@@ -1,0 +1,47 @@
+{
+  "_comment": "Hand rules for fields no automatic rule explains (see coverage.md). Keys are '<component>:<path>'. Each names the transform the phase B compiler implements and why inference cannot derive it. Rules the inference did derive are never repeated here.",
+  "block:minecraft:embedded_visual:material_instances": {
+    "transform": "material_instances_inline",
+    "why": "The value is a whole minecraft:material_instances object, sent inline with per-face {texture, render_method, tint_method, ambient_occlusion, face_dimming, isotropic, alpha_masked_tint}. Setting it also fills in the sibling geometry description's defaults (bone_visibility, culling, ...), so per-field correlation cannot separate the two. Reuse the material_instances field rules per face."
+  },
+  "block:minecraft:item_visual:material_instances": {
+    "transform": "material_instances_packed",
+    "why": "Sent as materialInstancesDescription in the minecraft:material_instances wire shape: face aliases go to 'mappings', faces to 'materials', and face_dimming/isotropic are packed into 'packed_bools' (bit 0 face_dimming, bit 1 isotropic, bit 2 always set). The bit packing combines two JSON fields into one leaf, which single-field variation cannot fit."
+  },
+  "block:minecraft:placement_filter:conditions[].block_filter[].states": {
+    "transform": "block_descriptor_states",
+    "why": "Descriptor states become a list of {state, type, value} with the value as the state's int/string/byte. The type depends on the state's definition in the block registry, not on the JSON value. A state the named block does not have makes BDS drop the descriptor, so arbitrary sample state names give no mapping."
+  },
+  "item:minecraft:block_placer:use_on[].states": {
+    "transform": "block_descriptor_states",
+    "why": "Same block descriptor as placement_filter: state values are resolved against the named block (e.g. pillar_axis 'y' -> 0). Unknown states drop the entry, so the mapping depends on registry data, not on the JSON alone."
+  },
+  "item:minecraft:digger:destroy_speeds[].block.states": {
+    "transform": "block_descriptor_states",
+    "why": "Same block descriptor resolution; the capture's variants with sample state names removed the whole destroy_speeds entry."
+  },
+  "item:minecraft:entity_placer:use_on[].states": {
+    "transform": "block_descriptor_states",
+    "why": "Same block descriptor resolution as block_placer.use_on."
+  },
+  "item:minecraft:entity_placer:dispense_on[].states": {
+    "transform": "block_descriptor_states",
+    "why": "Same block descriptor resolution as block_placer.use_on."
+  },
+  "block:permutations:[].components": {
+    "transform": "permutation_components",
+    "why": "A permutation's components use each block component's own wire rules, under permutations[].components. A permutation with no components is not sent at all, which takes its condition leaf with it. Compile each nested component with its component mapping and drop empty permutations."
+  },
+  "item:minecraft:food:using_converts_to": {
+    "transform": "item_descriptor_name",
+    "why": "The docs type it as a string or keyed set of strings; BDS takes a string or {name}, sends {name: <item>} for a known item and {} otherwise. The output depends on whether the item exists, which no rule over the JSON value captures."
+  },
+  "item:minecraft:hover_text_color:value": {
+    "transform": "formatting_code",
+    "why": "The component keeps the color name; item_properties.hover_text_color gets the formatting code (red -> §c, dark_purple -> §5) and is left out for unknown names. The docs give no enum for the field, so a value table cannot be generalized. Implement it with Bedrock's text color table."
+  },
+  "item:minecraft:repairable:repair_items[].items": {
+    "transform": "item_descriptor_list",
+    "why": "Items become [{name}] and unknown items are dropped. An entry with no resolvable item drops the whole repair entry, repair_amount included (float for numbers, string for molang). Whether an item resolves comes from the item registry, not the JSON value."
+  }
+}

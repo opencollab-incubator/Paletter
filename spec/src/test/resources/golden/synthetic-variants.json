@@ -1,0 +1,229 @@
+[
+  {
+    "identifier": "paletter:test_1",
+    "kind": "item",
+    "file": "items/test_1.json",
+    "component": "item:minecraft:test",
+    "role": "control",
+    "path": "",
+    "label": "control"
+  },
+  {
+    "identifier": "paletter:test_2",
+    "kind": "item",
+    "file": "items/test_2.json",
+    "component": "item:minecraft:test",
+    "role": "base",
+    "path": "",
+    "label": "base",
+    "json": {
+      "seconds": 1.5
+    }
+  },
+  {
+    "identifier": "paletter:test_3",
+    "kind": "item",
+    "file": "items/test_3.json",
+    "component": "item:minecraft:test",
+    "role": "form",
+    "path": "",
+    "label": "boolean:true",
+    "value": true,
+    "json": true
+  },
+  {
+    "identifier": "paletter:test_4",
+    "kind": "item",
+    "file": "items/test_4.json",
+    "component": "item:minecraft:test",
+    "role": "form",
+    "path": "",
+    "label": "boolean:false",
+    "value": false,
+    "json": false
+  },
+  {
+    "identifier": "paletter:test_5",
+    "kind": "item",
+    "file": "items/test_5.json",
+    "component": "item:minecraft:test",
+    "role": "omit",
+    "path": "seconds",
+    "label": "omitted",
+    "json": {}
+  },
+  {
+    "identifier": "paletter:test_6",
+    "kind": "item",
+    "file": "items/test_6.json",
+    "component": "item:minecraft:test",
+    "role": "field",
+    "path": "seconds",
+    "label": "number:0",
+    "value": 0,
+    "json": {
+      "seconds": 0
+    }
+  },
+  {
+    "identifier": "paletter:test_7",
+    "kind": "item",
+    "file": "items/test_7.json",
+    "component": "item:minecraft:test",
+    "role": "field",
+    "path": "seconds",
+    "label": "number:0.5",
+    "value": 0.5,
+    "json": {
+      "seconds": 0.5
+    }
+  },
+  {
+    "identifier": "paletter:test_8",
+    "kind": "item",
+    "file": "items/test_8.json",
+    "component": "item:minecraft:test",
+    "role": "field",
+    "path": "seconds",
+    "label": "number:1",
+    "value": 1,
+    "json": {
+      "seconds": 1
+    }
+  },
+  {
+    "identifier": "paletter:test_9",
+    "kind": "item",
+    "file": "items/test_9.json",
+    "component": "item:minecraft:test",
+    "role": "field",
+    "path": "seconds",
+    "label": "number:2.25",
+    "value": 2.25,
+    "json": {
+      "seconds": 2.25
+    }
+  },
+  {
+    "identifier": "paletter:test_10",
+    "kind": "item",
+    "file": "items/test_10.json",
+    "component": "item:minecraft:test",
+    "role": "field",
+    "path": "seconds",
+    "label": "number:30",
+    "value": 30,
+    "json": {
+      "seconds": 30
+    }
+  },
+  {
+    "identifier": "paletter:test_11",
+    "kind": "item",
+    "file": "items/test_11.json",
+    "component": "item:minecraft:test",
+    "role": "field",
+    "path": "seconds",
+    "label": "number:-1",
+    "value": -1,
+    "json": {
+      "seconds": -1
+    }
+  },
+  {
+    "identifier": "paletter:test_12",
+    "kind": "item",
+    "file": "items/test_12.json",
+    "component": "item:minecraft:test",
+    "role": "field",
+    "path": "seconds",
+    "label": "number:100",
+    "value": 100,
+    "json": {
+      "seconds": 100
+    }
+  },
+  {
+    "identifier": "paletter:test_13",
+    "kind": "item",
+    "file": "items/test_13.json",
+    "component": "item:minecraft:test",
+    "role": "field",
+    "path": "seconds",
+    "label": "number:101",
+    "value": 101,
+    "json": {
+      "seconds": 101
+    }
+  },
+  {
+    "identifier": "paletter:test_14",
+    "kind": "item",
+    "file": "items/test_14.json",
+    "component": "item:minecraft:test",
+    "role": "field",
+    "path": "mode",
+    "label": "string:a",
+    "value": "a",
+    "json": {
+      "seconds": 1.5,
+      "mode": "a"
+    }
+  },
+  {
+    "identifier": "paletter:test_15",
+    "kind": "item",
+    "file": "items/test_15.json",
+    "component": "item:minecraft:test",
+    "role": "field",
+    "path": "mode",
+    "label": "string:b",
+    "value": "b",
+    "json": {
+      "seconds": 1.5,
+      "mode": "b"
+    }
+  },
+  {
+    "identifier": "paletter:test_16",
+    "kind": "item",
+    "file": "items/test_16.json",
+    "component": "item:minecraft:test",
+    "role": "field",
+    "path": "mode",
+    "label": "string:c",
+    "value": "c",
+    "json": {
+      "seconds": 1.5,
+      "mode": "c"
+    }
+  },
+  {
+    "identifier": "paletter:test_17",
+    "kind": "item",
+    "file": "items/test_17.json",
+    "component": "item:minecraft:test",
+    "role": "field",
+    "path": "quiet",
+    "label": "boolean:true",
+    "value": true,
+    "json": {
+      "seconds": 1.5,
+      "quiet": true
+    }
+  },
+  {
+    "identifier": "paletter:test_18",
+    "kind": "item",
+    "file": "items/test_18.json",
+    "component": "item:minecraft:test",
+    "role": "field",
+    "path": "quiet",
+    "label": "boolean:false",
+    "value": false,
+    "json": {
+      "seconds": 1.5,
+      "quiet": false
+    }
+  }
+]

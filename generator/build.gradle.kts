@@ -6,6 +6,7 @@ dependencies {
     implementation(project(":paletter"))
     implementation(project(":capture"))
     implementation(project(":codegen"))
+    implementation(project(":spec"))
     implementation(libs.gson)
 
     testImplementation(platform(libs.junit.bom))

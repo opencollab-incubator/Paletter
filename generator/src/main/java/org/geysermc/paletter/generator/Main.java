@@ -31,6 +31,10 @@ import java.util.Map;
  *         The whole pipeline: newest BDS of the channel, Script API dump, vanilla and add-on network captures (hashed
  *         and sequential block ids), comparison with the committed data, import or refresh, component shape
  *         comparison, markdown report. --verify-only writes nothing and exits with 1 on any difference.
+ * spec-capture [--channel release|preview] [--version X] [--out DIR] [--keep-server] [--cache DIR] [--port 19270]
+ *         Generates the spec add-on from codegen/model (spec module), loads it in BDS with experiments on and writes the
+ *         content log, the custom item registry and block properties and variants.json to
+ *         codegen/model/captures/bds-VERSION (input of spec infer).
  * check   Verifies the bundled data: every block and item of the newest version that is missing in an older
  *         version needs a fallback there, and every fallback target must exist. Exits with 1 on problems.
  * </pre>
@@ -45,6 +49,9 @@ public final class Main {
         }
         if (args[0].equals("update")) {
             System.exit(new Update(Path.of("").toAbsolutePath(), parseFlags(args)).run());
+        }
+        if (args[0].equals("spec-capture")) {
+            System.exit(new SpecCapture(Path.of("").toAbsolutePath(), parseFlags(args)).run());
         }
         Map<String, String> options = parseOptions(args);
         Path root = Path.of("").toAbsolutePath();
@@ -126,6 +133,7 @@ public final class Main {
               bds-compare --bds-dump FILE --name 26.60 [--item-tags FILE]
               update --channel release|preview [--version X] [--verify-only] [--import-preview] [--keep-server]
                      [--cache DIR] [--report FILE] [--name 26.70] [--experiments a,b] [--port 19260] [--timeout SECONDS]
+              spec-capture [--channel release|preview] [--version X] [--out DIR] [--keep-server]
               check""");
     }
 }

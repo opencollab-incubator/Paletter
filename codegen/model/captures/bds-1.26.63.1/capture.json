@@ -1,0 +1,14 @@
+{
+  "bdsVersion": "1.26.63.1",
+  "protocol": 2225,
+  "preview": false,
+  "formatVersion": "1.26.60",
+  "nativeCodec": true,
+  "codecProtocol": 2225,
+  "experiments": [
+    "upcoming_creator_features\u003dtrue",
+    "gametest\u003dtrue",
+    "experimental_creator_cameras\u003dtrue",
+    "y_2026_drop_4\u003dtrue"
+  ]
+}

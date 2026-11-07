@@ -47,6 +47,7 @@ what is API, what `@Experimental` and `@Internal` mean, and the policy.
 | `bds-addon` | A behavior pack that dumps what the Script API knows (item tags and properties, block states, defaults and tags). |
 | `codegen`   | Infers component shapes from wire NBT and generates the typed components. Not shipped.          |
 | `capture`   | A headless Bedrock client that records what BDS sends (palette data, custom item/block NBT). Not shipped; see `capture/WIRE-NOTES.md`. |
+| `spec`      | The component model: add-on JSON side parsed from Microsoft's creator docs, a capture add-on generated from it, and the JSON -> wire mapping inferred from BDS (`codegen/model/`). Not shipped; see `spec/README.md`. |
 
 ## Concepts
 
@@ -329,6 +330,11 @@ maps the same semantic value to the shape of each palette's version: no API chan
 Shapes inferred from vanilla NBT round-trip every vanilla data driven item and block in the bundled data unchanged.
 Regenerate with `./gradlew :codegen:generateComponents`; `./gradlew check` fails if the committed sources are stale. See
 `codegen/README.md`, and `codegen/DEVIATIONS.md` for how Paletter's output differs from what Geyser used to send.
+
+The next API generation mirrors the add-on component model itself (typed `minecraft:durability {max_durability, damage_chance}`,
+traits, states, permutations, `menu_category`) and compiles it to the wire per protocol. Its inputs are in `codegen/model/`:
+`components.json` (from the official creator docs, CC BY 4.0, see `codegen/model/ATTRIBUTION.md`), `mappings.json` (inferred from BDS
+captures of a generated add-on) and `coverage.md`; see `spec/README.md`.
 
 ## The creative inventory
 
