@@ -8,8 +8,10 @@ import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.ItemFallback;
 import org.geysermc.paletter.item.ItemOverride;
+import org.geysermc.paletter.item.ItemVariant;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +44,7 @@ public final class PaletteLayer {
     private final Map<String, ItemFallback> itemFallbacks;
     private final Map<String, BlockFallback> blockFallbacks;
     private final Map<String, List<String>> tags;
+    private final List<ItemVariant> variants;
 
     private PaletteLayer(Builder builder) {
         this.id = builder.id;
@@ -51,6 +54,7 @@ public final class PaletteLayer {
         this.creativeEdits = List.copyOf(builder.creativeEdits);
         this.itemFallbacks = Map.copyOf(builder.itemFallbacks);
         this.blockFallbacks = Map.copyOf(builder.blockFallbacks);
+        this.variants = List.copyOf(builder.variants);
         Map<String, List<String>> tags = new LinkedHashMap<>();
         builder.tags.forEach((tag, list) -> tags.put(tag, List.copyOf(list)));
         this.tags = Map.copyOf(tags);
@@ -96,6 +100,13 @@ public final class PaletteLayer {
     }
 
     /**
+     * @return item variants this layer gives canonical ids to, besides its custom items
+     */
+    public @NonNull List<ItemVariant> variants() {
+        return variants;
+    }
+
+    /**
      * @return true if compiling this layer changes block states, so the block palette cannot be shared
      */
     public boolean changesBlocks() {
@@ -119,6 +130,7 @@ public final class PaletteLayer {
         private final Map<String, ItemFallback> itemFallbacks = new LinkedHashMap<>();
         private final Map<String, BlockFallback> blockFallbacks = new LinkedHashMap<>();
         private final Map<String, List<String>> tags = new LinkedHashMap<>();
+        private final List<ItemVariant> variants = new ArrayList<>();
 
         private Builder(String id) {
             this.id = Objects.requireNonNull(id);
@@ -175,6 +187,23 @@ public final class PaletteLayer {
 
         public @NonNull Builder blockFallback(@NonNull String identifier, @NonNull BlockFallback fallback) {
             blockFallbacks.put(identifier, fallback);
+            return this;
+        }
+
+        /**
+         * Gives an item variant a canonical id, so it can be used with {@link Palette#item(int)} and is recognized by
+         * {@link Palette#match}. Needed for variants of the newest version that are neither an item's base variant nor
+         * in the creative inventory, e.g. a damage value or block state a consumer maps to. Ids are appended after
+         * the custom items of this layer, in call order; variants that already have one keep it. Like every canonical id
+         * they are the same in every version.
+         */
+        public @NonNull Builder variant(@NonNull ItemVariant variant) {
+            variants.add(Objects.requireNonNull(variant));
+            return this;
+        }
+
+        public @NonNull Builder variants(@NonNull Collection<ItemVariant> variants) {
+            variants.forEach(this::variant);
             return this;
         }
 

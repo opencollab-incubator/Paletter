@@ -14,6 +14,7 @@ import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.item.PaletteItem;
 import org.geysermc.paletter.item.ResolvedItem;
 import org.junit.jupiter.api.Test;
 
@@ -222,5 +223,86 @@ class CanonicalTest {
         // variants that name one; spelling out the default state is the same variant
         assertEquals(planks, PALETTER.canonicalItem(new ItemVariant("minecraft:oak_planks", 0, resolved.block().getState())));
         assertEquals(planks, palette.match(resolved.toItemData().blockDefinition(palette.blocks().air()).build()));
+    }
+
+    @Test
+    void layersAddCanonicalVariants() {
+        Palette latest = PALETTER.vanilla(PALETTER.latest());
+        PaletteBlock log = latest.blocks().states("minecraft:oak_log").stream()
+            .filter(state -> state != latest.items().defaultBlock(latest.items().getDefinition("minecraft:oak_log")))
+            .findFirst().orElseThrow();
+        ItemVariant apple3 = ItemVariant.of("minecraft:apple", 3);
+        ItemVariant sidewaysLog = new ItemVariant("minecraft:oak_log", 0, log.getState());
+        assertEquals(-1, PALETTER.canonicalItem(apple3));
+        assertEquals(-1, PALETTER.canonicalItem(sidewaysLog));
+        PaletteLayer layer = PaletteLayer.builder("variants")
+            .variant(apple3)
+            .variant(ItemVariant.of("minecraft:apple"))     // already canonical: keeps its id, nothing appended
+            .variant(sidewaysLog)
+            .variant(apple3)                                // duplicates are ignored
+            .build();
+
+        int vanilla = PALETTER.canonicalItemCount();
+        for (BlockNetworkIds mode : BlockNetworkIds.values()) {
+            for (DataVersion version : PALETTER.versions()) {
+                Palette palette = PALETTER.palette(version.protocolVersion(), mode, layer);
+                assertEquals(vanilla + 2, palette.canonicalItemCount());
+                assertEquals(vanilla, palette.canonicalItem(apple3), "stable across versions and modes");
+                assertEquals(vanilla + 1, palette.canonicalItem(sidewaysLog));
+                assertEquals(PALETTER.canonicalItem(ItemVariant.of("minecraft:apple")), palette.canonicalItem(ItemVariant.of("minecraft:apple")));
+
+                PaletteItem apple = palette.items().getDefinition("minecraft:apple");
+                assertEquals(3, palette.item(vanilla).damage());
+                assertEquals(vanilla, palette.match(ItemData.builder().definition(apple).damage(3).count(1).build()));
+                assertEquals(PALETTER.canonicalItem(ItemVariant.of("minecraft:apple")),
+                    palette.match(ItemData.builder().definition(apple).damage(4).count(1).build()));
+
+                // Block state variants are told apart by the block the client sends
+                ResolvedItem logItem = palette.item(vanilla + 1);
+                assertEquals(log.getState(), logItem.block().getState(), version.toString());
+                assertEquals(vanilla + 1, palette.match(logItem.toItemData().build()));
+                int baseLog = PALETTER.canonicalItem(ItemVariant.of("minecraft:oak_log"));
+                assertEquals(baseLog, palette.match(palette.item(baseLog).toItemData().build()));
+            }
+        }
+    }
+
+    @Test
+    void missingCanonicalContentIsReported() {
+        Palette oldest = PALETTER.vanilla(PALETTER.version(OLDEST));
+        assertEquals(30, oldest.blocks().missingCanonical().size());
+        assertTrue(oldest.report().entries().stream().anyMatch(entry -> entry.source().equals("canonical")
+            && entry.message().contains("canonical block states")), oldest.report().entries().toString());
+        assertTrue(oldest.report().entries().stream().anyMatch(entry -> entry.source().equals("canonical")
+            && entry.message().contains("canonical item variants")));
+        // Not repeated by layers that do not change it
+        Palette layered = PALETTER.palette(OLDEST, PaletteLayer.builder("empty").build());
+        assertEquals(oldest.report().entries().size(), layered.report().entries().size());
+        // The newest version has everything
+        assertTrue(PALETTER.vanilla(PALETTER.latest()).report().entries().stream().noneMatch(entry -> entry.source().equals("canonical")));
+    }
+
+    @Test
+    void hashedPalettesShareVanillaBlocksAndTablesAcrossVersions() {
+        Palette oldest = PALETTER.vanilla(PALETTER.version(OLDEST), BlockNetworkIds.HASHED);
+        Palette latest = PALETTER.vanilla(PALETTER.latest(), BlockNetworkIds.HASHED);
+        Palette withBlocks = PALETTER.palette(LATEST, BlockNetworkIds.HASHED, PaletteLayer.builder("lamp").block(lamp()).build());
+        int air = PALETTER.canonicalBlock(BlockStates.of("minecraft:air"));
+        assertSame(latest.block(air), oldest.block(air));
+        assertSame(latest.block(air), withBlocks.block(air));
+        int shared = 0;
+        for (int i = 0; i < latest.canonicalBlockCount(); i++) {
+            if (latest.block(i) == oldest.block(i)) {
+                shared++;
+            }
+            assertSame(latest.block(i), withBlocks.block(i), "custom blocks do not change vanilla hashed definitions");
+        }
+        // Every state 26.40 has unchanged (about two thirds) uses the same instance
+        assertTrue(shared > latest.canonicalBlockCount() / 2, shared + " shared");
+        // Registries still only know their own version's states
+        PaletteBlock newOnly = latest.block(PALETTER.canonicalBlock(latest.blocks().states("minecraft:white_concrete_stairs").getFirst().getState()));
+        assertTrue(latest.blocks().isRegistered(newOnly));
+        assertFalse(oldest.blocks().isRegistered(newOnly));
+        assertEquals(-1, oldest.blocks().indexOf(newOnly));
     }
 }

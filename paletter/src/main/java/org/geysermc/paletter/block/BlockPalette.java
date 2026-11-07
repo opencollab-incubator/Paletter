@@ -1,7 +1,5 @@
 package org.geysermc.paletter.block;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -17,7 +15,6 @@ import org.geysermc.paletter.data.VanillaData;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -36,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * to older versions (renamed or missing blocks, added or removed states) are handled here.
  * <p>
  * Runtime ids depend on the palette's {@link BlockNetworkIds} mode: palette positions, or state hashes. Each state also
- * has a dense {@link PaletteBlock#index()} in both modes.
+ * has a dense position, {@link #indexOf}, in both modes; in hashed palettes vanilla definitions are shared between versions.
  */
 public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     /**
@@ -47,25 +44,36 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     private static final long FNV1_64_OFFSET_BASIS = 0xcbf29ce484222325L;
     private static final long FNV1_64_PRIME = 1099511628211L;
 
+    /**
+     * Canonical tables are split in pages of this many entries, so pages with equal content can be shared.
+     */
+    private static final int PAGE_BITS = 10;
+    private static final int PAGE_SIZE = 1 << PAGE_BITS;
+    private static final int PAGE_MASK = PAGE_SIZE - 1;
+
     private final Table table;
     private final CanonicalBlocks canonical;
     private final Map<String, BlockFallback> fallbacks;
+    private final BlockInterner interner;
     private final Map<NbtMap, BlockResolution> resolutions = new ConcurrentHashMap<>();
     private volatile @Nullable CanonicalTable canonicalTable;
 
-    private BlockPalette(Table table, CanonicalBlocks canonical, Map<String, BlockFallback> fallbacks) {
+    private BlockPalette(Table table, CanonicalBlocks canonical, Map<String, BlockFallback> fallbacks, BlockInterner interner) {
         this.table = table;
         this.canonical = canonical;
         this.fallbacks = fallbacks;
+        this.interner = interner;
     }
 
     /**
      * Builds the vanilla palette of a version.
      *
      * @param canonical canonical ids of the newest version's states
+     * @param interner shares blocks and tables between hashed palettes; one per Paletter
      */
-    public static @NonNull BlockPalette build(@NonNull VanillaData data, @NonNull BlockNetworkIds mode, @NonNull CanonicalBlocks canonical) {
-        return new BlockPalette(new Table(data, List.of(), mode), canonical, data.fallbacks().blocks());
+    public static @NonNull BlockPalette build(@NonNull VanillaData data, @NonNull BlockNetworkIds mode, @NonNull CanonicalBlocks canonical,
+                                              @NonNull BlockInterner interner) {
+        return new BlockPalette(new Table(data, List.of(), mode, interner), canonical, data.fallbacks().blocks(), interner);
     }
 
     /**
@@ -77,7 +85,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
         }
         Map<String, BlockFallback> merged = new HashMap<>(fallbacks);
         merged.putAll(extraFallbacks);
-        return new BlockPalette(table, canonical, Map.copyOf(merged));
+        return new BlockPalette(table, canonical, Map.copyOf(merged), interner);
     }
 
     /**
@@ -91,8 +99,8 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
         }
         List<CustomBlock> all = new ArrayList<>(table.customBlocks);
         all.addAll(additional);
-        Table extended = new Table(data, all, table.mode);
-        return new BlockPalette(extended, canonical.extend(key, additional), fallbacks);
+        Table extended = new Table(data, all, table.mode, interner);
+        return new BlockPalette(extended, canonical.extend(key, additional), fallbacks, interner);
     }
 
     public @NonNull DataVersion version() {
@@ -118,19 +126,33 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     }
 
     public @Nullable PaletteBlock byRuntimeId(int runtimeId) {
-        Int2ObjectMap<PaletteBlock> byHash = table.byHash;
-        if (byHash != null) {
-            return byHash.get(runtimeId);
-        }
-        return runtimeId >= 0 && runtimeId < table.byIndex.length ? table.byIndex[runtimeId] : null;
+        int index = indexOfRuntimeId(runtimeId);
+        return index == -1 ? null : table.byIndex[index];
     }
 
     /**
-     * @param index a dense position, see {@link PaletteBlock#index()}
+     * @param index a dense position, see {@link #indexOf}
      * @throws IndexOutOfBoundsException if there is no such position
      */
     public @NonNull PaletteBlock byIndex(int index) {
         return table.byIndex[index];
+    }
+
+    /**
+     * @return the dense position of a block in this palette, {@code 0} to {@code size() - 1} (equal to the runtime id
+     * in {@link BlockNetworkIds#SEQUENTIAL} palettes), or -1 if it is not registered here
+     */
+    public int indexOf(@NonNull BlockDefinition definition) {
+        int index = indexOfRuntimeId(definition.getRuntimeId());
+        return index != -1 && table.byIndex[index] == definition ? index : -1;
+    }
+
+    private int indexOfRuntimeId(int runtimeId) {
+        IntIndex byHash = table.byHash;
+        if (byHash != null) {
+            return byHash.get(runtimeId);
+        }
+        return runtimeId >= 0 && runtimeId < table.byIndex.length ? runtimeId : -1;
     }
 
     @Override
@@ -140,7 +162,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
 
     @Override
     public boolean isRegistered(@NonNull BlockDefinition definition) {
-        return definition instanceof PaletteBlock block && block.index() < table.byIndex.length && table.byIndex[block.index()] == block;
+        return definition instanceof PaletteBlock && indexOf(definition) != -1;
     }
 
     // ---- Canonical ids ----
@@ -153,14 +175,14 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
      * @throws IndexOutOfBoundsException if the id is not one of {@link #canonical()}
      */
     public @NonNull PaletteBlock block(int canonical) {
-        return canonicalTable().blocks[canonical];
+        return canonicalTable().blocks[canonical >>> PAGE_BITS][canonical & PAGE_MASK];
     }
 
     /**
      * Like {@link #block(int)}, but only the runtime id. An array lookup.
      */
     public int runtimeId(int canonical) {
-        return canonicalTable().runtimeIds[canonical];
+        return canonicalTable().runtimeIds[canonical >>> PAGE_BITS][canonical & PAGE_MASK];
     }
 
     /**
@@ -173,23 +195,29 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
         if (definition == null) {
             return -1;
         }
-        PaletteBlock block = isRegistered(definition) ? (PaletteBlock) definition : byRuntimeId(definition.getRuntimeId());
-        return block == null ? -1 : canonicalTable().reverse[block.index()];
+        return canonicalOfRuntimeId(definition.getRuntimeId());
     }
 
     /**
      * Like {@link #canonical(BlockDefinition)}, by runtime id.
      */
     public int canonicalOfRuntimeId(int runtimeId) {
-        PaletteBlock block = byRuntimeId(runtimeId);
-        return block == null ? -1 : canonicalTable().reverse[block.index()];
+        int index = indexOfRuntimeId(runtimeId);
+        return index == -1 ? -1 : canonicalTable().reverse[index];
     }
 
     /**
-     * @return how many canonical ids have no block of their own in this version and use air
+     * @return the canonical states that have no block of their own in this version and use air
      */
-    public int missingCanonical() {
+    public @NonNull List<NbtMap> missingCanonical() {
         return canonicalTable().missing;
+    }
+
+    /**
+     * Builds the canonical tables now instead of on first use. Called by the palette compiler.
+     */
+    public void prepareCanonical() {
+        canonicalTable();
     }
 
     private CanonicalTable canonicalTable() {
@@ -207,30 +235,49 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
 
     private CanonicalTable buildCanonicalTable() {
         int size = canonical.size();
-        PaletteBlock[] blocks = new PaletteBlock[size];
-        int[] runtimeIds = new int[size];
+        int pageCount = (size + PAGE_SIZE - 1) >>> PAGE_BITS;
+        PaletteBlock[][] blocks = new PaletteBlock[pageCount][];
+        int[][] runtimeIds = new int[pageCount][];
         int[] reverse = new int[table.byIndex.length];
-        Arrays.fill(reverse, -1);
-        for (PaletteBlock block : table.byIndex) {
-            reverse[block.index()] = canonical.index(block.getState());
+        for (int i = 0; i < reverse.length; i++) {
+            reverse[i] = canonical.index(table.byIndex[i].getState());
         }
-        int missing = 0;
-        for (int i = 0; i < size; i++) {
-            PaletteBlock block = resolve(canonical.state(i)).block();
-            if (block == null) {
-                block = table.air;
-                missing++;
+        List<NbtMap> missing = new ArrayList<>();
+        boolean share = table.mode == BlockNetworkIds.HASHED;
+        for (int page = 0; page < pageCount; page++) {
+            int start = page << PAGE_BITS;
+            int length = Math.min(PAGE_SIZE, size - start);
+            PaletteBlock[] pageBlocks = new PaletteBlock[length];
+            int[] pageIds = new int[length];
+            boolean vanillaOnly = true;
+            for (int j = 0; j < length; j++) {
+                int id = start + j;
+                NbtMap state = canonical.state(id);
+                PaletteBlock block = resolve(state).block();
+                if (block == null) {
+                    block = table.air;
+                    missing.add(state);
+                }
+                pageBlocks[j] = block;
+                pageIds[j] = block.getRuntimeId();
+                vanillaOnly &= !block.isCustom();
+                int index = indexOfRuntimeId(block.getRuntimeId());
+                if (reverse[index] == -1) {
+                    reverse[index] = id;
+                }
             }
-            blocks[i] = block;
-            runtimeIds[i] = block.getRuntimeId();
-            if (reverse[block.index()] == -1) {
-                reverse[block.index()] = i;
+            // In hashed palettes vanilla blocks are shared between versions, so most pages are equal between them
+            if (share && vanillaOnly) {
+                pageBlocks = interner.intern(pageBlocks);
+                pageIds = interner.intern(pageIds);
             }
+            blocks[page] = pageBlocks;
+            runtimeIds[page] = pageIds;
         }
-        return new CanonicalTable(blocks, runtimeIds, reverse, missing);
+        return new CanonicalTable(blocks, runtimeIds, reverse, List.copyOf(missing));
     }
 
-    private record CanonicalTable(PaletteBlock[] blocks, int[] runtimeIds, int[] reverse, int missing) {
+    private record CanonicalTable(PaletteBlock[][] blocks, int[][] runtimeIds, int[] reverse, List<NbtMap> missing) {
     }
 
     // ---- States ----
@@ -403,7 +450,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
         private final DataVersion version;
         private final BlockNetworkIds mode;
         private final PaletteBlock[] byIndex;
-        private final @Nullable Int2ObjectMap<PaletteBlock> byHash;
+        private final @Nullable IntIndex byHash;
         private final Map<NbtMap, PaletteBlock> byState;
         private final int @Nullable [] vanillaToRuntime;
         private final List<BlockPropertyData> blockProperties;
@@ -412,7 +459,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
         private final PaletteBlock air;
         private volatile Map<String, Schema> schemas;
 
-        private Table(VanillaData data, List<CustomBlock> customBlocks, BlockNetworkIds mode) {
+        private Table(VanillaData data, List<CustomBlock> customBlocks, BlockNetworkIds mode, BlockInterner interner) {
             this.version = data.version();
             this.mode = mode;
             this.customBlocks = List.copyOf(customBlocks);
@@ -444,27 +491,32 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
 
             this.byIndex = new PaletteBlock[states.size()];
             Object2ObjectOpenHashMap<NbtMap, PaletteBlock> byState = new Object2ObjectOpenHashMap<>(states.size());
-            Int2ObjectOpenHashMap<PaletteBlock> byHash = mode == BlockNetworkIds.HASHED ? new Int2ObjectOpenHashMap<>(states.size()) : null;
+            IntIndex byHash = mode == BlockNetworkIds.HASHED ? new IntIndex(states.size()) : null;
             for (int i = 0; i < states.size(); i++) {
                 NbtMap state = states.get(i);
-                int runtimeId = byHash == null ? i : BlockNetworkIds.hash(state);
-                PaletteBlock block = new PaletteBlock(runtimeId, i, state, customStates.contains(state));
+                boolean custom = customStates.contains(state);
+                PaletteBlock block;
+                if (byHash == null) {
+                    block = new PaletteBlock(i, state, custom);
+                } else if (custom) {
+                    block = new PaletteBlock(BlockNetworkIds.hash(state), state, true);
+                } else {
+                    // A vanilla state has the same hash in every version: share the definition
+                    block = interner.vanillaBlock(state);
+                }
                 if (byState.put(state, block) != null) {
                     throw new PaletteException("Duplicate block state in " + version + " palette: " + state);
                 }
                 if (byHash != null) {
-                    PaletteBlock collision = byHash.put(runtimeId, block);
-                    if (collision != null) {
+                    int collision = byHash.put(block.getRuntimeId(), i);
+                    if (collision != -1) {
                         throw new PaletteException("Block network id hash collision in the " + version + " palette: "
-                            + collision.getState() + " and " + state + " both hash to " + runtimeId);
+                            + byIndex[collision].getState() + " and " + state + " both hash to " + block.getRuntimeId());
                     }
                 }
                 byIndex[i] = block;
             }
             this.byState = byState;
-            if (byHash != null) {
-                byHash.trim();
-            }
             this.byHash = byHash;
 
             if (customStates.isEmpty() || mode == BlockNetworkIds.HASHED) {

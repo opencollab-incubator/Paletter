@@ -90,21 +90,29 @@ public final class CanonicalItems {
     /**
      * @param key identifies the extension (e.g. the layer adding the items); the same key returns the same instance
      *            for as long as it is referenced
-     * @param identifiers identifiers of custom items, each appended as its base variant
-     * @return these indices with the given items appended, or this if there are none
+     * @param additional variants to append, e.g. base variants of custom items. Variants that already have an id
+     *                   (here or earlier in the list) are skipped; a block state equal to the item's default is dropped
+     * @return these indices with the given variants appended, or this if there are none
      */
-    public @NonNull CanonicalItems extend(@NonNull Object key, @NonNull List<String> identifiers) {
-        if (identifiers.isEmpty()) {
+    public @NonNull CanonicalItems extend(@NonNull Object key, @NonNull List<ItemVariant> additional) {
+        if (additional.isEmpty()) {
             return this;
         }
         synchronized (extensions) {
             CanonicalItems existing = extensions.get(key);
             if (existing == null) {
-                List<ItemVariant> variants = new ArrayList<>(identifiers.size());
-                for (String identifier : identifiers) {
-                    variants.add(ItemVariant.of(identifier));
+                Map<String, NbtMap> defaults = root().defaultStates;
+                Set<ItemVariant> variants = new LinkedHashSet<>();
+                for (ItemVariant variant : additional) {
+                    ItemVariant normalized = normalize(variant, defaults);
+                    if (lookup(normalized) == -1) {
+                        variants.add(normalized);
+                    }
                 }
-                existing = new CanonicalItems(this, variants, Map.of());
+                if (variants.isEmpty()) {
+                    return this;
+                }
+                existing = new CanonicalItems(this, List.copyOf(variants), Map.of());
                 extensions.put(key, existing);
             }
             return existing;

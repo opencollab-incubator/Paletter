@@ -3,6 +3,7 @@ package org.geysermc.paletter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
+import org.geysermc.paletter.block.BlockInterner;
 import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.CanonicalBlocks;
 import org.geysermc.paletter.data.DataVersion;
@@ -43,6 +44,7 @@ public final class Paletter {
     private final Map<VanillaKey, Palette> vanilla = new ConcurrentHashMap<>();
     private final Map<Key, Palette> palettes = new ConcurrentHashMap<>();
     private final Map<NbtMap, NbtMap> interned = new HashMap<>();
+    private final BlockInterner blockInterner = new BlockInterner();
     private volatile CanonicalBlocks canonicalBlocks;
     private volatile CanonicalItems canonicalItems;
 
@@ -184,6 +186,13 @@ public final class Paletter {
         return canonicalItems().size();
     }
 
+    /**
+     * @return what hashed palettes of this instance share between versions
+     */
+    public @NonNull BlockInterner blockInterner() {
+        return blockInterner;
+    }
+
     // ---- Palettes ----
 
     /**
@@ -198,7 +207,7 @@ public final class Paletter {
      */
     public @NonNull Palette vanilla(@NonNull DataVersion version, @NonNull BlockNetworkIds mode) {
         return vanilla.computeIfAbsent(new VanillaKey(version, mode),
-            key -> PaletteCompiler.vanilla(vanillaData(key.version()), key.mode(), canonicalBlocks(), canonicalItems()));
+            key -> PaletteCompiler.vanilla(vanillaData(key.version()), key.mode(), canonicalBlocks(), canonicalItems(), blockInterner));
     }
 
     /**

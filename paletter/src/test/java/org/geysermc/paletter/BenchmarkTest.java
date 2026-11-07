@@ -135,6 +135,8 @@ class BenchmarkTest {
             }
         }
         double matchNs = (System.nanoTime() - m0) / (double) (rounds * items);
+        int[] pages = paletter.blockInterner().pageStats();
+        out.append(String.format("Hashed canonical table pages: %d built, %d shared%n", pages[0], pages[1]));
         out.append(String.format("runtimeId(int): %.1f ns, match(ItemData): %.1f ns (checksum %d)%n", blockNs, matchNs, sum));
         System.out.println(out);
 

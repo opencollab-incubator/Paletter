@@ -199,6 +199,13 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
      * @return the resolved item, or null if the item does not exist and has no fallback
      */
     public @Nullable ResolvedItem resolve(@NonNull ItemVariant variant) {
+        CanonicalTable table = canonicalTable;
+        if (table != null) {
+            int canonicalId = canonical.index(variant);
+            if (canonicalId != -1 && canonical.variant(canonicalId).equals(variant)) {
+                return table.items[canonicalId];
+            }
+        }
         return resolutions.computeIfAbsent(variant, v -> Optional.ofNullable(resolveUncached(v))).orElse(null);
     }
 
@@ -276,6 +283,20 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         return damageMatch != -1 ? damageMatch : base;
     }
 
+    /**
+     * @return the canonical variants that do not exist in this version and have no fallback ({@link #item(int)} is null)
+     */
+    public @NonNull List<ItemVariant> missingCanonical() {
+        return canonicalTable().missing;
+    }
+
+    /**
+     * Builds the canonical tables now instead of on first use. Called by the palette compiler.
+     */
+    public void prepareCanonical() {
+        canonicalTable();
+    }
+
     private CanonicalTable canonicalTable() {
         CanonicalTable result = canonicalTable;
         if (result == null) {
@@ -292,8 +313,13 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     private CanonicalTable buildCanonicalTable() {
         int size = canonical.size();
         ResolvedItem[] items = new ResolvedItem[size];
+        List<ItemVariant> missing = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            items[i] = resolve(canonical.variant(i));
+            // Not through the resolve cache: the table holds the results already
+            items[i] = resolveUncached(canonical.variant(i));
+            if (items[i] == null) {
+                missing.add(canonical.variant(i));
+            }
         }
         Int2ObjectOpenHashMap<List<Candidate>> candidates = new Int2ObjectOpenHashMap<>();
         // Direct variants first, so a fallback never shadows an item's own variant
@@ -319,13 +345,13 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         Int2ObjectOpenHashMap<Candidate[]> byRuntimeId = new Int2ObjectOpenHashMap<>(candidates.size());
         candidates.int2ObjectEntrySet().forEach(entry -> byRuntimeId.put(entry.getIntKey(), entry.getValue().toArray(Candidate[]::new)));
         byRuntimeId.trim();
-        return new CanonicalTable(items, byRuntimeId);
+        return new CanonicalTable(items, byRuntimeId, List.copyOf(missing));
     }
 
     private record Candidate(int damage, @Nullable PaletteBlock block, int canonical) {
     }
 
-    private record CanonicalTable(ResolvedItem[] items, Int2ObjectMap<Candidate[]> byRuntimeId) {
+    private record CanonicalTable(ResolvedItem[] items, Int2ObjectMap<Candidate[]> byRuntimeId, List<ItemVariant> missing) {
     }
 
     /**

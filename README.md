@@ -55,6 +55,10 @@ version's vanilla palette order; every item variant of the newest version has on
 variant in runtime id order, then the other variants of the creative inventory, i.e. damage values like potions). They
 are stable for a Paletter release and the same for every protocol version. Custom blocks and items of a layer get ids
 appended after the vanilla ones, per lineage of layers: the same layer stack gives the same ids in every version.
+A layer can also give ids to further variants of the newest version (`PaletteLayer.Builder#variant`), e.g. damage values
+or block states a consumer maps to that are not in the creative inventory; `Palette#match` recognizes them too.
+The tables are built when a palette is compiled; canonical content a version lacks (sent as air, or `item` is null) is
+listed in the palette's report.
 Each palette turns them into what its version needs with flat arrays built once per palette and shared where possible:
 
 | Lookup                          | Cost                               | Result                                              |
@@ -73,7 +77,9 @@ None of them allocate.
 custom blocks exist, so a custom block shifts vanilla ids). `BlockNetworkIds.HASHED` uses what the client expects when
 `StartGamePacket#blockNetworkIdsHashed` is set: FNV-1a 32 over the little endian NBT of `{name, states}` with states
 sorted by key and no `version` (`minecraft:unknown` is -2). A state then has the same id in every version and palette, so
-ids and encoded chunks can be shared between client versions. Hash collisions within a palette fail compilation.
+ids and encoded chunks can be shared between client versions. Paletter does so itself: hashed palettes of all versions
+share one `PaletteBlock` per vanilla state and equal pages of their canonical tables. Hash collisions within a palette
+fail compilation.
 `Palette#applyTo(StartGamePacket)` sets the flag to match.
 
 **One mapping for all versions.** Map against the newest version only. For older versions, `BlockPalette#resolve` adapts
@@ -138,8 +144,9 @@ for (int javaId = 0; javaId < javaStateCount; javaId++) {
 }
 // With HASHED ids, javaToRuntime is equal between versions for every state they share, so it can be deduplicated
 
-// Items, both directions
-int[] javaItemToCanonical = ...;                   // from the translator's item mappings, via paletter.canonicalItem(variant)
+// Items, both directions. Variants the translator maps to that are not in creative get ids from its layer:
+//   PaletteLayer.builder("translator").variant(ItemVariant.of("minecraft:banner", 15))...
+int[] javaItemToCanonical = ...;                   // from the translator's item mappings, via palette.canonicalItem(variant)
 JavaItem[] canonicalToJava = new JavaItem[palette.canonicalItemCount()];   // the reverse, also by canonical id
 ItemData toClient = palette.item(javaItemToCanonical[javaItemId]).toItemData().count(count).build();
 JavaItem fromClient = canonicalToJava[palette.match(itemDataFromClient)];
