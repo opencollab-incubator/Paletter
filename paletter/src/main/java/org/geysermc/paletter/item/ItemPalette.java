@@ -13,9 +13,6 @@ import org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket;
 import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import org.geysermc.paletter.PaletteException;
 import org.geysermc.paletter.PaletteReport;
-import org.geysermc.paletter.attach.AttachmentKey;
-import org.geysermc.paletter.attach.AttachmentStore;
-import org.geysermc.paletter.attach.Attachments;
 import org.geysermc.paletter.block.BlockPalette;
 import org.geysermc.paletter.block.BlockResolution;
 import org.geysermc.paletter.block.CustomBlock;
@@ -44,8 +41,9 @@ import java.util.function.Consumer;
  * The compiled item palette of one {@link org.geysermc.paletter.Palette}. It is the item {@link DefinitionRegistry}
  * for the codec, and answers both directions of item translation:
  * <ul>
- *     <li>{@link #resolve(ItemVariant)}: what to send for a variant (written against the newest Bedrock version);</li>
- *     <li>{@link #match(ItemData)}: what the client sent, including whatever layers attached to it.</li>
+ *     <li>{@link #item(int)} / {@link #resolve(ItemVariant)}: what to send for a canonical id or a variant (written
+ *     against the newest Bedrock version);</li>
+ *     <li>{@link #match(ItemData)}: which canonical id a stack the client sent is.</li>
  * </ul>
  * It also knows which block each block item is sent with, so consumers never have to work that out from the
  * creative inventory themselves.
@@ -63,11 +61,12 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     private final Map<String, PaletteBlock> defaultBlocks;
     private final Set<String> multiStateBlockItems;
     private final Map<String, ItemFallback> fallbacks;
-    private final AttachmentStore<ItemVariant> attachments;
+    private final CanonicalItems canonical;
     private final Map<String, List<String>> tags;
     private final List<CustomItem> customItems;
     private final int nextRuntimeId;
     private final Map<ItemVariant, Optional<ResolvedItem>> resolutions = new ConcurrentHashMap<>();
+    private volatile @Nullable CanonicalTable canonicalTable;
 
     private ItemPalette(Builder builder, Map<String, PaletteBlock> defaultBlocks, Set<String> multiStateBlockItems) {
         this.version = builder.version;
@@ -82,7 +81,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         this.defaultBlocks = Map.copyOf(defaultBlocks);
         this.multiStateBlockItems = Set.copyOf(multiStateBlockItems);
         this.fallbacks = Map.copyOf(builder.fallbacks);
-        this.attachments = builder.attachments;
+        this.canonical = builder.canonical;
         Map<String, List<String>> tags = new HashMap<>();
         builder.tags.forEach((tag, items) -> tags.put(tag, List.copyOf(items)));
         this.tags = Collections.unmodifiableMap(tags);
@@ -93,8 +92,8 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     /**
      * Starts the item palette of a version from its vanilla items.
      */
-    public static @NonNull Builder vanilla(@NonNull VanillaData data, @NonNull BlockPalette blocks) {
-        Builder builder = new Builder(data.version(), blocks, data.fallbacks().items());
+    public static @NonNull Builder vanilla(@NonNull VanillaData data, @NonNull BlockPalette blocks, @NonNull CanonicalItems canonical) {
+        Builder builder = new Builder(data.version(), blocks, data.fallbacks().items(), canonical);
         for (VanillaItem item : data.items()) {
             builder.put(new PaletteItem(item.identifier(), item.runtimeId(), ItemVersion.from(item.version()),
                 item.componentBased(), item.componentData(), false));
@@ -107,9 +106,10 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
      * Starts a palette extending this one. Unchanged definitions are shared, so they stay {@code ==} across palettes.
      *
      * @param blocks the block palette of the new palette; may differ from this one's if custom blocks were added
+     * @param canonical the canonical ids of the new palette: this palette's, or these with custom items appended
      */
-    public @NonNull Builder extend(@NonNull BlockPalette blocks) {
-        return new Builder(this, blocks);
+    public @NonNull Builder extend(@NonNull BlockPalette blocks, @NonNull CanonicalItems canonical) {
+        return new Builder(this, blocks, canonical);
     }
 
     public @NonNull DataVersion version() {
@@ -118,6 +118,13 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
 
     public @NonNull BlockPalette blocks() {
         return blocks;
+    }
+
+    /**
+     * @return the canonical item ids this palette resolves
+     */
+    public @NonNull CanonicalItems canonical() {
+        return canonical;
     }
 
     // ---- Definitions ----
@@ -217,75 +224,108 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         return new ResolvedItem(item, variant.damage(), block, fallback);
     }
 
+    // ---- Canonical ids ----
+
     /**
-     * Identifies a stack the client sent, and finds the values layers attached to it.
-     * <p>
-     * Attachments are looked up from the most to the least specific variant: identifier with damage and block state,
-     * with damage only, with block state only, and finally the plain identifier. The block state is only considered
-     * for block items, so the meaningless block definitions the client sends for other items do no harm.
+     * What to send for a canonical id: {@link #resolve(ItemVariant)} of its variant. An array lookup; the table is
+     * built on first use.
      *
-     * @return the match, or null for air or an unknown definition
+     * @return the resolved item, or null if the item does not exist in this version and has no fallback
+     * @throws IndexOutOfBoundsException if the id is not one of {@link #canonical()}
      */
-    public @Nullable ItemMatch match(@NonNull ItemData data) {
+    public @Nullable ResolvedItem item(int canonical) {
+        return canonicalTable().items[canonical];
+    }
+
+    /**
+     * Identifies a stack the client sent: its runtime id is looked up in a hash table, then the few variants of that
+     * item are told apart by damage and, for block items, the block definition. The block definitions clients send
+     * with other items are ignored. Does not allocate.
+     * <p>
+     * Order: a variant with this damage and block, then a variant with this damage, then the item's base variant.
+     * A variant that only reached this version through a fallback never shadows the item's own variants.
+     *
+     * @return the canonical id, or -1 for air, an unknown definition, or an item that is no variant of the newest version
+     */
+    public int match(@NonNull ItemData data) {
         ItemDefinition definition = data.getDefinition();
         if (definition == null || definition == ItemDefinition.AIR) {
-            return null;
+            return -1;
         }
-        PaletteItem item = byRuntimeId.get(definition.getRuntimeId());
-        if (item == null) {
-            return null;
+        Candidate[] candidates = canonicalTable().byRuntimeId.get(definition.getRuntimeId());
+        if (candidates == null) {
+            return -1;
         }
-        NbtMap state = null;
-        BlockDefinition blockDefinition = data.getBlockDefinition();
-        if (blockDefinition != null && defaultBlocks.containsKey(item.getIdentifier())) {
-            PaletteBlock block = blocks.byRuntimeId(blockDefinition.getRuntimeId());
-            if (block != null) {
-                state = block.getState();
+        int damage = data.getDamage();
+        BlockDefinition block = data.getBlockDefinition();
+        int damageMatch = -1;
+        int base = -1;
+        for (Candidate candidate : candidates) {
+            if (candidate.block != null) {
+                if (candidate.damage == damage && block != null && block.getRuntimeId() == candidate.block.getRuntimeId()) {
+                    return candidate.canonical;
+                }
+            } else if (candidate.damage == damage) {
+                if (damageMatch == -1) {
+                    damageMatch = candidate.canonical;
+                }
+            } else if (candidate.damage == 0 && base == -1) {
+                base = candidate.canonical;
             }
         }
-        ItemVariant variant = new ItemVariant(item.getIdentifier(), data.getDamage(), state);
-        return match(item, variant);
+        return damageMatch != -1 ? damageMatch : base;
     }
 
-    /**
-     * Like {@link #match(ItemData)}, for a variant.
-     */
-    public @Nullable ItemMatch match(@NonNull ItemVariant variant) {
-        PaletteItem item = byIdentifier.get(variant.identifier());
-        return item == null ? null : match(item, variant);
-    }
-
-    private ItemMatch match(PaletteItem item, ItemVariant variant) {
-        String identifier = item.getIdentifier();
-        ItemVariant[] candidates = variant.blockState() == null
-            ? new ItemVariant[] {variant, ItemVariant.of(identifier)}
-            : new ItemVariant[] {variant, variant.withBlockState(null), new ItemVariant(identifier, 0, variant.blockState()), ItemVariant.of(identifier)};
-        for (ItemVariant candidate : candidates) {
-            AttachmentStore.Values values = attachments.getIfPresent(candidate);
-            if (values != null) {
-                return new ItemMatch(item, variant, candidate, values);
+    private CanonicalTable canonicalTable() {
+        CanonicalTable result = canonicalTable;
+        if (result == null) {
+            synchronized (this) {
+                result = canonicalTable;
+                if (result == null) {
+                    canonicalTable = result = buildCanonicalTable();
+                }
             }
         }
-        return new ItemMatch(item, variant, ItemVariant.of(identifier), Attachments.EMPTY);
+        return result;
     }
 
-    public <T> @Nullable T attachment(@NonNull ItemData data, @NonNull AttachmentKey<T> key) {
-        ItemMatch match = match(data);
-        return match == null ? null : match.get(key);
+    private CanonicalTable buildCanonicalTable() {
+        int size = canonical.size();
+        ResolvedItem[] items = new ResolvedItem[size];
+        for (int i = 0; i < size; i++) {
+            items[i] = resolve(canonical.variant(i));
+        }
+        Int2ObjectOpenHashMap<List<Candidate>> candidates = new Int2ObjectOpenHashMap<>();
+        // Direct variants first, so a fallback never shadows an item's own variant
+        for (int pass = 0; pass < 2; pass++) {
+            for (int i = 0; i < size; i++) {
+                ResolvedItem item = items[i];
+                if (item == null || item.fallback() != (pass == 1)) {
+                    continue;
+                }
+                ItemVariant variant = canonical.variant(i);
+                PaletteBlock block = variant.blockState() != null && item.block() != defaultBlocks.get(item.definition().getIdentifier())
+                    ? item.block() : null;
+                List<Candidate> list = candidates.computeIfAbsent(item.definition().getRuntimeId(), id -> new ArrayList<>(1));
+                boolean taken = false;
+                for (Candidate candidate : list) {
+                    taken |= candidate.damage == item.damage() && candidate.block == block;
+                }
+                if (!taken) {
+                    list.add(new Candidate(item.damage(), block, i));
+                }
+            }
+        }
+        Int2ObjectOpenHashMap<Candidate[]> byRuntimeId = new Int2ObjectOpenHashMap<>(candidates.size());
+        candidates.int2ObjectEntrySet().forEach(entry -> byRuntimeId.put(entry.getIntKey(), entry.getValue().toArray(Candidate[]::new)));
+        byRuntimeId.trim();
+        return new CanonicalTable(items, byRuntimeId);
     }
 
-    /**
-     * @return the values attached to exactly this variant (no less specific lookup)
-     */
-    public @NonNull Attachments attachments(@NonNull ItemVariant variant) {
-        return attachments.get(variant);
+    private record Candidate(int damage, @Nullable PaletteBlock block, int canonical) {
     }
 
-    /**
-     * @return every variant that has attachments
-     */
-    public @NonNull Set<ItemVariant> attachedVariants() {
-        return attachments.targets();
+    private record CanonicalTable(ResolvedItem[] items, Int2ObjectMap<Candidate[]> byRuntimeId) {
     }
 
     /**
@@ -330,12 +370,12 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         private final Map<String, NbtMap> blockOverrides;
         private final Set<String> customBlockItems;
         private final Map<String, ItemFallback> fallbacks;
-        private final AttachmentStore<ItemVariant> attachments;
+        private final CanonicalItems canonical;
         private final Map<String, Set<String>> tags = new LinkedHashMap<>();
         private final List<CustomItem> customItems;
         private int nextRuntimeId;
 
-        private Builder(DataVersion version, BlockPalette blocks, Map<String, ItemFallback> fallbacks) {
+        private Builder(DataVersion version, BlockPalette blocks, Map<String, ItemFallback> fallbacks, CanonicalItems canonical) {
             this.version = version;
             this.blocks = blocks;
             this.byRuntimeId = new Int2ObjectOpenHashMap<>();
@@ -343,11 +383,11 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             this.blockOverrides = new HashMap<>();
             this.customBlockItems = new HashSet<>();
             this.fallbacks = new HashMap<>(fallbacks);
-            this.attachments = new AttachmentStore<>();
+            this.canonical = canonical;
             this.customItems = new ArrayList<>();
         }
 
-        private Builder(ItemPalette parent, BlockPalette blocks) {
+        private Builder(ItemPalette parent, BlockPalette blocks, CanonicalItems canonical) {
             this.version = parent.version;
             this.blocks = blocks;
             this.byRuntimeId = new Int2ObjectOpenHashMap<>(parent.byRuntimeId);
@@ -355,7 +395,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             this.blockOverrides = new HashMap<>(parent.blockOverrides);
             this.customBlockItems = new HashSet<>(parent.customBlockItems);
             this.fallbacks = new HashMap<>(parent.fallbacks);
-            this.attachments = parent.attachments.copy();
+            this.canonical = canonical;
             parent.tags.forEach((tag, items) -> this.tags.put(tag, new LinkedHashSet<>(items)));
             this.customItems = new ArrayList<>(parent.customItems);
             this.nextRuntimeId = parent.nextRuntimeId;
@@ -446,25 +486,6 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
 
         public void tag(@NonNull String tag, @NonNull List<String> identifiers) {
             tags.computeIfAbsent(tag, t -> new LinkedHashSet<>()).addAll(identifiers);
-        }
-
-        /**
-         * Attaches a value. A variant whose item does not exist in this version is attached to its fallback instead,
-         * as a weak value that never overrides or conflicts with direct attachments.
-         *
-         * @return false if the item does not exist and has no fallback
-         */
-        public boolean attach(@NonNull ItemVariant variant, @NonNull AttachmentKey<?> key, @NonNull Object value, @NonNull String source) {
-            ItemFallback fallback = fallbacks.get(variant.identifier());
-            if (byIdentifier.containsKey(variant.identifier()) && (fallback == null || !fallback.force())) {
-                attachments.put(variant, key, value, false, source);
-                return true;
-            }
-            if (fallback != null && byIdentifier.containsKey(fallback.target())) {
-                attachments.put(ItemVariant.of(fallback.target()), key, value, true, source);
-                return true;
-            }
-            return false;
         }
 
         public @NonNull ItemPalette build(@NonNull CreativeLayout layout, @NonNull PaletteReport report) {

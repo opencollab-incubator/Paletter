@@ -10,9 +10,7 @@ import org.geysermc.paletter.block.BlockStates;
  * <p>
  * Most items are fully identified by their identifier. Some still use the damage (aux) value to tell variants apart,
  * e.g. potions, banners and goat horns, and a few block items differ only in the block they place.
- * Lookups go from the most to the least specific variant (see {@link ItemPalette#match}), so attaching data to
- * {@code ItemVariant.of("minecraft:potion")} acts as the default for every potion, and attaching to
- * {@code ItemVariant.of("minecraft:potion", 5)} overrides it for that one potion.
+ * The variants of the newest version have dense canonical ids, see {@link CanonicalItems}.
  *
  * @param identifier the item identifier
  * @param damage the damage / aux value

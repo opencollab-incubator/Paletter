@@ -1,17 +1,13 @@
 package org.geysermc.paletter;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.paletter.attach.AttachmentKey;
 import org.geysermc.paletter.block.BlockFallback;
-import org.geysermc.paletter.block.BlockStates;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeEditor;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.ItemFallback;
 import org.geysermc.paletter.item.ItemOverride;
-import org.geysermc.paletter.item.ItemVariant;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -23,18 +19,19 @@ import java.util.function.Consumer;
 
 /**
  * A patch on top of a palette: custom items and blocks, changes to vanilla items, creative inventory edits,
- * fallbacks and attachments. Layers are immutable and independent of protocol versions; the same layer is compiled
+ * and fallbacks. Layers are immutable and independent of protocol versions; the same layer is compiled
  * against every version.
  * <p>
  * Palettes are built by stacking layers, so ownership can be split. For example:
  * <ol>
- *     <li>a {@code geyser} layer with Geyser's own fixes and mappings, compiled once per version and shared;</li>
+ *     <li>a {@code geyser} layer with Geyser's own fixes and custom items, compiled once per version and shared;</li>
  *     <li>an {@code extensions} layer with custom items and blocks of extensions, also shared;</li>
  *     <li>a per-session layer, e.g. content of the server the player is on, applied with {@link Palette#extend}.</li>
  * </ol>
  * A later layer sees everything earlier layers did. Definitions untouched by a layer are shared with the palette
  * it extends, so the per-session palette costs little and its definitions stay {@code ==} to the shared ones.
- * Adding custom blocks in a layer does re-number block states, since the client sorts its palette by name.
+ * Adding custom blocks in a layer does re-number block states in {@link org.geysermc.paletter.block.BlockNetworkIds#SEQUENTIAL}
+ * palettes, since the client sorts its palette by name hash. Canonical ids never change: custom content is appended.
  */
 public final class PaletteLayer {
     private final String id;
@@ -42,8 +39,6 @@ public final class PaletteLayer {
     private final List<CustomBlock> blocks;
     private final List<Override> overrides;
     private final List<BiConsumer<CreativeEditor, DataVersion>> creativeEdits;
-    private final List<ItemAttachment> itemAttachments;
-    private final List<BlockAttachment> blockAttachments;
     private final Map<String, ItemFallback> itemFallbacks;
     private final Map<String, BlockFallback> blockFallbacks;
     private final Map<String, List<String>> tags;
@@ -54,8 +49,6 @@ public final class PaletteLayer {
         this.blocks = List.copyOf(builder.blocks);
         this.overrides = List.copyOf(builder.overrides);
         this.creativeEdits = List.copyOf(builder.creativeEdits);
-        this.itemAttachments = List.copyOf(builder.itemAttachments);
-        this.blockAttachments = List.copyOf(builder.blockAttachments);
         this.itemFallbacks = Map.copyOf(builder.itemFallbacks);
         this.blockFallbacks = Map.copyOf(builder.blockFallbacks);
         Map<String, List<String>> tags = new LinkedHashMap<>();
@@ -90,14 +83,6 @@ public final class PaletteLayer {
         return creativeEdits;
     }
 
-    public @NonNull List<ItemAttachment> itemAttachments() {
-        return itemAttachments;
-    }
-
-    public @NonNull List<BlockAttachment> blockAttachments() {
-        return blockAttachments;
-    }
-
     public @NonNull Map<String, ItemFallback> itemFallbacks() {
         return itemFallbacks;
     }
@@ -125,20 +110,12 @@ public final class PaletteLayer {
     public record Override(@NonNull String identifier, @NonNull Consumer<ItemOverride> modifier) {
     }
 
-    public record ItemAttachment(@NonNull ItemVariant variant, @NonNull AttachmentKey<?> key, @NonNull Object value) {
-    }
-
-    public record BlockAttachment(@NonNull NbtMap state, @NonNull AttachmentKey<?> key, @NonNull Object value) {
-    }
-
     public static final class Builder {
         private final String id;
         private final List<CustomItem> items = new ArrayList<>();
         private final List<CustomBlock> blocks = new ArrayList<>();
         private final List<Override> overrides = new ArrayList<>();
         private final List<BiConsumer<CreativeEditor, DataVersion>> creativeEdits = new ArrayList<>();
-        private final List<ItemAttachment> itemAttachments = new ArrayList<>();
-        private final List<BlockAttachment> blockAttachments = new ArrayList<>();
         private final Map<String, ItemFallback> itemFallbacks = new LinkedHashMap<>();
         private final Map<String, BlockFallback> blockFallbacks = new LinkedHashMap<>();
         private final Map<String, List<String>> tags = new LinkedHashMap<>();
@@ -180,22 +157,6 @@ public final class PaletteLayer {
          */
         public @NonNull Builder creative(@NonNull BiConsumer<CreativeEditor, DataVersion> edit) {
             creativeEdits.add(Objects.requireNonNull(edit));
-            return this;
-        }
-
-        /**
-         * Attaches a value to an item variant, e.g. the Java item it translates back to.
-         */
-        public <T> @NonNull Builder attach(@NonNull ItemVariant variant, @NonNull AttachmentKey<T> key, @NonNull T value) {
-            itemAttachments.add(new ItemAttachment(variant, key, value));
-            return this;
-        }
-
-        /**
-         * Attaches a value to a block state (written against the newest Bedrock version).
-         */
-        public <T> @NonNull Builder attachBlock(@NonNull NbtMap state, @NonNull AttachmentKey<T> key, @NonNull T value) {
-            blockAttachments.add(new BlockAttachment(BlockStates.normalize(state), key, value));
             return this;
         }
 

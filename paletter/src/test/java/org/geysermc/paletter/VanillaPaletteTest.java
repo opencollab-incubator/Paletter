@@ -12,7 +12,7 @@ import org.geysermc.paletter.creative.CreativeEntry;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataCodec;
 import org.geysermc.paletter.data.VanillaData;
-import org.geysermc.paletter.item.ItemMatch;
+import org.geysermc.paletter.item.ItemVariant;
 import org.geysermc.paletter.item.PaletteItem;
 import org.junit.jupiter.api.Test;
 
@@ -118,9 +118,7 @@ class VanillaPaletteTest {
         // The client sends junk block definitions for non block items (runtime id 0 is a real block on Bedrock);
         // they must not influence matching
         ItemData appleWithJunk = ItemData.builder().definition(apple).count(1).blockDefinition(palette.blocks().byRuntimeId(0)).build();
-        ItemMatch match = palette.items().match(appleWithJunk);
-        assertNotNull(match);
-        assertNull(match.variant().blockState());
+        assertEquals(PALETTER.canonicalItem(ItemVariant.of("minecraft:apple")), palette.match(appleWithJunk));
     }
 
     @Test

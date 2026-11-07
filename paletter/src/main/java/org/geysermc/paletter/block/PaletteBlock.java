@@ -10,18 +10,31 @@ import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
  */
 public final class PaletteBlock implements BlockDefinition {
     private final int runtimeId;
+    private final int index;
     private final NbtMap state;
     private final boolean custom;
 
-    PaletteBlock(int runtimeId, NbtMap state, boolean custom) {
+    PaletteBlock(int runtimeId, int index, NbtMap state, boolean custom) {
         this.runtimeId = runtimeId;
+        this.index = index;
         this.state = state;
         this.custom = custom;
     }
 
+    /**
+     * @return the runtime id: a palette position, or the state hash in {@link BlockNetworkIds#HASHED} palettes
+     */
     @Override
     public int getRuntimeId() {
         return runtimeId;
+    }
+
+    /**
+     * @return the dense position of this state in its palette, {@code 0} to {@code size() - 1}. Equal to the runtime
+     * id in {@link BlockNetworkIds#SEQUENTIAL} palettes
+     */
+    public int index() {
+        return index;
     }
 
     /**

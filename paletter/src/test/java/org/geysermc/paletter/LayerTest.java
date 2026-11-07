@@ -5,8 +5,6 @@ import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
-import org.geysermc.paletter.attach.AttachmentKey;
-import org.geysermc.paletter.attach.Conflict;
 import org.geysermc.paletter.block.BlockComponents;
 import org.geysermc.paletter.block.BlockPalette;
 import org.geysermc.paletter.block.BlockProperty;
@@ -22,7 +20,6 @@ import org.geysermc.paletter.creative.ItemMatcher;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.ItemComponents;
-import org.geysermc.paletter.item.ItemMatch;
 import org.geysermc.paletter.item.ItemVariant;
 import org.geysermc.paletter.item.PaletteItem;
 import org.geysermc.paletter.item.ResolvedItem;
@@ -41,13 +38,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LayerTest {
     private static final Paletter PALETTER = Paletter.bundled();
-    private static final AttachmentKey<String> JAVA_ITEM = AttachmentKey.create("test:java_item", String.class);
     private static final int LATEST = 2225;
     private static final int OLDEST = 2168;
 
     /**
-     * Roughly what Geyser would register for furnace minecarts: a custom item next to the hopper minecart,
-     * and a one to one Java mapping for both.
+     * Roughly what Geyser would register for furnace minecarts: a custom item next to the hopper minecart.
      */
     private static PaletteLayer minecartLayer() {
         return PaletteLayer.builder("geyser")
@@ -59,9 +54,7 @@ class LayerTest {
                     .build())
                 .creative(CreativePlacement.group(CreativeCategory.ITEMS, "itemGroup.name.minecart")
                     .after(ItemMatcher.id("minecraft:hopper_minecart")))
-                .attach(JAVA_ITEM, "minecraft:furnace_minecart")
                 .build())
-            .attach(ItemVariant.of("minecraft:hopper_minecart"), JAVA_ITEM, "minecraft:hopper_minecart")
             .build();
     }
 
@@ -93,47 +86,32 @@ class LayerTest {
     }
 
     @Test
-    void reverseLookupFindsTheAttachedMapping() {
+    void matchFindsCustomAndVanillaItems() {
         Palette palette = PALETTER.palette(LATEST, minecartLayer());
         ItemData furnace = ItemData.builder().definition(palette.items().getDefinition("geysermc:furnace_minecart")).count(1).build();
         ItemData hopper = ItemData.builder().definition(palette.items().getDefinition("minecraft:hopper_minecart")).count(1).build();
-        assertEquals("minecraft:furnace_minecart", palette.items().attachment(furnace, JAVA_ITEM));
-        assertEquals("minecraft:hopper_minecart", palette.items().attachment(hopper, JAVA_ITEM));
+        int furnaceCanonical = palette.canonicalItem(ItemVariant.of("geysermc:furnace_minecart"));
+        assertEquals(PALETTER.canonicalItemCount(), furnaceCanonical, "custom items are appended");
+        assertEquals(furnaceCanonical, palette.match(furnace));
+        assertEquals(PALETTER.canonicalItem(ItemVariant.of("minecraft:hopper_minecart")), palette.match(hopper));
+        assertEquals(-1, PALETTER.canonicalItem(ItemVariant.of("geysermc:furnace_minecart")));
+        // The same layer gives the same canonical ids in every version
+        assertEquals(furnaceCanonical, PALETTER.palette(OLDEST, minecartLayer()).canonicalItem(ItemVariant.of("geysermc:furnace_minecart")));
     }
 
     @Test
-    void duplicateUniqueAttachmentsFailCompilation() {
-        // The bug class behind furnace minecarts turning into hopper minecarts: two Java items claiming one Bedrock item
-        PaletteLayer conflicting = PaletteLayer.builder("conflicting")
-            .attach(ItemVariant.of("minecraft:hopper_minecart"), JAVA_ITEM, "minecraft:furnace_minecart")
-            .build();
-        Palette base = PALETTER.palette(LATEST, minecartLayer());
-        PaletteException exception = assertThrows(PaletteException.class, () -> base.extend(conflicting));
-        assertTrue(exception.getMessage().contains("minecraft:hopper_minecart"), exception.getMessage());
-    }
-
-    @Test
-    void replaceConflictsLetLaterLayersOverride() {
-        AttachmentKey<String> name = AttachmentKey.create("test:name", String.class, Conflict.REPLACE);
-        PaletteLayer first = PaletteLayer.builder("first").attach(ItemVariant.of("minecraft:apple"), name, "first").build();
-        PaletteLayer second = PaletteLayer.builder("second").attach(ItemVariant.of("minecraft:apple"), name, "second").build();
-        Palette palette = PALETTER.palette(LATEST, first, second);
-        assertEquals("second", palette.items().match(ItemVariant.of("minecraft:apple")).get(name));
-    }
-
-    @Test
-    void mostSpecificVariantWins() {
-        PaletteLayer layer = PaletteLayer.builder("potions")
-            .attach(ItemVariant.of("minecraft:potion"), JAVA_ITEM, "default")
-            .attach(ItemVariant.of("minecraft:potion", 5), JAVA_ITEM, "night_vision")
-            .build();
-        Palette palette = PALETTER.palette(LATEST, layer);
+    void damageVariantsMatchTheirCanonicalId() {
+        Palette palette = PALETTER.palette(LATEST);
         PaletteItem potion = palette.items().getDefinition("minecraft:potion");
-        ItemMatch five = palette.items().match(ItemData.builder().definition(potion).damage(5).count(1).build());
-        ItemMatch other = palette.items().match(ItemData.builder().definition(potion).damage(7).count(1).build());
-        assertEquals("night_vision", five.get(JAVA_ITEM));
-        assertEquals("default", other.get(JAVA_ITEM));
-        assertEquals(ItemVariant.of("minecraft:potion"), other.attached());
+        int five = PALETTER.canonicalItem(ItemVariant.of("minecraft:potion", 5));
+        int base = PALETTER.canonicalItem(ItemVariant.of("minecraft:potion"));
+        assertTrue(five >= 0 && base >= 0 && five != base);
+        assertEquals(five, palette.match(ItemData.builder().definition(potion).damage(5).count(1).build()));
+        // A damage value that is no variant falls back to the base variant
+        assertEquals(base, palette.match(ItemData.builder().definition(potion).damage(9999).count(1).build()));
+        ResolvedItem resolved = palette.item(five);
+        assertSame(potion, resolved.definition());
+        assertEquals(5, resolved.damage());
     }
 
     @Test
@@ -150,9 +128,13 @@ class LayerTest {
         assertSame(shared.blocks().air(), sessionPalette.blocks().air());
         assertNotNull(sessionPalette.items().getDefinition("server:ruby"));
         assertNull(shared.items().getDefinition("server:ruby"));
-        // Attachments of the shared layer are visible
-        ItemData hopper = ItemData.builder().definition(sessionPalette.items().getDefinition("minecraft:hopper_minecart")).count(1).build();
-        assertEquals("minecraft:hopper_minecart", sessionPalette.items().attachment(hopper, JAVA_ITEM));
+        // No custom blocks or block fallbacks: the block palette and its canonical table are shared
+        assertSame(shared.blocks(), sessionPalette.blocks());
+        // Canonical ids of the shared palette stay valid; the session's custom item is appended
+        int furnace = shared.canonicalItem(ItemVariant.of("geysermc:furnace_minecart"));
+        assertEquals(furnace, sessionPalette.canonicalItem(ItemVariant.of("geysermc:furnace_minecart")));
+        assertSame(shared.item(furnace).definition(), sessionPalette.item(furnace).definition());
+        assertEquals(shared.canonicalItemCount(), sessionPalette.canonicalItem(ItemVariant.of("server:ruby")));
         // Extending again with the same layer returns the cached palette
         assertSame(sessionPalette, shared.extend(session));
     }
@@ -275,16 +257,18 @@ class LayerTest {
     }
 
     @Test
-    void fallbackAttachmentsNeverOverrideDirectOnes() {
-        // Poplar boats fall back to pale oak boats in 26.40; pale oak boats must still translate to themselves there
-        PaletteLayer layer = PaletteLayer.builder("boats")
-            .attach(ItemVariant.of("minecraft:poplar_boat"), JAVA_ITEM, "minecraft:poplar_boat")
-            .attach(ItemVariant.of("minecraft:pale_oak_boat"), JAVA_ITEM, "minecraft:pale_oak_boat")
-            .build();
+    void fallbacksNeverShadowAnItemsOwnCanonicalId() {
+        // Poplar boats fall back to pale oak boats in 26.40; pale oak boats must still match themselves there
+        int poplar = PALETTER.canonicalItem(ItemVariant.of("minecraft:poplar_boat"));
+        int paleOak = PALETTER.canonicalItem(ItemVariant.of("minecraft:pale_oak_boat"));
         for (DataVersion version : PALETTER.versions()) {
-            Palette palette = PALETTER.palette(version.protocolVersion(), layer);
-            assertEquals("minecraft:pale_oak_boat", palette.items().match(ItemVariant.of("minecraft:pale_oak_boat")).get(JAVA_ITEM), version.toString());
+            Palette palette = PALETTER.vanilla(version);
+            ResolvedItem resolved = palette.item(paleOak);
+            assertEquals(paleOak, palette.match(resolved.toItemData().build()), version.toString());
         }
+        Palette oldest = PALETTER.vanilla(PALETTER.version(OLDEST));
+        assertTrue(oldest.item(poplar).fallback());
+        assertEquals("minecraft:pale_oak_boat", oldest.item(poplar).definition().getIdentifier());
     }
 
     @Test

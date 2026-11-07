@@ -1,17 +1,26 @@
 package org.geysermc.paletter;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodecHelper;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
+import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
+import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.BlockPalette;
+import org.geysermc.paletter.block.CanonicalBlocks;
+import org.geysermc.paletter.block.PaletteBlock;
 import org.geysermc.paletter.creative.CreativeContent;
 import org.geysermc.paletter.creative.CreativeLayout;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.VanillaData;
+import org.geysermc.paletter.item.CanonicalItems;
 import org.geysermc.paletter.item.ItemPalette;
+import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.item.ResolvedItem;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -26,10 +35,13 @@ import java.util.WeakHashMap;
  * Sending it to a client:
  * <pre>{@code
  * palette.applyTo(session.getCodecHelper());     // item and block definitions for the codec
- * palette.applyTo(startGamePacket);              // block properties
+ * palette.applyTo(startGamePacket);              // block properties and the block network id mode
  * session.sendPacket(palette.itemComponentPacket());
  * session.sendPacket(palette.creativeContentPacket());
  * }</pre>
+ * Translating content uses canonical ids, version independent dense ints (see {@link CanonicalBlocks} and
+ * {@link CanonicalItems}): {@link #runtimeId(int)} and {@link #block(int)} for blocks, {@link #item(int)} and
+ * {@link #match(ItemData)} for items. All are array or hash lookups that do not allocate.
  */
 public final class Palette {
     private final VanillaData data;
@@ -73,6 +85,74 @@ public final class Palette {
 
     public @NonNull ItemPalette items() {
         return items;
+    }
+
+    /**
+     * @return how block runtime ids are assigned in this palette
+     */
+    public @NonNull BlockNetworkIds blockNetworkIds() {
+        return blocks.networkIds();
+    }
+
+    // ---- Canonical ids ----
+
+    public @NonNull CanonicalBlocks canonicalBlocks() {
+        return blocks.canonical();
+    }
+
+    /**
+     * @return the canonical id of a block state of the newest version (or of a custom block of this palette's layers),
+     * or -1. Extra keys like {@code version} are ignored
+     */
+    public int canonicalBlock(@NonNull NbtMap state) {
+        return blocks.canonical().index(state);
+    }
+
+    public int canonicalBlockCount() {
+        return blocks.canonical().size();
+    }
+
+    /**
+     * @return the block to send for a canonical id; resolved for this version, air if nothing fits. An array lookup
+     */
+    public @NonNull PaletteBlock block(int canonical) {
+        return blocks.block(canonical);
+    }
+
+    /**
+     * @return the runtime id to send for a canonical id, in this palette's {@link #blockNetworkIds()} mode. An array lookup
+     */
+    public int runtimeId(int canonical) {
+        return blocks.runtimeId(canonical);
+    }
+
+    public @NonNull CanonicalItems canonicalItems() {
+        return items.canonical();
+    }
+
+    /**
+     * @return the canonical id of an item variant of the newest version (or a custom item of this palette's layers), or -1
+     */
+    public int canonicalItem(@NonNull ItemVariant variant) {
+        return items.canonical().index(variant);
+    }
+
+    public int canonicalItemCount() {
+        return items.canonical().size();
+    }
+
+    /**
+     * @return what to send for a canonical item id, or null if the item does not exist in this version and has no fallback
+     */
+    public @Nullable ResolvedItem item(int canonical) {
+        return items.item(canonical);
+    }
+
+    /**
+     * @return the canonical id of a stack the client sent, or -1; see {@link ItemPalette#match(ItemData)}
+     */
+    public int match(@NonNull ItemData data) {
+        return items.match(data);
     }
 
     /**
@@ -130,10 +210,12 @@ public final class Palette {
     }
 
     /**
-     * Adds the block properties (vanilla data driven and custom blocks) to a start game packet.
+     * Adds the block properties (vanilla data driven and custom blocks) to a start game packet, and sets
+     * {@code blockNetworkIdsHashed} to match {@link #blockNetworkIds()}.
      */
     public void applyTo(@NonNull StartGamePacket packet) {
         packet.getBlockProperties().addAll(blocks.blockProperties());
+        packet.setBlockNetworkIdsHashed(blocks.networkIds() == BlockNetworkIds.HASHED);
     }
 
     public @NonNull List<BlockPropertyData> blockProperties() {
@@ -152,7 +234,7 @@ public final class Palette {
     public String toString() {
         List<String> ids = new ArrayList<>();
         layers.forEach(layer -> ids.add(layer.id()));
-        return "Palette{" + version() + ", layers=" + ids + ", " + blocks.size() + " block states, "
+        return "Palette{" + version() + ", " + blockNetworkIds() + ", layers=" + ids + ", " + blocks.size() + " block states, "
             + items.definitions().size() + " items, " + creative.size() + " creative entries}";
     }
 }
