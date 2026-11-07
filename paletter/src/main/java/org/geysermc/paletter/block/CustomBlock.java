@@ -67,8 +67,11 @@ public record CustomBlock(
     /**
      * The {@code menu_category} of a block, which the client uses for its own block menus. Independent from the
      * creative inventory placement, though {@link Builder#creative} sets both.
+     *
+     * @param category the category, or null for {@code none}: a block that is in no creative tab, which can still be
+     *                 in a group (since 2.0.0)
      */
-    public record Menu(@NonNull CreativeCategory category, @NonNull String group, boolean hiddenInCommands) {
+    public record Menu(@Nullable CreativeCategory category, @NonNull String group, boolean hiddenInCommands) {
     }
 
     /**

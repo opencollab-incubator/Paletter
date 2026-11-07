@@ -100,7 +100,7 @@ public final class BlockEncoder {
         if (context.supports(id, BlockDefinition.TYPE)) {
             BlockDefinition definition = new BlockDefinition(
                 tags.isEmpty() ? null : List.copyOf(tags),
-                new BlockDefinition.MenuCategory(menu == null ? CreativeCategory.NONE_NAME : menu.category().bedrockName(),
+                new BlockDefinition.MenuCategory(menu == null || menu.category() == null ? CreativeCategory.NONE_NAME : menu.category().bedrockName(),
                     menu == null ? "" : menu.group(), menu != null && menu.hiddenInCommands()),
                 molangVersion(context),
                 new NbtList<>(NbtType.COMPOUND, properties),

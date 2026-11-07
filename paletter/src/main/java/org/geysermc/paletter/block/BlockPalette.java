@@ -134,12 +134,16 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
         }
         List<CustomBlock> all = new ArrayList<>(table.customBlocks);
         all.addAll(additional);
-        // Block ids are in load order, so the blocks already here keep their encoded data
-        List<BlockPropertyData> encoded = new ArrayList<>(table.blockProperties.subList(data.dataDrivenBlocks().size(), table.blockProperties.size()));
+        // BDS numbers custom blocks by identifier in descending order, whatever order they were registered in (verified
+        // on 1.26.63.1), so ids of the blocks already here can change: encode all of them again
+        List<String> byIdentifier = new ArrayList<>(all.size());
+        all.forEach(block -> byIdentifier.add(block.identifier()));
+        byIdentifier.sort(java.util.Comparator.reverseOrder());
+        List<BlockPropertyData> encoded = new ArrayList<>(all.size());
         EncodeContext context = EncodeContext.of(data.version(), report, source);
-        int blockId = CUSTOM_BLOCK_ID_START + table.customBlocks.size();
-        for (CustomBlock block : additional) {
-            encoded.add(new BlockPropertyData(block.identifier(), BlockEncoder.propertyData(block, blockId++, context)));
+        for (CustomBlock block : all) {
+            int blockId = CUSTOM_BLOCK_ID_START + byIdentifier.indexOf(block.identifier());
+            encoded.add(new BlockPropertyData(block.identifier(), BlockEncoder.propertyData(block, blockId, context)));
         }
         Table extended = new Table(data, all, encoded, table.mode, interner);
         return new BlockPalette(extended, canonical.extend(key, additional), fallbacks, defaultFallback, interner);

@@ -59,7 +59,16 @@ final class PaletteCompiler {
             }
 
             List<ItemVariant> newVariants = new ArrayList<>();
-            layer.items().forEach(item -> newVariants.add(item.variant()));
+            for (PaletteLayer.ItemEntry entry : layer.itemEntries()) {
+                switch (entry) {
+                    case PaletteLayer.ItemEntry.Custom custom -> newVariants.add(custom.item().variant());
+                    case PaletteLayer.ItemEntry.OfBlock ofBlock -> {
+                        if (!(ofBlock.item() instanceof CustomBlock.BlockItem.None)) {
+                            newVariants.add(ItemVariant.of(ofBlock.block()));
+                        }
+                    }
+                }
+            }
             for (CustomBlock block : layer.blocks()) {
                 if (!(block.item() instanceof CustomBlock.BlockItem.None)) {
                     newVariants.add(ItemVariant.of(block.identifier()));
@@ -80,10 +89,21 @@ final class PaletteCompiler {
             }
 
             CreativeEditor creative = parent.creativeLayout().edit();
-            for (CustomItem custom : layer.items()) {
-                items.addCustom(custom, report, source);
-                if (custom.creative() != null) {
-                    custom.creative().apply(creative, CreativeStack.of(custom.identifier()));
+            for (PaletteLayer.ItemEntry entry : layer.itemEntries()) {
+                switch (entry) {
+                    case PaletteLayer.ItemEntry.Custom(CustomItem custom) -> {
+                        items.addCustom(custom, report, source);
+                        if (custom.creative() != null) {
+                            custom.creative().apply(creative, CreativeStack.of(custom.identifier()));
+                        }
+                    }
+                    case PaletteLayer.ItemEntry.OfBlock(String identifier, CustomBlock.BlockItem blockItem, var placement) -> {
+                        CustomBlock block = blocks.customBlocks().stream().filter(b -> b.identifier().equals(identifier)).findFirst()
+                            .orElseThrow(() -> new PaletteException("Item of unknown custom block " + identifier));
+                        if (items.addBlockItem(block, blockItem, report, source) != null && placement != null) {
+                            placement.apply(creative, CreativeStack.of(block.identifier()).withBlockState(block.defaultState()));
+                        }
+                    }
                 }
             }
             for (CustomBlock block : layer.blocks()) {

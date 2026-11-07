@@ -515,8 +515,18 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
          * Registers the item of a custom block, unless the block has none.
          */
         public @Nullable PaletteItem addBlockItem(@NonNull CustomBlock block, @NonNull PaletteReport report, @NonNull String source) {
+            return addBlockItem(block, block.item(), report, source);
+        }
+
+        /**
+         * Registers an item for a custom block of this palette, e.g. one registered without item in an earlier layer.
+         *
+         * @return the item, or null for {@link CustomBlock.BlockItem#NONE}
+         */
+        public @Nullable PaletteItem addBlockItem(@NonNull CustomBlock block, CustomBlock.@NonNull BlockItem blockItem,
+                                                  @NonNull PaletteReport report, @NonNull String source) {
             PaletteItem item;
-            switch (block.item()) {
+            switch (blockItem) {
                 case CustomBlock.BlockItem.None none -> {
                     return null;
                 }
