@@ -161,6 +161,13 @@ Rules:
   states and enum values stay deprecated as well. `deprecated` is set once, so later generations keep the version.
 - **New content** gets `@since` of the current Paletter version when it is newer than the class (2.0.0).
 
-`ConstantsGeneratorTest` covers deprecation with a synthetic history, naming failures and previews, and compiles what it
-generates; `VanillaConstantsTest` (paletter) round-trips every block state of the release, compares 200k random `with()`
+`ConstantsGoldenTest` runs the generator on a small synthetic bundle (bool, int and string states, a shared value set, a
+name collision settled by names, a lookup table block, a removed block, a rename, a removed item with a curated fallback,
+a preview-only block and item) and compares every output byte for byte with `src/test/resources/constants-golden`
+(after an intended change: `./gradlew :codegen:test -PupdateGolden=true`, then review the diff). It also checks that
+generating twice, and with blocks, items and JSON keys shuffled, gives identical bytes, and the error message of every
+failure: broken data (non-contiguous, duplicate or incomplete states, mixed value kinds), invalid or colliding names,
+inconsistent history entries. `BlockLayoutTest` (paletter) covers stride derivation and the lookup table fallback.
+`ConstantsGeneratorTest` runs on the real bundle: reproducibility of the committed output, deprecation with a synthetic
+history, naming failures and previews, and compiles what it generates; `VanillaConstantsTest` (paletter) round-trips every block state of the release, compares 200k random `with()`
 chains with palette lookups and checks that `with()` does not allocate.

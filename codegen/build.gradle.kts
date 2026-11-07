@@ -15,6 +15,8 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    // ./gradlew :codegen:test -PupdateGolden=true rewrites src/test/resources/constants-golden (review the diff)
+    systemProperty("paletter.updateGolden", (findProperty("updateGolden") as String?) ?: "false")
 }
 
 application {

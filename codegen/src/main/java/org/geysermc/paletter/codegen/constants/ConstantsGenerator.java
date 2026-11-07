@@ -152,7 +152,7 @@ public final class ConstantsGenerator {
 
     private Result run() {
         Map<String, String> files = new TreeMap<>();
-        List<BlockLayout> layouts = BlockLayout.of(release.blockStates());
+        List<BlockLayout> layouts = layouts(release);
         for (BlockLayout layout : layouts) {
             if (!layout.arithmetic()) {
                 tableBlocks.add(layout.identifier() + ": " + layout.problem());
@@ -179,7 +179,7 @@ public final class ConstantsGenerator {
         counts.put("BedrockItems", items.size());
 
         if (preview != null) {
-            List<BlockLayout> previewLayouts = BlockLayout.of(preview.blockStates());
+            List<BlockLayout> previewLayouts = layouts(preview);
             Map<String, BlockLayout> previewById = new LinkedHashMap<>();
             previewLayouts.stream().filter(l -> !byId.containsKey(l.identifier())).forEach(l -> previewById.put(l.identifier(), l));
             List<Constant> previewBlocks = previewConstants("blocks", new ArrayList<>(previewById.keySet()));
@@ -219,6 +219,14 @@ public final class ConstantsGenerator {
         return out.append("}\n").toString();
     }
 
+    private static List<BlockLayout> layouts(VanillaData data) {
+        try {
+            return BlockLayout.of(data.blockStates());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException("Bundled data " + data.version().name() + ": " + e.getMessage(), e);
+        }
+    }
+
     private static Map<String, Integer> variantCounts(VanillaData data) {
         // Variants beyond the base one: damage values and block states of the creative inventory
         Map<String, Set<String>> variants = new HashMap<>();
@@ -251,6 +259,7 @@ public final class ConstantsGenerator {
         JsonObject renamed = object(object(names, "renamed"), kind);
         JsonObject fallbacks = object(object(names, "fallbacks"), kind);
 
+        previous.entrySet().forEach(entry -> entry(entry, kind));
         Map<String, String> current = new TreeMap<>();
         Map<String, String> nameOf = new HashMap<>();
         for (String identifier : identifiers) {
@@ -270,28 +279,32 @@ public final class ConstantsGenerator {
         Map<String, Constant> constants = new TreeMap<>();
         for (Map.Entry<String, String> entry : current.entrySet()) {
             JsonObject old = previous.has(entry.getKey()) ? previous.getAsJsonObject(entry.getKey()) : null;
-            String since = old != null ? old.get("since").getAsString() : version;
+            String since = old != null ? required(old, "since", kind + "." + entry.getKey()) : version;
             if (old == null) {
                 added.add(className + "." + entry.getKey() + " = " + entry.getValue());
             }
             constants.put(entry.getKey(), new Constant(entry.getKey(), entry.getValue(), since, null, null, null));
         }
         // Constants the data no longer has under that name stay, deprecated
-        for (Map.Entry<String, JsonElement> entry : previous.entrySet()) {
+        for (Map.Entry<String, JsonElement> entry : new TreeMap<>(previous.asMap()).entrySet()) {
             String name = entry.getKey();
             if (constants.containsKey(name)) {
                 continue;
             }
-            JsonObject old = entry.getValue().getAsJsonObject();
-            String identifier = old.get("identifier").getAsString();
-            String since = old.get("since").getAsString();
+            JsonObject old = entry(entry, kind);
+            String identifier = required(old, "identifier", kind + "." + name);
+            String since = required(old, "since", kind + "." + name);
             String deprecatedSince = old.has("deprecated") ? old.get("deprecated").getAsString() : version;
             String target = nameOf.get(identifier);
             if (target == null && renamed.has(identifier)) {
                 target = nameOf.get(renamed.get(identifier).getAsString());
             }
-            if (target == null && old.has("replacement") && constants.containsKey(old.get("replacement").getAsString())) {
+            if (target == null && old.has("replacement")) {
                 target = old.get("replacement").getAsString();
+                if (!current.containsKey(target) && !previous.has(target)) {
+                    throw new IllegalStateException(HISTORY + ": " + kind + "." + name + " is an alias of " + target
+                        + ", which is neither generated nor in the history");
+                }
             }
             Constant constant;
             if (target != null) {
@@ -404,10 +417,13 @@ public final class ConstantsGenerator {
     }
 
     private StateModel states(List<BlockLayout> layouts) {
-        // Every state name with its values, in order of first appearance, and how many blocks have it
+        // Every state name with its values, in order of first appearance over the blocks sorted by identifier (so the
+        // palette order of blocks does not matter), and how many blocks have it
         Map<String, List<Object>> values = new TreeMap<>();
         Map<String, Integer> usage = new HashMap<>();
-        for (BlockLayout layout : layouts) {
+        List<BlockLayout> byIdentifier = new ArrayList<>(layouts);
+        byIdentifier.sort(Comparator.comparing(BlockLayout::identifier));
+        for (BlockLayout layout : byIdentifier) {
             for (int p = 0; p < layout.properties().size(); p++) {
                 List<Object> list = values.computeIfAbsent(layout.properties().get(p), k -> new ArrayList<>());
                 for (Object value : layout.values().get(p)) {
@@ -428,15 +444,19 @@ public final class ConstantsGenerator {
         // Enums of the history keep their states and values
         Map<String, String> enumOfState = new HashMap<>();
         for (Map.Entry<String, JsonElement> entry : previousEnums.entrySet()) {
-            JsonObject old = entry.getValue().getAsJsonObject();
-            EnumModel model1 = new EnumModel(entry.getKey(), old.get("since").getAsString());
+            JsonObject old = entry(entry, "enums");
+            EnumModel model1 = new EnumModel(entry.getKey(), required(old, "since", "enums." + entry.getKey()));
+            if (!old.has("states") || !old.has("values")) {
+                throw new IllegalStateException(HISTORY + ": enums." + entry.getKey() + " lacks \"states\" or \"values\"");
+            }
             for (JsonElement state : old.getAsJsonArray("states")) {
                 enumOfState.put(state.getAsString(), entry.getKey());
             }
             for (Map.Entry<String, JsonElement> value : old.getAsJsonObject("values").entrySet()) {
                 JsonObject v = value.getValue().getAsJsonObject();
-                model1.values.put(v.get("value").getAsString(), new EnumValue(value.getKey(), v.get("value").getAsString(),
-                    v.get("since").getAsString(), v.has("deprecated") ? v.get("deprecated").getAsString() : null));
+                String where = "enums." + entry.getKey() + "." + value.getKey();
+                model1.values.put(required(v, "value", where), new EnumValue(value.getKey(), required(v, "value", where),
+                    required(v, "since", where), v.has("deprecated") ? v.get("deprecated").getAsString() : null));
             }
             model.enums.put(model1.name, model1);
         }
@@ -465,7 +485,7 @@ public final class ConstantsGenerator {
             }
             constantOf.put(constant, name);
             JsonObject old = previousStates.has(constant) ? previousStates.getAsJsonObject(constant) : null;
-            if (old != null && !old.get("kind").getAsString().equals(kind.name().toLowerCase())) {
+            if (old != null && !required(old, "kind", "states." + constant).equals(kind.name().toLowerCase())) {
                 throw new IllegalStateException("BedrockStates." + constant + " (" + name + ") changed from " + old.get("kind").getAsString()
                     + " to " + kind + ", which would change the type of the constant; give the state a new name in " + NAMES + " states");
             }
@@ -474,7 +494,8 @@ public final class ConstantsGenerator {
                 list.forEach(v -> ints.add((Integer) v));
                 ints.sort(null);
             }
-            StateConstant state = new StateConstant(constant, name, kind, List.copyOf(ints), old != null ? old.get("since").getAsString() : version);
+            StateConstant state = new StateConstant(constant, name, kind, List.copyOf(ints),
+                old != null ? required(old, "since", "states." + constant) : version);
             state.blocks = usage.get(name);
             if (old == null) {
                 added.add("BedrockStates." + constant + " = " + name);
@@ -575,20 +596,33 @@ public final class ConstantsGenerator {
         }
 
         // States the data no longer has stay, deprecated
-        for (Map.Entry<String, JsonElement> entry : previousStates.entrySet()) {
+        for (Map.Entry<String, JsonElement> entry : new TreeMap<>(previousStates.asMap()).entrySet()) {
             if (model.constants.containsKey(entry.getKey())) {
                 continue;
             }
-            JsonObject old = entry.getValue().getAsJsonObject();
-            String name = old.get("name").getAsString();
-            Kind kind = Kind.valueOf(old.get("kind").getAsString().toUpperCase());
+            JsonObject old = entry(entry, "states");
+            String where = "states." + entry.getKey();
+            String name = required(old, "name", where);
+            Kind kind;
+            try {
+                kind = Kind.valueOf(required(old, "kind", where).toUpperCase(java.util.Locale.ROOT));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalStateException(HISTORY + ": " + where + " has the unknown kind " + old.get("kind") + " (bool, int or enum)");
+            }
+            if (kind == Kind.ENUM && !old.has("enum")) {
+                throw new IllegalStateException(HISTORY + ": " + where + " is an enum state without \"enum\"");
+            }
             List<Integer> ints = new ArrayList<>();
             if (old.has("values")) {
                 for (String value : old.get("values").getAsString().split(",")) {
-                    ints.add(Integer.parseInt(value.strip()));
+                    try {
+                        ints.add(Integer.parseInt(value.strip()));
+                    } catch (NumberFormatException e) {
+                        throw new IllegalStateException(HISTORY + ": " + where + " has the value " + value + ", which is no integer");
+                    }
                 }
             }
-            StateConstant state = new StateConstant(entry.getKey(), name, kind, ints, old.get("since").getAsString());
+            StateConstant state = new StateConstant(entry.getKey(), name, kind, ints, required(old, "since", where));
             state.enumName = old.has("enum") ? old.get("enum").getAsString() : null;
             state.deprecated = old.has("deprecated") ? old.get("deprecated").getAsString() : version;
             StateConstant renamedTo = model.byName.get(name);
@@ -670,8 +704,29 @@ public final class ConstantsGenerator {
         return builder.toString();
     }
 
+    private static JsonObject entry(Map.Entry<String, JsonElement> entry, String section) {
+        if (!entry.getValue().isJsonObject()) {
+            throw new IllegalStateException(HISTORY + ": " + section + "." + entry.getKey() + " is not an object");
+        }
+        return entry.getValue().getAsJsonObject();
+    }
+
+    private static String required(JsonObject object, String key, String where) {
+        JsonElement value = object.get(key);
+        if (value == null || !value.isJsonPrimitive()) {
+            throw new IllegalStateException(HISTORY + ": " + where + " lacks \"" + key + "\"");
+        }
+        return value.getAsString();
+    }
+
     private static JsonObject object(JsonObject parent, String key) {
-        return parent.has(key) && parent.get(key).isJsonObject() ? parent.getAsJsonObject(key) : new JsonObject();
+        if (!parent.has(key)) {
+            return new JsonObject();
+        }
+        if (!parent.get(key).isJsonObject()) {
+            throw new IllegalStateException("\"" + key + "\" in " + NAMES + " or " + HISTORY + " is not an object");
+        }
+        return parent.getAsJsonObject(key);
     }
 
 }
