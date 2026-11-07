@@ -9,6 +9,7 @@ import org.geysermc.paletter.item.component.Cooldown;
 import org.geysermc.paletter.item.component.Digger;
 import org.geysermc.paletter.item.component.Durability;
 import org.geysermc.paletter.item.component.Enchantable;
+import org.geysermc.paletter.item.component.EquipmentSlot;
 import org.geysermc.paletter.item.component.EntityPlacer;
 import org.geysermc.paletter.item.component.Food;
 import org.geysermc.paletter.item.component.KineticWeapon;
@@ -62,7 +63,8 @@ public final class ItemComponents {
         ICON, DISPLAY_NAME, MAX_STACK_SIZE, ALLOW_OFF_HAND, HAND_EQUIPPED, GLINT, CAN_DESTROY_IN_CREATIVE, STACKED_BY_DATA,
         LIQUID_CLIPPED, SHOULD_DESPAWN, FIRE_RESISTANT, DURABILITY, ATTACK_DAMAGE, ENCHANTABLE, DYEABLE, KINETIC_WEAPON,
         PIERCING_WEAPON, SWING_DURATION, FOOD, USE_ANIMATION, USE_MODIFIERS, COOLDOWN, BLOCK_PLACER, BLOCK_PLACER_ICON, SHOOTER,
-        THROWABLE, PROJECTILE, ENTITY_PLACER, COMPOSTABLE, FUEL, REPAIRABLE, DIGGER, RARITY, WEARABLE, RENDER_OFFSETS
+        THROWABLE, PROJECTILE, ENTITY_PLACER, COMPOSTABLE, FUEL, REPAIRABLE, DIGGER, RARITY, WEARABLE, RENDER_OFFSETS,
+        MINING_SPEED, FRAME_COUNT, ARMOR_RENDER_OFFSETS
     }
 
     private final EnumMap<Key, Object> values;
@@ -256,6 +258,28 @@ public final class ItemComponents {
     }
 
     @Experimental
+    /**
+     * @since 2.0.0
+     */
+    public @Nullable Float miningSpeed() {
+        return get(Key.MINING_SPEED);
+    }
+
+    /**
+     * @since 2.0.0
+     */
+    public @Nullable Integer frameCount() {
+        return get(Key.FRAME_COUNT);
+    }
+
+    /**
+     * @since 2.0.0
+     */
+    @Experimental
+    public @Nullable EquipmentSlot armorRenderOffsets() {
+        return get(Key.ARMOR_RENDER_OFFSETS);
+    }
+
     public @Nullable RenderOffsets renderOffsets() {
         return get(Key.RENDER_OFFSETS);
     }
@@ -519,6 +543,40 @@ public final class ItemComponents {
          * See {@link RenderOffsets} for why this is experimental.
          */
         @Experimental
+        /**
+         * Sets the mining speed (the {@code mining_speed} item property) the client uses for this item, as a multiplier
+         * of the base speed.
+         *
+         * @since 2.0.0
+         */
+        public @NonNull Builder miningSpeed(float speed) {
+            return set(Key.MINING_SPEED, speed);
+        }
+
+        /**
+         * Sets the amount of animation frames of a chargeable item's icon (the {@code frame_count} item property),
+         * e.g. 3 for bows and 10 for crossbows.
+         *
+         * @since 2.0.0
+         */
+        public @NonNull Builder frameCount(int frames) {
+            return set(Key.FRAME_COUNT, frames);
+        }
+
+        /**
+         * Uses the client's built-in render offsets of an armor piece for this item (the legacy {@code render_offsets}
+         * preset: boots, leggings, chestplates or helmets), as Geyser sends for armor converted from v1 custom mappings.
+         * Only head, chest, legs and feet have a preset; other slots send nothing.
+         * <p>
+         * Not an add-on component in 1.26, so not verified against a vanilla server, like {@link #renderOffsets}.
+         *
+         * @since 2.0.0
+         */
+        @Experimental
+        public @NonNull Builder armorRenderOffsets(@Nullable EquipmentSlot slot) {
+            return set(Key.ARMOR_RENDER_OFFSETS, slot);
+        }
+
         public @NonNull Builder renderOffsets(@Nullable RenderOffsets offsets) {
             return set(Key.RENDER_OFFSETS, offsets);
         }

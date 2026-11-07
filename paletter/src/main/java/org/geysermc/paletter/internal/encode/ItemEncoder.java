@@ -225,6 +225,25 @@ public final class ItemEncoder {
                         weapon.creativeReach() == null ? null : piercingRange(weapon.creativeReach()),
                         weapon.hitboxMargin(), piercingRange(weapon.reach())));
             }
+            if (c.miningSpeed() != null) {
+                properties.miningSpeed(c.miningSpeed());
+            }
+            if (c.frameCount() != null) {
+                properties.frameCount(c.frameCount());
+            }
+            if (c.armorRenderOffsets() != null) {
+                String preset = switch (c.armorRenderOffsets()) {
+                    case HEAD -> "helmets";
+                    case CHEST -> "chestplates";
+                    case LEGS -> "leggings";
+                    case FEET -> "boots";
+                    default -> null;
+                };
+                if (preset != null) {
+                    // A bare string, not a minecraft: component; only Geyser sends it
+                    out.putString("render_offsets", preset);
+                }
+            }
             if (c.swingDuration() != null) {
                 context.put(out, id, SwingDuration.TYPE, () -> SwingDuration.of(c.swingDuration()));
             }
