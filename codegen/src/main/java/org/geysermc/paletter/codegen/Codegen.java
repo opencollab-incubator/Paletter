@@ -28,7 +28,7 @@ public final class Codegen {
     static final String SPEC = "codegen/spec/inferred.json";
     static final String OVERRIDES = "codegen/overrides.json";
     static final String NEEDS_CAPTURE = "codegen/needs-capture.txt";
-    static final String COMPONENT_DIR = "paletter/src/main/java/org/geysermc/paletter/component";
+    static final String COMPONENT_DIR = "paletter/src/main/java/org/geysermc/paletter/internal/wire";
     static final List<String> GENERATED_PACKAGES = List.of("item", "block");
 
     private Codegen() {
@@ -46,8 +46,8 @@ public final class Codegen {
             }
         }
 
-        JsonObject spec = Inference.infer(root, captures);
         JsonObject overrides = JsonParser.parseString(Files.readString(root.resolve(OVERRIDES), StandardCharsets.UTF_8)).getAsJsonObject();
+        JsonObject spec = Inference.infer(root, captures, overrides);
 
         Map<String, String> outputs = new TreeMap<>();
         outputs.put(SPEC, GSON.toJson(spec) + "\n");

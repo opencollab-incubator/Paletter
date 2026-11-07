@@ -52,7 +52,7 @@ final class PaletteCompiler {
             // Blocks first: items need to know which blocks exist, and custom blocks re-number all states.
             // Without custom blocks or block fallbacks the parent's block palette (and its canonical table) is shared
             BlockPalette blocks = parent.blocks()
-                .withCustomBlocks(data, layer, layer.blocks())
+                .withCustomBlocks(data, layer, layer.blocks(), report, source)
                 .withFallbacks(layer.blockFallbacks());
 
             List<ItemVariant> newVariants = new ArrayList<>();
@@ -68,20 +68,20 @@ final class PaletteCompiler {
             ItemPalette.Builder items = parent.items().extend(blocks, canonicalItems);
             layer.itemFallbacks().forEach(items::fallback);
             for (PaletteLayer.Override override : layer.overrides()) {
-                if (!items.override(override.identifier(), override.modifier())) {
+                if (!items.override(override.identifier(), override.modifier(), report, source)) {
                     report.info(source, "Not overriding " + override.identifier() + ": the item does not exist in " + data.version());
                 }
             }
 
             CreativeEditor creative = parent.creativeLayout().edit();
             for (CustomItem custom : layer.items()) {
-                items.addCustom(custom);
+                items.addCustom(custom, report, source);
                 if (custom.creative() != null) {
                     custom.creative().apply(creative, CreativeStack.of(custom.identifier()));
                 }
             }
             for (CustomBlock block : layer.blocks()) {
-                if (items.addBlockItem(block) != null && block.creative() != null) {
+                if (items.addBlockItem(block, report, source) != null && block.creative() != null) {
                     block.creative().apply(creative, CreativeStack.of(block.identifier()).withBlockState(block.defaultState()));
                 }
             }

@@ -45,9 +45,28 @@ final class Inference {
     private final Map<String, Shape> geyserOnly = new TreeMap<>();
     private final Map<String, List<String>> geyserReports = new TreeMap<>();
     private final TreeSet<String> sources = new TreeSet<>();
+    /**
+     * Base key to the protocol versions at which its wire shape changed ({@code protocolSplits} in the overrides).
+     */
+    private final Map<String, List<Integer>> splits = new TreeMap<>();
+    /**
+     * The protocol version of the source being read, -1 if unknown.
+     */
+    private int protocol = -1;
 
-    static JsonObject infer(Path root, List<Path> extraCaptures) throws IOException {
+    static JsonObject infer(Path root, List<Path> extraCaptures, JsonObject overrides) throws IOException {
         Inference inference = new Inference();
+        if (overrides.has("components")) {
+            overrides.getAsJsonObject("components").entrySet().forEach(entry -> {
+                JsonObject component = entry.getValue().getAsJsonObject();
+                if (component.has("protocolSplits")) {
+                    List<Integer> points = new ArrayList<>();
+                    component.getAsJsonArray("protocolSplits").forEach(point -> points.add(point.getAsInt()));
+                    points.sort(null);
+                    inference.splits.put(entry.getKey(), points);
+                }
+            });
+        }
         Path data = root.resolve("paletter/src/main/resources/paletter");
         try (Stream<Path> files = Files.list(data)) {
             for (Path file : files.filter(f -> f.toString().endsWith(".nbt")).sorted().toList()) {
@@ -55,6 +74,7 @@ final class Inference {
                 try (InputStream stream = Files.newInputStream(file)) {
                     vanilla = PaletteDataCodec.read(stream);
                 }
+                inference.protocol = vanilla.version().protocolVersion();
                 inference.addVanilla("vanilla " + vanilla.version().name(), vanilla);
             }
         }
@@ -69,11 +89,15 @@ final class Inference {
                 for (Path file : files.filter(f -> f.toString().endsWith(".nbt") || f.toString().endsWith(".dat")).sorted().toList()) {
                     String name = "capture " + captures.relativize(file).toString().replace(java.io.File.separatorChar, '/');
                     NbtMap capture = readNbt(file);
+                    inference.protocol = captureProtocol(captures, file);
                     if (capture.containsKey("format") && capture.containsKey("items") && capture.containsKey("blocks")) {
                         // A whole palette in the bundled format
+                        VanillaData palette;
                         try (InputStream stream = Files.newInputStream(file)) {
-                            inference.addVanilla(name, PaletteDataCodec.read(stream));
+                            palette = PaletteDataCodec.read(stream);
                         }
+                        inference.protocol = palette.version().protocolVersion();
+                        inference.addVanilla(name, palette);
                     } else {
                         inference.addCapture(name, capture);
                     }
@@ -86,6 +110,69 @@ final class Inference {
             : new JsonObject());
         inference.geyserOnly.values().forEach(Shape::finish);
         return inference.toJson();
+    }
+
+    /**
+     * The protocol version of a capture: the {@code protocol} of the nearest {@code capture.json} (the capture module's
+     * summary, or a hand written {@code {"protocol": 2225}}) in the capture's directory or one of its parents below the
+     * captures root. -1 if there is none, which only matters for components with {@code protocolSplits}: such
+     * observations count for the newest shape. ({@code referencePalette} is not used: it names the bundled palette the
+     * capture was compared with, not the protocol of the server.)
+     */
+    static int captureProtocol(Path capturesRoot, Path file) throws IOException {
+        for (Path dir = file.getParent(); dir != null && dir.startsWith(capturesRoot); dir = dir.getParent()) {
+            Path summary = dir.resolve("capture.json");
+            if (Files.exists(summary)) {
+                JsonObject json = JsonParser.parseString(Files.readString(summary, StandardCharsets.UTF_8)).getAsJsonObject();
+                if (json.has("protocol")) {
+                    return json.get("protocol").getAsInt();
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * @return the base key of a spec key: {@code item:minecraft:damage@..2250} is a shape of {@code item:minecraft:damage}
+     */
+    static String baseKey(String key) {
+        int at = key.indexOf('@');
+        return at < 0 ? key : key.substring(0, at);
+    }
+
+    /**
+     * @return {since, until} of the protocol window of a spec key's shape; 0 and {@link Integer#MAX_VALUE} if unbounded
+     */
+    int[] window(String key) {
+        List<Integer> points = splits.getOrDefault(baseKey(key), List.of());
+        if (points.isEmpty()) {
+            return new int[]{0, Integer.MAX_VALUE};
+        }
+        int at = key.indexOf('@');
+        if (at < 0) {
+            return new int[]{points.getLast(), Integer.MAX_VALUE};
+        }
+        String[] bounds = key.substring(at + 1).split("\\.\\.", -1);
+        return new int[]{bounds[0].isEmpty() ? 0 : Integer.parseInt(bounds[0]), Integer.parseInt(bounds[1])};
+    }
+
+    /**
+     * @return the spec key of the shape a source of the current protocol version observed: the base key for the newest
+     * shape (and for components whose shape never changed), {@code <base>@<since>..<until>} for older ones
+     */
+    private String windowKey(String key) {
+        List<Integer> points = splits.get(key);
+        if (points == null || protocol < 0 || protocol >= points.getLast()) {
+            return key;
+        }
+        int since = 0;
+        for (int point : points) {
+            if (protocol < point) {
+                return key + "@" + (since == 0 ? "" : since) + ".." + point;
+            }
+            since = point;
+        }
+        return key;
     }
 
     /**
@@ -183,7 +270,8 @@ final class Inference {
         });
     }
 
-    private void observe(String key, String source, Object value) {
+    private void observe(String baseKey, String source, Object value) {
+        String key = windowKey(baseKey);
         wire.computeIfAbsent(key, k -> new Shape()).observe(value);
         seenIn.computeIfAbsent(key, k -> new TreeSet<>()).add(source.replaceFirst("^vanilla ", ""));
     }
@@ -228,6 +316,13 @@ final class Inference {
             JsonObject component = new JsonObject();
             boolean fromWire = wire.containsKey(key);
             component.addProperty("confidence", fromWire ? "high" : "medium");
+            int[] window = window(key);
+            if (window[0] != 0) {
+                component.addProperty("sinceProtocol", window[0]);
+            }
+            if (window[1] != Integer.MAX_VALUE) {
+                component.addProperty("untilProtocol", window[1]);
+            }
             JsonArray seen = new JsonArray();
             if (fromWire) {
                 seenIn.get(key).forEach(seen::add);

@@ -9,6 +9,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @param clearStates true to use the replacement's default state instead of carrying over matching state values
  * @param force true to replace the block even though it exists in this version. Needed for blocks that are in the
  *              palette, but only usable with an experiment enabled
+ *
+ * @since 2.0.0
  */
 public record BlockFallback(@NonNull String target, boolean clearStates, boolean force) {
 

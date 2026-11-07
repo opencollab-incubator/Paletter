@@ -13,6 +13,7 @@ import java.util.Objects;
  * @param identifier the item identifier, e.g. {@code geysermc:furnace_minecart}
  * @param components the components
  * @param creative where it goes in the creative inventory, or null to leave it out
+ * @since 2.0.0
  */
 public record CustomItem(@NonNull String identifier, @NonNull ItemComponents components, @Nullable CreativePlacement creative) {
 

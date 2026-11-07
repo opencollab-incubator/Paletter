@@ -20,6 +20,8 @@ import java.util.Map;
  * @param fallbacks replacements for content that only exists in newer versions
  * @param blockDefaults default state of each block as {@code {name, states}}; may be empty if the dump did not include
  *                      them, in which case a block's first state is its default
+ *
+ * @since 2.0.0
  */
 public record VanillaData(
     @NonNull DataVersion version,

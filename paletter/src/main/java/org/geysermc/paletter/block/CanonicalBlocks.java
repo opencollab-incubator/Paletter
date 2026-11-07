@@ -19,6 +19,8 @@ import java.util.WeakHashMap;
  * <p>
  * A consumer maps its own blocks to canonical ids once, and uses {@link org.geysermc.paletter.Palette#runtimeId(int)}
  * (an array lookup) to get the runtime id of a particular palette.
+ *
+ * @since 2.0.0
  */
 public final class CanonicalBlocks {
     private final @Nullable CanonicalBlocks parent;

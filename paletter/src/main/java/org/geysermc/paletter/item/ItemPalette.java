@@ -13,6 +13,7 @@ import org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket;
 import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import org.geysermc.paletter.PaletteException;
 import org.geysermc.paletter.PaletteReport;
+import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.block.BlockPalette;
 import org.geysermc.paletter.block.BlockResolution;
 import org.geysermc.paletter.block.CustomBlock;
@@ -22,6 +23,8 @@ import org.geysermc.paletter.creative.CreativeStack;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.VanillaData;
 import org.geysermc.paletter.data.VanillaItem;
+import org.geysermc.paletter.internal.encode.EncodeContext;
+import org.geysermc.paletter.internal.encode.ItemEncoder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,6 +50,8 @@ import java.util.function.Consumer;
  * </ul>
  * It also knows which block each block item is sent with, so consumers never have to work that out from the
  * creative inventory themselves.
+ *
+ * @since 2.0.0
  */
 public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     private static final NbtMap NO_BLOCK = NbtMap.builder().putString("name", "paletter:no_block").build();
@@ -92,6 +97,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     /**
      * Starts the item palette of a version from its vanilla items.
      */
+    @Internal
     public static @NonNull Builder vanilla(@NonNull VanillaData data, @NonNull BlockPalette blocks, @NonNull CanonicalItems canonical) {
         Builder builder = new Builder(data.version(), blocks, data.fallbacks().items(), canonical);
         for (VanillaItem item : data.items()) {
@@ -108,6 +114,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
      * @param blocks the block palette of the new palette; may differ from this one's if custom blocks were added
      * @param canonical the canonical ids of the new palette: this palette's, or these with custom items appended
      */
+    @Internal
     public @NonNull Builder extend(@NonNull BlockPalette blocks, @NonNull CanonicalItems canonical) {
         return new Builder(this, blocks, canonical);
     }
@@ -388,6 +395,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     /**
      * Builds an item palette. Obtained from {@link #vanilla} or {@link #extend}; used by the palette compiler.
      */
+    @Internal
     public static final class Builder {
         private final DataVersion version;
         private final BlockPalette blocks;
@@ -440,7 +448,8 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         /**
          * @return false if the item does not exist in this version, so there was nothing to override
          */
-        public boolean override(@NonNull String identifier, @NonNull Consumer<ItemOverride> modifier) {
+        public boolean override(@NonNull String identifier, @NonNull Consumer<ItemOverride> modifier, @NonNull PaletteReport report,
+                                @NonNull String source) {
             PaletteItem original = byIdentifier.get(identifier);
             if (original == null) {
                 return false;
@@ -448,7 +457,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             ItemOverride override = new ItemOverride(original);
             modifier.accept(override);
             if (override.changesDefinition()) {
-                put(override.apply());
+                put(override.apply(EncodeContext.of(version, report, source)));
             }
             if (override.setsBlock()) {
                 NbtMap block = override.block();
@@ -457,10 +466,11 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             return true;
         }
 
-        public @NonNull PaletteItem addCustom(@NonNull CustomItem custom) {
+        public @NonNull PaletteItem addCustom(@NonNull CustomItem custom, @NonNull PaletteReport report, @NonNull String source) {
             checkUnused(custom.identifier());
             int runtimeId = nextRuntimeId;
-            NbtMap componentData = custom.components().toComponentData(custom.identifier(), runtimeId, custom.creative());
+            NbtMap componentData = ItemEncoder.componentData(custom.components(), custom.identifier(), runtimeId, custom.creative(),
+                EncodeContext.of(version, report, source));
             PaletteItem item = new PaletteItem(custom.identifier(), runtimeId, ItemVersion.DATA_DRIVEN, true, componentData, true);
             put(item);
             customItems.add(custom);
@@ -473,7 +483,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         /**
          * Registers the item of a custom block, unless the block has none.
          */
-        public @Nullable PaletteItem addBlockItem(@NonNull CustomBlock block) {
+        public @Nullable PaletteItem addBlockItem(@NonNull CustomBlock block, @NonNull PaletteReport report, @NonNull String source) {
             PaletteItem item;
             switch (block.item()) {
                 case CustomBlock.BlockItem.None none -> {
@@ -488,11 +498,12 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
                     ItemComponents components = dataDriven.components();
                     // Without an icon of its own, the client renders the block
                     components = components.toBuilder()
-                        .blockPlacer(block.identifier(), components.property("minecraft:icon") == null)
+                        .blockPlacer(block.identifier(), components.icon() == null && !components.rawProperties().containsKey("minecraft:icon"))
                         .build();
                     int runtimeId = nextRuntimeId;
                     item = new PaletteItem(block.identifier(), runtimeId, ItemVersion.DATA_DRIVEN, true,
-                        components.toComponentData(block.identifier(), runtimeId, block.creative()), true);
+                        ItemEncoder.componentData(components, block.identifier(), runtimeId, block.creative(),
+                            EncodeContext.of(version, report, source)), true);
                 }
             }
             put(item);

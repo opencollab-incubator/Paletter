@@ -1,9 +1,6 @@
 package org.geysermc.paletter.block;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.cloudburstmc.nbt.NbtMap;
-import org.cloudburstmc.nbt.NbtMapBuilder;
-import org.cloudburstmc.nbt.NbtType;
 
 import java.util.List;
 
@@ -14,6 +11,7 @@ import java.util.List;
  * @param type the value type
  * @param values the possible values; the first one is the default
  * @param <T> the value type: {@link Byte} for booleans (0 and 1, as Bedrock stores them), {@link Integer} or {@link String}
+ * @since 2.0.0
  */
 public record BlockProperty<T>(@NonNull String name, @NonNull Type type, @NonNull List<T> values) {
 
@@ -46,15 +44,5 @@ public record BlockProperty<T>(@NonNull String name, @NonNull Type type, @NonNul
 
     public static @NonNull BlockProperty<String> strings(@NonNull String name, @NonNull String... values) {
         return new BlockProperty<>(name, Type.STRING, List.of(values));
-    }
-
-    NbtMap toNbt() {
-        NbtMapBuilder builder = NbtMap.builder().putString("name", name);
-        switch (type) {
-            case BOOLEAN -> builder.putList("enum", NbtType.BYTE, values.stream().map(Byte.class::cast).toList());
-            case INTEGER -> builder.putList("enum", NbtType.INT, values.stream().map(Integer.class::cast).toList());
-            case STRING -> builder.putList("enum", NbtType.STRING, values.stream().map(String.class::cast).toList());
-        }
-        return builder.build();
     }
 }

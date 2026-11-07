@@ -12,6 +12,8 @@ import java.util.Locale;
  * ({@link CreativeItemCategory}, whose ordinal is offset by {@code ALL}), the numeric id used in the
  * {@code creative_category} item property, and the name used in a block's {@code menu_category}.
  * This enum is the only place that knows all three.
+ *
+ * @since 2.0.0
  */
 public enum CreativeCategory {
     CONSTRUCTION("construction", 1, CreativeItemCategory.CONSTRUCTION),

@@ -3,340 +3,359 @@ package org.geysermc.paletter.block;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.paletter.component.BlockComponent;
-import org.geysermc.paletter.component.ComponentType;
-import org.geysermc.paletter.component.block.CollisionBox;
-import org.geysermc.paletter.component.block.DestructibleByMining;
-import org.geysermc.paletter.component.block.DisplayName;
-import org.geysermc.paletter.component.block.Friction;
-import org.geysermc.paletter.component.block.Geometry;
-import org.geysermc.paletter.component.block.LightDampening;
-import org.geysermc.paletter.component.block.LightEmission;
-import org.geysermc.paletter.component.block.MaterialInstances;
-import org.geysermc.paletter.component.block.OnPlayerPlacing;
-import org.geysermc.paletter.component.block.PlacementFilter;
-import org.geysermc.paletter.component.block.SelectionBox;
-import org.geysermc.paletter.component.block.Transformation;
+import org.geysermc.paletter.annotation.Experimental;
+import org.geysermc.paletter.block.component.Box;
+import org.geysermc.paletter.block.component.Geometry;
+import org.geysermc.paletter.block.component.Material;
+import org.geysermc.paletter.block.component.PlacementFilter;
+import org.geysermc.paletter.block.component.Transformation;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
- * Data driven block components, as sent in the start game packet. Immutable; build with {@link #builder()}.
+ * What a data driven block (or one of its permutations) looks like and does, in Bedrock terms. Immutable; build with
+ * {@link #builder()}.
+ * <pre>{@code
+ * BlockComponents.builder()
+ *     .geometry(Geometry.of(Geometry.FULL_BLOCK))
+ *     .materials(Map.of(Material.ALL_FACES, Material.of("my_block").faceDimming(false)))
+ *     .placementFilter(PlacementFilter.allowOn(Face.UP).blocks("minecraft:grass_block"))
+ *     .lightEmission(10)
+ *     .tags("minecraft:stone")
+ *     .build()
+ * }</pre>
  * <p>
- * Typed components (generated from captured network NBT, see {@code org.geysermc.paletter.component.block}) are added
- * with {@link Builder#with}. The convenience methods convert units and conventions (pixels relative to the bottom
- * center, degrees, face sets), so callers describe a block instead of encoding it. Anything without a generated type
- * can be set as raw NBT with {@link Builder#component}.
+ * The values are semantic, in the units of add-on JSON (pixels relative to the bottom center, degrees, seconds): Paletter
+ * encodes them into the network format of each palette's Bedrock version when the palette is compiled. A value a
+ * palette's version cannot express is left out of that palette with a warning in its
+ * {@link org.geysermc.paletter.PaletteReport}. Components without a semantic method can be set as raw NBT with the
+ * {@link Experimental} {@link Builder#raw}.
+ *
+ * @since 2.0.0
  */
 public final class BlockComponents {
-    public static final BlockComponents EMPTY = new BlockComponents(NbtMap.EMPTY);
-    /**
-     * The {@code tags_version} of placement filter tag queries; BDS 1.26.63 sends 13 (the Molang version).
-     */
-    public static final int TAGS_VERSION = 13;
+    public static final BlockComponents EMPTY = new BlockComponents(new EnumMap<>(Key.class), Map.of(), Set.of());
 
-    private final NbtMap nbt;
+    private enum Key {
+        DISPLAY_NAME, SELECTION_BOX, COLLISION_BOXES, GEOMETRY, MATERIALS, MATERIAL_ALIASES, PLACEMENT_FILTER, DESTRUCTIBLE_BY_MINING,
+        FRICTION, LIGHT_EMISSION, LIGHT_DAMPENING, TRANSFORMATION, ON_PLAYER_PLACING
+    }
 
-    private BlockComponents(NbtMap nbt) {
-        this.nbt = nbt;
+    private final EnumMap<Key, Object> values;
+    private final Map<String, NbtMap> raw;
+    private final Set<String> tags;
+
+    private BlockComponents(EnumMap<Key, Object> values, Map<String, NbtMap> raw, Set<String> tags) {
+        this.values = values;
+        this.raw = raw;
+        this.tags = tags;
     }
 
     public static @NonNull Builder builder() {
         return new Builder();
     }
 
-    public static @NonNull BlockComponents raw(@NonNull NbtMap nbt) {
-        return new BlockComponents(nbt);
-    }
-
-    public @NonNull NbtMap toNbt() {
-        return nbt;
-    }
-
-    /**
-     * @return the component read as its generated type, or null if not set
-     */
-    public <T extends BlockComponent> @Nullable T get(@NonNull ComponentType<T> type) {
-        return nbt.get(type.name()) instanceof NbtMap value ? type.read(value) : null;
-    }
-
     public @NonNull Builder toBuilder() {
         Builder builder = new Builder();
-        builder.components.putAll(nbt);
+        builder.values.putAll(values);
+        builder.raw.putAll(raw);
+        builder.tags.addAll(tags);
         return builder;
     }
 
-    /**
-     * A box in pixels, relative to the bottom center of the block (Bedrock's origin convention).
-     */
-    public record Box(float originX, float originY, float originZ, float sizeX, float sizeY, float sizeZ) {
-        public static final Box FULL = new Box(-8, 0, -8, 16, 16, 16);
-        public static final Box EMPTY = new Box(0, 0, 0, 0, 0, 0);
+    @SuppressWarnings("unchecked")
+    private <T> @Nullable T get(Key key) {
+        return (T) values.get(key);
+    }
 
-        public boolean isEmpty() {
-            return sizeX == 0 || sizeY == 0 || sizeZ == 0;
-        }
+    public @Nullable String displayName() {
+        return get(Key.DISPLAY_NAME);
     }
 
     /**
-     * @param texture the texture short name, or null when the resource pack's blocks.json defines it
-     * @param renderMethod e.g. {@code opaque}, {@code alpha_test}, {@code blend}, or null for the default
-     * @param tintMethod e.g. {@code grass}, or null for none
-     * @param ambientOcclusion the ambient occlusion exponent; 1 is the default
-     * @param faceDimming whether faces are dimmed by direction
-     * @param isotropic whether the texture is randomly rotated
+     * @return the selection box; an empty box means the block cannot be selected
      */
-    public record Material(@Nullable String texture, @Nullable String renderMethod, @Nullable String tintMethod,
-                           float ambientOcclusion, boolean faceDimming, boolean isotropic) {
-        /**
-         * Bit of {@code packed_bools} for face dimming (captured from BDS 1.26.63.1).
-         */
-        public static final int FACE_DIMMING_BIT = 1;
-        /**
-         * Bit of {@code packed_bools} for isotropic (captured from BDS 1.26.63.1).
-         */
-        public static final int ISOTROPIC_BIT = 1 << 1;
-        /**
-         * Bit of {@code packed_bools} that BDS sets in every material it sends (vanilla and custom); meaning unknown.
-         */
-        public static final int ALWAYS_SET_BIT = 1 << 2;
-
-        public static @NonNull Material of(@NonNull String texture) {
-            return new Material(texture, null, null, 1.0f, true, false);
-        }
-
-        public @NonNull Material renderMethod(@NonNull String renderMethod) {
-            return new Material(texture, renderMethod, tintMethod, ambientOcclusion, faceDimming, isotropic);
-        }
-
-        public @NonNull Material tintMethod(@NonNull String tintMethod) {
-            return new Material(texture, renderMethod, tintMethod, ambientOcclusion, faceDimming, isotropic);
-        }
-
-        /**
-         * @return the network form. Vanilla sends no {@code isotropic} key; the flags are packed into {@code packed_bools}
-         */
-        public MaterialInstances.@NonNull Material toComponent() {
-            return MaterialInstances.Material.builder()
-                // Bedrock stopped accepting a byte here in 1.26.20; it must be a float
-                .ambientOcclusion(ambientOcclusion)
-                .packedBools((byte) (ALWAYS_SET_BIT | (faceDimming ? FACE_DIMMING_BIT : 0) | (isotropic ? ISOTROPIC_BIT : 0)))
-                .renderMethod(renderMethod)
-                .tintMethod(tintMethod)
-                .texture(texture)
-                .build();
-        }
-    }
-
-    public enum Face {
-        DOWN, UP, NORTH, SOUTH, WEST, EAST;
-
-        private final int bit = 1 << ordinal();
+    public @Nullable Box selectionBox() {
+        return get(Key.SELECTION_BOX);
     }
 
     /**
-     * One placement condition: the block may be placed on any of the faces, against any of the filters.
-     *
-     * @param faces the faces the block may be placed on
-     * @param blocks block identifiers it may be placed against
-     * @param tags Molang block tag queries it may be placed against
+     * @return the collision boxes; empty means no collision
      */
-    public record PlacementCondition(@NonNull Set<Face> faces, @NonNull List<String> blocks, @NonNull List<String> tags) {
+    public @Nullable List<Box> collisionBoxes() {
+        return get(Key.COLLISION_BOXES);
     }
 
+    public @Nullable Geometry geometry() {
+        return get(Key.GEOMETRY);
+    }
+
+    /**
+     * @return material instance name to material
+     */
+    public @Nullable Map<String, Material> materials() {
+        return get(Key.MATERIALS);
+    }
+
+    /**
+     * @return face to the material instance it uses (add-on JSON {@code "up": "north"}); empty without aliases
+     */
+    public @NonNull Map<String, String> materialAliases() {
+        Map<String, String> aliases = get(Key.MATERIAL_ALIASES);
+        return aliases == null ? Map.of() : aliases;
+    }
+
+    /**
+     * @return the placement conditions; the block can be placed if any holds
+     */
+    public @Nullable List<PlacementFilter> placementFilter() {
+        return get(Key.PLACEMENT_FILTER);
+    }
+
+    /**
+     * @return the seconds to break the block by hand, or -1 if it cannot be mined
+     */
+    public @Nullable Float destructibleByMining() {
+        return get(Key.DESTRUCTIBLE_BY_MINING);
+    }
+
+    public @Nullable Float friction() {
+        return get(Key.FRICTION);
+    }
+
+    public @Nullable Integer lightEmission() {
+        return get(Key.LIGHT_EMISSION);
+    }
+
+    public @Nullable Integer lightDampening() {
+        return get(Key.LIGHT_DAMPENING);
+    }
+
+    public @Nullable Transformation transformation() {
+        return get(Key.TRANSFORMATION);
+    }
+
+    @Experimental
+    public @Nullable String onPlayerPlacing() {
+        return get(Key.ON_PLAYER_PLACING);
+    }
+
+    /**
+     * @return the block tags, queryable with Molang
+     */
+    public @NonNull Set<String> tags() {
+        return tags;
+    }
+
+    @Experimental
+    public @NonNull Map<String, NbtMap> raw() {
+        return raw;
+    }
+
+    /**
+     * @since 2.0.0
+     */
     public static final class Builder {
-        private final Map<String, Object> components = new LinkedHashMap<>();
+        private final EnumMap<Key, Object> values = new EnumMap<>(Key.class);
+        private final Map<String, NbtMap> raw = new LinkedHashMap<>();
+        private final Set<String> tags = new LinkedHashSet<>();
 
         private Builder() {
         }
 
-        /**
-         * Sets a typed component, replacing any previous value.
-         */
-        public @NonNull Builder with(@NonNull BlockComponent component) {
-            components.put(component.componentType().name(), component.toNbt());
+        private Builder set(Key key, @Nullable Object value) {
+            if (value == null) {
+                values.remove(key);
+            } else {
+                values.put(key, value);
+            }
             return this;
         }
 
         /**
-         * Sets a raw component, replacing any previous value. The escape hatch for components without a
-         * generated type; see {@code codegen/needs-capture.txt}.
+         * @param translationKeyOrName a translation key, or the name itself
          */
-        public @NonNull Builder component(@NonNull String name, @NonNull NbtMap value) {
-            components.put(name, value);
-            return this;
-        }
-
-        public @NonNull Builder removeComponent(@NonNull String name) {
-            components.remove(name);
-            return this;
-        }
-
         public @NonNull Builder displayName(@NonNull String translationKeyOrName) {
-            return with(DisplayName.of(translationKeyOrName));
-        }
-
-        public @NonNull Builder selectionBox(@NonNull Box box) {
-            return with(SelectionBox.builder()
-                .enabled(!box.isEmpty())
-                .origin(List.of(box.originX(), box.originY(), box.originZ()))
-                .size(List.of(box.sizeX(), box.sizeY(), box.sizeZ()))
-                .build());
+            return set(Key.DISPLAY_NAME, Objects.requireNonNull(translationKeyOrName));
         }
 
         /**
-         * Sets the collision boxes. Empty boxes are skipped; with no non-empty box, collision is disabled.
+         * @param box the selection box; {@link Box#EMPTY} makes the block unselectable
+         */
+        public @NonNull Builder selectionBox(@NonNull Box box) {
+            return set(Key.SELECTION_BOX, Objects.requireNonNull(box, "box"));
+        }
+
+        /**
+         * Sets the collision boxes. Empty boxes are skipped; with no non-empty box, the block has no collision.
          */
         public @NonNull Builder collisionBoxes(@NonNull Box... boxes) {
-            List<CollisionBox.Box> converted = new ArrayList<>();
+            List<Box> nonEmpty = new ArrayList<>();
             for (Box box : boxes) {
-                if (box.isEmpty()) {
-                    continue;
+                if (!box.isEmpty()) {
+                    nonEmpty.add(box);
                 }
-                float minX = 8f + box.originX();
-                float minY = box.originY();
-                float minZ = 8f + box.originZ();
-                converted.add(CollisionBox.Box.builder()
-                    .minX(minX).minY(minY).minZ(minZ)
-                    .maxX(minX + box.sizeX()).maxY(minY + box.sizeY()).maxZ(minZ + box.sizeZ())
-                    .build());
             }
-            return with(CollisionBox.builder().enabled(!converted.isEmpty()).boxes(converted).build());
+            return set(Key.COLLISION_BOXES, List.copyOf(nonEmpty));
         }
 
-        public @NonNull Builder geometry(@NonNull String identifier) {
-            return geometry(identifier, Map.of());
+        public @NonNull Builder geometry(@NonNull Geometry geometry) {
+            return set(Key.GEOMETRY, Objects.requireNonNull(geometry, "geometry"));
         }
 
         /**
-         * @param boneVisibility bone name to a Molang expression (or {@code true}/{@code false})
+         * @param identifier the geometry identifier, e.g. {@link Geometry#FULL_BLOCK}
          */
-        public @NonNull Builder geometry(@NonNull String identifier, @NonNull Map<String, String> boneVisibility) {
-            Geometry.Builder geometry = Geometry.builder().identifier(identifier);
-            if (!boneVisibility.isEmpty()) {
-                geometry.boneVisibility(boneVisibility);
-            }
-            return with(geometry.build());
+        public @NonNull Builder geometry(@NonNull String identifier) {
+            return geometry(Geometry.of(identifier));
         }
 
         /**
-         * @param materials material instance name (e.g. {@code *}, {@code up}, {@code north}) to material
+         * @param materials material instance name ({@link Material#ALL_FACES}, a face like {@code up}, or a name the
+         *                  geometry uses) to material
          */
         public @NonNull Builder materials(@NonNull Map<String, Material> materials) {
             return materials(materials, Map.of());
         }
 
         /**
-         * @param materials material instance name (e.g. {@code *}, {@code up}, {@code north}) to material
-         * @param aliases face to the material instance it uses, e.g. {@code up -> north} (JSON {@code "up": "north"})
+         * @param materials material instance name to material
+         * @param aliases face to the material instance it uses, e.g. {@code up -> north} (add-on JSON {@code "up": "north"})
          */
         public @NonNull Builder materials(@NonNull Map<String, Material> materials, @NonNull Map<String, String> aliases) {
-            Map<String, MaterialInstances.Material> converted = new LinkedHashMap<>();
-            materials.forEach((name, material) -> converted.put(name, material.toComponent()));
-            Map<String, MaterialInstances.Mapping> mappings = new LinkedHashMap<>();
-            aliases.forEach((face, target) -> mappings.put(face, new MaterialInstances.Mapping(target)));
-            return with(MaterialInstances.builder().mappings(mappings).materials(converted).build());
-        }
-
-        public @NonNull Builder placementFilter(@NonNull PlacementCondition... conditions) {
-            List<PlacementFilter.Condition> converted = new ArrayList<>();
-            for (PlacementCondition condition : conditions) {
-                byte faces = 0;
-                for (Face face : condition.faces()) {
-                    faces |= (byte) face.bit;
-                }
-                List<PlacementFilter.BlockFilter> filters = new ArrayList<>();
-                for (String block : condition.blocks()) {
-                    filters.add(PlacementFilter.BlockFilter.builder().name(block).build());
-                }
-                for (String tag : condition.tags()) {
-                    // BDS 1.26.63 sends tags_version 13, the molang version of 1.26 content
-                    filters.add(PlacementFilter.BlockFilter.builder().tags(tag).tagsVersion(TAGS_VERSION).build());
-                }
-                converted.add(new PlacementFilter.Condition(faces, filters));
-            }
-            return with(PlacementFilter.of(converted));
+            set(Key.MATERIALS, Collections.unmodifiableMap(new LinkedHashMap<>(materials)));
+            return set(Key.MATERIAL_ALIASES, Collections.unmodifiableMap(new LinkedHashMap<>(aliases)));
         }
 
         /**
-         * @param seconds the time to break the block by hand
+         * @param conditions the conditions; the block can be placed if any holds
+         */
+        public @NonNull Builder placementFilter(@NonNull PlacementFilter... conditions) {
+            if (conditions.length == 0) {
+                throw new IllegalArgumentException("A placement filter needs at least one condition");
+            }
+            return set(Key.PLACEMENT_FILTER, List.of(conditions));
+        }
+
+        /**
+         * @param seconds the time to break the block by hand; -1 makes it unbreakable by mining
          */
         public @NonNull Builder destructibleByMining(float seconds) {
-            return with(DestructibleByMining.builder().value(seconds).build());
+            return set(Key.DESTRUCTIBLE_BY_MINING, seconds);
         }
 
+        /**
+         * @param friction 0 to 0.9; vanilla blocks use 0.4, ice 0.02
+         */
         public @NonNull Builder friction(float friction) {
-            return with(Friction.of(friction));
+            return set(Key.FRICTION, friction);
         }
 
+        /**
+         * @param level the light level the block emits, 0 to 15
+         */
         public @NonNull Builder lightEmission(int level) {
-            return with(LightEmission.of((byte) level));
+            return set(Key.LIGHT_EMISSION, lightLevel(level));
         }
 
+        /**
+         * @param level how much light the block absorbs, 0 to 15
+         */
         public @NonNull Builder lightDampening(int level) {
-            return with(LightDampening.of((byte) level));
+            return set(Key.LIGHT_DAMPENING, lightLevel(level));
+        }
+
+        public @NonNull Builder transformation(@NonNull Transformation transformation) {
+            return set(Key.TRANSFORMATION, Objects.requireNonNull(transformation, "transformation"));
         }
 
         /**
-         * @param rotationX rotation in degrees; Bedrock only supports multiples of 90
+         * @param x rotation in degrees; Bedrock only supports multiples of 90
          */
-        public @NonNull Builder transformation(float rotationX, float rotationY, float rotationZ,
-                                               float scaleX, float scaleY, float scaleZ,
-                                               float translateX, float translateY, float translateZ) {
-            return with(Transformation.builder()
-                .rotationX(quarterTurns(rotationX))
-                .rotationY(quarterTurns(rotationY))
-                .rotationZ(quarterTurns(rotationZ))
-                .scaleX(scaleX).scaleY(scaleY).scaleZ(scaleZ)
-                .translationX(translateX).translationY(translateY).translationZ(translateZ)
-                .build());
-        }
-
-        public @NonNull Builder rotation(float rotationX, float rotationY, float rotationZ) {
-            return transformation(rotationX, rotationY, rotationZ, 1, 1, 1, 0, 0, 0);
+        public @NonNull Builder rotation(float x, float y, float z) {
+            return transformation(Transformation.rotation(x, y, z));
         }
 
         /**
-         * Makes the client fire the given event instead of placing anything itself. Useful when the server
-         * decides what is placed, as it avoids the client briefly placing the block twice.
+         * Makes the client fire the given event instead of placing anything itself. Useful when the server decides what
+         * is placed, as it avoids the client briefly placing the block twice.
+         * <p>
+         * Experimental: 1.26 add-on JSON rejects this component (it was replaced by script custom components), so its
+         * 1.26 network form is only known from Geyser's production use.
          */
+        @Experimental
         public @NonNull Builder onPlayerPlacing(@NonNull String eventName) {
-            return with(OnPlayerPlacing.of(eventName));
+            return set(Key.ON_PLAYER_PLACING, Objects.requireNonNull(eventName, "eventName"));
         }
 
         /**
-         * Adds a block tag, queryable with Molang. Tags are plain components named {@code tag:<name>}, as Geyser sends
-         * them; vanilla 26.50+ data driven blocks list their tags in a top level {@code blockTags} list instead.
+         * Adds block tags, queryable with Molang. Tags belong to the block, not to a permutation: tags set in a
+         * permutation's components cannot be sent, and are reported and left out.
          */
+        public @NonNull Builder tags(@NonNull String... tags) {
+            for (String tag : tags) {
+                this.tags.add(Objects.requireNonNull(tag, "tag"));
+            }
+            return this;
+        }
+
         public @NonNull Builder tag(@NonNull String tag) {
-            return component("tag:" + tag, NbtMap.EMPTY);
+            return tags(tag);
+        }
+
+        /**
+         * Sets a component as raw network NBT, replacing any previous raw value of that name. The escape hatch for
+         * components without a semantic method.
+         * <p>
+         * <b>You own the wire format</b>: the NBT is sent as given to every Bedrock version, and Paletter does not adapt it
+         * when Bedrock changes the component's network shape. A semantic value that encodes to the same component name
+         * replaces it.
+         */
+        @Experimental
+        public @NonNull Builder raw(@NonNull String name, @NonNull NbtMap value) {
+            raw.put(Objects.requireNonNull(name, "name"), Objects.requireNonNull(value, "value"));
+            return this;
+        }
+
+        @Experimental
+        public @NonNull Builder removeRaw(@NonNull String name) {
+            raw.remove(name);
+            return this;
         }
 
         public @NonNull BlockComponents build() {
-            return new BlockComponents(NbtMap.fromMap(components));
+            return new BlockComponents(new EnumMap<>(values), Collections.unmodifiableMap(new LinkedHashMap<>(raw)),
+                Collections.unmodifiableSet(new LinkedHashSet<>(tags)));
         }
 
-        private static int quarterTurns(float degrees) {
-            return (int) ((degrees % 360 + 360) % 360) / 90;
+        private static int lightLevel(int level) {
+            if (level < 0 || level > 15) {
+                throw new IllegalArgumentException("Light levels are 0 to 15: " + level);
+            }
+            return level;
         }
     }
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof BlockComponents other && nbt.equals(other.nbt);
+        return o instanceof BlockComponents other && values.equals(other.values) && raw.equals(other.raw) && tags.equals(other.tags);
     }
 
     @Override
     public int hashCode() {
-        return nbt.hashCode();
+        return Objects.hash(values, raw, tags);
     }
 
     @Override
     public String toString() {
-        return nbt.toString();
+        return "BlockComponents" + values + (tags.isEmpty() ? "" : " tags " + tags) + (raw.isEmpty() ? "" : " raw " + raw.keySet());
     }
 }

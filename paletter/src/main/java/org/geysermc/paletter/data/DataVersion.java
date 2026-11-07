@@ -10,6 +10,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @param name the version name, e.g. {@code 26.60}
  * @param protocolVersion the first protocol version this data is valid for
+ * @since 2.0.0
  */
 public record DataVersion(@NonNull String name, int protocolVersion) implements Comparable<DataVersion> {
 

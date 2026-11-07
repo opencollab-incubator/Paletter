@@ -14,7 +14,12 @@ Paletter paletter = Paletter.bundled();
 
 PaletteLayer layer = PaletteLayer.builder("server")
     .item(CustomItem.builder("example:ruby")
-        .components(ItemComponents.builder().icon("ruby").displayName("item.ruby.name").build())
+        .components(ItemComponents.builder()
+            .icon("ruby")
+            .displayName("item.ruby.name")
+            .maxStackSize(16)
+            .tags("minecraft:gems")
+            .build())
         .creative(CreativePlacement.group(CreativeCategory.ITEMS, "itemGroup.name.minerals"))
         .build())
     .overrideItem("minecraft:cake", item -> item.components(c -> c.maxStackSize(1)))
@@ -29,6 +34,9 @@ palette.applyTo(startGamePacket);              // block properties, blockNetwork
 session.sendPacket(palette.itemComponentPacket());
 session.sendPacket(palette.creativeContentPacket());
 ```
+
+The API is stable: semantic versioning, a deprecation cycle and a binary compatibility check. See [API.md](API.md) for
+what is API, what `@Experimental` and `@Internal` mean, and the policy.
 
 ## Modules
 
@@ -163,26 +171,71 @@ table (`canonicalToJava[id] != null`), and is what turns bugs like GeyserMC/Geys
 
 ## Components
 
-Data driven item and block components are typed records in `org.geysermc.paletter.component.item` and `...block`,
-**generated from NBT captured off the wire** (bundled vanilla data plus BDS captures), never from add-on JSON schemas,
-which differ from the network format. Each type has `TYPE` (name, confidence, min format version, experimental flag),
-`fromNbt` and `toNbt`:
+Custom items and blocks are described with **semantic** builders: Java types for what an item or block is and does, in
+the units of add-on JSON. They contain no NBT, no network key names and no encoding quirks.
 
 ```java
-ItemComponents components = ItemComponents.builder()
-    .with(Damage.of((short) 5))                        // typed, exact wire types
-    .with(Cooldown.builder().category("geyser:pearl").duration(1).build())
-    .maxStackSize(16)                                  // conveniences also set the mirrored item_properties
-    .component("minecraft:rarity", rawNbt)             // raw escape hatch for components without a type
+ItemComponents sword = ItemComponents.builder()
+    .icon("example_sword")
+    .displayName("item.example.sword.name")
+    .maxStackSize(1)
+    .handEquipped(true)
+    .attackDamage(7)
+    .durability(Durability.of(1561).damageChance(60, 100))   // percent
+    .enchantable(Enchantable.of("sword", 10))
+    .repairable(Repairable.of(Repairable.Entry.items("minecraft:diamond").amount("query.max_durability * 0.25")))
+    .tags("minecraft:is_sword")
     .build();
-Damage damage = components.get(Damage.TYPE);
+
+ItemComponents spear = ItemComponents.builder()
+    .kineticWeapon(KineticWeapon.builder()
+        .delayTicks(12)
+        .reach(Reach.of(2, 4.5f))
+        .damageConditions(KineticWeapon.Conditions.of(300, 0, 4.6f))
+        .build())
+    .useAnimation(UseAnimation.SPEAR)
+    .dyeable(Color.of(0xA06540))
+    .build();
+
+BlockComponents lamp = BlockComponents.builder()
+    .geometry(Geometry.of(Geometry.FULL_BLOCK))
+    .materials(Map.of(Material.ALL_FACES, Material.of("example_lamp").faceDimming(false).isotropic(true)))
+    .placementFilter(PlacementFilter.allowOn(Face.UP).blocks("minecraft:grass_block", "minecraft:dirt"))
+    .collisionBoxes(new Box(-8, 0, -8, 16, 8, 16))        // pixels, relative to the bottom center
+    .rotation(0, 90, 0)                                   // degrees
+    .lightEmission(10)
+    .tags("minecraft:stone")
+    .build();
 ```
 
-Types inferred from vanilla NBT are `Confidence.HIGH` and round-trip every vanilla data driven item and block in the
-bundled data unchanged. Types known only from Geyser's production encoders are `MEDIUM` and annotated `@Unverified`.
-Components never seen on the wire have no type; `codegen/needs-capture.txt` lists them for the capture pipeline.
-Regenerate with `./gradlew :codegen:generateComponents`; `./gradlew check` fails if the committed sources are stale.
-See `codegen/README.md`, and `codegen/DEVIATIONS.md` for where Paletter's NBT differs from Geyser's.
+Item values: icon, display name, stack size, off hand, hand equipped, glint, creative destroy, stacked by data, liquid
+clipped, despawn, fire resistance, durability, attack damage, enchantability, dyeable colour, kinetic and piercing
+weapons, swing duration, food, use animation and modifiers, cooldown, block and entity placers, shooter, throwable,
+projectile, compostable, fuel, repairable, digger, rarity, wearable, render offsets, tags. Block values: display name,
+selection and collision boxes, geometry, materials, placement filter, mining time, friction, light emission and
+dampening, transformation, tags. Anything else can be set with the `@Experimental` raw escape hatch
+(`ItemComponents.Builder#raw`, `#rawProperty`, `BlockComponents.Builder#raw`): you then own the wire format, see
+[API.md](API.md#experimental).
+
+### Versioned encoding
+
+Paletter encodes the semantic values when a palette is compiled, for that palette's Bedrock version
+(`internal.encode.ItemEncoder` / `BlockEncoder`, the only code that knows the wire format). Everything Bedrock sends in two
+places is written in both: the stack size as a component and an item property, tags as `item_tags` and `minecraft:tags`
+for items and as the top level `blockTags` for blocks, the use animation as a name and an id, the use duration in
+seconds and ticks.
+
+The network shapes are generated records in `org.geysermc.paletter.internal.wire` (not API), **generated from NBT captured
+off the wire** (bundled vanilla data plus BDS captures), never from add-on JSON schemas, which differ from the network
+format. Every shape carries a protocol window (`ComponentType#sinceProtocol`/`untilProtocol`). When a Bedrock version
+changes a component's shape, the spec gains an entry for the new window, the records are regenerated, and the encoder
+maps the same semantic value to the shape of each palette's version: no API change. A value a version cannot express
+(the component does not exist there, or a shape the encoder does not produce yet) is left out with a warning in
+`Palette#report()`; compilation never fails because of it.
+
+Shapes inferred from vanilla NBT round-trip every vanilla data driven item and block in the bundled data unchanged.
+Regenerate with `./gradlew :codegen:generateComponents`; `./gradlew check` fails if the committed sources are stale. See
+`codegen/README.md`, and `codegen/DEVIATIONS.md` for how Paletter's output differs from what Geyser used to send.
 
 ## The creative inventory
 
@@ -325,7 +378,7 @@ import --source $G --name 26.60 --protocol 2225 --bds-dump bds-1.26.63.1.log
   `minecraft:sulfur_cube_archetype_slow_bouncy`; 26.50 and 26.60 also add the poplar wood set to the wood tags (boats,
   door, signs, logs, planks, slab) and wool slabs and stairs to `minecraft:vibration_damper`.
 - Block tags and block to item are dumped but not bundled.
-- `ItemComponents` and `BlockComponents` type the components Geyser uses today; anything else goes through the raw
-  `component(...)` escape hatch.
+- `ItemComponents` and `BlockComponents` cover every component Geyser sends today and the common add-on ones; anything
+  else goes through the `@Experimental` raw escape hatch until it gets a semantic method.
 - Not covered: biome definitions, entity identifiers and other data Geyser ships that is not about items or blocks.
 - The BDS addon needs `@minecraft/server` 2.1.0; tested with BDS 1.26.45.1, 1.26.51.1 and 1.26.63.1.

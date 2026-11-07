@@ -7,6 +7,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @param target the replacement item identifier
  * @param force true to replace the item even though it exists in this version, e.g. because it is experimental there
+ * @since 2.0.0
  */
 public record ItemFallback(@NonNull String target, boolean force) {
 

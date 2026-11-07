@@ -31,6 +31,8 @@ import java.util.WeakHashMap;
  * <p>
  * A creative block state that is the item's default block (its first creative block state, which is what it is sent
  * with without one) is not a variant of its own; {@link #index(ItemVariant)} treats both spellings alike.
+ *
+ * @since 2.0.0
  */
 public final class CanonicalItems {
     private final @Nullable CanonicalItems parent;

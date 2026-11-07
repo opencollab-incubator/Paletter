@@ -23,6 +23,7 @@ import org.geysermc.paletter.item.ItemComponents;
 import org.geysermc.paletter.item.ItemVariant;
 import org.geysermc.paletter.item.PaletteItem;
 import org.geysermc.paletter.item.ResolvedItem;
+import org.geysermc.paletter.item.component.Throwing;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -155,7 +156,7 @@ class LayerTest {
     void overridesChangeVanillaDefinitions() {
         PaletteLayer layer = PaletteLayer.builder("fixes")
             .overrideItem("minecraft:cake", item -> item.components(c -> c.maxStackSize(1)))
-            .overrideItem("minecraft:firework_rocket", item -> item.dataDriven(c -> c.maxStackSize(64).throwable(true)))
+            .overrideItem("minecraft:firework_rocket", item -> item.dataDriven(c -> c.maxStackSize(64).throwable(Throwing.of(true))))
             .overrideItem("minecraft:structure_block", item -> item.noBlock())
             .build();
         Palette vanilla = PALETTER.vanilla(PALETTER.version(LATEST));

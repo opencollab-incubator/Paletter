@@ -3,16 +3,36 @@ package org.geysermc.paletter;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.paletter.block.BlockComponents;
+import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
-import org.geysermc.paletter.component.block.BlockDefinition;
-import org.geysermc.paletter.component.block.MaterialInstances;
-import org.geysermc.paletter.component.block.Transformation;
-import org.geysermc.paletter.component.item.Damage;
-import org.geysermc.paletter.component.item.ItemProperties;
-import org.geysermc.paletter.component.item.KineticWeapon;
-import org.geysermc.paletter.component.item.Repairable;
-import org.geysermc.paletter.component.item.Tags;
+import org.geysermc.paletter.block.component.Box;
+import org.geysermc.paletter.block.component.Face;
+import org.geysermc.paletter.block.component.Geometry;
+import org.geysermc.paletter.block.component.Material;
+import org.geysermc.paletter.block.component.PlacementFilter;
+import org.geysermc.paletter.block.component.RenderMethod;
+import org.geysermc.paletter.block.component.TintMethod;
+import org.geysermc.paletter.block.component.Transformation;
+import org.geysermc.paletter.data.DataVersion;
+import org.geysermc.paletter.internal.encode.BlockEncoder;
+import org.geysermc.paletter.internal.encode.EncodeContext;
+import org.geysermc.paletter.internal.encode.ItemEncoder;
+import org.geysermc.paletter.internal.wire.block.BlockDefinition;
+import org.geysermc.paletter.internal.wire.item.Damage;
 import org.geysermc.paletter.item.ItemComponents;
+import org.geysermc.paletter.item.component.Color;
+import org.geysermc.paletter.item.component.Cooldown;
+import org.geysermc.paletter.item.component.CooldownType;
+import org.geysermc.paletter.item.component.Durability;
+import org.geysermc.paletter.item.component.EquipmentSlot;
+import org.geysermc.paletter.item.component.Food;
+import org.geysermc.paletter.item.component.KineticWeapon;
+import org.geysermc.paletter.item.component.Reach;
+import org.geysermc.paletter.item.component.Repairable;
+import org.geysermc.paletter.item.component.Throwing;
+import org.geysermc.paletter.item.component.UseAnimation;
+import org.geysermc.paletter.item.component.UseModifiers;
+import org.geysermc.paletter.item.component.Wearable;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -21,29 +41,37 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * The semantic API encodes to what vanilla and BDS send. Covers every "Geyser should change" point of
+ * {@code codegen/DEVIATIONS.md}, which Paletter's encoders now own.
+ */
 class ComponentBuilderTest {
-    private static NbtMap components(ItemComponents components) {
-        return components.toComponentData("test:item", 1000, null).getCompound("components");
+    static final DataVersion LATEST = new DataVersion("26.60", 2225);
+
+    private final PaletteReport report = new PaletteReport();
+    private final EncodeContext context = EncodeContext.of(LATEST, report, "test");
+
+    private NbtMap components(ItemComponents components) {
+        NbtMap nbt = ItemEncoder.componentData(components, "test:item", 1000, null, context).getCompound("components");
+        assertTrue(report.warnings().isEmpty(), report.warnings().toString());
+        return nbt;
+    }
+
+    private NbtMap blockComponents(BlockComponents components) {
+        NbtMap nbt = BlockEncoder.components(components, "test:block", context);
+        assertTrue(report.warnings().isEmpty(), report.warnings().toString());
+        return nbt;
     }
 
     @Test
-    void typedComponentsAreEncodedAsOnTheWire() {
-        NbtMap nbt = components(ItemComponents.builder().with(Damage.of((short) 300)).build());
-        // A short, as vanilla sends it; the old byte encoding overflowed above 127
+    void attackDamageIsAShortAndMirrorsTheItemProperty() {
+        NbtMap nbt = components(ItemComponents.builder().attackDamage(300).build());
+        // A short, as vanilla sends it; Geyser's byte overflowed above 127
         assertEquals((short) 300, nbt.getCompound("minecraft:damage").get("value"));
-    }
-
-    @Test
-    void attackDamageMirrorsTheItemProperty() {
-        ItemComponents components = ItemComponents.builder().attackDamage(7).build();
-        NbtMap nbt = components(components);
-        assertEquals((short) 7, nbt.getCompound("minecraft:damage").get("value"));
-        assertEquals(7, nbt.getCompound("item_properties").get("damage"));
-        assertEquals(Damage.of((short) 7), components.get(Damage.TYPE));
-        assertEquals(7, components.itemProperties().damage());
+        assertEquals(300, nbt.getCompound("item_properties").get("damage"));
     }
 
     @Test
@@ -54,130 +82,167 @@ class ComponentBuilderTest {
 
     @Test
     void tagsAreSentInBothForms() {
-        ItemComponents components = ItemComponents.builder().tag("geyser:is_custom").with(Tags.of(List.of("minecraft:is_tool"))).build();
+        ItemComponents components = ItemComponents.builder().tag("geyser:is_custom").tags("minecraft:is_tool").build();
         NbtMap nbt = components(components);
         assertEquals(List.of("geyser:is_custom", "minecraft:is_tool"), nbt.getList("item_tags", NbtType.STRING));
         assertEquals(List.of("geyser:is_custom", "minecraft:is_tool"), nbt.getCompound("minecraft:tags").getList("tags", NbtType.STRING));
-        // Reading merges both forms back into one set
-        assertEquals(components.tags(), ItemComponents.fromComponentData(nbt).tags());
+        // Decoding merges both forms back into one set
+        assertEquals(components.tags(), ItemEncoder.decode(nbt).tags());
     }
 
     @Test
-    void legacyEncodingsAreReadLeniently() {
-        // Geyser and old Paletter versions wrote damage as a byte; reading converts, writing uses the wire type
-        Damage damage = Damage.TYPE.read(NbtMap.builder().putByte("value", (byte) 5).build());
-        assertEquals((short) 5, damage.toNbt().get("value"));
+    void durabilityDamageChanceIsInPercent() {
+        NbtMap always = components(ItemComponents.builder().durability(Durability.of(250)).build());
+        // BDS default for custom items: always damaged. Geyser's 1/1 meant a 1 % chance
+        assertEquals(NbtMap.builder()
+            .putCompound("damage_chance", NbtMap.builder().putInt("max", 100).putInt("min", 100).build())
+            .putInt("max_durability", 250)
+            .build(), always.getCompound("minecraft:durability"));
+        NbtMap ranged = components(ItemComponents.builder().durability(Durability.of(10).damageChance(20, 60)).build());
+        assertEquals(NbtMap.builder().putInt("max", 60).putInt("min", 20).build(),
+            ranged.getCompound("minecraft:durability").getCompound("damage_chance"));
+        assertThrows(IllegalArgumentException.class, () -> Durability.of(10).damageChance(60, 20));
+    }
+
+    @Test
+    void kineticWeaponIsNestedLikeVanilla() {
+        KineticWeapon.Conditions conditions = KineticWeapon.Conditions.of(100, 10f, 0f);
+        NbtMap nbt = components(ItemComponents.builder().kineticWeapon(KineticWeapon.builder()
+            .delayTicks(10).reach(Reach.of(0, 3)).creativeReach(Reach.of(0, 5)).hitboxMargin(0.3f)
+            .dismountConditions(conditions)
+            .build()).build()).getCompound("minecraft:kinetic_weapon");
+        assertEquals(Set.of("minecraft:kinetic_weapon"), nbt.keySet());
+        NbtMap weapon = nbt.getCompound("minecraft:kinetic_weapon");
+        assertEquals((short) 10, weapon.get("delay"));
+        assertEquals(NbtMap.builder().putFloat("max", 3f).putFloat("min", 0f).build(), weapon.getCompound("reach"));
+        assertEquals(NbtMap.builder().putShort("max_duration", (short) 100).putFloat("min_relative_speed", 0f).putFloat("min_speed", 10f).build(),
+            weapon.getCompound("dismount_conditions"));
+        // Absent conditions are omitted
+        assertFalse(weapon.containsKey("damage_conditions"));
+        assertFalse(weapon.containsKey("knockback_conditions"));
+    }
+
+    @Test
+    void dyeableColourIsAListOfInts() {
+        NbtMap nbt = components(ItemComponents.builder().dyeable(Color.of(0xA06540)).build());
+        Object color = nbt.getCompound("minecraft:dyeable").get("default_color");
+        assertEquals(List.of(160, 101, 64), color);
+        assertFalse(color instanceof int[]);
     }
 
     @Test
     void conveniencesMatchTheWire() {
         NbtMap nbt = components(ItemComponents.builder()
             .maxStackSize(16)
-            .durability(250)
-            .throwable(true)
-            .wearable("armor.chest", 5)
+            .throwable(Throwing.of(true))
+            .wearable(Wearable.of(EquipmentSlot.CHEST, 5))
             .blockPlacer("geyser:block", true)
-            .cooldown("geyser:cooldown", 1.5f)
+            .cooldown(Cooldown.of("geyser:cooldown", 1.5f))
             .glint(true)
+            .icon("custom_icon")
             .build());
         assertEquals(NbtMap.builder().putByte("value", (byte) 16).build(), nbt.getCompound("minecraft:max_stack_size"));
-        assertEquals(NbtMap.builder()
-            .putCompound("damage_chance", NbtMap.builder().putInt("max", 100).putInt("min", 100).build())
-            .putInt("max_durability", 250)
-            .build(), nbt.getCompound("minecraft:durability"));
         assertEquals(NbtMap.builder().putBoolean("do_swing_animation", true).build(), nbt.getCompound("minecraft:throwable"));
+        // A throwable needs a projectile for the swing animation
         assertEquals(NbtMap.builder().putString("projectile_entity", "minecraft:snowball").build(), nbt.getCompound("minecraft:projectile"));
         assertEquals(NbtMap.builder().putString("slot", "slot.armor.chest").putInt("protection", 5).build(), nbt.getCompound("minecraft:wearable"));
         assertEquals(NbtMap.builder().putString("block", "geyser:block").putBoolean("canUseBlockAsIcon", true)
-            .putList("use_on", NbtType.STRING).build(), nbt.getCompound("minecraft:block_placer"));
+            .putList("use_on", NbtType.COMPOUND).build(), nbt.getCompound("minecraft:block_placer"));
         assertEquals(NbtMap.builder().putString("category", "geyser:cooldown").putFloat("duration", 1.5f).build(), nbt.getCompound("minecraft:cooldown"));
         assertEquals(NbtMap.builder().putBoolean("value", true).build(), nbt.getCompound("minecraft:glint"));
         NbtMap properties = nbt.getCompound("item_properties");
         assertEquals(16, properties.get("max_stack_size"));
         assertEquals((byte) 1, properties.get("foil"));
-    }
-
-    @Test
-    void itemPropertiesMergeOnlySetValues() {
-        ItemComponents components = ItemComponents.builder()
-            .icon("custom_icon")
-            .properties(ItemProperties.builder().handEquipped(true).miningSpeed(1f).build())
-            .build();
-        NbtMap properties = components(components).getCompound("item_properties");
-        assertEquals((byte) 1, properties.get("hand_equipped"));
-        assertEquals(1f, properties.get("mining_speed"));
-        assertEquals(Map.of("default", "custom_icon"), components.itemProperties().icon().textures());
+        assertEquals(NbtMap.builder().putCompound("textures", NbtMap.builder().putString("default", "custom_icon").build()).build(),
+            properties.get("minecraft:icon"));
         assertFalse(properties.containsKey("allow_off_hand"));
+
+        NbtMap attack = components(ItemComponents.builder().cooldown(Cooldown.of("x", 1).type(CooldownType.ATTACK)).build());
+        assertEquals("attack", attack.getCompound("minecraft:cooldown").getString("type"));
     }
 
     @Test
-    void rawComponentsStayAvailable() {
-        NbtMap raw = NbtMap.builder().putString("value", "rare").build();
-        ItemComponents components = ItemComponents.builder().component("minecraft:rarity", raw).build();
-        assertEquals(raw, components(components).getCompound("minecraft:rarity"));
-    }
-
-    @Test
-    void kineticWeaponIsNestedLikeVanilla() {
-        KineticWeapon.Range reach = new KineticWeapon.Range(3f, 0f);
-        KineticWeapon.Conditions conditions = new KineticWeapon.Conditions((short) 100, 0f, 10f);
-        KineticWeapon weapon = new KineticWeapon(KineticWeapon.Weapon.builder()
-            .reach(reach).creativeReach(reach).hitboxMargin(0.25f).delay((short) 10).damageMultiplier(1f)
-            .damageConditions(conditions).dismountConditions(conditions).knockbackConditions(conditions)
+    void consumablesWriteComponentAndItemProperty() {
+        NbtMap nbt = components(ItemComponents.builder()
+            .food(Food.of(4, 0.3f))
+            .useAnimation(UseAnimation.EAT)
+            .useModifiers(UseModifiers.of(1.6f).movementModifier(0.2f))
             .build());
-        NbtMap nbt = weapon.toNbt();
-        assertEquals(Set.of("minecraft:kinetic_weapon"), nbt.keySet());
-        assertEquals((short) 10, nbt.getCompound("minecraft:kinetic_weapon").get("delay"));
+        assertEquals(NbtMap.builder().putBoolean("can_always_eat", false).putInt("nutrition", 4).putFloat("saturation_modifier", 0.3f)
+            .putCompound("using_converts_to", NbtMap.EMPTY).build(), nbt.getCompound("minecraft:food"));
+        assertEquals("eat", nbt.getCompound("minecraft:use_animation").getString("value"));
+        assertEquals(1, nbt.getCompound("item_properties").get("use_animation"));
+        assertEquals(32, nbt.getCompound("item_properties").get("use_duration"));
+        assertEquals(1.6f, nbt.getCompound("minecraft:use_modifiers").get("use_duration"));
     }
 
     @Test
-    void repairAmountIsAMolangString() {
-        Repairable repairable = Repairable.of(List.of(new Repairable.RepairItem(
-            List.of(new Repairable.ItemDescriptor("minecraft:diamond", null)), "query.max_durability * 0.25")));
-        NbtMap item = repairable.toNbt().getList("repair_items", NbtType.COMPOUND).get(0);
-        assertEquals("query.max_durability * 0.25", item.getString("repair_amount"));
-        assertEquals(NbtMap.builder().putString("name", "minecraft:diamond").build(), item.getList("items", NbtType.COMPOUND).get(0));
+    void repairAmountIsAFloatOrAMolangString() {
+        NbtMap nbt = components(ItemComponents.builder().repairable(Repairable.of(
+            Repairable.Entry.items("minecraft:diamond").amount("query.max_durability * 0.25"),
+            Repairable.Entry.tags("1").amount(1f))).build());
+        List<NbtMap> items = nbt.getCompound("minecraft:repairable").getList("repair_items", NbtType.COMPOUND);
+        assertEquals("query.max_durability * 0.25", items.get(0).getString("repair_amount"));
+        assertEquals(NbtMap.builder().putString("name", "minecraft:diamond").build(), items.get(0).getList("items", NbtType.COMPOUND).get(0));
+        assertEquals(1f, items.get(1).get("repair_amount"));
+        assertEquals(NbtMap.builder().putString("tags", "1").build(), items.get(1).getList("items", NbtType.COMPOUND).get(0));
+    }
+
+    @Test
+    void rawComponentsAreWrittenAsGivenAndSemanticValuesWin() {
+        NbtMap rarity = NbtMap.builder().putString("value", "rare").build();
+        NbtMap nbt = components(ItemComponents.builder()
+            .raw("minecraft:rarity", rarity)
+            .raw("minecraft:max_stack_size", NbtMap.builder().putByte("value", (byte) 2).build())
+            .rawProperty("max_stack_size", 2)
+            .maxStackSize(8)
+            .build());
+        assertEquals(rarity, nbt.getCompound("minecraft:rarity"));
+        assertEquals((byte) 8, nbt.getCompound("minecraft:max_stack_size").get("value"));
+        assertEquals(8, nbt.getCompound("item_properties").get("max_stack_size"));
     }
 
     @Test
     void materialsPackTheirFlagsLikeVanilla() {
-        BlockComponents components = BlockComponents.builder()
-            .materials(Map.of("*", BlockComponents.Material.of("custom").renderMethod("alpha_test")))
-            .build();
-        NbtMap material = components.toNbt().getCompound("minecraft:material_instances").getCompound("materials").getCompound("*");
+        NbtMap material = blockComponents(BlockComponents.builder()
+            .materials(Map.of(Material.ALL_FACES, Material.of("custom").renderMethod(RenderMethod.ALPHA_TEST)))
+            .build()).getCompound("minecraft:material_instances").getCompound("materials").getCompound("*");
         assertFalse(material.containsKey("isotropic"));
         // Bit 0 face dimming, bit 2 always set: the JSON defaults, as BDS sends them
         assertEquals((byte) 5, material.get("packed_bools"));
         assertEquals(1f, material.get("ambient_occlusion"));
         assertEquals("alpha_test", material.getString("render_method"));
         assertFalse(material.containsKey("tint_method"));
-        MaterialInstances instances = components.get(MaterialInstances.TYPE);
-        assertEquals("custom", instances.materials().get("*").texture());
     }
 
     @Test
     void isotropicWithoutDimmingPacksLikeTheCapture() {
         // The capture's isotropic material without face dimming sends packed_bools 6
-        BlockComponents.Material material = new BlockComponents.Material("custom", "opaque", "none", 1f, false, true);
-        assertEquals((byte) 6, material.toComponent().packedBools());
+        NbtMap material = blockComponents(BlockComponents.builder()
+            .materials(Map.of("*", Material.of("custom").renderMethod(RenderMethod.OPAQUE).tintMethod(TintMethod.NONE)
+                .faceDimming(false).isotropic(true)))
+            .build()).getCompound("minecraft:material_instances").getCompound("materials").getCompound("*");
+        assertEquals((byte) 6, material.get("packed_bools"));
+        assertEquals("none", material.getString("tint_method"));
     }
 
     @Test
     void faceAliasesGoToMappings() {
-        NbtMap nbt = BlockComponents.builder()
-            .materials(Map.of("*", BlockComponents.Material.of("custom")), Map.of("up", "north"))
-            .build().toNbt().getCompound("minecraft:material_instances");
+        NbtMap nbt = blockComponents(BlockComponents.builder()
+            .materials(Map.of("*", Material.of("custom")), Map.of("up", "north"))
+            .build()).getCompound("minecraft:material_instances");
         assertEquals(NbtMap.builder().putCompound("up", NbtMap.builder().putString("value", "north").build()).build(),
             nbt.getCompound("mappings"));
     }
 
     @Test
     void placementFiltersUseTheWireKeys() {
-        NbtMap condition = BlockComponents.builder()
-            .placementFilter(new BlockComponents.PlacementCondition(Set.of(BlockComponents.Face.UP),
-                List.of("minecraft:stone"), List.of("q.any_tag('stone')")))
-            .build().toNbt().getCompound("minecraft:placement_filter").getList("conditions", NbtType.COMPOUND).get(0);
+        NbtMap condition = blockComponents(BlockComponents.builder()
+            .placementFilter(PlacementFilter.allowOn(Face.UP).blocks("minecraft:stone").tags("q.any_tag('stone')"))
+            .build()).getCompound("minecraft:placement_filter").getList("conditions", NbtType.COMPOUND).get(0);
         assertEquals((byte) 2, condition.get("allowed_faces"));
+        // block_filter (singular) with tags_version 13; Geyser's block_filters / 6 is not on the wire
+        assertFalse(condition.containsKey("block_filters"));
         List<NbtMap> filters = condition.getList("block_filter", NbtType.COMPOUND);
         assertEquals(NbtMap.builder().putString("name", "minecraft:stone").build(), filters.get(0));
         assertEquals(NbtMap.builder().putString("tags", "q.any_tag('stone')").putInt("tags_version", 13).build(), filters.get(1));
@@ -185,37 +250,50 @@ class ComponentBuilderTest {
 
     @Test
     void customBlockPropertyDataHasTheTopLevelShapeOfBds() {
-        NbtMap data = CustomBlock.builder("test:block")
-            .components(BlockComponents.builder().lightEmission(3).build())
+        NbtMap data = BlockEncoder.propertyData(CustomBlock.builder("test:block")
+            .property(BlockProperty.bool("test:on"))
+            .components(BlockComponents.builder().lightEmission(3).tags("test:from_components").build())
             .tag("test:tag")
-            .material("dirt")
-            .build()
-            .propertyData(10000);
-        assertEquals(List.of("test:tag"), data.getList("blockTags", NbtType.STRING));
+            .build(), 10000, context);
+        assertTrue(report.warnings().isEmpty(), report.warnings().toString());
+        // Tags as top level blockTags, not tag:<name> components
+        assertEquals(List.of("test:tag", "test:from_components"), data.getList("blockTags", NbtType.STRING));
+        assertFalse(data.getCompound("components").keySet().stream().anyMatch(key -> key.startsWith("tag:")));
         assertEquals(13, data.getInt("molangVersion"));
         assertEquals(NbtMap.builder().putInt("block_id", 10000).putString("material", "dirt").build(),
             data.getCompound("vanilla_block_data"));
         assertEquals(NbtMap.builder().putString("category", "none").putString("group", "")
             .putBoolean("is_hidden_in_commands", false).build(), data.getCompound("menu_category"));
-        assertTrue(data.containsKey("components") && data.containsKey("permutations") && data.containsKey("properties"));
-        BlockDefinition definition = BlockDefinition.fromNbt(data);
-        assertEquals(10000, definition.vanillaBlockData().blockId());
-        // Without tags or material, nothing is sent for them, as Geyser does today
-        NbtMap plain = CustomBlock.builder("test:plain").build().propertyData(10001);
+        assertEquals(List.of(NbtMap.builder().putString("name", "test:on").putList("enum", NbtType.BYTE, (byte) 0, (byte) 1).build()),
+            data.getList("properties", NbtType.COMPOUND));
+        assertEquals(10000, BlockDefinition.fromNbt(data).vanillaBlockData().blockId());
+
+        NbtMap plain = BlockEncoder.propertyData(CustomBlock.builder("test:plain").build(), 10001, context);
         assertFalse(plain.containsKey("blockTags"));
-        assertFalse(plain.getCompound("vanilla_block_data").containsKey("material"));
+    }
+
+    @Test
+    void permutationTagsAreReportedAndLeftOut() {
+        NbtMap data = BlockEncoder.propertyData(CustomBlock.builder("test:block")
+            .property(BlockProperty.bool("test:on"))
+            .permutation("q.block_state('test:on') == 1", BlockComponents.builder().tags("test:lit").lightEmission(15).build())
+            .build(), 10000, context);
+        assertEquals(1, report.warnings().size(), report.entries().toString());
+        assertTrue(report.warnings().getFirst().message().contains("test:lit"));
+        assertFalse(data.containsKey("blockTags"));
+        assertEquals(Set.of("minecraft:light_emission"),
+            data.getList("permutations", NbtType.COMPOUND).getFirst().getCompound("components").keySet());
     }
 
     @Test
     void blockConveniencesKeepGeyserParity() {
-        NbtMap nbt = BlockComponents.builder()
+        NbtMap nbt = blockComponents(BlockComponents.builder()
             .lightEmission(15)
-            .selectionBox(BlockComponents.Box.FULL)
-            .collisionBoxes(BlockComponents.Box.EMPTY)
+            .selectionBox(Box.FULL)
+            .collisionBoxes(Box.EMPTY)
             .rotation(0, 90, 0)
-            .tag("geyser:custom")
-            .build()
-            .toNbt();
+            .geometry(Geometry.of("geometry.custom").boneVisibility("lid", "q.block_state('x') == 1"))
+            .build());
         assertEquals(NbtMap.builder().putByte("emission", (byte) 15).build(), nbt.getCompound("minecraft:light_emission"));
         assertEquals(NbtMap.builder().putBoolean("enabled", true)
             .putList("origin", NbtType.FLOAT, -8f, 0f, -8f).putList("size", NbtType.FLOAT, 16f, 16f, 16f).build(),
@@ -226,7 +304,34 @@ class ComponentBuilderTest {
         assertEquals(1, transformation.get("RY"));
         assertFalse(transformation.containsKey("RXP"));
         assertEquals(9, transformation.size());
-        assertTrue(nbt.containsKey("tag:geyser:custom"));
-        assertNull(BlockComponents.EMPTY.get(Transformation.TYPE));
+        assertEquals(NbtMap.builder().putString("identifier", "geometry.custom")
+            .putCompound("bone_visibility", NbtMap.builder().putString("lid", "q.block_state('x') == 1").build()).build(),
+            nbt.getCompound("minecraft:geometry"));
+
+        // Like BDS for JSON false: disabled, but the full cube is still sent
+        assertEquals(NbtMap.builder().putBoolean("enabled", false)
+            .putList("origin", NbtType.FLOAT, -8f, 0f, -8f).putList("size", NbtType.FLOAT, 16f, 16f, 16f).build(),
+            blockComponents(BlockComponents.builder().selectionBox(Box.EMPTY).build()).getCompound("minecraft:selection_box"));
+
+        NbtMap pivoted = blockComponents(BlockComponents.builder()
+            .transformation(Transformation.builder().rotation(0, 180, 0).rotationPivot(0, 0.5f, 0).build())
+            .build()).getCompound("minecraft:transformation");
+        assertEquals(2, pivoted.get("RY"));
+        assertEquals(0.5f, pivoted.get("RYP"));
+    }
+
+    @Test
+    void legacyEncodingsAreReadLeniently() {
+        // Geyser and old Paletter versions wrote damage as a byte; reading converts, writing uses the wire type
+        Damage damage = Damage.TYPE.read(NbtMap.builder().putByte("value", (byte) 5).build());
+        assertEquals((short) 5, damage.toNbt().get("value"));
+    }
+
+    @Test
+    void semanticValuesAreValidated() {
+        assertThrows(IllegalArgumentException.class, () -> ItemComponents.builder().maxStackSize(99));
+        assertThrows(IllegalArgumentException.class, () -> ItemComponents.builder().compostable(101));
+        assertThrows(IllegalArgumentException.class, () -> BlockComponents.builder().lightEmission(16));
+        assertThrows(IllegalArgumentException.class, () -> Color.rgb(256, 0, 0));
     }
 }

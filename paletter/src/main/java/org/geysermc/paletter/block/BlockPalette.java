@@ -10,8 +10,11 @@ import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
 import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import org.geysermc.paletter.PaletteException;
 import org.geysermc.paletter.PaletteReport;
+import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.VanillaData;
+import org.geysermc.paletter.internal.encode.BlockEncoder;
+import org.geysermc.paletter.internal.encode.EncodeContext;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -34,6 +37,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * Runtime ids depend on the palette's {@link BlockNetworkIds} mode: palette positions, or state hashes. Each state also
  * has a dense position, {@link #indexOf}, in both modes; in hashed palettes vanilla definitions are shared between versions.
+ *
+ * @since 2.0.0
  */
 public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     /**
@@ -71,14 +76,16 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
      * @param canonical canonical ids of the newest version's states
      * @param interner shares blocks and tables between hashed palettes; one per Paletter
      */
+    @Internal
     public static @NonNull BlockPalette build(@NonNull VanillaData data, @NonNull BlockNetworkIds mode, @NonNull CanonicalBlocks canonical,
                                               @NonNull BlockInterner interner) {
-        return new BlockPalette(new Table(data, List.of(), mode, interner), canonical, data.fallbacks().blocks(), interner);
+        return new BlockPalette(new Table(data, List.of(), List.of(), mode, interner), canonical, data.fallbacks().blocks(), interner);
     }
 
     /**
      * @return a palette sharing all states with this one, with additional fallbacks, or this palette if there are none
      */
+    @Internal
     public @NonNull BlockPalette withFallbacks(@NonNull Map<String, BlockFallback> extraFallbacks) {
         if (extraFallbacks.isEmpty()) {
             return this;
@@ -91,15 +98,26 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     /**
      * @param key what adds the blocks, typically the layer; canonical ids of custom blocks are cached per key, so
      *            every version compiling the same layer stack shares them
+     * @param report receives what the version cannot express of the blocks
+     * @param source the layer id, for the report
      * @return a palette with these custom blocks added, keeping this palette's fallbacks, or this palette if there are none
      */
-    public @NonNull BlockPalette withCustomBlocks(@NonNull VanillaData data, @NonNull Object key, @NonNull List<CustomBlock> additional) {
+    @Internal
+    public @NonNull BlockPalette withCustomBlocks(@NonNull VanillaData data, @NonNull Object key, @NonNull List<CustomBlock> additional,
+                                                  @NonNull PaletteReport report, @NonNull String source) {
         if (additional.isEmpty()) {
             return this;
         }
         List<CustomBlock> all = new ArrayList<>(table.customBlocks);
         all.addAll(additional);
-        Table extended = new Table(data, all, table.mode, interner);
+        // Block ids are in load order, so the blocks already here keep their encoded data
+        List<BlockPropertyData> encoded = new ArrayList<>(table.blockProperties.subList(data.dataDrivenBlocks().size(), table.blockProperties.size()));
+        EncodeContext context = EncodeContext.of(data.version(), report, source);
+        int blockId = CUSTOM_BLOCK_ID_START + table.customBlocks.size();
+        for (CustomBlock block : additional) {
+            encoded.add(new BlockPropertyData(block.identifier(), BlockEncoder.propertyData(block, blockId++, context)));
+        }
+        Table extended = new Table(data, all, encoded, table.mode, interner);
         return new BlockPalette(extended, canonical.extend(key, additional), fallbacks, interner);
     }
 
@@ -459,7 +477,8 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
         private final PaletteBlock air;
         private volatile Map<String, Schema> schemas;
 
-        private Table(VanillaData data, List<CustomBlock> customBlocks, BlockNetworkIds mode, BlockInterner interner) {
+        private Table(VanillaData data, List<CustomBlock> customBlocks, List<BlockPropertyData> customProperties, BlockNetworkIds mode,
+                      BlockInterner interner) {
             this.version = data.version();
             this.mode = mode;
             this.customBlocks = List.copyOf(customBlocks);
@@ -472,15 +491,14 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
             for (NbtMap state : data.blockStates()) {
                 vanillaNames.add(BlockStates.name(state));
             }
-            int blockId = CUSTOM_BLOCK_ID_START;
             for (CustomBlock block : this.customBlocks) {
                 if (vanillaNames.contains(block.identifier()) || customDefaults.containsKey(block.identifier())) {
                     throw new PaletteException("Custom block " + block.identifier() + " is registered twice, or collides with a vanilla block");
                 }
                 customStates.addAll(block.states());
                 customDefaults.put(block.identifier(), block.defaultState());
-                properties.add(new BlockPropertyData(block.identifier(), block.propertyData(blockId++)));
             }
+            properties.addAll(customProperties);
 
             if (!customStates.isEmpty()) {
                 states.addAll(customStates);

@@ -2,11 +2,8 @@ package org.geysermc.paletter.block;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
-import org.cloudburstmc.nbt.NbtType;
-import org.geysermc.paletter.component.block.BlockDefinition;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.ItemComponents;
@@ -29,9 +26,9 @@ import java.util.Objects;
  * @param item how the block item is registered
  * @param creative where the block item goes in the creative inventory, or null to leave it out
  * @param defaultStates state values of the default state; properties not listed use their first value
- * @param tags block tags, sent as the top level {@code blockTags} of the block property data (JSON {@code minecraft:tags})
- * @param molangVersion the Molang version of the block's expressions; BDS 1.26 sends 13
- * @param material the {@code vanilla_block_data.material}, or null to omit it (BDS sends {@code dirt} for custom blocks)
+ * @param tags block tags, queryable with Molang (add-on JSON {@code minecraft:tags}); merged with the tags of the base
+ *             components
+ * @since 2.0.0
  */
 public record CustomBlock(
     @NonNull String identifier,
@@ -42,15 +39,8 @@ public record CustomBlock(
     @NonNull BlockItem item,
     @Nullable CreativePlacement creative,
     @NonNull Map<String, Object> defaultStates,
-    @NonNull List<String> tags,
-    int molangVersion,
-    @Nullable String material
+    @NonNull List<String> tags
 ) {
-    /**
-     * The Molang version BDS 1.26.63 sends for custom blocks (and vanilla data driven blocks since 26.50).
-     */
-    public static final int MOLANG_VERSION = 13;
-
     public CustomBlock {
         properties = List.copyOf(properties);
         permutations = List.copyOf(permutations);
@@ -144,39 +134,6 @@ public record CustomBlock(
         return BlockStates.of(identifier, builder.build());
     }
 
-    /**
-     * @param blockId the numeric block id, unique among custom blocks of a palette
-     * @return the block property data NBT, as sent in the start game packet
-     */
-    public @NonNull NbtMap propertyData(int blockId) {
-        List<NbtMap> permutationsNbt = new ArrayList<>(permutations.size());
-        for (Permutation permutation : permutations) {
-            permutationsNbt.add(NbtMap.builder()
-                .putCompound("components", permutation.components().toNbt())
-                .putString("condition", permutation.condition())
-                .build());
-        }
-        List<NbtMap> propertiesNbt = new ArrayList<>(properties.size());
-        for (BlockProperty<?> property : properties) {
-            propertiesNbt.add(property.toNbt());
-        }
-
-        // The client crashes without a menu category
-        Menu menu = this.menu;
-        BlockDefinition definition = new BlockDefinition(
-            tags.isEmpty() ? null : tags,
-            new BlockDefinition.MenuCategory(menu == null ? CreativeCategory.NONE_NAME : menu.category().bedrockName(),
-                menu == null ? "" : menu.group(), menu != null && menu.hiddenInCommands()),
-            molangVersion,
-            new NbtList<>(NbtType.COMPOUND, propertiesNbt),
-            null,
-            BlockDefinition.VanillaBlockData.builder().blockId(blockId).material(material).build());
-        NbtMapBuilder data = NbtMapBuilder.from(definition.toNbt());
-        data.putCompound("components", components.toNbt());
-        data.putList("permutations", NbtType.COMPOUND, permutationsNbt);
-        return data.build();
-    }
-
     public static final class Builder {
         private final String identifier;
         private final List<BlockProperty<?>> properties = new ArrayList<>();
@@ -187,8 +144,6 @@ public record CustomBlock(
         private @Nullable CreativePlacement creative;
         private final Map<String, Object> defaultStates = new LinkedHashMap<>();
         private final List<String> tags = new ArrayList<>();
-        private int molangVersion = MOLANG_VERSION;
-        private @Nullable String material;
 
         private Builder(String identifier) {
             this.identifier = Objects.requireNonNull(identifier);
@@ -239,30 +194,19 @@ public record CustomBlock(
         }
 
         /**
-         * Adds a block tag, queryable with Molang. Sent like vanilla 1.26 does, in the top level {@code blockTags};
-         * {@link BlockComponents.Builder#tag} adds the legacy {@code tag:<name>} component instead.
+         * Adds block tags, queryable with Molang. Same as {@link BlockComponents.Builder#tags} on the base components.
          */
-        public @NonNull Builder tag(@NonNull String tag) {
-            if (!tags.contains(tag)) {
-                tags.add(tag);
+        public @NonNull Builder tags(@NonNull String... tags) {
+            for (String tag : tags) {
+                if (!this.tags.contains(tag)) {
+                    this.tags.add(Objects.requireNonNull(tag, "tag"));
+                }
             }
             return this;
         }
 
-        /**
-         * @param molangVersion the Molang version of the block's expressions, {@link #MOLANG_VERSION} by default
-         */
-        public @NonNull Builder molangVersion(int molangVersion) {
-            this.molangVersion = molangVersion;
-            return this;
-        }
-
-        /**
-         * @param material the {@code vanilla_block_data.material}, or null (the default) to omit it
-         */
-        public @NonNull Builder material(@Nullable String material) {
-            this.material = material;
-            return this;
+        public @NonNull Builder tag(@NonNull String tag) {
+            return tags(tag);
         }
 
         public @NonNull CustomBlock build() {
@@ -270,8 +214,7 @@ public record CustomBlock(
             if (menu == null && creative != null) {
                 menu = new Menu(creative.category(), creative.group() == null ? "" : creative.group(), false);
             }
-            return new CustomBlock(identifier, properties, components, permutations, menu, item, creative, defaultStates,
-                tags, molangVersion, material);
+            return new CustomBlock(identifier, properties, components, permutations, menu, item, creative, defaultStates, tags);
         }
     }
 }

@@ -3,6 +3,7 @@ package org.geysermc.paletter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
+import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.block.BlockInterner;
 import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.CanonicalBlocks;
@@ -37,6 +38,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * Canonical ids ({@link #canonicalBlock(NbtMap)}, {@link #canonicalItem(ItemVariant)}) are defined by the newest
  * version, and valid in every palette of this instance.
+ *
+ * @since 2.0.0
  */
 public final class Paletter {
     private final PaletteDataSource source;
@@ -189,6 +192,7 @@ public final class Paletter {
     /**
      * @return what hashed palettes of this instance share between versions
      */
+    @Internal
     public @NonNull BlockInterner blockInterner() {
         return blockInterner;
     }

@@ -5,19 +5,21 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.nbt.NbtUtils;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
-import org.geysermc.paletter.component.BlockComponent;
-import org.geysermc.paletter.component.ComponentType;
-import org.geysermc.paletter.component.Confidence;
-import org.geysermc.paletter.component.ItemComponent;
-import org.geysermc.paletter.component.block.BlockComponentTypes;
-import org.geysermc.paletter.component.block.BlockDefinition;
-import org.geysermc.paletter.component.item.ItemComponentTypes;
-import org.geysermc.paletter.component.item.ItemProperties;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataSource;
 import org.geysermc.paletter.data.VanillaData;
 import org.geysermc.paletter.data.VanillaItem;
-import org.geysermc.paletter.item.ItemComponents;
+import org.geysermc.paletter.internal.encode.EncodeContext;
+import org.geysermc.paletter.internal.encode.ItemEncoder;
+import org.geysermc.paletter.internal.wire.BedrockComponent;
+import org.geysermc.paletter.internal.wire.BlockComponent;
+import org.geysermc.paletter.internal.wire.ComponentType;
+import org.geysermc.paletter.internal.wire.Confidence;
+import org.geysermc.paletter.internal.wire.ItemComponent;
+import org.geysermc.paletter.internal.wire.block.BlockComponentTypes;
+import org.geysermc.paletter.internal.wire.block.BlockDefinition;
+import org.geysermc.paletter.internal.wire.item.ItemComponentTypes;
+import org.geysermc.paletter.internal.wire.item.ItemProperties;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -35,9 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The main correctness proof of the generated component types: every component of every data driven item and block in
- * the bundled vanilla data and in the BDS captures ({@code codegen/captures}) must survive {@code fromNbt -> toNbt}
- * unchanged, value types included.
+ * The main correctness proof of the generated (internal) wire types: every component of every data driven item and block
+ * in the bundled vanilla data and in the BDS captures ({@code codegen/captures}) must survive {@code fromNbt -> toNbt}
+ * unchanged, value types included, using the shape whose protocol window covers the version of the data.
  */
 class ComponentRoundTripTest {
     private static final Path CAPTURES = Path.of("../codegen/captures");
@@ -45,7 +47,7 @@ class ComponentRoundTripTest {
     /**
      * Wire NBT of one source: item component data ({@code {components}}) by item, block property data by block.
      */
-    record WireData(String label, Map<String, NbtMap> items, Map<String, NbtMap> blocks) {
+    record WireData(String label, DataVersion version, Map<String, NbtMap> items, Map<String, NbtMap> blocks) {
     }
 
     private static List<WireData> wireData() throws IOException {
@@ -63,7 +65,7 @@ class ComponentRoundTripTest {
             for (BlockPropertyData block : data.dataDrivenBlocks()) {
                 blocks.put(block.getName(), block.getProperties());
             }
-            all.add(new WireData("vanilla " + version.name(), items, blocks));
+            all.add(new WireData("vanilla " + version.name(), version, items, blocks));
         }
         List<Path> files;
         try (Stream<Path> walk = Files.walk(CAPTURES)) {
@@ -86,7 +88,8 @@ class ComponentRoundTripTest {
             }
         }
         assertTrue(items.size() > 80 && blocks.size() > 60, "captures missing: " + items.size() + " items, " + blocks.size() + " blocks");
-        all.add(new WireData("capture", items, blocks));
+        // The captures are of BDS 1.26.63.1, protocol 2225 (bundled 26.60)
+        all.add(new WireData("capture", new DataVersion("bds 1.26.63.1", 2225), items, blocks));
         return all;
     }
 
@@ -106,13 +109,13 @@ class ComponentRoundTripTest {
                     if (name.equals("item_properties")) {
                         roundTripped = ItemProperties.fromNbt(nbt).toNbt();
                     } else {
-                        ComponentType<? extends ItemComponent> type = ItemComponentTypes.byName(name);
+                        ComponentType<?> type = ItemComponentTypes.byName(name, data.version().protocolVersion());
                         if (type == null) {
                             failures.add(where + ": no generated type");
                             return;
                         }
                         assertEquals(Confidence.HIGH, type.confidence(), where);
-                        roundTripped = type.read(nbt).toNbt();
+                        roundTripped = ((BedrockComponent) type.read(nbt)).toNbt();
                     }
                     if (!nbt.equals(roundTripped)) {
                         failures.add(where + "\n  wire  " + nbt + "\n  typed " + roundTripped);
@@ -140,14 +143,14 @@ class ComponentRoundTripTest {
                 for (NbtMap components : componentSets) {
                     components.forEach((name, value) -> {
                         String where = data.label() + " " + identifier + " " + name;
-                        ComponentType<? extends BlockComponent> type = BlockComponentTypes.byName(name);
+                        ComponentType<?> type = BlockComponentTypes.byName(name, data.version().protocolVersion());
                         if (type == null) {
                             failures.add(where + ": no generated type");
                             return;
                         }
                         assertEquals(Confidence.HIGH, type.confidence(), where);
                         NbtMap nbt = (NbtMap) value;
-                        NbtMap roundTripped = type.read(nbt).toNbt();
+                        NbtMap roundTripped = ((BedrockComponent) type.read(nbt)).toNbt();
                         if (!nbt.equals(roundTripped)) {
                             failures.add(where + "\n  wire  " + nbt + "\n  typed " + roundTripped);
                         }
@@ -183,19 +186,23 @@ class ComponentRoundTripTest {
     }
 
     @Test
-    void wireComponentDataSurvivesItemComponents() throws IOException {
+    void wireComponentDataSurvivesDecodingAndEncoding() throws IOException {
         List<String> failures = new ArrayList<>();
         for (WireData data : wireData()) {
             data.items().forEach((identifier, componentData) -> {
                 Map<String, Object> expected = new TreeMap<>(componentData.getCompound("components"));
                 if (expected.get("item_tags") instanceof List<?> tags && tags.isEmpty()) {
-                    // ItemComponents does not send an empty tag list
+                    // The encoder does not send an empty tag list
                     expected.remove("item_tags");
                 }
                 NbtMap wire = NbtMap.fromMap(expected);
-                NbtMap rebuilt = ItemComponents.fromComponentData(wire)
-                    .toComponentData(identifier, 0, null)
+                PaletteReport report = new PaletteReport();
+                NbtMap rebuilt = ItemEncoder.componentData(ItemEncoder.decode(wire), identifier, 0, null,
+                        EncodeContext.of(data.version(), report, "test"))
                     .getCompound("components");
+                if (!report.warnings().isEmpty()) {
+                    failures.add(data.label() + " " + identifier + ": " + report.warnings());
+                }
                 if (!wire.equals(rebuilt)) {
                     failures.add(data.label() + " " + identifier + "\n  wire    " + wire + "\n  rebuilt " + rebuilt);
                 }
@@ -208,11 +215,13 @@ class ComponentRoundTripTest {
     void everyGeneratedTypeIsRegisteredUnderItsName() {
         for (ComponentType<? extends ItemComponent> type : ItemComponentTypes.ALL) {
             assertEquals(ComponentType.Kind.ITEM, type.kind());
-            assertNotNull(ItemComponentTypes.byName(type.name()));
+            assertTrue(ItemComponentTypes.windows(type.name()).contains(type), type.toString());
         }
         for (ComponentType<? extends BlockComponent> type : BlockComponentTypes.ALL) {
             assertEquals(ComponentType.Kind.BLOCK, type.kind());
-            assertNotNull(BlockComponentTypes.byName(type.name()));
+            assertTrue(BlockComponentTypes.windows(type.name()).contains(type), type.toString());
         }
+        assertNotNull(ItemComponentTypes.byName("item_properties", 2225));
+        assertNotNull(BlockComponentTypes.byName("block_definition", 2225));
     }
 }

@@ -18,6 +18,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @param category the category
  * @param group the group to add to, or null
  * @param after a stack to insert after, or null
+ * @since 2.0.0
  */
 public record CreativePlacement(@NonNull CreativeCategory category, @Nullable String group, @Nullable ItemMatcher after) {
 

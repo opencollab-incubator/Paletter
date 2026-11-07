@@ -8,6 +8,7 @@ import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.nbt.NbtUtils;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
+import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.block.BlockFallback;
 import org.geysermc.paletter.block.BlockStates;
 import org.geysermc.paletter.creative.CreativeCategory;
@@ -47,6 +48,7 @@ import java.util.TreeSet;
  * block_defaults: {name: states}   optional
  * </pre>
  */
+@Internal
 public final class PaletteDataCodec {
     public static final int FORMAT = 1;
 

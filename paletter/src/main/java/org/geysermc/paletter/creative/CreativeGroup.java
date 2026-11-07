@@ -11,6 +11,7 @@ import java.util.List;
  * @param name the group name, usually a translation key like {@code itemGroup.name.minecart}. Unique across the layout
  * @param icon the stack shown on the collapsed group, or null to use the first stack that exists in the client's version
  * @param stacks the stacks in the group, in order
+ * @since 2.0.0
  */
 public record CreativeGroup(@NonNull String name, @Nullable CreativeStack icon, @NonNull List<CreativeStack> stacks) implements CreativeNode {
 

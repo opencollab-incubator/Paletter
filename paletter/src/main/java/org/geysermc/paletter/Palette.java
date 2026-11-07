@@ -42,6 +42,8 @@ import java.util.WeakHashMap;
  * Translating content uses canonical ids, version independent dense ints (see {@link CanonicalBlocks} and
  * {@link CanonicalItems}): {@link #runtimeId(int)} and {@link #block(int)} for blocks, {@link #item(int)} and
  * {@link #match(ItemData)} for items. All are array or hash lookups that do not allocate.
+ *
+ * @since 2.0.0
  */
 public final class Palette {
     private final VanillaData data;

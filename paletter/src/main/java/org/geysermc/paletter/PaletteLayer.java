@@ -34,6 +34,8 @@ import java.util.function.Consumer;
  * it extends, so the per-session palette costs little and its definitions stay {@code ==} to the shared ones.
  * Adding custom blocks in a layer does re-number block states in {@link org.geysermc.paletter.block.BlockNetworkIds#SEQUENTIAL}
  * palettes, since the client sorts its palette by name hash. Canonical ids never change: custom content is appended.
+ *
+ * @since 2.0.0
  */
 public final class PaletteLayer {
     private final String id;

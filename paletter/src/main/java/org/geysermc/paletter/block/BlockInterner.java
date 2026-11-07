@@ -2,6 +2,7 @@ package org.geysermc.paletter.block;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;
+import org.geysermc.paletter.annotation.Internal;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,9 +13,12 @@ import java.util.Map;
  * {@link PaletteBlock}s (a state has the same hash in every version) and pages of canonical id tables with equal
  * content. One per {@link org.geysermc.paletter.Paletter}.
  * <p>
+ * Internal: shared between Paletter's packages, not API.
+ * <p>
  * Only vanilla content is interned, which is bounded by the bundled versions; custom blocks of (possibly short lived)
  * layers are not, so session palettes do not accumulate here.
  */
+@Internal
 public final class BlockInterner {
     private final Map<NbtMap, PaletteBlock> blocks = new HashMap<>();
     private final Map<IntPage, int[]> intPages = new HashMap<>();

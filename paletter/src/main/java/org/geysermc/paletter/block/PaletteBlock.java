@@ -11,6 +11,8 @@ import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
  * In {@link BlockNetworkIds#HASHED} palettes, vanilla states are additionally shared between all palettes of a
  * {@link org.geysermc.paletter.Paletter}, across versions: equal state, same instance. The position of a state in its
  * palette is {@link BlockPalette#indexOf}.
+ *
+ * @since 2.0.0
  */
 public final class PaletteBlock implements BlockDefinition {
     private final int runtimeId;

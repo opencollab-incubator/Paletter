@@ -17,6 +17,8 @@ import java.util.stream.Stream;
  * This is the model, not the wire format. The protocol has no notion of "loose" stacks; it only knows a flat list of
  * groups (unnamed ones for loose runs), each item pointing at a group index, and it crashes on empty groups.
  * {@link CreativeContent} handles that translation per client version, so none of it leaks into the layout.
+ *
+ * @since 2.0.0
  */
 public final class CreativeLayout {
     private static final CreativeLayout EMPTY = new CreativeLayout(new EnumMap<>(CreativeCategory.class));

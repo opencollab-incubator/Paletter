@@ -13,6 +13,8 @@ import java.util.function.Predicate;
  * <pre>{@code
  * ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.damage(2))
  * }</pre>
+ *
+ * @since 2.0.0
  */
 @FunctionalInterface
 public interface ItemMatcher {

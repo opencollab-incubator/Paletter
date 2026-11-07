@@ -12,6 +12,7 @@ import org.geysermc.paletter.block.PaletteBlock;
  * @param damage the damage value to send
  * @param block the block to send, or null
  * @param fallback true if the variant does not exist in this version and a replacement was used
+ * @since 2.0.0
  */
 public record ResolvedItem(@NonNull PaletteItem definition, int damage, @Nullable PaletteBlock block, boolean fallback) {
 

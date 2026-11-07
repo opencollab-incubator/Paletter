@@ -24,6 +24,8 @@ import java.util.List;
  *     <li>a group without an icon, or whose icon does not exist in this version, uses its first stack;</li>
  *     <li>network ids are assigned sequentially from 1, so {@link #entry(int)} is an array lookup.</li>
  * </ul>
+ *
+ * @since 2.0.0
  */
 public final class CreativeContent {
     private final List<CreativeItemGroup> groups;

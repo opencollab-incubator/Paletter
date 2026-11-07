@@ -10,6 +10,7 @@ import org.cloudburstmc.nbt.NbtMap;
  * @param requested the state that was asked for
  * @param block the resolved definition, or null if nothing suitable exists
  * @param kind how it was resolved
+ * @since 2.0.0
  */
 public record BlockResolution(@NonNull NbtMap requested, @Nullable PaletteBlock block, @NonNull Kind kind) {
 

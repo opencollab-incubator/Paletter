@@ -26,6 +26,8 @@ import java.util.function.UnaryOperator;
  * }</pre>
  * Placements that depend on an anchor return {@code false} when the anchor does not exist, so a fallback is a plain
  * {@code ||}: {@code insertion.after(anchor) || insertion.intoGroup(name)}.
+ *
+ * @since 2.0.0
  */
 public final class CreativeEditor {
     private final Map<CreativeCategory, List<Object>> categories = new EnumMap<>(CreativeCategory.class);

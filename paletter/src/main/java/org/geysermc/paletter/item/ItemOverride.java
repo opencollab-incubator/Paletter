@@ -5,6 +5,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
 import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.internal.encode.EncodeContext;
+import org.geysermc.paletter.internal.encode.ItemEncoder;
 
 /**
  * Changes to a vanilla (or earlier layer's) item definition, applied in a layer. Received in
@@ -13,8 +15,10 @@ import org.geysermc.paletter.block.BlockStates;
  * // Bedrock stacks cakes to 64, Java to 1
  * layer.overrideItem("minecraft:cake", item -> item.components(c -> c.maxStackSize(1)));
  * // Prevent client side firework boosting by making the item data driven
- * layer.overrideItem("minecraft:firework_rocket", item -> item.dataDriven(c -> c.maxStackSize(64).throwable(true)));
+ * layer.overrideItem("minecraft:firework_rocket", item -> item.dataDriven(c -> c.maxStackSize(64).throwable(Throwing.of(true))));
  * }</pre>
+ *
+ * @since 2.0.0
  */
 public final class ItemOverride {
     private final PaletteItem original;
@@ -36,14 +40,16 @@ public final class ItemOverride {
     }
 
     /**
-     * @return the current components: those set in this override so far, else the original's
+     * @return the current components: those set in this override so far, else the original's. The original's network
+     * data is kept as is (as {@link org.geysermc.paletter.annotation.Experimental raw} components), so semantic values set
+     * on top only replace what they encode to
      */
     public @NonNull ItemComponents currentComponents() {
         if (components != null) {
             return components;
         }
         NbtMap data = original.getComponentData();
-        return data == null ? ItemComponents.EMPTY : ItemComponents.fromComponentData(data);
+        return data == null ? ItemComponents.EMPTY : ItemEncoder.decode(data);
     }
 
     public @NonNull ItemOverride version(@NonNull ItemVersion version) {
@@ -111,9 +117,9 @@ public final class ItemOverride {
         return block;
     }
 
-    PaletteItem apply() {
+    PaletteItem apply(EncodeContext context) {
         NbtMap componentData = components == null ? original.getComponentData()
-            : components.toComponentData(original.getIdentifier(), original.getRuntimeId(), null);
+            : ItemEncoder.componentData(components, original.getIdentifier(), original.getRuntimeId(), null, context);
         return new PaletteItem(original.getIdentifier(), original.getRuntimeId(),
             version != null ? version : original.getVersion(),
             componentBased != null ? componentBased : original.isComponentBased(),

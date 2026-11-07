@@ -1,7 +1,9 @@
 # Component code generation
 
-The typed Bedrock components in `paletter/src/main/java/org/geysermc/paletter/component/{item,block}` are generated.
-Their network shape comes from **wire NBT only**: what the vanilla server actually sends. Add-on JSON, the wiki and the
+The wire shapes of Bedrock components in `paletter/src/main/java/org/geysermc/paletter/internal/wire/{item,block}` are
+generated. They are **internal**, not Paletter's API: consumers use the semantic `ItemComponents` / `BlockComponents`, and
+the hand written encoders in `org.geysermc.paletter.internal.encode` map those onto the generated shape of each palette's
+Bedrock version (see `API.md`). Their network shape comes from **wire NBT only**: what the vanilla server actually sends. Add-on JSON, the wiki and the
 bedrock-samples JSON schemas differ from the wire format in places (shorthands wrapped in `{value: ...}`, camelCase keys,
 `kinetic_weapon` nested in itself, `packed_bools` instead of separate flags, ...), so they never decide a field name, type
 or nesting.
@@ -21,14 +23,19 @@ or nesting.
    - **Wire NBT** (confidence `high`): the bundled vanilla data (`paletter/src/main/resources/paletter/*.nbt`: item
      component entries of data driven items, data driven block components and permutations) and every capture under
      `codegen/captures/` (recursive; plus `-Pcaptures=dir1,dir2`). Rerunning on new captures regenerates the types.
+     Every source has a protocol version: a bundled palette its `DataVersion`, a capture the `protocol` of the nearest
+     `capture.json` in its directory or a parent (unknown without one; observations of unknown protocol count for the
+     newest shape of a component with `protocolSplits`).
    - **Geyser samples** ([`geyser-samples.json`](geyser-samples.json), confidence `medium`): what Geyser's production
      encoders write. A sample shapes a component only when no wire NBT shows it; such types are annotated `@Unverified`.
      For components with wire NBT a sample is checked against the wire shape: a compatible sample may only make the
      fields it omits optional (Geyser proves the client accepts the omission); an incompatible one is reported
      (`DIFFERS`) and ignored. See [`DEVIATIONS.md`](DEVIATIONS.md).
 2. **Generate** (`Generator`): `spec/inferred.json` + [`overrides.json`](overrides.json) produce one immutable record per
-   component (typed fields, `fromNbt`, `toNbt`, `TYPE`, a builder for two or more fields, nested records for compounds),
-   `ItemProperties` for `item_properties`, and the `ItemComponentTypes` / `BlockComponentTypes` registries.
+   component shape in `org.geysermc.paletter.internal.wire.{item,block}` (typed fields, `fromNbt`, `toNbt`, `TYPE` with
+   the protocol window, a builder for two or more fields, nested records for compounds), `ItemProperties` for
+   `item_properties`, and the `ItemComponentTypes` / `BlockComponentTypes` registries (`byName(name, protocol)`,
+   `windows(name)`).
 3. **needs-capture** ([`needs-capture.txt`](needs-capture.txt), generated): components without (consistent) wire
    evidence. `none` = no evidence, raw escape hatch only; `not-sent` = server only, BDS accepts the JSON but sends
    nothing (no type); `rejected` = BDS 1.26.63 rejects the JSON (no type); `not-a-component` = sent elsewhere
@@ -41,6 +48,24 @@ Besides the components, two pseudo components are inferred and generated: `item:
 
 The javadoc of each type pairs the add-on JSON with the captured wire form (from `capture/WIRE-NOTES.md` and the add-on
 files in `capture/addon/`, as `doc` overrides); the shape itself still comes only from the wire.
+
+## Protocol windows: when Bedrock changes a shape
+
+Each spec entry is the shape of one component for a window of protocol versions. Normally there is one, unbounded. When
+a Bedrock version sends a component differently:
+
+1. Add the protocol version at which the shape changed to the component's overrides:
+   `"item:minecraft:damage": {"protocolSplits": [2250], ...}`.
+2. Add a capture of the new version (with its `capture.json`) and run `./gradlew :codegen:generateComponents`. Inference
+   splits the observations by source protocol: the newest window keeps the key (`item:minecraft:damage`, with
+   `"sinceProtocol": 2250`) and the class name (`Damage`); older windows get keys like `item:minecraft:damage@..2250`
+   (`"untilProtocol": 2250`) and classes like `DamageUntil2250` (`DamageFrom2200Until2250` for a middle window). Overrides
+   of the base key apply to every window.
+3. Map the semantic value to the new shape in `ItemEncoder` / `BlockEncoder` (`EncodeContext#put` picks the shape whose
+   window covers the palette). Until then, palettes of the new version leave the value out with a report warning
+   ("has a network shape Paletter does not encode yet"), and `VersionedEncodingTest` fails for the bundled versions.
+
+The public API does not change. `ProtocolWindowTest` covers the split with synthetic captures.
 
 ## Capture files
 
@@ -66,6 +91,7 @@ Never a source of shape. Keys are `<kind>:<name>` (`item:minecraft:damage`, `blo
 |---|---|
 | `class` | Java class name (default: PascalCase of the name without namespace) |
 | `since`, `experimental`, `deprecated` | min add-on format version and flags, from bedrock-samples schema metadata (javadoc and `ComponentType` only) |
+| `protocolSplits` | protocol versions at which the wire shape changed; observations are split into one shape per window (see above) |
 | `schema` | bedrock-samples schema path, for reference in javadoc |
 | `doc`, `notes` | javadoc text |
 | `fields.<path>` | per field: `java` (name), `class` (nested record name), `doc`, `type` (`byte`: keep a 0/1 byte numeric, `bool`, `map`: read a compound with arbitrary keys as `Map<String, V>`, `raw`: keep `NbtMap`/`NbtList`), `optional` (reason; only with production evidence) |
