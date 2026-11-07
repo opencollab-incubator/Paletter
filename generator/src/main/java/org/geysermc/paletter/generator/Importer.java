@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Imports a palette dump. Expected files in the source directory, as produced by dumping a BDS client session
@@ -50,8 +51,9 @@ import java.util.TreeMap;
  *     <li>{@code creative_items.json}: {@code {groups: [{name, category, icon}], items: [{id, groupId, damage?, block_state_b64?, nbt_b64?}]}};</li>
  *     <li>{@code data_driven_blocks.nbt} (optional): gzipped NBT, block identifier to block property data.</li>
  * </ul>
+ * Files may also carry the version like Geyser's resources ({@code block_palette.26_60.nbt}).
  * Item tags and default block states come from the BDS addon dump ({@code --bds-dump}), or item tags from a plain
- * {@code --item-tags} JSON file.
+ * {@code --item-tags} JSON file (which wins over the dump).
  */
 final class Importer {
     private final Path output;
@@ -66,17 +68,20 @@ final class Importer {
         DataVersion version = new DataVersion(name, protocol);
         System.out.println("Importing " + version + " from " + source);
 
-        List<NbtMap> blocks = readBlocks(source.resolve("block_palette.nbt"));
-        List<VanillaItem> items = readItems(source.resolve("runtime_item_states.json"), source.resolve("item_components.nbt"));
-        List<BlockPropertyData> dataDriven = readDataDrivenBlocks(source.resolve("data_driven_blocks.nbt"));
-        CreativeLayout creative = readCreative(source.resolve("creative_items.json"));
+        List<NbtMap> blocks = readBlocks(file(source, "block_palette.nbt", name));
+        List<VanillaItem> items = readItems(file(source, "runtime_item_states.json", name), file(source, "item_components.nbt", name));
+        List<BlockPropertyData> dataDriven = readDataDrivenBlocks(file(source, "data_driven_blocks.nbt", name));
+        CreativeLayout creative = readCreative(file(source, "creative_items.json", name));
 
         Map<String, List<String>> tags = Map.of();
         Map<String, NbtMap> defaults = Map.of();
         if (bdsDump != null) {
             BdsDump dump = BdsDump.read(bdsDump);
+            if (!dump.version().startsWith("1." + name.substring(0, name.length() - 1))) {
+                System.out.println("  warning: the dump is of BDS " + dump.version() + ", not of " + name);
+            }
             tags = dump.itemTags();
-            defaults = dump.blockDefaults();
+            defaults = defaults(dump, blocks);
         }
         if (itemTagsFile != null) {
             tags = readItemTags(itemTagsFile);
@@ -92,6 +97,44 @@ final class Importer {
         System.out.printf("Wrote %s: %d block states, %d items, %d data driven blocks, %d creative stacks, %d item tags, %d block fallbacks, %d item fallbacks, %d block defaults%n",
             version, blocks.size(), items.size(), dataDriven.size(), creative.stacks().count(), tags.size(),
             fallbacks.blocks().size(), fallbacks.items().size(), defaults.size());
+    }
+
+    /**
+     * Block defaults of the dump, reduced to network states. Only defaults that differ from a block's first palette
+     * state are kept: the first state is the default of every block without an entry, so storing it is redundant.
+     */
+    private static Map<String, NbtMap> defaults(BdsDump dump, List<NbtMap> blocks) {
+        List<String> rejected = new ArrayList<>();
+        Map<String, NbtMap> defaults = dump.projectDefaults(blocks, rejected);
+        rejected.forEach(problem -> System.out.println("  warning: " + problem));
+        Map<String, NbtMap> first = new TreeMap<>();
+        blocks.forEach(state -> first.putIfAbsent(BlockStates.name(state), state));
+        Map<String, NbtMap> differing = new TreeMap<>();
+        defaults.forEach((block, state) -> {
+            if (!state.equals(first.get(block))) {
+                differing.put(block, state);
+            }
+        });
+        Set<String> missing = new TreeSet<>(first.keySet());
+        missing.removeAll(dump.blockDefaults().keySet());
+        if (!missing.isEmpty()) {
+            System.out.println("  warning: no BDS default for " + missing.size() + " blocks: " + missing);
+        }
+        System.out.println("  " + defaults.size() + " block defaults, " + differing.size() + " of them not the first state");
+        return differing;
+    }
+
+    /**
+     * Files are either named plainly (CloudburstMC/Data) or with the version, as Geyser ships them
+     * ({@code block_palette.26_60.nbt}).
+     */
+    private static Path file(Path source, String file, String version) {
+        Path plain = source.resolve(file);
+        if (Files.exists(plain)) {
+            return plain;
+        }
+        int dot = file.lastIndexOf('.');
+        return source.resolve(file.substring(0, dot) + "." + version.replace('.', '_') + file.substring(dot));
     }
 
     private static List<NbtMap> readBlocks(Path file) throws IOException {
@@ -186,7 +229,7 @@ final class Importer {
         }
     }
 
-    private static Map<String, List<String>> readItemTags(Path file) throws IOException {
+    static Map<String, List<String>> readItemTags(Path file) throws IOException {
         Map<String, List<String>> tags = new TreeMap<>();
         readJson(file).getAsJsonObject().entrySet().forEach(entry -> {
             List<String> items = new ArrayList<>();
@@ -271,7 +314,7 @@ final class Importer {
         versions.entrySet().stream()
             .sorted(Map.Entry.comparingByValue())
             .forEach(entry -> lines.add(entry.getKey() + " " + entry.getValue()));
-        Files.write(index, lines);
+        Files.writeString(index, String.join("\n", lines) + "\n");
     }
 
     static JsonElement readJson(Path file) throws IOException {

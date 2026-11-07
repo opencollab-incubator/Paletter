@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -131,6 +132,9 @@ public final class PaletteDataCodec {
             new VersionFallbacks(blockFallbacks, itemFallbacks, unmapped), defaults);
     }
 
+    /**
+     * Writes the data. Maps are written sorted by key, so the same data always produces the same bytes.
+     */
     public static void write(@NonNull VanillaData data, @NonNull OutputStream stream) throws IOException {
         NbtMapBuilder root = NbtMap.builder()
             .putInt("format", FORMAT)
@@ -180,17 +184,17 @@ public final class PaletteDataCodec {
         root.putCompound("creative", creative.build());
 
         NbtMapBuilder tags = NbtMap.builder();
-        data.itemTags().forEach((tag, identifiers) -> tags.putList(tag, NbtType.STRING, identifiers));
+        new TreeMap<>(data.itemTags()).forEach((tag, identifiers) -> tags.putList(tag, NbtType.STRING, identifiers));
         root.putCompound("item_tags", tags.build());
 
         NbtMapBuilder blockFallbacks = NbtMap.builder();
-        data.fallbacks().blocks().forEach((name, fallback) -> blockFallbacks.putCompound(name, NbtMap.builder()
+        new TreeMap<>(data.fallbacks().blocks()).forEach((name, fallback) -> blockFallbacks.putCompound(name, NbtMap.builder()
             .putString("target", fallback.target())
             .putBoolean("clear_states", fallback.clearStates())
             .putBoolean("force", fallback.force())
             .build()));
         NbtMapBuilder itemFallbacks = NbtMap.builder();
-        data.fallbacks().items().forEach((name, fallback) -> itemFallbacks.putCompound(name, NbtMap.builder()
+        new TreeMap<>(data.fallbacks().items()).forEach((name, fallback) -> itemFallbacks.putCompound(name, NbtMap.builder()
             .putString("target", fallback.target())
             .putBoolean("force", fallback.force())
             .build()));
@@ -201,7 +205,7 @@ public final class PaletteDataCodec {
             .build());
 
         NbtMapBuilder defaults = NbtMap.builder();
-        data.blockDefaults().forEach((name, state) -> defaults.putCompound(name, BlockStates.states(state)));
+        new TreeMap<>(data.blockDefaults()).forEach((name, state) -> defaults.putCompound(name, BlockStates.states(state)));
         root.putCompound("block_defaults", defaults.build());
 
         try (NBTOutputStream output = NbtUtils.createGZIPWriter(stream)) {

@@ -36,7 +36,7 @@ session.sendPacket(palette.creativeContentPacket());
 |-------------|------------------------------------------------------------------------------------------------|
 | `paletter`  | The library. Depends on Cloudburst `bedrock-codec` (its types are the public API) and fastutil. No JSON, no network. |
 | `generator` | Imports palette dumps into the bundled format and checks version coverage. Not shipped.        |
-| `bds-addon` | A behavior pack that dumps what only the running game knows (item tags, default block states). |
+| `bds-addon` | A behavior pack that dumps what the Script API knows (item tags and properties, block states, defaults and tags). |
 
 ## Concepts
 
@@ -191,28 +191,116 @@ Custom items and blocks declare a `CreativePlacement`: after an anchor if presen
 Bundled data lives in `paletter/src/main/resources/paletter/`: `versions.txt` and one gzipped NBT file per version
 (format documented in `PaletteDataCodec`). Each file holds block states, items with their components, data driven blocks,
 the creative layout, item tags, default block states and the fallbacks for that version. The current bundle (26.40, 26.50,
-26.60) was imported from the files Geyser shipped, and is about 480 KB instead of about 2.9 MB.
+26.60, about 470 KB instead of about 2.9 MB) combines the network data Geyser shipped with BDS dumps of the same versions:
+
+| Version | Network data (block palette, items, components, creative) | BDS dump (item tags, block defaults) |
+|---------|-----------------------------------------------------------|--------------------------------------|
+| 26.40   | Geyser `*.26_40.*`                                        | BDS 1.26.45.1                        |
+| 26.50   | Geyser `*.26_50.*`                                        | BDS 1.26.51.1                        |
+| 26.60   | Geyser `*.26_60.*`                                        | BDS 1.26.63.1                        |
+
+The generator writes maps sorted, so an import is byte for byte reproducible.
+
+### Data sources
+
+What each source can provide, and whether the generator gets it automatically:
+
+| Datum | Source | Automated |
+|-------|--------|-----------|
+| Block list, block states and their valid values | BDS Script API (`BlockTypes`, `BlockPermutation.getAllStates`, `withState`) | dumped and cross-checked; the bundle still takes them from the network palette (see below) |
+| Default block state | BDS Script API (`BlockPermutation.resolve`) | **yes, bundled**. Only defaults that are not a block's first palette state are stored (26 to 28 per version); the first state is the default of every other block |
+| Block palette order (runtime ids) | not observable from scripts; client and server derive it from the block registry | no: BDS internals |
+| Item tags | BDS Script API (`ItemStack.getTags`) | **yes, bundled** (before: Geyser's 26.30 tags for every version) |
+| Item list | BDS Script API (`ItemTypes.getAll`) | dumped and cross-checked only: the Script API omits about 455 items the client knows (block-only items such as double slabs and wall signs, legacy ids such as `minecraft:boat`, education items) |
+| Item max stack size, durability, localization key, Script API components | BDS Script API (`ItemStack.maxAmount`, `minecraft:durability`, `localizationKey`) | dumped and cross-checked against the item components (no differences) |
+| Block tags, block to item | BDS Script API (`BlockPermutation.getTags`, `getItemStack`) | dumped, not bundled (no consumer yet) |
+| Item runtime ids, item version, component based flag | `ItemRegistryPacket` | no: network capture |
+| Item component NBT (vanilla data driven items) | `ItemRegistryPacket` | no: network capture |
+| Creative inventory (groups, order, icons, damage, block states, NBT) | `CreativeContentPacket` | no: network capture |
+| Data driven block properties | `StartGamePacket` block properties | no: network capture |
+| Item and block ids, `raw_id`, command names | `Mojang/bedrock-samples` `metadata/vanilladata_modules/mojang-items.json`, `mojang-blocks.json` | not used: `raw_id` is the item runtime id for most items but not all (34 of 1627 differ for 26.60), 450+ network items are missing, and blocks only list state *names* (with the same legacy alias states as the Script API) plus one global value list per state; no defaults, no order |
+| State value lists | `mojang-blocks.json` `block_properties`, Script API `BlockStates.getAll` | dumped (`state_types`); global per state, not per block |
+| Vanilla item and block JSON incl. `menu_category`, `minecraft:tags` | `bedrock-samples` `behavior_pack/items`, `behavior_pack/blocks` | not used: only the ~80 items and ~100 blocks vanilla defines in JSON; everything else is hard coded |
+| Creative catalog | BDS `behavior_packs/vanilla/__brarchive/item_catalog.brarchive` (`crafting_item_catalog.json`) | not used: Mojang's binary `MCB` encoding; it names groups and items per category, but no damage values, block states or NBT, so it cannot replace `CreativeContentPacket` |
+| Script API surface | `bedrock-samples` `metadata/script_modules/@minecraft/server-bindings_*.json` | used by hand to pick the addon's module version |
+| `definitions/` in the BDS zip | attachables, feature rules, features, spawn groups, persona, SDL layouts, disconnection errors | nothing Paletter needs |
+
+Things to know about the Script API data:
+
+- `getAllStates()` also returns **legacy alias states** that are not part of the network block state: 39 state names on
+  about 530 blocks (e.g. `wood_type` on planks, `color` on wool, `direction` next to `minecraft:cardinal_direction`,
+  `top_slot_bit` next to `minecraft:vertical_half`). The importer drops every state the block palette does not have.
+  After that, every BDS default of 26.40, 26.50 and 26.60 is a palette state.
+- `withState` answers with another block for alias values (e.g. `flower_type: poppy` on `minecraft:pink_tulip`) instead
+  of throwing, so the addon checks the type and value of the result.
+- Apart from `minecraft:chalkboard` (education edition: the palette has `direction` 0-15, the Script API accepts 0-3),
+  every block's palette states are exactly all combinations of the values the Script API reports. The *set* of block
+  states could therefore be generated from BDS; their order cannot be observed.
+- Native arrays such as `BlockStateType.validValues` are not iterable with `for ... of` in BDS 1.26; the addon copies
+  them by index.
+
+### What still needs a network capture
+
+The Script API cannot see what the server sends a client, so these still come from a capture of a vanilla BDS session
+in the CloudburstMC/Data layout, e.g. with ProxyPass between a client and BDS (`online-mode=false`). ProxyPass writes
+the files from the corresponding packets:
+
+- `runtime_item_states.json`: identifiers, runtime ids, item versions and the component based flag, from the
+  `ItemRegistryPacket` (formerly the item list of `StartGamePacket`);
+- `item_components.nbt`: component NBT of data driven vanilla items, from the same packet;
+- `creative_items.json`: the `CreativeContentPacket` (groups with names and icons, items with damage, block state, NBT);
+- `data_driven_blocks.nbt`: block properties from `StartGamePacket`;
+- `block_palette.nbt`: the vanilla palette is not sent at all. Both sides build it from the block registry (sequential
+  ids sort blocks by the FNV-1a hash of their name; with `block-network-ids-are-hashes` the id is a hash of the state).
+  CloudburstMC/Data and pmmp's BedrockData get it from BDS internals (pmmp/bds-mod-mapping is a native BDS mod for this).
+  Geyser's copy is the input today. With the Script API dump the set of states is known and cross-checked; only the
+  order of the permutations would have to be reproduced to generate it.
 
 ### Updating
 
-1. Dump the network data of a BDS session in the CloudburstMC/Data layout (`block_palette.nbt`, `runtime_item_states.json`,
-   `item_components.nbt`, `creative_items.json`, optionally `data_driven_blocks.nbt`), e.g. with ProxyPass. Runtime ids, item
-   components and the creative content are only sent over the network; the Script API cannot read them.
-2. Install `bds-addon` as a behavior pack on the BDS world, start BDS with its output redirected to a file, and wait for
-   `PALETTER-DONE`. This adds item tags and true default block states.
-3. Import:
+1. Capture the network data of a BDS session in the CloudburstMC/Data layout (`block_palette.nbt`,
+   `runtime_item_states.json`, `item_components.nbt`, `creative_items.json`, optionally `data_driven_blocks.nbt`), see
+   above. Files may also be named like Geyser's resources (`block_palette.26_70.nbt`), so `--source` can point at Geyser's
+   `core/src/main/resources/bedrock`.
+2. Run the addon on BDS. The generator downloads BDS (the newest by default; older releases stay downloadable, but only
+   by their exact version), installs `bds-addon` on a fresh flat world, runs BDS headless until the addon prints
+   `PALETTER-DONE`, stops it and keeps the console log. Keep the BDS directory outside the repository. Downloading BDS
+   means accepting the [Minecraft EULA](https://minecraft.net/eula); BDS asks for nothing else.
    ```
-   ./gradlew :generator:run --args="import --source DUMP_DIR --name 26.70 --protocol 2250 --bds-dump bds.log"
+   ./gradlew :generator:run --args="bds-run --download /tmp/bds --log /tmp/bds/bds.log"
+   ./gradlew :generator:run --args="bds-run --download /tmp/bds --version 1.26.51.1 --log /tmp/bds/bds-1.26.51.1.log"
+   ./gradlew :generator:run --args="bds-run --server /path/to/extracted/bds --log /tmp/bds/bds.log"
+   ```
+   A run takes well under a minute; the dump itself is a script job of about a second.
+3. Import, then cross-check the dump with the imported data (block states, defaults, items, stack sizes, item tags; add
+   `--item-tags FILE` to compare with another tag file):
+   ```
+   ./gradlew :generator:run --args="import --source DUMP_DIR --name 26.70 --protocol 2250 --bds-dump /tmp/bds/bds.log"
+   ./gradlew :generator:run --args="bds-compare --bds-dump /tmp/bds/bds.log --name 26.70"
    ```
 4. Run `./gradlew :generator:run --args="check"`. Every block and item of the newest version that an older version lacks
    needs an entry in `generator/fallbacks/<old version>.json` (or `null` to acknowledge there is none). Re-import the older
    versions after editing their fallbacks.
 
+The current bundle was produced with:
+```
+G=<Geyser>/core/src/main/resources/bedrock
+bds-run --download DIR --version 1.26.45.1 --log bds-1.26.45.1.log    (and 1.26.51.1, 1.26.63.1)
+import --source $G --name 26.40 --protocol 2168 --bds-dump bds-1.26.45.1.log
+import --source $G --name 26.50 --protocol 2193 --bds-dump bds-1.26.51.1.log
+import --source $G --name 26.60 --protocol 2225 --bds-dump bds-1.26.63.1.log
+```
+
 ## Status and known gaps
 
-- The current bundle has no default block states yet (it was imported without a BDS dump), so adaptation uses each block's
-  first state as default. Item tags are the 26.30 ones Geyser used for every version.
+- Block palettes, items, item components and the creative inventory are still the network dumps Geyser shipped; see
+  "What still needs a network capture".
+- Item tags now come from BDS. Compared with Geyser's `item_tags.26_30.json` (used for every version before), all three
+  versions add `minecraft:mushrooms_for_stew` and no longer have `minecraft:observer` and `minecraft:redstone_lamp` in
+  `minecraft:sulfur_cube_archetype_slow_bouncy`; 26.50 and 26.60 also add the poplar wood set to the wood tags (boats,
+  door, signs, logs, planks, slab) and wool slabs and stairs to `minecraft:vibration_damper`.
+- Block tags and block to item are dumped but not bundled.
 - `ItemComponents` and `BlockComponents` type the components Geyser uses today; anything else goes through the raw
   `component(...)` escape hatch.
 - Not covered: biome definitions, entity identifiers and other data Geyser ships that is not about items or blocks.
-- The BDS addon targets `@minecraft/server` 2.0.0; adjust `manifest.json` if the BDS version needs another module version.
+- The BDS addon needs `@minecraft/server` 2.1.0; tested with BDS 1.26.45.1, 1.26.51.1 and 1.26.63.1.

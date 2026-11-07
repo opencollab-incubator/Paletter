@@ -1,8 +1,14 @@
 package org.geysermc.paletter.generator;
 
+import org.geysermc.paletter.data.PaletteDataCodec;
+import org.geysermc.paletter.data.VanillaData;
+
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +18,14 @@ import java.util.Map;
  * import  --source DIR --name 26.60 --protocol 2225 [--item-tags FILE] [--bds-dump FILE]
  *         Converts a palette dump (the layout of CloudburstMC/Data, as produced from BDS) into the bundled format.
  *         Fallbacks are read from generator/fallbacks/NAME.json if present.
+ * bds-run --log FILE (--server DIR | --download DIR [--version 1.26.51.1] [--preview true]) [--timeout SECONDS]
+ *         Installs bds-addon on a fresh flat world of a Bedrock Dedicated Server, runs it headless until the addon
+ *         printed PALETTER-DONE and writes the console output to FILE (the input of import --bds-dump).
+ *         --download fetches BDS for this OS from minecraft.net into DIR/VERSION first (the newest, or --version); keep
+ *         DIR outside the repository. Downloading BDS means accepting the Minecraft EULA.
+ * bds-compare --bds-dump FILE --name 26.60 [--item-tags FILE]
+ *         Cross-checks a BDS dump with a bundled version: block states and defaults against the block palette, items
+ *         and stack sizes, item tags against the bundled ones (and against --item-tags, e.g. Geyser's item_tags.json).
  * check   Verifies the bundled data: every block and item of the newest version that is missing in an older
  *         version needs a fallback there, and every fallback target must exist. Exits with 1 on problems.
  * </pre>
@@ -34,6 +48,25 @@ public final class Main {
                 Integer.parseInt(require(options, "protocol")),
                 options.containsKey("item-tags") ? Path.of(options.get("item-tags")) : null,
                 options.containsKey("bds-dump") ? Path.of(options.get("bds-dump")) : null);
+            case "bds-run" -> {
+                Path server = options.containsKey("download")
+                    ? BdsRunner.download(Path.of(options.get("download")), Boolean.parseBoolean(options.get("preview")), options.get("version"))
+                    : Path.of(require(options, "server"));
+                new BdsRunner(root.resolve("bds-addon")).run(server, Path.of(require(options, "log")),
+                    Integer.parseInt(options.getOrDefault("timeout", "600")));
+            }
+            case "bds-compare" -> {
+                Map<String, Map<String, List<String>>> tagSources = new LinkedHashMap<>();
+                VanillaData data;
+                try (InputStream stream = Files.newInputStream(output.resolve(require(options, "name") + ".nbt"))) {
+                    data = PaletteDataCodec.read(stream);
+                }
+                tagSources.put("the bundled " + data.version().name() + " tags", data.itemTags());
+                if (options.containsKey("item-tags")) {
+                    tagSources.put(options.get("item-tags"), Importer.readItemTags(Path.of(options.get("item-tags"))));
+                }
+                BdsCompare.compare(BdsDump.read(Path.of(require(options, "bds-dump"))), data, tagSources);
+            }
             case "check" -> System.exit(new Checker(output).run() ? 0 : 1);
             default -> usage();
         }
@@ -64,6 +97,8 @@ public final class Main {
         System.out.println("""
             Usage:
               import --source DIR --name 26.60 --protocol 2225 [--item-tags FILE] [--bds-dump FILE]
+              bds-run --log FILE (--server DIR | --download DIR [--version 1.26.51.1] [--preview true]) [--timeout SECONDS]
+              bds-compare --bds-dump FILE --name 26.60 [--item-tags FILE]
               check""");
     }
 }
