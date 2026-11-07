@@ -134,6 +134,17 @@ constant overloads of `Palette`, `PaletteLayer.Builder`, `ItemMatcher`, `Creativ
 `CanonicalItems#extendsOrIs`, and the `FallbackDefaults` API of the update pipeline), so the new baseline covers the
 new types too, including every generated constant: removing one now fails `apiCompat`.
 
+### Pre-release changes
+
+2.0.0 is not released, so these API changes replaced the old API directly, without a deprecation cycle (which applies
+from the first release on); the baseline was regenerated with each:
+
+- `BedrockBlockState#id()`, `BedrockItemType#id()` and `BedrockItemVariant#id()` are removed. They returned the canonical
+  id in `Paletter.bundled()` and -1 for custom content, a trap for code that handles both. Canonical ids come only from
+  `Paletter#canonicalBlock(BedrockBlockState)` / `#canonicalItem(BedrockItemType|BedrockItemVariant)` (vanilla content;
+  for vanilla constants still an addition or field read, no hash lookup) and `Palette#canonicalBlock` /
+  `#canonicalItem` (any content, custom included).
+
 ### `@since`
 
 Every exported type has `@since` in its javadoc (enforced by `ApiBoundaryTest`); members added later carry their own

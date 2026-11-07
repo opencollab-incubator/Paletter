@@ -131,14 +131,6 @@ public final class BedrockItemType {
     }
 
     /**
-     * @return the canonical id of the base variant in {@link org.geysermc.paletter.Paletter#bundled()}, or -1 for a
-     *         custom item (see {@link org.geysermc.paletter.Palette#canonicalItem(BedrockItemType)})
-     */
-    public int id() {
-        return linked().base.id();
-    }
-
-    /**
      * @return the base variant: damage 0, no block state
      */
     public @NonNull BedrockItemVariant base() {
@@ -147,7 +139,7 @@ public final class BedrockItemType {
 
     /**
      * @return the variant with a damage value: one of {@link #variants()} if it has a canonical id, else a new variant
-     *         without one ({@link BedrockItemVariant#id()} -1; a layer can give it one with
+     *         without one (no canonical id; a layer can give it one with
      *         {@link org.geysermc.paletter.PaletteLayer.Builder#variant(BedrockItemVariant)})
      */
     public @NonNull BedrockItemVariant variant(int damage) {

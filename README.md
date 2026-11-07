@@ -74,11 +74,11 @@ Each palette turns them into what its version needs with flat arrays built once 
 
 | Lookup                          | Cost                               | Result                                              |
 |---------------------------------|------------------------------------|-----------------------------------------------------|
-| `Paletter#canonicalBlock(state)` | hash lookup (state normalized)    | canonical id or -1                                  |
+| `Paletter#canonicalBlock(state)` | hash lookup (state normalized); an addition for a `BedrockBlockState` constant | canonical id or -1 |
 | `Palette#runtimeId(canonical)`  | array                              | runtime id in the palette's network id mode         |
 | `Palette#block(canonical)`      | array                              | `PaletteBlock`: exact, adapted, fallback, else air  |
 | `BlockPalette#canonical(definition)` | array                         | canonical id of a block the client sent             |
-| `Paletter#canonicalItem(variant)` | hash lookup                      | canonical id or -1                                  |
+| `Paletter#canonicalItem(variant)` | hash lookup; a field read for a `BedrockItemType`/`BedrockItemVariant` constant | canonical id or -1 |
 | `Palette#item(canonical)`       | array                              | `ResolvedItem`: definition, damage, block, fallback flag; null if missing |
 | `Palette#match(itemData)`       | hash lookup by runtime id + a few candidates | canonical id of a stack the client sent  |
 
@@ -208,7 +208,7 @@ CardinalDirection facing = open.get(BedrockStates.CARDINAL_DIRECTION);
 List<Integer> growth = BedrockBlocks.WHEAT.values(BedrockStates.GROWTH);  // [0..7]: what this block accepts
 door.with(BedrockStates.GROWTH, 3);                                      // IllegalArgumentException: not a door state
 
-int canonical = door.id();                         // canonical id in Paletter.bundled(), valid in every version
+int canonical = paletter.canonicalBlock(door);     // canonical id, valid in every version; an addition, no hash lookup
 int runtimeId = palette.runtimeId(door);           // = palette.runtimeId(canonical)
 NbtMap nbt = door.toNbt();                         // {name, states}
 BedrockBlockState back = BedrockBlockState.vanilla(canonical);   // same instance
@@ -233,7 +233,9 @@ PaletteLayer layer = PaletteLayer.builder("server")
 ```
 
 **Custom content is used alike.** `CustomBlock#type()` and `CustomItem#type()` (and `CustomBlock#itemType()`) return
-the same handle types. Their canonical ids depend on the layer stack, so look them up on a palette:
+the same handle types. The handles have no `id()`: canonical ids come only from `Paletter#canonicalBlock/canonicalItem`
+(vanilla content) and `Palette#canonicalBlock/canonicalItem` (anything, custom content included). Custom canonical ids
+depend on the layer stack, so look them up on a palette:
 `palette.runtimeId(lamp.type().defaultState().with(lit, true))`, `palette.canonicalBlock(state)`,
 `palette.item(ruby.type())`. A vanilla constant matches custom properties by name, so a custom
 `minecraft:cardinal_direction` property works with `BedrockStates.CARDINAL_DIRECTION`. Custom properties are typed as

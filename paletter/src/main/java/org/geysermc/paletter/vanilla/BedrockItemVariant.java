@@ -43,14 +43,6 @@ public final class BedrockItemVariant {
         return blockState;
     }
 
-    /**
-     * @return the canonical id in {@link org.geysermc.paletter.Paletter#bundled()}, or -1 for a custom item or a
-     *         variant without one (see {@link org.geysermc.paletter.Palette#canonicalItem(BedrockItemVariant)})
-     */
-    public int id() {
-        return id;
-    }
-
     public @NonNull ItemVariant toItemVariant() {
         ItemVariant variant = this.variant;
         if (variant == null) {

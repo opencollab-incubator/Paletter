@@ -134,7 +134,7 @@ public final class Palette {
     /**
      * @return the canonical id of a vanilla or custom block state in this palette, or -1 if it has none (a custom block
      *         of a layer this palette does not have). For vanilla states in palettes of {@link Paletter#bundled()} this
-     *         is {@link BedrockBlockState#id()}
+     *         is {@link Paletter#canonicalBlock(BedrockBlockState)}, without a hash lookup
      * @since 2.0.0
      */
     public int canonicalBlock(@NonNull BedrockBlockState state) {

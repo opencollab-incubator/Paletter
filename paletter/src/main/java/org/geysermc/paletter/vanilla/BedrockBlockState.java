@@ -11,10 +11,11 @@ import org.geysermc.paletter.block.CanonicalBlocks;
  * One state of a {@link BedrockBlockType}. There is one instance per state, so {@link #with} does not allocate, and
  * states can be compared with {@code ==}.
  * <p>
- * A vanilla state knows its canonical id ({@link #id()}): the first state of its block plus the sum of each value's
- * index times the stride of its property, computed once (Bedrock enumerates every block's states as the full product of
- * its values; blocks that are not get a lookup table). Custom block states have canonical ids per layer lineage, so
- * look them up with {@link org.geysermc.paletter.Palette#canonicalBlock(BedrockBlockState)}, which works for both.
+ * Canonical ids come from {@link org.geysermc.paletter.Paletter#canonicalBlock(BedrockBlockState)} (vanilla states) and
+ * {@link org.geysermc.paletter.Palette#canonicalBlock(BedrockBlockState)} (vanilla and custom states). For a vanilla
+ * state both are an addition, not a hash lookup: the first state of its block plus the sum of each value's index times
+ * the stride of its property, computed once (Bedrock enumerates every block's states as the full product of its values;
+ * blocks that are not get a lookup table). Custom block states have canonical ids per layer lineage only.
  *
  * @since 2.0.0
  */
@@ -49,14 +50,6 @@ public final class BedrockBlockState {
 
     public @NonNull BedrockBlockType type() {
         return layout.owner;
-    }
-
-    /**
-     * @return the canonical id in {@link org.geysermc.paletter.Paletter#bundled()} (valid in all of its palettes), or
-     *         -1 for a custom block state
-     */
-    public int id() {
-        return id;
     }
 
     /**
@@ -127,8 +120,9 @@ public final class BedrockBlockState {
     }
 
     /**
-     * The canonical id of this state in a palette's canonical blocks: {@link #id()} for vanilla states of palettes of
-     * {@link org.geysermc.paletter.Paletter#bundled()}, the custom block's id in that lineage, else a hash lookup.
+     * The canonical id of this state in a palette's canonical blocks: the precomputed vanilla id for vanilla states of
+     * palettes of {@link org.geysermc.paletter.Paletter#bundled()}, the custom block's id in that lineage, else a hash
+     * lookup.
      *
      * @return the canonical id, or -1 if the state is not in it
      */

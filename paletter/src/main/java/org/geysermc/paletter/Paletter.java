@@ -13,6 +13,9 @@ import org.geysermc.paletter.data.VanillaData;
 import org.geysermc.paletter.data.VanillaItem;
 import org.geysermc.paletter.item.CanonicalItems;
 import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.vanilla.BedrockItemType;
+import org.geysermc.paletter.vanilla.BedrockItemVariant;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -169,6 +172,15 @@ public final class Paletter {
     }
 
     /**
+     * @return the canonical id of a vanilla state (no hash lookup for {@link #bundled()}), or -1 for a custom block
+     *         state: custom blocks have canonical ids per layer lineage, see {@link Palette#canonicalBlock(BedrockBlockState)}
+     * @since 2.0.0
+     */
+    public int canonicalBlock(@NonNull BedrockBlockState state) {
+        return state.canonicalIn(canonicalBlocks());
+    }
+
+    /**
      * @return the amount of vanilla canonical block ids
      */
     public int canonicalBlockCount() {
@@ -180,6 +192,23 @@ public final class Paletter {
      */
     public int canonicalItem(@NonNull ItemVariant variant) {
         return canonicalItems().index(variant);
+    }
+
+    /**
+     * @return the canonical id of the base variant of a vanilla item type, or -1 for a custom item: custom items have
+     *         canonical ids per layer lineage, see {@link Palette#canonicalItem(BedrockItemType)}
+     * @since 2.0.0
+     */
+    public int canonicalItem(@NonNull BedrockItemType type) {
+        return type.canonicalIn(canonicalItems());
+    }
+
+    /**
+     * @return the canonical id of a vanilla item variant, or -1 (a custom item, or a variant that has none)
+     * @since 2.0.0
+     */
+    public int canonicalItem(@NonNull BedrockItemVariant variant) {
+        return variant.canonicalIn(canonicalItems());
     }
 
     /**
