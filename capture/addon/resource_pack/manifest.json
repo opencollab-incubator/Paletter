@@ -1,0 +1,29 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Paletter capture resources",
+    "description": "Textures and geometry for the capture pack",
+    "uuid": "a1e5c0de-0000-4000-8000-00000000c001",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      26,
+      60
+    ]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "a1e5c0de-0000-4000-8000-00000000c002",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

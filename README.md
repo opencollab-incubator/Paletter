@@ -38,6 +38,7 @@ session.sendPacket(palette.creativeContentPacket());
 | `generator` | Imports palette dumps into the bundled format and checks version coverage. Not shipped.        |
 | `bds-addon` | A behavior pack that dumps what the Script API knows (item tags and properties, block states, defaults and tags). |
 | `codegen`   | Infers component shapes from wire NBT and generates the typed components. Not shipped.          |
+| `capture`   | A headless Bedrock client that records what BDS sends (palette data, custom item/block NBT). Not shipped; see `capture/WIRE-NOTES.md`. |
 
 ## Concepts
 

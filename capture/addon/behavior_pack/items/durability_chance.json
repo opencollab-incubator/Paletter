@@ -1,0 +1,20 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:durability_chance",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:durability": {
+        "max_durability": 50,
+        "damage_chance": {
+          "min": 10,
+          "max": 50
+        }
+      }
+    }
+  }
+}

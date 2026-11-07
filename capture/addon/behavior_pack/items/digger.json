@@ -1,0 +1,37 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:digger",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:digger": {
+        "use_efficiency": true,
+        "destroy_speeds": [
+          {
+            "block": "minecraft:dirt",
+            "speed": 5
+          },
+          {
+            "block": {
+              "tags": "query.any_tag('stone', 'metal')"
+            },
+            "speed": 8
+          },
+          {
+            "block": {
+              "name": "minecraft:oak_log",
+              "states": {
+                "pillar_axis": "y"
+              }
+            },
+            "speed": 3
+          }
+        ]
+      }
+    }
+  }
+}

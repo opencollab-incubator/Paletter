@@ -1,0 +1,18 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:swing_sounds",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:swing_sounds": {
+        "attack_hit": "attack.strong",
+        "attack_miss": "attack.nodamage",
+        "attack_critical_hit": "attack.strong"
+      }
+    }
+  }
+}

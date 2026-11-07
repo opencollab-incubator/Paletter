@@ -1,0 +1,1616 @@
+# paletter:vibration_properties
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10000,
+    "material": "dirt"
+  }
+}
+
+# paletter:display_name
+{
+  "components": {
+    "minecraft:display_name": {
+      "value": "Paletter Block Name"
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10049,
+    "material": "dirt"
+  }
+}
+
+# paletter:states_block
+{
+  "components": {
+    "minecraft:geometry": {
+      "bone_visibility": {},
+      "culling": "",
+      "culling_layer": "minecraft:culling_layer.undefined",
+      "culling_shape": "",
+      "identifier": "minecraft:geometry.full_block",
+      "ignoreGeometryForIsSolid": 0b,
+      "isV1Fullblock": 0b,
+      "needsLegacyTopRotation": 0b,
+      "useBlockTypeLightAbsorption": 0b,
+      "uv_lock": 0b
+    },
+    "minecraft:material_instances": {
+      "mappings": {},
+      "materials": {
+        "*": {
+          "ambient_occlusion": 1.0f,
+          "packed_bools": 5b,
+          "render_method": "opaque",
+          "texture": "paletter_tex",
+          "tint_method": "none"
+        }
+      }
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "permutations": [
+    {
+      "components": {
+        "minecraft:light_emission": {
+          "emission": 15b
+        }
+      },
+      "condition": "query.block_state('paletter:flag') == true"
+    },
+    {
+      "components": {
+        "minecraft:transformation": {
+          "RX": 0,
+          "RXP": 0.0f,
+          "RY": 0,
+          "RYP": 0.0f,
+          "RZ": 0,
+          "RZP": 0.0f,
+          "SX": 1.0f,
+          "SXP": 0.0f,
+          "SY": 1.0f,
+          "SYP": 0.0f,
+          "SZ": 1.0f,
+          "SZP": 0.0f,
+          "TX": 0.0f,
+          "TY": 0.0f,
+          "TZ": 0.0f,
+          "hasJsonVersionBeforeValidation": 0b
+        }
+      },
+      "condition": "query.block_state('minecraft:cardinal_direction') == 'north'"
+    }
+  ],
+  "properties": [
+    {
+      "enum": [1, 5, 9],
+      "name": "paletter:list"
+    },
+    {
+      "enum": [0b, 1b],
+      "name": "paletter:flag"
+    },
+    {
+      "enum": [0, 1, 2, 3],
+      "name": "paletter:count"
+    },
+    {
+      "enum": ["red", "green"],
+      "name": "paletter:color"
+    }
+  ],
+  "traits": [
+    {
+      "blocks_to_corner_with": [] /* TAG_END */,
+      "enabled_states": {
+        "cardinal_direction": 1b,
+        "corner_and_cardinal_direction": 0b,
+        "facing_direction": 0b,
+        "sixteen_way_rotation": 0b
+      },
+      "name": "minecraft:placement_direction",
+      "y_rotation_offset": 180.0f
+    },
+    {
+      "enabled_states": {
+        "block_face": 1b,
+        "vertical_half": 1b
+      },
+      "name": "minecraft:placement_position"
+    }
+  ],
+  "vanilla_block_data": {
+    "block_id": 10006,
+    "material": "dirt"
+  }
+}
+
+# paletter:transformation_rotation
+{
+  "components": {
+    "minecraft:transformation": {
+      "RX": 0,
+      "RXP": 0.0f,
+      "RY": 2,
+      "RYP": 0.0f,
+      "RZ": 0,
+      "RZP": 0.0f,
+      "SX": 1.0f,
+      "SXP": 0.0f,
+      "SY": 1.0f,
+      "SYP": 0.0f,
+      "SZ": 1.0f,
+      "SZP": 0.0f,
+      "TX": 0.0f,
+      "TY": 0.0f,
+      "TZ": 0.0f,
+      "hasJsonVersionBeforeValidation": 0b
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10001,
+    "material": "dirt"
+  }
+}
+
+# paletter:tags
+{
+  "blockTags": ["paletter:block_tag", "stone"],
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10004,
+    "material": "dirt"
+  }
+}
+
+# paletter:transformation
+{
+  "components": {
+    "minecraft:transformation": {
+      "RX": 0,
+      "RXP": 0.5f,
+      "RY": 1,
+      "RYP": 0.0f,
+      "RZ": 0,
+      "RZP": 0.0f,
+      "SX": 0.5f,
+      "SXP": 0.0f,
+      "SY": 1.0f,
+      "SYP": 0.5f,
+      "SZ": 0.5f,
+      "SZP": 0.0f,
+      "TX": 0.0f,
+      "TY": 0.25f,
+      "TZ": 0.0f,
+      "hasJsonVersionBeforeValidation": 0b
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10002,
+    "material": "dirt"
+  }
+}
+
+# paletter:crafting_table
+{
+  "components": {
+    "minecraft:crafting_table": {
+      "crafting_tags": ["crafting_table", "paletter"],
+      "grid_size": 3,
+      "table_name": "Paletter Table"
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10056,
+    "material": "dirt"
+  }
+}
+
+# paletter:tick
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10003,
+    "material": "dirt"
+  }
+}
+
+# paletter:entity_fall_on
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10046,
+    "material": "dirt"
+  }
+}
+
+# paletter:sound
+{
+  "components": {
+    "minecraft:sound": {
+      "sound": "metal"
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10007,
+    "material": "dirt"
+  }
+}
+
+# paletter:support
+{
+  "components": {
+    "minecraft:support": {
+      "shape": "stair"
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10005,
+    "material": "dirt"
+  }
+}
+
+# paletter:enchantment_power_transmitter
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10047,
+    "material": "dirt"
+  }
+}
+
+# paletter:redstone_conductivity
+{
+  "components": {
+    "minecraft:redstone_conductivity": {
+      "allowsWireToStepDown": 0b,
+      "redstoneConductor": 0b
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10014,
+    "material": "dirt"
+  }
+}
+
+# paletter:selection_box_false
+{
+  "components": {
+    "minecraft:selection_box": {
+      "enabled": 0b,
+      "origin": [-8.0f, 0.0f, -8.0f],
+      "size": [16.0f, 16.0f, 16.0f]
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10008,
+    "material": "dirt"
+  }
+}
+
+# paletter:collision_box_false
+{
+  "components": {
+    "minecraft:collision_box": {
+      "boxes": [] /* TAG_END */,
+      "enabled": 0b
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10063,
+    "material": "dirt"
+  }
+}
+
+# paletter:selection_box_box
+{
+  "components": {
+    "minecraft:selection_box": {
+      "enabled": 1b,
+      "origin": [-4.0f, 0.0f, -4.0f],
+      "size": [8.0f, 8.0f, 8.0f]
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10009,
+    "material": "dirt"
+  }
+}
+
+# paletter:plain_block
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10017,
+    "material": "dirt"
+  }
+}
+
+# paletter:replaceable
+{
+  "components": {
+    "minecraft:replaceable": {}
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10010,
+    "material": "dirt"
+  }
+}
+
+# paletter:redstone_producer_min
+{
+  "components": {
+    "minecraft:redstone_producer": {
+      "allowPowerDown": 1b,
+      "allowPowerUp": 0b,
+      "connected_faces": ["down", "up", "north", "south", "west", "east"],
+      "power": 4b,
+      "transform_relative": 1b
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10011,
+    "material": "dirt"
+  }
+}
+
+# paletter:redstone_producer
+{
+  "components": {
+    "minecraft:redstone_producer": {
+      "allowPowerDown": 1b,
+      "allowPowerUp": 0b,
+      "connected_faces": ["north", "south"],
+      "power": 15b,
+      "strongly_powered_face": "north",
+      "transform_relative": 1b
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10012,
+    "material": "dirt"
+  }
+}
+
+# paletter:leashable
+{
+  "components": {
+    "minecraft:leashable": {
+      "offset": [0.0f, 0.5f, 0.0f]
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10035,
+    "material": "dirt"
+  }
+}
+
+# paletter:redstone_consumer
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10013,
+    "material": "dirt"
+  }
+}
+
+# paletter:destructible_by_mining
+{
+  "components": {
+    "minecraft:destructible_by_mining": {
+      "item_specific_speeds": [
+        {
+          "destroy_speed": 1.0f,
+          "item": {
+            "Aux": 32767s,
+            "Name": "minecraft:iron_pickaxe"
+          }
+        },
+        {
+          "destroy_speed": 0.5f,
+          "item": {
+            "MolangVersion": 13s,
+            "Tags": "query.any_tag('minecraft:is_pickaxe')"
+          }
+        }
+      ],
+      "value": 2.5f
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10053,
+    "material": "dirt"
+  }
+}
+
+# paletter:embedded_visual
+{
+  "components": {
+    "minecraft:embedded_visual": {
+      "geometry": {
+        "bone_visibility": {},
+        "culling": "",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "",
+        "identifier": "minecraft:geometry.full_block",
+        "uv_lock": 0b
+      },
+      "material_instances": {
+        "*": {
+          "alpha_masked_tint": 0b,
+          "ambient_occlusion": 1.0f,
+          "face_dimming": 1b,
+          "isotropic": 0b,
+          "render_method": "opaque",
+          "texture": "paletter_tex",
+          "tint_method": "none"
+        }
+      }
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10048,
+    "material": "dirt"
+  }
+}
+
+# paletter:leashable_default
+{
+  "components": {
+    "minecraft:leashable": {
+      "offset": [0.0f, 0.25f, 0.0f]
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10034,
+    "material": "dirt"
+  }
+}
+
+# paletter:random_offset
+{
+  "components": {
+    "minecraft:random_offset": {
+      "x": {
+        "range": {
+          "max": 0.25f,
+          "min": -0.25f
+        },
+        "steps": 4
+      },
+      "y": {
+        "range": {
+          "max": 0.0f,
+          "min": 0.0f
+        },
+        "steps": 0
+      },
+      "z": {
+        "range": {
+          "max": 0.125f,
+          "min": -0.125f
+        },
+        "steps": 0
+      }
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10015,
+    "material": "dirt"
+  }
+}
+
+# paletter:geometry_short
+{
+  "components": {
+    "minecraft:geometry": {
+      "bone_visibility": {},
+      "culling": "",
+      "culling_layer": "minecraft:culling_layer.undefined",
+      "culling_shape": "",
+      "identifier": "geometry.paletter_cube",
+      "ignoreGeometryForIsSolid": 0b,
+      "isV1Fullblock": 0b,
+      "needsLegacyTopRotation": 0b,
+      "useBlockTypeLightAbsorption": 0b,
+      "uv_lock": 0b
+    },
+    "minecraft:material_instances": {
+      "mappings": {},
+      "materials": {
+        "*": {
+          "ambient_occlusion": 1.0f,
+          "packed_bools": 5b,
+          "render_method": "opaque",
+          "texture": "paletter_tex",
+          "tint_method": "none"
+        }
+      }
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10039,
+    "material": "dirt"
+  }
+}
+
+# paletter:precipitation_interactions
+{
+  "components": {
+    "minecraft:precipitation_interactions": {
+      "precipitation_behavior": "none"
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10016,
+    "material": "dirt"
+  }
+}
+
+# paletter:movable_immovable
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10023,
+    "material": "dirt"
+  }
+}
+
+# paletter:placement_filter
+{
+  "components": {
+    "minecraft:placement_filter": {
+      "conditions": [
+        {
+          "allowed_faces": 6b,
+          "block_filter": [
+            {
+              "name": "minecraft:dirt"
+            },
+            {
+              "name": "minecraft:stone"
+            },
+            {
+              "tags": "query.any_tag('stone')",
+              "tags_version": 13
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10018,
+    "material": "dirt"
+  }
+}
+
+# paletter:instrument_sound
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10037,
+    "material": "dirt"
+  }
+}
+
+# paletter:block_entity
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10065,
+    "material": "dirt"
+  }
+}
+
+# paletter:neighbor_change_default
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10019,
+    "material": "dirt"
+  }
+}
+
+# paletter:neighbor_change
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10020,
+    "material": "dirt"
+  }
+}
+
+# paletter:multi_block
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "traits": [
+    {
+      "direction": 1b,
+      "enabled_states": {
+        "multi_block": 1b
+      },
+      "name": "minecraft:multi_block",
+      "part_count": 2b,
+      "place_behavior": 0b
+    }
+  ],
+  "vanilla_block_data": {
+    "block_id": 10021,
+    "material": "dirt"
+  }
+}
+
+# paletter:movable_sticky
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10022,
+    "material": "dirt"
+  }
+}
+
+# paletter:destructible_by_explosion_false
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10054,
+    "material": "dirt"
+  }
+}
+
+# paletter:menu_hidden_block
+{
+  "menu_category": {
+    "category": "nature",
+    "group": "minecraft:itemGroup.name.dirt",
+    "is_hidden_in_commands": 1b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10024,
+    "material": "dirt"
+  }
+}
+
+# paletter:material_instances_min
+{
+  "components": {
+    "minecraft:geometry": {
+      "bone_visibility": {},
+      "culling": "",
+      "culling_layer": "minecraft:culling_layer.undefined",
+      "culling_shape": "",
+      "identifier": "minecraft:geometry.full_block",
+      "ignoreGeometryForIsSolid": 0b,
+      "isV1Fullblock": 0b,
+      "needsLegacyTopRotation": 0b,
+      "useBlockTypeLightAbsorption": 0b,
+      "uv_lock": 0b
+    },
+    "minecraft:material_instances": {
+      "mappings": {},
+      "materials": {
+        "*": {
+          "ambient_occlusion": 1.0f,
+          "packed_bools": 5b,
+          "render_method": "opaque",
+          "texture": "paletter_tex",
+          "tint_method": "none"
+        }
+      }
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10025,
+    "material": "dirt"
+  }
+}
+
+# paletter:destructible_by_explosion
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10055,
+    "material": "dirt"
+  }
+}
+
+# paletter:material_instances
+{
+  "components": {
+    "minecraft:geometry": {
+      "bone_visibility": {},
+      "culling": "",
+      "culling_layer": "minecraft:culling_layer.undefined",
+      "culling_shape": "",
+      "identifier": "minecraft:geometry.full_block",
+      "ignoreGeometryForIsSolid": 0b,
+      "isV1Fullblock": 0b,
+      "needsLegacyTopRotation": 0b,
+      "useBlockTypeLightAbsorption": 0b,
+      "uv_lock": 0b
+    },
+    "minecraft:material_instances": {
+      "mappings": {
+        "up": {
+          "value": "north"
+        }
+      },
+      "materials": {
+        "*": {
+          "ambient_occlusion": 0.5f,
+          "packed_bools": 6b,
+          "render_method": "alpha_test",
+          "texture": "paletter_tex",
+          "tint_method": "grass"
+        },
+        "north": {
+          "ambient_occlusion": 1.0f,
+          "packed_bools": 5b,
+          "render_method": "blend",
+          "texture": "paletter_tex_alt",
+          "tint_method": "none"
+        }
+      }
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10026,
+    "material": "dirt"
+  }
+}
+
+# paletter:map_color_rgb
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10027,
+    "material": "dirt"
+  }
+}
+
+# paletter:destruction_particles
+{
+  "components": {
+    "minecraft:destruction_particles": {
+      "particle_count": 50,
+      "texture": "paletter_tex",
+      "tint_method": "grass"
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10051,
+    "material": "dirt"
+  }
+}
+
+# paletter:map_color_hex
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10028,
+    "material": "dirt"
+  }
+}
+
+# paletter:map_color_full
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10029,
+    "material": "dirt"
+  }
+}
+
+# paletter:loot
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10030,
+    "material": "dirt"
+  }
+}
+
+# paletter:liquid_detection
+{
+  "components": {
+    "minecraft:liquid_detection": {
+      "detectionRules": [
+        {
+          "canContainLiquid": 1b,
+          "liquidType": "water",
+          "onLiquidTouches": "no_reaction",
+          "stopsLiquidFromDirection": 6b,
+          "use_liquid_clipping": 0b
+        }
+      ]
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10031,
+    "material": "dirt"
+  }
+}
+
+# paletter:light_emission
+{
+  "components": {
+    "minecraft:light_emission": {
+      "emission": 10b
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10032,
+    "material": "dirt"
+  }
+}
+
+# paletter:light_dampening
+{
+  "components": {
+    "minecraft:light_dampening": {
+      "lightLevel": 7b
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10033,
+    "material": "dirt"
+  }
+}
+
+# paletter:item_visual
+{
+  "components": {
+    "minecraft:geometry": {
+      "bone_visibility": {},
+      "culling": "",
+      "culling_layer": "minecraft:culling_layer.undefined",
+      "culling_shape": "",
+      "identifier": "geometry.paletter_cube",
+      "ignoreGeometryForIsSolid": 0b,
+      "isV1Fullblock": 0b,
+      "needsLegacyTopRotation": 0b,
+      "useBlockTypeLightAbsorption": 0b,
+      "uv_lock": 0b
+    },
+    "minecraft:item_visual": {
+      "geometryDescription": {
+        "bone_visibility": {},
+        "culling": "",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "",
+        "identifier": "minecraft:geometry.full_block",
+        "ignoreGeometryForIsSolid": 0b,
+        "isV1Fullblock": 0b,
+        "needsLegacyTopRotation": 0b,
+        "useBlockTypeLightAbsorption": 0b,
+        "uv_lock": 0b
+      },
+      "materialInstancesDescription": {
+        "mappings": {},
+        "materials": {
+          "*": {
+            "ambient_occlusion": 1.0f,
+            "packed_bools": 5b,
+            "render_method": "opaque",
+            "texture": "paletter_tex",
+            "tint_method": "none"
+          }
+        }
+      }
+    },
+    "minecraft:material_instances": {
+      "mappings": {},
+      "materials": {
+        "*": {
+          "ambient_occlusion": 1.0f,
+          "packed_bools": 5b,
+          "render_method": "opaque",
+          "texture": "paletter_tex_alt",
+          "tint_method": "none"
+        }
+      }
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10036,
+    "material": "dirt"
+  }
+}
+
+# paletter:geometry_uv_lock_list
+{
+  "components": {
+    "minecraft:geometry": {
+      "bone_visibility": {},
+      "culling": "",
+      "culling_layer": "minecraft:culling_layer.undefined",
+      "culling_shape": "",
+      "identifier": "geometry.paletter_cube",
+      "ignoreGeometryForIsSolid": 0b,
+      "isV1Fullblock": 0b,
+      "needsLegacyTopRotation": 0b,
+      "useBlockTypeLightAbsorption": 0b,
+      "uv_lock": ["bone_a"]
+    },
+    "minecraft:material_instances": {
+      "mappings": {},
+      "materials": {
+        "*": {
+          "ambient_occlusion": 1.0f,
+          "packed_bools": 5b,
+          "render_method": "opaque",
+          "texture": "paletter_tex",
+          "tint_method": "none"
+        }
+      }
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10038,
+    "material": "dirt"
+  }
+}
+
+# paletter:geometry_full_block
+{
+  "components": {
+    "minecraft:geometry": {
+      "bone_visibility": {},
+      "culling": "",
+      "culling_layer": "minecraft:culling_layer.undefined",
+      "culling_shape": "",
+      "identifier": "minecraft:geometry.full_block",
+      "ignoreGeometryForIsSolid": 0b,
+      "isV1Fullblock": 0b,
+      "needsLegacyTopRotation": 0b,
+      "useBlockTypeLightAbsorption": 0b,
+      "uv_lock": 0b
+    },
+    "minecraft:material_instances": {
+      "mappings": {},
+      "materials": {
+        "*": {
+          "ambient_occlusion": 1.0f,
+          "packed_bools": 5b,
+          "render_method": "opaque",
+          "texture": "paletter_tex",
+          "tint_method": "none"
+        }
+      }
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10040,
+    "material": "dirt"
+  }
+}
+
+# paletter:geometry_full
+{
+  "components": {
+    "minecraft:geometry": {
+      "bone_visibility": {
+        "bone_a": "1.000000",
+        "bone_b": "query.block_state('paletter:on')"
+      },
+      "culling": "paletter:culling",
+      "culling_layer": "minecraft:culling_layer.leaves",
+      "culling_shape": "",
+      "identifier": "geometry.paletter_cube",
+      "ignoreGeometryForIsSolid": 0b,
+      "isV1Fullblock": 0b,
+      "needsLegacyTopRotation": 0b,
+      "useBlockTypeLightAbsorption": 0b,
+      "uv_lock": 1b
+    },
+    "minecraft:material_instances": {
+      "mappings": {},
+      "materials": {
+        "*": {
+          "ambient_occlusion": 1.0f,
+          "packed_bools": 5b,
+          "render_method": "opaque",
+          "texture": "paletter_tex",
+          "tint_method": "none"
+        }
+      }
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "properties": [
+    {
+      "enum": [0b, 1b],
+      "name": "paletter:on"
+    }
+  ],
+  "vanilla_block_data": {
+    "block_id": 10041,
+    "material": "dirt"
+  }
+}
+
+# paletter:friction
+{
+  "components": {
+    "minecraft:friction": {
+      "value": 0.2f
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10042,
+    "material": "dirt"
+  }
+}
+
+# paletter:flower_pottable
+{
+  "components": {
+    "minecraft:flower_pottable": {
+      "usePreR26U2FlowerPotOffset": 0b
+    },
+    "minecraft:geometry": {
+      "bone_visibility": {},
+      "culling": "",
+      "culling_layer": "minecraft:culling_layer.undefined",
+      "culling_shape": "",
+      "identifier": "minecraft:geometry.full_block",
+      "ignoreGeometryForIsSolid": 0b,
+      "isV1Fullblock": 0b,
+      "needsLegacyTopRotation": 0b,
+      "useBlockTypeLightAbsorption": 0b,
+      "uv_lock": 0b
+    },
+    "minecraft:material_instances": {
+      "mappings": {},
+      "materials": {
+        "*": {
+          "ambient_occlusion": 1.0f,
+          "packed_bools": 5b,
+          "render_method": "opaque",
+          "texture": "paletter_tex",
+          "tint_method": "none"
+        }
+      }
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10043,
+    "material": "dirt"
+  }
+}
+
+# paletter:flammable_true
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10044,
+    "material": "dirt"
+  }
+}
+
+# paletter:destruction_particles_min
+{
+  "components": {
+    "minecraft:destruction_particles": {
+      "particle_count": 100,
+      "texture": "paletter_tex",
+      "tint_method": "none"
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10050,
+    "material": "dirt"
+  }
+}
+
+# paletter:flammable
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10045,
+    "material": "dirt"
+  }
+}
+
+# paletter:destructible_by_mining_false
+{
+  "components": {
+    "minecraft:destructible_by_mining": {
+      "value": -1.0f
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10052,
+    "material": "dirt"
+  }
+}
+
+# paletter:connection_trait_block
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "traits": [
+    {
+      "enabled_states": 1,
+      "name": "minecraft:connection",
+      "type": 0,
+      "update_flags": 3
+    }
+  ],
+  "vanilla_block_data": {
+    "block_id": 10057,
+    "material": "dirt"
+  }
+}
+
+# paletter:connection_rule_default
+{
+  "components": {
+    "minecraft:connection_rule": {
+      "accepts_connections_from": "all",
+      "enabled_directions": ["south", "north", "east", "west"]
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10058,
+    "material": "dirt"
+  }
+}
+
+# paletter:connection_rule
+{
+  "components": {
+    "minecraft:connection_rule": {
+      "accepts_connections_from": "only_fences",
+      "enabled_directions": ["north", "south"]
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10059,
+    "material": "dirt"
+  }
+}
+
+# paletter:collision_box_true
+{
+  "components": {
+    "minecraft:collision_box": {
+      "boxes": [] /* TAG_END */,
+      "enabled": 1b
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10060,
+    "material": "dirt"
+  }
+}
+
+# paletter:collision_box_single_list
+{
+  "components": {
+    "minecraft:collision_box": {
+      "boxes": [
+        {
+          "maxX": 14.0f,
+          "maxY": 10.0f,
+          "maxZ": 14.0f,
+          "minX": 2.0f,
+          "minY": 0.0f,
+          "minZ": 2.0f
+        }
+      ],
+      "enabled": 1b
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10061,
+    "material": "dirt"
+  }
+}
+
+# paletter:collision_box_list
+{
+  "components": {
+    "minecraft:collision_box": {
+      "boxes": [
+        {
+          "maxX": 16.0f,
+          "maxY": 4.0f,
+          "maxZ": 16.0f,
+          "minX": 0.0f,
+          "minY": 0.0f,
+          "minZ": 0.0f
+        },
+        {
+          "maxX": 10.0f,
+          "maxY": 16.0f,
+          "maxZ": 10.0f,
+          "minX": 6.0f,
+          "minY": 4.0f,
+          "minZ": 6.0f
+        }
+      ],
+      "enabled": 1b
+    }
+  },
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10062,
+    "material": "dirt"
+  }
+}
+
+# paletter:chest_obstruction
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10064,
+    "material": "dirt"
+  }
+}
+

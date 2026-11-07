@@ -1,0 +1,18 @@
+{
+  "format_version": "1.21.80",
+  "minecraft:block_culling_rules": {
+    "description": {
+      "identifier": "paletter:culling"
+    },
+    "rules": [
+      {
+        "geometry_part": {
+          "bone": "bone_a",
+          "cube": 0,
+          "face": "down"
+        },
+        "direction": "down"
+      }
+    ]
+  }
+}

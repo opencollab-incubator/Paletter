@@ -1,0 +1,17 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:enchantable",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:enchantable": {
+        "slot": "sword",
+        "value": 10
+      }
+    }
+  }
+}

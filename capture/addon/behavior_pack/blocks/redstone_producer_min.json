@@ -1,0 +1,16 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:redstone_producer_min",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:redstone_producer": {
+        "power": 4
+      }
+    }
+  }
+}

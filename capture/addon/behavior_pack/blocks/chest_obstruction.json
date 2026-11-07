@@ -1,0 +1,16 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:chest_obstruction",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:chest_obstruction": {
+        "obstruction_rule": "never"
+      }
+    }
+  }
+}

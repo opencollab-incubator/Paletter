@@ -1,0 +1,19 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:icon_textures",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:icon": {
+        "textures": {
+          "default": "paletter_icon",
+          "dyed": "paletter_icon_alt"
+        }
+      }
+    }
+  }
+}

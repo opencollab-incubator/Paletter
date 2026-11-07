@@ -1,0 +1,29 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:shooter",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:use_modifiers": {
+        "use_duration": 3600
+      },
+      "minecraft:shooter": {
+        "ammunition": [
+          {
+            "item": "minecraft:arrow",
+            "use_offhand": true,
+            "search_inventory": true,
+            "use_in_creative": true
+          }
+        ],
+        "max_draw_duration": 1,
+        "scale_power_by_draw_duration": true,
+        "charge_on_draw": false
+      }
+    }
+  }
+}

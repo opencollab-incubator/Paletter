@@ -1,0 +1,16 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:allow_off_hand_full",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:allow_off_hand": {
+        "value": false
+      }
+    }
+  }
+}

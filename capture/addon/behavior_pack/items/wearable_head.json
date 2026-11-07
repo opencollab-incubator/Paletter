@@ -1,0 +1,16 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:wearable_head",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:wearable": {
+        "slot": "slot.armor.head"
+      }
+    }
+  }
+}

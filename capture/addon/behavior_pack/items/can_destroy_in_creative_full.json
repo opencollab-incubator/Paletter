@@ -1,0 +1,16 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:can_destroy_in_creative_full",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:can_destroy_in_creative": {
+        "value": true
+      }
+    }
+  }
+}

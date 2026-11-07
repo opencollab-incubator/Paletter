@@ -1,0 +1,16 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:fire_resistant_full",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:fire_resistant": {
+        "value": false
+      }
+    }
+  }
+}

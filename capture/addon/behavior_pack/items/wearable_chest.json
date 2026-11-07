@@ -1,0 +1,17 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:wearable_chest",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:wearable": {
+        "slot": "slot.armor.chest",
+        "protection": 5
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:neighbor_change",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:neighbor_change": {
+        "neighbor_directions": [
+          "north",
+          "up"
+        ]
+      }
+    }
+  }
+}

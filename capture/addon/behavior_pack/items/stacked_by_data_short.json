@@ -1,0 +1,14 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:stacked_by_data_short",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:stacked_by_data": true
+    }
+  }
+}

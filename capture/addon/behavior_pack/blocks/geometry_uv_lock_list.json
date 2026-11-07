@@ -1,0 +1,24 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:geometry_uv_lock_list",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:geometry": {
+        "identifier": "geometry.paletter_cube",
+        "uv_lock": [
+          "bone_a"
+        ]
+      },
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  }
+}

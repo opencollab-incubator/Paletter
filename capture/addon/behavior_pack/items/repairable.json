@@ -1,0 +1,35 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:repairable",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:durability": {
+        "max_durability": 80
+      },
+      "minecraft:repairable": {
+        "repair_items": [
+          {
+            "items": [
+              "minecraft:stick"
+            ],
+            "repair_amount": 10
+          },
+          {
+            "items": [
+              "minecraft:diamond",
+              {
+                "name": "minecraft:iron_ingot"
+              }
+            ],
+            "repair_amount": "query.max_durability * 0.25"
+          }
+        ]
+      }
+    }
+  }
+}

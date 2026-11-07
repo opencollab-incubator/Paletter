@@ -1,0 +1,22 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:block_placer_use_on",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:block_placer": {
+        "block": "minecraft:dirt",
+        "use_on": [
+          "minecraft:grass_block",
+          {
+            "name": "minecraft:stone"
+          }
+        ]
+      }
+    }
+  }
+}

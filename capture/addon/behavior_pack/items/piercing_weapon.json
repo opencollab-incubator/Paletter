@@ -1,0 +1,24 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:piercing_weapon",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:piercing_weapon": {
+        "reach": {
+          "min": 0.25,
+          "max": 4.5
+        },
+        "creative_reach": {
+          "min": 0,
+          "max": 7
+        },
+        "hitbox_margin": 0.2
+      }
+    }
+  }
+}

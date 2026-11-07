@@ -1,0 +1,16 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:dyeable_hex",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:dyeable": {
+        "default_color": "#ff0080"
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:wearable_offhand",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:wearable": {
+        "slot": "slot.weapon.offhand"
+      },
+      "minecraft:allow_off_hand": true
+    }
+  }
+}

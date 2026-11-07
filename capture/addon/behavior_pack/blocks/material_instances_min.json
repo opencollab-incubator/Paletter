@@ -1,0 +1,19 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:material_instances_min",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      },
+      "minecraft:geometry": "minecraft:geometry.full_block"
+    }
+  }
+}

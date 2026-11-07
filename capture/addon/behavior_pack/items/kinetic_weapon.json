@@ -1,0 +1,38 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:kinetic_weapon",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:kinetic_weapon": {
+        "delay": 5,
+        "reach": {
+          "min": 0.5,
+          "max": 4
+        },
+        "creative_reach": {
+          "min": 0,
+          "max": 6
+        },
+        "hitbox_margin": 0.125,
+        "damage_multiplier": 1.5,
+        "damage_modifier": 2,
+        "damage_conditions": {
+          "max_duration": 20,
+          "min_speed": 1.5,
+          "min_relative_speed": 0.5
+        },
+        "knockback_conditions": {
+          "max_duration": 40
+        },
+        "dismount_conditions": {
+          "min_speed": 3
+        }
+      }
+    }
+  }
+}

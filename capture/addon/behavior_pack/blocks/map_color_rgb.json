@@ -1,0 +1,18 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:map_color_rgb",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:map_color": [
+        0,
+        255,
+        0
+      ]
+    }
+  }
+}

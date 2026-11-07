@@ -1,0 +1,17 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:cooldown",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:cooldown": {
+        "category": "pal",
+        "duration": 1.5
+      }
+    }
+  }
+}

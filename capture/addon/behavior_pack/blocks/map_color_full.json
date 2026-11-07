@@ -1,0 +1,17 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:map_color_full",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:map_color": {
+        "color": "#0000ff",
+        "tint_method": "grass"
+      }
+    }
+  }
+}

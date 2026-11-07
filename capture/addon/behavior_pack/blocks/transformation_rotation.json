@@ -1,0 +1,20 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:transformation_rotation",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:transformation": {
+        "rotation": [
+          0,
+          180,
+          0
+        ]
+      }
+    }
+  }
+}

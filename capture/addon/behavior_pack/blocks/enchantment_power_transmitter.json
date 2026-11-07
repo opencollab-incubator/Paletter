@@ -1,0 +1,14 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:enchantment_power_transmitter",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:enchantment_power_transmitter": true
+    }
+  }
+}

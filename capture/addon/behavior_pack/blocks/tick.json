@@ -1,0 +1,20 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:tick",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:tick": {
+        "interval_range": [
+          10,
+          20
+        ],
+        "looping": true
+      }
+    }
+  }
+}

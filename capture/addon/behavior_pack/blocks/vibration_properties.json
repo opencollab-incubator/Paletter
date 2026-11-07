@@ -1,0 +1,17 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:vibration_properties",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:vibration_properties": {
+        "dampen_vibrations": true,
+        "occlude_vibrations": true
+      }
+    }
+  }
+}

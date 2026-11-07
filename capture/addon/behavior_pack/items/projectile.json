@@ -1,0 +1,17 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:projectile",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:projectile": {
+        "projectile_entity": "minecraft:arrow",
+        "minimum_critical_power": 1.25
+      }
+    }
+  }
+}

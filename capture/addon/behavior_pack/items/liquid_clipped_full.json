@@ -1,0 +1,16 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:liquid_clipped_full",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:liquid_clipped": {
+        "value": false
+      }
+    }
+  }
+}

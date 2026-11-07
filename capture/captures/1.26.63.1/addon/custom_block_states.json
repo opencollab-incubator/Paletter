@@ -1,0 +1,332 @@
+{
+  "paletter:vibration_properties": {
+    "states": 1,
+    "defaultHash": "540351744",
+    "default": "{}"
+  },
+  "paletter:display_name": {
+    "states": 1,
+    "defaultHash": "4209834966",
+    "default": "{}"
+  },
+  "paletter:states_block": {
+    "states": 2304,
+    "defaultHash": "3387770614",
+    "default": "{ \"paletter:list\": 1, \"paletter:flag\": 0b, \"paletter:count\": 0, \"paletter:color\": \"red\", \"minecraft:cardinal_direction\": \"south\", \"minecraft:block_face\": \"down\", \"minecraft:vertical_half\": \"bottom\" }"
+  },
+  "paletter:transformation_rotation": {
+    "states": 1,
+    "defaultHash": "2223432841",
+    "default": "{}"
+  },
+  "paletter:tags": {
+    "states": 1,
+    "defaultHash": "1031679781",
+    "default": "{}"
+  },
+  "paletter:transformation": {
+    "states": 1,
+    "defaultHash": "1530395711",
+    "default": "{}"
+  },
+  "paletter:crafting_table": {
+    "states": 1,
+    "defaultHash": "3674319591",
+    "default": "{}"
+  },
+  "paletter:tick": {
+    "states": 1,
+    "defaultHash": "4086606281",
+    "default": "{}"
+  },
+  "paletter:entity_fall_on": {
+    "states": 1,
+    "defaultHash": "2533795465",
+    "default": "{}"
+  },
+  "paletter:sound": {
+    "states": 1,
+    "defaultHash": "3603290386",
+    "default": "{}"
+  },
+  "paletter:support": {
+    "states": 1,
+    "defaultHash": "3006952784",
+    "default": "{}"
+  },
+  "paletter:enchantment_power_transmitter": {
+    "states": 1,
+    "defaultHash": "3797338106",
+    "default": "{}"
+  },
+  "paletter:redstone_conductivity": {
+    "states": 1,
+    "defaultHash": "3974700799",
+    "default": "{}"
+  },
+  "paletter:selection_box_false": {
+    "states": 1,
+    "defaultHash": "4204854257",
+    "default": "{}"
+  },
+  "paletter:collision_box_false": {
+    "states": 1,
+    "defaultHash": "3186428619",
+    "default": "{}"
+  },
+  "paletter:selection_box_box": {
+    "states": 1,
+    "defaultHash": "2120954469",
+    "default": "{}"
+  },
+  "paletter:plain_block": {
+    "states": 1,
+    "defaultHash": "924668375",
+    "default": "{}"
+  },
+  "paletter:replaceable": {
+    "states": 1,
+    "defaultHash": "849930765",
+    "default": "{}"
+  },
+  "paletter:redstone_producer_min": {
+    "states": 1,
+    "defaultHash": "564228923",
+    "default": "{}"
+  },
+  "paletter:redstone_producer": {
+    "states": 1,
+    "defaultHash": "562598574",
+    "default": "{}"
+  },
+  "paletter:leashable": {
+    "states": 1,
+    "defaultHash": "2268165524",
+    "default": "{}"
+  },
+  "paletter:redstone_consumer": {
+    "states": 1,
+    "defaultHash": "3260124016",
+    "default": "{}"
+  },
+  "paletter:destructible_by_mining": {
+    "states": 1,
+    "defaultHash": "3817624213",
+    "default": "{}"
+  },
+  "paletter:embedded_visual": {
+    "states": 1,
+    "defaultHash": "4242516448",
+    "default": "{}"
+  },
+  "paletter:leashable_default": {
+    "states": 1,
+    "defaultHash": "3913588222",
+    "default": "{}"
+  },
+  "paletter:random_offset": {
+    "states": 1,
+    "defaultHash": "2843823762",
+    "default": "{}"
+  },
+  "paletter:geometry_short": {
+    "states": 1,
+    "defaultHash": "2716470927",
+    "default": "{}"
+  },
+  "paletter:precipitation_interactions": {
+    "states": 1,
+    "defaultHash": "3262194203",
+    "default": "{}"
+  },
+  "paletter:movable_immovable": {
+    "states": 1,
+    "defaultHash": "1021793192",
+    "default": "{}"
+  },
+  "paletter:placement_filter": {
+    "states": 1,
+    "defaultHash": "3261791128",
+    "default": "{}"
+  },
+  "paletter:instrument_sound": {
+    "states": 1,
+    "defaultHash": "2623574017",
+    "default": "{}"
+  },
+  "paletter:block_entity": {
+    "states": 1,
+    "defaultHash": "1764772469",
+    "default": "{}"
+  },
+  "paletter:neighbor_change_default": {
+    "states": 1,
+    "defaultHash": "3662462278",
+    "default": "{}"
+  },
+  "paletter:neighbor_change": {
+    "states": 1,
+    "defaultHash": "1674341180",
+    "default": "{}"
+  },
+  "paletter:multi_block": {
+    "states": 2,
+    "defaultHash": "428099933",
+    "default": "{ \"minecraft:multi_block_part\": 0 }"
+  },
+  "paletter:movable_sticky": {
+    "states": 1,
+    "defaultHash": "1632099816",
+    "default": "{}"
+  },
+  "paletter:destructible_by_explosion_false": {
+    "states": 1,
+    "defaultHash": "2297438535",
+    "default": "{}"
+  },
+  "paletter:menu_hidden_block": {
+    "states": 1,
+    "defaultHash": "3726024409",
+    "default": "{}"
+  },
+  "paletter:material_instances_min": {
+    "states": 1,
+    "defaultHash": "2134949555",
+    "default": "{}"
+  },
+  "paletter:destructible_by_explosion": {
+    "states": 1,
+    "defaultHash": "610886765",
+    "default": "{}"
+  },
+  "paletter:material_instances": {
+    "states": 1,
+    "defaultHash": "3113547982",
+    "default": "{}"
+  },
+  "paletter:map_color_rgb": {
+    "states": 1,
+    "defaultHash": "1455579413",
+    "default": "{}"
+  },
+  "paletter:destruction_particles": {
+    "states": 1,
+    "defaultHash": "242327887",
+    "default": "{}"
+  },
+  "paletter:map_color_hex": {
+    "states": 1,
+    "defaultHash": "2736231911",
+    "default": "{}"
+  },
+  "paletter:map_color_full": {
+    "states": 1,
+    "defaultHash": "3617665770",
+    "default": "{}"
+  },
+  "paletter:loot": {
+    "states": 1,
+    "defaultHash": "1192760884",
+    "default": "{}"
+  },
+  "paletter:liquid_detection": {
+    "states": 1,
+    "defaultHash": "3796476406",
+    "default": "{}"
+  },
+  "paletter:light_emission": {
+    "states": 1,
+    "defaultHash": "693961646",
+    "default": "{}"
+  },
+  "paletter:light_dampening": {
+    "states": 1,
+    "defaultHash": "1559146481",
+    "default": "{}"
+  },
+  "paletter:item_visual": {
+    "states": 1,
+    "defaultHash": "1540640509",
+    "default": "{}"
+  },
+  "paletter:geometry_uv_lock_list": {
+    "states": 1,
+    "defaultHash": "2717199276",
+    "default": "{}"
+  },
+  "paletter:geometry_full_block": {
+    "states": 1,
+    "defaultHash": "467059323",
+    "default": "{}"
+  },
+  "paletter:geometry_full": {
+    "states": 2,
+    "defaultHash": "2402227895",
+    "default": "{ \"paletter:on\": 0b }"
+  },
+  "paletter:friction": {
+    "states": 1,
+    "defaultHash": "1333990600",
+    "default": "{}"
+  },
+  "paletter:flower_pottable": {
+    "states": 1,
+    "defaultHash": "459950554",
+    "default": "{}"
+  },
+  "paletter:flammable_true": {
+    "states": 1,
+    "defaultHash": "3861507456",
+    "default": "{}"
+  },
+  "paletter:destruction_particles_min": {
+    "states": 1,
+    "defaultHash": "3907776814",
+    "default": "{}"
+  },
+  "paletter:flammable": {
+    "states": 1,
+    "defaultHash": "139850858",
+    "default": "{}"
+  },
+  "paletter:destructible_by_mining_false": {
+    "states": 1,
+    "defaultHash": "566024519",
+    "default": "{}"
+  },
+  "paletter:connection_trait_block": {
+    "states": 16,
+    "defaultHash": "3371306093",
+    "default": "{ \"minecraft:connection_north\": 0b, \"minecraft:connection_east\": 0b, \"minecraft:connection_south\": 0b, \"minecraft:connection_west\": 0b }"
+  },
+  "paletter:connection_rule_default": {
+    "states": 1,
+    "defaultHash": "2087671702",
+    "default": "{}"
+  },
+  "paletter:connection_rule": {
+    "states": 1,
+    "defaultHash": "1056535772",
+    "default": "{}"
+  },
+  "paletter:collision_box_true": {
+    "states": 1,
+    "defaultHash": "1838401393",
+    "default": "{}"
+  },
+  "paletter:collision_box_single_list": {
+    "states": 1,
+    "defaultHash": "758940547",
+    "default": "{}"
+  },
+  "paletter:collision_box_list": {
+    "states": 1,
+    "defaultHash": "1725846685",
+    "default": "{}"
+  },
+  "paletter:chest_obstruction": {
+    "states": 1,
+    "defaultHash": "1040259447",
+    "default": "{}"
+  }
+}

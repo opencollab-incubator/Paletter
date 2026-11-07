@@ -1,0 +1,14 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:tag_legacy",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "tag:paletter:legacy_tag": {}
+    }
+  }
+}

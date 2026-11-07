@@ -1,0 +1,17 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:redstone_consumer",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:redstone_consumer": {
+        "min_power": 3,
+        "propagates_power": true
+      }
+    }
+  }
+}

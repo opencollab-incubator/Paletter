@@ -1,0 +1,2 @@
+Comparing capture with bundled 26.60 (2225)
+IDENTICAL

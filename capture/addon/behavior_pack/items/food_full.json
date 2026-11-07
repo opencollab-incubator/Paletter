@@ -1,0 +1,21 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:food_full",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:food": {
+        "can_always_eat": true,
+        "nutrition": 2,
+        "using_converts_to": "minecraft:bowl"
+      },
+      "minecraft:use_modifiers": {
+        "use_duration": 1
+      }
+    }
+  }
+}

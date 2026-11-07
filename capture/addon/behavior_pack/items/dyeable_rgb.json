@@ -1,0 +1,20 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:dyeable_rgb",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:dyeable": {
+        "default_color": [
+          10,
+          20,
+          30
+        ]
+      }
+    }
+  }
+}

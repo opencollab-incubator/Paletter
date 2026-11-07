@@ -1,0 +1,28 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:destructible_by_mining",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 2.5,
+        "item_specific_speeds": [
+          {
+            "item": "minecraft:iron_pickaxe",
+            "destroy_speed": 1
+          },
+          {
+            "item": {
+              "tags": "query.any_tag('minecraft:is_pickaxe')"
+            },
+            "destroy_speed": 0.5
+          }
+        ]
+      }
+    }
+  }
+}

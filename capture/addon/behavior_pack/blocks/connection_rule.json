@@ -1,0 +1,20 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:connection_rule",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:connection_rule": {
+        "accepts_connections_from": "only_fences",
+        "enabled_directions": [
+          "north",
+          "south"
+        ]
+      }
+    }
+  }
+}

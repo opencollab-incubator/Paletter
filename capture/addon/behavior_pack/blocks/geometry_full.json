@@ -1,0 +1,34 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:geometry_full",
+      "menu_category": {
+        "category": "construction"
+      },
+      "states": {
+        "paletter:on": [
+          false,
+          true
+        ]
+      }
+    },
+    "components": {
+      "minecraft:geometry": {
+        "identifier": "geometry.paletter_cube",
+        "bone_visibility": {
+          "bone_a": true,
+          "bone_b": "query.block_state('paletter:on')"
+        },
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.leaves",
+        "uv_lock": true
+      },
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:compostable",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:compostable": {
+        "composting_chance": 50
+      }
+    }
+  }
+}

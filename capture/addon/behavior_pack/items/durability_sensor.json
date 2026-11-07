@@ -1,0 +1,27 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:durability_sensor",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:durability": {
+        "max_durability": 30
+      },
+      "minecraft:durability_sensor": {
+        "durability_thresholds": [
+          {
+            "durability": 10,
+            "sound_event": "break"
+          },
+          {
+            "durability": 5
+          }
+        ]
+      }
+    }
+  }
+}

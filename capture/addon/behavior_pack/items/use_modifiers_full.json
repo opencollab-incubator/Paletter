@@ -1,0 +1,19 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:use_modifiers_full",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:use_modifiers": {
+        "use_duration": 2,
+        "movement_modifier": 0.5,
+        "emit_vibrations": false,
+        "start_sound": "bow"
+      }
+    }
+  }
+}

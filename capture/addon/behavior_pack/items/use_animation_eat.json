@@ -1,0 +1,17 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:use_animation_eat",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:use_animation": "eat",
+      "minecraft:use_modifiers": {
+        "use_duration": 1
+      }
+    }
+  }
+}

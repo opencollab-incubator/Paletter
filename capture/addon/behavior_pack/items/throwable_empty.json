@@ -1,0 +1,17 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:throwable_empty",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:throwable": {},
+      "minecraft:projectile": {
+        "projectile_entity": "minecraft:snowball"
+      }
+    }
+  }
+}

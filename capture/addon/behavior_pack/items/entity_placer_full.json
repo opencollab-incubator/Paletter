@@ -1,0 +1,24 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:entity_placer_full",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:entity_placer": {
+        "entity": "minecraft:cow",
+        "use_on": [
+          "minecraft:grass_block"
+        ],
+        "dispense_on": [
+          {
+            "name": "minecraft:stone"
+          }
+        ]
+      }
+    }
+  }
+}

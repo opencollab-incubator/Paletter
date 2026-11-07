@@ -1,0 +1,20 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:leashable",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:leashable": {
+        "offset": [
+          0,
+          0.5,
+          0
+        ]
+      }
+    }
+  }
+}

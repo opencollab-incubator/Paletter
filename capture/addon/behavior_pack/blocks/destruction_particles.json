@@ -1,0 +1,18 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:destruction_particles",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:destruction_particles": {
+        "texture": "paletter_tex",
+        "tint_method": "grass",
+        "particle_count": 50
+      }
+    }
+  }
+}

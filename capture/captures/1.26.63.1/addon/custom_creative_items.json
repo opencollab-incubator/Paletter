@@ -1,0 +1,760 @@
+{
+  "groups": [
+    {
+      "name": "",
+      "category": "construction",
+      "icon": {
+        "id": "minecraft:air"
+      },
+      "index": 24
+    },
+    {
+      "name": "",
+      "category": "items",
+      "icon": {
+        "id": "minecraft:air"
+      },
+      "index": 129
+    },
+    {
+      "name": "itemGroup.name.dirt",
+      "category": "nature",
+      "icon": {
+        "id": "minecraft:air"
+      },
+      "index": 130
+    },
+    {
+      "name": "itemGroup.name.sword",
+      "category": "equipment",
+      "icon": {
+        "id": "minecraft:wooden_sword"
+      },
+      "index": 61
+    }
+  ],
+  "items": [
+    {
+      "id": "paletter:vibration_properties",
+      "block_runtime_id": "540351744",
+      "block_state_b64": "CgAACAQAbmFtZR0AcGFsZXR0ZXI6dmlicmF0aW9uX3Byb3BlcnRpZXMKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:display_name",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:states_block",
+      "block_runtime_id": "3387770614",
+      "block_state_b64": "CgAACAQAbmFtZRUAcGFsZXR0ZXI6c3RhdGVzX2Jsb2NrCgYAc3RhdGVzAw0AcGFsZXR0ZXI6bGlzdAEAAAABDQBwYWxldHRlcjpmbGFnAAMOAHBhbGV0dGVyOmNvdW50AAAAAAgOAHBhbGV0dGVyOmNvbG9yAwByZWQIHABtaW5lY3JhZnQ6Y2FyZGluYWxfZGlyZWN0aW9uBQBzb3V0aAgUAG1pbmVjcmFmdDpibG9ja19mYWNlBABkb3duCBcAbWluZWNyYWZ0OnZlcnRpY2FsX2hhbGYGAGJvdHRvbQAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:transformation_rotation",
+      "block_runtime_id": "2223432841",
+      "block_state_b64": "CgAACAQAbmFtZSAAcGFsZXR0ZXI6dHJhbnNmb3JtYXRpb25fcm90YXRpb24KBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:tags",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:transformation",
+      "block_runtime_id": "1530395711",
+      "block_state_b64": "CgAACAQAbmFtZRcAcGFsZXR0ZXI6dHJhbnNmb3JtYXRpb24KBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:crafting_table",
+      "block_runtime_id": "3674319591",
+      "block_state_b64": "CgAACAQAbmFtZRcAcGFsZXR0ZXI6Y3JhZnRpbmdfdGFibGUKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:tick",
+      "block_runtime_id": "4086606281",
+      "block_state_b64": "CgAACAQAbmFtZQ0AcGFsZXR0ZXI6dGljawoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:entity_fall_on",
+      "block_runtime_id": "2533795465",
+      "block_state_b64": "CgAACAQAbmFtZRcAcGFsZXR0ZXI6ZW50aXR5X2ZhbGxfb24KBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:sound",
+      "block_runtime_id": "3603290386",
+      "block_state_b64": "CgAACAQAbmFtZQ4AcGFsZXR0ZXI6c291bmQKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:support",
+      "block_runtime_id": "3006952784",
+      "block_state_b64": "CgAACAQAbmFtZRAAcGFsZXR0ZXI6c3VwcG9ydAoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:enchantment_power_transmitter",
+      "block_runtime_id": "3797338106",
+      "block_state_b64": "CgAACAQAbmFtZSYAcGFsZXR0ZXI6ZW5jaGFudG1lbnRfcG93ZXJfdHJhbnNtaXR0ZXIKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:redstone_conductivity",
+      "block_runtime_id": "3974700799",
+      "block_state_b64": "CgAACAQAbmFtZR4AcGFsZXR0ZXI6cmVkc3RvbmVfY29uZHVjdGl2aXR5CgYAc3RhdGVzAAA=",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:selection_box_false",
+      "block_runtime_id": "4204854257",
+      "block_state_b64": "CgAACAQAbmFtZRwAcGFsZXR0ZXI6c2VsZWN0aW9uX2JveF9mYWxzZQoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:collision_box_false",
+      "block_runtime_id": "3186428619",
+      "block_state_b64": "CgAACAQAbmFtZRwAcGFsZXR0ZXI6Y29sbGlzaW9uX2JveF9mYWxzZQoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:selection_box_box",
+      "block_runtime_id": "2120954469",
+      "block_state_b64": "CgAACAQAbmFtZRoAcGFsZXR0ZXI6c2VsZWN0aW9uX2JveF9ib3gKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:plain_block",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:replaceable",
+      "block_runtime_id": "849930765",
+      "block_state_b64": "CgAACAQAbmFtZRQAcGFsZXR0ZXI6cmVwbGFjZWFibGUKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:redstone_producer_min",
+      "block_runtime_id": "564228923",
+      "block_state_b64": "CgAACAQAbmFtZR4AcGFsZXR0ZXI6cmVkc3RvbmVfcHJvZHVjZXJfbWluCgYAc3RhdGVzAAA=",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:redstone_producer",
+      "block_runtime_id": "562598574",
+      "block_state_b64": "CgAACAQAbmFtZRoAcGFsZXR0ZXI6cmVkc3RvbmVfcHJvZHVjZXIKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:leashable",
+      "block_runtime_id": "2268165524",
+      "block_state_b64": "CgAACAQAbmFtZRIAcGFsZXR0ZXI6bGVhc2hhYmxlCgYAc3RhdGVzAAA=",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:redstone_consumer",
+      "block_runtime_id": "3260124016",
+      "block_state_b64": "CgAACAQAbmFtZRoAcGFsZXR0ZXI6cmVkc3RvbmVfY29uc3VtZXIKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:destructible_by_mining",
+      "block_runtime_id": "3817624213",
+      "block_state_b64": "CgAACAQAbmFtZR8AcGFsZXR0ZXI6ZGVzdHJ1Y3RpYmxlX2J5X21pbmluZwoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:embedded_visual",
+      "block_runtime_id": "4242516448",
+      "block_state_b64": "CgAACAQAbmFtZRgAcGFsZXR0ZXI6ZW1iZWRkZWRfdmlzdWFsCgYAc3RhdGVzAAA=",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:leashable_default",
+      "block_runtime_id": "3913588222",
+      "block_state_b64": "CgAACAQAbmFtZRoAcGFsZXR0ZXI6bGVhc2hhYmxlX2RlZmF1bHQKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:random_offset",
+      "block_runtime_id": "2843823762",
+      "block_state_b64": "CgAACAQAbmFtZRYAcGFsZXR0ZXI6cmFuZG9tX29mZnNldAoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:geometry_short",
+      "block_runtime_id": "2716470927",
+      "block_state_b64": "CgAACAQAbmFtZRcAcGFsZXR0ZXI6Z2VvbWV0cnlfc2hvcnQKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:precipitation_interactions",
+      "block_runtime_id": "3262194203",
+      "block_state_b64": "CgAACAQAbmFtZSMAcGFsZXR0ZXI6cHJlY2lwaXRhdGlvbl9pbnRlcmFjdGlvbnMKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:movable_immovable",
+      "block_runtime_id": "1021793192",
+      "block_state_b64": "CgAACAQAbmFtZRoAcGFsZXR0ZXI6bW92YWJsZV9pbW1vdmFibGUKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:placement_filter",
+      "block_runtime_id": "3261791128",
+      "block_state_b64": "CgAACAQAbmFtZRkAcGFsZXR0ZXI6cGxhY2VtZW50X2ZpbHRlcgoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:instrument_sound",
+      "block_runtime_id": "2623574017",
+      "block_state_b64": "CgAACAQAbmFtZRkAcGFsZXR0ZXI6aW5zdHJ1bWVudF9zb3VuZAoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:block_entity",
+      "block_runtime_id": "1764772469",
+      "block_state_b64": "CgAACAQAbmFtZRUAcGFsZXR0ZXI6YmxvY2tfZW50aXR5CgYAc3RhdGVzAAA=",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:neighbor_change_default",
+      "block_runtime_id": "3662462278",
+      "block_state_b64": "CgAACAQAbmFtZSAAcGFsZXR0ZXI6bmVpZ2hib3JfY2hhbmdlX2RlZmF1bHQKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:neighbor_change",
+      "block_runtime_id": "1674341180",
+      "block_state_b64": "CgAACAQAbmFtZRgAcGFsZXR0ZXI6bmVpZ2hib3JfY2hhbmdlCgYAc3RhdGVzAAA=",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:multi_block",
+      "block_runtime_id": "428099933",
+      "block_state_b64": "CgAACAQAbmFtZRQAcGFsZXR0ZXI6bXVsdGlfYmxvY2sKBgBzdGF0ZXMDGgBtaW5lY3JhZnQ6bXVsdGlfYmxvY2tfcGFydAAAAAAAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:movable_sticky",
+      "block_runtime_id": "1632099816",
+      "block_state_b64": "CgAACAQAbmFtZRcAcGFsZXR0ZXI6bW92YWJsZV9zdGlja3kKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:destructible_by_explosion_false",
+      "block_runtime_id": "2297438535",
+      "block_state_b64": "CgAACAQAbmFtZSgAcGFsZXR0ZXI6ZGVzdHJ1Y3RpYmxlX2J5X2V4cGxvc2lvbl9mYWxzZQoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:menu_hidden_block",
+      "block_runtime_id": "3726024409",
+      "block_state_b64": "CgAACAQAbmFtZRoAcGFsZXR0ZXI6bWVudV9oaWRkZW5fYmxvY2sKBgBzdGF0ZXMAAA==",
+      "groupId": 130
+    },
+    {
+      "id": "paletter:material_instances_min",
+      "block_runtime_id": "2134949555",
+      "block_state_b64": "CgAACAQAbmFtZR8AcGFsZXR0ZXI6bWF0ZXJpYWxfaW5zdGFuY2VzX21pbgoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:destructible_by_explosion",
+      "block_runtime_id": "610886765",
+      "block_state_b64": "CgAACAQAbmFtZSIAcGFsZXR0ZXI6ZGVzdHJ1Y3RpYmxlX2J5X2V4cGxvc2lvbgoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:material_instances",
+      "block_runtime_id": "3113547982",
+      "block_state_b64": "CgAACAQAbmFtZRsAcGFsZXR0ZXI6bWF0ZXJpYWxfaW5zdGFuY2VzCgYAc3RhdGVzAAA=",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:map_color_rgb",
+      "block_runtime_id": "1455579413",
+      "block_state_b64": "CgAACAQAbmFtZRYAcGFsZXR0ZXI6bWFwX2NvbG9yX3JnYgoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:destruction_particles",
+      "block_runtime_id": "242327887",
+      "block_state_b64": "CgAACAQAbmFtZR4AcGFsZXR0ZXI6ZGVzdHJ1Y3Rpb25fcGFydGljbGVzCgYAc3RhdGVzAAA=",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:map_color_hex",
+      "block_runtime_id": "2736231911",
+      "block_state_b64": "CgAACAQAbmFtZRYAcGFsZXR0ZXI6bWFwX2NvbG9yX2hleAoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:map_color_full",
+      "block_runtime_id": "3617665770",
+      "block_state_b64": "CgAACAQAbmFtZRcAcGFsZXR0ZXI6bWFwX2NvbG9yX2Z1bGwKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:loot",
+      "block_runtime_id": "1192760884",
+      "block_state_b64": "CgAACAQAbmFtZQ0AcGFsZXR0ZXI6bG9vdAoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:liquid_detection",
+      "block_runtime_id": "3796476406",
+      "block_state_b64": "CgAACAQAbmFtZRkAcGFsZXR0ZXI6bGlxdWlkX2RldGVjdGlvbgoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:light_emission",
+      "block_runtime_id": "693961646",
+      "block_state_b64": "CgAACAQAbmFtZRcAcGFsZXR0ZXI6bGlnaHRfZW1pc3Npb24KBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:light_dampening",
+      "block_runtime_id": "1559146481",
+      "block_state_b64": "CgAACAQAbmFtZRgAcGFsZXR0ZXI6bGlnaHRfZGFtcGVuaW5nCgYAc3RhdGVzAAA=",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:item_visual",
+      "block_runtime_id": "1540640509",
+      "block_state_b64": "CgAACAQAbmFtZRQAcGFsZXR0ZXI6aXRlbV92aXN1YWwKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:geometry_uv_lock_list",
+      "block_runtime_id": "2717199276",
+      "block_state_b64": "CgAACAQAbmFtZR4AcGFsZXR0ZXI6Z2VvbWV0cnlfdXZfbG9ja19saXN0CgYAc3RhdGVzAAA=",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:geometry_full_block",
+      "block_runtime_id": "467059323",
+      "block_state_b64": "CgAACAQAbmFtZRwAcGFsZXR0ZXI6Z2VvbWV0cnlfZnVsbF9ibG9jawoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:geometry_full",
+      "block_runtime_id": "2402227895",
+      "block_state_b64": "CgAACAQAbmFtZRYAcGFsZXR0ZXI6Z2VvbWV0cnlfZnVsbAoGAHN0YXRlcwELAHBhbGV0dGVyOm9uAAAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:friction",
+      "block_runtime_id": "1333990600",
+      "block_state_b64": "CgAACAQAbmFtZREAcGFsZXR0ZXI6ZnJpY3Rpb24KBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:flower_pottable",
+      "block_runtime_id": "459950554",
+      "block_state_b64": "CgAACAQAbmFtZRgAcGFsZXR0ZXI6Zmxvd2VyX3BvdHRhYmxlCgYAc3RhdGVzAAA=",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:flammable_true",
+      "block_runtime_id": "3861507456",
+      "block_state_b64": "CgAACAQAbmFtZRcAcGFsZXR0ZXI6ZmxhbW1hYmxlX3RydWUKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:destruction_particles_min",
+      "block_runtime_id": "3907776814",
+      "block_state_b64": "CgAACAQAbmFtZSIAcGFsZXR0ZXI6ZGVzdHJ1Y3Rpb25fcGFydGljbGVzX21pbgoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:flammable",
+      "block_runtime_id": "139850858",
+      "block_state_b64": "CgAACAQAbmFtZRIAcGFsZXR0ZXI6ZmxhbW1hYmxlCgYAc3RhdGVzAAA=",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:destructible_by_mining_false",
+      "block_runtime_id": "566024519",
+      "block_state_b64": "CgAACAQAbmFtZSUAcGFsZXR0ZXI6ZGVzdHJ1Y3RpYmxlX2J5X21pbmluZ19mYWxzZQoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:connection_trait_block",
+      "block_runtime_id": "3371306093",
+      "block_state_b64": "CgAACAQAbmFtZR8AcGFsZXR0ZXI6Y29ubmVjdGlvbl90cmFpdF9ibG9jawoGAHN0YXRlcwEaAG1pbmVjcmFmdDpjb25uZWN0aW9uX25vcnRoAAEZAG1pbmVjcmFmdDpjb25uZWN0aW9uX2Vhc3QAARoAbWluZWNyYWZ0OmNvbm5lY3Rpb25fc291dGgAARkAbWluZWNyYWZ0OmNvbm5lY3Rpb25fd2VzdAAAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:connection_rule_default",
+      "block_runtime_id": "2087671702",
+      "block_state_b64": "CgAACAQAbmFtZSAAcGFsZXR0ZXI6Y29ubmVjdGlvbl9ydWxlX2RlZmF1bHQKBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:connection_rule",
+      "block_runtime_id": "1056535772",
+      "block_state_b64": "CgAACAQAbmFtZRgAcGFsZXR0ZXI6Y29ubmVjdGlvbl9ydWxlCgYAc3RhdGVzAAA=",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:collision_box_true",
+      "block_runtime_id": "1838401393",
+      "block_state_b64": "CgAACAQAbmFtZRsAcGFsZXR0ZXI6Y29sbGlzaW9uX2JveF90cnVlCgYAc3RhdGVzAAA=",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:collision_box_single_list",
+      "block_runtime_id": "758940547",
+      "block_state_b64": "CgAACAQAbmFtZSIAcGFsZXR0ZXI6Y29sbGlzaW9uX2JveF9zaW5nbGVfbGlzdAoGAHN0YXRlcwAA",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:collision_box_list",
+      "block_runtime_id": "1725846685",
+      "block_state_b64": "CgAACAQAbmFtZRsAcGFsZXR0ZXI6Y29sbGlzaW9uX2JveF9saXN0CgYAc3RhdGVzAAA=",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:chest_obstruction",
+      "block_runtime_id": "1040259447",
+      "block_state_b64": "CgAACAQAbmFtZRoAcGFsZXR0ZXI6Y2hlc3Rfb2JzdHJ1Y3Rpb24KBgBzdGF0ZXMAAA==",
+      "groupId": 24
+    },
+    {
+      "id": "paletter:allow_off_hand_full",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:allow_off_hand_short",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:block_placer",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:block_placer_use_on",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:bundle_interaction",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:bundle_interaction_default",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:can_destroy_in_creative_full",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:can_destroy_in_creative_short",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:compostable",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:compostable_max",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:cooldown",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:cooldown_attack",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:damage_absorption",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:damage_full",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:damage_short",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:digger",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:digger_empty",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:display_name_key",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:durability",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:durability_chance",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:durability_sensor",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:dyeable",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:dyeable_hex",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:dyeable_rgb",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:enchantable",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:enchantable_all",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:entity_placer",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:entity_placer_full",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:fire_resistant_full",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:fire_resistant_true",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:food",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:food_full",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:fuel",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:fuel_fraction",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:glint_full",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:glint_short",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:hand_equipped_full",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:hand_equipped_short",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:hover_text_color",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:hover_text_color_full",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:icon_short",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:icon_textures",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:interact_button_text",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:interact_button_true",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:kinetic_weapon",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:kinetic_weapon_empty",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:liquid_clipped_full",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:liquid_clipped_short",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:max_stack_size_full",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:max_stack_size_short",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:menu_hidden",
+      "groupId": 61
+    },
+    {
+      "id": "paletter:piercing_weapon",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:piercing_weapon_empty",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:plain",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:projectile",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:projectile_min",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:rarity_full",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:rarity_short",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:record",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:record_min",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:repairable",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:shooter",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:shooter_min",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:should_despawn_full",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:should_despawn_short",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:stacked_by_data_full",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:stacked_by_data_short",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:storage_item",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:storage_item_default",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:storage_weight_modifier",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:storage_weight_modifier_zero",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:swing_duration",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:swing_sounds",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:swing_sounds_min",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:throwable",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:throwable_empty",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:use_animation_eat",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:use_animation_spear",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:use_modifiers",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:use_modifiers_full",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:wearable_chest",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:wearable_head",
+      "groupId": 129
+    },
+    {
+      "id": "paletter:wearable_offhand",
+      "groupId": 129
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:entity_placer",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:entity_placer": {
+        "entity": "minecraft:pig"
+      }
+    }
+  }
+}

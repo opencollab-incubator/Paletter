@@ -1,0 +1,28 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:random_offset",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:random_offset": {
+        "x": {
+          "range": {
+            "min": -0.25,
+            "max": 0.25
+          },
+          "steps": 4
+        },
+        "z": {
+          "range": {
+            "min": -0.125,
+            "max": 0.125
+          }
+        }
+      }
+    }
+  }
+}

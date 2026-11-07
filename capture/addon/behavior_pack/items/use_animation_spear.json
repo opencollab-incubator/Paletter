@@ -1,0 +1,19 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:use_animation_spear",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:use_animation": {
+        "value": "spear"
+      },
+      "minecraft:use_modifiers": {
+        "use_duration": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:entity_fall_on",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:entity_fall_on": {
+        "min_fall_distance": 2
+      }
+    }
+  }
+}

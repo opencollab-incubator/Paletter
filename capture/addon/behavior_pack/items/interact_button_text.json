@@ -1,0 +1,14 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:interact_button_text",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:interact_button": "Use Paletter"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:movable_sticky",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:movable": {
+        "movement_type": "push_pull",
+        "sticky": "same"
+      }
+    }
+  }
+}

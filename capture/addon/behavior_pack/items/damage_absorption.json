@@ -1,0 +1,24 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:damage_absorption",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:damage_absorption": {
+        "absorbable_causes": [
+          "all"
+        ]
+      },
+      "minecraft:wearable": {
+        "slot": "slot.armor.body"
+      },
+      "minecraft:durability": {
+        "max_durability": 64
+      }
+    }
+  }
+}

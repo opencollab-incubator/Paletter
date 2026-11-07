@@ -1,0 +1,18 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:cooldown_attack",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:cooldown": {
+        "category": "pal2",
+        "duration": 2,
+        "type": "attack"
+      }
+    }
+  }
+}

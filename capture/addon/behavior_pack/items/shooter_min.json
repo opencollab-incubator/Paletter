@@ -1,0 +1,23 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:shooter_min",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:use_modifiers": {
+        "use_duration": 10
+      },
+      "minecraft:shooter": {
+        "ammunition": [
+          {
+            "item": "minecraft:snowball"
+          }
+        ]
+      }
+    }
+  }
+}

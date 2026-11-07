@@ -1,0 +1,27 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:storage_item",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:storage_item": {
+        "max_slots": 8,
+        "allow_nested_storage_items": false,
+        "banned_items": [
+          "minecraft:shulker_box"
+        ],
+        "allowed_items": [
+          "minecraft:dirt",
+          "minecraft:stone"
+        ]
+      },
+      "minecraft:storage_weight_limit": {
+        "max_weight_limit": 32
+      }
+    }
+  }
+}

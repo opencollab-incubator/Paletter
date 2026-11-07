@@ -1,0 +1,14 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:digger_empty",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:digger": {}
+    }
+  }
+}

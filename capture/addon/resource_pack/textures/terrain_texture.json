@@ -1,0 +1,14 @@
+{
+  "resource_pack_name": "paletter",
+  "texture_name": "atlas.terrain",
+  "padding": 8,
+  "num_mip_levels": 4,
+  "texture_data": {
+    "paletter_tex": {
+      "textures": "textures/blocks/paletter_tex"
+    },
+    "paletter_tex_alt": {
+      "textures": "textures/blocks/paletter_tex_alt"
+    }
+  }
+}

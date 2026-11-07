@@ -8,6 +8,7 @@ junit = "6.0.0"
 
 [libraries]
 protocol-codec = { group = "org.cloudburstmc.protocol", name = "bedrock-codec", version.ref = "protocol" }
+protocol-connection = { group = "org.cloudburstmc.protocol", name = "bedrock-connection", version.ref = "protocol" }
 fastutil-int-object = { group = "org.cloudburstmc.fastutil.maps", name = "int-object-maps", version.ref = "fastutil" }
 fastutil-object-int = { group = "org.cloudburstmc.fastutil.maps", name = "object-int-maps", version.ref = "fastutil" }
 fastutil-object-object = { group = "org.cloudburstmc.fastutil.maps", name = "object-object-maps", version.ref = "fastutil" }

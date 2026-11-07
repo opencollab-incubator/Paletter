@@ -1,0 +1,241 @@
+Comparing capture with bundled 26.60 (2225)
+  items only in the capture: 153
+      minecraft:ice_ball
+      paletter:allow_off_hand_full
+      paletter:allow_off_hand_short
+      paletter:block_entity
+      paletter:block_placer
+      paletter:block_placer_use_on
+      paletter:bundle_interaction
+      paletter:bundle_interaction_default
+      paletter:can_destroy_in_creative_full
+      paletter:can_destroy_in_creative_short
+      paletter:chest_obstruction
+      paletter:collision_box_false
+      paletter:collision_box_list
+      paletter:collision_box_single_list
+      paletter:collision_box_true
+      paletter:compostable
+      paletter:compostable_max
+      paletter:connection_rule
+      paletter:connection_rule_default
+      paletter:connection_trait_block
+      paletter:cooldown
+      paletter:cooldown_attack
+      paletter:crafting_table
+      paletter:damage_absorption
+      paletter:damage_full
+      paletter:damage_short
+      paletter:destructible_by_explosion
+      paletter:destructible_by_explosion_false
+      paletter:destructible_by_mining
+      paletter:destructible_by_mining_false
+      paletter:destruction_particles
+      paletter:destruction_particles_min
+      paletter:digger
+      paletter:digger_empty
+      paletter:display_name
+      paletter:display_name_key
+      paletter:durability
+      paletter:durability_chance
+      paletter:durability_sensor
+      paletter:dyeable
+      ... 113 more
+  item runtime id changes: 34
+      minecraft:yellow_bundle: 878 -> 968
+      minecraft:cyan_bundle: 866 -> 956
+      minecraft:bundle: 865 -> 955
+      minecraft:white_bundle: 877 -> 967
+      minecraft:stone_spear: 860 -> 950
+      minecraft:netherite_spear: 859 -> 949
+      minecraft:breeze_rod: 879 -> 969
+      minecraft:ominous_trial_key: 880 -> 970
+      minecraft:wooden_spear: 861 -> 951
+      minecraft:ice_crystal: -1248 -> 941
+      minecraft:icicle: -1247 -> 942
+      minecraft:red_shrub: 853 -> 943
+      minecraft:shelf_mushroom: 854 -> 944
+      minecraft:copper_spear: 855 -> 945
+      minecraft:diamond_spear: 856 -> 946
+      minecraft:golden_spear: 857 -> 947
+      minecraft:iron_spear: 858 -> 948
+      minecraft:black_bundle: 862 -> 952
+      minecraft:blue_bundle: 863 -> 953
+      minecraft:brown_bundle: 864 -> 954
+      minecraft:gray_bundle: 867 -> 957
+      minecraft:green_bundle: 868 -> 958
+      minecraft:light_blue_bundle: 869 -> 959
+      minecraft:light_gray_bundle: 870 -> 960
+      minecraft:lime_bundle: 871 -> 961
+      minecraft:magenta_bundle: 872 -> 962
+      minecraft:orange_bundle: 873 -> 963
+      minecraft:pink_bundle: 874 -> 964
+      minecraft:purple_bundle: 875 -> 965
+      minecraft:red_bundle: 876 -> 966
+      minecraft:trial_key: 881 -> 971
+      minecraft:wind_charge: 882 -> 972
+      minecraft:apple: 883 -> 973
+      minecraft:glow_berries: 884 -> 974
+  item version/componentBased changes: 2
+      minecraft:ice_crystal: version 2 -> 1, componentBased false -> true
+      minecraft:icicle: version 2 -> 1, componentBased false -> true
+  item component data changes: 2
+      minecraft:ice_crystal: +components={ "item_properties": { "allow_off_hand": 0b, "can_destroy_in_creative": 1b, "creative_category": 2i, "creative_group"...
+      minecraft:icicle: +components={ "item_properties": { "allow_off_hand": 0b, "can_destroy_in_creative": 1b, "creative_category": 2i, "creative_group"...
+  block properties only in the capture: 66
+      paletter:block_entity
+      paletter:chest_obstruction
+      paletter:collision_box_false
+      paletter:collision_box_list
+      paletter:collision_box_single_list
+      paletter:collision_box_true
+      paletter:connection_rule
+      paletter:connection_rule_default
+      paletter:connection_trait_block
+      paletter:crafting_table
+      paletter:destructible_by_explosion
+      paletter:destructible_by_explosion_false
+      paletter:destructible_by_mining
+      paletter:destructible_by_mining_false
+      paletter:destruction_particles
+      paletter:destruction_particles_min
+      paletter:display_name
+      paletter:embedded_visual
+      paletter:enchantment_power_transmitter
+      paletter:entity_fall_on
+      paletter:flammable
+      paletter:flammable_true
+      paletter:flower_pottable
+      paletter:friction
+      paletter:geometry_full
+      paletter:geometry_full_block
+      paletter:geometry_short
+      paletter:geometry_uv_lock_list
+      paletter:instrument_sound
+      paletter:item_visual
+      paletter:leashable
+      paletter:leashable_default
+      paletter:light_dampening
+      paletter:light_emission
+      paletter:liquid_detection
+      paletter:loot
+      paletter:map_color_full
+      paletter:map_color_hex
+      paletter:map_color_rgb
+      paletter:material_instances
+      ... 26 more
+  creative CONSTRUCTION: 63
+      size 587 -> 649
+      + paletter:block_entity {}
+      + paletter:chest_obstruction {}
+      + paletter:collision_box_false {}
+      + paletter:collision_box_list {}
+      + paletter:collision_box_single_list {}
+      + paletter:collision_box_true {}
+      + paletter:connection_rule {}
+      + paletter:connection_rule_default {}
+      + paletter:connection_trait_block {
+  "minecraft:connection_north": 0b,
+  "minecraft:connection_east": 0b,
+  "minecraft:connection_south": 0b,
+  "minecraft:connection_west": 0b
+}
+      + paletter:crafting_table {}
+      + paletter:destructible_by_explosion {}
+      + paletter:destructible_by_explosion_false {}
+      + paletter:destructible_by_mining {}
+      + paletter:destructible_by_mining_false {}
+      + paletter:destruction_particles {}
+      + paletter:destruction_particles_min {}
+      + paletter:embedded_visual {}
+      + paletter:enchantment_power_transmitter {}
+      + paletter:entity_fall_on {}
+      + paletter:flammable {}
+      + paletter:flammable_true {}
+      + paletter:flower_pottable {}
+      + paletter:friction {}
+      + paletter:geometry_full {
+  "paletter:on": 0b
+}
+      + paletter:geometry_full_block {}
+      + paletter:geometry_short {}
+      + paletter:geometry_uv_lock_list {}
+      + paletter:instrument_sound {}
+      + paletter:item_visual {}
+      + paletter:leashable {}
+      + paletter:leashable_default {}
+      + paletter:light_dampening {}
+      + paletter:light_emission {}
+      + paletter:liquid_detection {}
+      + paletter:loot {}
+      + paletter:map_color_full {}
+      + paletter:map_color_hex {}
+      + paletter:map_color_rgb {}
+      + paletter:material_instances {}
+      ... 23 more
+  creative NATURE: 16
+      size 457 -> 472
+      + [group itemGroup.name.dirt icon -]
+      + [group itemGroup.name.lingeringPotion icon minecraft:lingering_potion]
+      + [group itemGroup.name.potion icon minecraft:potion]
+      + [group itemGroup.name.spawnEgg icon minecraft:frostbite_spawn_egg]
+      + [group itemGroup.name.splashPotion icon minecraft:splash_potion]
+      + itemGroup.name.dirt / paletter:menu_hidden_block {}
+      + itemGroup.name.lingeringPotion / minecraft:lingering_potion@47
+      + itemGroup.name.lingeringPotion / minecraft:lingering_potion@48
+      + itemGroup.name.potion / minecraft:potion@47
+      + itemGroup.name.potion / minecraft:potion@48
+      + itemGroup.name.spawnEgg / minecraft:frostbite_spawn_egg
+      + itemGroup.name.splashPotion / minecraft:splash_potion@47
+      + itemGroup.name.splashPotion / minecraft:splash_potion@48
+      + minecraft:ice_crystal
+      + minecraft:icicle
+  creative EQUIPMENT: 5
+      size 389 -> 393
+      + itemGroup.name.arrow / minecraft:arrow@48
+      + itemGroup.name.arrow / minecraft:arrow@49
+      + itemGroup.name.sword / paletter:menu_hidden
+      + minecraft:ice_ball
+  creative ITEMS: 86
+      size 635 -> 720
+      + paletter:allow_off_hand_full
+      + paletter:allow_off_hand_short
+      + paletter:block_placer
+      + paletter:block_placer_use_on
+      + paletter:bundle_interaction
+      + paletter:bundle_interaction_default
+      + paletter:can_destroy_in_creative_full
+      + paletter:can_destroy_in_creative_short
+      + paletter:compostable
+      + paletter:compostable_max
+      + paletter:cooldown
+      + paletter:cooldown_attack
+      + paletter:damage_absorption
+      + paletter:damage_full
+      + paletter:damage_short
+      + paletter:digger
+      + paletter:digger_empty
+      + paletter:display_name
+      + paletter:display_name_key
+      + paletter:durability
+      + paletter:durability_chance
+      + paletter:durability_sensor
+      + paletter:dyeable
+      + paletter:dyeable_hex
+      + paletter:dyeable_rgb
+      + paletter:enchantable
+      + paletter:enchantable_all
+      + paletter:entity_placer
+      + paletter:entity_placer_full
+      + paletter:fire_resistant_full
+      + paletter:fire_resistant_true
+      + paletter:food
+      + paletter:food_full
+      + paletter:fuel
+      + paletter:fuel_fraction
+      + paletter:glint_full
+      + paletter:glint_short
+      + paletter:hand_equipped_full
+      + paletter:hand_equipped_short
+      ... 46 more
+DIFFERENT

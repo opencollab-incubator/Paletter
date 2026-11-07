@@ -1,0 +1,74 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:states_block",
+      "menu_category": {
+        "category": "construction"
+      },
+      "states": {
+        "paletter:count": {
+          "values": {
+            "min": 0,
+            "max": 3
+          }
+        },
+        "paletter:color": [
+          "red",
+          "green"
+        ],
+        "paletter:flag": [
+          false,
+          true
+        ],
+        "paletter:list": [
+          1,
+          5,
+          9
+        ]
+      },
+      "traits": {
+        "minecraft:placement_direction": {
+          "enabled_states": [
+            "minecraft:cardinal_direction"
+          ],
+          "y_rotation_offset": 180
+        },
+        "minecraft:placement_position": {
+          "enabled_states": [
+            "minecraft:block_face",
+            "minecraft:vertical_half"
+          ]
+        }
+      }
+    },
+    "components": {
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      },
+      "minecraft:geometry": "minecraft:geometry.full_block"
+    },
+    "permutations": [
+      {
+        "condition": "query.block_state('paletter:flag') == true",
+        "components": {
+          "minecraft:light_emission": 15
+        }
+      },
+      {
+        "condition": "query.block_state('minecraft:cardinal_direction') == 'north'",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

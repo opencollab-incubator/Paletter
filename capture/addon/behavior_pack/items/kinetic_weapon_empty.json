@@ -1,0 +1,14 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:kinetic_weapon_empty",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:kinetic_weapon": {}
+    }
+  }
+}

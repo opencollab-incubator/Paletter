@@ -1,0 +1,14 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paletter:loot",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:loot": "loot_tables/paletter_empty.json"
+    }
+  }
+}

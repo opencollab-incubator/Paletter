@@ -1,0 +1,12 @@
+{
+  "resource_pack_name": "paletter",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "paletter_icon": {
+      "textures": "textures/items/paletter_icon"
+    },
+    "paletter_icon_alt": {
+      "textures": "textures/items/paletter_icon_alt"
+    }
+  }
+}

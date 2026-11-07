@@ -1,0 +1,18 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:record",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:record": {
+        "sound_event": "record.cat",
+        "duration": 185,
+        "comparator_signal": 2
+      }
+    }
+  }
+}

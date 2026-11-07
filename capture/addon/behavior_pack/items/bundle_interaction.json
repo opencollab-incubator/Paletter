@@ -1,0 +1,17 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:bundle_interaction",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:bundle_interaction": {
+        "num_viewable_slots": 4
+      },
+      "minecraft:storage_item": {}
+    }
+  }
+}
