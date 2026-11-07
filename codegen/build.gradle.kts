@@ -1,0 +1,41 @@
+plugins {
+    application
+}
+
+dependencies {
+    implementation(project(":paletter"))
+    implementation(libs.gson)
+}
+
+application {
+    mainClass.set("org.geysermc.paletter.codegen.Codegen")
+}
+
+// Inputs: wire NBT (bundled vanilla data + codegen/captures), Geyser samples and the curated overrides.
+// Outputs (committed): codegen/spec/inferred.json, codegen/needs-capture.txt and the generated component sources.
+// Extra capture directories (e.g. -Pcaptures=../Paletter-capture/capture/captures) are read in addition to
+// codegen/captures. Copy captures into codegen/captures to make them part of the committed spec.
+val codegenArgs = listOf("--root", rootProject.projectDir.absolutePath) +
+    (findProperty("captures") as String?).orEmpty().split(',').filter { it.isNotBlank() }
+        .flatMap { listOf("--captures", rootProject.file(it).absolutePath) }
+
+tasks.register<JavaExec>("generateComponents") {
+    group = "codegen"
+    description = "Infers component shapes from wire NBT and regenerates the component types"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set(application.mainClass)
+    args = listOf("generate") + codegenArgs
+}
+
+val checkComponents = tasks.register<JavaExec>("checkComponents") {
+    group = "verification"
+    description = "Fails if regenerating the component types from the committed inputs yields a diff"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set(application.mainClass)
+    args = listOf("check") + codegenArgs
+    outputs.upToDateWhen { false }
+}
+
+tasks.named("check") {
+    dependsOn(checkComponents)
+}

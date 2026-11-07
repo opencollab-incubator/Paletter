@@ -37,6 +37,7 @@ session.sendPacket(palette.creativeContentPacket());
 | `paletter`  | The library. Depends on Cloudburst `bedrock-codec` (its types are the public API) and fastutil. No JSON, no network. |
 | `generator` | Imports palette dumps into the bundled format and checks version coverage. Not shipped.        |
 | `bds-addon` | A behavior pack that dumps what the Script API knows (item tags and properties, block states, defaults and tags). |
+| `codegen`   | Infers component shapes from wire NBT and generates the typed components. Not shipped.          |
 
 ## Concepts
 
@@ -158,6 +159,29 @@ int furnaceMinecart = palette.canonicalItem(ItemVariant.of("geysermc:furnace_min
 
 One to one mappings are the translator's business: two Java items claiming the same canonical id is a check on its own
 table (`canonicalToJava[id] != null`), and is what turns bugs like GeyserMC/Geyser#6668 into a startup error.
+
+## Components
+
+Data driven item and block components are typed records in `org.geysermc.paletter.component.item` and `...block`,
+**generated from NBT captured off the wire** (bundled vanilla data plus BDS captures), never from add-on JSON schemas,
+which differ from the network format. Each type has `TYPE` (name, confidence, min format version, experimental flag),
+`fromNbt` and `toNbt`:
+
+```java
+ItemComponents components = ItemComponents.builder()
+    .with(Damage.of((short) 5))                        // typed, exact wire types
+    .with(Cooldown.builder().category("geyser:pearl").duration(1).build())
+    .maxStackSize(16)                                  // conveniences also set the mirrored item_properties
+    .component("minecraft:rarity", rawNbt)             // raw escape hatch for components without a type
+    .build();
+Damage damage = components.get(Damage.TYPE);
+```
+
+Types inferred from vanilla NBT are `Confidence.HIGH` and round-trip every vanilla data driven item and block in the
+bundled data unchanged. Types known only from Geyser's production encoders are `MEDIUM` and annotated `@Unverified`.
+Components never seen on the wire have no type; `codegen/needs-capture.txt` lists them for the capture pipeline.
+Regenerate with `./gradlew :codegen:generateComponents`; `./gradlew check` fails if the committed sources are stale.
+See `codegen/README.md`, and `codegen/DEVIATIONS.md` for where Paletter's NBT differs from Geyser's.
 
 ## The creative inventory
 

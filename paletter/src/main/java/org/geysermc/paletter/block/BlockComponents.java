@@ -4,7 +4,20 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
-import org.cloudburstmc.nbt.NbtType;
+import org.geysermc.paletter.component.BlockComponent;
+import org.geysermc.paletter.component.ComponentType;
+import org.geysermc.paletter.component.block.CollisionBox;
+import org.geysermc.paletter.component.block.DestructibleByMining;
+import org.geysermc.paletter.component.block.DisplayName;
+import org.geysermc.paletter.component.block.Friction;
+import org.geysermc.paletter.component.block.Geometry;
+import org.geysermc.paletter.component.block.LightDampening;
+import org.geysermc.paletter.component.block.LightEmission;
+import org.geysermc.paletter.component.block.MaterialInstances;
+import org.geysermc.paletter.component.block.OnPlayerPlacing;
+import org.geysermc.paletter.component.block.PlacementFilter;
+import org.geysermc.paletter.component.block.SelectionBox;
+import org.geysermc.paletter.component.block.Transformation;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -15,8 +28,10 @@ import java.util.Set;
 /**
  * Data driven block components, as sent in the start game packet. Immutable; build with {@link #builder()}.
  * <p>
- * The typed methods produce exactly the NBT the client expects (units, key names, value types), so callers
- * describe a block instead of encoding it. Anything not covered can be set as raw NBT with {@link Builder#component}.
+ * Typed components (generated from captured network NBT, see {@code org.geysermc.paletter.component.block}) are added
+ * with {@link Builder#with}. The convenience methods convert units and conventions (pixels relative to the bottom
+ * center, degrees, face sets), so callers describe a block instead of encoding it. Anything without a generated type
+ * can be set as raw NBT with {@link Builder#component}.
  */
 public final class BlockComponents {
     public static final BlockComponents EMPTY = new BlockComponents(NbtMap.EMPTY);
@@ -37,6 +52,13 @@ public final class BlockComponents {
 
     public @NonNull NbtMap toNbt() {
         return nbt;
+    }
+
+    /**
+     * @return the component read as its generated type, or null if not set
+     */
+    public <T extends BlockComponent> @Nullable T get(@NonNull ComponentType<T> type) {
+        return nbt.get(type.name()) instanceof NbtMap value ? type.read(value) : null;
     }
 
     public @NonNull Builder toBuilder() {
@@ -67,6 +89,17 @@ public final class BlockComponents {
      */
     public record Material(@Nullable String texture, @Nullable String renderMethod, @Nullable String tintMethod,
                            float ambientOcclusion, boolean faceDimming, boolean isotropic) {
+        /**
+         * Bit of {@code packed_bools} for face dimming. Geyser sends face dimming as {@code packed_bools} 0 or 1 in
+         * production, so this bit is backed by use.
+         */
+        public static final int FACE_DIMMING_BIT = 1;
+        /**
+         * Bit of {@code packed_bools} assumed for isotropic, following the order of the add-on JSON fields
+         * (face_dimming, isotropic, alpha_masked_tint). Unverified: needs a capture of an isotropic material.
+         */
+        public static final int ISOTROPIC_BIT = 1 << 1;
+
         public static @NonNull Material of(@NonNull String texture) {
             return new Material(texture, null, null, 1.0f, true, false);
         }
@@ -77,6 +110,20 @@ public final class BlockComponents {
 
         public @NonNull Material tintMethod(@NonNull String tintMethod) {
             return new Material(texture, renderMethod, tintMethod, ambientOcclusion, faceDimming, isotropic);
+        }
+
+        /**
+         * @return the network form. Vanilla sends no {@code isotropic} key; the flags are packed into {@code packed_bools}
+         */
+        public MaterialInstances.@NonNull Material toComponent() {
+            return MaterialInstances.Material.builder()
+                // Bedrock stopped accepting a byte here in 1.26.20; it must be a float
+                .ambientOcclusion(ambientOcclusion)
+                .packedBools((byte) ((faceDimming ? FACE_DIMMING_BIT : 0) | (isotropic ? ISOTROPIC_BIT : 0)))
+                .renderMethod(renderMethod)
+                .tintMethod(tintMethod)
+                .texture(texture)
+                .build();
         }
     }
 
@@ -103,22 +150,36 @@ public final class BlockComponents {
         }
 
         /**
-         * Sets a raw component, replacing any previous value.
+         * Sets a typed component, replacing any previous value.
+         */
+        public @NonNull Builder with(@NonNull BlockComponent component) {
+            components.put(component.componentType().name(), component.toNbt());
+            return this;
+        }
+
+        /**
+         * Sets a raw component, replacing any previous value. The escape hatch for components without a
+         * generated type; see {@code codegen/needs-capture.txt}.
          */
         public @NonNull Builder component(@NonNull String name, @NonNull NbtMap value) {
             components.put(name, value);
             return this;
         }
 
+        public @NonNull Builder removeComponent(@NonNull String name) {
+            components.remove(name);
+            return this;
+        }
+
         public @NonNull Builder displayName(@NonNull String translationKeyOrName) {
-            return component("minecraft:display_name", NbtMap.builder().putString("value", translationKeyOrName).build());
+            return with(DisplayName.of(translationKeyOrName));
         }
 
         public @NonNull Builder selectionBox(@NonNull Box box) {
-            return component("minecraft:selection_box", NbtMap.builder()
-                .putBoolean("enabled", !box.isEmpty())
-                .putList("origin", NbtType.FLOAT, box.originX(), box.originY(), box.originZ())
-                .putList("size", NbtType.FLOAT, box.sizeX(), box.sizeY(), box.sizeZ())
+            return with(SelectionBox.builder()
+                .enabled(!box.isEmpty())
+                .origin(List.of(box.originX(), box.originY(), box.originZ()))
+                .size(List.of(box.sizeX(), box.sizeY(), box.sizeZ()))
                 .build());
         }
 
@@ -126,7 +187,7 @@ public final class BlockComponents {
          * Sets the collision boxes. Empty boxes are skipped; with no non-empty box, collision is disabled.
          */
         public @NonNull Builder collisionBoxes(@NonNull Box... boxes) {
-            List<NbtMap> boxesNbt = new ArrayList<>();
+            List<CollisionBox.Box> converted = new ArrayList<>();
             for (Box box : boxes) {
                 if (box.isEmpty()) {
                     continue;
@@ -134,19 +195,12 @@ public final class BlockComponents {
                 float minX = 8f + box.originX();
                 float minY = box.originY();
                 float minZ = 8f + box.originZ();
-                boxesNbt.add(NbtMap.builder()
-                    .putFloat("minX", minX)
-                    .putFloat("minY", minY)
-                    .putFloat("minZ", minZ)
-                    .putFloat("maxX", minX + box.sizeX())
-                    .putFloat("maxY", minY + box.sizeY())
-                    .putFloat("maxZ", minZ + box.sizeZ())
+                converted.add(CollisionBox.Box.builder()
+                    .minX(minX).minY(minY).minZ(minZ)
+                    .maxX(minX + box.sizeX()).maxY(minY + box.sizeY()).maxZ(minZ + box.sizeZ())
                     .build());
             }
-            return component("minecraft:collision_box", NbtMap.builder()
-                .putBoolean("enabled", !boxesNbt.isEmpty())
-                .putList("boxes", NbtType.COMPOUND, boxesNbt)
-                .build());
+            return with(CollisionBox.builder().enabled(!converted.isEmpty()).boxes(converted).build());
         }
 
         public @NonNull Builder geometry(@NonNull String identifier) {
@@ -157,86 +211,61 @@ public final class BlockComponents {
          * @param boneVisibility bone name to a Molang expression (or {@code true}/{@code false})
          */
         public @NonNull Builder geometry(@NonNull String identifier, @NonNull Map<String, String> boneVisibility) {
-            NbtMapBuilder geometry = NbtMap.builder().putString("identifier", identifier);
+            Geometry.Builder geometry = Geometry.builder().identifier(identifier);
             if (!boneVisibility.isEmpty()) {
                 NbtMapBuilder bones = NbtMap.builder();
                 boneVisibility.forEach(bones::putString);
-                geometry.putCompound("bone_visibility", bones.build());
+                geometry.boneVisibility(bones.build());
             }
-            return component("minecraft:geometry", geometry.build());
+            return with(geometry.build());
         }
 
         /**
          * @param materials material instance name (e.g. {@code *}, {@code up}, {@code north}) to material
          */
         public @NonNull Builder materials(@NonNull Map<String, Material> materials) {
-            NbtMapBuilder materialsNbt = NbtMap.builder();
-            materials.forEach((name, material) -> {
-                NbtMapBuilder builder = NbtMap.builder()
-                    // Bedrock stopped accepting a byte here in 1.26.20; it must be a float
-                    .putFloat("ambient_occlusion", material.ambientOcclusion())
-                    .putBoolean("isotropic", material.isotropic())
-                    // Actually a bitset; face dimming is its only known flag so far
-                    .putBoolean("packed_bools", material.faceDimming());
-                if (material.renderMethod() != null) {
-                    builder.putString("render_method", material.renderMethod());
-                }
-                if (material.tintMethod() != null) {
-                    builder.putString("tint_method", material.tintMethod());
-                }
-                if (material.texture() != null) {
-                    builder.putString("texture", material.texture());
-                }
-                materialsNbt.putCompound(name, builder.build());
-            });
-            return component("minecraft:material_instances", NbtMap.builder()
-                .putCompound("mappings", NbtMap.EMPTY)
-                .putCompound("materials", materialsNbt.build())
-                .build());
+            Map<String, MaterialInstances.Material> converted = new LinkedHashMap<>();
+            materials.forEach((name, material) -> converted.put(name, material.toComponent()));
+            return with(MaterialInstances.builder().mappings(NbtMap.EMPTY).materials(converted).build());
         }
 
         public @NonNull Builder placementFilter(@NonNull PlacementCondition... conditions) {
-            List<NbtMap> conditionsNbt = new ArrayList<>();
+            List<PlacementFilter.Condition> converted = new ArrayList<>();
             for (PlacementCondition condition : conditions) {
                 byte faces = 0;
                 for (Face face : condition.faces()) {
                     faces |= (byte) face.bit;
                 }
-                List<NbtMap> filters = new ArrayList<>();
+                List<PlacementFilter.BlockFilter> filters = new ArrayList<>();
                 for (String block : condition.blocks()) {
-                    filters.add(NbtMap.builder().putString("name", block).build());
+                    filters.add(PlacementFilter.BlockFilter.builder().name(block).build());
                 }
                 for (String tag : condition.tags()) {
                     // The meaning of tags_version is unknown, but tags do not work without it
-                    filters.add(NbtMap.builder().putString("tags", tag).putInt("tags_version", 6).build());
+                    filters.add(PlacementFilter.BlockFilter.builder().tags(tag).tagsVersion(6).build());
                 }
-                conditionsNbt.add(NbtMap.builder()
-                    .putByte("allowed_faces", faces)
-                    .putList("block_filters", NbtType.COMPOUND, filters)
-                    .build());
+                converted.add(new PlacementFilter.Condition(faces, filters));
             }
-            return component("minecraft:placement_filter", NbtMap.builder()
-                .putList("conditions", NbtType.COMPOUND, conditionsNbt)
-                .build());
+            return with(PlacementFilter.of(converted));
         }
 
         /**
          * @param seconds the time to break the block by hand
          */
         public @NonNull Builder destructibleByMining(float seconds) {
-            return component("minecraft:destructible_by_mining", NbtMap.builder().putFloat("value", seconds).build());
+            return with(DestructibleByMining.of(seconds));
         }
 
         public @NonNull Builder friction(float friction) {
-            return component("minecraft:friction", NbtMap.builder().putFloat("value", friction).build());
+            return with(Friction.of(friction));
         }
 
         public @NonNull Builder lightEmission(int level) {
-            return component("minecraft:light_emission", NbtMap.builder().putByte("emission", (byte) level).build());
+            return with(LightEmission.of((byte) level));
         }
 
         public @NonNull Builder lightDampening(int level) {
-            return component("minecraft:light_dampening", NbtMap.builder().putByte("lightLevel", (byte) level).build());
+            return with(LightDampening.of((byte) level));
         }
 
         /**
@@ -245,16 +274,12 @@ public final class BlockComponents {
         public @NonNull Builder transformation(float rotationX, float rotationY, float rotationZ,
                                                float scaleX, float scaleY, float scaleZ,
                                                float translateX, float translateY, float translateZ) {
-            return component("minecraft:transformation", NbtMap.builder()
-                .putInt("RX", quarterTurns(rotationX))
-                .putInt("RY", quarterTurns(rotationY))
-                .putInt("RZ", quarterTurns(rotationZ))
-                .putFloat("SX", scaleX)
-                .putFloat("SY", scaleY)
-                .putFloat("SZ", scaleZ)
-                .putFloat("TX", translateX)
-                .putFloat("TY", translateY)
-                .putFloat("TZ", translateZ)
+            return with(Transformation.builder()
+                .rotationX(quarterTurns(rotationX))
+                .rotationY(quarterTurns(rotationY))
+                .rotationZ(quarterTurns(rotationZ))
+                .scaleX(scaleX).scaleY(scaleY).scaleZ(scaleZ)
+                .translationX(translateX).translationY(translateY).translationZ(translateZ)
                 .build());
         }
 
@@ -267,11 +292,12 @@ public final class BlockComponents {
          * decides what is placed, as it avoids the client briefly placing the block twice.
          */
         public @NonNull Builder onPlayerPlacing(@NonNull String eventName) {
-            return component("minecraft:on_player_placing", NbtMap.builder().putString("triggerType", eventName).build());
+            return with(OnPlayerPlacing.of(eventName));
         }
 
         /**
-         * Adds a block tag, queryable with Molang. Tags are plain components named {@code tag:<name>}.
+         * Adds a block tag, queryable with Molang. Tags are plain components named {@code tag:<name>}, as Geyser sends
+         * them; vanilla 26.50+ data driven blocks list their tags in a top level {@code blockTags} list instead.
          */
         public @NonNull Builder tag(@NonNull String tag) {
             return component("tag:" + tag, NbtMap.EMPTY);

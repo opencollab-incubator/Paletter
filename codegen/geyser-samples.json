@@ -1,0 +1,90 @@
+{
+  "comment": "NBT exactly as Geyser's production encoders write it (GeyserMC/Geyser master, core/.../registry/populator/CustomItemRegistryPopulator.java and CustomBlockRegistryPopulator.java), in the typed notation of codegen/README.md. Evidence tier below wire NBT: a sample shapes a component only when no wire NBT shows it; otherwise it is checked against the wire shape and may only make fields optional.",
+  "samples": [
+    {"kind": "item", "name": "item_properties", "source": "CustomItemRegistryPopulator#createComponentNbt", "value": {
+      "allow_off_hand": false, "hand_equipped": false, "max_stack_size": "i:64", "damage": "i:5",
+      "can_destroy_in_creative": true, "enchantable_slot": "all", "enchantable_value": "i:10", "foil": true,
+      "frame_count": "i:10", "use_animation": "i:1", "use_duration": "i:32", "mining_speed": "f:1.0",
+      "minecraft:icon": {"textures": {"default": "custom_icon"}}, "creative_category": "i:4", "creative_group": "itemGroup.name.sword"
+    }},
+    {"kind": "item", "name": "minecraft:display_name", "source": "CustomItemRegistryPopulator#setupBasicItemInfo", "value": {"value": "Custom"}},
+    {"kind": "item", "name": "minecraft:max_stack_size", "source": "CustomItemRegistryPopulator#setupBasicItemInfo", "value": {"value": "b:64"}},
+    {"kind": "item", "name": "minecraft:durability", "source": "CustomItemRegistryPopulator#setupBasicItemInfo", "value": {
+      "damage_chance": {"max": "i:1", "min": "i:1"}, "max_durability": "i:250"
+    }},
+    {"kind": "item", "name": "minecraft:digger", "source": "CustomItemRegistryPopulator#computeToolProperties", "value": {
+      "destroy_speeds": [{"block": {"name": "", "states": {}, "tags": "1"}, "speed": "i:1"}], "use_efficiency": false
+    }},
+    {"kind": "item", "name": "minecraft:damage", "source": "CustomItemRegistryPopulator#createComponentNbt", "value": {"value": "b:5"}},
+    {"kind": "item", "name": "minecraft:can_destroy_in_creative", "source": "CustomItemRegistryPopulator#computeCreativeDestroyProperties", "value": {"value": true}},
+    {"kind": "item", "name": "minecraft:repairable", "source": "CustomItemRegistryPopulator#computeRepairableProperties", "value": {
+      "repair_items": [{"items": [{"tags": "1"}], "repair_amount": "f:1.0"}]
+    }},
+    {"kind": "item", "name": "minecraft:wearable", "source": "CustomItemRegistryPopulator#computeArmorProperties", "value": {"slot": "slot.armor.chest", "protection": "i:5"}},
+    {"kind": "item", "name": "minecraft:enchantable", "source": "CustomItemRegistryPopulator#computeEnchantableProperties", "value": {"slot": "all", "value": "b:10"}},
+    {"kind": "item", "name": "minecraft:glint", "source": "CustomItemRegistryPopulator#createComponentNbt", "value": {"value": true}},
+    {"kind": "item", "name": "minecraft:dyeable", "source": "CustomItemRegistryPopulator#createComponentNbt", "value": {"default_color": {"@int_array": [160, 101, 64]}}},
+    {"kind": "item", "name": "minecraft:kinetic_weapon", "source": "CustomItemRegistryPopulator#computeKineticWeaponProperties", "value": {
+      "delay": "s:10", "damage_modifier": "f:0.0", "damage_multiplier": "f:1.0",
+      "reach": {"min": "f:0.0", "max": "f:3.0"}, "creative_reach": {"min": "f:0.0", "max": "f:5.0"}, "hitbox_margin": "f:0.3",
+      "dismount_conditions": {"max_duration": "s:100", "min_speed": "f:10.0", "min_relative_speed": "f:0.0"}
+    }},
+    {"kind": "item", "name": "minecraft:piercing_weapon", "source": "CustomItemRegistryPopulator#computePiercingWeaponProperties", "value": {
+      "reach": {"min": "f:0.0", "max": "f:3.0"}, "creative_reach": {"min": "f:0.0", "max": "f:5.0"}, "hitbox_margin": "f:0.3"
+    }},
+    {"kind": "item", "name": "minecraft:swing_duration", "source": "CustomItemRegistryPopulator#computeSwingAnimationProperties", "value": {"value": "f:0.3"}},
+    {"kind": "item", "name": "minecraft:use_animation", "source": "CustomItemRegistryPopulator#computeConsumableProperties", "value": {"value": "eat"}},
+    {"kind": "item", "name": "minecraft:food", "source": "CustomItemRegistryPopulator#computeConsumableProperties", "value": {
+      "can_always_eat": false, "nutrition": "i:4", "saturation_modifier": "f:0.3", "using_converts_to": {}
+    }},
+    {"kind": "item", "name": "minecraft:cooldown", "source": "CustomItemRegistryPopulator#computeUseCooldownProperties", "value": {"category": "minecraft:ender_pearl", "duration": "f:1.0"}},
+    {"kind": "item", "name": "minecraft:block_placer", "source": "CustomItemRegistryPopulator#computeBlockItemProperties", "value": {
+      "block": "geyser:custom_block", "canUseBlockAsIcon": true, "use_on": {"@list": "STRING"}
+    }},
+    {"kind": "item", "name": "minecraft:shooter", "source": "CustomItemRegistryPopulator#computeChargeableProperties", "value": {
+      "ammunition": [{"item": {"name": "minecraft:arrow"}, "use_offhand": true, "use_in_creative": false, "search_inventory": true}],
+      "charge_on_draw": false, "max_draw_duration": "f:1.0", "scale_power_by_draw_duration": true
+    }},
+    {"kind": "item", "name": "minecraft:throwable", "source": "CustomItemRegistryPopulator#computeThrowableProperties", "value": {"do_swing_animation": true}},
+    {"kind": "item", "name": "minecraft:projectile", "source": "CustomItemRegistryPopulator#computeProjectileProperties", "value": {"projectile_entity": "minecraft:snowball"}},
+    {"kind": "item", "name": "minecraft:use_modifiers", "source": "CustomItemRegistryPopulator#computeUseEffectsProperties", "value": {"movement_modifier": "f:0.2", "use_duration": "f:1.6"}},
+    {"kind": "item", "name": "minecraft:entity_placer", "source": "CustomItemRegistryPopulator#computeEntityPlacerProperties", "value": {
+      "dispense_on": {"@list": "STRING"}, "entity": "minecraft:minecart", "use_on": {"@list": "STRING"}
+    }},
+    {"kind": "item", "name": "minecraft:compostable", "source": "CustomItemRegistryPopulator#createComponentNbt", "value": {"composting_chance": "i:1"}},
+    {"kind": "item", "name": "minecraft:fuel", "source": "CustomItemRegistryPopulator#createComponentNbt", "value": {"duration": "f:1.0"}},
+    {"kind": "item", "name": "minecraft:render_offsets", "source": "CustomItemRegistryPopulator#toNbtMap(CustomRenderOffsets)", "value": {
+      "main_hand": {
+        "first_person": {"position": ["f:0.0", "f:0.0", "f:0.0"], "rotation": ["f:0.0", "f:0.0", "f:0.0"], "scale": ["f:1.0", "f:1.0", "f:1.0"]},
+        "third_person": {"position": ["f:0.0", "f:0.0", "f:0.0"], "rotation": ["f:0.0", "f:0.0", "f:0.0"], "scale": ["f:1.0", "f:1.0", "f:1.0"]}
+      },
+      "off_hand": {
+        "first_person": {"position": ["f:0.0", "f:0.0", "f:0.0"], "rotation": ["f:0.0", "f:0.0", "f:0.0"], "scale": ["f:1.0", "f:1.0", "f:1.0"]},
+        "third_person": {"position": ["f:0.0", "f:0.0", "f:0.0"], "rotation": ["f:0.0", "f:0.0", "f:0.0"], "scale": ["f:1.0", "f:1.0", "f:1.0"]}
+      }
+    }},
+
+    {"kind": "block", "name": "minecraft:display_name", "source": "CustomBlockRegistryPopulator#convertComponents", "value": {"value": "Custom"}},
+    {"kind": "block", "name": "minecraft:selection_box", "source": "CustomBlockRegistryPopulator#convertBox", "value": {
+      "enabled": true, "origin": ["f:-8.0", "f:0.0", "f:-8.0"], "size": ["f:16.0", "f:16.0", "f:16.0"]
+    }},
+    {"kind": "block", "name": "minecraft:collision_box", "source": "CustomBlockRegistryPopulator#convertCollisionBoxes", "value": {
+      "enabled": true, "boxes": [{"minX": "f:0.0", "minY": "f:0.0", "minZ": "f:0.0", "maxX": "f:16.0", "maxY": "f:16.0", "maxZ": "f:16.0"}]
+    }},
+    {"kind": "block", "name": "minecraft:geometry", "source": "CustomBlockRegistryPopulator#convertComponents", "value": {"identifier": "geometry.custom"}},
+    {"kind": "block", "name": "minecraft:material_instances", "source": "CustomBlockRegistryPopulator#convertComponents", "value": {
+      "mappings": {}, "materials": {"*": {"ambient_occlusion": "f:1.0", "isotropic": false, "packed_bools": true, "render_method": "opaque", "texture": "custom"}}
+    }},
+    {"kind": "block", "name": "minecraft:placement_filter", "source": "CustomBlockRegistryPopulator#convertPlacementFilter", "value": {
+      "conditions": [{"allowed_faces": "b:3", "block_filters": [{"name": "minecraft:stone"}, {"tags": "q.any_tag('stone')", "tags_version": "i:6"}]}]
+    }},
+    {"kind": "block", "name": "minecraft:destructible_by_mining", "source": "CustomBlockRegistryPopulator#convertComponents", "value": {"value": "f:1.5"}},
+    {"kind": "block", "name": "minecraft:friction", "source": "CustomBlockRegistryPopulator#convertComponents", "value": {"value": "f:0.4"}},
+    {"kind": "block", "name": "minecraft:light_emission", "source": "CustomBlockRegistryPopulator#convertComponents", "value": {"emission": "b:15"}},
+    {"kind": "block", "name": "minecraft:light_dampening", "source": "CustomBlockRegistryPopulator#convertComponents", "value": {"lightLevel": "b:15"}},
+    {"kind": "block", "name": "minecraft:transformation", "source": "CustomBlockRegistryPopulator#convertComponents", "value": {
+      "RX": "i:0", "RY": "i:1", "RZ": "i:0", "SX": "f:1.0", "SY": "f:1.0", "SZ": "f:1.0", "TX": "f:0.0", "TY": "f:0.0", "TZ": "f:0.0"
+    }},
+    {"kind": "block", "name": "minecraft:on_player_placing", "source": "CustomBlockRegistryPopulator#convertComponents", "value": {"triggerType": "geyser:place_event"}}
+  ]
+}

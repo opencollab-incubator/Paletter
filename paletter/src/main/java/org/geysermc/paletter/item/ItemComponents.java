@@ -2,12 +2,30 @@ package org.geysermc.paletter.item;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
+import org.geysermc.paletter.component.ComponentType;
+import org.geysermc.paletter.component.ItemComponent;
+import org.geysermc.paletter.component.item.BlockPlacer;
+import org.geysermc.paletter.component.item.Compostable;
+import org.geysermc.paletter.component.item.Cooldown;
+import org.geysermc.paletter.component.item.Damage;
+import org.geysermc.paletter.component.item.DisplayName;
+import org.geysermc.paletter.component.item.Durability;
+import org.geysermc.paletter.component.item.Fuel;
+import org.geysermc.paletter.component.item.Glint;
+import org.geysermc.paletter.component.item.ItemProperties;
+import org.geysermc.paletter.component.item.MaxStackSize;
+import org.geysermc.paletter.component.item.Projectile;
+import org.geysermc.paletter.component.item.Tags;
+import org.geysermc.paletter.component.item.ThrowableComponent;
+import org.geysermc.paletter.component.item.Wearable;
 import org.geysermc.paletter.creative.CreativePlacement;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -18,11 +36,14 @@ import java.util.Set;
  * Data driven item components. Immutable; build with {@link #builder()}.
  * <p>
  * Bedrock splits item data into components ({@code minecraft:*}) and {@code item_properties}, and a few values
- * have to be sent in both places in different types. The typed methods take care of that. The item's name,
- * runtime id and creative category are filled in by the palette, since only it knows them.
+ * have to be sent in both places in different types. Typed components (generated from captured network NBT, see
+ * {@code org.geysermc.paletter.component.item}) are added with {@link Builder#with}; the convenience methods also fill
+ * in the mirrored item properties. Anything without a generated type can be set as raw NBT with
+ * {@link Builder#component}. The item's name, runtime id and creative category are filled in by the palette.
  */
 public final class ItemComponents {
     public static final ItemComponents EMPTY = new ItemComponents(Map.of(), Map.of(), Set.of());
+    private static final String ITEM_TAGS = "item_tags";
 
     private final Map<String, Object> components;
     private final Map<String, Object> properties;
@@ -39,7 +60,8 @@ public final class ItemComponents {
     }
 
     /**
-     * Reads existing component data, e.g. a vanilla item's, so it can be modified.
+     * Reads existing component data, e.g. a vanilla item's, so it can be modified. Tags are read from both
+     * {@code item_tags} and {@code minecraft:tags}.
      *
      * @param componentData data as returned by {@link #toComponentData}, or just its {@code components} compound
      */
@@ -47,10 +69,14 @@ public final class ItemComponents {
         NbtMap componentsNbt = componentData.containsKey("components") ? componentData.getCompound("components") : componentData;
         Builder builder = new Builder();
         componentsNbt.forEach((key, value) -> {
-            switch (key) {
-                case "item_properties" -> builder.properties.putAll((NbtMap) value);
-                case "item_tags" -> ((List<?>) value).forEach(tag -> builder.tags.add((String) tag));
-                default -> builder.components.put(key, value);
+            if (key.equals("item_properties")) {
+                builder.properties.putAll((NbtMap) value);
+            } else if (key.equals(ITEM_TAGS)) {
+                ((List<?>) value).forEach(tag -> builder.tags.add((String) tag));
+            } else if (key.equals(Tags.TYPE.name()) && value instanceof NbtMap map) {
+                builder.tags.addAll(Tags.fromNbt(map).tags());
+            } else {
+                builder.components.put(key, value);
             }
         });
         return builder.build();
@@ -64,12 +90,32 @@ public final class ItemComponents {
         return builder;
     }
 
+    /**
+     * @return the raw NBT of a component, or null if not set. Tags are not a component here, see {@link #tags()}
+     */
     public @Nullable Object component(@NonNull String name) {
         return components.get(name);
     }
 
+    /**
+     * @return the component read as its generated type, or null if not set
+     */
+    public <T extends ItemComponent> @Nullable T get(@NonNull ComponentType<T> type) {
+        if (type == Tags.TYPE) {
+            return tags.isEmpty() ? null : type.read(Tags.of(List.copyOf(tags)).toNbt());
+        }
+        return components.get(type.name()) instanceof NbtMap nbt ? type.read(nbt) : null;
+    }
+
     public @Nullable Object property(@NonNull String name) {
         return properties.get(name);
+    }
+
+    /**
+     * @return the item properties set so far, typed. The creative category and group are added by the palette
+     */
+    public @NonNull ItemProperties itemProperties() {
+        return ItemProperties.fromNbt(NbtMap.fromMap(properties));
     }
 
     public @NonNull Set<String> tags() {
@@ -92,7 +138,10 @@ public final class ItemComponents {
         NbtMapBuilder componentsNbt = NbtMap.builder();
         componentsNbt.putAll(components);
         if (!tags.isEmpty()) {
-            componentsNbt.putList("item_tags", NbtType.STRING, new ArrayList<>(tags));
+            // Vanilla sends tags twice: as the bare item_tags list and as the minecraft:tags component
+            List<String> tagList = new ArrayList<>(tags);
+            componentsNbt.putList(ITEM_TAGS, NbtType.STRING, tagList);
+            componentsNbt.putCompound(Tags.TYPE.name(), Tags.of(tagList).toNbt());
         }
         componentsNbt.putCompound("item_properties", itemProperties.build());
 
@@ -112,7 +161,21 @@ public final class ItemComponents {
         }
 
         /**
-         * Sets a raw component, replacing any previous value.
+         * Sets a typed component, replacing any previous value. {@link Tags} are added to the item's tags.
+         * Mirrored item properties are not touched; use {@link #properties(ItemProperties)} for those.
+         */
+        public @NonNull Builder with(@NonNull ItemComponent component) {
+            if (component instanceof Tags tagComponent) {
+                tags.addAll(tagComponent.tags());
+                return this;
+            }
+            components.put(component.componentType().name(), component.toNbt());
+            return this;
+        }
+
+        /**
+         * Sets a raw component, replacing any previous value. The escape hatch for components without a
+         * generated type; see {@code codegen/needs-capture.txt}.
          */
         public @NonNull Builder component(@NonNull String name, @NonNull NbtMap value) {
             components.put(name, value);
@@ -133,6 +196,14 @@ public final class ItemComponents {
             return this;
         }
 
+        /**
+         * Sets every non-null item property of {@code itemProperties}, keeping the others.
+         */
+        public @NonNull Builder properties(@NonNull ItemProperties itemProperties) {
+            properties.putAll(itemProperties.toNbt());
+            return this;
+        }
+
         public @NonNull Builder icon(@NonNull String texture) {
             return icon(Map.of("default", texture));
         }
@@ -141,13 +212,11 @@ public final class ItemComponents {
          * @param textures texture slot to texture, e.g. {@code default} and {@code dyed}
          */
         public @NonNull Builder icon(@NonNull Map<String, String> textures) {
-            NbtMapBuilder texturesNbt = NbtMap.builder();
-            textures.forEach(texturesNbt::putString);
-            return property("minecraft:icon", NbtMap.builder().putCompound("textures", texturesNbt.build()).build());
+            return property("minecraft:icon", new ItemProperties.Icon(textures).toNbt());
         }
 
         public @NonNull Builder displayName(@NonNull String translationKeyOrName) {
-            return component("minecraft:display_name", NbtMap.builder().putString("value", translationKeyOrName).build());
+            return with(DisplayName.of(translationKeyOrName));
         }
 
         /**
@@ -156,7 +225,7 @@ public final class ItemComponents {
          */
         public @NonNull Builder maxStackSize(int size) {
             property("max_stack_size", size);
-            return component("minecraft:max_stack_size", NbtMap.builder().putByte("value", (byte) size).build());
+            return with(MaxStackSize.of((byte) size));
         }
 
         public @NonNull Builder allowOffHand(boolean allow) {
@@ -167,20 +236,35 @@ public final class ItemComponents {
             return property("hand_equipped", handEquipped);
         }
 
+        /**
+         * Sets the durability, with a damage chance of {@code min = max = 1} as Geyser sends it.
+         */
         public @NonNull Builder durability(int maxDurability) {
-            return component("minecraft:durability", NbtMap.builder()
-                .putCompound("damage_chance", NbtMap.builder().putInt("max", 1).putInt("min", 1).build())
-                .putInt("max_durability", maxDurability)
+            return durability(maxDurability, 1, 1);
+        }
+
+        public @NonNull Builder durability(int maxDurability, int minDamageChance, int maxDamageChance) {
+            return with(Durability.builder()
+                .damageChance(new Durability.DamageChance(maxDamageChance, minDamageChance))
+                .maxDurability(maxDurability)
                 .build());
         }
 
+        /**
+         * Sets the attack damage, as the {@code damage} property and the {@code minecraft:damage} component
+         * (a short on the network).
+         */
         public @NonNull Builder attackDamage(int damage) {
             property("damage", damage);
-            return component("minecraft:damage", NbtMap.builder().putByte("value", (byte) damage).build());
+            return with(Damage.of((short) damage));
         }
 
+        /**
+         * Sets the enchantment glint, as the {@code minecraft:glint} component and the {@code foil} property.
+         */
         public @NonNull Builder glint(boolean glint) {
-            return component("minecraft:glint", NbtMap.builder().putBoolean("value", glint).build());
+            property("foil", glint);
+            return with(Glint.of(glint));
         }
 
         /**
@@ -188,48 +272,45 @@ public final class ItemComponents {
          * the projectile entity is irrelevant when the server spawns the real one.
          */
         public @NonNull Builder throwable(boolean swingAnimation) {
-            component("minecraft:throwable", NbtMap.builder().putBoolean("do_swing_animation", swingAnimation).build());
+            with(ThrowableComponent.builder().doSwingAnimation(swingAnimation).build());
             return projectile("minecraft:snowball");
         }
 
         public @NonNull Builder projectile(@NonNull String entity) {
-            return component("minecraft:projectile", NbtMap.builder().putString("projectile_entity", entity).build());
+            return with(Projectile.builder().projectileEntity(entity).build());
         }
 
         /**
          * @param slot the armor slot without prefix, e.g. {@code armor.chest}
          */
         public @NonNull Builder wearable(@NonNull String slot, int protection) {
-            return component("minecraft:wearable", NbtMap.builder()
-                .putString("slot", slot.startsWith("slot.") ? slot : "slot." + slot)
-                .putInt("protection", protection)
-                .build());
+            return with(new Wearable(protection, slot.startsWith("slot.") ? slot : "slot." + slot));
         }
 
         /**
          * @param useBlockAsIcon render the placed block as icon instead of the item's icon
          */
         public @NonNull Builder blockPlacer(@NonNull String block, boolean useBlockAsIcon) {
-            return component("minecraft:block_placer", NbtMap.builder()
-                .putString("block", block)
-                .putBoolean("canUseBlockAsIcon", useBlockAsIcon)
-                .putList("use_on", NbtType.STRING, List.of())
+            return with(BlockPlacer.builder()
+                .block(block)
+                .canUseBlockAsIcon(useBlockAsIcon)
+                .useOn(new NbtList<>(NbtType.STRING, Collections.emptyList()))
                 .build());
         }
 
         public @NonNull Builder cooldown(@NonNull String category, float seconds) {
-            return component("minecraft:cooldown", NbtMap.builder()
-                .putString("category", category)
-                .putFloat("duration", seconds)
-                .build());
+            return with(Cooldown.builder().category(category).duration(seconds).build());
         }
 
         public @NonNull Builder fuel(float duration) {
-            return component("minecraft:fuel", NbtMap.builder().putFloat("duration", duration).build());
+            return with(Fuel.of(duration));
         }
 
+        /**
+         * @param chance the composting chance in percent; a byte on the network
+         */
         public @NonNull Builder compostable(int chance) {
-            return component("minecraft:compostable", NbtMap.builder().putInt("composting_chance", chance).build());
+            return with(Compostable.of((byte) chance));
         }
 
         /**
@@ -241,8 +322,9 @@ public final class ItemComponents {
         }
 
         public @NonNull ItemComponents build() {
-            return new ItemComponents(Map.copyOf(components), Map.copyOf(properties),
-                java.util.Collections.unmodifiableSet(new LinkedHashSet<>(tags)));
+            return new ItemComponents(Collections.unmodifiableMap(new LinkedHashMap<>(components)),
+                Collections.unmodifiableMap(new LinkedHashMap<>(properties)),
+                Collections.unmodifiableSet(new LinkedHashSet<>(tags)));
         }
     }
 

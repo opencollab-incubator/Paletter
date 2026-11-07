@@ -1,0 +1,639 @@
+{
+  "comment": "Curated naming/doc overrides for :codegen. Never a source of NBT shape; see codegen/README.md.",
+  "components": {
+    "block:minecraft:block_entity": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/block_components/1.26.60/block_entity.json"
+    },
+    "block:minecraft:breathability": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Block Breathability Component.json"
+    },
+    "block:minecraft:chest_obstruction": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/chest_obstruction.json"
+    },
+    "block:minecraft:collision_box": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/block_components/1.26.60/Collision Box.json",
+      "fields": {
+        "boxes[]": {
+          "doc": "a box in pixels, 0 to 16 from the block corner"
+        }
+      }
+    },
+    "block:minecraft:connection_rule": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Connection Rule.json"
+    },
+    "block:minecraft:crafting_table": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Crafting Table.json"
+    },
+    "block:minecraft:destructible_by_explosion": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Destructible By Explosion.json"
+    },
+    "block:minecraft:destructible_by_mining": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Destructible By Mining.json"
+    },
+    "block:minecraft:destruction_particles": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Destruction Particles.json"
+    },
+    "block:minecraft:display_name": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Display Name.json"
+    },
+    "block:minecraft:embedded_visual": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Embedded Visual.json"
+    },
+    "block:minecraft:enchantment_power_transmitter": {
+      "since": "1.26.60",
+      "schema": "metadata/json_schemas/server/block_components/1.26.60/Enchantment Power Transmitter.json"
+    },
+    "block:minecraft:entity_fall_on": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Entity Fall On.json"
+    },
+    "block:minecraft:flammable": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Flammable Component.json"
+    },
+    "block:minecraft:flower_pottable": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Flower Pottable.json"
+    },
+    "block:minecraft:friction": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Friction.json"
+    },
+    "block:minecraft:geometry": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Geometry.json",
+      "fields": {
+        "bone_visibility": {
+          "doc": "always empty in vanilla; Geyser sends bone name to Molang string"
+        }
+      }
+    },
+    "block:minecraft:instrument_sound": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Instrument Sound.json"
+    },
+    "block:minecraft:item_visual": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Item Visual.json"
+    },
+    "block:minecraft:leashable": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/leashable.json"
+    },
+    "block:minecraft:light_dampening": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Light Dampening.json",
+      "fields": {
+        "lightLevel": {
+          "type": "byte"
+        }
+      }
+    },
+    "block:minecraft:light_emission": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Light Emission.json",
+      "fields": {
+        "emission": {
+          "type": "byte"
+        }
+      }
+    },
+    "block:minecraft:liquid_detection": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Liquid Detection.json"
+    },
+    "block:minecraft:loot": {},
+    "block:minecraft:map_color": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Map Color.json"
+    },
+    "block:minecraft:material_instances": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Material Instances Component.json",
+      "fields": {
+        "mappings": {
+          "doc": "always empty in vanilla"
+        },
+        "materials": {
+          "type": "map",
+          "doc": "material instance name ({@code *}, a face, or a bone material name) to material"
+        },
+        "materials{}": {
+          "class": "Material"
+        },
+        "materials{}.packed_bools": {
+          "type": "byte",
+          "doc": "a bitset of the boolean material flags; vanilla sends 5. The bit layout is not verified"
+        },
+        "materials{}.render_method": {
+          "optional": "Geyser omits it when unset (CustomBlockRegistryPopulator#convertComponents)"
+        },
+        "materials{}.tint_method": {
+          "optional": "Geyser omits it when unset (CustomBlockRegistryPopulator#convertComponents)"
+        },
+        "materials{}.texture": {
+          "optional": "Geyser omits it when unset (CustomBlockRegistryPopulator#convertComponents)"
+        }
+      },
+      "notes": "Vanilla sends no {@code isotropic} key; flags are packed into {@code packed_bools}."
+    },
+    "block:minecraft:movable": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Movable.json"
+    },
+    "block:minecraft:neighbor_change": {
+      "since": "1.26.60",
+      "schema": "metadata/json_schemas/server/block_components/1.26.60/Neighbor Change.json"
+    },
+    "block:minecraft:on_fall_on": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Fall On Component.json"
+    },
+    "block:minecraft:on_interact": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Interact Component.json"
+    },
+    "block:minecraft:on_placed": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Placed Component.json"
+    },
+    "block:minecraft:on_player_destroyed": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Player Destroyed Component.json"
+    },
+    "block:minecraft:on_player_placing": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Player Placing Component.json"
+    },
+    "block:minecraft:on_step_off": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Step Off Component.json"
+    },
+    "block:minecraft:on_step_on": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Step On Component.json"
+    },
+    "block:minecraft:placement_filter": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Placement Filter.json",
+      "fields": {
+        "conditions[].allowed_faces": {
+          "type": "byte",
+          "doc": "bitset: down, up, north, south, west, east from bit 0"
+        }
+      }
+    },
+    "block:minecraft:precipitation_interactions": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Precipitation Interactions.json"
+    },
+    "block:minecraft:queued_ticking": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Queued Ticking Component.json"
+    },
+    "block:minecraft:random_offset": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Random Offset.json"
+    },
+    "block:minecraft:random_ticking": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Random Ticking Component.json"
+    },
+    "block:minecraft:redstone_conductivity": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Redstone Conductivity.json"
+    },
+    "block:minecraft:redstone_consumer": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Redstone Consumer.json"
+    },
+    "block:minecraft:redstone_producer": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Redstone Producer.json"
+    },
+    "block:minecraft:replaceable": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Replaceable.json"
+    },
+    "block:minecraft:selection_box": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Selection Box.json"
+    },
+    "block:minecraft:sound": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Sound Block Component.json"
+    },
+    "block:minecraft:support": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Support.json"
+    },
+    "block:minecraft:tags": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Tags.json"
+    },
+    "block:minecraft:tick": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Tick.json"
+    },
+    "block:minecraft:transformation": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Transformation.json",
+      "fields": {
+        "RX": {
+          "java": "rotationX",
+          "doc": "quarter turns"
+        },
+        "RY": {
+          "java": "rotationY",
+          "doc": "quarter turns"
+        },
+        "RZ": {
+          "java": "rotationZ",
+          "doc": "quarter turns"
+        },
+        "RXP": {
+          "java": "rotationPivotX"
+        },
+        "RYP": {
+          "java": "rotationPivotY"
+        },
+        "RZP": {
+          "java": "rotationPivotZ"
+        },
+        "SX": {
+          "java": "scaleX"
+        },
+        "SY": {
+          "java": "scaleY"
+        },
+        "SZ": {
+          "java": "scaleZ"
+        },
+        "SXP": {
+          "java": "scalePivotX"
+        },
+        "SYP": {
+          "java": "scalePivotY"
+        },
+        "SZP": {
+          "java": "scalePivotZ"
+        },
+        "TX": {
+          "java": "translationX"
+        },
+        "TY": {
+          "java": "translationY"
+        },
+        "TZ": {
+          "java": "translationZ"
+        }
+      }
+    },
+    "block:minecraft:unit_cube": {
+      "since": "1.26.20",
+      "schema": "metadata/json_schemas/server/common/1.26.20/Block Unit Cube Component.json"
+    },
+    "block:minecraft:vibration_properties": {
+      "since": "1.26.60",
+      "schema": "metadata/json_schemas/server/block_components/1.26.60/Vibration Properties.json"
+    },
+    "item:item_properties": {
+      "fields": {
+        "minecraft:icon": {
+          "java": "icon",
+          "class": "Icon"
+        },
+        "minecraft:icon.textures": {
+          "type": "map",
+          "doc": "texture slot (e.g. {@code default}, {@code dyed}) to texture short name"
+        },
+        "hidden_in_commands": {
+          "type": "byte"
+        }
+      },
+      "notes": "Several properties mirror a component (damage, max_stack_size, foil, hand_equipped, ...)."
+    },
+    "item:minecraft:allow_off_hand": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_allow_off_hand.json"
+    },
+    "item:minecraft:block_placer": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_block_placer.json"
+    },
+    "item:minecraft:bundle_interaction": {
+      "since": "1.26.30",
+      "experimental": true,
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_bundle_interaction.json"
+    },
+    "item:minecraft:can_destroy_in_creative": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_can_destroy_in_creative.json"
+    },
+    "item:minecraft:compostable": {
+      "since": "1.26.30",
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_compostable.json"
+    },
+    "item:minecraft:cooldown": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_cooldown.json"
+    },
+    "item:minecraft:damage": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_damage.json"
+    },
+    "item:minecraft:damage_absorption": {
+      "since": "1.26.30",
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_damage_absorption.json"
+    },
+    "item:minecraft:digger": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_digger.json",
+      "fields": {
+        "destroy_speeds[].block": {
+          "class": "BlockDescriptor"
+        }
+      }
+    },
+    "item:minecraft:display_name": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_display_name.json"
+    },
+    "item:minecraft:durability": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_durability.json"
+    },
+    "item:minecraft:durability_sensor": {
+      "since": "1.26.30",
+      "schema": "metadata/json_schemas/server/item/1.26.50/minecraft_durability_sensor.json"
+    },
+    "item:minecraft:dyeable": {
+      "since": "1.26.30",
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_dyeable.json"
+    },
+    "item:minecraft:enchantable": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_enchantable.json"
+    },
+    "item:minecraft:entity_placer": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_entity_placer.json"
+    },
+    "item:minecraft:fire_resistant": {
+      "since": "1.26.30",
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_fire_resistant.json"
+    },
+    "item:minecraft:food": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_food.json"
+    },
+    "item:minecraft:fuel": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_fuel.json"
+    },
+    "item:minecraft:glint": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_glint.json"
+    },
+    "item:minecraft:hand_equipped": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_hand_equipped.json"
+    },
+    "item:minecraft:hover_text_color": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_hover_text_color.json"
+    },
+    "item:minecraft:icon": {
+      "since": "1.26.30",
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_icon v1.21.80.json"
+    },
+    "item:minecraft:interact_button": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_interact_button.json"
+    },
+    "item:minecraft:kinetic_weapon": {
+      "since": "1.26.30",
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_kinetic_weapon.json",
+      "fields": {
+        "minecraft:kinetic_weapon": {
+          "java": "weapon",
+          "class": "Weapon",
+          "doc": "vanilla nests the payload in a compound named like the component"
+        },
+        "minecraft:kinetic_weapon.reach": {
+          "class": "Range"
+        },
+        "minecraft:kinetic_weapon.creative_reach": {
+          "class": "Range"
+        },
+        "minecraft:kinetic_weapon.damage_conditions": {
+          "class": "Conditions"
+        },
+        "minecraft:kinetic_weapon.dismount_conditions": {
+          "class": "Conditions"
+        },
+        "minecraft:kinetic_weapon.knockback_conditions": {
+          "class": "Conditions"
+        }
+      },
+      "notes": "Vanilla 26.40 to 26.60 nest the payload in a compound named {@code minecraft:kinetic_weapon}; Geyser sends it flat."
+    },
+    "item:minecraft:liquid_clipped": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_liquid_clipped.json"
+    },
+    "item:minecraft:max_stack_size": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_max_stack_size.json",
+      "fields": {
+        "value": {
+          "type": "byte",
+          "doc": "the stack size; vanilla only shows 1, so Paletter does not read it as a boolean"
+        }
+      }
+    },
+    "item:minecraft:piercing_weapon": {
+      "since": "1.26.30",
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_piercing_weapon.json",
+      "fields": {
+        "reach": {
+          "class": "Range"
+        },
+        "creative_reach": {
+          "class": "Range"
+        }
+      }
+    },
+    "item:minecraft:projectile": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_projectile.json"
+    },
+    "item:minecraft:publisher_on_use_on": {},
+    "item:minecraft:rarity": {
+      "since": "1.26.30",
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_rarity.json"
+    },
+    "item:minecraft:record": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_record.json"
+    },
+    "item:minecraft:render_offsets": {
+      "fields": {
+        "main_hand": {
+          "class": "Hand"
+        },
+        "off_hand": {
+          "class": "Hand"
+        },
+        "main_hand.first_person": {
+          "class": "Offset"
+        },
+        "main_hand.third_person": {
+          "class": "Offset"
+        },
+        "off_hand.first_person": {
+          "class": "Offset"
+        },
+        "off_hand.third_person": {
+          "class": "Offset"
+        }
+      }
+    },
+    "item:minecraft:repairable": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_repairable.json",
+      "fields": {
+        "repair_items[].items": {
+          "doc": "item descriptors: either {@code name} or a Molang {@code tags} query"
+        },
+        "repair_items[].items[]": {
+          "class": "ItemDescriptor"
+        },
+        "repair_items[].repair_amount": {
+          "doc": "a Molang expression"
+        }
+      }
+    },
+    "item:minecraft:shooter": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_shooter.json",
+      "fields": {
+        "ammunition[]": {
+          "class": "Ammunition"
+        },
+        "ammunition[].item": {
+          "class": "ItemDescriptor"
+        }
+      }
+    },
+    "item:minecraft:should_despawn": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_should_despawn.json"
+    },
+    "item:minecraft:stacked_by_data": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_stacked_by_data.json"
+    },
+    "item:minecraft:storage_item": {
+      "since": "1.26.30",
+      "experimental": true,
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_storage_item.json"
+    },
+    "item:minecraft:storage_weight_limit": {
+      "since": "1.26.30",
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_storage_weight_limit.json"
+    },
+    "item:minecraft:storage_weight_modifier": {
+      "since": "1.26.30",
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_storage_weight_modifier.json"
+    },
+    "item:minecraft:swing_duration": {
+      "since": "1.26.30",
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_swing_duration.json"
+    },
+    "item:minecraft:swing_sounds": {
+      "since": "1.26.30",
+      "schema": "metadata/json_schemas/server/item/1.26.50/minecraft_swing_sounds.json"
+    },
+    "item:minecraft:tags": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_tags.json",
+      "notes": "Vanilla also sends the same tags as the bare {@code item_tags} list; ItemComponents writes both."
+    },
+    "item:minecraft:throwable": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_throwable.json",
+      "class": "ThrowableComponent"
+    },
+    "item:minecraft:use_animation": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_use_animation.json"
+    },
+    "item:minecraft:use_modifiers": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.26.50/minecraft_use_modifiers.json"
+    },
+    "item:minecraft:wearable": {
+      "since": "1.20.50",
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_wearable.json"
+    }
+  },
+  "needsCapture": {
+    "block:minecraft:block_entity": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:breathability": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:chest_obstruction": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:crafting_table": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:destructible_by_explosion": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:embedded_visual": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:enchantment_power_transmitter": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:entity_fall_on": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:flammable": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:flower_pottable": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:instrument_sound": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:item_visual": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:leashable": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:loot": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:map_color": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:movable": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:neighbor_change": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:on_fall_on": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:on_interact": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:on_placed": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:on_player_destroyed": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:on_step_off": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:on_step_on": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:queued_ticking": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:random_offset": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:random_ticking": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:redstone_consumer": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:redstone_producer": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:sound": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:tags": "vanilla data driven blocks send top level blockTags; tag:<name> components are the legacy form",
+    "block:minecraft:tick": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:unit_cube": "no wire NBT seen; add-on JSON/schema only",
+    "block:minecraft:vibration_properties": "no wire NBT seen; add-on JSON/schema only",
+    "item:minecraft:allow_off_hand": "no wire NBT seen; add-on JSON/schema only",
+    "item:minecraft:damage_absorption": "no wire NBT seen; add-on JSON/schema only",
+    "item:minecraft:durability_sensor": "no wire NBT seen; add-on JSON/schema only",
+    "item:minecraft:hover_text_color": "no wire NBT seen; add-on JSON/schema only",
+    "item:minecraft:icon": "no wire NBT seen; add-on JSON/schema only",
+    "item:minecraft:interact_button": "no wire NBT seen; add-on JSON/schema only",
+    "item:minecraft:liquid_clipped": "no wire NBT seen; add-on JSON/schema only",
+    "item:minecraft:rarity": "no wire NBT seen; add-on JSON/schema only",
+    "item:minecraft:record": "no wire NBT seen; add-on JSON/schema only",
+    "item:minecraft:should_despawn": "no wire NBT seen; add-on JSON/schema only",
+    "item:minecraft:stacked_by_data": "no wire NBT seen; add-on JSON/schema only",
+    "item:render_offsets": "Geyser sends a bare string next to the components for armor; not a compound"
+  }
+}
