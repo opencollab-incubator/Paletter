@@ -65,6 +65,13 @@ final class Importer {
     }
 
     void run(Path source, String name, int protocol, Path itemTagsFile, Path bdsDump) throws IOException {
+        run(source, name, protocol, itemTagsFile, bdsDump, false);
+    }
+
+    /**
+     * @param preview mark the version as a preview in {@code versions.txt}: consumers only see it when they opt in
+     */
+    void run(Path source, String name, int protocol, Path itemTagsFile, Path bdsDump, boolean preview) throws IOException {
         DataVersion version = new DataVersion(name, protocol);
         System.out.println("Importing " + version + " from " + source);
 
@@ -93,7 +100,7 @@ final class Importer {
         try (OutputStream stream = Files.newOutputStream(output.resolve(name + ".nbt"))) {
             PaletteDataCodec.write(data, stream);
         }
-        updateIndex(version);
+        updateIndex(version, preview);
         System.out.printf("Wrote %s: %d block states, %d items, %d data driven blocks, %d creative stacks, %d item tags, %d block fallbacks, %d item fallbacks, %d block defaults%n",
             version, blocks.size(), items.size(), dataDriven.size(), creative.stacks().count(), tags.size(),
             fallbacks.blocks().size(), fallbacks.items().size(), defaults.size());
@@ -103,7 +110,7 @@ final class Importer {
      * Block defaults of the dump, reduced to network states. Only defaults that differ from a block's first palette
      * state are kept: the first state is the default of every block without an entry, so storing it is redundant.
      */
-    private static Map<String, NbtMap> defaults(BdsDump dump, List<NbtMap> blocks) {
+    static Map<String, NbtMap> defaults(BdsDump dump, List<NbtMap> blocks) {
         List<String> rejected = new ArrayList<>();
         Map<String, NbtMap> defaults = dump.projectDefaults(blocks, rejected);
         rejected.forEach(problem -> System.out.println("  warning: " + problem));
@@ -296,25 +303,38 @@ final class Importer {
         return object.has(name) && object.get(name).getAsBoolean();
     }
 
-    private void updateIndex(DataVersion version) throws IOException {
-        Path index = output.resolve("versions.txt");
-        Map<String, Integer> versions = new TreeMap<>();
+    /**
+     * A line of {@code versions.txt}: {@code <name> <protocol> [preview]}.
+     */
+    record IndexEntry(String name, int protocol, boolean preview) {
+    }
+
+    static List<IndexEntry> readIndex(Path directory) throws IOException {
+        Path index = directory.resolve("versions.txt");
+        List<IndexEntry> entries = new ArrayList<>();
         if (Files.exists(index)) {
             for (String line : Files.readAllLines(index)) {
                 line = line.strip();
                 if (!line.isEmpty() && !line.startsWith("#")) {
                     String[] parts = line.split("\\s+");
-                    versions.put(parts[0], Integer.parseInt(parts[1]));
+                    entries.add(new IndexEntry(parts[0], Integer.parseInt(parts[1]), parts.length > 2 && parts[2].equals("preview")));
                 }
             }
         }
-        versions.put(version.name(), version.protocolVersion());
+        entries.sort(java.util.Comparator.comparingInt(IndexEntry::protocol));
+        return entries;
+    }
+
+    private void updateIndex(DataVersion version, boolean preview) throws IOException {
+        Map<String, IndexEntry> versions = new TreeMap<>();
+        readIndex(output).forEach(entry -> versions.put(entry.name(), entry));
+        versions.put(version.name(), new IndexEntry(version.name(), version.protocolVersion(), preview));
         List<String> lines = new ArrayList<>();
         lines.add("# <data version> <first protocol version> - written by the generator");
-        versions.entrySet().stream()
-            .sorted(Map.Entry.comparingByValue())
-            .forEach(entry -> lines.add(entry.getKey() + " " + entry.getValue()));
-        Files.writeString(index, String.join("\n", lines) + "\n");
+        versions.values().stream()
+            .sorted(java.util.Comparator.comparingInt(IndexEntry::protocol))
+            .forEach(entry -> lines.add(entry.name() + " " + entry.protocol() + (entry.preview() ? " preview" : "")));
+        Files.writeString(output.resolve("versions.txt"), String.join("\n", lines) + "\n");
     }
 
     static JsonElement readJson(Path file) throws IOException {

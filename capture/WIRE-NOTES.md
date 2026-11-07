@@ -15,11 +15,15 @@ The `.snbt` files are the reference for every shape below; the add-on JSON that 
 
 ## Rerunning
 
+`./gradlew :generator:run --args="update --channel release"` does all of the below (and more checks) in one go; see
+"Updating data" in the README. By hand:
+
 ```
 # 1. BDS: copy a server, set in server.properties
 #    transport=raknet  server-port=19140  server-portv6=19141  online-mode=false  enable-lan-visibility=false
 #    block-network-ids-are-hashes=true  content-log-level=verbose
-#    (BDS 1.26.x logs "NetherNet is the only supported transport", but RakNet logins work)
+#    (BDS 1.26.6x logs "NetherNet is the only supported transport", but RakNet logins work; 1.26.70 only speaks
+#    NetherNet: capture --transport nethernet --port <server-port>, with enable-lan-visibility=true for the protocol)
 # 2. Vanilla capture: start BDS once (creates the world), then
 ./gradlew :capture:run --args="capture --out <dir> --bds-version 1.26.63.1"
 ./gradlew :capture:run --args="compare --capture <dir> --reference 26.60"

@@ -10,6 +10,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @since 2.0.0
  */
 public record ItemFallback(@NonNull String target, boolean force) {
+    /**
+     * The default for items a version lacks: the {@code minecraft:unknown} item (the block item of
+     * {@code minecraft:unknown}).
+     *
+     * @since 2.0.0
+     */
+    public static final ItemFallback UNKNOWN = new ItemFallback("minecraft:unknown", false);
+
 
     public static @NonNull ItemFallback of(@NonNull String target) {
         return new ItemFallback(target, false);

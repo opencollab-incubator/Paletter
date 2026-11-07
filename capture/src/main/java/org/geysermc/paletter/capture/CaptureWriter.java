@@ -261,6 +261,10 @@ final class CaptureWriter {
         return json;
     }
 
+    int resolvedHashes() {
+        return resolvedHashes;
+    }
+
     int unresolvedHashes() {
         return unresolvedHashes.size();
     }

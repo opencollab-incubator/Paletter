@@ -14,12 +14,15 @@ import java.util.List;
 
 /**
  * Reads data from {@code /paletter/} on the classpath of the library: {@code versions.txt} lists one
- * {@code <name> <protocol>} pair per line, and each version is stored in {@code <name>.nbt}
+ * {@code <name> <protocol> [preview]} line per version (preview versions are skipped unless the system property
+ * {@code paletter.previews} is {@code true}), and each version is stored in {@code <name>.nbt}
  * (written by the generator, see {@link PaletteDataCodec}).
  */
 final class BundledDataSource implements PaletteDataSource {
     static final BundledDataSource INSTANCE = new BundledDataSource();
     private static final String ROOT = "/paletter/";
+    /** Set to {@code true} to also load versions marked {@code preview} in {@code versions.txt}. */
+    static final String PREVIEWS_PROPERTY = "paletter.previews";
 
     private volatile List<DataVersion> versions;
 
@@ -46,6 +49,10 @@ final class BundledDataSource implements PaletteDataSource {
                     continue;
                 }
                 String[] parts = line.split("\\s+");
+                // "<name> <protocol> preview": data of a preview build, only loaded on request
+                if (parts.length > 2 && parts[2].equals("preview") && !Boolean.getBoolean(PREVIEWS_PROPERTY)) {
+                    continue;
+                }
                 versions.add(new DataVersion(parts[0], Integer.parseInt(parts[1])));
             }
             Collections.sort(versions);

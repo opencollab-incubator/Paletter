@@ -59,14 +59,17 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     private final Table table;
     private final CanonicalBlocks canonical;
     private final Map<String, BlockFallback> fallbacks;
+    private final @Nullable BlockFallback defaultFallback;
     private final BlockInterner interner;
     private final Map<NbtMap, BlockResolution> resolutions = new ConcurrentHashMap<>();
     private volatile @Nullable CanonicalTable canonicalTable;
 
-    private BlockPalette(Table table, CanonicalBlocks canonical, Map<String, BlockFallback> fallbacks, BlockInterner interner) {
+    private BlockPalette(Table table, CanonicalBlocks canonical, Map<String, BlockFallback> fallbacks,
+                         @Nullable BlockFallback defaultFallback, BlockInterner interner) {
         this.table = table;
         this.canonical = canonical;
         this.fallbacks = fallbacks;
+        this.defaultFallback = defaultFallback;
         this.interner = interner;
     }
 
@@ -79,7 +82,8 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     @Internal
     public static @NonNull BlockPalette build(@NonNull VanillaData data, @NonNull BlockNetworkIds mode, @NonNull CanonicalBlocks canonical,
                                               @NonNull BlockInterner interner) {
-        return new BlockPalette(new Table(data, List.of(), List.of(), mode, interner), canonical, data.fallbacks().blocks(), interner);
+        return new BlockPalette(new Table(data, List.of(), List.of(), mode, interner), canonical, data.fallbacks().blocks(),
+            BlockFallback.UNKNOWN, interner);
     }
 
     /**
@@ -92,7 +96,27 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
         }
         Map<String, BlockFallback> merged = new HashMap<>(fallbacks);
         merged.putAll(extraFallbacks);
-        return new BlockPalette(table, canonical, Map.copyOf(merged), interner);
+        return new BlockPalette(table, canonical, Map.copyOf(merged), defaultFallback, interner);
+    }
+
+    /**
+     * @param fallback what canonical states without a block or fallback of their own use, or null for air
+     * @return a palette sharing all states with this one, with this default fallback, or this palette if it has it
+     */
+    @Internal
+    public @NonNull BlockPalette withDefaultFallback(@Nullable BlockFallback fallback) {
+        if (java.util.Objects.equals(fallback, defaultFallback)) {
+            return this;
+        }
+        return new BlockPalette(table, canonical, fallbacks, fallback, interner);
+    }
+
+    /**
+     * @return what canonical states without a block or fallback of their own use, or null if they are sent as air
+     */
+    @Internal
+    public @Nullable BlockFallback defaultFallback() {
+        return defaultFallback;
     }
 
     /**
@@ -118,7 +142,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
             encoded.add(new BlockPropertyData(block.identifier(), BlockEncoder.propertyData(block, blockId++, context)));
         }
         Table extended = new Table(data, all, encoded, table.mode, interner);
-        return new BlockPalette(extended, canonical.extend(key, additional), fallbacks, interner);
+        return new BlockPalette(extended, canonical.extend(key, additional), fallbacks, defaultFallback, interner);
     }
 
     public @NonNull DataVersion version() {
@@ -225,7 +249,8 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     }
 
     /**
-     * @return the canonical states that have no block of their own in this version and use air
+     * @return the canonical states that have no block (or fallback) of their own in this version and use the default
+     *         fallback ({@link #defaultFallback()}), or air without one
      */
     public @NonNull List<NbtMap> missingCanonical() {
         return canonicalTable().missing;
@@ -273,7 +298,8 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
                 NbtMap state = canonical.state(id);
                 PaletteBlock block = resolve(state).block();
                 if (block == null) {
-                    block = table.air;
+                    PaletteBlock fallback = defaultBlock();
+                    block = fallback != null ? fallback : table.air;
                     missing.add(state);
                 }
                 pageBlocks[j] = block;
@@ -367,6 +393,9 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
         Map<BlockResolution.Kind, Integer> counts = new LinkedHashMap<>();
         for (int i = 0; i < result.length; i++) {
             BlockResolution resolution = resolve(states.get(i));
+            if (resolution.block() == null && defaultBlock() != null) {
+                resolution = new BlockResolution(resolution.requested(), defaultBlock(), BlockResolution.Kind.DEFAULT);
+            }
             counts.merge(resolution.kind(), 1, Integer::sum);
             if (resolution.kind() == BlockResolution.Kind.MISSING) {
                 report.warn("blocks", "No " + version() + " block for " + resolution.requested() + ", and no fallback; using " + missing.getState());
@@ -383,6 +412,11 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     public @Nullable PaletteBlock defaultState(@NonNull String identifier) {
         Schema schema = table.schemas().get(identifier);
         return schema == null ? null : schema.defaultState;
+    }
+
+    /** The default state of the default fallback's target, or null if there is none (or it is not in this version). */
+    private @Nullable PaletteBlock defaultBlock() {
+        return defaultFallback == null ? null : defaultState(defaultFallback.target());
     }
 
     public boolean contains(@NonNull String identifier) {

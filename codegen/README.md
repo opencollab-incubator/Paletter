@@ -78,6 +78,9 @@ The public API does not change. `ProtocolWindowTest` covers the split with synth
   and `custom_block_properties.nbt` (`{blocks: [{name, properties: {block property data}}]}`).
 
 `codegen/captures/bds-1.26.63.1-addon/` holds the BDS 1.26.63.1 capture of `capture/addon` (87 items, 66 blocks).
+The generator's `update` pipeline compares each new add-on capture with the newest one here (a changed shape is reported
+as a wire format change), and in update mode adds it as `codegen/captures/bds-<bds version>-addon/` (with a `capture.json` naming the server's `protocol`) and reruns
+`generateComponents`.
 
 Captures in `codegen/captures/` are part of the committed spec; directories passed with `-Pcaptures` are not, so
 `checkComponents` fails until they are copied in.

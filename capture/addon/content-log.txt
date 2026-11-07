@@ -1,0 +1,4 @@
+ERROR [Blocks] block_definitions | behavior_packs/paletter_capture | blocks/collision_box_box.json |  -> components -> minecraft:collision_box: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_capture | blocks/collision_box_box.json |  -> components -> minecraft:collision_box: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_capture | blocks/tag_legacy.json |  -> components -> tag:paletter:legacy_tag: this component was found in the input, but is not present in the Schema
+WARN [Components] All MaterialInstances must use the same render_method for a given block. This may create rendering issues otherwise.

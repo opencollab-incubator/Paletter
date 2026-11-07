@@ -26,28 +26,47 @@ import java.util.TreeSet;
  */
 final class Checker {
     private final Path output;
+    /**
+     * Per older version, the content of the newest version it lacks without a curated fallback: it falls back to
+     * {@code minecraft:unknown} (Paletter's default), which is fine, but a fallback in
+     * {@code generator/fallbacks/<version>.json} would be better. Filled by {@link #problems}.
+     */
+    final Map<String, List<String>> defaulted = new java.util.LinkedHashMap<>();
 
     Checker(Path output) {
         this.output = output;
     }
 
     boolean run() throws IOException {
+        Map<String, List<String>> problems = problems(false);
+        problems.values().forEach(list -> list.forEach(problem -> System.out.println("  " + problem)));
+        defaulted.forEach((version, list) -> System.out.println("  " + version + ": " + list.size()
+            + " fall back to minecraft:unknown (no curated fallback): " + list));
+        boolean ok = problems.values().stream().allMatch(List::isEmpty);
+        System.out.println(ok ? "All versions are covered." : "Fix the problems above in generator/fallbacks/<version>.json and re-import.");
+        return ok;
+    }
+
+    /**
+     * @param includePreviews also treat preview versions of {@code versions.txt} as bundled (the newest one then
+     *                        defines what needs fallbacks); by default they are ignored
+     * @return per older version, what is missing a fallback or has a broken one (empty lists if covered)
+     */
+    Map<String, List<String>> problems(boolean includePreviews) throws IOException {
         List<VanillaData> versions = new ArrayList<>();
-        for (String line : Files.readAllLines(output.resolve("versions.txt"))) {
-            line = line.strip();
-            if (line.isEmpty() || line.startsWith("#")) {
+        for (Importer.IndexEntry entry : Importer.readIndex(output)) {
+            if (entry.preview() && !includePreviews) {
                 continue;
             }
-            String name = line.split("\\s+")[0];
-            try (InputStream stream = Files.newInputStream(output.resolve(name + ".nbt"))) {
+            try (InputStream stream = Files.newInputStream(output.resolve(entry.name() + ".nbt"))) {
                 versions.add(PaletteDataCodec.read(stream));
             }
         }
+        Map<String, List<String>> result = new java.util.LinkedHashMap<>();
+        defaulted.clear();
         VanillaData latest = versions.getLast();
         Set<String> latestBlocks = blockNames(latest);
         Set<String> latestItems = itemNames(latest);
-        boolean ok = true;
-
         for (VanillaData data : versions.subList(0, versions.size() - 1)) {
             DataVersion version = data.version();
             Set<String> blocks = blockNames(data);
@@ -60,7 +79,7 @@ final class Checker {
             for (String block : missingBlocks) {
                 BlockFallback fallback = data.fallbacks().blocks().get(block);
                 if (fallback == null) {
-                    problems.add("block " + block + " has no fallback");
+                    defaulted.computeIfAbsent(version.name(), v -> new ArrayList<>()).add("block " + block);
                 }
             }
             Set<String> missingItems = new TreeSet<>(latestItems);
@@ -69,7 +88,7 @@ final class Checker {
             for (String item : missingItems) {
                 ItemFallback fallback = data.fallbacks().items().get(item);
                 if (fallback == null) {
-                    problems.add("item " + item + " has no fallback");
+                    defaulted.computeIfAbsent(version.name(), v -> new ArrayList<>()).add("item " + item);
                 }
             }
             for (Map.Entry<String, BlockFallback> entry : data.fallbacks().blocks().entrySet()) {
@@ -92,12 +111,12 @@ final class Checker {
             }
 
             System.out.println(version + ": " + missingBlocks.size() + " blocks and " + missingItems.size()
-                + " items of " + latest.version() + " are missing; " + problems.size() + " problems");
-            problems.forEach(problem -> System.out.println("  " + problem));
-            ok &= problems.isEmpty();
+                + " items of " + latest.version() + " are missing, "
+                + defaulted.getOrDefault(version.name(), List.of()).size() + " of them fall back to minecraft:unknown; "
+                + problems.size() + " problems");
+            result.put(version.name(), problems);
         }
-        System.out.println(ok ? "All versions are covered." : "Fix the problems above in generator/fallbacks/<version>.json and re-import.");
-        return ok;
+        return result;
     }
 
     private static Set<String> blockNames(VanillaData data) {

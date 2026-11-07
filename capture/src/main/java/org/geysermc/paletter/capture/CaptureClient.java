@@ -5,6 +5,9 @@ import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import org.cloudburstmc.netty.channel.nethernet.NetherNetChannelFactory;
+import org.cloudburstmc.netty.channel.nethernet.config.NetherChannelOption;
+import org.cloudburstmc.netty.channel.nethernet.signaling.NetherNetHTTPClientSignaling;
 import org.cloudburstmc.netty.channel.raknet.RakChannelFactory;
 import org.cloudburstmc.netty.channel.raknet.config.RakChannelOption;
 import org.cloudburstmc.protocol.bedrock.BedrockClientSession;
@@ -73,21 +76,70 @@ final class CaptureClient {
     private final Map<Integer, ItemDefinition> itemsById = new ConcurrentHashMap<>();
     private volatile long completeAt = Long.MAX_VALUE;
 
+    private final boolean netherNet;
+
     CaptureClient(BedrockCodec codec, InetSocketAddress address) {
+        this(codec, address, false);
+    }
+
+    /**
+     * @param netherNet connect over NetherNet (HTTP signaling on the address, then WebRTC) instead of RakNet
+     */
+    CaptureClient(BedrockCodec codec, InetSocketAddress address, boolean netherNet) {
         this.codec = codec;
         this.address = address;
+        this.netherNet = netherNet;
     }
 
     Result run(long timeoutSeconds) throws Exception {
         EventLoopGroup group = new NioEventLoopGroup(1);
         try {
-            Channel channel = new Bootstrap()
-                .channelFactory(RakChannelFactory.client(NioDatagramChannel.class))
-                .group(group)
-                .option(RakChannelOption.RAK_PROTOCOL_VERSION, codec.getRaknetProtocolVersion())
-                .option(RakChannelOption.RAK_ORDERING_CHANNELS, 1)
-                .option(RakChannelOption.RAK_SESSION_TIMEOUT, 10_000L)
+            Bootstrap bootstrap = new Bootstrap().group(group);
+            if (netherNet) {
+                bootstrap.channelFactory(NetherNetChannelFactory.client(NetherNetHTTPClientSignaling::new))
+                    .option(NetherChannelOption.NETHER_CLIENT_HANDSHAKE_TIMEOUT_MS, 15_000)
+                    // A self signed identity for the offer (BDS refuses unsigned offers with MultiplayerDisabled), with
+                    // the login chain's key: BDS binds the chain to the transport identity (NOT_AUTHENTICATED otherwise)
+                    .option(NetherChannelOption.NETHER_CLIENT_IDENTITY, NetherNet.identity(login.keyPair(), login.name()));
+            } else {
+                bootstrap.channelFactory(RakChannelFactory.client(NioDatagramChannel.class))
+                    .option(RakChannelOption.RAK_PROTOCOL_VERSION, codec.getRaknetProtocolVersion())
+                    .option(RakChannelOption.RAK_ORDERING_CHANNELS, 1)
+                    .option(RakChannelOption.RAK_SESSION_TIMEOUT, 10_000L);
+            }
+            Channel channel = bootstrap
                 .handler(new BedrockClientInitializer() {
+                    @Override
+                    protected void preInitChannel(Channel channel) throws Exception {
+                        if (netherNet) {
+                            NetherNet.preInitChannel(channel);
+                        } else {
+                            super.preInitChannel(channel);
+                        }
+                    }
+
+                    @Override
+                    protected void initPacketCodec(Channel channel) throws Exception {
+                        if (netherNet) {
+                            NetherNet.initPacketCodec(channel);
+                        } else {
+                            super.initPacketCodec(channel);
+                        }
+                    }
+
+                    @Override
+                    protected void postInitChannel(Channel channel) throws Exception {
+                        super.postInitChannel(channel);
+                        if (netherNet) {
+                            NetherNet.postInitChannel(channel);
+                        }
+                    }
+
+                    @Override
+                    protected org.cloudburstmc.protocol.bedrock.BedrockPeer createPeer(Channel channel) {
+                        return netherNet ? NetherNet.peer(channel, this::createSession) : super.createPeer(channel);
+                    }
+
                     @Override
                     protected void initSession(BedrockClientSession session) {
                         session.setCodec(codec);

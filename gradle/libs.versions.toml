@@ -1,6 +1,9 @@
 [versions]
 # Keep in sync with Geyser's gradle/libs.versions.toml
 protocol = "3.0.0.Beta15-20261026.210753-2"
+# CloudburstMC/Network, "nethernet" branch (capture only); keep in sync with Geyser
+network = "2.0.0.CR6-20261030.131938-23"
+libdatachannel = "0.24.6.0-20261029.091642-10"
 fastutil = "8.5.15"
 checker = "3.19.0"
 gson = "2.10.1"
@@ -13,5 +16,8 @@ fastutil-int-object = { group = "org.cloudburstmc.fastutil.maps", name = "int-ob
 fastutil-object-int = { group = "org.cloudburstmc.fastutil.maps", name = "object-int-maps", version.ref = "fastutil" }
 fastutil-object-object = { group = "org.cloudburstmc.fastutil.maps", name = "object-object-maps", version.ref = "fastutil" }
 checker-qual = { group = "org.checkerframework", name = "checker-qual", version.ref = "checker" }
+nethernet = { group = "org.cloudburstmc.netty", name = "netty-transport-nethernet", version.ref = "network" }
+raknet = { group = "org.cloudburstmc.netty", name = "netty-transport-raknet", version.ref = "network" }
+libdatachannel = { group = "dev.opencollab", name = "libdatachannel-java-arch-detect", version.ref = "libdatachannel" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit" }

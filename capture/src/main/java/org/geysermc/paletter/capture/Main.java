@@ -1,10 +1,6 @@
 package org.geysermc.paletter.capture;
 
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
-import org.cloudburstmc.protocol.bedrock.data.PacketRecipient;
-import org.cloudburstmc.protocol.bedrock.codec.v2225.Bedrock_v2225;
-import org.cloudburstmc.protocol.bedrock.codec.v407.serializer.PacketViolationWarningSerializer_v407;
-import org.cloudburstmc.protocol.bedrock.packet.PacketViolationWarningPacket;
 import org.geysermc.paletter.data.PaletteDataCodec;
 import org.geysermc.paletter.data.VanillaData;
 
@@ -26,17 +22,6 @@ import java.util.Map;
  * </pre>
  */
 public final class Main {
-    /** Codecs this client can speak; the server must use one of these protocol versions. */
-    private static final List<BedrockCodec> CODECS = List.of(clientCodec(Bedrock_v2225.CODEC));
-
-    /** The codecs are written for servers; let the client decode the violation warnings BDS sends it. */
-    private static BedrockCodec clientCodec(BedrockCodec codec) {
-        return codec.toBuilder()
-            .updateSerializer(org.cloudburstmc.protocol.bedrock.packet.LoginPacket.class, new LoginSerializer())
-            .deregisterPacket(PacketViolationWarningPacket.class)
-            .registerPacket(PacketViolationWarningPacket::new, PacketViolationWarningSerializer_v407.INSTANCE, 156, PacketRecipient.BOTH)
-            .build();
-    }
 
     public static void main(String[] args) throws Exception {
         if (args.length == 0) {
@@ -61,9 +46,27 @@ public final class Main {
     }
 
     private static void capture(Map<String, String> options) throws Exception {
-        int protocol = Integer.parseInt(options.getOrDefault("protocol", String.valueOf(CODECS.getLast().getProtocolVersion())));
-        BedrockCodec codec = CODECS.stream().filter(c -> c.getProtocolVersion() == protocol).findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("No codec for protocol " + protocol));
+        if (options.getOrDefault("transport", "raknet").equals("nethernet")) {
+            InetSocketAddress address = new InetSocketAddress(options.getOrDefault("host", "127.0.0.1"),
+                Integer.parseInt(options.getOrDefault("port", "19140")));
+            String[] status = Capture.netherNetPing(address, 10);
+            if (status == null) {
+                throw new IllegalStateException("No NetherNet signaling on " + address);
+            }
+            System.out.println("NetherNet status: " + String.join(", ", status));
+            Capture.Summary summary = Capture.capture(address, Integer.parseInt(status[0]),
+                reference(options.getOrDefault("reference", "26.60")), options.getOrDefault("bds-version", "unknown"),
+                Path.of(require(options, "out")), options.containsKey("custom-out") ? Path.of(options.get("custom-out")) : null,
+                Long.parseLong(options.getOrDefault("timeout", "90")), true);
+            System.out.println(summary);
+            return;
+        }
+        int protocol = Integer.parseInt(options.getOrDefault("protocol", String.valueOf(Capture.NEWEST.getProtocolVersion())));
+        BedrockCodec codec = Capture.codecFor(protocol);
+        if (codec.getProtocolVersion() != protocol) {
+            throw new IllegalArgumentException("No codec for protocol " + protocol + "; use --wire-protocol to probe with the newest codec");
+        }
+        codec = Capture.clientCodec(codec);
         if (options.containsKey("wire-protocol")) {
             // Speak the codec's format, but announce another protocol number (probing a server's version)
             codec = codec.toBuilder().protocolVersion(Integer.parseInt(options.get("wire-protocol"))).build();

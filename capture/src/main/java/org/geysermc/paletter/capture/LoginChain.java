@@ -42,6 +42,14 @@ final class LoginChain {
     private final UUID identity;
     private final String playFabId = java.util.HexFormat.of().formatHex(java.nio.ByteBuffer.allocate(8).putLong(ThreadLocalRandom.current().nextLong()).array());
 
+    KeyPair keyPair() {
+        return keyPair;
+    }
+
+    String name() {
+        return name;
+    }
+
     LoginChain(String name) {
         this.name = name;
         this.identity = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));

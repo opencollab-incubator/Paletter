@@ -29,6 +29,13 @@ public record BlockResolution(@NonNull NbtMap requested, @Nullable PaletteBlock 
          */
         FALLBACK,
         /**
+         * The block does not exist in this version and has no fallback of its own; the palette's default fallback
+         * ({@link BlockFallback#UNKNOWN} unless a layer set {@link org.geysermc.paletter.data.FallbackDefaults}) was used.
+         *
+         * @since 2.0.0
+         */
+        DEFAULT,
+        /**
          * Nothing suitable exists. {@link #block()} is null.
          */
         MISSING

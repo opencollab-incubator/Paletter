@@ -67,8 +67,8 @@ are stable for a Paletter release and the same for every protocol version. Custo
 appended after the vanilla ones, per lineage of layers: the same layer stack gives the same ids in every version.
 A layer can also give ids to further variants of the newest version (`PaletteLayer.Builder#variant`), e.g. damage values
 or block states a consumer maps to that are not in the creative inventory; `Palette#match` recognizes them too.
-The tables are built when a palette is compiled; canonical content a version lacks (sent as air, or `item` is null) is
-listed in the palette's report.
+The tables are built when a palette is compiled; canonical content a version lacks and that has no fallback (sent as
+`minecraft:unknown`, see below) is listed in the palette's report.
 Each palette turns them into what its version needs with flat arrays built once per palette and shared where possible:
 
 | Lookup                          | Cost                               | Result                                              |
@@ -96,7 +96,26 @@ fail compilation.
 states automatically (states added or removed between versions, e.g. stair corners) and applies bundled fallbacks for
 blocks that do not exist (or are experimental) there; `ItemPalette#resolve` does the same for items. The canonical tables
 are filled with these results. When matching stacks from the client, a variant that only reached a version through a
-fallback never shadows an item's own variant.
+fallback never shadows an item's own variant, and a stack that is only the fallback of several canonical ids (e.g. the
+shared `minecraft:unknown`) matches none of them (-1).
+
+**Fallbacks.** Canonical content an older version lacks resolves, in this order, to: a fallback a layer set for that
+version (`PaletteLayer.Builder#blockFallback(version, identifier, fallback)`, `#itemFallback(version, ...)`), a layer
+fallback for every version (`#blockFallback(identifier, fallback)`), the bundled fallback (`generator/fallbacks/`,
+curated replacements such as poplar wood to pale oak), and otherwise the default: the block `minecraft:unknown` and the
+item `minecraft:unknown` (its block item), which every client knows and shows as a placeholder
+(`FallbackDefaults.UNKNOWN`). A layer changes the default for itself and the layers above it with
+`#fallbackDefaults(...)`; `FallbackDefaults.NONE` restores air and missing items. `BlockFallback#force` /
+`ItemFallback#force` also replace content that exists in a version but only behind an experiment.
+
+```java
+PaletteLayer.builder("server")
+    .blockFallback("minecraft:calcite_stairs", BlockFallback.of("minecraft:stone_stairs"))       // every version
+    .blockFallback("26.40", "minecraft:poplar_log", BlockFallback.of("minecraft:birch_log"))     // one version
+    .itemFallback("26.40", "minecraft:poplar_boat", ItemFallback.of("minecraft:birch_boat"))
+    .fallbackDefaults(new FallbackDefaults(BlockFallback.of("minecraft:barrier"), ItemFallback.UNKNOWN))
+    .build();
+```
 
 **Block items.** The item palette knows which block each block item is sent with (from the creative inventory, a layer
 override, or the block of the same name), and ignores the meaningless block definitions clients send with other items.
@@ -334,31 +353,97 @@ the files from the corresponding packets:
   Geyser's copy is the input today. With the Script API dump the set of states is known and cross-checked; only the
   order of the permutations would have to be reproduced to generate it.
 
-### Updating
+### Updating data
 
-1. Capture the network data of a BDS session in the CloudburstMC/Data layout (`block_palette.nbt`,
-   `runtime_item_states.json`, `item_components.nbt`, `creative_items.json`, optionally `data_driven_blocks.nbt`), see
-   above. Files may also be named like Geyser's resources (`block_palette.26_70.nbt`), so `--source` can point at Geyser's
-   `core/src/main/resources/bedrock`.
-2. Run the addon on BDS. The generator downloads BDS (the newest by default; older releases stay downloadable, but only
-   by their exact version), installs `bds-addon` on a fresh flat world, runs BDS headless until the addon prints
-   `PALETTER-DONE`, stops it and keeps the console log. Keep the BDS directory outside the repository. Downloading BDS
-   means accepting the [Minecraft EULA](https://minecraft.net/eula); BDS asks for nothing else.
-   ```
-   ./gradlew :generator:run --args="bds-run --download /tmp/bds --log /tmp/bds/bds.log"
-   ./gradlew :generator:run --args="bds-run --download /tmp/bds --version 1.26.51.1 --log /tmp/bds/bds-1.26.51.1.log"
-   ./gradlew :generator:run --args="bds-run --server /path/to/extracted/bds --log /tmp/bds/bds.log"
-   ```
-   A run takes well under a minute; the dump itself is a script job of about a second.
-3. Import, then cross-check the dump with the imported data (block states, defaults, items, stack sizes, item tags; add
-   `--item-tags FILE` to compare with another tag file):
-   ```
-   ./gradlew :generator:run --args="import --source DUMP_DIR --name 26.70 --protocol 2250 --bds-dump /tmp/bds/bds.log"
-   ./gradlew :generator:run --args="bds-compare --bds-dump /tmp/bds/bds.log --name 26.70"
-   ```
-4. Run `./gradlew :generator:run --args="check"`. Every block and item of the newest version that an older version lacks
-   needs an entry in `generator/fallbacks/<old version>.json` (or `null` to acknowledge there is none). Re-import the older
-   versions after editing their fallbacks.
+One command pulls the newest Bedrock Dedicated Server of a channel, runs everything against it and writes a report:
+
+```
+./gradlew :generator:run --args="update --channel release"                  # update the repository
+./gradlew :generator:run --args="update --channel release --verify-only"    # CI: write nothing, exit 1 on any difference
+./gradlew :generator:run --args="update --channel preview --verify-only --report reports/preview.md"
+```
+
+| Option | Meaning |
+|---|---|
+| `--channel release\|preview` | which BDS to resolve with the official links API (`net-secondary.web.minecraft-services.net/api/v1.0/download/links`); the Windows or Linux build, by host OS |
+| `--version 1.26.63.1` | a specific build instead of the newest (old builds stay downloadable, but are not listed anywhere) |
+| `--verify-only` | write nothing to the repository; exit 1 if anything differs from the committed data or spec, or a check fails |
+| `--import-preview` | allow a preview to be imported (as a version marked `preview` in `versions.txt`, see below) |
+| `--keep-server` | keep (and reuse) the extracted server; by default it is removed after the run, the zip stays cached |
+| `--cache DIR` | BDS cache; default `$PALETTER_BDS_CACHE`, else `<gradle user home>/caches/paletter/bds`. Never in the repository |
+| `--report FILE` | where to write the markdown report (always also `<cache>/runs/<platform>-<version>/report.md`) |
+| `--name 26.70`, `--protocol N` | name of a new bundled version (default from the BDS version: `1.26.70.23` -> `26.70`); protocol if the RakNet pong does not carry it |
+| `--experiments a,b`, `--port 19260`, `--timeout 300` | experiments for the add-on world, base port (port + 1 for IPv6), seconds per server start |
+
+Downloading BDS means accepting the [Minecraft EULA](https://minecraft.net/eula). A run takes about a minute plus the
+download (about 100 MB, once per build). What it does, in `<cache>/runs/<platform>-<version>/` (logs, captures):
+
+1. **Download** the zip into `<cache>/zips/`, extract it into `<cache>/servers/`.
+2. **Script API dump**: `bds-addon` on a fresh flat world, BDS runs until the addon printed `PALETTER-DONE`
+   (`bds-dump.log`, `bds-dump.json`).
+3. **Vanilla world**, `transport=raknet`, `online-mode=false`, `block-network-ids-are-hashes=true`: a RakNet ping reads the
+   protocol (LAN visibility is on for this, otherwise the pong is empty), the headless capture client (`capture` module)
+   records the item registry, creative inventory and block properties, every creative block id is checked against the
+   FNV-1a 32 hashes of the palette. Then once more with sequential ids.
+4. **Add-on world**: `capture/addon` installed, the world created once, the experiments switched on in `level.dat`, then the
+   same two captures. The content log of that start (definitions BDS rejects) is kept.
+5. **Assertions** on every run, first confirmed by hand on 1.26.63.1: sequential block ids are positions in the palette
+   sorted by the FNV-1 64 hash of the block name (vanilla and with 66 custom blocks, checked through the hashed run's
+   states); custom `block_id`s are 10000+ in descending identifier order; custom block items have id `255 - block_id`;
+   the bundled palette is in name hash order.
+6. **Compare**: the Script API dump against the committed baseline of the newest release (`generator/bds-dumps/`); for a
+   protocol that is already bundled, the capture (imported like `import` would) against the bundled version (items,
+   runtime ids, components, data driven blocks, creative layout) and the refreshed item tags and block defaults; for a
+   new protocol, everything against the newest bundled release; the add-on content log against
+   `capture/addon/content-log.txt`; component wire shapes of the add-on capture (against the newest
+   `codegen/captures/bds-*-addon`) and of the vanilla data driven items and blocks (against the bundled version), plus
+   coverage by `codegen/spec/inferred.json`. An added, removed or retyped field, or a component that is no longer sent,
+   is a **WIRE FORMAT CHANGE** at the top of the report.
+7. **Write** (not with `--verify-only`): a new protocol is imported as a new bundled version (its palette starts from the
+   newest release, with blocks whose Script API states changed and new blocks generated from the Script API, then
+   verified by the hash and sequential checks); for an existing one only item tags and block defaults are refreshed
+   (network differences become a TODO); a new add-on capture goes to `codegen/captures/bds-<version>-addon/` and the
+   component types are regenerated; the Script API baseline and the content log are updated.
+
+The report (`reports/preview-1.26.70.23.md` is an example) lists checks with PASS/DIFF/FAIL, every difference, and a
+**TODO** list of what needs a decision.
+
+**Previews** never replace release data. Without `--import-preview` nothing of a preview is written. With it, the version
+is imported and marked in `versions.txt` (`26.70 2250 preview`); the library skips such versions unless the system
+property `paletter.previews` is `true`, and `check` ignores them.
+
+**Still manual**, each listed in the report's TODO section:
+
+- Nothing is required for new content: blocks and items an older bundled version lacks fall back to `minecraft:unknown`.
+  The report lists them per version (INFO) as candidates for a curated fallback in `generator/fallbacks/<old version>.json`
+  (a target; `null` just records that unknown is intended). Re-import the older versions after adding some; `check`
+  verifies the targets.
+- The state order *within* blocks generated from the Script API (only creative stacks verify it; other blocks' ids do
+  not depend on it).
+- Network data that differs for an already bundled protocol (a hotfix that changes content): re-import deliberately.
+- Wire format changes: review the regenerated component types and `codegen/overrides.json`.
+- A new protocol needs a codec in the Cloudburst protocol library (`codec.vNNNN.Bedrock_vNNNN` is picked up by name);
+  without it the capture is decoded with the newest codec and the check is flagged.
+- Transports: 1.26.63.1 still accepts RakNet with `transport=raknet` (logging that NetherNet is the only supported
+  transport); the 1.26.70 previews only speak NetherNet. The capture client uses RakNet when the server answers a RakNet
+  ping and NetherNet otherwise (CloudburstMC/Network's `netty-transport-nethernet` with `libdatachannel-java`): HTTP
+  signaling on `server-port`, the protocol from NetherNet LAN discovery sent to `127.0.0.1:7551` (needs
+  `enable-lan-visibility=true`), and a self signed offer identity using the login chain's key, since BDS refuses
+  unsigned offers (`MultiplayerDisabled`) and chains not bound to the transport identity (`NOT_AUTHENTICATED`). No Xbox
+  sign in is involved with `online-mode=false`.
+
+CI (`.github/workflows/bds-data.yml`) runs `update --verify-only` daily for both channels on Linux BDS, opens or comments on
+an issue with the report when something differs, and for the release channel opens a pull request with the updated data.
+
+The lower level commands still exist:
+```
+./gradlew :generator:run --args="bds-run --download /tmp/bds --log /tmp/bds/bds.log"       # Script API dump only
+./gradlew :generator:run --args="import --source DUMP_DIR --name 26.70 --protocol 2250 --bds-dump /tmp/bds/bds.log"
+./gradlew :generator:run --args="bds-compare --bds-dump /tmp/bds/bds.log --name 26.70"
+./gradlew :generator:run --args="check"
+./gradlew :capture:run --args="capture --out DIR --bds-version 1.26.63.1"                    # see capture/WIRE-NOTES.md
+```
+`import --source` also reads Geyser's resource layout (`block_palette.26_70.nbt`, ...), i.e. `core/src/main/resources/bedrock`.
 
 The current bundle was produced with:
 ```
@@ -368,6 +453,9 @@ import --source $G --name 26.40 --protocol 2168 --bds-dump bds-1.26.45.1.log
 import --source $G --name 26.50 --protocol 2193 --bds-dump bds-1.26.51.1.log
 import --source $G --name 26.60 --protocol 2225 --bds-dump bds-1.26.63.1.log
 ```
+and is verified by `update --channel release --verify-only` against BDS 1.26.63.1: the capture reproduces 26.60, item
+tags and block defaults match. (Block defaults are now stored with the palette's state key order, so the Script API's
+varying order no longer changes the file.)
 
 ## Status and known gaps
 
@@ -381,4 +469,7 @@ import --source $G --name 26.60 --protocol 2225 --bds-dump bds-1.26.63.1.log
 - `ItemComponents` and `BlockComponents` cover every component Geyser sends today and the common add-on ones; anything
   else goes through the `@Experimental` raw escape hatch until it gets a semantic method.
 - Not covered: biome definitions, entity identifiers and other data Geyser ships that is not about items or blocks.
-- The BDS addon needs `@minecraft/server` 2.1.0; tested with BDS 1.26.45.1, 1.26.51.1 and 1.26.63.1.
+- The BDS addon needs `@minecraft/server` 2.1.0; tested with BDS 1.26.45.1, 1.26.51.1, 1.26.63.1 and the
+  1.26.70.23 preview.
+- The 1.26.70 previews only accept NetherNet connections; they are captured over NetherNet (see "Updating data"). Their
+  protocol (2250) has no codec in the protocol library yet, so the captures are decoded with the 2225 codec.

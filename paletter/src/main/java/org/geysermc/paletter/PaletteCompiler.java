@@ -53,7 +53,10 @@ final class PaletteCompiler {
             // Without custom blocks or block fallbacks the parent's block palette (and its canonical table) is shared
             BlockPalette blocks = parent.blocks()
                 .withCustomBlocks(data, layer, layer.blocks(), report, source)
-                .withFallbacks(layer.blockFallbacks());
+                .withFallbacks(layer.blockFallbacks(data.version()));
+            if (layer.fallbackDefaults() != null) {
+                blocks = blocks.withDefaultFallback(layer.fallbackDefaults().block());
+            }
 
             List<ItemVariant> newVariants = new ArrayList<>();
             layer.items().forEach(item -> newVariants.add(item.variant()));
@@ -66,7 +69,10 @@ final class PaletteCompiler {
             CanonicalItems canonicalItems = parent.items().canonical().extend(layer, newVariants);
 
             ItemPalette.Builder items = parent.items().extend(blocks, canonicalItems);
-            layer.itemFallbacks().forEach(items::fallback);
+            layer.itemFallbacks(data.version()).forEach(items::fallback);
+            if (layer.fallbackDefaults() != null) {
+                items.defaultFallback(layer.fallbackDefaults().item());
+            }
             for (PaletteLayer.Override override : layer.overrides()) {
                 if (!items.override(override.identifier(), override.modifier(), report, source)) {
                     report.info(source, "Not overriding " + override.identifier() + ": the item does not exist in " + data.version());
@@ -117,13 +123,15 @@ final class PaletteCompiler {
                 Set<String> names = new LinkedHashSet<>();
                 missing.forEach(state -> names.add(BlockStates.name(state)));
                 report.info("canonical", missing.size() + " canonical block states have no " + blocks.version()
-                    + " block and no fallback, and are sent as air: " + names);
+                    + " block and no fallback, and are sent as " + (blocks.defaultFallback() == null ? "air"
+                    : blocks.defaultFallback().target()) + ": " + names);
             }
         }
         List<ItemVariant> missingItems = items.missingCanonical();
         if (!missingItems.isEmpty() && (parentItems == null || !missingItems.equals(parentItems.missingCanonical()))) {
             report.info("canonical", missingItems.size() + " canonical item variants do not exist in " + items.version()
-                + " and have no fallback: " + missingItems);
+                + " and have no fallback" + (items.defaultFallback() == null ? "" : ", and are sent as "
+                + items.defaultFallback().target()) + ": " + missingItems);
         }
     }
 }

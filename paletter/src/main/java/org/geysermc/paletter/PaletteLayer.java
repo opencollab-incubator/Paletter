@@ -1,10 +1,12 @@
 package org.geysermc.paletter;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.block.BlockFallback;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeEditor;
 import org.geysermc.paletter.data.DataVersion;
+import org.geysermc.paletter.data.FallbackDefaults;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.ItemFallback;
 import org.geysermc.paletter.item.ItemOverride;
@@ -45,6 +47,9 @@ public final class PaletteLayer {
     private final List<BiConsumer<CreativeEditor, DataVersion>> creativeEdits;
     private final Map<String, ItemFallback> itemFallbacks;
     private final Map<String, BlockFallback> blockFallbacks;
+    private final Map<String, Map<String, ItemFallback>> versionItemFallbacks;
+    private final Map<String, Map<String, BlockFallback>> versionBlockFallbacks;
+    private final @Nullable FallbackDefaults fallbackDefaults;
     private final Map<String, List<String>> tags;
     private final List<ItemVariant> variants;
 
@@ -56,6 +61,13 @@ public final class PaletteLayer {
         this.creativeEdits = List.copyOf(builder.creativeEdits);
         this.itemFallbacks = Map.copyOf(builder.itemFallbacks);
         this.blockFallbacks = Map.copyOf(builder.blockFallbacks);
+        Map<String, Map<String, ItemFallback>> versionItems = new LinkedHashMap<>();
+        builder.versionItemFallbacks.forEach((version, map) -> versionItems.put(version, Map.copyOf(map)));
+        this.versionItemFallbacks = Map.copyOf(versionItems);
+        Map<String, Map<String, BlockFallback>> versionBlocks = new LinkedHashMap<>();
+        builder.versionBlockFallbacks.forEach((version, map) -> versionBlocks.put(version, Map.copyOf(map)));
+        this.versionBlockFallbacks = Map.copyOf(versionBlocks);
+        this.fallbackDefaults = builder.fallbackDefaults;
         this.variants = List.copyOf(builder.variants);
         Map<String, List<String>> tags = new LinkedHashMap<>();
         builder.tags.forEach((tag, list) -> tags.put(tag, List.copyOf(list)));
@@ -97,6 +109,45 @@ public final class PaletteLayer {
         return blockFallbacks;
     }
 
+    /**
+     * @return the item fallbacks this layer applies to a version: those for every version, overridden by those for
+     *         this one
+     * @since 2.0.0
+     */
+    public @NonNull Map<String, ItemFallback> itemFallbacks(@NonNull DataVersion version) {
+        Map<String, ItemFallback> specific = versionItemFallbacks.get(version.name());
+        if (specific == null) {
+            return itemFallbacks;
+        }
+        Map<String, ItemFallback> merged = new LinkedHashMap<>(itemFallbacks);
+        merged.putAll(specific);
+        return Map.copyOf(merged);
+    }
+
+    /**
+     * @return the block fallbacks this layer applies to a version: those for every version, overridden by those for
+     *         this one
+     * @since 2.0.0
+     */
+    public @NonNull Map<String, BlockFallback> blockFallbacks(@NonNull DataVersion version) {
+        Map<String, BlockFallback> specific = versionBlockFallbacks.get(version.name());
+        if (specific == null) {
+            return blockFallbacks;
+        }
+        Map<String, BlockFallback> merged = new LinkedHashMap<>(blockFallbacks);
+        merged.putAll(specific);
+        return Map.copyOf(merged);
+    }
+
+    /**
+     * @return the defaults this layer sets for content without a fallback, or null if it keeps those of the layers
+     *         below (initially {@link FallbackDefaults#UNKNOWN})
+     * @since 2.0.0
+     */
+    public @Nullable FallbackDefaults fallbackDefaults() {
+        return fallbackDefaults;
+    }
+
     public @NonNull Map<String, List<String>> tags() {
         return tags;
     }
@@ -131,6 +182,9 @@ public final class PaletteLayer {
         private final List<BiConsumer<CreativeEditor, DataVersion>> creativeEdits = new ArrayList<>();
         private final Map<String, ItemFallback> itemFallbacks = new LinkedHashMap<>();
         private final Map<String, BlockFallback> blockFallbacks = new LinkedHashMap<>();
+        private final Map<String, Map<String, ItemFallback>> versionItemFallbacks = new LinkedHashMap<>();
+        private final Map<String, Map<String, BlockFallback>> versionBlockFallbacks = new LinkedHashMap<>();
+        private @Nullable FallbackDefaults fallbackDefaults;
         private final Map<String, List<String>> tags = new LinkedHashMap<>();
         private final List<ItemVariant> variants = new ArrayList<>();
 
@@ -189,6 +243,43 @@ public final class PaletteLayer {
 
         public @NonNull Builder blockFallback(@NonNull String identifier, @NonNull BlockFallback fallback) {
             blockFallbacks.put(identifier, fallback);
+            return this;
+        }
+
+        /**
+         * Uses {@code fallback} for {@code identifier} in one data version only (e.g. {@code "26.50"}), overriding this
+         * layer's fallback for every version and the bundled one. Fallbacks apply where the item does not exist, or
+         * with {@link ItemFallback#force()} also where it does.
+         *
+         * @since 2.0.0
+         */
+        public @NonNull Builder itemFallback(@NonNull String version, @NonNull String identifier, @NonNull ItemFallback fallback) {
+            versionItemFallbacks.computeIfAbsent(Objects.requireNonNull(version), v -> new LinkedHashMap<>())
+                .put(Objects.requireNonNull(identifier), Objects.requireNonNull(fallback));
+            return this;
+        }
+
+        /**
+         * Uses {@code fallback} for {@code identifier} in one data version only (e.g. {@code "26.50"}), overriding this
+         * layer's fallback for every version and the bundled one.
+         *
+         * @since 2.0.0
+         */
+        public @NonNull Builder blockFallback(@NonNull String version, @NonNull String identifier, @NonNull BlockFallback fallback) {
+            versionBlockFallbacks.computeIfAbsent(Objects.requireNonNull(version), v -> new LinkedHashMap<>())
+                .put(Objects.requireNonNull(identifier), Objects.requireNonNull(fallback));
+            return this;
+        }
+
+        /**
+         * Sets what canonical content without any fallback becomes in versions that lack it, for this layer and the
+         * layers above it. The default is {@link FallbackDefaults#UNKNOWN}; {@link FallbackDefaults#NONE} sends air and
+         * leaves items out.
+         *
+         * @since 2.0.0
+         */
+        public @NonNull Builder fallbackDefaults(@NonNull FallbackDefaults defaults) {
+            this.fallbackDefaults = Objects.requireNonNull(defaults);
             return this;
         }
 

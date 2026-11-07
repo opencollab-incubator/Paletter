@@ -1,0 +1,133 @@
+# Daily check of the newest Bedrock Dedicated Server release and preview against the committed data.
+#
+# Per channel: runs `update --verify-only` on Linux BDS (downloaded from minecraft.net; that means accepting the
+# Minecraft EULA, https://minecraft.net/eula). When the run fails or finds differences:
+#   - an issue labelled `bds-data` + `<channel>` is opened, or the open one gets a comment when the report changed
+#     (dates and paths ignored), so a standing difference does not spam;
+#   - release only: the pipeline runs again in update mode and `peter-evans/create-pull-request` opens (or updates) a
+#     pull request from branch `bds-data/release` with the new data and the report. Previews are never imported here.
+#
+# Required permissions (granted below): contents: write, pull-requests: write, issues: write. No extra secrets: the
+# default GITHUB_TOKEN is used. Note that pull requests opened with GITHUB_TOKEN do not trigger other workflows; to
+# run the build on them, use a fine grained PAT (contents + pull requests: read and write) in a `BDS_DATA_TOKEN`
+# secret, which this workflow prefers when it exists. The repository setting "Allow GitHub Actions to create and
+# approve pull requests" must be enabled for the release PR.
+
+name: BDS data
+
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "BDS version (empty: newest of each channel)"
+        required: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: bds-data
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        channel: [release, preview]
+    env:
+      PALETTER_BDS_CACHE: ${{ github.workspace }}/../bds-cache
+      CHANNEL: ${{ matrix.channel }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Cache BDS downloads
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.PALETTER_BDS_CACHE }}/zips
+          key: bds-zips-${{ matrix.channel }}-${{ github.run_id }}
+          restore-keys: bds-zips-${{ matrix.channel }}-
+
+      - name: Verify against the committed data
+        id: verify
+        run: |
+          VERSION_ARG=""
+          if [ -n "${{ inputs.version }}" ]; then VERSION_ARG="--version ${{ inputs.version }}"; fi
+          set +e
+          ./gradlew :generator:run --args="update --channel $CHANNEL $VERSION_ARG --verify-only --report reports/ci-$CHANNEL.md"
+          echo "exit=$?" >> "$GITHUB_OUTPUT"
+          # The report without the lines that change every run (date, paths)
+          if [ -f "reports/ci-$CHANNEL.md" ]; then
+            echo "hash=$(grep -v -e '^- \*\*Date\*\*' -e '^- \*\*Work directory' -e '^- \*\*Server' "reports/ci-$CHANNEL.md" | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
+          fi
+          exit 0
+
+      - name: Upload report and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bds-data-${{ matrix.channel }}
+          path: |
+            reports/ci-${{ matrix.channel }}.md
+            ${{ env.PALETTER_BDS_CACHE }}/runs/*/*.log
+            ${{ env.PALETTER_BDS_CACHE }}/runs/*/report.md
+          if-no-files-found: ignore
+
+      - name: Open or update the issue
+        if: steps.verify.outputs.exit != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HASH: ${{ steps.verify.outputs.hash }}
+        run: |
+          gh label create bds-data --color 1d76db --description "Automated BDS data check" 2>/dev/null || true
+          gh label create "$CHANNEL" --color c5def5 2>/dev/null || true
+          TITLE="BDS data: $CHANNEL differs from the committed data"
+          BODY="reports/ci-$CHANNEL.md"
+          MARKER="<!-- report-hash: $HASH -->"
+          {
+            echo "$MARKER"
+            echo "Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo
+            # GitHub limits bodies to 65536 characters
+            head -c 60000 "$BODY"
+          } > issue.md
+          NUMBER=$(gh issue list --label bds-data --label "$CHANNEL" --state open --json number --jq '.[0].number')
+          if [ -z "$NUMBER" ]; then
+            gh issue create --title "$TITLE" --label bds-data --label "$CHANNEL" --body-file issue.md
+          elif ! gh issue view "$NUMBER" --json body,comments --jq '[.body] + [.comments[].body] | join("\n")' | grep -qF "$MARKER"; then
+            gh issue comment "$NUMBER" --body-file issue.md
+          else
+            echo "Issue #$NUMBER already has this report"
+          fi
+
+      - name: Update the data (release only)
+        if: steps.verify.outputs.exit != '0' && matrix.channel == 'release'
+        run: |
+          VERSION_ARG=""
+          if [ -n "${{ inputs.version }}" ]; then VERSION_ARG="--version ${{ inputs.version }}"; fi
+          # Exits non-zero when decisions are pending (TODOs in the report); the PR is opened anyway
+          ./gradlew :generator:run --args="update --channel release $VERSION_ARG --report reports/release-latest.md" || true
+          rm -f reports/ci-*.md
+          head -c 60000 reports/release-latest.md > "$RUNNER_TEMP/pr-body.md"
+
+      - name: Open or update the pull request (release only)
+        if: steps.verify.outputs.exit != '0' && matrix.channel == 'release'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.BDS_DATA_TOKEN || github.token }}
+          branch: bds-data/release
+          delete-branch: true
+          title: "Update bundled data from the newest BDS release"
+          commit-message: "Update bundled data from the newest BDS release"
+          body-path: ${{ runner.temp }}/pr-body.md
+          labels: bds-data

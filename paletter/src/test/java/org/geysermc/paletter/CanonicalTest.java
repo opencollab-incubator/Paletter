@@ -75,7 +75,8 @@ class CanonicalTest {
             Palette palette = PALETTER.vanilla(version);
             for (int i = 0; i < palette.canonicalBlockCount(); i++) {
                 PaletteBlock resolved = palette.blocks().resolve(palette.canonicalBlocks().state(i)).block();
-                assertSame(resolved == null ? palette.blocks().air() : resolved, palette.block(i));
+                // Blocks a version lacks fall back to minecraft:unknown by default
+                assertSame(resolved == null ? palette.blocks().defaultState("minecraft:unknown") : resolved, palette.block(i));
                 assertEquals(palette.block(i).getRuntimeId(), palette.runtimeId(i));
             }
             // Every block of the version maps back to a canonical id resolving to it, unless nothing resolves to it

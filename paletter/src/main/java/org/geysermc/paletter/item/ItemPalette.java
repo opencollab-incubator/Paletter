@@ -66,6 +66,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     private final Map<String, PaletteBlock> defaultBlocks;
     private final Set<String> multiStateBlockItems;
     private final Map<String, ItemFallback> fallbacks;
+    private final @Nullable ItemFallback defaultFallback;
     private final CanonicalItems canonical;
     private final Map<String, List<String>> tags;
     private final List<CustomItem> customItems;
@@ -86,6 +87,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         this.defaultBlocks = Map.copyOf(defaultBlocks);
         this.multiStateBlockItems = Set.copyOf(multiStateBlockItems);
         this.fallbacks = Map.copyOf(builder.fallbacks);
+        this.defaultFallback = builder.defaultFallback;
         this.canonical = builder.canonical;
         Map<String, List<String>> tags = new HashMap<>();
         builder.tags.forEach((tag, items) -> tags.put(tag, List.copyOf(items)));
@@ -257,9 +259,13 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
      * with other items are ignored. Does not allocate.
      * <p>
      * Order: a variant with this damage and block, then a variant with this damage, then the item's base variant.
-     * A variant that only reached this version through a fallback never shadows the item's own variants.
+     * A variant that only reached this version through a fallback never shadows the item's own variants, and never
+     * serves as a base variant. A stack that exists here only as the fallback of <em>several</em> canonical ids (e.g. the
+     * shared {@code minecraft:unknown} of the default fallback) is not matched: any of them would be an arbitrary claim.
+     * A fallback reached by exactly one canonical id still matches it.
      *
-     * @return the canonical id, or -1 for air, an unknown definition, or an item that is no variant of the newest version
+     * @return the canonical id, or -1 for air, an unknown definition, an item that is no variant of the newest version,
+     *         or a stack shared by the fallbacks of several canonical ids
      */
     public int match(@NonNull ItemData data) {
         ItemDefinition definition = data.getDefinition();
@@ -272,6 +278,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         }
         int damage = data.getDamage();
         BlockDefinition block = data.getBlockDefinition();
+        boolean damageMatched = false;
         int damageMatch = -1;
         int base = -1;
         for (Candidate candidate : candidates) {
@@ -280,22 +287,33 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
                     return candidate.canonical;
                 }
             } else if (candidate.damage == damage) {
-                if (damageMatch == -1) {
+                if (!damageMatched) {
+                    damageMatched = true;
                     damageMatch = candidate.canonical;
                 }
-            } else if (candidate.damage == 0 && base == -1) {
+            } else if (candidate.damage == 0 && base == -1 && !candidate.fallback) {
                 base = candidate.canonical;
             }
         }
-        return damageMatch != -1 ? damageMatch : base;
+        return damageMatched ? damageMatch : base;
     }
 
     /**
-     * @return the canonical variants that do not exist in this version and have no fallback ({@link #item(int)} is null)
+     * @return the canonical variants that do not exist in this version and have no fallback of their own: they use the
+     *         default fallback ({@link #defaultFallback()}), or {@link #item(int)} is null without one
      */
     public @NonNull List<ItemVariant> missingCanonical() {
         return canonicalTable().missing;
     }
+
+    /**
+     * @return what canonical variants without an item or fallback of their own use, or null if they have no item
+     */
+    @Internal
+    public @Nullable ItemFallback defaultFallback() {
+        return defaultFallback;
+    }
+
 
     /**
      * Builds the canonical tables now instead of on first use. Called by the palette compiler.
@@ -326,6 +344,10 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             items[i] = resolveUncached(canonical.variant(i));
             if (items[i] == null) {
                 missing.add(canonical.variant(i));
+                PaletteItem fallback = defaultFallback == null ? null : byIdentifier.get(defaultFallback.target());
+                if (fallback != null) {
+                    items[i] = new ResolvedItem(fallback, 0, defaultBlocks.get(fallback.getIdentifier()), true);
+                }
             }
         }
         Int2ObjectOpenHashMap<List<Candidate>> candidates = new Int2ObjectOpenHashMap<>();
@@ -340,12 +362,18 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
                 PaletteBlock block = variant.blockState() != null && item.block() != defaultBlocks.get(item.definition().getIdentifier())
                     ? item.block() : null;
                 List<Candidate> list = candidates.computeIfAbsent(item.definition().getRuntimeId(), id -> new ArrayList<>(1));
-                boolean taken = false;
-                for (Candidate candidate : list) {
-                    taken |= candidate.damage == item.damage() && candidate.block == block;
+                boolean fallback = pass == 1;
+                int taken = -1;
+                for (int c = 0; c < list.size(); c++) {
+                    if (list.get(c).damage == item.damage() && list.get(c).block == block) {
+                        taken = c;
+                    }
                 }
-                if (!taken) {
-                    list.add(new Candidate(item.damage(), block, i));
+                if (taken == -1) {
+                    list.add(new Candidate(item.damage(), block, i, fallback));
+                } else if (fallback && list.get(taken).fallback) {
+                    // Shared by the fallbacks of several canonical ids: claiming any of them would be arbitrary
+                    list.set(taken, new Candidate(item.damage(), block, -1, true));
                 }
             }
         }
@@ -355,7 +383,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         return new CanonicalTable(items, byRuntimeId, List.copyOf(missing));
     }
 
-    private record Candidate(int damage, @Nullable PaletteBlock block, int canonical) {
+    private record Candidate(int damage, @Nullable PaletteBlock block, int canonical, boolean fallback) {
     }
 
     private record CanonicalTable(ResolvedItem[] items, Int2ObjectMap<Candidate[]> byRuntimeId, List<ItemVariant> missing) {
@@ -404,6 +432,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         private final Map<String, NbtMap> blockOverrides;
         private final Set<String> customBlockItems;
         private final Map<String, ItemFallback> fallbacks;
+        private @Nullable ItemFallback defaultFallback;
         private final CanonicalItems canonical;
         private final Map<String, Set<String>> tags = new LinkedHashMap<>();
         private final List<CustomItem> customItems;
@@ -417,6 +446,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             this.blockOverrides = new HashMap<>();
             this.customBlockItems = new HashSet<>();
             this.fallbacks = new HashMap<>(fallbacks);
+            this.defaultFallback = ItemFallback.UNKNOWN;
             this.canonical = canonical;
             this.customItems = new ArrayList<>();
         }
@@ -429,6 +459,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             this.blockOverrides = new HashMap<>(parent.blockOverrides);
             this.customBlockItems = new HashSet<>(parent.customBlockItems);
             this.fallbacks = new HashMap<>(parent.fallbacks);
+            this.defaultFallback = parent.defaultFallback;
             this.canonical = canonical;
             parent.tags.forEach((tag, items) -> this.tags.put(tag, new LinkedHashSet<>(items)));
             this.customItems = new ArrayList<>(parent.customItems);
@@ -515,6 +546,14 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             if (byIdentifier.containsKey(identifier)) {
                 throw new PaletteException("Item " + identifier + " already exists in " + version);
             }
+        }
+
+        /**
+         * @param fallback what canonical variants without an item or fallback of their own use, or null for none
+         */
+        @Internal
+        public void defaultFallback(@Nullable ItemFallback fallback) {
+            this.defaultFallback = fallback;
         }
 
         public void fallback(@NonNull String identifier, @NonNull ItemFallback fallback) {

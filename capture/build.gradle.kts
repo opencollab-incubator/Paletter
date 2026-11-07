@@ -6,6 +6,10 @@ plugins {
 dependencies {
     implementation(project(":paletter"))
     implementation(libs.protocol.connection)
+    // BDS 1.26.70+ only speaks NetherNet (WebRTC, HTTP signaling on server-port); RakNet from the same build
+    implementation(libs.raknet)
+    implementation(libs.nethernet)
+    implementation(libs.libdatachannel)
     implementation(libs.gson)
 }
 

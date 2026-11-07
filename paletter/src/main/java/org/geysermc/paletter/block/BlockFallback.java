@@ -13,6 +13,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @since 2.0.0
  */
 public record BlockFallback(@NonNull String target, boolean clearStates, boolean force) {
+    /**
+     * The default for blocks a version lacks: {@code minecraft:unknown}, which every client knows and shows as a
+     * placeholder block.
+     *
+     * @since 2.0.0
+     */
+    public static final BlockFallback UNKNOWN = new BlockFallback("minecraft:unknown", true, false);
+
 
     public static @NonNull BlockFallback of(@NonNull String target) {
         return new BlockFallback(target, false, false);

@@ -26,6 +26,11 @@ import java.util.Map;
  * bds-compare --bds-dump FILE --name 26.60 [--item-tags FILE]
  *         Cross-checks a BDS dump with a bundled version: block states and defaults against the block palette, items
  *         and stack sizes, item tags against the bundled ones (and against --item-tags, e.g. Geyser's item_tags.json).
+ * update  --channel release|preview [--version X] [--verify-only] [--import-preview] [--keep-server]
+ *         [--cache DIR] [--report FILE] [--name 26.70] [--experiments a,b] [--port 19260] [--timeout SECONDS]
+ *         The whole pipeline: newest BDS of the channel, Script API dump, vanilla and add-on network captures (hashed
+ *         and sequential block ids), comparison with the committed data, import or refresh, component shape
+ *         comparison, markdown report. --verify-only writes nothing and exits with 1 on any difference.
  * check   Verifies the bundled data: every block and item of the newest version that is missing in an older
  *         version needs a fallback there, and every fallback target must exist. Exits with 1 on problems.
  * </pre>
@@ -37,6 +42,9 @@ public final class Main {
         if (args.length == 0) {
             usage();
             return;
+        }
+        if (args[0].equals("update")) {
+            System.exit(new Update(Path.of("").toAbsolutePath(), parseFlags(args)).run());
         }
         Map<String, String> options = parseOptions(args);
         Path root = Path.of("").toAbsolutePath();
@@ -85,6 +93,23 @@ public final class Main {
         return options;
     }
 
+    /** Like {@link #parseOptions}, but an option without a value (followed by another option or last) is a flag. */
+    private static Map<String, String> parseFlags(String[] args) {
+        Map<String, String> options = new HashMap<>();
+        for (int i = 1; i < args.length; i++) {
+            if (!args[i].startsWith("--")) {
+                throw new IllegalArgumentException("Expected --option [value], got " + args[i]);
+            }
+            String name = args[i].substring(2);
+            if (i + 1 < args.length && !args[i + 1].startsWith("--")) {
+                options.put(name, args[++i]);
+            } else {
+                options.put(name, "true");
+            }
+        }
+        return options;
+    }
+
     private static String require(Map<String, String> options, String name) {
         String value = options.get(name);
         if (value == null) {
@@ -99,6 +124,8 @@ public final class Main {
               import --source DIR --name 26.60 --protocol 2225 [--item-tags FILE] [--bds-dump FILE]
               bds-run --log FILE (--server DIR | --download DIR [--version 1.26.51.1] [--preview true]) [--timeout SECONDS]
               bds-compare --bds-dump FILE --name 26.60 [--item-tags FILE]
+              update --channel release|preview [--version X] [--verify-only] [--import-preview] [--keep-server]
+                     [--cache DIR] [--report FILE] [--name 26.70] [--experiments a,b] [--port 19260] [--timeout SECONDS]
               check""");
     }
 }

@@ -63,6 +63,16 @@ record BdsDump(
     }
 
     static BdsDump read(Path log) throws IOException {
+        String[] json = json(log);
+        return parse(json[1], json[0]);
+    }
+
+    /**
+     * Reassembles the dump JSON from a console log.
+     *
+     * @return the BDS version and the JSON
+     */
+    static String[] json(Path log) throws IOException {
         Map<Integer, String> chunks = new TreeMap<>();
         int total = -1;
         String version = "unknown";
@@ -89,7 +99,11 @@ record BdsDump(
             throw new IOException("Incomplete Paletter dump in " + log + ": got " + chunks.size() + " of " + total
                 + " chunks. Did the addon finish? Check the log for script errors");
         }
-        JsonObject root = JsonParser.parseString(String.join("", chunks.values())).getAsJsonObject();
+        return new String[]{version, String.join("", chunks.values())};
+    }
+
+    static BdsDump parse(String json, String version) {
+        JsonObject root = JsonParser.parseString(canonicalJson(json)).getAsJsonObject();
 
         Map<String, NbtMap> defaults = new TreeMap<>();
         for (Map.Entry<String, JsonElement> entry : root.getAsJsonObject("block_defaults").entrySet()) {
@@ -151,8 +165,11 @@ record BdsDump(
      */
     Map<String, NbtMap> projectDefaults(List<NbtMap> palette, List<String> rejected) {
         Map<String, Set<String>> keys = new HashMap<>();
-        Set<NbtMap> states = new HashSet<>(palette);
+        // Equal NbtMaps may differ in key order; keep the palette's instance so the output does not depend on the
+        // order the Script API happened to list the states in
+        Map<NbtMap, NbtMap> states = new HashMap<>();
         for (NbtMap state : palette) {
+            states.putIfAbsent(state, state);
             keys.computeIfAbsent(BlockStates.name(state), n -> new HashSet<>()).addAll(BlockStates.states(state).keySet());
         }
         Map<String, NbtMap> projected = new TreeMap<>();
@@ -168,13 +185,49 @@ record BdsDump(
                 }
             });
             NbtMap candidate = BlockStates.of(name, builder.build());
-            if (states.contains(candidate)) {
-                projected.put(name, candidate);
+            NbtMap paletteState = states.get(candidate);
+            if (paletteState != null) {
+                projected.put(name, paletteState);
             } else {
                 rejected.add(name + ": default " + BlockStates.states(candidate) + " is not a palette state");
             }
         });
         return projected;
+    }
+
+    /**
+     * The dump with object keys sorted and arrays of plain values sorted: the Script API lists states, tags and
+     * components in an order that differs between server runs, so two dumps of the same build are only byte for byte
+     * equal like this.
+     */
+    static String canonicalJson(String json) {
+        return new com.google.gson.Gson().toJson(canonical(JsonParser.parseString(json)));
+    }
+
+    private static JsonElement canonical(JsonElement element) {
+        if (element.isJsonObject()) {
+            JsonObject sorted = new JsonObject();
+            new TreeMap<>(element.getAsJsonObject().asMap()).forEach((key, value) -> sorted.add(key, canonical(value)));
+            return sorted;
+        }
+        if (element.isJsonArray()) {
+            List<JsonElement> values = new ArrayList<>();
+            element.getAsJsonArray().forEach(value -> values.add(canonical(value)));
+            if (values.stream().allMatch(JsonElement::isJsonPrimitive)) {
+                values.sort((a, b) -> {
+                    JsonPrimitive x = a.getAsJsonPrimitive();
+                    JsonPrimitive y = b.getAsJsonPrimitive();
+                    if (x.isNumber() && y.isNumber()) {
+                        return Double.compare(x.getAsDouble(), y.getAsDouble());
+                    }
+                    return x.getAsString().compareTo(y.getAsString());
+                });
+            }
+            com.google.gson.JsonArray array = new com.google.gson.JsonArray();
+            values.forEach(array::add);
+            return array;
+        }
+        return element;
     }
 
     private static JsonObject object(JsonObject root, String name) {
