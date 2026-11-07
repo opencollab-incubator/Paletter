@@ -75,7 +75,7 @@ class LayerTest {
         assertEquals(furnace.getRuntimeId(), data.getInt("id"));
         NbtMap properties = data.getCompound("components").getCompound("item_properties");
         assertEquals(CreativeCategory.ITEMS.itemPropertyId(), properties.getInt("creative_category"));
-        assertEquals("itemGroup.name.minecart", properties.getString("creative_group"));
+        assertEquals("minecraft:itemGroup.name.minecart", properties.getString("creative_group"));
 
         // Directly after the hopper minecart, inside the minecart group
         List<CreativeItemData> items = palette.creative().items();

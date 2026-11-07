@@ -1,0 +1,13 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "exp:block_g3",
+      "menu_category": {
+        "category": "nature",
+        "group": "exp:itemGroup.g3"
+      }
+    },
+    "components": {}
+  }
+}

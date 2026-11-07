@@ -1,0 +1,709 @@
+# aaa:sword_d id=858 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 3,
+      "creative_group": "minecraft:itemGroup.name.sword",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# exp:sword_a id=853 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 3,
+      "creative_group": "minecraft:itemGroup.name.sword",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# exp:cat_none id=866 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 5,
+      "creative_group": "",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# exp:no_menu id=854 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 5,
+      "creative_group": "",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# exp:placer_item id=859 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 4,
+      "creative_group": "",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:block_placer": {
+      "alignedPlacement": 0b,
+      "block": "exp:block_placed",
+      "canUseBlockAsIcon": 1b,
+      "replaceBlockItem": 0b,
+      "use_on": [] /* TAG_END */
+    },
+    "minecraft:publisher_on_use_on": {
+      "autoSucceedOnClient": 0b
+    }
+  }
+}
+
+# exp:hidden_items id=857 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 4,
+      "creative_group": "",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 1b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# zzz:loose_a id=855 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 4,
+      "creative_group": "",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# exp:g1_a id=865 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 3,
+      "creative_group": "exp:itemGroup.g1",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# exp:g0_x id=856 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 3,
+      "creative_group": "exp:itemGroup.g0",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# exp:g1_b id=860 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 3,
+      "creative_group": "exp:itemGroup.g1",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# exp:sword_c id=861 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 3,
+      "creative_group": "minecraft:itemGroup.name.sword",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# exp:loose_m id=869 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 4,
+      "creative_group": "",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# exp:nature_loose id=862 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 2,
+      "creative_group": "",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# aaa:loose_z id=863 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 4,
+      "creative_group": "",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# zzz:sword_b id=864 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 3,
+      "creative_group": "minecraft:itemGroup.name.sword",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# exp:block_with_item id=867 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 4,
+      "creative_group": "",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# aaa:g2_x id=868 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 3,
+      "creative_group": "exp:itemGroup.g2",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# exp:equip_loose id=870 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 3,
+      "creative_group": "",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# exp:construction_loose id=871 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 1,
+      "creative_group": "",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# exp:sword_wrongcat id=872 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 4,
+      "creative_group": "minecraft:itemGroup.name.sword",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# exp:g1_other id=873 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 2,
+      "creative_group": "exp:itemGroup.g1",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# exp:group_only id=874 version=DATA_DRIVEN componentBased=true
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 0b,
+      "can_destroy_in_creative": 1b,
+      "creative_category": 5,
+      "creative_group": "exp:itemGroup.g4",
+      "damage": 0,
+      "enchantable_slot": "none",
+      "enchantable_value": 0,
+      "foil": 0b,
+      "frame_count": 1,
+      "hand_equipped": 0b,
+      "hidden_in_commands": 2b,
+      "liquid_clipped": 0b,
+      "max_stack_size": 64,
+      "mining_speed": 1.0f,
+      "should_despawn": 1b,
+      "stacked_by_data": 0b,
+      "use_animation": 0,
+      "use_duration": 0
+    },
+    "item_tags": [] /* TAG_END */,
+    "minecraft:max_stack_size": {
+      "value": 64b
+    }
+  }
+}
+
+# exp:block_placed id=-9753 version=NONE componentBased=false
+{}
+
+# exp:item.block_with_item id=-9751 version=NONE componentBased=false
+{}
+
+# exp:block_items id=-9755 version=NONE componentBased=false
+{}
+
+# exp:block_planks id=-9746 version=NONE componentBased=false
+{}
+
+# zzz:block_c id=-9748 version=NONE componentBased=false
+{}
+
+# exp:block_sword id=-9750 version=NONE componentBased=false
+{}
+
+# exp:block_nomenu id=-9749 version=NONE componentBased=false
+{}
+
+# exp:block_none id=-9756 version=NONE componentBased=false
+{}
+
+# exp:block_hidden id=-9745 version=NONE componentBased=false
+{}
+
+# aaa:block_d id=-9754 version=NONE componentBased=false
+{}
+
+# exp:block_g3 id=-9747 version=NONE componentBased=false
+{}
+
+# exp:block_g1 id=-9758 version=NONE componentBased=false
+{}
+
+# exp:block_b id=-9752 version=NONE componentBased=false
+{}
+
+# exp:block_a id=-9757 version=NONE componentBased=false
+{}
+

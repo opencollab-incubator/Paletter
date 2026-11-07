@@ -1,0 +1,17 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "exp:placer_item",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:block_placer": {
+        "block": "exp:block_placed",
+        "replace_block_item": true
+      }
+    }
+  }
+}

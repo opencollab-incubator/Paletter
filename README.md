@@ -359,8 +359,13 @@ client), missing icons replaced by the first stack, net ids sequential from 1 (`
 category mess (protocol enum offset by `ALL`, numeric `creative_category` item property, `menu_category` names) lives in one
 enum, `CreativeCategory`.
 
-Custom items and blocks declare a `CreativePlacement`: after an anchor if present, else at the end of a named group
-(created if needed), else loose at the end of the category. The same placement is written into the item's
+Custom items and blocks declare a `CreativePlacement` (a block may instead only have a `menu_category`): after an anchor
+if present, else in a named group, else loose at the end of the category. Without an anchor, the layer's
+`CreativeOrdering` decides the rest. `BDS` (default) puts content exactly where Bedrock Dedicated Server puts add-on
+content: block items first, in the iteration order of BDS's data driven block map, then items in definition order, each
+at the end of the group of its category (created at the end of the category if missing; `minecraft:` prefix ignored) or
+loose at the end of the category. `APPEND` is the old behaviour. The rule, its evidence and the checks against BDS
+captures are in [`capture/CREATIVE-ORDER.md`](capture/CREATIVE-ORDER.md). The same placement is written into the item's
 `creative_category`/`creative_group` and the block's `menu_category`.
 
 ## Data
@@ -469,7 +474,7 @@ download (about 100 MB, once per build). What it does, in `<cache>/runs/<platfor
    same two captures. The content log of that start (definitions BDS rejects) is kept.
 5. **Assertions** on every run, first confirmed by hand on 1.26.63.1: sequential block ids are positions in the palette
    sorted by the FNV-1 64 hash of the block name (vanilla and with 66 custom blocks, checked through the hashed run's
-   states); custom `block_id`s are 10000+ in descending identifier order; custom block items have id `255 - block_id`;
+   states); custom `block_id`s are 10000+ in descending identifier order (really descending file name order; the capture add-on names files after blocks, see `capture/CREATIVE-ORDER.md`); custom block items have id `255 - block_id`;
    the bundled palette is in name hash order.
 6. **Compare**: the Script API dump against the committed baseline of the newest release (`generator/bds-dumps/`); for a
    protocol that is already bundled, the capture (imported like `import` would) against the bundled version (items,

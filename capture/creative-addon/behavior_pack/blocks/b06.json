@@ -1,0 +1,13 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "exp:block_hidden",
+      "menu_category": {
+        "category": "construction",
+        "is_hidden_in_commands": true
+      }
+    },
+    "components": {}
+  }
+}

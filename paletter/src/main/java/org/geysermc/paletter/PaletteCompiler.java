@@ -1,6 +1,8 @@
 package org.geysermc.paletter;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.geysermc.paletter.block.BlockInterner;
 import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.BlockStates;
@@ -10,6 +12,8 @@ import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeContent;
 import org.geysermc.paletter.creative.CreativeEditor;
 import org.geysermc.paletter.creative.CreativeLayout;
+import org.geysermc.paletter.creative.CreativeOrdering;
+import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.creative.CreativeStack;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.VanillaData;
@@ -19,8 +23,11 @@ import org.geysermc.paletter.item.ItemPalette;
 import org.geysermc.paletter.item.ItemVariant;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
@@ -89,27 +96,51 @@ final class PaletteCompiler {
             }
 
             CreativeEditor creative = parent.creativeLayout().edit();
+            CreativeOrdering ordering = layer.creativeOrdering();
+            // Placements in registration order (custom items and block items interleaved, then items of blocks)
+            List<Placed> placed = new ArrayList<>();
             for (PaletteLayer.ItemEntry entry : layer.itemEntries()) {
                 switch (entry) {
                     case PaletteLayer.ItemEntry.Custom(CustomItem custom) -> {
                         items.addCustom(custom, report, source);
                         if (custom.creative() != null) {
-                            custom.creative().apply(creative, CreativeStack.of(custom.identifier()));
+                            placed.add(new Placed(null, CreativeStack.of(custom.identifier()), custom.creative()));
                         }
                     }
                     case PaletteLayer.ItemEntry.OfBlock(String identifier, CustomBlock.BlockItem blockItem, var placement) -> {
                         CustomBlock block = blocks.customBlocks().stream().filter(b -> b.identifier().equals(identifier)).findFirst()
                             .orElseThrow(() -> new PaletteException("Item of unknown custom block " + identifier));
                         if (items.addBlockItem(block, blockItem, report, source) != null && placement != null) {
-                            placement.apply(creative, CreativeStack.of(block.identifier()).withBlockState(block.defaultState()));
+                            placed.add(new Placed(identifier, CreativeStack.of(block.identifier()).withBlockState(block.defaultState()), placement));
                         }
                     }
                 }
             }
             for (CustomBlock block : layer.blocks()) {
-                if (items.addBlockItem(block, report, source) != null && block.creative() != null) {
-                    block.creative().apply(creative, CreativeStack.of(block.identifier()).withBlockState(block.defaultState()));
+                CreativePlacement placement = creativePlacement(block, ordering);
+                if (items.addBlockItem(block, report, source) != null && placement != null) {
+                    placed.add(new Placed(block.identifier(), CreativeStack.of(block.identifier()).withBlockState(block.defaultState()), placement));
                 }
+            }
+            if (ordering == CreativeOrdering.APPEND) {
+                placed.forEach(entry -> entry.placement().apply(creative, entry.stack(), ordering));
+            } else {
+                // BDS adds block items while iterating its data driven block map, then items in registration order.
+                // Custom blocks enter the map by block id, which Paletter assigns by identifier, descending
+                Map<String, Placed> blockItems = new HashMap<>();
+                placed.stream().filter(entry -> entry.block() != null).forEach(entry -> blockItems.put(entry.block(), entry));
+                List<String> byBlockId = new ArrayList<>();
+                blocks.customBlocks().forEach(block -> byBlockId.add(block.identifier()));
+                byBlockId.sort(Comparator.reverseOrder());
+                for (String identifier : ordering.blockOrder(byBlockId,
+                    data.dataDrivenBlocks().stream().map(BlockPropertyData::getName).toList())) {
+                    Placed entry = blockItems.get(identifier);
+                    if (entry != null) {
+                        entry.placement().apply(creative, entry.stack(), ordering);
+                    }
+                }
+                placed.stream().filter(entry -> entry.block() == null)
+                    .forEach(entry -> entry.placement().apply(creative, entry.stack(), ordering));
             }
             for (BiConsumer<CreativeEditor, DataVersion> edit : layer.creativeEdits()) {
                 edit.accept(creative, data.version());
@@ -127,6 +158,23 @@ final class PaletteCompiler {
         } catch (PaletteException e) {
             throw new PaletteException("Unable to compile layer " + source + " for " + data.version() + ": " + e.getMessage(), e);
         }
+    }
+
+    /** A creative placement to apply; {@code block} is the custom block if the stack is a block item. */
+    private record Placed(@Nullable String block, CreativeStack stack, CreativePlacement placement) {
+    }
+
+    /**
+     * The creative placement of a custom block: its own, or with {@link CreativeOrdering#BDS} the one its menu
+     * category implies (BDS puts every block with a menu category in the creative inventory).
+     */
+    private static @Nullable CreativePlacement creativePlacement(CustomBlock block, CreativeOrdering ordering) {
+        if (block.creative() != null || ordering == CreativeOrdering.APPEND || block.menu() == null
+            || block.menu().category() == null) {
+            return block.creative();
+        }
+        CustomBlock.Menu menu = block.menu();
+        return menu.group().isEmpty() ? CreativePlacement.loose(menu.category()) : CreativePlacement.group(menu.category(), menu.group());
     }
 
     /**

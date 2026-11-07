@@ -1,0 +1,29 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Paletter creative order probe",
+    "description": "Custom items and blocks with every menu_category placement",
+    "uuid": "a1e5c0de-0000-4000-8000-00000000d001",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      26,
+      60
+    ]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "a1e5c0de-0000-4000-8000-00000000d002",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

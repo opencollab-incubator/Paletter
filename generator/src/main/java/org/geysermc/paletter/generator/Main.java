@@ -83,6 +83,7 @@ public final class Main {
                 BdsCompare.compare(BdsDump.read(Path.of(require(options, "bds-dump"))), data, tagSources);
             }
             case "check" -> System.exit(new Checker(output).run() ? 0 : 1);
+            case "creative-probe" -> CreativeProbe.run(root, options);
             default -> usage();
         }
     }

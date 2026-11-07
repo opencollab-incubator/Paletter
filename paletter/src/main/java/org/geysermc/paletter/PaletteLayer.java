@@ -6,6 +6,7 @@ import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.block.BlockFallback;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeEditor;
+import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.FallbackDefaults;
 import org.geysermc.paletter.vanilla.BedrockBlockType;
@@ -57,8 +58,10 @@ public final class PaletteLayer {
     private final @Nullable FallbackDefaults fallbackDefaults;
     private final Map<String, List<String>> tags;
     private final List<ItemVariant> variants;
+    private final CreativeOrdering creativeOrdering;
 
     private PaletteLayer(Builder builder) {
+        this.creativeOrdering = builder.creativeOrdering;
         this.id = builder.id;
         this.items = List.copyOf(builder.items);
         this.itemEntries = List.copyOf(builder.itemEntries);
@@ -115,6 +118,15 @@ public final class PaletteLayer {
 
     public @NonNull List<BiConsumer<CreativeEditor, DataVersion>> creativeEdits() {
         return creativeEdits;
+    }
+
+    /**
+     * @return how this layer's custom items and blocks without an anchored placement are ordered in the creative
+     * inventory
+     * @since 2.0.0
+     */
+    public @NonNull CreativeOrdering creativeOrdering() {
+        return creativeOrdering;
     }
 
     public @NonNull Map<String, ItemFallback> itemFallbacks() {
@@ -226,6 +238,7 @@ public final class PaletteLayer {
         private @Nullable FallbackDefaults fallbackDefaults;
         private final Map<String, List<String>> tags = new LinkedHashMap<>();
         private final List<ItemVariant> variants = new ArrayList<>();
+        private CreativeOrdering creativeOrdering = CreativeOrdering.BDS;
 
         private Builder(String id) {
             this.id = Objects.requireNonNull(id);
@@ -269,6 +282,17 @@ public final class PaletteLayer {
          */
         public @NonNull Builder overrideItem(@NonNull BedrockItemType type, @NonNull Consumer<ItemOverride> modifier) {
             return overrideItem(type.identifier(), modifier);
+        }
+
+        /**
+         * Sets how custom items and blocks of this layer are ordered in the creative inventory when their placement
+         * has no anchor. {@link CreativeOrdering#BDS} (the default) puts them exactly where BDS puts add-on content.
+         *
+         * @since 2.0.0
+         */
+        public @NonNull Builder creativeOrdering(@NonNull CreativeOrdering ordering) {
+            this.creativeOrdering = Objects.requireNonNull(ordering);
+            return this;
         }
 
         /**

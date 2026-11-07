@@ -84,7 +84,9 @@ public final class ItemEncoder {
         if (creative != null) {
             typedProperties.creativeCategory(creative.category().itemPropertyId());
             if (creative.group() != null) {
-                typedProperties.creativeGroup(creative.group());
+                // Like BDS: the group as add-on JSON names it, always namespaced (vanilla groups are minecraft:)
+                String group = creative.group();
+                typedProperties.creativeGroup(group.indexOf(':') < 0 ? "minecraft:" + group : group);
             }
         }
 

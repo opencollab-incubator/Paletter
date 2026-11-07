@@ -265,6 +265,30 @@ public final class CreativeEditor {
         }
 
         /**
+         * Places the stacks at the end of the group of that name in the category, creating the group at the end of
+         * the category if the category has none (even if another category has a group of that name), as BDS does.
+         */
+        boolean intoCategoryGroup(CreativeCategory category, String group) {
+            if (done) {
+                return false;
+            }
+            removeMoving();
+            MutableGroup target = null;
+            for (Object node : categories.get(category)) {
+                if (node instanceof MutableGroup candidate && candidate.name.equals(group)) {
+                    target = candidate;
+                    break;
+                }
+            }
+            if (target == null) {
+                target = new MutableGroup(group, null, new ArrayList<>());
+                categories.get(category).add(target);
+            }
+            target.stacks.addAll(stacks);
+            return done = true;
+        }
+
+        /**
          * Places the stacks as loose stacks at the end of a category.
          */
         public boolean loose(@NonNull CreativeCategory category) {

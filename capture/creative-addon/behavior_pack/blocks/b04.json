@@ -1,0 +1,13 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "exp:block_g1",
+      "menu_category": {
+        "category": "equipment",
+        "group": "exp:itemGroup.g1"
+      }
+    },
+    "components": {}
+  }
+}

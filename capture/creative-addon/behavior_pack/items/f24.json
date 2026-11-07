@@ -1,0 +1,14 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "exp:group_only",
+      "menu_category": {
+        "group": "exp:itemGroup.g4"
+      }
+    },
+    "components": {
+      "minecraft:max_stack_size": 64
+    }
+  }
+}

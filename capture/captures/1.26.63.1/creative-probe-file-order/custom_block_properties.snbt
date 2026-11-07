@@ -1,0 +1,196 @@
+# exp:block_hidden
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 1b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10000,
+    "material": "dirt"
+  }
+}
+
+# exp:block_sword
+{
+  "menu_category": {
+    "category": "equipment",
+    "group": "minecraft:itemGroup.name.sword",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10005,
+    "material": "dirt"
+  }
+}
+
+# exp:block_planks
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "minecraft:itemGroup.name.planks",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10001,
+    "material": "dirt"
+  }
+}
+
+# exp:block_g3
+{
+  "menu_category": {
+    "category": "nature",
+    "group": "exp:itemGroup.g3",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10002,
+    "material": "dirt"
+  }
+}
+
+# exp:block_nomenu
+{
+  "menu_category": {
+    "category": "none",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10004,
+    "material": "dirt"
+  }
+}
+
+# zzz:block_c
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10003,
+    "material": "dirt"
+  }
+}
+
+# exp:block_with_item
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10006,
+    "material": "dirt"
+  }
+}
+
+# exp:block_b
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10007,
+    "material": "dirt"
+  }
+}
+
+# exp:block_placed
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10008,
+    "material": "dirt"
+  }
+}
+
+# aaa:block_d
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10009,
+    "material": "dirt"
+  }
+}
+
+# exp:block_items
+{
+  "menu_category": {
+    "category": "items",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10010,
+    "material": "dirt"
+  }
+}
+
+# exp:block_g1
+{
+  "menu_category": {
+    "category": "equipment",
+    "group": "exp:itemGroup.g1",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10013,
+    "material": "dirt"
+  }
+}
+
+# exp:block_none
+{
+  "menu_category": {
+    "category": "none",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10011,
+    "material": "dirt"
+  }
+}
+
+# exp:block_a
+{
+  "menu_category": {
+    "category": "construction",
+    "group": "",
+    "is_hidden_in_commands": 0b
+  },
+  "molangVersion": 13,
+  "vanilla_block_data": {
+    "block_id": 10012,
+    "material": "dirt"
+  }
+}
+

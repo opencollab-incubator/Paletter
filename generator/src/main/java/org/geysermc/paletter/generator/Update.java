@@ -47,6 +47,7 @@ final class Update {
     private static final String VANILLA_WORLD = "paletter_vanilla";
     private static final String ADDON_WORLD = "paletter_addon";
     private static final String CAPTURE_PACK = "paletter_capture";
+    private static final String CREATIVE_WORLD = "paletter_creative";
 
     private final Path root;
     private final Path resources;
@@ -152,6 +153,7 @@ final class Update {
             missingNetworkData(distribution, dump);
         }
         contentLog(runs);
+        creativeOrder(runs);
         if (runs.addon != null) {
             shapes(distribution, runs);
         }
@@ -207,6 +209,7 @@ final class Update {
         Path vanilla;
         Path addon;
         Path customCapture;
+        Path creative;
         List<String> addonContentLog;
     }
 
@@ -307,6 +310,18 @@ final class Update {
             capture(address, runs, work.resolve("addon-sequential"), null, "add-on capture (sequential ids)");
         }
 
+        // Creative order probe: every kind of menu category placement, no experiments
+        freshWorld(server, CREATIVE_WORLD, root.resolve("capture/creative-addon"));
+        properties.put("level-name", CREATIVE_WORLD);
+        properties.put("block-network-ids-are-hashes", "true");
+        BdsServer.configure(server, properties);
+        try (BdsServer bds = new BdsServer(server, false)) {
+            bds.start(work.resolve("bds-creative.log"));
+            bds.awaitStarted(timeout);
+            capture(address, runs, work.resolve("creative"), work.resolve("creative/custom"), "creative order probe capture");
+            runs.creative = work.resolve("creative");
+        }
+
         OrderingCheck ordering = new OrderingCheck();
         ordering.bundledOrder("reference palette " + runs.reference.version().name(), runs.reference.blockStates());
         ordering.sequential("vanilla", work.resolve("vanilla"), work.resolve("vanilla-sequential"));
@@ -379,6 +394,9 @@ final class Update {
             Path source = addon.resolve(kind + "_pack");
             Path target = server.resolve(kind + "_packs").resolve(CAPTURE_PACK);
             BdsDistribution.deleteRecursively(target);
+            if (!Files.isDirectory(source)) {
+                continue;
+            }
             try (Stream<Path> files = Files.walk(source)) {
                 for (Path file : files.toList()) {
                     Path copy = target.resolve(source.relativize(file).toString());
@@ -537,6 +555,42 @@ final class Update {
     }
 
     /** Add-on definitions BDS rejects (content log errors and warnings) against the committed list. */
+    /**
+     * Paletter's default creative ordering ({@code CreativeOrdering.BDS}) against what BDS sent for the add-on and the
+     * creative order probe (capture/CREATIVE-ORDER.md). A difference means BDS changed where it puts custom content.
+     */
+    private void creativeOrder(Runs runs) throws IOException {
+        if (runs.existing == null) {
+            report.check(Report.Status.INFO, "Creative order", "skipped: protocol " + runs.protocol + " is not bundled, "
+                + "so Paletter has no vanilla layout of this version to place custom content in");
+            return;
+        }
+        String[][] captures = {{"add-on", runs.addon == null ? null : runs.addon.toString(), runs.customCapture == null ? null : runs.customCapture.toString()},
+            {"creative order probe", runs.creative == null ? null : runs.creative.toString(), runs.creative == null ? null : runs.creative.resolve("custom").toString()}};
+        for (String[] capture : captures) {
+            if (capture[1] == null) {
+                report.check(Report.Status.FAIL, "Creative order (" + capture[0] + ")", "no capture");
+                continue;
+            }
+            Path directory = Path.of(capture[1]);
+            Path custom = Path.of(capture[2]);
+            CreativeOrderCheck.Result result = CreativeOrderCheck.check(org.geysermc.paletter.Paletter.bundled(), runs.protocol,
+                directory.resolve("creative_items.json"), custom.resolve("custom_item_registry.nbt"), custom.resolve("custom_block_properties.nbt"));
+            if (result.matches()) {
+                report.check(Report.Status.PASS, "Creative order (" + capture[0] + ")", "CreativeOrdering.BDS reproduces the "
+                    + "creative inventory BDS sent (" + result.customStacks() + " custom stacks)");
+            } else {
+                report.check(Report.Status.DIFF, "Creative order (" + capture[0] + ")", "BDS places custom content differently "
+                    + "from CreativeOrdering.BDS: " + result.differences().size() + "+ differences");
+                List<String> lines = new ArrayList<>();
+                result.differences().forEach(difference -> lines.add("- `" + difference.replace("`", "'") + "`"));
+                report.section("Creative order: " + capture[0], lines);
+                report.todos.add("Creative order: BDS changed where it puts custom items/blocks (" + capture[0] + "); see "
+                    + "capture/CREATIVE-ORDER.md, update CreativeOrdering.BDS and the committed probe captures");
+            }
+        }
+    }
+
     private void contentLog(Runs runs) throws IOException {
         if (runs.addonContentLog == null) {
             return;
