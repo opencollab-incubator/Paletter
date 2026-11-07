@@ -1,0 +1,14 @@
+{
+  "_comment": "Content of the newest version that 26.50 lacks.",
+  "blocks": {
+    "minecraft:disc_press": null,
+    "minecraft:ice_crystal": null,
+    "minecraft:icicle": null
+  },
+  "items": {
+    "minecraft:disc_press": null,
+    "minecraft:ice_crystal": null,
+    "minecraft:icicle": null,
+    "minecraft:frostbite_spawn_egg": null
+  }
+}

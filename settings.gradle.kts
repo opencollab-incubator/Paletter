@@ -1,7 +1,4 @@
-rootProject.name = "Paletter"
-include("palette")
-include("api")
-include("runtime")
-include("cloudburst")
+rootProject.name = "paletter-parent"
+
+include("paletter")
 include("generator")
-include("test")

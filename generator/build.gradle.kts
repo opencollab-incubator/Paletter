@@ -1,13 +1,24 @@
 plugins {
-    id("java")
     application
+}
+
+dependencies {
+    implementation(project(":paletter"))
+    implementation(libs.gson)
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 application {
     mainClass.set("org.geysermc.paletter.generator.Main")
 }
 
-dependencies {
-    implementation(project(":palette"))
-    implementation("org.cloudburstmc:nbt:3.0.5.Final")
+tasks.named<JavaExec>("run") {
+    workingDir = rootProject.projectDir
 }
