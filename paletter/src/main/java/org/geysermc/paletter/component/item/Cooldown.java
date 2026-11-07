@@ -15,8 +15,12 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:cooldown} item component.
+ * <p>
+ * Add-on JSON <code>{category, duration, type?}</code> is sent as <code>{category: string, duration: float, type: string}</code>.
+ * <code>type</code> always sent, default <code>"use"</code>.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/cooldown.json</code>, <code>capture/addon/behavior_pack/items/cooldown_attack.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:cooldown}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>

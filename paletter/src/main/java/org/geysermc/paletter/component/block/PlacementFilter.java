@@ -10,27 +10,29 @@ import org.geysermc.paletter.component.BlockComponent;
 import org.geysermc.paletter.component.ComponentType;
 import org.geysermc.paletter.component.Confidence;
 import org.geysermc.paletter.component.NbtReader;
-import org.geysermc.paletter.component.Unverified;
 
 import java.util.List;
 import java.util.Objects;
 
 /**
  * The {@code minecraft:placement_filter} block component.
+ * <p>
+ * Add-on JSON <code>{conditions: [{allowed_faces, block_filter}]}</code> is sent as `{conditions: [{allowed_faces: byte bit set, block_filter: [{name} \.
+ * {tags, tags_version: 13}]}]}`.
+ * Captured from add-on files <code>capture/addon/behavior_pack/blocks/placement_filter.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: from Geyser's production encoder only (confidence MEDIUM); no wire capture yet</li>
+ * <li>Network shape: inferred from wire NBT of capture bds-1.26.63.1-addon/custom_block_properties.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:placement_filter}</li>
  * <li>Minimum format version: 1.26.20</li>
  * <li>Experimental: no</li>
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/common/1.26.20/Placement Filter.json}</li>
- * <li>Geyser CustomBlockRegistryPopulator#convertPlacementFilter: only evidence</li>
+ * <li>Geyser CustomBlockRegistryPopulator#convertPlacementFilter: DIFFERS conditions[].block_filters: not on the wire</li>
  * </ul>
  *
  * @param conditions network {@code conditions}, list of compound
  */
-@Unverified
 public record PlacementFilter(@NonNull List<Condition> conditions) implements BlockComponent {
-    public static final @NonNull ComponentType<PlacementFilter> TYPE = new ComponentType<>("minecraft:placement_filter", ComponentType.Kind.BLOCK, Confidence.MEDIUM, "1.26.20", false, PlacementFilter::fromNbt);
+    public static final @NonNull ComponentType<PlacementFilter> TYPE = new ComponentType<>("minecraft:placement_filter", ComponentType.Kind.BLOCK, Confidence.HIGH, "1.26.20", false, PlacementFilter::fromNbt);
 
     public PlacementFilter {
         conditions = NbtReader.copy(Objects.requireNonNull(conditions, "conditions"));
@@ -61,25 +63,25 @@ public record PlacementFilter(@NonNull List<Condition> conditions) implements Bl
     /**
      * Nested compound.
      *
-     * @param allowedFaces network {@code allowed_faces}, byte. bitset: down, up, north, south, west, east from bit 0
-     * @param blockFilters network {@code block_filters}, list of compound
+     * @param allowedFaces network {@code allowed_faces}, byte. face bit set: down 1, up 2, north 4, south 8, west 16, east 32
+     * @param blockFilter network {@code block_filter}, list of compound. {@code {name}} or {@code {tags, tags_version}} entries
      */
-    public record Condition(byte allowedFaces, @NonNull List<BlockFilter> blockFilters) {
+    public record Condition(byte allowedFaces, @NonNull List<BlockFilter> blockFilter) {
         public Condition {
-            blockFilters = NbtReader.copy(Objects.requireNonNull(blockFilters, "blockFilters"));
+            blockFilter = NbtReader.copy(Objects.requireNonNull(blockFilter, "blockFilter"));
         }
 
         public static @NonNull Condition fromNbt(@NonNull NbtMap nbt) {
             return new Condition(
                 NbtReader.read(nbt, "allowed_faces", NbtReader::toByte, (byte) 0),
-                NbtReader.read(nbt, "block_filters", NbtReader.listOf(NbtReader.compound(BlockFilter::fromNbt)), List.of())
+                NbtReader.read(nbt, "block_filter", NbtReader.listOf(NbtReader.compound(BlockFilter::fromNbt)), List.of())
             );
         }
 
         public @NonNull NbtMap toNbt() {
             NbtMapBuilder builderNbt = NbtMap.builder();
             builderNbt.put("allowed_faces", allowedFaces);
-            builderNbt.put("block_filters", NbtReader.writeList(blockFilters, BlockFilter::toNbt));
+            builderNbt.put("block_filter", NbtReader.writeList(blockFilter, BlockFilter::toNbt));
             return builderNbt.build();
         }
 
@@ -90,13 +92,13 @@ public record PlacementFilter(@NonNull List<Condition> conditions) implements Bl
         public @NonNull Builder toBuilder() {
             Builder builder = new Builder();
             builder.allowedFaces = allowedFaces;
-            builder.blockFilters = blockFilters;
+            builder.blockFilter = blockFilter;
             return builder;
         }
 
         public static final class Builder {
             private byte allowedFaces = (byte) 0;
-            private @NonNull List<BlockFilter> blockFilters = List.of();
+            private @NonNull List<BlockFilter> blockFilter = List.of();
 
             private Builder() {
             }
@@ -106,13 +108,13 @@ public record PlacementFilter(@NonNull List<Condition> conditions) implements Bl
                 return this;
             }
 
-            public @NonNull Builder blockFilters(@NonNull List<BlockFilter> blockFilters) {
-                this.blockFilters = blockFilters;
+            public @NonNull Builder blockFilter(@NonNull List<BlockFilter> blockFilter) {
+                this.blockFilter = blockFilter;
                 return this;
             }
 
             public @NonNull Condition build() {
-                return new Condition(allowedFaces, blockFilters);
+                return new Condition(allowedFaces, blockFilter);
             }
         }
     }

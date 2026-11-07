@@ -9,24 +9,26 @@ import org.geysermc.paletter.component.BlockComponent;
 import org.geysermc.paletter.component.ComponentType;
 import org.geysermc.paletter.component.Confidence;
 import org.geysermc.paletter.component.NbtReader;
-import org.geysermc.paletter.component.Unverified;
 
 /**
  * The {@code minecraft:light_emission} block component.
+ * <p>
+ * Add-on JSON <code>10</code> is sent as <code>{emission: byte}</code>.
+ * renamed.
+ * Captured from add-on files <code>capture/addon/behavior_pack/blocks/light_emission.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: from Geyser's production encoder only (confidence MEDIUM); no wire capture yet</li>
+ * <li>Network shape: inferred from wire NBT of capture bds-1.26.63.1-addon/custom_block_properties.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:light_emission}</li>
  * <li>Minimum format version: 1.26.20</li>
  * <li>Experimental: no</li>
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/common/1.26.20/Light Emission.json}</li>
- * <li>Geyser CustomBlockRegistryPopulator#convertComponents: only evidence</li>
+ * <li>Geyser CustomBlockRegistryPopulator#convertComponents: compatible</li>
  * </ul>
  *
  * @param emission network {@code emission}, byte
  */
-@Unverified
 public record LightEmission(byte emission) implements BlockComponent {
-    public static final @NonNull ComponentType<LightEmission> TYPE = new ComponentType<>("minecraft:light_emission", ComponentType.Kind.BLOCK, Confidence.MEDIUM, "1.26.20", false, LightEmission::fromNbt);
+    public static final @NonNull ComponentType<LightEmission> TYPE = new ComponentType<>("minecraft:light_emission", ComponentType.Kind.BLOCK, Confidence.HIGH, "1.26.20", false, LightEmission::fromNbt);
 
     public static @NonNull LightEmission of(byte emission) {
         return new LightEmission(emission);

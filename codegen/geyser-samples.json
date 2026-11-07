@@ -64,6 +64,10 @@
       }
     }},
 
+    {"kind": "block", "name": "block_definition", "source": "CustomBlockRegistryPopulator#generateCustomBlocks (without components/permutations)", "value": {
+      "menu_category": {"category": "construction", "group": "", "is_hidden_in_commands": false}, "molangVersion": "i:1",
+      "properties": [{"name": "geyser:lit", "enum": ["b:0", "b:1"]}], "vanilla_block_data": {"block_id": "i:10000"}
+    }},
     {"kind": "block", "name": "minecraft:display_name", "source": "CustomBlockRegistryPopulator#convertComponents", "value": {"value": "Custom"}},
     {"kind": "block", "name": "minecraft:selection_box", "source": "CustomBlockRegistryPopulator#convertBox", "value": {
       "enabled": true, "origin": ["f:-8.0", "f:0.0", "f:-8.0"], "size": ["f:16.0", "f:16.0", "f:16.0"]

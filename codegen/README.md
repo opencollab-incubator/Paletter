@@ -29,9 +29,18 @@ or nesting.
 2. **Generate** (`Generator`): `spec/inferred.json` + [`overrides.json`](overrides.json) produce one immutable record per
    component (typed fields, `fromNbt`, `toNbt`, `TYPE`, a builder for two or more fields, nested records for compounds),
    `ItemProperties` for `item_properties`, and the `ItemComponentTypes` / `BlockComponentTypes` registries.
-3. **needs-capture** ([`needs-capture.txt`](needs-capture.txt), generated): components without wire evidence, for the
-   capture pipeline. `none` = no typed encoder at all (raw escape hatch only), `geyser-only` = typed `@Unverified`,
-   `differs` = typed from wire NBT but Geyser sends something else.
+3. **needs-capture** ([`needs-capture.txt`](needs-capture.txt), generated): components without (consistent) wire
+   evidence. `none` = no evidence, raw escape hatch only; `not-sent` = server only, BDS accepts the JSON but sends
+   nothing (no type); `rejected` = BDS 1.26.63 rejects the JSON (no type); `not-a-component` = sent elsewhere
+   (`item_properties`, top level block data); `removed` = no longer an add-on component; `geyser-only` = typed
+   `@Unverified`; `differs` = typed from wire NBT but Geyser sends something else.
+
+Besides the components, two pseudo components are inferred and generated: `item:item_properties` (`ItemProperties`) and
+`block:block_definition` (`BlockDefinition`: the block property data around `components` and `permutations`:
+`blockTags`, `menu_category`, `molangVersion`, `properties`, `traits`, `vanilla_block_data`), used by `CustomBlock`.
+
+The javadoc of each type pairs the add-on JSON with the captured wire form (from `capture/WIRE-NOTES.md` and the add-on
+files in `capture/addon/`, as `doc` overrides); the shape itself still comes only from the wire.
 
 ## Capture files
 
@@ -39,7 +48,11 @@ or nesting.
 - a compound `{items: [{name, components: {...}}...], blocks: [{name, components, permutations: [{components}]}...]}`
   (item component packet entries and start game block properties; both lists optional),
 - a single item component entry `{name, components}`, or
-- a whole palette in the bundled `PaletteDataCodec` format.
+- a whole palette in the bundled `PaletteDataCodec` format,
+- the `capture` module's `custom_item_registry.nbt` (`{items: [{name, id, componentBased, version, data: {components}}]}`)
+  and `custom_block_properties.nbt` (`{blocks: [{name, properties: {block property data}}]}`).
+
+`codegen/captures/bds-1.26.63.1-addon/` holds the BDS 1.26.63.1 capture of `capture/addon` (87 items, 66 blocks).
 
 Captures in `codegen/captures/` are part of the committed spec; directories passed with `-Pcaptures` are not, so
 `checkComponents` fails until they are copied in.

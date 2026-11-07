@@ -9,24 +9,26 @@ import org.geysermc.paletter.component.ItemComponent;
 import org.geysermc.paletter.component.ComponentType;
 import org.geysermc.paletter.component.Confidence;
 import org.geysermc.paletter.component.NbtReader;
-import org.geysermc.paletter.component.Unverified;
 
 /**
  * The {@code minecraft:glint} item component.
+ * <p>
+ * Add-on JSON bool is sent as <code>{value: byte}</code>.
+ * also <code>item_properties.foil</code>.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/glint_full.json</code>, <code>capture/addon/behavior_pack/items/glint_short.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: from Geyser's production encoder only (confidence MEDIUM); no wire capture yet</li>
+ * <li>Network shape: inferred from wire NBT of capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:glint}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/item/1.20.50/minecraft_glint.json}</li>
- * <li>Geyser CustomItemRegistryPopulator#createComponentNbt: only evidence</li>
+ * <li>Geyser CustomItemRegistryPopulator#createComponentNbt: compatible</li>
  * </ul>
  *
  * @param value network {@code value}, byte (0 or 1 in every sample)
  */
-@Unverified
 public record Glint(boolean value) implements ItemComponent {
-    public static final @NonNull ComponentType<Glint> TYPE = new ComponentType<>("minecraft:glint", ComponentType.Kind.ITEM, Confidence.MEDIUM, "1.20.50", false, Glint::fromNbt);
+    public static final @NonNull ComponentType<Glint> TYPE = new ComponentType<>("minecraft:glint", ComponentType.Kind.ITEM, Confidence.HIGH, "1.20.50", false, Glint::fromNbt);
 
     public static @NonNull Glint of(boolean value) {
         return new Glint(value);

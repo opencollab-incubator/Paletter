@@ -20,15 +20,18 @@
         "boxes[]": {
           "doc": "a box in pixels, 0 to 16 from the block corner"
         }
-      }
+      },
+      "doc": "Add-on JSON <code>true</code> / <code>false</code> / <code>[{origin, size}, ...]</code> is sent as <code>{enabled: byte, boxes: [{minX, minY, minZ, maxX, maxY, maxZ: float}]}</code>.\n<b>origin/size become min/max in 0..16 block space</b> (origin + 8); <code>true</code>/<code>false</code> send <code>boxes: []</code>. The single object form <code>{origin, size}</code> is <b>rejected</b> by 1.26.60 JSON (array required).\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/collision_box_box.json</code>, <code>capture/addon/behavior_pack/blocks/collision_box_false.json</code>, <code>capture/addon/behavior_pack/blocks/collision_box_list.json</code>, <code>capture/addon/behavior_pack/blocks/collision_box_single_list.json</code>, <code>capture/addon/behavior_pack/blocks/collision_box_true.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:connection_rule": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Connection Rule.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Connection Rule.json",
+      "doc": "Add-on JSON <code>{accepts_connections_from?, enabled_directions?}</code> is sent as same keys.\ndefaults <code>\"all\"</code>, <code>[\"south\",\"north\",\"east\",\"west\"]</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/connection_rule.json</code>, <code>capture/addon/behavior_pack/blocks/connection_rule_default.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:crafting_table": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Crafting Table.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Crafting Table.json",
+      "doc": "Add-on JSON <code>{crafting_tags, table_name}</code> is sent as <code>{crafting_tags: [string], table_name: string, grid_size: 3}</code>.\n<code>grid_size</code> added.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/crafting_table.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:destructible_by_explosion": {
       "since": "1.26.20",
@@ -36,19 +39,44 @@
     },
     "block:minecraft:destructible_by_mining": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Destructible By Mining.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Destructible By Mining.json",
+      "fields": {
+        "item_specific_speeds[].item": {
+          "class": "ItemDescriptor",
+          "doc": "legacy descriptor: {@code {Name, Aux: 32767}} or {@code {Tags, MolangVersion}}"
+        },
+        "value": {
+          "doc": "seconds to destroy; JSON {@code false} becomes -1"
+        }
+      },
+      "doc": "Add-on JSON <code>false</code> / <code>{seconds_to_destroy, item_specific_speeds}</code> is sent as `{value: float, item_specific_speeds?: [{destroy_speed: float, item: {Name, Aux: 32767s} \\.\n{Tags, MolangVersion: 13s}}]}`.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/destructible_by_mining.json</code>, <code>capture/addon/behavior_pack/blocks/destructible_by_mining_false.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:destruction_particles": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Destruction Particles.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Destruction Particles.json",
+      "doc": "Add-on JSON <code>{texture, tint_method?, particle_count?}</code> is sent as <code>{texture, tint_method: string, particle_count: int}</code>.\ndefaults <code>\"none\"</code>, 100.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/destruction_particles.json</code>, <code>capture/addon/behavior_pack/blocks/destruction_particles_min.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:display_name": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Display Name.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Display Name.json",
+      "doc": "Add-on JSON <code>\"...\"</code> is sent as <code>{value: string}</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/display_name.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:embedded_visual": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Embedded Visual.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Embedded Visual.json",
+      "fields": {
+        "geometry.bone_visibility": {
+          "type": "map"
+        },
+        "material_instances": {
+          "type": "map",
+          "doc": "material instance name to material; not the mappings/materials/packed_bools form of minecraft:material_instances"
+        },
+        "material_instances{}": {
+          "class": "Material"
+        }
+      },
+      "doc": "Add-on JSON <code>{geometry, material_instances}</code> is sent as <code>{geometry: {bone_visibility, culling, culling_layer, culling_shape, identifier, uv_lock}, material_instances: {&lt;face&gt;: {texture, render_method, tint_method, ambient_occlusion: float, face_dimming, isotropic, alpha_masked_tint: byte}}}</code>.\nmaterial instances <b>not</b> in the <code>mappings</code>/<code>materials</code>/<code>packed_bools</code> form used by <code>minecraft:material_instances</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/embedded_visual.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:enchantment_power_transmitter": {
       "since": "1.26.60",
@@ -64,20 +92,32 @@
     },
     "block:minecraft:flower_pottable": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Flower Pottable.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Flower Pottable.json",
+      "fields": {
+        "usePreR26U2FlowerPotOffset": {
+          "doc": "always 0 from JSON"
+        }
+      },
+      "doc": "Add-on JSON <code>{}</code> is sent as <code>{usePreR26U2FlowerPotOffset: 0b}</code>.\nneeds geometry + material_instances.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/flower_pottable.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:friction": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Friction.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Friction.json",
+      "doc": "Add-on JSON <code>0.2</code> is sent as <code>{value: float}</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/friction.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:geometry": {
       "since": "1.26.20",
       "schema": "metadata/json_schemas/server/common/1.26.20/Geometry.json",
       "fields": {
         "bone_visibility": {
-          "doc": "always empty in vanilla; Geyser sends bone name to Molang string"
+          "doc": "bone name to a Molang expression; JSON {@code true} becomes {@code \"1.000000\"}",
+          "type": "map"
+        },
+        "uv_lock": {
+          "doc": "a byte (boolean) or a list of face names, as in the JSON"
         }
-      }
+      },
+      "doc": "Add-on JSON <code>\"id\"</code> / <code>{identifier, bone_visibility, culling, culling_layer, uv_lock}</code> is sent as `{identifier, bone_visibility: {bone: string}, culling: string, culling_layer: string, culling_shape: \"\", uv_lock: byte \\.\n[string], ignoreGeometryForIsSolid, isV1Fullblock, needsLegacyTopRotation, useBlockTypeLightAbsorption: byte}`.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/geometry_full.json</code>, <code>capture/addon/behavior_pack/blocks/geometry_full_block.json</code>, <code>capture/addon/behavior_pack/blocks/geometry_short.json</code>, <code>capture/addon/behavior_pack/blocks/geometry_uv_lock_list.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:instrument_sound": {
       "since": "1.26.20",
@@ -85,11 +125,40 @@
     },
     "block:minecraft:item_visual": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Item Visual.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Item Visual.json",
+      "fields": {
+        "geometryDescription": {
+          "class": "GeometryDescription"
+        },
+        "geometryDescription.bone_visibility": {
+          "type": "map"
+        },
+        "materialInstancesDescription": {
+          "class": "MaterialInstancesDescription"
+        },
+        "materialInstancesDescription.mappings": {
+          "type": "map"
+        },
+        "materialInstancesDescription.mappings{}": {
+          "class": "Mapping"
+        },
+        "materialInstancesDescription.materials": {
+          "type": "map"
+        },
+        "materialInstancesDescription.materials{}": {
+          "class": "Material"
+        },
+        "materialInstancesDescription.materials{}.packed_bools": {
+          "type": "byte",
+          "doc": "as in minecraft:material_instances"
+        }
+      },
+      "doc": "Add-on JSON <code>{geometry, material_instances}</code> is sent as <code>{geometryDescription: &lt;geometry shape&gt;, materialInstancesDescription: &lt;material_instances shape&gt;}</code>.\n<b>renamed</b> keys, full <code>minecraft:geometry</code> / <code>minecraft:material_instances</code> shapes inside.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/item_visual.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:leashable": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/leashable.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/leashable.json",
+      "doc": "Add-on JSON <code>{offset?}</code> is sent as <code>{offset: [float x3]}</code>.\ndefault <code>[0, 0.25, 0]</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/leashable.json</code>, <code>capture/addon/behavior_pack/blocks/leashable_default.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:light_dampening": {
       "since": "1.26.20",
@@ -98,7 +167,8 @@
         "lightLevel": {
           "type": "byte"
         }
-      }
+      },
+      "doc": "Add-on JSON <code>7</code> is sent as <code>{lightLevel: byte}</code>.\nrenamed.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/light_dampening.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:light_emission": {
       "since": "1.26.20",
@@ -107,11 +177,19 @@
         "emission": {
           "type": "byte"
         }
-      }
+      },
+      "doc": "Add-on JSON <code>10</code> is sent as <code>{emission: byte}</code>.\nrenamed.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/light_emission.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:liquid_detection": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Liquid Detection.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Liquid Detection.json",
+      "fields": {
+        "detectionRules[].stopsLiquidFromDirection": {
+          "type": "byte",
+          "doc": "direction bit set: down 1, up 2, north 4, south 8, west 16, east 32"
+        }
+      },
+      "doc": "Add-on JSON <code>{detection_rules: [{liquid_type, can_contain_liquid, on_liquid_touches, stops_liquid_flowing_from_direction}]}</code> is sent as <code>{detectionRules: [{liquidType, canContainLiquid: byte, onLiquidTouches, stopsLiquidFromDirection: byte bit set, use_liquid_clipping: byte}]}</code>.\ncamelCase, <b>direction list -&gt; bit set</b> (down 1, up 2, north 4, ...: <code>[\"up\",\"north\"]</code> = 6).\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/liquid_detection.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:loot": {},
     "block:minecraft:map_color": {
@@ -123,7 +201,8 @@
       "schema": "metadata/json_schemas/server/common/1.26.20/Material Instances Component.json",
       "fields": {
         "mappings": {
-          "doc": "always empty in vanilla"
+          "doc": "face alias (e.g. {@code up}) to the material instance it uses",
+          "type": "map"
         },
         "materials": {
           "type": "map",
@@ -134,7 +213,7 @@
         },
         "materials{}.packed_bools": {
           "type": "byte",
-          "doc": "a bitset of the boolean material flags; vanilla sends 5. The bit layout is not verified"
+          "doc": "bit set: bit 0 face_dimming, bit 1 isotropic, bit 2 always set by BDS (5 = JSON defaults)"
         },
         "materials{}.render_method": {
           "optional": "Geyser omits it when unset (CustomBlockRegistryPopulator#convertComponents)"
@@ -144,9 +223,13 @@
         },
         "materials{}.texture": {
           "optional": "Geyser omits it when unset (CustomBlockRegistryPopulator#convertComponents)"
+        },
+        "mappings{}": {
+          "class": "Mapping"
         }
       },
-      "notes": "Vanilla sends no {@code isotropic} key; flags are packed into {@code packed_bools}."
+      "notes": "Vanilla sends no {@code isotropic} key; flags are packed into {@code packed_bools}.",
+      "doc": "Add-on JSON <code>{\"*\": {texture, render_method, ambient_occlusion, face_dimming, isotropic, tint_method}, \"up\": \"north\"}</code> is sent as <code>{mappings: {up: {value: \"north\"}}, materials: {\"*\": {texture, render_method, tint_method, ambient_occlusion: float, packed_bools: byte}}}</code>.\nface aliases go to <code>mappings</code>; <b><code>face_dimming</code>/<code>isotropic</code> packed into <code>packed_bools</code></b>: bit 0 face_dimming, bit 1 isotropic, bit 2 always set in every capture (5 = default, 6 = no dimming + isotropic); <code>ambient_occlusion</code> float (bool true -&gt; 1.0); needs geometry.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/material_instances.json</code>, <code>capture/addon/behavior_pack/blocks/material_instances_min.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:movable": {
       "since": "1.26.20",
@@ -174,7 +257,8 @@
     },
     "block:minecraft:on_player_placing": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Player Placing Component.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Player Placing Component.json",
+      "notes": "Rejected by BDS 1.26.63.1 add-on JSON (replaced by script custom components); only Geyser sends it."
     },
     "block:minecraft:on_step_off": {
       "since": "1.26.20",
@@ -190,13 +274,21 @@
       "fields": {
         "conditions[].allowed_faces": {
           "type": "byte",
-          "doc": "bitset: down, up, north, south, west, east from bit 0"
+          "doc": "face bit set: down 1, up 2, north 4, south 8, west 16, east 32"
+        },
+        "conditions[].block_filter": {
+          "doc": "{@code {name}} or {@code {tags, tags_version}} entries"
+        },
+        "conditions[].block_filter[]": {
+          "class": "BlockFilter"
         }
-      }
+      },
+      "doc": "Add-on JSON <code>{conditions: [{allowed_faces, block_filter}]}</code> is sent as `{conditions: [{allowed_faces: byte bit set, block_filter: [{name} \\.\n{tags, tags_version: 13}]}]}`.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/placement_filter.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:precipitation_interactions": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Precipitation Interactions.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Precipitation Interactions.json",
+      "doc": "Add-on JSON <code>{precipitation_behavior}</code> is sent as same.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/precipitation_interactions.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:queued_ticking": {
       "since": "1.26.20",
@@ -204,7 +296,28 @@
     },
     "block:minecraft:random_offset": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Random Offset.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Random Offset.json",
+      "fields": {
+        "x": {
+          "class": "Axis"
+        },
+        "x.range": {
+          "class": "Range"
+        },
+        "y": {
+          "class": "Axis"
+        },
+        "y.range": {
+          "class": "Range"
+        },
+        "z": {
+          "class": "Axis"
+        },
+        "z.range": {
+          "class": "Range"
+        }
+      },
+      "doc": "Add-on JSON <code>{x?, y?, z?: {range: {min, max}, steps?}}</code> is sent as all three axes always, <code>{range: {min, max: float}, steps: int}</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/random_offset.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:random_ticking": {
       "since": "1.26.20",
@@ -212,7 +325,8 @@
     },
     "block:minecraft:redstone_conductivity": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Redstone Conductivity.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Redstone Conductivity.json",
+      "doc": "Add-on JSON <code>{redstone_conductor, allows_wire_to_step_down}</code> is sent as <code>{redstoneConductor, allowsWireToStepDown: byte}</code>.\ncamelCase.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/redstone_conductivity.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:redstone_consumer": {
       "since": "1.26.20",
@@ -220,23 +334,33 @@
     },
     "block:minecraft:redstone_producer": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Redstone Producer.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Redstone Producer.json",
+      "fields": {
+        "power": {
+          "type": "byte"
+        }
+      },
+      "doc": "Add-on JSON <code>{power, strongly_powered_face?, connected_faces?, transform_relative?}</code> is sent as same + <code>allowPowerUp: 0b, allowPowerDown: 1b</code>; <code>power</code> byte.\ndefaults: all six faces, transform_relative 1; <code>strongly_powered_face</code> omitted when absent.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/redstone_producer.json</code>, <code>capture/addon/behavior_pack/blocks/redstone_producer_min.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:replaceable": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Replaceable.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Replaceable.json",
+      "doc": "Add-on JSON <code>{}</code> is sent as <code>{}</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/replaceable.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:selection_box": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Selection Box.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Selection Box.json",
+      "doc": "Add-on JSON <code>false</code> / <code>{origin, size}</code> is sent as <code>{enabled: byte, origin: [float x3], size: [float x3]}</code>.\n<code>false</code> still sends the full cube origin/size.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/selection_box_box.json</code>, <code>capture/addon/behavior_pack/blocks/selection_box_false.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:sound": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Sound Block Component.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Sound Block Component.json",
+      "doc": "Add-on JSON <code>{sound}</code> (a bare string is rejected) is sent as <code>{sound: string}</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/sound.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:support": {
       "since": "1.26.20",
-      "schema": "metadata/json_schemas/server/common/1.26.20/Support.json"
+      "schema": "metadata/json_schemas/server/common/1.26.20/Support.json",
+      "doc": "Add-on JSON <code>{shape}</code> is sent as <code>{shape: string}</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/support.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:tags": {
       "since": "1.26.20",
@@ -298,7 +422,8 @@
         "TZ": {
           "java": "translationZ"
         }
-      }
+      },
+      "doc": "Add-on JSON <code>{rotation, scale, translation, rotation_pivot, scale_pivot}</code> is sent as <code>{RX, RY, RZ: int (rotation / 90), RXP.. : float (rotation pivot), SX.., SXP.. (scale, scale pivot), TX.. (translation), hasJsonVersionBeforeValidation: 0b}</code>.\nper axis keys; rotation in quarter turns.\nCaptured from add-on files <code>capture/addon/behavior_pack/blocks/transformation.json</code>, <code>capture/addon/behavior_pack/blocks/transformation_rotation.json</code> (BDS 1.26.63.1)."
     },
     "block:minecraft:unit_cube": {
       "since": "1.26.20",
@@ -319,43 +444,66 @@
           "doc": "texture slot (e.g. {@code default}, {@code dyed}) to texture short name"
         },
         "hidden_in_commands": {
-          "type": "byte"
+          "type": "byte",
+          "doc": "2 = not set (default), 1 = hidden; not a boolean"
+        },
+        "hover_text_color": {
+          "doc": "a formatting code, e.g. {@code §c} for JSON {@code \"red\"}"
+        },
+        "use_animation": {
+          "doc": "enum: eat 1, drink 2, bow 4, spear 6, ..."
+        },
+        "use_duration": {
+          "doc": "ticks; JSON use_modifiers.use_duration is in seconds"
         }
       },
       "notes": "Several properties mirror a component (damage, max_stack_size, foil, hand_equipped, ...)."
     },
     "item:minecraft:allow_off_hand": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_allow_off_hand.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_allow_off_hand.json",
+      "doc": "Add-on JSON <code>true</code> / <code>{value}</code> is sent as <code>{value: byte}</code>.\nalso <code>item_properties.allow_off_hand</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/allow_off_hand_full.json</code>, <code>capture/addon/behavior_pack/items/allow_off_hand_short.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:block_placer": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_block_placer.json"
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_block_placer.json",
+      "fields": {
+        "use_on[]": {
+          "class": "BlockDescriptor"
+        }
+      },
+      "doc": "Add-on JSON <code>{block, use_on, replace_block_item}</code> is sent as <code>{alignedPlacement: byte, block: string, canUseBlockAsIcon: byte(1), replaceBlockItem: byte, use_on: [{name, states: {}, tags: \"\"}]}</code>.\ncamelCase renames; <code>use_on</code> entries always expanded to <code>{name, states, tags}</code>; adds sibling <code>minecraft:publisher_on_use_on: {autoSucceedOnClient: 0b}</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/block_placer.json</code>, <code>capture/addon/behavior_pack/items/block_placer_use_on.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:bundle_interaction": {
       "since": "1.26.30",
       "experimental": true,
-      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_bundle_interaction.json"
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_bundle_interaction.json",
+      "doc": "Add-on JSON <code>{num_viewable_slots}</code> is sent as <code>{num_viewable_slots: int}</code>.\ndefault 12; requires <code>storage_item</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/bundle_interaction.json</code>, <code>capture/addon/behavior_pack/items/bundle_interaction_default.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:can_destroy_in_creative": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_can_destroy_in_creative.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_can_destroy_in_creative.json",
+      "doc": "Add-on JSON bool is sent as <code>{value: byte}</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/can_destroy_in_creative_full.json</code>, <code>capture/addon/behavior_pack/items/can_destroy_in_creative_short.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:compostable": {
       "since": "1.26.30",
-      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_compostable.json"
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_compostable.json",
+      "doc": "Add-on JSON <code>{composting_chance: 50}</code> is sent as <code>{composting_chance: byte}</code>.\nbyte (Geyser sends int).\nCaptured from add-on files <code>capture/addon/behavior_pack/items/compostable.json</code>, <code>capture/addon/behavior_pack/items/compostable_max.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:cooldown": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_cooldown.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_cooldown.json",
+      "doc": "Add-on JSON <code>{category, duration, type?}</code> is sent as <code>{category: string, duration: float, type: string}</code>.\n<code>type</code> always sent, default <code>\"use\"</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/cooldown.json</code>, <code>capture/addon/behavior_pack/items/cooldown_attack.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:damage": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_damage.json"
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_damage.json",
+      "doc": "Add-on JSON <code>5</code> / <code>{value: 300}</code> is sent as <code>{value: short}</code>.\nshort (Geyser sends byte); also <code>item_properties.damage</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/damage_absorption.json</code>, <code>capture/addon/behavior_pack/items/damage_full.json</code>, <code>capture/addon/behavior_pack/items/damage_short.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:damage_absorption": {
       "since": "1.26.30",
-      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_damage_absorption.json"
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_damage_absorption.json",
+      "doc": "Add-on JSON <code>{absorbable_causes}</code> is sent as <b>not sent</b>.\nserver only.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/damage_absorption.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:digger": {
       "since": "1.20.50",
@@ -363,64 +511,104 @@
       "fields": {
         "destroy_speeds[].block": {
           "class": "BlockDescriptor"
+        },
+        "destroy_speeds[].block.states": {
+          "type": "raw",
+          "doc": "state name to value; state values are ints on the wire"
         }
-      }
+      },
+      "doc": "Add-on JSON <code>{use_efficiency, destroy_speeds: [{block, speed}]}</code> is sent as <code>{use_efficiency: byte, destroy_speeds: [{block: {name, states, tags}, speed: int}]}</code>.\nblock descriptor always the full triple (<code>name</code> \"\" for tag filters, <code>tags</code> molang string); <b>state values become ints</b> (<code>pillar_axis: \"y\"</code> -&gt; <code>0</code>); <code>speed</code> int.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/digger.json</code>, <code>capture/addon/behavior_pack/items/digger_empty.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:display_name": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_display_name.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_display_name.json",
+      "doc": "Add-on JSON <code>{value}</code> is sent as <code>{value: string}</code>.\nlocalisation keys unchanged.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/display_name.json</code>, <code>capture/addon/behavior_pack/items/display_name_key.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:durability": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_durability.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_durability.json",
+      "doc": "Add-on JSON <code>{max_durability, damage_chance?}</code> is sent as <code>{max_durability: int, damage_chance: {min: int, max: int}}</code>.\n<code>damage_chance</code> always sent, default <b>100/100</b> for custom items (vanilla tools send 0..100).\nCaptured from add-on files <code>capture/addon/behavior_pack/items/durability.json</code>, <code>capture/addon/behavior_pack/items/durability_chance.json</code>, <code>capture/addon/behavior_pack/items/durability_sensor.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:durability_sensor": {
       "since": "1.26.30",
-      "schema": "metadata/json_schemas/server/item/1.26.50/minecraft_durability_sensor.json"
+      "schema": "metadata/json_schemas/server/item/1.26.50/minecraft_durability_sensor.json",
+      "doc": "Add-on JSON <code>{durability_thresholds}</code> is sent as <b>not sent</b>.\nserver only.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/durability_sensor.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:dyeable": {
       "since": "1.26.30",
-      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_dyeable.json"
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_dyeable.json",
+      "fields": {
+        "default_color": {
+          "doc": "red, green, blue; JSON hex and RGB both become this list"
+        }
+      },
+      "doc": "Add-on JSON <code>{}</code> / <code>{default_color: \"#ff0080\"}</code> / <code>[10,20,30]</code> is sent as <code>{default_color: [int, int, int]}</code>.\nhex and RGB both become an int list; default <code>[255,255,255]</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/dyeable.json</code>, <code>capture/addon/behavior_pack/items/dyeable_hex.json</code>, <code>capture/addon/behavior_pack/items/dyeable_rgb.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:enchantable": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_enchantable.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_enchantable.json",
+      "doc": "Add-on JSON <code>{slot, value}</code> is sent as <code>{slot: string, value: byte}</code>.\nvalue byte; mirrored into item_properties (int).\nCaptured from add-on files <code>capture/addon/behavior_pack/items/enchantable.json</code>, <code>capture/addon/behavior_pack/items/enchantable_all.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:entity_placer": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_entity_placer.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_entity_placer.json",
+      "fields": {
+        "use_on[]": {
+          "class": "BlockDescriptor"
+        },
+        "dispense_on[]": {
+          "class": "BlockDescriptor"
+        },
+        "entity": {
+          "doc": "entity identifier with a spawn event suffix, e.g. {@code minecraft:pig<>}"
+        }
+      },
+      "doc": "Add-on JSON <code>{entity, use_on?, dispense_on?}</code> is sent as <code>{entity: \"minecraft:pig&lt;&gt;\", use_on: [...], dispense_on: [...]}</code>.\n<b>entity gets a <code>&lt;&gt;</code> (spawn event) suffix</b>; descriptors as in block_placer; adds <code>minecraft:publisher_on_use_on</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/entity_placer.json</code>, <code>capture/addon/behavior_pack/items/entity_placer_full.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:fire_resistant": {
       "since": "1.26.30",
-      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_fire_resistant.json"
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_fire_resistant.json",
+      "doc": "Add-on JSON <code>{value}</code> only (bare <code>true</code> is rejected) is sent as <code>{value: byte}</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/fire_resistant_full.json</code>, <code>capture/addon/behavior_pack/items/fire_resistant_true.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:food": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_food.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_food.json",
+      "fields": {
+        "using_converts_to": {
+          "class": "ItemDescriptor"
+        }
+      },
+      "doc": "Add-on JSON <code>{nutrition, saturation_modifier, can_always_eat, using_converts_to}</code> is sent as `{can_always_eat: byte, nutrition: int, saturation_modifier: float, using_converts_to: {} \\.\n{name}}`.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/food.json</code>, <code>capture/addon/behavior_pack/items/food_full.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:fuel": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_fuel.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_fuel.json",
+      "doc": "Add-on JSON <code>{duration}</code> is sent as <code>{duration: float}</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/fuel.json</code>, <code>capture/addon/behavior_pack/items/fuel_fraction.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:glint": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_glint.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_glint.json",
+      "doc": "Add-on JSON bool is sent as <code>{value: byte}</code>.\nalso <code>item_properties.foil</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/glint_full.json</code>, <code>capture/addon/behavior_pack/items/glint_short.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:hand_equipped": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_hand_equipped.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_hand_equipped.json",
+      "doc": "Add-on JSON bool is sent as <code>{value: byte}</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/hand_equipped_full.json</code>, <code>capture/addon/behavior_pack/items/hand_equipped_short.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:hover_text_color": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_hover_text_color.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_hover_text_color.json",
+      "doc": "Add-on JSON <code>\"red\"</code> / <code>{value}</code> is sent as <code>{value: \"red\"}</code>.\ncomponent keeps the name; item_properties gets <code>§c</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/hover_text_color.json</code>, <code>capture/addon/behavior_pack/items/hover_text_color_full.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:icon": {
       "since": "1.26.30",
-      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_icon v1.21.80.json"
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_icon v1.21.80.json",
+      "doc": "Add-on JSON string / <code>{textures}</code> is sent as (item_properties only).\nsee above.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/icon_short.json</code>, <code>capture/addon/behavior_pack/items/icon_textures.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:interact_button": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_interact_button.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_interact_button.json",
+      "doc": "Add-on JSON <code>true</code> / <code>\"text\"</code> is sent as <code>{interact_text: string, requires_interact: 1b}</code>.\n<code>true</code> -&gt; <code>\"action.interact.use\"</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/interact_button_text.json</code>, <code>capture/addon/behavior_pack/items/interact_button_true.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:kinetic_weapon": {
       "since": "1.26.30",
@@ -447,11 +635,13 @@
           "class": "Conditions"
         }
       },
-      "notes": "Vanilla 26.40 to 26.60 nest the payload in a compound named {@code minecraft:kinetic_weapon}; Geyser sends it flat."
+      "notes": "Vanilla 26.40 to 26.60 nest the payload in a compound named {@code minecraft:kinetic_weapon}; Geyser sends it flat.",
+      "doc": "Add-on JSON <code>{delay, reach, creative_reach, hitbox_margin, damage_multiplier, damage_modifier, *_conditions}</code> is sent as <code>{minecraft:kinetic_weapon: {...}}</code>.\n<b>double nested</b>; <code>delay</code> short (sent, also by vanilla spears: 12s), conditions <code>{max_duration: short (-1 default), min_speed: float, min_relative_speed: float}</code>; <code>creative_reach</code> and each <code>*_conditions</code> omitted when absent; <code>reach</code> default {0, 3}.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/kinetic_weapon.json</code>, <code>capture/addon/behavior_pack/items/kinetic_weapon_empty.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:liquid_clipped": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_liquid_clipped.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_liquid_clipped.json",
+      "doc": "Add-on JSON bool is sent as <code>{value: byte}</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/liquid_clipped_full.json</code>, <code>capture/addon/behavior_pack/items/liquid_clipped_short.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:max_stack_size": {
       "since": "1.20.50",
@@ -461,7 +651,8 @@
           "type": "byte",
           "doc": "the stack size; vanilla only shows 1, so Paletter does not read it as a boolean"
         }
-      }
+      },
+      "doc": "Add-on JSON <code>16</code> / <code>{value}</code> is sent as <code>{value: byte}</code>.\nbyte.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/max_stack_size_full.json</code>, <code>capture/addon/behavior_pack/items/max_stack_size_short.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:piercing_weapon": {
       "since": "1.26.30",
@@ -473,20 +664,30 @@
         "creative_reach": {
           "class": "Range"
         }
-      }
+      },
+      "doc": "Add-on JSON <code>{reach, creative_reach?, hitbox_margin}</code> is sent as <code>{reach: {min, max: float}, creative_reach?, hitbox_margin: float}</code>.\n<code>creative_reach</code> omitted when absent.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/piercing_weapon.json</code>, <code>capture/addon/behavior_pack/items/piercing_weapon_empty.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:projectile": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_projectile.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_projectile.json",
+      "fields": {
+        "projectile_entity": {
+          "doc": "entity identifier with a spawn event suffix, e.g. {@code minecraft:snowball<>}"
+        }
+      },
+      "doc": "Add-on JSON <code>{projectile_entity, minimum_critical_power?}</code> is sent as <code>{projectile_entity: \"minecraft:snowball&lt;&gt;\", minimum_critical_power: float}</code>.\nnamespace added, <code>&lt;&gt;</code> suffix.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/projectile.json</code>, <code>capture/addon/behavior_pack/items/projectile_min.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:publisher_on_use_on": {},
     "item:minecraft:rarity": {
       "since": "1.26.30",
-      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_rarity.json"
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_rarity.json",
+      "doc": "Add-on JSON <code>\"rare\"</code> / <code>{value}</code> is sent as <code>{value: string}</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/rarity_full.json</code>, <code>capture/addon/behavior_pack/items/rarity_short.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:record": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_record.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_record.json",
+      "doc": "Add-on JSON <code>{sound_event, duration?, comparator_signal?}</code> is sent as <code>{sound_event: string, duration: float, comparator_signal: int}</code>.\ndefaults 0.0 / 1.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/record.json</code>, <code>capture/addon/behavior_pack/items/record_min.json</code> (BDS 1.26.63.1).",
+      "class": "MusicRecord"
     },
     "item:minecraft:render_offsets": {
       "fields": {
@@ -508,7 +709,10 @@
         "off_hand.third_person": {
           "class": "Offset"
         }
-      }
+      },
+      "deprecated": true,
+      "notes": "No longer an add-on JSON component in 1.26; only Geyser still sends it. Unverified on the wire.",
+      "doc": "Add-on JSON — is sent as —.\nno longer an item component in 1.26 JSON; nothing to capture."
     },
     "item:minecraft:repairable": {
       "since": "1.20.50",
@@ -521,9 +725,10 @@
           "class": "ItemDescriptor"
         },
         "repair_items[].repair_amount": {
-          "doc": "a Molang expression"
+          "doc": "a float for a number, a Molang string otherwise (both on the wire)"
         }
-      }
+      },
+      "doc": "Add-on JSON <code>{repair_items: [{items, repair_amount}]}</code> is sent as `{repair_items: [{items: [{name}], repair_amount: float \\.\nstring}]}`.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/repairable.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:shooter": {
       "since": "1.20.50",
@@ -535,105 +740,240 @@
         "ammunition[].item": {
           "class": "ItemDescriptor"
         }
-      }
+      },
+      "doc": "Add-on JSON <code>{ammunition: [{item, ...}], max_draw_duration, scale_power_by_draw_duration, charge_on_draw}</code> is sent as same keys; <code>ammunition[].item</code> -&gt; <code>{name}</code>; all flags as bytes, always present.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/shooter.json</code>, <code>capture/addon/behavior_pack/items/shooter_min.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:should_despawn": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_should_despawn.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_should_despawn.json",
+      "doc": "Add-on JSON bool is sent as <code>{value: byte}</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/should_despawn_full.json</code>, <code>capture/addon/behavior_pack/items/should_despawn_short.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:stacked_by_data": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_stacked_by_data.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_stacked_by_data.json",
+      "doc": "Add-on JSON bool is sent as <code>{value: byte}</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/stacked_by_data_full.json</code>, <code>capture/addon/behavior_pack/items/stacked_by_data_short.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:storage_item": {
       "since": "1.26.30",
       "experimental": true,
-      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_storage_item.json"
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_storage_item.json",
+      "fields": {
+        "allowed_items[]": {
+          "class": "ItemDescriptor"
+        },
+        "banned_items[]": {
+          "class": "ItemDescriptor"
+        }
+      },
+      "doc": "Add-on JSON <code>{max_slots, allow_nested_storage_items, allowed_items, banned_items}</code> is sent as same, items as <code>{name}</code>, empty lists typed END.\ndefaults 64 / 1b.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/storage_item.json</code>, <code>capture/addon/behavior_pack/items/storage_item_default.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:storage_weight_limit": {
       "since": "1.26.30",
-      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_storage_weight_limit.json"
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_storage_weight_limit.json",
+      "doc": "Add-on JSON <code>{max_weight_limit}</code> is sent as <code>{max_weight_limit: int}</code>."
     },
     "item:minecraft:storage_weight_modifier": {
       "since": "1.26.30",
-      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_storage_weight_modifier.json"
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_storage_weight_modifier.json",
+      "doc": "Add-on JSON <code>{weight_in_storage_item}</code> is sent as <code>{weight_in_storage_item: int}</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/storage_weight_modifier.json</code>, <code>capture/addon/behavior_pack/items/storage_weight_modifier_zero.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:swing_duration": {
       "since": "1.26.30",
-      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_swing_duration.json"
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_swing_duration.json",
+      "doc": "Add-on JSON <code>{value}</code> is sent as <code>{value: float}</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/swing_duration.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:swing_sounds": {
       "since": "1.26.30",
-      "schema": "metadata/json_schemas/server/item/1.26.50/minecraft_swing_sounds.json"
+      "schema": "metadata/json_schemas/server/item/1.26.50/minecraft_swing_sounds.json",
+      "doc": "Add-on JSON <code>{attack_hit?, attack_miss?, attack_critical_hit?}</code> is sent as same keys, strings, absent keys omitted.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/swing_sounds.json</code>, <code>capture/addon/behavior_pack/items/swing_sounds_min.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:tags": {
       "since": "1.20.50",
       "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_tags.json",
-      "notes": "Vanilla also sends the same tags as the bare {@code item_tags} list; ItemComponents writes both."
+      "notes": "Vanilla also sends the same tags as the bare {@code item_tags} list; ItemComponents writes both.",
+      "doc": "Add-on JSON <code>{tags}</code> is sent as <code>{tags: [string]}</code>.\nalso top level <code>item_tags</code>.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/tags.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:throwable": {
       "since": "1.20.50",
       "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_throwable.json",
-      "class": "ThrowableComponent"
+      "class": "ThrowableComponent",
+      "doc": "Add-on JSON all optional is sent as all six keys always sent (<code>do_swing_animation</code> byte, floats, <code>scale_power_by_draw_duration</code> byte).\ndefaults launch_power_scale 1, max_launch_power 1.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/throwable.json</code>, <code>capture/addon/behavior_pack/items/throwable_empty.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:use_animation": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_use_animation.json"
+      "schema": "metadata/json_schemas/server/item/1.20.50/minecraft_use_animation.json",
+      "doc": "Add-on JSON <code>\"eat\"</code> / <code>{value}</code> is sent as <code>{value: string}</code>.\nalso <code>item_properties.use_animation</code> (int enum).\nCaptured from add-on files <code>capture/addon/behavior_pack/items/use_animation_eat.json</code>, <code>capture/addon/behavior_pack/items/use_animation_spear.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:use_modifiers": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.26.50/minecraft_use_modifiers.json"
+      "schema": "metadata/json_schemas/server/item/1.26.50/minecraft_use_modifiers.json",
+      "doc": "Add-on JSON <code>{use_duration, movement_modifier?, emit_vibrations?, start_sound?}</code> is sent as <code>{use_duration: float, movement_modifier?: float, emit_vibrations: byte, start_sound?: string, start_using: \"if_first\"}</code>.\n<b><code>start_using</code> added</b> (custom default <code>\"if_first\"</code>, vanilla food <code>\"always\"</code>); <code>movement_modifier</code> omitted when absent.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/use_modifiers.json</code>, <code>capture/addon/behavior_pack/items/use_modifiers_full.json</code> (BDS 1.26.63.1)."
     },
     "item:minecraft:wearable": {
       "since": "1.20.50",
-      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_wearable.json"
+      "schema": "metadata/json_schemas/server/item/1.26.30/minecraft_wearable.json",
+      "doc": "Add-on JSON <code>{slot, protection?}</code> is sent as <code>{slot: string, protection: int, hides_player_location: 0b}</code>.\n<code>hides_player_location</code> added; forces max_stack_size 1.\nCaptured from add-on files <code>capture/addon/behavior_pack/items/wearable_chest.json</code>, <code>capture/addon/behavior_pack/items/wearable_head.json</code>, <code>capture/addon/behavior_pack/items/wearable_offhand.json</code> (BDS 1.26.63.1)."
+    },
+    "block:block_definition": {
+      "fields": {
+        "properties": {
+          "type": "raw",
+          "doc": "state properties {@code [{name, enum}]}; written by CustomBlock"
+        },
+        "traits": {
+          "type": "raw",
+          "doc": "traits; the client adds their states"
+        },
+        "blockTags": {
+          "doc": "block tags (JSON {@code minecraft:tags})"
+        },
+        "molangVersion": {
+          "doc": "13 for 1.26 content"
+        },
+        "menu_category": {
+          "class": "MenuCategory"
+        },
+        "vanilla_block_data": {
+          "class": "VanillaBlockData"
+        },
+        "vanilla_block_data.block_archetype": {
+          "class": "BlockArchetype"
+        },
+        "vanilla_block_data.block_archetype.is_double": {
+          "type": "bool"
+        }
+      },
+      "class": "BlockDefinition"
     }
   },
   "needsCapture": {
-    "block:minecraft:block_entity": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:breathability": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:chest_obstruction": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:crafting_table": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:destructible_by_explosion": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:embedded_visual": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:enchantment_power_transmitter": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:entity_fall_on": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:flammable": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:flower_pottable": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:instrument_sound": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:item_visual": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:leashable": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:loot": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:map_color": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:movable": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:neighbor_change": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:on_fall_on": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:on_interact": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:on_placed": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:on_player_destroyed": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:on_step_off": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:on_step_on": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:queued_ticking": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:random_offset": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:random_ticking": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:redstone_consumer": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:redstone_producer": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:sound": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:tags": "vanilla data driven blocks send top level blockTags; tag:<name> components are the legacy form",
-    "block:minecraft:tick": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:unit_cube": "no wire NBT seen; add-on JSON/schema only",
-    "block:minecraft:vibration_properties": "no wire NBT seen; add-on JSON/schema only",
-    "item:minecraft:allow_off_hand": "no wire NBT seen; add-on JSON/schema only",
-    "item:minecraft:damage_absorption": "no wire NBT seen; add-on JSON/schema only",
-    "item:minecraft:durability_sensor": "no wire NBT seen; add-on JSON/schema only",
-    "item:minecraft:hover_text_color": "no wire NBT seen; add-on JSON/schema only",
-    "item:minecraft:icon": "no wire NBT seen; add-on JSON/schema only",
-    "item:minecraft:interact_button": "no wire NBT seen; add-on JSON/schema only",
-    "item:minecraft:liquid_clipped": "no wire NBT seen; add-on JSON/schema only",
-    "item:minecraft:rarity": "no wire NBT seen; add-on JSON/schema only",
-    "item:minecraft:record": "no wire NBT seen; add-on JSON/schema only",
-    "item:minecraft:should_despawn": "no wire NBT seen; add-on JSON/schema only",
-    "item:minecraft:stacked_by_data": "no wire NBT seen; add-on JSON/schema only",
-    "item:render_offsets": "Geyser sends a bare string next to the components for armor; not a compound"
+    "block:minecraft:block_entity": {
+      "status": "not-sent",
+      "note": "server only: BDS 1.26.63.1 accepts it but sends nothing"
+    },
+    "block:minecraft:breathability": {
+      "status": "rejected",
+      "note": "BDS 1.26.63.1 rejects the add-on JSON; no 1.26 wire shape"
+    },
+    "block:minecraft:chest_obstruction": {
+      "status": "not-sent",
+      "note": "server only: BDS 1.26.63.1 accepts it but sends nothing"
+    },
+    "block:minecraft:destructible_by_explosion": {
+      "status": "not-sent",
+      "note": "server only: BDS 1.26.63.1 accepts it but sends nothing"
+    },
+    "block:minecraft:enchantment_power_transmitter": {
+      "status": "not-sent",
+      "note": "server only: BDS 1.26.63.1 accepts it but sends nothing"
+    },
+    "block:minecraft:entity_fall_on": {
+      "status": "not-sent",
+      "note": "server only: BDS 1.26.63.1 accepts it but sends nothing"
+    },
+    "block:minecraft:flammable": {
+      "status": "not-sent",
+      "note": "server only: BDS 1.26.63.1 accepts it but sends nothing"
+    },
+    "block:minecraft:instrument_sound": {
+      "status": "not-sent",
+      "note": "server only: BDS 1.26.63.1 accepts it but sends nothing"
+    },
+    "block:minecraft:loot": {
+      "status": "not-sent",
+      "note": "server only: BDS 1.26.63.1 accepts it but sends nothing"
+    },
+    "block:minecraft:map_color": {
+      "status": "not-sent",
+      "note": "server only: BDS 1.26.63.1 accepts it but sends nothing"
+    },
+    "block:minecraft:movable": {
+      "status": "not-sent",
+      "note": "server only: BDS 1.26.63.1 accepts it but sends nothing"
+    },
+    "block:minecraft:neighbor_change": {
+      "status": "not-sent",
+      "note": "server only: BDS 1.26.63.1 accepts it but sends nothing"
+    },
+    "block:minecraft:on_fall_on": {
+      "status": "rejected",
+      "note": "BDS 1.26.63.1 rejects the add-on JSON; no 1.26 wire shape"
+    },
+    "block:minecraft:on_interact": {
+      "status": "rejected",
+      "note": "BDS 1.26.63.1 rejects the add-on JSON; no 1.26 wire shape"
+    },
+    "block:minecraft:on_placed": {
+      "status": "rejected",
+      "note": "BDS 1.26.63.1 rejects the add-on JSON; no 1.26 wire shape"
+    },
+    "block:minecraft:on_player_destroyed": {
+      "status": "rejected",
+      "note": "BDS 1.26.63.1 rejects the add-on JSON; no 1.26 wire shape"
+    },
+    "block:minecraft:on_player_placing": {
+      "status": "rejected",
+      "note": "BDS 1.26.63.1 rejects the add-on JSON; no 1.26 wire shape"
+    },
+    "block:minecraft:on_step_off": {
+      "status": "rejected",
+      "note": "BDS 1.26.63.1 rejects the add-on JSON; no 1.26 wire shape"
+    },
+    "block:minecraft:on_step_on": {
+      "status": "rejected",
+      "note": "BDS 1.26.63.1 rejects the add-on JSON; no 1.26 wire shape"
+    },
+    "block:minecraft:queued_ticking": {
+      "status": "rejected",
+      "note": "BDS 1.26.63.1 rejects the add-on JSON; no 1.26 wire shape"
+    },
+    "block:minecraft:random_ticking": {
+      "status": "rejected",
+      "note": "BDS 1.26.63.1 rejects the add-on JSON; no 1.26 wire shape"
+    },
+    "block:minecraft:redstone_consumer": {
+      "status": "not-sent",
+      "note": "server only: BDS 1.26.63.1 accepts it but sends nothing"
+    },
+    "block:minecraft:tags": {
+      "status": "not-a-component",
+      "note": "sent as the top level blockTags list of the block property data (BlockDefinition)"
+    },
+    "block:minecraft:tick": {
+      "status": "not-sent",
+      "note": "server only: BDS 1.26.63.1 accepts it but sends nothing"
+    },
+    "block:minecraft:unit_cube": {
+      "status": "rejected",
+      "note": "BDS 1.26.63.1 rejects the add-on JSON; no 1.26 wire shape"
+    },
+    "block:minecraft:vibration_properties": {
+      "status": "not-sent",
+      "note": "server only: BDS 1.26.63.1 accepts it but sends nothing"
+    },
+    "block:tag:<name>": {
+      "status": "rejected",
+      "note": "legacy tag components are rejected by 1.26.60 JSON; tags are the top level blockTags of the block property data"
+    },
+    "item:minecraft:damage_absorption": {
+      "status": "not-sent",
+      "note": "server only"
+    },
+    "item:minecraft:durability_sensor": {
+      "status": "not-sent",
+      "note": "server only"
+    },
+    "item:minecraft:icon": {
+      "status": "not-a-component",
+      "note": "sent only as item_properties.minecraft:icon (ItemProperties.Icon)"
+    },
+    "item:minecraft:render_offsets": {
+      "status": "removed",
+      "note": "no longer an add-on JSON item component in 1.26; only Geyser still sends it"
+    },
+    "item:render_offsets": {
+      "status": "geyser-only",
+      "note": "Geyser sends a bare string next to the components for armor; not a compound"
+    }
   }
 }

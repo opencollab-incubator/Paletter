@@ -12,8 +12,12 @@ import org.geysermc.paletter.component.NbtReader;
 
 /**
  * The {@code minecraft:bundle_interaction} item component.
+ * <p>
+ * Add-on JSON <code>{num_viewable_slots}</code> is sent as <code>{num_viewable_slots: int}</code>.
+ * default 12; requires <code>storage_item</code>.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/bundle_interaction.json</code>, <code>capture/addon/behavior_pack/items/bundle_interaction_default.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:bundle_interaction}</li>
  * <li>Minimum format version: 1.26.30</li>
  * <li>Experimental: yes</li>

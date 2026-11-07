@@ -9,24 +9,25 @@ import org.geysermc.paletter.component.BlockComponent;
 import org.geysermc.paletter.component.ComponentType;
 import org.geysermc.paletter.component.Confidence;
 import org.geysermc.paletter.component.NbtReader;
-import org.geysermc.paletter.component.Unverified;
 
 /**
  * The {@code minecraft:friction} block component.
+ * <p>
+ * Add-on JSON <code>0.2</code> is sent as <code>{value: float}</code>.
+ * Captured from add-on files <code>capture/addon/behavior_pack/blocks/friction.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: from Geyser's production encoder only (confidence MEDIUM); no wire capture yet</li>
+ * <li>Network shape: inferred from wire NBT of capture bds-1.26.63.1-addon/custom_block_properties.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:friction}</li>
  * <li>Minimum format version: 1.26.20</li>
  * <li>Experimental: no</li>
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/common/1.26.20/Friction.json}</li>
- * <li>Geyser CustomBlockRegistryPopulator#convertComponents: only evidence</li>
+ * <li>Geyser CustomBlockRegistryPopulator#convertComponents: compatible</li>
  * </ul>
  *
  * @param value network {@code value}, float
  */
-@Unverified
 public record Friction(float value) implements BlockComponent {
-    public static final @NonNull ComponentType<Friction> TYPE = new ComponentType<>("minecraft:friction", ComponentType.Kind.BLOCK, Confidence.MEDIUM, "1.26.20", false, Friction::fromNbt);
+    public static final @NonNull ComponentType<Friction> TYPE = new ComponentType<>("minecraft:friction", ComponentType.Kind.BLOCK, Confidence.HIGH, "1.26.20", false, Friction::fromNbt);
 
     public static @NonNull Friction of(float value) {
         return new Friction(value);

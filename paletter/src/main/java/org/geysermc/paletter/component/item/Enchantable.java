@@ -14,8 +14,12 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:enchantable} item component.
+ * <p>
+ * Add-on JSON <code>{slot, value}</code> is sent as <code>{slot: string, value: byte}</code>.
+ * value byte; mirrored into item_properties (int).
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/enchantable.json</code>, <code>capture/addon/behavior_pack/items/enchantable_all.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:enchantable}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>

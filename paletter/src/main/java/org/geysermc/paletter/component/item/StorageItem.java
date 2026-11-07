@@ -3,7 +3,6 @@
 package org.geysermc.paletter.component.item;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.geysermc.paletter.component.ItemComponent;
@@ -16,8 +15,12 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:storage_item} item component.
+ * <p>
+ * Add-on JSON <code>{max_slots, allow_nested_storage_items, allowed_items, banned_items}</code> is sent as same, items as <code>{name}</code>, empty lists typed END.
+ * defaults 64 / 1b.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/storage_item.json</code>, <code>capture/addon/behavior_pack/items/storage_item_default.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:storage_item}</li>
  * <li>Minimum format version: 1.26.30</li>
  * <li>Experimental: yes</li>
@@ -25,28 +28,28 @@ import java.util.Objects;
  * </ul>
  *
  * @param allowNestedStorageItems network {@code allow_nested_storage_items}, byte (0 or 1 in every sample)
- * @param allowedItems network {@code allowed_items}, list (always empty in samples)
+ * @param allowedItems network {@code allowed_items}, list of compound
  * @param bannedItems network {@code banned_items}, list of compound
  * @param maxSlots network {@code max_slots}, int
  */
 public record StorageItem(
     boolean allowNestedStorageItems,
-    @NonNull NbtList<?> allowedItems,
-    @NonNull List<BannedItem> bannedItems,
+    @NonNull List<ItemDescriptor> allowedItems,
+    @NonNull List<ItemDescriptor> bannedItems,
     int maxSlots
 ) implements ItemComponent {
     public static final @NonNull ComponentType<StorageItem> TYPE = new ComponentType<>("minecraft:storage_item", ComponentType.Kind.ITEM, Confidence.HIGH, "1.26.30", true, StorageItem::fromNbt);
 
     public StorageItem {
-        Objects.requireNonNull(allowedItems, "allowedItems");
+        allowedItems = NbtReader.copy(Objects.requireNonNull(allowedItems, "allowedItems"));
         bannedItems = NbtReader.copy(Objects.requireNonNull(bannedItems, "bannedItems"));
     }
 
     public static @NonNull StorageItem fromNbt(@NonNull NbtMap nbt) {
         return new StorageItem(
             NbtReader.read(nbt, "allow_nested_storage_items", NbtReader::toBool, false),
-            NbtReader.read(nbt, "allowed_items", NbtReader::toRawList, NbtList.EMPTY),
-            NbtReader.read(nbt, "banned_items", NbtReader.listOf(NbtReader.compound(BannedItem::fromNbt)), List.of()),
+            NbtReader.read(nbt, "allowed_items", NbtReader.listOf(NbtReader.compound(ItemDescriptor::fromNbt)), List.of()),
+            NbtReader.read(nbt, "banned_items", NbtReader.listOf(NbtReader.compound(ItemDescriptor::fromNbt)), List.of()),
             NbtReader.read(nbt, "max_slots", NbtReader::toInt, 0)
         );
     }
@@ -60,8 +63,8 @@ public record StorageItem(
     public @NonNull NbtMap toNbt() {
         NbtMapBuilder builderNbt = NbtMap.builder();
         builderNbt.put("allow_nested_storage_items", NbtReader.bool(allowNestedStorageItems));
-        builderNbt.put("allowed_items", allowedItems);
-        builderNbt.put("banned_items", NbtReader.writeList(bannedItems, BannedItem::toNbt));
+        builderNbt.put("allowed_items", NbtReader.writeList(allowedItems, ItemDescriptor::toNbt));
+        builderNbt.put("banned_items", NbtReader.writeList(bannedItems, ItemDescriptor::toNbt));
         builderNbt.put("max_slots", maxSlots);
         return builderNbt.build();
     }
@@ -81,8 +84,8 @@ public record StorageItem(
 
     public static final class Builder {
         private boolean allowNestedStorageItems = false;
-        private @NonNull NbtList<?> allowedItems = NbtList.EMPTY;
-        private @NonNull List<BannedItem> bannedItems = List.of();
+        private @NonNull List<ItemDescriptor> allowedItems = List.of();
+        private @NonNull List<ItemDescriptor> bannedItems = List.of();
         private int maxSlots = 0;
 
         private Builder() {
@@ -93,12 +96,12 @@ public record StorageItem(
             return this;
         }
 
-        public @NonNull Builder allowedItems(@NonNull NbtList<?> allowedItems) {
+        public @NonNull Builder allowedItems(@NonNull List<ItemDescriptor> allowedItems) {
             this.allowedItems = allowedItems;
             return this;
         }
 
-        public @NonNull Builder bannedItems(@NonNull List<BannedItem> bannedItems) {
+        public @NonNull Builder bannedItems(@NonNull List<ItemDescriptor> bannedItems) {
             this.bannedItems = bannedItems;
             return this;
         }
@@ -118,17 +121,17 @@ public record StorageItem(
      *
      * @param name network {@code name}, string
      */
-    public record BannedItem(@NonNull String name) {
-        public BannedItem {
+    public record ItemDescriptor(@NonNull String name) {
+        public ItemDescriptor {
             Objects.requireNonNull(name, "name");
         }
 
-        public static @NonNull BannedItem of(@NonNull String name) {
-            return new BannedItem(name);
+        public static @NonNull ItemDescriptor of(@NonNull String name) {
+            return new ItemDescriptor(name);
         }
 
-        public static @NonNull BannedItem fromNbt(@NonNull NbtMap nbt) {
-            return new BannedItem(
+        public static @NonNull ItemDescriptor fromNbt(@NonNull NbtMap nbt) {
+            return new ItemDescriptor(
                 NbtReader.read(nbt, "name", NbtReader::toStr, "")
             );
         }

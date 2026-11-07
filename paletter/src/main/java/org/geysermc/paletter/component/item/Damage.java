@@ -12,13 +12,17 @@ import org.geysermc.paletter.component.NbtReader;
 
 /**
  * The {@code minecraft:damage} item component.
+ * <p>
+ * Add-on JSON <code>5</code> / <code>{value: 300}</code> is sent as <code>{value: short}</code>.
+ * short (Geyser sends byte); also <code>item_properties.damage</code>.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/damage_absorption.json</code>, <code>capture/addon/behavior_pack/items/damage_full.json</code>, <code>capture/addon/behavior_pack/items/damage_short.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:damage}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/item/1.26.30/minecraft_damage.json}</li>
- * <li>Geyser CustomItemRegistryPopulator#createComponentNbt: DIFFERS value: vanilla short, sample byte</li>
+ * <li>Geyser CustomItemRegistryPopulator#createComponentNbt: DIFFERS value: wire short, sample byte</li>
  * </ul>
  *
  * @param value network {@code value}, short

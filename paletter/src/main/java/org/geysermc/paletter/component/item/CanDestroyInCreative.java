@@ -9,24 +9,25 @@ import org.geysermc.paletter.component.ItemComponent;
 import org.geysermc.paletter.component.ComponentType;
 import org.geysermc.paletter.component.Confidence;
 import org.geysermc.paletter.component.NbtReader;
-import org.geysermc.paletter.component.Unverified;
 
 /**
  * The {@code minecraft:can_destroy_in_creative} item component.
+ * <p>
+ * Add-on JSON bool is sent as <code>{value: byte}</code>.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/can_destroy_in_creative_full.json</code>, <code>capture/addon/behavior_pack/items/can_destroy_in_creative_short.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: from Geyser's production encoder only (confidence MEDIUM); no wire capture yet</li>
+ * <li>Network shape: inferred from wire NBT of capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:can_destroy_in_creative}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/item/1.20.50/minecraft_can_destroy_in_creative.json}</li>
- * <li>Geyser CustomItemRegistryPopulator#computeCreativeDestroyProperties: only evidence</li>
+ * <li>Geyser CustomItemRegistryPopulator#computeCreativeDestroyProperties: compatible</li>
  * </ul>
  *
  * @param value network {@code value}, byte (0 or 1 in every sample)
  */
-@Unverified
 public record CanDestroyInCreative(boolean value) implements ItemComponent {
-    public static final @NonNull ComponentType<CanDestroyInCreative> TYPE = new ComponentType<>("minecraft:can_destroy_in_creative", ComponentType.Kind.ITEM, Confidence.MEDIUM, "1.20.50", false, CanDestroyInCreative::fromNbt);
+    public static final @NonNull ComponentType<CanDestroyInCreative> TYPE = new ComponentType<>("minecraft:can_destroy_in_creative", ComponentType.Kind.ITEM, Confidence.HIGH, "1.20.50", false, CanDestroyInCreative::fromNbt);
 
     public static @NonNull CanDestroyInCreative of(boolean value) {
         return new CanDestroyInCreative(value);

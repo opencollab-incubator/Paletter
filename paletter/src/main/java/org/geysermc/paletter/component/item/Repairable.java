@@ -16,13 +16,17 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:repairable} item component.
+ * <p>
+ * Add-on JSON <code>{repair_items: [{items, repair_amount}]}</code> is sent as `{repair_items: [{items: [{name}], repair_amount: float \.
+ * string}]}`.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/repairable.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:repairable}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/item/1.20.50/minecraft_repairable.json}</li>
- * <li>Geyser CustomItemRegistryPopulator#computeRepairableProperties: DIFFERS repair_items[].repair_amount: vanilla string, sample float</li>
+ * <li>Geyser CustomItemRegistryPopulator#computeRepairableProperties: compatible</li>
  * </ul>
  *
  * @param repairItems network {@code repair_items}, list of compound
@@ -60,25 +64,26 @@ public record Repairable(@NonNull List<RepairItem> repairItems) implements ItemC
      * Nested compound.
      *
      * @param items network {@code items}, list of compound. item descriptors: either {@code name} or a Molang {@code tags} query
-     * @param repairAmount network {@code repair_amount}, string. a Molang expression
+     * @param repairAmount network {@code repair_amount}, mixed types in samples; optional, not sent when null. a float for a number, a Molang string otherwise (both on the wire)
      */
-    public record RepairItem(@NonNull List<ItemDescriptor> items, @NonNull String repairAmount) {
+    public record RepairItem(@NonNull List<ItemDescriptor> items, @Nullable Object repairAmount) {
         public RepairItem {
             items = NbtReader.copy(Objects.requireNonNull(items, "items"));
-            Objects.requireNonNull(repairAmount, "repairAmount");
         }
 
         public static @NonNull RepairItem fromNbt(@NonNull NbtMap nbt) {
             return new RepairItem(
                 NbtReader.read(nbt, "items", NbtReader.listOf(NbtReader.compound(ItemDescriptor::fromNbt)), List.of()),
-                NbtReader.read(nbt, "repair_amount", NbtReader::toStr, "")
+                NbtReader.read(nbt, "repair_amount", NbtReader::toAny, null)
             );
         }
 
         public @NonNull NbtMap toNbt() {
             NbtMapBuilder builderNbt = NbtMap.builder();
             builderNbt.put("items", NbtReader.writeList(items, ItemDescriptor::toNbt));
-            builderNbt.put("repair_amount", repairAmount);
+            if (repairAmount != null) {
+                builderNbt.put("repair_amount", repairAmount);
+            }
             return builderNbt.build();
         }
 
@@ -95,7 +100,7 @@ public record Repairable(@NonNull List<RepairItem> repairItems) implements ItemC
 
         public static final class Builder {
             private @NonNull List<ItemDescriptor> items = List.of();
-            private @NonNull String repairAmount = "";
+            private @Nullable Object repairAmount;
 
             private Builder() {
             }
@@ -105,7 +110,7 @@ public record Repairable(@NonNull List<RepairItem> repairItems) implements ItemC
                 return this;
             }
 
-            public @NonNull Builder repairAmount(@NonNull String repairAmount) {
+            public @NonNull Builder repairAmount(@Nullable Object repairAmount) {
                 this.repairAmount = repairAmount;
                 return this;
             }

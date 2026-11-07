@@ -13,8 +13,12 @@ import org.geysermc.paletter.component.NbtReader;
 
 /**
  * The {@code minecraft:throwable} item component.
+ * <p>
+ * Add-on JSON all optional is sent as all six keys always sent (<code>do_swing_animation</code> byte, floats, <code>scale_power_by_draw_duration</code> byte).
+ * defaults launch_power_scale 1, max_launch_power 1.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/throwable.json</code>, <code>capture/addon/behavior_pack/items/throwable_empty.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:throwable}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>

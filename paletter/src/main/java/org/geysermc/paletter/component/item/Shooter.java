@@ -9,20 +9,22 @@ import org.geysermc.paletter.component.ItemComponent;
 import org.geysermc.paletter.component.ComponentType;
 import org.geysermc.paletter.component.Confidence;
 import org.geysermc.paletter.component.NbtReader;
-import org.geysermc.paletter.component.Unverified;
 
 import java.util.List;
 import java.util.Objects;
 
 /**
  * The {@code minecraft:shooter} item component.
+ * <p>
+ * Add-on JSON <code>{ammunition: [{item, ...}], max_draw_duration, scale_power_by_draw_duration, charge_on_draw}</code> is sent as same keys; <code>ammunition[].item</code> -&gt; <code>{name}</code>; all flags as bytes, always present.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/shooter.json</code>, <code>capture/addon/behavior_pack/items/shooter_min.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: from Geyser's production encoder only (confidence MEDIUM); no wire capture yet</li>
+ * <li>Network shape: inferred from wire NBT of capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:shooter}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/item/1.20.50/minecraft_shooter.json}</li>
- * <li>Geyser CustomItemRegistryPopulator#computeChargeableProperties: only evidence</li>
+ * <li>Geyser CustomItemRegistryPopulator#computeChargeableProperties: compatible</li>
  * </ul>
  *
  * @param ammunition network {@code ammunition}, list of compound
@@ -30,14 +32,13 @@ import java.util.Objects;
  * @param maxDrawDuration network {@code max_draw_duration}, float
  * @param scalePowerByDrawDuration network {@code scale_power_by_draw_duration}, byte (0 or 1 in every sample)
  */
-@Unverified
 public record Shooter(
     @NonNull List<Ammunition> ammunition,
     boolean chargeOnDraw,
     float maxDrawDuration,
     boolean scalePowerByDrawDuration
 ) implements ItemComponent {
-    public static final @NonNull ComponentType<Shooter> TYPE = new ComponentType<>("minecraft:shooter", ComponentType.Kind.ITEM, Confidence.MEDIUM, "1.20.50", false, Shooter::fromNbt);
+    public static final @NonNull ComponentType<Shooter> TYPE = new ComponentType<>("minecraft:shooter", ComponentType.Kind.ITEM, Confidence.HIGH, "1.20.50", false, Shooter::fromNbt);
 
     public Shooter {
         ammunition = NbtReader.copy(Objects.requireNonNull(ammunition, "ammunition"));

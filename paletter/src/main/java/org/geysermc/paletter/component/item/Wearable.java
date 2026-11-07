@@ -3,33 +3,37 @@
 package org.geysermc.paletter.component.item;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.geysermc.paletter.component.ItemComponent;
 import org.geysermc.paletter.component.ComponentType;
 import org.geysermc.paletter.component.Confidence;
 import org.geysermc.paletter.component.NbtReader;
-import org.geysermc.paletter.component.Unverified;
 
 import java.util.Objects;
 
 /**
  * The {@code minecraft:wearable} item component.
+ * <p>
+ * Add-on JSON <code>{slot, protection?}</code> is sent as <code>{slot: string, protection: int, hides_player_location: 0b}</code>.
+ * <code>hides_player_location</code> added; forces max_stack_size 1.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/wearable_chest.json</code>, <code>capture/addon/behavior_pack/items/wearable_head.json</code>, <code>capture/addon/behavior_pack/items/wearable_offhand.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: from Geyser's production encoder only (confidence MEDIUM); no wire capture yet</li>
+ * <li>Network shape: inferred from wire NBT of capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:wearable}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/item/1.26.30/minecraft_wearable.json}</li>
- * <li>Geyser CustomItemRegistryPopulator#computeArmorProperties: only evidence</li>
+ * <li>Geyser CustomItemRegistryPopulator#computeArmorProperties: compatible</li>
  * </ul>
  *
+ * @param hidesPlayerLocation network {@code hides_player_location}, byte (0 or 1 in every sample); optional (Geyser omits it (CustomItemRegistryPopulator#computeArmorProperties)), not sent when null
  * @param protection network {@code protection}, int
  * @param slot network {@code slot}, string
  */
-@Unverified
-public record Wearable(int protection, @NonNull String slot) implements ItemComponent {
-    public static final @NonNull ComponentType<Wearable> TYPE = new ComponentType<>("minecraft:wearable", ComponentType.Kind.ITEM, Confidence.MEDIUM, "1.20.50", false, Wearable::fromNbt);
+public record Wearable(@Nullable Boolean hidesPlayerLocation, int protection, @NonNull String slot) implements ItemComponent {
+    public static final @NonNull ComponentType<Wearable> TYPE = new ComponentType<>("minecraft:wearable", ComponentType.Kind.ITEM, Confidence.HIGH, "1.20.50", false, Wearable::fromNbt);
 
     public Wearable {
         Objects.requireNonNull(slot, "slot");
@@ -37,6 +41,7 @@ public record Wearable(int protection, @NonNull String slot) implements ItemComp
 
     public static @NonNull Wearable fromNbt(@NonNull NbtMap nbt) {
         return new Wearable(
+            NbtReader.read(nbt, "hides_player_location", NbtReader::toBool, null),
             NbtReader.read(nbt, "protection", NbtReader::toInt, 0),
             NbtReader.read(nbt, "slot", NbtReader::toStr, "")
         );
@@ -50,6 +55,9 @@ public record Wearable(int protection, @NonNull String slot) implements ItemComp
     @Override
     public @NonNull NbtMap toNbt() {
         NbtMapBuilder builderNbt = NbtMap.builder();
+        if (hidesPlayerLocation != null) {
+            builderNbt.put("hides_player_location", NbtReader.bool(hidesPlayerLocation));
+        }
         builderNbt.put("protection", protection);
         builderNbt.put("slot", slot);
         return builderNbt.build();
@@ -61,16 +69,23 @@ public record Wearable(int protection, @NonNull String slot) implements ItemComp
 
     public @NonNull Builder toBuilder() {
         Builder builder = new Builder();
+        builder.hidesPlayerLocation = hidesPlayerLocation;
         builder.protection = protection;
         builder.slot = slot;
         return builder;
     }
 
     public static final class Builder {
+        private @Nullable Boolean hidesPlayerLocation;
         private int protection = 0;
         private @NonNull String slot = "";
 
         private Builder() {
+        }
+
+        public @NonNull Builder hidesPlayerLocation(@Nullable Boolean hidesPlayerLocation) {
+            this.hidesPlayerLocation = hidesPlayerLocation;
+            return this;
         }
 
         public @NonNull Builder protection(int protection) {
@@ -84,7 +99,7 @@ public record Wearable(int protection, @NonNull String slot) implements ItemComp
         }
 
         public @NonNull Wearable build() {
-            return new Wearable(protection, slot);
+            return new Wearable(hidesPlayerLocation, protection, slot);
         }
     }
 }

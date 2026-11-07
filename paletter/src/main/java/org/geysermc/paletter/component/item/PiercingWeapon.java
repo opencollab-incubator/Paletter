@@ -3,6 +3,7 @@
 package org.geysermc.paletter.component.item;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.geysermc.paletter.component.ItemComponent;
@@ -14,8 +15,12 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:piercing_weapon} item component.
+ * <p>
+ * Add-on JSON <code>{reach, creative_reach?, hitbox_margin}</code> is sent as <code>{reach: {min, max: float}, creative_reach?, hitbox_margin: float}</code>.
+ * <code>creative_reach</code> omitted when absent.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/piercing_weapon.json</code>, <code>capture/addon/behavior_pack/items/piercing_weapon_empty.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:piercing_weapon}</li>
  * <li>Minimum format version: 1.26.30</li>
  * <li>Experimental: no</li>
@@ -23,21 +28,20 @@ import java.util.Objects;
  * <li>Geyser CustomItemRegistryPopulator#computePiercingWeaponProperties: compatible</li>
  * </ul>
  *
- * @param creativeReach network {@code creative_reach}, compound
+ * @param creativeReach network {@code creative_reach}, compound; optional, not sent when null
  * @param hitboxMargin network {@code hitbox_margin}, float
  * @param reach network {@code reach}, compound
  */
-public record PiercingWeapon(@NonNull Range creativeReach, float hitboxMargin, @NonNull Range reach) implements ItemComponent {
+public record PiercingWeapon(@Nullable Range creativeReach, float hitboxMargin, @NonNull Range reach) implements ItemComponent {
     public static final @NonNull ComponentType<PiercingWeapon> TYPE = new ComponentType<>("minecraft:piercing_weapon", ComponentType.Kind.ITEM, Confidence.HIGH, "1.26.30", false, PiercingWeapon::fromNbt);
 
     public PiercingWeapon {
-        Objects.requireNonNull(creativeReach, "creativeReach");
         Objects.requireNonNull(reach, "reach");
     }
 
     public static @NonNull PiercingWeapon fromNbt(@NonNull NbtMap nbt) {
         return new PiercingWeapon(
-            NbtReader.read(nbt, "creative_reach", NbtReader.compound(Range::fromNbt), Range.fromNbt(NbtMap.EMPTY)),
+            NbtReader.read(nbt, "creative_reach", NbtReader.compound(Range::fromNbt), null),
             NbtReader.read(nbt, "hitbox_margin", NbtReader::toFloat, 0f),
             NbtReader.read(nbt, "reach", NbtReader.compound(Range::fromNbt), Range.fromNbt(NbtMap.EMPTY))
         );
@@ -51,7 +55,9 @@ public record PiercingWeapon(@NonNull Range creativeReach, float hitboxMargin, @
     @Override
     public @NonNull NbtMap toNbt() {
         NbtMapBuilder builderNbt = NbtMap.builder();
-        builderNbt.put("creative_reach", creativeReach.toNbt());
+        if (creativeReach != null) {
+            builderNbt.put("creative_reach", creativeReach.toNbt());
+        }
         builderNbt.put("hitbox_margin", hitboxMargin);
         builderNbt.put("reach", reach.toNbt());
         return builderNbt.build();
@@ -70,14 +76,14 @@ public record PiercingWeapon(@NonNull Range creativeReach, float hitboxMargin, @
     }
 
     public static final class Builder {
-        private @NonNull Range creativeReach = Range.fromNbt(NbtMap.EMPTY);
+        private @Nullable Range creativeReach;
         private float hitboxMargin = 0f;
         private @NonNull Range reach = Range.fromNbt(NbtMap.EMPTY);
 
         private Builder() {
         }
 
-        public @NonNull Builder creativeReach(@NonNull Range creativeReach) {
+        public @NonNull Builder creativeReach(@Nullable Range creativeReach) {
             this.creativeReach = creativeReach;
             return this;
         }

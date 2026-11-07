@@ -14,8 +14,11 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:support} block component.
+ * <p>
+ * Add-on JSON <code>{shape}</code> is sent as <code>{shape: string}</code>.
+ * Captured from add-on files <code>capture/addon/behavior_pack/blocks/support.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.50, 26.60, capture bds-1.26.63.1-addon/custom_block_properties.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:support}</li>
  * <li>Minimum format version: 1.26.20</li>
  * <li>Experimental: no</li>

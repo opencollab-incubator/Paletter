@@ -13,7 +13,7 @@ import org.geysermc.paletter.component.NbtReader;
 /**
  * The {@code minecraft:publisher_on_use_on} item component.
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:publisher_on_use_on}</li>
  * <li>Minimum format version: unknown</li>
  * <li>Experimental: no</li>

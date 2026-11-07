@@ -14,8 +14,12 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:destruction_particles} block component.
+ * <p>
+ * Add-on JSON <code>{texture, tint_method?, particle_count?}</code> is sent as <code>{texture, tint_method: string, particle_count: int}</code>.
+ * defaults <code>"none"</code>, 100.
+ * Captured from add-on files <code>capture/addon/behavior_pack/blocks/destruction_particles.json</code>, <code>capture/addon/behavior_pack/blocks/destruction_particles_min.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.50, 26.60, capture bds-1.26.63.1-addon/custom_block_properties.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:destruction_particles}</li>
  * <li>Minimum format version: 1.26.20</li>
  * <li>Experimental: no</li>

@@ -14,8 +14,12 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:durability} item component.
+ * <p>
+ * Add-on JSON <code>{max_durability, damage_chance?}</code> is sent as <code>{max_durability: int, damage_chance: {min: int, max: int}}</code>.
+ * <code>damage_chance</code> always sent, default <b>100/100</b> for custom items (vanilla tools send 0..100).
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/durability.json</code>, <code>capture/addon/behavior_pack/items/durability_chance.json</code>, <code>capture/addon/behavior_pack/items/durability_sensor.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:durability}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>

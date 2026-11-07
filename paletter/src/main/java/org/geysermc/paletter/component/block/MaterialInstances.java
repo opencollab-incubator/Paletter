@@ -16,31 +16,38 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:material_instances} block component.
+ * <p>
+ * Add-on JSON <code>{"*": {texture, render_method, ambient_occlusion, face_dimming, isotropic, tint_method}, "up": "north"}</code> is sent as <code>{mappings: {up: {value: "north"}}, materials: {"*": {texture, render_method, tint_method, ambient_occlusion: float, packed_bools: byte}}}</code>.
+ * face aliases go to <code>mappings</code>; <b><code>face_dimming</code>/<code>isotropic</code> packed into <code>packed_bools</code></b>: bit 0 face_dimming, bit 1 isotropic, bit 2 always set in every capture (5 = default, 6 = no dimming + isotropic); <code>ambient_occlusion</code> float (bool true -&gt; 1.0); needs geometry.
+ * Captured from add-on files <code>capture/addon/behavior_pack/blocks/material_instances.json</code>, <code>capture/addon/behavior_pack/blocks/material_instances_min.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.50, 26.60, capture bds-1.26.63.1-addon/custom_block_properties.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:material_instances}</li>
  * <li>Minimum format version: 1.26.20</li>
  * <li>Experimental: no</li>
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/common/1.26.20/Material Instances Component.json}</li>
- * <li>Geyser CustomBlockRegistryPopulator#convertComponents: DIFFERS materials.*.isotropic: not sent by vanilla</li>
+ * <li>Geyser CustomBlockRegistryPopulator#convertComponents: DIFFERS materials.*.isotropic: not on the wire</li>
  * </ul>
  * <p>
  * Vanilla sends no {@code isotropic} key; flags are packed into {@code packed_bools}.
  *
- * @param mappings network {@code mappings}, compound (always empty in samples). always empty in vanilla
+ * @param mappings network {@code mappings}, compound. face alias (e.g. {@code up}) to the material instance it uses
  * @param materials network {@code materials}, compound. material instance name ({@code *}, a face, or a bone material name) to material
  */
-public record MaterialInstances(@NonNull NbtMap mappings, @NonNull Map<String, Material> materials) implements BlockComponent {
+public record MaterialInstances(
+    @NonNull Map<String, Mapping> mappings,
+    @NonNull Map<String, Material> materials
+) implements BlockComponent {
     public static final @NonNull ComponentType<MaterialInstances> TYPE = new ComponentType<>("minecraft:material_instances", ComponentType.Kind.BLOCK, Confidence.HIGH, "1.26.20", false, MaterialInstances::fromNbt);
 
     public MaterialInstances {
-        Objects.requireNonNull(mappings, "mappings");
+        mappings = NbtReader.copy(Objects.requireNonNull(mappings, "mappings"));
         materials = NbtReader.copy(Objects.requireNonNull(materials, "materials"));
     }
 
     public static @NonNull MaterialInstances fromNbt(@NonNull NbtMap nbt) {
         return new MaterialInstances(
-            NbtReader.read(nbt, "mappings", NbtReader::toCompound, NbtMap.EMPTY),
+            NbtReader.read(nbt, "mappings", NbtReader.mapOf(NbtReader.compound(Mapping::fromNbt)), Map.of()),
             NbtReader.read(nbt, "materials", NbtReader.mapOf(NbtReader.compound(Material::fromNbt)), Map.of())
         );
     }
@@ -53,7 +60,7 @@ public record MaterialInstances(@NonNull NbtMap mappings, @NonNull Map<String, M
     @Override
     public @NonNull NbtMap toNbt() {
         NbtMapBuilder builderNbt = NbtMap.builder();
-        builderNbt.put("mappings", mappings);
+        builderNbt.put("mappings", NbtReader.writeMap(mappings, Mapping::toNbt));
         builderNbt.put("materials", NbtReader.writeMap(materials, Material::toNbt));
         return builderNbt.build();
     }
@@ -70,13 +77,13 @@ public record MaterialInstances(@NonNull NbtMap mappings, @NonNull Map<String, M
     }
 
     public static final class Builder {
-        private @NonNull NbtMap mappings = NbtMap.EMPTY;
+        private @NonNull Map<String, Mapping> mappings = Map.of();
         private @NonNull Map<String, Material> materials = Map.of();
 
         private Builder() {
         }
 
-        public @NonNull Builder mappings(@NonNull NbtMap mappings) {
+        public @NonNull Builder mappings(@NonNull Map<String, Mapping> mappings) {
             this.mappings = mappings;
             return this;
         }
@@ -94,8 +101,35 @@ public record MaterialInstances(@NonNull NbtMap mappings, @NonNull Map<String, M
     /**
      * Nested compound.
      *
+     * @param value network {@code value}, string
+     */
+    public record Mapping(@NonNull String value) {
+        public Mapping {
+            Objects.requireNonNull(value, "value");
+        }
+
+        public static @NonNull Mapping of(@NonNull String value) {
+            return new Mapping(value);
+        }
+
+        public static @NonNull Mapping fromNbt(@NonNull NbtMap nbt) {
+            return new Mapping(
+                NbtReader.read(nbt, "value", NbtReader::toStr, "")
+            );
+        }
+
+        public @NonNull NbtMap toNbt() {
+            NbtMapBuilder builderNbt = NbtMap.builder();
+            builderNbt.put("value", value);
+            return builderNbt.build();
+        }
+    }
+
+    /**
+     * Nested compound.
+     *
      * @param ambientOcclusion network {@code ambient_occlusion}, float
-     * @param packedBools network {@code packed_bools}, byte. a bitset of the boolean material flags; vanilla sends 5. The bit layout is not verified
+     * @param packedBools network {@code packed_bools}, byte. bit set: bit 0 face_dimming, bit 1 isotropic, bit 2 always set by BDS (5 = JSON defaults)
      * @param renderMethod network {@code render_method}, string; optional (Geyser omits it when unset (CustomBlockRegistryPopulator#convertComponents)), not sent when null
      * @param texture network {@code texture}, string; optional (Geyser omits it when unset (CustomBlockRegistryPopulator#convertComponents)), not sent when null
      * @param tintMethod network {@code tint_method}, string; optional (Geyser omits it when unset (CustomBlockRegistryPopulator#convertComponents)), not sent when null

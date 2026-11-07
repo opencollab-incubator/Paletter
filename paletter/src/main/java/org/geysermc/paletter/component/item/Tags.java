@@ -16,8 +16,12 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:tags} item component.
+ * <p>
+ * Add-on JSON <code>{tags}</code> is sent as <code>{tags: [string]}</code>.
+ * also top level <code>item_tags</code>.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/tags.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:tags}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>

@@ -111,13 +111,13 @@ final class Shape {
     String incompatibility(Object value, String path) {
         Kind kind = Kind.of(value);
         if (this.kind != Kind.ANY && this.kind != kind) {
-            return path + ": vanilla " + this.kind.id() + ", sample " + kind.id();
+            return path + ": wire " + this.kind.id() + ", sample " + kind.id();
         }
         if (kind == Kind.COMPOUND && this.kind == Kind.COMPOUND) {
             for (Map.Entry<String, Object> entry : ((NbtMap) value).entrySet()) {
                 Shape field = fields.get(entry.getKey());
                 if (field == null) {
-                    return path + "." + entry.getKey() + ": not sent by vanilla";
+                    return path + "." + entry.getKey() + ": not on the wire";
                 }
                 String problem = field.incompatibility(entry.getValue(), path + "." + entry.getKey());
                 if (problem != null) {
@@ -128,7 +128,7 @@ final class Shape {
         if (kind == Kind.LIST && this.kind == Kind.LIST) {
             for (Object child : (List<?>) value) {
                 if (element == null) {
-                    return path + "[]: vanilla lists are always empty";
+                    return path + "[]: lists on the wire are always empty";
                 }
                 String problem = element.incompatibility(child, path + "[]");
                 if (problem != null) {

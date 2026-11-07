@@ -3,6 +3,8 @@ package org.geysermc.paletter;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.paletter.block.BlockComponents;
+import org.geysermc.paletter.block.CustomBlock;
+import org.geysermc.paletter.component.block.BlockDefinition;
 import org.geysermc.paletter.component.block.MaterialInstances;
 import org.geysermc.paletter.component.block.Transformation;
 import org.geysermc.paletter.component.item.Damage;
@@ -68,7 +70,7 @@ class ComponentBuilderTest {
     }
 
     @Test
-    void conveniencesKeepGeyserParity() {
+    void conveniencesMatchTheWire() {
         NbtMap nbt = components(ItemComponents.builder()
             .maxStackSize(16)
             .durability(250)
@@ -80,7 +82,7 @@ class ComponentBuilderTest {
             .build());
         assertEquals(NbtMap.builder().putByte("value", (byte) 16).build(), nbt.getCompound("minecraft:max_stack_size"));
         assertEquals(NbtMap.builder()
-            .putCompound("damage_chance", NbtMap.builder().putInt("max", 1).putInt("min", 1).build())
+            .putCompound("damage_chance", NbtMap.builder().putInt("max", 100).putInt("min", 100).build())
             .putInt("max_durability", 250)
             .build(), nbt.getCompound("minecraft:durability"));
         assertEquals(NbtMap.builder().putBoolean("do_swing_animation", true).build(), nbt.getCompound("minecraft:throwable"));
@@ -144,12 +146,64 @@ class ComponentBuilderTest {
             .build();
         NbtMap material = components.toNbt().getCompound("minecraft:material_instances").getCompound("materials").getCompound("*");
         assertFalse(material.containsKey("isotropic"));
-        assertEquals((byte) 1, material.get("packed_bools"));
+        // Bit 0 face dimming, bit 2 always set: the JSON defaults, as BDS sends them
+        assertEquals((byte) 5, material.get("packed_bools"));
         assertEquals(1f, material.get("ambient_occlusion"));
         assertEquals("alpha_test", material.getString("render_method"));
         assertFalse(material.containsKey("tint_method"));
         MaterialInstances instances = components.get(MaterialInstances.TYPE);
         assertEquals("custom", instances.materials().get("*").texture());
+    }
+
+    @Test
+    void isotropicWithoutDimmingPacksLikeTheCapture() {
+        // The capture's isotropic material without face dimming sends packed_bools 6
+        BlockComponents.Material material = new BlockComponents.Material("custom", "opaque", "none", 1f, false, true);
+        assertEquals((byte) 6, material.toComponent().packedBools());
+    }
+
+    @Test
+    void faceAliasesGoToMappings() {
+        NbtMap nbt = BlockComponents.builder()
+            .materials(Map.of("*", BlockComponents.Material.of("custom")), Map.of("up", "north"))
+            .build().toNbt().getCompound("minecraft:material_instances");
+        assertEquals(NbtMap.builder().putCompound("up", NbtMap.builder().putString("value", "north").build()).build(),
+            nbt.getCompound("mappings"));
+    }
+
+    @Test
+    void placementFiltersUseTheWireKeys() {
+        NbtMap condition = BlockComponents.builder()
+            .placementFilter(new BlockComponents.PlacementCondition(Set.of(BlockComponents.Face.UP),
+                List.of("minecraft:stone"), List.of("q.any_tag('stone')")))
+            .build().toNbt().getCompound("minecraft:placement_filter").getList("conditions", NbtType.COMPOUND).get(0);
+        assertEquals((byte) 2, condition.get("allowed_faces"));
+        List<NbtMap> filters = condition.getList("block_filter", NbtType.COMPOUND);
+        assertEquals(NbtMap.builder().putString("name", "minecraft:stone").build(), filters.get(0));
+        assertEquals(NbtMap.builder().putString("tags", "q.any_tag('stone')").putInt("tags_version", 13).build(), filters.get(1));
+    }
+
+    @Test
+    void customBlockPropertyDataHasTheTopLevelShapeOfBds() {
+        NbtMap data = CustomBlock.builder("test:block")
+            .components(BlockComponents.builder().lightEmission(3).build())
+            .tag("test:tag")
+            .material("dirt")
+            .build()
+            .propertyData(10000);
+        assertEquals(List.of("test:tag"), data.getList("blockTags", NbtType.STRING));
+        assertEquals(13, data.getInt("molangVersion"));
+        assertEquals(NbtMap.builder().putInt("block_id", 10000).putString("material", "dirt").build(),
+            data.getCompound("vanilla_block_data"));
+        assertEquals(NbtMap.builder().putString("category", "none").putString("group", "")
+            .putBoolean("is_hidden_in_commands", false).build(), data.getCompound("menu_category"));
+        assertTrue(data.containsKey("components") && data.containsKey("permutations") && data.containsKey("properties"));
+        BlockDefinition definition = BlockDefinition.fromNbt(data);
+        assertEquals(10000, definition.vanillaBlockData().blockId());
+        // Without tags or material, nothing is sent for them, as Geyser does today
+        NbtMap plain = CustomBlock.builder("test:plain").build().propertyData(10001);
+        assertFalse(plain.containsKey("blockTags"));
+        assertFalse(plain.getCompound("vanilla_block_data").containsKey("material"));
     }
 
     @Test

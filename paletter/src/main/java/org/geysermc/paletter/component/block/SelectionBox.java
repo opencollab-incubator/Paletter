@@ -16,8 +16,12 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:selection_box} block component.
+ * <p>
+ * Add-on JSON <code>false</code> / <code>{origin, size}</code> is sent as <code>{enabled: byte, origin: [float x3], size: [float x3]}</code>.
+ * <code>false</code> still sends the full cube origin/size.
+ * Captured from add-on files <code>capture/addon/behavior_pack/blocks/selection_box_box.json</code>, <code>capture/addon/behavior_pack/blocks/selection_box_false.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.50, 26.60, capture bds-1.26.63.1-addon/custom_block_properties.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:selection_box}</li>
  * <li>Minimum format version: 1.26.20</li>
  * <li>Experimental: no</li>

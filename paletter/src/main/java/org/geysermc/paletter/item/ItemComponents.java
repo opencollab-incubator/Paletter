@@ -2,7 +2,6 @@ package org.geysermc.paletter.item;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
@@ -237,10 +236,11 @@ public final class ItemComponents {
         }
 
         /**
-         * Sets the durability, with a damage chance of {@code min = max = 1} as Geyser sends it.
+         * Sets the durability, with a damage chance of {@code min = max = 100} (percent), the default BDS sends for
+         * custom items. Geyser sends 1/1.
          */
         public @NonNull Builder durability(int maxDurability) {
-            return durability(maxDurability, 1, 1);
+            return durability(maxDurability, 100, 100);
         }
 
         public @NonNull Builder durability(int maxDurability, int minDamageChance, int maxDamageChance) {
@@ -284,7 +284,7 @@ public final class ItemComponents {
          * @param slot the armor slot without prefix, e.g. {@code armor.chest}
          */
         public @NonNull Builder wearable(@NonNull String slot, int protection) {
-            return with(new Wearable(protection, slot.startsWith("slot.") ? slot : "slot." + slot));
+            return with(Wearable.builder().protection(protection).slot(slot.startsWith("slot.") ? slot : "slot." + slot).build());
         }
 
         /**
@@ -294,7 +294,7 @@ public final class ItemComponents {
             return with(BlockPlacer.builder()
                 .block(block)
                 .canUseBlockAsIcon(useBlockAsIcon)
-                .useOn(new NbtList<>(NbtType.STRING, Collections.emptyList()))
+                .useOn(List.of())
                 .build());
         }
 

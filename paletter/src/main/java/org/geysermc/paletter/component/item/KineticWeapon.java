@@ -3,6 +3,7 @@
 package org.geysermc.paletter.component.item;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.geysermc.paletter.component.ItemComponent;
@@ -14,13 +15,17 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:kinetic_weapon} item component.
+ * <p>
+ * Add-on JSON <code>{delay, reach, creative_reach, hitbox_margin, damage_multiplier, damage_modifier, *_conditions}</code> is sent as <code>{minecraft:kinetic_weapon: {...}}</code>.
+ * <b>double nested</b>; <code>delay</code> short (sent, also by vanilla spears: 12s), conditions <code>{max_duration: short (-1 default), min_speed: float, min_relative_speed: float}</code>; <code>creative_reach</code> and each <code>*_conditions</code> omitted when absent; <code>reach</code> default {0, 3}.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/kinetic_weapon.json</code>, <code>capture/addon/behavior_pack/items/kinetic_weapon_empty.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:kinetic_weapon}</li>
  * <li>Minimum format version: 1.26.30</li>
  * <li>Experimental: no</li>
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/item/1.26.30/minecraft_kinetic_weapon.json}</li>
- * <li>Geyser CustomItemRegistryPopulator#computeKineticWeaponProperties: DIFFERS delay: not sent by vanilla</li>
+ * <li>Geyser CustomItemRegistryPopulator#computeKineticWeaponProperties: DIFFERS delay: not on the wire</li>
  * </ul>
  * <p>
  * Vanilla 26.40 to 26.60 nest the payload in a compound named {@code minecraft:kinetic_weapon}; Geyser sends it flat.
@@ -59,59 +64,63 @@ public record KineticWeapon(@NonNull Weapon weapon) implements ItemComponent {
     /**
      * vanilla nests the payload in a compound named like the component
      *
-     * @param creativeReach network {@code creative_reach}, compound
-     * @param damageConditions network {@code damage_conditions}, compound
+     * @param creativeReach network {@code creative_reach}, compound; optional, not sent when null
+     * @param damageConditions network {@code damage_conditions}, compound; optional, not sent when null
      * @param damageModifier network {@code damage_modifier}, float
      * @param damageMultiplier network {@code damage_multiplier}, float
      * @param delay network {@code delay}, short
-     * @param dismountConditions network {@code dismount_conditions}, compound
+     * @param dismountConditions network {@code dismount_conditions}, compound; optional, not sent when null
      * @param hitboxMargin network {@code hitbox_margin}, float
-     * @param knockbackConditions network {@code knockback_conditions}, compound
+     * @param knockbackConditions network {@code knockback_conditions}, compound; optional, not sent when null
      * @param reach network {@code reach}, compound
      */
     public record Weapon(
-        @NonNull Range creativeReach,
-        @NonNull Conditions damageConditions,
+        @Nullable Range creativeReach,
+        @Nullable Conditions damageConditions,
         float damageModifier,
         float damageMultiplier,
         short delay,
-        @NonNull Conditions dismountConditions,
+        @Nullable Conditions dismountConditions,
         float hitboxMargin,
-        @NonNull Conditions knockbackConditions,
+        @Nullable Conditions knockbackConditions,
         @NonNull Range reach
     ) {
         public Weapon {
-            Objects.requireNonNull(creativeReach, "creativeReach");
-            Objects.requireNonNull(damageConditions, "damageConditions");
-            Objects.requireNonNull(dismountConditions, "dismountConditions");
-            Objects.requireNonNull(knockbackConditions, "knockbackConditions");
             Objects.requireNonNull(reach, "reach");
         }
 
         public static @NonNull Weapon fromNbt(@NonNull NbtMap nbt) {
             return new Weapon(
-                NbtReader.read(nbt, "creative_reach", NbtReader.compound(Range::fromNbt), Range.fromNbt(NbtMap.EMPTY)),
-                NbtReader.read(nbt, "damage_conditions", NbtReader.compound(Conditions::fromNbt), Conditions.fromNbt(NbtMap.EMPTY)),
+                NbtReader.read(nbt, "creative_reach", NbtReader.compound(Range::fromNbt), null),
+                NbtReader.read(nbt, "damage_conditions", NbtReader.compound(Conditions::fromNbt), null),
                 NbtReader.read(nbt, "damage_modifier", NbtReader::toFloat, 0f),
                 NbtReader.read(nbt, "damage_multiplier", NbtReader::toFloat, 0f),
                 NbtReader.read(nbt, "delay", NbtReader::toShort, (short) 0),
-                NbtReader.read(nbt, "dismount_conditions", NbtReader.compound(Conditions::fromNbt), Conditions.fromNbt(NbtMap.EMPTY)),
+                NbtReader.read(nbt, "dismount_conditions", NbtReader.compound(Conditions::fromNbt), null),
                 NbtReader.read(nbt, "hitbox_margin", NbtReader::toFloat, 0f),
-                NbtReader.read(nbt, "knockback_conditions", NbtReader.compound(Conditions::fromNbt), Conditions.fromNbt(NbtMap.EMPTY)),
+                NbtReader.read(nbt, "knockback_conditions", NbtReader.compound(Conditions::fromNbt), null),
                 NbtReader.read(nbt, "reach", NbtReader.compound(Range::fromNbt), Range.fromNbt(NbtMap.EMPTY))
             );
         }
 
         public @NonNull NbtMap toNbt() {
             NbtMapBuilder builderNbt = NbtMap.builder();
-            builderNbt.put("creative_reach", creativeReach.toNbt());
-            builderNbt.put("damage_conditions", damageConditions.toNbt());
+            if (creativeReach != null) {
+                builderNbt.put("creative_reach", creativeReach.toNbt());
+            }
+            if (damageConditions != null) {
+                builderNbt.put("damage_conditions", damageConditions.toNbt());
+            }
             builderNbt.put("damage_modifier", damageModifier);
             builderNbt.put("damage_multiplier", damageMultiplier);
             builderNbt.put("delay", delay);
-            builderNbt.put("dismount_conditions", dismountConditions.toNbt());
+            if (dismountConditions != null) {
+                builderNbt.put("dismount_conditions", dismountConditions.toNbt());
+            }
             builderNbt.put("hitbox_margin", hitboxMargin);
-            builderNbt.put("knockback_conditions", knockbackConditions.toNbt());
+            if (knockbackConditions != null) {
+                builderNbt.put("knockback_conditions", knockbackConditions.toNbt());
+            }
             builderNbt.put("reach", reach.toNbt());
             return builderNbt.build();
         }
@@ -135,25 +144,25 @@ public record KineticWeapon(@NonNull Weapon weapon) implements ItemComponent {
         }
 
         public static final class Builder {
-            private @NonNull Range creativeReach = Range.fromNbt(NbtMap.EMPTY);
-            private @NonNull Conditions damageConditions = Conditions.fromNbt(NbtMap.EMPTY);
+            private @Nullable Range creativeReach;
+            private @Nullable Conditions damageConditions;
             private float damageModifier = 0f;
             private float damageMultiplier = 0f;
             private short delay = (short) 0;
-            private @NonNull Conditions dismountConditions = Conditions.fromNbt(NbtMap.EMPTY);
+            private @Nullable Conditions dismountConditions;
             private float hitboxMargin = 0f;
-            private @NonNull Conditions knockbackConditions = Conditions.fromNbt(NbtMap.EMPTY);
+            private @Nullable Conditions knockbackConditions;
             private @NonNull Range reach = Range.fromNbt(NbtMap.EMPTY);
 
             private Builder() {
             }
 
-            public @NonNull Builder creativeReach(@NonNull Range creativeReach) {
+            public @NonNull Builder creativeReach(@Nullable Range creativeReach) {
                 this.creativeReach = creativeReach;
                 return this;
             }
 
-            public @NonNull Builder damageConditions(@NonNull Conditions damageConditions) {
+            public @NonNull Builder damageConditions(@Nullable Conditions damageConditions) {
                 this.damageConditions = damageConditions;
                 return this;
             }
@@ -173,7 +182,7 @@ public record KineticWeapon(@NonNull Weapon weapon) implements ItemComponent {
                 return this;
             }
 
-            public @NonNull Builder dismountConditions(@NonNull Conditions dismountConditions) {
+            public @NonNull Builder dismountConditions(@Nullable Conditions dismountConditions) {
                 this.dismountConditions = dismountConditions;
                 return this;
             }
@@ -183,7 +192,7 @@ public record KineticWeapon(@NonNull Weapon weapon) implements ItemComponent {
                 return this;
             }
 
-            public @NonNull Builder knockbackConditions(@NonNull Conditions knockbackConditions) {
+            public @NonNull Builder knockbackConditions(@Nullable Conditions knockbackConditions) {
                 this.knockbackConditions = knockbackConditions;
                 return this;
             }

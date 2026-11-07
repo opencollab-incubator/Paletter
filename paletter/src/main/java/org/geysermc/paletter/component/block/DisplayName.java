@@ -9,26 +9,27 @@ import org.geysermc.paletter.component.BlockComponent;
 import org.geysermc.paletter.component.ComponentType;
 import org.geysermc.paletter.component.Confidence;
 import org.geysermc.paletter.component.NbtReader;
-import org.geysermc.paletter.component.Unverified;
 
 import java.util.Objects;
 
 /**
  * The {@code minecraft:display_name} block component.
+ * <p>
+ * Add-on JSON <code>"..."</code> is sent as <code>{value: string}</code>.
+ * Captured from add-on files <code>capture/addon/behavior_pack/blocks/display_name.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: from Geyser's production encoder only (confidence MEDIUM); no wire capture yet</li>
+ * <li>Network shape: inferred from wire NBT of capture bds-1.26.63.1-addon/custom_block_properties.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:display_name}</li>
  * <li>Minimum format version: 1.26.20</li>
  * <li>Experimental: no</li>
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/common/1.26.20/Display Name.json}</li>
- * <li>Geyser CustomBlockRegistryPopulator#convertComponents: only evidence</li>
+ * <li>Geyser CustomBlockRegistryPopulator#convertComponents: compatible</li>
  * </ul>
  *
  * @param value network {@code value}, string
  */
-@Unverified
 public record DisplayName(@NonNull String value) implements BlockComponent {
-    public static final @NonNull ComponentType<DisplayName> TYPE = new ComponentType<>("minecraft:display_name", ComponentType.Kind.BLOCK, Confidence.MEDIUM, "1.26.20", false, DisplayName::fromNbt);
+    public static final @NonNull ComponentType<DisplayName> TYPE = new ComponentType<>("minecraft:display_name", ComponentType.Kind.BLOCK, Confidence.HIGH, "1.26.20", false, DisplayName::fromNbt);
 
     public DisplayName {
         Objects.requireNonNull(value, "value");

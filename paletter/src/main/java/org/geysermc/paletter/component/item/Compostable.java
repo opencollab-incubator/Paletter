@@ -12,13 +12,17 @@ import org.geysermc.paletter.component.NbtReader;
 
 /**
  * The {@code minecraft:compostable} item component.
+ * <p>
+ * Add-on JSON <code>{composting_chance: 50}</code> is sent as <code>{composting_chance: byte}</code>.
+ * byte (Geyser sends int).
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/compostable.json</code>, <code>capture/addon/behavior_pack/items/compostable_max.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:compostable}</li>
  * <li>Minimum format version: 1.26.30</li>
  * <li>Experimental: no</li>
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/item/1.26.30/minecraft_compostable.json}</li>
- * <li>Geyser CustomItemRegistryPopulator#createComponentNbt: DIFFERS composting_chance: vanilla byte, sample int</li>
+ * <li>Geyser CustomItemRegistryPopulator#createComponentNbt: DIFFERS composting_chance: wire byte, sample int</li>
  * </ul>
  *
  * @param compostingChance network {@code composting_chance}, byte

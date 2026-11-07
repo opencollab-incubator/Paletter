@@ -5,31 +5,34 @@ package org.geysermc.paletter.component.item;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
+import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.paletter.component.ItemComponent;
 import org.geysermc.paletter.component.ComponentType;
 import org.geysermc.paletter.component.Confidence;
 import org.geysermc.paletter.component.NbtReader;
-import org.geysermc.paletter.component.Unverified;
 
 import java.util.List;
 import java.util.Objects;
 
 /**
  * The {@code minecraft:dyeable} item component.
+ * <p>
+ * Add-on JSON <code>{}</code> / <code>{default_color: "#ff0080"}</code> / <code>[10,20,30]</code> is sent as <code>{default_color: [int, int, int]}</code>.
+ * hex and RGB both become an int list; default <code>[255,255,255]</code>.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/dyeable.json</code>, <code>capture/addon/behavior_pack/items/dyeable_hex.json</code>, <code>capture/addon/behavior_pack/items/dyeable_rgb.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: from Geyser's production encoder only (confidence MEDIUM); no wire capture yet</li>
+ * <li>Network shape: inferred from wire NBT of capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:dyeable}</li>
  * <li>Minimum format version: 1.26.30</li>
  * <li>Experimental: no</li>
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/item/1.26.30/minecraft_dyeable.json}</li>
- * <li>Geyser CustomItemRegistryPopulator#createComponentNbt: only evidence</li>
+ * <li>Geyser CustomItemRegistryPopulator#createComponentNbt: DIFFERS default_color: wire list, sample int_array</li>
  * </ul>
  *
- * @param defaultColor network {@code default_color}, int_array
+ * @param defaultColor network {@code default_color}, list of int. red, green, blue; JSON hex and RGB both become this list
  */
-@Unverified
 public record Dyeable(@NonNull List<Integer> defaultColor) implements ItemComponent {
-    public static final @NonNull ComponentType<Dyeable> TYPE = new ComponentType<>("minecraft:dyeable", ComponentType.Kind.ITEM, Confidence.MEDIUM, "1.26.30", false, Dyeable::fromNbt);
+    public static final @NonNull ComponentType<Dyeable> TYPE = new ComponentType<>("minecraft:dyeable", ComponentType.Kind.ITEM, Confidence.HIGH, "1.26.30", false, Dyeable::fromNbt);
 
     public Dyeable {
         defaultColor = NbtReader.copy(Objects.requireNonNull(defaultColor, "defaultColor"));
@@ -41,7 +44,7 @@ public record Dyeable(@NonNull List<Integer> defaultColor) implements ItemCompon
 
     public static @NonNull Dyeable fromNbt(@NonNull NbtMap nbt) {
         return new Dyeable(
-            NbtReader.read(nbt, "default_color", NbtReader::toIntList, List.of())
+            NbtReader.read(nbt, "default_color", NbtReader.listOf(NbtReader::toInt), List.of())
         );
     }
 
@@ -53,7 +56,7 @@ public record Dyeable(@NonNull List<Integer> defaultColor) implements ItemCompon
     @Override
     public @NonNull NbtMap toNbt() {
         NbtMapBuilder builderNbt = NbtMap.builder();
-        builderNbt.put("default_color", NbtReader.intArray(defaultColor));
+        builderNbt.put("default_color", NbtReader.writeList(NbtType.INT, defaultColor));
         return builderNbt.build();
     }
 }

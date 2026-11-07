@@ -13,8 +13,12 @@ import org.geysermc.paletter.component.NbtReader;
 
 /**
  * The {@code minecraft:use_modifiers} item component.
+ * <p>
+ * Add-on JSON <code>{use_duration, movement_modifier?, emit_vibrations?, start_sound?}</code> is sent as <code>{use_duration: float, movement_modifier?: float, emit_vibrations: byte, start_sound?: string, start_using: "if_first"}</code>.
+ * <b><code>start_using</code> added</b> (custom default <code>"if_first"</code>, vanilla food <code>"always"</code>); <code>movement_modifier</code> omitted when absent.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/use_modifiers.json</code>, <code>capture/addon/behavior_pack/items/use_modifiers_full.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:use_modifiers}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>
@@ -23,14 +27,14 @@ import org.geysermc.paletter.component.NbtReader;
  * </ul>
  *
  * @param emitVibrations network {@code emit_vibrations}, byte (0 or 1 in every sample); optional (Geyser omits it (CustomItemRegistryPopulator#computeUseEffectsProperties)), not sent when null
- * @param movementModifier network {@code movement_modifier}, float
+ * @param movementModifier network {@code movement_modifier}, float; optional, not sent when null
  * @param startSound network {@code start_sound}, string; optional, not sent when null
  * @param startUsing network {@code start_using}, string; optional (Geyser omits it (CustomItemRegistryPopulator#computeUseEffectsProperties)), not sent when null
  * @param useDuration network {@code use_duration}, float
  */
 public record UseModifiers(
     @Nullable Boolean emitVibrations,
-    float movementModifier,
+    @Nullable Float movementModifier,
     @Nullable String startSound,
     @Nullable String startUsing,
     float useDuration
@@ -40,7 +44,7 @@ public record UseModifiers(
     public static @NonNull UseModifiers fromNbt(@NonNull NbtMap nbt) {
         return new UseModifiers(
             NbtReader.read(nbt, "emit_vibrations", NbtReader::toBool, null),
-            NbtReader.read(nbt, "movement_modifier", NbtReader::toFloat, 0f),
+            NbtReader.read(nbt, "movement_modifier", NbtReader::toFloat, null),
             NbtReader.read(nbt, "start_sound", NbtReader::toStr, null),
             NbtReader.read(nbt, "start_using", NbtReader::toStr, null),
             NbtReader.read(nbt, "use_duration", NbtReader::toFloat, 0f)
@@ -58,7 +62,9 @@ public record UseModifiers(
         if (emitVibrations != null) {
             builderNbt.put("emit_vibrations", NbtReader.bool(emitVibrations));
         }
-        builderNbt.put("movement_modifier", movementModifier);
+        if (movementModifier != null) {
+            builderNbt.put("movement_modifier", movementModifier);
+        }
         if (startSound != null) {
             builderNbt.put("start_sound", startSound);
         }
@@ -85,7 +91,7 @@ public record UseModifiers(
 
     public static final class Builder {
         private @Nullable Boolean emitVibrations;
-        private float movementModifier = 0f;
+        private @Nullable Float movementModifier;
         private @Nullable String startSound;
         private @Nullable String startUsing;
         private float useDuration = 0f;
@@ -98,7 +104,7 @@ public record UseModifiers(
             return this;
         }
 
-        public @NonNull Builder movementModifier(float movementModifier) {
+        public @NonNull Builder movementModifier(@Nullable Float movementModifier) {
             this.movementModifier = movementModifier;
             return this;
         }

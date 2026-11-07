@@ -9,28 +9,30 @@ import org.geysermc.paletter.component.ItemComponent;
 import org.geysermc.paletter.component.ComponentType;
 import org.geysermc.paletter.component.Confidence;
 import org.geysermc.paletter.component.NbtReader;
-import org.geysermc.paletter.component.Unverified;
 
 import java.util.List;
 import java.util.Objects;
 
 /**
  * The {@code minecraft:digger} item component.
+ * <p>
+ * Add-on JSON <code>{use_efficiency, destroy_speeds: [{block, speed}]}</code> is sent as <code>{use_efficiency: byte, destroy_speeds: [{block: {name, states, tags}, speed: int}]}</code>.
+ * block descriptor always the full triple (<code>name</code> "" for tag filters, <code>tags</code> molang string); <b>state values become ints</b> (<code>pillar_axis: "y"</code> -&gt; <code>0</code>); <code>speed</code> int.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/digger.json</code>, <code>capture/addon/behavior_pack/items/digger_empty.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: from Geyser's production encoder only (confidence MEDIUM); no wire capture yet</li>
+ * <li>Network shape: inferred from wire NBT of capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:digger}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/item/1.20.50/minecraft_digger.json}</li>
- * <li>Geyser CustomItemRegistryPopulator#computeToolProperties: only evidence</li>
+ * <li>Geyser CustomItemRegistryPopulator#computeToolProperties: compatible</li>
  * </ul>
  *
  * @param destroySpeeds network {@code destroy_speeds}, list of compound
  * @param useEfficiency network {@code use_efficiency}, byte (0 or 1 in every sample)
  */
-@Unverified
 public record Digger(@NonNull List<DestroySpeed> destroySpeeds, boolean useEfficiency) implements ItemComponent {
-    public static final @NonNull ComponentType<Digger> TYPE = new ComponentType<>("minecraft:digger", ComponentType.Kind.ITEM, Confidence.MEDIUM, "1.20.50", false, Digger::fromNbt);
+    public static final @NonNull ComponentType<Digger> TYPE = new ComponentType<>("minecraft:digger", ComponentType.Kind.ITEM, Confidence.HIGH, "1.20.50", false, Digger::fromNbt);
 
     public Digger {
         destroySpeeds = NbtReader.copy(Objects.requireNonNull(destroySpeeds, "destroySpeeds"));
@@ -152,7 +154,7 @@ public record Digger(@NonNull List<DestroySpeed> destroySpeeds, boolean useEffic
      * Nested compound.
      *
      * @param name network {@code name}, string
-     * @param states network {@code states}, compound (always empty in samples)
+     * @param states network {@code states}, compound. state name to value; state values are ints on the wire
      * @param tags network {@code tags}, string
      */
     public record BlockDescriptor(@NonNull String name, @NonNull NbtMap states, @NonNull String tags) {

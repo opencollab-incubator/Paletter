@@ -12,8 +12,11 @@ import org.geysermc.paletter.component.NbtReader;
 
 /**
  * The {@code minecraft:storage_weight_modifier} item component.
+ * <p>
+ * Add-on JSON <code>{weight_in_storage_item}</code> is sent as <code>{weight_in_storage_item: int}</code>.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/storage_weight_modifier.json</code>, <code>capture/addon/behavior_pack/items/storage_weight_modifier_zero.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:storage_weight_modifier}</li>
  * <li>Minimum format version: 1.26.30</li>
  * <li>Experimental: no</li>

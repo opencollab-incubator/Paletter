@@ -3,52 +3,53 @@
 package org.geysermc.paletter.component.item;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.geysermc.paletter.component.ItemComponent;
 import org.geysermc.paletter.component.ComponentType;
 import org.geysermc.paletter.component.Confidence;
 import org.geysermc.paletter.component.NbtReader;
-import org.geysermc.paletter.component.Unverified;
 
 import java.util.List;
 import java.util.Objects;
 
 /**
  * The {@code minecraft:entity_placer} item component.
+ * <p>
+ * Add-on JSON <code>{entity, use_on?, dispense_on?}</code> is sent as <code>{entity: "minecraft:pig&lt;&gt;", use_on: [...], dispense_on: [...]}</code>.
+ * <b>entity gets a <code>&lt;&gt;</code> (spawn event) suffix</b>; descriptors as in block_placer; adds <code>minecraft:publisher_on_use_on</code>.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/entity_placer.json</code>, <code>capture/addon/behavior_pack/items/entity_placer_full.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: from Geyser's production encoder only (confidence MEDIUM); no wire capture yet</li>
+ * <li>Network shape: inferred from wire NBT of capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:entity_placer}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/item/1.20.50/minecraft_entity_placer.json}</li>
- * <li>Geyser CustomItemRegistryPopulator#computeEntityPlacerProperties: only evidence</li>
+ * <li>Geyser CustomItemRegistryPopulator#computeEntityPlacerProperties: compatible</li>
  * </ul>
  *
- * @param dispenseOn network {@code dispense_on}, list (always empty in samples)
- * @param entity network {@code entity}, string
- * @param useOn network {@code use_on}, list (always empty in samples)
+ * @param dispenseOn network {@code dispense_on}, list of compound
+ * @param entity network {@code entity}, string. entity identifier with a spawn event suffix, e.g. {@code minecraft:pig<>}
+ * @param useOn network {@code use_on}, list of compound
  */
-@Unverified
 public record EntityPlacer(
-    @NonNull NbtList<?> dispenseOn,
+    @NonNull List<BlockDescriptor> dispenseOn,
     @NonNull String entity,
-    @NonNull NbtList<?> useOn
+    @NonNull List<BlockDescriptor> useOn
 ) implements ItemComponent {
-    public static final @NonNull ComponentType<EntityPlacer> TYPE = new ComponentType<>("minecraft:entity_placer", ComponentType.Kind.ITEM, Confidence.MEDIUM, "1.20.50", false, EntityPlacer::fromNbt);
+    public static final @NonNull ComponentType<EntityPlacer> TYPE = new ComponentType<>("minecraft:entity_placer", ComponentType.Kind.ITEM, Confidence.HIGH, "1.20.50", false, EntityPlacer::fromNbt);
 
     public EntityPlacer {
-        Objects.requireNonNull(dispenseOn, "dispenseOn");
+        dispenseOn = NbtReader.copy(Objects.requireNonNull(dispenseOn, "dispenseOn"));
         Objects.requireNonNull(entity, "entity");
-        Objects.requireNonNull(useOn, "useOn");
+        useOn = NbtReader.copy(Objects.requireNonNull(useOn, "useOn"));
     }
 
     public static @NonNull EntityPlacer fromNbt(@NonNull NbtMap nbt) {
         return new EntityPlacer(
-            NbtReader.read(nbt, "dispense_on", NbtReader::toRawList, NbtList.EMPTY),
+            NbtReader.read(nbt, "dispense_on", NbtReader.listOf(NbtReader.compound(BlockDescriptor::fromNbt)), List.of()),
             NbtReader.read(nbt, "entity", NbtReader::toStr, ""),
-            NbtReader.read(nbt, "use_on", NbtReader::toRawList, NbtList.EMPTY)
+            NbtReader.read(nbt, "use_on", NbtReader.listOf(NbtReader.compound(BlockDescriptor::fromNbt)), List.of())
         );
     }
 
@@ -60,9 +61,9 @@ public record EntityPlacer(
     @Override
     public @NonNull NbtMap toNbt() {
         NbtMapBuilder builderNbt = NbtMap.builder();
-        builderNbt.put("dispense_on", dispenseOn);
+        builderNbt.put("dispense_on", NbtReader.writeList(dispenseOn, BlockDescriptor::toNbt));
         builderNbt.put("entity", entity);
-        builderNbt.put("use_on", useOn);
+        builderNbt.put("use_on", NbtReader.writeList(useOn, BlockDescriptor::toNbt));
         return builderNbt.build();
     }
 
@@ -79,14 +80,14 @@ public record EntityPlacer(
     }
 
     public static final class Builder {
-        private @NonNull NbtList<?> dispenseOn = NbtList.EMPTY;
+        private @NonNull List<BlockDescriptor> dispenseOn = List.of();
         private @NonNull String entity = "";
-        private @NonNull NbtList<?> useOn = NbtList.EMPTY;
+        private @NonNull List<BlockDescriptor> useOn = List.of();
 
         private Builder() {
         }
 
-        public @NonNull Builder dispenseOn(@NonNull NbtList<?> dispenseOn) {
+        public @NonNull Builder dispenseOn(@NonNull List<BlockDescriptor> dispenseOn) {
             this.dispenseOn = dispenseOn;
             return this;
         }
@@ -96,13 +97,84 @@ public record EntityPlacer(
             return this;
         }
 
-        public @NonNull Builder useOn(@NonNull NbtList<?> useOn) {
+        public @NonNull Builder useOn(@NonNull List<BlockDescriptor> useOn) {
             this.useOn = useOn;
             return this;
         }
 
         public @NonNull EntityPlacer build() {
             return new EntityPlacer(dispenseOn, entity, useOn);
+        }
+    }
+
+    /**
+     * Nested compound.
+     *
+     * @param name network {@code name}, string
+     * @param states network {@code states}, compound (always empty in samples)
+     * @param tags network {@code tags}, string
+     */
+    public record BlockDescriptor(@NonNull String name, @NonNull NbtMap states, @NonNull String tags) {
+        public BlockDescriptor {
+            Objects.requireNonNull(name, "name");
+            Objects.requireNonNull(states, "states");
+            Objects.requireNonNull(tags, "tags");
+        }
+
+        public static @NonNull BlockDescriptor fromNbt(@NonNull NbtMap nbt) {
+            return new BlockDescriptor(
+                NbtReader.read(nbt, "name", NbtReader::toStr, ""),
+                NbtReader.read(nbt, "states", NbtReader::toCompound, NbtMap.EMPTY),
+                NbtReader.read(nbt, "tags", NbtReader::toStr, "")
+            );
+        }
+
+        public @NonNull NbtMap toNbt() {
+            NbtMapBuilder builderNbt = NbtMap.builder();
+            builderNbt.put("name", name);
+            builderNbt.put("states", states);
+            builderNbt.put("tags", tags);
+            return builderNbt.build();
+        }
+
+        public static @NonNull Builder builder() {
+            return new Builder();
+        }
+
+        public @NonNull Builder toBuilder() {
+            Builder builder = new Builder();
+            builder.name = name;
+            builder.states = states;
+            builder.tags = tags;
+            return builder;
+        }
+
+        public static final class Builder {
+            private @NonNull String name = "";
+            private @NonNull NbtMap states = NbtMap.EMPTY;
+            private @NonNull String tags = "";
+
+            private Builder() {
+            }
+
+            public @NonNull Builder name(@NonNull String name) {
+                this.name = name;
+                return this;
+            }
+
+            public @NonNull Builder states(@NonNull NbtMap states) {
+                this.states = states;
+                return this;
+            }
+
+            public @NonNull Builder tags(@NonNull String tags) {
+                this.tags = tags;
+                return this;
+            }
+
+            public @NonNull BlockDescriptor build() {
+                return new BlockDescriptor(name, states, tags);
+            }
         }
     }
 }

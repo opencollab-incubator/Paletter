@@ -15,7 +15,7 @@ import java.util.Objects;
  * The {@code item_properties} compound of a data driven item: legacy flat properties, sent next to the
  * components. All fields are optional; absent ones are not sent.
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Geyser CustomItemRegistryPopulator#createComponentNbt: compatible</li>
  * </ul>
  * <p>
@@ -31,15 +31,16 @@ import java.util.Objects;
  * @param foil network {@code foil}, byte (0 or 1 in every sample); optional (item properties are all optional), not sent when null
  * @param frameCount network {@code frame_count}, int; optional (item properties are all optional), not sent when null
  * @param handEquipped network {@code hand_equipped}, byte (0 or 1 in every sample); optional (item properties are all optional), not sent when null
- * @param hiddenInCommands network {@code hidden_in_commands}, byte; optional (Geyser omits it (CustomItemRegistryPopulator#createComponentNbt)), not sent when null
+ * @param hiddenInCommands network {@code hidden_in_commands}, byte; optional (Geyser omits it (CustomItemRegistryPopulator#createComponentNbt)), not sent when null. 2 = not set (default), 1 = hidden; not a boolean
+ * @param hoverTextColor network {@code hover_text_color}, string; optional, not sent when null. a formatting code, e.g. {@code §c} for JSON {@code "red"}
  * @param liquidClipped network {@code liquid_clipped}, byte (0 or 1 in every sample); optional (Geyser omits it (CustomItemRegistryPopulator#createComponentNbt)), not sent when null
  * @param maxStackSize network {@code max_stack_size}, int; optional (item properties are all optional), not sent when null
  * @param icon network {@code minecraft:icon}, compound; optional, not sent when null
  * @param miningSpeed network {@code mining_speed}, float; optional (item properties are all optional), not sent when null
  * @param shouldDespawn network {@code should_despawn}, byte (0 or 1 in every sample); optional (Geyser omits it (CustomItemRegistryPopulator#createComponentNbt)), not sent when null
  * @param stackedByData network {@code stacked_by_data}, byte (0 or 1 in every sample); optional (Geyser omits it (CustomItemRegistryPopulator#createComponentNbt)), not sent when null
- * @param useAnimation network {@code use_animation}, int; optional (item properties are all optional), not sent when null
- * @param useDuration network {@code use_duration}, int; optional (item properties are all optional), not sent when null
+ * @param useAnimation network {@code use_animation}, int; optional (item properties are all optional), not sent when null. enum: eat 1, drink 2, bow 4, spear 6, ...
+ * @param useDuration network {@code use_duration}, int; optional (item properties are all optional), not sent when null. ticks; JSON use_modifiers.use_duration is in seconds
  */
 public record ItemProperties(
     @Nullable Boolean allowOffHand,
@@ -53,6 +54,7 @@ public record ItemProperties(
     @Nullable Integer frameCount,
     @Nullable Boolean handEquipped,
     @Nullable Byte hiddenInCommands,
+    @Nullable String hoverTextColor,
     @Nullable Boolean liquidClipped,
     @Nullable Integer maxStackSize,
     @Nullable Icon icon,
@@ -75,6 +77,7 @@ public record ItemProperties(
             NbtReader.read(nbt, "frame_count", NbtReader::toInt, null),
             NbtReader.read(nbt, "hand_equipped", NbtReader::toBool, null),
             NbtReader.read(nbt, "hidden_in_commands", NbtReader::toByte, null),
+            NbtReader.read(nbt, "hover_text_color", NbtReader::toStr, null),
             NbtReader.read(nbt, "liquid_clipped", NbtReader::toBool, null),
             NbtReader.read(nbt, "max_stack_size", NbtReader::toInt, null),
             NbtReader.read(nbt, "minecraft:icon", NbtReader.compound(Icon::fromNbt), null),
@@ -121,6 +124,9 @@ public record ItemProperties(
         if (hiddenInCommands != null) {
             builderNbt.put("hidden_in_commands", hiddenInCommands);
         }
+        if (hoverTextColor != null) {
+            builderNbt.put("hover_text_color", hoverTextColor);
+        }
         if (liquidClipped != null) {
             builderNbt.put("liquid_clipped", NbtReader.bool(liquidClipped));
         }
@@ -165,6 +171,7 @@ public record ItemProperties(
         builder.frameCount = frameCount;
         builder.handEquipped = handEquipped;
         builder.hiddenInCommands = hiddenInCommands;
+        builder.hoverTextColor = hoverTextColor;
         builder.liquidClipped = liquidClipped;
         builder.maxStackSize = maxStackSize;
         builder.icon = icon;
@@ -188,6 +195,7 @@ public record ItemProperties(
         private @Nullable Integer frameCount;
         private @Nullable Boolean handEquipped;
         private @Nullable Byte hiddenInCommands;
+        private @Nullable String hoverTextColor;
         private @Nullable Boolean liquidClipped;
         private @Nullable Integer maxStackSize;
         private @Nullable Icon icon;
@@ -255,6 +263,11 @@ public record ItemProperties(
             return this;
         }
 
+        public @NonNull Builder hoverTextColor(@Nullable String hoverTextColor) {
+            this.hoverTextColor = hoverTextColor;
+            return this;
+        }
+
         public @NonNull Builder liquidClipped(@Nullable Boolean liquidClipped) {
             this.liquidClipped = liquidClipped;
             return this;
@@ -296,7 +309,7 @@ public record ItemProperties(
         }
 
         public @NonNull ItemProperties build() {
-            return new ItemProperties(allowOffHand, canDestroyInCreative, creativeCategory, creativeGroup, damage, enchantableSlot, enchantableValue, foil, frameCount, handEquipped, hiddenInCommands, liquidClipped, maxStackSize, icon, miningSpeed, shouldDespawn, stackedByData, useAnimation, useDuration);
+            return new ItemProperties(allowOffHand, canDestroyInCreative, creativeCategory, creativeGroup, damage, enchantableSlot, enchantableValue, foil, frameCount, handEquipped, hiddenInCommands, hoverTextColor, liquidClipped, maxStackSize, icon, miningSpeed, shouldDespawn, stackedByData, useAnimation, useDuration);
         }
     }
 

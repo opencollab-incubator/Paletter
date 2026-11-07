@@ -17,6 +17,9 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:render_offsets} item component.
+ * <p>
+ * Add-on JSON — is sent as —.
+ * no longer an item component in 1.26 JSON; nothing to capture.
  * <ul>
  * <li>Network shape: from Geyser's production encoder only (confidence MEDIUM); no wire capture yet</li>
  * <li>Add-on JSON name: {@code minecraft:render_offsets}</li>
@@ -24,11 +27,14 @@ import java.util.Objects;
  * <li>Experimental: no</li>
  * <li>Geyser CustomItemRegistryPopulator#toNbtMap(CustomRenderOffsets): only evidence</li>
  * </ul>
+ * <p>
+ * No longer an add-on JSON component in 1.26; only Geyser still sends it. Unverified on the wire.
  *
  * @param mainHand network {@code main_hand}, compound
  * @param offHand network {@code off_hand}, compound
  */
 @Unverified
+@Deprecated
 public record RenderOffsets(@NonNull Hand mainHand, @NonNull Hand offHand) implements ItemComponent {
     public static final @NonNull ComponentType<RenderOffsets> TYPE = new ComponentType<>("minecraft:render_offsets", ComponentType.Kind.ITEM, Confidence.MEDIUM, null, false, RenderOffsets::fromNbt);
 

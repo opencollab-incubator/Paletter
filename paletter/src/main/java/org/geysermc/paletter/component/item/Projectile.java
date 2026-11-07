@@ -15,8 +15,12 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:projectile} item component.
+ * <p>
+ * Add-on JSON <code>{projectile_entity, minimum_critical_power?}</code> is sent as <code>{projectile_entity: "minecraft:snowball&lt;&gt;", minimum_critical_power: float}</code>.
+ * namespace added, <code>&lt;&gt;</code> suffix.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/projectile.json</code>, <code>capture/addon/behavior_pack/items/projectile_min.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:projectile}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>
@@ -25,7 +29,7 @@ import java.util.Objects;
  * </ul>
  *
  * @param minimumCriticalPower network {@code minimum_critical_power}, float; optional (Geyser omits it (CustomItemRegistryPopulator#computeProjectileProperties)), not sent when null
- * @param projectileEntity network {@code projectile_entity}, string
+ * @param projectileEntity network {@code projectile_entity}, string. entity identifier with a spawn event suffix, e.g. {@code minecraft:snowball<>}
  */
 public record Projectile(@Nullable Float minimumCriticalPower, @NonNull String projectileEntity) implements ItemComponent {
     public static final @NonNull ComponentType<Projectile> TYPE = new ComponentType<>("minecraft:projectile", ComponentType.Kind.ITEM, Confidence.HIGH, "1.20.50", false, Projectile::fromNbt);

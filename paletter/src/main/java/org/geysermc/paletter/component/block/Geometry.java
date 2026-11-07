@@ -11,12 +11,17 @@ import org.geysermc.paletter.component.ComponentType;
 import org.geysermc.paletter.component.Confidence;
 import org.geysermc.paletter.component.NbtReader;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
  * The {@code minecraft:geometry} block component.
+ * <p>
+ * Add-on JSON <code>"id"</code> / <code>{identifier, bone_visibility, culling, culling_layer, uv_lock}</code> is sent as `{identifier, bone_visibility: {bone: string}, culling: string, culling_layer: string, culling_shape: "", uv_lock: byte \.
+ * [string], ignoreGeometryForIsSolid, isV1Fullblock, needsLegacyTopRotation, useBlockTypeLightAbsorption: byte}`.
+ * Captured from add-on files <code>capture/addon/behavior_pack/blocks/geometry_full.json</code>, <code>capture/addon/behavior_pack/blocks/geometry_full_block.json</code>, <code>capture/addon/behavior_pack/blocks/geometry_short.json</code>, <code>capture/addon/behavior_pack/blocks/geometry_uv_lock_list.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.50, 26.60, capture bds-1.26.63.1-addon/custom_block_properties.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:geometry}</li>
  * <li>Minimum format version: 1.26.20</li>
  * <li>Experimental: no</li>
@@ -24,7 +29,7 @@ import java.util.Objects;
  * <li>Geyser CustomBlockRegistryPopulator#convertComponents: compatible</li>
  * </ul>
  *
- * @param boneVisibility network {@code bone_visibility}, compound (always empty in samples); optional (Geyser omits it (CustomBlockRegistryPopulator#convertComponents)), not sent when null. always empty in vanilla; Geyser sends bone name to Molang string
+ * @param boneVisibility network {@code bone_visibility}, compound; optional (Geyser omits it (CustomBlockRegistryPopulator#convertComponents)), not sent when null. bone name to a Molang expression; JSON {@code true} becomes {@code "1.000000"}
  * @param culling network {@code culling}, string; optional (Geyser omits it (CustomBlockRegistryPopulator#convertComponents)), not sent when null
  * @param cullingLayer network {@code culling_layer}, string; optional (Geyser omits it (CustomBlockRegistryPopulator#convertComponents)), not sent when null
  * @param cullingShape network {@code culling_shape}, string; optional (Geyser omits it (CustomBlockRegistryPopulator#convertComponents)), not sent when null
@@ -33,10 +38,10 @@ import java.util.Objects;
  * @param isV1Fullblock network {@code isV1Fullblock}, byte (0 or 1 in every sample); optional (Geyser omits it (CustomBlockRegistryPopulator#convertComponents)), not sent when null
  * @param needsLegacyTopRotation network {@code needsLegacyTopRotation}, byte (0 or 1 in every sample); optional (Geyser omits it (CustomBlockRegistryPopulator#convertComponents)), not sent when null
  * @param useBlockTypeLightAbsorption network {@code useBlockTypeLightAbsorption}, byte (0 or 1 in every sample); optional (Geyser omits it (CustomBlockRegistryPopulator#convertComponents)), not sent when null
- * @param uvLock network {@code uv_lock}, byte (0 or 1 in every sample); optional (Geyser omits it (CustomBlockRegistryPopulator#convertComponents)), not sent when null
+ * @param uvLock network {@code uv_lock}, mixed types in samples; optional (Geyser omits it (CustomBlockRegistryPopulator#convertComponents)), not sent when null. a byte (boolean) or a list of face names, as in the JSON
  */
 public record Geometry(
-    @Nullable NbtMap boneVisibility,
+    @Nullable Map<String, String> boneVisibility,
     @Nullable String culling,
     @Nullable String cullingLayer,
     @Nullable String cullingShape,
@@ -45,17 +50,20 @@ public record Geometry(
     @Nullable Boolean isV1Fullblock,
     @Nullable Boolean needsLegacyTopRotation,
     @Nullable Boolean useBlockTypeLightAbsorption,
-    @Nullable Boolean uvLock
+    @Nullable Object uvLock
 ) implements BlockComponent {
     public static final @NonNull ComponentType<Geometry> TYPE = new ComponentType<>("minecraft:geometry", ComponentType.Kind.BLOCK, Confidence.HIGH, "1.26.20", false, Geometry::fromNbt);
 
     public Geometry {
+        if (boneVisibility != null) {
+            boneVisibility = NbtReader.copy(boneVisibility);
+        }
         Objects.requireNonNull(identifier, "identifier");
     }
 
     public static @NonNull Geometry fromNbt(@NonNull NbtMap nbt) {
         return new Geometry(
-            NbtReader.read(nbt, "bone_visibility", NbtReader::toCompound, null),
+            NbtReader.read(nbt, "bone_visibility", NbtReader.mapOf(NbtReader::toStr), null),
             NbtReader.read(nbt, "culling", NbtReader::toStr, null),
             NbtReader.read(nbt, "culling_layer", NbtReader::toStr, null),
             NbtReader.read(nbt, "culling_shape", NbtReader::toStr, null),
@@ -64,7 +72,7 @@ public record Geometry(
             NbtReader.read(nbt, "isV1Fullblock", NbtReader::toBool, null),
             NbtReader.read(nbt, "needsLegacyTopRotation", NbtReader::toBool, null),
             NbtReader.read(nbt, "useBlockTypeLightAbsorption", NbtReader::toBool, null),
-            NbtReader.read(nbt, "uv_lock", NbtReader::toBool, null)
+            NbtReader.read(nbt, "uv_lock", NbtReader::toAny, null)
         );
     }
 
@@ -77,7 +85,7 @@ public record Geometry(
     public @NonNull NbtMap toNbt() {
         NbtMapBuilder builderNbt = NbtMap.builder();
         if (boneVisibility != null) {
-            builderNbt.put("bone_visibility", boneVisibility);
+            builderNbt.put("bone_visibility", NbtReader.writeMap(boneVisibility));
         }
         if (culling != null) {
             builderNbt.put("culling", culling);
@@ -102,7 +110,7 @@ public record Geometry(
             builderNbt.put("useBlockTypeLightAbsorption", NbtReader.bool(useBlockTypeLightAbsorption));
         }
         if (uvLock != null) {
-            builderNbt.put("uv_lock", NbtReader.bool(uvLock));
+            builderNbt.put("uv_lock", uvLock);
         }
         return builderNbt.build();
     }
@@ -127,7 +135,7 @@ public record Geometry(
     }
 
     public static final class Builder {
-        private @Nullable NbtMap boneVisibility;
+        private @Nullable Map<String, String> boneVisibility;
         private @Nullable String culling;
         private @Nullable String cullingLayer;
         private @Nullable String cullingShape;
@@ -136,12 +144,12 @@ public record Geometry(
         private @Nullable Boolean isV1Fullblock;
         private @Nullable Boolean needsLegacyTopRotation;
         private @Nullable Boolean useBlockTypeLightAbsorption;
-        private @Nullable Boolean uvLock;
+        private @Nullable Object uvLock;
 
         private Builder() {
         }
 
-        public @NonNull Builder boneVisibility(@Nullable NbtMap boneVisibility) {
+        public @NonNull Builder boneVisibility(@Nullable Map<String, String> boneVisibility) {
             this.boneVisibility = boneVisibility;
             return this;
         }
@@ -186,7 +194,7 @@ public record Geometry(
             return this;
         }
 
-        public @NonNull Builder uvLock(@Nullable Boolean uvLock) {
+        public @NonNull Builder uvLock(@Nullable Object uvLock) {
             this.uvLock = uvLock;
             return this;
         }

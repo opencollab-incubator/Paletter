@@ -12,8 +12,12 @@ import org.geysermc.paletter.component.NbtReader;
 
 /**
  * The {@code minecraft:max_stack_size} item component.
+ * <p>
+ * Add-on JSON <code>16</code> / <code>{value}</code> is sent as <code>{value: byte}</code>.
+ * byte.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/max_stack_size_full.json</code>, <code>capture/addon/behavior_pack/items/max_stack_size_short.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:max_stack_size}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>
@@ -21,7 +25,7 @@ import org.geysermc.paletter.component.NbtReader;
  * <li>Geyser CustomItemRegistryPopulator#setupBasicItemInfo: compatible</li>
  * </ul>
  *
- * @param value network {@code value}, byte (0 or 1 in every sample). the stack size; vanilla only shows 1, so Paletter does not read it as a boolean
+ * @param value network {@code value}, byte. the stack size; vanilla only shows 1, so Paletter does not read it as a boolean
  */
 public record MaxStackSize(byte value) implements ItemComponent {
     public static final @NonNull ComponentType<MaxStackSize> TYPE = new ComponentType<>("minecraft:max_stack_size", ComponentType.Kind.ITEM, Confidence.HIGH, "1.20.50", false, MaxStackSize::fromNbt);

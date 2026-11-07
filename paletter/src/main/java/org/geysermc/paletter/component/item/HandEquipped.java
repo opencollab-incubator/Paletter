@@ -12,8 +12,11 @@ import org.geysermc.paletter.component.NbtReader;
 
 /**
  * The {@code minecraft:hand_equipped} item component.
+ * <p>
+ * Add-on JSON bool is sent as <code>{value: byte}</code>.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/hand_equipped_full.json</code>, <code>capture/addon/behavior_pack/items/hand_equipped_short.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:hand_equipped}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>

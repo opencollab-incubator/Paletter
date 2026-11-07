@@ -15,8 +15,12 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:collision_box} block component.
+ * <p>
+ * Add-on JSON <code>true</code> / <code>false</code> / <code>[{origin, size}, ...]</code> is sent as <code>{enabled: byte, boxes: [{minX, minY, minZ, maxX, maxY, maxZ: float}]}</code>.
+ * <b>origin/size become min/max in 0..16 block space</b> (origin + 8); <code>true</code>/<code>false</code> send <code>boxes: []</code>. The single object form <code>{origin, size}</code> is <b>rejected</b> by 1.26.60 JSON (array required).
+ * Captured from add-on files <code>capture/addon/behavior_pack/blocks/collision_box_box.json</code>, <code>capture/addon/behavior_pack/blocks/collision_box_false.json</code>, <code>capture/addon/behavior_pack/blocks/collision_box_list.json</code>, <code>capture/addon/behavior_pack/blocks/collision_box_single_list.json</code>, <code>capture/addon/behavior_pack/blocks/collision_box_true.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.50, 26.60, capture bds-1.26.63.1-addon/custom_block_properties.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:collision_box}</li>
  * <li>Minimum format version: 1.26.20</li>
  * <li>Experimental: no</li>

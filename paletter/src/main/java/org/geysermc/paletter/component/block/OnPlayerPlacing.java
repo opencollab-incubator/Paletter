@@ -23,6 +23,8 @@ import java.util.Objects;
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/common/1.26.20/Player Placing Component.json}</li>
  * <li>Geyser CustomBlockRegistryPopulator#convertComponents: only evidence</li>
  * </ul>
+ * <p>
+ * Rejected by BDS 1.26.63.1 add-on JSON (replaced by script custom components); only Geyser sends it.
  *
  * @param triggerType network {@code triggerType}, string
  */

@@ -3,6 +3,7 @@
 package org.geysermc.paletter.component.item;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.geysermc.paletter.component.ItemComponent;
@@ -14,28 +15,36 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:swing_sounds} item component.
+ * <p>
+ * Add-on JSON <code>{attack_hit?, attack_miss?, attack_critical_hit?}</code> is sent as same keys, strings, absent keys omitted.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/swing_sounds.json</code>, <code>capture/addon/behavior_pack/items/swing_sounds_min.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:swing_sounds}</li>
  * <li>Minimum format version: 1.26.30</li>
  * <li>Experimental: no</li>
  * <li>Schema (docs and versions only): bedrock-samples {@code metadata/json_schemas/server/item/1.26.50/minecraft_swing_sounds.json}</li>
  * </ul>
  *
- * @param attackHit network {@code attack_hit}, string
+ * @param attackCriticalHit network {@code attack_critical_hit}, string; optional, not sent when null
+ * @param attackHit network {@code attack_hit}, string; optional, not sent when null
  * @param attackMiss network {@code attack_miss}, string
  */
-public record SwingSounds(@NonNull String attackHit, @NonNull String attackMiss) implements ItemComponent {
+public record SwingSounds(
+    @Nullable String attackCriticalHit,
+    @Nullable String attackHit,
+    @NonNull String attackMiss
+) implements ItemComponent {
     public static final @NonNull ComponentType<SwingSounds> TYPE = new ComponentType<>("minecraft:swing_sounds", ComponentType.Kind.ITEM, Confidence.HIGH, "1.26.30", false, SwingSounds::fromNbt);
 
     public SwingSounds {
-        Objects.requireNonNull(attackHit, "attackHit");
         Objects.requireNonNull(attackMiss, "attackMiss");
     }
 
     public static @NonNull SwingSounds fromNbt(@NonNull NbtMap nbt) {
         return new SwingSounds(
-            NbtReader.read(nbt, "attack_hit", NbtReader::toStr, ""),
+            NbtReader.read(nbt, "attack_critical_hit", NbtReader::toStr, null),
+            NbtReader.read(nbt, "attack_hit", NbtReader::toStr, null),
             NbtReader.read(nbt, "attack_miss", NbtReader::toStr, "")
         );
     }
@@ -48,7 +57,12 @@ public record SwingSounds(@NonNull String attackHit, @NonNull String attackMiss)
     @Override
     public @NonNull NbtMap toNbt() {
         NbtMapBuilder builderNbt = NbtMap.builder();
-        builderNbt.put("attack_hit", attackHit);
+        if (attackCriticalHit != null) {
+            builderNbt.put("attack_critical_hit", attackCriticalHit);
+        }
+        if (attackHit != null) {
+            builderNbt.put("attack_hit", attackHit);
+        }
         builderNbt.put("attack_miss", attackMiss);
         return builderNbt.build();
     }
@@ -59,19 +73,26 @@ public record SwingSounds(@NonNull String attackHit, @NonNull String attackMiss)
 
     public @NonNull Builder toBuilder() {
         Builder builder = new Builder();
+        builder.attackCriticalHit = attackCriticalHit;
         builder.attackHit = attackHit;
         builder.attackMiss = attackMiss;
         return builder;
     }
 
     public static final class Builder {
-        private @NonNull String attackHit = "";
+        private @Nullable String attackCriticalHit;
+        private @Nullable String attackHit;
         private @NonNull String attackMiss = "";
 
         private Builder() {
         }
 
-        public @NonNull Builder attackHit(@NonNull String attackHit) {
+        public @NonNull Builder attackCriticalHit(@Nullable String attackCriticalHit) {
+            this.attackCriticalHit = attackCriticalHit;
+            return this;
+        }
+
+        public @NonNull Builder attackHit(@Nullable String attackHit) {
             this.attackHit = attackHit;
             return this;
         }
@@ -82,7 +103,7 @@ public record SwingSounds(@NonNull String attackHit, @NonNull String attackMiss)
         }
 
         public @NonNull SwingSounds build() {
-            return new SwingSounds(attackHit, attackMiss);
+            return new SwingSounds(attackCriticalHit, attackHit, attackMiss);
         }
     }
 }

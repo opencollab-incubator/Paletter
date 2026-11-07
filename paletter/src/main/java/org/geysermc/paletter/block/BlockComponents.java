@@ -3,7 +3,6 @@ package org.geysermc.paletter.block;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
-import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.geysermc.paletter.component.BlockComponent;
 import org.geysermc.paletter.component.ComponentType;
 import org.geysermc.paletter.component.block.CollisionBox;
@@ -35,6 +34,10 @@ import java.util.Set;
  */
 public final class BlockComponents {
     public static final BlockComponents EMPTY = new BlockComponents(NbtMap.EMPTY);
+    /**
+     * The {@code tags_version} of placement filter tag queries; BDS 1.26.63 sends 13 (the Molang version).
+     */
+    public static final int TAGS_VERSION = 13;
 
     private final NbtMap nbt;
 
@@ -90,15 +93,17 @@ public final class BlockComponents {
     public record Material(@Nullable String texture, @Nullable String renderMethod, @Nullable String tintMethod,
                            float ambientOcclusion, boolean faceDimming, boolean isotropic) {
         /**
-         * Bit of {@code packed_bools} for face dimming. Geyser sends face dimming as {@code packed_bools} 0 or 1 in
-         * production, so this bit is backed by use.
+         * Bit of {@code packed_bools} for face dimming (captured from BDS 1.26.63.1).
          */
         public static final int FACE_DIMMING_BIT = 1;
         /**
-         * Bit of {@code packed_bools} assumed for isotropic, following the order of the add-on JSON fields
-         * (face_dimming, isotropic, alpha_masked_tint). Unverified: needs a capture of an isotropic material.
+         * Bit of {@code packed_bools} for isotropic (captured from BDS 1.26.63.1).
          */
         public static final int ISOTROPIC_BIT = 1 << 1;
+        /**
+         * Bit of {@code packed_bools} that BDS sets in every material it sends (vanilla and custom); meaning unknown.
+         */
+        public static final int ALWAYS_SET_BIT = 1 << 2;
 
         public static @NonNull Material of(@NonNull String texture) {
             return new Material(texture, null, null, 1.0f, true, false);
@@ -119,7 +124,7 @@ public final class BlockComponents {
             return MaterialInstances.Material.builder()
                 // Bedrock stopped accepting a byte here in 1.26.20; it must be a float
                 .ambientOcclusion(ambientOcclusion)
-                .packedBools((byte) ((faceDimming ? FACE_DIMMING_BIT : 0) | (isotropic ? ISOTROPIC_BIT : 0)))
+                .packedBools((byte) (ALWAYS_SET_BIT | (faceDimming ? FACE_DIMMING_BIT : 0) | (isotropic ? ISOTROPIC_BIT : 0)))
                 .renderMethod(renderMethod)
                 .tintMethod(tintMethod)
                 .texture(texture)
@@ -213,9 +218,7 @@ public final class BlockComponents {
         public @NonNull Builder geometry(@NonNull String identifier, @NonNull Map<String, String> boneVisibility) {
             Geometry.Builder geometry = Geometry.builder().identifier(identifier);
             if (!boneVisibility.isEmpty()) {
-                NbtMapBuilder bones = NbtMap.builder();
-                boneVisibility.forEach(bones::putString);
-                geometry.boneVisibility(bones.build());
+                geometry.boneVisibility(boneVisibility);
             }
             return with(geometry.build());
         }
@@ -224,9 +227,19 @@ public final class BlockComponents {
          * @param materials material instance name (e.g. {@code *}, {@code up}, {@code north}) to material
          */
         public @NonNull Builder materials(@NonNull Map<String, Material> materials) {
+            return materials(materials, Map.of());
+        }
+
+        /**
+         * @param materials material instance name (e.g. {@code *}, {@code up}, {@code north}) to material
+         * @param aliases face to the material instance it uses, e.g. {@code up -> north} (JSON {@code "up": "north"})
+         */
+        public @NonNull Builder materials(@NonNull Map<String, Material> materials, @NonNull Map<String, String> aliases) {
             Map<String, MaterialInstances.Material> converted = new LinkedHashMap<>();
             materials.forEach((name, material) -> converted.put(name, material.toComponent()));
-            return with(MaterialInstances.builder().mappings(NbtMap.EMPTY).materials(converted).build());
+            Map<String, MaterialInstances.Mapping> mappings = new LinkedHashMap<>();
+            aliases.forEach((face, target) -> mappings.put(face, new MaterialInstances.Mapping(target)));
+            return with(MaterialInstances.builder().mappings(mappings).materials(converted).build());
         }
 
         public @NonNull Builder placementFilter(@NonNull PlacementCondition... conditions) {
@@ -241,8 +254,8 @@ public final class BlockComponents {
                     filters.add(PlacementFilter.BlockFilter.builder().name(block).build());
                 }
                 for (String tag : condition.tags()) {
-                    // The meaning of tags_version is unknown, but tags do not work without it
-                    filters.add(PlacementFilter.BlockFilter.builder().tags(tag).tagsVersion(6).build());
+                    // BDS 1.26.63 sends tags_version 13, the molang version of 1.26 content
+                    filters.add(PlacementFilter.BlockFilter.builder().tags(tag).tagsVersion(TAGS_VERSION).build());
                 }
                 converted.add(new PlacementFilter.Condition(faces, filters));
             }
@@ -253,7 +266,7 @@ public final class BlockComponents {
          * @param seconds the time to break the block by hand
          */
         public @NonNull Builder destructibleByMining(float seconds) {
-            return with(DestructibleByMining.of(seconds));
+            return with(DestructibleByMining.builder().value(seconds).build());
         }
 
         public @NonNull Builder friction(float friction) {

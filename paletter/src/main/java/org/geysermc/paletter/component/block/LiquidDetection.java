@@ -15,8 +15,12 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:liquid_detection} block component.
+ * <p>
+ * Add-on JSON <code>{detection_rules: [{liquid_type, can_contain_liquid, on_liquid_touches, stops_liquid_flowing_from_direction}]}</code> is sent as <code>{detectionRules: [{liquidType, canContainLiquid: byte, onLiquidTouches, stopsLiquidFromDirection: byte bit set, use_liquid_clipping: byte}]}</code>.
+ * camelCase, <b>direction list -&gt; bit set</b> (down 1, up 2, north 4, ...: <code>["up","north"]</code> = 6).
+ * Captured from add-on files <code>capture/addon/behavior_pack/blocks/liquid_detection.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.50, 26.60, capture bds-1.26.63.1-addon/custom_block_properties.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:liquid_detection}</li>
  * <li>Minimum format version: 1.26.20</li>
  * <li>Experimental: no</li>
@@ -60,14 +64,14 @@ public record LiquidDetection(@NonNull List<DetectionRule> detectionRules) imple
      * @param canContainLiquid network {@code canContainLiquid}, byte (0 or 1 in every sample)
      * @param liquidType network {@code liquidType}, string
      * @param onLiquidTouches network {@code onLiquidTouches}, string
-     * @param stopsLiquidFromDirection network {@code stopsLiquidFromDirection}, byte (0 or 1 in every sample)
+     * @param stopsLiquidFromDirection network {@code stopsLiquidFromDirection}, byte. direction bit set: down 1, up 2, north 4, south 8, west 16, east 32
      * @param useLiquidClipping network {@code use_liquid_clipping}, byte (0 or 1 in every sample)
      */
     public record DetectionRule(
         boolean canContainLiquid,
         @NonNull String liquidType,
         @NonNull String onLiquidTouches,
-        boolean stopsLiquidFromDirection,
+        byte stopsLiquidFromDirection,
         boolean useLiquidClipping
     ) {
         public DetectionRule {
@@ -80,7 +84,7 @@ public record LiquidDetection(@NonNull List<DetectionRule> detectionRules) imple
                 NbtReader.read(nbt, "canContainLiquid", NbtReader::toBool, false),
                 NbtReader.read(nbt, "liquidType", NbtReader::toStr, ""),
                 NbtReader.read(nbt, "onLiquidTouches", NbtReader::toStr, ""),
-                NbtReader.read(nbt, "stopsLiquidFromDirection", NbtReader::toBool, false),
+                NbtReader.read(nbt, "stopsLiquidFromDirection", NbtReader::toByte, (byte) 0),
                 NbtReader.read(nbt, "use_liquid_clipping", NbtReader::toBool, false)
             );
         }
@@ -90,7 +94,7 @@ public record LiquidDetection(@NonNull List<DetectionRule> detectionRules) imple
             builderNbt.put("canContainLiquid", NbtReader.bool(canContainLiquid));
             builderNbt.put("liquidType", liquidType);
             builderNbt.put("onLiquidTouches", onLiquidTouches);
-            builderNbt.put("stopsLiquidFromDirection", NbtReader.bool(stopsLiquidFromDirection));
+            builderNbt.put("stopsLiquidFromDirection", stopsLiquidFromDirection);
             builderNbt.put("use_liquid_clipping", NbtReader.bool(useLiquidClipping));
             return builderNbt.build();
         }
@@ -113,7 +117,7 @@ public record LiquidDetection(@NonNull List<DetectionRule> detectionRules) imple
             private boolean canContainLiquid = false;
             private @NonNull String liquidType = "";
             private @NonNull String onLiquidTouches = "";
-            private boolean stopsLiquidFromDirection = false;
+            private byte stopsLiquidFromDirection = (byte) 0;
             private boolean useLiquidClipping = false;
 
             private Builder() {
@@ -134,7 +138,7 @@ public record LiquidDetection(@NonNull List<DetectionRule> detectionRules) imple
                 return this;
             }
 
-            public @NonNull Builder stopsLiquidFromDirection(boolean stopsLiquidFromDirection) {
+            public @NonNull Builder stopsLiquidFromDirection(byte stopsLiquidFromDirection) {
                 this.stopsLiquidFromDirection = stopsLiquidFromDirection;
                 return this;
             }

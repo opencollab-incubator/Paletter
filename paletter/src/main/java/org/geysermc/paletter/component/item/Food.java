@@ -3,6 +3,7 @@
 package org.geysermc.paletter.component.item;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.geysermc.paletter.component.ItemComponent;
@@ -14,8 +15,12 @@ import java.util.Objects;
 
 /**
  * The {@code minecraft:food} item component.
+ * <p>
+ * Add-on JSON <code>{nutrition, saturation_modifier, can_always_eat, using_converts_to}</code> is sent as `{can_always_eat: byte, nutrition: int, saturation_modifier: float, using_converts_to: {} \.
+ * {name}}`.
+ * Captured from add-on files <code>capture/addon/behavior_pack/items/food.json</code>, <code>capture/addon/behavior_pack/items/food_full.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:food}</li>
  * <li>Minimum format version: 1.20.50</li>
  * <li>Experimental: no</li>
@@ -26,13 +31,13 @@ import java.util.Objects;
  * @param canAlwaysEat network {@code can_always_eat}, byte (0 or 1 in every sample)
  * @param nutrition network {@code nutrition}, int
  * @param saturationModifier network {@code saturation_modifier}, float
- * @param usingConvertsTo network {@code using_converts_to}, compound (always empty in samples)
+ * @param usingConvertsTo network {@code using_converts_to}, compound
  */
 public record Food(
     boolean canAlwaysEat,
     int nutrition,
     float saturationModifier,
-    @NonNull NbtMap usingConvertsTo
+    @NonNull ItemDescriptor usingConvertsTo
 ) implements ItemComponent {
     public static final @NonNull ComponentType<Food> TYPE = new ComponentType<>("minecraft:food", ComponentType.Kind.ITEM, Confidence.HIGH, "1.20.50", false, Food::fromNbt);
 
@@ -45,7 +50,7 @@ public record Food(
             NbtReader.read(nbt, "can_always_eat", NbtReader::toBool, false),
             NbtReader.read(nbt, "nutrition", NbtReader::toInt, 0),
             NbtReader.read(nbt, "saturation_modifier", NbtReader::toFloat, 0f),
-            NbtReader.read(nbt, "using_converts_to", NbtReader::toCompound, NbtMap.EMPTY)
+            NbtReader.read(nbt, "using_converts_to", NbtReader.compound(ItemDescriptor::fromNbt), ItemDescriptor.fromNbt(NbtMap.EMPTY))
         );
     }
 
@@ -60,7 +65,7 @@ public record Food(
         builderNbt.put("can_always_eat", NbtReader.bool(canAlwaysEat));
         builderNbt.put("nutrition", nutrition);
         builderNbt.put("saturation_modifier", saturationModifier);
-        builderNbt.put("using_converts_to", usingConvertsTo);
+        builderNbt.put("using_converts_to", usingConvertsTo.toNbt());
         return builderNbt.build();
     }
 
@@ -81,7 +86,7 @@ public record Food(
         private boolean canAlwaysEat = false;
         private int nutrition = 0;
         private float saturationModifier = 0f;
-        private @NonNull NbtMap usingConvertsTo = NbtMap.EMPTY;
+        private @NonNull ItemDescriptor usingConvertsTo = ItemDescriptor.fromNbt(NbtMap.EMPTY);
 
         private Builder() {
         }
@@ -101,13 +106,38 @@ public record Food(
             return this;
         }
 
-        public @NonNull Builder usingConvertsTo(@NonNull NbtMap usingConvertsTo) {
+        public @NonNull Builder usingConvertsTo(@NonNull ItemDescriptor usingConvertsTo) {
             this.usingConvertsTo = usingConvertsTo;
             return this;
         }
 
         public @NonNull Food build() {
             return new Food(canAlwaysEat, nutrition, saturationModifier, usingConvertsTo);
+        }
+    }
+
+    /**
+     * Nested compound.
+     *
+     * @param name network {@code name}, string; optional, not sent when null
+     */
+    public record ItemDescriptor(@Nullable String name) {
+        public static @NonNull ItemDescriptor of(@Nullable String name) {
+            return new ItemDescriptor(name);
+        }
+
+        public static @NonNull ItemDescriptor fromNbt(@NonNull NbtMap nbt) {
+            return new ItemDescriptor(
+                NbtReader.read(nbt, "name", NbtReader::toStr, null)
+            );
+        }
+
+        public @NonNull NbtMap toNbt() {
+            NbtMapBuilder builderNbt = NbtMap.builder();
+            if (name != null) {
+                builderNbt.put("name", name);
+            }
+            return builderNbt.build();
         }
     }
 }

@@ -38,6 +38,7 @@ import java.util.zip.GZIPInputStream;
  */
 final class Inference {
     static final String ITEM_PROPERTIES = "item_properties";
+    static final String BLOCK_DEFINITION = "block_definition";
 
     private final Map<String, Shape> wire = new TreeMap<>();
     private final Map<String, TreeSet<String>> seenIn = new TreeMap<>();
@@ -131,10 +132,16 @@ final class Inference {
             return;
         }
         for (NbtMap item : capture.getList("items", NbtType.COMPOUND, List.of())) {
-            addItem(source, item);
+            // capture module layout: {name, id, componentBased, version, data: {components}}
+            NbtMap data = item.containsKey("data") ? item.getCompound("data") : item;
+            if (!data.isEmpty()) {
+                addItem(source, data);
+            }
         }
         for (NbtMap block : capture.getList("blocks", NbtType.COMPOUND, List.of())) {
-            addBlock(source, block);
+            // capture module layout: {name, properties: {block property data}}
+            addBlock(source, block.containsKey("properties") && block.get("properties") instanceof NbtMap properties
+                ? properties : block);
         }
     }
 
@@ -152,6 +159,12 @@ final class Inference {
     }
 
     private void addBlock(String source, NbtMap properties) {
+        // The block property data around the components, typed as its own pseudo component
+        Map<String, Object> definition = new TreeMap<>(properties);
+        definition.remove("components");
+        definition.remove("permutations");
+        definition.remove("name");
+        observe("block:" + BLOCK_DEFINITION, source, NbtMap.fromMap(definition));
         addBlockComponents(source, properties.getCompound("components", NbtMap.EMPTY));
         for (NbtMap permutation : properties.getList("permutations", NbtType.COMPOUND, List.of())) {
             addBlockComponents(source, permutation.getCompound("components", NbtMap.EMPTY));

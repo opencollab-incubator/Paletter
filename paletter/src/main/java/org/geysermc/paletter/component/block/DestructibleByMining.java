@@ -3,6 +3,7 @@
 package org.geysermc.paletter.component.block;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.geysermc.paletter.component.BlockComponent;
@@ -10,10 +11,17 @@ import org.geysermc.paletter.component.ComponentType;
 import org.geysermc.paletter.component.Confidence;
 import org.geysermc.paletter.component.NbtReader;
 
+import java.util.List;
+import java.util.Objects;
+
 /**
  * The {@code minecraft:destructible_by_mining} block component.
+ * <p>
+ * Add-on JSON <code>false</code> / <code>{seconds_to_destroy, item_specific_speeds}</code> is sent as `{value: float, item_specific_speeds?: [{destroy_speed: float, item: {Name, Aux: 32767s} \.
+ * {Tags, MolangVersion: 13s}}]}`.
+ * Captured from add-on files <code>capture/addon/behavior_pack/blocks/destructible_by_mining.json</code>, <code>capture/addon/behavior_pack/blocks/destructible_by_mining_false.json</code> (BDS 1.26.63.1).
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.50, 26.60, capture bds-1.26.63.1-addon/custom_block_properties.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:destructible_by_mining}</li>
  * <li>Minimum format version: 1.26.20</li>
  * <li>Experimental: no</li>
@@ -21,17 +29,21 @@ import org.geysermc.paletter.component.NbtReader;
  * <li>Geyser CustomBlockRegistryPopulator#convertComponents: compatible</li>
  * </ul>
  *
- * @param value network {@code value}, float
+ * @param itemSpecificSpeeds network {@code item_specific_speeds}, list of compound; optional, not sent when null
+ * @param value network {@code value}, float. seconds to destroy; JSON {@code false} becomes -1
  */
-public record DestructibleByMining(float value) implements BlockComponent {
+public record DestructibleByMining(@Nullable List<ItemSpecificSpeed> itemSpecificSpeeds, float value) implements BlockComponent {
     public static final @NonNull ComponentType<DestructibleByMining> TYPE = new ComponentType<>("minecraft:destructible_by_mining", ComponentType.Kind.BLOCK, Confidence.HIGH, "1.26.20", false, DestructibleByMining::fromNbt);
 
-    public static @NonNull DestructibleByMining of(float value) {
-        return new DestructibleByMining(value);
+    public DestructibleByMining {
+        if (itemSpecificSpeeds != null) {
+            itemSpecificSpeeds = NbtReader.copy(itemSpecificSpeeds);
+        }
     }
 
     public static @NonNull DestructibleByMining fromNbt(@NonNull NbtMap nbt) {
         return new DestructibleByMining(
+            NbtReader.read(nbt, "item_specific_speeds", NbtReader.listOf(NbtReader.compound(ItemSpecificSpeed::fromNbt)), null),
             NbtReader.read(nbt, "value", NbtReader::toFloat, 0f)
         );
     }
@@ -44,7 +56,190 @@ public record DestructibleByMining(float value) implements BlockComponent {
     @Override
     public @NonNull NbtMap toNbt() {
         NbtMapBuilder builderNbt = NbtMap.builder();
+        if (itemSpecificSpeeds != null) {
+            builderNbt.put("item_specific_speeds", NbtReader.writeList(itemSpecificSpeeds, ItemSpecificSpeed::toNbt));
+        }
         builderNbt.put("value", value);
         return builderNbt.build();
+    }
+
+    public static @NonNull Builder builder() {
+        return new Builder();
+    }
+
+    public @NonNull Builder toBuilder() {
+        Builder builder = new Builder();
+        builder.itemSpecificSpeeds = itemSpecificSpeeds;
+        builder.value = value;
+        return builder;
+    }
+
+    public static final class Builder {
+        private @Nullable List<ItemSpecificSpeed> itemSpecificSpeeds;
+        private float value = 0f;
+
+        private Builder() {
+        }
+
+        public @NonNull Builder itemSpecificSpeeds(@Nullable List<ItemSpecificSpeed> itemSpecificSpeeds) {
+            this.itemSpecificSpeeds = itemSpecificSpeeds;
+            return this;
+        }
+
+        public @NonNull Builder value(float value) {
+            this.value = value;
+            return this;
+        }
+
+        public @NonNull DestructibleByMining build() {
+            return new DestructibleByMining(itemSpecificSpeeds, value);
+        }
+    }
+
+    /**
+     * Nested compound.
+     *
+     * @param destroySpeed network {@code destroy_speed}, float
+     * @param item network {@code item}, compound. legacy descriptor: {@code {Name, Aux: 32767}} or {@code {Tags, MolangVersion}}
+     */
+    public record ItemSpecificSpeed(float destroySpeed, @NonNull ItemDescriptor item) {
+        public ItemSpecificSpeed {
+            Objects.requireNonNull(item, "item");
+        }
+
+        public static @NonNull ItemSpecificSpeed fromNbt(@NonNull NbtMap nbt) {
+            return new ItemSpecificSpeed(
+                NbtReader.read(nbt, "destroy_speed", NbtReader::toFloat, 0f),
+                NbtReader.read(nbt, "item", NbtReader.compound(ItemDescriptor::fromNbt), ItemDescriptor.fromNbt(NbtMap.EMPTY))
+            );
+        }
+
+        public @NonNull NbtMap toNbt() {
+            NbtMapBuilder builderNbt = NbtMap.builder();
+            builderNbt.put("destroy_speed", destroySpeed);
+            builderNbt.put("item", item.toNbt());
+            return builderNbt.build();
+        }
+
+        public static @NonNull Builder builder() {
+            return new Builder();
+        }
+
+        public @NonNull Builder toBuilder() {
+            Builder builder = new Builder();
+            builder.destroySpeed = destroySpeed;
+            builder.item = item;
+            return builder;
+        }
+
+        public static final class Builder {
+            private float destroySpeed = 0f;
+            private @NonNull ItemDescriptor item = ItemDescriptor.fromNbt(NbtMap.EMPTY);
+
+            private Builder() {
+            }
+
+            public @NonNull Builder destroySpeed(float destroySpeed) {
+                this.destroySpeed = destroySpeed;
+                return this;
+            }
+
+            public @NonNull Builder item(@NonNull ItemDescriptor item) {
+                this.item = item;
+                return this;
+            }
+
+            public @NonNull ItemSpecificSpeed build() {
+                return new ItemSpecificSpeed(destroySpeed, item);
+            }
+        }
+    }
+
+    /**
+     * legacy descriptor: {@code {Name, Aux: 32767}} or {@code {Tags, MolangVersion}}
+     *
+     * @param aux network {@code Aux}, short; optional, not sent when null
+     * @param molangVersion network {@code MolangVersion}, short; optional, not sent when null
+     * @param name network {@code Name}, string; optional, not sent when null
+     * @param tags network {@code Tags}, string; optional, not sent when null
+     */
+    public record ItemDescriptor(
+        @Nullable Short aux,
+        @Nullable Short molangVersion,
+        @Nullable String name,
+        @Nullable String tags
+    ) {
+        public static @NonNull ItemDescriptor fromNbt(@NonNull NbtMap nbt) {
+            return new ItemDescriptor(
+                NbtReader.read(nbt, "Aux", NbtReader::toShort, null),
+                NbtReader.read(nbt, "MolangVersion", NbtReader::toShort, null),
+                NbtReader.read(nbt, "Name", NbtReader::toStr, null),
+                NbtReader.read(nbt, "Tags", NbtReader::toStr, null)
+            );
+        }
+
+        public @NonNull NbtMap toNbt() {
+            NbtMapBuilder builderNbt = NbtMap.builder();
+            if (aux != null) {
+                builderNbt.put("Aux", aux);
+            }
+            if (molangVersion != null) {
+                builderNbt.put("MolangVersion", molangVersion);
+            }
+            if (name != null) {
+                builderNbt.put("Name", name);
+            }
+            if (tags != null) {
+                builderNbt.put("Tags", tags);
+            }
+            return builderNbt.build();
+        }
+
+        public static @NonNull Builder builder() {
+            return new Builder();
+        }
+
+        public @NonNull Builder toBuilder() {
+            Builder builder = new Builder();
+            builder.aux = aux;
+            builder.molangVersion = molangVersion;
+            builder.name = name;
+            builder.tags = tags;
+            return builder;
+        }
+
+        public static final class Builder {
+            private @Nullable Short aux;
+            private @Nullable Short molangVersion;
+            private @Nullable String name;
+            private @Nullable String tags;
+
+            private Builder() {
+            }
+
+            public @NonNull Builder aux(@Nullable Short aux) {
+                this.aux = aux;
+                return this;
+            }
+
+            public @NonNull Builder molangVersion(@Nullable Short molangVersion) {
+                this.molangVersion = molangVersion;
+                return this;
+            }
+
+            public @NonNull Builder name(@Nullable String name) {
+                this.name = name;
+                return this;
+            }
+
+            public @NonNull Builder tags(@Nullable String tags) {
+                this.tags = tags;
+                return this;
+            }
+
+            public @NonNull ItemDescriptor build() {
+                return new ItemDescriptor(aux, molangVersion, name, tags);
+            }
+        }
     }
 }

@@ -12,8 +12,10 @@ import org.geysermc.paletter.component.NbtReader;
 
 /**
  * The {@code minecraft:storage_weight_limit} item component.
+ * <p>
+ * Add-on JSON <code>{max_weight_limit}</code> is sent as <code>{max_weight_limit: int}</code>.
  * <ul>
- * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60 (confidence HIGH)</li>
+ * <li>Network shape: inferred from wire NBT of 26.40, 26.50, 26.60, capture bds-1.26.63.1-addon/custom_item_registry.nbt (confidence HIGH)</li>
  * <li>Add-on JSON name: {@code minecraft:storage_weight_limit}</li>
  * <li>Minimum format version: 1.26.30</li>
  * <li>Experimental: no</li>
