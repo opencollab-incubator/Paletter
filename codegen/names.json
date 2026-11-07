@@ -1,0 +1,21 @@
+{
+  "_comment": "Names of the generated vanilla constants that differ from the default (UPPER_SNAKE of the identifier path; PascalCase of the first state name for enums). blocks/items/states: identifier or state name -> constant name. enums: state name -> enum class of its value set. renamed: an identifier Bedrock renamed -> the new one, so the old constant becomes a deprecated alias. fallbacks: what a removed identifier resolves to (default minecraft:unknown). See codegen/README.md.",
+  "blocks": {},
+  "items": {},
+  "states": {
+    "minecraft:facing_direction": "MINECRAFT_FACING_DIRECTION"
+  },
+  "enums": {
+    "wall_connection_type_east": "WallConnectionType",
+    "redstone_east": "RedstoneConnection",
+    "minecraft:block_face": "Direction"
+  },
+  "renamed": {
+    "blocks": {},
+    "items": {}
+  },
+  "fallbacks": {
+    "blocks": {},
+    "items": {}
+  }
+}

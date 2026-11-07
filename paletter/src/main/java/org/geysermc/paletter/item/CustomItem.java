@@ -3,6 +3,7 @@ package org.geysermc.paletter.item;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.creative.CreativePlacement;
+import org.geysermc.paletter.vanilla.BedrockItemType;
 
 import java.util.Objects;
 
@@ -19,6 +20,14 @@ public record CustomItem(@NonNull String identifier, @NonNull ItemComponents com
 
     public static @NonNull Builder builder(@NonNull String identifier) {
         return new Builder(identifier);
+    }
+
+    /**
+     * @return the type of the item, to use it like a vanilla {@link org.geysermc.paletter.vanilla.BedrockItems} constant
+     * @since 2.0.0
+     */
+    public @NonNull BedrockItemType type() {
+        return BedrockItemType.of(this);
     }
 
     public @NonNull ItemVariant variant() {

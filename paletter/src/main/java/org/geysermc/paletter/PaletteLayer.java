@@ -7,6 +7,9 @@ import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeEditor;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.FallbackDefaults;
+import org.geysermc.paletter.vanilla.BedrockBlockType;
+import org.geysermc.paletter.vanilla.BedrockItemType;
+import org.geysermc.paletter.vanilla.BedrockItemVariant;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.ItemFallback;
 import org.geysermc.paletter.item.ItemOverride;
@@ -211,6 +214,15 @@ public final class PaletteLayer {
         }
 
         /**
+         * Changes an existing item definition, like {@link #overrideItem(String, Consumer)}.
+         *
+         * @since 2.0.0
+         */
+        public @NonNull Builder overrideItem(@NonNull BedrockItemType type, @NonNull Consumer<ItemOverride> modifier) {
+            return overrideItem(type.identifier(), modifier);
+        }
+
+        /**
          * Edits the creative inventory. Runs after this layer's custom items and blocks were placed, so it can
          * reference them.
          */
@@ -244,6 +256,34 @@ public final class PaletteLayer {
         public @NonNull Builder blockFallback(@NonNull String identifier, @NonNull BlockFallback fallback) {
             blockFallbacks.put(identifier, fallback);
             return this;
+        }
+
+        /**
+         * @since 2.0.0
+         */
+        public @NonNull Builder itemFallback(@NonNull BedrockItemType type, @NonNull BedrockItemType replacement) {
+            return itemFallback(type.identifier(), ItemFallback.of(replacement));
+        }
+
+        /**
+         * @since 2.0.0
+         */
+        public @NonNull Builder itemFallback(@NonNull BedrockItemType type, @NonNull ItemFallback fallback) {
+            return itemFallback(type.identifier(), fallback);
+        }
+
+        /**
+         * @since 2.0.0
+         */
+        public @NonNull Builder blockFallback(@NonNull BedrockBlockType type, @NonNull BlockFallback fallback) {
+            return blockFallback(type.identifier(), fallback);
+        }
+
+        /**
+         * @since 2.0.0
+         */
+        public @NonNull Builder blockFallback(@NonNull BedrockBlockType type, @NonNull BedrockBlockType replacement) {
+            return blockFallback(type.identifier(), BlockFallback.of(replacement));
         }
 
         /**
@@ -293,6 +333,15 @@ public final class PaletteLayer {
         public @NonNull Builder variant(@NonNull ItemVariant variant) {
             variants.add(Objects.requireNonNull(variant));
             return this;
+        }
+
+        /**
+         * Gives a variant a canonical id, like {@link #variant(ItemVariant)}.
+         *
+         * @since 2.0.0
+         */
+        public @NonNull Builder variant(@NonNull BedrockItemVariant variant) {
+            return variant(variant.toItemVariant());
         }
 
         public @NonNull Builder variants(@NonNull Collection<ItemVariant> variants) {

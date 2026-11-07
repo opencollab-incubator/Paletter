@@ -19,6 +19,8 @@ The API is exactly the packages exported by [`paletter/src/module/java/module-in
 | `org.geysermc.paletter.data` | `DataVersion`, data sources, bundled vanilla data model |
 | `org.geysermc.paletter.item` | palettes, canonical ids, `CustomItem`, `ItemComponents`, `ItemOverride`, ... |
 | `org.geysermc.paletter.item.component` | semantic item values: `Durability`, `KineticWeapon`, `Food`, `Wearable`, `Color`, ... |
+| `org.geysermc.paletter.vanilla` | vanilla constants (generated `BedrockBlocks`, `BedrockStates`, `BedrockItems`) and their types: `BedrockBlockType`, `BedrockBlockState`, `BedrockItemType`, `BedrockItemVariant`, `BoolState`, `IntState`, `EnumState`, `StringState` |
+| `org.geysermc.paletter.vanilla.state` | generated enums of string block states (`CardinalDirection`, `Direction`, ...) |
 
 Not API, and free to change in any release:
 
@@ -56,6 +58,28 @@ the new version (see "Versioned encoding" in the [README](README.md#components))
 Bedrock removing a feature does not remove API: the semantic method stays, and palettes of versions that cannot express
 it leave the value out with a `PaletteReport` warning (see below). It is deprecated only if no supported version can
 express it anymore.
+
+## Vanilla constants
+
+The generated classes of `org.geysermc.paletter.vanilla` (`BedrockBlocks`, `BedrockStates`, `BedrockItems`, the enums of
+`org.geysermc.paletter.vanilla.state`) are API like any other, with rules that follow from Bedrock changing content
+between versions (see the [README](README.md#vanilla-constants) for usage):
+
+- Constants are `static final` **objects**, never compile time constants: consumers do not inline canonical ids, so a
+  Paletter release may renumber them freely.
+- **Additions** (new constants, enum values, enums) are binary compatible and arrive in minor releases, or in patch
+  releases that bundle a new Bedrock version.
+- **Removals** go through the deprecation cycle: when the newest bundled data no longer has a block, item, state or
+  enum value, the constant stays, `@Deprecated(since = "<the release>", forRemoval = true)`, and resolves to its
+  fallback (`minecraft:unknown` unless `codegen/names.json` names another). A rename keeps the old constant as a
+  deprecated alias of the new one. `codegen/constants-history.json` is the record of every constant the generator ever
+  produced, so a regeneration cannot drop one; deprecated constants are removed from it (and the classes) only in a
+  major release.
+- A state constant never changes its type (`BoolState`, `IntState`, `EnumState<E>`): if Bedrock changes a state's kind,
+  generation fails until the state gets a new name in `codegen/names.json`. Enum assignment is sticky the same way.
+- `BedrockPreviewBlocks` and `BedrockPreviewItems` (content of a bundled preview only) are `@Experimental`: they move or
+  disappear without deprecation.
+- Which values a block accepts, and the canonical ids, are data, not API: they follow the bundled release.
 
 ## `@Experimental`
 
@@ -102,6 +126,13 @@ release yet, so the baseline `2.0.0` was generated from the `stable-api` branch.
 - **Intended break** (major release only, after the deprecation cycle): bump the major version, then update the baseline
   the same way in the same change.
 - Never update the baseline to make `apiCompat` pass within a minor line.
+
+The baseline was regenerated once since, when the vanilla constants were added (branch `constants`): `apiCompat`
+passed against the previous baseline first (no incompatible change, only additions: the `vanilla` packages, the
+constant overloads of `Palette`, `PaletteLayer.Builder`, `ItemMatcher`, `CreativePlacement`, `BlockDescriptor`,
+`PlacementFilter`, `Repairable.Entry`, `BlockFallback`, `ItemFallback`, `CustomBlock#type`, `CustomItem#type`,
+`CanonicalItems#extendsOrIs`, and the `FallbackDefaults` API of the update pipeline), so the new baseline covers the
+new types too, including every generated constant: removing one now fails `apiCompat`.
 
 ### `@since`
 

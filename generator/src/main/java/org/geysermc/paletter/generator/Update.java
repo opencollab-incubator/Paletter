@@ -8,6 +8,7 @@ import org.geysermc.paletter.block.BlockStates;
 import org.geysermc.paletter.capture.Capture;
 import org.geysermc.paletter.codegen.Codegen;
 import org.geysermc.paletter.codegen.ShapeInference;
+import org.geysermc.paletter.codegen.constants.ConstantsGenerator;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataCodec;
 import org.geysermc.paletter.data.VanillaData;
@@ -154,7 +155,42 @@ final class Update {
         if (runs.addon != null) {
             shapes(distribution, runs);
         }
+        constants(staging);
         staging.apply();
+    }
+
+    /**
+     * Regenerates the vanilla constants from the staged data (what the repository will have after this run), and lists
+     * the constants added and deprecated. Staged with the data, so a data import never leaves stale constants.
+     */
+    private void constants(Staging staging) throws IOException {
+        ConstantsGenerator.Result result;
+        try {
+            result = ConstantsGenerator.generate(staging.resources, ConstantsGenerator.readJson(root.resolve(ConstantsGenerator.NAMES)),
+                ConstantsGenerator.readJson(root.resolve(ConstantsGenerator.HISTORY)), ConstantsGenerator.paletterVersion(root));
+        } catch (IllegalStateException e) {
+            // A name collision or a state that changed its kind needs a codegen/names.json entry
+            report.todos.add("Vanilla constants: " + e.getMessage());
+            report.check(Report.Status.FAIL, "Vanilla constants", e.getMessage());
+            return;
+        }
+        List<String> lines = new ArrayList<>();
+        lines.add("From " + result.release() + (result.preview() == null ? "" : " and preview " + result.preview()) + ": " + result.counts());
+        result.added().forEach(added -> lines.add("added `" + added + "`"));
+        result.deprecated().forEach(deprecated -> lines.add("deprecated `" + deprecated + "`"));
+        result.tableBlocks().forEach(block -> lines.add("lookup table (states are not a full product in a stride order): " + block));
+        report.section("Vanilla constants", lines);
+        report.check(result.added().isEmpty() && result.deprecated().isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Vanilla constants",
+            result.added().size() + " added, " + result.deprecated().size() + " deprecated, " + result.tableBlocks().size() + " blocks with a lookup table");
+        for (Path stale : org.geysermc.paletter.codegen.constants.Main.stale(root, result.files())) {
+            report.repoChanges.add((verifyOnly ? "would " : "") + "remove `" + root.relativize(stale).toString().replace('\\', '/') + "` (constants)");
+            if (!verifyOnly) {
+                Files.delete(stale);
+            }
+        }
+        for (Map.Entry<String, String> file : result.files().entrySet()) {
+            stage(root.resolve(file.getKey()), file.getValue().getBytes(StandardCharsets.UTF_8), "vanilla constants");
+        }
     }
 
     /** What the server runs gave; fields stay null when a step was impossible. */

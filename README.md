@@ -188,6 +188,80 @@ int furnaceMinecart = palette.canonicalItem(ItemVariant.of("geysermc:furnace_min
 One to one mappings are the translator's business: two Java items claiming the same canonical id is a check on its own
 table (`canonicalToJava[id] != null`), and is what turns bugs like GeyserMC/Geyser#6668 into a startup error.
 
+## Vanilla constants
+
+`org.geysermc.paletter.vanilla` has generated constants for the vanilla content of the newest bundled **release**:
+`BedrockBlocks` (one `BedrockBlockType` per block), `BedrockStates` (one typed constant per state name) and
+`BedrockItems` (one `BedrockItemType` per item). They are objects, not `int` compile time constants, so they stay binary
+compatible across Paletter releases, and they are resolved against the newest data of `Paletter.bundled()` the first
+time a state or id is needed; referencing them loads nothing.
+
+```java
+// Block states, typed. One instance per state: with() does not allocate, == works
+BedrockBlockState door = BedrockBlocks.WOODEN_DOOR.state()
+    .with(BedrockStates.CARDINAL_DIRECTION, CardinalDirection.NORTH)   // EnumState<CardinalDirection>
+    .with(BedrockStates.OPEN_BIT, true)                                // BoolState: byte 0/1 in NBT
+    .build();
+BedrockBlockState open = door.with(BedrockStates.UPPER_BLOCK_BIT, true);
+CardinalDirection facing = open.get(BedrockStates.CARDINAL_DIRECTION);
+List<Integer> growth = BedrockBlocks.WHEAT.values(BedrockStates.GROWTH);  // [0..7]: what this block accepts
+door.with(BedrockStates.GROWTH, 3);                                      // IllegalArgumentException: not a door state
+
+int canonical = door.id();                         // canonical id in Paletter.bundled(), valid in every version
+int runtimeId = palette.runtimeId(door);           // = palette.runtimeId(canonical)
+NbtMap nbt = door.toNbt();                         // {name, states}
+BedrockBlockState back = BedrockBlockState.vanilla(canonical);   // same instance
+
+// Items and their damage variants (the data has no names for those, so they are variant(int), not constants)
+ItemData apple = palette.item(BedrockItems.APPLE).toItemData().count(3).build();
+ItemData potion = palette.item(BedrockItems.POTION.variant(5)).toItemData().build();
+
+// Everywhere an identifier is accepted, a constant is too
+PaletteLayer layer = PaletteLayer.builder("server")
+    .overrideItem(BedrockItems.CAKE, item -> item.components(c -> c.maxStackSize(1)))
+    .blockFallback(BedrockBlocks.ICICLE, BedrockBlocks.STONE)
+    .item(CustomItem.builder("example:ruby")
+        .components(ItemComponents.builder()
+            .repairable(Repairable.of(Repairable.Entry.items(BedrockItems.DIAMOND)))
+            .digger(Digger.of().speed(BlockDescriptor.block(BedrockBlocks.STONE), 4))
+            .build())
+        .creative(CreativePlacement.loose(CreativeCategory.ITEMS).after(BedrockItems.DIAMOND))
+        .build())
+    .creative(editor -> editor.remove(ItemMatcher.of(BedrockItems.EMPTY_MAP.variant(2))))
+    .build();
+```
+
+**Custom content is used alike.** `CustomBlock#type()` and `CustomItem#type()` (and `CustomBlock#itemType()`) return
+the same handle types. Their canonical ids depend on the layer stack, so look them up on a palette:
+`palette.runtimeId(lamp.type().defaultState().with(lit, true))`, `palette.canonicalBlock(state)`,
+`palette.item(ruby.type())`. A vanilla constant matches custom properties by name, so a custom
+`minecraft:cardinal_direction` property works with `BedrockStates.CARDINAL_DIRECTION`. Custom properties are typed as
+`BoolState.of(name)`, `IntState.range(name, min, max)` or `StringState.of(name, values...)` (or `EnumState.of(name,
+MyEnum.class)` with an enum implementing `StateValue`).
+
+**Typing.** Byte states with the values 0 and 1 are `BoolState`, integer states `IntState` (a range or a list), string
+states `EnumState` with a generated enum in `org.geysermc.paletter.vanilla.state`. States with identical value sets
+share an enum (`minecraft:block_face` and `minecraft:facing_direction` share `Direction`; the four
+`wall_connection_type_*` and `pale_moss_carpet_side_*` states share `WallConnectionType`). The current release has 124
+state names, 24 enums, 1480 blocks and 2080 items.
+
+**Arithmetic state ids.** Bedrock enumerates the states of every block as the full cartesian product of its values. The
+generator verifies this for every block of the bundled release and derives each property's stride, so a state's
+canonical id is `first state of the block + sum(value index * stride)`, computed once per state; a block that is not a
+full product in a stride order would get a lookup table instead and be listed by the generator (none in 26.60).
+States are created per block on first use and interned, so `with()` only indexes an array.
+
+**Versions.** Constants describe the newest bundled release; for older clients the palette resolves them like any
+canonical id (adapted states, fallbacks). A constant whose content the data no longer has (Bedrock removed it) stays,
+`@Deprecated(forRemoval = true)`, and resolves to its fallback (`minecraft:unknown` unless `codegen/names.json` names
+another); `isAvailable()` is false. A renamed block or item keeps its old constant as a deprecated alias of the new one.
+Content only in a bundled preview goes to `BedrockPreviewBlocks` / `BedrockPreviewItems` (`@Experimental`, generated only
+while a preview is bundled); without `paletter.previews` those resolve to `minecraft:unknown` too.
+
+**Regenerating.** `./gradlew :codegen:generateConstants` (`check` fails if the committed constants are stale), and the
+`update` pipeline does it whenever it imports data, listing added and deprecated constants in its report. See
+[codegen/README.md](codegen/README.md#vanilla-constants).
+
 ## Components
 
 Custom items and blocks are described with **semantic** builders: Java types for what an item or block is and does, in
@@ -404,6 +478,9 @@ download (about 100 MB, once per build). What it does, in `<cache>/runs/<platfor
    verified by the hash and sequential checks); for an existing one only item tags and block defaults are refreshed
    (network differences become a TODO); a new add-on capture goes to `codegen/captures/bds-<version>-addon/` and the
    component types are regenerated; the Script API baseline and the content log are updated.
+8. **Constants**: the vanilla constants (`BedrockBlocks`, `BedrockStates`, `BedrockItems`, ...) are regenerated from the
+   staged data with `codegen/constants-history.json`; the report lists the constants added and deprecated. A name
+   collision or a state that changes its kind fails this step until `codegen/names.json` settles it.
 
 The report (`reports/preview-1.26.70.23.md` is an example) lists checks with PASS/DIFF/FAIL, every difference, and a
 **TODO** list of what needs a decision.

@@ -6,6 +6,8 @@ dependencies {
     implementation(project(":paletter"))
     implementation(libs.gson)
 
+    // ConstantsGeneratorTest compiles generated sources, which use the nullness annotations
+    testImplementation(libs.checker.qual)
     testImplementation(platform(libs.junit.bom))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -44,6 +46,27 @@ val checkComponents = tasks.register<JavaExec>("checkComponents") {
     outputs.upToDateWhen { false }
 }
 
+// Vanilla constants (org.geysermc.paletter.vanilla.BedrockBlocks, BedrockStates, BedrockItems, the state enums):
+// from the newest bundled release, codegen/names.json and codegen/constants-history.json (committed, updated).
+val constantsArgs = listOf("--root", rootProject.projectDir.absolutePath)
+
+tasks.register<JavaExec>("generateConstants") {
+    group = "codegen"
+    description = "Regenerates the vanilla constants classes from the bundled data"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("org.geysermc.paletter.codegen.constants.Main")
+    args = listOf("generate") + constantsArgs
+}
+
+val checkConstants = tasks.register<JavaExec>("checkConstants") {
+    group = "verification"
+    description = "Fails if regenerating the vanilla constants from the committed data, names and history yields a diff"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("org.geysermc.paletter.codegen.constants.Main")
+    args = listOf("check") + constantsArgs
+    outputs.upToDateWhen { false }
+}
+
 tasks.named("check") {
-    dependsOn(checkComponents)
+    dependsOn(checkComponents, checkConstants)
 }

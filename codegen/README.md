@@ -119,3 +119,48 @@ rejected. `{"@list": "STRING"}` is an empty typed list, `{"@int_array": [1, 2]}`
 - `fromNbt` is lenient (numbers of another width convert, missing fields take zero values), so NBT from older encoders
   (e.g. a byte `minecraft:damage`) reads and is re-encoded in the wire shape.
 - Record components are in NBT key order (sorted); prefer the builders.
+
+## Vanilla constants
+
+`./gradlew :codegen:generateConstants` writes `org.geysermc.paletter.vanilla.BedrockBlocks`, `BedrockStates`,
+`BedrockItems`, the enums in `org.geysermc.paletter.vanilla.state` and, while a preview is bundled,
+`BedrockPreviewBlocks` / `BedrockPreviewItems`; `./gradlew :codegen:checkConstants` (part of `check`) fails if they, or
+the history, differ from what the committed inputs give. The generator's `update` pipeline runs the same code on the data
+it stages (see the README). Code: `org.geysermc.paletter.codegen.constants`.
+
+Inputs:
+
+- the newest bundled **release** in `paletter/src/main/resources/paletter/versions.txt` (and the newest preview newer
+  than it, if any: its content the release lacks goes to the preview classes, which are not part of the history);
+- [`names.json`](names.json): names that differ from the default, and what removed content becomes;
+- [`constants-history.json`](constants-history.json): every constant generated so far, with `since` (the Paletter
+  version from the root `build.gradle.kts`, without `-SNAPSHOT`) and, once deprecated, `deprecated` plus `replacement`
+  (an alias) or `fallback`. Written by every generation; commit it with the classes.
+
+Rules:
+
+- **Names**: UPPER_SNAKE of the identifier path (`minecraft:item.bed` -> `ITEM_BED`; other namespaces keep theirs as a
+  prefix), of the state name for states (`minecraft:cardinal_direction` -> `CARDINAL_DIRECTION`), enum values from their
+  string. Enums are named after the PascalCase of the first of their states, without a trailing direction
+  (`wall_connection_type_east` -> `WallConnectionType`). Generation **fails** on duplicates or names that are no Java
+  identifiers; `names.json` (`blocks`, `items`, `states`: identifier -> constant; `enums`: state -> enum) settles them.
+  Today: `minecraft:facing_direction` (string) is `MINECRAFT_FACING_DIRECTION` next to the integer `facing_direction`,
+  and three enums are named by hand.
+- **Types**: byte states with values 0/1 are `BoolState`, integer states `IntState` (`range` if contiguous), string
+  states `EnumState` of an enum shared by every state with the same value set. A state keeps its enum once it has one
+  (new values are appended to it), and a state that changes its kind fails generation.
+- **Arithmetic ids**: `internal.vanilla.BlockLayout` (shared with the runtime) checks every block of the release: its
+  states must be the full cartesian product of its values (properties sorted, values in order of first appearance), and
+  every state's offset from the block's first state must be `sum(value index * stride)`. Blocks that are not get a lookup
+  table at runtime; the generator prints them, writes the reason into the constant's javadoc, and the update report lists
+  them. For 26.60: 1480 blocks, none needs a table. Generation fails only if a block's states are not contiguous, are
+  duplicated or lack properties other states of the block have.
+- **Removed content**: a history entry the data no longer has stays as a deprecated constant. If its identifier still
+  exists under another constant name (a `names.json` change), or `names.json` `renamed` maps it to a new identifier, it
+  becomes an alias of that constant; otherwise it resolves to `names.json` `fallbacks` or `minecraft:unknown`. Removed
+  states and enum values stay deprecated as well. `deprecated` is set once, so later generations keep the version.
+- **New content** gets `@since` of the current Paletter version when it is newer than the class (2.0.0).
+
+`ConstantsGeneratorTest` covers deprecation with a synthetic history, naming failures and previews, and compiles what it
+generates; `VanillaConstantsTest` (paletter) round-trips every block state of the release, compares 200k random `with()`
+chains with palette lookups and checks that `with()` does not allocate.

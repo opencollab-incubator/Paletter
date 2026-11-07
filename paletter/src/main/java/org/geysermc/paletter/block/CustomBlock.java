@@ -7,6 +7,8 @@ import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.ItemComponents;
+import org.geysermc.paletter.vanilla.BedrockBlockType;
+import org.geysermc.paletter.vanilla.BedrockItemType;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -123,6 +125,24 @@ public record CustomBlock(
             states.add(BlockStates.of(identifier, builder.build()));
         }
         return states;
+    }
+
+    /**
+     * @return the type of the block, to use it like a vanilla {@link org.geysermc.paletter.vanilla.BedrockBlocks}
+     *         constant. Its states have canonical ids per layer lineage, see
+     *         {@link org.geysermc.paletter.Palette#canonicalBlock(org.geysermc.paletter.vanilla.BedrockBlockState)}
+     * @since 2.0.0
+     */
+    public @NonNull BedrockBlockType type() {
+        return BedrockBlockType.of(this);
+    }
+
+    /**
+     * @return the type of the block item, or null if the block has none ({@link BlockItem#NONE})
+     * @since 2.0.0
+     */
+    public @Nullable BedrockItemType itemType() {
+        return item instanceof BlockItem.None ? null : BedrockItemType.custom(identifier);
     }
 
     public @NonNull NbtMap defaultState() {

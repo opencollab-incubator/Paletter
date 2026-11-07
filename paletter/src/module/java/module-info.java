@@ -27,4 +27,6 @@ module org.geysermc.paletter {
     exports org.geysermc.paletter.data;
     exports org.geysermc.paletter.item;
     exports org.geysermc.paletter.item.component;
+    exports org.geysermc.paletter.vanilla;
+    exports org.geysermc.paletter.vanilla.state;
 }

@@ -3,6 +3,8 @@ package org.geysermc.paletter.item.component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import org.geysermc.paletter.vanilla.BedrockBlockType;
+
 import java.util.Objects;
 
 /**
@@ -29,6 +31,14 @@ public final class BlockDescriptor {
      */
     public static @NonNull BlockDescriptor block(@NonNull String identifier) {
         return new BlockDescriptor(Objects.requireNonNull(identifier, "identifier"), null);
+    }
+
+    /**
+     * @param type a block type, e.g. {@code BedrockBlocks.STONE}
+     * @since 2.0.0
+     */
+    public static @NonNull BlockDescriptor block(@NonNull BedrockBlockType type) {
+        return block(type.identifier());
     }
 
     /**

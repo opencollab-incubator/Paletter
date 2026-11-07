@@ -3,6 +3,8 @@ package org.geysermc.paletter.creative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.vanilla.BedrockItemType;
+import org.geysermc.paletter.vanilla.BedrockItemVariant;
 
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -34,6 +36,25 @@ public interface ItemMatcher {
      */
     static @NonNull ItemMatcher id(@NonNull String identifier) {
         return new Id(identifier);
+    }
+
+    /**
+     * Matches every stack of an item type, like {@link #id(String)}.
+     *
+     * @since 2.0.0
+     */
+    static @NonNull ItemMatcher of(@NonNull BedrockItemType type) {
+        return new Id(type.identifier());
+    }
+
+    /**
+     * Matches the stacks of a variant: its item, damage and, if it has one, block state.
+     *
+     * @since 2.0.0
+     */
+    static @NonNull ItemMatcher of(@NonNull BedrockItemVariant variant) {
+        ItemMatcher matcher = new Id(variant.type().identifier()).and(new Damage(variant.damage()));
+        return variant.blockState() == null ? matcher : matcher.and(new BlockState(variant.blockState().toNbt()));
     }
 
     static @NonNull ItemMatcher damage(int damage) {

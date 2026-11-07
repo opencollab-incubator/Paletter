@@ -184,6 +184,21 @@ public final class CanonicalItems {
         return current.variants[canonical - current.offset];
     }
 
+    /**
+     * @return true if the other indices are these, or these with variants appended
+     * @since 2.0.0
+     */
+    public boolean extendsOrIs(@NonNull CanonicalItems other) {
+        CanonicalItems current = this;
+        while (current != null) {
+            if (current == other) {
+                return true;
+            }
+            current = current.parent;
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return "CanonicalItems{" + size() + " variants, " + (size() - vanillaSize()) + " custom}";

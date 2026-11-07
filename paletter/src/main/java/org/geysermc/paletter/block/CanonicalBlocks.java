@@ -6,6 +6,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.PaletteException;
+import org.geysermc.paletter.annotation.Internal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +28,11 @@ public final class CanonicalBlocks {
     private final int offset;
     private final NbtMap[] states;
     private final Object2IntMap<NbtMap> index;
+    private final Object2IntMap<String> customBases;
+    private final Object2IntMap<String> customCounts;
     private final Map<Object, CanonicalBlocks> extensions = new WeakHashMap<>();
 
-    private CanonicalBlocks(@Nullable CanonicalBlocks parent, List<NbtMap> states) {
+    private CanonicalBlocks(@Nullable CanonicalBlocks parent, List<NbtMap> states, List<CustomBlock> blocks) {
         this.parent = parent;
         this.offset = parent == null ? 0 : parent.size();
         this.states = states.toArray(NbtMap[]::new);
@@ -44,13 +47,26 @@ public final class CanonicalBlocks {
         }
         index.trim();
         this.index = index;
+        this.customBases = new Object2IntOpenHashMap<>(blocks.size());
+        this.customBases.defaultReturnValue(-1);
+        this.customCounts = new Object2IntOpenHashMap<>(blocks.size());
+        int base = offset;
+        for (CustomBlock block : blocks) {
+            int count = 1;
+            for (BlockProperty<?> property : block.properties()) {
+                count *= property.values().size();
+            }
+            customBases.put(block.identifier(), base);
+            customCounts.put(block.identifier(), count);
+            base += count;
+        }
     }
 
     /**
      * @param states the states of the newest version, in its vanilla runtime id order
      */
     public static @NonNull CanonicalBlocks of(@NonNull List<NbtMap> states) {
-        return new CanonicalBlocks(null, states);
+        return new CanonicalBlocks(null, states, List.of());
     }
 
     /**
@@ -69,7 +85,7 @@ public final class CanonicalBlocks {
                 for (CustomBlock block : blocks) {
                     states.addAll(block.states());
                 }
-                existing = new CanonicalBlocks(this, states);
+                existing = new CanonicalBlocks(this, states, blocks);
                 extensions.put(key, existing);
             }
             return existing;
@@ -120,6 +136,25 @@ public final class CanonicalBlocks {
             current = current.parent;
         }
         return current.states[canonical - current.offset];
+    }
+
+    /**
+     * @param identifier a custom block identifier
+     * @param stateCount the amount of states the caller expects the block to have
+     * @return the canonical id of the first state of a custom block of this lineage with that many states, or -1. Its
+     *         states follow in {@link CustomBlock#states()} order
+     */
+    @Internal
+    public int customBase(@NonNull String identifier, int stateCount) {
+        CanonicalBlocks current = this;
+        while (current != null) {
+            int base = current.customBases.getInt(identifier);
+            if (base != -1) {
+                return current.customCounts.getInt(identifier) == stateCount ? base : -1;
+            }
+            current = current.parent;
+        }
+        return -1;
     }
 
     /**

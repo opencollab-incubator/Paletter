@@ -22,4 +22,11 @@ public record ItemFallback(@NonNull String target, boolean force) {
     public static @NonNull ItemFallback of(@NonNull String target) {
         return new ItemFallback(target, false);
     }
+
+    /**
+     * @since 2.0.0
+     */
+    public static @NonNull ItemFallback of(org.geysermc.paletter.vanilla.@NonNull BedrockItemType target) {
+        return of(target.identifier());
+    }
 }

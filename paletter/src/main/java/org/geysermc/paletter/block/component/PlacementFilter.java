@@ -2,6 +2,8 @@ package org.geysermc.paletter.block.component;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import org.geysermc.paletter.vanilla.BedrockBlockType;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -53,6 +55,18 @@ public final class PlacementFilter {
         List<String> all = new ArrayList<>(blocks);
         all.addAll(List.of(identifiers));
         return new PlacementFilter(faces, all, tags);
+    }
+
+    /**
+     * @param types blocks it may be placed against, in addition to those already listed
+     * @since 2.0.0
+     */
+    public @NonNull PlacementFilter blocks(@NonNull BedrockBlockType... types) {
+        String[] identifiers = new String[types.length];
+        for (int i = 0; i < types.length; i++) {
+            identifiers[i] = types[i].identifier();
+        }
+        return blocks(identifiers);
     }
 
     /**

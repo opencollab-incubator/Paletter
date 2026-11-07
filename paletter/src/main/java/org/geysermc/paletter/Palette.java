@@ -21,6 +21,9 @@ import org.geysermc.paletter.item.CanonicalItems;
 import org.geysermc.paletter.item.ItemPalette;
 import org.geysermc.paletter.item.ItemVariant;
 import org.geysermc.paletter.item.ResolvedItem;
+import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.vanilla.BedrockItemType;
+import org.geysermc.paletter.vanilla.BedrockItemVariant;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -128,6 +131,42 @@ public final class Palette {
         return blocks.runtimeId(canonical);
     }
 
+    /**
+     * @return the canonical id of a vanilla or custom block state in this palette, or -1 if it has none (a custom block
+     *         of a layer this palette does not have). For vanilla states in palettes of {@link Paletter#bundled()} this
+     *         is {@link BedrockBlockState#id()}
+     * @since 2.0.0
+     */
+    public int canonicalBlock(@NonNull BedrockBlockState state) {
+        return state.canonicalIn(blocks.canonical());
+    }
+
+    /**
+     * @return the block to send for a state, like {@link #block(int)}
+     * @throws IllegalArgumentException if the state has no canonical id in this palette
+     * @since 2.0.0
+     */
+    public @NonNull PaletteBlock block(@NonNull BedrockBlockState state) {
+        return blocks.block(requireCanonical(state));
+    }
+
+    /**
+     * @return the runtime id to send for a state, like {@link #runtimeId(int)}
+     * @throws IllegalArgumentException if the state has no canonical id in this palette
+     * @since 2.0.0
+     */
+    public int runtimeId(@NonNull BedrockBlockState state) {
+        return blocks.runtimeId(requireCanonical(state));
+    }
+
+    private int requireCanonical(BedrockBlockState state) {
+        int canonical = state.canonicalIn(blocks.canonical());
+        if (canonical == -1) {
+            throw new IllegalArgumentException(state + " has no canonical id in " + this);
+        }
+        return canonical;
+    }
+
     public @NonNull CanonicalItems canonicalItems() {
         return items.canonical();
     }
@@ -139,6 +178,22 @@ public final class Palette {
         return items.canonical().index(variant);
     }
 
+    /**
+     * @return the canonical id of the base variant of an item type in this palette, or -1
+     * @since 2.0.0
+     */
+    public int canonicalItem(@NonNull BedrockItemType type) {
+        return type.canonicalIn(items.canonical());
+    }
+
+    /**
+     * @return the canonical id of a variant in this palette, or -1
+     * @since 2.0.0
+     */
+    public int canonicalItem(@NonNull BedrockItemVariant variant) {
+        return variant.canonicalIn(items.canonical());
+    }
+
     public int canonicalItemCount() {
         return items.canonical().size();
     }
@@ -148,6 +203,27 @@ public final class Palette {
      */
     public @Nullable ResolvedItem item(int canonical) {
         return items.item(canonical);
+    }
+
+    /**
+     * @return what to send for the base variant of an item type, or null if it has no canonical id here, or does not
+     *         exist in this version and has no fallback
+     * @since 2.0.0
+     */
+    public @Nullable ResolvedItem item(@NonNull BedrockItemType type) {
+        int canonical = canonicalItem(type);
+        return canonical == -1 ? null : items.item(canonical);
+    }
+
+    /**
+     * @return what to send for a variant, or null if it has no canonical id here (see
+     *         {@link PaletteLayer.Builder#variant(BedrockItemVariant)}), or does not exist in this version and has no
+     *         fallback
+     * @since 2.0.0
+     */
+    public @Nullable ResolvedItem item(@NonNull BedrockItemVariant variant) {
+        int canonical = canonicalItem(variant);
+        return canonical == -1 ? null : items.item(canonical);
     }
 
     /**

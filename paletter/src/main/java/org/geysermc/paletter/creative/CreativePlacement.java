@@ -2,6 +2,8 @@ package org.geysermc.paletter.creative;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.vanilla.BedrockItemType;
+import org.geysermc.paletter.vanilla.BedrockItemVariant;
 
 /**
  * Declares where a custom item or block item goes in the creative inventory. It is tried in this order:
@@ -32,6 +34,22 @@ public record CreativePlacement(@NonNull CreativeCategory category, @Nullable St
 
     public @NonNull CreativePlacement after(@NonNull ItemMatcher anchor) {
         return new CreativePlacement(category, group, anchor);
+    }
+
+    /**
+     * @return this placement, right after the stacks of an item type if present
+     * @since 2.0.0
+     */
+    public @NonNull CreativePlacement after(@NonNull BedrockItemType anchor) {
+        return after(ItemMatcher.of(anchor));
+    }
+
+    /**
+     * @return this placement, right after a variant if present
+     * @since 2.0.0
+     */
+    public @NonNull CreativePlacement after(@NonNull BedrockItemVariant anchor) {
+        return after(ItemMatcher.of(anchor));
     }
 
     /**

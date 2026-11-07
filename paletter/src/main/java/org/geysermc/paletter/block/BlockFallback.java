@@ -25,4 +25,11 @@ public record BlockFallback(@NonNull String target, boolean clearStates, boolean
     public static @NonNull BlockFallback of(@NonNull String target) {
         return new BlockFallback(target, false, false);
     }
+
+    /**
+     * @since 2.0.0
+     */
+    public static @NonNull BlockFallback of(org.geysermc.paletter.vanilla.@NonNull BedrockBlockType target) {
+        return of(target.identifier());
+    }
 }

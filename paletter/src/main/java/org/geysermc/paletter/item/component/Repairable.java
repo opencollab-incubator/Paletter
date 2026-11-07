@@ -64,6 +64,18 @@ public final class Repairable {
         }
 
         /**
+         * @param types the repairing items, e.g. {@code BedrockItems.DIAMOND}
+         * @since 2.0.0
+         */
+        public static @NonNull Entry items(org.geysermc.paletter.vanilla.@NonNull BedrockItemType... types) {
+            String[] identifiers = new String[types.length];
+            for (int i = 0; i < types.length; i++) {
+                identifiers[i] = types[i].identifier();
+            }
+            return items(identifiers);
+        }
+
+        /**
          * @param molang a Molang item tag query; {@code "1"} matches every item
          */
         public static @NonNull Entry tags(@NonNull String molang) {
