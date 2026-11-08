@@ -10,7 +10,7 @@ import java.util.List;
  * Everything noteworthy that happened while compiling a palette: content left out for a version, anchors that
  * matched nothing, fallbacks that were used. Compilation never logs by itself; consumers decide what to show.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class PaletteReport {
     private final List<Entry> entries = Collections.synchronizedList(new ArrayList<>());

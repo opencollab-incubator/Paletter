@@ -7,14 +7,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @param target the replacement item identifier
  * @param force true to replace the item even though it exists in this version, e.g. because it is experimental there
- * @since 2.0.0
+ * @since 1.0.0
  */
 public record ItemFallback(@NonNull String target, boolean force) {
     /**
      * The default for items a version lacks: the {@code minecraft:unknown} item (the block item of
      * {@code minecraft:unknown}).
      *
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public static final ItemFallback UNKNOWN = new ItemFallback("minecraft:unknown", false);
 
@@ -24,7 +24,7 @@ public record ItemFallback(@NonNull String target, boolean force) {
     }
 
     /**
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public static @NonNull ItemFallback of(org.geysermc.paletter.vanilla.@NonNull BedrockItemType target) {
         return of(target.identifier());

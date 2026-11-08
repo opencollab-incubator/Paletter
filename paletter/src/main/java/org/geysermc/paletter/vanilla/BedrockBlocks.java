@@ -9,7 +9,7 @@ package org.geysermc.paletter.vanilla;
  * Constants are added when Bedrock adds blocks (binary compatible). Blocks Bedrock removes stay, deprecated, and
  * resolve to their fallback; renamed blocks keep their old constant, deprecated, as an alias of the new one.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class BedrockBlocks {
     /**

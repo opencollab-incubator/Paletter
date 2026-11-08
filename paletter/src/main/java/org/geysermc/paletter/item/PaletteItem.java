@@ -12,7 +12,7 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
  * Instances are compared by identity, and are shared between a palette and every palette extending it, unless a layer
  * overrides that item. So {@code ==} between a definition from a shared palette and one from a session's palette is safe.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class PaletteItem implements ItemDefinition {
     private final String identifier;

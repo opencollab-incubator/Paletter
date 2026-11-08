@@ -17,7 +17,7 @@ import org.geysermc.paletter.block.CanonicalBlocks;
  * the stride of its property, computed once (Bedrock enumerates every block's states as the full product of its values;
  * blocks that are not get a lookup table). Custom block states have canonical ids per layer lineage only.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class BedrockBlockState {
     private final BlockTypeLayout layout;

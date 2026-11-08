@@ -10,7 +10,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * without, they resolve to {@code minecraft:unknown}. Experimental: constants move to {@link BedrockItems} when
  * the content is released, and disappear if the preview drops it.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 @Experimental
 public final class BedrockPreviewItems {

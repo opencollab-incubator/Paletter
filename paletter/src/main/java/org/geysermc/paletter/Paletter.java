@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Canonical ids ({@link #canonicalBlock(NbtMap)}, {@link #canonicalItem(ItemVariant)}) are defined by the newest
  * version, and valid in every palette of this instance.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class Paletter {
     private final PaletteDataSource source;
@@ -174,7 +174,7 @@ public final class Paletter {
     /**
      * @return the canonical id of a vanilla state (no hash lookup for {@link #bundled()}), or -1 for a custom block
      *         state: custom blocks have canonical ids per layer lineage, see {@link Palette#canonicalBlock(BedrockBlockState)}
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public int canonicalBlock(@NonNull BedrockBlockState state) {
         return state.canonicalIn(canonicalBlocks());
@@ -197,7 +197,7 @@ public final class Paletter {
     /**
      * @return the canonical id of the base variant of a vanilla item type, or -1 for a custom item: custom items have
      *         canonical ids per layer lineage, see {@link Palette#canonicalItem(BedrockItemType)}
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public int canonicalItem(@NonNull BedrockItemType type) {
         return type.canonicalIn(canonicalItems());
@@ -205,7 +205,7 @@ public final class Paletter {
 
     /**
      * @return the canonical id of a vanilla item variant, or -1 (a custom item, or a variant that has none)
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public int canonicalItem(@NonNull BedrockItemVariant variant) {
         return variant.canonicalIn(canonicalItems());

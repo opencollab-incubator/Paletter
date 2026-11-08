@@ -12,7 +12,7 @@ import java.util.List;
  * @param type the value type
  * @param values the possible values; the first one is the default
  * @param <T> the value type: {@link Byte} for booleans (0 and 1, as Bedrock stores them), {@link Integer} or {@link String}
- * @since 2.0.0
+ * @since 1.0.0
  */
 public record BlockProperty<T>(@NonNull String name, @NonNull Type type, @NonNull List<T> values) {
 

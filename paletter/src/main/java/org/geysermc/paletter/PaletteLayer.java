@@ -42,7 +42,7 @@ import java.util.function.Consumer;
  * Adding custom blocks in a layer does re-number block states in {@link org.geysermc.paletter.block.BlockNetworkIds#SEQUENTIAL}
  * palettes, since the client sorts its palette by name hash. Canonical ids never change: custom content is appended.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class PaletteLayer {
     private final String id;
@@ -102,7 +102,7 @@ public final class PaletteLayer {
      * @return custom items and items of custom blocks registered with {@link Builder#blockItem}, in registration
      * order: the order their runtime and canonical ids are assigned in. Items of blocks registered with
      * {@link Builder#block} follow them
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public @NonNull List<ItemEntry> itemEntries() {
         return itemEntries;
@@ -123,7 +123,7 @@ public final class PaletteLayer {
     /**
      * @return how this layer's custom items and blocks without an anchored placement are ordered in the creative
      * inventory
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public @NonNull CreativeOrdering creativeOrdering() {
         return creativeOrdering;
@@ -140,7 +140,7 @@ public final class PaletteLayer {
     /**
      * @return the item fallbacks this layer applies to a version: those for every version, overridden by those for
      *         this one
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public @NonNull Map<String, ItemFallback> itemFallbacks(@NonNull DataVersion version) {
         Map<String, ItemFallback> specific = versionItemFallbacks.get(version.name());
@@ -155,7 +155,7 @@ public final class PaletteLayer {
     /**
      * @return the block fallbacks this layer applies to a version: those for every version, overridden by those for
      *         this one
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public @NonNull Map<String, BlockFallback> blockFallbacks(@NonNull DataVersion version) {
         Map<String, BlockFallback> specific = versionBlockFallbacks.get(version.name());
@@ -170,7 +170,7 @@ public final class PaletteLayer {
     /**
      * @return the defaults this layer sets for content without a fallback, or null if it keeps those of the layers
      *         below (initially {@link FallbackDefaults#UNKNOWN})
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public @Nullable FallbackDefaults fallbackDefaults() {
         return fallbackDefaults;
@@ -205,11 +205,11 @@ public final class PaletteLayer {
     /**
      * An item a layer registers: a custom item, or the item of a custom block.
      *
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public sealed interface ItemEntry {
         /**
-         * @since 2.0.0
+         * @since 1.0.0
          */
         record Custom(@NonNull CustomItem item) implements ItemEntry {
         }
@@ -218,7 +218,7 @@ public final class PaletteLayer {
          * @param block the identifier of a custom block of this layer or an earlier one
          * @param item how the item is registered
          * @param creative where it goes in the creative inventory, or null to leave it out
-         * @since 2.0.0
+         * @since 1.0.0
          */
         record OfBlock(@NonNull String block, CustomBlock.@NonNull BlockItem item, @Nullable CreativePlacement creative) implements ItemEntry {
         }
@@ -255,7 +255,7 @@ public final class PaletteLayer {
          * layer (registered there with {@link CustomBlock.BlockItem#NONE}), or to order block items among custom items:
          * runtime and canonical ids are assigned in the order of {@link #item} and {@code blockItem} calls.
          *
-         * @since 2.0.0
+         * @since 1.0.0
          */
         public @NonNull Builder blockItem(@NonNull String block, CustomBlock.@NonNull BlockItem item, @Nullable CreativePlacement creative) {
             itemEntries.add(new ItemEntry.OfBlock(Objects.requireNonNull(block), Objects.requireNonNull(item), creative));
@@ -278,7 +278,7 @@ public final class PaletteLayer {
         /**
          * Changes an existing item definition, like {@link #overrideItem(String, Consumer)}.
          *
-         * @since 2.0.0
+         * @since 1.0.0
          */
         public @NonNull Builder overrideItem(@NonNull BedrockItemType type, @NonNull Consumer<ItemOverride> modifier) {
             return overrideItem(type.identifier(), modifier);
@@ -288,7 +288,7 @@ public final class PaletteLayer {
          * Sets how custom items and blocks of this layer are ordered in the creative inventory when their placement
          * has no anchor. {@link CreativeOrdering#BDS} (the default) puts them exactly where BDS puts add-on content.
          *
-         * @since 2.0.0
+         * @since 1.0.0
          */
         public @NonNull Builder creativeOrdering(@NonNull CreativeOrdering ordering) {
             this.creativeOrdering = Objects.requireNonNull(ordering);
@@ -332,28 +332,28 @@ public final class PaletteLayer {
         }
 
         /**
-         * @since 2.0.0
+         * @since 1.0.0
          */
         public @NonNull Builder itemFallback(@NonNull BedrockItemType type, @NonNull BedrockItemType replacement) {
             return itemFallback(type.identifier(), ItemFallback.of(replacement));
         }
 
         /**
-         * @since 2.0.0
+         * @since 1.0.0
          */
         public @NonNull Builder itemFallback(@NonNull BedrockItemType type, @NonNull ItemFallback fallback) {
             return itemFallback(type.identifier(), fallback);
         }
 
         /**
-         * @since 2.0.0
+         * @since 1.0.0
          */
         public @NonNull Builder blockFallback(@NonNull BedrockBlockType type, @NonNull BlockFallback fallback) {
             return blockFallback(type.identifier(), fallback);
         }
 
         /**
-         * @since 2.0.0
+         * @since 1.0.0
          */
         public @NonNull Builder blockFallback(@NonNull BedrockBlockType type, @NonNull BedrockBlockType replacement) {
             return blockFallback(type.identifier(), BlockFallback.of(replacement));
@@ -364,7 +364,7 @@ public final class PaletteLayer {
          * layer's fallback for every version and the bundled one. Fallbacks apply where the item does not exist, or
          * with {@link ItemFallback#force()} also where it does.
          *
-         * @since 2.0.0
+         * @since 1.0.0
          */
         public @NonNull Builder itemFallback(@NonNull String version, @NonNull String identifier, @NonNull ItemFallback fallback) {
             versionItemFallbacks.computeIfAbsent(Objects.requireNonNull(version), v -> new LinkedHashMap<>())
@@ -376,7 +376,7 @@ public final class PaletteLayer {
          * Uses {@code fallback} for {@code identifier} in one data version only (e.g. {@code "26.50"}), overriding this
          * layer's fallback for every version and the bundled one.
          *
-         * @since 2.0.0
+         * @since 1.0.0
          */
         public @NonNull Builder blockFallback(@NonNull String version, @NonNull String identifier, @NonNull BlockFallback fallback) {
             versionBlockFallbacks.computeIfAbsent(Objects.requireNonNull(version), v -> new LinkedHashMap<>())
@@ -389,7 +389,7 @@ public final class PaletteLayer {
          * layers above it. The default is {@link FallbackDefaults#UNKNOWN}; {@link FallbackDefaults#NONE} sends air and
          * leaves items out.
          *
-         * @since 2.0.0
+         * @since 1.0.0
          */
         public @NonNull Builder fallbackDefaults(@NonNull FallbackDefaults defaults) {
             this.fallbackDefaults = Objects.requireNonNull(defaults);
@@ -411,7 +411,7 @@ public final class PaletteLayer {
         /**
          * Gives a variant a canonical id, like {@link #variant(ItemVariant)}.
          *
-         * @since 2.0.0
+         * @since 1.0.0
          */
         public @NonNull Builder variant(@NonNull BedrockItemVariant variant) {
             return variant(variant.toItemVariant());

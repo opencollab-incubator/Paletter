@@ -9,7 +9,7 @@ import java.util.List;
  * Supplies vanilla data. The default implementation, {@link #bundled()}, reads the data shipped inside the library jar,
  * so no network access or external files are needed at runtime.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public interface PaletteDataSource {
 

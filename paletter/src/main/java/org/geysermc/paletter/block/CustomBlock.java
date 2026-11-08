@@ -45,7 +45,7 @@ import java.util.Objects;
  * @param creative where the block item goes in the creative inventory, or null to leave it out
  * @param defaultStates state values of the default state; properties not listed use their first value
  * @param tags block tags, queryable with Molang (sent as the block's {@code blockTags})
- * @since 2.0.0
+ * @since 1.0.0
  */
 public record CustomBlock(
     @NonNull String identifier,
@@ -189,7 +189,7 @@ public record CustomBlock(
      * @return the type of the block, to use it like a vanilla {@link org.geysermc.paletter.vanilla.BedrockBlocks}
      *         constant. Its states have canonical ids per layer lineage, see
      *         {@link org.geysermc.paletter.Palette#canonicalBlock(org.geysermc.paletter.vanilla.BedrockBlockState)}
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public @NonNull BedrockBlockType type() {
         return BedrockBlockType.of(this);
@@ -197,7 +197,7 @@ public record CustomBlock(
 
     /**
      * @return the type of the block item, or null if the block has none ({@link BlockItem#NONE})
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public @Nullable BedrockItemType itemType() {
         return item instanceof BlockItem.None ? null : BedrockItemType.custom(identifier);

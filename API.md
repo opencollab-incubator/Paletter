@@ -113,7 +113,7 @@ component. Consumers decide what to log.
 
 [`paletter/api/baseline.version`](paletter/api/baseline.version) names the API version the current code must stay
 compatible with; `paletter/api/paletter-<version>-api.jar` holds the exported classes of that version. There is no
-release yet, so the baseline `2.0.0` was generated from the `stable-api` branch. Workflow:
+release yet, so the baseline `1.0.0` was generated from the `stable-api` branch. Workflow:
 
 - **Release** `2.N.0`: after tagging, write the released API as the new baseline:
   `./gradlew :paletter:updateApiBaseline`, after setting `baseline.version` to the released version (and deleting the old
@@ -131,7 +131,7 @@ new types too, including every generated constant: removing one now fails `apiCo
 
 ### Pre-release changes
 
-2.0.0 is not released, so these API changes replaced the old API directly, without a deprecation cycle (which applies
+1.0.0 is not released, so these API changes replaced the old API directly, without a deprecation cycle (which applies
 from the first release on); the baseline was regenerated with each:
 
 - `BedrockBlockState#id()`, `BedrockItemType#id()` and `BedrockItemVariant#id()` are removed. They returned the canonical

@@ -19,7 +19,7 @@ import java.util.TreeSet;
  * <p>
  * The rule BDS follows, and the evidence for it, is in {@code capture/CREATIVE-ORDER.md}.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public enum CreativeOrdering {
     /**
@@ -40,7 +40,7 @@ public enum CreativeOrdering {
      */
     BDS,
     /**
-     * The behaviour before 2.0.0: items, then block items, each in definition order; a group is looked up by name in
+     * The behaviour before 1.0.0: items, then block items, each in definition order; a group is looked up by name in
      * any category and created at the end of the category if missing; loose stacks go to the end of the category.
      * Blocks without a creative placement are not placed.
      */
@@ -63,7 +63,7 @@ public enum CreativeOrdering {
      * @param customBlocks every custom block identifier of the palette, in block id order
      * @param vanillaDataDrivenBlocks the identifiers of the version's vanilla data driven blocks
      * @return {@code customBlocks} in placement order
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public @NonNull List<String> blockOrder(@NonNull List<String> customBlocks, @NonNull Collection<String> vanillaDataDrivenBlocks) {
         if (this == APPEND) {

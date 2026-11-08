@@ -12,7 +12,7 @@ import org.cloudburstmc.nbt.NbtMap;
  * @param version the item version as sent by BDS, see {@link org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion#from(int)}
  * @param componentBased whether the item is component based
  * @param componentData the vanilla item components, if any. Some non component based items (e.g. food) still have them
- * @since 2.0.0
+ * @since 1.0.0
  */
 public record VanillaItem(@NonNull String identifier, int runtimeId, int version, boolean componentBased, @Nullable NbtMap componentData) {
 }

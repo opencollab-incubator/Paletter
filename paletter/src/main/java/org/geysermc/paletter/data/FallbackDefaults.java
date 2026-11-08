@@ -15,7 +15,7 @@ import org.geysermc.paletter.item.ItemFallback;
  *
  * @param block the fallback for blocks, or null to send air
  * @param item the fallback for items, or null to leave the item out ({@code Palette#item(int)} is null)
- * @since 2.0.0
+ * @since 1.0.0
  */
 public record FallbackDefaults(@Nullable BlockFallback block, @Nullable ItemFallback item) {
     /**

@@ -27,7 +27,7 @@ import java.util.WeakHashMap;
  * because Bedrock removed the block, or a preview block without the preview loaded) is not {@link #isAvailable()
  * available}: its states are those of its fallback, normally {@code minecraft:unknown}.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class BedrockBlockType {
     private static final Map<CustomBlock, BedrockBlockType> CUSTOM = new WeakHashMap<>();
@@ -234,7 +234,7 @@ public final class BedrockBlockType {
     /**
      * Builds a state from the default state of a type.
      *
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public static final class StateBuilder {
         private BedrockBlockState state;

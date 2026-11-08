@@ -8,7 +8,7 @@ import org.geysermc.paletter.vanilla.StateValue;
 /**
  * Values of {@code orientation}.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public enum Orientation implements StateValue {
     /**

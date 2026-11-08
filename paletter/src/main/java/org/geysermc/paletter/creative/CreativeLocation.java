@@ -9,7 +9,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @param category the category
  * @param group the group name, or null if the stack is loose
  * @param index the index inside the group, or the node index inside the category if loose
- * @since 2.0.0
+ * @since 1.0.0
  */
 public record CreativeLocation(@NonNull CreativeCategory category, @Nullable String group, int index) {
 

@@ -8,7 +8,7 @@ import org.geysermc.paletter.vanilla.StateValue;
 /**
  * Values of {@code minecraft:block_face}, {@code minecraft:facing_direction}.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public enum Direction implements StateValue {
     /**

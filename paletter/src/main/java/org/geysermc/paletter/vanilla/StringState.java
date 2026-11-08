@@ -9,7 +9,7 @@ import java.util.List;
  * A string block state without an enum: string properties of custom blocks, and vanilla string states that are newer
  * than the generated {@link BedrockStates} (e.g. only in a preview version).
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class StringState extends BedrockState<String> {
     private final List<String> values;

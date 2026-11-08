@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * A boolean block state: a byte 0 or 1 in the block state NBT, e.g. {@link BedrockStates#OPEN_BIT}.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class BoolState extends BedrockState<Boolean> {
     private static final List<Boolean> VALUES = List.of(false, true);

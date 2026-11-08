@@ -8,7 +8,7 @@ import org.geysermc.paletter.vanilla.StateValue;
 /**
  * Values of {@code structure_block_type}.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public enum StructureBlockType implements StateValue {
     /**

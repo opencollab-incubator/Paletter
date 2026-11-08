@@ -8,7 +8,7 @@ import org.geysermc.paletter.vanilla.StateValue;
 /**
  * Values of {@code minecraft:vertical_half}.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public enum VerticalHalf implements StateValue {
     /**

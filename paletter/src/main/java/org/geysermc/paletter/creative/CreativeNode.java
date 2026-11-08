@@ -14,7 +14,7 @@ package org.geysermc.paletter.creative;
  * Neither knows which category or group it is in; ask the {@link CreativeLayout} or {@link CreativeEditor} instead.
  * That way an element can never disagree with the layout about where it is.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public sealed interface CreativeNode permits CreativeGroup, CreativeStack {
 }

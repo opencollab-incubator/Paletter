@@ -111,7 +111,7 @@ Rules:
   exists under another constant name (a `names.json` change), or `names.json` `renamed` maps it to a new identifier, it
   becomes an alias of that constant; otherwise it resolves to `names.json` `fallbacks` or `minecraft:unknown`. Removed
   states and enum values stay deprecated as well. `deprecated` is set once, so later generations keep the version.
-- **New content** gets `@since` of the current Paletter version when it is newer than the class (2.0.0).
+- **New content** gets `@since` of the current Paletter version when it is newer than the class (1.0.0).
 
 `ConstantsGoldenTest` runs the generator on a small synthetic bundle (bool, int and string states, a shared value set, a
 name collision settled by names, a lookup table block, a removed block, a rename, a removed item with a curated fallback,

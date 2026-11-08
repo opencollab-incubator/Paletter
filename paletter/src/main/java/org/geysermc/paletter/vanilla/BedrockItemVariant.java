@@ -12,7 +12,7 @@ import java.util.Objects;
  * A variant of a {@link BedrockItemType}: its damage value and, for the few block items that differ only in the block
  * they place, a block state. Obtained from {@link BedrockItemType#variant(int)} and {@link BedrockItemType#variants()}.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class BedrockItemVariant {
     private final BedrockItemType type;

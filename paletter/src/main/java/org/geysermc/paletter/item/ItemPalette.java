@@ -53,7 +53,7 @@ import java.util.function.Consumer;
  * It also knows which block each block item is sent with, so consumers never have to work that out from the
  * creative inventory themselves.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     private static final NbtMap NO_BLOCK = NbtMap.builder().putString("name", "paletter:no_block").build();

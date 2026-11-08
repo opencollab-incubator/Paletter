@@ -57,7 +57,7 @@ class ConstantsGeneratorTest {
     private static JsonObject entry(String identifier) {
         JsonObject entry = new JsonObject();
         entry.addProperty("identifier", identifier);
-        entry.addProperty("since", "2.0.0");
+        entry.addProperty("since", "1.0.0");
         return entry;
     }
 
@@ -74,7 +74,7 @@ class ConstantsGeneratorTest {
 
     @Test
     void removedAndRenamedContentIsDeprecated(@TempDir Path temp) throws IOException {
-        JsonObject first = history(ConstantsGenerator.generate(release, null, names, new JsonObject(), "2.0.0"));
+        JsonObject first = history(ConstantsGenerator.generate(release, null, names, new JsonObject(), "1.0.0"));
 
         // A previous generation had a block Bedrock removed, a constant since renamed, an item Bedrock renamed,
         // a state Bedrock removed and an enum value no state has anymore; STONE did not exist yet
@@ -86,11 +86,11 @@ class ConstantsGeneratorTest {
         JsonObject state = new JsonObject();
         state.addProperty("name", "removed_state");
         state.addProperty("kind", "bool");
-        state.addProperty("since", "2.0.0");
+        state.addProperty("since", "1.0.0");
         first.getAsJsonObject("states").add("REMOVED_STATE", state);
         JsonObject value = new JsonObject();
         value.addProperty("value", "upwards");
-        value.addProperty("since", "2.0.0");
+        value.addProperty("since", "1.0.0");
         first.getAsJsonObject("enums").getAsJsonObject("CardinalDirection").getAsJsonObject("values").add("UPWARDS", value);
 
         JsonObject names = this.names.deepCopy();
@@ -149,17 +149,17 @@ class ConstantsGeneratorTest {
         JsonObject clash = names.deepCopy();
         clash.getAsJsonObject("blocks").addProperty("minecraft:dirt", "STONE");
         IllegalStateException e = assertThrows(IllegalStateException.class,
-            () -> ConstantsGenerator.generate(release, null, clash, new JsonObject(), "2.0.0"));
+            () -> ConstantsGenerator.generate(release, null, clash, new JsonObject(), "1.0.0"));
         assertTrue(e.getMessage().contains("Duplicate constant BedrockBlocks.STONE"), e.getMessage());
 
         JsonObject noOverride = names.deepCopy();
         noOverride.getAsJsonObject("states").remove("minecraft:facing_direction");
-        e = assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(release, null, noOverride, new JsonObject(), "2.0.0"));
+        e = assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(release, null, noOverride, new JsonObject(), "1.0.0"));
         assertTrue(e.getMessage().contains("Duplicate constant BedrockStates.FACING_DIRECTION"), e.getMessage());
 
         JsonObject invalid = names.deepCopy();
         invalid.getAsJsonObject("items").addProperty("minecraft:apple", "1APPLE");
-        assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(release, null, invalid, new JsonObject(), "2.0.0"));
+        assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(release, null, invalid, new JsonObject(), "1.0.0"));
     }
 
     @Test
@@ -172,7 +172,7 @@ class ConstantsGeneratorTest {
         VanillaData preview = new VanillaData(new DataVersion("26.70", 9999), states, items, release.dataDrivenBlocks(), release.creative(),
             release.itemTags(), release.fallbacks(), release.blockDefaults());
 
-        ConstantsGenerator.Result result = ConstantsGenerator.generate(release, preview, names, new JsonObject(), "2.0.0");
+        ConstantsGenerator.Result result = ConstantsGenerator.generate(release, preview, names, new JsonObject(), "1.0.0");
         String blocks = result.files().get(ConstantsGenerator.PACKAGE_DIR + "/BedrockPreviewBlocks.java");
         assertTrue(blocks.contains("@Experimental\npublic final class BedrockPreviewBlocks"));
         assertTrue(blocks.contains("public static final BedrockBlockType PREVIEW_BLOCK = VanillaTypes.block(\"minecraft:preview_block\");"));

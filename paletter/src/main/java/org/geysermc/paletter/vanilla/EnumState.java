@@ -13,7 +13,7 @@ import java.util.Objects;
  * {@link org.geysermc.paletter.vanilla.state.CardinalDirection}. Vanilla states with the same values share an enum.
  *
  * @param <E> the enum
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class EnumState<E extends Enum<E> & StateValue> extends BedrockState<E> {
     private final Class<E> type;

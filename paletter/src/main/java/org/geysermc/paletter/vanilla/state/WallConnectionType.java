@@ -8,7 +8,7 @@ import org.geysermc.paletter.vanilla.StateValue;
 /**
  * Values of {@code pale_moss_carpet_side_east}, {@code pale_moss_carpet_side_north}, {@code pale_moss_carpet_side_south}, {@code pale_moss_carpet_side_west}, {@code wall_connection_type_east}, {@code wall_connection_type_north}, {@code wall_connection_type_south}, {@code wall_connection_type_west}.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public enum WallConnectionType implements StateValue {
     /**

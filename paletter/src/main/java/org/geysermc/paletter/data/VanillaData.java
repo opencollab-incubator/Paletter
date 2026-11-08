@@ -23,7 +23,7 @@ import java.util.Map;
  * @param experiments content gated behind an experiment toggle in this version, by toggle id (e.g.
  *                    {@code y_2026_drop_4}); empty if the version was not captured with experiments
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public record VanillaData(
     @NonNull DataVersion version,

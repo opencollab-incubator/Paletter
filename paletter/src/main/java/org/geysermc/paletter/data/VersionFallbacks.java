@@ -18,7 +18,7 @@ import java.util.Set;
  * @param unmapped identifiers that are deliberately left without a fallback, e.g. Bedrock-only content no consumer maps
  *                 to. Only used by the generator's coverage check
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public record VersionFallbacks(@NonNull Map<String, BlockFallback> blocks, @NonNull Map<String, ItemFallback> items,
                                @NonNull Set<String> unmapped) {

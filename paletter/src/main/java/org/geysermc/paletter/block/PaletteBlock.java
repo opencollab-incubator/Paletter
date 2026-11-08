@@ -12,7 +12,7 @@ import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
  * {@link org.geysermc.paletter.Paletter}, across versions: equal state, same instance. The position of a state in its
  * palette is {@link BlockPalette#indexOf}.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class PaletteBlock implements BlockDefinition {
     private final int runtimeId;

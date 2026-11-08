@@ -11,7 +11,7 @@ import java.util.Map;
  * {@code name} (the block identifier) and {@code states} (the state values). Other keys found in palette dumps
  * ({@code version}, {@code name_hash}, {@code network_id}, {@code block_id}) carry no identity and are dropped.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class BlockStates {
 

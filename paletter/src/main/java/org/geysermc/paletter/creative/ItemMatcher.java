@@ -16,7 +16,7 @@ import java.util.function.Predicate;
  * ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.damage(2))
  * }</pre>
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 @FunctionalInterface
 public interface ItemMatcher {
@@ -41,7 +41,7 @@ public interface ItemMatcher {
     /**
      * Matches every stack of an item type, like {@link #id(String)}.
      *
-     * @since 2.0.0
+     * @since 1.0.0
      */
     static @NonNull ItemMatcher of(@NonNull BedrockItemType type) {
         return new Id(type.identifier());
@@ -50,7 +50,7 @@ public interface ItemMatcher {
     /**
      * Matches the stacks of a variant: its item, damage and, if it has one, block state.
      *
-     * @since 2.0.0
+     * @since 1.0.0
      */
     static @NonNull ItemMatcher of(@NonNull BedrockItemVariant variant) {
         ItemMatcher matcher = new Id(variant.type().identifier()).and(new Damage(variant.damage()));

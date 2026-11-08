@@ -16,7 +16,7 @@ import org.geysermc.paletter.item.ItemVariant;
  * @param count the stack size
  * @param blockState the block state as {@code {name, states}}, or null to use the item's default block (if any)
  * @param tag the item NBT, if any
- * @since 2.0.0
+ * @since 1.0.0
  */
 public record CreativeStack(@NonNull String identifier, int damage, int count, @Nullable NbtMap blockState, @Nullable NbtMap tag) implements CreativeNode {
 

@@ -24,7 +24,7 @@ import java.util.Objects;
  * without the preview loaded) is not {@link #isAvailable() available} and resolves to its fallback, normally
  * {@code minecraft:unknown}.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class BedrockItemType {
     private final String identifier;

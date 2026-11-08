@@ -16,7 +16,7 @@ import java.util.Objects;
  * named like a vanilla state can be used with the vanilla constant.
  *
  * @param <T> the value type
- * @since 2.0.0
+ * @since 1.0.0
  */
 public abstract sealed class BedrockState<T> permits BoolState, IntState, EnumState, StringState {
     private final String name;

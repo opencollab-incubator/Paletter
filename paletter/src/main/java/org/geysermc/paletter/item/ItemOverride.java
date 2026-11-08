@@ -22,7 +22,7 @@ import java.util.List;
  * layer.overrideItem("minecraft:firework_rocket", item -> item.dataDriven(MaxStackSize.of(64), Throwable.builder().build()));
  * }</pre>
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class ItemOverride {
     private final PaletteItem original;

@@ -8,7 +8,7 @@ import org.geysermc.paletter.vanilla.StateValue;
 /**
  * Values of {@code bamboo_stalk_thickness}.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public enum BambooStalkThickness implements StateValue {
     /**

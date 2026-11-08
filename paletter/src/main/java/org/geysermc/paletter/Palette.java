@@ -46,7 +46,7 @@ import java.util.WeakHashMap;
  * {@link CanonicalItems}): {@link #runtimeId(int)} and {@link #block(int)} for blocks, {@link #item(int)} and
  * {@link #match(ItemData)} for items. All are array or hash lookups that do not allocate.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class Palette {
     private final VanillaData data;
@@ -135,7 +135,7 @@ public final class Palette {
      * @return the canonical id of a vanilla or custom block state in this palette, or -1 if it has none (a custom block
      *         of a layer this palette does not have). For vanilla states in palettes of {@link Paletter#bundled()} this
      *         is {@link Paletter#canonicalBlock(BedrockBlockState)}, without a hash lookup
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public int canonicalBlock(@NonNull BedrockBlockState state) {
         return state.canonicalIn(blocks.canonical());
@@ -144,7 +144,7 @@ public final class Palette {
     /**
      * @return the block to send for a state, like {@link #block(int)}
      * @throws IllegalArgumentException if the state has no canonical id in this palette
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public @NonNull PaletteBlock block(@NonNull BedrockBlockState state) {
         return blocks.block(requireCanonical(state));
@@ -153,7 +153,7 @@ public final class Palette {
     /**
      * @return the runtime id to send for a state, like {@link #runtimeId(int)}
      * @throws IllegalArgumentException if the state has no canonical id in this palette
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public int runtimeId(@NonNull BedrockBlockState state) {
         return blocks.runtimeId(requireCanonical(state));
@@ -180,7 +180,7 @@ public final class Palette {
 
     /**
      * @return the canonical id of the base variant of an item type in this palette, or -1
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public int canonicalItem(@NonNull BedrockItemType type) {
         return type.canonicalIn(items.canonical());
@@ -188,7 +188,7 @@ public final class Palette {
 
     /**
      * @return the canonical id of a variant in this palette, or -1
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public int canonicalItem(@NonNull BedrockItemVariant variant) {
         return variant.canonicalIn(items.canonical());
@@ -208,7 +208,7 @@ public final class Palette {
     /**
      * @return what to send for the base variant of an item type, or null if it has no canonical id here, or does not
      *         exist in this version and has no fallback
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public @Nullable ResolvedItem item(@NonNull BedrockItemType type) {
         int canonical = canonicalItem(type);
@@ -219,7 +219,7 @@ public final class Palette {
      * @return what to send for a variant, or null if it has no canonical id here (see
      *         {@link PaletteLayer.Builder#variant(BedrockItemVariant)}), or does not exist in this version and has no
      *         fallback
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public @Nullable ResolvedItem item(@NonNull BedrockItemVariant variant) {
         int canonical = canonicalItem(variant);

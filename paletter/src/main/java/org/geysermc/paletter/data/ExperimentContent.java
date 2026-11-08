@@ -18,7 +18,7 @@ import java.util.List;
  * @param blocks block identifiers the toggle adds to the Script API block types or to the start game block properties
  * @param creative creative stacks the toggle adds, as {@code identifier} or {@code identifier:damage}
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public record ExperimentContent(@NonNull List<String> items, @NonNull List<String> blocks, @NonNull List<String> creative) {
     public static final ExperimentContent EMPTY = new ExperimentContent(List.of(), List.of(), List.of());

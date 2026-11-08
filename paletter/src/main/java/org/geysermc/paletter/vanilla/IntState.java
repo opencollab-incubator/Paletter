@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * An integer block state, e.g. {@link BedrockStates#AGE}. Its values are a range ({@link #range}) or a list.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class IntState extends BedrockState<Integer> {
     private final List<Integer> values;

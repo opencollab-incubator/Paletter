@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Runtime ids depend on the palette's {@link BlockNetworkIds} mode: palette positions, or state hashes. Each state also
  * has a dense position, {@link #indexOf}, in both modes; in hashed palettes vanilla definitions are shared between versions.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     /**
