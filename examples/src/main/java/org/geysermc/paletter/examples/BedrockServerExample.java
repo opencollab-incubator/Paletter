@@ -1,0 +1,60 @@
+package org.geysermc.paletter.examples;
+
+import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
+import org.cloudburstmc.protocol.bedrock.codec.v2225.Bedrock_v2225;
+import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
+import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
+import org.geysermc.paletter.Palette;
+import org.geysermc.paletter.PaletteLayer;
+import org.geysermc.paletter.Paletter;
+import org.geysermc.paletter.block.BlockNetworkIds;
+import org.geysermc.paletter.item.CustomItem;
+import org.geysermc.paletter.item.component.DisplayName;
+import org.geysermc.paletter.item.component.Icon;
+import org.geysermc.paletter.item.component.MaxStackSize;
+import org.geysermc.paletter.vanilla.BedrockBlocks;
+import org.geysermc.paletter.vanilla.BedrockItems;
+
+/**
+ * A Bedrock-only server: one palette per client version, block and item ids stored canonically, converted at the
+ * network edge. Run: {@code ./gradlew :examples:run}.
+ */
+public final class BedrockServerExample {
+    public static void main(String[] args) {
+        Paletter paletter = Paletter.bundled();
+
+        // The server's own content, described once, valid for every client version
+        CustomItem ruby = CustomItem.builder("example:ruby")
+            .component(Icon.of("ruby"))
+            .component(DisplayName.builder().value("item.example.ruby.name").build())
+            .component(MaxStackSize.of(16))
+            .build();
+        PaletteLayer server = PaletteLayer.builder("server").item(ruby).build();
+
+        // One palette per client version, shared by all its players
+        BedrockCodec codec = Bedrock_v2225.CODEC;
+        Palette palette = paletter.palette(codec, BlockNetworkIds.HASHED, server);
+
+        // Login: definition registries for the codec, block properties and the id mode for start game
+        palette.applyTo(codec.createHelper());
+        StartGamePacket startGame = new StartGamePacket();
+        palette.applyTo(startGame);
+        System.out.println("hashed block ids: " + startGame.isBlockNetworkIdsHashed());
+        System.out.println("items in the component packet: " + palette.itemComponentPacket().getItems().size());
+        System.out.println("creative entries: " + palette.creativeContentPacket().getContents().size());
+
+        // World storage keeps canonical ids, independent of the client version
+        int stone = paletter.canonicalBlock(BedrockBlocks.STONE.defaultState());
+        System.out.println("stone: canonical " + stone + ", runtime id " + palette.runtimeId(stone));
+
+        // Items: canonical id -> stack for the client, and back
+        int rubyId = palette.canonicalItem(ruby.type());
+        ItemData stack = palette.item(rubyId).toItemData().count(3).build();
+        System.out.println("match(ruby stack) is ruby: " + (palette.match(stack) == rubyId));
+        ItemData apple = palette.item(BedrockItems.APPLE).toItemData().build();
+        System.out.println("match(apple) = " + palette.match(apple) + " (canonical " + palette.canonicalItem(BedrockItems.APPLE) + ")");
+
+        // Debugging: why does this id look the way it does?
+        System.out.println(palette.explain(BedrockBlocks.STONE.defaultState()));
+    }
+}

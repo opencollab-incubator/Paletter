@@ -35,6 +35,8 @@ session.sendPacket(palette.creativeContentPacket());
 
 The API is stable: semantic versioning, a deprecation cycle and a binary compatibility check. See [API.md](API.md) for
 what is API, what `@Experimental` and `@Internal` mean, and the policy.
+How the pieces fit together, and recipes for the common changes, are in [ARCHITECTURE.md](ARCHITECTURE.md);
+runnable examples are in [examples/](examples).
 
 
 | Path        | What                                                                                           |
