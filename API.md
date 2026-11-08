@@ -129,6 +129,9 @@ constant overloads of `Palette`, `PaletteLayer.Builder`, `ItemMatcher`, `Creativ
 `CanonicalItems#extendsOrIs`, and the `FallbackDefaults` API of the update pipeline), so the new baseline covers the
 new types too, including every generated constant: removing one now fails `apiCompat`.
 
+Additions since the baseline (`apiCompat` passes, baseline not regenerated): `BedrockItemType#hasVariant` / `#variantOf`, and the
+debugging aids `Palette#explain` with `BlockExplanation` and `ItemExplanation` (both `@Experimental`: their shape may still grow).
+
 ### Pre-release changes
 
 1.0.0 is not released, so these API changes replaced the old API directly, without a deprecation cycle (which applies

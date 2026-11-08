@@ -22,6 +22,7 @@ One command line, picocli (`Cli`): `./gradlew :tools:run --args="<command> ..."`
 | `creative-probe` | Runs a creative add-on on BDS and records the creative order |
 | `capture`, `compare`, `experiments` | The capture client: record a server, diff it with a bundled version, switch experiments in a `level.dat` |
 | `docs`, `addon [--kind spec\|capture\|creative\|creative-large]`, `infer`, `check-mappings` | The component model ([docs/model.md](docs/model.md)) and the add-on packs |
+| `inspect --version <v\|all> --block '<id[states]>' \| --item '<id[:damage]>'` | Prints `Palette#explain` of a block state or item variant for one or all bundled versions: canonical, runtime and hashed id, how it resolves (exact, adapted, fallback, default), the block sent with an item, the creative location |
 | `constants generate\|check`, `components generate\|check` | The generators ([docs/codegen.md](docs/codegen.md)) |
 
 Gradle tasks (run from anywhere in the build): `generateConstants`, `checkConstants`, `generateComponentApi`,

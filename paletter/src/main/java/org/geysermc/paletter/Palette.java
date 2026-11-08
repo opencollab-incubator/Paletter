@@ -11,10 +11,13 @@ import org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
 import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.BlockPalette;
+import org.geysermc.paletter.block.BlockResolution;
+import org.geysermc.paletter.block.BlockStates;
 import org.geysermc.paletter.block.CanonicalBlocks;
 import org.geysermc.paletter.block.PaletteBlock;
 import org.geysermc.paletter.creative.CreativeContent;
 import org.geysermc.paletter.creative.CreativeLayout;
+import org.geysermc.paletter.creative.ItemMatcher;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.VanillaData;
 import org.geysermc.paletter.item.CanonicalItems;
@@ -224,6 +227,80 @@ public final class Palette {
     public @Nullable ResolvedItem item(@NonNull BedrockItemVariant variant) {
         int canonical = canonicalItem(variant);
         return canonical == -1 ? null : items.item(canonical);
+    }
+
+    // ---- Debugging ----
+
+    /**
+     * Explains what this palette does with a block state: canonical, runtime and hashed id, how it was resolved for
+     * this version and which state is sent. Slow, for debugging only.
+     *
+     * @since 1.1.0
+     */
+    public @NonNull BlockExplanation explain(@NonNull NbtMap state) {
+        NbtMap normalized = BlockStates.normalize(state);
+        int canonical = canonicalBlock(normalized);
+        BlockResolution resolution = blocks.resolve(normalized);
+        BlockResolution.Kind kind = resolution.block() != null ? resolution.kind()
+            : blocks.defaultFallback() != null ? BlockResolution.Kind.DEFAULT : BlockResolution.Kind.MISSING;
+        PaletteBlock sent = kind == BlockResolution.Kind.MISSING ? null
+            : canonical != -1 ? blocks.block(canonical) : resolution.block();
+        List<String> chain = new ArrayList<>(List.of(BlockStates.name(normalized)));
+        if (sent != null && !sent.identifier().equals(chain.getFirst())) {
+            chain.add(sent.identifier());
+        }
+        return new BlockExplanation(normalized, canonical, kind, List.copyOf(chain), sent == null ? null : sent.getState(),
+            sent == null ? -1 : sent.getRuntimeId(), sent == null ? -1 : BlockNetworkIds.hash(sent.getState()));
+    }
+
+    /**
+     * Like {@link #explain(NbtMap)}, for a vanilla state.
+     *
+     * @since 1.1.0
+     */
+    public @NonNull BlockExplanation explain(@NonNull BedrockBlockState state) {
+        return explain(state.toNbt());
+    }
+
+    /**
+     * Explains what this palette does with an item variant: canonical and runtime id, how it was resolved for this
+     * version, the block it is sent with and its place in the creative inventory. Slow, for debugging only.
+     *
+     * @since 1.1.0
+     */
+    public @NonNull ItemExplanation explain(@NonNull ItemVariant variant) {
+        int canonical = canonicalItem(variant);
+        ResolvedItem direct = items.resolve(variant);
+        ResolvedItem sent = canonical != -1 ? items.item(canonical) : direct;
+        BlockResolution.Kind kind;
+        if (direct != null) {
+            kind = direct.fallback() ? BlockResolution.Kind.FALLBACK : BlockResolution.Kind.EXACT;
+        } else {
+            kind = sent != null ? BlockResolution.Kind.DEFAULT : BlockResolution.Kind.MISSING;
+        }
+        List<String> chain = new ArrayList<>(List.of(variant.identifier()));
+        String item = sent == null ? null : sent.definition().getIdentifier();
+        if (item != null && !item.equals(variant.identifier())) {
+            chain.add(item);
+        }
+        PaletteBlock block = sent == null ? null : sent.block();
+        ItemMatcher matcher = ItemMatcher.id(variant.identifier()).and(ItemMatcher.damage(variant.damage()));
+        if (variant.blockState() != null) {
+            matcher = matcher.and(ItemMatcher.blockState(variant.blockState()));
+        }
+        return new ItemExplanation(variant, canonical, kind, List.copyOf(chain), item,
+            sent == null ? -1 : sent.definition().getRuntimeId(), sent == null ? 0 : sent.damage(),
+            block == null ? null : BlockExplanation.describe(block.getState()), block == null ? -1 : block.getRuntimeId(),
+            creativeLayout().locate(matcher).orElse(null));
+    }
+
+    /**
+     * Like {@link #explain(ItemVariant)}, for a vanilla variant.
+     *
+     * @since 1.1.0
+     */
+    public @NonNull ItemExplanation explain(@NonNull BedrockItemVariant variant) {
+        return explain(variant.toItemVariant());
     }
 
     /**

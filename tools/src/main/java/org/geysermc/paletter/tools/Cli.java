@@ -48,7 +48,7 @@ import java.util.concurrent.Callable;
     Cli.VerifyCommand.class, Cli.CheckData.class, Cli.CreativeProbeCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
-    Cli.Constants.class, Cli.Components.class
+    Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class
 })
 public final class Cli implements Runnable {
     /** The docs commit the committed model was generated from (MicrosoftDocs/minecraft-creator main, 2026-11-06). */
@@ -444,6 +444,19 @@ public final class Cli implements Runnable {
                 org.geysermc.paletter.tools.codegen.constants.Main.main(new String[]{"check", "--root", root().toString()});
                 return 0;
             }
+        }
+    }
+
+    @Command(name = "inspect", description = "Explain what the bundled palettes do with a block state or an item variant")
+    static final class InspectCommand implements Callable<Integer> {
+        @Option(names = "--version", required = true, description = "Bundled version name, or all") String version;
+        @Option(names = "--block", description = "Block: identifier or identifier[key=value,...], e.g. 'minecraft:oak_stairs[upside_down_bit=true]'") String block;
+        @Option(names = "--item", description = "Item: identifier or identifier:damage, e.g. minecraft:potion:5") String item;
+
+        @Override
+        public Integer call() {
+            org.geysermc.paletter.tools.data.Inspect.run(org.geysermc.paletter.Paletter.bundled(), version, block, item, System.out);
+            return 0;
         }
     }
 
