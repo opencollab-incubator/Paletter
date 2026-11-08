@@ -10,15 +10,9 @@ import java.lang.annotation.Target;
  * Marks API that is public and supported, but <b>not covered by the compatibility promise</b>: it may change or be removed
  * in a minor release without a deprecation cycle. Changes are listed in the release notes.
  * <p>
- * Two kinds of API carry it:
- * <ul>
- *     <li>The raw NBT escape hatches ({@code ItemComponents.Builder#raw}, {@code BlockComponents.Builder#raw}, ...). With
- *     them <b>you own the wire format</b>: Paletter writes the NBT as given, for every Bedrock version, and does not adapt
- *     it when Bedrock changes the component's shape. Prefer the semantic builder methods, which Paletter encodes per
- *     version.</li>
- *     <li>Semantic API whose network behaviour is not verified against a vanilla server yet (e.g. a component only Geyser
- *     sends). It graduates, without source changes, once it is.</li>
- * </ul>
+ * It marks the generated components Bedrock gates behind an experiment ("Upcoming Creator Features" and the like): Bedrock
+ * may still change them before releasing them, and Paletter's generated API follows. They graduate, without source
+ * changes, once Bedrock releases them.
  *
  * @since 2.0.0
  */

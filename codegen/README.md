@@ -1,124 +1,76 @@
-# Component code generation
+# Code generation
 
-The wire shapes of Bedrock components in `paletter/src/main/java/org/geysermc/paletter/internal/wire/{item,block}` are
-generated. They are **internal**, not Paletter's API: consumers use the semantic `ItemComponents` / `BlockComponents`, and
-the hand written encoders in `org.geysermc.paletter.internal.encode` map those onto the generated shape of each palette's
-Bedrock version (see `API.md`). Their network shape comes from **wire NBT only**: what the vanilla server actually sends. Add-on JSON, the wiki and the
-bedrock-samples JSON schemas differ from the wire format in places (shorthands wrapped in `{value: ...}`, camelCase keys,
-`kinetic_weapon` nested in itself, `packed_bools` instead of separate flags, ...), so they never decide a field name, type
-or nesting.
+## The component API
 
-```
-./gradlew :codegen:generateComponents                 # infer + regenerate (writes the files below)
-./gradlew :codegen:generateComponents -Pcaptures=../Paletter-capture/capture/captures   # also read extra captures
-./gradlew :codegen:checkComponents                    # part of ./gradlew check: fails on any diff
-```
+`./gradlew :codegen:generateComponentApi` writes Paletter's custom item and block component API and its encoders from the
+component model in `codegen/model`; `./gradlew :codegen:checkComponentApi` (part of `check`) fails if the committed
+sources differ. Code: `org.geysermc.paletter.codegen.component` in the `componentApi` source set, which needs neither
+paletter nor its sources, so it can regenerate them when they do not compile. Java is emitted with JavaPoet
+(`com.palantir.javapoet`, the maintained fork of square/javapoet; a codegen-only dependency).
 
-## Pipeline
+Inputs (all in `codegen/model`):
 
-1. **Infer** (`Inference`): unions the shape of every component observed in wire NBT into
-   [`spec/inferred.json`](spec/inferred.json) (committed, generated). Per component: the NBT type of every field,
-   whether a byte only ever held 0/1, nested compounds and list element shapes, and which fields were absent in some
-   observations (optional). Inputs, in evidence order:
-   - **Wire NBT** (confidence `high`): the bundled vanilla data (`paletter/src/main/resources/paletter/*.nbt`: item
-     component entries of data driven items, data driven block components and permutations) and every capture under
-     `codegen/captures/` (recursive; plus `-Pcaptures=dir1,dir2`). Rerunning on new captures regenerates the types.
-     Every source has a protocol version: a bundled palette its `DataVersion`, a capture the `protocol` of the nearest
-     `capture.json` in its directory or a parent (unknown without one; observations of unknown protocol count for the
-     newest shape of a component with `protocolSplits`).
-   - **Geyser samples** ([`geyser-samples.json`](geyser-samples.json), confidence `medium`): what Geyser's production
-     encoders write. A sample shapes a component only when no wire NBT shows it; such types are annotated `@Unverified`.
-     For components with wire NBT a sample is checked against the wire shape: a compatible sample may only make the
-     fields it omits optional (Geyser proves the client accepts the omission); an incompatible one is reported
-     (`DIFFERS`) and ignored. See [`DEVIATIONS.md`](DEVIATIONS.md).
-2. **Generate** (`Generator`): `spec/inferred.json` + [`overrides.json`](overrides.json) produce one immutable record per
-   component shape in `org.geysermc.paletter.internal.wire.{item,block}` (typed fields, `fromNbt`, `toNbt`, `TYPE` with
-   the protocol window, a builder for two or more fields, nested records for compounds), `ItemProperties` for
-   `item_properties`, and the `ItemComponentTypes` / `BlockComponentTypes` registries (`byName(name, protocol)`,
-   `windows(name)`).
-3. **needs-capture** ([`needs-capture.txt`](needs-capture.txt), generated): components without (consistent) wire
-   evidence. `none` = no evidence, raw escape hatch only; `not-sent` = server only, BDS accepts the JSON but sends
-   nothing (no type); `rejected` = BDS 1.26.63 rejects the JSON (no type); `not-a-component` = sent elsewhere
-   (`item_properties`, top level block data); `removed` = no longer an add-on component; `geyser-only` = typed
-   `@Unverified`; `differs` = typed from wire NBT but Geyser sends something else.
+| File | Kind | What the generator takes from it |
+|---|---|---|
+| `components.json` | generated from the creator docs | components, fields, JSON types, defaults, enums, ranges, docs text, minimum format versions, experiments, status |
+| `fixtures.json` | hand | `errata` (types and fields the docs omit; added to the documented ones), `probeOnly` and `skip` (left out) |
+| `bds-feedback.json` | generated from BDS's content log | required fields and ranges BDS enforces (they win over the docs), fields BDS does not know (left out) |
+| `mappings.json` | inferred from BDS captures | per component and protocol window: status, value form and field rules, `whenAbsent`, `constants` |
+| `transforms.json` | hand | fields (or whole components, path `""`) compiled by a named hand transform, with why |
+| `api.json` | hand | Java shaping only: class, field and type names, union resolution, value form fields, descriptors, open enums, `since` |
 
-Besides the components, two pseudo components are inferred and generated: `item:item_properties` (`ItemProperties`) and
-`block:block_definition` (`BlockDefinition`: the block property data around `components` and `permutations`:
-`blockTags`, `menu_category`, `molangVersion`, `properties`, `traits`, `vanilla_block_data`), used by `CustomBlock`.
+Outputs: per generated component a record in `org.geysermc.paletter.item.component` / `block.component` (nested records
+for object types, merged when identical; enums; `Vec3`; builder; `of(...)` factories for value forms and shorthands;
+vanilla-constant overloads for descriptors), the sealed `ItemComponent` / `BlockComponent` / `BlockTrait`, and in
+`org.geysermc.paletter.internal.component` the encoders `ItemWire`, `BlockWire`, `TraitWire` and `ComponentIndex`.
+Hand-written there: the compile core (`ItemCompiler`, `BlockCompiler`, `TraitStates`, `WireNode`, `WireContext`,
+`Wire`, `Check`) and `Transforms`, whose public static methods are the transform names (camelCase); the generator reads
+them from its source and fails on a name transforms.json uses that it does not implement.
 
-The javadoc of each type pairs the add-on JSON with the captured wire form (from `capture/WIRE-NOTES.md` and the add-on
-files in `capture/addon/`, as `doc` overrides); the shape itself still comes only from the wire.
+Which components: those BDS sends (`sent`) or that only failed for want of a companion (`untestable`, e.g.
+`minecraft:geometry`). Server-only and rejected components are listed in the interfaces' javadoc instead. The
+descriptions' `menu_category` is generated as the standalone record `MenuCategory`; states, permutations and the
+description itself are the definition core (`CustomItem`, `CustomBlock`, `BlockProperty`).
 
-## Protocol windows: when Bedrock changes a shape
+Rules of the generated code:
 
-Each spec entry is the shape of one component for a window of protocol versions. Normally there is one, unbounded. When
-a Bedrock version sends a component differently:
+- **Defaults** are the documented defaults (an object's default names its fields' defaults), unless BDS sends something
+  else when the field is omitted; such a field stays unset (nullable) and the encoder writes BDS's value. The javadoc
+  says which.
+- **Required** fields (docs or BDS) are checked by `build()`; a BDS-only requirement is dropped when BDS accepted the
+  omission. **Ranges** BDS reports win over documented ones; both are checked by the record constructor.
+- **Encoders** follow each window's rules (see `WireSource`): constants first; per field, set: its value rules
+  (identity, linear, table, affix, bitset, count) and the constants its presence switches on for leaves no other field
+  owns; unset: its `whenAbsent` leaves, never another field's. Lists of objects become element loops. Hand transforms
+  run after the generic fields of their record. A field with no rule in a window is dropped with a report warning when
+  set.
+- **Protocol windows**: each mapping in `mappings.json` holds from its protocol (`protocols`, or `protocol<N>` for a
+  different mapping) until the next different one; the oldest also below. Components with several windows dispatch on
+  `ctx.protocol()`.
 
-1. Add the protocol version at which the shape changed to the component's overrides:
-   `"item:minecraft:damage": {"protocolSplits": [2250], ...}`.
-2. Add a capture of the new version (with its `capture.json`) and run `./gradlew :codegen:generateComponents`. Inference
-   splits the observations by source protocol: the newest window keeps the key (`item:minecraft:damage`, with
-   `"sinceProtocol": 2250`) and the class name (`Damage`); older windows get keys like `item:minecraft:damage@..2250`
-   (`"untilProtocol": 2250`) and classes like `DamageUntil2250` (`DamageFrom2200Until2250` for a middle window). Overrides
-   of the base key apply to every window.
-3. Map the semantic value to the new shape in `ItemEncoder` / `BlockEncoder` (`EncodeContext#put` picks the shape whose
-   window covers the palette). Until then, palettes of the new version leave the value out with a report warning
-   ("has a network shape Paletter does not encode yet"), and `VersionedEncodingTest` fails for the bundled versions.
+Generation fails, naming component and field, on: an unknown transform, two mappings for one protocol, name collisions
+(two components, a `java.lang` name, keywords, two nested types), two fields deciding one wire leaf, an object or list
+of objects without documented fields, an ambiguous union, value forms without fields, a rule at the wrong list depth.
 
-The public API does not change. `ProtocolWindowTest` covers the split with synthetic captures.
+Tests: `ComponentGeneratorTest` (golden sources of a synthetic model covering every field kind, determinism with
+shuffled inputs, every failure message; `-PupdateGolden=true` rewrites `src/test/resources/component-golden`),
+`GeneratedApiTest` (the committed API: required fields, ranges, defaults equal the docs or are explained),
+`ComponentConformanceTest` (every accepted variant of the newest capture rebuilt through the generated API and compared
+with BDS's NBT; outcomes other than pass are committed in `codegen/model/conformance-known.txt`), and in paletter
+`TransformsTest` (every hand transform) and `CustomContentTest` (the definition core, every bundled version).
 
-## Capture files
+When a new BDS version changes the wire: `generator spec-capture`, `./gradlew :spec:inferMappings` (a different mapping
+lands as a new protocol window), `./gradlew :codegen:generateComponentApi`, review, and run the conformance suite.
 
-`*.nbt` / `*.dat`, big or little endian, optionally gzipped. Either
-- a compound `{items: [{name, components: {...}}...], blocks: [{name, components, permutations: [{components}]}...]}`
-  (item component packet entries and start game block properties; both lists optional),
-- a single item component entry `{name, components}`, or
-- a whole palette in the bundled `PaletteDataCodec` format,
-- the `capture` module's `custom_item_registry.nbt` (`{items: [{name, id, componentBased, version, data: {components}}]}`)
-  and `custom_block_properties.nbt` (`{blocks: [{name, properties: {block property data}}]}`).
+## Wire shape inference
 
-`codegen/captures/bds-1.26.63.1-addon/` holds the BDS 1.26.63.1 capture of `capture/addon` (87 items, 66 blocks).
-The generator's `update` pipeline compares each new add-on capture with the newest one here (a changed shape is reported
-as a wire format change), and in update mode adds it as `codegen/captures/bds-<bds version>-addon/` (with a `capture.json` naming the server's `protocol`) and reruns
-`generateComponents`.
-
-Captures in `codegen/captures/` are part of the committed spec; directories passed with `-Pcaptures` are not, so
-`checkComponents` fails until they are copied in.
-
-## overrides.json
-
-Never a source of shape. Keys are `<kind>:<name>` (`item:minecraft:damage`, `block:minecraft:geometry`,
-`item:item_properties`).
-
-| Key | Meaning |
-|---|---|
-| `class` | Java class name (default: PascalCase of the name without namespace) |
-| `since`, `experimental`, `deprecated` | min add-on format version and flags, from bedrock-samples schema metadata (javadoc and `ComponentType` only) |
-| `protocolSplits` | protocol versions at which the wire shape changed; observations are split into one shape per window (see above) |
-| `schema` | bedrock-samples schema path, for reference in javadoc |
-| `doc`, `notes` | javadoc text |
-| `fields.<path>` | per field: `java` (name), `class` (nested record name), `doc`, `type` (`byte`: keep a 0/1 byte numeric, `bool`, `map`: read a compound with arbitrary keys as `Map<String, V>`, `raw`: keep `NbtMap`/`NbtList`), `optional` (reason; only with production evidence) |
-
-Field paths join NBT keys with `.`, list elements as `[]`, map values as `{}`: `repair_items[].items[]`,
-`materials{}.packed_bools`.
-
-`needsCapture` lists known components (from the schemas and research) that wire NBT has not shown yet.
-
-## geyser-samples.json typed notation
-
-Compounds are JSON objects, lists JSON arrays. Strings with a prefix are typed: `b:` byte, `s:` short, `i:` int, `l:`
-long, `f:` float, `d:` double, `str:` string; other strings are strings. JSON booleans are bytes 0/1. Untyped numbers are
-rejected. `{"@list": "STRING"}` is an empty typed list, `{"@int_array": [1, 2]}` an int array.
-
-## Generated type rules
-
-- NBT types are exactly the observed ones: byte, short, int, long, float, double, string, int array, list, compound.
-  A byte that only ever held 0 or 1 becomes `boolean` (still a byte on the wire) unless overridden.
-- Optional fields are nullable and not written when null; required fields are always written.
-- Compounds always empty in the samples stay `NbtMap`; lists always empty stay `NbtList<?>` (element type unknown).
-- `fromNbt` is lenient (numbers of another width convert, missing fields take zero values), so NBT from older encoders
-  (e.g. a byte `minecraft:damage`) reads and is re-encoded in the wire shape.
-- Record components are in NBT key order (sorted); prefer the builders.
+`./gradlew :codegen:inferWireShapes` writes `codegen/spec/inferred.json`, the shape of every component observed in wire
+NBT (the bundled vanilla data and the captures in `codegen/captures`, plus `-Pcaptures=dir1,dir2`);
+`./gradlew :codegen:checkWireShapes` is part of `check`. It no longer generates code: the generator's `update` pipeline
+compares new captures with it to report wire format changes. Inputs: wire NBT (confidence `high`), Geyser samples
+([`geyser-samples.json`](geyser-samples.json), `medium`, see [`DEVIATIONS.md`](DEVIATIONS.md)) and
+[`overrides.json`](overrides.json) (`protocolSplits`, field types, optionality). `ProtocolWindowTest` covers protocol
+splits.
 
 ## Vanilla constants
 

@@ -14,15 +14,13 @@ Paletter paletter = Paletter.bundled();
 
 PaletteLayer layer = PaletteLayer.builder("server")
     .item(CustomItem.builder("example:ruby")
-        .components(ItemComponents.builder()
-            .icon("ruby")
-            .displayName("item.ruby.name")
-            .maxStackSize(16)
-            .tags("minecraft:gems")
-            .build())
+        .component(Icon.of("ruby"))
+        .component(DisplayName.builder().value("item.ruby.name").build())
+        .component(MaxStackSize.of(16))
+        .component(Tags.builder().tags("minecraft:gems").build())
         .creative(CreativePlacement.group(CreativeCategory.ITEMS, "itemGroup.name.minerals"))
         .build())
-    .overrideItem("minecraft:cake", item -> item.components(c -> c.maxStackSize(1)))
+    .overrideItem("minecraft:cake", item -> item.components(MaxStackSize.of(1)))
     .creative(editor -> editor.remove(ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.damage(2))))
     .build();
 
@@ -45,7 +43,7 @@ what is API, what `@Experimental` and `@Internal` mean, and the policy.
 | `paletter`  | The library. Depends on Cloudburst `bedrock-codec` (its types are the public API) and fastutil. No JSON, no network. |
 | `generator` | Imports palette dumps into the bundled format and checks version coverage. Not shipped.        |
 | `bds-addon` | A behavior pack that dumps what the Script API knows (item tags and properties, block states, defaults and tags). |
-| `codegen`   | Infers component shapes from wire NBT and generates the typed components. Not shipped.          |
+| `codegen`   | Generates the component API and its encoders from `codegen/model`, the vanilla constants, and infers wire shapes for change detection. Not shipped. |
 | `capture`   | A headless Bedrock client that records what BDS sends (palette data, custom item/block NBT). Not shipped; see `capture/WIRE-NOTES.md`. |
 | `spec`      | The component model: add-on JSON side parsed from Microsoft's creator docs, a capture add-on generated from it, and the JSON -> wire mapping inferred from BDS (`codegen/model/`). Not shipped; see `spec/README.md`. |
 
@@ -219,13 +217,12 @@ ItemData potion = palette.item(BedrockItems.POTION.variant(5)).toItemData().buil
 
 // Everywhere an identifier is accepted, a constant is too
 PaletteLayer layer = PaletteLayer.builder("server")
-    .overrideItem(BedrockItems.CAKE, item -> item.components(c -> c.maxStackSize(1)))
+    .overrideItem(BedrockItems.CAKE, item -> item.components(MaxStackSize.of(1)))
     .blockFallback(BedrockBlocks.ICICLE, BedrockBlocks.STONE)
     .item(CustomItem.builder("example:ruby")
-        .components(ItemComponents.builder()
-            .repairable(Repairable.of(Repairable.Entry.items(BedrockItems.DIAMOND)))
-            .digger(Digger.of().speed(BlockDescriptor.block(BedrockBlocks.STONE), 4))
-            .build())
+        .component(Repairable.builder().repairItems(Repairable.RepairItems.builder().items(BedrockItems.DIAMOND).build()).build())
+        .component(Digger.builder().destroySpeeds(Digger.DestroySpeeds.builder()
+            .block(Digger.Block.of(BedrockBlocks.STONE)).speed(4).build()).build())
         .creative(CreativePlacement.loose(CreativeCategory.ITEMS).after(BedrockItems.DIAMOND))
         .build())
     .creative(editor -> editor.remove(ItemMatcher.of(BedrockItems.EMPTY_MAP.variant(2))))
@@ -267,76 +264,73 @@ while a preview is bundled); without `paletter.previews` those resolve to `minec
 
 ## Components
 
-Custom items and blocks are described with **semantic** builders: Java types for what an item or block is and does, in
-the units of add-on JSON. They contain no NBT, no network key names and no encoding quirks.
+Custom items and blocks are described with Bedrock's own add-on component model, as generated Java: one immutable
+record per component (`minecraft:durability` is `Durability`, its `damage_chance` object `Durability.DamageChance`),
+nested records for object fields, Java enums for documented enums, and builders that apply the documented defaults and
+check required fields and the ranges Bedrock Dedicated Server enforces when `build()` runs. Consumers never write JSON or
+NBT; the definition entry points (`CustomItem`, `CustomBlock`: identifier, menu category, creative placement, block
+states, traits, permutations, `type()` handles) take the generated values.
 
 ```java
-ItemComponents sword = ItemComponents.builder()
-    .icon("example_sword")
-    .displayName("item.example.sword.name")
-    .maxStackSize(1)
-    .handEquipped(true)
-    .attackDamage(7)
-    .durability(Durability.of(1561).damageChance(60, 100))   // percent
-    .enchantable(Enchantable.of("sword", 10))
-    .repairable(Repairable.of(Repairable.Entry.items("minecraft:diamond").amount("query.max_durability * 0.25")))
-    .tags("minecraft:is_sword")
+CustomItem sword = CustomItem.builder("example:sword")
+    .component(Icon.of("example_sword"))
+    .component(DisplayName.builder().value("item.example.sword.name").build())
+    .component(MaxStackSize.of(1))
+    .component(HandEquipped.of(true))
+    .component(Damage.of(7))
+    .component(Durability.builder().maxDurability(1561)
+        .damageChance(Durability.DamageChance.builder().min(60).max(100).build()).build())
+    .component(Enchantable.builder().slot("sword").value(10).build())
+    .component(Repairable.builder().repairItems(Repairable.RepairItems.builder()
+        .items(BedrockItems.DIAMOND).repairAmountExpression("q.max_durability * 0.25").build()).build())
+    .component(Tags.builder().tags("minecraft:is_sword").build())
+    .creative(CreativePlacement.group(CreativeCategory.EQUIPMENT, "itemGroup.name.sword"))
     .build();
 
-ItemComponents spear = ItemComponents.builder()
-    .kineticWeapon(KineticWeapon.builder()
-        .delayTicks(12)
-        .reach(Reach.of(2, 4.5f))
-        .damageConditions(KineticWeapon.Conditions.of(300, 0, 4.6f))
-        .build())
-    .useAnimation(UseAnimation.SPEAR)
-    .dyeable(Color.of(0xA06540))
-    .build();
-
-BlockComponents lamp = BlockComponents.builder()
-    .geometry(Geometry.of(Geometry.FULL_BLOCK))
-    .materials(Map.of(Material.ALL_FACES, Material.of("example_lamp").faceDimming(false).isotropic(true)))
-    .placementFilter(PlacementFilter.allowOn(Face.UP).blocks("minecraft:grass_block", "minecraft:dirt"))
-    .collisionBoxes(new Box(-8, 0, -8, 16, 8, 16))        // pixels, relative to the bottom center
-    .rotation(0, 90, 0)                                   // degrees
-    .lightEmission(10)
+CustomBlock lamp = CustomBlock.builder("example:lamp")
+    .property(BlockProperty.bool("example:lit"))
+    .trait(PlacementDirection.builder().enabledStates(PlacementDirection.EnabledStates.CARDINAL_DIRECTION).build())
+    .component(Geometry.of("minecraft:geometry.full_block"))
+    .component(MaterialInstances.builder()
+        .all(MaterialInstances.Instance.builder().texture("example_lamp").faceDimming(false).isotropic(true).build()).build())
+    .component(PlacementFilter.builder().conditions(PlacementFilter.Conditions.builder()
+        .allowedFaces("up").blockFilter(PlacementFilter.BlockFilter.of(BedrockBlocks.GRASS_BLOCK)).build()).build())
+    .component(CollisionBox.builder().boxes(CollisionBox.Entry.builder().origin(-8, 0, -8).size(16, 8, 16).build()).build())
+    .component(Transformation.builder().rotation(0, 90, 0).build())
+    .permutation("q.block_state('example:lit')", LightEmission.of(10))
     .tags("minecraft:stone")
+    .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION))
     .build();
 ```
 
-Item values: icon, display name, stack size, off hand, hand equipped, glint, creative destroy, stacked by data, liquid
-clipped, despawn, fire resistance, durability, attack damage, enchantability, dyeable colour, kinetic and piercing
-weapons, swing duration, food, use animation and modifiers, cooldown, block and entity placers, shooter, throwable,
-projectile, compostable, fuel, repairable, digger, rarity, wearable, render offsets, tags. Block values: display name,
-selection and collision boxes, geometry, materials, placement filter, mining time, friction, light emission and
-dampening, transformation, tags. Anything else can be set with the `@Experimental` raw escape hatch
-(`ItemComponents.Builder#raw`, `#rawProperty`, `BlockComponents.Builder#raw`): you then own the wire format, see
-[API.md](API.md#experimental).
+Field names are the add-on JSON keys in camelCase, value forms are `of(...)` factories (`MaxStackSize.of(16)` is
+`"minecraft:max_stack_size": 16`), and every place the model has a block or item descriptor also takes the vanilla
+constants (`BedrockBlocks`, `BedrockItems`, a `BedrockBlockState` for a descriptor with states). Javadoc comes from the
+creator documentation; `@BedrockFormat("1.20.0")` names a component's minimum `format_version`, `@Experimental` marks
+components Bedrock gates behind an experiment, `@Deprecated` the ones the docs deprecate. Where the docs give a default
+that BDS does not use when the field is omitted (e.g. `use_modifiers.start_using`), the field is left unset and Paletter
+sends what BDS sends; the javadoc says so.
+
+Not generated: server-only components, which BDS accepts but never sends to clients (`minecraft:loot`,
+`minecraft:flammable`, `minecraft:tick`, ...; listed in the javadoc of `ItemComponent` / `BlockComponent`), and
+components BDS rejects (legacy and removed ones).
 
 ### Versioned encoding
 
-Paletter encodes the semantic values when a palette is compiled, for that palette's Bedrock version
-(`internal.encode.ItemEncoder` / `BlockEncoder`, the only code that knows the wire format). Everything Bedrock sends in two
-places is written in both: the stack size as a component and an item property, tags as `item_tags` and `minecraft:tags`
-for items and as the top level `blockTags` for blocks, the use animation as a name and an id, the use duration in
-seconds and ticks.
+Paletter compiles the components when a palette is compiled, for that palette's protocol, with encoders generated from
+the component model in `codegen/model`: `components.json` (the creator docs), `mappings.json` (per field, how BDS turns
+the JSON into wire NBT, inferred from captures of a generated add-on, per protocol window), `transforms.json` (named hand
+transforms for what no inferred rule explains, e.g. collision box min/max or the packed material flags) and `api.json`
+(Java naming). A field a palette's protocol window does not send is left out with a warning in `Palette#report()`;
+compilation never fails because of a Bedrock version. Everything BDS sends in two places is written in both (the stack
+size as a component and an item property, tags as `item_tags` and `minecraft:tags`, the use animation as a name and an
+id), and the item properties BDS sends for every custom item (`mining_speed`, `frame_count`, ...) are always there.
 
-The network shapes are generated records in `org.geysermc.paletter.internal.wire` (not API), **generated from NBT captured
-off the wire** (bundled vanilla data plus BDS captures), never from add-on JSON schemas, which differ from the network
-format. Every shape carries a protocol window (`ComponentType#sinceProtocol`/`untilProtocol`). When a Bedrock version
-changes a component's shape, the spec gains an entry for the new window, the records are regenerated, and the encoder
-maps the same semantic value to the shape of each palette's version: no API change. A value a version cannot express
-(the component does not exist there, or a shape the encoder does not produce yet) is left out with a warning in
-`Palette#report()`; compilation never fails because of it.
-
-Shapes inferred from vanilla NBT round-trip every vanilla data driven item and block in the bundled data unchanged.
-Regenerate with `./gradlew :codegen:generateComponents`; `./gradlew check` fails if the committed sources are stale. See
-`codegen/README.md`, and `codegen/DEVIATIONS.md` for how Paletter's output differs from what Geyser used to send.
-
-The next API generation mirrors the add-on component model itself (typed `minecraft:durability {max_durability, damage_chance}`,
-traits, states, permutations, `menu_category`) and compiles it to the wire per protocol. Its inputs are in `codegen/model/`:
-`components.json` (from the official creator docs, CC BY 4.0, see `codegen/model/ATTRIBUTION.md`), `mappings.json` (inferred from BDS
-captures of a generated add-on) and `coverage.md`; see `spec/README.md`.
+The conformance suite (`ComponentConformanceTest` in codegen) rebuilds every variant of the BDS 1.26.63.1 capture that
+BDS accepted from its add-on JSON through the generated API and compares Paletter's NBT with BDS's: 1215 of the 1368
+accepted variants are identical, none differ; the others use server-only components (132) or JSON forms the API does not
+model (21), each listed with its reason in `codegen/model/conformance-known.txt`. See `codegen/README.md` and
+`spec/README.md`.
 
 ## The creative inventory
 
@@ -654,8 +648,9 @@ Results (November 2026):
   `minecraft:sulfur_cube_archetype_slow_bouncy`; 26.50 and 26.60 also add the poplar wood set to the wood tags (boats,
   door, signs, logs, planks, slab) and wool slabs and stairs to `minecraft:vibration_damper`.
 - Block tags and block to item are dumped but not bundled.
-- `ItemComponents` and `BlockComponents` cover every component Geyser sends today and the common add-on ones; anything
-  else goes through the `@Experimental` raw escape hatch until it gets a semantic method.
+- The component API covers every component BDS 1.26.63.1 sends to clients. Geyser-only wire data that is not an add-on
+  component (custom `mining_speed`/`frame_count` item properties, the legacy `render_offsets`, `on_player_placing`) has
+  no API: there is no raw NBT escape hatch.
 - Not covered: biome definitions, entity identifiers and other data Geyser ships that is not about items or blocks.
 - The BDS addon needs `@minecraft/server` 2.1.0; tested with BDS 1.26.45.1, 1.26.51.1, 1.26.63.1 and the
   1.26.70.23 preview.

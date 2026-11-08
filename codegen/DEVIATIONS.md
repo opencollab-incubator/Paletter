@@ -1,12 +1,12 @@
 # Paletter vs historic Geyser output
 
-Migration notes. Paletter's encoders (`paletter/.../internal/encode/ItemEncoder.java`, `BlockEncoder.java`) are the single
-source of truth for the custom item and block wire format; consumers describe content with the semantic
-`ItemComponents` / `BlockComponents` and never write these shapes themselves. This file lists where the output differs
-from what Geyser's encoders (`CustomItemRegistryPopulator`, `CustomBlockRegistryPopulator`) used to send, so a migration
-can review the golden file changes it causes. Every row is a wire fact from the bundled vanilla data or the BDS 1.26.63.1
-capture of an add-on using every component (`codegen/captures/bds-1.26.63.1-addon`, findings in `capture/WIRE-NOTES.md`);
-`spec/inferred.json` records each Geyser sample as `compatible` or `DIFFERS`.
+Migration notes. Paletter's generated component encoders (`internal.component`, from `codegen/model`, checked against
+BDS by the conformance suite) are the single source of truth for the custom item and block wire format; consumers
+describe content with the generated components and never write these shapes themselves. This file lists where the
+output differs from what Geyser's encoders (`CustomItemRegistryPopulator`, `CustomBlockRegistryPopulator`) used to send,
+so a migration can review the golden file changes it causes. The "Semantic API" column names the API of the time
+(`ItemComponents` / `BlockComponents`, since replaced by the generated components of the same names: `Durability`,
+`PlacementFilter`, ...). Every row is a wire fact from the bundled vanilla data or a BDS 1.26.63.1 capture.
 
 ## Fixes folded into the encoders
 
