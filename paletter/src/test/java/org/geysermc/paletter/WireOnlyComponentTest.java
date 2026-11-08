@@ -5,6 +5,8 @@ import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
+import org.geysermc.paletter.block.CustomBlock;
+import org.geysermc.paletter.block.component.OnPlayerPlacing;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.component.FrameCount;
 import org.geysermc.paletter.item.component.Icon;
@@ -162,5 +164,21 @@ class WireOnlyComponentTest {
         assertThrows(IllegalArgumentException.class, () -> MiningSpeed.of(Float.NaN));
         assertEquals("item_properties.frame_count", FrameCount.of(1).name());
         assertEquals("minecraft:render_offsets", new RenderOffsets(null, null).name());
+    }
+
+    @Test
+    void onPlayerPlacingIsSentAsTheTriggerType() {
+        for (DataVersion version : PALETTER.versions()) {
+            Palette palette = PALETTER.palette(version.protocolVersion(), PaletteLayer.builder("placing")
+                .block(CustomBlock.builder("example:slab").component(OnPlayerPlacing.of("geyser:place_event")).build()).build());
+            assertTrue(palette.report().warnings().isEmpty(), version + ": " + palette.report().warnings());
+            NbtMap components = palette.blocks().blockProperties().stream().filter(b -> b.getName().equals("example:slab")).findFirst()
+                .orElseThrow().getProperties().getCompound("components");
+            assertEquals(NbtMap.builder().putString("triggerType", "geyser:place_event").build(),
+                components.getCompound("minecraft:on_player_placing"), version.toString());
+        }
+        CustomBlock replaced = CustomBlock.builder("example:slab").component(OnPlayerPlacing.of("a:b")).component(OnPlayerPlacing.of("c:d")).build();
+        assertEquals("c:d", replaced.component(OnPlayerPlacing.class).triggerType());
+        assertEquals("minecraft:on_player_placing", OnPlayerPlacing.of("a:b").name());
     }
 }

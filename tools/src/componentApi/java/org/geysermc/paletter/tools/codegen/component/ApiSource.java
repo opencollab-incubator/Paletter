@@ -80,6 +80,11 @@ final class ApiSource {
         }
     }
 
+    /** The sealed sub-interface of the hand-written wire-only components of a kind (items and blocks have them). */
+    static String wireOnly(Kind kind) {
+        return kind == Kind.BLOCK ? "WireOnlyBlockComponent" : "WireOnlyItemComponent";
+    }
+
     static ClassName className(Comp c) {
         return ClassName.get(c.kind.pkg(), c.className);
     }
@@ -114,8 +119,8 @@ final class ApiSource {
         TypeSpec.Builder type = TypeSpec.interfaceBuilder(kind.iface()).addModifiers(Modifier.PUBLIC, Modifier.SEALED)
             .addJavadoc("$L", doc.toString());
         members.stream().map(ApiSource::className).sorted((a, b) -> a.simpleName().compareTo(b.simpleName())).forEach(type::addPermittedSubclass);
-        if (kind == Kind.ITEM) {
-            type.addPermittedSubclass(ClassName.get(kind.pkg(), "WireOnlyItemComponent"));
+        if (kind == Kind.ITEM || kind == Kind.BLOCK) {
+            type.addPermittedSubclass(ClassName.get(kind.pkg(), wireOnly(kind)));
         }
         type.addMethod(MethodSpec.methodBuilder("name").addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .addJavadoc("@return the component name in add-on JSON, e.g. {@code minecraft:durability}\n")

@@ -12,7 +12,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @since 1.0.0
  */
-public sealed interface BlockComponent permits Glow {
+public sealed interface BlockComponent permits Glow, WireOnlyBlockComponent {
     /**
      * @return the component name in add-on JSON, e.g. {@code minecraft:durability}
      */

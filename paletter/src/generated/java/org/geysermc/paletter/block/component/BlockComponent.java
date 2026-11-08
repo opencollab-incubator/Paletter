@@ -37,7 +37,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @since 1.0.0
  */
-public sealed interface BlockComponent permits BlockEntity, CollisionBox, ConnectionRule, CraftingTable, DestructibleByMining, DestructionParticles, DisplayName, EmbeddedVisual, FlowerPottable, Friction, Geometry, ItemVisual, LightDampening, LightEmission, LiquidDetection, MaterialInstances, PlacementFilter, PrecipitationInteractions, RandomOffset, RedstoneConductivity, RedstoneProducer, Replaceable, SelectionBox, Support, Transformation {
+public sealed interface BlockComponent permits BlockEntity, CollisionBox, ConnectionRule, CraftingTable, DestructibleByMining, DestructionParticles, DisplayName, EmbeddedVisual, FlowerPottable, Friction, Geometry, ItemVisual, LightDampening, LightEmission, LiquidDetection, MaterialInstances, PlacementFilter, PrecipitationInteractions, RandomOffset, RedstoneConductivity, RedstoneProducer, Replaceable, SelectionBox, Support, Transformation, WireOnlyBlockComponent {
     /**
      * @return the component name in add-on JSON, e.g. {@code minecraft:durability}
      */

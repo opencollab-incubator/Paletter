@@ -89,10 +89,10 @@ a minor release without a deprecation cycle (changes are still listed in the rel
 Bedrock gates behind an experiment (e.g. `minecraft:support`, `minecraft:connection_rule`, the `minecraft:connection`
 and `minecraft:multi_block` traits) carry it: Bedrock may still change them before releasing them, and Paletter follows.
 
-## Hand-written wire-only item components
+## Hand-written wire-only components
 
-Three wire fields have no add-on JSON source, so they are not generated. They are hand-written `WireOnlyItemComponent`s
-(a sealed `ItemComponent` sub-interface, `@since 1.0.0`) that go through the same `CustomItem`, `PaletteLayer` item
+Four wire fields have no add-on JSON source, so they are not generated. They are hand-written `WireOnlyItemComponent`s /
+`WireOnlyBlockComponent`s (sealed `ItemComponent` / `BlockComponent` sub-interfaces, `@since 1.0.0`) that go through the same `CustomItem`, `PaletteLayer` item
 override and compile path as the generated components:
 
 - `RenderOffsets` (`minecraft:render_offsets`, `@Deprecated` but not for removal): retired from the add-on format (BDS
@@ -100,6 +100,9 @@ override and compile path as the generated components:
   sending it for legacy content. It will be removed if clients stop honouring it. `new RenderOffsets(Hand mainHand, Hand offHand)`,
   `Hand(Offset firstPerson, Offset thirdPerson)`, `Offset(Vec3 position, Vec3 rotation, Vec3 scale)` (`Offset.scale(x, y, z)`),
   `Vec3(float x, float y, float z)`; null parts are left out.
+- `OnPlayerPlacing.of(String triggerType)` (`minecraft:on_player_placing`, a block component, `WireOnlyBlockComponent`, `@Deprecated` but not
+  for removal): retired from the add-on format like `render_offsets`, assumed to be honoured by clients; sent as
+  `{triggerType}`. Geyser sends `geyser:place_event`, an event no pack handles, so the client does not double place blocks.
 - `MiningSpeed.of(float)` (`item_properties.mining_speed`, `@Experimental`, BDS default 1.0).
 - `FrameCount.of(int)` (`item_properties.frame_count`, `@Experimental`, BDS default 1, at least 1).
 
@@ -146,7 +149,7 @@ constant overloads of `Palette`, `PaletteLayer.Builder`, `ItemMatcher`, `Creativ
 new types too, including every generated constant: removing one now fails `apiCompat`.
 
 Additions since the baseline (`apiCompat` passes, baseline not regenerated): `BedrockItemType#hasVariant` / `#variantOf`, and the
-debugging aids `Palette#explain` with `BlockExplanation` and `ItemExplanation` (both `@Experimental`: their shape may still grow), and the wire-only item components (`WireOnlyItemComponent`, `RenderOffsets`, `MiningSpeed`, `FrameCount`; `ItemComponent` gains the permitted sub-interface, so code that switches over it exhaustively needs a case for it).
+debugging aids `Palette#explain` with `BlockExplanation` and `ItemExplanation` (both `@Experimental`: their shape may still grow), and the wire-only item components (`WireOnlyItemComponent`, `RenderOffsets`, `MiningSpeed`, `FrameCount`; `ItemComponent` gains the permitted sub-interface, so code that switches over it exhaustively needs a case for it; likewise `WireOnlyBlockComponent` with `OnPlayerPlacing` for `BlockComponent`).
 
 ### Pre-release changes
 

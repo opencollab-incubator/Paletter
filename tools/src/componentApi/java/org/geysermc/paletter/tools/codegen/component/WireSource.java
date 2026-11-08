@@ -92,8 +92,8 @@ final class WireSource {
         for (Comp c : members) {
             dispatch.addStatement("case $T value -> $N(value, ctx, out)", ApiSource.className(c), method(c));
         }
-        if (kind == Kind.ITEM) {
-            dispatch.addStatement("case $T value -> $T.write(value, ctx, out)", ClassName.get(kind.pkg(), "WireOnlyItemComponent"),
+        if (kind == Kind.ITEM || kind == Kind.BLOCK) {
+            dispatch.addStatement("case $T value -> $T.write(value, ctx, out)", ClassName.get(kind.pkg(), ApiSource.wireOnly(kind)),
                 ClassName.get(PKG, "WireOnlyWire"));
         }
         if (members.isEmpty()) {

@@ -2,6 +2,8 @@ package org.geysermc.paletter.internal.component;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.block.component.OnPlayerPlacing;
+import org.geysermc.paletter.block.component.WireOnlyBlockComponent;
 import org.geysermc.paletter.item.component.FrameCount;
 import org.geysermc.paletter.item.component.MiningSpeed;
 import org.geysermc.paletter.item.component.RenderOffsets;
@@ -10,7 +12,7 @@ import org.geysermc.paletter.item.component.WireOnlyItemComponent;
 import java.util.List;
 
 /**
- * Encoders of the hand-written {@link WireOnlyItemComponent}s, dispatched from the generated {@code ItemWire}. Each has a
+ * Encoders of the hand-written {@link WireOnlyItemComponent}s and {@link WireOnlyBlockComponent}s, dispatched from the generated {@code ItemWire}. Each has a
  * protocol window ({@code *_FROM}: the first protocol that carries the field); all bundled versions (26.40 and later)
  * carry all of them. Not API.
  */
@@ -19,6 +21,7 @@ public final class WireOnlyWire {
     static final int RENDER_OFFSETS_FROM = 0;
     static final int MINING_SPEED_FROM = 0;
     static final int FRAME_COUNT_FROM = 0;
+    static final int ON_PLAYER_PLACING_FROM = 0;
 
     private WireOnlyWire() {
     }
@@ -38,6 +41,20 @@ public final class WireOnlyWire {
             case FrameCount c -> {
                 if (check(ctx, FRAME_COUNT_FROM, c.name())) {
                     out.put("item_properties.frame_count", c.value());
+                }
+            }
+        }
+    }
+
+    /**
+     * Dispatched from the generated {@code BlockWire}.
+     */
+    public static void write(@NonNull WireOnlyBlockComponent component, @NonNull WireContext ctx, @NonNull WireNode out) {
+        switch (component) {
+            case OnPlayerPlacing c -> {
+                if (check(ctx, ON_PLAYER_PLACING_FROM, c.name())) {
+                    out.remove(OnPlayerPlacing.NAME);
+                    out.child(OnPlayerPlacing.NAME).put("triggerType", c.triggerType());
                 }
             }
         }

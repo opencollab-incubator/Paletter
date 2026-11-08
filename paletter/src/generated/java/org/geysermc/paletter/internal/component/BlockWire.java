@@ -33,6 +33,7 @@ import org.geysermc.paletter.block.component.Replaceable;
 import org.geysermc.paletter.block.component.SelectionBox;
 import org.geysermc.paletter.block.component.Support;
 import org.geysermc.paletter.block.component.Transformation;
+import org.geysermc.paletter.block.component.WireOnlyBlockComponent;
 
 /**
  * Encoders of the generated {@link BlockComponent} types: the rules of {@code data/model/mappings.json} per
@@ -75,6 +76,7 @@ public final class BlockWire {
             case SelectionBox value -> selectionBox(value, ctx, out);
             case Support value -> support(value, ctx, out);
             case Transformation value -> transformation(value, ctx, out);
+            case WireOnlyBlockComponent value -> WireOnlyWire.write(value, ctx, out);
         }
     }
 

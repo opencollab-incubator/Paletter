@@ -6,6 +6,7 @@ package org.geysermc.paletter.internal.component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.paletter.block.component.BlockComponent;
 import org.geysermc.paletter.block.component.Glow;
+import org.geysermc.paletter.block.component.WireOnlyBlockComponent;
 
 /**
  * Encoders of the generated {@link BlockComponent} types: the rules of {@code data/model/mappings.json} per
@@ -24,6 +25,7 @@ public final class BlockWire {
             @NonNull WireNode out) {
         switch (component) {
             case Glow value -> glow(value, ctx, out);
+            case WireOnlyBlockComponent value -> WireOnlyWire.write(value, ctx, out);
         }
     }
 
