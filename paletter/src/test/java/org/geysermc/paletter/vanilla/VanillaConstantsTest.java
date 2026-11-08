@@ -161,7 +161,10 @@ class VanillaConstantsTest {
         assertEquals(PALETTER.canonicalItem(ItemVariant.of("minecraft:apple")), PALETTER.canonicalItem(BedrockItems.APPLE));
         assertEquals(PALETTER.canonicalItem(ItemVariant.of("minecraft:potion", 5)), PALETTER.canonicalItem(BedrockItems.POTION.variant(5)));
         assertSame(BedrockItems.POTION.variant(5), BedrockItems.POTION.variant(5));
-        assertEquals(-1, PALETTER.canonicalItem(BedrockItems.POTION.variant(9999)));
+        assertNull(BedrockItems.POTION.variant(9999));
+        assertTrue(BedrockItems.POTION.hasVariant(5));
+        assertFalse(BedrockItems.POTION.hasVariant(9999));
+        assertEquals(-1, PALETTER.canonicalItem(BedrockItems.POTION.variantOf(9999)));
         assertTrue(BedrockItems.POTION.variants().size() > 40);
         assertSame(BedrockItems.APPLE, BedrockItemType.vanilla("minecraft:apple"));
 
@@ -169,10 +172,10 @@ class VanillaConstantsTest {
         ResolvedItem apple = palette.item(BedrockItems.APPLE);
         assertEquals("minecraft:apple", apple.definition().getIdentifier());
         assertEquals(5, palette.item(BedrockItems.POTION.variant(5)).damage());
-        assertNull(palette.item(BedrockItems.POTION.variant(9999)));
+        assertNull(palette.item(BedrockItems.POTION.variantOf(9999)));
         // A layer gives the variant an id
-        Palette withVariant = palette.extend(PaletteLayer.builder("variant").variant(BedrockItems.POTION.variant(9999)).build());
-        assertNotNull(withVariant.item(BedrockItems.POTION.variant(9999)));
+        Palette withVariant = palette.extend(PaletteLayer.builder("variant").variant(BedrockItems.POTION.variantOf(9999)).build());
+        assertNotNull(withVariant.item(BedrockItems.POTION.variantOf(9999)));
         assertTrue(ItemMatcher.of(BedrockItems.POTION.variant(5)).matches(new CreativeStack("minecraft:potion", 5, 1, null, null)));
         assertFalse(ItemMatcher.of(BedrockItems.POTION.variant(5)).matches(new CreativeStack("minecraft:potion", 6, 1, null, null)));
     }

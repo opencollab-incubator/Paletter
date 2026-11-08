@@ -17,7 +17,7 @@ import java.util.Objects;
  * ItemData apple = palette.item(BedrockItems.APPLE).toItemData().count(3).build();
  * ItemData potion = palette.item(BedrockItems.POTION.variant(5)).toItemData().build();
  * }</pre>
- * Items whose variants differ by damage (potions, banners, goat horns, ...) expose them with {@link #variant(int)}: the
+ * Items whose variants differ by damage (potions, banners, goat horns, ...) expose them with {@link #variant(int)} (null if unknown, {@link #variantOf(int)} makes any): the
  * bundled data has no names for them, so they have no constants of their own.
  * <p>
  * Referencing a type loads nothing. A vanilla constant the bundled data does not have (deprecated, or a preview item
@@ -138,18 +138,36 @@ public final class BedrockItemType {
     }
 
     /**
-     * @return the variant with a damage value: one of {@link #variants()} if it has a canonical id, else a new variant
-     *         without one (no canonical id; a layer can give it one with
-     *         {@link org.geysermc.paletter.PaletteLayer.Builder#variant(BedrockItemVariant)})
+     * @return the variant with a damage value if it is one of {@link #variants()}, i.e. a known variant of the newest
+     *         data, else null
      */
-    public @NonNull BedrockItemVariant variant(int damage) {
+    public @Nullable BedrockItemVariant variant(int damage) {
         Linked linked = linked();
         for (BedrockItemVariant variant : linked.variants) {
             if (variant.damage() == damage && variant.blockState() == null) {
                 return variant;
             }
         }
-        return new BedrockItemVariant(linked.owner, damage, null, -1);
+        return null;
+    }
+
+    /**
+     * @return whether {@link #variant(int)} would return a variant for this damage value
+     * @since 1.1.0
+     */
+    public boolean hasVariant(int damage) {
+        return variant(damage) != null;
+    }
+
+    /**
+     * @return the variant with a damage value: one of {@link #variants()} if it has a canonical id, else a new variant
+     *         without one (no canonical id; a layer can give it one with
+     *         {@link org.geysermc.paletter.PaletteLayer.Builder#variant(BedrockItemVariant)})
+     * @since 1.1.0
+     */
+    public @NonNull BedrockItemVariant variantOf(int damage) {
+        BedrockItemVariant known = variant(damage);
+        return known != null ? known : new BedrockItemVariant(linked().owner, damage, null, -1);
     }
 
     /**

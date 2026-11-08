@@ -140,6 +140,10 @@ from the first release on); the baseline was regenerated with each:
   for vanilla constants still an addition or field read, no hash lookup) and `Palette#canonicalBlock` /
   `#canonicalItem` (any content, custom included).
 
+- `BedrockItemType#variant(int)` returns null for a damage value that is not a known variant of the newest data (it used
+  to return a new variant without canonical id). `hasVariant(int)` and `variantOf(int)` (the old behaviour) are added.
+  Binary compatible, so the baseline was not regenerated.
+
 - The hand-written semantic component API (`ItemComponents`, `BlockComponents` and the values in `item.component` /
   `block.component`, including the `@Experimental` raw NBT escape hatches) is replaced by the components generated from
   the add-on component model (see the [README](README.md#components)); `CustomBlock.Menu` by the generated
