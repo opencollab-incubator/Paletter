@@ -16,6 +16,7 @@ import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.PaletteItem;
 import org.geysermc.paletter.item.component.DisplayName;
 import org.geysermc.paletter.item.component.Durability;
+import org.geysermc.paletter.item.component.Food;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.MaxStackSize;
 import org.geysermc.paletter.item.component.Tags;
@@ -132,5 +133,21 @@ class CustomContentTest {
         CustomItem replaced = CustomItem.builder("example:x").component(MaxStackSize.of(1)).component(MaxStackSize.of(2)).build();
         assertEquals(2, replaced.component(MaxStackSize.class).value());
         assertFalse(replaced.components().size() > 1);
+    }
+
+    @Test
+    void componentsMayReferToItemsTheLayerRegistersLater() {
+        CustomItem stew = CustomItem.builder("example:stew")
+            .component(Icon.of("stew"))
+            .component(Food.builder().usingConvertsTo("example:bowl").build())
+            .build();
+        CustomItem bowl = CustomItem.builder("example:bowl").component(Icon.of("bowl")).build();
+        for (PaletteLayer layer : List.of(PaletteLayer.builder("stew-first").item(stew).item(bowl).build(),
+            PaletteLayer.builder("bowl-first").item(bowl).item(stew).build())) {
+            Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), layer);
+            NbtMap food = palette.items().getDefinition("example:stew").getComponentData().getCompound("components")
+                .getCompound("minecraft:food");
+            assertEquals("example:bowl", food.getCompound("using_converts_to").getString("name"), layer.id());
+        }
     }
 }

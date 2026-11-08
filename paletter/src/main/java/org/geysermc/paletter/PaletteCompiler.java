@@ -82,10 +82,13 @@ final class PaletteCompiler {
                     newVariants.add(ItemVariant.of(block.identifier()));
                 }
             }
+            List<String> registered = newVariants.stream().map(ItemVariant::identifier).toList();
             newVariants.addAll(layer.variants());
             CanonicalItems canonicalItems = parent.items().canonical().extend(layer, newVariants);
 
             ItemPalette.Builder items = parent.items().extend(blocks, canonicalItems);
+            // Components refer to items of this layer registered later: declare them all first
+            registered.forEach(items::declare);
             layer.itemFallbacks(data.version()).forEach(items::fallback);
             if (layer.fallbackDefaults() != null) {
                 items.defaultFallback(layer.fallbackDefaults().item());

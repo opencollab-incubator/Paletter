@@ -440,6 +440,8 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         private final Map<String, Set<String>> tags = new LinkedHashMap<>();
         private final List<CustomItem> customItems;
         private int nextRuntimeId;
+        /** Identifiers the layer is about to register: they exist for components compiled before their registration. */
+        private final Set<String> declared = new HashSet<>();
 
         private Builder(DataVersion version, BlockPalette blocks, Map<String, ItemFallback> fallbacks, CanonicalItems canonical) {
             this.version = version;
@@ -473,6 +475,14 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             byRuntimeId.put(item.getRuntimeId(), item);
             byIdentifier.put(item.getIdentifier(), item);
             nextRuntimeId = Math.max(nextRuntimeId, item.getRuntimeId() + 1);
+        }
+
+        /**
+         * Announces an item the layer is about to register, so components compiled earlier can refer to it
+         * (registration order must not decide whether an item exists).
+         */
+        public void declare(@NonNull String identifier) {
+            declared.add(identifier);
         }
 
         public @Nullable PaletteItem get(@NonNull String identifier) {
@@ -521,7 +531,8 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             return WireContext.of(version, report, source, new WireContext.Registry() {
                 @Override
                 public boolean itemExists(@NonNull String identifier) {
-                    return byIdentifier.containsKey(identifier.indexOf(':') < 0 ? "minecraft:" + identifier : identifier);
+                    String name = identifier.indexOf(':') < 0 ? "minecraft:" + identifier : identifier;
+                    return byIdentifier.containsKey(name) || declared.contains(name);
                 }
 
                 @Override
