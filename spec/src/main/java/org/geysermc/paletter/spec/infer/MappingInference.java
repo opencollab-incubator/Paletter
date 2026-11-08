@@ -353,7 +353,102 @@ public final class MappingInference {
             fields.add(field.path(), f);
         }
         result.add("fields", fields);
+        JsonObject constants = constants(component, result, observations, control, base);
+        if (!constants.isEmpty()) {
+            result.add("constants", constants);
+        }
         return result;
+    }
+
+    /**
+     * Leaves of the component's wire keys that no rule of a field or form targets and that have the same value in every
+     * accepted observation that sends them: what BDS writes whatever the JSON says ({@code grid_size: 3},
+     * {@code hasJsonVersionBeforeValidation: 0b}, {@code damage_chance.max: 100} in every accepted variant). A compiler
+     * writes them whenever it writes the component (list element leaves per element).
+     */
+    private static JsonObject constants(Component component, JsonObject result, List<Obs> observations, Obs control, Obs base) {
+        JsonObject constants = new JsonObject();
+        if (!result.has("wire") || !"sent".equals(result.get("status").getAsString())) {
+            return constants;
+        }
+        List<String> keys = result.getAsJsonArray("wire").asList().stream().map(JsonElement::getAsString).toList();
+        Set<String> targeted = new TreeSet<>();
+        List<JsonObject> groups = new ArrayList<>();
+        if (result.has("forms")) {
+            result.getAsJsonObject("forms").entrySet().forEach(e -> groups.add(e.getValue().getAsJsonObject()));
+        }
+        result.getAsJsonObject("fields").entrySet().forEach(e -> groups.add(e.getValue().getAsJsonObject()));
+        for (JsonObject group : groups) {
+            if (group.has("rules")) {
+                group.getAsJsonArray("rules").forEach(r -> targeted.add(r.getAsJsonObject().get("wire").getAsString()));
+            }
+            if (group.has("whenAbsent")) {
+                targeted.addAll(group.getAsJsonObject("whenAbsent").keySet());
+            }
+        }
+        Map<String, String> values = new TreeMap<>();
+        Set<String> varying = new TreeSet<>();
+        for (Obs o : observations) {
+            if (!o.accepted() || (o == control && !o.variant().role().equals("base"))) {
+                continue;
+            }
+            for (Map.Entry<String, Leaf> leaf : o.wire().entrySet()) {
+                String generic = Wire.generic(leaf.getKey());
+                boolean ours = keys.stream().anyMatch(k -> generic.equals(k) || generic.startsWith(k + ".") || generic.startsWith(k + "["));
+                if (!ours || explained(generic, targeted)) {
+                    continue;
+                }
+                String value = leaf.getValue().toString();
+                String before = values.putIfAbsent(generic, value);
+                if (before != null && !before.equals(value)) {
+                    varying.add(generic);
+                }
+            }
+        }
+        String shortName = component.name().replaceFirst("^minecraft:", "");
+        values.forEach((path, value) -> {
+            if (varying.contains(path)) {
+                return;
+            }
+            // A field whose variants could not move the leaf (one accepted value), named like the leaf and set to its
+            // value in the base: the leaf follows the field (enchantable slot -> slot and item_properties.enchantable_slot)
+            String last = path.substring(path.lastIndexOf('.') + 1);
+            if (base != null && base.accepted()) {
+                for (Map.Entry<String, JsonElement> f : result.getAsJsonObject("fields").entrySet()) {
+                    JsonObject field = f.getValue().getAsJsonObject();
+                    String status = field.get("status").getAsString();
+                    String token = AddonGenerator.tokens(f.getKey()).getLast();
+                    JsonElement json = f.getKey().contains("[") || f.getKey().contains("{") ? null : jsonAt(base.variant().json(), f.getKey());
+                    if ((status.equals("no-evidence") || status.equals("dropped")) && (last.equals(token) || last.equals(shortName + "_" + token))
+                        && json != null && json.isJsonPrimitive() && value.equals(json.getAsString() + value.substring(value.lastIndexOf(" (")))) {
+                        JsonObject rule = new JsonObject();
+                        rule.addProperty("kind", "identity");
+                        rule.addProperty("nbt", value.substring(value.lastIndexOf(" (") + 2, value.length() - 1));
+                        JsonArray tags = new JsonArray();
+                        tags.add("assumed-by-name");
+                        rule.add("tags", tags);
+                        rule.addProperty("wire", path);
+                        if (!field.has("rules")) {
+                            field.add("rules", new JsonArray());
+                        }
+                        field.getAsJsonArray("rules").add(rule);
+                        return;
+                    }
+                }
+            }
+            constants.addProperty(path, value);
+        });
+        return constants;
+    }
+
+    /** Whether a rule explains the leaf: it targets the leaf, a list or compound containing it, or a leaf inside it. */
+    private static boolean explained(String leaf, Set<String> targeted) {
+        for (String t : targeted) {
+            if (leaf.equals(t) || leaf.startsWith(t + ".") || leaf.startsWith(t + "[") || t.startsWith(leaf + ".") || t.startsWith(leaf + "[")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

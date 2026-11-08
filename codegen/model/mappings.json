@@ -100,6 +100,10 @@
           "reference": "control (the base was rejected)"
         }
       },
+      "constants": {
+        "menu_category.group": " (string)",
+        "menu_category.is_hidden_in_commands": "0 (byte)"
+      },
       "protocols": [
         2225
       ]
@@ -894,6 +898,9 @@
             "minecraft:crafting_table.table_name": " (string)"
           }
         }
+      },
+      "constants": {
+        "minecraft:crafting_table.grid_size": "3 (int)"
       },
       "protocols": [
         2225
@@ -1700,6 +1707,9 @@
       ],
       "status": "sent",
       "fields": {},
+      "constants": {
+        "minecraft:flower_pottable.usePreR26U2FlowerPotOffset": "0 (byte)"
+      },
       "protocols": [
         2225
       ]
@@ -2117,6 +2127,21 @@
           "unexplainedMore": 2
         }
       },
+      "constants": {
+        "minecraft:item_visual.geometryDescription.bone_visibility": "{} (compound)",
+        "minecraft:item_visual.geometryDescription.ignoreGeometryForIsSolid": "0 (byte)",
+        "minecraft:item_visual.geometryDescription.isV1Fullblock": "0 (byte)",
+        "minecraft:item_visual.geometryDescription.needsLegacyTopRotation": "0 (byte)",
+        "minecraft:item_visual.geometryDescription.useBlockTypeLightAbsorption": "0 (byte)",
+        "minecraft:item_visual.geometryDescription.uv_lock": "0 (byte)",
+        "minecraft:item_visual.materialInstancesDescription.mappings": "{} (compound)",
+        "minecraft:item_visual.materialInstancesDescription.materials": "{} (compound)",
+        "minecraft:item_visual.materialInstancesDescription.materials.*.ambient_occlusion": "1.0 (float)",
+        "minecraft:item_visual.materialInstancesDescription.materials.*.packed_bools": "5 (byte)",
+        "minecraft:item_visual.materialInstancesDescription.materials.*.render_method": "opaque (string)",
+        "minecraft:item_visual.materialInstancesDescription.materials.*.texture": "paletter_tex (string)",
+        "minecraft:item_visual.materialInstancesDescription.materials.*.tint_method": "none (string)"
+      },
       "protocols": [
         2225
       ]
@@ -2390,6 +2415,10 @@
           "unknownToBds": true,
           "status": "rejected"
         }
+      },
+      "constants": {
+        "minecraft:liquid_detection.detectionRules[].liquidType": "water (string)",
+        "minecraft:liquid_detection.detectionRules[].stopsLiquidFromDirection": "0 (byte)"
       },
       "protocols": [
         2225
@@ -4870,6 +4899,10 @@
           }
         }
       },
+      "constants": {
+        "minecraft:redstone_producer.allowPowerDown": "1 (byte)",
+        "minecraft:redstone_producer.allowPowerUp": "0 (byte)"
+      },
       "protocols": [
         2225
       ]
@@ -4884,6 +4917,9 @@
       ],
       "status": "sent",
       "fields": {},
+      "constants": {
+        "minecraft:replaceable": "{} (compound)"
+      },
       "protocols": [
         2225
       ]
@@ -5537,6 +5573,9 @@
           }
         }
       },
+      "constants": {
+        "minecraft:transformation.hasJsonVersionBeforeValidation": "0 (byte)"
+      },
       "protocols": [
         2225
       ]
@@ -5796,6 +5835,12 @@
           "status": "no-evidence"
         }
       },
+      "constants": {
+        "traits[].enabled_states": "1 (int)",
+        "traits[].name": "minecraft:connection (string)",
+        "traits[].type": "0 (int)",
+        "traits[].update_flags": "3 (int)"
+      },
       "protocols": [
         2225
       ]
@@ -5874,6 +5919,11 @@
             }
           ]
         }
+      },
+      "constants": {
+        "traits[].enabled_states.multi_block": "1 (byte)",
+        "traits[].name": "minecraft:multi_block (string)",
+        "traits[].place_behavior": "0 (byte)"
       },
       "protocols": [
         2225
@@ -5993,6 +6043,11 @@
           "status": "rejected"
         }
       },
+      "constants": {
+        "traits[].blocks_to_corner_with": "[] (list<void>)",
+        "traits[].enabled_states.sixteen_way_rotation": "0 (byte)",
+        "traits[].name": "minecraft:placement_direction (string)"
+      },
       "protocols": [
         2225
       ]
@@ -6048,6 +6103,9 @@
             }
           ]
         }
+      },
+      "constants": {
+        "traits[].name": "minecraft:placement_position (string)"
       },
       "protocols": [
         2225
@@ -6542,6 +6600,11 @@
             "minecraft:block_placer.use_on[].tags": "omitted"
           }
         }
+      },
+      "constants": {
+        "minecraft:block_placer.canUseBlockAsIcon": "1 (byte)",
+        "minecraft:block_placer.replaceBlockItem": "0 (byte)",
+        "minecraft:publisher_on_use_on.autoSucceedOnClient": "0 (byte)"
       },
       "protocols": [
         2225
@@ -7485,6 +7548,9 @@
           ]
         }
       },
+      "constants": {
+        "minecraft:durability.damage_chance.max": "100 (int)"
+      },
       "protocols": [
         2225
       ]
@@ -7614,7 +7680,25 @@
             "[Item]  Error Parsing Item <id>:",
             "slot: expected string to match the \"none|all|g_armor|armor_head|armor_torso|armor_feet|armor_legs|sword|bow|spear|crossbow|melee_spear|g_tool|hoe|shears|flintsteel|shield|g_digging|axe|pickaxe|shovel|fishing_rod|carrot_stick|elytra|cosmetic_head\" regex"
           ],
-          "status": "no-evidence"
+          "status": "no-evidence",
+          "rules": [
+            {
+              "kind": "identity",
+              "nbt": "string",
+              "tags": [
+                "assumed-by-name"
+              ],
+              "wire": "item_properties.enchantable_slot"
+            },
+            {
+              "kind": "identity",
+              "nbt": "string",
+              "tags": [
+                "assumed-by-name"
+              ],
+              "wire": "minecraft:enchantable.slot"
+            }
+          ]
         },
         "value": {
           "accepted": 5,
@@ -8141,6 +8225,9 @@
             "minecraft:entity_placer.use_on[].tags": "omitted"
           }
         }
+      },
+      "constants": {
+        "minecraft:publisher_on_use_on.autoSucceedOnClient": "0 (byte)"
       },
       "protocols": [
         2225
@@ -10631,6 +10718,10 @@
             "minecraft:storage_item.max_slots": "64 (int)"
           }
         }
+      },
+      "constants": {
+        "minecraft:storage_item.allowed_items": "[] (list<void>)",
+        "minecraft:storage_item.banned_items": "[] (list<void>)"
       },
       "protocols": [
         2225

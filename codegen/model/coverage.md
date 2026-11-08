@@ -49,13 +49,14 @@ field but nothing on the wire follows it (server only); `rejected`: every varian
 | count | 1 |
 | cross-field | 3 |
 | empty-list | 19 |
-| identity | 200 |
+| identity | 202 |
 | linear | 9 |
 | structure | 40 |
 | table | 13 |
 
 | tag | rules |
 |---|---|
+| assumed-by-name | 2 |
 | depends-on-other-fields | 3 |
 | enum->int | 12 |
 | explained-by-child-fields | 40 |
