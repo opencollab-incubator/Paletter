@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 /**
- * {@code :codegen:generateConstants} ({@code generate}) and {@code :codegen:checkConstants} ({@code check}, part of
+ * {@code :tools:generateConstants} ({@code generate}) and {@code :tools:checkConstants} ({@code check}, part of
  * {@code ./gradlew check}: fails if the committed constants, enums or history differ from what the committed data,
  * names and history give).
  */
@@ -105,7 +105,7 @@ public final class Main {
             }
         }
         if (!problems.isEmpty()) {
-            throw new IllegalStateException("Generated constants are out of date; run ./gradlew :codegen:generateConstants\n  "
+            throw new IllegalStateException("Generated constants are out of date; run ./gradlew :tools:generateConstants\n  "
                 + String.join("\n  ", problems));
         }
         System.out.println("All " + result.files().size() + " generated constants files are up to date");

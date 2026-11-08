@@ -12,12 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Paletter's default creative ordering against what BDS 1.26.63.1 sent for three add-ons (see capture/CREATIVE-ORDER.md):
+ * Paletter's default creative ordering against what BDS 1.26.63.1 sent for three add-ons (see data/bds/CREATIVE-ORDER.md):
  * the capture add-on (66 blocks, 84 items, with experiments), the creative order probe (every kind of menu category
  * placement) and the large probe (700 blocks, so BDS's block map has more than 512 buckets).
  */
 class CreativeOrderCheckTest {
-    private static final Path CAPTURES = Path.of("../capture/captures/1.26.63.1");
+    private static final Path CAPTURES = Path.of("../data/bds/1.26.63.1");
 
     @ParameterizedTest
     @CsvSource({"addon, 149", "creative-probe, 30", "creative-large, 700"})

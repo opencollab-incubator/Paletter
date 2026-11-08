@@ -1,5 +1,6 @@
 package org.geysermc.paletter.tools.update;
 
+import org.geysermc.paletter.tools.Layout;
 import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsServer;
 import org.geysermc.paletter.tools.data.Importer;
@@ -27,10 +28,10 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 /**
- * {@code spec-capture}: generates the spec add-on from {@code codegen/model}, installs it on a fresh world of a BDS of
+ * {@code spec-capture}: generates the spec add-on from {@code data/model}, installs it on a fresh world of a BDS of
  * the channel (experiments on), and records what BDS does with every variant: the content log of the load (what it
  * rejects) and the custom item registry and block properties it sends. Writes
- * {@code codegen/model/captures/bds-<version>/} (the input of {@code spec infer}). Reuses the {@code update} tooling
+ * {@code data/bds/<version>/spec/} (the input of {@code spec infer}). Reuses the {@code update} tooling
  * (download cache, server control, capture client).
  */
 public final class SpecCapture {
@@ -54,9 +55,9 @@ public final class SpecCapture {
         BdsDistribution.deleteRecursively(work);
         Files.createDirectories(work);
         Path out = options.containsKey("out") ? Path.of(options.get("out"))
-            : root.resolve("codegen/model/captures/bds-" + distribution.version());
+            : root.resolve(Layout.BDS).resolve(distribution.version()).resolve("spec");
 
-        Path modelDir = root.resolve("codegen/model");
+        Path modelDir = root.resolve("data/model");
         AddonGenerator generator = new AddonGenerator(Model.read(modelDir.resolve("components.json")), Fixtures.read(modelDir));
         Path addon = work.resolve("addon");
         generator.write(addon);

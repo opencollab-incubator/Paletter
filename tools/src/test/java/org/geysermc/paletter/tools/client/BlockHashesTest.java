@@ -24,7 +24,7 @@ class BlockHashesTest {
 
     @Test
     void customStatesIncludeTraits() throws IOException {
-        Path file = Path.of("../capture/captures/1.26.63.1/addon/custom_block_properties.nbt");
+        Path file = Path.of("../data/bds/1.26.63.1/addon/custom_block_properties.nbt");
         Map<String, NbtMap> blocks = new java.util.HashMap<>();
         for (NbtMap block : CapturedData.readGzip(file).getList("blocks", NbtType.COMPOUND)) {
             blocks.put(block.getString("name"), block.getCompound("properties"));

@@ -64,11 +64,11 @@ jobs:
           VERSION_ARG=""
           if [ -n "${{ inputs.version }}" ]; then VERSION_ARG="--version ${{ inputs.version }}"; fi
           set +e
-          ./gradlew :tools:run --args="update --channel $CHANNEL $VERSION_ARG --verify-only --report reports/ci-$CHANNEL.md"
+          ./gradlew :tools:run --args="update --channel $CHANNEL $VERSION_ARG --verify-only --report ${{ runner.temp }}/ci-$CHANNEL.md"
           echo "exit=$?" >> "$GITHUB_OUTPUT"
           # The report without the lines that change every run (date, paths)
-          if [ -f "reports/ci-$CHANNEL.md" ]; then
-            echo "hash=$(grep -v -e '^- \*\*Date\*\*' -e '^- \*\*Work directory' -e '^- \*\*Server' "reports/ci-$CHANNEL.md" | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
+          if [ -f "${{ runner.temp }}/ci-$CHANNEL.md" ]; then
+            echo "hash=$(grep -v -e '^- \*\*Date\*\*' -e '^- \*\*Work directory' -e '^- \*\*Server' "${{ runner.temp }}/ci-$CHANNEL.md" | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
           fi
           exit 0
 
@@ -78,7 +78,7 @@ jobs:
         with:
           name: bds-data-${{ matrix.channel }}
           path: |
-            reports/ci-${{ matrix.channel }}.md
+            ${{ runner.temp }}/ci-${{ matrix.channel }}.md
             ${{ env.PALETTER_BDS_CACHE }}/runs/*/*.log
             ${{ env.PALETTER_BDS_CACHE }}/runs/*/report.md
           if-no-files-found: ignore
@@ -92,7 +92,7 @@ jobs:
           gh label create bds-data --color 1d76db --description "Automated BDS data check" 2>/dev/null || true
           gh label create "$CHANNEL" --color c5def5 2>/dev/null || true
           TITLE="BDS data: $CHANNEL differs from the committed data"
-          BODY="reports/ci-$CHANNEL.md"
+          BODY="${{ runner.temp }}/ci-$CHANNEL.md"
           MARKER="<!-- report-hash: $HASH -->"
           {
             echo "$MARKER"
@@ -116,9 +116,8 @@ jobs:
           VERSION_ARG=""
           if [ -n "${{ inputs.version }}" ]; then VERSION_ARG="--version ${{ inputs.version }}"; fi
           # Exits non-zero when decisions are pending (TODOs in the report); the PR is opened anyway
-          ./gradlew :tools:run --args="update --channel release $VERSION_ARG --report reports/release-latest.md" || true
-          rm -f reports/ci-*.md
-          head -c 60000 reports/release-latest.md > "$RUNNER_TEMP/pr-body.md"
+          ./gradlew :tools:run --args="update --channel release $VERSION_ARG --report data/bds/release-latest.md" || true
+          head -c 60000 data/bds/release-latest.md > "$RUNNER_TEMP/pr-body.md"
 
       - name: Open or update the pull request (release only)
         if: steps.verify.outputs.exit != '0' && matrix.channel == 'release'

@@ -85,9 +85,7 @@ public final class Update {
     private final Path root;
     private final Path resources;
     private final Path fallbacks;
-    private final Path dumps;
     private final Path bdsData;
-    private final Path experimentRecords;
     private final Map<String, String> options;
     private final boolean preview;
     private final boolean verifyOnly;
@@ -100,10 +98,8 @@ public final class Update {
     public Update(Path root, Map<String, String> options) {
         this.root = root;
         this.resources = root.resolve("paletter/src/main/resources/paletter");
-        this.fallbacks = root.resolve("generator/fallbacks");
-        this.dumps = root.resolve("generator/bds-dumps");
-        this.bdsData = root.resolve("capture/captures");
-        this.experimentRecords = root.resolve("generator/experiments");
+        this.fallbacks = root.resolve(Layout.FALLBACKS);
+        this.bdsData = root.resolve(Layout.BDS);
         this.options = options;
         String channel = options.getOrDefault("channel", "release");
         if (!channel.equals("release") && !channel.equals("preview")) {
@@ -157,7 +153,7 @@ public final class Update {
         try {
             // 1. Script API dump
             Path dumpLog = work.resolve("bds-dump.log");
-            new BdsRunner(root.resolve("bds-addon")).run(server, dumpLog, timeout, port, false);
+            new BdsRunner(root.resolve(Layout.DUMP_ADDON)).run(server, dumpLog, timeout, port, false);
             String[] json = BdsDump.json(dumpLog);
             dump = BdsDump.parse(json[1], json[0]);
             Files.writeString(work.resolve("bds-dump.json"), json[1]);
@@ -387,7 +383,7 @@ public final class Update {
         }
 
         // Creative order probe: every kind of menu category placement, no experiments
-        freshWorld(server, CREATIVE_WORLD, root.resolve("capture/creative-addon"));
+        freshWorld(server, CREATIVE_WORLD, root.resolve(Layout.CREATIVE_ADDON));
         properties.put("level-name", CREATIVE_WORLD);
         properties.put("block-network-ids-are-hashes", "true");
         BdsServer.configure(server, properties);
@@ -417,7 +413,7 @@ public final class Update {
      * experiments enabled: the definitions BDS rejects. Leaves the server stopped.
      */
     private List<String> addonWorldContentLog(Path server, Path work, Map<String, String> properties, Runs runs) throws Exception {
-        Path addon = root.resolve("capture/addon");
+        Path addon = root.resolve(Layout.CAPTURE_ADDON);
         freshWorld(server, ADDON_WORLD, addon);
         properties.put("level-name", ADDON_WORLD);
         properties.put("block-network-ids-are-hashes", "true");
@@ -590,7 +586,7 @@ public final class Update {
         if (!mode.equals("none") && runs.vanilla != null) {
             CapturedData base = CapturedData.read(runs.vanilla);
             Set<String> creativeBefore = ExperimentAttribution.creativeItems(base);
-            BdsRunner runner = new BdsRunner(root.resolve("bds-addon"));
+            BdsRunner runner = new BdsRunner(root.resolve(Layout.DUMP_ADDON));
             Path dumpLog = work.resolve("experiments/bds-dump-all.log");
             try {
                 runner.rerun(server, dumpLog, timeout, port, toggles);
@@ -642,14 +638,14 @@ public final class Update {
     /** Retired toggles of this run: BDS keeps them in level.dat but never streams them. */
     private List<String> retiredToggles = List.of();
 
-    /** Toggle ids of the committed experiment records ({@code generator/experiments/*.json}). */
+    /** Toggle ids of the committed experiment records ({@code experiments.json} of every version in data/bds). */
     private Set<String> recordedToggles() throws IOException {
         Set<String> ids = new TreeSet<>();
-        if (!Files.isDirectory(experimentRecords)) {
+        if (!Files.isDirectory(bdsData)) {
             return ids;
         }
-        try (Stream<Path> files = Files.list(experimentRecords)) {
-            for (Path file : files.filter(f -> f.toString().endsWith(".json")).toList()) {
+        try (Stream<Path> dirs = Files.list(bdsData)) {
+            for (Path file : dirs.map(d -> d.resolve("experiments.json")).filter(Files::exists).toList()) {
                 JsonObject toggles = JsonParser.parseString(Files.readString(file)).getAsJsonObject().getAsJsonObject("toggles");
                 if (toggles != null) {
                     ids.addAll(toggles.keySet());
@@ -660,7 +656,7 @@ public final class Update {
     }
 
     /**
-     * The "Experiments" report section, the committed record {@code generator/experiments/<bds version>.json} and the
+     * The "Experiments" report section, the committed record {@code data/bds/<bds version>/experiments.json} and the
      * experiment marks of the bundled version.
      */
     private void experimentsReport(BdsDistribution distribution, Runs runs, Staging staging) throws IOException {
@@ -706,7 +702,7 @@ public final class Update {
         if (!result.source.equals("discovered") || (preview && !importPreview)) {
             return;
         }
-        stage(experimentRecords.resolve(distribution.version() + ".json"), record(distribution, runs), "experiment record");
+        stage(bdsData.resolve(distribution.version()).resolve("experiments.json"), record(distribution, runs), "experiment record");
         if (runs.bundledName != null && result.attribution.equals("each")) {
             Path file = staging.resources.resolve(runs.bundledName + ".nbt");
             VanillaData data = read(file);
@@ -725,7 +721,7 @@ public final class Update {
 
     /** Which toggle each experiment named in the creator docs ({@code codegen/model/components.json}) is. */
     private void docsExperiments(ExperimentRun result, List<String> lines) throws IOException {
-        Path model = root.resolve("codegen/model/components.json");
+        Path model = root.resolve(Layout.MODEL + "/components.json");
         if (!Files.exists(model)) {
             return;
         }
@@ -749,7 +745,7 @@ public final class Update {
             }
         });
         lines.add("");
-        lines.add("Experiments the creator docs name (`codegen/model/components.json`):");
+        lines.add("Experiments the creator docs name (`data/model/components.json`):");
         lines.add("");
         List<String> unknown = new ArrayList<>();
         for (String name : names) {
@@ -764,7 +760,7 @@ public final class Update {
     }
 
     /**
-     * {@code generator/experiments/<bds version>.json}: toggles and per toggle content. Candidate counts differ by
+     * {@code data/bds/<bds version>/experiments.json}: toggles and per toggle content. Candidate counts differ by
      * platform and stay in the report; ids of earlier records are candidates again, so the toggle set converges.
      */
     private byte[] record(BdsDistribution distribution, Runs runs) {
@@ -825,9 +821,9 @@ public final class Update {
     /** The Script API view against the committed baseline dump of the newest bundled release. */
     private void scriptApi(BdsDistribution distribution, BdsDump dump, Runs runs) throws IOException {
         Path baselineFile = latestDump();
-        Path target = dumps.resolve(distribution.version() + ".json.gz");
+        Path target = bdsData.resolve(distribution.version()).resolve("dump.json.gz");
         if (baselineFile == null) {
-            report.check(Report.Status.DIFF, "Script API vs baseline", "no baseline dump in generator/bds-dumps");
+            report.check(Report.Status.DIFF, "Script API vs baseline", "no baseline dump in data/bds/*/dump.json.gz");
         } else {
             String baselineVersion = baselineFile.getFileName().toString().replace(".json.gz", "");
             BdsDump baseline = BdsDump.parse(readGzipText(baselineFile), baselineVersion);
@@ -865,7 +861,7 @@ public final class Update {
             List<String> needItems = identifiers(items).stream()
                 .filter(id -> !knownItems.contains(id) && !existing.covers(id, false)).toList();
             if (!needBlocks.isEmpty() || !needItems.isEmpty()) {
-                lines.add("- `generator/fallbacks/" + entry.name() + ".json`: "
+                lines.add("- `data/fallbacks/" + entry.name() + ".json`: "
                     + (needBlocks.isEmpty() ? "" : needBlocks.size() + " blocks " + code(needBlocks))
                     + (needBlocks.isEmpty() || needItems.isEmpty() ? "" : "; ")
                     + (needItems.isEmpty() ? "" : needItems.size() + " items " + code(needItems)));
@@ -940,7 +936,7 @@ public final class Update {
                 Map<String, List<String>> problems = new Checker(staging.resources).problems(preview);
                 // Content without a curated fallback is listed above (INFO); broken or unused fallbacks need fixing
                 problems.forEach((version, list) -> list.forEach(problem ->
-                    report.todos.add("`generator/fallbacks/" + version + ".json`: " + problem)));
+                    report.todos.add("`data/fallbacks/" + version + ".json`: " + problem)));
             } else {
                 report.check(Report.Status.INFO, "Import", "preview not imported (pass --import-preview to bundle it as a preview version)");
             }
@@ -1001,7 +997,7 @@ public final class Update {
         if (runs.addonContentLog == null) {
             return;
         }
-        Path file = root.resolve("capture/addon/content-log.txt");
+        Path file = root.resolve(Layout.CAPTURE_ADDON + "/content-log.txt");
         String current = String.join("\n", runs.addonContentLog) + "\n";
         String committed = Files.exists(file) ? Files.readString(file).replace("\r\n", "\n") : "";
         Set<String> before = new TreeSet<>(committed.lines().filter(l -> !l.isBlank()).toList());
@@ -1011,7 +1007,7 @@ public final class Update {
         DataDiff.difference(before, after).forEach(line -> lines.add("- gone: `" + line.replace("`", "'") + "`"));
         report.check(lines.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Add-on content log",
             lines.isEmpty() ? runs.addonContentLog.size() + " known rejections/warnings, unchanged"
-                : lines.size() + " changes in what BDS rejects or warns about in capture/addon");
+                : lines.size() + " changes in what BDS rejects or warns about in data/addons/capture");
         if (!lines.isEmpty()) {
             report.section("Add-on content log changes", lines);
         }
@@ -1415,12 +1411,12 @@ public final class Update {
     }
 
     private Path latestDump() throws IOException {
-        if (!Files.isDirectory(dumps)) {
+        if (!Files.isDirectory(bdsData)) {
             return null;
         }
-        try (Stream<Path> files = Files.list(dumps)) {
-            return files.filter(f -> f.toString().endsWith(".json.gz"))
-                .max(Comparator.comparing(f -> versionKey(f.getFileName().toString().replace(".json.gz", "")))).orElse(null);
+        try (Stream<Path> dirs = Files.list(bdsData)) {
+            return dirs.map(d -> d.resolve("dump.json.gz")).filter(Files::exists)
+                .max(Comparator.comparing(f -> versionKey(f.getParent().getFileName().toString()))).orElse(null);
         }
     }
 

@@ -25,7 +25,7 @@ class GeneratedApiTest {
     private static final Path ROOT = Path.of(System.getProperty("paletter.root", ".."));
 
     private static ApiModel model() throws Exception {
-        return ComponentGenerator.model(ComponentGenerator.read(ROOT.resolve("codegen/model"), Main.knownTransforms(ROOT), "1.0.0"));
+        return ComponentGenerator.model(ComponentGenerator.read(ROOT.resolve("data/model"), Main.knownTransforms(ROOT), "1.0.0"));
     }
 
     private static Class<?> recordClass(ApiModel.Comp c, ApiModel.ObjType o) throws ClassNotFoundException {

@@ -83,7 +83,7 @@ public final class DocsParser {
         List<FormatNote> unique = new ArrayList<>(new LinkedHashSet<>(formatNotes));
         return new Model("https://github.com/MicrosoftDocs/minecraft-creator (" + CONTENT + ")", docs.commit(),
             "Derived from the Minecraft creator documentation by Microsoft, CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/); "
-                + "see codegen/model/ATTRIBUTION.md", components, unique);
+                + "see data/model/ATTRIBUTION.md", components, unique);
     }
 
     // ---------------------------------------------------------------------------------------------------------------

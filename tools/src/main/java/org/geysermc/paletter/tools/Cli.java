@@ -97,7 +97,7 @@ public final class Cli implements Runnable {
         }
     }
 
-    @Command(name = "bds-run", description = "Installs bds-addon on a fresh flat world of a Bedrock Dedicated Server, runs it headless until the "
+    @Command(name = "bds-run", description = "Installs data/addons/dump on a fresh flat world of a Bedrock Dedicated Server, runs it headless until the "
         + "add-on printed PALETTER-DONE and writes the console output to --log (the input of import --bds-dump). --download fetches BDS for this OS "
         + "from minecraft.net into DIR/VERSION first; keep DIR outside the repository. Downloading BDS means accepting the Minecraft EULA.")
     static final class BdsRun extends Rooted implements Callable<Integer> {
@@ -114,7 +114,7 @@ public final class Cli implements Runnable {
             if (dir == null) {
                 throw new IllegalArgumentException("Missing --server or --download");
             }
-            new BdsRunner(root().resolve("bds-addon")).run(dir, log, timeout);
+            new BdsRunner(root().resolve(Layout.DUMP_ADDON)).run(dir, log, timeout);
             return 0;
         }
     }

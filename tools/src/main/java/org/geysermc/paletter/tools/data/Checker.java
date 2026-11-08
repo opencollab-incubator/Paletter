@@ -29,7 +29,7 @@ public final class Checker {
     /**
      * Per older version, the content of the newest version it lacks without a curated fallback: it falls back to
      * {@code minecraft:unknown} (Paletter's default), which is fine, but a fallback in
-     * {@code generator/fallbacks/<version>.json} would be better. Filled by {@link #problems}.
+     * {@code data/fallbacks/<version>.json} would be better. Filled by {@link #problems}.
      */
     final Map<String, List<String>> defaulted = new java.util.LinkedHashMap<>();
 
@@ -43,7 +43,7 @@ public final class Checker {
         defaulted.forEach((version, list) -> System.out.println("  " + version + ": " + list.size()
             + " fall back to minecraft:unknown (no curated fallback): " + list));
         boolean ok = problems.values().stream().allMatch(List::isEmpty);
-        System.out.println(ok ? "All versions are covered." : "Fix the problems above in generator/fallbacks/<version>.json and re-import.");
+        System.out.println(ok ? "All versions are covered." : "Fix the problems above in data/fallbacks/<version>.json and re-import.");
         return ok;
     }
 

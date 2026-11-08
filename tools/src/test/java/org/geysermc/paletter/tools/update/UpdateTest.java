@@ -56,11 +56,11 @@ class UpdateTest {
     @Test
     void committedCapturesAreCoveredByTheMappings() throws Exception {
         Path root = Path.of(System.getProperty("paletter.root", ".."));
-        var mappings = JsonParser.parseString(Files.readString(root.resolve("codegen/model/mappings.json"))).getAsJsonObject();
-        var shapes = WireShapes.ofCapture(root.resolve("capture/captures/1.26.63.1/addon"));
+        var mappings = JsonParser.parseString(Files.readString(root.resolve("data/model/mappings.json"))).getAsJsonObject();
+        var shapes = WireShapes.ofCapture(root.resolve("data/bds/1.26.63.1/addon"));
         assertFalse(shapes.components().isEmpty());
         List<String> uncovered = shapes.uncovered(mappings);
-        var gaps = WireShapes.knownGaps(root.resolve("codegen/model"));
+        var gaps = WireShapes.knownGaps(root.resolve("data/model"));
         assertTrue(gaps.containsAll(uncovered), "not covered and not a known gap: " + uncovered.stream().filter(u -> !gaps.contains(u)).toList());
         assertTrue(uncovered.containsAll(gaps), "known gaps that are covered now: " + gaps.stream().filter(g -> !uncovered.contains(g)).toList());
         var invented = new WireShapes();

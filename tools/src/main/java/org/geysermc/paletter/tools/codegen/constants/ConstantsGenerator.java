@@ -35,12 +35,12 @@ import java.util.regex.Pattern;
  * {@code BedrockPreviewItems}) from the newest bundled release, {@code codegen/names.json} and
  * {@code codegen/constants-history.json}. See {@code codegen/README.md}.
  * <p>
- * Used by {@code :codegen:generateConstants} / {@code checkConstants} ({@link Main}) and by the generator's
+ * Used by {@code :tools:generateConstants} / {@code checkConstants} ({@link Main}) and by the generator's
  * {@code update} pipeline.
  */
 public final class ConstantsGenerator {
-    public static final String NAMES = "codegen/names.json";
-    public static final String HISTORY = "codegen/constants-history.json";
+    public static final String NAMES = "data/model/names.json";
+    public static final String HISTORY = "data/model/constants-history.json";
     public static final String DATA = "paletter/src/main/resources/paletter";
     public static final String PACKAGE_DIR = "paletter/src/generated/java/org/geysermc/paletter/vanilla";
     public static final String STATE_DIR = PACKAGE_DIR + "/state";

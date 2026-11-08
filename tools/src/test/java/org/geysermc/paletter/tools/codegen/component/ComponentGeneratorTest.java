@@ -1,6 +1,5 @@
 package org.geysermc.paletter.tools.codegen.component;
 
-import org.geysermc.paletter.tools.codegen.Shape;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -36,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * sends is dropped with a report warning in the older one), and deprecated and
  * experiment-gated components; a server-only component is left out.
  * <p>
- * After an intended change of the output: {@code ./gradlew :codegen:test -PupdateGolden=true}, then review the diff.
+ * After an intended change of the output: {@code ./gradlew :tools:test -PupdateGolden=true}, then review the diff.
  */
 class ComponentGeneratorTest {
     private static final Path GOLDEN = Path.of("src/test/resources/component-golden");

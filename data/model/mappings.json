@@ -1,7 +1,7 @@
 {
   "captures": [
     {
-      "capture": "codegen/model/captures/bds-1.26.63.1",
+      "capture": "data/bds/1.26.63.1/spec",
       "bdsVersion": "1.26.63.1",
       "protocol": 2225,
       "variants": 2001,

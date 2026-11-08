@@ -84,7 +84,7 @@ final class WireSource {
         List<Comp> members = model.components.stream().filter(c -> c.kind == kind && !c.standalone).toList();
         ClassName iface = ClassName.get(kind.pkg(), kind.iface());
         TypeSpec.Builder type = TypeSpec.classBuilder(wireClass(kind)).addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-            .addJavadoc("Encoders of the generated {@link $T} types: the rules of {@code codegen/model/mappings.json} per\nprotocol window, "
+            .addJavadoc("Encoders of the generated {@link $T} types: the rules of {@code data/model/mappings.json} per\nprotocol window, "
                 + "hand transforms by name. Not API.\n", iface)
             .addAnnotation(AnnotationSpec.builder(SuppressWarnings.class).addMember("value", "{$S, $S}", "unused", "deprecation").build())
             .addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build());

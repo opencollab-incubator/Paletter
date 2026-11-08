@@ -90,7 +90,7 @@ public final class Report {
         if (!wireChanges.isEmpty()) {
             out.append("## WIRE FORMAT CHANGES\n\n");
             out.append("> **Component NBT that BDS sends changed shape.** Generated component types encode the old shape; ")
-                .append("review `codegen/spec/inferred.json` and the generated types before shipping this version.\n\n");
+                .append("review the component model (data/model) and the generated types before shipping this version.\n\n");
             wireChanges.forEach(change -> out.append("- **").append(change.replace("*", "\\*")).append("**\n"));
             out.append('\n');
         }

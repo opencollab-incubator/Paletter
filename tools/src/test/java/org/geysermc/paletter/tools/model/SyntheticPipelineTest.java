@@ -53,7 +53,7 @@ class SyntheticPipelineTest {
          "mapKeys": {"default": "k"}, "context": {}, "skip": {}}""";
 
     private static Path modelDir(Path root) throws IOException {
-        Path model = Files.createDirectories(root.resolve("codegen/model"));
+        Path model = Files.createDirectories(root.resolve("data/model"));
         Files.writeString(model.resolve("components.json"), MODEL);
         Files.writeString(model.resolve("fixtures.json"), FIXTURES);
         return model;
@@ -85,7 +85,7 @@ class SyntheticPipelineTest {
     void inferenceFindsTheServerFunction(@TempDir Path root) throws IOException {
         Path model = modelDir(root);
         AddonGenerator generator = generator(model);
-        Path capture = Files.createDirectories(model.resolve("captures/bds-test"));
+        Path capture = Files.createDirectories(root.resolve("data/bds/9.9.9.9/spec"));
         fakeServer(generator, capture);
 
         new MappingInference(root).run(false);

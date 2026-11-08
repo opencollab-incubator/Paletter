@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class ComponentConformanceTest {
     static final Path ROOT = Path.of(System.getProperty("paletter.root", ".."));
-    static final Path MODEL = ROOT.resolve("codegen/model");
+    static final Path MODEL = ROOT.resolve("data/model");
     static final Path KNOWN = MODEL.resolve("conformance-known.txt");
 
     record Outcome(String identifier, String component, String status, String detail) {
@@ -66,8 +66,8 @@ class ComponentConformanceTest {
     @Test
     void everyAcceptedVariantReproducesBdsWire() throws IOException {
         Path capture;
-        try (var dirs = Files.list(MODEL.resolve("captures"))) {
-            capture = dirs.filter(Files::isDirectory).sorted().toList().getLast();
+        try (var dirs = Files.list(ROOT.resolve("data/bds"))) {
+            capture = dirs.map(d -> d.resolve("spec")).filter(Files::isDirectory).sorted().toList().getLast();
         }
         JsonObject meta = JsonParser.parseString(Files.readString(capture.resolve("capture.json"))).getAsJsonObject();
         int protocol = meta.get("protocol").getAsInt();
@@ -127,7 +127,7 @@ class ComponentConformanceTest {
                 report.append("- `").append(o.identifier()).append("` ").append(o.status()).append(": ").append(o.detail()).append('\n');
             }
         }
-        Path out = ROOT.resolve("codegen/build/reports/component-conformance.md");
+        Path out = ROOT.resolve("tools/build/reports/component-conformance.md");
         Files.createDirectories(out.getParent());
         Files.writeString(out, report.toString(), StandardCharsets.UTF_8);
         System.out.println(report.substring(0, report.indexOf("\n## Not passing")));

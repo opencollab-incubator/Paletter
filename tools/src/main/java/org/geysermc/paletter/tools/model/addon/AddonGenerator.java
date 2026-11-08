@@ -771,7 +771,7 @@ public final class AddonGenerator {
         }
         json(bp.resolve("loot_tables/paletter_empty.json"), JsonParser.parseString("{\"pools\": []}"));
         json(bp.resolve("manifest.json"), JsonParser.parseString("""
-            {"format_version": 2, "header": {"name": "Paletter spec capture", "description": "Generated from codegen/model: every documented component field, varied",
+            {"format_version": 2, "header": {"name": "Paletter spec capture", "description": "Generated from data/model: every documented component field, varied",
               "uuid": "%s", "version": [1, 0, 0], "min_engine_version": [1, 26, 60]},
              "modules": [{"type": "data", "uuid": "a1e5c0de-0000-4000-8000-00000000d002", "version": [1, 0, 0]}],
              "dependencies": [{"uuid": "%s", "version": [1, 0, 0]}]}""".formatted(BP_UUID, RP_UUID)));

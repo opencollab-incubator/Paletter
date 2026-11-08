@@ -34,14 +34,14 @@ import java.util.stream.Stream;
 
 /**
  * Infers the JSON -> wire mapping of every component field from the spec captures
- * ({@code codegen/model/captures/bds-<version>/}: the variants BDS was given, its content log and what it sent).
+ * ({@code data/model/captures/bds-<version>/}: the variants BDS was given, its content log and what it sent).
  * <p>
  * Per component the control (companions only) shows what the component adds on the wire at all; per field the
  * variants that change only that field show which wire leaves follow it, and how: identity (possibly renamed, moved
  * into {@code item_properties}, re-typed), linear (unit conversions), a value table (enum -> int, string -> string),
  * a bit set (list of enum values -> int), list element -> leaf, presence. A field nothing on the wire follows is
  * dropped (server only); a field whose every variant BDS rejects is rejected. What fits none of these needs a named
- * hand transform ({@code codegen/model/transforms.json}).
+ * hand transform ({@code data/model/transforms.json}).
  */
 public final class MappingInference {
     private static final String ABSENT = "<absent>";
@@ -55,7 +55,7 @@ public final class MappingInference {
 
     public MappingInference(Path root) {
         this.root = root;
-        this.modelDir = root.resolve("codegen/model");
+        this.modelDir = root.resolve("data/model");
     }
 
     record Variant(String identifier, String kind, String file, String component, String role, String path, String label,
@@ -87,10 +87,10 @@ public final class MappingInference {
             ? JsonParser.parseString(Files.readString(modelDir.resolve("transforms.json"))).getAsJsonObject() : new JsonObject();
         List<Capture> captures = new ArrayList<>();
         feedback = new Feedback();
-        Path dir = modelDir.resolve("captures");
+        Path dir = root.resolve(org.geysermc.paletter.tools.Layout.BDS);
         if (Files.isDirectory(dir)) {
             try (Stream<Path> dirs = Files.list(dir)) {
-                for (Path capture : dirs.filter(Files::isDirectory).sorted().toList()) {
+                for (Path capture : dirs.map(d -> d.resolve("spec")).filter(d -> Files.exists(d.resolve("variants.json"))).sorted().toList()) {
                     captures.add(load(capture));
                 }
             }
@@ -99,7 +99,7 @@ public final class MappingInference {
         JsonArray sources = new JsonArray();
         for (Capture capture : captures) {
             JsonObject source = new JsonObject();
-            source.addProperty("capture", "codegen/model/captures/" + capture.name());
+            source.addProperty("capture", "data/bds/" + capture.bdsVersion() + "/spec");
             source.addProperty("bdsVersion", capture.bdsVersion());
             source.addProperty("protocol", capture.protocol());
             source.addProperty("variants", capture.variants().size());
@@ -145,8 +145,8 @@ public final class MappingInference {
             boolean same = mappingsText.equals(read(modelDir.resolve("mappings.json")))
                 && feedbackText.equals(read(modelDir.resolve("bds-feedback.json")))
                 && coverageText.equals(read(modelDir.resolve("coverage.md")));
-            System.out.println(same ? "codegen/model/mappings.json and coverage.md are up to date"
-                : "codegen/model/mappings.json or coverage.md is stale: run ./gradlew :spec:inferMappings");
+            System.out.println(same ? "data/model/mappings.json and coverage.md are up to date"
+                : "data/model/mappings.json or coverage.md is stale: run ./gradlew :tools:inferMappings");
             return same;
         }
         Files.writeString(modelDir.resolve("mappings.json"), mappingsText, StandardCharsets.UTF_8);

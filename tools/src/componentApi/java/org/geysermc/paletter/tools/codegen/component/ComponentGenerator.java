@@ -41,7 +41,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Generates Paletter's custom item and block component API from the component model in {@code codegen/model}:
+ * Generates Paletter's custom item and block component API from the component model in {@code data/model}:
  * <ul>
  *     <li>{@code components.json}: every component and field as the creator docs describe it (types, defaults, enums,
  *     ranges, docs text, format versions, experiments, status), plus the {@code errata} of {@code fixtures.json};</li>

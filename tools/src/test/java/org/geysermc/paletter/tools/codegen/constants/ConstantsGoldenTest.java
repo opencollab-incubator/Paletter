@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * shared by two states, a name collision settled by names.json, a block that needs a lookup table, a removed block, a
  * renamed block, a removed item with a curated fallback, and a preview-only block and item.
  * <p>
- * After an intended change of the output: {@code ./gradlew :codegen:test -PupdateGolden=true}, then review the diff.
+ * After an intended change of the output: {@code ./gradlew :tools:test -PupdateGolden=true}, then review the diff.
  */
 class ConstantsGoldenTest {
     private static final Path GOLDEN = Path.of("src/test/resources/constants-golden");
@@ -329,38 +329,38 @@ class ConstantsGoldenTest {
         JsonObject noOverride = names();
         noOverride.getAsJsonObject("blocks").remove("minecraft:test.block");
         assertEquals("Duplicate constant BedrockBlocks.TEST_BLOCK for minecraft:test.block and minecraft:test_block; give one a name in "
-            + "codegen/names.json blocks", failure(temp.resolve("a"), releaseBlocks(false), noOverride, new JsonObject()));
+            + "data/model/names.json blocks", failure(temp.resolve("a"), releaseBlocks(false), noOverride, new JsonObject()));
 
         JsonObject noState = names();
         noState.getAsJsonObject("states").remove("minecraft:facing");
-        assertEquals("Duplicate constant BedrockStates.FACING for facing and minecraft:facing; give one a name in codegen/names.json states",
+        assertEquals("Duplicate constant BedrockStates.FACING for facing and minecraft:facing; give one a name in data/model/names.json states",
             failure(temp.resolve("b"), releaseBlocks(false), noState, new JsonObject()));
 
         JsonObject digit = names();
         digit.getAsJsonObject("items").addProperty("minecraft:apple", "1APPLE");
-        assertEquals("minecraft:apple gives the constant name 1APPLE, which is not a Java constant; add it to codegen/names.json items",
+        assertEquals("minecraft:apple gives the constant name 1APPLE, which is not a Java constant; add it to data/model/names.json items",
             failure(temp.resolve("c"), releaseBlocks(false), digit, new JsonObject()));
 
         JsonObject enumName = names();
         enumName.getAsJsonObject("enums").addProperty("wall_east", "wall side");
-        assertEquals("Enum name wall side of [wall_east, wall_west] is no Java class name; set one in codegen/names.json enums",
+        assertEquals("Enum name wall side of [wall_east, wall_west] is no Java class name; set one in data/model/names.json enums",
             failure(temp.resolve("d"), releaseBlocks(false), enumName, new JsonObject()));
 
         JsonObject notAnObject = names();
         notAnObject.addProperty("blocks", "oops");
-        assertEquals("\"blocks\" in codegen/names.json or codegen/constants-history.json is not an object",
+        assertEquals("\"blocks\" in data/model/names.json or data/model/constants-history.json is not an object",
             failure(temp.resolve("e"), releaseBlocks(false), notAnObject, new JsonObject()));
     }
 
     @Test
     void inconsistentHistoryFailsClearly(@TempDir Path temp) throws IOException {
-        assertEquals("codegen/constants-history.json: blocks.GONE lacks \"identifier\"", historyFailure(temp.resolve("a"), history -> {
+        assertEquals("data/model/constants-history.json: blocks.GONE lacks \"identifier\"", historyFailure(temp.resolve("a"), history -> {
             JsonObject entry = new JsonObject();
             entry.addProperty("since", "1.0.0");
             history.getAsJsonObject("blocks").add("GONE", entry);
             return history;
         }));
-        assertEquals("codegen/constants-history.json: blocks.GONE is an alias of NOWHERE, which is neither generated nor in the history",
+        assertEquals("data/model/constants-history.json: blocks.GONE is an alias of NOWHERE, which is neither generated nor in the history",
             historyFailure(temp.resolve("b"), history -> {
                 JsonObject entry = entry("minecraft:gone");
                 entry.addProperty("deprecated", "1.0.0");
@@ -369,16 +369,16 @@ class ConstantsGoldenTest {
                 return history;
             }));
         assertEquals("BedrockStates.OPEN_BIT (open_bit) changed from int to BOOL, which would change the type of the constant; give the state "
-            + "a new name in codegen/names.json states", historyFailure(temp.resolve("c"), history -> {
+            + "a new name in data/model/names.json states", historyFailure(temp.resolve("c"), history -> {
                 history.getAsJsonObject("states").getAsJsonObject("OPEN_BIT").addProperty("kind", "int");
                 return history;
             }));
-        assertEquals("codegen/constants-history.json: states.GONE has the unknown kind \"float\" (bool, int or enum)",
+        assertEquals("data/model/constants-history.json: states.GONE has the unknown kind \"float\" (bool, int or enum)",
             historyFailure(temp.resolve("d"), history -> {
                 history.getAsJsonObject("states").add("GONE", JsonParser.parseString("{\"name\":\"gone\",\"kind\":\"float\",\"since\":\"1.0.0\"}"));
                 return history;
             }));
-        assertEquals("codegen/constants-history.json: states.GONE is an enum state without \"enum\"",
+        assertEquals("data/model/constants-history.json: states.GONE is an enum state without \"enum\"",
             historyFailure(temp.resolve("e"), history -> {
                 history.getAsJsonObject("states").add("GONE", JsonParser.parseString("{\"name\":\"gone\",\"kind\":\"enum\",\"since\":\"1.0.0\"}"));
                 return history;
@@ -389,11 +389,11 @@ class ConstantsGoldenTest {
                     JsonParser.parseString("{\"name\":\"gone\",\"kind\":\"enum\",\"enum\":\"Nowhere\",\"since\":\"1.0.0\"}"));
                 return history;
             }));
-        assertEquals("codegen/constants-history.json: enums.WallSide.NONE lacks \"since\"", historyFailure(temp.resolve("g"), history -> {
+        assertEquals("data/model/constants-history.json: enums.WallSide.NONE lacks \"since\"", historyFailure(temp.resolve("g"), history -> {
             history.getAsJsonObject("enums").getAsJsonObject("WallSide").getAsJsonObject("values").getAsJsonObject("NONE").remove("since");
             return history;
         }));
-        assertEquals("codegen/constants-history.json: items.APPLE is not an object", historyFailure(temp.resolve("h"), history -> {
+        assertEquals("data/model/constants-history.json: items.APPLE is not an object", historyFailure(temp.resolve("h"), history -> {
             history.getAsJsonObject("items").addProperty("APPLE", "minecraft:apple");
             return history;
         }));
