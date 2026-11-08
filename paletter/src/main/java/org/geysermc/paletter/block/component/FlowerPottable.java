@@ -11,7 +11,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * <p>
  * Add-on JSON: {@code "minecraft:flower_pottable"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_flower_pottable.md}.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.120")
 public record FlowerPottable() implements BlockComponent {

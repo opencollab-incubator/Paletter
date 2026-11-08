@@ -13,7 +13,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @param value Determines whether the item is immune to burning when dropped in fire or lava. Add-on JSON {@code value}.
  *        Default: <code>true</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
 public record FireResistant(boolean value) implements ItemComponent {
     /**

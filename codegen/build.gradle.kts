@@ -8,6 +8,7 @@ val componentApi: SourceSet = sourceSets.create("componentApi")
 
 dependencies {
     "componentApiImplementation"(libs.gson)
+    "componentApiImplementation"(libs.javapoet)
     implementation(project(":paletter"))
     implementation(libs.gson)
     testImplementation(componentApi.output)

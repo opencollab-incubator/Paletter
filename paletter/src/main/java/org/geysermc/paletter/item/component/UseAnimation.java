@@ -14,7 +14,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *
  * @param value Specifies which animation to play when the item is used. Add-on JSON {@code value}. Optional (null: not set).
  *        Compiled by the hand transform {@code use_animation_id}.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
 public record UseAnimation(@Nullable String value) implements ItemComponent {

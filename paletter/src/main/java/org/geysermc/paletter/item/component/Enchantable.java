@@ -22,7 +22,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        Add-on JSON {@code slot}. Required.
  * @param value Specifies the value of the enchantment (minimum of 0). Add-on JSON {@code value}. Required. Range [0, inf)
  *        (BDS 1.26.63.1).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
 public record Enchantable(@NonNull String slot, int value) implements ItemComponent {
@@ -63,6 +63,7 @@ public record Enchantable(@NonNull String slot, int value) implements ItemCompon
      */
     public static final class Builder {
         private @Nullable String slot;
+
         private @Nullable Integer value;
 
         private Builder() {

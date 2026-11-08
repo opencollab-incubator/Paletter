@@ -26,10 +26,11 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  *        maximum power. Default is 0. Add-on JSON {@code max_draw_duration}. Default: <code>0</code>.
  * @param scalePowerByDrawDuration When true, the projectile's launch power increases based on how long the player holds the use button before
  *        releasing. Default is false. Add-on JSON {@code scale_power_by_draw_duration}. Default: <code>false</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
-public record Shooter(@NonNull List<Ammunition> ammunition, boolean chargeOnDraw, float maxDrawDuration, boolean scalePowerByDrawDuration) implements ItemComponent {
+public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean chargeOnDraw,
+        float maxDrawDuration, boolean scalePowerByDrawDuration) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -68,8 +69,11 @@ public record Shooter(@NonNull List<Ammunition> ammunition, boolean chargeOnDraw
      */
     public static final class Builder {
         private @Nullable List<Ammunition> ammunition = List.of();
+
         private @Nullable Boolean chargeOnDraw = false;
+
         private @Nullable Float maxDrawDuration = 0.0f;
+
         private @Nullable Boolean scalePowerByDrawDuration = false;
 
         private Builder() {
@@ -135,7 +139,8 @@ public record Shooter(@NonNull List<Ammunition> ammunition, boolean chargeOnDraw
      *        <code>false</code>.
      * @param useOffhand Can use off-hand? Default is set to false. Add-on JSON {@code use_offhand}. Default: <code>false</code>.
      */
-    public record Ammunition(@Nullable String item, boolean searchInventory, boolean useInCreative, boolean useOffhand) {
+    public record Ammunition(@Nullable String item, boolean searchInventory, boolean useInCreative,
+            boolean useOffhand) {
         /**
          * @return a builder with the defaults applied
          */
@@ -160,8 +165,11 @@ public record Shooter(@NonNull List<Ammunition> ammunition, boolean chargeOnDraw
          */
         public static final class Builder {
             private @Nullable String item;
+
             private @Nullable Boolean searchInventory = false;
+
             private @Nullable Boolean useInCreative = false;
+
             private @Nullable Boolean useOffhand = false;
 
             private Builder() {

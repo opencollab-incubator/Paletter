@@ -16,10 +16,10 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param value Sets the base rarity of the item. The rarity of an item automatically increases when enchanted, either to Rare
  *        when the base rarity is Common or Uncommon, or Epic when the base rarity is Rare. Add-on JSON {@code value}.
  *        Optional (null: not set).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.30")
-public record Rarity(@Nullable Value value) implements ItemComponent {
+public record Rarity(Rarity. @Nullable Value value) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -35,7 +35,7 @@ public record Rarity(@Nullable Value value) implements ItemComponent {
      *
      * @return the value with everything else at its default
      */
-    public static @NonNull Rarity of(Value value) {
+    public static @NonNull Rarity of(@NonNull Value value) {
         return builder().value(value).build();
     }
 
@@ -89,14 +89,17 @@ public record Rarity(@Nullable Value value) implements ItemComponent {
          * {@code common}
          */
         COMMON("common"),
+
         /**
          * {@code uncommon}
          */
         UNCOMMON("uncommon"),
+
         /**
          * {@code rare}
          */
         RARE("rare"),
+
         /**
          * {@code epic}
          */

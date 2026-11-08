@@ -20,10 +20,11 @@ import org.geysermc.paletter.internal.component.Check;
  *        <code>0</code>. Range [0, inf) (BDS 1.26.63.1).
  * @param slot Specifies where the item can be worn. If any non-hand slot is chosen, the max stack size is set to 1. Add-on
  *        JSON {@code slot}. Required.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
-public record Wearable(boolean hidesPlayerLocation, int protection, @NonNull Slot slot) implements ItemComponent {
+public record Wearable(boolean hidesPlayerLocation, int protection,
+        Wearable. @NonNull Slot slot) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -62,7 +63,9 @@ public record Wearable(boolean hidesPlayerLocation, int protection, @NonNull Slo
      */
     public static final class Builder {
         private @Nullable Boolean hidesPlayerLocation = false;
+
         private @Nullable Integer protection = 0;
+
         private @Nullable Slot slot;
 
         private Builder() {
@@ -112,26 +115,32 @@ public record Wearable(boolean hidesPlayerLocation, int protection, @NonNull Slo
          * {@code slot.armor.body}
          */
         SLOT_ARMOR_BODY("slot.armor.body"),
+
         /**
          * {@code slot.armor.chest}
          */
         SLOT_ARMOR_CHEST("slot.armor.chest"),
+
         /**
          * {@code slot.armor.feet}
          */
         SLOT_ARMOR_FEET("slot.armor.feet"),
+
         /**
          * {@code slot.armor.head}
          */
         SLOT_ARMOR_HEAD("slot.armor.head"),
+
         /**
          * {@code slot.armor.legs}
          */
         SLOT_ARMOR_LEGS("slot.armor.legs"),
+
         /**
          * {@code slot.weapon.mainhand}
          */
         SLOT_WEAPON_MAINHAND("slot.weapon.mainhand"),
+
         /**
          * {@code slot.weapon.offhand}
          */

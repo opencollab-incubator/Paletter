@@ -24,10 +24,11 @@ import org.geysermc.paletter.vanilla.BedrockBlockType;
  *
  * @param conditions List of conditions where the block can be placed/survive Value must have at most 64 items. Add-on JSON {@code
  *        conditions}. Default: <code>[]</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.19.60")
-public record PlacementFilter(@NonNull List<Conditions> conditions) implements BlockComponent {
+public record PlacementFilter(
+        @NonNull List<PlacementFilter.Conditions> conditions) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -101,7 +102,8 @@ public record PlacementFilter(@NonNull List<Conditions> conditions) implements B
      *        block_descriptor_states}.
      * @param tags Add-on JSON {@code tags}. Optional (null: not set).
      */
-    public record BlockFilter(@Nullable String name, @NonNull Map<String, Object> states, @Nullable String tags) {
+    public record BlockFilter(@Nullable String name, @NonNull Map<String, Object> states,
+            @Nullable String tags) {
         public BlockFilter {
             states = Check.copy(states, "PlacementFilter.BlockFilter.states");
             Check.stateValues(states, "PlacementFilter.BlockFilter.states");
@@ -144,7 +146,9 @@ public record PlacementFilter(@NonNull List<Conditions> conditions) implements B
          */
         public static final class Builder {
             private @Nullable String name;
+
             private @Nullable Map<String, Object> states = Map.of();
+
             private @Nullable String tags;
 
             private Builder() {
@@ -202,7 +206,8 @@ public record PlacementFilter(@NonNull List<Conditions> conditions) implements B
      *        specified as a String (block name) or as a BlockDescriptor. Value must have at most 64 items. Add-on JSON
      *        {@code block_filter}. Default: <code>[]</code>.
      */
-    public record Conditions(@NonNull List<String> allowedFaces, @NonNull List<BlockFilter> blockFilter) {
+    public record Conditions(@NonNull List<String> allowedFaces,
+            @NonNull List<BlockFilter> blockFilter) {
         public Conditions {
             allowedFaces = List.copyOf(Objects.requireNonNull(allowedFaces, "PlacementFilter.Conditions.allowedFaces"));
             blockFilter = List.copyOf(Objects.requireNonNull(blockFilter, "PlacementFilter.Conditions.blockFilter"));
@@ -230,6 +235,7 @@ public record PlacementFilter(@NonNull List<Conditions> conditions) implements B
          */
         public static final class Builder {
             private @Nullable List<String> allowedFaces = List.of("down", "up", "north", "south", "west", "east");
+
             private @Nullable List<BlockFilter> blockFilter = List.of();
 
             private Builder() {

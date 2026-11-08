@@ -21,10 +21,11 @@ import org.geysermc.paletter.internal.component.Check;
  * @param materialInstances The "minecraft:material_instances" component that will be used when rendered inside of another block. Value
  *        must have at most 64 items. Add-on JSON {@code material_instances}. Optional (null: not set). Compiled by the
  *        hand transform {@code material_instances_inline}.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.120")
-public record EmbeddedVisual(@NonNull Geometry geometry, @Nullable MaterialInstances materialInstances) implements BlockComponent {
+public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
+        @Nullable MaterialInstances materialInstances) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -61,6 +62,7 @@ public record EmbeddedVisual(@NonNull Geometry geometry, @Nullable MaterialInsta
      */
     public static final class Builder {
         private @Nullable Geometry geometry;
+
         private @Nullable MaterialInstances materialInstances;
 
         private Builder() {
@@ -128,7 +130,9 @@ public record EmbeddedVisual(@NonNull Geometry geometry, @Nullable MaterialInsta
          */
         public static final class Builder {
             private @Nullable String x;
+
             private @Nullable String y;
+
             private @Nullable String z;
 
             private Builder() {
@@ -211,7 +215,10 @@ public record EmbeddedVisual(@NonNull Geometry geometry, @Nullable MaterialInsta
      *        geometry, regardless of how the block is rotated using "minecraft:transformation" component. For performance
      *        reasons it's recommended to use the Boolean. Add-on JSON {@code uv_lock}. Default: <code>false</code>.
      */
-    public record Geometry(@NonNull Map<String, Boolean> boneVisibility, @Nullable String culling, @Nullable String cullingLayer, @Nullable String cullingShape, @NonNull String identifier, @Nullable NWayVisualRotation nWayVisualRotation, boolean uvLock) {
+    public record Geometry(@NonNull Map<String, Boolean> boneVisibility, @Nullable String culling,
+            @Nullable String cullingLayer, @Nullable String cullingShape,
+            @NonNull String identifier, @Nullable NWayVisualRotation nWayVisualRotation,
+            boolean uvLock) {
         public Geometry {
             boneVisibility = Check.copy(boneVisibility, "EmbeddedVisual.Geometry.boneVisibility");
             Objects.requireNonNull(identifier, "EmbeddedVisual.Geometry.identifier");
@@ -244,11 +251,17 @@ public record EmbeddedVisual(@NonNull Geometry geometry, @Nullable MaterialInsta
          */
         public static final class Builder {
             private @Nullable Map<String, Boolean> boneVisibility = Map.of();
+
             private @Nullable String culling;
+
             private @Nullable String cullingLayer;
+
             private @Nullable String cullingShape;
+
             private @Nullable String identifier;
+
             private @Nullable NWayVisualRotation nWayVisualRotation;
+
             private @Nullable Boolean uvLock = false;
 
             private Builder() {
@@ -297,7 +310,8 @@ public record EmbeddedVisual(@NonNull Geometry geometry, @Nullable MaterialInsta
             /**
              * Sets {@code n_way_visual_rotation}.
              */
-            public @NonNull Builder nWayVisualRotation(@Nullable NWayVisualRotation nWayVisualRotation) {
+            public @NonNull Builder nWayVisualRotation(
+                    @Nullable NWayVisualRotation nWayVisualRotation) {
                 this.nWayVisualRotation = nWayVisualRotation;
                 return this;
             }

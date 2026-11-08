@@ -24,10 +24,11 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  * @param usingConvertsTo When used, converts to the item specified by the string in this field. Default does not convert item. Add-on
  *        JSON {@code using_converts_to}. Optional (null: not set). The docs give the default {}, which is not a value
  *        of this type; unset, BDS's behaviour applies. Compiled by the hand transform {@code item_descriptor_name}.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
-public record Food(boolean canAlwaysEat, int nutrition, float saturationModifier, @Nullable String usingConvertsTo) implements ItemComponent {
+public record Food(boolean canAlwaysEat, int nutrition, float saturationModifier,
+        @Nullable String usingConvertsTo) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -66,8 +67,11 @@ public record Food(boolean canAlwaysEat, int nutrition, float saturationModifier
      */
     public static final class Builder {
         private @Nullable Boolean canAlwaysEat = false;
+
         private @Nullable Integer nutrition = 0;
+
         private @Nullable Float saturationModifier = 0.6f;
+
         private @Nullable String usingConvertsTo;
 
         private Builder() {

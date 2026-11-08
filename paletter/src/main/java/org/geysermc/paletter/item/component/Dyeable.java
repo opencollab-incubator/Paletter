@@ -19,10 +19,11 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *        rgb_color}.
  * @param defaultColorHex The string form of &#123;&#64;code default_color&#125; (hex); excludes &#123;&#64;link #defaultColor()&#125;.
  *        Add-on JSON {@code default_color}. Compiled by the hand transform {@code rgb_color}.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.30")
-public record Dyeable(@Nullable List<Integer> defaultColor, @Nullable String defaultColorHex) implements ItemComponent {
+public record Dyeable(@Nullable List<Integer> defaultColor,
+        @Nullable String defaultColorHex) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -62,6 +63,7 @@ public record Dyeable(@Nullable List<Integer> defaultColor, @Nullable String def
      */
     public static final class Builder {
         private @Nullable List<Integer> defaultColor = List.of(255, 255, 255);
+
         private @Nullable String defaultColorHex;
 
         private Builder() {

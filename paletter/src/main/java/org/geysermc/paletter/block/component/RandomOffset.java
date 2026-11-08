@@ -23,10 +23,11 @@ import org.geysermc.paletter.internal.component.Check;
  *        <code>&#123;"range":&#123;"max":0,"min":0&#125;,"steps":0&#125;</code>.
  * @param z Z coordinate Add-on JSON {@code z}. Default:
  *        <code>&#123;"range":&#123;"max":0,"min":0&#125;,"steps":0&#125;</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.100")
-public record RandomOffset(@NonNull X x, @NonNull X y, @NonNull X z) implements BlockComponent {
+public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X y,
+        RandomOffset. @NonNull X z) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -66,7 +67,9 @@ public record RandomOffset(@NonNull X x, @NonNull X y, @NonNull X z) implements 
      */
     public static final class Builder {
         private @Nullable X x = X.builder().range(Range.builder().max(0.0f).min(0.0f).build()).steps(0).build();
+
         private @Nullable X y = X.builder().range(Range.builder().max(0.0f).min(0.0f).build()).steps(0).build();
+
         private @Nullable X z = X.builder().range(Range.builder().max(0.0f).min(0.0f).build()).steps(0).build();
 
         private Builder() {
@@ -140,6 +143,7 @@ public record RandomOffset(@NonNull X x, @NonNull X y, @NonNull X z) implements 
          */
         public static final class Builder {
             private @Nullable Float max = 0.0f;
+
             private @Nullable Float min = 0.0f;
 
             private Builder() {
@@ -206,6 +210,7 @@ public record RandomOffset(@NonNull X x, @NonNull X y, @NonNull X z) implements 
          */
         public static final class Builder {
             private @Nullable Range range;
+
             private @Nullable Integer steps = 0;
 
             private Builder() {

@@ -25,10 +25,12 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *        Default: <code>0</code>.
  * @param scalePowerByDrawDuration Whether or not the power of the throw increases with duration charged. Default is set to false. Add-on JSON
  *        {@code scale_power_by_draw_duration}. Default: <code>false</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
-public record ThrowableItem(boolean doSwingAnimation, float launchPowerScale, float maxDrawDuration, float maxLaunchPower, float minDrawDuration, boolean scalePowerByDrawDuration) implements ItemComponent {
+public record ThrowableItem(boolean doSwingAnimation, float launchPowerScale, float maxDrawDuration,
+        float maxLaunchPower, float minDrawDuration,
+        boolean scalePowerByDrawDuration) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -65,10 +67,15 @@ public record ThrowableItem(boolean doSwingAnimation, float launchPowerScale, fl
      */
     public static final class Builder {
         private @Nullable Boolean doSwingAnimation = false;
+
         private @Nullable Float launchPowerScale = 1.0f;
+
         private @Nullable Float maxDrawDuration = 0.0f;
+
         private @Nullable Float maxLaunchPower = 1.0f;
+
         private @Nullable Float minDrawDuration = 0.0f;
+
         private @Nullable Boolean scalePowerByDrawDuration = false;
 
         private Builder() {

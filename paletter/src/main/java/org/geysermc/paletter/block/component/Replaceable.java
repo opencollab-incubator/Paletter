@@ -14,7 +14,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * Add-on JSON: {@code "minecraft:replaceable"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_replaceable.md}.
  * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.70")
 @Experimental

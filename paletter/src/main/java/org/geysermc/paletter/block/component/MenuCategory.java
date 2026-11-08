@@ -23,9 +23,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @param hiddenInCommands Determines whether or not this block can be used with commands. Commands can use blocks by default, but you
  *        may use this to disable that functionality. Add-on JSON {@code is_hidden_in_commands}. Default:
  *        <code>false</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
-public record MenuCategory(@NonNull Category category, @Nullable String group, boolean hiddenInCommands) {
+public record MenuCategory(MenuCategory. @NonNull Category category, @Nullable String group,
+        boolean hiddenInCommands) {
     public MenuCategory {
         Objects.requireNonNull(category, "MenuCategory.category");
     }
@@ -53,7 +54,9 @@ public record MenuCategory(@NonNull Category category, @Nullable String group, b
      */
     public static final class Builder {
         private @Nullable Category category;
+
         private @Nullable String group;
+
         private @Nullable Boolean hiddenInCommands = false;
 
         private Builder() {
@@ -103,18 +106,22 @@ public record MenuCategory(@NonNull Category category, @Nullable String group, b
          * {@code construction}
          */
         CONSTRUCTION("construction"),
+
         /**
          * {@code nature}
          */
         NATURE("nature"),
+
         /**
          * {@code equipment}
          */
         EQUIPMENT("equipment"),
+
         /**
          * {@code items}
          */
         ITEMS("items"),
+
         /**
          * {@code none}
          */

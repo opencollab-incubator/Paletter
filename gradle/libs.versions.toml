@@ -7,6 +7,8 @@ libdatachannel = "0.24.6.0-20261029.091642-10"
 fastutil = "8.5.15"
 checker = "3.19.0"
 gson = "2.10.1"
+# Code generation only (codegen module), never a dependency of paletter. square/javapoet is archived; this is its maintained fork
+javapoet = "0.22.0"
 junit = "6.0.0"
 
 [libraries]
@@ -20,4 +22,5 @@ nethernet = { group = "org.cloudburstmc.netty", name = "netty-transport-netherne
 raknet = { group = "org.cloudburstmc.netty", name = "netty-transport-raknet", version.ref = "network" }
 libdatachannel = { group = "dev.opencollab", name = "libdatachannel-java-arch-detect", version.ref = "libdatachannel" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+javapoet = { group = "com.palantir.javapoet", name = "javapoet", version.ref = "javapoet" }
 junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit" }

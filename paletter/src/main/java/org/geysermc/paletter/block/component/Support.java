@@ -20,11 +20,11 @@ import org.geysermc.paletter.annotation.Experimental;
  * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
  *
  * @param shape Required field. The type of support shape for this block. Add-on JSON {@code shape}. Required.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
 @Experimental
-public record Support(@NonNull Shape shape) implements BlockComponent {
+public record Support(Support. @NonNull Shape shape) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -92,6 +92,7 @@ public record Support(@NonNull Shape shape) implements BlockComponent {
          * {@code fence}
          */
         FENCE("fence"),
+
         /**
          * {@code stair}
          */

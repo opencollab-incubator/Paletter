@@ -18,11 +18,12 @@ import org.geysermc.paletter.annotation.Experimental;
  * @param precipitationBehavior What behavior should the block have. Possible values: obrain, obstruct_rain_accumulate_snow, snowlogging, and
  *        none Add-on JSON {@code precipitation_behavior}. Optional (null: not set). The docs give the default
  *        "accumulate snow", which is not a value of this type; unset, BDS's behaviour applies.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.120")
 @Experimental
-public record PrecipitationInteractions(@Nullable PrecipitationBehavior precipitationBehavior) implements BlockComponent {
+public record PrecipitationInteractions(
+        PrecipitationInteractions. @Nullable PrecipitationBehavior precipitationBehavior) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -61,7 +62,8 @@ public record PrecipitationInteractions(@Nullable PrecipitationBehavior precipit
         /**
          * Sets {@code precipitation_behavior}.
          */
-        public @NonNull Builder precipitationBehavior(@Nullable PrecipitationBehavior precipitationBehavior) {
+        public @NonNull Builder precipitationBehavior(
+                @Nullable PrecipitationBehavior precipitationBehavior) {
             this.precipitationBehavior = precipitationBehavior;
             return this;
         }
@@ -83,14 +85,17 @@ public record PrecipitationInteractions(@Nullable PrecipitationBehavior precipit
          * {@code none}
          */
         NONE("none"),
+
         /**
          * {@code obstruct_rain}
          */
         OBSTRUCT_RAIN("obstruct_rain"),
+
         /**
          * {@code obstruct_rain_accumulate_snow}
          */
         OBSTRUCT_RAIN_ACCUMULATE_SNOW("obstruct_rain_accumulate_snow"),
+
         /**
          * {@code snowlogging}
          */

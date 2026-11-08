@@ -20,10 +20,11 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param projectileEntity Which entity is to be fired as a projectile. Value must match a regular expression pattern of
  *        "^(?:&#92;w+(?:&#92;.&#92;w+)*:(?=&#92;w))?(?:&#92;w+(?:&#92;.&#92;w+)*)(?:&lt;((?:&#92;w+(?:&#92;.&#92;w+)*:(?=&#92;w))?&#92;w+(?:&#92;.&#92;w+)*)*&gt;)?$".
  *        Add-on JSON {@code projectile_entity}. Required.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
-public record Projectile(float minimumCriticalPower, @NonNull String projectileEntity) implements ItemComponent {
+public record Projectile(float minimumCriticalPower,
+        @NonNull String projectileEntity) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -60,6 +61,7 @@ public record Projectile(float minimumCriticalPower, @NonNull String projectileE
      */
     public static final class Builder {
         private @Nullable Float minimumCriticalPower = 0.0f;
+
         private @Nullable String projectileEntity;
 
         private Builder() {

@@ -29,10 +29,11 @@ import org.geysermc.paletter.vanilla.BedrockBlockType;
  *        Add-on JSON {@code replace_block_item}. Default: <code>false</code>.
  * @param useOn List of block descriptors of the blocks that this item can be used on. If left empty, all blocks will be
  *        allowed. Value must have at most 256 items. Add-on JSON {@code use_on}. Default: <code>[]</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.50")
-public record BlockPlacer(@BedrockFormat("1.26.10") boolean alignedPlacement, @NonNull String block, boolean replaceBlockItem, @NonNull List<UseOn> useOn) implements ItemComponent {
+public record BlockPlacer(@BedrockFormat("1.26.10") boolean alignedPlacement, @NonNull String block,
+        boolean replaceBlockItem, @NonNull List<BlockPlacer.UseOn> useOn) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -72,8 +73,11 @@ public record BlockPlacer(@BedrockFormat("1.26.10") boolean alignedPlacement, @N
      */
     public static final class Builder {
         private @Nullable Boolean alignedPlacement = false;
+
         private @Nullable String block;
+
         private @Nullable Boolean replaceBlockItem = false;
+
         private @Nullable List<UseOn> useOn = List.of();
 
         private Builder() {
@@ -146,7 +150,8 @@ public record BlockPlacer(@BedrockFormat("1.26.10") boolean alignedPlacement, @N
      *        block_descriptor_states}.
      * @param tags Add-on JSON {@code tags}. Optional (null: not set).
      */
-    public record UseOn(@Nullable String name, @NonNull Map<String, Object> states, @Nullable String tags) {
+    public record UseOn(@Nullable String name, @NonNull Map<String, Object> states,
+            @Nullable String tags) {
         public UseOn {
             states = Check.copy(states, "BlockPlacer.UseOn.states");
             Check.stateValues(states, "BlockPlacer.UseOn.states");
@@ -189,7 +194,9 @@ public record BlockPlacer(@BedrockFormat("1.26.10") boolean alignedPlacement, @N
          */
         public static final class Builder {
             private @Nullable String name;
+
             private @Nullable Map<String, Object> states = Map.of();
+
             private @Nullable String tags;
 
             private Builder() {

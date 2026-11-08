@@ -15,7 +15,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *
  * @param value Determines whether the item can be used to destroy blocks while in creative mode. Add-on JSON {@code value}.
  *        Optional (null: not set).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
 public record CanDestroyInCreative(@Nullable Boolean value) implements ItemComponent {

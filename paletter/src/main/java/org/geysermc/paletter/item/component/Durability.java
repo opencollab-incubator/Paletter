@@ -21,10 +21,11 @@ import org.geysermc.paletter.internal.component.Check;
  *        {@code damage_chance}. Default: <code>&#123;"max":100,"min":100&#125;</code>.
  * @param maxDurability Max durability is the amount of damage that this item can take before breaking. This is a required parameter
  *        and has a minimum of 0. Add-on JSON {@code max_durability}. Required. Range [0, inf) (BDS 1.26.63.1).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.0")
-public record Durability(@NonNull DamageChance damageChance, int maxDurability) implements ItemComponent {
+public record Durability(Durability. @NonNull DamageChance damageChance,
+        int maxDurability) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -62,6 +63,7 @@ public record Durability(@NonNull DamageChance damageChance, int maxDurability) 
      */
     public static final class Builder {
         private @Nullable DamageChance damageChance = DamageChance.builder().max(100).min(100).build();
+
         private @Nullable Integer maxDurability;
 
         private Builder() {
@@ -131,6 +133,7 @@ public record Durability(@NonNull DamageChance damageChance, int maxDurability) 
          */
         public static final class Builder {
             private @Nullable Integer max = 100;
+
             private @Nullable Integer min = 100;
 
             private Builder() {

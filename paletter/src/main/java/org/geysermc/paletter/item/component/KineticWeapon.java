@@ -39,10 +39,14 @@ import org.geysermc.paletter.internal.component.Check;
  *        blocks) along the user's view vector where entities can be hit. Only targets within this distance are
  *        considered. Block collisions between the user and target block damage and its effects. Add-on JSON {@code
  *        reach}. Default: <code>&#123;"max":3,"min":0&#125;</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
-public record KineticWeapon(@Nullable CreativeReach creativeReach, @Nullable Conditions damageConditions, float damageModifier, float damageMultiplier, int delay, @Nullable Conditions dismountConditions, float hitboxMargin, @Nullable Conditions knockbackConditions, @NonNull Reach reach) implements ItemComponent {
+public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach,
+        KineticWeapon. @Nullable Conditions damageConditions, float damageModifier,
+        float damageMultiplier, int delay, KineticWeapon. @Nullable Conditions dismountConditions,
+        float hitboxMargin, KineticWeapon. @Nullable Conditions knockbackConditions,
+        KineticWeapon. @NonNull Reach reach) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -86,13 +90,21 @@ public record KineticWeapon(@Nullable CreativeReach creativeReach, @Nullable Con
      */
     public static final class Builder {
         private @Nullable CreativeReach creativeReach;
+
         private @Nullable Conditions damageConditions;
+
         private @Nullable Float damageModifier = 0.0f;
+
         private @Nullable Float damageMultiplier = 1.0f;
+
         private @Nullable Integer delay = 0;
+
         private @Nullable Conditions dismountConditions;
+
         private @Nullable Float hitboxMargin = 0.0f;
+
         private @Nullable Conditions knockbackConditions;
+
         private @Nullable Reach reach = Reach.builder().max(3.0f).min(0.0f).build();
 
         private Builder() {
@@ -208,6 +220,7 @@ public record KineticWeapon(@Nullable CreativeReach creativeReach, @Nullable Con
          */
         public static final class Builder {
             private @Nullable Float max = 0.0f;
+
             private @Nullable Float min = 0.0f;
 
             private Builder() {
@@ -279,7 +292,9 @@ public record KineticWeapon(@Nullable CreativeReach creativeReach, @Nullable Con
          */
         public static final class Builder {
             private @Nullable Integer maxDuration = -1;
+
             private @Nullable Float minRelativeSpeed;
+
             private @Nullable Float minSpeed;
 
             private Builder() {
@@ -356,6 +371,7 @@ public record KineticWeapon(@Nullable CreativeReach creativeReach, @Nullable Con
          */
         public static final class Builder {
             private @Nullable Float max = 3.0f;
+
             private @Nullable Float min = 0.0f;
 
             private Builder() {

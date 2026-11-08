@@ -22,10 +22,11 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *        (-8, 0, -8) to (8, 16, 8), inclusive. Add-on JSON {@code size}. Default: <code>[16,16,16]</code>.
  * @param enabled The boolean form of the component (add-on JSON &#123;&#64;code "minecraft:selection_box":
  *        &lt;boolean&gt;&#125;). Optional (null: not set).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.19.60")
-public record SelectionBox(@NonNull Vec3 origin, @NonNull Vec3 size, @Nullable Boolean enabled) implements BlockComponent {
+public record SelectionBox(SelectionBox. @NonNull Vec3 origin, SelectionBox. @NonNull Vec3 size,
+        @Nullable Boolean enabled) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -73,7 +74,9 @@ public record SelectionBox(@NonNull Vec3 origin, @NonNull Vec3 size, @Nullable B
      */
     public static final class Builder {
         private @Nullable Vec3 origin = new Vec3(-8.0f, 0.0f, -8.0f);
+
         private @Nullable Vec3 size = new Vec3(16.0f, 16.0f, 16.0f);
+
         private @Nullable Boolean enabled;
 
         private Builder() {

@@ -14,7 +14,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * Add-on JSON: {@code "minecraft:display_name"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_display_name.md}.
  *
  * @param value Name shown for an item. Add-on JSON {@code value}. Optional (null: not set).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.0")
 public record DisplayName(@Nullable String value) implements ItemComponent {

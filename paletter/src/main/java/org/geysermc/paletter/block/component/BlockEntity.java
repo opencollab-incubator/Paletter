@@ -16,9 +16,10 @@ import org.geysermc.paletter.internal.component.Check;
  * @param dynamicProperties Dynamic-properties can store and retrieve variables on a block via scripting, more at
  *        https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/blockdynamicpropertiescomponent.
  *        Add-on JSON {@code dynamic_properties}. Default: <code>false</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
-public record BlockEntity(@Nullable Container container, boolean dynamicProperties) implements BlockComponent {
+public record BlockEntity(BlockEntity. @Nullable Container container,
+        boolean dynamicProperties) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -51,6 +52,7 @@ public record BlockEntity(@Nullable Container container, boolean dynamicProperti
      */
     public static final class Builder {
         private @Nullable Container container;
+
         private @Nullable Boolean dynamicProperties = false;
 
         private Builder() {
@@ -117,6 +119,7 @@ public record BlockEntity(@Nullable Container container, boolean dynamicProperti
          */
         public static final class Builder {
             private @Nullable Integer slotCount;
+
             private @Nullable String title;
 
             private Builder() {

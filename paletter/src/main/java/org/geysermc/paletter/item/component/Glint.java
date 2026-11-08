@@ -13,7 +13,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * Add-on JSON: {@code "minecraft:glint"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_glint.md}.
  *
  * @param value Whether the item has the enchanted glint render effect. Add-on JSON {@code value}. Optional (null: not set).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
 public record Glint(@Nullable Boolean value) implements ItemComponent {

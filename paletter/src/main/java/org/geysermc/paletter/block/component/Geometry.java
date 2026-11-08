@@ -68,10 +68,14 @@ import org.geysermc.paletter.internal.component.Check;
  *        the cube faces are square. This item requires a format version of at least 1.21.100. With UV locking, a single
  *        geometry can be reused for multiple texture rotations without authoring a new geometry per rotation. Add-on
  *        JSON {@code uv_lock}. Optional (null: not set).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.19.40")
-public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, Boolean> boneVisibility, @BedrockFormat("1.20.60") @Nullable String culling, @NonNull String cullingLayer, @BedrockFormat("1.26.30") @NonNull String cullingShape, @NonNull String identifier, @BedrockFormat("1.26.30") @Nullable NWayVisualRotation nWayVisualRotation, @BedrockFormat("1.21.100") @Nullable Boolean uvLock) implements BlockComponent {
+public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, Boolean> boneVisibility,
+        @BedrockFormat("1.20.60") @Nullable String culling, @NonNull String cullingLayer,
+        @BedrockFormat("1.26.30") @NonNull String cullingShape, @NonNull String identifier,
+        @BedrockFormat("1.26.30") Geometry. @Nullable NWayVisualRotation nWayVisualRotation,
+        @BedrockFormat("1.21.100") @Nullable Boolean uvLock) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -125,11 +129,17 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, Boolean> 
      */
     public static final class Builder {
         private @Nullable Map<String, Boolean> boneVisibility;
+
         private @Nullable String culling;
+
         private @Nullable String cullingLayer = "minecraft:culling_layer.undefined";
+
         private @Nullable String cullingShape = "minecraft:empty";
+
         private @Nullable String identifier;
+
         private @Nullable NWayVisualRotation nWayVisualRotation;
+
         private @Nullable Boolean uvLock;
 
         private Builder() {
@@ -178,7 +188,8 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, Boolean> 
         /**
          * Sets {@code n_way_visual_rotation}.
          */
-        public @NonNull Builder nWayVisualRotation(@Nullable NWayVisualRotation nWayVisualRotation) {
+        public @NonNull Builder nWayVisualRotation(
+                @Nullable NWayVisualRotation nWayVisualRotation) {
             this.nWayVisualRotation = nWayVisualRotation;
             return this;
         }
@@ -211,6 +222,7 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, Boolean> 
          * {@code minecraft:cardinal_direction}
          */
         CARDINAL_DIRECTION("minecraft:cardinal_direction"),
+
         /**
          * {@code minecraft:sixteen_way_rotation}
          */

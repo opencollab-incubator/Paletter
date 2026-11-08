@@ -6,11 +6,11 @@ package org.geysermc.paletter.block.component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * A custom block trait, mirroring Bedrock's add-on JSON: one record per component, generated from the component
- * model in {@code codegen/model} (creator docs plus what Bedrock Dedicated Server sends). Paletter compiles them to the
- * wire format of each palette's protocol.
+ * A custom block trait, mirroring Bedrock's add-on JSON: one record per component, generated
+ * from the component model in {@code codegen/model} (creator docs plus what Bedrock Dedicated Server sends). Paletter
+ * compiles them to the wire format of each palette's protocol.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public sealed interface BlockTrait permits Connection, MultiBlock, PlacementDirection, PlacementPosition {
     /**

@@ -23,10 +23,11 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *        blocks) along the user's view vector where entities can be hit. Only targets within this distance are
  *        considered. Block collisions between the user and target block damage and its effects. Add-on JSON {@code
  *        reach}. Default: <code>&#123;"max":3,"min":0&#125;</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
-public record PiercingWeapon(@Nullable CreativeReach creativeReach, float hitboxMargin, @NonNull Reach reach) implements ItemComponent {
+public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeReach,
+        float hitboxMargin, PiercingWeapon. @NonNull Reach reach) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -64,7 +65,9 @@ public record PiercingWeapon(@Nullable CreativeReach creativeReach, float hitbox
      */
     public static final class Builder {
         private @Nullable CreativeReach creativeReach;
+
         private @Nullable Float hitboxMargin = 0.0f;
+
         private @Nullable Reach reach = Reach.builder().max(3.0f).min(0.0f).build();
 
         private Builder() {
@@ -132,6 +135,7 @@ public record PiercingWeapon(@Nullable CreativeReach creativeReach, float hitbox
          */
         public static final class Builder {
             private @Nullable Float max = 0.0f;
+
             private @Nullable Float min = 0.0f;
 
             private Builder() {
@@ -194,6 +198,7 @@ public record PiercingWeapon(@Nullable CreativeReach creativeReach, float hitbox
          */
         public static final class Builder {
             private @Nullable Float max = 3.0f;
+
             private @Nullable Float min = 0.0f;
 
             private Builder() {

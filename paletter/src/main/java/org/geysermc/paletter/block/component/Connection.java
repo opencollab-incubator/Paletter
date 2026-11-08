@@ -20,11 +20,12 @@ import org.geysermc.paletter.annotation.Experimental;
  *
  * @param enabledStates Which states to enable. Must specify at least one. Valid value is <code>minecraft:cardinal_connections</code>.
  *        Add-on JSON {@code enabled_states}. Required.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
 @Experimental
-public record Connection(@NonNull List<EnabledStates> enabledStates) implements BlockTrait {
+public record Connection(
+        @NonNull List<Connection.EnabledStates> enabledStates) implements BlockTrait {
     /**
      * The component name in add-on JSON.
      */

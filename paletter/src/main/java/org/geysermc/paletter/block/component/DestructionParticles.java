@@ -19,10 +19,11 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param tintMethod Tint multiplied to the color. Tint method logic varies, but often refers to the "rain" and "temperature" of
  *        the biome the block is placed in to compute the tint. Add-on JSON {@code tint_method}. Default:
  *        <code>"none"</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.80")
-public record DestructionParticles(int particleCount, @Nullable String texture, @NonNull TintMethod tintMethod) implements BlockComponent {
+public record DestructionParticles(int particleCount, @Nullable String texture,
+        DestructionParticles. @NonNull TintMethod tintMethod) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -60,7 +61,9 @@ public record DestructionParticles(int particleCount, @Nullable String texture, 
      */
     public static final class Builder {
         private @Nullable Integer particleCount = 100;
+
         private @Nullable String texture;
+
         private @Nullable TintMethod tintMethod = TintMethod.NONE;
 
         private Builder() {
@@ -107,26 +110,32 @@ public record DestructionParticles(int particleCount, @Nullable String texture, 
          * {@code none}
          */
         NONE("none"),
+
         /**
          * {@code default_foliage}
          */
         DEFAULT_FOLIAGE("default_foliage"),
+
         /**
          * {@code birch_foliage}
          */
         BIRCH_FOLIAGE("birch_foliage"),
+
         /**
          * {@code evergreen_foliage}
          */
         EVERGREEN_FOLIAGE("evergreen_foliage"),
+
         /**
          * {@code dry_foliage}
          */
         DRY_FOLIAGE("dry_foliage"),
+
         /**
          * {@code grass}
          */
         GRASS("grass"),
+
         /**
          * {@code water}
          */

@@ -18,10 +18,11 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param attackHit Sound played when an attack hits. Add-on JSON {@code attack_hit}. Optional (null: not set).
  * @param attackMiss Sound played when an attack misses or deals no damage due to invulnerability. Add-on JSON {@code attack_miss}.
  *        Optional (null: not set).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
-public record SwingSounds(@Nullable String attackCriticalHit, @Nullable String attackHit, @Nullable String attackMiss) implements ItemComponent {
+public record SwingSounds(@Nullable String attackCriticalHit, @Nullable String attackHit,
+        @Nullable String attackMiss) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -55,7 +56,9 @@ public record SwingSounds(@Nullable String attackCriticalHit, @Nullable String a
      */
     public static final class Builder {
         private @Nullable String attackCriticalHit;
+
         private @Nullable String attackHit;
+
         private @Nullable String attackMiss;
 
         private Builder() {

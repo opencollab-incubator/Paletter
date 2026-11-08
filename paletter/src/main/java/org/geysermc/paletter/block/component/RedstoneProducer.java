@@ -31,10 +31,12 @@ import org.geysermc.paletter.internal.component.Check;
  *        not set). The docs give the default <code>false</code>, but BDS sends
  *        minecraft:redstone_producer.transform_relative = 1 (byte) when it is omitted; so it is unset by default, and
  *        the encoder sends what BDS sends then.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.120")
-public record RedstoneProducer(@NonNull List<ConnectedFaces> connectedFaces, int power, @Nullable StronglyPoweredFace stronglyPoweredFace, @Nullable Boolean transformRelative) implements BlockComponent {
+public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> connectedFaces,
+        int power, RedstoneProducer. @Nullable StronglyPoweredFace stronglyPoweredFace,
+        @Nullable Boolean transformRelative) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -74,8 +76,11 @@ public record RedstoneProducer(@NonNull List<ConnectedFaces> connectedFaces, int
      */
     public static final class Builder {
         private @Nullable List<ConnectedFaces> connectedFaces = List.of(ConnectedFaces.DOWN, ConnectedFaces.UP, ConnectedFaces.NORTH, ConnectedFaces.SOUTH, ConnectedFaces.WEST, ConnectedFaces.EAST);
+
         private @Nullable Integer power;
+
         private @Nullable StronglyPoweredFace stronglyPoweredFace;
+
         private @Nullable Boolean transformRelative;
 
         private Builder() {
@@ -107,7 +112,8 @@ public record RedstoneProducer(@NonNull List<ConnectedFaces> connectedFaces, int
         /**
          * Sets {@code strongly_powered_face}.
          */
-        public @NonNull Builder stronglyPoweredFace(@Nullable StronglyPoweredFace stronglyPoweredFace) {
+        public @NonNull Builder stronglyPoweredFace(
+                @Nullable StronglyPoweredFace stronglyPoweredFace) {
             this.stronglyPoweredFace = stronglyPoweredFace;
             return this;
         }
@@ -140,22 +146,27 @@ public record RedstoneProducer(@NonNull List<ConnectedFaces> connectedFaces, int
          * {@code north}
          */
         NORTH("north"),
+
         /**
          * {@code east}
          */
         EAST("east"),
+
         /**
          * {@code south}
          */
         SOUTH("south"),
+
         /**
          * {@code west}
          */
         WEST("west"),
+
         /**
          * {@code up}
          */
         UP("up"),
+
         /**
          * {@code down}
          */
@@ -196,22 +207,27 @@ public record RedstoneProducer(@NonNull List<ConnectedFaces> connectedFaces, int
          * {@code north}
          */
         NORTH("north"),
+
         /**
          * {@code east}
          */
         EAST("east"),
+
         /**
          * {@code south}
          */
         SOUTH("south"),
+
         /**
          * {@code west}
          */
         WEST("west"),
+
         /**
          * {@code up}
          */
         UP("up"),
+
         /**
          * {@code down}
          */

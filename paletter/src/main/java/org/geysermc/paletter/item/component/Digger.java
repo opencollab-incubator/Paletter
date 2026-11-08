@@ -23,10 +23,11 @@ import org.geysermc.paletter.vanilla.BedrockBlockType;
  *        (by ID or tag query) and a speed multiplier. Add-on JSON {@code destroy_speeds}. Default: <code>[]</code>.
  * @param useEfficiency When true, the Efficiency enchantment will increase the dig speed of this item. Default is false. Add-on JSON
  *        {@code use_efficiency}. Default: <code>false</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
-public record Digger(@NonNull List<DestroySpeeds> destroySpeeds, boolean useEfficiency) implements ItemComponent {
+public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
+        boolean useEfficiency) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -63,6 +64,7 @@ public record Digger(@NonNull List<DestroySpeeds> destroySpeeds, boolean useEffi
      */
     public static final class Builder {
         private @Nullable List<DestroySpeeds> destroySpeeds = List.of();
+
         private @Nullable Boolean useEfficiency = false;
 
         private Builder() {
@@ -108,7 +110,8 @@ public record Digger(@NonNull List<DestroySpeeds> destroySpeeds, boolean useEffi
      *        block_descriptor_states}.
      * @param tags Add-on JSON {@code tags}. Optional (null: not set).
      */
-    public record Block(@Nullable String name, @NonNull Map<String, Object> states, @Nullable String tags) {
+    public record Block(@Nullable String name, @NonNull Map<String, Object> states,
+            @Nullable String tags) {
         public Block {
             states = Check.copy(states, "Digger.Block.states");
             Check.stateValues(states, "Digger.Block.states");
@@ -160,7 +163,9 @@ public record Digger(@NonNull List<DestroySpeeds> destroySpeeds, boolean useEffi
          */
         public static final class Builder {
             private @Nullable String name;
+
             private @Nullable Map<String, Object> states = Map.of();
+
             private @Nullable String tags;
 
             private Builder() {
@@ -237,6 +242,7 @@ public record Digger(@NonNull List<DestroySpeeds> destroySpeeds, boolean useEffi
          */
         public static final class Builder {
             private @Nullable Block block;
+
             private @Nullable Integer speed;
 
             private Builder() {

@@ -26,10 +26,11 @@ import org.geysermc.paletter.vanilla.BedrockBlockType;
  *        Add-on JSON {@code entity}. Optional (null: not set).
  * @param useOn List of block descriptors of the blocks that this item can be used on. If left empty, all blocks will be
  *        allowed. Add-on JSON {@code use_on}. Default: <code>[]</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
-public record EntityPlacer(@NonNull List<UseOn> dispenseOn, @Nullable String entity, @NonNull List<UseOn> useOn) implements ItemComponent {
+public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullable String entity,
+        @NonNull List<EntityPlacer.UseOn> useOn) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -68,7 +69,9 @@ public record EntityPlacer(@NonNull List<UseOn> dispenseOn, @Nullable String ent
      */
     public static final class Builder {
         private @Nullable List<UseOn> dispenseOn = List.of();
+
         private @Nullable String entity;
+
         private @Nullable List<UseOn> useOn = List.of();
 
         private Builder() {
@@ -130,7 +133,8 @@ public record EntityPlacer(@NonNull List<UseOn> dispenseOn, @Nullable String ent
      *        block_descriptor_states}.
      * @param tags Add-on JSON {@code tags}. Optional (null: not set).
      */
-    public record UseOn(@Nullable String name, @NonNull Map<String, Object> states, @Nullable String tags) {
+    public record UseOn(@Nullable String name, @NonNull Map<String, Object> states,
+            @Nullable String tags) {
         public UseOn {
             states = Check.copy(states, "EntityPlacer.UseOn.states");
             Check.stateValues(states, "EntityPlacer.UseOn.states");
@@ -173,7 +177,9 @@ public record EntityPlacer(@NonNull List<UseOn> dispenseOn, @Nullable String ent
          */
         public static final class Builder {
             private @Nullable String name;
+
             private @Nullable Map<String, Object> states = Map.of();
+
             private @Nullable String tags;
 
             private Builder() {

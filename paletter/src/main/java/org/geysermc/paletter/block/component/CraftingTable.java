@@ -25,11 +25,12 @@ import org.geysermc.paletter.annotation.Experimental;
  *        name displayed will default to the name specified in the "display_name" component. If this block has no
  *        "display_name" component, the name displayed will default to the name of the block. Value must have at most
  *        256 items. Add-on JSON {@code table_name}. Optional (null: not set).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.19.50")
 @Experimental
-public record CraftingTable(@NonNull List<String> craftingTags, @Nullable String tableName) implements BlockComponent {
+public record CraftingTable(@NonNull List<String> craftingTags,
+        @Nullable String tableName) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -66,6 +67,7 @@ public record CraftingTable(@NonNull List<String> craftingTags, @Nullable String
      */
     public static final class Builder {
         private @Nullable List<String> craftingTags;
+
         private @Nullable String tableName;
 
         private Builder() {

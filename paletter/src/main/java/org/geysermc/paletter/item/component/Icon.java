@@ -21,10 +21,11 @@ import org.geysermc.paletter.internal.component.Check;
  *        resource_pack/textures/item_texture.json 'texture_data' object associated with the texture file. Add-on JSON
  *        {@code textures}. Optional (null: not set).
  * @param texture The string form: the icon's default texture (item_texture.json short name). Optional (null: not set).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.0")
-public record Icon(@Nullable Map<String, String> textures, @Nullable String texture) implements ItemComponent {
+public record Icon(@Nullable Map<String, String> textures,
+        @Nullable String texture) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -70,6 +71,7 @@ public record Icon(@Nullable Map<String, String> textures, @Nullable String text
      */
     public static final class Builder {
         private @Nullable Map<String, String> textures;
+
         private @Nullable String texture;
 
         private Builder() {

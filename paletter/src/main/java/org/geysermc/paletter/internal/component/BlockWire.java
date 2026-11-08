@@ -3,12 +3,39 @@
 // codegen/model/ATTRIBUTION.md.
 package org.geysermc.paletter.internal.component;
 
+import java.util.List;
+import java.util.Map;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.paletter.block.component.*;
+import org.geysermc.paletter.block.component.BlockComponent;
+import org.geysermc.paletter.block.component.BlockEntity;
+import org.geysermc.paletter.block.component.CollisionBox;
+import org.geysermc.paletter.block.component.ConnectionRule;
+import org.geysermc.paletter.block.component.CraftingTable;
+import org.geysermc.paletter.block.component.DestructibleByMining;
+import org.geysermc.paletter.block.component.DestructionParticles;
+import org.geysermc.paletter.block.component.DisplayName;
+import org.geysermc.paletter.block.component.EmbeddedVisual;
+import org.geysermc.paletter.block.component.FlowerPottable;
+import org.geysermc.paletter.block.component.Friction;
+import org.geysermc.paletter.block.component.Geometry;
+import org.geysermc.paletter.block.component.ItemVisual;
+import org.geysermc.paletter.block.component.LightDampening;
+import org.geysermc.paletter.block.component.LightEmission;
+import org.geysermc.paletter.block.component.LiquidDetection;
+import org.geysermc.paletter.block.component.MaterialInstances;
+import org.geysermc.paletter.block.component.PlacementFilter;
+import org.geysermc.paletter.block.component.PrecipitationInteractions;
+import org.geysermc.paletter.block.component.RandomOffset;
+import org.geysermc.paletter.block.component.RedstoneConductivity;
+import org.geysermc.paletter.block.component.RedstoneProducer;
+import org.geysermc.paletter.block.component.Replaceable;
+import org.geysermc.paletter.block.component.SelectionBox;
+import org.geysermc.paletter.block.component.Support;
+import org.geysermc.paletter.block.component.Transformation;
 
 /**
- * Encoders of the generated BlockComponent types: the rules of {@code codegen/model/mappings.json} per
+ * Encoders of the generated {@link BlockComponent} types: the rules of {@code codegen/model/mappings.json} per
  * protocol window, hand transforms by name. Not API.
  */
 @SuppressWarnings({"unused", "deprecation"})
@@ -20,7 +47,8 @@ public final class BlockWire {
      * Writes a component into {@code out}: the item components compound, the block's {@code components}, or for a
      * trait its element of {@code traits}.
      */
-    public static void write(@NonNull BlockComponent component, @NonNull WireContext ctx, @NonNull WireNode out) {
+    public static void write(@NonNull BlockComponent component, @NonNull WireContext ctx,
+            @NonNull WireNode out) {
         switch (component) {
             case BlockEntity value -> blockEntity(value, ctx, out);
             case CollisionBox value -> collisionBox(value, ctx, out);
@@ -85,7 +113,7 @@ public final class BlockWire {
 
     private static void craftingTable(CraftingTable c, WireContext ctx, WireNode out) {
         out.put("minecraft:crafting_table.grid_size", 3);
-        java.util.List<String> v0 = c.craftingTags();
+        List<String> v0 = c.craftingTags();
         out.put("minecraft:crafting_table.crafting_tags", Wire.strings(v0));
         String v1 = c.tableName();
         if (v1 != null) {
@@ -95,11 +123,13 @@ public final class BlockWire {
         }
     }
 
-    private static void destructibleByMining(DestructibleByMining c, WireContext ctx, WireNode out) {
+    private static void destructibleByMining(DestructibleByMining c, WireContext ctx,
+            WireNode out) {
         Transforms.destructibleByMining(ctx, out, c);
     }
 
-    private static void destructionParticles(DestructionParticles c, WireContext ctx, WireNode out) {
+    private static void destructionParticles(DestructionParticles c, WireContext ctx,
+            WireNode out) {
         int v0 = c.particleCount();
         out.put("minecraft:destruction_particles.particle_count", Wire.toInt(v0));
         String v1 = c.texture();
@@ -150,7 +180,7 @@ public final class BlockWire {
         out.put("minecraft:item_visual.materialInstancesDescription.materials.*.texture", "paletter_tex");
         out.put("minecraft:item_visual.materialInstancesDescription.materials.*.tint_method", "none");
         ItemVisual.Geometry v0 = c.geometry();
-        java.util.Map<String, Boolean> v1 = v0.boneVisibility();
+        Map<String, Boolean> v1 = v0.boneVisibility();
         String v2 = v0.culling();
         if (v2 != null) {
             out.put("minecraft:item_visual.geometryDescription.culling", v2);
@@ -211,7 +241,7 @@ public final class BlockWire {
     }
 
     private static void liquidDetection(LiquidDetection c, WireContext ctx, WireNode out) {
-        java.util.List<LiquidDetection.DetectionRules> v0 = c.detectionRules();
+        List<LiquidDetection.DetectionRules> v0 = c.detectionRules();
         out.list("minecraft:liquid_detection.detectionRules");
         for (LiquidDetection.DetectionRules e1 : v0) {
             WireNode n2 = out.element("minecraft:liquid_detection.detectionRules");
@@ -233,11 +263,11 @@ public final class BlockWire {
     }
 
     private static void placementFilter(PlacementFilter c, WireContext ctx, WireNode out) {
-        java.util.List<PlacementFilter.Conditions> v0 = c.conditions();
+        List<PlacementFilter.Conditions> v0 = c.conditions();
         out.list("minecraft:placement_filter.conditions");
         for (PlacementFilter.Conditions e1 : v0) {
             WireNode n2 = out.element("minecraft:placement_filter.conditions");
-            java.util.List<PlacementFilter.BlockFilter> v3 = e1.blockFilter();
+            List<PlacementFilter.BlockFilter> v3 = e1.blockFilter();
             n2.list("block_filter");
             for (PlacementFilter.BlockFilter e4 : v3) {
                 WireNode n5 = n2.element("block_filter");
@@ -261,7 +291,8 @@ public final class BlockWire {
         }
     }
 
-    private static void precipitationInteractions(PrecipitationInteractions c, WireContext ctx, WireNode out) {
+    private static void precipitationInteractions(PrecipitationInteractions c, WireContext ctx,
+            WireNode out) {
         PrecipitationInteractions.PrecipitationBehavior v0 = c.precipitationBehavior();
         if (v0 != null) {
             out.put("minecraft:precipitation_interactions.precipitation_behavior", v0.value());
@@ -297,7 +328,8 @@ public final class BlockWire {
         out.put("minecraft:random_offset.z.steps", Wire.toInt(v14));
     }
 
-    private static void redstoneConductivity(RedstoneConductivity c, WireContext ctx, WireNode out) {
+    private static void redstoneConductivity(RedstoneConductivity c, WireContext ctx,
+            WireNode out) {
         boolean v0 = c.allowsWireToStepDown();
         out.put("minecraft:redstone_conductivity.allowsWireToStepDown", Wire.bool(v0));
         boolean v1 = c.redstoneConductor();

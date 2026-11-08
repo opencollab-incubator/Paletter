@@ -23,11 +23,12 @@ import org.geysermc.paletter.annotation.Experimental;
  * @param enabledDirections The cardinal directions that connection is enabled for. Note that if "none" is specified for
  *        "accepts_connections_from", this field will not be used. Add-on JSON {@code enabled_directions}. Default:
  *        <code>["south","north","east","west"]</code>. Compiled by the hand transform {@code face_list}.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
 @Experimental
-public record ConnectionRule(@NonNull AcceptsConnectionsFrom acceptsConnectionsFrom, @NonNull List<EnabledDirections> enabledDirections) implements BlockComponent {
+public record ConnectionRule(ConnectionRule. @NonNull AcceptsConnectionsFrom acceptsConnectionsFrom,
+        @NonNull List<ConnectionRule.EnabledDirections> enabledDirections) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -65,6 +66,7 @@ public record ConnectionRule(@NonNull AcceptsConnectionsFrom acceptsConnectionsF
      */
     public static final class Builder {
         private @Nullable AcceptsConnectionsFrom acceptsConnectionsFrom = AcceptsConnectionsFrom.ALL;
+
         private @Nullable List<EnabledDirections> enabledDirections = List.of(EnabledDirections.SOUTH, EnabledDirections.NORTH, EnabledDirections.EAST, EnabledDirections.WEST);
 
         private Builder() {
@@ -73,7 +75,8 @@ public record ConnectionRule(@NonNull AcceptsConnectionsFrom acceptsConnectionsF
         /**
          * Sets {@code accepts_connections_from}.
          */
-        public @NonNull Builder acceptsConnectionsFrom(@NonNull AcceptsConnectionsFrom acceptsConnectionsFrom) {
+        public @NonNull Builder acceptsConnectionsFrom(
+                @NonNull AcceptsConnectionsFrom acceptsConnectionsFrom) {
             this.acceptsConnectionsFrom = acceptsConnectionsFrom;
             return this;
         }
@@ -81,7 +84,8 @@ public record ConnectionRule(@NonNull AcceptsConnectionsFrom acceptsConnectionsF
         /**
          * Sets {@code enabled_directions}.
          */
-        public @NonNull Builder enabledDirections(@NonNull List<EnabledDirections> enabledDirections) {
+        public @NonNull Builder enabledDirections(
+                @NonNull List<EnabledDirections> enabledDirections) {
             this.enabledDirections = enabledDirections;
             return this;
         }
@@ -110,10 +114,12 @@ public record ConnectionRule(@NonNull AcceptsConnectionsFrom acceptsConnectionsF
          * {@code all}
          */
         ALL("all"),
+
         /**
          * {@code none}
          */
         NONE("none"),
+
         /**
          * {@code only_fences}
          */
@@ -154,14 +160,17 @@ public record ConnectionRule(@NonNull AcceptsConnectionsFrom acceptsConnectionsF
          * {@code east}
          */
         EAST("east"),
+
         /**
          * {@code north}
          */
         NORTH("north"),
+
         /**
          * {@code south}
          */
         SOUTH("south"),
+
         /**
          * {@code west}
          */

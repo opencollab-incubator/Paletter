@@ -27,11 +27,12 @@ import org.geysermc.paletter.internal.component.Check;
  *        parts}. Default: <code>2</code>. One of [2, 3, 4].
  * @param direction Required property to define direction to place the block parts. Valid values are <code>"up", "down", "north",
  *        "south", "west", "east"</code>. Add-on JSON {@code direction}. Required.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.26.10")
 @Experimental
-public record MultiBlock(@NonNull List<EnabledStates> enabledStates, int parts, @NonNull Direction direction) implements BlockTrait {
+public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, int parts,
+        MultiBlock. @NonNull Direction direction) implements BlockTrait {
     /**
      * The component name in add-on JSON.
      */
@@ -71,7 +72,9 @@ public record MultiBlock(@NonNull List<EnabledStates> enabledStates, int parts, 
      */
     public static final class Builder {
         private @Nullable List<EnabledStates> enabledStates;
+
         private @Nullable Integer parts = 2;
+
         private @Nullable Direction direction;
 
         private Builder() {
@@ -167,22 +170,27 @@ public record MultiBlock(@NonNull List<EnabledStates> enabledStates, int parts, 
          * {@code up}
          */
         UP("up"),
+
         /**
          * {@code down}
          */
         DOWN("down"),
+
         /**
          * {@code north}
          */
         NORTH("north"),
+
         /**
          * {@code south}
          */
         SOUTH("south"),
+
         /**
          * {@code west}
          */
         WEST("west"),
+
         /**
          * {@code east}
          */

@@ -19,10 +19,11 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *        <code>0</code>.
  * @param soundEvent Sound event type: 13, cat, blocks, chirp, far, mall, mellohi, stal, strad, ward, 11, wait, pigstep, otherside,
  *        5, relic. Add-on JSON {@code sound_event}. Default: <code>"undefined"</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
-public record MusicRecord(int comparatorSignal, float duration, @NonNull String soundEvent) implements ItemComponent {
+public record MusicRecord(int comparatorSignal, float duration,
+        @NonNull String soundEvent) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -60,7 +61,9 @@ public record MusicRecord(int comparatorSignal, float duration, @NonNull String 
      */
     public static final class Builder {
         private @Nullable Integer comparatorSignal = 1;
+
         private @Nullable Float duration = 0.0f;
+
         private @Nullable String soundEvent = "undefined";
 
         private Builder() {

@@ -21,10 +21,11 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param type The type of action that triggers the cooldown. Use 'use' for items consumed on use, or 'attack' for weapons.
  *        Default is 'use'. This item requires a format version of at least 1.21.130. Add-on JSON {@code type}. Default:
  *        <code>"use"</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
-public record Cooldown(@NonNull String category, float duration, @BedrockFormat("1.21.130") @NonNull Type type) implements ItemComponent {
+public record Cooldown(@NonNull String category, float duration,
+        @BedrockFormat("1.21.130") Cooldown. @NonNull Type type) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -63,7 +64,9 @@ public record Cooldown(@NonNull String category, float duration, @BedrockFormat(
      */
     public static final class Builder {
         private @Nullable String category;
+
         private @Nullable Float duration;
+
         private @Nullable Type type = Type.USE;
 
         private Builder() {
@@ -116,6 +119,7 @@ public record Cooldown(@NonNull String category, float duration, @BedrockFormat(
          * {@code attack}
          */
         ATTACK("attack"),
+
         /**
          * {@code use}
          */

@@ -17,7 +17,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param value Duration, in seconds, of the item's swing animation played when mining or attacking. Affects visuals only and
  *        does not impact attack frequency or other gameplay mechanics. Add-on JSON {@code value}. Default:
  *        <code>0.30000001192092896</code>. Range [0, inf) (BDS 1.26.63.1).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.120")
 public record SwingDuration(float value) implements ItemComponent {

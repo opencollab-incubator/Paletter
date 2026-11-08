@@ -16,10 +16,11 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *        Default: <code>true</code>.
  * @param redstoneConductor Specifies if the block can be powered by redstone. Add-on JSON {@code redstone_conductor}. Default:
  *        <code>false</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.40")
-public record RedstoneConductivity(boolean allowsWireToStepDown, boolean redstoneConductor) implements BlockComponent {
+public record RedstoneConductivity(boolean allowsWireToStepDown,
+        boolean redstoneConductor) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -52,6 +53,7 @@ public record RedstoneConductivity(boolean allowsWireToStepDown, boolean redston
      */
     public static final class Builder {
         private @Nullable Boolean allowsWireToStepDown = true;
+
         private @Nullable Boolean redstoneConductor = false;
 
         private Builder() {

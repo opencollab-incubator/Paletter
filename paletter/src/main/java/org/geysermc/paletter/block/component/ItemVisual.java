@@ -18,10 +18,11 @@ import org.geysermc.paletter.internal.component.Check;
  * @param geometry The "minecraft:geometry" component of the item. Add-on JSON {@code geometry}. Required.
  * @param materialInstances The "minecraft:material_instances" component of the item. Value must have at most 64 items. Add-on JSON {@code
  *        material_instances}. Required. Compiled by the hand transform {@code material_instances_packed}.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.60")
-public record ItemVisual(@NonNull Geometry geometry, @NonNull MaterialInstances materialInstances) implements BlockComponent {
+public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
+        @NonNull MaterialInstances materialInstances) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -59,6 +60,7 @@ public record ItemVisual(@NonNull Geometry geometry, @NonNull MaterialInstances 
      */
     public static final class Builder {
         private @Nullable Geometry geometry;
+
         private @Nullable MaterialInstances materialInstances;
 
         private Builder() {
@@ -136,7 +138,9 @@ public record ItemVisual(@NonNull Geometry geometry, @NonNull MaterialInstances 
          */
         public static final class Builder {
             private @Nullable String x;
+
             private @Nullable String y;
+
             private @Nullable String z;
 
             private Builder() {
@@ -219,7 +223,10 @@ public record ItemVisual(@NonNull Geometry geometry, @NonNull MaterialInstances 
      *        geometry, regardless of how the block is rotated using "minecraft:transformation" component. For performance
      *        reasons it's recommended to use the Boolean. Add-on JSON {@code uv_lock}. Default: <code>false</code>.
      */
-    public record Geometry(@NonNull Map<String, Boolean> boneVisibility, @Nullable String culling, @Nullable String cullingLayer, @Nullable String cullingShape, @NonNull String identifier, @Nullable NWayVisualRotation nWayVisualRotation, boolean uvLock) {
+    public record Geometry(@NonNull Map<String, Boolean> boneVisibility, @Nullable String culling,
+            @Nullable String cullingLayer, @Nullable String cullingShape,
+            @NonNull String identifier, @Nullable NWayVisualRotation nWayVisualRotation,
+            boolean uvLock) {
         public Geometry {
             boneVisibility = Check.copy(boneVisibility, "ItemVisual.Geometry.boneVisibility");
             Objects.requireNonNull(identifier, "ItemVisual.Geometry.identifier");
@@ -261,11 +268,17 @@ public record ItemVisual(@NonNull Geometry geometry, @NonNull MaterialInstances 
          */
         public static final class Builder {
             private @Nullable Map<String, Boolean> boneVisibility = Map.of();
+
             private @Nullable String culling;
+
             private @Nullable String cullingLayer;
+
             private @Nullable String cullingShape;
+
             private @Nullable String identifier;
+
             private @Nullable NWayVisualRotation nWayVisualRotation;
+
             private @Nullable Boolean uvLock = false;
 
             private Builder() {
@@ -314,7 +327,8 @@ public record ItemVisual(@NonNull Geometry geometry, @NonNull MaterialInstances 
             /**
              * Sets {@code n_way_visual_rotation}.
              */
-            public @NonNull Builder nWayVisualRotation(@Nullable NWayVisualRotation nWayVisualRotation) {
+            public @NonNull Builder nWayVisualRotation(
+                    @Nullable NWayVisualRotation nWayVisualRotation) {
                 this.nWayVisualRotation = nWayVisualRotation;
                 return this;
             }

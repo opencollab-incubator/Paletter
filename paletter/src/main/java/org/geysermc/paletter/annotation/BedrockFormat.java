@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * Paletter sends the wire form of each palette's protocol whatever the format version, so this only tells which Bedrock
  * releases understand the definition at all. On generated component types.
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

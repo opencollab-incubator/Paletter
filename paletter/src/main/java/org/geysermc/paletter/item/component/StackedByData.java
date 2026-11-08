@@ -15,7 +15,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *
  * @param value Determines whether the same item with different aux values can stack. Also defines whether the item entities
  *        can merge while floating in the world. Add-on JSON {@code value}. Optional (null: not set).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
 public record StackedByData(@Nullable Boolean value) implements ItemComponent {

@@ -15,7 +15,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @param value The integer form of the component (add-on JSON &#123;&#64;code "minecraft:light_emission":
  *        &lt;integer&gt;&#125;). Required.
- * @since 2.0.0
+ * @since 1.0.0
  */
 public record LightEmission(int value) implements BlockComponent {
     /**

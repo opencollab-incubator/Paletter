@@ -16,10 +16,11 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * Add-on JSON: {@code "minecraft:liquid_detection"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_liquid_detection.md}.
  *
  * @param detectionRules Add-on JSON {@code detection_rules}. Required.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.60")
-public record LiquidDetection(@NonNull List<DetectionRules> detectionRules) implements BlockComponent {
+public record LiquidDetection(
+        @NonNull List<LiquidDetection.DetectionRules> detectionRules) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -120,7 +121,10 @@ public record LiquidDetection(@NonNull List<DetectionRules> detectionRules) impl
      *        1.26.0 and to <code>false</code> for 1.26.0 and newer. Add-on JSON {@code use_liquid_clipping}. Default:
      *        <code>false</code>.
      */
-    public record DetectionRules(boolean canContainLiquid, @NonNull LiquidType liquidType, @NonNull OnLiquidTouches onLiquidTouches, @NonNull List<String> stopsLiquidFlowingFromDirection, @BedrockFormat("1.26.0") boolean useLiquidClipping) {
+    public record DetectionRules(boolean canContainLiquid, @NonNull LiquidType liquidType,
+            @NonNull OnLiquidTouches onLiquidTouches,
+            @NonNull List<String> stopsLiquidFlowingFromDirection,
+            @BedrockFormat("1.26.0") boolean useLiquidClipping) {
         public DetectionRules {
             Objects.requireNonNull(liquidType, "LiquidDetection.DetectionRules.liquidType");
             Objects.requireNonNull(onLiquidTouches, "LiquidDetection.DetectionRules.onLiquidTouches");
@@ -152,9 +156,13 @@ public record LiquidDetection(@NonNull List<DetectionRules> detectionRules) impl
          */
         public static final class Builder {
             private @Nullable Boolean canContainLiquid = false;
+
             private @Nullable LiquidType liquidType = LiquidType.WATER;
+
             private @Nullable OnLiquidTouches onLiquidTouches = OnLiquidTouches.BLOCKING;
+
             private @Nullable List<String> stopsLiquidFlowingFromDirection = List.of();
+
             private @Nullable Boolean useLiquidClipping = false;
 
             private Builder() {
@@ -187,7 +195,8 @@ public record LiquidDetection(@NonNull List<DetectionRules> detectionRules) impl
             /**
              * Sets {@code stops_liquid_flowing_from_direction}.
              */
-            public @NonNull Builder stopsLiquidFlowingFromDirection(@NonNull List<String> stopsLiquidFlowingFromDirection) {
+            public @NonNull Builder stopsLiquidFlowingFromDirection(
+                    @NonNull List<String> stopsLiquidFlowingFromDirection) {
                 this.stopsLiquidFlowingFromDirection = stopsLiquidFlowingFromDirection;
                 return this;
             }
@@ -195,7 +204,8 @@ public record LiquidDetection(@NonNull List<DetectionRules> detectionRules) impl
             /**
              * Sets {@code stops_liquid_flowing_from_direction}.
              */
-            public @NonNull Builder stopsLiquidFlowingFromDirection(@NonNull String... stopsLiquidFlowingFromDirection) {
+            public @NonNull Builder stopsLiquidFlowingFromDirection(
+                    @NonNull String... stopsLiquidFlowingFromDirection) {
                 return stopsLiquidFlowingFromDirection(List.of(stopsLiquidFlowingFromDirection));
             }
 
@@ -261,14 +271,17 @@ public record LiquidDetection(@NonNull List<DetectionRules> detectionRules) impl
          * {@code blocking}
          */
         BLOCKING("blocking"),
+
         /**
          * {@code broken}
          */
         BROKEN("broken"),
+
         /**
          * {@code no_reaction}
          */
         NO_REACTION("no_reaction"),
+
         /**
          * {@code popped}
          */

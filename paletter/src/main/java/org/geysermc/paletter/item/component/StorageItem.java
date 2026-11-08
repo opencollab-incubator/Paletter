@@ -3,6 +3,7 @@
 // codegen/model/ATTRIBUTION.md.
 package org.geysermc.paletter.item.component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -24,10 +25,11 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  *        <code>[]</code>.
  * @param maxSlots The maximum allowed weight of the sum of all contained items. Maximum is 64. Default is 64. Value must be
  *        &lt;= 64. Add-on JSON {@code max_slots}. Default: <code>64</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.40")
-public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String> allowedItems, @NonNull List<String> bannedItems, int maxSlots) implements ItemComponent {
+public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String> allowedItems,
+        @NonNull List<String> bannedItems, int maxSlots) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -67,8 +69,11 @@ public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String>
      */
     public static final class Builder {
         private @Nullable Boolean allowNestedStorageItems = true;
+
         private @Nullable List<String> allowedItems = List.of();
+
         private @Nullable List<String> bannedItems = List.of();
+
         private @Nullable Integer maxSlots = 64;
 
         private Builder() {
@@ -101,7 +106,7 @@ public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String>
          * Sets {@code allowed_items} to the identifiers of vanilla or custom items.
          */
         public @NonNull Builder allowedItems(@NonNull BedrockItemType... allowedItems) {
-            java.util.List<String> identifiers = new java.util.ArrayList<>();
+            List<String> identifiers = new ArrayList<>();
             for (BedrockItemType type : allowedItems) {
                 identifiers.add(type.identifier());
             }
@@ -127,7 +132,7 @@ public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String>
          * Sets {@code banned_items} to the identifiers of vanilla or custom items.
          */
         public @NonNull Builder bannedItems(@NonNull BedrockItemType... bannedItems) {
-            java.util.List<String> identifiers = new java.util.ArrayList<>();
+            List<String> identifiers = new ArrayList<>();
             for (BedrockItemType type : bannedItems) {
                 identifiers.add(type.identifier());
             }

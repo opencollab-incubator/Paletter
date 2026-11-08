@@ -3,6 +3,7 @@
 // codegen/model/ATTRIBUTION.md.
 package org.geysermc.paletter.item.component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -20,10 +21,11 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  * @param repairItems List of repair item entries. Each entry needs to define a list of strings for <code>items</code> that can be
  *        used for the repair and an optional <code>repair_amount</code> for how much durability is gained. Add-on JSON
  *        {@code repair_items}. Default: <code>[]</code>. Compiled by the hand transform {@code item_descriptor_list}.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
-public record Repairable(@NonNull List<RepairItems> repairItems) implements ItemComponent {
+public record Repairable(
+        @NonNull List<Repairable.RepairItems> repairItems) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -96,7 +98,8 @@ public record Repairable(@NonNull List<RepairItems> repairItems) implements Item
      * @param repairAmountExpression The string form of &#123;&#64;code repair_amount&#125; (expression); excludes &#123;&#64;link
      *        #repairAmount()&#125;. Add-on JSON {@code repair_amount}.
      */
-    public record RepairItems(@Nullable List<String> items, @Nullable Float repairAmount, @Nullable String repairAmountExpression) {
+    public record RepairItems(@Nullable List<String> items, @Nullable Float repairAmount,
+            @Nullable String repairAmountExpression) {
         public RepairItems {
             items = items == null ? null : List.copyOf(items);
             if (repairAmount != null && repairAmountExpression != null) {
@@ -127,7 +130,9 @@ public record Repairable(@NonNull List<RepairItems> repairItems) implements Item
          */
         public static final class Builder {
             private @Nullable List<String> items;
+
             private @Nullable Float repairAmount;
+
             private @Nullable String repairAmountExpression;
 
             private Builder() {
@@ -152,7 +157,7 @@ public record Repairable(@NonNull List<RepairItems> repairItems) implements Item
              * Sets {@code items} to the identifiers of vanilla or custom items.
              */
             public @NonNull Builder items(@NonNull BedrockItemType... items) {
-                java.util.List<String> identifiers = new java.util.ArrayList<>();
+                List<String> identifiers = new ArrayList<>();
                 for (BedrockItemType type : items) {
                     identifiers.add(type.identifier());
                 }
@@ -173,7 +178,8 @@ public record Repairable(@NonNull List<RepairItems> repairItems) implements Item
             /**
              * Sets {@code repair_amount} (clears the other form).
              */
-            public @NonNull Builder repairAmountExpression(@Nullable String repairAmountExpression) {
+            public @NonNull Builder repairAmountExpression(
+                    @Nullable String repairAmountExpression) {
                 this.repairAmountExpression = repairAmountExpression;
                 if (repairAmountExpression != null) {
                     this.repairAmount = null;

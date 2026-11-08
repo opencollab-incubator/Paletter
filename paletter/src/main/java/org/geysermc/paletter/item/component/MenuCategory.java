@@ -17,9 +17,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *        group}. Optional (null: not set).
  * @param hiddenInCommands Determines whether or not this item can be used with commands. Commands can use items by default. Add-on JSON
  *        {@code is_hidden_in_commands}. Optional (null: not set).
- * @since 2.0.0
+ * @since 1.0.0
  */
-public record MenuCategory(@Nullable Category category, @Nullable String group, @Nullable Boolean hiddenInCommands) {
+public record MenuCategory(MenuCategory. @Nullable Category category, @Nullable String group,
+        @Nullable Boolean hiddenInCommands) {
     /**
      * @return a builder with the defaults applied
      */
@@ -43,7 +44,9 @@ public record MenuCategory(@Nullable Category category, @Nullable String group, 
      */
     public static final class Builder {
         private @Nullable Category category;
+
         private @Nullable String group;
+
         private @Nullable Boolean hiddenInCommands;
 
         private Builder() {
@@ -90,18 +93,22 @@ public record MenuCategory(@Nullable Category category, @Nullable String group, 
          * {@code construction}
          */
         CONSTRUCTION("construction"),
+
         /**
          * {@code nature}
          */
         NATURE("nature"),
+
         /**
          * {@code equipment}
          */
         EQUIPMENT("equipment"),
+
         /**
          * {@code items}
          */
         ITEMS("items"),
+
         /**
          * {@code none}
          */

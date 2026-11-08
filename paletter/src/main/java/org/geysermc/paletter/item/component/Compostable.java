@@ -16,7 +16,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param compostingChance The chance of this item to create a layer upon composting with the composter. Valid value range is 1 - 100
  *        inclusive Value must be &gt;= 1. Value must be &lt;= 100. Add-on JSON {@code composting_chance}. Required.
  *        Range [1, 100] (BDS 1.26.63.1).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.60")
 public record Compostable(int compostingChance) implements ItemComponent {

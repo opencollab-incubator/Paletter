@@ -16,7 +16,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param weightInStorageItem The weight of this item when inside another Storage Item. Default is 4. 0 means item is not allowed in another
  *        Storage Item. Add-on JSON {@code weight_in_storage_item}. Default: <code>4</code>. Range [0, inf) (BDS
  *        1.26.63.1).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.110")
 public record StorageWeightModifier(int weightInStorageItem) implements ItemComponent {

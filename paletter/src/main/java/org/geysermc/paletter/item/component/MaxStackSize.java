@@ -16,7 +16,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param value How many of an item that can be stacked together. Add-on JSON {@code value}. Optional (null: not set). The
  *        docs give the default <code>64</code>, but BDS sends item_properties.max_stack_size = 1 (int) when it is
  *        omitted; so it is unset by default, and the encoder sends what BDS sends then. Range [1, 64] (BDS 1.26.63.1).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
 public record MaxStackSize(@Nullable Integer value) implements ItemComponent {
@@ -26,7 +26,9 @@ public record MaxStackSize(@Nullable Integer value) implements ItemComponent {
     public static final String NAME = "minecraft:max_stack_size";
 
     public MaxStackSize {
-        if (value != null) Check.range("MaxStackSize.value", value, 1.0, 64.0);
+        if (value != null) {
+            Check.range("MaxStackSize.value", value, 1.0, 64.0);
+        }
     }
 
     @Override

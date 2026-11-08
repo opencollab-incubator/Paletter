@@ -6,9 +6,9 @@ package org.geysermc.paletter.block.component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * A custom block component, mirroring Bedrock's add-on JSON: one record per component, generated from the component
- * model in {@code codegen/model} (creator docs plus what Bedrock Dedicated Server sends). Paletter compiles them to the
- * wire format of each palette's protocol.
+ * A custom block component, mirroring Bedrock's add-on JSON: one record per component, generated
+ * from the component model in {@code codegen/model} (creator docs plus what Bedrock Dedicated Server sends). Paletter
+ * compiles them to the wire format of each palette's protocol.
  * <p>
  * Documented but not generated:
  * <ul>
@@ -35,7 +35,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *     <li>{@code minecraft:unit_cube}: rejected by BDS 1.26.63.1</li>
  * </ul>
  *
- * @since 2.0.0
+ * @since 1.0.0
  */
 public sealed interface BlockComponent permits BlockEntity, CollisionBox, ConnectionRule, CraftingTable, DestructibleByMining, DestructionParticles, DisplayName, EmbeddedVisual, FlowerPottable, Friction, Geometry, ItemVisual, LightDampening, LightEmission, LiquidDetection, MaterialInstances, PlacementFilter, PrecipitationInteractions, RandomOffset, RedstoneConductivity, RedstoneProducer, Replaceable, SelectionBox, Support, Transformation {
     /**

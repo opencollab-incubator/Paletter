@@ -17,7 +17,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *
  * @param value The string form of the component (add-on JSON &#123;&#64;code "minecraft:display_name": &lt;string&gt;&#125;).
  *        Required.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.19.60")
 public record DisplayName(@NonNull String value) implements BlockComponent {

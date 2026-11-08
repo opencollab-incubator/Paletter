@@ -22,11 +22,12 @@ import org.geysermc.paletter.annotation.Experimental;
  *        Compiled by the hand transform {@code collision_boxes}.
  * @param enabled The boolean form of the component (add-on JSON &#123;&#64;code "minecraft:collision_box":
  *        &lt;boolean&gt;&#125;). Optional (null: not set).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.19.50")
 @Experimental
-public record CollisionBox(@NonNull List<Entry> boxes, @Nullable Boolean enabled) implements BlockComponent {
+public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
+        @Nullable Boolean enabled) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -72,6 +73,7 @@ public record CollisionBox(@NonNull List<Entry> boxes, @Nullable Boolean enabled
      */
     public static final class Builder {
         private @Nullable List<Entry> boxes = List.of();
+
         private @Nullable Boolean enabled;
 
         private Builder() {
@@ -138,6 +140,7 @@ public record CollisionBox(@NonNull List<Entry> boxes, @Nullable Boolean enabled
          */
         public static final class Builder {
             private @Nullable Vec3 origin;
+
             private @Nullable Vec3 size;
 
             private Builder() {

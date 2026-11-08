@@ -34,7 +34,7 @@ public record BlockProperty<T>(@NonNull String name, @NonNull Type type, @NonNul
     /**
      * A boolean state with its values in the given order, as add-on JSON lists them ({@code [true, false]}).
      *
-     * @since 2.0.0
+     * @since 1.0.0
      */
     public static @NonNull BlockProperty<Byte> bools(@NonNull String name, boolean @NonNull ... values) {
         List<Byte> bytes = new java.util.ArrayList<>(values.length);

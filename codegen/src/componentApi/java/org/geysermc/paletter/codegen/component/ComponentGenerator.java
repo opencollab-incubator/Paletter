@@ -106,7 +106,9 @@ public final class ComponentGenerator {
         ComponentGenerator generator = new ComponentGenerator(in);
         generator.build();
         Map<String, String> out = new TreeMap<>();
-        ApiSource.write(generator.model, in.since(), out);
+        // api.json "since" overrides the build version (the Paletter version the generated API first shipped in)
+        String since = in.api().has("since") ? in.api().get("since").getAsString() : in.since();
+        ApiSource.write(generator.model, since, out);
         WireSource.write(generator.model, out);
         return out;
     }

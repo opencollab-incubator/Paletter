@@ -28,17 +28,22 @@ import org.geysermc.paletter.internal.component.Check;
  *        and the encoder sends what BDS sends then.
  * @param useDuration Time, in seconds, that the item takes to use. Add-on JSON {@code use_duration}. Default: <code>0</code>. Range
  *        [0, inf) (BDS 1.26.63.1).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.50")
-public record UseModifiers(boolean emitVibrations, @Nullable Float movementModifier, @Nullable String startSound, @BedrockFormat("1.26.30") @Nullable StartUsing startUsing, float useDuration) implements ItemComponent {
+public record UseModifiers(boolean emitVibrations, @Nullable Float movementModifier,
+        @Nullable String startSound,
+        @BedrockFormat("1.26.30") UseModifiers. @Nullable StartUsing startUsing,
+        float useDuration) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:use_modifiers";
 
     public UseModifiers {
-        if (movementModifier != null) Check.range("UseModifiers.movementModifier", movementModifier, 0.0, 1.0);
+        if (movementModifier != null) {
+            Check.range("UseModifiers.movementModifier", movementModifier, 0.0, 1.0);
+        }
         Check.range("UseModifiers.useDuration", useDuration, 0.0, null);
     }
 
@@ -72,9 +77,13 @@ public record UseModifiers(boolean emitVibrations, @Nullable Float movementModif
      */
     public static final class Builder {
         private @Nullable Boolean emitVibrations = true;
+
         private @Nullable Float movementModifier;
+
         private @Nullable String startSound;
+
         private @Nullable StartUsing startUsing;
+
         private @Nullable Float useDuration = 0.0f;
 
         private Builder() {
@@ -137,6 +146,7 @@ public record UseModifiers(boolean emitVibrations, @Nullable Float movementModif
          * {@code always}
          */
         ALWAYS("always"),
+
         /**
          * {@code if_first}
          */

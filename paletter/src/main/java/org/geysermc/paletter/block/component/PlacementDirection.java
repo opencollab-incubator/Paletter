@@ -25,9 +25,11 @@ import org.geysermc.paletter.internal.component.Check;
  * @param blocksToCornerWith A list of block descriptors that define the blocks to connect with the corner shape. Requires
  *        <code>minecraft:corner_and_cardinal_direction</code> to be enabled. Add-on JSON {@code blocks_to_corner_with}.
  *        Optional (null: not set).
- * @since 2.0.0
+ * @since 1.0.0
  */
-public record PlacementDirection(@NonNull List<EnabledStates> enabledStates, @Nullable Float yRotationOffset, @Nullable List<BlocksToCornerWith> blocksToCornerWith) implements BlockTrait {
+public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates> enabledStates,
+        @Nullable Float yRotationOffset,
+        @Nullable List<PlacementDirection.BlocksToCornerWith> blocksToCornerWith) implements BlockTrait {
     /**
      * The component name in add-on JSON.
      */
@@ -35,7 +37,9 @@ public record PlacementDirection(@NonNull List<EnabledStates> enabledStates, @Nu
 
     public PlacementDirection {
         enabledStates = List.copyOf(Objects.requireNonNull(enabledStates, "PlacementDirection.enabledStates"));
-        if (yRotationOffset != null) Check.range("PlacementDirection.yRotationOffset", yRotationOffset, 0.0, 360.0);
+        if (yRotationOffset != null) {
+            Check.range("PlacementDirection.yRotationOffset", yRotationOffset, 0.0, 360.0);
+        }
         blocksToCornerWith = blocksToCornerWith == null ? null : List.copyOf(blocksToCornerWith);
     }
 
@@ -67,7 +71,9 @@ public record PlacementDirection(@NonNull List<EnabledStates> enabledStates, @Nu
      */
     public static final class Builder {
         private @Nullable List<EnabledStates> enabledStates;
+
         private @Nullable Float yRotationOffset;
+
         private @Nullable List<BlocksToCornerWith> blocksToCornerWith;
 
         private Builder() {
@@ -99,7 +105,8 @@ public record PlacementDirection(@NonNull List<EnabledStates> enabledStates, @Nu
         /**
          * Sets {@code blocks_to_corner_with}.
          */
-        public @NonNull Builder blocksToCornerWith(@Nullable List<BlocksToCornerWith> blocksToCornerWith) {
+        public @NonNull Builder blocksToCornerWith(
+                @Nullable List<BlocksToCornerWith> blocksToCornerWith) {
             this.blocksToCornerWith = blocksToCornerWith;
             return this;
         }
@@ -107,7 +114,8 @@ public record PlacementDirection(@NonNull List<EnabledStates> enabledStates, @Nu
         /**
          * Sets {@code blocks_to_corner_with}.
          */
-        public @NonNull Builder blocksToCornerWith(@NonNull BlocksToCornerWith... blocksToCornerWith) {
+        public @NonNull Builder blocksToCornerWith(
+                @NonNull BlocksToCornerWith... blocksToCornerWith) {
             return blocksToCornerWith(List.of(blocksToCornerWith));
         }
 
@@ -181,10 +189,12 @@ public record PlacementDirection(@NonNull List<EnabledStates> enabledStates, @Nu
          * {@code minecraft:cardinal_direction}
          */
         CARDINAL_DIRECTION("minecraft:cardinal_direction"),
+
         /**
          * {@code minecraft:corner_and_cardinal_direction}
          */
         CORNER_AND_CARDINAL_DIRECTION("minecraft:corner_and_cardinal_direction"),
+
         /**
          * {@code minecraft:facing_direction}
          */

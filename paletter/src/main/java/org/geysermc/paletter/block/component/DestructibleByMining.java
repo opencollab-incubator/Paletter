@@ -32,10 +32,12 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  *        1.26.63.1).
  * @param enabled The boolean form of the component (add-on JSON &#123;&#64;code "minecraft:destructible_by_mining":
  *        &lt;boolean&gt;&#125;). Optional (null: not set).
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.50")
-public record DestructibleByMining(float baseTimeToDestroy, @Nullable List<ItemSpecificSpeeds> itemSpecificSpeeds, float secondsToDestroy, @Nullable Boolean enabled) implements BlockComponent {
+public record DestructibleByMining(float baseTimeToDestroy,
+        @Nullable List<DestructibleByMining.ItemSpecificSpeeds> itemSpecificSpeeds,
+        float secondsToDestroy, @Nullable Boolean enabled) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -84,8 +86,11 @@ public record DestructibleByMining(float baseTimeToDestroy, @Nullable List<ItemS
      */
     public static final class Builder {
         private @Nullable Float baseTimeToDestroy = 0.0f;
+
         private @Nullable List<ItemSpecificSpeeds> itemSpecificSpeeds;
+
         private @Nullable Float secondsToDestroy = 0.0f;
+
         private @Nullable Boolean enabled;
 
         private Builder() {
@@ -102,7 +107,8 @@ public record DestructibleByMining(float baseTimeToDestroy, @Nullable List<ItemS
         /**
          * Sets {@code item_specific_speeds}.
          */
-        public @NonNull Builder itemSpecificSpeeds(@Nullable List<ItemSpecificSpeeds> itemSpecificSpeeds) {
+        public @NonNull Builder itemSpecificSpeeds(
+                @Nullable List<ItemSpecificSpeeds> itemSpecificSpeeds) {
             this.itemSpecificSpeeds = itemSpecificSpeeds;
             return this;
         }
@@ -110,7 +116,8 @@ public record DestructibleByMining(float baseTimeToDestroy, @Nullable List<ItemS
         /**
          * Sets {@code item_specific_speeds}.
          */
-        public @NonNull Builder itemSpecificSpeeds(@NonNull ItemSpecificSpeeds... itemSpecificSpeeds) {
+        public @NonNull Builder itemSpecificSpeeds(
+                @NonNull ItemSpecificSpeeds... itemSpecificSpeeds) {
             return itemSpecificSpeeds(List.of(itemSpecificSpeeds));
         }
 
@@ -175,6 +182,7 @@ public record DestructibleByMining(float baseTimeToDestroy, @Nullable List<ItemS
          */
         public static final class Builder {
             private @Nullable Float destroySpeed;
+
             private @Nullable String item;
 
             private Builder() {

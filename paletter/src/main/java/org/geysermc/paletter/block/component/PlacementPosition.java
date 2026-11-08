@@ -16,9 +16,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @param enabledStates Which states to enable. Must specify at least one. Valid values are <code>minecraft:block_face</code> and
  *        <code>minecraft:vertical_half</code>. Add-on JSON {@code enabled_states}. Required.
- * @since 2.0.0
+ * @since 1.0.0
  */
-public record PlacementPosition(@NonNull List<EnabledStates> enabledStates) implements BlockTrait {
+public record PlacementPosition(
+        @NonNull List<PlacementPosition.EnabledStates> enabledStates) implements BlockTrait {
     /**
      * The component name in add-on JSON.
      */
@@ -93,6 +94,7 @@ public record PlacementPosition(@NonNull List<EnabledStates> enabledStates) impl
          * {@code minecraft:block_face}
          */
         BLOCK_FACE("minecraft:block_face"),
+
         /**
          * {@code minecraft:vertical_half}
          */

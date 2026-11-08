@@ -15,9 +15,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @param enabled The boolean form: &#123;&#64;code true&#125; shows the interact button with the default text. Optional (null:
  *        not set).
  * @param text The string form: the button text (a localization key or literal). Optional (null: not set).
- * @since 2.0.0
+ * @since 1.0.0
  */
-public record InteractButton(@Nullable Boolean enabled, @Nullable String text) implements ItemComponent {
+public record InteractButton(@Nullable Boolean enabled,
+        @Nullable String text) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -68,6 +69,7 @@ public record InteractButton(@Nullable Boolean enabled, @Nullable String text) i
      */
     public static final class Builder {
         private @Nullable Boolean enabled;
+
         private @Nullable String text;
 
         private Builder() {

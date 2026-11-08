@@ -14,7 +14,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *
  * @param value The color of the item hover text. Add-on JSON {@code value}. Optional (null: not set). Compiled by the hand
  *        transform {@code formatting_code}.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
 public record HoverTextColor(@Nullable String value) implements ItemComponent {

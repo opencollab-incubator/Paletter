@@ -3,12 +3,54 @@
 // codegen/model/ATTRIBUTION.md.
 package org.geysermc.paletter.internal.component;
 
+import java.util.List;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.paletter.item.component.*;
+import org.geysermc.paletter.item.component.AllowOffHand;
+import org.geysermc.paletter.item.component.BlockPlacer;
+import org.geysermc.paletter.item.component.BundleInteraction;
+import org.geysermc.paletter.item.component.CanDestroyInCreative;
+import org.geysermc.paletter.item.component.Compostable;
+import org.geysermc.paletter.item.component.Cooldown;
+import org.geysermc.paletter.item.component.Damage;
+import org.geysermc.paletter.item.component.Digger;
+import org.geysermc.paletter.item.component.DisplayName;
+import org.geysermc.paletter.item.component.Durability;
+import org.geysermc.paletter.item.component.Dyeable;
+import org.geysermc.paletter.item.component.Enchantable;
+import org.geysermc.paletter.item.component.EntityPlacer;
+import org.geysermc.paletter.item.component.FireResistant;
+import org.geysermc.paletter.item.component.Food;
+import org.geysermc.paletter.item.component.Fuel;
+import org.geysermc.paletter.item.component.Glint;
+import org.geysermc.paletter.item.component.HandEquipped;
+import org.geysermc.paletter.item.component.HoverTextColor;
+import org.geysermc.paletter.item.component.Icon;
+import org.geysermc.paletter.item.component.InteractButton;
+import org.geysermc.paletter.item.component.ItemComponent;
+import org.geysermc.paletter.item.component.KineticWeapon;
+import org.geysermc.paletter.item.component.LiquidClipped;
+import org.geysermc.paletter.item.component.MaxStackSize;
+import org.geysermc.paletter.item.component.MusicRecord;
+import org.geysermc.paletter.item.component.PiercingWeapon;
+import org.geysermc.paletter.item.component.Projectile;
+import org.geysermc.paletter.item.component.Rarity;
+import org.geysermc.paletter.item.component.Repairable;
+import org.geysermc.paletter.item.component.Shooter;
+import org.geysermc.paletter.item.component.ShouldDespawn;
+import org.geysermc.paletter.item.component.StackedByData;
+import org.geysermc.paletter.item.component.StorageItem;
+import org.geysermc.paletter.item.component.StorageWeightLimit;
+import org.geysermc.paletter.item.component.StorageWeightModifier;
+import org.geysermc.paletter.item.component.SwingDuration;
+import org.geysermc.paletter.item.component.SwingSounds;
+import org.geysermc.paletter.item.component.Tags;
+import org.geysermc.paletter.item.component.ThrowableItem;
+import org.geysermc.paletter.item.component.UseAnimation;
+import org.geysermc.paletter.item.component.UseModifiers;
+import org.geysermc.paletter.item.component.Wearable;
 
 /**
- * Encoders of the generated ItemComponent types: the rules of {@code codegen/model/mappings.json} per
+ * Encoders of the generated {@link ItemComponent} types: the rules of {@code codegen/model/mappings.json} per
  * protocol window, hand transforms by name. Not API.
  */
 @SuppressWarnings({"unused", "deprecation"})
@@ -20,7 +62,8 @@ public final class ItemWire {
      * Writes a component into {@code out}: the item components compound, the block's {@code components}, or for a
      * trait its element of {@code traits}.
      */
-    public static void write(@NonNull ItemComponent component, @NonNull WireContext ctx, @NonNull WireNode out) {
+    public static void write(@NonNull ItemComponent component, @NonNull WireContext ctx,
+            @NonNull WireNode out) {
         switch (component) {
             case AllowOffHand value -> allowOffHand(value, ctx, out);
             case BlockPlacer value -> blockPlacer(value, ctx, out);
@@ -87,7 +130,7 @@ public final class ItemWire {
         String v1 = c.block();
         out.put("minecraft:block_placer.block", v1);
         boolean v2 = c.replaceBlockItem();
-        java.util.List<BlockPlacer.UseOn> v3 = c.useOn();
+        List<BlockPlacer.UseOn> v3 = c.useOn();
         out.list("minecraft:block_placer.use_on");
         for (BlockPlacer.UseOn e4 : v3) {
             WireNode n5 = out.element("minecraft:block_placer.use_on");
@@ -110,7 +153,8 @@ public final class ItemWire {
         out.put("minecraft:bundle_interaction.num_viewable_slots", Wire.toInt(v0));
     }
 
-    private static void canDestroyInCreative(CanDestroyInCreative c, WireContext ctx, WireNode out) {
+    private static void canDestroyInCreative(CanDestroyInCreative c, WireContext ctx,
+            WireNode out) {
         Boolean v0 = c.value();
         if (v0 != null) {
             out.put("item_properties.can_destroy_in_creative", Wire.bool(v0));
@@ -147,7 +191,7 @@ public final class ItemWire {
     }
 
     private static void digger(Digger c, WireContext ctx, WireNode out) {
-        java.util.List<Digger.DestroySpeeds> v0 = c.destroySpeeds();
+        List<Digger.DestroySpeeds> v0 = c.destroySpeeds();
         out.list("minecraft:digger.destroy_speeds");
         for (Digger.DestroySpeeds e1 : v0) {
             WireNode n2 = out.element("minecraft:digger.destroy_speeds");
@@ -213,7 +257,7 @@ public final class ItemWire {
 
     private static void entityPlacer(EntityPlacer c, WireContext ctx, WireNode out) {
         out.put("minecraft:publisher_on_use_on.autoSucceedOnClient", (byte) 0);
-        java.util.List<EntityPlacer.UseOn> v0 = c.dispenseOn();
+        List<EntityPlacer.UseOn> v0 = c.dispenseOn();
         out.list("minecraft:entity_placer.dispense_on");
         for (EntityPlacer.UseOn e1 : v0) {
             WireNode n2 = out.element("minecraft:entity_placer.dispense_on");
@@ -235,7 +279,7 @@ public final class ItemWire {
         } else {
             out.put("minecraft:entity_placer.entity", "minecraft:<>");
         }
-        java.util.List<EntityPlacer.UseOn> v6 = c.useOn();
+        List<EntityPlacer.UseOn> v6 = c.useOn();
         out.list("minecraft:entity_placer.use_on");
         for (EntityPlacer.UseOn e7 : v6) {
             WireNode n8 = out.element("minecraft:entity_placer.use_on");
@@ -464,7 +508,7 @@ public final class ItemWire {
     }
 
     private static void shooter(Shooter c, WireContext ctx, WireNode out) {
-        java.util.List<Shooter.Ammunition> v0 = c.ammunition();
+        List<Shooter.Ammunition> v0 = c.ammunition();
         out.list("minecraft:shooter.ammunition");
         for (Shooter.Ammunition e1 : v0) {
             WireNode n2 = out.element("minecraft:shooter.ammunition");
@@ -518,8 +562,8 @@ public final class ItemWire {
         out.put("minecraft:storage_item.banned_items", Wire.EMPTY_LIST);
         boolean v0 = c.allowNestedStorageItems();
         out.put("minecraft:storage_item.allow_nested_storage_items", Wire.bool(v0));
-        java.util.List<String> v1 = c.allowedItems();
-        java.util.List<String> v2 = c.bannedItems();
+        List<String> v1 = c.allowedItems();
+        List<String> v2 = c.bannedItems();
         int v3 = c.maxSlots();
         out.put("minecraft:storage_item.max_slots", Wire.toInt(v3));
     }
@@ -529,7 +573,8 @@ public final class ItemWire {
         out.put("minecraft:storage_weight_limit.max_weight_limit", Wire.toInt(v0));
     }
 
-    private static void storageWeightModifier(StorageWeightModifier c, WireContext ctx, WireNode out) {
+    private static void storageWeightModifier(StorageWeightModifier c, WireContext ctx,
+            WireNode out) {
         int v0 = c.weightInStorageItem();
         out.put("minecraft:storage_weight_modifier.weight_in_storage_item", Wire.toInt(v0));
     }
@@ -561,7 +606,7 @@ public final class ItemWire {
     }
 
     private static void tags(Tags c, WireContext ctx, WireNode out) {
-        java.util.List<String> v0 = c.tags();
+        List<String> v0 = c.tags();
         out.put("item_tags", Wire.strings(v0));
         out.put("minecraft:tags.tags", Wire.strings(v0));
     }

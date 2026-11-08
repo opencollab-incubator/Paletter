@@ -14,7 +14,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *
  * @param maxWeightLimit The maximum allowed weight of the sum of all contained items. Maximum is 64. Default is 64. Value must be
  *        &lt;= 64. Add-on JSON {@code max_weight_limit}. Default: <code>64</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.110")
 public record StorageWeightLimit(int maxWeightLimit) implements ItemComponent {

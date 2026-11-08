@@ -194,5 +194,6 @@
   ],
   "noDefaults": [
     "item:description:category"
-  ]
+  ],
+  "since": "1.0.0"
 }

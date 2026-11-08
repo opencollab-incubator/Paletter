@@ -21,10 +21,14 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param scalePivot The point to apply scale around. This item requires a format version of at least 1.21.0. Add-on JSON {@code
  *        scale_pivot}. Default: <code>[0,0,0]</code>.
  * @param translation The block's translation Add-on JSON {@code translation}. Default: <code>[0,0,0]</code>.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.19.80")
-public record Transformation(@NonNull Vec3 rotation, @BedrockFormat("1.21.0") @NonNull Vec3 rotationPivot, @NonNull Vec3 scale, @BedrockFormat("1.21.0") @NonNull Vec3 scalePivot, @NonNull Vec3 translation) implements BlockComponent {
+public record Transformation(Transformation. @NonNull Vec3 rotation,
+        @BedrockFormat("1.21.0") Transformation. @NonNull Vec3 rotationPivot,
+        Transformation. @NonNull Vec3 scale,
+        @BedrockFormat("1.21.0") Transformation. @NonNull Vec3 scalePivot,
+        Transformation. @NonNull Vec3 translation) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -68,9 +72,13 @@ public record Transformation(@NonNull Vec3 rotation, @BedrockFormat("1.21.0") @N
      */
     public static final class Builder {
         private @Nullable Vec3 rotation = new Vec3(0.0f, 0.0f, 0.0f);
+
         private @Nullable Vec3 rotationPivot = new Vec3(0.0f, 0.0f, 0.0f);
+
         private @Nullable Vec3 scale = new Vec3(1.0f, 1.0f, 1.0f);
+
         private @Nullable Vec3 scalePivot = new Vec3(0.0f, 0.0f, 0.0f);
+
         private @Nullable Vec3 translation = new Vec3(0.0f, 0.0f, 0.0f);
 
         private Builder() {

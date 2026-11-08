@@ -3,12 +3,16 @@
 // codegen/model/ATTRIBUTION.md.
 package org.geysermc.paletter.internal.component;
 
+import java.util.List;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.paletter.block.component.*;
+import org.geysermc.paletter.block.component.BlockTrait;
+import org.geysermc.paletter.block.component.Connection;
+import org.geysermc.paletter.block.component.MultiBlock;
+import org.geysermc.paletter.block.component.PlacementDirection;
+import org.geysermc.paletter.block.component.PlacementPosition;
 
 /**
- * Encoders of the generated BlockTrait types: the rules of {@code codegen/model/mappings.json} per
+ * Encoders of the generated {@link BlockTrait} types: the rules of {@code codegen/model/mappings.json} per
  * protocol window, hand transforms by name. Not API.
  */
 @SuppressWarnings({"unused", "deprecation"})
@@ -20,7 +24,8 @@ public final class TraitWire {
      * Writes a component into {@code out}: the item components compound, the block's {@code components}, or for a
      * trait its element of {@code traits}.
      */
-    public static void write(@NonNull BlockTrait component, @NonNull WireContext ctx, @NonNull WireNode out) {
+    public static void write(@NonNull BlockTrait component, @NonNull WireContext ctx,
+            @NonNull WireNode out) {
         switch (component) {
             case Connection value -> connection(value, ctx, out);
             case MultiBlock value -> multiBlock(value, ctx, out);
@@ -34,7 +39,7 @@ public final class TraitWire {
         out.put("name", "minecraft:connection");
         out.put("type", 0);
         out.put("update_flags", 3);
-        java.util.List<Connection.EnabledStates> v0 = c.enabledStates();
+        List<Connection.EnabledStates> v0 = c.enabledStates();
         ctx.drop(Connection.NAME, "enabled_states has no known wire mapping");
     }
 
@@ -42,7 +47,7 @@ public final class TraitWire {
         out.put("enabled_states.multi_block", (byte) 1);
         out.put("name", "minecraft:multi_block");
         out.put("place_behavior", (byte) 0);
-        java.util.List<MultiBlock.EnabledStates> v0 = c.enabledStates();
+        List<MultiBlock.EnabledStates> v0 = c.enabledStates();
         ctx.drop(MultiBlock.NAME, "enabled_states has no known wire mapping");
         int v1 = c.parts();
         out.put("part_count", Wire.toByte(v1));
@@ -68,32 +73,34 @@ public final class TraitWire {
         } else {
             out.put("y_rotation_offset", 0.0f);
         }
-        java.util.List<PlacementDirection.BlocksToCornerWith> v1 = c.blocksToCornerWith();
+        List<PlacementDirection.BlocksToCornerWith> v1 = c.blocksToCornerWith();
         if (v1 != null) {
-            if (!v1.isEmpty()) ctx.drop(PlacementDirection.NAME, "blocks_to_corner_with has no known wire mapping");
+            if (!v1.isEmpty()) {
+                ctx.drop(PlacementDirection.NAME, "blocks_to_corner_with has no known wire mapping");
+            }
         }
         Transforms.enabledStateFlags(ctx, out, c);
     }
 
     private static void placementPosition(PlacementPosition c, WireContext ctx, WireNode out) {
         out.put("name", "minecraft:placement_position");
-        java.util.List<PlacementPosition.EnabledStates> v0 = c.enabledStates();
+        List<PlacementPosition.EnabledStates> v0 = c.enabledStates();
         int bits1 = 0;
         for (PlacementPosition.EnabledStates x2 : v0) {
             bits1 |= switch (x2.value()) {
-                case "minecraft:block_face" -> 1;
-                case "minecraft:vertical_half" -> 0;
-                default -> 0;
-            };
+                        case "minecraft:block_face" -> 1;
+                        case "minecraft:vertical_half" -> 0;
+                        default -> 0;
+                    };
         }
         out.put("enabled_states.block_face", Wire.toByte(bits1));
         int bits3 = 0;
         for (PlacementPosition.EnabledStates x4 : v0) {
             bits3 |= switch (x4.value()) {
-                case "minecraft:block_face" -> 0;
-                case "minecraft:vertical_half" -> 1;
-                default -> 0;
-            };
+                        case "minecraft:block_face" -> 0;
+                        case "minecraft:vertical_half" -> 1;
+                        default -> 0;
+                    };
         }
         out.put("enabled_states.vertical_half", Wire.toByte(bits3));
     }

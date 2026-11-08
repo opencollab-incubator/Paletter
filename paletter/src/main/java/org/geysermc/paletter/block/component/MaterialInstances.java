@@ -37,10 +37,17 @@ import org.geysermc.paletter.internal.component.Check;
  * @param west Add-on JSON {@code west}. Optional (null: not set).
  * @param westAlias The string form of &#123;&#64;code west&#125; (alias); excludes &#123;&#64;link #west()&#125;. Add-on JSON
  *        {@code west}.
- * @since 2.0.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.19.40")
-public record MaterialInstances(@Nullable Instance all, @Nullable String allAlias, @Nullable Instance down, @Nullable String downAlias, @Nullable Instance east, @Nullable String eastAlias, @Nullable Instance north, @Nullable String northAlias, @Nullable Instance south, @Nullable String southAlias, @Nullable Instance up, @Nullable String upAlias, @Nullable Instance west, @Nullable String westAlias) implements BlockComponent {
+public record MaterialInstances(MaterialInstances. @Nullable Instance all,
+        @Nullable String allAlias, MaterialInstances. @Nullable Instance down,
+        @Nullable String downAlias, MaterialInstances. @Nullable Instance east,
+        @Nullable String eastAlias, MaterialInstances. @Nullable Instance north,
+        @Nullable String northAlias, MaterialInstances. @Nullable Instance south,
+        @Nullable String southAlias, MaterialInstances. @Nullable Instance up,
+        @Nullable String upAlias, MaterialInstances. @Nullable Instance west,
+        @Nullable String westAlias) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -109,18 +116,31 @@ public record MaterialInstances(@Nullable Instance all, @Nullable String allAlia
      */
     public static final class Builder {
         private @Nullable Instance all;
+
         private @Nullable String allAlias;
+
         private @Nullable Instance down;
+
         private @Nullable String downAlias;
+
         private @Nullable Instance east;
+
         private @Nullable String eastAlias;
+
         private @Nullable Instance north;
+
         private @Nullable String northAlias;
+
         private @Nullable Instance south;
+
         private @Nullable String southAlias;
+
         private @Nullable Instance up;
+
         private @Nullable String upAlias;
+
         private @Nullable Instance west;
+
         private @Nullable String westAlias;
 
         private Builder() {
@@ -307,9 +327,13 @@ public record MaterialInstances(@Nullable Instance all, @Nullable String allAlia
      *        requires a format version of at least 1.21.80. Add-on JSON {@code tint_method}. Optional (null: not set). The
      *        docs give the default false, which is not a value of this type; unset, BDS's behaviour applies.
      */
-    public record Instance(@Nullable Float ambientOcclusion, @Nullable Boolean faceDimming, @BedrockFormat("1.21.80") boolean isotropic, @Nullable RenderMethod renderMethod, @Nullable String texture, @BedrockFormat("1.21.80") @Nullable String tintMethod) {
+    public record Instance(@Nullable Float ambientOcclusion, @Nullable Boolean faceDimming,
+            @BedrockFormat("1.21.80") boolean isotropic, @Nullable RenderMethod renderMethod,
+            @Nullable String texture, @BedrockFormat("1.21.80") @Nullable String tintMethod) {
         public Instance {
-            if (ambientOcclusion != null) Check.range("MaterialInstances.Instance.ambientOcclusion", ambientOcclusion, 0.0, 10.0);
+            if (ambientOcclusion != null) {
+                Check.range("MaterialInstances.Instance.ambientOcclusion", ambientOcclusion, 0.0, 10.0);
+            }
         }
 
         /**
@@ -338,10 +362,15 @@ public record MaterialInstances(@Nullable Instance all, @Nullable String allAlia
          */
         public static final class Builder {
             private @Nullable Float ambientOcclusion;
+
             private @Nullable Boolean faceDimming;
+
             private @Nullable Boolean isotropic = false;
+
             private @Nullable RenderMethod renderMethod;
+
             private @Nullable String texture;
+
             private @Nullable String tintMethod;
 
             private Builder() {
@@ -413,30 +442,37 @@ public record MaterialInstances(@Nullable Instance all, @Nullable String allAlia
          * {@code opaque}
          */
         OPAQUE("opaque"),
+
         /**
          * {@code double_sided}
          */
         DOUBLE_SIDED("double_sided"),
+
         /**
          * {@code blend}
          */
         BLEND("blend"),
+
         /**
          * {@code alpha_test}
          */
         ALPHA_TEST("alpha_test"),
+
         /**
          * {@code alpha_test_single_sided}
          */
         ALPHA_TEST_SINGLE_SIDED("alpha_test_single_sided"),
+
         /**
          * {@code blend_to_opaque}
          */
         BLEND_TO_OPAQUE("blend_to_opaque"),
+
         /**
          * {@code alpha_test_to_opaque}
          */
         ALPHA_TEST_TO_OPAQUE("alpha_test_to_opaque"),
+
         /**
          * {@code alpha_test_single_sided_to_opaque}
          */
