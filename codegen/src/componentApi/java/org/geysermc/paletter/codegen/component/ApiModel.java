@@ -74,7 +74,7 @@ final class ApiModel {
         }
 
         Map<String, String> constants() {
-            Map<String, String> out = new LinkedHashMap<>();
+            Map<String, String> out = new java.util.TreeMap<>();
             if (mapping.has("constants")) {
                 mapping.getAsJsonObject("constants").entrySet().forEach(e -> out.put(e.getKey(), e.getValue().getAsString()));
             }

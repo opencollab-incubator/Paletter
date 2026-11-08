@@ -309,8 +309,14 @@ public final class ComponentGenerator {
             return c.root.fields.stream().filter(f -> of.equals(f.java)).findFirst()
                 .orElseThrow(() -> new GenerationException("api.json forms: " + c.id + " " + form + " is a shorthand of '" + of + "', which is no field"));
         }
-        Window w = c.windows.isEmpty() ? null : c.windows.getLast();
-        Set<String> leaves = w == null || w.form(form) == null ? Set.of() : valueLeaves(w.form(form));
+        // The newest window that observed the form
+        Window w = null;
+        for (Window candidate : c.windows) {
+            if (candidate.form(form) != null) {
+                w = candidate;
+            }
+        }
+        Set<String> leaves = w == null ? Set.of() : valueLeaves(w.form(form));
         if (!leaves.isEmpty()) {
             for (Field f : c.root.fields) {
                 JsonObject fm = w.field(f.path);
@@ -1053,7 +1059,7 @@ public final class ComponentGenerator {
 
     static Map<String, String> whenAbsent(Window w, Field f) {
         JsonObject m = mappingOf(w, f);
-        Map<String, String> out = new LinkedHashMap<>();
+        Map<String, String> out = new TreeMap<>();
         if (m != null && m.has("whenAbsent")) {
             m.getAsJsonObject("whenAbsent").entrySet().forEach(e -> out.put(e.getKey(), e.getValue().getAsString()));
         }

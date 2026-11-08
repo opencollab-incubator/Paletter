@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":paletter"))
     implementation(libs.gson)
     testImplementation(componentApi.output)
+    testImplementation(libs.javapoet)
     // The conformance suite rebuilds the capture add-on's definitions with the spec module
     testImplementation(project(":spec"))
 

@@ -469,7 +469,7 @@ final class WireSource {
                 CodeBlock key = key(t, expr);
                 b.beginControlFlow("switch ($L)", key);
                 JsonObject table = r.getAsJsonObject("table");
-                for (String k : table.keySet()) {
+                for (String k : new TreeSet<>(table.keySet())) {
                     String v = table.get(k).getAsString();
                     if (v.equals("<not sent>")) {
                         b.addStatement("case $S -> $N.remove($S)", k, node, rel);
@@ -492,7 +492,7 @@ final class WireSource {
                 b.beginControlFlow("for ($T $N : $N)", ApiSource.typeName(c, l.element(), true), e, var);
                 CodeBlock.Builder sw = CodeBlock.builder().add("$N |= switch ($L) {\n", bits, stringOf(l.element(), CodeBlock.of("$N", e))).indent();
                 JsonObject table = r.getAsJsonObject("bits");
-                for (String k : table.keySet()) {
+                for (String k : new TreeSet<>(table.keySet())) {
                     sw.add("case $S -> $L;\n", k, table.get(k).getAsLong());
                 }
                 sw.add("default -> 0;\n").unindent().add("}");
