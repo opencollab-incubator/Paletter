@@ -5,11 +5,11 @@ import org.geysermc.paletter.block.BlockFallback;
 import org.geysermc.paletter.item.ItemFallback;
 
 /**
- * What canonical content a version lacks becomes when neither a layer nor the bundled data has a fallback for it.
+ * What canonical content a version lacks becomes when no layer has a fallback for it.
  * <p>
- * Paletter maps every block of the newest version that an older version does not have to {@code minecraft:unknown},
- * and every such item to the {@code minecraft:unknown} item ({@link #UNKNOWN}). Bundled and layer fallbacks
- * ({@code PaletteLayer.Builder#blockFallback}, {@code #itemFallback}) are curated improvements over this default.
+ * Paletter bundles no fallbacks: it maps every block of the newest version that an older version does not have to
+ * {@code minecraft:unknown}, and every such item to the {@code minecraft:unknown} item ({@link #UNKNOWN}). Consumers
+ * define better replacements with layer fallbacks ({@code PaletteLayer.Builder#blockFallback}, {@code #itemFallback}).
  * A layer can change the default for itself and every layer above it with
  * {@code PaletteLayer.Builder#fallbackDefaults}.
  *

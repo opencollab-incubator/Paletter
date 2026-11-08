@@ -45,6 +45,8 @@ import java.util.TreeSet;
  *     stack: {id, damage?, count?, block?: {name, states}, nbt?}
  * item_tags: {tag: [identifier]}
  * fallbacks: {blocks: {name: {target, clear_states, force}}, items: {name: {target, force}}, unmapped: [name]}
+ *                                  optional, and not part of the bundled data (consumers define fallbacks); older
+ *                                  files and custom data sources may still carry it
  * block_defaults: {name: states}   optional
  * experiments: {toggle: {items: [name], blocks: [name], creative: [id or id:damage]}}
  *                                  optional; only written when the version was captured with experiments
@@ -202,6 +204,23 @@ public final class PaletteDataCodec {
         new TreeMap<>(data.itemTags()).forEach((tag, identifiers) -> tags.putList(tag, NbtType.STRING, identifiers));
         root.putCompound("item_tags", tags.build());
 
+        // Bundled data has no fallbacks (consumers define them); only data that carries some writes them
+        if (!data.fallbacks().blocks().isEmpty() || !data.fallbacks().items().isEmpty() || !data.fallbacks().unmapped().isEmpty()) {
+            writeFallbacks(data, root);
+        }
+
+        NbtMapBuilder defaults = NbtMap.builder();
+        new TreeMap<>(data.blockDefaults()).forEach((name, state) -> defaults.putCompound(name, BlockStates.states(state)));
+        root.putCompound("block_defaults", defaults.build());
+
+        writeRest(data, root);
+
+        try (NBTOutputStream output = NbtUtils.createGZIPWriter(stream)) {
+            output.writeTag(root.build());
+        }
+    }
+
+    private static void writeFallbacks(VanillaData data, NbtMapBuilder root) {
         NbtMapBuilder blockFallbacks = NbtMap.builder();
         new TreeMap<>(data.fallbacks().blocks()).forEach((name, fallback) -> blockFallbacks.putCompound(name, NbtMap.builder()
             .putString("target", fallback.target())
@@ -218,11 +237,9 @@ public final class PaletteDataCodec {
             .putCompound("items", itemFallbacks.build())
             .putList("unmapped", NbtType.STRING, new ArrayList<>(new TreeSet<>(data.fallbacks().unmapped())))
             .build());
+    }
 
-        NbtMapBuilder defaults = NbtMap.builder();
-        new TreeMap<>(data.blockDefaults()).forEach((name, state) -> defaults.putCompound(name, BlockStates.states(state)));
-        root.putCompound("block_defaults", defaults.build());
-
+    private static void writeRest(VanillaData data, NbtMapBuilder root) {
         // Only when present, so versions captured without experiments keep their bytes
         if (!data.experiments().isEmpty()) {
             NbtMapBuilder experiments = NbtMap.builder();
@@ -238,10 +255,6 @@ public final class PaletteDataCodec {
             NbtMapBuilder blockItems = NbtMap.builder();
             new TreeMap<>(data.blockItems()).forEach(blockItems::putString);
             root.putCompound("block_items", blockItems.build());
-        }
-
-        try (NBTOutputStream output = NbtUtils.createGZIPWriter(stream)) {
-            output.writeTag(root.build());
         }
     }
 

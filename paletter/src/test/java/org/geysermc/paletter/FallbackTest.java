@@ -3,7 +3,10 @@ package org.geysermc.paletter;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.BlockFallback;
 import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.block.BlockResolution;
+import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.FallbackDefaults;
+import org.geysermc.paletter.data.VersionFallbacks;
 import org.geysermc.paletter.item.ItemFallback;
 import org.geysermc.paletter.item.ItemVariant;
 import org.geysermc.paletter.item.ResolvedItem;
@@ -16,38 +19,32 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Content of the newest version that an older one lacks: bundled fallbacks, the {@code minecraft:unknown} default and
- * the layer API that overrides both.
+ * Content of the newest version that an older one lacks: Paletter bundles no fallbacks, so it is the
+ * {@code minecraft:unknown} default, which the layer API overrides.
  */
 class FallbackTest {
     private static final Paletter PALETTER = Paletter.bundled();
     private static final int OLDEST = 2168;
 
-    /** A canonical block of the newest version that the oldest lacks and that has no bundled fallback there. */
+    /** A canonical block of the newest version that the oldest lacks. */
     private static int blockWithoutFallback(Palette palette) {
-        for (int i = 0; i < palette.canonicalBlockCount(); i++) {
-            String name = BlockStates.name(palette.canonicalBlocks().state(i));
-            if (!palette.blocks().contains(name) && !palette.blocks().fallbacks().containsKey(name)) {
-                return i;
-            }
-        }
-        throw new AssertionError("every missing block has a bundled fallback; pick another fixture");
+        return missingBlock(palette, null);
     }
 
-    /** A canonical block of the newest version that the oldest lacks and that has a bundled fallback there. */
-    private static int blockWithFallback(Palette palette) {
+    /** A canonical block of the newest version that the oldest lacks, of another block than {@code other}. */
+    private static int missingBlock(Palette palette, String other) {
         for (int i = 0; i < palette.canonicalBlockCount(); i++) {
             String name = BlockStates.name(palette.canonicalBlocks().state(i));
-            if (!palette.blocks().contains(name) && palette.blocks().fallbacks().containsKey(name)) {
+            if (!palette.blocks().contains(name) && !name.equals(other)) {
                 return i;
             }
         }
-        throw new AssertionError("no bundled block fallback in the oldest version");
+        throw new AssertionError("fixture: the oldest version lacks blocks of the newest");
     }
 
     /**
-     * A canonical item of the newest version that the oldest lacks. Every one of them has a bundled fallback, so
-     * {@link #broken} points it at nothing to get an item without a usable fallback.
+     * A canonical item of the newest version that the oldest lacks. {@link #broken} points it at nothing, which
+     * keeps the test independent of other fallbacks.
      */
     private static int missingItem(Palette palette) {
         for (int i = 0; i < palette.canonicalItemCount(); i++) {
@@ -78,18 +75,31 @@ class FallbackTest {
     }
 
     @Test
-    void bundledFallbacksWinOverTheDefault() {
+    void nothingIsBundled() {
+        for (DataVersion version : PALETTER.versions()) {
+            VersionFallbacks fallbacks = PALETTER.vanillaData(version).fallbacks();
+            assertTrue(fallbacks.blocks().isEmpty() && fallbacks.items().isEmpty() && fallbacks.unmapped().isEmpty(), version.toString());
+        }
         Palette palette = PALETTER.palette(OLDEST);
-        int block = blockWithFallback(palette);
-        String name = BlockStates.name(palette.canonicalBlocks().state(block));
-        assertEquals(palette.blocks().fallbacks().get(name).target(), BlockStates.name(palette.block(block).getState()));
+        assertTrue(palette.blocks().fallbacks().isEmpty());
     }
 
     @Test
-    void layerFallbacksOverrideBundledOnesPerVersion() {
+    void layerFallbacksAreHowConsumersReplaceTheDefault() {
+        Palette palette = PALETTER.palette(OLDEST);
+        int block = blockWithoutFallback(palette);
+        String name = BlockStates.name(palette.canonicalBlocks().state(block));
+        assertEquals("minecraft:unknown", BlockStates.name(palette.block(block).getState()));
+        Palette layered = PALETTER.palette(OLDEST, PaletteLayer.builder("fallback").blockFallback(name, BlockFallback.of("minecraft:dirt")).build());
+        assertEquals("minecraft:dirt", BlockStates.name(layered.block(block).getState()));
+        assertEquals(BlockResolution.Kind.FALLBACK, layered.explain(palette.canonicalBlocks().state(block)).kind());
+    }
+
+    @Test
+    void layerFallbacksApplyPerVersion() {
         Palette vanilla = PALETTER.palette(OLDEST);
-        int block = blockWithFallback(vanilla);
-        int missing = blockWithoutFallback(vanilla);
+        int block = blockWithoutFallback(vanilla);
+        int missing = missingBlock(vanilla, BlockStates.name(vanilla.canonicalBlocks().state(block)));
         String name = BlockStates.name(vanilla.canonicalBlocks().state(block));
         String missingName = BlockStates.name(vanilla.canonicalBlocks().state(missing));
         String oldest = vanilla.version().name();

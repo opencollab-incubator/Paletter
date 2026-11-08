@@ -271,7 +271,13 @@ class CanonicalTest {
     @Test
     void missingCanonicalContentIsReported() {
         Palette oldest = PALETTER.vanilla(PALETTER.version(OLDEST));
-        assertEquals(30, oldest.blocks().missingCanonical().size());
+        // No fallbacks are bundled: every state of a block the oldest version lacks is without a block there
+        long lacking = PALETTER.vanillaData(PALETTER.latest()).blockStates().stream()
+            .filter(state -> !oldest.blocks().contains(BlockStates.name(state))).count();
+        assertTrue(lacking > 0);
+        assertTrue(oldest.blocks().missingCanonical().size() >= lacking, oldest.blocks().missingCanonical().size() + " vs " + lacking);
+        assertEquals(lacking, oldest.blocks().missingCanonical().stream()
+            .filter(state -> !oldest.blocks().contains(BlockStates.name(state))).count());
         assertTrue(oldest.report().entries().stream().anyMatch(entry -> entry.source().equals("canonical")
             && entry.message().contains("canonical block states")), oldest.report().entries().toString());
         assertTrue(oldest.report().entries().stream().anyMatch(entry -> entry.source().equals("canonical")

@@ -45,7 +45,7 @@ import java.util.concurrent.Callable;
  */
 @Command(name = "paletter-tools", mixinStandardHelpOptions = true, subcommands = {
     Cli.Import.class, Cli.BdsRun.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.SpecCaptureCommand.class,
-    Cli.VerifyCommand.class, Cli.CheckData.class, Cli.BlockItemsCommand.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class,
+    Cli.VerifyCommand.class, Cli.CheckData.class, Cli.BlockItemsCommand.class, Cli.RewriteCommand.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
     Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class
@@ -81,7 +81,7 @@ public final class Cli implements Runnable {
     // Bundled data and BDS
 
     @Command(name = "import", description = "Converts a palette dump (CloudburstMC/Data layout, as produced from BDS) into the bundled format. "
-        + "Fallbacks are read from data/fallbacks/NAME.json if present.")
+        + "Paletter bundles no fallbacks. With --bds-dump the block to item relation, item tags and block defaults are imported too.")
     static final class Import extends Rooted implements Callable<Integer> {
         @Option(names = "--source", required = true) Path source;
         @Option(names = "--name", required = true, description = "Version name, e.g. 26.60") String name;
@@ -91,7 +91,7 @@ public final class Cli implements Runnable {
 
         @Override
         public Integer call() throws Exception {
-            new Importer(resources(), root().resolve(Layout.FALLBACKS)).run(source, name, protocol, itemTags, bdsDump);
+            new Importer(resources()).run(source, name, protocol, itemTags, bdsDump);
             return 0;
         }
     }
@@ -120,6 +120,25 @@ public final class Cli implements Runnable {
             PaletteDataCodec.write(data.withBlockItems(relation), bytes);
             Files.write(file, bytes.toByteArray());
             System.out.println("Wrote " + file + " with " + relation.size() + " block to item entries");
+            return 0;
+        }
+    }
+
+    @Command(name = "rewrite", description = "Reads bundled data NAME and writes it again without fallbacks (Paletter bundles none; the codec still reads them from older files).")
+    static final class RewriteCommand extends Rooted implements Callable<Integer> {
+        @Option(names = "--name", required = true, split = ",") List<String> names;
+
+        @Override
+        public Integer call() throws Exception {
+            for (String name : names) {
+                Path file = resources().resolve(name + ".nbt");
+                java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
+                VanillaData data = readPalette(file);
+                PaletteDataCodec.write(new VanillaData(data.version(), data.blockStates(), data.items(), data.dataDrivenBlocks(), data.creative(),
+                    data.itemTags(), org.geysermc.paletter.data.VersionFallbacks.NONE, data.blockDefaults(), data.experiments(), data.blockItems()), bytes);
+                Files.write(file, bytes.toByteArray());
+                System.out.println("Rewrote " + file);
+            }
             return 0;
         }
     }
@@ -262,8 +281,8 @@ public final class Cli implements Runnable {
         }
     }
 
-    @Command(name = "check-data", description = "Verifies the bundled data: every block and item of the newest version that is missing in an older "
-        + "version needs a fallback there, and every fallback target must exist. Exits with 1 on problems.")
+    @Command(name = "check-data", description = "Lists what older bundled versions lack of the newest one: new content falls back to unknown "
+        + "unless a consumer defines a fallback (Paletter bundles none), and content older versions only have behind an experiment toggle. Exits with 1 on problems of the data.")
     static final class CheckData extends Rooted implements Callable<Integer> {
         @Override
         public Integer call() throws Exception {

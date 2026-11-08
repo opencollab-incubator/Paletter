@@ -84,7 +84,6 @@ public final class Update {
 
     private final Path root;
     private final Path resources;
-    private final Path fallbacks;
     private final Path bdsData;
     private final Map<String, String> options;
     private final boolean preview;
@@ -98,7 +97,6 @@ public final class Update {
     public Update(Path root, Map<String, String> options) {
         this.root = root;
         this.resources = root.resolve("paletter/src/main/resources/paletter");
-        this.fallbacks = root.resolve(Layout.FALLBACKS);
         this.bdsData = root.resolve(Layout.BDS);
         this.options = options;
         String channel = options.getOrDefault("channel", "release");
@@ -842,7 +840,7 @@ public final class Update {
 
     /**
      * New blocks and items an older bundled version lacks fall back to {@code minecraft:unknown} there (Paletter's
-     * default). Lists them per fallback file as INFO: candidates for a curated fallback, no decision required.
+     * default; it bundles no fallbacks). Lists them per version as INFO: what a consumer may want to define a fallback for.
      */
     private void fallbackTodos(List<String> blocks, List<String> items, String source) throws IOException {
         List<String> lines = new ArrayList<>();
@@ -855,32 +853,23 @@ public final class Update {
             data.blockStates().forEach(state -> knownBlocks.add(BlockStates.name(state)));
             Set<String> knownItems = new TreeSet<>();
             data.items().forEach(item -> knownItems.add(item.identifier()));
-            VersionFallbacksView existing = new VersionFallbacksView(Importer.readFallbacks(fallbacks.resolve(entry.name() + ".json")));
-            List<String> needBlocks = identifiers(blocks).stream()
-                .filter(id -> !knownBlocks.contains(id) && !existing.covers(id, true)).toList();
-            List<String> needItems = identifiers(items).stream()
-                .filter(id -> !knownItems.contains(id) && !existing.covers(id, false)).toList();
+            List<String> needBlocks = identifiers(blocks).stream().filter(id -> !knownBlocks.contains(id)).toList();
+            List<String> needItems = identifiers(items).stream().filter(id -> !knownItems.contains(id)).toList();
             if (!needBlocks.isEmpty() || !needItems.isEmpty()) {
-                lines.add("- `data/fallbacks/" + entry.name() + ".json`: "
+                lines.add("- " + entry.name() + ": "
                     + (needBlocks.isEmpty() ? "" : needBlocks.size() + " blocks " + code(needBlocks))
                     + (needBlocks.isEmpty() || needItems.isEmpty() ? "" : "; ")
                     + (needItems.isEmpty() ? "" : needItems.size() + " items " + code(needItems)));
             }
         }
         if (!lines.isEmpty()) {
-            report.check(Report.Status.INFO, "Fallbacks", "new content falls back to minecraft:unknown in older versions ("
-                + source + "); curated fallbacks are optional, see the list");
-            List<String> section = new ArrayList<>(List.of("Without a curated fallback these fall back to `minecraft:unknown` "
-                + "(block and item) in the older version. Add a target to the file for a better replacement; nothing is required.", ""));
+            report.check(Report.Status.INFO, "Fallbacks", "new content falls back to unknown in older versions unless a consumer defines a fallback ("
+                + source + "), see the list");
+            List<String> section = new ArrayList<>(List.of("Paletter bundles no fallbacks: these fall back to `minecraft:unknown` "
+                + "(block and item) in the older version unless a consumer defines a fallback "
+                + "(`PaletteLayer.Builder#blockFallback` / `#itemFallback`). Nothing is required here.", ""));
             section.addAll(lines);
-            report.section("Fallbacks (" + source + "): content that falls back to minecraft:unknown", section);
-        }
-    }
-
-    private record VersionFallbacksView(org.geysermc.paletter.data.VersionFallbacks fallbacks) {
-        boolean covers(String identifier, boolean block) {
-            return fallbacks.unmapped().contains(identifier)
-                || (block ? fallbacks.blocks().containsKey(identifier) : fallbacks.items().containsKey(identifier));
+            report.section("Fallbacks (" + source + "): content that falls back to unknown", section);
         }
     }
 
@@ -899,7 +888,7 @@ public final class Update {
         // The capture in the bundled format, imported into a scratch directory
         Path scratch = staging.directory.resolveSibling("imported");
         Files.createDirectories(scratch);
-        new Importer(scratch, fallbacks).run(runs.vanilla, name, runs.protocol, null, runs.dumpLog);
+        new Importer(scratch).run(runs.vanilla, name, runs.protocol, null, runs.dumpLog);
         VanillaData captured = read(scratch.resolve(name + ".nbt"));
         runs.imported = scratch.resolve(name + ".nbt");
 
@@ -917,7 +906,7 @@ public final class Update {
             }
             // Refresh what comes from the Script API (item tags, block defaults); keep the network data
             VanillaData refreshed = new VanillaData(bundled.version(), bundled.blockStates(), bundled.items(), bundled.dataDrivenBlocks(),
-                bundled.creative(), captured.itemTags(), Importer.readFallbacks(fallbacks.resolve(name + ".json")), captured.blockDefaults(), bundled.experiments(),
+                bundled.creative(), captured.itemTags(), bundled.fallbacks(), captured.blockDefaults(), bundled.experiments(),
                 captured.blockItems());
             Diff bds = Diff.vanilla(bundled, refreshed, false, true);
             report.check(bds.identical() ? Report.Status.PASS : Report.Status.DIFF, "Item tags and block defaults vs bundled " + name,
@@ -932,12 +921,10 @@ public final class Update {
             report.diff("What changed: " + name + " (BDS " + distribution.version() + ") vs bundled " + latest.name(), diff);
             fallbackTodos(diff.lines("new blocks"), diff.lines("new items"), "network");
             if (!preview || importPreview) {
-                new Importer(staging.resources, fallbacks).run(runs.vanilla, name, runs.protocol, null, runs.dumpLog, preview);
+                new Importer(staging.resources).run(runs.vanilla, name, runs.protocol, null, runs.dumpLog, preview);
                 report.check(Report.Status.INFO, "Import", "imported " + name + " (" + runs.protocol + ")" + (preview ? " as a PREVIEW version" : ""));
-                Map<String, List<String>> problems = new Checker(staging.resources).problems(preview);
-                // Content without a curated fallback is listed above (INFO); broken or unused fallbacks need fixing
-                problems.forEach((version, list) -> list.forEach(problem ->
-                    report.todos.add("`data/fallbacks/" + version + ".json`: " + problem)));
+                // Content older versions lack is listed above (INFO); there are no bundled fallbacks to check
+                new Checker(staging.resources).problems(preview);
             } else {
                 report.check(Report.Status.INFO, "Import", "preview not imported (pass --import-preview to bundle it as a preview version)");
             }

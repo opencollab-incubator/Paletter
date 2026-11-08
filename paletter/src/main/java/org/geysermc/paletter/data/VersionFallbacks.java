@@ -10,8 +10,10 @@ import java.util.Set;
 /**
  * Replacements for blocks and items of the newest bundled version, for an older version that lacks them.
  * <p>
- * Consumers only ever map against the newest Bedrock version; these fallbacks are what lets a single mapping
- * serve every supported version. Added or removed block states need no entries: they are adapted automatically.
+ * The bundled data carries none (consumers define fallbacks with {@code PaletteLayer.Builder#blockFallback} and
+ * {@code #itemFallback}; Paletter only falls back to {@code minecraft:unknown}); the type stays for data sources that
+ * provide some, and files of older Paletter releases that still contain them. Added or removed block states need no
+ * entries: they are adapted automatically.
  *
  * @param blocks block identifier to its replacement
  * @param items item identifier to its replacement

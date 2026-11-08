@@ -4,7 +4,6 @@ package org.geysermc.paletter.tools;
 public final class Layout {
     /** The component model and the generators' inputs: components.json, mappings.json, names.json, ... */
     public static final String MODEL = "data/model";
-    public static final String FALLBACKS = "data/fallbacks";
     /** One directory per BDS version: captures, Script API dump, experiment record, report. */
     public static final String BDS = "data/bds";
     /** The add-on packs the tooling runs on BDS. */

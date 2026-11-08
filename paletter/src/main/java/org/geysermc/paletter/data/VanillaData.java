@@ -17,7 +17,7 @@ import java.util.Map;
  * @param dataDrivenBlocks block property data of vanilla data driven blocks, sent in the start game packet
  * @param creative the vanilla creative inventory layout
  * @param itemTags vanilla item tags: tag to item identifiers
- * @param fallbacks replacements for content that only exists in newer versions
+ * @param fallbacks replacements for content that only exists in newer versions; empty in the bundled data
  * @param blockDefaults default state of each block as {@code {name, states}}; may be empty if the dump did not include
  *                      them, in which case a block's first state is its default
  * @param experiments content gated behind an experiment toggle in this version, by toggle id (e.g.

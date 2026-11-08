@@ -8,7 +8,6 @@ import com.google.gson.JsonParser;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
-import org.geysermc.paletter.block.BlockFallback;
 import org.geysermc.paletter.block.BlockStates;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeGroup;
@@ -20,7 +19,6 @@ import org.geysermc.paletter.data.PaletteDataCodec;
 import org.geysermc.paletter.data.VanillaData;
 import org.geysermc.paletter.data.VanillaItem;
 import org.geysermc.paletter.data.VersionFallbacks;
-import org.geysermc.paletter.item.ItemFallback;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,8 +28,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.EnumMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,11 +50,9 @@ import java.util.TreeSet;
  */
 public final class Importer {
     private final Path output;
-    private final Path fallbacksDirectory;
 
-    public Importer(Path output, Path fallbacksDirectory) {
+    public Importer(Path output) {
         this.output = output;
-        this.fallbacksDirectory = fallbacksDirectory;
     }
 
     public void run(Path source, String name, int protocol, Path itemTagsFile, Path bdsDump) throws IOException {
@@ -91,18 +85,17 @@ public final class Importer {
         if (itemTagsFile != null) {
             tags = readItemTags(itemTagsFile);
         }
-        VersionFallbacks fallbacks = readFallbacks(fallbacksDirectory.resolve(name + ".json"));
 
         Map<String, String> blockItems = bdsDump == null ? Map.of() : blockItems(BdsDump.read(bdsDump), blocks, items);
-        VanillaData data = new VanillaData(version, blocks, items, dataDriven, creative, tags, fallbacks, defaults, Map.of(), blockItems);
+        VanillaData data = new VanillaData(version, blocks, items, dataDriven, creative, tags, VersionFallbacks.NONE, defaults, Map.of(), blockItems);
         Files.createDirectories(output);
         try (OutputStream stream = Files.newOutputStream(output.resolve(name + ".nbt"))) {
             PaletteDataCodec.write(data, stream);
         }
         updateIndex(version, preview);
-        System.out.printf("Wrote %s: %d block states, %d items, %d data driven blocks, %d creative stacks, %d item tags, %d block fallbacks, %d item fallbacks, %d block defaults%n",
+        System.out.printf("Wrote %s: %d block states, %d items, %d data driven blocks, %d creative stacks, %d item tags, %d block defaults, %d blocks with an item%n",
             version, blocks.size(), items.size(), dataDriven.size(), creative.stacks().count(), tags.size(),
-            fallbacks.blocks().size(), fallbacks.items().size(), defaults.size());
+            defaults.size(), blockItems.size());
     }
 
     /**
@@ -300,63 +293,6 @@ public final class Importer {
             tags.put(entry.getKey(), items);
         });
         return tags;
-    }
-
-    /**
-     * Fallback files map identifiers of the newest version to replacements in this one:
-     * <pre>{@code
-     * {
-     *   "blocks": {
-     *     "minecraft:poplar_log": "minecraft:pale_oak_log",
-     *     "minecraft:straw_bed": {"target": "minecraft:yellow_carpet", "clear_states": true},
-     *     "minecraft:disc_press": null
-     *   },
-     *   "items": {"minecraft:poplar_boat": {"target": "minecraft:pale_oak_boat", "force": true}}
-     * }
-     * }</pre>
-     * {@code null} acknowledges that something has no fallback on purpose. {@code force} replaces things that do
-     * exist in the version, but are only usable with an experiment enabled.
-     */
-    public static VersionFallbacks readFallbacks(Path file) throws IOException {
-        if (Files.notExists(file)) {
-            return VersionFallbacks.NONE;
-        }
-        JsonObject root = readJson(file).getAsJsonObject();
-        Set<String> unmapped = new LinkedHashSet<>();
-        Map<String, BlockFallback> blocks = new LinkedHashMap<>();
-        if (root.has("blocks")) {
-            for (Map.Entry<String, JsonElement> entry : root.getAsJsonObject("blocks").entrySet()) {
-                JsonElement value = entry.getValue();
-                if (value.isJsonNull()) {
-                    unmapped.add(entry.getKey());
-                } else if (value.isJsonPrimitive()) {
-                    blocks.put(entry.getKey(), BlockFallback.of(value.getAsString()));
-                } else {
-                    JsonObject object = value.getAsJsonObject();
-                    blocks.put(entry.getKey(), new BlockFallback(object.get("target").getAsString(),
-                        flag(object, "clear_states"), flag(object, "force")));
-                }
-            }
-        }
-        Map<String, ItemFallback> items = new LinkedHashMap<>();
-        if (root.has("items")) {
-            for (Map.Entry<String, JsonElement> entry : root.getAsJsonObject("items").entrySet()) {
-                JsonElement value = entry.getValue();
-                if (value.isJsonNull()) {
-                    unmapped.add(entry.getKey());
-                } else if (value.isJsonPrimitive()) {
-                    items.put(entry.getKey(), ItemFallback.of(value.getAsString()));
-                } else {
-                    JsonObject object = value.getAsJsonObject();
-                    items.put(entry.getKey(), new ItemFallback(object.get("target").getAsString(), flag(object, "force")));
-                }
-            }
-        }
-        return new VersionFallbacks(blocks, items, unmapped);
-    }
-
-    private static boolean flag(JsonObject object, String name) {
-        return object.has(name) && object.get(name).getAsBoolean();
     }
 
     /**

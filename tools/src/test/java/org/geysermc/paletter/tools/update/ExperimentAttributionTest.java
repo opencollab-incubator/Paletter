@@ -106,34 +106,25 @@ class ExperimentAttributionTest {
     }
 
     @Test
-    void checkerWantsForceFallbacksForContentGatedOnlyInOlderVersions() {
+    void checkerListsContentGatedOnlyInOlderVersions() {
         VanillaData latest = data("27.0", Map.of(), VersionFallbacks.NONE);
         ExperimentContent drop = new ExperimentContent(List.of("minecraft:icicle"), List.of("minecraft:icicle"), List.of());
         VanillaData older = data("26.60", Map.of("y_2026_drop_4", drop), VersionFallbacks.NONE);
-        List<String> problems = new ArrayList<>();
-        Checker.experimentProblems(older, latest, Set.of("minecraft:stone", "minecraft:icicle"), Set.of("minecraft:stone", "minecraft:icicle"), problems);
-        assertEquals(2, problems.size(), problems.toString());
-        assertTrue(problems.getFirst().contains("block minecraft:icicle is behind [y_2026_drop_4]"));
-
-        // Acknowledged: force fallbacks (items), unmapped (blocks)
-        VanillaData covered = data("26.60", Map.of("y_2026_drop_4", drop), new VersionFallbacks(Map.of(),
-            Map.of("minecraft:icicle", new ItemFallback("minecraft:stone", true)), Set.of("minecraft:icicle")));
-        problems.clear();
-        Checker.experimentProblems(covered, latest, Set.of("minecraft:stone", "minecraft:icicle"), Set.of("minecraft:stone", "minecraft:icicle"), problems);
-        assertEquals(List.of(), problems);
+        assertEquals(List.of("block minecraft:icicle (y_2026_drop_4)", "item minecraft:icicle (y_2026_drop_4)"), Checker.gatedContent(older, latest));
 
         // Still gated in the newest version: nothing to do
-        problems.clear();
-        Checker.experimentProblems(older, data("27.0", Map.of("y_2026_drop_4", drop), VersionFallbacks.NONE),
-            Set.of("minecraft:stone", "minecraft:icicle"), Set.of("minecraft:stone", "minecraft:icicle"), problems);
-        assertEquals(List.of(), problems);
+        assertEquals(List.of(), Checker.gatedContent(older, data("27.0", Map.of("y_2026_drop_4", drop), VersionFallbacks.NONE)));
+        // No experiment marks: nothing known
+        assertEquals(List.of(), Checker.gatedContent(data("26.60", Map.of(), VersionFallbacks.NONE), latest));
+    }
 
-        // A force fallback for content that is not gated is unused
-        VanillaData forced = data("26.60", Map.of("y_2026_drop_4", drop), new VersionFallbacks(Map.of(),
-            Map.of("minecraft:stone", new ItemFallback("minecraft:icicle", true)), Set.of("minecraft:icicle")));
-        problems.clear();
-        Checker.experimentProblems(forced, latest, Set.of("minecraft:stone", "minecraft:icicle"), Set.of("minecraft:stone", "minecraft:icicle"), problems);
-        assertTrue(problems.stream().anyMatch(p -> p.startsWith("force item fallback minecraft:stone")), problems.toString());
+    @Test
+    void checkerListsContentOlderVersionsLack() {
+        VanillaData latest = data("27.0", Map.of(), VersionFallbacks.NONE);
+        VanillaData older = new VanillaData(new DataVersion("26.50", 1), List.of(BlockStates.of("minecraft:stone", NbtMap.EMPTY)),
+            List.of(new VanillaItem("minecraft:stone", 1, 2, false, null)), List.of(), CreativeLayout.of(Map.of()), Map.of(),
+            VersionFallbacks.NONE, Map.of(), Map.of());
+        assertEquals(List.of("block minecraft:icicle", "item minecraft:icicle"), Checker.missing(older, latest));
     }
 
     private static VanillaData data(String name, Map<String, ExperimentContent> experiments, VersionFallbacks fallbacks) {
