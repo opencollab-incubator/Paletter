@@ -1,5 +1,6 @@
 package org.geysermc.paletter.item;
 
+import org.geysermc.paletter.internal.CanonicalItems;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -139,6 +140,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     /**
      * @return the canonical item ids this palette resolves
      */
+@Internal
     public @NonNull CanonicalItems canonical() {
         return canonical;
     }
@@ -280,6 +282,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
      * @return the resolved item, or null if the item does not exist in this version and has no fallback
      * @throws IndexOutOfBoundsException if the id is not one of {@link #canonical()}
      */
+@Internal
     public @Nullable ResolvedItem item(int canonical) {
         return canonicalTable().items[canonical];
     }
@@ -298,6 +301,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
      * @return the canonical id, or -1 for air, an unknown definition, an item that is no variant of the newest version,
      *         or a stack shared by the fallbacks of several canonical ids
      */
+@Internal
     public int match(@NonNull ItemData data) {
         ItemDefinition definition = data.getDefinition();
         if (definition == null || definition == ItemDefinition.AIR) {
@@ -333,6 +337,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
      * @return the canonical variants that do not exist in this version and have no fallback of their own: they use the
      *         default fallback ({@link #defaultFallback()}), or {@link #item(int)} is null without one
      */
+@Internal
     public @NonNull List<ItemVariant> missingCanonical() {
         return canonicalTable().missing;
     }
@@ -349,6 +354,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     /**
      * Builds the canonical tables now instead of on first use. Called by the palette compiler.
      */
+@Internal
     public void prepareCanonical() {
         canonicalTable();
     }

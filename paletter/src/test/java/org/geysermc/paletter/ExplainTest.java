@@ -20,15 +20,15 @@ class ExplainTest {
     void exactBlock() {
         Palette palette = PALETTER.vanilla(PALETTER.latest(), BlockNetworkIds.HASHED);
         BlockExplanation explanation = palette.explain(BlockStates.of("minecraft:stone"));
-        int canonical = PALETTER.canonicalBlock(BlockStates.of("minecraft:stone"));
-        assertEquals(canonical, explanation.canonical());
+        int canonical = Ids.block(PALETTER, BlockStates.of("minecraft:stone"));
+        assertNotNull(explanation.handle());
         assertEquals(BlockResolution.Kind.EXACT, explanation.kind());
-        assertEquals(palette.runtimeId(canonical), explanation.runtimeId());
+        assertEquals(Ids.runtimeId(palette, canonical), explanation.runtimeId());
         assertEquals(explanation.runtimeId(), explanation.hashedId());
         String text = explanation.toString();
         assertTrue(text.contains("minecraft:stone"), text);
         assertTrue(text.contains("exact"), text);
-        assertTrue(text.contains("canonical id: " + canonical), text);
+        assertTrue(text.contains("handle:       minecraft:stone"), text);
     }
 
     @Test
@@ -36,12 +36,12 @@ class ExplainTest {
         Palette oldest = PALETTER.vanilla(PALETTER.versions().getFirst(), BlockNetworkIds.SEQUENTIAL);
         Palette newest = PALETTER.vanilla(PALETTER.latest(), BlockNetworkIds.SEQUENTIAL);
         boolean found = false;
-        for (int i = 0; i < newest.canonicalBlockCount() && !found; i++) {
-            BlockExplanation explanation = oldest.explain(newest.canonicalBlocks().state(i));
+        for (int i = 0; i < Ids.blockCount(newest) && !found; i++) {
+            BlockExplanation explanation = oldest.explain(Ids.canonicalBlocks(newest).state(i));
             if (explanation.kind() == BlockResolution.Kind.FALLBACK || explanation.kind() == BlockResolution.Kind.DEFAULT) {
                 found = true;
-                assertEquals(i, explanation.canonical());
-                assertEquals(oldest.runtimeId(i), explanation.runtimeId());
+                assertNotNull(explanation.handle());
+                assertEquals(Ids.runtimeId(oldest, i), explanation.runtimeId());
                 assertNotNull(explanation.sent());
                 assertTrue(explanation.toString().contains(explanation.kind().name().toLowerCase()));
                 if (explanation.kind() == BlockResolution.Kind.FALLBACK) {
@@ -57,7 +57,7 @@ class ExplainTest {
     void items() {
         Palette palette = PALETTER.vanilla(PALETTER.latest(), BlockNetworkIds.HASHED);
         ItemExplanation apple = palette.explain(BedrockItems.APPLE.base());
-        assertEquals(palette.canonicalItem(BedrockItems.APPLE), apple.canonical());
+        assertNotNull(apple.handle());
         assertEquals(BlockResolution.Kind.EXACT, apple.kind());
         assertEquals("minecraft:apple", apple.item());
         assertNull(apple.block());
@@ -68,7 +68,7 @@ class ExplainTest {
         assertTrue(stone.toString().contains("block:"), stone.toString());
 
         ItemExplanation unknown = palette.explain(ItemVariant.of("minecraft:potion", 9999));
-        assertEquals(-1, unknown.canonical());
+        assertNull(unknown.handle());
         assertNull(unknown.creative());
         assertTrue(unknown.toString().contains("not in the creative inventory"), unknown.toString());
         assertFalse(apple.toString().isEmpty());

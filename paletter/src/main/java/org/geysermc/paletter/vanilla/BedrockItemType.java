@@ -3,7 +3,7 @@ package org.geysermc.paletter.vanilla;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.Internal;
-import org.geysermc.paletter.item.CanonicalItems;
+import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.ItemVariant;
 

@@ -1,9 +1,10 @@
 package org.geysermc.paletter.vanilla;
 
+import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.Internal;
-import org.geysermc.paletter.item.CanonicalItems;
+import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.item.ItemVariant;
 
 import java.util.Objects;
@@ -26,6 +27,35 @@ public final class BedrockItemVariant {
         this.damage = damage;
         this.blockState = blockState;
         this.id = id;
+    }
+
+    /**
+     * Plumbing of {@link org.geysermc.paletter.Palette}: the handle of a canonical id.
+     *
+     * @return the variant of a canonical id (not null for an id in range)
+     */
+    @Internal
+    public static @NonNull BedrockItemVariant fromCanonical(@NonNull CanonicalItems canonical, @NonNull CanonicalBlocks blocks, int id) {
+        VanillaIndex index = VanillaIndex.get();
+        if (id < canonical.vanillaSize() && canonical.root() == index.items) {
+            return index.itemsByCanonical[id];
+        }
+        ItemVariant variant = canonical.variant(id);
+        BedrockItemType type = BedrockItemType.vanilla(variant.identifier());
+        BedrockBlockState state = null;
+        if (variant.blockState() != null) {
+            state = BedrockBlockState.fromCanonical(blocks, blocks.index(variant.blockState()));
+        }
+        if (type != null) {
+            for (BedrockItemVariant known : type.variants()) {
+                if (known.damage() == variant.damage() && Objects.equals(known.blockState(), state)) {
+                    return known;
+                }
+            }
+        } else {
+            type = BedrockItemType.custom(variant.identifier());
+        }
+        return new BedrockItemVariant(type, variant.damage(), state, -1);
     }
 
     public @NonNull BedrockItemType type() {
@@ -57,7 +87,7 @@ public final class BedrockItemVariant {
      */
     @Internal
     public int canonicalIn(@NonNull CanonicalItems canonical) {
-        if (id >= 0 && canonical.extendsOrIs(VanillaIndex.get().items)) {
+        if (id >= 0 && canonical.root() == VanillaIndex.get().items) {
             return id;
         }
         return canonical.index(toItemVariant());

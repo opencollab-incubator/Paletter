@@ -76,8 +76,8 @@ class BenchmarkTest {
                 long t1 = System.nanoTime();
                 Palette palette = paletter.palette(version.protocolVersion(), mode, shared);
                 long t2 = System.nanoTime();
-                palette.runtimeId(0);
-                palette.item(0);
+                Ids.runtimeId(palette, 0);
+                Ids.itemAt(palette, 0);
                 long t3 = System.nanoTime();
                 keep.add(vanilla);
                 keep.add(palette);
@@ -92,8 +92,8 @@ class BenchmarkTest {
         Palette base = paletter.palette(paletter.latest().protocolVersion(), BlockNetworkIds.HASHED, shared);
         long t0 = System.nanoTime();
         Palette session = base.extend(sessionLayer());
-        session.runtimeId(0);
-        session.item(0);
+        Ids.runtimeId(session, 0);
+        Ids.itemAt(session, 0);
         long sessionTime = System.nanoTime() - t0;
         keep.add(session);
         long afterSession = usedHeap(memory);
@@ -102,37 +102,37 @@ class BenchmarkTest {
             (afterSession - afterPalettes) / 1e6, (afterSession - before) / 1e6));
 
         // Hot paths
-        int blocks = base.canonicalBlockCount();
+        int blocks = Ids.blockCount(base);
         long sum = 0;
         for (int warmup = 0; warmup < 20; warmup++) {
             for (int i = 0; i < blocks; i++) {
-                sum += base.runtimeId(i);
+                sum += Ids.runtimeId(base, i);
             }
         }
         int rounds = 200;
         long b0 = System.nanoTime();
         for (int r = 0; r < rounds; r++) {
             for (int i = 0; i < blocks; i++) {
-                sum += base.runtimeId(i);
+                sum += Ids.runtimeId(base, i);
             }
         }
         double blockNs = (System.nanoTime() - b0) / (double) (rounds * blocks);
 
-        int items = base.canonicalItemCount();
+        int items = Ids.itemCount(base);
         ItemData[] stacks = new ItemData[items];
         for (int i = 0; i < items; i++) {
-            ResolvedItem item = base.item(i);
+            ResolvedItem item = Ids.itemAt(base, i);
             stacks[i] = item == null ? ItemData.AIR : item.toItemData().build();
         }
         for (int warmup = 0; warmup < 20; warmup++) {
             for (ItemData stack : stacks) {
-                sum += base.match(stack);
+                sum += Ids.match(base, stack);
             }
         }
         long m0 = System.nanoTime();
         for (int r = 0; r < rounds; r++) {
             for (ItemData stack : stacks) {
-                sum += base.match(stack);
+                sum += Ids.match(base, stack);
             }
         }
         double matchNs = (System.nanoTime() - m0) / (double) (rounds * items);

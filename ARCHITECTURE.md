@@ -10,8 +10,8 @@ what is API in [API.md](API.md), the commands in [tools/README.md](tools/README.
 
 | Stage | Does | Owned by |
 |---|---|---|
-| 1. blocks | Vanilla states of the version, custom blocks and their properties, block fallbacks, network ids (sequential or hashed), canonical table | `BlockPalette` (+ `CanonicalBlocks`, `BlockInterner`, `BlockNetworkIds`); custom blocks are encoded by `internal.component.BlockCompiler` |
-| 2. items | Vanilla item definitions, custom items, overrides, item fallbacks, block items (`ItemPalette#blockOf`, decided from the bundled block to item relation first), tags, canonical table | `ItemPalette` (+ `CanonicalItems`); components are encoded by `internal.component.ItemCompiler` |
+| 1. blocks | Vanilla states of the version, custom blocks and their properties, block fallbacks, network ids (sequential or hashed), canonical table | `BlockPalette` (+ `internal.CanonicalBlocks`, `BlockInterner`, `BlockNetworkIds`); custom blocks are encoded by `internal.component.BlockCompiler` |
+| 2. items | Vanilla item definitions, custom items, overrides, item fallbacks, block items (`ItemPalette#blockOf`, decided from the bundled block to item relation first), tags, canonical table | `ItemPalette` (+ `internal.CanonicalItems`); components are encoded by `internal.component.ItemCompiler` |
 | 3. creative | The creative layout (vanilla order from the data, then placements and edits of the layers) and the packet content | `CreativeLayout`, `CreativeEditor`, `CreativePlacement`, `CreativeContent` |
 | 4. output | The immutable `Palette`: definition registries for the codec, `StartGamePacket`, item component and creative content packets | `Palette`, `PaletteReport` (what was adapted, replaced or dropped) |
 
@@ -62,23 +62,33 @@ window (`WireOnlyWire.*_FROM`, the first protocol that carries the field; now al
 implementing `WireOnlyItemComponent` (and the `permits` clause), a case in `WireOnlyWire`, a test in
 `WireOnlyComponentTest`.
 
-## Ids
+## Ids and handles
+
+Consumers never see ids. The public lookups return interned handles, `BedrockBlockState` and `BedrockItemVariant`
+(`Paletter#block(NbtMap)`, `#item(ItemVariant)`, `#blockOf(ItemVariant)`, the same on `Palette` including custom content of
+its layers, and `Palette#match(ItemData)`); `Palette#runtimeId/block/item(handle)` turn them into what a client needs.
+Everything below is plumbing in `org.geysermc.paletter.internal` (`CanonicalBlocks`, `CanonicalItems`, `Canonicals`,
+`Forwarding`) and the members of `BlockPalette` / `ItemPalette` marked `@Internal`.
 
 - **Canonical ids** are dense ints for the newest Bedrock version: a block state's position in its vanilla palette; an
   item variant's position in `CanonicalItems` (each item's base variant in runtime id order, then the other creative
-  variants such as potions). The same for every protocol version; a consumer maps its content to them once.
+  variants such as potions). The same for every protocol version. A handle keeps its id in a hidden field, so
+  `Palette#runtimeId(handle)` is a field read and an array load without allocation (`HandleTest` checks it); only a
+  handle of a source that is not the bundled one, or custom content, takes one more lookup.
 - **Custom content** of a layer lineage gets ids appended after the vanilla ones, so the same layer stack gives the same ids
-  in every version. `PaletteLayer.Builder#variant` gives ids to further variants.
-- **Runtime ids** are per palette. `Palette#runtimeId(canonical)` is an array lookup built once. `BlockNetworkIds.SEQUENTIAL`
-  uses palette positions (and shifts once custom blocks exist); `HASHED` uses the state hash, which is the same in every
-  version, so vanilla `PaletteBlock`s and canonical table pages are shared between palettes.
+  in every version. `PaletteLayer.Builder#variant` gives ids to further variants. Its handles are made from the custom
+  block's `BedrockBlockType` (interned per state) and, for items, once per id.
+- **Runtime ids** are per palette. `BlockNetworkIds.SEQUENTIAL` uses palette positions (and shifts once custom blocks
+  exist); `HASHED` uses the state hash, which is the same in every version, so vanilla `PaletteBlock`s and canonical table
+  pages are shared between palettes.
 - **Resolution** turns a canonical id into what an older version sends: exact, adapted (state values added or removed),
   fallback (a layer's), or the default (`minecraft:unknown`). `Palette#explain` shows which, and `inspect` prints it.
-- **Forwarding** is the reverse and makes the canonical lookups version independent: `CanonicalBlocks#forward` /
+- **Forwarding** is the reverse and makes the handle lookups version independent: `CanonicalBlocks#forward` /
   `CanonicalItems#forward` map a state or variant of any bundled version to the newest version's canonical id (exact,
   renamed through `renames.txt`, or adapted: values the newest block still has are kept, new keys get the default of
-  the newest data, removed keys are dropped) and say why when nothing matches (`Forwarding`). A newly bundled version
-  redefines the canonical table, so consumers keep mapping with the content they know and Paletter maps it forward.
+  the newest data, removed keys are dropped) and say why when nothing matches (`Forwarding`, surfaced as
+  `explainUnknown`). A newly bundled version redefines the canonical table, so consumers keep mapping with the content
+  they know and Paletter maps it forward.
 
 ## Layers and extend
 

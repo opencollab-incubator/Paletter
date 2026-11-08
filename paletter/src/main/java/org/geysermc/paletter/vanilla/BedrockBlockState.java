@@ -1,11 +1,12 @@
 package org.geysermc.paletter.vanilla;
 
+import org.geysermc.paletter.block.CustomBlock;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.block.BlockStates;
-import org.geysermc.paletter.block.CanonicalBlocks;
+import org.geysermc.paletter.internal.CanonicalBlocks;
 
 /**
  * One state of a {@link BedrockBlockType}. There is one instance per state, so {@link #with} does not allocate, and
@@ -46,6 +47,33 @@ public final class BedrockBlockState {
     public static @Nullable BedrockBlockState vanilla(@NonNull NbtMap state) {
         VanillaIndex index = VanillaIndex.get();
         return index.state(index.blocks.index(state));
+    }
+
+    /**
+     * Plumbing of {@link org.geysermc.paletter.Palette}: the handle of a canonical id.
+     *
+     * @return the state of a canonical id of any palette lineage, or null if there is no such id or the state is not
+     *         known to the constants (vanilla states of a source that is not the bundled one)
+     */
+    @Internal
+    public static @Nullable BedrockBlockState fromCanonical(@NonNull CanonicalBlocks canonical, int id) {
+        if (id < 0 || id >= canonical.size()) {
+            return null;
+        }
+        VanillaIndex index = VanillaIndex.get();
+        if (id < canonical.vanillaSize() && canonical.extendsOrIs(index.blocks)) {
+            return index.state(id);
+        }
+        CustomBlock block = canonical.customBlockAt(id);
+        if (block == null) {
+            return vanilla(canonical.state(id));
+        }
+        int base = canonical.customBase(block.identifier(), block.stateCount());
+        if (base == -1) {
+            return null;
+        }
+        BlockTypeLayout layout = BedrockBlockType.of(block).layout();
+        return layout.byOffset(id - base);
     }
 
     public @NonNull BedrockBlockType type() {
@@ -129,7 +157,7 @@ public final class BedrockBlockState {
     @Internal
     public int canonicalIn(@NonNull CanonicalBlocks canonical) {
         if (id >= 0) {
-            return canonical.extendsOrIs(VanillaIndex.get().blocks) ? id : canonical.index(toNbt());
+            return canonical.root() == VanillaIndex.get().blocks ? id : canonical.index(toNbt());
         }
         int base = canonical.customBase(type().identifier(), layout.count);
         return base == -1 ? canonical.index(toNbt()) : base + combination;

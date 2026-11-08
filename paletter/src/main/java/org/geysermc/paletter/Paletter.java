@@ -1,5 +1,7 @@
 package org.geysermc.paletter;
 
+import org.geysermc.paletter.internal.Canonicals;
+import org.geysermc.paletter.internal.Forwarding;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
@@ -7,12 +9,12 @@ import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.block.BlockInterner;
 import org.geysermc.paletter.block.BlockNetworkIds;
-import org.geysermc.paletter.block.CanonicalBlocks;
+import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataSource;
 import org.geysermc.paletter.data.VanillaData;
 import org.geysermc.paletter.data.VanillaItem;
-import org.geysermc.paletter.item.CanonicalItems;
+import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.item.ItemVariant;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockItemType;
@@ -130,11 +132,12 @@ public final class Paletter {
         }
     }
 
-    // ---- Canonical ids ----
+    // ---- Lookups ----
 
     /**
      * @return canonical block ids: every state of the newest version, in its vanilla palette order
      */
+    @Internal
     public @NonNull CanonicalBlocks canonicalBlocks() {
         CanonicalBlocks blocks = canonicalBlocks;
         if (blocks == null) {
@@ -151,6 +154,7 @@ public final class Paletter {
     /**
      * @return canonical item ids: every item of the newest version, then its other creative variants
      */
+    @Internal
     public @NonNull CanonicalItems canonicalItems() {
         CanonicalItems items = canonicalItems;
         if (items == null) {
@@ -166,118 +170,60 @@ public final class Paletter {
 
     /**
      * @param state a block state of <em>any</em> bundled version as {@code {name, states}}; extra keys are ignored.
-     *              A state the newest version lacks is mapped forward to its newest equivalent, see {@link #forwardBlock}
-     * @return its canonical id, or -1 if the newest version has no equivalent (see {@link #explainUnknown(NbtMap)}).
-     * Custom blocks have canonical ids too, but only in palettes with their layer, see {@link Palette#canonicalBlock(NbtMap)}
+     *              A state the newest version lacks is mapped forward to its newest equivalent (renamed identifiers, state
+     *              keys added, removed or reset)
+     * @return its handle, or null if the newest version has no equivalent (see {@link #explainUnknown(NbtMap)}).
+     *         Custom blocks have handles of their own ({@code BedrockBlockType.of(customBlock)}), valid in palettes with
+     *         their layer, see {@link Palette#block(NbtMap)}
+     * @since 1.0.0
      */
-    public int canonicalBlock(@NonNull NbtMap state) {
-        int exact = canonicalBlocks().index(state);
-        return exact != -1 ? exact : canonicalBlocks().forward(state).canonical();
+    public @Nullable BedrockBlockState block(@NonNull NbtMap state) {
+        CanonicalBlocks blocks = canonicalBlocks();
+        return blocks.handle(Canonicals.block(blocks, state));
     }
 
     /**
-     * Maps a block state of any bundled version to the canonical ids, and says how: exact, renamed, adapted (state
-     * keys added, removed or reset), or unknown with the reason. A consumer that mapped its content once keeps
-     * working when a newer Bedrock version is bundled.
-     *
+     * @param variant an item variant of <em>any</em> bundled version; one the newest version lacks is mapped forward
+     * @return its handle, or null if the newest version has no equivalent (see {@link #explainUnknown(ItemVariant)})
      * @since 1.0.0
      */
-    public @NonNull Forwarding forwardBlock(@NonNull NbtMap state) {
-        return canonicalBlocks().forward(state);
+    public @Nullable BedrockItemVariant item(@NonNull ItemVariant variant) {
+        return canonicalItems().handle(Canonicals.item(canonicalItems(), canonicalBlocks(), variant), canonicalBlocks());
     }
 
     /**
-     * Maps an item variant of any bundled version to the canonical ids, see {@link #forwardBlock}.
+     * The block state an item places, version independent: the block the newest version sends the item with
+     * ({@link Palette#blockOf}). Accepts variants of any bundled version like {@link #item(ItemVariant)}.
      *
+     * @return the block state, or null if the item is not a block item or has no handle
      * @since 1.0.0
      */
-    public @NonNull Forwarding forwardItem(@NonNull ItemVariant variant) {
-        return canonicalItems().forward(variant, canonicalBlocks());
-    }
-
-    /**
-     * The block state an item places, version independent: the canonical id of the block the newest version sends the
-     * item with ({@link Palette#blockOf}). Accepts variants of any bundled version like {@link #canonicalItem(ItemVariant)}.
-     *
-     * @return the canonical block id, or -1 if the item is not a block item or has no canonical id
-     * @since 1.0.0
-     */
-    public int canonicalBlockOf(@NonNull ItemVariant variant) {
-        int canonical = canonicalItem(variant);
+    public @Nullable BedrockBlockState blockOf(@NonNull ItemVariant variant) {
+        int canonical = Canonicals.item(canonicalItems(), canonicalBlocks(), variant);
         if (canonical == -1) {
-            return -1;
+            return null;
         }
         var block = vanilla(latest()).blockOf(canonicalItems().variant(canonical));
-        return block == null ? -1 : canonicalBlocks().index(block.getState());
+        return block == null ? null : block(block.getState());
     }
 
     /**
-     * @return why a block state has no canonical id (the block was removed, a rename leads nowhere), or null if it has one
+     * @return why a block state has no handle (the block was removed, a rename leads nowhere), or null if it has one
      * @since 1.0.0
      */
     public @Nullable String explainUnknown(@NonNull NbtMap state) {
-        Forwarding forwarding = forwardBlock(state);
+        Forwarding forwarding = Canonicals.forwardBlock(canonicalBlocks(), state);
         return forwarding.known() ? null : forwarding.detail();
     }
 
     /**
-     * @return why an item variant has no canonical id (the item was removed, it has no such damage value or block
+     * @return why an item variant has no handle (the item was removed, it has no such damage value or block
      *         state), or null if it has one
      * @since 1.0.0
      */
     public @Nullable String explainUnknown(@NonNull ItemVariant variant) {
-        Forwarding forwarding = forwardItem(variant);
+        Forwarding forwarding = Canonicals.forwardItem(canonicalItems(), canonicalBlocks(), variant);
         return forwarding.known() ? null : forwarding.detail();
-    }
-
-    /**
-     * @return the canonical id of a vanilla state (no hash lookup for {@link #bundled()}), or -1 for a custom block
-     *         state: custom blocks have canonical ids per layer lineage, see {@link Palette#canonicalBlock(BedrockBlockState)}
-     * @since 1.0.0
-     */
-    public int canonicalBlock(@NonNull BedrockBlockState state) {
-        return state.canonicalIn(canonicalBlocks());
-    }
-
-    /**
-     * @return the amount of vanilla canonical block ids
-     */
-    public int canonicalBlockCount() {
-        return canonicalBlocks().size();
-    }
-
-    /**
-     * @param variant an item variant of <em>any</em> bundled version; one the newest version lacks is mapped forward,
-     *                see {@link #forwardItem}
-     * @return its canonical id, or -1 if the newest version has no equivalent (see {@link #explainUnknown(ItemVariant)})
-     */
-    public int canonicalItem(@NonNull ItemVariant variant) {
-        int exact = canonicalItems().index(variant);
-        return exact != -1 ? exact : forwardItem(variant).canonical();
-    }
-
-    /**
-     * @return the canonical id of the base variant of a vanilla item type, or -1 for a custom item: custom items have
-     *         canonical ids per layer lineage, see {@link Palette#canonicalItem(BedrockItemType)}
-     * @since 1.0.0
-     */
-    public int canonicalItem(@NonNull BedrockItemType type) {
-        return type.canonicalIn(canonicalItems());
-    }
-
-    /**
-     * @return the canonical id of a vanilla item variant, or -1 (a custom item, or a variant that has none)
-     * @since 1.0.0
-     */
-    public int canonicalItem(@NonNull BedrockItemVariant variant) {
-        return variant.canonicalIn(canonicalItems());
-    }
-
-    /**
-     * @return the amount of vanilla canonical item ids
-     */
-    public int canonicalItemCount() {
-        return canonicalItems().size();
     }
 
     /**

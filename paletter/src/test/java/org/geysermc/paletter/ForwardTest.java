@@ -1,5 +1,6 @@
 package org.geysermc.paletter;
 
+import org.geysermc.paletter.internal.Forwarding;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.BlockStates;
@@ -34,15 +35,15 @@ class ForwardTest {
         int adapted = 0;
         for (DataVersion version : paletter.versions()) {
             for (NbtMap state : paletter.vanillaData(version).blockStates()) {
-                Forwarding forwarding = paletter.forwardBlock(state);
+                Forwarding forwarding = Ids.forwardBlock(paletter, state);
                 assertTrue(forwarding.known(), version + " " + state + ": " + forwarding.detail());
                 if (newest.contains(BlockStates.normalize(state))) {
                     assertEquals(Forwarding.Kind.EXACT, forwarding.kind());
                 } else {
                     adapted++;
                     assertEquals(Forwarding.Kind.ADAPTED, forwarding.kind(), state.toString());
-                    assertEquals(BlockStates.name(state), BlockStates.name(paletter.canonicalBlocks().state(forwarding.canonical())));
-                    assertEquals(forwarding.canonical(), paletter.canonicalBlock(state));
+                    assertEquals(BlockStates.name(state), BlockStates.name(Ids.canonicalBlocks(paletter).state(forwarding.canonical())));
+                    assertEquals(forwarding.canonical(), Ids.block(paletter, state));
                 }
             }
         }
@@ -59,10 +60,10 @@ class ForwardTest {
             .filter(state -> !newest.contains(BlockStates.normalize(state))).toList();
         assertTrue(!only.isEmpty(), "states of " + previous + " that the newest version lacks");
         for (NbtMap state : only) {
-            NbtMap forwarded = paletter.canonicalBlocks().state(paletter.canonicalBlock(state));
+            NbtMap forwarded = Ids.canonicalBlocks(paletter).state(Ids.block(paletter, state));
             NbtMap states = BlockStates.states(state);
             BlockStates.states(forwarded).forEach((key, value) -> {
-                if (states.containsKey(key) && paletter.canonicalBlocks().index(BlockStates.with(forwarded, key, states.get(key))) != -1) {
+                if (states.containsKey(key) && Ids.canonicalBlocks(paletter).index(BlockStates.with(forwarded, key, states.get(key))) != -1) {
                     // a value the old state had and the newest block allows in this combination is kept
                     assertEquals(states.get(key), value, state + " -> " + forwarded + " at " + key);
                 }
@@ -73,8 +74,8 @@ class ForwardTest {
     @Test
     void removedBlocksAreUnknownWithAReason() {
         NbtMap gone = BlockStates.of("minecraft:removed_in_a_later_version");
-        Forwarding forwarding = paletter.forwardBlock(gone);
-        assertEquals(-1, paletter.canonicalBlock(gone));
+        Forwarding forwarding = Ids.forwardBlock(paletter, gone);
+        assertEquals(-1, Ids.block(paletter, gone));
         assertEquals(Forwarding.Kind.UNKNOWN, forwarding.kind());
         assertTrue(forwarding.detail().contains("minecraft:removed_in_a_later_version"));
         assertEquals(forwarding.detail(), paletter.explainUnknown(gone));
@@ -86,10 +87,10 @@ class ForwardTest {
     void itemsOfAnyVersionMapForward() {
         for (DataVersion version : paletter.versions()) {
             VanillaData data = paletter.vanillaData(version);
-            data.items().forEach(item -> assertNotEquals(-1, paletter.canonicalItem(ItemVariant.of(item.identifier())), version + " " + item.identifier()));
+            data.items().forEach(item -> assertNotEquals(-1, Ids.item(paletter, ItemVariant.of(item.identifier())), version + " " + item.identifier()));
             data.creative().forEachStack(stack -> {
                 ItemVariant variant = stack.variant();
-                int id = paletter.canonicalItem(variant);
+                int id = Ids.item(paletter, variant);
                 if (id == -1) {
                     // only variants of the newest version are allowed to be unknown (creative changed): say why
                     assertNotNull(paletter.explainUnknown(variant), variant.toString());
@@ -118,11 +119,11 @@ class ForwardTest {
                     "item minecraft:old_stick minecraft:stick", "item minecraft:gone minecraft:also_gone"));
             }
         });
-        Forwarding block = renaming.forwardBlock(BlockStates.of("minecraft:older_stone"));
+        Forwarding block = Ids.forwardBlock(renaming, BlockStates.of("minecraft:older_stone"));
         assertEquals(Forwarding.Kind.RENAMED, block.kind());
-        assertEquals(renaming.canonicalBlock(BlockStates.of("minecraft:stone", java.util.Map.of("stone_type", "stone"))), block.canonical());
-        assertEquals(renaming.canonicalItem(ItemVariant.of("minecraft:stick")), renaming.canonicalItem(ItemVariant.of("minecraft:old_stick")));
-        Forwarding gone = renaming.forwardItem(ItemVariant.of("minecraft:gone"));
+        assertEquals(Ids.block(renaming, BlockStates.of("minecraft:stone", java.util.Map.of("stone_type", "stone"))), block.canonical());
+        assertEquals(Ids.item(renaming, ItemVariant.of("minecraft:stick")), Ids.item(renaming, ItemVariant.of("minecraft:old_stick")));
+        Forwarding gone = Ids.forwardItem(renaming, ItemVariant.of("minecraft:gone"));
         assertEquals(Forwarding.Kind.UNKNOWN, gone.kind());
         assertTrue(gone.detail().contains("also_gone"), gone.detail());
     }
@@ -131,8 +132,8 @@ class ForwardTest {
     void paletteForwardsLikePaletter() {
         Palette palette = paletter.vanilla(paletter.latest());
         NbtMap state = paletter.vanillaData(paletter.versions().getFirst()).blockStates().stream()
-            .filter(s -> paletter.forwardBlock(s).kind() == Forwarding.Kind.ADAPTED).findFirst().orElseThrow();
-        assertEquals(paletter.canonicalBlock(state), palette.canonicalBlock(state));
-        assertEquals(paletter.forwardBlock(state), palette.forwardBlock(state));
+            .filter(s -> Ids.forwardBlock(paletter, s).kind() == Forwarding.Kind.ADAPTED).findFirst().orElseThrow();
+        assertEquals(Ids.block(paletter, state), Ids.block(palette, state));
+        assertEquals(Ids.forwardBlock(paletter, state), Ids.forwardBlock(palette, state));
     }
 }

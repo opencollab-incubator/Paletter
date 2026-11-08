@@ -13,11 +13,11 @@ The API is exactly the packages exported by [`paletter/src/module/java/module-in
 |---|---|
 | `org.geysermc.paletter` | `Paletter`, `Palette`, `PaletteLayer`, `PaletteReport`, `PaletteException` |
 | `org.geysermc.paletter.annotation` | `@Experimental`, `@Internal`, `@BedrockFormat` |
-| `org.geysermc.paletter.block` | palettes, canonical ids, `CustomBlock`, `BlockProperty`, ... |
+| `org.geysermc.paletter.block` | palettes, `CustomBlock`, `BlockProperty`, ... |
 | `org.geysermc.paletter.block.component` | generated block components and traits (`BlockComponent`, `BlockTrait`, `Geometry`, `MaterialInstances`, `PlacementDirection`, `MenuCategory`, ...) |
 | `org.geysermc.paletter.creative` | the creative inventory model and editor |
 | `org.geysermc.paletter.data` | `DataVersion`, data sources, bundled vanilla data model |
-| `org.geysermc.paletter.item` | palettes, canonical ids, `CustomItem`, `ItemOverride`, ... |
+| `org.geysermc.paletter.item` | palettes, `CustomItem`, `ItemOverride`, ... |
 | `org.geysermc.paletter.item.component` | generated item components (`ItemComponent`, `Durability`, `KineticWeapon`, `Food`, `Wearable`, `MenuCategory`, ...) |
 | `org.geysermc.paletter.vanilla` | vanilla constants (generated `BedrockBlocks`, `BedrockStates`, `BedrockItems`) and their types: `BedrockBlockType`, `BedrockBlockState`, `BedrockItemType`, `BedrockItemVariant`, `BoolState`, `IntState`, `EnumState`, `StringState` |
 | `org.geysermc.paletter.vanilla.state` | generated enums of string block states (`CardinalDirection`, `Direction`, ...) |
@@ -66,7 +66,7 @@ The generated classes of `org.geysermc.paletter.vanilla` (`BedrockBlocks`, `Bedr
 `org.geysermc.paletter.vanilla.state`) are API like any other, with rules that follow from Bedrock changing content
 between versions (see the [README](README.md#vanilla-constants) for usage):
 
-- Constants are `static final` **objects**, never compile time constants: consumers do not inline canonical ids, so a
+- Constants are `static final` **objects**, never compile time constants: consumers hold handles and never ids, so a
   Paletter release may renumber them freely.
 - **Additions** (new constants, enum values, enums) are binary compatible and arrive in minor releases, or in patch
   releases that bundle a new Bedrock version.
@@ -80,7 +80,7 @@ between versions (see the [README](README.md#vanilla-constants) for usage):
   generation fails until the state gets a new name in `data/model/names.json`. Enum assignment is sticky the same way.
 - `BedrockPreviewBlocks` and `BedrockPreviewItems` (content of a bundled preview only) are `@Experimental`: they move or
   disappear without deprecation.
-- Which values a block accepts, and the canonical ids, are data, not API: they follow the bundled release.
+- Which values a block accepts is data, not API (canonical ids are not exposed at all): they follow the bundled release.
 
 ## `@Experimental`
 
@@ -161,6 +161,20 @@ record component; the previous constructors stay), and: `BedrockItemType#hasVari
 debugging aids `Palette#explain` with `BlockExplanation` and `ItemExplanation` (both `@Experimental`: their shape may still grow), and the wire-only item components (`WireOnlyItemComponent`, `RenderOffsets`, `MiningSpeed`, `FrameCount`; `ItemComponent` gains the permitted sub-interface, so code that switches over it exhaustively needs a case for it; likewise `WireOnlyBlockComponent` with `OnPlayerPlacing` for `BlockComponent`).
 
 ### Pre-release changes
+
+- **Canonical ids are not exposed anymore** (pre-release, baseline regenerated; `apiCompat` failed against the old one, as
+  it should). Public lookups return interned handles instead of ints: `Paletter#block(NbtMap)` ->
+  `@Nullable BedrockBlockState` (a state of any bundled version, forwarded), `Paletter#item(ItemVariant)` ->
+  `@Nullable BedrockItemVariant`, `Paletter#blockOf(ItemVariant)` -> `@Nullable BedrockBlockState`, the same `block` /
+  `item` on `Palette` (custom content of its layers included), `Palette#match(ItemData)` ->
+  `@Nullable BedrockItemVariant`, and `Palette#itemVariants()` to enumerate. `Palette#runtimeId/block/item(handle)` stay;
+  `explainUnknown` and `explain` stay (`BlockExplanation` / `ItemExplanation` carry a `handle` instead of `canonical`).
+  Removed from the API (moved to `org.geysermc.paletter.internal` or `@Internal`): `Paletter#canonicalBlock` /
+  `#canonicalItem` / `#canonicalBlockOf` / `#forwardBlock` / `#forwardItem` / `#canonicalBlockCount` /
+  `#canonicalItemCount`, their `Palette` counterparts and the `int` overloads of `Palette#runtimeId/block/item/match`,
+  `CanonicalBlocks`, `CanonicalItems` and `Forwarding` (now `internal`), and the canonical id members of `BlockPalette`
+  and `ItemPalette`. Consumers hold handles where they held ids; where they sized an array by the id count they key a
+  map by handle.
 
 - `Paletter#canonicalBlock(NbtMap)`, `#canonicalItem(ItemVariant)` and their `Palette` counterparts accept content of any
   bundled version instead of returning -1 for what the newest version lacks: they map it forward (state keys adapted,

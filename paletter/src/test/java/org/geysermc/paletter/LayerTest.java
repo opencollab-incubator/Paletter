@@ -94,26 +94,26 @@ class LayerTest {
         Palette palette = PALETTER.palette(LATEST, minecartLayer());
         ItemData furnace = ItemData.builder().definition(palette.items().getDefinition("geysermc:furnace_minecart")).count(1).build();
         ItemData hopper = ItemData.builder().definition(palette.items().getDefinition("minecraft:hopper_minecart")).count(1).build();
-        int furnaceCanonical = palette.canonicalItem(ItemVariant.of("geysermc:furnace_minecart"));
-        assertEquals(PALETTER.canonicalItemCount(), furnaceCanonical, "custom items are appended");
-        assertEquals(furnaceCanonical, palette.match(furnace));
-        assertEquals(PALETTER.canonicalItem(ItemVariant.of("minecraft:hopper_minecart")), palette.match(hopper));
-        assertEquals(-1, PALETTER.canonicalItem(ItemVariant.of("geysermc:furnace_minecart")));
+        int furnaceCanonical = Ids.item(palette, ItemVariant.of("geysermc:furnace_minecart"));
+        assertEquals(Ids.itemCount(PALETTER), furnaceCanonical, "custom items are appended");
+        assertEquals(furnaceCanonical, Ids.match(palette, furnace));
+        assertEquals(Ids.item(PALETTER, ItemVariant.of("minecraft:hopper_minecart")), Ids.match(palette, hopper));
+        assertEquals(-1, Ids.item(PALETTER, ItemVariant.of("geysermc:furnace_minecart")));
         // The same layer gives the same canonical ids in every version
-        assertEquals(furnaceCanonical, PALETTER.palette(OLDEST, minecartLayer()).canonicalItem(ItemVariant.of("geysermc:furnace_minecart")));
+        assertEquals(furnaceCanonical, Ids.item(PALETTER.palette(OLDEST, minecartLayer()), ItemVariant.of("geysermc:furnace_minecart")));
     }
 
     @Test
     void damageVariantsMatchTheirCanonicalId() {
         Palette palette = PALETTER.palette(LATEST);
         PaletteItem potion = palette.items().getDefinition("minecraft:potion");
-        int five = PALETTER.canonicalItem(ItemVariant.of("minecraft:potion", 5));
-        int base = PALETTER.canonicalItem(ItemVariant.of("minecraft:potion"));
+        int five = Ids.item(PALETTER, ItemVariant.of("minecraft:potion", 5));
+        int base = Ids.item(PALETTER, ItemVariant.of("minecraft:potion"));
         assertTrue(five >= 0 && base >= 0 && five != base);
-        assertEquals(five, palette.match(ItemData.builder().definition(potion).damage(5).count(1).build()));
+        assertEquals(five, Ids.match(palette, ItemData.builder().definition(potion).damage(5).count(1).build()));
         // A damage value that is no variant falls back to the base variant
-        assertEquals(base, palette.match(ItemData.builder().definition(potion).damage(9999).count(1).build()));
-        ResolvedItem resolved = palette.item(five);
+        assertEquals(base, Ids.match(palette, ItemData.builder().definition(potion).damage(9999).count(1).build()));
+        ResolvedItem resolved = Ids.itemAt(palette, five);
         assertSame(potion, resolved.definition());
         assertEquals(5, resolved.damage());
     }
@@ -135,10 +135,10 @@ class LayerTest {
         // No custom blocks or block fallbacks: the block palette and its canonical table are shared
         assertSame(shared.blocks(), sessionPalette.blocks());
         // Canonical ids of the shared palette stay valid; the session's custom item is appended
-        int furnace = shared.canonicalItem(ItemVariant.of("geysermc:furnace_minecart"));
-        assertEquals(furnace, sessionPalette.canonicalItem(ItemVariant.of("geysermc:furnace_minecart")));
-        assertSame(shared.item(furnace).definition(), sessionPalette.item(furnace).definition());
-        assertEquals(shared.canonicalItemCount(), sessionPalette.canonicalItem(ItemVariant.of("server:ruby")));
+        int furnace = Ids.item(shared, ItemVariant.of("geysermc:furnace_minecart"));
+        assertEquals(furnace, Ids.item(sessionPalette, ItemVariant.of("geysermc:furnace_minecart")));
+        assertSame(Ids.itemAt(shared, furnace).definition(), Ids.itemAt(sessionPalette, furnace).definition());
+        assertEquals(Ids.itemCount(shared), Ids.item(sessionPalette, ItemVariant.of("server:ruby")));
         // Extending again with the same layer returns the cached palette
         assertSame(sessionPalette, shared.extend(session));
     }
@@ -275,16 +275,16 @@ class LayerTest {
     void fallbacksNeverShadowAnItemsOwnCanonicalId() {
         // A layer sends poplar boats as pale oak boats in 26.40; pale oak boats must still match themselves there
         PaletteLayer layer = PaletteLayer.builder("force").itemFallback("minecraft:poplar_boat", new ItemFallback("minecraft:pale_oak_boat", true)).build();
-        int poplar = PALETTER.canonicalItem(ItemVariant.of("minecraft:poplar_boat"));
-        int paleOak = PALETTER.canonicalItem(ItemVariant.of("minecraft:pale_oak_boat"));
+        int poplar = Ids.item(PALETTER, ItemVariant.of("minecraft:poplar_boat"));
+        int paleOak = Ids.item(PALETTER, ItemVariant.of("minecraft:pale_oak_boat"));
         for (DataVersion version : PALETTER.versions()) {
             Palette palette = PALETTER.palette(version.protocolVersion(), layer);
-            ResolvedItem resolved = palette.item(paleOak);
-            assertEquals(paleOak, palette.match(resolved.toItemData().build()), version.toString());
+            ResolvedItem resolved = Ids.itemAt(palette, paleOak);
+            assertEquals(paleOak, Ids.match(palette, resolved.toItemData().build()), version.toString());
         }
         Palette oldest = PALETTER.palette(PALETTER.version(OLDEST).protocolVersion(), layer);
-        assertTrue(oldest.item(poplar).fallback());
-        assertEquals("minecraft:pale_oak_boat", oldest.item(poplar).definition().getIdentifier());
+        assertTrue(Ids.itemAt(oldest, poplar).fallback());
+        assertEquals("minecraft:pale_oak_boat", Ids.itemAt(oldest, poplar).definition().getIdentifier());
     }
 
     @Test

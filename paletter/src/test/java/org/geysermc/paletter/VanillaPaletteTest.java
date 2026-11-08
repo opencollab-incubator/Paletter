@@ -119,7 +119,7 @@ class VanillaPaletteTest {
         // The client sends junk block definitions for non block items (runtime id 0 is a real block on Bedrock);
         // they must not influence matching
         ItemData appleWithJunk = ItemData.builder().definition(apple).count(1).blockDefinition(palette.blocks().byRuntimeId(0)).build();
-        assertEquals(PALETTER.canonicalItem(ItemVariant.of("minecraft:apple")), palette.match(appleWithJunk));
+        assertEquals(Ids.item(PALETTER, ItemVariant.of("minecraft:apple")), Ids.match(palette, appleWithJunk));
     }
 
     @Test

@@ -1,14 +1,14 @@
-package org.geysermc.paletter.item;
+package org.geysermc.paletter.internal;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.paletter.Forwarding;
 import org.geysermc.paletter.PaletteException;
+import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.vanilla.BedrockItemVariant;
 import org.geysermc.paletter.annotation.Internal;
-import org.geysermc.paletter.block.CanonicalBlocks;
 import org.geysermc.paletter.data.Renames;
 import org.geysermc.paletter.creative.CreativeLayout;
 import org.geysermc.paletter.data.VanillaData;
@@ -25,7 +25,7 @@ import java.util.WeakHashMap;
 
 /**
  * Dense, version independent item variant indices ("canonical" ids), the item counterpart of
- * {@link org.geysermc.paletter.block.CanonicalBlocks}. The newest bundled version defines them, stable for a Paletter
+ * {@link CanonicalBlocks}. The newest bundled version defines them, stable for a Paletter
  * release:
  * <ol>
  *     <li>the base variant ({@code identifier}, damage 0, no block state) of every item, in runtime id order;</li>
@@ -40,8 +40,10 @@ import java.util.WeakHashMap;
  */
 public final class CanonicalItems {
     private final @Nullable CanonicalItems parent;
+    private final CanonicalItems root;
     private final int offset;
     private final ItemVariant[] variants;
+    private final BedrockItemVariant[] handles;
     private final Object2IntMap<ItemVariant> index;
     private final Map<String, NbtMap> defaultStates;
     private final Map<Object, CanonicalItems> extensions = new WeakHashMap<>();
@@ -51,10 +53,12 @@ public final class CanonicalItems {
     private CanonicalItems(@Nullable CanonicalItems parent, List<ItemVariant> variants, Map<String, NbtMap> defaultStates,
                            Renames renames, String version) {
         this.parent = parent;
+        this.root = parent == null ? this : parent.root;
         this.renames = renames;
         this.version = version;
         this.offset = parent == null ? 0 : parent.size();
         this.variants = variants.toArray(ItemVariant[]::new);
+        this.handles = new BedrockItemVariant[this.variants.length];
         this.defaultStates = Map.copyOf(defaultStates);
         Object2IntOpenHashMap<ItemVariant> index = new Object2IntOpenHashMap<>(variants.size());
         index.defaultReturnValue(-1);
@@ -227,12 +231,32 @@ public final class CanonicalItems {
         return -1;
     }
 
-    private CanonicalItems root() {
+    /**
+     * @return the first indices of the lineage: the variants of the newest version
+     */
+    public @NonNull CanonicalItems root() {
+        return root;
+    }
+
+    /**
+     * @param blocks the canonical blocks of the same layers, for variants with a block state
+     * @return the handle of a canonical id, or null if there is no such id. Handles of custom content are created once
+     */
+    public @Nullable BedrockItemVariant handle(int canonical, @NonNull CanonicalBlocks blocks) {
+        if (canonical < 0 || canonical >= size()) {
+            return null;
+        }
         CanonicalItems current = this;
-        while (current.parent != null) {
+        while (canonical < current.offset) {
             current = current.parent;
         }
-        return current;
+        int local = canonical - current.offset;
+        BedrockItemVariant handle = current.handles[local];
+        if (handle == null) {
+            handle = BedrockItemVariant.fromCanonical(this, blocks, canonical);
+            current.handles[local] = handle;
+        }
+        return handle;
     }
 
     /**
@@ -254,6 +278,9 @@ public final class CanonicalItems {
      * @since 1.0.0
      */
     public boolean extendsOrIs(@NonNull CanonicalItems other) {
+        if (other == root) {
+            return true;
+        }
         CanonicalItems current = this;
         while (current != null) {
             if (current == other) {

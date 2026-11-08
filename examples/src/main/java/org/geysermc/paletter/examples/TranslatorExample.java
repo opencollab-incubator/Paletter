@@ -15,9 +15,13 @@ import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.ItemVariant;
 import org.geysermc.paletter.item.component.DisplayName;
 import org.geysermc.paletter.item.component.Icon;
+import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.vanilla.BedrockItemVariant;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A Java <-> Bedrock translator: its mappings are int tables written once against the newest Bedrock version, then
@@ -41,32 +45,31 @@ public final class TranslatorExample {
             .build();
         PaletteLayer translator = PaletteLayer.builder("translator").item(ruby).block(lamp).build();
 
-        // Java block state id -> canonical id, once (0 air, 1 stone, 2 lamp). Custom ids are the same in every version
+        // Java block state id -> Bedrock block handle, once (0 air, 1 stone, 2 lamp). Handles are the same in every version
         Palette shared = paletter.palette(Bedrock_v2225.CODEC, BlockNetworkIds.HASHED, translator);
-        int[] javaToCanonical = {
-            paletter.canonicalBlock(BedrockBlocks.AIR.defaultState()),
-            paletter.canonicalBlock(BedrockBlocks.STONE.defaultState()),
-            shared.canonicalBlock(lamp.type().defaultState())
+        BedrockBlockState[] javaToBedrock = {
+            BedrockBlocks.AIR.defaultState(),
+            BedrockBlocks.STONE.defaultState(),
+            lamp.type().defaultState()
         };
 
-        // Per client version: chunk translation is two array lookups. With HASHED ids the vanilla entries are equal
+        // Per client version: chunk translation is one array lookup per block. With HASHED ids the vanilla entries are equal
         for (int protocol : new int[]{paletter.versions().getFirst().protocolVersion(), paletter.latest().protocolVersion()}) {
             Palette palette = paletter.palette(protocol, BlockNetworkIds.HASHED, translator);
-            int[] javaToRuntime = Arrays.stream(javaToCanonical).map(palette::runtimeId).toArray();
+            int[] javaToRuntime = Arrays.stream(javaToBedrock).mapToInt(palette::runtimeId).toArray();
             System.out.println(protocol + ": java -> runtime ids " + Arrays.toString(javaToRuntime));
         }
 
-        // Items, both directions: canonical id <-> the translator's own item table
-        String[] canonicalToJava = new String[shared.canonicalItemCount()];
-        int rubyId = shared.canonicalItem(ruby.type());
-        canonicalToJava[rubyId] = "java:ruby";
-        ItemData toClient = shared.item(rubyId).toItemData().count(2).build();
-        System.out.println("from client: " + canonicalToJava[shared.match(toClient)]);
+        // Items, both directions: handle <-> the translator's own item table
+        Map<BedrockItemVariant, String> bedrockToJava = new HashMap<>();
+        bedrockToJava.put(ruby.type().base(), "java:ruby");
+        ItemData toClient = shared.item(ruby.type()).toItemData().count(2).build();
+        System.out.println("from client: " + bedrockToJava.get(shared.match(toClient)));
 
         // A session: a short lived layer on top of the shared palette; what it does not touch stays identical
         Palette session = shared.extend(PaletteLayer.builder("session")
             .variant(ItemVariant.of("minecraft:potion", 9999)).build());
         System.out.println("session shares the block palette: " + (session.blocks() == shared.blocks()));
-        System.out.println("session adds item ids: " + (session.canonicalItemCount() - shared.canonicalItemCount()));
+        System.out.println("session adds item ids: " + (session.itemVariants().size() - shared.itemVariants().size()));
     }
 }

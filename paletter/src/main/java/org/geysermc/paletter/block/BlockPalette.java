@@ -1,5 +1,6 @@
 package org.geysermc.paletter.block;
 
+import org.geysermc.paletter.internal.CanonicalBlocks;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -167,6 +168,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     /**
      * @return the canonical ids this palette resolves: states of the newest version plus custom blocks of its layers
      */
+@Internal
     public @NonNull CanonicalBlocks canonical() {
         return canonical;
     }
@@ -227,6 +229,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
      *
      * @throws IndexOutOfBoundsException if the id is not one of {@link #canonical()}
      */
+@Internal
     public @NonNull PaletteBlock block(int canonical) {
         return canonicalTable().blocks[canonical >>> PAGE_BITS][canonical & PAGE_MASK];
     }
@@ -234,6 +237,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     /**
      * Like {@link #block(int)}, but only the runtime id. An array lookup.
      */
+@Internal
     public int runtimeId(int canonical) {
         return canonicalTable().runtimeIds[canonical >>> PAGE_BITS][canonical & PAGE_MASK];
     }
@@ -244,6 +248,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
      *
      * @return the canonical id, or -1 for null, a definition of another palette, or a state nothing resolves to
      */
+@Internal
     public int canonical(@Nullable BlockDefinition definition) {
         if (definition == null) {
             return -1;
@@ -254,6 +259,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     /**
      * Like {@link #canonical(BlockDefinition)}, by runtime id.
      */
+@Internal
     public int canonicalOfRuntimeId(int runtimeId) {
         int index = indexOfRuntimeId(runtimeId);
         return index == -1 ? -1 : canonicalTable().reverse[index];
@@ -263,6 +269,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
      * @return the canonical states that have no block (or fallback) of their own in this version and use the default
      *         fallback ({@link #defaultFallback()}), or air without one
      */
+@Internal
     public @NonNull List<NbtMap> missingCanonical() {
         return canonicalTable().missing;
     }
@@ -270,6 +277,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     /**
      * Builds the canonical tables now instead of on first use. Called by the palette compiler.
      */
+@Internal
     public void prepareCanonical() {
         canonicalTable();
     }

@@ -1,5 +1,6 @@
 package org.geysermc.paletter.vanilla;
 
+import org.geysermc.paletter.Ids;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.PaletteLayer;
@@ -7,7 +8,7 @@ import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.BlockFallback;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.BlockStates;
-import org.geysermc.paletter.block.CanonicalBlocks;
+import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
@@ -41,7 +42,7 @@ class VanillaConstantsTest {
 
     @Test
     void everyStateRoundTrips() {
-        CanonicalBlocks canonical = PALETTER.canonicalBlocks();
+        CanonicalBlocks canonical = Ids.canonicalBlocks(PALETTER);
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
         for (int id = 0; id < canonical.vanillaSize(); id++) {
             NbtMap nbt = canonical.state(id);
@@ -53,12 +54,12 @@ class VanillaConstantsTest {
                 set(builder, property, BlockStates.states(nbt).get(property.name()));
             }
             BedrockBlockState state = builder.build();
-            assertEquals(id, PALETTER.canonicalBlock(state), nbt.toString());
+            assertEquals(id, Ids.block(PALETTER, state), nbt.toString());
             assertEquals(nbt, state.toNbt());
             assertSame(state, BedrockBlockState.vanilla(id));
             assertSame(state, BedrockBlockState.vanilla(nbt));
-            assertEquals(id, palette.canonicalBlock(state));
-            assertEquals(palette.runtimeId(id), palette.runtimeId(state));
+            assertEquals(id, Ids.block(palette, state));
+            assertEquals(Ids.runtimeId(palette, id), palette.runtimeId(state));
             assertEquals(nbt, BlockStates.normalize(palette.block(state).getState()));
         }
     }
@@ -69,7 +70,7 @@ class VanillaConstantsTest {
 
     @Test
     void randomWithEqualsPaletteLookup() {
-        CanonicalBlocks canonical = PALETTER.canonicalBlocks();
+        CanonicalBlocks canonical = Ids.canonicalBlocks(PALETTER);
         Random random = new Random(42);
         List<BedrockBlockType> types = BedrockBlockType.vanillaTypes().stream().filter(t -> !t.properties().isEmpty()).toList();
         for (int i = 0; i < 200_000; i++) {
@@ -81,8 +82,8 @@ class VanillaConstantsTest {
                 Object nbt = randomValue(type, property, random);
                 BedrockBlockState changed = with(state, property, nbt);
                 NbtMap expected = BlockStates.with(state.toNbt(), property.name(), nbt);
-                assertEquals(canonical.index(expected), PALETTER.canonicalBlock(changed), expected.toString());
-                assertSame(changed, BedrockBlockState.vanilla(PALETTER.canonicalBlock(changed)));
+                assertEquals(canonical.index(expected), Ids.block(PALETTER, changed), expected.toString());
+                assertSame(changed, BedrockBlockState.vanilla(Ids.block(PALETTER, changed)));
                 state = changed;
             }
         }
@@ -109,7 +110,7 @@ class VanillaConstantsTest {
         assertEquals(CardinalDirection.NORTH, door.get(BedrockStates.CARDINAL_DIRECTION));
         assertTrue(door.get(BedrockStates.OPEN_BIT));
         assertSame(door, door.with(BedrockStates.OPEN_BIT, false).with(BedrockStates.OPEN_BIT, true));
-        assertEquals(PALETTER.canonicalBlock(door.toNbt()), PALETTER.canonicalBlock(door));
+        assertEquals(Ids.block(PALETTER, door.toNbt()), Ids.block(PALETTER, door));
 
         BedrockBlockState log = BedrockBlocks.OAK_LOG.defaultState().with(BedrockStates.PILLAR_AXIS, PillarAxis.X);
         assertEquals(PillarAxis.X, log.get(BedrockStates.PILLAR_AXIS));
@@ -149,7 +150,7 @@ class VanillaConstantsTest {
         for (int i = 0; i < 1_000_000; i++) {
             state = state.with(BedrockStates.OPEN_BIT, (i & 1) == 0).with(BedrockStates.CARDINAL_DIRECTION, CardinalDirection.EAST)
                 .with(BedrockStates.UPPER_BLOCK_BIT, (i & 2) == 0);
-            sum += PALETTER.canonicalBlock(state);
+            sum += Ids.block(PALETTER, state);
         }
         long allocated = threads.getCurrentThreadAllocatedBytes() - before;
         assertTrue(sum != 0);
@@ -158,13 +159,13 @@ class VanillaConstantsTest {
 
     @Test
     void items() {
-        assertEquals(PALETTER.canonicalItem(ItemVariant.of("minecraft:apple")), PALETTER.canonicalItem(BedrockItems.APPLE));
-        assertEquals(PALETTER.canonicalItem(ItemVariant.of("minecraft:potion", 5)), PALETTER.canonicalItem(BedrockItems.POTION.variant(5)));
+        assertEquals(Ids.item(PALETTER, ItemVariant.of("minecraft:apple")), Ids.item(PALETTER, BedrockItems.APPLE));
+        assertEquals(Ids.item(PALETTER, ItemVariant.of("minecraft:potion", 5)), Ids.item(PALETTER, BedrockItems.POTION.variant(5)));
         assertSame(BedrockItems.POTION.variant(5), BedrockItems.POTION.variant(5));
         assertNull(BedrockItems.POTION.variant(9999));
         assertTrue(BedrockItems.POTION.hasVariant(5));
         assertFalse(BedrockItems.POTION.hasVariant(9999));
-        assertEquals(-1, PALETTER.canonicalItem(BedrockItems.POTION.variantOf(9999)));
+        assertEquals(-1, Ids.item(PALETTER, BedrockItems.POTION.variantOf(9999)));
         assertTrue(BedrockItems.POTION.variants().size() > 40);
         assertSame(BedrockItems.APPLE, BedrockItemType.vanilla("minecraft:apple"));
 
@@ -230,7 +231,7 @@ class VanillaConstantsTest {
 
         BedrockItemType removedItem = VanillaTypes.item("minecraft:paletter_test_removed_item", "minecraft:stick");
         assertFalse(removedItem.isAvailable());
-        assertEquals(PALETTER.canonicalItem(BedrockItems.STICK), PALETTER.canonicalItem(removedItem));
+        assertEquals(Ids.item(PALETTER, BedrockItems.STICK), Ids.item(PALETTER, removedItem));
     }
 
     @Test
@@ -254,11 +255,11 @@ class VanillaConstantsTest {
         assertEquals(lamp.states().size(), type.stateCount());
         assertEquals(2, type.defaultState().get(IntState.range("example:level", 0, 3)));
         for (BedrockBlockState state : type.states()) {
-            assertEquals(-1, PALETTER.canonicalBlock(state));
-            int canonical = palette.canonicalBlock(state.toNbt());
-            assertTrue(canonical >= palette.canonicalBlocks().vanillaSize());
-            assertEquals(canonical, palette.canonicalBlock(state));
-            assertEquals(palette.runtimeId(canonical), palette.runtimeId(state));
+            assertEquals(-1, Ids.block(PALETTER, state));
+            int canonical = Ids.block(palette, state.toNbt());
+            assertTrue(canonical >= Ids.canonicalBlocks(palette).vanillaSize());
+            assertEquals(canonical, Ids.block(palette, state));
+            assertEquals(Ids.runtimeId(palette, canonical), palette.runtimeId(state));
         }
         // The vanilla enum state works on a custom property of the same name
         BedrockBlockState east = type.defaultState().with(BedrockStates.CARDINAL_DIRECTION, CardinalDirection.EAST)
@@ -269,12 +270,12 @@ class VanillaConstantsTest {
 
         // Not in a palette without the layer
         Palette vanilla = PALETTER.palette(PALETTER.latest().protocolVersion());
-        assertEquals(-1, vanilla.canonicalBlock(east));
+        assertEquals(-1, Ids.block(vanilla, east));
         assertThrows(IllegalArgumentException.class, () -> vanilla.runtimeId(east));
 
-        assertEquals(palette.canonicalItem(ItemVariant.of("example:ruby")), palette.canonicalItem(ruby.type()));
+        assertEquals(Ids.item(palette, ItemVariant.of("example:ruby")), Ids.item(palette, ruby.type()));
         assertEquals("example:ruby", palette.item(ruby.type()).definition().getIdentifier());
-        assertEquals(palette.canonicalItem(ItemVariant.of("example:lamp")), palette.canonicalItem(lamp.itemType()));
+        assertEquals(Ids.item(palette, ItemVariant.of("example:lamp")), Ids.item(palette, lamp.itemType()));
         assertEquals(BlockFallback.of("minecraft:dirt"), BlockFallback.of(BedrockBlocks.DIRT));
     }
 
@@ -304,7 +305,7 @@ class VanillaConstantsTest {
         boolean[] ruby = new boolean[1];
         palette.creativeLayout().forEachStack(stack -> ruby[0] |= stack.identifier().equals("example:ruby"));
         assertTrue(ruby[0]);
-        assertEquals(PALETTER.canonicalBlock(BedrockBlockState.vanilla(BlockStates.of("minecraft:stone"))), PALETTER.canonicalBlock(BlockStates.of("minecraft:stone")));
+        assertEquals(Ids.block(PALETTER, BedrockBlockState.vanilla(BlockStates.of("minecraft:stone"))), Ids.block(PALETTER, BlockStates.of("minecraft:stone")));
     }
 
     @Test

@@ -7,13 +7,15 @@ import org.geysermc.paletter.block.BlockResolution;
 import org.geysermc.paletter.creative.CreativeLocation;
 import org.geysermc.paletter.item.ItemVariant;
 
+import org.geysermc.paletter.vanilla.BedrockItemVariant;
+
 import java.util.List;
 
 /**
  * What a palette does with an item variant, for debugging: {@link Palette#explain(ItemVariant)}.
  *
  * @param requested the variant asked for
- * @param canonical its canonical id, or -1 if it has none in this palette
+ * @param handle its handle, or null if it has none in this palette
  * @param kind how it was resolved for this palette's version ({@code ADAPTED} does not occur for items)
  * @param chain the identifiers involved: the requested item, then the item it resolved to if that is another one
  * @param item the identifier of the item that is sent, or null if nothing fits
@@ -25,7 +27,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @Experimental
-public record ItemExplanation(@NonNull ItemVariant requested, int canonical, BlockResolution.@NonNull Kind kind,
+public record ItemExplanation(@NonNull ItemVariant requested, @Nullable BedrockItemVariant handle, BlockResolution.@NonNull Kind kind,
                               @NonNull List<String> chain, @Nullable String item, int runtimeId, int damage,
                               @Nullable String block, int blockRuntimeId, @Nullable CreativeLocation creative) {
     @Override
@@ -39,7 +41,7 @@ public record ItemExplanation(@NonNull ItemVariant requested, int canonical, Blo
             out.append(' ').append(BlockExplanation.describe(requested.blockState()));
         }
         out.append('\n');
-        out.append("  canonical id: ").append(canonical == -1 ? "none" : canonical).append('\n');
+        out.append("  handle:       ").append(handle == null ? "none" : handle).append('\n');
         out.append("  resolution:   ").append(kind.name().toLowerCase());
         if (chain.size() > 1) {
             out.append(" (").append(String.join(" -> ", chain)).append(')');

@@ -1,15 +1,17 @@
-package org.geysermc.paletter.block;
+package org.geysermc.paletter.internal;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.paletter.Forwarding;
 import org.geysermc.paletter.PaletteException;
+import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.data.Renames;
 import org.geysermc.paletter.data.VanillaData;
+import org.geysermc.paletter.vanilla.BedrockBlockState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,15 +26,19 @@ import java.util.WeakHashMap;
  * one, in that version's vanilla palette order, so they are stable for a Paletter release. Custom blocks of layers are
  * appended, in layer order, per lineage of layers: the same layer stack gives the same indices in every version.
  * <p>
- * A consumer maps its own blocks to canonical ids once, and uses {@link org.geysermc.paletter.Palette#runtimeId(int)}
- * (an array lookup) to get the runtime id of a particular palette.
+ * Not API: consumers hold {@link org.geysermc.paletter.vanilla.BedrockBlockState} handles and never see these ids; the
+ * handles carry them in a hidden field and {@code Palette#runtimeId(BedrockBlockState)} is an array
+ * lookup with them.
  *
  * @since 1.0.0
  */
 public final class CanonicalBlocks {
     private final @Nullable CanonicalBlocks parent;
+    private final CanonicalBlocks root;
     private final int offset;
     private final NbtMap[] states;
+    private final CustomBlock[] customs;
+    private final int[] customStarts;
     private final Object2IntMap<NbtMap> index;
     private final Object2IntMap<String> customBases;
     private final Object2IntMap<String> customCounts;
@@ -45,6 +51,7 @@ public final class CanonicalBlocks {
     private CanonicalBlocks(@Nullable CanonicalBlocks parent, List<NbtMap> states, List<CustomBlock> blocks,
                             Renames renames, String version, Map<NbtMap, String> defaultStates) {
         this.parent = parent;
+        this.root = parent == null ? this : parent.root;
         this.renames = renames;
         this.version = version;
         this.defaultStates = defaultStates;
@@ -64,8 +71,12 @@ public final class CanonicalBlocks {
         this.customBases = new Object2IntOpenHashMap<>(blocks.size());
         this.customBases.defaultReturnValue(-1);
         this.customCounts = new Object2IntOpenHashMap<>(blocks.size());
+        this.customs = blocks.toArray(CustomBlock[]::new);
+        this.customStarts = new int[customs.length];
         int base = offset;
-        for (CustomBlock block : blocks) {
+        for (int i = 0; i < customs.length; i++) {
+            CustomBlock block = customs[i];
+            customStarts[i] = base;
             int count = block.stateCount();
             customBases.put(block.identifier(), base);
             customCounts.put(block.identifier(), count);
@@ -169,12 +180,37 @@ public final class CanonicalBlocks {
         return root().forwardVanilla(normalized);
     }
 
-    private CanonicalBlocks root() {
+    /**
+     * @return the handle of a canonical id, or null if there is no such id
+     */
+    public @Nullable BedrockBlockState handle(int canonical) {
+        return BedrockBlockState.fromCanonical(this, canonical);
+    }
+
+    /**
+     * @return the first indices of the lineage: the vanilla states of the newest version
+     */
+    public @NonNull CanonicalBlocks root() {
+        return root;
+    }
+
+    /**
+     * @return the custom block that owns a canonical id of this lineage, or null if it is a vanilla state
+     */
+    public @Nullable CustomBlock customBlockAt(int canonical) {
         CanonicalBlocks current = this;
-        while (current.parent != null) {
+        while (current != null && canonical < current.offset) {
             current = current.parent;
         }
-        return current;
+        if (current == null) {
+            return null;
+        }
+        for (int i = current.customs.length - 1; i >= 0; i--) {
+            if (canonical >= current.customStarts[i]) {
+                return current.customs[i];
+            }
+        }
+        return null;
     }
 
     private Forwarding forwardVanilla(NbtMap state) {
@@ -290,6 +326,9 @@ public final class CanonicalBlocks {
      * @return true if the other indices are these, or these with states appended
      */
     public boolean extendsOrIs(@NonNull CanonicalBlocks other) {
+        if (other == root) {
+            return true;
+        }
         CanonicalBlocks current = this;
         while (current != null) {
             if (current == other) {

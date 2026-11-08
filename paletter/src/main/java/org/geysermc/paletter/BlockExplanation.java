@@ -6,13 +6,15 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.annotation.Experimental;
 import org.geysermc.paletter.block.BlockResolution;
 
+import org.geysermc.paletter.vanilla.BedrockBlockState;
+
 import java.util.List;
 
 /**
  * What a palette does with a block state, for debugging: {@link Palette#explain(NbtMap)}.
  *
  * @param requested the state asked for, as {@code {name, states}}
- * @param canonical its canonical id, or -1 if it has none in this palette
+ * @param handle its handle, or null if it has none in this palette
  * @param kind how it was resolved for this palette's version
  * @param chain the identifiers involved: the requested block, then the block it resolved to if that is another one
  * @param sent the state that is sent to the client, or null if nothing fits ({@link BlockResolution.Kind#MISSING})
@@ -21,13 +23,13 @@ import java.util.List;
  * @since 1.0.0
  */
 @Experimental
-public record BlockExplanation(@NonNull NbtMap requested, int canonical, BlockResolution.@NonNull Kind kind,
+public record BlockExplanation(@NonNull NbtMap requested, @Nullable BedrockBlockState handle, BlockResolution.@NonNull Kind kind,
                                @NonNull List<String> chain, @Nullable NbtMap sent, int runtimeId, int hashedId) {
     @Override
     public String toString() {
         StringBuilder out = new StringBuilder();
         out.append("block ").append(describe(requested)).append('\n');
-        out.append("  canonical id: ").append(canonical == -1 ? "none" : canonical).append('\n');
+        out.append("  handle:       ").append(handle == null ? "none" : handle).append('\n');
         out.append("  resolution:   ").append(kind.name().toLowerCase());
         if (chain.size() > 1) {
             out.append(" (").append(String.join(" -> ", chain)).append(')');

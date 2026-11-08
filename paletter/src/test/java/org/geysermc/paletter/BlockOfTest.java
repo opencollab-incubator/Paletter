@@ -1,12 +1,16 @@
 package org.geysermc.paletter;
 
+import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.BlockStates;
 import org.geysermc.paletter.block.PaletteBlock;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -56,12 +60,12 @@ class BlockOfTest {
     }
 
     @Test
-    void canonicalBlockOfIsVersionIndependent() {
-        int canonical = paletter.canonicalBlockOf(ItemVariant.of("minecraft:acacia_sign"));
-        assertTrue(canonical != -1);
-        assertEquals("minecraft:acacia_standing_sign", BlockStates.name(paletter.canonicalBlocks().state(canonical)));
-        assertEquals(-1, paletter.canonicalBlockOf(ItemVariant.of("minecraft:stick")));
-        assertEquals(-1, paletter.canonicalBlockOf(ItemVariant.of("minecraft:not_an_item")));
+    void blockOfIsVersionIndependent() {
+        BedrockBlockState block = paletter.blockOf(ItemVariant.of("minecraft:acacia_sign"));
+        assertNotNull(block);
+        assertEquals("minecraft:acacia_standing_sign", block.type().identifier());
+        assertNull(paletter.blockOf(ItemVariant.of("minecraft:stick")));
+        assertNull(paletter.blockOf(ItemVariant.of("minecraft:not_an_item")));
     }
 
     private static String block(Palette palette, String item) {

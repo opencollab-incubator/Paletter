@@ -12,11 +12,12 @@ import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.component.DisplayName;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.MaxStackSize;
+import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItems;
 
 /**
- * A Bedrock-only server: one palette per client version, block and item ids stored canonically, converted at the
+ * A Bedrock-only server: one palette per client version, block and item content stored as handles, converted at the
  * network edge. Run: {@code ./gradlew :examples:run}.
  */
 public final class BedrockServerExample {
@@ -43,16 +44,15 @@ public final class BedrockServerExample {
         System.out.println("items in the component packet: " + palette.itemComponentPacket().getItems().size());
         System.out.println("creative entries: " + palette.creativeContentPacket().getContents().size());
 
-        // World storage keeps canonical ids, independent of the client version
-        int stone = paletter.canonicalBlock(BedrockBlocks.STONE.defaultState());
-        System.out.println("stone: canonical " + stone + ", runtime id " + palette.runtimeId(stone));
+        // Content is held as handles, independent of the client version; a palette turns one into what its client needs
+        BedrockBlockState stone = BedrockBlocks.STONE.defaultState();
+        System.out.println("stone: runtime id " + palette.runtimeId(stone));
 
-        // Items: canonical id -> stack for the client, and back
-        int rubyId = palette.canonicalItem(ruby.type());
-        ItemData stack = palette.item(rubyId).toItemData().count(3).build();
-        System.out.println("match(ruby stack) is ruby: " + (palette.match(stack) == rubyId));
+        // Items: handle -> stack for the client, and back
+        ItemData stack = palette.item(ruby.type()).toItemData().count(3).build();
+        System.out.println("match(ruby stack) is ruby: " + (palette.match(stack) == ruby.type().base()));
         ItemData apple = palette.item(BedrockItems.APPLE).toItemData().build();
-        System.out.println("match(apple) = " + palette.match(apple) + " (canonical " + palette.canonicalItem(BedrockItems.APPLE) + ")");
+        System.out.println("match(apple) = " + palette.match(apple));
 
         // Debugging: why does this id look the way it does?
         System.out.println(palette.explain(BedrockBlocks.STONE.defaultState()));

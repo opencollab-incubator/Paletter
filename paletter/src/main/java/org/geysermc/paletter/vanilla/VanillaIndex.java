@@ -4,10 +4,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.Paletter;
-import org.geysermc.paletter.block.CanonicalBlocks;
+import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.data.VanillaData;
 import org.geysermc.paletter.internal.vanilla.BlockLayout;
-import org.geysermc.paletter.item.CanonicalItems;
+import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.item.ItemVariant;
 
 import java.lang.reflect.Field;
@@ -30,6 +30,7 @@ final class VanillaIndex {
     final List<BedrockBlockType> blockTypes;
     final List<BedrockItemType> itemTypes;
     private final BlockTypeLayout[] byCanonical;
+    final BedrockItemVariant[] itemsByCanonical;
     private final Map<String, BedrockBlockType> blocksById;
     private final Map<String, BedrockItemType> itemsById;
     /** Blocks whose states are not a full product in a stride order, and so use a lookup table. */
@@ -93,13 +94,15 @@ final class VanillaIndex {
 
         Map<String, BedrockItemType> itemsById = new LinkedHashMap<>();
         Map<String, List<BedrockItemVariant>> variants = new HashMap<>();
+        this.itemsByCanonical = new BedrockItemVariant[items.vanillaSize()];
         for (int i = 0; i < items.vanillaSize(); i++) {
             ItemVariant variant = items.variant(i);
             BedrockItemType type = itemsById.computeIfAbsent(variant.identifier(),
                 id -> constantItems.computeIfAbsent(id, key -> new BedrockItemType(key, VanillaTypes.UNKNOWN)));
             BedrockBlockState blockState = variant.blockState() == null ? null : state(blocks.index(variant.blockState()));
-            variants.computeIfAbsent(variant.identifier(), id -> new ArrayList<>())
-                .add(new BedrockItemVariant(type, variant.damage(), blockState, i));
+            BedrockItemVariant handle = new BedrockItemVariant(type, variant.damage(), blockState, i);
+            itemsByCanonical[i] = handle;
+            variants.computeIfAbsent(variant.identifier(), id -> new ArrayList<>()).add(handle);
         }
         itemsById.forEach((id, type) -> type.link(variants.get(id)));
         this.itemsById = itemsById;
