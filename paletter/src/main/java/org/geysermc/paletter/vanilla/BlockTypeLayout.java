@@ -59,7 +59,7 @@ final class BlockTypeLayout {
     }
 
     static BlockTypeLayout custom(BedrockBlockType owner, CustomBlock block) {
-        List<BlockProperty<?>> declared = block.properties();
+        List<BlockProperty<?>> declared = block.stateProperties();
         BedrockState<?>[] properties = new BedrockState<?>[declared.size()];
         Object[][] values = new Object[declared.size()][];
         int defaultOffset = 0;

@@ -13,8 +13,8 @@ import org.geysermc.paletter.PaletteReport;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.VanillaData;
-import org.geysermc.paletter.internal.encode.BlockEncoder;
-import org.geysermc.paletter.internal.encode.EncodeContext;
+import org.geysermc.paletter.internal.component.BlockCompiler;
+import org.geysermc.paletter.internal.component.WireContext;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -140,10 +140,10 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
         all.forEach(block -> byIdentifier.add(block.identifier()));
         byIdentifier.sort(java.util.Comparator.reverseOrder());
         List<BlockPropertyData> encoded = new ArrayList<>(all.size());
-        EncodeContext context = EncodeContext.of(data.version(), report, source);
+        WireContext context = WireContext.of(data, report, source);
         for (CustomBlock block : all) {
             int blockId = CUSTOM_BLOCK_ID_START + byIdentifier.indexOf(block.identifier());
-            encoded.add(new BlockPropertyData(block.identifier(), BlockEncoder.propertyData(block, blockId, context)));
+            encoded.add(new BlockPropertyData(block.identifier(), BlockCompiler.propertyData(block, blockId, context)));
         }
         Table extended = new Table(data, all, encoded, table.mode, interner);
         return new BlockPalette(extended, canonical.extend(key, additional), fallbacks, defaultFallback, interner);

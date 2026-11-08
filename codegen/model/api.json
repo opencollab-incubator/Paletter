@@ -1,0 +1,198 @@
+{
+  "_comment": "Hand-written Java shaping of the generated component API (see codegen/README.md). Never a source of wire behaviour.",
+  "rootLists": {
+    "block:minecraft:collision_box": "boxes"
+  },
+  "forms": {
+    "block:minecraft:collision_box": {
+      "boolean": {
+        "field": "enabled"
+      }
+    },
+    "block:minecraft:geometry": {
+      "string": {
+        "shorthandOf": "identifier"
+      }
+    },
+    "block:minecraft:selection_box": {
+      "boolean": {
+        "field": "enabled"
+      }
+    },
+    "block:minecraft:destructible_by_mining": {
+      "boolean": {
+        "field": "enabled"
+      }
+    },
+    "item:minecraft:interact_button": {
+      "boolean": {
+        "field": "enabled",
+        "doc": "The boolean form: {@code true} shows the interact button with the default text."
+      },
+      "string": {
+        "field": "text",
+        "doc": "The string form: the button text (a localization key or literal)."
+      }
+    },
+    "item:minecraft:icon": {
+      "string": {
+        "field": "texture",
+        "doc": "The string form: the icon's default texture (item_texture.json short name)."
+      }
+    }
+  },
+  "types": {
+    "block:minecraft:embedded_visual:geometry.uv_lock": "boolean",
+    "block:minecraft:item_visual:geometry.uv_lock": "boolean",
+    "block:minecraft:embedded_visual:material_instances": "component:MaterialInstances",
+    "block:minecraft:item_visual:material_instances": "component:MaterialInstances",
+    "block:minecraft:liquid_detection:detection_rules[].stops_liquid_flowing_from_direction": "array<string>",
+    "block:minecraft:placement_filter:conditions[].allowed_faces": "array<string>",
+    "block:minecraft:redstone_producer:connected_faces": "array<string>",
+    "block:minecraft:connection_rule:enabled_directions": "array<string>",
+    "item:minecraft:icon:textures": "map<string>",
+    "item:minecraft:storage_item:allowed_items": "array<string>",
+    "item:minecraft:storage_item:banned_items": "array<string>",
+    "item:minecraft:shooter:ammunition[].item": "string",
+    "block:minecraft:destructible_by_mining:item_specific_speeds[].item": "string",
+    "item:minecraft:block_placer:use_on[].states": "states",
+    "item:minecraft:entity_placer:use_on[].states": "states",
+    "item:minecraft:entity_placer:dispense_on[].states": "states",
+    "item:minecraft:digger:destroy_speeds[].block.states": "states",
+    "block:minecraft:placement_filter:conditions[].block_filter[].states": "states",
+    "block:trait:minecraft:placement_direction:blocks_to_corner_with": "array<object>",
+    "block:minecraft:material_instances:*.face_dimming": "boolean",
+    "block:minecraft:material_instances:*.tint_method": "string",
+    "block:minecraft:material_instances:up.face_dimming": "boolean",
+    "block:minecraft:material_instances:up.tint_method": "string",
+    "block:minecraft:material_instances:down.face_dimming": "boolean",
+    "block:minecraft:material_instances:down.tint_method": "string",
+    "block:minecraft:material_instances:north.face_dimming": "boolean",
+    "block:minecraft:material_instances:north.tint_method": "string",
+    "block:minecraft:material_instances:south.face_dimming": "boolean",
+    "block:minecraft:material_instances:south.tint_method": "string",
+    "block:minecraft:material_instances:east.face_dimming": "boolean",
+    "block:minecraft:material_instances:east.tint_method": "string",
+    "block:minecraft:material_instances:west.face_dimming": "boolean",
+    "block:minecraft:material_instances:west.tint_method": "string",
+    "item:minecraft:food:using_converts_to": "string"
+  },
+  "unions": {
+    "block:minecraft:geometry:uv_lock": {
+      "use": "boolean"
+    },
+    "block:minecraft:material_instances:*": {
+      "alternative": {
+        "string": "alias"
+      }
+    },
+    "block:minecraft:material_instances:up": {
+      "alternative": {
+        "string": "alias"
+      }
+    },
+    "block:minecraft:material_instances:down": {
+      "alternative": {
+        "string": "alias"
+      }
+    },
+    "block:minecraft:material_instances:north": {
+      "alternative": {
+        "string": "alias"
+      }
+    },
+    "block:minecraft:material_instances:south": {
+      "alternative": {
+        "string": "alias"
+      }
+    },
+    "block:minecraft:material_instances:east": {
+      "alternative": {
+        "string": "alias"
+      }
+    },
+    "block:minecraft:material_instances:west": {
+      "alternative": {
+        "string": "alias"
+      }
+    },
+    "block:minecraft:embedded_visual:geometry": {
+      "use": "object"
+    },
+    "item:minecraft:repairable:repair_items[].repair_amount": {
+      "use": "number",
+      "alternative": {
+        "string": "expression"
+      }
+    },
+    "item:minecraft:dyeable:default_color": {
+      "use": "array<integer>",
+      "alternative": {
+        "string": "hex"
+      }
+    }
+  },
+  "descriptors": {
+    "item:minecraft:storage_item:allowed_items": "item",
+    "item:minecraft:storage_item:banned_items": "item",
+    "item:minecraft:shooter:ammunition[].item": "item",
+    "block:minecraft:destructible_by_mining:item_specific_speeds[].item": "item",
+    "item:minecraft:repairable:repair_items[].items": "item",
+    "item:minecraft:food:using_converts_to": "item",
+    "item:minecraft:block_placer:block": "block",
+    "item:minecraft:block_placer:use_on[].name": "block",
+    "item:minecraft:entity_placer:use_on[].name": "block",
+    "item:minecraft:entity_placer:dispense_on[].name": "block",
+    "item:minecraft:digger:destroy_speeds[].block.name": "block",
+    "block:minecraft:placement_filter:conditions[].block_filter[].name": "block"
+  },
+  "blockDescriptors": [
+    "item:minecraft:block_placer:use_on[]",
+    "item:minecraft:entity_placer:use_on[]",
+    "item:minecraft:entity_placer:dispense_on[]",
+    "item:minecraft:digger:destroy_speeds[].block",
+    "block:minecraft:placement_filter:conditions[].block_filter[]"
+  ],
+  "fields": {
+    "block:minecraft:material_instances:*": "all",
+    "item:description:is_hidden_in_commands": "hiddenInCommands",
+    "block:description:is_hidden_in_commands": "hiddenInCommands"
+  },
+  "typeNames": {
+    "block:minecraft:material_instances:*": "Instance",
+    "item:minecraft:kinetic_weapon:damage_conditions": "Conditions",
+    "item:minecraft:entity_placer:dispense_on[]": "UseOn"
+  },
+  "standalone": {
+    "item:description": "MenuCategory",
+    "block:description": "MenuCategory"
+  },
+  "standalonePaths": {
+    "item:description": "menu_category",
+    "block:description": "menu_category"
+  },
+  "openEnums": [
+    "block:minecraft:geometry:identifier",
+    "block:minecraft:embedded_visual:geometry.identifier",
+    "block:minecraft:item_visual:geometry.identifier",
+    "block:minecraft:geometry:culling_layer",
+    "block:minecraft:embedded_visual:geometry.culling_layer",
+    "block:minecraft:item_visual:geometry.culling_layer",
+    "item:minecraft:record:sound_event",
+    "item:description:group"
+  ],
+  "exclude": [
+    "block:minecraft:collision_box:[].min",
+    "block:minecraft:collision_box:[].max"
+  ],
+  "classes": {
+    "item:minecraft:record": "MusicRecord",
+    "item:minecraft:throwable": "ThrowableItem"
+  },
+  "optional": [
+    "block:minecraft:destructible_by_mining:seconds_to_destroy"
+  ],
+  "noDefaults": [
+    "item:description:category"
+  ]
+}

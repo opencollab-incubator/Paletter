@@ -23,8 +23,10 @@ import org.geysermc.paletter.creative.CreativeStack;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.VanillaData;
 import org.geysermc.paletter.data.VanillaItem;
-import org.geysermc.paletter.internal.encode.EncodeContext;
-import org.geysermc.paletter.internal.encode.ItemEncoder;
+import org.geysermc.paletter.internal.component.ItemCompiler;
+import org.geysermc.paletter.internal.component.WireContext;
+import org.geysermc.paletter.item.component.BlockPlacer;
+import org.geysermc.paletter.item.component.ItemComponent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -488,7 +490,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             ItemOverride override = new ItemOverride(original);
             modifier.accept(override);
             if (override.changesDefinition()) {
-                put(override.apply(EncodeContext.of(version, report, source)));
+                put(override.apply(context(report, source)));
             }
             if (override.setsBlock()) {
                 NbtMap block = override.block();
@@ -500,15 +502,33 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         public @NonNull PaletteItem addCustom(@NonNull CustomItem custom, @NonNull PaletteReport report, @NonNull String source) {
             checkUnused(custom.identifier());
             int runtimeId = nextRuntimeId;
-            NbtMap componentData = ItemEncoder.componentData(custom.components(), custom.identifier(), runtimeId, custom.creative(),
-                EncodeContext.of(version, report, source));
+            NbtMap componentData = ItemCompiler.componentData(custom.identifier(), runtimeId, custom.components(), custom.menuCategory(),
+                custom.creative(), context(report, source));
             PaletteItem item = new PaletteItem(custom.identifier(), runtimeId, ItemVersion.DATA_DRIVEN, true, componentData, true);
             put(item);
             customItems.add(custom);
-            for (String tag : custom.components().tags()) {
+            for (String tag : custom.tags()) {
                 tags.computeIfAbsent(tag, t -> new LinkedHashSet<>()).add(custom.identifier());
             }
             return item;
+        }
+
+        /**
+         * @return the context components of this palette compile in: its version, and its items and blocks for descriptors
+         */
+        private WireContext context(PaletteReport report, String source) {
+            return WireContext.of(version, report, source, new WireContext.Registry() {
+                @Override
+                public boolean itemExists(@NonNull String identifier) {
+                    return byIdentifier.containsKey(identifier.indexOf(':') < 0 ? "minecraft:" + identifier : identifier);
+                }
+
+                @Override
+                public @Nullable NbtMap blockStates(@NonNull String identifier) {
+                    PaletteBlock block = blocks.defaultState(identifier.indexOf(':') < 0 ? "minecraft:" + identifier : identifier);
+                    return block == null ? null : block.states();
+                }
+            });
         }
 
         /**
@@ -536,15 +556,14 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
                 }
                 case CustomBlock.BlockItem.DataDriven dataDriven -> {
                     checkUnused(block.identifier());
-                    ItemComponents components = dataDriven.components();
-                    // Without an icon of its own, the client renders the block
-                    components = components.toBuilder()
-                        .blockPlacer(block.identifier(), components.icon() == null && !components.rawProperties().containsKey("minecraft:icon"))
-                        .build();
+                    List<ItemComponent> components = new ArrayList<>(dataDriven.components());
+                    if (components.stream().noneMatch(c -> c instanceof BlockPlacer)) {
+                        components.add(BlockPlacer.builder().block(block.identifier()).build());
+                    }
                     int runtimeId = nextRuntimeId;
                     item = new PaletteItem(block.identifier(), runtimeId, ItemVersion.DATA_DRIVEN, true,
-                        ItemEncoder.componentData(components, block.identifier(), runtimeId, block.creative(),
-                            EncodeContext.of(version, report, source)), true);
+                        ItemCompiler.componentData(block.identifier(), runtimeId, components, null, block.creative(),
+                            context(report, source)), true);
                 }
             }
             put(item);

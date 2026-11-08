@@ -13,6 +13,7 @@ import org.geysermc.paletter.creative.CreativeContent;
 import org.geysermc.paletter.creative.CreativeEditor;
 import org.geysermc.paletter.creative.CreativeLayout;
 import org.geysermc.paletter.creative.CreativeOrdering;
+import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.creative.CreativeStack;
 import org.geysermc.paletter.data.DataVersion;
@@ -169,12 +170,13 @@ final class PaletteCompiler {
      * category implies (BDS puts every block with a menu category in the creative inventory).
      */
     private static @Nullable CreativePlacement creativePlacement(CustomBlock block, CreativeOrdering ordering) {
-        if (block.creative() != null || ordering == CreativeOrdering.APPEND || block.menu() == null
-            || block.menu().category() == null) {
+        org.geysermc.paletter.block.component.MenuCategory menu = block.menuCategory();
+        if (block.creative() != null || ordering == CreativeOrdering.APPEND || menu == null
+            || menu.category() == org.geysermc.paletter.block.component.MenuCategory.Category.NONE) {
             return block.creative();
         }
-        CustomBlock.Menu menu = block.menu();
-        return menu.group().isEmpty() ? CreativePlacement.loose(menu.category()) : CreativePlacement.group(menu.category(), menu.group());
+        CreativeCategory category = CreativeCategory.fromBedrockName(menu.category().value());
+        return menu.group() == null || menu.group().isEmpty() ? CreativePlacement.loose(category) : CreativePlacement.group(category, menu.group());
     }
 
     /**

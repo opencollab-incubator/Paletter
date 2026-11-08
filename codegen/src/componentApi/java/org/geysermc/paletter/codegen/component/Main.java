@@ -1,0 +1,104 @@
+package org.geysermc.paletter.codegen.component;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+/**
+ * {@code generate --root DIR} writes the component API from {@code codegen/model}; {@code check --root DIR} fails if the
+ * committed sources differ (and lists the files).
+ */
+public final class Main {
+    static final String TRANSFORMS_SOURCE = "paletter/src/main/java/org/geysermc/paletter/internal/component/Transforms.java";
+    /** Directories whose generated files this generator owns (a file with the generator header that it no longer writes is deleted). */
+    static final List<String> OWNED = List.of("org/geysermc/paletter/item/component", "org/geysermc/paletter/block/component",
+        "org/geysermc/paletter/internal/component");
+
+    private Main() {
+    }
+
+    public static void main(String[] args) throws Exception {
+        Path root = Path.of(".");
+        Path sources = null;
+        for (int i = 1; i < args.length; i++) {
+            if (args[i].equals("--root")) {
+                root = Path.of(args[++i]);
+            } else if (args[i].equals("--sources")) {
+                sources = Path.of(args[++i]);
+            }
+        }
+        boolean check = args.length > 0 && args[0].equals("check");
+        int changed = run(root, sources == null ? root.resolve("paletter/src/main/java") : sources, check);
+        if (check && changed > 0) {
+            System.err.println(changed + " generated component API files are stale: run ./gradlew :codegen:generateComponentApi");
+            System.exit(1);
+        }
+    }
+
+    /** @return the number of files that differ (written unless {@code check}) */
+    static int run(Path root, Path sources, boolean check) throws IOException {
+        Path model = root.resolve("codegen/model");
+        ComponentGenerator.Inputs inputs = ComponentGenerator.read(model, knownTransforms(root), version(root));
+        Map<String, String> files = ComponentGenerator.generate(inputs);
+        int changed = 0;
+        for (Map.Entry<String, String> file : files.entrySet()) {
+            Path path = sources.resolve(file.getKey());
+            String existing = Files.exists(path) ? Files.readString(path, StandardCharsets.UTF_8).replace("\r\n", "\n") : null;
+            if (!file.getValue().equals(existing)) {
+                changed++;
+                System.out.println((check ? "stale: " : "wrote: ") + file.getKey());
+                if (!check) {
+                    Files.createDirectories(path.getParent());
+                    Files.writeString(path, file.getValue(), StandardCharsets.UTF_8);
+                }
+            }
+        }
+        for (String dir : OWNED) {
+            Path d = sources.resolve(dir);
+            if (!Files.isDirectory(d)) {
+                continue;
+            }
+            try (Stream<Path> list = Files.list(d)) {
+                for (Path p : list.filter(Files::isRegularFile).toList()) {
+                    String rel = sources.relativize(p).toString().replace('\\', '/');
+                    if (!files.containsKey(rel) && Files.readString(p, StandardCharsets.UTF_8).startsWith(ApiSource.HEADER.substring(0, 40))) {
+                        changed++;
+                        System.out.println((check ? "stale (no longer generated): " : "deleted: ") + rel);
+                        if (!check) {
+                            Files.delete(p);
+                        }
+                    }
+                }
+            }
+        }
+        return changed;
+    }
+
+    /** Transform names (snake_case) the runtime implements: the public static methods of {@code Transforms}, read from its source. */
+    static Set<String> knownTransforms(Path root) throws IOException {
+        Path source = root.resolve(TRANSFORMS_SOURCE);
+        Set<String> names = new TreeSet<>();
+        Matcher m = Pattern.compile("public static void ([a-zA-Z0-9]+)\\(").matcher(Files.readString(source, StandardCharsets.UTF_8));
+        while (m.find()) {
+            names.add(m.group(1).replaceAll("([a-z0-9])([A-Z])", "$1_$2").toLowerCase(java.util.Locale.ROOT));
+        }
+        return names;
+    }
+
+    static String version(Path root) throws IOException {
+        Matcher m = Pattern.compile("version = \"([^\"]+)\"").matcher(Files.readString(root.resolve("build.gradle.kts")));
+        if (!m.find()) {
+            throw new IllegalStateException("no version in build.gradle.kts");
+        }
+        return m.group(1).replace("-SNAPSHOT", "");
+    }
+}

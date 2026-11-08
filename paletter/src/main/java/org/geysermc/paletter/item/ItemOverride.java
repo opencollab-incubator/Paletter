@@ -5,17 +5,21 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
 import org.geysermc.paletter.block.BlockStates;
-import org.geysermc.paletter.internal.encode.EncodeContext;
-import org.geysermc.paletter.internal.encode.ItemEncoder;
+import org.geysermc.paletter.internal.component.ItemCompiler;
+import org.geysermc.paletter.internal.component.WireContext;
+import org.geysermc.paletter.item.component.ItemComponent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Changes to a vanilla (or earlier layer's) item definition, applied in a layer. Received in
  * {@link org.geysermc.paletter.PaletteLayer.Builder#overrideItem}; anything not set keeps its current value.
  * <pre>{@code
  * // Bedrock stacks cakes to 64, Java to 1
- * layer.overrideItem("minecraft:cake", item -> item.components(c -> c.maxStackSize(1)));
+ * layer.overrideItem("minecraft:cake", item -> item.components(MaxStackSize.of(1)));
  * // Prevent client side firework boosting by making the item data driven
- * layer.overrideItem("minecraft:firework_rocket", item -> item.dataDriven(c -> c.maxStackSize(64).throwable(Throwing.of(true))));
+ * layer.overrideItem("minecraft:firework_rocket", item -> item.dataDriven(MaxStackSize.of(64), Throwable.builder().build()));
  * }</pre>
  *
  * @since 2.0.0
@@ -24,7 +28,8 @@ public final class ItemOverride {
     private final PaletteItem original;
     private @Nullable ItemVersion version;
     private @Nullable Boolean componentBased;
-    private @Nullable ItemComponents components;
+    private final List<ItemComponent> components = new ArrayList<>();
+    private boolean fresh;
     private boolean blockSet;
     private @Nullable NbtMap block;
 
@@ -39,19 +44,6 @@ public final class ItemOverride {
         return original;
     }
 
-    /**
-     * @return the current components: those set in this override so far, else the original's. The original's network
-     * data is kept as is (as {@link org.geysermc.paletter.annotation.Experimental raw} components), so semantic values set
-     * on top only replace what they encode to
-     */
-    public @NonNull ItemComponents currentComponents() {
-        if (components != null) {
-            return components;
-        }
-        NbtMap data = original.getComponentData();
-        return data == null ? ItemComponents.EMPTY : ItemEncoder.decode(data);
-    }
-
     public @NonNull ItemOverride version(@NonNull ItemVersion version) {
         this.version = version;
         return this;
@@ -63,28 +55,28 @@ public final class ItemOverride {
     }
 
     /**
-     * Replaces the components. Marks the item component based.
+     * Adds components on top of the item's current component data: what they write replaces the original keys
+     * (including single {@code item_properties} entries), everything else is sent as before. Marks the item component
+     * based.
      */
-    public @NonNull ItemOverride components(@NonNull ItemComponents components) {
-        this.components = components;
+    public @NonNull ItemOverride components(@NonNull ItemComponent... components) {
+        for (ItemComponent component : components) {
+            this.components.removeIf(existing -> existing.name().equals(component.name()));
+            this.components.add(component);
+        }
         this.componentBased = true;
         return this;
     }
 
     /**
-     * Modifies the current components. Marks the item component based.
+     * Turns the item into a data driven item with only these components (the custom item defaults underneath). The
+     * client then stops applying its hardcoded behaviour, e.g. firework boosting.
      */
-    public @NonNull ItemOverride components(java.util.function.@NonNull UnaryOperator<ItemComponents.Builder> modifier) {
-        return components(modifier.apply(currentComponents().toBuilder()).build());
-    }
-
-    /**
-     * Turns the item into a data driven item with fresh components. The client then stops applying its hardcoded
-     * behaviour, e.g. firework boosting.
-     */
-    public @NonNull ItemOverride dataDriven(java.util.function.@NonNull UnaryOperator<ItemComponents.Builder> components) {
+    public @NonNull ItemOverride dataDriven(@NonNull ItemComponent... components) {
         version(ItemVersion.DATA_DRIVEN);
-        return components(components.apply(ItemComponents.builder()).build());
+        this.components.clear();
+        this.fresh = true;
+        return components(components);
     }
 
     /**
@@ -106,7 +98,7 @@ public final class ItemOverride {
     }
 
     boolean changesDefinition() {
-        return version != null || componentBased != null || components != null;
+        return version != null || componentBased != null || !components.isEmpty() || fresh;
     }
 
     boolean setsBlock() {
@@ -117,9 +109,13 @@ public final class ItemOverride {
         return block;
     }
 
-    PaletteItem apply(EncodeContext context) {
-        NbtMap componentData = components == null ? original.getComponentData()
-            : ItemEncoder.componentData(components, original.getIdentifier(), original.getRuntimeId(), null, context);
+    PaletteItem apply(WireContext context) {
+        NbtMap componentData = original.getComponentData();
+        if (fresh || (componentData == null && !components.isEmpty())) {
+            componentData = ItemCompiler.componentData(original.getIdentifier(), original.getRuntimeId(), components, null, null, context);
+        } else if (!components.isEmpty()) {
+            componentData = ItemCompiler.override(componentData, components, context);
+        }
         return new PaletteItem(original.getIdentifier(), original.getRuntimeId(),
             version != null ? version : original.getVersion(),
             componentBased != null ? componentBased : original.isComponentBased(),

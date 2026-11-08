@@ -2,9 +2,17 @@ plugins {
     application
 }
 
+// The component API generator has its own source set: it reads only codegen/model (and the Transforms source), so it
+// runs without compiling paletter, whose generated sources it writes.
+val componentApi: SourceSet = sourceSets.create("componentApi")
+
 dependencies {
+    "componentApiImplementation"(libs.gson)
     implementation(project(":paletter"))
     implementation(libs.gson)
+    testImplementation(componentApi.output)
+    // The conformance suite rebuilds the capture add-on's definitions with the spec module
+    testImplementation(project(":spec"))
 
     // ConstantsGeneratorTest compiles generated sources, which use the nullness annotations
     testImplementation(libs.checker.qual)
@@ -15,6 +23,8 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    maxHeapSize = "1G"
+    systemProperty("paletter.root", rootProject.projectDir.absolutePath)
     // ./gradlew :codegen:test -PupdateGolden=true rewrites src/test/resources/constants-golden (review the diff)
     systemProperty("paletter.updateGolden", (findProperty("updateGolden") as String?) ?: "false")
 }
@@ -23,25 +33,25 @@ application {
     mainClass.set("org.geysermc.paletter.codegen.Codegen")
 }
 
-// Inputs: wire NBT (bundled vanilla data + codegen/captures), Geyser samples and the curated overrides.
-// Outputs (committed): codegen/spec/inferred.json, codegen/needs-capture.txt and the generated component sources.
+// Wire shape inference for the update pipeline's wire change detection. Inputs: wire NBT (bundled vanilla data +
+// codegen/captures), Geyser samples and the curated overrides. Output (committed): codegen/spec/inferred.json.
 // Extra capture directories (e.g. -Pcaptures=../Paletter-capture/capture/captures) are read in addition to
 // codegen/captures. Copy captures into codegen/captures to make them part of the committed spec.
 val codegenArgs = listOf("--root", rootProject.projectDir.absolutePath) +
     (findProperty("captures") as String?).orEmpty().split(',').filter { it.isNotBlank() }
         .flatMap { listOf("--captures", rootProject.file(it).absolutePath) }
 
-tasks.register<JavaExec>("generateComponents") {
+tasks.register<JavaExec>("inferWireShapes") {
     group = "codegen"
-    description = "Infers component shapes from wire NBT and regenerates the component types"
+    description = "Infers the wire shapes of components from wire NBT into codegen/spec/inferred.json"
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set(application.mainClass)
     args = listOf("generate") + codegenArgs
 }
 
-val checkComponents = tasks.register<JavaExec>("checkComponents") {
+val checkWireShapes = tasks.register<JavaExec>("checkWireShapes") {
     group = "verification"
-    description = "Fails if regenerating the component types from the committed inputs yields a diff"
+    description = "Fails if inferring the wire shapes from the committed inputs yields a diff"
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set(application.mainClass)
     args = listOf("check") + codegenArgs
@@ -70,5 +80,36 @@ val checkConstants = tasks.register<JavaExec>("checkConstants") {
 }
 
 tasks.named("check") {
-    dependsOn(checkComponents, checkConstants)
+    dependsOn(checkWireShapes, checkConstants)
+}
+
+// The custom item/block component API (org.geysermc.paletter.item.component, block.component and the internal encoders)
+// from codegen/model: components.json, mappings.json, transforms.json, bds-feedback.json, fixtures.json, api.json.
+tasks.register<JavaExec>("generateComponentApi") {
+    group = "codegen"
+    description = "Regenerates the component API and its encoders from codegen/model"
+    classpath = componentApi.runtimeClasspath
+    mainClass.set("org.geysermc.paletter.codegen.component.Main")
+    args = listOf("generate", "--root", rootProject.projectDir.absolutePath)
+}
+
+val checkComponentApi = tasks.register<JavaExec>("checkComponentApi") {
+    group = "verification"
+    description = "Fails if regenerating the component API from codegen/model yields a diff"
+    classpath = componentApi.runtimeClasspath
+    mainClass.set("org.geysermc.paletter.codegen.component.Main")
+    args = listOf("check", "--root", rootProject.projectDir.absolutePath)
+    outputs.upToDateWhen { false }
+}
+
+tasks.named("check") {
+    dependsOn(checkComponentApi)
+}
+
+// Generates into build/component-api (to look at, or while the committed API is being replaced)
+tasks.register<JavaExec>("generateComponentApiPreview") {
+    group = "codegen"
+    classpath = componentApi.runtimeClasspath
+    mainClass.set("org.geysermc.paletter.codegen.component.Main")
+    args = listOf("generate", "--root", rootProject.projectDir.absolutePath, "--sources", layout.buildDirectory.dir("component-api").get().asFile.absolutePath)
 }

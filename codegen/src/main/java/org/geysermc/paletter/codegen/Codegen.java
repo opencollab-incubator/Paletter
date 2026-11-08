@@ -16,20 +16,19 @@ import java.util.TreeMap;
 import java.util.stream.Stream;
 
 /**
- * Component code generation. Modes:
+ * Wire shape inference: the shape of every component observed in wire NBT (bundled vanilla data and the captures in
+ * {@code codegen/captures}), written to {@code codegen/spec/inferred.json}. The generator's {@code update} pipeline
+ * compares new captures with it to report wire format changes. It no longer generates code: the component API and its
+ * encoders come from the component model ({@code codegen/model}, see {@code component.ComponentGenerator}). Modes:
  * <ul>
- *     <li>{@code generate}: infer the spec from wire NBT, write it, generate the component types from it plus the
- *     overrides, and write {@code needs-capture.txt}</li>
- *     <li>{@code check}: the same in memory; fails if any committed output differs</li>
+ *     <li>{@code generate}: infer the spec and write it</li>
+ *     <li>{@code check}: the same in memory; fails if the committed spec differs</li>
  * </ul>
  */
 public final class Codegen {
     static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     static final String SPEC = "codegen/spec/inferred.json";
     static final String OVERRIDES = "codegen/overrides.json";
-    static final String NEEDS_CAPTURE = "codegen/needs-capture.txt";
-    static final String COMPONENT_DIR = "paletter/src/main/java/org/geysermc/paletter/internal/wire";
-    static final List<String> GENERATED_PACKAGES = List.of("item", "block");
 
     private Codegen() {
     }
@@ -51,16 +50,6 @@ public final class Codegen {
 
         Map<String, String> outputs = new TreeMap<>();
         outputs.put(SPEC, GSON.toJson(spec) + "\n");
-        if (mode.equals("generate")) {
-            // Written first, so a spec the overrides do not cover yet can be inspected
-            Files.createDirectories(root.resolve(SPEC).getParent());
-            Files.writeString(root.resolve(SPEC), outputs.get(SPEC), StandardCharsets.UTF_8);
-        }
-        // The generator reads the spec back from its serialised form, so the committed file is the whole truth
-        Generator generator = new Generator(JsonParser.parseString(outputs.get(SPEC)).getAsJsonObject(), overrides);
-        generator.generate().forEach((file, content) -> outputs.put(COMPONENT_DIR + "/" + file, content));
-        outputs.put(NEEDS_CAPTURE, generator.needsCapture());
-
         switch (mode) {
             case "generate" -> write(root, outputs);
             case "check" -> check(root, outputs);
@@ -68,28 +57,7 @@ public final class Codegen {
         }
     }
 
-    private static List<Path> stale(Path root, Map<String, String> outputs) throws IOException {
-        List<Path> stale = new ArrayList<>();
-        for (String pkg : GENERATED_PACKAGES) {
-            Path dir = root.resolve(COMPONENT_DIR).resolve(pkg);
-            if (!Files.isDirectory(dir)) {
-                continue;
-            }
-            try (Stream<Path> files = Files.list(dir)) {
-                for (Path file : files.toList()) {
-                    if (!outputs.containsKey(COMPONENT_DIR + "/" + pkg + "/" + file.getFileName())) {
-                        stale.add(file);
-                    }
-                }
-            }
-        }
-        return stale;
-    }
-
     private static void write(Path root, Map<String, String> outputs) throws IOException {
-        for (Path file : stale(root, outputs)) {
-            Files.delete(file);
-        }
         int changed = 0;
         for (Map.Entry<String, String> output : outputs.entrySet()) {
             Path file = root.resolve(output.getKey());
@@ -105,9 +73,6 @@ public final class Codegen {
 
     private static void check(Path root, Map<String, String> outputs) throws IOException {
         List<String> problems = new ArrayList<>();
-        for (Path file : stale(root, outputs)) {
-            problems.add("stale generated file " + file);
-        }
         for (Map.Entry<String, String> output : outputs.entrySet()) {
             Path file = root.resolve(output.getKey());
             if (!Files.exists(file)) {
@@ -117,7 +82,7 @@ public final class Codegen {
             }
         }
         if (!problems.isEmpty()) {
-            throw new IllegalStateException("Generated component sources are out of date; run ./gradlew :codegen:generateComponents\n  "
+            throw new IllegalStateException("codegen/spec/inferred.json is out of date; run ./gradlew :codegen:inferWireShapes\n  "
                 + String.join("\n  ", problems));
         }
         System.out.println("All " + outputs.size() + " generated files are up to date");

@@ -53,7 +53,7 @@ public final class CanonicalBlocks {
         int base = offset;
         for (CustomBlock block : blocks) {
             int count = 1;
-            for (BlockProperty<?> property : block.properties()) {
+            for (BlockProperty<?> property : block.stateProperties()) {
                 count *= property.values().size();
             }
             customBases.put(block.identifier(), base);

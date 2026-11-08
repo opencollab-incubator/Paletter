@@ -64,22 +64,6 @@ class ProtocolWindowTest {
         JsonObject stable = components.getAsJsonObject("item:test:stable");
         assertFalse(stable.has("sinceProtocol") || stable.has("untilProtocol"));
 
-        Map<String, String> files = new Generator(wrap(components), overrides).generate();
-        String thing = files.get("item/Thing.java");
-        String thingOld = files.get("item/ThingUntil2250.java");
-        assertTrue(thing.contains("public record Thing(@NonNull String value)"), thing);
-        assertTrue(thing.contains("2250, ComponentType.UNBOUNDED_UNTIL, Thing::fromNbt"), thing);
-        assertTrue(thingOld.contains("public record ThingUntil2250(boolean value)"), thingOld);
-        assertTrue(thingOld.contains("ComponentType.UNBOUNDED_SINCE, 2250, ThingUntil2250::fromNbt"), thingOld);
-        assertTrue(thing.contains("package " + Generator.BASE_PACKAGE + ".item;"), thing);
-        String registry = files.get("item/ItemComponentTypes.java");
-        assertTrue(registry.contains("Thing.TYPE") && registry.contains("ThingUntil2250.TYPE"), registry);
-    }
-
-    private static JsonObject wrap(JsonObject components) {
-        JsonObject spec = new JsonObject();
-        spec.add("components", components);
-        return spec;
     }
 
     @Test

@@ -5,7 +5,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.List;
 
 /**
- * A state property of a custom block. The order properties are declared in determines the order of the generated states.
+ * A state property of a custom block: an entry of the add-on JSON description {@code states}. The order properties are
+ * declared in determines the order of the generated states; the order of the values is the order sent to clients.
  *
  * @param name the property name, e.g. {@code geyser:lit}
  * @param type the value type
@@ -28,6 +29,19 @@ public record BlockProperty<T>(@NonNull String name, @NonNull Type type, @NonNul
 
     public static @NonNull BlockProperty<Byte> bool(@NonNull String name) {
         return new BlockProperty<>(name, Type.BOOLEAN, List.of((byte) 0, (byte) 1));
+    }
+
+    /**
+     * A boolean state with its values in the given order, as add-on JSON lists them ({@code [true, false]}).
+     *
+     * @since 2.0.0
+     */
+    public static @NonNull BlockProperty<Byte> bools(@NonNull String name, boolean @NonNull ... values) {
+        List<Byte> bytes = new java.util.ArrayList<>(values.length);
+        for (boolean value : values) {
+            bytes.add((byte) (value ? 1 : 0));
+        }
+        return new BlockProperty<>(name, Type.BOOLEAN, bytes);
     }
 
     public static @NonNull BlockProperty<Integer> ints(@NonNull String name, @NonNull Integer... values) {

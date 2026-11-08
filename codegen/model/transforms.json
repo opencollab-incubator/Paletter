@@ -38,10 +38,70 @@
   },
   "item:minecraft:hover_text_color:value": {
     "transform": "formatting_code",
-    "why": "The component keeps the color name; item_properties.hover_text_color gets the formatting code (red -> §c, dark_purple -> §5) and is left out for unknown names. The docs give no enum for the field, so a value table cannot be generalized. Implement it with Bedrock's text color table."
+    "why": "The component keeps the color name; item_properties.hover_text_color gets the formatting code (red -> §c, dark_purple -> §5) and is left out for unknown names. The docs give no enum for the field, so a value table cannot be generalized. Implement it with Bedrock's text color table. With no value, BDS sends the component with an empty value."
   },
-  "item:minecraft:repairable:repair_items[].items": {
+  "block:minecraft:collision_box:[]": {
+    "transform": "collision_boxes",
+    "why": "Each box's min/max leaves depend on both origin and size (min = origin + (8, 0, 8), max = min + size; BDS orders min and max per axis), so single-field variation fits spurious linear rules to each and they conflict on every leaf."
+  },
+  "block:minecraft:geometry:": {
+    "transform": "geometry",
+    "why": "BDS rejected every variant's companions (status untestable), so no rule was inferred. The wire shape is known from every material_instances variant, which carries a geometry: {identifier, bone_visibility, culling, culling_layer, culling_shape, uv_lock, ignoreGeometryForIsSolid, isV1Fullblock, needsLegacyTopRotation, useBlockTypeLightAbsorption}; item_visual sends the same shape as geometryDescription."
+  },
+  "block:minecraft:material_instances:": {
+    "transform": "material_instances",
+    "why": "face_dimming and isotropic are packed into one byte (packed_bools: bit 0 face_dimming, bit 1 isotropic, bit 2 always set), so each field's table only fits with the other at its default; face aliases go to mappings, faces to materials. Inference cannot combine two fields into one leaf."
+  },
+  "item:minecraft:repairable:repair_items": {
     "transform": "item_descriptor_list",
-    "why": "Items become [{name}] and unknown items are dropped. An entry with no resolvable item drops the whole repair entry, repair_amount included (float for numbers, string for molang). Whether an item resolves comes from the item registry, not the JSON value."
+    "why": "Each entry's items become [{name}] (names as written, not namespaced) next to repair_amount, a float for numbers and a string for Molang. The two JSON types of repair_amount land on the same leaf with different NBT types, which no single rule fits."
+  },
+  "block:minecraft:embedded_visual:geometry": {
+    "transform": "geometry",
+    "why": "The same geometry description as minecraft:geometry, inline. BDS rejected every embedded_visual variant of the capture, so this shape is the documented one with the wire keys of minecraft:geometry (unverified)."
+  },
+  "block:minecraft:transformation:rotation": {
+    "transform": "quarter_turns",
+    "why": "Rotation is sent as RX/RY/RZ in quarter turns (degrees / 90). Only multiples of 90 are accepted, and the variant values 90/180/270 vary all three axes at once, so per-axis rules could not be fitted."
+  },
+  "block:minecraft:placement_filter:conditions[].allowed_faces": {
+    "transform": "face_bits",
+    "why": "A list of faces becomes a byte bit set (down 1, up 2, north 4, south 8, west 16, east 32; 63 for the default all). Every list variant was rejected by BDS, so no bitset rule could be fitted; the encoding is the one liquid_detection and vanilla data show."
+  },
+  "block:minecraft:liquid_detection:detection_rules[].stops_liquid_flowing_from_direction": {
+    "transform": "face_bits",
+    "why": "Same face bit set as placement_filter allowed_faces (stopsLiquidFromDirection); BDS rejected every list variant, so only the empty default (0) was observed."
+  },
+  "block:minecraft:redstone_producer:connected_faces": {
+    "transform": "face_list",
+    "why": "Sent as the list of face names, all six by default. BDS rejected every varied list, so only the default list was observed, which inference cannot turn into a rule (its per-index leaves differ)."
+  },
+  "block:minecraft:connection_rule:enabled_directions": {
+    "transform": "face_list",
+    "why": "Same as redstone_producer connected_faces: the list of directions, default [south, north, east, west]."
+  },
+  "block:trait:minecraft:placement_direction:enabled_states": {
+    "transform": "enabled_state_flags",
+    "why": "enabled_states becomes one byte per state the trait can enable (cardinal_direction, corner_and_cardinal_direction, facing_direction, sixteen_way_rotation), 1 if listed. Inference fitted a table on the first element and could not see the others."
+  },
+  "item:minecraft:icon:": {
+    "transform": "icon_textures",
+    "why": "The icon lives only in item_properties.minecraft:icon as {textures: {default: <texture>}}; the string form and textures map variants both write that compound, but the documented texture field is unknown to BDS and textures was dropped (no varied value)."
+  },
+  "item:minecraft:dyeable:default_color": {
+    "transform": "rgb_color",
+    "why": "default_color is a hex string or [r, g, b] and is sent as a list of three ints, white [255, 255, 255] by default; inference dropped the field because the varied values all fell back to white or were rejected."
+  },
+  "block:minecraft:destructible_by_mining:": {
+    "transform": "destructible_by_mining",
+    "why": "value is seconds_to_destroy (0 by default, -1 for the false form), item_specific_speeds is only sent when not empty, in the legacy {Name, Aux} item descriptor shape. Single field variation fitted count/table rules for value that conflict."
+  },
+  "block:minecraft:selection_box:": {
+    "transform": "selection_box",
+    "why": "Every origin variant was rejected (BDS validates the box against the block bounds), so origin has no rule; the wire always carries enabled, origin and size, the full cube when the false form disables selection."
+  },
+  "item:minecraft:use_animation:value": {
+    "transform": "use_animation_id",
+    "why": "item_properties.use_animation numbers the animation (eat 1, spear 6, ...). The docs give no enum for value, so the inference only saw the two samples and fitted a constant; the numbering is Bedrock's UseAnimation enum."
   }
 }
