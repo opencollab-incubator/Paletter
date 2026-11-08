@@ -22,7 +22,7 @@ import java.util.List;
  * @param block the block sent with the item (its block item's block, or the default block), or null
  * @param blockRuntimeId the runtime id of that block, or -1
  * @param creative where the variant is in the creative inventory, or null if it is not
- * @since 1.1.0
+ * @since 1.0.0
  */
 @Experimental
 public record ItemExplanation(@NonNull ItemVariant requested, int canonical, BlockResolution.@NonNull Kind kind,

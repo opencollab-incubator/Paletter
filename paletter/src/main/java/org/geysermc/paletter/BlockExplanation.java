@@ -18,7 +18,7 @@ import java.util.List;
  * @param sent the state that is sent to the client, or null if nothing fits ({@link BlockResolution.Kind#MISSING})
  * @param runtimeId the runtime id of the sent state in this palette's network id mode, or -1
  * @param hashedId the hashed network id of the sent state, whatever the palette's mode, or -1
- * @since 1.1.0
+ * @since 1.0.0
  */
 @Experimental
 public record BlockExplanation(@NonNull NbtMap requested, int canonical, BlockResolution.@NonNull Kind kind,

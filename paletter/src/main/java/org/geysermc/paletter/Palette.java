@@ -242,7 +242,7 @@ public final class Palette {
      * Explains what this palette does with a block state: canonical, runtime and hashed id, how it was resolved for
      * this version and which state is sent. Slow, for debugging only.
      *
-     * @since 1.1.0
+     * @since 1.0.0
      */
     public @NonNull BlockExplanation explain(@NonNull NbtMap state) {
         NbtMap normalized = BlockStates.normalize(state);
@@ -263,7 +263,7 @@ public final class Palette {
     /**
      * Like {@link #explain(NbtMap)}, for a vanilla state.
      *
-     * @since 1.1.0
+     * @since 1.0.0
      */
     public @NonNull BlockExplanation explain(@NonNull BedrockBlockState state) {
         return explain(state.toNbt());
@@ -273,7 +273,7 @@ public final class Palette {
      * Explains what this palette does with an item variant: canonical and runtime id, how it was resolved for this
      * version, the block it is sent with and its place in the creative inventory. Slow, for debugging only.
      *
-     * @since 1.1.0
+     * @since 1.0.0
      */
     public @NonNull ItemExplanation explain(@NonNull ItemVariant variant) {
         int canonical = canonicalItem(variant);
@@ -304,7 +304,7 @@ public final class Palette {
     /**
      * Like {@link #explain(ItemVariant)}, for a vanilla variant.
      *
-     * @since 1.1.0
+     * @since 1.0.0
      */
     public @NonNull ItemExplanation explain(@NonNull BedrockItemVariant variant) {
         return explain(variant.toItemVariant());
