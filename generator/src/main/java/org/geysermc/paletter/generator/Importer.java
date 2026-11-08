@@ -75,10 +75,11 @@ final class Importer {
         DataVersion version = new DataVersion(name, protocol);
         System.out.println("Importing " + version + " from " + source);
 
-        List<NbtMap> blocks = readBlocks(file(source, "block_palette.nbt", name));
-        List<VanillaItem> items = readItems(file(source, "runtime_item_states.json", name), file(source, "item_components.nbt", name));
-        List<BlockPropertyData> dataDriven = readDataDrivenBlocks(file(source, "data_driven_blocks.nbt", name));
-        CreativeLayout creative = readCreative(file(source, "creative_items.json", name));
+        Source read = readSource(source, name);
+        List<NbtMap> blocks = read.blocks();
+        List<VanillaItem> items = read.items();
+        List<BlockPropertyData> dataDriven = read.dataDriven() == null ? List.of() : read.dataDriven();
+        CreativeLayout creative = read.creative();
 
         Map<String, List<String>> tags = Map.of();
         Map<String, NbtMap> defaults = Map.of();
@@ -132,10 +133,36 @@ final class Importer {
     }
 
     /**
+     * A source directory read into memory, as {@link #run} imports it.
+     *
+     * @param rawBlocks the palette entries as stored, with keys the bundled format drops ({@code version},
+     *                  {@code network_id}, {@code name_hash}, ...)
+     * @param blocks the palette entries reduced to {@code {name, states}}, in file order
+     * @param items the items, sorted by identifier (the order of the file is not kept)
+     * @param components the item component file: identifier to component data, including entries without an item
+     * @param dataDriven the data driven blocks, or null if the source has no such file
+     */
+    record Source(List<NbtMap> rawBlocks, List<NbtMap> blocks, List<VanillaItem> items, NbtMap components,
+                  List<BlockPropertyData> dataDriven, CreativeLayout creative) {
+    }
+
+    /** Reads a source directory (CloudburstMC/Data or Geyser's versioned layout) without writing anything. */
+    static Source readSource(Path source, String name) throws IOException {
+        List<NbtMap> rawBlocks = readRawBlocks(file(source, "block_palette.nbt", name));
+        List<NbtMap> blocks = rawBlocks.stream().map(BlockStates::normalize).toList();
+        NbtMap components = readGzip(file(source, "item_components.nbt", name));
+        List<VanillaItem> items = readItems(file(source, "runtime_item_states.json", name), components);
+        Path dataDrivenFile = file(source, "data_driven_blocks.nbt", name);
+        List<BlockPropertyData> dataDriven = Files.exists(dataDrivenFile) ? readDataDrivenBlocks(dataDrivenFile) : null;
+        CreativeLayout creative = readCreative(file(source, "creative_items.json", name));
+        return new Source(rawBlocks, blocks, items, components, dataDriven, creative);
+    }
+
+    /**
      * Files are either named plainly (CloudburstMC/Data) or with the version, as Geyser ships them
      * ({@code block_palette.26_60.nbt}).
      */
-    private static Path file(Path source, String file, String version) {
+    static Path file(Path source, String file, String version) {
         Path plain = source.resolve(file);
         if (Files.exists(plain)) {
             return plain;
@@ -144,41 +171,40 @@ final class Importer {
         return source.resolve(file.substring(0, dot) + "." + version.replace('.', '_') + file.substring(dot));
     }
 
-    private static List<NbtMap> readBlocks(Path file) throws IOException {
+    private static List<NbtMap> readRawBlocks(Path file) throws IOException {
+        return List.copyOf(readGzip(file).getList("blocks", NbtType.COMPOUND));
+    }
+
+    private static NbtMap readGzip(Path file) throws IOException {
         try (InputStream stream = Files.newInputStream(file); NBTInputStream input = NbtUtils.createGZIPReader(stream, true, true)) {
-            NbtMap root = (NbtMap) input.readTag();
-            List<NbtMap> blocks = new ArrayList<>();
-            for (NbtMap block : root.getList("blocks", NbtType.COMPOUND)) {
-                blocks.add(BlockStates.normalize(block));
-            }
-            return blocks;
+            return (NbtMap) input.readTag();
         }
     }
 
-    private static List<VanillaItem> readItems(Path statesFile, Path componentsFile) throws IOException {
-        NbtMap components;
-        try (InputStream stream = Files.newInputStream(componentsFile); NBTInputStream input = NbtUtils.createGZIPReader(stream, true, true)) {
-            components = (NbtMap) input.readTag();
-        }
+    private static List<VanillaItem> readItems(Path statesFile, NbtMap components) throws IOException {
         List<VanillaItem> items = new ArrayList<>();
         for (JsonElement element : readJson(statesFile).getAsJsonArray()) {
             JsonObject item = element.getAsJsonObject();
             String identifier = item.get("name").getAsString();
             boolean componentBased = item.get("componentBased").getAsBoolean();
             NbtMap componentData = components.getCompound(identifier, null);
-            if (componentData == null && componentBased) {
-                System.out.println("  warning: component based item " + identifier + " has no components in the dump; using empty components");
+            if (componentData == null) {
+                // BDS sends a (mostly empty) compound for every item; CloudburstMC/Data and Geyser keep the empty ones,
+                // the capture writer drops them. Empty either way, so every source imports to the same file
+                if (componentBased) {
+                    System.out.println("  warning: component based item " + identifier + " has no components in the dump; using empty components");
+                }
                 componentData = NbtMap.EMPTY;
             }
             items.add(new VanillaItem(identifier, item.get("id").getAsInt(), item.get("version").getAsInt(), componentBased, componentData));
         }
+        // The order carries no meaning (items are keyed by runtime id), but a capture lists them in BDS's network order
+        // and CloudburstMC/Data and Geyser by identifier: sort, so every source imports to the same file
+        items.sort(java.util.Comparator.comparing(VanillaItem::identifier));
         return items;
     }
 
     private static List<BlockPropertyData> readDataDrivenBlocks(Path file) throws IOException {
-        if (Files.notExists(file)) {
-            return List.of();
-        }
         try (InputStream stream = Files.newInputStream(file); NBTInputStream input = NbtUtils.createGZIPReader(stream)) {
             NbtMap root = (NbtMap) input.readTag();
             List<BlockPropertyData> blocks = new ArrayList<>();

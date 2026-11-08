@@ -35,6 +35,10 @@ import java.util.Map;
  *         Generates the spec add-on from codegen/model (spec module), loads it in BDS with experiments on and writes the
  *         content log, the custom item registry and block properties and variants.json to
  *         codegen/model/captures/bds-VERSION (input of spec infer).
+ * verify  --source DIR --name 26.60 [--bundled FILE] [--report FILE] [--max N]
+ *         Diffs a directory in the CloudburstMC/Data layout (or Geyser's versioned names) against the bundled version
+ *         (or the Paletter data file --bundled), in memory: block states and their order, hashed ids, items, item
+ *         components, data driven blocks, creative layout. Writes nothing but the report; exits with 1 on any difference.
  * check   Verifies the bundled data: every block and item of the newest version that is missing in an older
  *         version needs a fallback there, and every fallback target must exist. Exits with 1 on problems.
  * </pre>
@@ -81,6 +85,21 @@ public final class Main {
                     tagSources.put(options.get("item-tags"), Importer.readItemTags(Path.of(options.get("item-tags"))));
                 }
                 BdsCompare.compare(BdsDump.read(Path.of(require(options, "bds-dump"))), data, tagSources);
+            }
+            case "verify" -> {
+                String name = require(options, "name");
+                Path bundledFile = options.containsKey("bundled") ? Path.of(options.get("bundled")) : output.resolve(name + ".nbt");
+                VanillaData bundled;
+                try (InputStream stream = Files.newInputStream(bundledFile)) {
+                    bundled = PaletteDataCodec.read(stream);
+                }
+                Verify verify = Verify.of(Path.of(require(options, "source")), name, bundled, bundledFile.toString());
+                int max = Integer.parseInt(options.getOrDefault("max", String.valueOf(Verify.DEFAULT_MAX_LINES)));
+                System.out.print(verify.markdown(max));
+                if (options.containsKey("report")) {
+                    verify.write(Path.of(options.get("report")), max);
+                }
+                System.exit(verify.identical() ? 0 : 1);
             }
             case "check" -> System.exit(new Checker(output).run() ? 0 : 1);
             case "creative-probe" -> CreativeProbe.run(root, options);
@@ -134,6 +153,7 @@ public final class Main {
               bds-compare --bds-dump FILE --name 26.60 [--item-tags FILE]
               update --channel release|preview [--version X] [--verify-only] [--import-preview] [--keep-server]
                      [--cache DIR] [--report FILE] [--name 26.70] [--experiments a,b] [--port 19260] [--timeout SECONDS]
+              verify --source DIR --name 26.60 [--bundled FILE] [--report FILE] [--max N]
               spec-capture [--channel release|preview] [--version X] [--out DIR] [--keep-server]
               check""");
     }

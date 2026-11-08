@@ -777,9 +777,9 @@ final class Update {
      * The palette block hashes are resolved against: the bundled version of the protocol, or for a new protocol the
      * newest bundled release adjusted with the Script API: removed blocks dropped, new blocks and blocks whose states
      * changed generated from their Script API states (legacy alias states, known from the baseline dump of that
-     * release, left out). Within a generated block the state order is a guess (existing keys and values first, last
-     * key varying fastest); the order of blocks, and so every other block's sequential id, does not depend on it. The
-     * block hash and sequential order checks verify the result.
+     * release, left out). Within a generated block the state order follows {@link #keyOrder}; it is only partly
+     * observable (creative stacks), but the order of blocks, and so every other block's sequential id, does not depend
+     * on it. The block hash and sequential order checks verify the result.
      */
     private VanillaData reference(String existing, BdsDump dump, Runs runs) throws IOException {
         if (existing != null) {
@@ -794,6 +794,8 @@ final class Update {
 
         Map<String, List<NbtMap>> palette = new LinkedHashMap<>();
         data.blockStates().forEach(state -> palette.computeIfAbsent(BlockStates.name(state), n -> new ArrayList<>()).add(state));
+        Map<String, List<String>> strides = new LinkedHashMap<>();
+        palette.forEach((name, blockStates) -> strides.put(name, strideOrder(blockStates)));
         List<NbtMap> states = new ArrayList<>();
         List<String> generated = new ArrayList<>();
         List<String> removed = new ArrayList<>();
@@ -812,18 +814,16 @@ final class Update {
                 states.addAll(blockStates);
                 return;
             }
-            // Existing keys and values keep their order, new ones are appended
-            Map<String, List<Object>> ordered = new LinkedHashMap<>();
-            current.forEach((key, values) -> {
-                if (network.containsKey(key)) {
-                    List<Object> merged = new ArrayList<>();
-                    values.stream().filter(v -> contains(network.get(key), v)).forEach(merged::add);
-                    network.get(key).stream().filter(v -> !contains(merged, v)).forEach(merged::add);
-                    ordered.put(key, merged);
-                }
+            // Existing values keep their order, new ones are appended
+            Map<String, List<Object>> merged = new LinkedHashMap<>();
+            network.forEach((key, values) -> {
+                List<Object> list = new ArrayList<>();
+                current.getOrDefault(key, List.of()).stream().filter(v -> contains(values, v)).forEach(list::add);
+                values.stream().filter(v -> !contains(list, v)).forEach(list::add);
+                merged.put(key, list);
             });
-            network.forEach(ordered::putIfAbsent);
-            List<NbtMap> combinations = combinations(name, ordered);
+            List<String> keys = keyOrder(strides.get(name), new ArrayList<>(network.keySet()), strides);
+            List<NbtMap> combinations = combinations(name, slowestFirst(keys, merged));
             states.addAll(combinations);
             generated.add(name + " (" + blockStates.size() + " -> " + combinations.size() + " states)");
         });
@@ -842,7 +842,8 @@ final class Update {
                     list.stream().filter(v -> !contains(sorted, v)).forEach(sorted::add);
                     values.put(key, sorted);
                 });
-                List<NbtMap> combinations = combinations(name, values);
+                List<NbtMap> combinations = combinations(name, slowestFirst(
+                    keyOrder(similarBlockOrder(values.keySet(), strides), new ArrayList<>(values.keySet()), strides), values));
                 states.addAll(combinations);
                 generated.add(name + " (new, " + combinations.size() + " states)");
             }
@@ -853,12 +854,121 @@ final class Update {
                 + (generated.isEmpty() ? "" : "generated " + String.join(", ", generated)) + (removed.isEmpty() ? "" : "; removed " + removed));
             if (!generated.isEmpty()) {
                 report.todos.add("Block palette: the states of " + generated.size() + " blocks were generated from the Script API. Their order "
-                    + "within each block is a guess that only creative stacks verify (sequential ids of other blocks do not depend on it): "
+                    + "within each block is inferred from the reference palette (Update#keyOrder) and only creative stacks verify it (sequential ids of other blocks do not depend on it): "
                     + String.join(", ", generated));
             }
         }
         return new VanillaData(new DataVersion(latest.name() + "+", 0), states, data.items(), data.dataDrivenBlocks(), data.creative(),
             data.itemTags(), data.fallbacks(), data.blockDefaults());
+    }
+
+    private static final List<String> DIRECTIONS = List.of("north", "east", "south", "west", "up", "down");
+
+    /**
+     * The order in which BDS enumerates a generated block's states, as keys from the fastest varying (stride 1) to the
+     * slowest. Bedrock enumerates every combination with the first registered state varying fastest; registration
+     * order cannot be observed, so it is inferred from the reference palette (replayed on 26.40 -> 26.50 -> 26.60 in
+     * KeyOrderTest: right for 126 of the 127 blocks whose states changed or that are new with several states):
+     * <ol>
+     *     <li>the keys of {@code base} (the block's own order in the reference palette, or that of the most similar
+     *     block for a new block) stay first, in their order: states added to an existing block vary slower than the old
+     *     ones (stairs gained {@code minecraft:corner} as their slowest state in 26.50, fire and redstone wire their
+     *     connections in 26.60; icicle, new in 26.60, starts like pointed dripstone). The exception seen:
+     *     {@code minecraft:trip_wire} put the connections it gained in 26.50 first;</li>
+     *     <li>the other keys follow, each time the one that the fewest remaining keys precede in other blocks of the
+     *     reference palette (e.g. {@code minecraft:connection_north} before {@code _east} on 58 blocks of 26.50);</li>
+     *     <li>without such evidence, keys that only differ by a direction suffix go north, east, south, west, up, down
+     *     (every such family in the palette: walls, pale moss carpet, connections, redstone wire), and otherwise the
+     *     order of {@code keys} (the Script API's, which matches the palette for only about 64% of blocks).</li>
+     * </ol>
+     *
+     * @param base known order of some of the keys, fastest first; may be null or contain keys not in {@code keys}
+     * @param keys every key of the block
+     * @param reference fastest first key order of each block of the reference palette
+     */
+    static List<String> keyOrder(List<String> base, List<String> keys, Map<String, List<String>> reference) {
+        List<String> order = new ArrayList<>();
+        if (base != null) {
+            base.stream().filter(keys::contains).forEach(order::add);
+        }
+        List<String> remaining = new ArrayList<>(keys);
+        remaining.removeAll(order);
+        Map<String, Integer> precedes = new java.util.HashMap<>();
+        for (List<String> blockKeys : reference.values()) {
+            for (int i = 0; i < blockKeys.size(); i++) {
+                for (int j = i + 1; j < blockKeys.size(); j++) {
+                    precedes.merge(blockKeys.get(i) + '\0' + blockKeys.get(j), 1, Integer::sum);
+                }
+            }
+        }
+        while (!remaining.isEmpty()) {
+            String best = null;
+            int bestBeaten = Integer.MAX_VALUE;
+            for (String key : remaining) {
+                int beaten = 0;
+                for (String other : remaining) {
+                    if (!other.equals(key) && precedes.getOrDefault(other + '\0' + key, 0) > precedes.getOrDefault(key + '\0' + other, 0)) {
+                        beaten++;
+                    }
+                }
+                if (beaten < bestBeaten || (beaten == bestBeaten && directionBefore(key, best))) {
+                    best = key;
+                    bestBeaten = beaten;
+                }
+            }
+            order.add(best);
+            remaining.remove(best);
+        }
+        return order;
+    }
+
+    /** Whether {@code key} and {@code other} only differ by a direction suffix, {@code key}'s coming first. */
+    private static boolean directionBefore(String key, String other) {
+        int a = key.lastIndexOf('_');
+        int b = other.lastIndexOf('_');
+        if (a < 0 || b < 0 || !key.substring(0, a).equals(other.substring(0, b))) {
+            return false;
+        }
+        int x = DIRECTIONS.indexOf(key.substring(a + 1));
+        int y = DIRECTIONS.indexOf(other.substring(b + 1));
+        return x >= 0 && y >= 0 && x < y;
+    }
+
+    /** The key order of the reference block with the most keys that are all keys of a new block, or null. */
+    static List<String> similarBlockOrder(Set<String> keys, Map<String, List<String>> reference) {
+        List<String> best = null;
+        for (List<String> order : reference.values()) {
+            if (!order.isEmpty() && keys.containsAll(order) && (best == null || order.size() > best.size())) {
+                best = order;
+            }
+        }
+        return best;
+    }
+
+    /** The keys of a block's states from the fastest varying to the slowest (the first index at which each changes). */
+    static List<String> strideOrder(List<NbtMap> states) {
+        Map<String, Integer> firstChange = new LinkedHashMap<>();
+        NbtMap first = BlockStates.states(states.get(0));
+        for (String key : first.keySet()) {
+            for (int i = 1; i < states.size(); i++) {
+                if (!java.util.Objects.equals(BlockStates.states(states.get(i)).get(key), first.get(key))) {
+                    firstChange.put(key, i);
+                    break;
+                }
+            }
+        }
+        List<String> keys = new ArrayList<>(firstChange.keySet());
+        keys.sort(Comparator.comparingInt(firstChange::get));
+        return keys;
+    }
+
+    /** {@link #combinations} varies the last key fastest. */
+    private static Map<String, List<Object>> slowestFirst(List<String> fastestFirst, Map<String, List<Object>> values) {
+        Map<String, List<Object>> ordered = new LinkedHashMap<>();
+        for (int i = fastestFirst.size() - 1; i >= 0; i--) {
+            ordered.put(fastestFirst.get(i), values.get(fastestFirst.get(i)));
+        }
+        return ordered;
     }
 
     /**
@@ -916,7 +1026,7 @@ final class Update {
         return false;
     }
 
-    private static List<NbtMap> combinations(String name, Map<String, List<Object>> values) {
+    static List<NbtMap> combinations(String name, Map<String, List<Object>> values) {
         List<NbtMap> combinations = new ArrayList<>();
         combinations.add(NbtMap.EMPTY);
         for (Map.Entry<String, List<Object>> state : values.entrySet()) {
@@ -930,7 +1040,9 @@ final class Update {
             }
             combinations = next;
         }
-        return combinations.stream().map(states -> BlockStates.of(name, states)).toList();
+        // BDS's palette has every state's keys sorted (whatever the enumeration order); creative stacks resolved
+        // through this palette carry these instances, so match it byte for byte
+        return combinations.stream().map(states -> BlockStates.of(name, NbtMap.fromMap(new java.util.TreeMap<>(states)))).toList();
     }
 
     /** {@code 1.26.70.23} -> {@code 26.70}, {@code 1.26.63.1} -> {@code 26.60}: hotfixes share their release's name. */
