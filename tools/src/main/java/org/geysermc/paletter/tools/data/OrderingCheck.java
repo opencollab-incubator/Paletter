@@ -79,7 +79,7 @@ public final class OrderingCheck {
             Integer expected = index.get(state);
             checked++;
             if (expected == null || expected != actual) {
-                wrong.add(BlockStates.name(state) + " " + DataDiff.compact(BlockStates.states(state)) + ": BDS " + actual + ", expected " + expected
+                wrong.add(BlockStates.name(state) + " " + Diff.compact(BlockStates.states(state)) + ": BDS " + actual + ", expected " + expected
                     + (actual < sorted.size() ? " (BDS id is " + BlockStates.name(sorted.get((int) actual)) + ")" : ""));
             }
         }

@@ -2,7 +2,7 @@ package org.geysermc.paletter.tools.update;
 
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.data.Importer;
-import org.geysermc.paletter.tools.data.ShapeDiff;
+import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.data.WireShapes;
 import java.util.List;
 import java.util.Map;
@@ -36,21 +36,21 @@ class UpdateTest {
     void shapeChangesAreWireFormatChanges() {
         var before = shapes("value", "byte", "old", "int");
         var after = shapes("value", "short", "new", "string");
-        ShapeDiff diff = ShapeDiff.of(before, after);
-        assertEquals(3, diff.wireChanges.size(), diff.wireChanges.toString());
-        assertTrue(diff.wireChanges.stream().anyMatch(c -> c.contains("value: type byte -> short")));
-        assertTrue(diff.wireChanges.stream().anyMatch(c -> c.contains("old: field removed")));
-        assertTrue(diff.wireChanges.stream().anyMatch(c -> c.contains("new: new field")));
-        assertTrue(ShapeDiff.of(before, before).identical());
+        Diff diff = Diff.shapes(before, after);
+        assertEquals(3, diff.lines(Diff.WIRE_CHANGES).size(), diff.lines(Diff.WIRE_CHANGES).toString());
+        assertTrue(diff.lines(Diff.WIRE_CHANGES).stream().anyMatch(c -> c.contains("value: type byte -> short")));
+        assertTrue(diff.lines(Diff.WIRE_CHANGES).stream().anyMatch(c -> c.contains("old: field removed")));
+        assertTrue(diff.lines(Diff.WIRE_CHANGES).stream().anyMatch(c -> c.contains("new: new field")));
+        assertTrue(Diff.shapes(before, before).identical());
     }
 
     @Test
     void componentsComeAndGo() {
         var before = shapes("value", "byte");
         var after = Map.of("item:minecraft:other", Map.of("", "compound"));
-        ShapeDiff diff = ShapeDiff.of(before, after);
-        assertEquals(List.of("item:minecraft:other"), diff.newComponents);
-        assertEquals(List.of("item:minecraft:test: no longer sent"), diff.wireChanges);
+        Diff diff = Diff.shapes(before, after);
+        assertEquals(List.of("item:minecraft:other"), diff.lines(Diff.NEW_COMPONENTS));
+        assertEquals(List.of("item:minecraft:test: no longer sent"), diff.lines(Diff.WIRE_CHANGES));
     }
 
     @Test

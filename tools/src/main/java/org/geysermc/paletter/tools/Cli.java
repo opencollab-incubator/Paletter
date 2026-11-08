@@ -10,11 +10,9 @@ import org.geysermc.paletter.tools.client.CaptureClient;
 import org.geysermc.paletter.tools.client.CaptureWriter;
 import org.geysermc.paletter.tools.client.CapturedData;
 import org.geysermc.paletter.tools.client.LevelDat;
-import org.geysermc.paletter.tools.data.BdsCompare;
+import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.data.Checker;
-import org.geysermc.paletter.tools.data.Compare;
 import org.geysermc.paletter.tools.data.Importer;
-import org.geysermc.paletter.tools.data.Verify;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
@@ -135,7 +133,7 @@ public final class Cli implements Runnable {
             if (itemTags != null) {
                 tagSources.put(itemTags.toString(), Importer.readItemTags(itemTags));
             }
-            BdsCompare.compare(BdsDump.read(bdsDump), data, tagSources);
+            Diff.bdsDump(BdsDump.read(bdsDump), data, tagSources).print(System.out);
             return 0;
         }
     }
@@ -213,8 +211,8 @@ public final class Cli implements Runnable {
         @Override
         public Integer call() throws Exception {
             Path file = bundled != null ? bundled : resources().resolve(name + ".nbt");
-            Verify verify = Verify.of(source, name, readPalette(file), file.toString());
-            int lines = max != null ? max : Verify.DEFAULT_MAX_LINES;
+            Diff verify = Diff.source(source, name, readPalette(file), file.toString());
+            int lines = max != null ? max : Diff.DEFAULT_MAX_LINES;
             System.out.print(verify.markdown(lines));
             if (report != null) {
                 verify.write(report, lines);
@@ -333,7 +331,10 @@ public final class Cli implements Runnable {
 
         @Override
         public Integer call() throws Exception {
-            return new Compare(CapturedData.read(capture), reference(reference)).run() ? 0 : 1;
+            Diff diff = Diff.capture(CapturedData.read(capture), reference(reference));
+            diff.print(System.out);
+            System.out.println(diff.identical() ? "IDENTICAL" : "DIFFERENT");
+            return diff.identical() ? 0 : 1;
         }
     }
 

@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class VerifyTest {
+class DiffSourceTest {
     private static final String NAME = "26.60";
 
     @TempDir
@@ -53,7 +53,7 @@ class VerifyTest {
     void identical() throws Exception {
         VanillaData data = fixture();
         write(data, directory, true);
-        Verify verify = Verify.of(directory, NAME, data, "fixture");
+        Diff verify = Diff.source(directory, NAME, data, "fixture");
         assertTrue(verify.identical(), verify.markdown(50));
         assertTrue(verify.markdown(50).contains("IDENTICAL"));
     }
@@ -69,7 +69,7 @@ class VerifyTest {
                 Files.move(file, directory.resolve(name.substring(0, dot) + ".26_60" + name.substring(dot)));
             }
         }
-        assertTrue(Verify.of(directory, NAME, data, "fixture").identical());
+        assertTrue(Diff.source(directory, NAME, data, "fixture").identical());
     }
 
     @Test
@@ -82,7 +82,7 @@ class VerifyTest {
         states.set(first + 1, swapped);
         write(with(data, states, data.items(), data.creative()), directory, true);
 
-        Verify verify = Verify.of(directory, NAME, data, "fixture");
+        Diff verify = Diff.source(directory, NAME, data, "fixture");
         assertOnly(verify, "State order within blocks");
         String line = verify.section("State order within blocks").differences.get(0);
         assertTrue(line.startsWith("test:lamp: state #0"), line);
@@ -96,7 +96,7 @@ class VerifyTest {
         states.add(firstState);
         write(with(data, states, data.items(), data.creative()), directory, true);
 
-        Verify verify = Verify.of(directory, NAME, data, "fixture");
+        Diff verify = Diff.source(directory, NAME, data, "fixture");
         assertOnly(verify, "Block order (FNV-1 64 name sort)");
         assertTrue(verify.section("Block order (FNV-1 64 name sort)").info.get(0).contains("not sorted"));
     }
@@ -112,7 +112,7 @@ class VerifyTest {
         items.set(2, new VanillaItem(sword.identifier(), sword.runtimeId(), sword.version(), sword.componentBased(), components));
         write(with(data, data.blockStates(), items, data.creative()), directory, true);
 
-        Verify verify = Verify.of(directory, NAME, data, "fixture");
+        Diff verify = Diff.source(directory, NAME, data, "fixture");
         assertOnly(verify, "Item components");
         List<String> differences = verify.section("Item components").differences;
         assertEquals(1, differences.size(), differences.toString());
@@ -129,7 +129,7 @@ class VerifyTest {
             .build();
         items.set(2, new VanillaItem(sword.identifier(), sword.runtimeId(), sword.version(), sword.componentBased(), components));
         write(with(data, data.blockStates(), items, data.creative()), directory, true);
-        assertOnly(Verify.of(directory, NAME, data, "fixture"), "Item components");
+        assertOnly(Diff.source(directory, NAME, data, "fixture"), "Item components");
     }
 
     @Test
@@ -143,7 +143,7 @@ class VerifyTest {
         items.add(items.remove(0)); // the loose apple goes last
         write(with(data, data.blockStates(), data.items(), CreativeLayout.of(categories)), directory, true);
 
-        Verify verify = Verify.of(directory, NAME, data, "fixture");
+        Diff verify = Diff.source(directory, NAME, data, "fixture");
         assertOnly(verify, "Creative layout");
         List<String> differences = verify.section("Creative layout").differences;
         assertTrue(differences.stream().anyMatch(line -> line.startsWith("ITEMS moved: test:apple from #0")), differences.toString());
@@ -159,7 +159,7 @@ class VerifyTest {
         VanillaData a = with(data, data.blockStates(), data.items(), lampLayout(data, powerFirst));
         VanillaData b = with(data, data.blockStates(), data.items(), lampLayout(data, litFirst));
         write(b, directory, true);
-        assertTrue(Verify.of(directory, NAME, a, "fixture").identical());
+        assertTrue(Diff.source(directory, NAME, a, "fixture").identical());
     }
 
     private static CreativeLayout lampLayout(VanillaData data, NbtMap state) {
@@ -183,7 +183,7 @@ class VerifyTest {
         writeGzip(directory.resolve("item_components.nbt"), nonEmpty.build());
         Importer.Source source = Importer.readSource(directory, NAME);
         assertFalse(source.components().containsKey("test:apple"));
-        assertTrue(Verify.of(directory, NAME, data, "fixture").identical());
+        assertTrue(Diff.source(directory, NAME, data, "fixture").identical());
         source.items().stream().filter(item -> !item.componentBased())
             .forEach(item -> assertEquals(NbtMap.EMPTY, item.componentData(), item.identifier()));
     }
@@ -195,7 +195,7 @@ class VerifyTest {
         List<VanillaItem> reversed = new ArrayList<>(data.items());
         java.util.Collections.reverse(reversed);
         write(with(data, data.blockStates(), reversed, data.creative()), directory, true);
-        assertTrue(Verify.of(directory, NAME, data, "fixture").identical());
+        assertTrue(Diff.source(directory, NAME, data, "fixture").identical());
         assertEquals(data.items(), Importer.readSource(directory, NAME).items());
     }
 
@@ -210,24 +210,24 @@ class VerifyTest {
         }
         blocks.set(0, blocks.get(0).toBuilder().putInt("network_id", 42).build());
         writeGzip(directory.resolve("block_palette.nbt"), NbtMap.builder().putList("blocks", NbtType.COMPOUND, blocks).build());
-        assertOnly(Verify.of(directory, NAME, data, "fixture"), "Hashed block network ids");
+        assertOnly(Diff.source(directory, NAME, data, "fixture"), "Hashed block network ids");
     }
 
     /** The bundled data exported into the layout must verify as identical: the importer and verify agree. */
     @Test
     void bundledRoundTrip() throws Exception {
         VanillaData data;
-        try (InputStream stream = VerifyTest.class.getResourceAsStream("/paletter/" + NAME + ".nbt")) {
+        try (InputStream stream = DiffSourceTest.class.getResourceAsStream("/paletter/" + NAME + ".nbt")) {
             assertNotNull(stream);
             data = PaletteDataCodec.read(stream);
         }
         write(data, directory, true);
-        Verify verify = Verify.of(directory, NAME, data, "bundled");
+        Diff verify = Diff.source(directory, NAME, data, "bundled");
         assertTrue(verify.identical(), verify.markdown(20));
         assertTrue(verify.section("Hashed block network ids").source.contains(data.blockStates().size() + " states carry `network_id`"));
     }
 
-    private static void assertOnly(Verify verify, String section) {
+    private static void assertOnly(Diff verify, String section) {
         verify.sections.values().forEach(s -> {
             if (s.title.equals(section)) {
                 assertFalse(s.differences.isEmpty(), "expected differences in " + section + "\n" + verify.markdown(50));

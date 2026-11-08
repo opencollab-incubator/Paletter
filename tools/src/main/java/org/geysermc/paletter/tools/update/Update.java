@@ -6,13 +6,12 @@ import org.geysermc.paletter.tools.bds.BdsRunner;
 import org.geysermc.paletter.tools.bds.BdsServer;
 import org.geysermc.paletter.tools.client.NetherNet;
 import org.geysermc.paletter.tools.data.Checker;
-import org.geysermc.paletter.tools.data.Compare;
 import org.geysermc.paletter.tools.data.CreativeOrderCheck;
-import org.geysermc.paletter.tools.data.DataDiff;
+import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.data.Importer;
 import org.geysermc.paletter.tools.data.OrderingCheck;
-import org.geysermc.paletter.tools.data.ScriptApiDiff;
-import org.geysermc.paletter.tools.data.ShapeDiff;
+import org.geysermc.paletter.tools.data.Diff;
+import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.data.WireShapes;
 import org.geysermc.paletter.tools.Layout;
 import org.geysermc.paletter.tools.model.infer.Coverage;
@@ -827,12 +826,12 @@ public final class Update {
         } else {
             String baselineVersion = baselineFile.getFileName().toString().replace(".json.gz", "");
             BdsDump baseline = BdsDump.parse(readGzipText(baselineFile), baselineVersion);
-            DataDiff diff = ScriptApiDiff.of(baseline, dump);
+            Diff diff = Diff.scriptApi(baseline, dump);
             report.check(diff.identical() ? Report.Status.PASS : Report.Status.DIFF, "Script API vs baseline " + baselineVersion,
                 diff.identical() ? "identical" : diff.count() + " differences");
             report.diff("Script API: BDS " + distribution.version() + " vs baseline " + baselineVersion, diff);
             if (runs.vanilla == null) {
-                fallbackTodos(diff.sections.get("new blocks"), diff.sections.get("new items"), "Script API");
+                fallbackTodos(diff.lines("new blocks"), diff.lines("new items"), "Script API");
             }
         }
         if (!preview || importPreview) {
@@ -905,7 +904,7 @@ public final class Update {
 
         if (runs.existing != null) {
             VanillaData bundled = read(resources.resolve(name + ".nbt"));
-            DataDiff network = DataDiff.of(bundled, captured, true, false);
+            Diff network = Diff.vanilla(bundled, captured, true, false);
             report.check(network.identical() ? Report.Status.PASS : Report.Status.DIFF, "Network data vs bundled " + name,
                 network.identical() ? "identical (items, runtime ids, components, data driven blocks, creative layout)"
                     : network.count() + " differences");
@@ -918,7 +917,7 @@ public final class Update {
             // Refresh what comes from the Script API (item tags, block defaults); keep the network data
             VanillaData refreshed = new VanillaData(bundled.version(), bundled.blockStates(), bundled.items(), bundled.dataDrivenBlocks(),
                 bundled.creative(), captured.itemTags(), Importer.readFallbacks(fallbacks.resolve(name + ".json")), captured.blockDefaults(), bundled.experiments());
-            DataDiff bds = DataDiff.of(bundled, refreshed, false, true);
+            Diff bds = Diff.vanilla(bundled, refreshed, false, true);
             report.check(bds.identical() ? Report.Status.PASS : Report.Status.DIFF, "Item tags and block defaults vs bundled " + name,
                 bds.identical() ? "identical" : bds.count() + " differences");
             report.diff("Item tags and block defaults: BDS " + distribution.version() + " vs bundled " + name, bds);
@@ -926,10 +925,10 @@ public final class Update {
         } else {
             Importer.IndexEntry latest = Importer.readIndex(resources).stream().filter(e -> !e.preview()).reduce((a, b) -> b).orElseThrow();
             VanillaData previous = read(resources.resolve(latest.name() + ".nbt"));
-            DataDiff diff = DataDiff.of(previous, captured, true, true);
+            Diff diff = Diff.vanilla(previous, captured, true, true);
             report.check(Report.Status.DIFF, "New protocol " + runs.protocol, "not bundled yet; " + diff.count() + " differences to " + latest.name());
             report.diff("What changed: " + name + " (BDS " + distribution.version() + ") vs bundled " + latest.name(), diff);
-            fallbackTodos(diff.sections.get("new blocks"), diff.sections.get("new items"), "network");
+            fallbackTodos(diff.lines("new blocks"), diff.lines("new items"), "network");
             if (!preview || importPreview) {
                 new Importer(staging.resources, fallbacks).run(runs.vanilla, name, runs.protocol, null, runs.dumpLog, preview);
                 report.check(Report.Status.INFO, "Import", "imported " + name + " (" + runs.protocol + ")" + (preview ? " as a PREVIEW version" : ""));
@@ -951,7 +950,7 @@ public final class Update {
         Map<String, NbtMap> defaults = Importer.defaults(dump, previous.blockStates());
         VanillaData fromDump = new VanillaData(previous.version(), previous.blockStates(), previous.items(), previous.dataDrivenBlocks(),
             previous.creative(), dump.itemTags(), previous.fallbacks(), defaults);
-        DataDiff bds = DataDiff.of(previous, fromDump, false, true);
+        Diff bds = Diff.vanilla(previous, fromDump, false, true);
         report.diff("Item tags and block defaults: BDS " + distribution.version() + " vs bundled " + latest.name(), bds);
         report.check(Report.Status.SKIP, "Network data", "no capture; nothing imported");
     }
@@ -1003,8 +1002,8 @@ public final class Update {
         Set<String> before = new TreeSet<>(committed.lines().filter(l -> !l.isBlank()).toList());
         Set<String> after = new TreeSet<>(runs.addonContentLog);
         List<String> lines = new ArrayList<>();
-        DataDiff.difference(after, before).forEach(line -> lines.add("- new: `" + line.replace("`", "'") + "`"));
-        DataDiff.difference(before, after).forEach(line -> lines.add("- gone: `" + line.replace("`", "'") + "`"));
+        Diff.difference(after, before).forEach(line -> lines.add("- new: `" + line.replace("`", "'") + "`"));
+        Diff.difference(before, after).forEach(line -> lines.add("- gone: `" + line.replace("`", "'") + "`"));
         report.check(lines.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Add-on content log",
             lines.isEmpty() ? runs.addonContentLog.size() + " known rejections/warnings, unchanged"
                 : lines.size() + " changes in what BDS rejects or warns about in data/addons/capture");
@@ -1024,12 +1023,12 @@ public final class Update {
         WireShapes captured = WireShapes.ofCapture(runs.customCapture);
 
         if (previous != null) {
-            report(ShapeDiff.of(WireShapes.ofCapture(previous).components(), captured.components()),
+            report(Diff.shapes(WireShapes.ofCapture(previous).components(), captured.components()),
                 "add-on components vs " + previous.getParent().getFileName());
         }
         // Vanilla data driven items and blocks: the reference version against the capture
         if (runs.imported != null) {
-            report(ShapeDiff.of(WireShapes.ofPalette(resources.resolve(runs.referenceName + ".nbt")).components(),
+            report(Diff.shapes(WireShapes.ofPalette(resources.resolve(runs.referenceName + ".nbt")).components(),
                 WireShapes.ofPalette(runs.imported).components()), "vanilla components vs bundled " + runs.referenceName);
         }
         // Coverage: everything captured must be something the component model can produce
@@ -1057,19 +1056,19 @@ public final class Update {
         }
     }
 
-    private void report(ShapeDiff diff, String what) {
+    private void report(Diff diff, String what) {
         if (diff.identical()) {
             report.check(Report.Status.PASS, "Component shapes", what + ": identical");
             return;
         }
-        if (!diff.wireChanges.isEmpty()) {
+        if (!diff.lines(Diff.WIRE_CHANGES).isEmpty()) {
             report.todos.add("WIRE FORMAT CHANGE in " + what + ": review the component model and the generated component types (see the top of this report)");
         }
         report.check(Report.Status.DIFF, "Component shapes", what + ": "
-            + diff.wireChanges.size() + " wire format changes, " + diff.newComponents.size() + " new components");
-        diff.wireChanges.forEach(change -> report.wireChanges.add(what + ": " + change));
+            + diff.lines(Diff.WIRE_CHANGES).size() + " wire format changes, " + diff.lines(Diff.NEW_COMPONENTS).size() + " new components");
+        diff.lines(Diff.WIRE_CHANGES).forEach(change -> report.wireChanges.add(what + ": " + change));
         List<String> lines = new ArrayList<>();
-        diff.newComponents.forEach(c -> lines.add("- new component `" + c + "`"));
+        diff.lines(Diff.NEW_COMPONENTS).forEach(c -> lines.add("- new component `" + c + "`"));
         if (!lines.isEmpty()) {
             report.section("Component shape notes: " + what, lines);
         }

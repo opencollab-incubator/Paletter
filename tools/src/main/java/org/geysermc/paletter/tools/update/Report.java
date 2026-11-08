@@ -1,6 +1,6 @@
 package org.geysermc.paletter.tools.update;
 
-import org.geysermc.paletter.tools.data.DataDiff;
+import org.geysermc.paletter.tools.data.Diff;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -54,9 +54,9 @@ public final class Report {
     }
 
     /** One subsection per non empty part of a diff. */
-    void diff(String title, DataDiff diff) {
+    void diff(String title, Diff diff) {
         List<String> lines = new ArrayList<>();
-        diff.sections.forEach((name, entries) -> {
+        diff.lines().forEach((name, entries) -> {
             if (entries.isEmpty()) {
                 return;
             }
