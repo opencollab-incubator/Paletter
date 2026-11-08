@@ -8,6 +8,7 @@ import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.OnPlayerPlacing;
 import org.geysermc.paletter.item.CustomItem;
+import org.geysermc.paletter.item.PaletteItem;
 import org.geysermc.paletter.item.component.FrameCount;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.MaxStackSize;
@@ -196,5 +197,20 @@ class WireOnlyComponentTest {
         CustomBlock replaced = CustomBlock.builder("example:slab").component(OnPlayerPlacing.of("a:b")).component(OnPlayerPlacing.of("c:d")).build();
         assertEquals("c:d", replaced.component(OnPlayerPlacing.class).triggerType());
         assertEquals("minecraft:on_player_placing", OnPlayerPlacing.of("a:b").name());
+    }
+
+    @Test
+    void overridesOfLegacyItemsKeepNameAndId() {
+        // Legacy items (cake) have no component data of their own: the override starts from {name, id, components}
+        for (DataVersion version : PALETTER.versions()) {
+            Palette palette = PALETTER.palette(version.protocolVersion(), PaletteLayer.builder("fixes")
+                .overrideItem("minecraft:cake", item -> item.components(MiningSpeed.of(2f))).build());
+            PaletteItem cake = palette.items().getDefinition("minecraft:cake");
+            NbtMap data = cake.getComponentData();
+            assertEquals("minecraft:cake", data.getString("name"), version.toString());
+            assertEquals(cake.getRuntimeId(), data.getInt("id"), version.toString());
+            assertEquals(2f, data.getCompound("components").getCompound("item_properties").getFloat("mining_speed"));
+            assertTrue(cake.isComponentBased());
+        }
     }
 }

@@ -114,6 +114,11 @@ public final class ItemOverride {
         if (fresh || (componentData == null && !components.isEmpty())) {
             componentData = ItemCompiler.componentData(original.getIdentifier(), original.getRuntimeId(), components, null, null, context);
         } else if (!components.isEmpty()) {
+            if (!componentData.containsKey("components")) {
+                // A legacy item has no component data (an empty compound): start from the envelope, so name and id are sent
+                componentData = NbtMap.builder().putString("name", original.getIdentifier()).putInt("id", original.getRuntimeId())
+                    .putCompound("components", NbtMap.EMPTY).build();
+            }
             componentData = ItemCompiler.override(componentData, components, context);
         }
         return new PaletteItem(original.getIdentifier(), original.getRuntimeId(),
