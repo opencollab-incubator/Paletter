@@ -213,7 +213,8 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         CanonicalTable table = canonicalTable;
         if (table != null) {
             int canonicalId = canonical.index(variant);
-            if (canonicalId != -1 && canonical.variant(canonicalId).equals(variant)) {
+            if (canonicalId != -1) {
+                // index() treats an explicit default block state like none: one canonical id, one resolution
                 return table.items[canonicalId];
             }
         }

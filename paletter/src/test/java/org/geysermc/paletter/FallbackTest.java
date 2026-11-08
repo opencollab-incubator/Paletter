@@ -167,6 +167,23 @@ class FallbackTest {
     }
 
     @Test
+    void aBlockItemResolvesTheSameSpelledWithItsDefaultBlockState() {
+        Palette latest = PALETTER.palette(PALETTER.latest().protocolVersion());
+        Palette vanilla = PALETTER.palette(OLDEST);
+        // A block item the oldest version lacks, as the newest creative inventory spells it (with a block state)
+        var stack = latest.creativeLayout().stacks()
+            .filter(s -> s.blockState() != null && vanilla.items().getDefinition(s.identifier()) == null)
+            .findFirst().orElseThrow(() -> new AssertionError("fixture: the oldest version lacks a block item of the newest"));
+        int id = vanilla.canonicalItems().index(stack.variant());
+        assertTrue(id != -1);
+        Palette palette = PALETTER.palette(OLDEST, broken(vanilla, id, "broken").build());
+        ResolvedItem plain = palette.item(id);
+        assertNotNull(plain);
+        assertEquals(plain, palette.items().resolve(stack.variant()));
+        assertEquals(plain, palette.items().resolve(ItemVariant.of(stack.identifier())));
+    }
+
+    @Test
     void theNewestVersionNeedsNoFallback() {
         Palette latest = PALETTER.palette(PALETTER.latest().protocolVersion());
         assertTrue(latest.blocks().missingCanonical().isEmpty());
