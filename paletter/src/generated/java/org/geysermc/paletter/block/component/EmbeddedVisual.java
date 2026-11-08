@@ -215,7 +215,7 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
      *        geometry, regardless of how the block is rotated using "minecraft:transformation" component. For performance
      *        reasons it's recommended to use the Boolean. Add-on JSON {@code uv_lock}. Default: <code>false</code>.
      */
-    public record Geometry(@NonNull Map<String, Boolean> boneVisibility, @Nullable String culling,
+    public record Geometry(@NonNull Map<String, String> boneVisibility, @Nullable String culling,
             @Nullable String cullingLayer, @Nullable String cullingShape,
             @NonNull String identifier, @Nullable NWayVisualRotation nWayVisualRotation,
             boolean uvLock) {
@@ -250,7 +250,7 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
          * Builds {@link Geometry}: defaults applied, required fields and ranges checked by {@link #build()}.
          */
         public static final class Builder {
-            private @Nullable Map<String, Boolean> boneVisibility = Map.of();
+            private @Nullable Map<String, String> boneVisibility = Map.of();
 
             private @Nullable String culling;
 
@@ -270,7 +270,7 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
             /**
              * Sets {@code bone_visibility}.
              */
-            public @NonNull Builder boneVisibility(@NonNull Map<String, Boolean> boneVisibility) {
+            public @NonNull Builder boneVisibility(@NonNull Map<String, String> boneVisibility) {
                 this.boneVisibility = boneVisibility;
                 return this;
             }

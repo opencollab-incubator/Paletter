@@ -71,7 +71,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @since 1.0.0
  */
 @BedrockFormat("1.19.40")
-public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, Boolean> boneVisibility,
+public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> boneVisibility,
         @BedrockFormat("1.20.60") @Nullable String culling, @NonNull String cullingLayer,
         @BedrockFormat("1.26.30") @NonNull String cullingShape, @NonNull String identifier,
         @BedrockFormat("1.26.30") Geometry. @Nullable NWayVisualRotation nWayVisualRotation,
@@ -128,7 +128,7 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, Boolean> 
      * Builds {@link Geometry}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable Map<String, Boolean> boneVisibility;
+        private @Nullable Map<String, String> boneVisibility;
 
         private @Nullable String culling;
 
@@ -148,7 +148,7 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, Boolean> 
         /**
          * Sets {@code bone_visibility}.
          */
-        public @NonNull Builder boneVisibility(@Nullable Map<String, Boolean> boneVisibility) {
+        public @NonNull Builder boneVisibility(@Nullable Map<String, String> boneVisibility) {
             this.boneVisibility = boneVisibility;
             return this;
         }

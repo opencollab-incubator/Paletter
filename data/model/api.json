@@ -42,6 +42,9 @@
     }
   },
   "types": {
+    "block:minecraft:geometry:bone_visibility": "map<string>",
+    "block:minecraft:embedded_visual:geometry.bone_visibility": "map<string>",
+    "block:minecraft:item_visual:geometry.bone_visibility": "map<string>",
     "block:minecraft:embedded_visual:geometry.uv_lock": "boolean",
     "block:minecraft:item_visual:geometry.uv_lock": "boolean",
     "block:minecraft:embedded_visual:material_instances": "component:MaterialInstances",

@@ -80,10 +80,12 @@ class TransformsTest {
     @Test
     void geometry() {
         WireNode out = new WireNode();
-        Transforms.geometry(ctx, out, Geometry.builder().identifier("geometry.lamp").boneVisibility(Map.of("lid", false)).uvLock(true).build());
+        Transforms.geometry(ctx, out, Geometry.builder().identifier("geometry.lamp").boneVisibility(Map.of("lid", "false", "door", "q.block_property('open') == 'true'", "base", "true")).uvLock(true).build());
         NbtMap g = compound(out, "minecraft:geometry");
         assertEquals("geometry.lamp", g.getString("identifier"));
         assertEquals("0.000000", g.getCompound("bone_visibility").getString("lid"));
+        assertEquals("1.000000", g.getCompound("bone_visibility").getString("base"));
+        assertEquals("q.block_property('open') == 'true'", g.getCompound("bone_visibility").getString("door"), "Molang is kept as a string");
         assertEquals("minecraft:culling_layer.undefined", g.getString("culling_layer"));
         assertEquals("", g.getString("culling_shape"), "the documented default minecraft:empty is sent as an empty string");
         assertEquals((byte) 1, g.getByte("uv_lock"));

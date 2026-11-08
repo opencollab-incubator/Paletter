@@ -180,7 +180,7 @@ public final class BlockWire {
         out.put("minecraft:item_visual.materialInstancesDescription.materials.*.texture", "paletter_tex");
         out.put("minecraft:item_visual.materialInstancesDescription.materials.*.tint_method", "none");
         ItemVisual.Geometry v0 = c.geometry();
-        Map<String, Boolean> v1 = v0.boneVisibility();
+        Map<String, String> v1 = v0.boneVisibility();
         String v2 = v0.culling();
         if (v2 != null) {
             out.put("minecraft:item_visual.geometryDescription.culling", v2);

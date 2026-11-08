@@ -87,7 +87,8 @@ public final class Transforms {
 
     /**
      * {@code minecraft:geometry}, in the shape every BDS 1.26.63.1 capture shows: the description fields plus four flags
-     * BDS always sends as 0. Bone visibility booleans become Molang constants ({@code "1.000000"}).
+     * BDS always sends as 0. Bone visibility is a Molang expression, kept as a string like BDS does; the constants {@code true}/{@code false} become
+     * {@code "1.000000"}/{@code "0.000000"}.
      */
     public static void geometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Geometry c) {
         out.put("minecraft:geometry", geometry(c.identifier(), c.boneVisibility(), c.culling(), c.cullingLayer(), c.cullingShape(),
@@ -125,11 +126,15 @@ public final class Transforms {
         out.put("minecraft:embedded_visual.geometry", geometry.build());
     }
 
-    static @NonNull NbtMap geometry(String identifier, @Nullable Map<String, Boolean> bones, @Nullable String culling,
+    static @NonNull NbtMap geometry(String identifier, @Nullable Map<String, String> bones, @Nullable String culling,
                                     @Nullable String cullingLayer, @Nullable String cullingShape, @Nullable Boolean uvLock) {
         NbtMapBuilder visibility = NbtMap.builder();
         if (bones != null) {
-            bones.forEach((bone, visible) -> visibility.putString(bone, visible ? "1.000000" : "0.000000"));
+            bones.forEach((bone, expression) -> visibility.putString(bone, switch (expression) {
+                case "true" -> "1.000000";
+                case "false" -> "0.000000";
+                default -> expression;
+            }));
         }
         return NbtMap.builder()
             .putCompound("bone_visibility", visibility.build())
