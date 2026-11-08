@@ -2,13 +2,13 @@
 
 ## The component API
 
-`./gradlew :codegen:generateComponentApi` writes Paletter's custom item and block component API and its encoders from the
-component model in `codegen/model`; `./gradlew :codegen:checkComponentApi` (part of `check`) fails if the committed
-sources differ. Code: `org.geysermc.paletter.codegen.component` in the `componentApi` source set, which needs neither
+`./gradlew :tools:generateComponentApi` writes Paletter's custom item and block component API and its encoders from the
+component model in `data/model`; `./gradlew :tools:checkComponentApi` (part of `check`) fails if the committed
+sources differ. Code: `org.geysermc.paletter.tools.codegen.component` in the `componentApi` source set, which needs neither
 paletter nor its sources, so it can regenerate them when they do not compile. Java is emitted with JavaPoet
 (`com.palantir.javapoet`, the maintained fork of square/javapoet; a codegen-only dependency).
 
-Inputs (all in `codegen/model`):
+Inputs (all in `data/model`):
 
 | File | Kind | What the generator takes from it |
 |---|---|---|
@@ -56,29 +56,27 @@ Tests: `ComponentGeneratorTest` (golden sources of a synthetic model covering ev
 shuffled inputs, every failure message; `-PupdateGolden=true` rewrites `src/test/resources/component-golden`),
 `GeneratedApiTest` (the committed API: required fields, ranges, defaults equal the docs or are explained),
 `ComponentConformanceTest` (every accepted variant of the newest capture rebuilt through the generated API and compared
-with BDS's NBT; outcomes other than pass are committed in `codegen/model/conformance-known.txt`), and in paletter
+with BDS's NBT; outcomes other than pass are committed in `data/model/conformance-known.txt`), and in paletter
 `TransformsTest` (every hand transform) and `CustomContentTest` (the definition core, every bundled version).
 
-When a new BDS version changes the wire: `generator spec-capture`, `./gradlew :spec:inferMappings` (a different mapping
-lands as a new protocol window), `./gradlew :codegen:generateComponentApi`, review, and run the conformance suite.
+When a new BDS version changes the wire: ``spec-capture``, `./gradlew :tools:inferMappings` (a different mapping
+lands as a new protocol window), `./gradlew :tools:generateComponentApi`, review, and run the conformance suite.
+## Wire shapes (change detection)
 
-## Wire shape inference
-
-`./gradlew :codegen:inferWireShapes` writes `codegen/spec/inferred.json`, the shape of every component observed in wire
-NBT (the bundled vanilla data and the captures in `codegen/captures`, plus `-Pcaptures=dir1,dir2`);
-`./gradlew :codegen:checkWireShapes` is part of `check`. It no longer generates code: the generator's `update` pipeline
-compares new captures with it to report wire format changes. Inputs: wire NBT (confidence `high`), Geyser samples
-([`geyser-samples.json`](geyser-samples.json), `medium`, see [`DEVIATIONS.md`](DEVIATIONS.md)) and
-[`overrides.json`](overrides.json) (`protocolSplits`, field types, optionality). `ProtocolWindowTest` covers protocol
+There is no separate wire shape spec any more: the `update` pipeline reads the observed NBT paths and types of the add-on
+capture and of the vanilla data driven items and blocks (`WireShapes`), reports added, removed or retyped fields and
+components that are no longer sent as wire format changes (`Diff.shapes`), and checks that every captured path is a wire
+path of `data/model/mappings.json`. Paths the model does not cover yet are listed in `data/model/wire-gaps.txt`; `UpdateTest`
+fails when an entry became covered or a captured path is neither mapped nor listed.
 splits.
 
 ## Vanilla constants
 
-`./gradlew :codegen:generateConstants` writes `org.geysermc.paletter.vanilla.BedrockBlocks`, `BedrockStates`,
+`./gradlew :tools:generateConstants` writes `org.geysermc.paletter.vanilla.BedrockBlocks`, `BedrockStates`,
 `BedrockItems`, the enums in `org.geysermc.paletter.vanilla.state` and, while a preview is bundled,
-`BedrockPreviewBlocks` / `BedrockPreviewItems`; `./gradlew :codegen:checkConstants` (part of `check`) fails if they, or
+`BedrockPreviewBlocks` / `BedrockPreviewItems`; `./gradlew :tools:checkConstants` (part of `check`) fails if they, or
 the history, differ from what the committed inputs give. The generator's `update` pipeline runs the same code on the data
-it stages (see the README). Code: `org.geysermc.paletter.codegen.constants`.
+it stages (see the README). Code: `org.geysermc.paletter.tools.codegen.constants`.
 
 Inputs:
 
@@ -116,7 +114,7 @@ Rules:
 `ConstantsGoldenTest` runs the generator on a small synthetic bundle (bool, int and string states, a shared value set, a
 name collision settled by names, a lookup table block, a removed block, a rename, a removed item with a curated fallback,
 a preview-only block and item) and compares every output byte for byte with `src/test/resources/constants-golden`
-(after an intended change: `./gradlew :codegen:test -PupdateGolden=true`, then review the diff). It also checks that
+(after an intended change: `./gradlew :tools:test -PupdateGolden=true`, then review the diff). It also checks that
 generating twice, and with blocks, items and JSON keys shuffled, gives identical bytes, and the error message of every
 failure: broken data (non-contiguous, duplicate or incomplete states, mixed value kinds), invalid or colliding names,
 inconsistent history entries. `BlockLayoutTest` (paletter) covers stride derivation and the lookup table fallback.

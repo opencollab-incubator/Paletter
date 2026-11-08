@@ -65,11 +65,11 @@ custom item registry and block properties, which carry the menu categories, item
 | Capture | Content | Result |
 |---|---|---|
 | `addon` | the capture add-on (`addon/`, 66 blocks, 84 items, experiments on) | 3 independent captures (hashed, sequential, probe run) identical |
-| `creative-probe-file-order` | first version of `creative-addon/generate.py`: 14 blocks, 22 items, every kind of placement, file names unrelated to identifiers, namespaces `aaa`/`exp`/`zzz` | 2 server starts identical; evidence for the file name order of block ids (not compared with Paletter) |
-| `creative-probe` | `creative-addon/generate.py`: the same content, block files named by identifier rank | 2 server starts identical; block ids in descending identifier order |
-| `creative-large` | `creative-addon/generate_large.py`: 700 blocks, 40 items, random identifiers, categories and groups; block files named by identifier rank, item files random | 2 server starts identical; the block map grows to 1024 buckets |
+| `creative-probe-file-order` | first version of ``addon --kind creative``: 14 blocks, 22 items, every kind of placement, file names unrelated to identifiers, namespaces `aaa`/`exp`/`zzz` | 2 server starts identical; evidence for the file name order of block ids (not compared with Paletter) |
+| `creative-probe` | ``addon --kind creative``: the same content, block files named by identifier rank | 2 server starts identical; block ids in descending identifier order |
+| `creative-large` | `addon --kind creative-large`: 700 blocks, 40 items, random identifiers, categories and groups; block files named by identifier rank, item files random | 2 server starts identical; the block map grows to 1024 buckets |
 
-A reference model of the rule above (a Python script first, now `CreativeOrderCheck` in the generator) reproduces the
+A reference model of the rule above (a Python script first, now `CreativeOrderCheck` in tools) reproduces the
 **entire packet** of all three captures: every group in packet order, its icon, and every stack in order.
 
 Key observations of the probe (`creative-probe-file-order`, items listed with their file name):
@@ -123,10 +123,10 @@ Limits:
 
 ## Verification
 
-- `generator` test `CreativeOrderCheckTest` compiles each capture (`addon`, `creative-probe`, `creative-large`)'s custom content through Paletter (blocks by block id,
+- `tools` test `CreativeOrderCheckTest` compiles each capture (`addon`, `creative-probe`, `creative-large`)'s custom content through Paletter (blocks by block id,
   items by runtime id, menu categories from the wire) and compares the creative inventory with the captured packet;
   `APPEND` is checked to differ.
 - `update` captures the add-on and the creative order probe (`creative-addon/`, an extra world without experiments) and
   runs the same comparison; a difference is a DIFF plus a TODO in the report (BDS changed its rule).
-- By hand: `./gradlew :generator:run --args="creative-probe --addon <dir> --out <dir> --starts 2"` runs an add-on on its
+- By hand: `./gradlew :tools:run --args="creative-probe --addon <dir> --out <dir> --starts 2"` runs an add-on on its
   own BDS copy (`<cache>/servers/creative-probe-<platform>-<version>`) and captures each start.

@@ -1,6 +1,6 @@
 # Paletter vs historic Geyser output
 
-Migration notes. Paletter's generated component encoders (`internal.component`, from `codegen/model`, checked against
+Migration notes. Paletter's generated component encoders (`internal.component`, from `data/model`, checked against
 BDS by the conformance suite) are the single source of truth for the custom item and block wire format; consumers
 describe content with the generated components and never write these shapes themselves. This file lists where the
 output differs from what Geyser's encoders (`CustomItemRegistryPopulator`, `CustomBlockRegistryPopulator`) used to send,

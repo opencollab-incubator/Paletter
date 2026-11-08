@@ -28,7 +28,7 @@ Not API, and free to change in any release:
   `internal.component`);
 - public types and members of exported packages annotated **`@Internal`** (plumbing shared between Paletter's own
   packages, e.g. `ItemPalette.Builder`, `BlockPalette#withCustomBlocks`, `PaletteDataCodec`);
-- the bundled data format, the generator, codegen and capture modules.
+- the bundled data format, the tools module.
 
 Types of dependencies that appear in the API (Cloudburst protocol types such as `NbtMap`, `ItemData`,
 `BlockDefinition`, `StartGamePacket`) are part of it; a Cloudburst upgrade that changes them is treated like a change of
@@ -44,7 +44,7 @@ Paletter follows [semantic versioning](https://semver.org) for the API:
 - **major** (`x.0.0`): removals and incompatible changes, only of API deprecated as described below.
 
 A new Bedrock version is never a reason for a major release. When Bedrock changes how a component is sent, a capture
-of the new version adds a protocol window to `codegen/model/mappings.json` and the encoders are regenerated; the
+of the new version adds a protocol window to `data/model/mappings.json` and the encoders are regenerated; the
 component records stay the same (see "Versioned encoding" in the [README](README.md#components)). Consumer code does not
 change. New documented components and fields are additions.
 
@@ -72,12 +72,12 @@ between versions (see the [README](README.md#vanilla-constants) for usage):
   releases that bundle a new Bedrock version.
 - **Removals** go through the deprecation cycle: when the newest bundled data no longer has a block, item, state or
   enum value, the constant stays, `@Deprecated(since = "<the release>", forRemoval = true)`, and resolves to its
-  fallback (`minecraft:unknown` unless `codegen/names.json` names another). A rename keeps the old constant as a
-  deprecated alias of the new one. `codegen/constants-history.json` is the record of every constant the generator ever
+  fallback (`minecraft:unknown` unless `data/model/names.json` names another). A rename keeps the old constant as a
+  deprecated alias of the new one. `data/model/constants-history.json` is the record of every constant the generator ever
   produced, so a regeneration cannot drop one; deprecated constants are removed from it (and the classes) only in a
   major release.
 - A state constant never changes its type (`BoolState`, `IntState`, `EnumState<E>`): if Bedrock changes a state's kind,
-  generation fails until the state gets a new name in `codegen/names.json`. Enum assignment is sticky the same way.
+  generation fails until the state gets a new name in `data/model/names.json`. Enum assignment is sticky the same way.
 - `BedrockPreviewBlocks` and `BedrockPreviewItems` (content of a bundled preview only) are `@Experimental`: they move or
   disappear without deprecation.
 - Which values a block accepts, and the canonical ids, are data, not API: they follow the bundled release.

@@ -8,7 +8,7 @@ experiments `upcoming_creator_features`, `gametest`, `experimental_creator_camer
 reported back in start game; `experimental_molang_features`, `experimental_vanilla_shapes`, `data_driven_biomes`
 were set in `level.dat` too but are not echoed: the first and last are retired toggles, `experimental_vanilla_shapes`
 is no toggle at all, BDS drops it from `level.dat`; the toggle is `voxel_shapes`). `update` now discovers the toggles
-of each build instead (README, "Experiments"); 1.26.63.1 has 7 current ones, see `generator/experiments/1.26.63.1.json`.
+of each build instead (README, "Experiments"); 1.26.63.1 has 7 current ones, see `data/bds/1.26.63.1/experiments.json`.
 
 Raw data: `captures/1.26.63.1/addon/custom_item_registry.{nbt,snbt}` and `custom_block_properties.{nbt,snbt}`
 (gzipped big endian NBT, and typed SNBT in wire order: `1b` byte, `2s` short, `3` int, `4L` long, `5.0f` float).
@@ -17,7 +17,7 @@ The `.snbt` files are the reference for every shape below; the add-on JSON that 
 
 ## Rerunning
 
-`./gradlew :generator:run --args="update --channel release"` does all of the below (and more checks) in one go; see
+`./gradlew :tools:run --args="update --channel release"` does all of the below (and more checks) in one go; see
 "Updating data" in the README. By hand:
 
 ```
@@ -27,14 +27,14 @@ The `.snbt` files are the reference for every shape below; the add-on JSON that 
 #    (BDS 1.26.6x logs "NetherNet is the only supported transport", but RakNet logins work; 1.26.70 only speaks
 #    NetherNet: capture --transport nethernet --port <server-port>, with enable-lan-visibility=true for the protocol)
 # 2. Vanilla capture: start BDS once (creates the world), then
-./gradlew :capture:run --args="capture --out <dir> --bds-version 1.26.63.1"
-./gradlew :capture:run --args="compare --capture <dir> --reference 26.60"
-# 3. Custom content: python capture/addon/generate.py capture/addon, copy addon/behavior_pack and
+./gradlew :tools:run --args="capture --out <dir> --bds-version 1.26.63.1"
+./gradlew :tools:run --args="compare --capture <dir> --reference 26.60"
+# 3. Custom content: :tools:run --args="addon --kind capture --out data/addons/capture", copy addon/behavior_pack and
 #    addon/resource_pack into the server's behavior_packs/ and resource_packs/, list their uuids in
 #    worlds/<level>/world_behavior_packs.json / world_resource_packs.json, stop BDS, then
-./gradlew :capture:run --args="experiments --level-dat <world>/level.dat --enable upcoming_creator_features,gametest,y_2026_drop_4,experimental_creator_cameras"
+./gradlew :tools:run --args="experiments --level-dat <world>/level.dat --enable upcoming_creator_features,gametest,y_2026_drop_4,experimental_creator_cameras"
 #    start BDS and check its content log for rejected definitions, then
-./gradlew :capture:run --args="capture --out <dir> --custom-out capture/captures/<bds version>/addon --bds-version <bds version>"
+./gradlew :tools:run --args="capture --out <dir> --custom-out data/bds/<bds version>/addon --bds-version <bds version>"
 # 4. A new vanilla version: generator import --source <dir> (the vanilla capture is in the importer's layout)
 ```
 

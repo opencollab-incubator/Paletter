@@ -36,16 +36,14 @@ session.sendPacket(palette.creativeContentPacket());
 The API is stable: semantic versioning, a deprecation cycle and a binary compatibility check. See [API.md](API.md) for
 what is API, what `@Experimental` and `@Internal` mean, and the policy.
 
-## Modules
 
-| Module      | What                                                                                           |
+| Path        | What                                                                                           |
 |-------------|------------------------------------------------------------------------------------------------|
-| `paletter`  | The library. Depends on Cloudburst `bedrock-codec` (its types are the public API) and fastutil. No JSON, no network. |
-| `generator` | Imports palette dumps into the bundled format and checks version coverage. Not shipped.        |
-| `bds-addon` | A behavior pack that dumps what the Script API knows (item tags and properties, block states, defaults and tags). |
-| `codegen`   | Generates the component API and its encoders from `codegen/model`, the vanilla constants, and infers wire shapes for change detection. Not shipped. |
-| `capture`   | A headless Bedrock client that records what BDS sends (palette data, custom item/block NBT). Not shipped; see `capture/WIRE-NOTES.md`. |
-| `spec`      | The component model: add-on JSON side parsed from Microsoft's creator docs, a capture add-on generated from it, and the JSON -> wire mapping inferred from BDS (`codegen/model/`). Not shipped; see `spec/README.md`. |
+| `paletter/` | The library (the only shipped module). Depends on Cloudburst `bedrock-codec` (its types are the public API) and fastutil. No JSON, no network. Hand-written sources are in `src/main/java`; everything generated (the component API in `item/component` and `block/component`, the vanilla constants and state enums) is in `src/generated/java`, same packages, never edited by hand. |
+| `tools/`    | All tooling, one module, never shipped, one command line (`./gradlew :tools:run --args="<command> ..."`, see [tools/README.md](tools/README.md)): the BDS update pipeline and data import (`tools.bds`, `tools.data`, `tools.update`), the headless Bedrock client that records what BDS sends (`tools.client`), the component model from Microsoft's creator docs and its wire inference (`tools.model`), and the generators of the component API and the constants (`tools.codegen`). |
+| `data/`     | Every non-code input: `model/` (the component model and the generators' inputs: `components.json`, `mappings.json`, `names.json`, ...), `fallbacks/`, `bds/<bds version>/` (captures, Script API dump, experiment record, report; see [data/README.md](data/README.md)) and `addons/` (the add-on packs run on BDS: `capture`, `creative`, `dump`). |
+
+
 
 ## Concepts
 
@@ -100,7 +98,7 @@ shared `minecraft:unknown`) matches none of them (-1).
 
 **Fallbacks.** Canonical content an older version lacks resolves, in this order, to: a fallback a layer set for that
 version (`PaletteLayer.Builder#blockFallback(version, identifier, fallback)`, `#itemFallback(version, ...)`), a layer
-fallback for every version (`#blockFallback(identifier, fallback)`), the bundled fallback (`generator/fallbacks/`,
+fallback for every version (`#blockFallback(identifier, fallback)`), the bundled fallback (`data/fallbacks/`,
 curated replacements such as poplar wood to pale oak), and otherwise the default: the block `minecraft:unknown` and the
 item `minecraft:unknown` (its block item), which every client knows and shows as a placeholder
 (`FallbackDefaults.UNKNOWN`). A layer changes the default for itself and the layers above it with
@@ -253,14 +251,14 @@ States are created per block on first use and interned, so `with()` only indexes
 
 **Versions.** Constants describe the newest bundled release; for older clients the palette resolves them like any
 canonical id (adapted states, fallbacks). A constant whose content the data no longer has (Bedrock removed it) stays,
-`@Deprecated(forRemoval = true)`, and resolves to its fallback (`minecraft:unknown` unless `codegen/names.json` names
+`@Deprecated(forRemoval = true)`, and resolves to its fallback (`minecraft:unknown` unless `data/model/names.json` names
 another); `isAvailable()` is false. A renamed block or item keeps its old constant as a deprecated alias of the new one.
 Content only in a bundled preview goes to `BedrockPreviewBlocks` / `BedrockPreviewItems` (`@Experimental`, generated only
 while a preview is bundled); without `paletter.previews` those resolve to `minecraft:unknown` too.
 
-**Regenerating.** `./gradlew :codegen:generateConstants` (`check` fails if the committed constants are stale), and the
+**Regenerating.** `./gradlew :tools:generateConstants` (`check` fails if the committed constants are stale), and the
 `update` pipeline does it whenever it imports data, listing added and deprecated constants in its report. See
-[codegen/README.md](codegen/README.md#vanilla-constants).
+[tools/docs/codegen.md](tools/docs/codegen.md#vanilla-constants).
 
 ## Components
 
@@ -318,7 +316,7 @@ components BDS rejects (legacy and removed ones).
 ### Versioned encoding
 
 Paletter compiles the components when a palette is compiled, for that palette's protocol, with encoders generated from
-the component model in `codegen/model`: `components.json` (the creator docs), `mappings.json` (per field, how BDS turns
+the component model in `data/model`: `components.json` (the creator docs), `mappings.json` (per field, how BDS turns
 the JSON into wire NBT, inferred from captures of a generated add-on, per protocol window), `transforms.json` (named hand
 transforms for what no inferred rule explains, e.g. collision box min/max or the packed material flags) and `api.json`
 (Java naming). A field a palette's protocol window does not send is left out with a warning in `Palette#report()`;
@@ -326,11 +324,11 @@ compilation never fails because of a Bedrock version. Everything BDS sends in tw
 size as a component and an item property, tags as `item_tags` and `minecraft:tags`, the use animation as a name and an
 id), and the item properties BDS sends for every custom item (`mining_speed`, `frame_count`, ...) are always there.
 
-The conformance suite (`ComponentConformanceTest` in codegen) rebuilds every variant of the BDS 1.26.63.1 capture that
+The conformance suite (`ComponentConformanceTest` in tools) rebuilds every variant of the BDS 1.26.63.1 capture that
 BDS accepted from its add-on JSON through the generated API and compares Paletter's NBT with BDS's: 1215 of the 1368
 accepted variants are identical, none differ; the others use server-only components (132) or JSON forms the API does not
-model (21), each listed with its reason in `codegen/model/conformance-known.txt`. See `codegen/README.md` and
-`spec/README.md`.
+model (21), each listed with its reason in `data/model/conformance-known.txt`. See `tools/docs/codegen.md` and
+`tools/docs/model.md`.
 
 ## The creative inventory
 
@@ -361,7 +359,7 @@ if present, else in a named group, else loose at the end of the category. Withou
 content: block items first, in the iteration order of BDS's data driven block map, then items in definition order, each
 at the end of the group of its category (created at the end of the category if missing; `minecraft:` prefix ignored) or
 loose at the end of the category. `APPEND` is the old behaviour. The rule, its evidence and the checks against BDS
-captures are in [`capture/CREATIVE-ORDER.md`](capture/CREATIVE-ORDER.md). The same placement is written into the item's
+captures are in [`data/bds/CREATIVE-ORDER.md`](data/bds/CREATIVE-ORDER.md). The same placement is written into the item's
 `creative_category`/`creative_group` and the block's `menu_category`.
 
 ## Data
@@ -439,9 +437,9 @@ the files from the corresponding packets:
 One command pulls the newest Bedrock Dedicated Server of a channel, runs everything against it and writes a report:
 
 ```
-./gradlew :generator:run --args="update --channel release"                  # update the repository
-./gradlew :generator:run --args="update --channel release --verify-only"    # CI: write nothing, exit 1 on any difference
-./gradlew :generator:run --args="update --channel preview --verify-only --report reports/preview.md"
+./gradlew :tools:run --args="update --channel release"                  # update the repository
+./gradlew :tools:run --args="update --channel release --verify-only"    # CI: write nothing, exit 1 on any difference
+./gradlew :tools:run --args="update --channel preview --verify-only --report preview-report.md"
 ```
 
 | Option | Meaning |
@@ -462,37 +460,37 @@ Downloading BDS means accepting the [Minecraft EULA](https://minecraft.net/eula)
 download (about 100 MB, once per build). What it does, in `<cache>/runs/<platform>-<version>/` (logs, captures):
 
 1. **Download** the zip into `<cache>/zips/`, extract it into `<cache>/servers/`.
-2. **Script API dump**: `bds-addon` on a fresh flat world, BDS runs until the addon printed `PALETTER-DONE`
+2. **Script API dump**: `data/addons/dump` on a fresh flat world, BDS runs until the addon printed `PALETTER-DONE`
    (`bds-dump.log`, `bds-dump.json`).
 3. **Vanilla world**, `transport=raknet`, `online-mode=false`, `block-network-ids-are-hashes=true`: a RakNet ping reads the
    protocol (LAN visibility is on for this, otherwise the pong is empty), the headless capture client (`capture` module)
    records the item registry, creative inventory and block properties, every creative block id is checked against the
    FNV-1a 32 hashes of the palette. Then once more with sequential ids.
 4. **Experiments**: the toggles of this build are discovered, verified and attributed (see "Experiments" below).
-   **Add-on world**: `capture/addon` installed, the world created once, the current toggles switched on in `level.dat`
+   **Add-on world**: `data/addons/capture` installed, the world created once, the current toggles switched on in `level.dat`
    (start game must report exactly them), then the same two captures. The content log of that start (definitions BDS rejects) is kept.
 5. **Assertions** on every run, first confirmed by hand on 1.26.63.1: sequential block ids are positions in the palette
    sorted by the FNV-1 64 hash of the block name (vanilla and with 66 custom blocks, checked through the hashed run's
-   states); custom `block_id`s are 10000+ in descending identifier order (really descending file name order; the capture add-on names files after blocks, see `capture/CREATIVE-ORDER.md`); custom block items have id `255 - block_id`;
+   states); custom `block_id`s are 10000+ in descending identifier order (really descending file name order; the capture add-on names files after blocks, see `data/bds/CREATIVE-ORDER.md`); custom block items have id `255 - block_id`;
    the bundled palette is in name hash order.
-6. **Compare**: the Script API dump against the committed baseline of the newest release (`generator/bds-dumps/`); for a
+6. **Compare**: the Script API dump against the committed baseline of the newest release (`data/bds/*/dump.json.gz`); for a
    protocol that is already bundled, the capture (imported like `import` would) against the bundled version (items,
    runtime ids, components, data driven blocks, creative layout) and the refreshed item tags and block defaults; for a
    new protocol, everything against the newest bundled release; the add-on content log against
-   `capture/addon/content-log.txt`; component wire shapes of the add-on capture (against the newest
-   `codegen/captures/bds-*-addon`) and of the vanilla data driven items and blocks (against the bundled version), plus
-   coverage by `codegen/spec/inferred.json`. An added, removed or retyped field, or a component that is no longer sent,
+   `data/addons/capture/content-log.txt`; component wire shapes of the add-on capture (against the newest
+   `data/bds/*/addon`) and of the vanilla data driven items and blocks (against the bundled version), plus
+   coverage by the wire paths of `data/model/mappings.json` (known gaps in `wire-gaps.txt`). An added, removed or retyped field, or a component that is no longer sent,
    is a **WIRE FORMAT CHANGE** at the top of the report.
 7. **Write** (not with `--verify-only`): a new protocol is imported as a new bundled version (its palette starts from the
    newest release, with blocks whose Script API states changed and new blocks generated from the Script API, then
    verified by the hash and sequential checks); for an existing one only item tags and block defaults are refreshed
-   (network differences become a TODO); a new add-on capture goes to `codegen/captures/bds-<version>-addon/` and the
+   (network differences become a TODO); a new add-on capture goes to `data/bds/<version>/addon/` and the
    component types are regenerated; the Script API baseline and the content log are updated.
 8. **Constants**: the vanilla constants (`BedrockBlocks`, `BedrockStates`, `BedrockItems`, ...) are regenerated from the
-   staged data with `codegen/constants-history.json`; the report lists the constants added and deprecated. A name
-   collision or a state that changes its kind fails this step until `codegen/names.json` settles it.
+   staged data with `data/model/constants-history.json`; the report lists the constants added and deprecated. A name
+   collision or a state that changes its kind fails this step until `data/model/names.json` settles it.
 
-The report (`reports/preview-1.26.70.23.md` is an example) lists checks with PASS/DIFF/FAIL, every difference, and a
+The report (`data/bds/1.26.70.23/report.md` is an example) lists checks with PASS/DIFF/FAIL, every difference, and a
 **TODO** list of what needs a decision.
 
 ### Experiments
@@ -516,13 +514,13 @@ discovers them for every build, so captures include experimental content without
    stack must list the same ones, and the binary has one `createWorldScreen.experimental<Name>` UI string per current
    toggle: a different count is a DIFF (a current toggle the candidates missed; pass it with `--experiments`). The UI
    keys give the English names (`resource_packs/vanilla/texts/en_US.lang`), which map the creator docs' experiment names
-   (`codegen/model/components.json`) to ids.
+   (`data/model/components.json`) to ids.
 4. **Applied and attributed**: a capture and a Script API dump with each current toggle alone (start game must report
    exactly that toggle, which also yields its log code), compared with the vanilla ones without any; plus all together, to
    find content only several toggles add. `--experiment-attribution all` skips the single toggle runs, `none` both
    (automatic above 12 current toggles).
 5. **Use**: the add-on world gets the current toggles (start game must report exactly them). The record
-   `generator/experiments/<bds version>.json` (toggles, status, code, UI key, name, content per toggle) is committed, and
+   `data/bds/<bds version>/experiments.json` (toggles, status, code, UI key, name, content per toggle) is committed, and
    the bundled version gets **experiment marks** (`VanillaData#experiments`, bundle key `experiments`, only written when
    present): per toggle the items and blocks it adds or turns on and its creative stacks. The bundle itself stays a
    capture without experiments. `check` uses the marks: content an older version has only behind a toggle but the newest
@@ -553,7 +551,7 @@ property `paletter.previews` is `true`, and `check` ignores them.
 **Still manual**, each listed in the report's TODO section:
 
 - Nothing is required for new content: blocks and items an older bundled version lacks fall back to `minecraft:unknown`.
-  The report lists them per version (INFO) as candidates for a curated fallback in `generator/fallbacks/<old version>.json`
+  The report lists them per version (INFO) as candidates for a curated fallback in `data/fallbacks/<old version>.json`
   (a target; `null` just records that unknown is intended). Re-import the older versions after adding some; `check`
   verifies the targets.
 - The state order *within* blocks generated from the Script API (only creative stacks verify it; other blocks' ids do
@@ -562,7 +560,7 @@ property `paletter.previews` is `true`, and `check` ignores them.
   which reproduces 126 of the 127 blocks generated in 26.40 -> 26.50 -> 26.60 (not `minecraft:trip_wire`). Check
   generated blocks against CloudburstMC/Data with `verify` once it has the version.
 - Network data that differs for an already bundled protocol (a hotfix that changes content): re-import deliberately.
-- Wire format changes: review the regenerated component types and `codegen/overrides.json`.
+- Wire format changes: review the component model (`data/model`) and the regenerated component types.
 - A new protocol needs a codec in the Cloudburst protocol library (`codec.vNNNN.Bedrock_vNNNN` is picked up by name);
   without it the capture is decoded with the newest codec and the check is flagged.
 - Transports: 1.26.63.1 still accepts RakNet with `transport=raknet` (logging that NetherNet is the only supported
@@ -578,12 +576,12 @@ an issue with the report when something differs, and for the release channel ope
 
 The lower level commands still exist:
 ```
-./gradlew :generator:run --args="bds-run --download /tmp/bds --log /tmp/bds/bds.log"       # Script API dump only
-./gradlew :generator:run --args="import --source DUMP_DIR --name 26.70 --protocol 2250 --bds-dump /tmp/bds/bds.log"
-./gradlew :generator:run --args="bds-compare --bds-dump /tmp/bds/bds.log --name 26.70"
-./gradlew :generator:run --args="check"
-./gradlew :generator:run --args="verify --source DIR --name 26.60"                          # see below
-./gradlew :capture:run --args="capture --out DIR --bds-version 1.26.63.1"                    # see capture/WIRE-NOTES.md
+./gradlew :tools:run --args="bds-run --download /tmp/bds --log /tmp/bds/bds.log"       # Script API dump only
+./gradlew :tools:run --args="import --source DUMP_DIR --name 26.70 --protocol 2250 --bds-dump /tmp/bds/bds.log"
+./gradlew :tools:run --args="bds-compare --bds-dump /tmp/bds/bds.log --name 26.70"
+./gradlew :tools:run --args="check-data"
+./gradlew :tools:run --args="verify --source DIR --name 26.60"                          # see below
+./gradlew :tools:run --args="capture --out DIR --bds-version 1.26.63.1"                    # see data/bds/WIRE-NOTES.md
 ```
 `import --source` also reads Geyser's resource layout (`block_palette.26_70.nbt`, ...), i.e. `core/src/main/resources/bedrock`.
 
@@ -602,7 +600,7 @@ varying order no longer changes the file.)
 ### Verifying against other sources
 
 ```
-./gradlew :generator:run --args="verify --source DIR --name 26.60 [--bundled FILE] [--report FILE] [--max 25]"
+./gradlew :tools:run --args="verify --source DIR --name 26.60 [--bundled FILE] [--report FILE] [--max 25]"
 ```
 reads a directory in the CloudburstMC/Data layout (`block_palette.nbt`, `runtime_item_states.json`,
 `item_components.nbt`, `creative_items.json`, optional `data_driven_blocks.nbt`; Geyser's `block_palette.26_60.nbt`

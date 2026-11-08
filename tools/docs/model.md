@@ -6,26 +6,26 @@ the wire format of each protocol. This module builds the machine-readable model 
 the official creator docs and Bedrock Dedicated Server itself. Not shipped.
 
 ```
-docs  ──DocsParser──> codegen/model/components.json      JSON side: every component and field, as documented
+docs  ──DocsParser──> data/model/components.json      JSON side: every component and field, as documented
                          + fixtures.json (hand: errata, content samples, companions)
                          + bds-feedback.json (generated: what BDS said last time)
       ──AddonGenerator──> spec add-on (~1900 items/blocks, one per varied field value) + variants.json
-BDS   ──generator spec-capture──> codegen/model/captures/bds-<version>/  (content log, custom item registry, block properties)
-      ──MappingInference──> codegen/model/mappings.json   JSON -> wire rule per field, per protocol window
-                            codegen/model/coverage.md      coverage report
-                            codegen/model/bds-feedback.json
+BDS   ──`spec-capture`──> data/bds/<version>/spec/  (content log, custom item registry, block properties)
+      ──MappingInference──> data/model/mappings.json   JSON -> wire rule per field, per protocol window
+                            data/model/coverage.md      coverage report
+                            data/model/bds-feedback.json
                          + transforms.json (hand: named transforms for what no automatic rule explains)
 ```
 
 ## Commands
 
 ```
-./gradlew :spec:generateModel -Pdocs=/path/to/minecraft-creator   # docs checkout -> components.json
-./gradlew :spec:generateModel                                      # same, pages of the pinned commit downloaded into the gradle cache
-./gradlew :spec:generateAddon                                      # -> spec/build/spec-addon (to look at)
-./gradlew :generator:run --args="spec-capture --channel release"  # BDS run -> codegen/model/captures/bds-<version>
-./gradlew :spec:inferMappings                                      # -> mappings.json, coverage.md, bds-feedback.json
-./gradlew :spec:checkMappings                                      # part of check: committed outputs up to date
+./gradlew :tools:generateModel -Pdocs=/path/to/minecraft-creator   # docs checkout -> components.json
+./gradlew :tools:generateModel                                      # same, pages of the pinned commit downloaded into the gradle cache
+./gradlew :tools:generateAddon                                      # -> tools/build/spec-addon (to look at)
+./gradlew :tools:run --args="spec-capture --channel release"  # BDS run -> data/model/captures/bds-<version>
+./gradlew :tools:inferMappings                                      # -> mappings.json, coverage.md, bds-feedback.json
+./gradlew :tools:checkMappings                                      # part of check: committed outputs up to date
 ```
 
 `spec-capture` takes the `update` options `--version`, `--cache`, `--keep-server`, `--port`, `--timeout`, `--experiments`.
@@ -35,7 +35,7 @@ components whose docs omit a required field or list members BDS does not know (r
 ## The docs model (`components.json`)
 
 Source: github.com/MicrosoftDocs/minecraft-creator, `creator/Reference/Content/` (CC BY 4.0, see
-`codegen/model/ATTRIBUTION.md`). The component pages are generated from Mojang's schemas and share one layout, which the
+`data/model/ATTRIBUTION.md`). The component pages are generated from Mojang's schemas and share one layout, which the
 parser reads: notes (minimum format version, experiments), "Alternate Simple Representations" (shorthand forms), the
 root property table (Name, Default, Type, Description, Example values) and one section per nested type, linked from the
 type column (`[Title](#anchor) item`, `Array of [...] items`, `[...] choices` for enums, "Same structure as").
