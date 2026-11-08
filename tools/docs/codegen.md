@@ -17,7 +17,7 @@ Inputs (all in `data/model`):
 | `bds-feedback.json` | generated from BDS's content log | required fields and ranges BDS enforces (they win over the docs), fields BDS does not know (left out) |
 | `mappings.json` | inferred from BDS captures | per component and protocol window: status, value form and field rules, `whenAbsent`, `constants` |
 | `transforms.json` | hand | fields (or whole components, path `""`) compiled by a named hand transform, with why |
-| `api.json` | hand | Java shaping only: class, field and type names, union resolution, value form fields, descriptors, open enums, `since` |
+| `api.json` | hand | Java shaping only: class, field and type names, union resolution, value form fields, descriptors, `keyedExtras` (a map for the keys a keyed set leaves to the caller), open enums, `since` |
 
 Outputs: per generated component a record in `org.geysermc.paletter.item.component` / `block.component` (nested records
 for object types, merged when identical; enums; `Vec3`; builder; `of(...)` factories for value forms and shorthands;

@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package org.geysermc.paletter.block.component;
 
+import java.util.Map;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.BedrockFormat;
@@ -37,6 +38,12 @@ import org.geysermc.paletter.internal.component.Check;
  * @param west Add-on JSON {@code west}. Optional (null: not set).
  * @param westAlias The string form of &#123;&#64;code west&#125; (alias); excludes &#123;&#64;link #west()&#125;. Add-on JSON
  *        {@code west}.
+ * @param instances Instances with any other name, which geometry bones refer to (for example &#123;&#64;code "glass"&#125;); the
+ *        keys &#123;&#64;code *&#125;, &#123;&#64;code up&#125;, &#123;&#64;code down&#125;, &#123;&#64;code
+ *        north&#125;, &#123;&#64;code south&#125;, &#123;&#64;code east&#125; and &#123;&#64;code west&#125; have their
+ *        own fields. Add-on JSON {@code *}. Default: <code>&#123;&#125;</code>.
+ * @param aliases Aliases with any other name: the key is an instance name, the value the instance it points at. Add-on JSON
+ *        {@code *}. Default: <code>&#123;&#125;</code>.
  * @since 1.0.0
  */
 @BedrockFormat("1.19.40")
@@ -47,7 +54,8 @@ public record MaterialInstances(MaterialInstances. @Nullable Instance all,
         @Nullable String northAlias, MaterialInstances. @Nullable Instance south,
         @Nullable String southAlias, MaterialInstances. @Nullable Instance up,
         @Nullable String upAlias, MaterialInstances. @Nullable Instance west,
-        @Nullable String westAlias) implements BlockComponent {
+        @Nullable String westAlias, @NonNull Map<String, MaterialInstances.Instance> instances,
+        @NonNull Map<String, String> aliases) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -75,6 +83,8 @@ public record MaterialInstances(MaterialInstances. @Nullable Instance all,
         if (west != null && westAlias != null) {
             throw new IllegalArgumentException("MaterialInstances sets both west and westAlias");
         }
+        instances = Check.copy(instances, "MaterialInstances.instances");
+        aliases = Check.copy(aliases, "MaterialInstances.aliases");
     }
 
     @Override
@@ -108,6 +118,8 @@ public record MaterialInstances(MaterialInstances. @Nullable Instance all,
         builder.upAlias = upAlias;
         builder.west = west;
         builder.westAlias = westAlias;
+        builder.instances = instances;
+        builder.aliases = aliases;
         return builder;
     }
 
@@ -142,6 +154,10 @@ public record MaterialInstances(MaterialInstances. @Nullable Instance all,
         private @Nullable Instance west;
 
         private @Nullable String westAlias;
+
+        private @Nullable Map<String, Instance> instances = Map.of();
+
+        private @Nullable Map<String, String> aliases = Map.of();
 
         private Builder() {
         }
@@ -301,11 +317,27 @@ public record MaterialInstances(MaterialInstances. @Nullable Instance all,
         }
 
         /**
+         * Sets {@code *}.
+         */
+        public @NonNull Builder instances(@NonNull Map<String, Instance> instances) {
+            this.instances = instances;
+            return this;
+        }
+
+        /**
+         * Sets {@code *}.
+         */
+        public @NonNull Builder aliases(@NonNull Map<String, String> aliases) {
+            this.aliases = aliases;
+            return this;
+        }
+
+        /**
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
         public @NonNull MaterialInstances build() {
-            return new MaterialInstances(all, allAlias, down, downAlias, east, eastAlias, north, northAlias, south, southAlias, up, upAlias, west, westAlias);
+            return new MaterialInstances(all, allAlias, down, downAlias, east, eastAlias, north, northAlias, south, southAlias, up, upAlias, west, westAlias, instances, aliases);
         }
     }
 

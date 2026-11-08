@@ -188,6 +188,8 @@ final class ApiModel {
         /** A union alternative kept as its own field next to the main one: the main field's java name. */
         Field alternativeOf;
         final List<Field> alternatives = new ArrayList<>();
+        /** A map of the keys the fixed field {@code keyedExtraOf} does not name (api.json keyedExtras); same wire rules. */
+        Field keyedExtraOf;
         /** Paths of the mapping fields whose rules apply to this field (its own path, or a form). */
         String mappingKey;
 

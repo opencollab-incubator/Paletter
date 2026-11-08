@@ -29,13 +29,15 @@ import org.geysermc.paletter.internal.component.Check;
  *        test_map}.
  * @param shape A shape or its id. Add-on JSON {@code shape}. Optional (null: not set).
  * @param offset Add-on JSON {@code offset}. Default: <code>[0,1,0]</code>.
+ * @param moreNested Nested things under any other key. Add-on JSON {@code nested}. Default: <code>&#123;&#125;</code>.
  * @since 1.0.0
  */
 @BedrockFormat("1.20.0")
 public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mode,
         @Nullable Float speed, Widget. @Nullable NestedThing nested, @NonNull List<String> tags,
         @Nullable List<Widget.Entry> entries, @Nullable Map<String, String> colors,
-        Widget. @Nullable Shape shape, Widget. @NonNull Vec3 offset) implements ItemComponent {
+        Widget. @Nullable Shape shape, Widget. @NonNull Vec3 offset,
+        @NonNull Map<String, Widget.NestedThing> moreNested) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -49,6 +51,7 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         entries = entries == null ? null : List.copyOf(entries);
         colors = colors == null ? null : Check.copy(colors, "Widget.colors");
         Objects.requireNonNull(offset, "Widget.offset");
+        moreNested = Check.copy(moreNested, "Widget.moreNested");
     }
 
     @Override
@@ -78,6 +81,7 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         builder.colors = colors;
         builder.shape = shape;
         builder.offset = offset;
+        builder.moreNested = moreNested;
         return builder;
     }
 
@@ -104,6 +108,8 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         private @Nullable Shape shape;
 
         private @Nullable Vec3 offset = new Vec3(0.0f, 1.0f, 0.0f);
+
+        private @Nullable Map<String, NestedThing> moreNested = Map.of();
 
         private Builder() {
         }
@@ -217,6 +223,14 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         }
 
         /**
+         * Sets {@code nested}.
+         */
+        public @NonNull Builder moreNested(@NonNull Map<String, NestedThing> moreNested) {
+            this.moreNested = moreNested;
+            return this;
+        }
+
+        /**
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -224,7 +238,7 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
             if (label == null) {
                 throw new IllegalStateException("Widget.label is required");
             }
-            return new Widget(count, label, mode, speed, nested, tags, entries, colors, shape, offset);
+            return new Widget(count, label, mode, speed, nested, tags, entries, colors, shape, offset, moreNested);
         }
     }
 

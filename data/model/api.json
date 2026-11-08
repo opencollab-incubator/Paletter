@@ -140,6 +140,15 @@
       }
     }
   },
+  "keyedExtras": {
+    "block:minecraft:material_instances": {
+      "from": "all",
+      "field": "instances",
+      "doc": "Instances with any other name, which geometry bones refer to (for example {@code \"glass\"}); the keys {@code *}, {@code up}, {@code down}, {@code north}, {@code south}, {@code east} and {@code west} have their own fields.",
+      "aliasField": "aliases",
+      "aliasDoc": "Aliases with any other name: the key is an instance name, the value the instance it points at."
+    }
+  },
   "descriptors": {
     "item:minecraft:storage_item:allowed_items": "item",
     "item:minecraft:storage_item:banned_items": "item",

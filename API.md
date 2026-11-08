@@ -177,6 +177,9 @@ from the first release on); the baseline was regenerated with each:
 - `Repairable.RepairItems` gains `itemsTags` (the `items` string form: a Molang tag query sent as `{tags}`), an added record
   component, which changes the canonical constructor; the baseline was regenerated.
 
+- `MaterialInstances` gains `instances` and `aliases` (maps for any instance name other than `*` and the six faces, which
+  geometry bones refer to), again an added record component; the baseline was regenerated.
+
 ### `@since`
 
 Every exported type has `@since` in its javadoc (enforced by `ApiBoundaryTest`); members added later carry their own

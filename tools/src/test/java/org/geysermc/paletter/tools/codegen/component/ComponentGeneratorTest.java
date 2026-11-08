@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * {@code src/test/resources/component-golden}. The model has every field kind the generator handles: a scalar with a
  * default and a BDS range, a required string, an enum written through a value table, a default BDS contradicts (left
  * unset), a nested object, a list of scalars, a list of objects, a map compiled by a hand transform, a union with a
- * scalar shorthand, a vector, a boolean value form, a component constant, a protocol split (a field only the newer window
+ * scalar shorthand, a map for the keys of a keyed set, a vector, a boolean value form, a component constant, a protocol split (a field only the newer window
  * sends is dropped with a report warning in the older one), and deprecated and
  * experiment-gated components; a server-only component is left out.
  * <p>
@@ -133,7 +133,8 @@ class ComponentGeneratorTest {
         return new Inputs(components(), json("{\"errata\": []}"),
             json("{\"item:test:widget\": {\"count\": [\"range 1 64\"]}}"), mappings(),
             json("{\"item:test:widget:colors\": {\"transform\": \"test_map\", \"why\": \"a map\"}}"),
-            json("{\"since\": \"1.0.0\"}"), TRANSFORMS, "9.0.0");
+            json("{\"since\": \"1.0.0\", \"keyedExtras\": {\"item:test:widget\": "
+                + "{\"from\": \"nested\", \"field\": \"moreNested\", \"doc\": \"Nested things under any other key.\"}}}"), TRANSFORMS, "9.0.0");
     }
 
     // ---- Golden files --------------------------------------------------------------------------------------------

@@ -254,6 +254,7 @@ public final class ComponentGenerator {
         for (Field f : children(c, "", fields, c.root)) {
             c.root.fields.add(f);
         }
+        keyedExtras(c);
         // Forms: synthetic fields, or shorthands of a field
         for (Map.Entry<String, JsonObject> form : c.pendingForms.entrySet()) {
             String type = form.getKey();
@@ -299,6 +300,46 @@ public final class ComponentGenerator {
         dedupeTypes(c);
         checkConflicts(c);
         return c;
+    }
+
+    /**
+     * api.json {@code keyedExtras}: the fields of a keyed set ({@code *} in the docs) are named by the caller, so next to the
+     * fixed fields the docs list (here {@code all}, {@code up}, ...) the component gets a map for any other key, and a map
+     * of its aliases when the field has an alias form.
+     */
+    private void keyedExtras(Comp c) {
+        if (!api("keyedExtras").has(c.id)) {
+            return;
+        }
+        JsonObject extra = api("keyedExtras").getAsJsonObject(c.id);
+        Field base = c.root.fields.stream().filter(f -> f.java.equals(extra.get("from").getAsString())).findFirst()
+            .orElseThrow(() -> new GenerationException("api.json keyedExtras: " + c.id + " has no field " + extra.get("from").getAsString()));
+        String doc = extra.get("doc").getAsString();
+        Field map = new Field();
+        map.path = base.path;
+        map.json = base.json;
+        map.java = extra.get("field").getAsString();
+        map.type = new MapOf(base.type);
+        map.defaultValue = new JsonObject();
+        map.mappingKey = base.mappingKey;
+        map.transform = base.transform;
+        map.keyedExtraOf = base;
+        map.doc = doc;
+        c.root.fields.add(map);
+        if (!base.alternatives.isEmpty()) {
+            Field alias = base.alternatives.getFirst();
+            Field aliases = new Field();
+            aliases.path = alias.path;
+            aliases.json = alias.json;
+            aliases.java = extra.get("aliasField").getAsString();
+            aliases.type = new MapOf(alias.type);
+            aliases.defaultValue = new JsonObject();
+            aliases.mappingKey = alias.mappingKey;
+            aliases.transform = alias.transform;
+            aliases.keyedExtraOf = alias;
+            aliases.doc = extra.get("aliasDoc").getAsString();
+            c.root.fields.add(aliases);
+        }
     }
 
     /** The field a scalar component form fills: the one whose value rules move the same leaves. */

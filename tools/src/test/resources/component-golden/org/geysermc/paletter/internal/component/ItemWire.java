@@ -4,6 +4,7 @@
 package org.geysermc.paletter.internal.component;
 
 import java.util.List;
+import java.util.Map;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.paletter.item.component.Gadget;
 import org.geysermc.paletter.item.component.ItemComponent;
@@ -117,6 +118,7 @@ public final class ItemWire {
         out.put("test:widget.ox", Wire.toFloat(v15.x()));
         out.put("test:widget.oy", Wire.toFloat(v15.y()));
         out.put("test:widget.oz", Wire.toFloat(v15.z()));
+        Map<String, Widget.NestedThing> v16 = c.moreNested();
         Transforms.testMap(ctx, out, c);
     }
 }

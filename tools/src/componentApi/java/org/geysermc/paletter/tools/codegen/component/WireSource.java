@@ -783,7 +783,7 @@ final class WireSource {
     private static void keys(CodeBlock.Builder init, ClassName cls, ObjType o) {
         List<CodeBlock> pairs = new ArrayList<>();
         for (Field f : o.fields) {
-            if (f.json != null) {
+            if (f.json != null && f.keyedExtraOf == null) {
                 pairs.add(CodeBlock.of("$S, $S", f.json, f.java));
             }
         }

@@ -130,6 +130,27 @@ class TransformsTest {
     }
 
     @Test
+    void materialInstancesWithCustomNames() {
+        MaterialInstances materials = MaterialInstances.builder()
+            .all(MaterialInstances.Instance.builder().texture("stone").build())
+            .instances(Map.of("glass", MaterialInstances.Instance.builder().texture("glass").renderMethod(MaterialInstances.RenderMethod.BLEND).build()))
+            .aliases(Map.of("pane", "glass"))
+            .build();
+        WireNode out = new WireNode();
+        Transforms.materialInstances(ctx, out, materials);
+        NbtMap m = compound(out, "minecraft:material_instances");
+        assertEquals("glass", m.getCompound("materials").getCompound("glass").getString("texture"));
+        assertEquals("blend", m.getCompound("materials").getCompound("glass").getString("render_method"));
+        assertEquals("stone", m.getCompound("materials").getCompound("*").getString("texture"));
+        assertEquals("glass", m.getCompound("mappings").getCompound("pane").getString("value"));
+
+        WireNode inline = new WireNode();
+        Transforms.materialInstancesInline(ctx, inline, EmbeddedVisual.builder()
+            .geometry(EmbeddedVisual.Geometry.builder().identifier("minecraft:geometry.full_block").build()).materialInstances(materials).build());
+        assertEquals("glass", compound(inline, "minecraft:embedded_visual").getCompound("material_instances").getCompound("glass").getString("texture"));
+    }
+
+    @Test
     void blockDescriptorStatesAreTypedByTheRegistry() {
         WireNode placer = new WireNode();
         Transforms.blockDescriptorStates(ctx, placer, BlockPlacer.UseOn.of(BedrockBlocks.OAK_LOG.defaultState()));

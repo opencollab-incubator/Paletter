@@ -213,6 +213,7 @@ public final class Transforms {
         putIfSet(faces, "south", c.south());
         putIfSet(faces, "up", c.up());
         putIfSet(faces, "west", c.west());
+        faces.putAll(c.instances());
         return faces;
     }
 
@@ -225,6 +226,7 @@ public final class Transforms {
         putIfSet(aliases, "south", c.southAlias());
         putIfSet(aliases, "up", c.upAlias());
         putIfSet(aliases, "west", c.westAlias());
+        aliases.putAll(c.aliases());
         return aliases;
     }
 
