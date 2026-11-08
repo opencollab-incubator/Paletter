@@ -131,7 +131,11 @@ final class PaletteCompiler {
                     }
                 }
             }
-            for (CustomBlock block : layer.blocks()) {
+            // BDS registers block items in the order of the block files, identifier descending without files, whatever
+            // order the layer lists them in
+            List<CustomBlock> blocksByItemOrder = new ArrayList<>(layer.blocks());
+            blocksByItemOrder.sort(Comparator.comparing(CustomBlock::identifier).reversed());
+            for (CustomBlock block : blocksByItemOrder) {
                 if (explicit.contains(block.identifier())) {
                     continue;
                 }

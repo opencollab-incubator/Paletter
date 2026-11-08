@@ -176,6 +176,11 @@ debugging aids `Palette#explain` with `BlockExplanation` and `ItemExplanation` (
   and `ItemPalette`. Consumers hold handles where they held ids; where they sized an array by the id count they key a
   map by handle.
 
+- Paletter owns the order of custom blocks: the custom entries of `Palette#blockProperties()` and the runtime ids of the
+  items Paletter registers for the blocks of a layer are in identifier order, descending, whatever order the layers register the blocks in (block ids
+  already were). Items registered with `PaletteLayer.Builder#blockItem` keep the slot the consumer gave them among the
+  custom items, so their order is the consumer's. Consumers need not sort blocks.
+
 - `Paletter#canonicalBlock(NbtMap)`, `#canonicalItem(ItemVariant)` and their `Palette` counterparts accept content of any
   bundled version instead of returning -1 for what the newest version lacks: they map it forward (state keys adapted,
   renamed identifiers via the bundled `renames.txt`) and return -1 only if no equivalent exists; `explainUnknown` says

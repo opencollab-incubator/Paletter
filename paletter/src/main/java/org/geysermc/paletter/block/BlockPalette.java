@@ -153,6 +153,8 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
             WireContext blockContext = i < table.customBlocks.size() ? earlier : context;
             encoded.add(new BlockPropertyData(block.identifier(), BlockCompiler.propertyData(block, blockIds.get(block.identifier()), blockContext)));
         }
+        // The property list BDS sends follows its block ids too
+        encoded.sort(java.util.Comparator.comparing(BlockPropertyData::getName).reversed());
         Table extended = new Table(data, all, encoded, table.mode, interner);
         return new BlockPalette(extended, canonical.extend(key, additional), fallbacks, defaultFallback, interner);
     }

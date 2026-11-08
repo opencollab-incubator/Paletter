@@ -68,6 +68,32 @@ class BlockOfTest {
         assertNull(paletter.blockOf(ItemVariant.of("minecraft:not_an_item")));
     }
 
+    /**
+     * Command blocks and jigsaws: a creative state of the item wins over the block's default state (per the precedence
+     * of {@link org.geysermc.paletter.item.ItemPalette#blockOf}). The bundled creative data has no stack of them (they are
+     * operator items), so the default state is what is sent.
+     */
+    @Test
+    void commandBlocksAndJigsawUseTheirCreativeStateElseTheDefault() {
+        for (var version : paletter.versions()) {
+            var data = paletter.vanillaData(version);
+            Palette palette = paletter.palette(version.protocolVersion());
+            for (String id : List.of("minecraft:command_block", "minecraft:repeating_command_block",
+                "minecraft:chain_command_block", "minecraft:jigsaw")) {
+                List<NbtMap> creative = new ArrayList<>();
+                data.creative().forEachStack(stack -> {
+                    if (stack.identifier().equals(id) && stack.blockState() != null) {
+                        creative.add(stack.blockState());
+                    }
+                });
+                PaletteBlock block = palette.blockOf(ItemVariant.of(id));
+                assertNotNull(block, version + " " + id);
+                NbtMap expected = creative.isEmpty() ? palette.blocks().defaultState(id).getState() : creative.getFirst();
+                assertEquals(BlockStates.normalize(expected), BlockStates.normalize(block.getState()), version + " " + id);
+            }
+        }
+    }
+
     private static String block(Palette palette, String item) {
         PaletteBlock block = palette.blockOf(ItemVariant.of(item));
         return block == null ? null : block.identifier();

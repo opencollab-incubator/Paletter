@@ -51,7 +51,8 @@ identifiers) got 10000 .. 10013. With one file per block named after the block, 
 of the capture add-on, this is descending identifier order.
 
 Paletter has no files, so it numbers custom blocks by **identifier, descending** (`BlockPalette#withCustomBlocks`),
-and `CreativeOrdering.BDS` inserts them into the simulated map in that order, then the version's vanilla data driven
+and `CreativeOrdering.BDS` inserts them into the simulated map in that order (the custom entries of the start game block property list and the
+runtime ids of custom block items use the same order, whatever order the layers register the blocks in), then the version's vanilla data driven
 blocks (`VanillaData#dataDrivenBlocks`). This is exact for add-ons whose block file names sort like their identifiers;
 for others BDS's block ids, and so the order of block items in the creative inventory, differ. Registration order
 would be no better a proxy (it is not what BDS uses either), and identifier order is the one consumers converting add-on

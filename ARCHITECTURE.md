@@ -89,6 +89,10 @@ Everything below is plumbing in `org.geysermc.paletter.internal` (`CanonicalBloc
   the newest data, removed keys are dropped) and say why when nothing matches (`Forwarding`, surfaced as
   `explainUnknown`). A newly bundled version redefines the canonical table, so consumers keep mapping with the content
   they know and Paletter maps it forward.
+- **Order of custom blocks** is Paletter's: the block ids, the custom entries of the block property list and the runtime
+  ids of the block items Paletter registers follow the identifier, descending (the stand-in for BDS's file name order, see
+  `data/bds/CREATIVE-ORDER.md`), whatever order the layers register them in. Items registered with `PaletteLayer.Builder#blockItem` are placed among the
+  custom items as the consumer registered them: that slot is the consumer's decision.
 
 ## Layers and extend
 
