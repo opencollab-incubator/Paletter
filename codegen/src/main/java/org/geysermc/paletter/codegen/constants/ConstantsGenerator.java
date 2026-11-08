@@ -42,7 +42,7 @@ public final class ConstantsGenerator {
     public static final String NAMES = "codegen/names.json";
     public static final String HISTORY = "codegen/constants-history.json";
     public static final String DATA = "paletter/src/main/resources/paletter";
-    public static final String PACKAGE_DIR = "paletter/src/main/java/org/geysermc/paletter/vanilla";
+    public static final String PACKAGE_DIR = "paletter/src/generated/java/org/geysermc/paletter/vanilla";
     public static final String STATE_DIR = PACKAGE_DIR + "/state";
     static final String PACKAGE = "org.geysermc.paletter.vanilla";
     static final String STATE_PACKAGE = PACKAGE + ".state";

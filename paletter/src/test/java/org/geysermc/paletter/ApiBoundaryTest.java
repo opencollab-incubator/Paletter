@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class ApiBoundaryTest {
     private static final Path MODULE_INFO = Path.of("src/module/java/module-info.java");
-    private static final Path SOURCES = Path.of("src/main/java");
+    private static final List<Path> SOURCES = List.of(Path.of("src/main/java"), Path.of("src/generated/java"));
     private static final String ROOT = "org.geysermc.paletter";
 
     static Set<String> exportedPackages() throws IOException {
@@ -134,7 +134,8 @@ class ApiBoundaryTest {
                 // Nested types inherit the @since of their top level type
                 continue;
             }
-            Path source = SOURCES.resolve(type.getName().replace('.', '/') + ".java");
+            String relative = type.getName().replace('.', '/') + ".java";
+            Path source = SOURCES.stream().map(dir -> dir.resolve(relative)).filter(Files::exists).findFirst().orElseThrow();
             String text = Files.readString(source, StandardCharsets.UTF_8);
             int declaration = indexOfDeclaration(text, type.getSimpleName());
             int docEnd = text.lastIndexOf("*/", declaration);

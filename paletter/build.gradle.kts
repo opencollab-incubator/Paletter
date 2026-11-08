@@ -19,6 +19,11 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
+// Generated sources (component API, vanilla constants) live beside the hand-written ones; see tools/README.md
+sourceSets.main {
+    java.srcDir("src/generated/java")
+}
+
 java {
     withSourcesJar()
 }

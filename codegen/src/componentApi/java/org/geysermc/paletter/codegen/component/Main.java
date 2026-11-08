@@ -37,7 +37,7 @@ public final class Main {
             }
         }
         boolean check = args.length > 0 && args[0].equals("check");
-        int changed = run(root, sources == null ? root.resolve("paletter/src/main/java") : sources, check);
+        int changed = run(root, sources == null ? root.resolve("paletter/src/generated/java") : sources, check);
         if (check && changed > 0) {
             System.err.println(changed + " generated component API files are stale: run ./gradlew :codegen:generateComponentApi");
             System.exit(1);
