@@ -20,4 +20,4 @@ jobs:
       # build includes :codegen:checkComponents (generated component types up to date) and all tests
       - run: ./gradlew build
       - name: Fallback coverage of the bundled versions
-        run: ./gradlew :generator:run --args="check"
+        run: ./gradlew :tools:run --args="check-data"

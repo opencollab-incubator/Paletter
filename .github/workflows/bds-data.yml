@@ -64,7 +64,7 @@ jobs:
           VERSION_ARG=""
           if [ -n "${{ inputs.version }}" ]; then VERSION_ARG="--version ${{ inputs.version }}"; fi
           set +e
-          ./gradlew :generator:run --args="update --channel $CHANNEL $VERSION_ARG --verify-only --report reports/ci-$CHANNEL.md"
+          ./gradlew :tools:run --args="update --channel $CHANNEL $VERSION_ARG --verify-only --report reports/ci-$CHANNEL.md"
           echo "exit=$?" >> "$GITHUB_OUTPUT"
           # The report without the lines that change every run (date, paths)
           if [ -f "reports/ci-$CHANNEL.md" ]; then
@@ -116,7 +116,7 @@ jobs:
           VERSION_ARG=""
           if [ -n "${{ inputs.version }}" ]; then VERSION_ARG="--version ${{ inputs.version }}"; fi
           # Exits non-zero when decisions are pending (TODOs in the report); the PR is opened anyway
-          ./gradlew :generator:run --args="update --channel release $VERSION_ARG --report reports/release-latest.md" || true
+          ./gradlew :tools:run --args="update --channel release $VERSION_ARG --report reports/release-latest.md" || true
           rm -f reports/ci-*.md
           head -c 60000 reports/release-latest.md > "$RUNNER_TEMP/pr-body.md"
 
