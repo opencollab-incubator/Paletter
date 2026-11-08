@@ -18,6 +18,7 @@ import org.geysermc.paletter.tools.data.Verify;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
+import org.geysermc.paletter.tools.model.addon.FixedAddons;
 import org.geysermc.paletter.tools.model.docs.DocsFetcher;
 import org.geysermc.paletter.tools.model.docs.DocsParser;
 import org.geysermc.paletter.tools.model.infer.MappingInference;
@@ -376,14 +377,24 @@ public final class Cli implements Runnable {
         }
     }
 
-    @Command(name = "addon", description = "data/model -> capture add-on (behavior + resource pack) + variants.json")
+    @Command(name = "addon", description = "Generates an add-on. Kinds: spec (data/model -> every documented component + variants.json, "
+        + "the default), capture (data/addons/capture), creative (data/addons/creative), creative-large (the 700 block probe)")
     static final class Addon extends Rooted implements Callable<Integer> {
         @Option(names = "--out", required = true) Path out;
+        @Option(names = "--kind", defaultValue = "spec", description = "spec, capture, creative or creative-large") String kind;
 
         @Override
         public Integer call() throws Exception {
-            Path model = root().resolve(Layout.MODEL);
-            new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model)).write(out);
+            switch (kind) {
+                case "spec" -> {
+                    Path model = root().resolve(Layout.MODEL);
+                    new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model)).write(out);
+                }
+                case "capture" -> FixedAddons.writeCapture(out);
+                case "creative" -> FixedAddons.writeCreative(out);
+                case "creative-large" -> FixedAddons.writeCreativeLarge(out);
+                default -> throw new IllegalArgumentException("Unknown --kind " + kind);
+            }
             return 0;
         }
     }

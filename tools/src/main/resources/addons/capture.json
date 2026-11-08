@@ -1,0 +1,1763 @@
+{
+  "items": [
+    {
+      "name": "allow_off_hand_full",
+      "components": {
+        "minecraft:allow_off_hand": {
+          "value": false
+        }
+      }
+    },
+    {
+      "name": "allow_off_hand_short",
+      "components": {
+        "minecraft:allow_off_hand": true
+      }
+    },
+    {
+      "name": "block_placer",
+      "components": {
+        "minecraft:block_placer": {
+          "block": "paletter:plain_block"
+        }
+      }
+    },
+    {
+      "name": "block_placer_use_on",
+      "components": {
+        "minecraft:block_placer": {
+          "block": "minecraft:dirt",
+          "use_on": [
+            "minecraft:grass_block",
+            {
+              "name": "minecraft:stone"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "bundle_interaction",
+      "components": {
+        "minecraft:bundle_interaction": {
+          "num_viewable_slots": 4
+        },
+        "minecraft:storage_item": {}
+      }
+    },
+    {
+      "name": "bundle_interaction_default",
+      "components": {
+        "minecraft:bundle_interaction": {},
+        "minecraft:storage_item": {
+          "max_slots": 12
+        }
+      }
+    },
+    {
+      "name": "can_destroy_in_creative_full",
+      "components": {
+        "minecraft:can_destroy_in_creative": {
+          "value": true
+        }
+      }
+    },
+    {
+      "name": "can_destroy_in_creative_short",
+      "components": {
+        "minecraft:can_destroy_in_creative": false
+      }
+    },
+    {
+      "name": "compostable",
+      "components": {
+        "minecraft:compostable": {
+          "composting_chance": 50
+        }
+      }
+    },
+    {
+      "name": "compostable_max",
+      "components": {
+        "minecraft:compostable": {
+          "composting_chance": 100
+        }
+      }
+    },
+    {
+      "name": "cooldown",
+      "components": {
+        "minecraft:cooldown": {
+          "category": "pal",
+          "duration": 1.5
+        }
+      }
+    },
+    {
+      "name": "cooldown_attack",
+      "components": {
+        "minecraft:cooldown": {
+          "category": "pal2",
+          "duration": 2,
+          "type": "attack"
+        }
+      }
+    },
+    {
+      "name": "damage_absorption",
+      "components": {
+        "minecraft:damage_absorption": {
+          "absorbable_causes": [
+            "all"
+          ]
+        },
+        "minecraft:wearable": {
+          "slot": "slot.armor.body"
+        },
+        "minecraft:durability": {
+          "max_durability": 64
+        }
+      }
+    },
+    {
+      "name": "damage_full",
+      "components": {
+        "minecraft:damage": {
+          "value": 300
+        }
+      }
+    },
+    {
+      "name": "damage_short",
+      "components": {
+        "minecraft:damage": 5
+      }
+    },
+    {
+      "name": "digger",
+      "components": {
+        "minecraft:digger": {
+          "use_efficiency": true,
+          "destroy_speeds": [
+            {
+              "block": "minecraft:dirt",
+              "speed": 5
+            },
+            {
+              "block": {
+                "tags": "query.any_tag('stone', 'metal')"
+              },
+              "speed": 8
+            },
+            {
+              "block": {
+                "name": "minecraft:oak_log",
+                "states": {
+                  "pillar_axis": "y"
+                }
+              },
+              "speed": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "digger_empty",
+      "components": {
+        "minecraft:digger": {}
+      }
+    },
+    {
+      "name": "display_name",
+      "components": {
+        "minecraft:display_name": {
+          "value": "Paletter Display"
+        }
+      }
+    },
+    {
+      "name": "display_name_key",
+      "components": {
+        "minecraft:display_name": {
+          "value": "item.paletter.key.name"
+        }
+      }
+    },
+    {
+      "name": "durability",
+      "components": {
+        "minecraft:durability": {
+          "max_durability": 100
+        }
+      }
+    },
+    {
+      "name": "durability_chance",
+      "components": {
+        "minecraft:durability": {
+          "max_durability": 50,
+          "damage_chance": {
+            "min": 10,
+            "max": 50
+          }
+        }
+      }
+    },
+    {
+      "name": "durability_sensor",
+      "components": {
+        "minecraft:durability": {
+          "max_durability": 30
+        },
+        "minecraft:durability_sensor": {
+          "durability_thresholds": [
+            {
+              "durability": 10,
+              "sound_event": "break"
+            },
+            {
+              "durability": 5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "dyeable",
+      "components": {
+        "minecraft:dyeable": {}
+      }
+    },
+    {
+      "name": "dyeable_hex",
+      "components": {
+        "minecraft:dyeable": {
+          "default_color": "#ff0080"
+        }
+      }
+    },
+    {
+      "name": "dyeable_rgb",
+      "components": {
+        "minecraft:dyeable": {
+          "default_color": [
+            10,
+            20,
+            30
+          ]
+        }
+      }
+    },
+    {
+      "name": "enchantable",
+      "components": {
+        "minecraft:enchantable": {
+          "slot": "sword",
+          "value": 10
+        }
+      }
+    },
+    {
+      "name": "enchantable_all",
+      "components": {
+        "minecraft:enchantable": {
+          "slot": "all",
+          "value": 1
+        }
+      }
+    },
+    {
+      "name": "entity_placer",
+      "components": {
+        "minecraft:entity_placer": {
+          "entity": "minecraft:pig"
+        }
+      }
+    },
+    {
+      "name": "entity_placer_full",
+      "components": {
+        "minecraft:entity_placer": {
+          "entity": "minecraft:cow",
+          "use_on": [
+            "minecraft:grass_block"
+          ],
+          "dispense_on": [
+            {
+              "name": "minecraft:stone"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "fire_resistant_full",
+      "components": {
+        "minecraft:fire_resistant": {
+          "value": false
+        }
+      }
+    },
+    {
+      "name": "fire_resistant_true",
+      "components": {
+        "minecraft:fire_resistant": {
+          "value": true
+        }
+      }
+    },
+    {
+      "name": "food",
+      "components": {
+        "minecraft:food": {
+          "nutrition": 4,
+          "saturation_modifier": 0.5
+        },
+        "minecraft:use_modifiers": {
+          "use_duration": 1.6
+        }
+      }
+    },
+    {
+      "name": "food_full",
+      "components": {
+        "minecraft:food": {
+          "can_always_eat": true,
+          "nutrition": 2,
+          "using_converts_to": "minecraft:bowl"
+        },
+        "minecraft:use_modifiers": {
+          "use_duration": 1
+        }
+      }
+    },
+    {
+      "name": "fuel",
+      "components": {
+        "minecraft:fuel": {
+          "duration": 3
+        }
+      }
+    },
+    {
+      "name": "fuel_fraction",
+      "components": {
+        "minecraft:fuel": {
+          "duration": 10.5
+        }
+      }
+    },
+    {
+      "name": "glint_full",
+      "components": {
+        "minecraft:glint": {
+          "value": false
+        }
+      }
+    },
+    {
+      "name": "glint_short",
+      "components": {
+        "minecraft:glint": true
+      }
+    },
+    {
+      "name": "hand_equipped_full",
+      "components": {
+        "minecraft:hand_equipped": {
+          "value": false
+        }
+      }
+    },
+    {
+      "name": "hand_equipped_short",
+      "components": {
+        "minecraft:hand_equipped": true
+      }
+    },
+    {
+      "name": "hover_text_color",
+      "components": {
+        "minecraft:hover_text_color": "red"
+      }
+    },
+    {
+      "name": "hover_text_color_full",
+      "components": {
+        "minecraft:hover_text_color": {
+          "value": "dark_purple"
+        }
+      }
+    },
+    {
+      "name": "icon_short",
+      "components": {
+        "minecraft:icon": "paletter_icon"
+      }
+    },
+    {
+      "name": "icon_textures",
+      "components": {
+        "minecraft:icon": {
+          "textures": {
+            "default": "paletter_icon",
+            "dyed": "paletter_icon_alt"
+          }
+        }
+      }
+    },
+    {
+      "name": "interact_button_text",
+      "components": {
+        "minecraft:interact_button": "Use Paletter"
+      }
+    },
+    {
+      "name": "interact_button_true",
+      "components": {
+        "minecraft:interact_button": true
+      }
+    },
+    {
+      "name": "kinetic_weapon",
+      "components": {
+        "minecraft:kinetic_weapon": {
+          "delay": 5,
+          "reach": {
+            "min": 0.5,
+            "max": 4
+          },
+          "creative_reach": {
+            "min": 0,
+            "max": 6
+          },
+          "hitbox_margin": 0.125,
+          "damage_multiplier": 1.5,
+          "damage_modifier": 2,
+          "damage_conditions": {
+            "max_duration": 20,
+            "min_speed": 1.5,
+            "min_relative_speed": 0.5
+          },
+          "knockback_conditions": {
+            "max_duration": 40
+          },
+          "dismount_conditions": {
+            "min_speed": 3
+          }
+        }
+      }
+    },
+    {
+      "name": "kinetic_weapon_empty",
+      "components": {
+        "minecraft:kinetic_weapon": {}
+      }
+    },
+    {
+      "name": "liquid_clipped_full",
+      "components": {
+        "minecraft:liquid_clipped": {
+          "value": false
+        }
+      }
+    },
+    {
+      "name": "liquid_clipped_short",
+      "components": {
+        "minecraft:liquid_clipped": true
+      }
+    },
+    {
+      "name": "max_stack_size_full",
+      "components": {
+        "minecraft:max_stack_size": {
+          "value": 1
+        }
+      }
+    },
+    {
+      "name": "max_stack_size_short",
+      "components": {
+        "minecraft:max_stack_size": 16
+      }
+    },
+    {
+      "name": "menu_hidden",
+      "components": {
+        "minecraft:max_stack_size": 64
+      },
+      "description": {
+        "menu_category": {
+          "category": "equipment",
+          "group": "minecraft:itemGroup.name.sword",
+          "is_hidden_in_commands": true
+        }
+      }
+    },
+    {
+      "name": "menu_none",
+      "components": {
+        "minecraft:max_stack_size": 64
+      },
+      "description": {
+        "menu_category": {
+          "category": "none"
+        }
+      }
+    },
+    {
+      "name": "piercing_weapon",
+      "components": {
+        "minecraft:piercing_weapon": {
+          "reach": {
+            "min": 0.25,
+            "max": 4.5
+          },
+          "creative_reach": {
+            "min": 0,
+            "max": 7
+          },
+          "hitbox_margin": 0.2
+        }
+      }
+    },
+    {
+      "name": "piercing_weapon_empty",
+      "components": {
+        "minecraft:piercing_weapon": {}
+      }
+    },
+    {
+      "name": "plain",
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "name": "plain_block",
+      "components": {
+        "minecraft:block_placer": {
+          "block": "paletter:plain_block",
+          "replace_block_item": true
+        }
+      }
+    },
+    {
+      "name": "projectile",
+      "components": {
+        "minecraft:projectile": {
+          "projectile_entity": "minecraft:arrow",
+          "minimum_critical_power": 1.25
+        }
+      }
+    },
+    {
+      "name": "projectile_min",
+      "components": {
+        "minecraft:projectile": {
+          "projectile_entity": "snowball"
+        }
+      }
+    },
+    {
+      "name": "rarity_full",
+      "components": {
+        "minecraft:rarity": {
+          "value": "epic"
+        }
+      }
+    },
+    {
+      "name": "rarity_short",
+      "components": {
+        "minecraft:rarity": "rare"
+      }
+    },
+    {
+      "name": "record",
+      "components": {
+        "minecraft:record": {
+          "sound_event": "record.cat",
+          "duration": 185,
+          "comparator_signal": 2
+        }
+      }
+    },
+    {
+      "name": "record_min",
+      "components": {
+        "minecraft:record": {
+          "sound_event": "record.13"
+        }
+      }
+    },
+    {
+      "name": "repairable",
+      "components": {
+        "minecraft:durability": {
+          "max_durability": 80
+        },
+        "minecraft:repairable": {
+          "repair_items": [
+            {
+              "items": [
+                "minecraft:stick"
+              ],
+              "repair_amount": 10
+            },
+            {
+              "items": [
+                "minecraft:diamond",
+                {
+                  "name": "minecraft:iron_ingot"
+                }
+              ],
+              "repair_amount": "query.max_durability * 0.25"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "shooter",
+      "components": {
+        "minecraft:use_modifiers": {
+          "use_duration": 3600
+        },
+        "minecraft:shooter": {
+          "ammunition": [
+            {
+              "item": "minecraft:arrow",
+              "use_offhand": true,
+              "search_inventory": true,
+              "use_in_creative": true
+            }
+          ],
+          "max_draw_duration": 1,
+          "scale_power_by_draw_duration": true,
+          "charge_on_draw": false
+        }
+      }
+    },
+    {
+      "name": "shooter_min",
+      "components": {
+        "minecraft:use_modifiers": {
+          "use_duration": 10
+        },
+        "minecraft:shooter": {
+          "ammunition": [
+            {
+              "item": "minecraft:snowball"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "should_despawn_full",
+      "components": {
+        "minecraft:should_despawn": {
+          "value": true
+        }
+      }
+    },
+    {
+      "name": "should_despawn_short",
+      "components": {
+        "minecraft:should_despawn": false
+      }
+    },
+    {
+      "name": "stacked_by_data_full",
+      "components": {
+        "minecraft:stacked_by_data": {
+          "value": false
+        }
+      }
+    },
+    {
+      "name": "stacked_by_data_short",
+      "components": {
+        "minecraft:stacked_by_data": true
+      }
+    },
+    {
+      "name": "storage_item",
+      "components": {
+        "minecraft:storage_item": {
+          "max_slots": 8,
+          "allow_nested_storage_items": false,
+          "banned_items": [
+            "minecraft:shulker_box"
+          ],
+          "allowed_items": [
+            "minecraft:dirt",
+            "minecraft:stone"
+          ]
+        },
+        "minecraft:storage_weight_limit": {
+          "max_weight_limit": 32
+        }
+      }
+    },
+    {
+      "name": "storage_item_default",
+      "components": {
+        "minecraft:storage_item": {}
+      }
+    },
+    {
+      "name": "storage_weight_modifier",
+      "components": {
+        "minecraft:storage_weight_modifier": {
+          "weight_in_storage_item": 4
+        }
+      }
+    },
+    {
+      "name": "storage_weight_modifier_zero",
+      "components": {
+        "minecraft:storage_weight_modifier": {
+          "weight_in_storage_item": 0
+        }
+      }
+    },
+    {
+      "name": "swing_duration",
+      "components": {
+        "minecraft:swing_duration": {
+          "value": 0.5
+        }
+      }
+    },
+    {
+      "name": "swing_sounds",
+      "components": {
+        "minecraft:swing_sounds": {
+          "attack_hit": "attack.strong",
+          "attack_miss": "attack.nodamage",
+          "attack_critical_hit": "attack.strong"
+        }
+      }
+    },
+    {
+      "name": "swing_sounds_min",
+      "components": {
+        "minecraft:swing_sounds": {
+          "attack_miss": "attack.nodamage"
+        }
+      }
+    },
+    {
+      "name": "tags",
+      "components": {
+        "minecraft:tags": {
+          "tags": [
+            "paletter:tag_a",
+            "minecraft:is_sword"
+          ]
+        }
+      }
+    },
+    {
+      "name": "throwable",
+      "components": {
+        "minecraft:throwable": {
+          "do_swing_animation": true,
+          "launch_power_scale": 1.5,
+          "max_draw_duration": 1,
+          "max_launch_power": 2,
+          "min_draw_duration": 0.25,
+          "scale_power_by_draw_duration": true
+        },
+        "minecraft:projectile": {
+          "projectile_entity": "minecraft:snowball"
+        }
+      }
+    },
+    {
+      "name": "throwable_empty",
+      "components": {
+        "minecraft:throwable": {},
+        "minecraft:projectile": {
+          "projectile_entity": "minecraft:snowball"
+        }
+      }
+    },
+    {
+      "name": "use_animation_eat",
+      "components": {
+        "minecraft:use_animation": "eat",
+        "minecraft:use_modifiers": {
+          "use_duration": 1
+        }
+      }
+    },
+    {
+      "name": "use_animation_spear",
+      "components": {
+        "minecraft:use_animation": {
+          "value": "spear"
+        },
+        "minecraft:use_modifiers": {
+          "use_duration": 1
+        }
+      }
+    },
+    {
+      "name": "use_modifiers",
+      "components": {
+        "minecraft:use_modifiers": {
+          "use_duration": 1.6,
+          "movement_modifier": 0.35
+        }
+      }
+    },
+    {
+      "name": "use_modifiers_full",
+      "components": {
+        "minecraft:use_modifiers": {
+          "use_duration": 2,
+          "movement_modifier": 0.5,
+          "emit_vibrations": false,
+          "start_sound": "bow"
+        }
+      }
+    },
+    {
+      "name": "wearable_chest",
+      "components": {
+        "minecraft:wearable": {
+          "slot": "slot.armor.chest",
+          "protection": 5
+        }
+      }
+    },
+    {
+      "name": "wearable_head",
+      "components": {
+        "minecraft:wearable": {
+          "slot": "slot.armor.head"
+        }
+      }
+    },
+    {
+      "name": "wearable_offhand",
+      "components": {
+        "minecraft:wearable": {
+          "slot": "slot.weapon.offhand"
+        },
+        "minecraft:allow_off_hand": true
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "name": "block_entity",
+      "components": {
+        "minecraft:block_entity": {
+          "dynamic_properties": true
+        }
+      }
+    },
+    {
+      "name": "chest_obstruction",
+      "components": {
+        "minecraft:chest_obstruction": {
+          "obstruction_rule": "never"
+        }
+      }
+    },
+    {
+      "name": "collision_box_box",
+      "components": {
+        "minecraft:collision_box": {
+          "origin": [
+            -8.0,
+            0.0,
+            -8.0
+          ],
+          "size": [
+            16.0,
+            8.0,
+            16.0
+          ]
+        }
+      }
+    },
+    {
+      "name": "collision_box_false",
+      "components": {
+        "minecraft:collision_box": false
+      }
+    },
+    {
+      "name": "collision_box_list",
+      "components": {
+        "minecraft:collision_box": [
+          {
+            "origin": [
+              -8,
+              0,
+              -8
+            ],
+            "size": [
+              16,
+              4,
+              16
+            ]
+          },
+          {
+            "origin": [
+              -2,
+              4,
+              -2
+            ],
+            "size": [
+              4,
+              12,
+              4
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "collision_box_single_list",
+      "components": {
+        "minecraft:collision_box": [
+          {
+            "origin": [
+              -6,
+              0,
+              -6
+            ],
+            "size": [
+              12,
+              10,
+              12
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "collision_box_true",
+      "components": {
+        "minecraft:collision_box": true
+      }
+    },
+    {
+      "name": "connection_rule",
+      "components": {
+        "minecraft:connection_rule": {
+          "accepts_connections_from": "only_fences",
+          "enabled_directions": [
+            "north",
+            "south"
+          ]
+        }
+      }
+    },
+    {
+      "name": "connection_rule_default",
+      "components": {
+        "minecraft:connection_rule": {}
+      }
+    },
+    {
+      "name": "connection_trait_block",
+      "components": {},
+      "description": {
+        "traits": {
+          "minecraft:connection": {
+            "enabled_states": [
+              "minecraft:cardinal_connections"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "crafting_table",
+      "components": {
+        "minecraft:crafting_table": {
+          "crafting_tags": [
+            "crafting_table",
+            "paletter"
+          ],
+          "table_name": "Paletter Table"
+        }
+      }
+    },
+    {
+      "name": "destructible_by_explosion",
+      "components": {
+        "minecraft:destructible_by_explosion": {
+          "explosion_resistance": 20
+        }
+      }
+    },
+    {
+      "name": "destructible_by_explosion_false",
+      "components": {
+        "minecraft:destructible_by_explosion": false
+      }
+    },
+    {
+      "name": "destructible_by_mining",
+      "components": {
+        "minecraft:destructible_by_mining": {
+          "seconds_to_destroy": 2.5,
+          "item_specific_speeds": [
+            {
+              "item": "minecraft:iron_pickaxe",
+              "destroy_speed": 1
+            },
+            {
+              "item": {
+                "tags": "query.any_tag('minecraft:is_pickaxe')"
+              },
+              "destroy_speed": 0.5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "destructible_by_mining_false",
+      "components": {
+        "minecraft:destructible_by_mining": false
+      }
+    },
+    {
+      "name": "destruction_particles",
+      "components": {
+        "minecraft:destruction_particles": {
+          "texture": "paletter_tex",
+          "tint_method": "grass",
+          "particle_count": 50
+        }
+      }
+    },
+    {
+      "name": "destruction_particles_min",
+      "components": {
+        "minecraft:destruction_particles": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    {
+      "name": "display_name",
+      "components": {
+        "minecraft:display_name": "Paletter Block Name"
+      }
+    },
+    {
+      "name": "embedded_visual",
+      "components": {
+        "minecraft:embedded_visual": {
+          "geometry": "minecraft:geometry.full_block",
+          "material_instances": {
+            "*": {
+              "texture": "paletter_tex"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "enchantment_power_transmitter",
+      "components": {
+        "minecraft:enchantment_power_transmitter": true
+      }
+    },
+    {
+      "name": "entity_fall_on",
+      "components": {
+        "minecraft:entity_fall_on": {
+          "min_fall_distance": 2
+        }
+      }
+    },
+    {
+      "name": "flammable",
+      "components": {
+        "minecraft:flammable": {
+          "catch_chance_modifier": 10,
+          "destroy_chance_modifier": 30
+        }
+      }
+    },
+    {
+      "name": "flammable_true",
+      "components": {
+        "minecraft:flammable": true
+      }
+    },
+    {
+      "name": "flower_pottable",
+      "components": {
+        "minecraft:flower_pottable": {},
+        "minecraft:geometry": "minecraft:geometry.full_block",
+        "minecraft:material_instances": {
+          "*": {
+            "texture": "paletter_tex"
+          }
+        }
+      }
+    },
+    {
+      "name": "friction",
+      "components": {
+        "minecraft:friction": 0.2
+      }
+    },
+    {
+      "name": "geometry_full",
+      "components": {
+        "minecraft:geometry": {
+          "identifier": "geometry.paletter_cube",
+          "bone_visibility": {
+            "bone_a": true,
+            "bone_b": "query.block_state('paletter:on')"
+          },
+          "culling": "paletter:culling",
+          "culling_layer": "minecraft:culling_layer.leaves",
+          "uv_lock": true
+        },
+        "minecraft:material_instances": {
+          "*": {
+            "texture": "paletter_tex"
+          }
+        }
+      },
+      "description": {
+        "states": {
+          "paletter:on": [
+            false,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "name": "geometry_full_block",
+      "components": {
+        "minecraft:geometry": "minecraft:geometry.full_block",
+        "minecraft:material_instances": {
+          "*": {
+            "texture": "paletter_tex"
+          }
+        }
+      }
+    },
+    {
+      "name": "geometry_short",
+      "components": {
+        "minecraft:geometry": "geometry.paletter_cube",
+        "minecraft:material_instances": {
+          "*": {
+            "texture": "paletter_tex"
+          }
+        }
+      }
+    },
+    {
+      "name": "geometry_uv_lock_list",
+      "components": {
+        "minecraft:geometry": {
+          "identifier": "geometry.paletter_cube",
+          "uv_lock": [
+            "bone_a"
+          ]
+        },
+        "minecraft:material_instances": {
+          "*": {
+            "texture": "paletter_tex"
+          }
+        }
+      }
+    },
+    {
+      "name": "instrument_sound",
+      "components": {
+        "minecraft:instrument_sound": {
+          "up": "note.bell",
+          "down": "note.harp"
+        }
+      }
+    },
+    {
+      "name": "item_visual",
+      "components": {
+        "minecraft:item_visual": {
+          "geometry": "minecraft:geometry.full_block",
+          "material_instances": {
+            "*": {
+              "texture": "paletter_tex"
+            }
+          }
+        },
+        "minecraft:geometry": "geometry.paletter_cube",
+        "minecraft:material_instances": {
+          "*": {
+            "texture": "paletter_tex_alt"
+          }
+        }
+      }
+    },
+    {
+      "name": "leashable",
+      "components": {
+        "minecraft:leashable": {
+          "offset": [
+            0,
+            0.5,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "leashable_default",
+      "components": {
+        "minecraft:leashable": {}
+      }
+    },
+    {
+      "name": "light_dampening",
+      "components": {
+        "minecraft:light_dampening": 7
+      }
+    },
+    {
+      "name": "light_emission",
+      "components": {
+        "minecraft:light_emission": 10
+      }
+    },
+    {
+      "name": "liquid_detection",
+      "components": {
+        "minecraft:liquid_detection": {
+          "detection_rules": [
+            {
+              "liquid_type": "water",
+              "can_contain_liquid": true,
+              "on_liquid_touches": "no_reaction",
+              "stops_liquid_flowing_from_direction": [
+                "up",
+                "north"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "loot",
+      "components": {
+        "minecraft:loot": "loot_tables/paletter_empty.json"
+      }
+    },
+    {
+      "name": "map_color_full",
+      "components": {
+        "minecraft:map_color": {
+          "color": "#0000ff",
+          "tint_method": "grass"
+        }
+      }
+    },
+    {
+      "name": "map_color_hex",
+      "components": {
+        "minecraft:map_color": "#ff0000"
+      }
+    },
+    {
+      "name": "map_color_rgb",
+      "components": {
+        "minecraft:map_color": [
+          0,
+          255,
+          0
+        ]
+      }
+    },
+    {
+      "name": "material_instances",
+      "components": {
+        "minecraft:material_instances": {
+          "*": {
+            "texture": "paletter_tex",
+            "render_method": "alpha_test",
+            "ambient_occlusion": 0.5,
+            "face_dimming": false,
+            "isotropic": true,
+            "tint_method": "grass"
+          },
+          "up": "north",
+          "north": {
+            "texture": "paletter_tex_alt",
+            "render_method": "blend"
+          }
+        },
+        "minecraft:geometry": "minecraft:geometry.full_block"
+      }
+    },
+    {
+      "name": "material_instances_min",
+      "components": {
+        "minecraft:material_instances": {
+          "*": {
+            "texture": "paletter_tex"
+          }
+        },
+        "minecraft:geometry": "minecraft:geometry.full_block"
+      }
+    },
+    {
+      "name": "menu_hidden_block",
+      "components": {},
+      "description": {
+        "menu_category": {
+          "category": "nature",
+          "group": "minecraft:itemGroup.name.dirt",
+          "is_hidden_in_commands": true
+        }
+      }
+    },
+    {
+      "name": "movable_immovable",
+      "components": {
+        "minecraft:movable": {
+          "movement_type": "immovable"
+        }
+      }
+    },
+    {
+      "name": "movable_sticky",
+      "components": {
+        "minecraft:movable": {
+          "movement_type": "push_pull",
+          "sticky": "same"
+        }
+      }
+    },
+    {
+      "name": "multi_block",
+      "components": {
+        "minecraft:movable": {
+          "movement_type": "immovable"
+        }
+      },
+      "description": {
+        "traits": {
+          "minecraft:multi_block": {
+            "enabled_states": [
+              "minecraft:multi_block_part"
+            ],
+            "parts": 2,
+            "direction": "up"
+          }
+        }
+      }
+    },
+    {
+      "name": "neighbor_change",
+      "components": {
+        "minecraft:neighbor_change": {
+          "neighbor_directions": [
+            "north",
+            "up"
+          ]
+        }
+      }
+    },
+    {
+      "name": "neighbor_change_default",
+      "components": {
+        "minecraft:neighbor_change": {}
+      }
+    },
+    {
+      "name": "placement_filter",
+      "components": {
+        "minecraft:placement_filter": {
+          "conditions": [
+            {
+              "allowed_faces": [
+                "up",
+                "north"
+              ],
+              "block_filter": [
+                "minecraft:dirt",
+                {
+                  "name": "minecraft:stone"
+                },
+                {
+                  "tags": "query.any_tag('stone')"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "plain_block",
+      "components": {}
+    },
+    {
+      "name": "precipitation_interactions",
+      "components": {
+        "minecraft:precipitation_interactions": {
+          "precipitation_behavior": "none"
+        }
+      }
+    },
+    {
+      "name": "random_offset",
+      "components": {
+        "minecraft:random_offset": {
+          "x": {
+            "range": {
+              "min": -0.25,
+              "max": 0.25
+            },
+            "steps": 4
+          },
+          "z": {
+            "range": {
+              "min": -0.125,
+              "max": 0.125
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "redstone_conductivity",
+      "components": {
+        "minecraft:redstone_conductivity": {
+          "redstone_conductor": false,
+          "allows_wire_to_step_down": false
+        }
+      }
+    },
+    {
+      "name": "redstone_consumer",
+      "components": {
+        "minecraft:redstone_consumer": {
+          "min_power": 3,
+          "propagates_power": true
+        }
+      }
+    },
+    {
+      "name": "redstone_producer",
+      "components": {
+        "minecraft:redstone_producer": {
+          "power": 15,
+          "strongly_powered_face": "north",
+          "connected_faces": [
+            "north",
+            "south"
+          ],
+          "transform_relative": true
+        }
+      }
+    },
+    {
+      "name": "redstone_producer_min",
+      "components": {
+        "minecraft:redstone_producer": {
+          "power": 4
+        }
+      }
+    },
+    {
+      "name": "replaceable",
+      "components": {
+        "minecraft:replaceable": {}
+      }
+    },
+    {
+      "name": "selection_box_box",
+      "components": {
+        "minecraft:selection_box": {
+          "origin": [
+            -4,
+            0,
+            -4
+          ],
+          "size": [
+            8,
+            8,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "selection_box_false",
+      "components": {
+        "minecraft:selection_box": false
+      }
+    },
+    {
+      "name": "sound",
+      "components": {
+        "minecraft:sound": {
+          "sound": "metal"
+        }
+      }
+    },
+    {
+      "name": "states_block",
+      "components": {
+        "minecraft:material_instances": {
+          "*": {
+            "texture": "paletter_tex"
+          }
+        },
+        "minecraft:geometry": "minecraft:geometry.full_block"
+      },
+      "description": {
+        "states": {
+          "paletter:count": {
+            "values": {
+              "min": 0,
+              "max": 3
+            }
+          },
+          "paletter:color": [
+            "red",
+            "green"
+          ],
+          "paletter:flag": [
+            false,
+            true
+          ],
+          "paletter:list": [
+            1,
+            5,
+            9
+          ]
+        },
+        "traits": {
+          "minecraft:placement_direction": {
+            "enabled_states": [
+              "minecraft:cardinal_direction"
+            ],
+            "y_rotation_offset": 180
+          },
+          "minecraft:placement_position": {
+            "enabled_states": [
+              "minecraft:block_face",
+              "minecraft:vertical_half"
+            ]
+          }
+        },
+        "permutations": [
+          {
+            "condition": "query.block_state('paletter:flag') == true",
+            "components": {
+              "minecraft:light_emission": 15
+            }
+          },
+          {
+            "condition": "query.block_state('minecraft:cardinal_direction') == 'north'",
+            "components": {
+              "minecraft:transformation": {
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "support",
+      "components": {
+        "minecraft:support": {
+          "shape": "stair"
+        }
+      }
+    },
+    {
+      "name": "tags",
+      "components": {
+        "minecraft:tags": [
+          "paletter:block_tag",
+          "stone"
+        ]
+      }
+    },
+    {
+      "name": "tag_legacy",
+      "components": {
+        "tag:paletter:legacy_tag": {}
+      }
+    },
+    {
+      "name": "tick",
+      "components": {
+        "minecraft:tick": {
+          "interval_range": [
+            10,
+            20
+          ],
+          "looping": true
+        }
+      }
+    },
+    {
+      "name": "transformation",
+      "components": {
+        "minecraft:transformation": {
+          "rotation": [
+            0,
+            90,
+            0
+          ],
+          "scale": [
+            0.5,
+            1,
+            0.5
+          ],
+          "translation": [
+            0,
+            0.25,
+            0
+          ],
+          "rotation_pivot": [
+            0.5,
+            0,
+            0
+          ],
+          "scale_pivot": [
+            0,
+            0.5,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "transformation_rotation",
+      "components": {
+        "minecraft:transformation": {
+          "rotation": [
+            0,
+            180,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "vibration_properties",
+      "components": {
+        "minecraft:vibration_properties": {
+          "dampen_vibrations": true,
+          "occlude_vibrations": true
+        }
+      }
+    },
+    {
+      "name": "unit_cube",
+      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "components": {
+        "minecraft:unit_cube": {}
+      }
+    },
+    {
+      "name": "queued_ticking",
+      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "components": {
+        "minecraft:queued_ticking": {}
+      }
+    },
+    {
+      "name": "random_ticking",
+      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "components": {
+        "minecraft:random_ticking": {}
+      }
+    },
+    {
+      "name": "on_fall_on",
+      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "components": {
+        "minecraft:on_fall_on": {}
+      }
+    },
+    {
+      "name": "on_interact",
+      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "components": {
+        "minecraft:on_interact": {}
+      }
+    },
+    {
+      "name": "on_placed",
+      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "components": {
+        "minecraft:on_placed": {}
+      }
+    },
+    {
+      "name": "on_player_destroyed",
+      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "components": {
+        "minecraft:on_player_destroyed": {}
+      }
+    },
+    {
+      "name": "on_player_placing",
+      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "components": {
+        "minecraft:on_player_placing": {}
+      }
+    },
+    {
+      "name": "on_step_off",
+      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "components": {
+        "minecraft:on_step_off": {}
+      }
+    },
+    {
+      "name": "on_step_on",
+      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "components": {
+        "minecraft:on_step_on": {}
+      }
+    },
+    {
+      "name": "breathability_air",
+      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "components": {
+        "minecraft:breathability": "air"
+      }
+    },
+    {
+      "name": "breathability_solid",
+      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "components": {
+        "minecraft:breathability": "solid"
+      }
+    }
+  ]
+}

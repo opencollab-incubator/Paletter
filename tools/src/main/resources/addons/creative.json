@@ -1,0 +1,323 @@
+{
+  "items": [
+    {
+      "file": "f01",
+      "identifier": "exp:sword_a",
+      "menu_category": {
+        "category": "equipment",
+        "group": "minecraft:itemGroup.name.sword"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f02",
+      "identifier": "exp:no_menu",
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f03",
+      "identifier": "zzz:loose_a",
+      "menu_category": {
+        "category": "items"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f04",
+      "identifier": "exp:g0_x",
+      "menu_category": {
+        "category": "equipment",
+        "group": "exp:itemGroup.g0"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f05",
+      "identifier": "exp:hidden_items",
+      "menu_category": {
+        "category": "items",
+        "is_hidden_in_commands": true
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f06",
+      "identifier": "aaa:sword_d",
+      "menu_category": {
+        "category": "equipment",
+        "group": "minecraft:itemGroup.name.sword"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f07",
+      "identifier": "exp:placer_item",
+      "menu_category": {
+        "category": "items"
+      },
+      "components": {
+        "minecraft:block_placer": {
+          "block": "exp:block_placed",
+          "replace_block_item": true
+        }
+      }
+    },
+    {
+      "file": "f08",
+      "identifier": "exp:g1_b",
+      "menu_category": {
+        "category": "equipment",
+        "group": "exp:itemGroup.g1"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f09",
+      "identifier": "exp:sword_c",
+      "menu_category": {
+        "category": "equipment",
+        "group": "minecraft:itemGroup.name.sword"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f10",
+      "identifier": "exp:nature_loose",
+      "menu_category": {
+        "category": "nature"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f11",
+      "identifier": "aaa:loose_z",
+      "menu_category": {
+        "category": "items"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f12",
+      "identifier": "zzz:sword_b",
+      "menu_category": {
+        "category": "equipment",
+        "group": "minecraft:itemGroup.name.sword"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f13",
+      "identifier": "exp:g1_a",
+      "menu_category": {
+        "category": "equipment",
+        "group": "exp:itemGroup.g1"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f14",
+      "identifier": "exp:cat_none",
+      "menu_category": {
+        "category": "none"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f15",
+      "identifier": "exp:block_with_item",
+      "menu_category": {
+        "category": "items"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f16",
+      "identifier": "aaa:g2_x",
+      "menu_category": {
+        "category": "equipment",
+        "group": "exp:itemGroup.g2"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f17",
+      "identifier": "exp:loose_m",
+      "menu_category": {
+        "category": "items"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f18",
+      "identifier": "exp:equip_loose",
+      "menu_category": {
+        "category": "equipment"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f19",
+      "identifier": "exp:construction_loose",
+      "menu_category": {
+        "category": "construction"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f21",
+      "identifier": "exp:sword_wrongcat",
+      "menu_category": {
+        "category": "items",
+        "group": "minecraft:itemGroup.name.sword"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f22",
+      "identifier": "exp:g1_other",
+      "menu_category": {
+        "category": "nature",
+        "group": "exp:itemGroup.g1"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    },
+    {
+      "file": "f24",
+      "identifier": "exp:group_only",
+      "menu_category": {
+        "group": "exp:itemGroup.g4"
+      },
+      "components": {
+        "minecraft:max_stack_size": 64
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "identifier": "aaa:block_d",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    {
+      "identifier": "exp:block_a",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    {
+      "identifier": "exp:block_b",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    {
+      "identifier": "exp:block_g1",
+      "menu_category": {
+        "category": "equipment",
+        "group": "exp:itemGroup.g1"
+      }
+    },
+    {
+      "identifier": "exp:block_g3",
+      "menu_category": {
+        "category": "nature",
+        "group": "exp:itemGroup.g3"
+      }
+    },
+    {
+      "identifier": "exp:block_hidden",
+      "menu_category": {
+        "category": "construction",
+        "is_hidden_in_commands": true
+      }
+    },
+    {
+      "identifier": "exp:block_items",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    {
+      "identifier": "exp:block_nomenu"
+    },
+    {
+      "identifier": "exp:block_none",
+      "menu_category": {
+        "category": "none"
+      }
+    },
+    {
+      "identifier": "exp:block_placed",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    {
+      "identifier": "exp:block_planks",
+      "menu_category": {
+        "category": "construction",
+        "group": "minecraft:itemGroup.name.planks"
+      }
+    },
+    {
+      "identifier": "exp:block_sword",
+      "menu_category": {
+        "category": "equipment",
+        "group": "minecraft:itemGroup.name.sword"
+      }
+    },
+    {
+      "identifier": "exp:block_with_item",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    {
+      "identifier": "zzz:block_c",
+      "menu_category": {
+        "category": "construction"
+      }
+    }
+  ]
+}
