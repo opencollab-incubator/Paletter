@@ -3,7 +3,9 @@ package org.geysermc.paletter.tools.update;
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.data.Importer;
 import org.geysermc.paletter.tools.data.ShapeDiff;
-import com.google.gson.JsonObject;
+import org.geysermc.paletter.tools.data.WireShapes;
+import java.util.List;
+import java.util.Map;
 import com.google.gson.JsonParser;
 import org.junit.jupiter.api.Test;
 
@@ -32,8 +34,8 @@ class UpdateTest {
 
     @Test
     void shapeChangesAreWireFormatChanges() {
-        JsonObject before = spec("{\"type\": \"compound\", \"fields\": {\"value\": {\"type\": \"byte\"}, \"old\": {\"type\": \"int\"}}}");
-        JsonObject after = spec("{\"type\": \"compound\", \"fields\": {\"value\": {\"type\": \"short\"}, \"new\": {\"type\": \"string\", \"optional\": true}}}");
+        var before = shapes("value", "byte", "old", "int");
+        var after = shapes("value", "short", "new", "string");
         ShapeDiff diff = ShapeDiff.of(before, after);
         assertEquals(3, diff.wireChanges.size(), diff.wireChanges.toString());
         assertTrue(diff.wireChanges.stream().anyMatch(c -> c.contains("value: type byte -> short")));
@@ -43,12 +45,26 @@ class UpdateTest {
     }
 
     @Test
-    void optionalityIsANoteNotAWireChange() {
-        JsonObject before = spec("{\"type\": \"compound\", \"fields\": {\"value\": {\"type\": \"byte\"}}}");
-        JsonObject after = spec("{\"type\": \"compound\", \"fields\": {\"value\": {\"type\": \"byte\", \"optional\": true}}}");
+    void componentsComeAndGo() {
+        var before = shapes("value", "byte");
+        var after = Map.of("item:minecraft:other", Map.of("", "compound"));
         ShapeDiff diff = ShapeDiff.of(before, after);
-        assertTrue(diff.wireChanges.isEmpty());
-        assertEquals(1, diff.notes.size());
+        assertEquals(List.of("item:minecraft:other"), diff.newComponents);
+        assertEquals(List.of("item:minecraft:test: no longer sent"), diff.wireChanges);
+    }
+
+    @Test
+    void committedCapturesAreCoveredByTheMappings() throws Exception {
+        Path root = Path.of(System.getProperty("paletter.root", ".."));
+        var mappings = JsonParser.parseString(Files.readString(root.resolve("codegen/model/mappings.json"))).getAsJsonObject();
+        var shapes = WireShapes.ofCapture(root.resolve("capture/captures/1.26.63.1/addon"));
+        assertFalse(shapes.components().isEmpty());
+        List<String> uncovered = shapes.uncovered(mappings);
+        var gaps = WireShapes.knownGaps(root.resolve("codegen/model"));
+        assertTrue(gaps.containsAll(uncovered), "not covered and not a known gap: " + uncovered.stream().filter(u -> !gaps.contains(u)).toList());
+        assertTrue(uncovered.containsAll(gaps), "known gaps that are covered now: " + gaps.stream().filter(g -> !uncovered.contains(g)).toList());
+        var invented = new WireShapes();
+        assertTrue(invented.uncovered(mappings).isEmpty());
     }
 
     @Test
@@ -61,7 +77,12 @@ class UpdateTest {
         assertTrue(entries.get(1).preview());
     }
 
-    private static JsonObject spec(String shape) {
-        return JsonParser.parseString("{\"components\": {\"item:minecraft:test\": {\"shape\": " + shape + "}}}").getAsJsonObject();
+    private static Map<String, Map<String, String>> shapes(String... pathsAndTypes) {
+        Map<String, String> paths = new java.util.TreeMap<>();
+        paths.put("", "compound");
+        for (int i = 0; i < pathsAndTypes.length; i += 2) {
+            paths.put(pathsAndTypes[i], pathsAndTypes[i + 1]);
+        }
+        return Map.of("item:minecraft:test", paths);
     }
 }

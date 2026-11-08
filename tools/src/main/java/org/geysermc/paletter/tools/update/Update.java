@@ -13,6 +13,8 @@ import org.geysermc.paletter.tools.data.Importer;
 import org.geysermc.paletter.tools.data.OrderingCheck;
 import org.geysermc.paletter.tools.data.ScriptApiDiff;
 import org.geysermc.paletter.tools.data.ShapeDiff;
+import org.geysermc.paletter.tools.data.WireShapes;
+import org.geysermc.paletter.tools.Layout;
 import org.geysermc.paletter.tools.model.infer.Coverage;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -22,8 +24,6 @@ import org.geysermc.paletter.block.BlockStates;
 import org.geysermc.paletter.tools.client.Capture;
 import org.geysermc.paletter.tools.client.CapturedData;
 import org.geysermc.paletter.tools.client.LevelDat;
-import org.geysermc.paletter.tools.codegen.Codegen;
-import org.geysermc.paletter.tools.codegen.ShapeInference;
 import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.ExperimentContent;
@@ -86,7 +86,7 @@ public final class Update {
     private final Path resources;
     private final Path fallbacks;
     private final Path dumps;
-    private final Path codegenCaptures;
+    private final Path bdsData;
     private final Path experimentRecords;
     private final Map<String, String> options;
     private final boolean preview;
@@ -102,7 +102,7 @@ public final class Update {
         this.resources = root.resolve("paletter/src/main/resources/paletter");
         this.fallbacks = root.resolve("generator/fallbacks");
         this.dumps = root.resolve("generator/bds-dumps");
-        this.codegenCaptures = root.resolve("codegen/captures");
+        this.bdsData = root.resolve("capture/captures");
         this.experimentRecords = root.resolve("generator/experiments");
         this.options = options;
         String channel = options.getOrDefault("channel", "release");
@@ -1022,63 +1022,43 @@ public final class Update {
 
     /** Component wire shapes: the new add-on and vanilla captures against the committed ones. */
     private void shapes(BdsDistribution distribution, Runs runs) throws Exception {
-        Path previous = latestCodegenCapture();
-        Path target = codegenCaptures.resolve("bds-" + distribution.version() + "-addon");
+        Path previous = latestAddonCapture();
+        Path target = bdsData.resolve(distribution.version()).resolve("addon");
         List<String> files = List.of("custom_block_properties.nbt", "custom_item_registry.nbt");
+        WireShapes captured = WireShapes.ofCapture(runs.customCapture);
 
         if (previous != null) {
-            JsonObject before = infer(List.of(previous), List.of());
-            JsonObject after = infer(List.of(runs.customCapture), List.of());
-            ShapeDiff diff = ShapeDiff.of(before, after);
-            report(diff, "add-on components vs " + previous.getFileName());
+            report(ShapeDiff.of(WireShapes.ofCapture(previous).components(), captured.components()),
+                "add-on components vs " + previous.getParent().getFileName());
         }
         // Vanilla data driven items and blocks: the reference version against the capture
         if (runs.imported != null) {
-            JsonObject before = infer(List.of(), List.of(resources.resolve(runs.referenceName + ".nbt")));
-            JsonObject after = infer(List.of(), List.of(runs.imported));
-            report(ShapeDiff.of(before, after), "vanilla components vs bundled " + runs.referenceName);
+            report(ShapeDiff.of(WireShapes.ofPalette(resources.resolve(runs.referenceName + ".nbt")).components(),
+                WireShapes.ofPalette(runs.imported).components()), "vanilla components vs bundled " + runs.referenceName);
         }
-        // Coverage: everything captured must be in the committed spec the types are generated from
-        JsonObject committed = JsonParser.parseString(Files.readString(root.resolve("codegen/spec/inferred.json"))).getAsJsonObject();
-        ShapeDiff coverage = ShapeDiff.of(committed, infer(List.of(runs.customCapture), List.of()));
-        List<String> uncovered = new ArrayList<>(coverage.newComponents.stream().map(c -> c + ": not in the generated types").toList());
-        coverage.wireChanges.stream().filter(c -> c.contains(": new field") || c.contains(": type ")).forEach(uncovered::add);
+        // Coverage: everything captured must be something the component model can produce
+        JsonObject mappings = JsonParser.parseString(Files.readString(root.resolve(Layout.MODEL + "/mappings.json"))).getAsJsonObject();
+        List<String> uncovered = new ArrayList<>(captured.uncovered(mappings));
+        uncovered.removeAll(WireShapes.knownGaps(root.resolve(Layout.MODEL)));
         report.check(uncovered.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Spec coverage",
-            uncovered.isEmpty() ? "every captured component shape is in codegen/spec/inferred.json" : uncovered.size() + " shapes not in the spec");
-        uncovered.forEach(line -> report.wireChanges.add("not covered by codegen/spec/inferred.json: " + line));
+            uncovered.isEmpty() ? "every captured component shape is in " + Layout.MODEL + "/mappings.json" : uncovered.size() + " shapes not in the mappings");
+        uncovered.forEach(line -> report.wireChanges.add("not covered by " + Layout.MODEL + "/mappings.json: " + line));
 
         boolean same = Files.isDirectory(target);
         for (String file : files) {
             same &= Files.exists(target.resolve(file))
                 && OrderingCheck.readGzip(target.resolve(file)).equals(OrderingCheck.readGzip(runs.customCapture.resolve(file)));
         }
-        report.check(same ? Report.Status.PASS : Report.Status.DIFF, "Add-on capture vs codegen/captures",
+        report.check(same ? Report.Status.PASS : Report.Status.DIFF, "Add-on capture vs " + root.relativize(bdsData),
             same ? "`" + root.relativize(target) + "` has the same NBT" : "`" + root.relativize(target) + "` is missing or differs");
-        // Codegen splits shapes by protocol: every capture directory carries the protocol of the server it came from
-        byte[] metadata = captureMetadata(distribution.version(), runs.protocol);
-        if (!preview || importPreview) {
-            stage(target.resolve("capture.json"), metadata, "capture protocol");
-        } else if (!same || !Files.exists(target.resolve("capture.json"))) {
-            report.check(Report.Status.INFO, "Add-on capture", "preview capture not copied to codegen/captures (pass --import-preview)");
-        }
         if (!same && (!preview || importPreview)) {
             for (String file : files) {
                 stageCopy(target.resolve(file), runs.customCapture.resolve(file), "component capture " + file);
             }
-            if (!verifyOnly) {
-                System.out.println("Regenerating component types (codegen)");
-                Codegen.main(new String[]{"generate", "--root", root.toString()});
-                report.check(Report.Status.INFO, "Codegen", "reran `:codegen:generateComponents` with the new capture; review the generated diff");
-            }
+            report.check(Report.Status.INFO, "Component model", "new add-on capture staged; run the model checks (checkMappings, checkComponentApi) and review the diff");
+        } else if (!same) {
+            report.check(Report.Status.INFO, "Add-on capture", "preview capture not copied to " + root.relativize(bdsData) + " (pass --import-preview)");
         }
-    }
-
-    /** {@code capture.json} of a codegen capture directory: {@code {"bdsVersion": ..., "protocol": n}}. */
-    static byte[] captureMetadata(String bdsVersion, int protocol) {
-        JsonObject json = new JsonObject();
-        json.addProperty("bdsVersion", bdsVersion);
-        json.addProperty("protocol", protocol);
-        return (new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(json) + "\n").getBytes(StandardCharsets.UTF_8);
     }
 
     private void report(ShapeDiff diff, String what) {
@@ -1087,39 +1067,15 @@ public final class Update {
             return;
         }
         if (!diff.wireChanges.isEmpty()) {
-            report.todos.add("WIRE FORMAT CHANGE in " + what + ": review the generated component types (see the top of this report)");
+            report.todos.add("WIRE FORMAT CHANGE in " + what + ": review the component model and the generated component types (see the top of this report)");
         }
         report.check(Report.Status.DIFF, "Component shapes", what + ": "
-            + diff.wireChanges.size() + " wire format changes, " + diff.newComponents.size() + " new components, " + diff.notes.size() + " notes");
+            + diff.wireChanges.size() + " wire format changes, " + diff.newComponents.size() + " new components");
         diff.wireChanges.forEach(change -> report.wireChanges.add(what + ": " + change));
         List<String> lines = new ArrayList<>();
         diff.newComponents.forEach(c -> lines.add("- new component `" + c + "`"));
-        diff.notes.forEach(n -> lines.add("- " + n));
         if (!lines.isEmpty()) {
             report.section("Component shape notes: " + what, lines);
-        }
-    }
-
-    /** Runs the codegen inference on a scratch root holding only the given captures and palettes. */
-    private JsonObject infer(List<Path> captureDirs, List<Path> palettes) throws IOException {
-        Path scratch = Files.createTempDirectory("paletter-shapes");
-        try {
-            Path data = Files.createDirectories(scratch.resolve("paletter/src/main/resources/paletter"));
-            for (Path palette : palettes) {
-                Files.copy(palette, data.resolve(palette.getFileName()));
-            }
-            Path captures = Files.createDirectories(scratch.resolve("codegen/captures"));
-            for (Path dir : captureDirs) {
-                Path copy = Files.createDirectories(captures.resolve("capture"));
-                try (Stream<Path> files = Files.list(dir)) {
-                    for (Path file : files.filter(f -> f.toString().endsWith(".nbt")).toList()) {
-                        Files.copy(file, copy.resolve(file.getFileName()));
-                    }
-                }
-            }
-            return ShapeInference.infer(scratch, List.of());
-        } finally {
-            BdsDistribution.deleteRecursively(scratch);
         }
     }
 
@@ -1468,10 +1424,14 @@ public final class Update {
         }
     }
 
-    private Path latestCodegenCapture() throws IOException {
-        try (Stream<Path> files = Files.list(codegenCaptures)) {
-            return files.filter(Files::isDirectory)
-                .max(Comparator.comparing(f -> versionKey(f.getFileName().toString().replace("bds-", "").replace("-addon", "")))).orElse(null);
+    /** The newest committed add-on capture directory ({@code <bdsData>/<version>/addon}), null if there is none. */
+    private Path latestAddonCapture() throws IOException {
+        if (!Files.isDirectory(bdsData)) {
+            return null;
+        }
+        try (Stream<Path> files = Files.list(bdsData)) {
+            return files.filter(f -> Files.exists(f.resolve("addon/custom_item_registry.nbt")))
+                .max(Comparator.comparing(f -> versionKey(f.getFileName().toString()))).map(f -> f.resolve("addon")).orElse(null);
         }
     }
 

@@ -1,0 +1,32 @@
+# Wire paths of the committed add-on captures that the component model (mappings.json) does not cover yet: components the
+# creator docs do not describe or that BDS rejected in the spec add-on ("untestable"). The update pipeline reports
+# only paths that are neither mapped nor listed here; UpdateTest fails on entries that became covered.
+# Format: <component> <path> (the path is empty for the component itself)
+block:block_definition blockTags
+block:block_definition blockTags[]
+block:block_definition molangVersion
+block:block_definition vanilla_block_data
+block:block_definition vanilla_block_data.block_id
+block:block_definition vanilla_block_data.material
+block:minecraft:geometry
+block:minecraft:geometry bone_visibility
+block:minecraft:geometry bone_visibility.bone_a
+block:minecraft:geometry bone_visibility.bone_b
+block:minecraft:geometry culling
+block:minecraft:geometry culling_layer
+block:minecraft:geometry culling_shape
+block:minecraft:geometry identifier
+block:minecraft:geometry ignoreGeometryForIsSolid
+block:minecraft:geometry isV1Fullblock
+block:minecraft:geometry needsLegacyTopRotation
+block:minecraft:geometry useBlockTypeLightAbsorption
+block:minecraft:geometry uv_lock
+block:minecraft:geometry uv_lock[]
+block:minecraft:leashable
+block:minecraft:leashable offset
+block:minecraft:leashable offset[]
+block:minecraft:sound
+block:minecraft:sound sound
+item:item_properties creative_group
+item:item_properties frame_count
+item:item_properties mining_speed
