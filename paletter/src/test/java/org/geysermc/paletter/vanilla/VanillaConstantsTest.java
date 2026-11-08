@@ -279,14 +279,15 @@ class VanillaConstantsTest {
     @Test
     void constantsWhereIdentifiersAreAccepted() {
         PaletteLayer layer = PaletteLayer.builder("server")
-            .overrideItem(BedrockItems.CAKE, item -> item.components(c -> c.maxStackSize(1)))
+            .overrideItem(BedrockItems.CAKE, item -> item.components(org.geysermc.paletter.item.component.MaxStackSize.of(1)))
             .blockFallback(BedrockBlocks.ICICLE, BedrockBlocks.STONE)
             .item(CustomItem.builder("example:ruby")
-                .components(org.geysermc.paletter.item.ItemComponents.builder()
-                    .repairable(org.geysermc.paletter.item.component.Repairable.of(
-                        org.geysermc.paletter.item.component.Repairable.Entry.items(BedrockItems.DIAMOND)))
-                    .digger(org.geysermc.paletter.item.component.Digger.of()
-                        .speed(org.geysermc.paletter.item.component.BlockDescriptor.block(BedrockBlocks.STONE), 4))
+                .component(org.geysermc.paletter.item.component.Repairable.builder()
+                    .repairItems(org.geysermc.paletter.item.component.Repairable.RepairItems.builder().items(BedrockItems.DIAMOND).build())
+                    .build())
+                .component(org.geysermc.paletter.item.component.Digger.builder()
+                    .destroySpeeds(org.geysermc.paletter.item.component.Digger.DestroySpeeds.builder()
+                        .block(org.geysermc.paletter.item.component.Digger.Block.of(BedrockBlocks.STONE)).speed(4).build())
                     .build())
                 .creative(CreativePlacement.loose(CreativeCategory.ITEMS).after(BedrockItems.DIAMOND))
                 .build())

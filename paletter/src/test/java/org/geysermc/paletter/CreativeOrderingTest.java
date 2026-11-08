@@ -83,7 +83,8 @@ class CreativeOrderingTest {
     void bdsPlacesBlocksBeforeItemsAndBlocksByMenuCategory() {
         PaletteLayer layer = PaletteLayer.builder("blocks")
             .item(item("test:item", CreativePlacement.loose(CreativeCategory.CONSTRUCTION)))
-            .block(CustomBlock.builder("test:block_menu_only").menu(new CustomBlock.Menu(CreativeCategory.CONSTRUCTION, "", false)).build())
+            .block(CustomBlock.builder("test:block_menu_only").menuCategory(org.geysermc.paletter.block.component.MenuCategory.builder()
+                .category(org.geysermc.paletter.block.component.MenuCategory.Category.CONSTRUCTION).build()).build())
             .build();
         Palette palette = PALETTER.palette(LATEST, layer);
         List<CreativeNode> construction = palette.creativeLayout().nodes(CreativeCategory.CONSTRUCTION);
@@ -92,7 +93,8 @@ class CreativeOrderingTest {
 
         Palette append = PALETTER.palette(LATEST, PaletteLayer.builder("blocks").creativeOrdering(CreativeOrdering.APPEND)
             .item(item("test:item", CreativePlacement.loose(CreativeCategory.CONSTRUCTION)))
-            .block(CustomBlock.builder("test:block_menu_only").menu(new CustomBlock.Menu(CreativeCategory.CONSTRUCTION, "", false)).build())
+            .block(CustomBlock.builder("test:block_menu_only").menuCategory(org.geysermc.paletter.block.component.MenuCategory.builder()
+                .category(org.geysermc.paletter.block.component.MenuCategory.Category.CONSTRUCTION).build()).build())
             .build());
         assertTrue(append.creativeLayout().locate(ItemMatcher.id("test:block_menu_only")).isEmpty());
     }

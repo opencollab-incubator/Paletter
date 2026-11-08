@@ -567,7 +567,17 @@ public final class MappingInference {
             status = unexplained.isEmpty() ? (onlyStructural && !container(component, path) && !form ? "dropped" : "inferred")
                 : rules.isEmpty() ? "unresolved" : "partial";
         }
+        // A transform of the field, of an object or list containing it, or of the whole component covers it
         String transformKey = component.id() + ":" + path;
+        for (String p = path; !transforms.has(transformKey); ) {
+            int cut = Math.max(p.lastIndexOf('.'), p.lastIndexOf("[]"));
+            if (cut < 0) {
+                transformKey = transforms.has(component.id() + ":") ? component.id() + ":" : transformKey;
+                break;
+            }
+            p = p.substring(0, cut);
+            transformKey = transforms.has(component.id() + ":" + p) ? component.id() + ":" + p : transformKey;
+        }
         if ((status.equals("unresolved") || status.equals("partial")) && transforms.has(transformKey)) {
             out.add("transform", transforms.get(transformKey));
             status = "hand-rule";

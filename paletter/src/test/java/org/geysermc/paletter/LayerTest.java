@@ -5,7 +5,8 @@ import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
-import org.geysermc.paletter.block.BlockComponents;
+import org.geysermc.paletter.block.component.Geometry;
+import org.geysermc.paletter.block.component.LightEmission;
 import org.geysermc.paletter.block.BlockPalette;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.BlockResolution;
@@ -19,11 +20,13 @@ import org.geysermc.paletter.creative.CreativeStack;
 import org.geysermc.paletter.creative.ItemMatcher;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.CustomItem;
-import org.geysermc.paletter.item.ItemComponents;
+import org.geysermc.paletter.item.component.DisplayName;
+import org.geysermc.paletter.item.component.Icon;
+import org.geysermc.paletter.item.component.MaxStackSize;
 import org.geysermc.paletter.item.ItemVariant;
 import org.geysermc.paletter.item.PaletteItem;
 import org.geysermc.paletter.item.ResolvedItem;
-import org.geysermc.paletter.item.component.Throwing;
+import org.geysermc.paletter.item.component.ThrowableItem;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -48,11 +51,9 @@ class LayerTest {
     private static PaletteLayer minecartLayer() {
         return PaletteLayer.builder("geyser")
             .item(CustomItem.builder("geysermc:furnace_minecart")
-                .components(ItemComponents.builder()
-                    .icon("minecart_furnace")
-                    .displayName("item.minecartFurnace.name")
-                    .maxStackSize(1)
-                    .build())
+                .components(Icon.of("minecart_furnace"),
+                    DisplayName.builder().value("item.minecartFurnace.name").build(),
+                    MaxStackSize.of(1))
                 .creative(CreativePlacement.group(CreativeCategory.ITEMS, "itemGroup.name.minecart")
                     .after(ItemMatcher.id("minecraft:hopper_minecart")))
                 .build())
@@ -155,8 +156,9 @@ class LayerTest {
     @Test
     void overridesChangeVanillaDefinitions() {
         PaletteLayer layer = PaletteLayer.builder("fixes")
-            .overrideItem("minecraft:cake", item -> item.components(c -> c.maxStackSize(1)))
-            .overrideItem("minecraft:firework_rocket", item -> item.dataDriven(c -> c.maxStackSize(64).throwable(Throwing.of(true))))
+            .overrideItem("minecraft:cake", item -> item.components(MaxStackSize.of(1)))
+            .overrideItem("minecraft:firework_rocket", item -> item.dataDriven(MaxStackSize.of(64),
+                ThrowableItem.builder().doSwingAnimation(true).build()))
             .overrideItem("minecraft:structure_block", item -> item.noBlock())
             .build();
         Palette vanilla = PALETTER.vanilla(PALETTER.version(LATEST));
@@ -184,8 +186,8 @@ class LayerTest {
         CustomBlock lamp = CustomBlock.builder("geyser:lamp")
             .property(BlockProperty.bool("geyser:lit"))
             .property(BlockProperty.ints("geyser:color", 0, 1, 2))
-            .components(BlockComponents.builder().lightEmission(15).geometry("minecraft:geometry.full_block").build())
-            .permutation("q.block_state('geyser:lit') == 1", BlockComponents.builder().lightEmission(15).build())
+            .components(LightEmission.of(15), Geometry.of("minecraft:geometry.full_block"))
+            .permutation("q.block_state('geyser:lit') == 1", LightEmission.of(15))
             .defaultState("geyser:color", 1)
             .creative(CreativePlacement.loose(CreativeCategory.ITEMS))
             .build();

@@ -9,7 +9,8 @@ import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataSource;
 import org.geysermc.paletter.item.CustomItem;
-import org.geysermc.paletter.item.ItemComponents;
+import org.geysermc.paletter.item.component.Icon;
+import org.geysermc.paletter.item.component.MaxStackSize;
 import org.geysermc.paletter.item.ResolvedItem;
 import org.junit.jupiter.api.Test;
 
@@ -28,10 +29,10 @@ class BenchmarkTest {
 
     private static PaletteLayer sharedLayer() {
         PaletteLayer.Builder builder = PaletteLayer.builder("shared")
-            .overrideItem("minecraft:cake", item -> item.components(c -> c.maxStackSize(1)));
+            .overrideItem("minecraft:cake", item -> item.components(MaxStackSize.of(1)));
         for (int i = 0; i < 50; i++) {
             builder.item(CustomItem.builder("bench:item_" + i)
-                .components(ItemComponents.builder().icon("apple").maxStackSize(16).build())
+                .components(Icon.of("apple"), MaxStackSize.of(16))
                 .creative(CreativePlacement.loose(CreativeCategory.ITEMS))
                 .build());
         }

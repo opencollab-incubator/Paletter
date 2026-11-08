@@ -19,7 +19,7 @@ import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.CustomItem;
-import org.geysermc.paletter.item.ItemComponents;
+import org.geysermc.paletter.block.component.MenuCategory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -111,7 +111,7 @@ final class CreativeOrderCheck {
                 NbtMap item = dataDriven.get(name);
                 if (item != null) {
                     // A data driven item of the same name replaces the block item; its menu category counts
-                    builder.item(CustomBlock.BlockItem.dataDriven(ItemComponents.EMPTY));
+                    builder.item(CustomBlock.BlockItem.dataDriven());
                     CreativePlacement placement = placement(item);
                     if (placement != null) {
                         builder.creative(placement);
@@ -119,8 +119,8 @@ final class CreativeOrderCheck {
                 } else {
                     String category = menu.getString("category", "none");
                     if (!category.equals(CreativeCategory.NONE_NAME)) {
-                        builder.menu(new CustomBlock.Menu(CreativeCategory.fromBedrockName(category), menu.getString("group", ""),
-                            menu.getBoolean("is_hidden_in_commands")));
+                        builder.menuCategory(MenuCategory.builder().category(MenuCategory.Category.fromValue(category))
+                            .group(menu.getString("group", "")).hiddenInCommands(menu.getBoolean("is_hidden_in_commands")).build());
                     }
                 }
                 layer.block(builder.build());

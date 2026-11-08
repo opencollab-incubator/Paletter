@@ -8638,7 +8638,7 @@
           "rejected": 0,
           "transform": {
             "transform": "formatting_code",
-            "why": "The component keeps the color name; item_properties.hover_text_color gets the formatting code (red -> §c, dark_purple -> §5) and is left out for unknown names. The docs give no enum for the field, so a value table cannot be generalized. Implement it with Bedrock's text color table."
+            "why": "The component keeps the color name; item_properties.hover_text_color gets the formatting code (red -> §c, dark_purple -> §5) and is left out for unknown names. The docs give no enum for the field, so a value table cannot be generalized. Implement it with Bedrock's text color table. With no value, BDS sends the component with an empty value."
           },
           "status": "hand-rule",
           "rules": [
@@ -9946,7 +9946,7 @@
           "rejected": 0,
           "transform": {
             "transform": "item_descriptor_list",
-            "why": "Items become [{name}] and unknown items are dropped. An entry with no resolvable item drops the whole repair entry, repair_amount included (float for numbers, string for molang). Whether an item resolves comes from the item registry, not the JSON value."
+            "why": "Each entry's items become [{name}] (names as written, not namespaced) next to repair_amount, a float for numbers and a string for Molang. The two JSON types of repair_amount land on the same leaf with different NBT types, which no single rule fits."
           },
           "status": "hand-rule",
           "rules": [
