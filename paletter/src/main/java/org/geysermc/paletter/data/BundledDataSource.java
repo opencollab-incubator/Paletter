@@ -69,6 +69,18 @@ final class BundledDataSource implements PaletteDataSource {
         }
     }
 
+    @Override
+    public @NonNull Renames renames() {
+        try (InputStream stream = BundledDataSource.class.getResourceAsStream(ROOT + "renames.txt")) {
+            if (stream == null) {
+                return Renames.NONE;
+            }
+            return Renames.parse(new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines().toList());
+        } catch (IOException e) {
+            throw new UncheckedIOException("Unable to read the bundled Paletter renames", e);
+        }
+    }
+
     private static InputStream open(String file) throws IOException {
         InputStream stream = BundledDataSource.class.getResourceAsStream(ROOT + file);
         if (stream == null) {

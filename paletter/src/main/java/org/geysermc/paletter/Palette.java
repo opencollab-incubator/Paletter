@@ -116,11 +116,48 @@ public final class Palette {
     }
 
     /**
-     * @return the canonical id of a block state of the newest version (or of a custom block of this palette's layers),
-     * or -1. Extra keys like {@code version} are ignored
+     * @return the canonical id of a block state of any bundled version (mapped forward as in {@link Paletter#canonicalBlock(NbtMap)})
+     * or of a custom block of this palette's layers, or -1. Extra keys like {@code version} are ignored
      */
     public int canonicalBlock(@NonNull NbtMap state) {
-        return blocks.canonical().index(state);
+        int exact = blocks.canonical().index(state);
+        return exact != -1 ? exact : blocks.canonical().forward(state).canonical();
+    }
+
+    /**
+     * Like {@link Paletter#forwardBlock}, with the custom blocks of this palette's layers.
+     *
+     * @since 1.0.0
+     */
+    public @NonNull Forwarding forwardBlock(@NonNull NbtMap state) {
+        return blocks.canonical().forward(state);
+    }
+
+    /**
+     * Like {@link Paletter#forwardItem}, with the custom items of this palette's layers.
+     *
+     * @since 1.0.0
+     */
+    public @NonNull Forwarding forwardItem(@NonNull ItemVariant variant) {
+        return items.canonical().forward(variant, blocks.canonical());
+    }
+
+    /**
+     * @return why a block state has no canonical id in this palette, or null if it has one
+     * @since 1.0.0
+     */
+    public @Nullable String explainUnknown(@NonNull NbtMap state) {
+        Forwarding forwarding = forwardBlock(state);
+        return forwarding.known() ? null : forwarding.detail();
+    }
+
+    /**
+     * @return why an item variant has no canonical id in this palette, or null if it has one
+     * @since 1.0.0
+     */
+    public @Nullable String explainUnknown(@NonNull ItemVariant variant) {
+        Forwarding forwarding = forwardItem(variant);
+        return forwarding.known() ? null : forwarding.detail();
     }
 
     public int canonicalBlockCount() {
@@ -182,10 +219,12 @@ public final class Palette {
     }
 
     /**
-     * @return the canonical id of an item variant of the newest version (or a custom item of this palette's layers), or -1
+     * @return the canonical id of an item variant of any bundled version (mapped forward as in {@link Paletter#canonicalItem(ItemVariant)})
+     *         or of a custom item of this palette's layers, or -1
      */
     public int canonicalItem(@NonNull ItemVariant variant) {
-        return items.canonical().index(variant);
+        int exact = items.canonical().index(variant);
+        return exact != -1 ? exact : forwardItem(variant).canonical();
     }
 
     /**

@@ -5,7 +5,11 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
+import org.geysermc.paletter.Forwarding;
 import org.geysermc.paletter.PaletteException;
+import org.geysermc.paletter.annotation.Internal;
+import org.geysermc.paletter.block.CanonicalBlocks;
+import org.geysermc.paletter.data.Renames;
 import org.geysermc.paletter.creative.CreativeLayout;
 import org.geysermc.paletter.data.VanillaData;
 import org.geysermc.paletter.data.VanillaItem;
@@ -41,9 +45,14 @@ public final class CanonicalItems {
     private final Object2IntMap<ItemVariant> index;
     private final Map<String, NbtMap> defaultStates;
     private final Map<Object, CanonicalItems> extensions = new WeakHashMap<>();
+    private final Renames renames;
+    private final String version;
 
-    private CanonicalItems(@Nullable CanonicalItems parent, List<ItemVariant> variants, Map<String, NbtMap> defaultStates) {
+    private CanonicalItems(@Nullable CanonicalItems parent, List<ItemVariant> variants, Map<String, NbtMap> defaultStates,
+                           Renames renames, String version) {
         this.parent = parent;
+        this.renames = renames;
+        this.version = version;
         this.offset = parent == null ? 0 : parent.size();
         this.variants = variants.toArray(ItemVariant[]::new);
         this.defaultStates = Map.copyOf(defaultStates);
@@ -62,6 +71,15 @@ public final class CanonicalItems {
      * @param newest the data of the newest version
      */
     public static @NonNull CanonicalItems of(@NonNull VanillaData newest) {
+        return of(newest, Renames.NONE);
+    }
+
+    /**
+     * @param newest the data of the newest version
+     * @param renames items Bedrock renamed, for {@link #forward}
+     */
+    @Internal
+    public static @NonNull CanonicalItems of(@NonNull VanillaData newest, @NonNull Renames renames) {
         Map<String, NbtMap> defaultStates = new HashMap<>();
         Set<ItemVariant> variants = new LinkedHashSet<>();
         List<VanillaItem> items = new ArrayList<>(newest.items());
@@ -79,7 +97,7 @@ public final class CanonicalItems {
             ItemVariant variant = normalize(stack.variant(), defaultStates);
             variants.add(variant);
         });
-        return new CanonicalItems(null, List.copyOf(variants), defaultStates);
+        return new CanonicalItems(null, List.copyOf(variants), defaultStates, renames, newest.version().toString());
     }
 
     private static ItemVariant normalize(ItemVariant variant, Map<String, NbtMap> defaultStates) {
@@ -114,7 +132,7 @@ public final class CanonicalItems {
                 if (variants.isEmpty()) {
                     return this;
                 }
-                existing = new CanonicalItems(this, List.copyOf(variants), Map.of());
+                existing = new CanonicalItems(this, List.copyOf(variants), Map.of(), renames, version);
                 extensions.put(key, existing);
             }
             return existing;
@@ -148,6 +166,53 @@ public final class CanonicalItems {
             }
         }
         return found;
+    }
+
+    /**
+     * Maps a variant of <em>any</em> bundled version to the canonical ids, which the newest version defines. The
+     * block states of variants are mapped like {@link CanonicalBlocks#forward}; an item Bedrock renamed is looked up
+     * under its new identifier. A variant the newest version does not have (the item is gone, or has no such damage
+     * value or block state) is {@link Forwarding.Kind#UNKNOWN} with the reason.
+     *
+     * @param blocks the canonical blocks to map block states with
+     * @since 1.0.0
+     */
+    public @NonNull Forwarding forward(@NonNull ItemVariant variant, @NonNull CanonicalBlocks blocks) {
+        int exact = index(variant);
+        if (exact != -1) {
+            return new Forwarding(exact, Forwarding.Kind.EXACT, "");
+        }
+        Forwarding.Kind kind = Forwarding.Kind.ADAPTED;
+        List<String> detail = new ArrayList<>();
+        ItemVariant mapped = variant;
+        String identifier = variant.identifier();
+        if (lookup(ItemVariant.of(identifier)) == -1) {
+            String renamed = renames.item(identifier);
+            if (renamed == null || lookup(ItemVariant.of(renamed)) == -1) {
+                return Forwarding.unknown("item " + identifier + " does not exist in " + version + (renamed == null ? " and was not renamed"
+                    : " (renamed to " + renamed + ", which does not exist either)"));
+            }
+            mapped = mapped.withIdentifier(renamed);
+            kind = Forwarding.Kind.RENAMED;
+            detail.add("renamed to " + renamed);
+        }
+        if (mapped.blockState() != null) {
+            Forwarding block = blocks.forward(mapped.blockState());
+            if (!block.known()) {
+                return Forwarding.unknown("block state of " + variant + ": " + block.detail());
+            }
+            if (block.kind() != Forwarding.Kind.EXACT) {
+                detail.add("block state: " + block.detail());
+            }
+            mapped = mapped.withBlockState(blocks.state(block.canonical()));
+        }
+        int found = index(mapped);
+        if (found == -1) {
+            return Forwarding.unknown("item " + mapped.identifier() + " exists in " + version + ", but has no variant with "
+                + (mapped.blockState() != null ? "block state " + mapped.blockState().getCompound("states") + " and " : "")
+                + "damage " + mapped.damage());
+        }
+        return new Forwarding(found, kind, String.join("; ", detail));
     }
 
     private int lookup(ItemVariant variant) {

@@ -1,0 +1,1 @@
+# Identifiers Bedrock renamed: block|item <old identifier> <new identifier>. Keep in sync with "renamed" in data/model/names.json.

@@ -1,6 +1,7 @@
 package org.geysermc.paletter;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
 import org.geysermc.paletter.annotation.Internal;
@@ -140,7 +141,7 @@ public final class Paletter {
             synchronized (this) {
                 blocks = canonicalBlocks;
                 if (blocks == null) {
-                    canonicalBlocks = blocks = CanonicalBlocks.of(vanillaData(latest()).blockStates());
+                    canonicalBlocks = blocks = CanonicalBlocks.of(vanillaData(latest()), source.renames());
                 }
             }
         }
@@ -156,7 +157,7 @@ public final class Paletter {
             synchronized (this) {
                 items = canonicalItems;
                 if (items == null) {
-                    canonicalItems = items = CanonicalItems.of(vanillaData(latest()));
+                    canonicalItems = items = CanonicalItems.of(vanillaData(latest()), source.renames());
                 }
             }
         }
@@ -164,12 +165,53 @@ public final class Paletter {
     }
 
     /**
-     * @param state a block state of the newest version as {@code {name, states}}; extra keys are ignored
-     * @return its canonical id, or -1 if the newest version has no such state. Custom blocks have canonical ids too,
-     * but only in palettes with their layer, see {@link Palette#canonicalBlock(NbtMap)}
+     * @param state a block state of <em>any</em> bundled version as {@code {name, states}}; extra keys are ignored.
+     *              A state the newest version lacks is mapped forward to its newest equivalent, see {@link #forwardBlock}
+     * @return its canonical id, or -1 if the newest version has no equivalent (see {@link #explainUnknown(NbtMap)}).
+     * Custom blocks have canonical ids too, but only in palettes with their layer, see {@link Palette#canonicalBlock(NbtMap)}
      */
     public int canonicalBlock(@NonNull NbtMap state) {
-        return canonicalBlocks().index(state);
+        int exact = canonicalBlocks().index(state);
+        return exact != -1 ? exact : canonicalBlocks().forward(state).canonical();
+    }
+
+    /**
+     * Maps a block state of any bundled version to the canonical ids, and says how: exact, renamed, adapted (state
+     * keys added, removed or reset), or unknown with the reason. A consumer that mapped its content once keeps
+     * working when a newer Bedrock version is bundled.
+     *
+     * @since 1.0.0
+     */
+    public @NonNull Forwarding forwardBlock(@NonNull NbtMap state) {
+        return canonicalBlocks().forward(state);
+    }
+
+    /**
+     * Maps an item variant of any bundled version to the canonical ids, see {@link #forwardBlock}.
+     *
+     * @since 1.0.0
+     */
+    public @NonNull Forwarding forwardItem(@NonNull ItemVariant variant) {
+        return canonicalItems().forward(variant, canonicalBlocks());
+    }
+
+    /**
+     * @return why a block state has no canonical id (the block was removed, a rename leads nowhere), or null if it has one
+     * @since 1.0.0
+     */
+    public @Nullable String explainUnknown(@NonNull NbtMap state) {
+        Forwarding forwarding = forwardBlock(state);
+        return forwarding.known() ? null : forwarding.detail();
+    }
+
+    /**
+     * @return why an item variant has no canonical id (the item was removed, it has no such damage value or block
+     *         state), or null if it has one
+     * @since 1.0.0
+     */
+    public @Nullable String explainUnknown(@NonNull ItemVariant variant) {
+        Forwarding forwarding = forwardItem(variant);
+        return forwarding.known() ? null : forwarding.detail();
     }
 
     /**
@@ -189,10 +231,13 @@ public final class Paletter {
     }
 
     /**
-     * @return the canonical id of an item variant of the newest version, or -1
+     * @param variant an item variant of <em>any</em> bundled version; one the newest version lacks is mapped forward,
+     *                see {@link #forwardItem}
+     * @return its canonical id, or -1 if the newest version has no equivalent (see {@link #explainUnknown(ItemVariant)})
      */
     public int canonicalItem(@NonNull ItemVariant variant) {
-        return canonicalItems().index(variant);
+        int exact = canonicalItems().index(variant);
+        return exact != -1 ? exact : forwardItem(variant).canonical();
     }
 
     /**

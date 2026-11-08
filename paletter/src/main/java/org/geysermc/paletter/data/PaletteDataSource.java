@@ -24,6 +24,15 @@ public interface PaletteDataSource {
     @NonNull VanillaData load(@NonNull DataVersion version) throws IOException;
 
     /**
+     * @return identifiers Bedrock renamed, which lets content of older versions map forward to the newest one
+     * @since 1.0.0
+     */
+    @org.geysermc.paletter.annotation.Internal
+    default @NonNull Renames renames() {
+        return Renames.NONE;
+    }
+
+    /**
      * @return a source reading the data bundled in the library jar
      */
     static @NonNull PaletteDataSource bundled() {

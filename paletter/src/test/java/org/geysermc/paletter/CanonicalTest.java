@@ -86,7 +86,7 @@ class CanonicalTest {
                 int canonical = palette.blocks().canonical(block);
                 if (canonical == -1) {
                     unmapped++;
-                } else if (canonical == PALETTER.canonicalBlock(block.getState())) {
+                } else if (PALETTER.forwardBlock(block.getState()).kind() == Forwarding.Kind.EXACT && canonical == PALETTER.canonicalBlock(block.getState())) {
                     assertEquals(block.getState(), palette.canonicalBlocks().state(canonical));
                 } else {
                     assertSame(block, palette.block(canonical));
