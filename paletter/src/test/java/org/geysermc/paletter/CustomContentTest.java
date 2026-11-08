@@ -150,4 +150,30 @@ class CustomContentTest {
             assertEquals("example:bowl", food.getCompound("using_converts_to").getString("name"), layer.id());
         }
     }
+
+    @Test
+    void defaultStatesMayNameTraitStates() {
+        CustomBlock block = CustomBlock.builder("example:facing")
+            .trait(PlacementDirection.builder().enabledStates(PlacementDirection.EnabledStates.CARDINAL_DIRECTION).build())
+            .defaultState("minecraft:cardinal_direction", "east")
+            .build();
+        assertEquals("east", block.defaultState().getCompound("states").getString("minecraft:cardinal_direction"));
+        assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:facing")
+            .trait(PlacementDirection.builder().enabledStates(PlacementDirection.EnabledStates.CARDINAL_DIRECTION).build())
+            .defaultState("minecraft:cardinal_direction", "up").build());
+    }
+
+    @Test
+    void blocksWithTooManyStateCombinationsAreRejected() {
+        assertEquals(1 << 24, CustomBlock.builder("example:big")
+            .property(BlockProperty.range("example:a", 0, 4095)).property(BlockProperty.range("example:b", 0, 4095))
+            .build().stateCount());
+        assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:huge")
+            .property(BlockProperty.range("example:a", 0, 4095)).property(BlockProperty.range("example:b", 0, 4096))
+            .build());
+        // The product would overflow an int
+        assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:overflow")
+            .property(BlockProperty.range("example:a", 0, 4095)).property(BlockProperty.range("example:b", 0, 4095))
+            .property(BlockProperty.range("example:c", 0, 4095)).build());
+    }
 }

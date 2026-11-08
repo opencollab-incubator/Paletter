@@ -52,10 +52,7 @@ public final class CanonicalBlocks {
         this.customCounts = new Object2IntOpenHashMap<>(blocks.size());
         int base = offset;
         for (CustomBlock block : blocks) {
-            int count = 1;
-            for (BlockProperty<?> property : block.stateProperties()) {
-                count *= property.values().size();
-            }
+            int count = block.stateCount();
             customBases.put(block.identifier(), base);
             customCounts.put(block.identifier(), count);
             base += count;

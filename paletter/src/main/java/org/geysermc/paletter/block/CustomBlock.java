@@ -67,13 +67,33 @@ public record CustomBlock(
         defaultStates = Map.copyOf(defaultStates);
         tags = List.copyOf(tags);
         checkUnique(identifier, components);
+        List<BlockProperty<?>> stateProperties = stateProperties(properties, traits);
+        long combinations = 1;
+        for (BlockProperty<?> property : stateProperties) {
+            combinations *= property.values().size();
+            if (combinations > MAX_STATES) {
+                throw new IllegalArgumentException(identifier + " has more than 2^24 state combinations");
+            }
+        }
         for (Map.Entry<String, Object> entry : defaultStates.entrySet()) {
-            BlockProperty<?> property = properties.stream().filter(p -> p.name().equals(entry.getKey())).findFirst()
+            BlockProperty<?> property = stateProperties.stream().filter(p -> p.name().equals(entry.getKey())).findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(identifier + " has no property " + entry.getKey()));
             if (!property.values().contains(entry.getValue())) {
                 throw new IllegalArgumentException(entry.getValue() + " is not a value of " + identifier + "'s " + entry.getKey());
             }
         }
+    }
+
+    /** The most state combinations a block may have, like vanilla blocks. */
+    private static final int MAX_STATES = 1 << 24;
+
+    private static List<BlockProperty<?>> stateProperties(List<BlockProperty<?>> properties, List<BlockTrait> traits) {
+        if (traits.isEmpty()) {
+            return properties;
+        }
+        List<BlockProperty<?>> all = new ArrayList<>(properties);
+        all.addAll(TraitStates.of(traits));
+        return all;
     }
 
     private static void checkUnique(String identifier, List<BlockComponent> components) {
@@ -155,12 +175,18 @@ public record CustomBlock(
      *         (e.g. {@code minecraft:cardinal_direction} of {@code minecraft:placement_direction})
      */
     public @NonNull List<BlockProperty<?>> stateProperties() {
-        if (traits.isEmpty()) {
-            return properties;
+        return stateProperties(properties, traits);
+    }
+
+    /**
+     * @return the amount of states: the product of the values of {@link #stateProperties()}, at most 2^24
+     */
+    public int stateCount() {
+        int total = 1;
+        for (BlockProperty<?> property : stateProperties()) {
+            total *= property.values().size();
         }
-        List<BlockProperty<?>> all = new ArrayList<>(properties);
-        all.addAll(TraitStates.of(traits));
-        return all;
+        return total;
     }
 
     /**
@@ -168,10 +194,7 @@ public record CustomBlock(
      */
     public @NonNull List<NbtMap> states() {
         List<BlockProperty<?>> properties = stateProperties();
-        int total = 1;
-        for (BlockProperty<?> property : properties) {
-            total *= property.values().size();
-        }
+        int total = stateCount();
         List<NbtMap> states = new ArrayList<>(total);
         for (int i = 0; i < total; i++) {
             NbtMapBuilder builder = NbtMap.builder();
