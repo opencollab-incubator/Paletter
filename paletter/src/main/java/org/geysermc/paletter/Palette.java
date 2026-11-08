@@ -255,6 +255,17 @@ public final class Palette {
     }
 
     /**
+     * The block state an item variant is sent with in this palette's version: Paletter alone decides it, see
+     * {@link ItemPalette#blockOf}. A block state of the variant wins over the item's block.
+     *
+     * @return the block, or null if the item is not a block item (or does not exist in this version and has no fallback)
+     * @since 1.0.0
+     */
+    public @Nullable PaletteBlock blockOf(@NonNull ItemVariant variant) {
+        return items.blockOf(variant);
+    }
+
+    /**
      * @return what to send for the base variant of an item type, or null if it has no canonical id here, or does not
      *         exist in this version and has no fallback
      * @since 1.0.0

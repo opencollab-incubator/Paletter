@@ -22,6 +22,9 @@ import java.util.Map;
  *                      them, in which case a block's first state is its default
  * @param experiments content gated behind an experiment toggle in this version, by toggle id (e.g.
  *                    {@code y_2026_drop_4}); empty if the version was not captured with experiments
+ * @param blockItems the block to item relation of the Script API: block identifier to the identifier of the item that
+ *                   places it (several blocks can share an item: slabs and double slabs, signs and wall signs). Empty
+ *                   for data that predates it; {@code ItemPalette} then guesses
  *
  * @since 1.0.0
  */
@@ -34,7 +37,8 @@ public record VanillaData(
     @NonNull Map<String, List<String>> itemTags,
     @NonNull VersionFallbacks fallbacks,
     @NonNull Map<String, NbtMap> blockDefaults,
-    @NonNull Map<String, ExperimentContent> experiments
+    @NonNull Map<String, ExperimentContent> experiments,
+    @NonNull Map<String, String> blockItems
 ) {
     public VanillaData {
         blockStates = List.copyOf(blockStates);
@@ -43,6 +47,15 @@ public record VanillaData(
         itemTags = Map.copyOf(itemTags);
         blockDefaults = Map.copyOf(blockDefaults);
         experiments = Map.copyOf(experiments);
+        blockItems = Map.copyOf(blockItems);
+    }
+
+    /** Data without the block to item relation. */
+    public VanillaData(@NonNull DataVersion version, @NonNull List<NbtMap> blockStates, @NonNull List<VanillaItem> items,
+                       @NonNull List<BlockPropertyData> dataDrivenBlocks, @NonNull CreativeLayout creative,
+                       @NonNull Map<String, List<String>> itemTags, @NonNull VersionFallbacks fallbacks,
+                       @NonNull Map<String, NbtMap> blockDefaults, @NonNull Map<String, ExperimentContent> experiments) {
+        this(version, blockStates, items, dataDrivenBlocks, creative, itemTags, fallbacks, blockDefaults, experiments, Map.of());
     }
 
     /** Data without experiment information. */
@@ -50,12 +63,17 @@ public record VanillaData(
                        @NonNull List<BlockPropertyData> dataDrivenBlocks, @NonNull CreativeLayout creative,
                        @NonNull Map<String, List<String>> itemTags, @NonNull VersionFallbacks fallbacks,
                        @NonNull Map<String, NbtMap> blockDefaults) {
-        this(version, blockStates, items, dataDrivenBlocks, creative, itemTags, fallbacks, blockDefaults, Map.of());
+        this(version, blockStates, items, dataDrivenBlocks, creative, itemTags, fallbacks, blockDefaults, Map.of(), Map.of());
     }
 
     /** The same data with other experiment information. */
     public @NonNull VanillaData withExperiments(@NonNull Map<String, ExperimentContent> experiments) {
-        return new VanillaData(version, blockStates, items, dataDrivenBlocks, creative, itemTags, fallbacks, blockDefaults, experiments);
+        return new VanillaData(version, blockStates, items, dataDrivenBlocks, creative, itemTags, fallbacks, blockDefaults, experiments, blockItems);
+    }
+
+    /** The same data with another block to item relation. */
+    public @NonNull VanillaData withBlockItems(@NonNull Map<String, String> blockItems) {
+        return new VanillaData(version, blockStates, items, dataDrivenBlocks, creative, itemTags, fallbacks, blockDefaults, experiments, blockItems);
     }
 
     /** The toggles that gate a block in this version (usually none). */

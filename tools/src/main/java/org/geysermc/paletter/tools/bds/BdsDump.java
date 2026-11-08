@@ -62,7 +62,18 @@ public record BdsDump(
     public record Item(int maxStackSize, String localizationKey, List<String> components, int maxDurability) {
     }
 
+    /**
+     * @param log a console log of the dump add-on, or a stored dump ({@code data/bds/<version>/dump.json.gz}, the
+     *            version being the name of the directory)
+     */
     public static BdsDump read(Path log) throws IOException {
+        String name = log.getFileName().toString();
+        if (name.endsWith(".json.gz") || name.endsWith(".json")) {
+            try (java.io.InputStream raw = Files.newInputStream(log);
+                 java.io.InputStream stream = name.endsWith(".gz") ? new java.util.zip.GZIPInputStream(raw) : raw) {
+                return parse(new String(stream.readAllBytes(), StandardCharsets.UTF_8), log.toAbsolutePath().getParent().getFileName().toString());
+            }
+        }
         String[] json = json(log);
         return parse(json[1], json[0]);
     }

@@ -45,7 +45,7 @@ import java.util.concurrent.Callable;
  */
 @Command(name = "paletter-tools", mixinStandardHelpOptions = true, subcommands = {
     Cli.Import.class, Cli.BdsRun.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.SpecCaptureCommand.class,
-    Cli.VerifyCommand.class, Cli.CheckData.class, Cli.CreativeProbeCommand.class,
+    Cli.VerifyCommand.class, Cli.CheckData.class, Cli.BlockItemsCommand.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
     Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class
@@ -93,6 +93,47 @@ public final class Cli implements Runnable {
         public Integer call() throws Exception {
             new Importer(resources(), root().resolve(Layout.FALLBACKS)).run(source, name, protocol, itemTags, bdsDump);
             return 0;
+        }
+    }
+
+    @Command(name = "block-items", description = "Adds the block to item relation of a Script API dump to bundled data (rewrites resources/NAME.nbt, "
+        + "everything else is kept). Without --bds-dump the relation of the bundled version --from is applied to NAME: a block that exists in both "
+        + "gets that item if it exists in NAME. For versions that no dump exists for.")
+    static final class BlockItemsCommand extends Rooted implements Callable<Integer> {
+        @Option(names = "--name", required = true) String name;
+        @Option(names = "--bds-dump") Path bdsDump;
+        @Option(names = "--from", description = "Bundled version to copy the relation from") String from;
+
+        @Override
+        public Integer call() throws Exception {
+            Path file = resources().resolve(name + ".nbt");
+            VanillaData data = readPalette(file);
+            Map<String, String> relation;
+            if (bdsDump != null) {
+                relation = Importer.blockItems(BdsDump.read(bdsDump), data.blockStates(), data.items());
+            } else if (from != null) {
+                relation = Importer.deriveBlockItems(readPalette(resources().resolve(from + ".nbt")), data);
+            } else {
+                throw new IllegalArgumentException("Missing --bds-dump or --from");
+            }
+            java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
+            PaletteDataCodec.write(data.withBlockItems(relation), bytes);
+            Files.write(file, bytes.toByteArray());
+            System.out.println("Wrote " + file + " with " + relation.size() + " block to item entries");
+            return 0;
+        }
+    }
+
+    @Command(name = "data-diff", description = "Diffs two bundled data files (network data, creative, tags, defaults, block to item relation). Exits with 1 on any difference.")
+    static final class DataDiffCommand extends Rooted implements Callable<Integer> {
+        @Option(names = "--before", required = true) Path before;
+        @Option(names = "--after", required = true) Path after;
+
+        @Override
+        public Integer call() throws Exception {
+            Diff diff = Diff.vanilla(readPalette(before), readPalette(after), true, true);
+            System.out.print(diff.markdown(Diff.DEFAULT_MAX_LINES));
+            return diff.identical() ? 0 : 1;
         }
     }
 

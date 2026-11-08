@@ -48,6 +48,7 @@ import java.util.TreeSet;
  * block_defaults: {name: states}   optional
  * experiments: {toggle: {items: [name], blocks: [name], creative: [id or id:damage]}}
  *                                  optional; only written when the version was captured with experiments
+ * block_items: {block: item}       optional (data before it has none): the item that places each block
  * </pre>
  */
 @Internal
@@ -139,8 +140,11 @@ public final class PaletteDataCodec {
                 content.getList("blocks", NbtType.STRING, List.of()), content.getList("creative", NbtType.STRING, List.of())));
         });
 
+        Map<String, String> blockItems = new HashMap<>();
+        root.getCompound("block_items", NbtMap.EMPTY).forEach((block, item) -> blockItems.put(block, (String) item));
+
         return new VanillaData(version, blocks, items, dataDriven, CreativeLayout.of(categories), tags,
-            new VersionFallbacks(blockFallbacks, itemFallbacks, unmapped), defaults, experiments);
+            new VersionFallbacks(blockFallbacks, itemFallbacks, unmapped), defaults, experiments, blockItems);
     }
 
     /**
@@ -228,6 +232,12 @@ public final class PaletteDataCodec {
                 .putList("creative", NbtType.STRING, new ArrayList<>(new TreeSet<>(content.creative())))
                 .build()));
             root.putCompound("experiments", experiments.build());
+        }
+
+        if (!data.blockItems().isEmpty()) {
+            NbtMapBuilder blockItems = NbtMap.builder();
+            new TreeMap<>(data.blockItems()).forEach(blockItems::putString);
+            root.putCompound("block_items", blockItems.build());
         }
 
         try (NBTOutputStream output = NbtUtils.createGZIPWriter(stream)) {

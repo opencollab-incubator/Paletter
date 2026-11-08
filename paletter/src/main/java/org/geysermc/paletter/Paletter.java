@@ -126,7 +126,7 @@ public final class Paletter {
             Map<String, NbtMap> defaults = new HashMap<>();
             loaded.blockDefaults().forEach((name, state) -> defaults.put(name, interned.computeIfAbsent(state, s -> s)));
             return new VanillaData(loaded.version(), states, items, loaded.dataDrivenBlocks(), loaded.creative(),
-                loaded.itemTags(), loaded.fallbacks(), defaults, loaded.experiments());
+                loaded.itemTags(), loaded.fallbacks(), defaults, loaded.experiments(), loaded.blockItems());
         }
     }
 
@@ -193,6 +193,22 @@ public final class Paletter {
      */
     public @NonNull Forwarding forwardItem(@NonNull ItemVariant variant) {
         return canonicalItems().forward(variant, canonicalBlocks());
+    }
+
+    /**
+     * The block state an item places, version independent: the canonical id of the block the newest version sends the
+     * item with ({@link Palette#blockOf}). Accepts variants of any bundled version like {@link #canonicalItem(ItemVariant)}.
+     *
+     * @return the canonical block id, or -1 if the item is not a block item or has no canonical id
+     * @since 1.0.0
+     */
+    public int canonicalBlockOf(@NonNull ItemVariant variant) {
+        int canonical = canonicalItem(variant);
+        if (canonical == -1) {
+            return -1;
+        }
+        var block = vanilla(latest()).blockOf(canonicalItems().variant(canonical));
+        return block == null ? -1 : canonicalBlocks().index(block.getState());
     }
 
     /**

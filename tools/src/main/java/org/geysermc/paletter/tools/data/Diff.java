@@ -173,6 +173,7 @@ public final class Diff {
         if (bds) {
             diff.tags(before.itemTags(), after.itemTags());
             diff.defaults(before, after);
+            diff.blockItems(before, after);
         }
         return diff;
     }
@@ -395,6 +396,20 @@ public final class Diff {
             }
         }
         put("item tag membership", changed);
+    }
+
+    private void blockItems(VanillaData before, VanillaData after) {
+        List<String> changed = new ArrayList<>();
+        Set<String> names = new TreeSet<>(before.blockItems().keySet());
+        names.addAll(after.blockItems().keySet());
+        for (String name : names) {
+            String x = before.blockItems().get(name);
+            String y = after.blockItems().get(name);
+            if (!Objects.equals(x, y)) {
+                changed.add(name + ": " + (x == null ? "no item" : x) + " -> " + (y == null ? "no item" : y));
+            }
+        }
+        put("block to item relation", changed);
     }
 
     private void defaults(VanillaData before, VanillaData after) {

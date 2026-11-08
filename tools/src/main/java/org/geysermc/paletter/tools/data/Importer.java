@@ -93,7 +93,8 @@ public final class Importer {
         }
         VersionFallbacks fallbacks = readFallbacks(fallbacksDirectory.resolve(name + ".json"));
 
-        VanillaData data = new VanillaData(version, blocks, items, dataDriven, creative, tags, fallbacks, defaults);
+        Map<String, String> blockItems = bdsDump == null ? Map.of() : blockItems(BdsDump.read(bdsDump), blocks, items);
+        VanillaData data = new VanillaData(version, blocks, items, dataDriven, creative, tags, fallbacks, defaults, Map.of(), blockItems);
         Files.createDirectories(output);
         try (OutputStream stream = Files.newOutputStream(output.resolve(name + ".nbt"))) {
             PaletteDataCodec.write(data, stream);
@@ -102,6 +103,49 @@ public final class Importer {
         System.out.printf("Wrote %s: %d block states, %d items, %d data driven blocks, %d creative stacks, %d item tags, %d block fallbacks, %d item fallbacks, %d block defaults%n",
             version, blocks.size(), items.size(), dataDriven.size(), creative.stacks().count(), tags.size(),
             fallbacks.blocks().size(), fallbacks.items().size(), defaults.size());
+    }
+
+    /**
+     * The block to item relation of the dump, reduced to blocks of the palette and items of the item list (the Script
+     * API knows content the network does not send, e.g. experimental blocks the client never gets).
+     */
+    public static Map<String, String> blockItems(BdsDump dump, List<NbtMap> blocks, List<VanillaItem> items) {
+        Set<String> blockNames = new TreeSet<>();
+        blocks.forEach(state -> blockNames.add(BlockStates.name(state)));
+        Set<String> itemNames = new TreeSet<>();
+        items.forEach(item -> itemNames.add(item.identifier()));
+        Map<String, String> result = new TreeMap<>();
+        List<String> dropped = new ArrayList<>();
+        dump.blockItems().forEach((block, item) -> {
+            if (blockNames.contains(block) && itemNames.contains(item)) {
+                result.put(block, item);
+            } else {
+                dropped.add(block + " -> " + item);
+            }
+        });
+        if (!dropped.isEmpty()) {
+            System.out.println("  warning: " + dropped.size() + " block to item entries are not in the palette or item list: " + dropped);
+        }
+        System.out.println("  " + result.size() + " blocks have an item");
+        return result;
+    }
+
+    /**
+     * The relation of a newer version, for a version no dump exists for: the entries of {@code newer} whose block and
+     * item both exist in {@code data}.
+     */
+    public static Map<String, String> deriveBlockItems(VanillaData newer, VanillaData data) {
+        Set<String> blockNames = new TreeSet<>();
+        data.blockStates().forEach(state -> blockNames.add(BlockStates.name(state)));
+        Set<String> itemNames = new TreeSet<>();
+        data.items().forEach(item -> itemNames.add(item.identifier()));
+        Map<String, String> result = new TreeMap<>();
+        newer.blockItems().forEach((block, item) -> {
+            if (blockNames.contains(block) && itemNames.contains(item)) {
+                result.put(block, item);
+            }
+        });
+        return result;
     }
 
     /**

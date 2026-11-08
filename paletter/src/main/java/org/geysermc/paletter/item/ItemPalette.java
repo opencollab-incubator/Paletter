@@ -16,6 +16,7 @@ import org.geysermc.paletter.PaletteReport;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.block.BlockPalette;
 import org.geysermc.paletter.block.BlockResolution;
+import org.geysermc.paletter.block.BlockStates;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.PaletteBlock;
 import org.geysermc.paletter.creative.CreativeLayout;
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -65,6 +67,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     private final List<PaletteItem> definitions;
     private final Map<String, NbtMap> blockOverrides;
     private final Set<String> customBlockItems;
+    private final Map<String, Set<String>> itemBlocks;
     private final Map<String, PaletteBlock> defaultBlocks;
     private final Set<String> multiStateBlockItems;
     private final Map<String, ItemFallback> fallbacks;
@@ -86,6 +89,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         this.definitions = List.copyOf(definitions);
         this.blockOverrides = Map.copyOf(builder.blockOverrides);
         this.customBlockItems = Set.copyOf(builder.customBlockItems);
+        this.itemBlocks = builder.itemBlocks;
         this.defaultBlocks = Map.copyOf(defaultBlocks);
         this.multiStateBlockItems = Set.copyOf(multiStateBlockItems);
         this.fallbacks = Map.copyOf(builder.fallbacks);
@@ -104,6 +108,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     @Internal
     public static @NonNull Builder vanilla(@NonNull VanillaData data, @NonNull BlockPalette blocks, @NonNull CanonicalItems canonical) {
         Builder builder = new Builder(data.version(), blocks, data.fallbacks().items(), canonical);
+        data.blockItems().forEach((block, item) -> builder.itemBlocks.computeIfAbsent(item, i -> new TreeSet<>()).add(block));
         for (VanillaItem item : data.items()) {
             builder.put(new PaletteItem(item.identifier(), item.runtimeId(), ItemVersion.from(item.version()),
                 item.componentBased(), item.componentData(), false));
@@ -182,7 +187,30 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     // ---- Blocks of block items ----
 
     /**
-     * @return the block this item is sent with by default, or null if it is not a block item
+     * The block an item variant is sent with in this version: the single owner of that decision. For an item that
+     * places blocks, a block state of the variant wins (adapted to this version), otherwise the item's block, which is
+     * decided in this order:
+     * <ol>
+     *     <li>an override of a layer ({@code PaletteLayer.Builder#blockItem});</li>
+     *     <li>the bundled block to item relation of the data ({@code VanillaData#blockItems}): the block whose first
+     *     creative stack the item has, else the block named like the item, else the first block that places it
+     *     (sorted by identifier), in its default state;</li>
+     *     <li>a block state of the item's creative stacks (items the relation does not know);</li>
+     *     <li>for data without the relation: a block named like the item, in its default state;</li>
+     *     <li>the block of a custom block item.</li>
+     * </ol>
+     *
+     * @param variant a variant, written against the newest Bedrock version like {@link #resolve(ItemVariant)}
+     * @return the block, or null if the item is not a block item here (or does not exist and has no fallback)
+     * @since 1.0.0
+     */
+    public @Nullable PaletteBlock blockOf(@NonNull ItemVariant variant) {
+        ResolvedItem resolved = resolve(variant);
+        return resolved == null ? null : resolved.block();
+    }
+
+    /**
+     * @return the block this item is sent with by default, or null if it is not a block item; see {@link #blockOf}
      */
     public @Nullable PaletteBlock defaultBlock(@NonNull ItemDefinition definition) {
         return defaultBlocks.get(definition.getIdentifier());
@@ -434,6 +462,8 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         private final Map<String, PaletteItem> byIdentifier;
         private final Map<String, NbtMap> blockOverrides;
         private final Set<String> customBlockItems;
+        /** The bundled block to item relation, inverted: item to the blocks that it places, sorted. Empty for data without it. */
+        private final Map<String, Set<String>> itemBlocks;
         private final Map<String, ItemFallback> fallbacks;
         private @Nullable ItemFallback defaultFallback;
         private final CanonicalItems canonical;
@@ -450,6 +480,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             this.byIdentifier = new HashMap<>();
             this.blockOverrides = new HashMap<>();
             this.customBlockItems = new HashSet<>();
+            this.itemBlocks = new HashMap<>();
             this.fallbacks = new HashMap<>(fallbacks);
             this.defaultFallback = ItemFallback.UNKNOWN;
             this.canonical = canonical;
@@ -463,6 +494,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             this.byIdentifier = new HashMap<>(parent.byIdentifier);
             this.blockOverrides = new HashMap<>(parent.blockOverrides);
             this.customBlockItems = new HashSet<>(parent.customBlockItems);
+            this.itemBlocks = parent.itemBlocks;
             this.fallbacks = new HashMap<>(parent.fallbacks);
             this.defaultFallback = parent.defaultFallback;
             this.canonical = canonical;
@@ -623,6 +655,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
                 PaletteBlock block = null;
                 NbtMap override = blockOverrides.get(identifier);
                 Set<NbtMap> states = creativeStates.get(identifier);
+                Set<String> placed = itemBlocks.get(identifier);
                 if (override != null) {
                     if (override != NO_BLOCK) {
                         block = blocks.resolve(override).block();
@@ -630,12 +663,17 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
                             report.warn("items", "Block override " + override + " of " + identifier + " does not exist in " + version);
                         }
                     }
+                } else if (placed != null) {
+                    block = bundledBlock(identifier, placed, states);
+                    if (states != null && states.size() > 1) {
+                        multiState.add(identifier);
+                    }
                 } else if (states != null) {
                     block = blocks.resolve(states.iterator().next()).block();
                     if (states.size() > 1) {
                         multiState.add(identifier);
                     }
-                } else if (!creativeWithoutBlock.contains(identifier) && blocks.contains(identifier)) {
+                } else if (itemBlocks.isEmpty() && !creativeWithoutBlock.contains(identifier) && blocks.contains(identifier)) {
                     // Not in the creative inventory: assume an item named like a block places it
                     block = blocks.defaultState(identifier);
                 } else if (customBlockItems.contains(identifier)) {
@@ -646,6 +684,20 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
                 }
             }
             return new ItemPalette(this, defaultBlocks, multiState);
+        }
+
+        private @Nullable PaletteBlock bundledBlock(String identifier, Set<String> placed, @Nullable Set<NbtMap> creativeStates) {
+            if (creativeStates != null) {
+                NbtMap first = creativeStates.iterator().next();
+                if (placed.contains(BlockStates.name(first))) {
+                    PaletteBlock block = blocks.resolve(first).block();
+                    if (block != null) {
+                        return block;
+                    }
+                }
+            }
+            String name = placed.contains(identifier) ? identifier : placed.iterator().next();
+            return blocks.defaultState(name);
         }
     }
 }

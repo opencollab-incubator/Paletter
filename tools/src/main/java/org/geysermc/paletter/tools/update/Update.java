@@ -917,7 +917,8 @@ public final class Update {
             }
             // Refresh what comes from the Script API (item tags, block defaults); keep the network data
             VanillaData refreshed = new VanillaData(bundled.version(), bundled.blockStates(), bundled.items(), bundled.dataDrivenBlocks(),
-                bundled.creative(), captured.itemTags(), Importer.readFallbacks(fallbacks.resolve(name + ".json")), captured.blockDefaults(), bundled.experiments());
+                bundled.creative(), captured.itemTags(), Importer.readFallbacks(fallbacks.resolve(name + ".json")), captured.blockDefaults(), bundled.experiments(),
+                captured.blockItems());
             Diff bds = Diff.vanilla(bundled, refreshed, false, true);
             report.check(bds.identical() ? Report.Status.PASS : Report.Status.DIFF, "Item tags and block defaults vs bundled " + name,
                 bds.identical() ? "identical" : bds.count() + " differences");
@@ -950,7 +951,8 @@ public final class Update {
         // Item tags and block defaults are Script API data, so they can still be compared with the bundled newest release
         Map<String, NbtMap> defaults = Importer.defaults(dump, previous.blockStates());
         VanillaData fromDump = new VanillaData(previous.version(), previous.blockStates(), previous.items(), previous.dataDrivenBlocks(),
-            previous.creative(), dump.itemTags(), previous.fallbacks(), defaults);
+            previous.creative(), dump.itemTags(), previous.fallbacks(), defaults, previous.experiments(),
+            Importer.blockItems(dump, previous.blockStates(), previous.items()));
         Diff bds = Diff.vanilla(previous, fromDump, false, true);
         report.diff("Item tags and block defaults: BDS " + distribution.version() + " vs bundled " + latest.name(), bds);
         report.check(Report.Status.SKIP, "Network data", "no capture; nothing imported");
@@ -1217,7 +1219,7 @@ public final class Update {
             }
         }
         return new VanillaData(new DataVersion(latest.name() + "+", 0), states, data.items(), data.dataDrivenBlocks(), data.creative(),
-            data.itemTags(), data.fallbacks(), data.blockDefaults());
+            data.itemTags(), data.fallbacks(), data.blockDefaults(), data.experiments(), data.blockItems());
     }
 
     private static final List<String> DIRECTIONS = List.of("north", "east", "south", "west", "up", "down");
