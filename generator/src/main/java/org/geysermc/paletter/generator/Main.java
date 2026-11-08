@@ -27,7 +27,7 @@ import java.util.Map;
  *         Cross-checks a BDS dump with a bundled version: block states and defaults against the block palette, items
  *         and stack sizes, item tags against the bundled ones (and against --item-tags, e.g. Geyser's item_tags.json).
  * update  --channel release|preview [--version X] [--verify-only] [--import-preview] [--keep-server]
- *         [--cache DIR] [--report FILE] [--name 26.70] [--experiments a,b] [--port 19260] [--timeout SECONDS]
+ *         [--cache DIR] [--report FILE] [--name 26.70] [--experiments a,b] [--experiment-attribution each|all|none] [--port 19260] [--timeout SECONDS]
  *         The whole pipeline: newest BDS of the channel, Script API dump, vanilla and add-on network captures (hashed
  *         and sequential block ids), comparison with the committed data, import or refresh, component shape
  *         comparison, markdown report. --verify-only writes nothing and exits with 1 on any difference.
@@ -152,7 +152,7 @@ public final class Main {
               bds-run --log FILE (--server DIR | --download DIR [--version 1.26.51.1] [--preview true]) [--timeout SECONDS]
               bds-compare --bds-dump FILE --name 26.60 [--item-tags FILE]
               update --channel release|preview [--version X] [--verify-only] [--import-preview] [--keep-server]
-                     [--cache DIR] [--report FILE] [--name 26.70] [--experiments a,b] [--port 19260] [--timeout SECONDS]
+                     [--cache DIR] [--report FILE] [--name 26.70] [--experiments a,b] [--experiment-attribution each|all|none] [--port 19260] [--timeout SECONDS]
               verify --source DIR --name 26.60 [--bundled FILE] [--report FILE] [--max N]
               spec-capture [--channel release|preview] [--version X] [--out DIR] [--keep-server]
               check""");

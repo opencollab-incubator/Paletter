@@ -46,6 +46,8 @@ import java.util.TreeSet;
  * item_tags: {tag: [identifier]}
  * fallbacks: {blocks: {name: {target, clear_states, force}}, items: {name: {target, force}}, unmapped: [name]}
  * block_defaults: {name: states}   optional
+ * experiments: {toggle: {items: [name], blocks: [name], creative: [id or id:damage]}}
+ *                                  optional; only written when the version was captured with experiments
  * </pre>
  */
 @Internal
@@ -130,8 +132,15 @@ public final class PaletteDataCodec {
         root.getCompound("block_defaults", NbtMap.EMPTY).forEach((name, states) ->
             defaults.put(name, BlockStates.of(name, interner.computeIfAbsent((NbtMap) states, s -> s))));
 
+        Map<String, ExperimentContent> experiments = new HashMap<>();
+        root.getCompound("experiments", NbtMap.EMPTY).forEach((toggle, value) -> {
+            NbtMap content = (NbtMap) value;
+            experiments.put(toggle, new ExperimentContent(content.getList("items", NbtType.STRING, List.of()),
+                content.getList("blocks", NbtType.STRING, List.of()), content.getList("creative", NbtType.STRING, List.of())));
+        });
+
         return new VanillaData(version, blocks, items, dataDriven, CreativeLayout.of(categories), tags,
-            new VersionFallbacks(blockFallbacks, itemFallbacks, unmapped), defaults);
+            new VersionFallbacks(blockFallbacks, itemFallbacks, unmapped), defaults, experiments);
     }
 
     /**
@@ -209,6 +218,17 @@ public final class PaletteDataCodec {
         NbtMapBuilder defaults = NbtMap.builder();
         new TreeMap<>(data.blockDefaults()).forEach((name, state) -> defaults.putCompound(name, BlockStates.states(state)));
         root.putCompound("block_defaults", defaults.build());
+
+        // Only when present, so versions captured without experiments keep their bytes
+        if (!data.experiments().isEmpty()) {
+            NbtMapBuilder experiments = NbtMap.builder();
+            new TreeMap<>(data.experiments()).forEach((toggle, content) -> experiments.putCompound(toggle, NbtMap.builder()
+                .putList("items", NbtType.STRING, new ArrayList<>(new TreeSet<>(content.items())))
+                .putList("blocks", NbtType.STRING, new ArrayList<>(new TreeSet<>(content.blocks())))
+                .putList("creative", NbtType.STRING, new ArrayList<>(new TreeSet<>(content.creative())))
+                .build()));
+            root.putCompound("experiments", experiments.build());
+        }
 
         try (NBTOutputStream output = NbtUtils.createGZIPWriter(stream)) {
             output.writeTag(root.build());

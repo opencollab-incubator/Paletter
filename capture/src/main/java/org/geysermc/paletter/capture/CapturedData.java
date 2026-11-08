@@ -28,9 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 /** A capture directory read back: raw item registry, raw block properties and the creative layout. */
-record CapturedData(Map<String, NbtMap> items, Map<String, NbtMap> blockProperties, CreativeLayout creative) {
+public record CapturedData(Map<String, NbtMap> items, Map<String, NbtMap> blockProperties, CreativeLayout creative) {
 
-    static CapturedData read(Path directory) throws IOException {
+    public static CapturedData read(Path directory) throws IOException {
         Map<String, NbtMap> items = new LinkedHashMap<>();
         for (NbtMap item : readGzip(directory.resolve("raw_item_registry.nbt")).getList("items", NbtType.COMPOUND)) {
             items.put(item.getString("name"), item);

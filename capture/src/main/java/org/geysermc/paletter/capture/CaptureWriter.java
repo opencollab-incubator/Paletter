@@ -254,6 +254,9 @@ final class CaptureWriter {
             result.packStack.getBehaviorPacks().forEach(pack -> packs.add("behavior " + pack.getPackId() + " " + pack.getPackVersion()));
             result.packStack.getResourcePacks().forEach(pack -> packs.add("resource " + pack.getPackId() + " " + pack.getPackVersion()));
             json.add("packStack", packs);
+            JsonArray packExperiments = new JsonArray();
+            result.packStack.getExperiments().forEach(experiment -> packExperiments.add(experiment.getName() + "=" + experiment.isEnabled()));
+            json.add("packStackExperiments", packExperiments);
         }
         JsonObject counts = new JsonObject();
         result.packetCounts.forEach(counts::addProperty);

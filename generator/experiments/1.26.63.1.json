@@ -1,0 +1,215 @@
+{
+  "bdsVersion": "1.26.63.1",
+  "protocol": 2225,
+  "toggles": {
+    "armadillo": {
+      "status": "retired"
+    },
+    "camera_aim_assist": {
+      "status": "retired"
+    },
+    "caves_and_cliffs": {
+      "status": "retired"
+    },
+    "creator_world_clocks": {
+      "status": "retired"
+    },
+    "custom_projectiles": {
+      "status": "retired"
+    },
+    "data_driven_biomes": {
+      "status": "retired"
+    },
+    "data_driven_items": {
+      "status": "retired"
+    },
+    "experimental_creator_cameras": {
+      "status": "current",
+      "logCode": "exca",
+      "uiKey": "createWorldScreen.experimentalCreatorCameraFeatures",
+      "name": "Experimental Creator Camera Features",
+      "content": {
+        "itemsAdded": [],
+        "itemsChanged": [],
+        "scriptItemsAdded": [],
+        "blocksAdded": [],
+        "dataDrivenBlocks": [],
+        "creativeAdded": [],
+        "removed": []
+      }
+    },
+    "experimental_molang_features": {
+      "status": "retired"
+    },
+    "furnace_recipe_book": {
+      "status": "retired"
+    },
+    "gametest": {
+      "status": "current",
+      "logCode": "gtst",
+      "uiKey": "createWorldScreen.experimentalGameTest",
+      "name": "Beta APIs",
+      "content": {
+        "itemsAdded": [],
+        "itemsChanged": [],
+        "scriptItemsAdded": [],
+        "blocksAdded": [],
+        "dataDrivenBlocks": [],
+        "creativeAdded": [],
+        "removed": []
+      }
+    },
+    "jigsaw_structures": {
+      "status": "retired"
+    },
+    "locator_bar": {
+      "status": "retired"
+    },
+    "next_major_update": {
+      "status": "retired"
+    },
+    "poi": {
+      "status": "current",
+      "logCode": "epoi",
+      "uiKey": "createWorldScreen.experimentalPoi",
+      "name": "Points of Interest (POI)",
+      "content": {
+        "itemsAdded": [],
+        "itemsChanged": [],
+        "scriptItemsAdded": [],
+        "blocksAdded": [],
+        "dataDrivenBlocks": [],
+        "creativeAdded": [],
+        "removed": []
+      }
+    },
+    "scripting": {
+      "status": "retired"
+    },
+    "sniffer": {
+      "status": "retired"
+    },
+    "spectator_mode": {
+      "status": "retired"
+    },
+    "upcoming_creator_features": {
+      "status": "current",
+      "logCode": "ucft",
+      "uiKey": "createWorldScreen.experimentalCreatorFeatures",
+      "name": "Upcoming Creator Features",
+      "content": {
+        "itemsAdded": [],
+        "itemsChanged": [],
+        "scriptItemsAdded": [],
+        "blocksAdded": [],
+        "dataDrivenBlocks": [],
+        "creativeAdded": [],
+        "removed": []
+      }
+    },
+    "updateAnnouncedLive2023": {
+      "status": "retired"
+    },
+    "vanilla_experiments": {
+      "status": "retired"
+    },
+    "villager_trades_rebalance": {
+      "status": "current",
+      "logCode": "vtra",
+      "uiKey": "createWorldScreen.experimentalVillagerTradesRebalance",
+      "name": "Villager Trade Rebalancing",
+      "content": {
+        "itemsAdded": [],
+        "itemsChanged": [],
+        "scriptItemsAdded": [],
+        "blocksAdded": [],
+        "dataDrivenBlocks": [],
+        "creativeAdded": [],
+        "removed": []
+      }
+    },
+    "voxel_shapes": {
+      "status": "current",
+      "logCode": "vavs",
+      "uiKey": "createWorldScreen.experimentalVoxelShapeFeatures",
+      "name": "Experimental Voxel Shape Features",
+      "content": {
+        "itemsAdded": [],
+        "itemsChanged": [],
+        "scriptItemsAdded": [],
+        "blocksAdded": [],
+        "dataDrivenBlocks": [],
+        "creativeAdded": [],
+        "removed": []
+      }
+    },
+    "wild_update": {
+      "status": "retired"
+    },
+    "y_2025_drop_1": {
+      "status": "retired"
+    },
+    "y_2025_drop_2": {
+      "status": "retired"
+    },
+    "y_2025_drop_3": {
+      "status": "retired"
+    },
+    "y_2026_drop_1": {
+      "status": "retired"
+    },
+    "y_2026_drop_2": {
+      "status": "retired"
+    },
+    "y_2026_drop_3": {
+      "status": "retired"
+    },
+    "y_2026_drop_4": {
+      "status": "current",
+      "logCode": "26d4",
+      "uiKey": "createWorldScreen.experimentalY2026Drop4",
+      "name": "Drop 4 of 2026",
+      "content": {
+        "itemsAdded": [
+          "minecraft:ice_ball"
+        ],
+        "itemsChanged": [
+          "minecraft:ice_crystal",
+          "minecraft:icicle"
+        ],
+        "scriptItemsAdded": [
+          "minecraft:frostbite_spawn_egg",
+          "minecraft:ice_ball",
+          "minecraft:ice_crystal",
+          "minecraft:icicle"
+        ],
+        "blocksAdded": [],
+        "dataDrivenBlocks": [],
+        "creativeAdded": [
+          "minecraft:arrow:48",
+          "minecraft:arrow:49",
+          "minecraft:frostbite_spawn_egg",
+          "minecraft:ice_ball",
+          "minecraft:ice_crystal",
+          "minecraft:icicle",
+          "minecraft:lingering_potion:47",
+          "minecraft:lingering_potion:48",
+          "minecraft:potion:47",
+          "minecraft:potion:48",
+          "minecraft:splash_potion:47",
+          "minecraft:splash_potion:48"
+        ],
+        "removed": []
+      }
+    }
+  },
+  "uiKeys": [
+    "createWorldScreen.experimentalCreatorCameraFeatures",
+    "createWorldScreen.experimentalCreatorFeatures",
+    "createWorldScreen.experimentalGameTest",
+    "createWorldScreen.experimentalPoi",
+    "createWorldScreen.experimentalVillagerTradesRebalance",
+    "createWorldScreen.experimentalVoxelShapeFeatures",
+    "createWorldScreen.experimentalY2026Drop4"
+  ]
+}

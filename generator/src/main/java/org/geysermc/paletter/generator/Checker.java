@@ -110,6 +110,8 @@ final class Checker {
                 }
             }
 
+            experimentProblems(data, latest, blocks, items, problems);
+
             System.out.println(version + ": " + missingBlocks.size() + " blocks and " + missingItems.size()
                 + " items of " + latest.version() + " are missing, "
                 + defaulted.getOrDefault(version.name(), List.of()).size() + " of them fall back to minecraft:unknown; "
@@ -117,6 +119,43 @@ final class Checker {
             result.put(version.name(), problems);
         }
         return result;
+    }
+
+    /**
+     * With experiment marks (versions captured with experiments): content an older version only has behind a toggle,
+     * but the newest version has without one, needs a {@code force} fallback (or an {@code unmapped} entry), since
+     * Paletter would otherwise send it to clients that never enabled the toggle; and a {@code force} fallback for
+     * content that exists and is not gated is unused.
+     */
+    static void experimentProblems(VanillaData data, VanillaData latest, Set<String> blocks, Set<String> items, List<String> problems) {
+        if (data.experiments().isEmpty()) {
+            return;
+        }
+        DataVersion version = data.version();
+        for (String block : blockNames(latest)) {
+            List<String> toggles = data.experimentsOfBlock(block);
+            BlockFallback fallback = data.fallbacks().blocks().get(block);
+            if (blocks.contains(block) && !toggles.isEmpty() && latest.experimentsOfBlock(block).isEmpty() && (fallback == null || !fallback.force())
+                && !data.fallbacks().unmapped().contains(block)) {
+                problems.add("block " + block + " is behind " + toggles + " in " + version + " but not in " + latest.version()
+                    + ": add a fallback with force (or list it in unmapped)");
+            }
+            if (fallback != null && fallback.force() && blocks.contains(block) && toggles.isEmpty()) {
+                problems.add("force block fallback " + block + ": it is not behind an experiment in " + version);
+            }
+        }
+        for (String item : itemNames(latest)) {
+            List<String> toggles = data.experimentsOfItem(item);
+            ItemFallback fallback = data.fallbacks().items().get(item);
+            if (items.contains(item) && !toggles.isEmpty() && latest.experimentsOfItem(item).isEmpty() && (fallback == null || !fallback.force())
+                && !data.fallbacks().unmapped().contains(item)) {
+                problems.add("item " + item + " is behind " + toggles + " in " + version + " but not in " + latest.version()
+                    + ": add a fallback with force (or list it in unmapped)");
+            }
+            if (fallback != null && fallback.force() && items.contains(item) && toggles.isEmpty()) {
+                problems.add("force item fallback " + item + ": it is not behind an experiment in " + version);
+            }
+        }
     }
 
     private static Set<String> blockNames(VanillaData data) {

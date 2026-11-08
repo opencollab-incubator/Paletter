@@ -458,7 +458,9 @@ One command pulls the newest Bedrock Dedicated Server of a channel, runs everyth
 | `--cache DIR` | BDS cache; default `$PALETTER_BDS_CACHE`, else `<gradle user home>/caches/paletter/bds`. Never in the repository |
 | `--report FILE` | where to write the markdown report (always also `<cache>/runs/<platform>-<version>/report.md`) |
 | `--name 26.70`, `--protocol N` | name of a new bundled version (default from the BDS version: `1.26.70.23` -> `26.70`); protocol if the RakNet pong does not carry it |
-| `--experiments a,b`, `--port 19260`, `--timeout 300` | experiments for the add-on world, base port (port + 1 for IPv6), seconds per server start |
+| `--experiments a,b` | manual override: use exactly these toggles instead of discovering them (see "Experiments" below) |
+| `--experiment-attribution each\|all\|none` | captures per experiment toggle (default `each`: one with all toggles and one per current toggle; `all` only the first) |
+| `--port 19260`, `--timeout 300` | base port (port + 1 for IPv6), seconds per server start |
 
 Downloading BDS means accepting the [Minecraft EULA](https://minecraft.net/eula). A run takes about a minute plus the
 download (about 100 MB, once per build). What it does, in `<cache>/runs/<platform>-<version>/` (logs, captures):
@@ -470,8 +472,9 @@ download (about 100 MB, once per build). What it does, in `<cache>/runs/<platfor
    protocol (LAN visibility is on for this, otherwise the pong is empty), the headless capture client (`capture` module)
    records the item registry, creative inventory and block properties, every creative block id is checked against the
    FNV-1a 32 hashes of the palette. Then once more with sequential ids.
-4. **Add-on world**: `capture/addon` installed, the world created once, the experiments switched on in `level.dat`, then the
-   same two captures. The content log of that start (definitions BDS rejects) is kept.
+4. **Experiments**: the toggles of this build are discovered, verified and attributed (see "Experiments" below).
+   **Add-on world**: `capture/addon` installed, the world created once, the current toggles switched on in `level.dat`
+   (start game must report exactly them), then the same two captures. The content log of that start (definitions BDS rejects) is kept.
 5. **Assertions** on every run, first confirmed by hand on 1.26.63.1: sequential block ids are positions in the palette
    sorted by the FNV-1 64 hash of the block name (vanilla and with 66 custom blocks, checked through the hashed run's
    states); custom `block_id`s are 10000+ in descending identifier order (really descending file name order; the capture add-on names files after blocks, see `capture/CREATIVE-ORDER.md`); custom block items have id `255 - block_id`;
@@ -495,6 +498,57 @@ download (about 100 MB, once per build). What it does, in `<cache>/runs/<platfor
 
 The report (`reports/preview-1.26.70.23.md` is an example) lists checks with PASS/DIFF/FAIL, every difference, and a
 **TODO** list of what needs a decision.
+
+### Experiments
+
+Bedrock has no list of its experiment toggles anywhere: not in `server.properties`, the Script API, the BDS files, the
+docs or the protocol (start game and the resource pack stack only echo the toggles a world has *on*). `update` therefore
+discovers them for every build, so captures include experimental content without a hand-maintained list:
+
+1. **Candidates** (`ExperimentDiscovery`): every identifier-like string of the server binary (memory mapped), plus the
+   suffixes after `_` of each (the Windows linker merges `y_2026_drop_4` into the tail of
+   `behavior_packs/experimental_y_2026_drop_4`), plus the ASCII of x86-64 `mov r64, imm64` instructions and joins of
+   neighbouring ones (MSVC builds `gametest` from an immediate), plus the `experimental_*` pack folders, `DEFAULT_EXPERIMENTS`,
+   `KNOWN_RETIRED` and every id of the committed records. About 50 000 on Windows, 86 000 on Linux (where every id is a
+   plain string).
+2. **Oracle**: all candidates go into the `experiments` compound of a fresh world's `level.dat`. BDS reads it, logs
+   `Experiment(s) active: ucft, gtst, ...` (one four letter code per toggle it knows) and writes the file back with only
+   the keys it knows; unknown keys are dropped silently, nothing is rejected or logged. The keys left are the toggles of
+   the build; the count must match the log line.
+3. **Current vs retired**: a capture with all of them on. Start game streams only toggles that still do something
+   (current); the others are retired (kept in `level.dat`, logged active, never streamed, no content). The resource pack
+   stack must list the same ones, and the binary has one `createWorldScreen.experimental<Name>` UI string per current
+   toggle: a different count is a DIFF (a current toggle the candidates missed; pass it with `--experiments`). The UI
+   keys give the English names (`resource_packs/vanilla/texts/en_US.lang`), which map the creator docs' experiment names
+   (`codegen/model/components.json`) to ids.
+4. **Applied and attributed**: a capture and a Script API dump with each current toggle alone (start game must report
+   exactly that toggle, which also yields its log code), compared with the vanilla ones without any; plus all together, to
+   find content only several toggles add. `--experiment-attribution all` skips the single toggle runs, `none` both
+   (automatic above 12 current toggles).
+5. **Use**: the add-on world gets the current toggles (start game must report exactly them). The record
+   `generator/experiments/<bds version>.json` (toggles, status, code, UI key, name, content per toggle) is committed, and
+   the bundled version gets **experiment marks** (`VanillaData#experiments`, bundle key `experiments`, only written when
+   present): per toggle the items and blocks it adds or turns on and its creative stacks. The bundle itself stays a
+   capture without experiments. `check` uses the marks: content an older version has only behind a toggle but the newest
+   has without one needs a `force` fallback (or an `unmapped` entry) there, and a `force` fallback for content that is
+   not gated is reported as unused.
+
+`--experiments a,b` still overrides discovery (no oracle; the toggles are verified against start game).
+
+BDS 1.26.63.1 (Windows, 49 563 candidates): 23 toggles kept by the oracle on the first run, 31 with `KNOWN_RETIRED`
+(the candidates of the Linux binary, 85 653, contain all 31 without help; the Linux server itself was not run here).
+**7 current**: `experimental_creator_cameras` (exca, "Experimental Creator
+Camera Features"), `gametest` (gtst, "Beta APIs"), `poi` (epoi, "Points of Interest (POI)"), `upcoming_creator_features`
+(ucft), `villager_trades_rebalance` (vtra), `voxel_shapes` (vavs, "Experimental Voxel Shape Features"),
+`y_2026_drop_4` (26d4, "Drop 4 of 2026"). **24 retired**, among them `data_driven_biomes`, `experimental_molang_features`,
+`caves_and_cliffs`, `y_2025_drop_1..3`, `y_2026_drop_1..3`. The old hand-written list had `experimental_vanilla_shapes`,
+which is no toggle (BDS drops it; the toggle is `voxel_shapes`), and lacked `poi` and `villager_trades_rebalance`.
+Content: only `y_2026_drop_4` changes items, blocks or the creative inventory: it adds `minecraft:ice_ball`, makes
+`minecraft:icicle` and `minecraft:ice_crystal` data driven (version 2 -> 1, component based), adds those three and
+`minecraft:frostbite_spawn_egg` to the Script API item types and 12 creative stacks (the four items, arrows 48/49 and
+potions 47/48 of every kind). Its blocks (`minecraft:icicle`, `minecraft:ice_crystal`) are registered without the toggle
+too. All toggles together add nothing more. The step takes 90 to 125 s (18 server starts: create, discover, all,
+its dump, then a capture and a dump per current toggle) of a 3 minute run (Windows, cached zip).
 
 **Previews** never replace release data. Without `--import-preview` nothing of a preview is written. With it, the version
 is imported and marked in `versions.txt` (`26.70 2250 preview`); the library skips such versions unless the system

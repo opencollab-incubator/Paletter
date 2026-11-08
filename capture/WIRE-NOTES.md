@@ -6,7 +6,9 @@ packet, the item registry packet (`ItemComponentPacket`) and the creative conten
 from the add-on in `addon/` (87 items, 80 blocks), which uses JSON `format_version` 1.26.60 and a world with the
 experiments `upcoming_creator_features`, `gametest`, `experimental_creator_cameras`, `y_2026_drop_4` (the ones BDS
 reported back in start game; `experimental_molang_features`, `experimental_vanilla_shapes`, `data_driven_biomes`
-were set in `level.dat` too but are not echoed).
+were set in `level.dat` too but are not echoed: the first and last are retired toggles, `experimental_vanilla_shapes`
+is no toggle at all, BDS drops it from `level.dat`; the toggle is `voxel_shapes`). `update` now discovers the toggles
+of each build instead (README, "Experiments"); 1.26.63.1 has 7 current ones, see `generator/experiments/1.26.63.1.json`.
 
 Raw data: `captures/1.26.63.1/addon/custom_item_registry.{nbt,snbt}` and `custom_block_properties.{nbt,snbt}`
 (gzipped big endian NBT, and typed SNBT in wire order: `1b` byte, `2s` short, `3` int, `4L` long, `5.0f` float).

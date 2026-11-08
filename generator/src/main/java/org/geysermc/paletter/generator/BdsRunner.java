@@ -1,11 +1,13 @@
 package org.geysermc.paletter.generator;
 
 import com.google.gson.JsonParser;
+import org.geysermc.paletter.capture.LevelDat;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,7 +25,7 @@ import java.util.stream.Stream;
  */
 final class BdsRunner {
     static final int DUMP_PORT = 19232;
-    private static final String WORLD = "paletter";
+    static final String WORLD = "paletter";
     private static final String PACK_DIRECTORY = "paletter_dumper";
     private static final String PACK_UUID = "6f1d3c5e-7a1b-4c2d-9e8f-0a1b2c3d4e5f";
 
@@ -59,6 +61,27 @@ final class BdsRunner {
      */
     void run(Path server, Path log, int timeoutSeconds, int port, boolean echo) throws IOException, InterruptedException {
         installPack(server);
+        configure(server, port);
+        System.out.println("Starting BDS in " + server + ", log: " + log);
+        dump(server, log, timeoutSeconds, echo);
+        System.out.println("Dump complete: " + log);
+    }
+
+    /**
+     * Runs the dump again on the world of the last {@link #run}, with exactly these experiment toggles in its
+     * {@code level.dat} (BDS applies them when it loads the world).
+     */
+    void rerun(Path server, Path log, int timeoutSeconds, int port, Collection<String> toggles) throws IOException, InterruptedException {
+        Path levelDat = server.resolve("worlds").resolve(WORLD).resolve("level.dat");
+        if (!Files.exists(levelDat)) {
+            throw new IOException("No dump world to rerun in " + levelDat.getParent());
+        }
+        LevelDat.setExperiments(levelDat, toggles);
+        configure(server, port);
+        dump(server, log, timeoutSeconds, false);
+    }
+
+    private static void configure(Path server, int port) throws IOException {
         Map<String, String> properties = new LinkedHashMap<>();
         properties.put("level-name", WORLD);
         properties.put("level-type", "FLAT");
@@ -71,8 +94,9 @@ final class BdsRunner {
         properties.put("content-log-level", "warning");
         properties.put("allow-list", "false");
         BdsServer.configure(server, properties);
+    }
 
-        System.out.println("Starting BDS in " + server + ", log: " + log);
+    private static void dump(Path server, Path log, int timeoutSeconds, boolean echo) throws IOException, InterruptedException {
         String result;
         try (BdsServer bds = new BdsServer(server, echo)) {
             bds.start(log);
@@ -81,7 +105,6 @@ final class BdsRunner {
         if (result == null || !result.contains("PALETTER-DONE")) {
             throw new IOException("BDS exited without PALETTER-DONE (timeout " + timeoutSeconds + "s); see " + log);
         }
-        System.out.println("Dump complete: " + log);
     }
 
     private void installPack(Path server) throws IOException {

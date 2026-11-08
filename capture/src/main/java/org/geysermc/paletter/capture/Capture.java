@@ -37,9 +37,15 @@ public final class Capture {
      * @param resolvedHashes creative block ids that matched a palette hash
      * @param unresolvedHashes creative block ids that matched no palette hash (always all of them in sequential mode)
      * @param experiments experiments start game reported, as {@code name=enabled}
+     * @param packStackExperiments experiments the resource pack stack packet reported, as {@code name=enabled}
      */
     public record Summary(int protocol, int codecProtocol, String minecraftVersion, boolean blockNetworkIdsHashed,
-                          int resolvedHashes, int unresolvedHashes, List<String> experiments) {
+                          int resolvedHashes, int unresolvedHashes, List<String> experiments, List<String> packStackExperiments) {
+        /** Names of the experiments start game reported as enabled. */
+        public List<String> enabledExperiments() {
+            return experiments.stream().filter(e -> e.endsWith("=true")).map(e -> e.substring(0, e.length() - 5)).sorted().toList();
+        }
+
         public boolean nativeCodec() {
             return protocol == codecProtocol;
         }
@@ -76,8 +82,10 @@ public final class Capture {
         writer.write(out, customOut);
         List<String> experiments = result.startGame.getExperiments().stream()
             .map(experiment -> experiment.getName() + "=" + experiment.isEnabled()).toList();
+        List<String> packStackExperiments = result.packStack == null ? List.of() : result.packStack.getExperiments().stream()
+            .map(experiment -> experiment.getName() + "=" + experiment.isEnabled()).toList();
         return new Summary(protocol, codecProtocol, codec.getMinecraftVersion(), result.startGame.isBlockNetworkIdsHashed(),
-            writer.resolvedHashes(), writer.unresolvedHashes(), experiments);
+            writer.resolvedHashes(), writer.unresolvedHashes(), experiments, packStackExperiments);
     }
 
     /**
@@ -119,7 +127,7 @@ public final class Capture {
                 "onlineAuth=" + pong.onlineAuth() + " selfSignedAuth=" + pong.selfSignedAuth()};
     }
 
-    /** See {@link LevelDat#enableExperiments}. */
+    /** Switches toggles on in a world's level.dat, keeping the ones already set. See {@link LevelDat}. */
     public static void enableExperiments(Path levelDat, List<String> toggles) throws IOException {
         LevelDat.enableExperiments(levelDat, toggles);
     }

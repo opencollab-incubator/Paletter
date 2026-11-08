@@ -10,6 +10,7 @@ import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeContent;
 import org.geysermc.paletter.creative.CreativeEntry;
 import org.geysermc.paletter.data.DataVersion;
+import org.geysermc.paletter.data.ExperimentContent;
 import org.geysermc.paletter.data.PaletteDataCodec;
 import org.geysermc.paletter.data.VanillaData;
 import org.geysermc.paletter.item.ItemVariant;
@@ -140,6 +141,28 @@ class VanillaPaletteTest {
         assertEquals(data.creative(), read.creative());
         assertEquals(data.itemTags(), read.itemTags());
         assertEquals(data.fallbacks(), read.fallbacks());
+    }
+
+    @Test
+    void experimentMarksRoundTripAndAreOptional() throws Exception {
+        VanillaData data = PALETTER.vanillaData(PALETTER.latest());
+        ByteArrayOutputStream plain = new ByteArrayOutputStream();
+        PaletteDataCodec.write(data.withExperiments(java.util.Map.of()), plain);
+        ByteArrayOutputStream again = new ByteArrayOutputStream();
+        PaletteDataCodec.write(PaletteDataCodec.read(new ByteArrayInputStream(plain.toByteArray())), again);
+        // Without marks nothing is written: data captured without experiments keeps its bytes
+        assertEquals(java.util.Arrays.toString(plain.toByteArray()), java.util.Arrays.toString(again.toByteArray()));
+
+        ExperimentContent drop = new ExperimentContent(List.of("minecraft:ice_ball", "minecraft:icicle"), List.of("minecraft:icicle"),
+            List.of("minecraft:arrow:48", "minecraft:ice_ball"));
+        ByteArrayOutputStream marked = new ByteArrayOutputStream();
+        PaletteDataCodec.write(data.withExperiments(java.util.Map.of("y_2026_drop_4", drop)), marked);
+        VanillaData read = PaletteDataCodec.read(new ByteArrayInputStream(marked.toByteArray()));
+        assertEquals(java.util.Map.of("y_2026_drop_4", drop), read.experiments());
+        assertEquals(List.of("y_2026_drop_4"), read.experimentsOfBlock("minecraft:icicle"));
+        assertEquals(List.of("y_2026_drop_4"), read.experimentsOfItem("minecraft:ice_ball"));
+        assertEquals(List.of(), read.experimentsOfItem("minecraft:stone"));
+        assertEquals(data.items(), read.items());
     }
 
     @Test

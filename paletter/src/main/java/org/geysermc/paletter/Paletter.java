@@ -121,7 +121,7 @@ public final class Paletter {
             Map<String, NbtMap> defaults = new HashMap<>();
             loaded.blockDefaults().forEach((name, state) -> defaults.put(name, interned.computeIfAbsent(state, s -> s)));
             return new VanillaData(loaded.version(), states, items, loaded.dataDrivenBlocks(), loaded.creative(),
-                loaded.itemTags(), loaded.fallbacks(), defaults);
+                loaded.itemTags(), loaded.fallbacks(), defaults, loaded.experiments());
         }
     }
 

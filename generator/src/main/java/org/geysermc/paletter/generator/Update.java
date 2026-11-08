@@ -6,10 +6,13 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.BlockPalette;
 import org.geysermc.paletter.block.BlockStates;
 import org.geysermc.paletter.capture.Capture;
+import org.geysermc.paletter.capture.CapturedData;
+import org.geysermc.paletter.capture.LevelDat;
 import org.geysermc.paletter.codegen.Codegen;
 import org.geysermc.paletter.codegen.ShapeInference;
 import org.geysermc.paletter.codegen.constants.ConstantsGenerator;
 import org.geysermc.paletter.data.DataVersion;
+import org.geysermc.paletter.data.ExperimentContent;
 import org.geysermc.paletter.data.PaletteDataCodec;
 import org.geysermc.paletter.data.VanillaData;
 
@@ -30,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
@@ -41,19 +45,35 @@ import java.util.zip.GZIPOutputStream;
  * See README.md, "Updating data".
  */
 final class Update {
-    static final List<String> DEFAULT_EXPERIMENTS = List.of("upcoming_creator_features", "gametest",
-        "experimental_creator_cameras", "y_2026_drop_4", "experimental_molang_features", "experimental_vanilla_shapes",
-        "data_driven_biomes");
+    /**
+     * Used only when discovery fails (and always tried as candidates): the current toggles of BDS 1.26.63.1 as
+     * discovered there. {@code experimental_vanilla_shapes}, used before, is not a toggle id (the toggle is
+     * {@code voxel_shapes}); {@code data_driven_biomes} and {@code experimental_molang_features} are retired toggles BDS
+     * still accepts but no longer streams.
+     */
+    static final List<String> DEFAULT_EXPERIMENTS = List.of("experimental_creator_cameras", "gametest", "poi",
+        "upcoming_creator_features", "villager_trades_rebalance", "voxel_shapes", "y_2026_drop_4");
+    /**
+     * Retired toggles the Linux binary of 1.26.63.1 has as strings but the Windows one only builds from immediates the
+     * scanner cannot join; tried as candidates on every platform so the committed record does not depend on the
+     * platform of the run (the level.dat oracle still decides).
+     */
+    static final List<String> KNOWN_RETIRED = List.of("locator_bar", "scripting", "wild_update", "y_2025_drop_2",
+        "y_2025_drop_3", "y_2026_drop_1", "y_2026_drop_2", "y_2026_drop_3");
+    /** Above this many current toggles, only one capture with all of them is made (no per toggle attribution). */
+    static final int EACH_LIMIT = 12;
     private static final String VANILLA_WORLD = "paletter_vanilla";
     private static final String ADDON_WORLD = "paletter_addon";
     private static final String CAPTURE_PACK = "paletter_capture";
     private static final String CREATIVE_WORLD = "paletter_creative";
+    private static final String EXPERIMENT_WORLD = "paletter_experiments";
 
     private final Path root;
     private final Path resources;
     private final Path fallbacks;
     private final Path dumps;
     private final Path codegenCaptures;
+    private final Path experimentRecords;
     private final Map<String, String> options;
     private final boolean preview;
     private final boolean verifyOnly;
@@ -69,6 +89,7 @@ final class Update {
         this.fallbacks = root.resolve("generator/fallbacks");
         this.dumps = root.resolve("generator/bds-dumps");
         this.codegenCaptures = root.resolve("codegen/captures");
+        this.experimentRecords = root.resolve("generator/experiments");
         this.options = options;
         String channel = options.getOrDefault("channel", "release");
         if (!channel.equals("release") && !channel.equals("preview")) {
@@ -153,6 +174,7 @@ final class Update {
             missingNetworkData(distribution, dump);
         }
         contentLog(runs);
+        experimentsReport(distribution, runs, staging);
         creativeOrder(runs);
         if (runs.addon != null) {
             shapes(distribution, runs);
@@ -211,6 +233,33 @@ final class Update {
         Path customCapture;
         Path creative;
         List<String> addonContentLog;
+        /** The bundled version this run's network data belongs to (null without a capture). */
+        String bundledName;
+        final ExperimentRun experiments = new ExperimentRun();
+    }
+
+    /** What the experiment step found; see README.md, "Experiments". */
+    static final class ExperimentRun {
+        /** discovered, --experiments, or fallback (discovery failed) */
+        String source = "fallback";
+        int candidates;
+        Set<String> uiKeys = new TreeSet<>();
+        Map<String, String> displayNames = new TreeMap<>();
+        Map<String, String> uiKeyOf = new TreeMap<>();
+        /** Toggles BDS kept in level.dat (current and retired); empty when not discovered. */
+        List<String> accepted = List.of();
+        /** Codes of the "Experiment(s) active" line of the discovery start. */
+        List<String> activeCodes;
+        /** Toggles start game streamed: what the add-on world and the attribution use. */
+        List<String> current = DEFAULT_EXPERIMENTS;
+        List<String> retired = List.of();
+        Map<String, String> codes = new TreeMap<>();
+        ExperimentAttribution.Diff all;
+        Map<String, ExperimentAttribution.Diff> each = new TreeMap<>();
+        Map<String, ExperimentContent> content = new TreeMap<>();
+        List<String> unexplained = List.of();
+        String attribution = "none";
+        long millis;
     }
 
     // ---------------------------------------------------------------------------------------------------------------
@@ -277,7 +326,7 @@ final class Update {
             report.check(Report.Status.FAIL, "Network capture", "BDS answers neither a RakNet ping nor NetherNet signaling on port " + port);
             report.section("Network capture impossible", List.of(
                 "Network lines of the server:", "", "```", String.join("\n", network), "```"));
-            runs.addonContentLog = addonWorldContentLog(server, work, properties);
+            runs.addonContentLog = addonWorldContentLog(server, work, properties, runs);
             return;
         }
         properties.put("block-network-ids-are-hashes", "false");
@@ -288,8 +337,21 @@ final class Update {
             capture(address, runs, work.resolve("vanilla-sequential"), null, "vanilla capture (sequential ids)");
         }
 
+        // Experiments: discover the toggles, verify them, capture what each one adds
+        if (options.containsKey("experiments")) {
+            runs.experiments.source = "--experiments";
+            runs.experiments.current = Arrays.stream(options.get("experiments").split(",")).map(String::strip)
+                .filter(t -> !t.isEmpty()).sorted().toList();
+        }
+        try {
+            experiments(server, work, address, dump, runs, properties);
+        } catch (Exception e) {
+            report.fail("Experiments", e);
+            report.todos.add("Experiment discovery failed; the add-on world used " + runs.experiments.current + " (" + runs.experiments.source + ")");
+        }
+
         // Add-on world: created once, experiments switched on in level.dat, then captured
-        runs.addonContentLog = addonWorldContentLog(server, work, properties);
+        runs.addonContentLog = addonWorldContentLog(server, work, properties, runs);
         properties.put("level-name", ADDON_WORLD);
         properties.put("block-network-ids-are-hashes", "true");
         BdsServer.configure(server, properties);
@@ -300,7 +362,7 @@ final class Update {
             runs.addon = work.resolve("addon");
             runs.customCapture = work.resolve("addon/custom");
             hashCheck("add-on", summary);
-            report.check(Report.Status.INFO, "Experiments echoed by BDS", String.join(", ", summary.experiments()));
+            appliedCheck("add-on world", runs.experiments.current, summary);
         }
         properties.put("block-network-ids-are-hashes", "false");
         BdsServer.configure(server, properties);
@@ -340,7 +402,7 @@ final class Update {
      * Creates the add-on world (packs installed, experiments on) and returns the content log of a start with the
      * experiments enabled: the definitions BDS rejects. Leaves the server stopped.
      */
-    private List<String> addonWorldContentLog(Path server, Path work, Map<String, String> properties) throws Exception {
+    private List<String> addonWorldContentLog(Path server, Path work, Map<String, String> properties, Runs runs) throws Exception {
         Path addon = root.resolve("capture/addon");
         freshWorld(server, ADDON_WORLD, addon);
         properties.put("level-name", ADDON_WORLD);
@@ -350,9 +412,7 @@ final class Update {
             bds.start(work.resolve("bds-addon-create.log"));
             bds.awaitStarted(timeout);
         }
-        List<String> experiments = options.containsKey("experiments")
-            ? Arrays.asList(options.get("experiments").split(",")) : DEFAULT_EXPERIMENTS;
-        Capture.enableExperiments(server.resolve("worlds").resolve(ADDON_WORLD).resolve("level.dat"), experiments);
+        Capture.enableExperiments(server.resolve("worlds").resolve(ADDON_WORLD).resolve("level.dat"), runs.experiments.current);
         try (BdsServer bds = new BdsServer(server, false)) {
             bds.start(work.resolve("bds-addon-content-log.log"));
             bds.awaitStarted(timeout);
@@ -412,6 +472,337 @@ final class Update {
             Files.writeString(directory.resolve("world_" + kind + "_packs.json"), "[{\"pack_id\": \""
                 + header.get("uuid").getAsString() + "\", \"version\": " + header.get("version") + "}]\n");
         }
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Experiments
+
+    /**
+     * Discovers the experiment toggles of this BDS (candidates from the binary, BDS's level.dat round trip as the
+     * oracle, start game for which are current), checks that BDS applies them, and attributes content: a capture and a
+     * Script API dump with all toggles and with each current toggle alone, against the vanilla ones without any.
+     * Leaves the server stopped.
+     */
+    private void experiments(Path server, Path work, InetSocketAddress address, BdsDump dump, Runs runs,
+                             Map<String, String> properties) throws Exception {
+        ExperimentRun result = runs.experiments;
+        long started = System.nanoTime();
+        Path levelDat = server.resolve("worlds").resolve(EXPERIMENT_WORLD).resolve("level.dat");
+        freshWorld(server, EXPERIMENT_WORLD, null);
+        properties.put("level-name", EXPERIMENT_WORLD);
+        properties.put("block-network-ids-are-hashes", "true");
+        BdsServer.configure(server, properties);
+        try (BdsServer bds = new BdsServer(server, false)) {
+            bds.start(work.resolve("bds-experiments-create.log"));
+            bds.awaitStarted(timeout);
+        }
+
+        // Candidates: the binary (identifiers, '_' suffixes, imm64 immediates), the experimental packs, ids of earlier
+        // records and the built in list
+        ExperimentDiscovery.Candidates scanned = ExperimentDiscovery.scan(BdsServer.executable(server));
+        result.uiKeys = scanned.uiKeys();
+        result.displayNames = ExperimentDiscovery.displayNames(server, scanned.uiKeys());
+        List<String> toggles;
+        boolean manual = result.source.equals("--experiments");
+        if (manual) {
+            toggles = result.current;
+        } else {
+            Set<String> candidates = new TreeSet<>(scanned.ids());
+            candidates.addAll(ExperimentDiscovery.packCandidates(server));
+            candidates.addAll(DEFAULT_EXPERIMENTS);
+            candidates.addAll(KNOWN_RETIRED);
+            candidates.addAll(recordedToggles());
+            result.candidates = candidates.size();
+            LevelDat.setExperiments(levelDat, candidates);
+            try (BdsServer bds = new BdsServer(server, false)) {
+                bds.start(work.resolve("bds-experiments-discover.log"));
+                bds.awaitStarted(timeout);
+                result.activeCodes = ExperimentDiscovery.activeCodes(bds.lines(line -> line.contains("Experiment(s) active")));
+            }
+            result.accepted = LevelDat.enabled(LevelDat.experiments(levelDat));
+            if (result.accepted.isEmpty()) {
+                throw new IOException("BDS kept none of " + candidates.size() + " candidate toggles in level.dat");
+            }
+            boolean codesMatch = result.activeCodes != null && result.activeCodes.size() == result.accepted.size();
+            report.check(codesMatch ? Report.Status.PASS : Report.Status.DIFF, "Experiments: discovery",
+                result.candidates + " candidates (binary " + BdsServer.executable(server).getFileName() + ", experimental "
+                    + "packs, known ids); BDS kept " + result.accepted.size() + " toggles in level.dat"
+                    + (codesMatch ? " and logged as many active" : "; it logged " + (result.activeCodes == null ? "no" : result.activeCodes.size())
+                    + " active (Experiment(s) active line)"));
+            toggles = result.accepted;
+        }
+
+        // All toggles at once: start game tells which are current (streamed); the rest are retired
+        LevelDat.setExperiments(levelDat, toggles);
+        Capture.Summary all;
+        try (BdsServer bds = new BdsServer(server, false)) {
+            bds.start(work.resolve("bds-experiments-all.log"));
+            bds.awaitStarted(timeout);
+            all = capture(address, runs, work.resolve("experiments/all"), null, "experiments capture (all toggles)");
+        }
+        List<String> streamed = all.enabledExperiments();
+        if (manual) {
+            appliedCheck("--experiments", toggles, all);
+        } else {
+            result.source = "discovered";
+            result.current = streamed;
+            result.retired = toggles.stream().filter(t -> !streamed.contains(t)).toList();
+            retiredToggles = result.retired;
+            List<String> notAccepted = streamed.stream().filter(t -> !toggles.contains(t)).toList();
+            boolean uiMatch = streamed.size() == result.uiKeys.size();
+            report.check(notAccepted.isEmpty() && uiMatch ? Report.Status.PASS : Report.Status.DIFF, "Experiments: current toggles",
+                streamed.size() + " streamed in start game " + streamed + ", " + result.retired.size() + " retired (kept, not streamed); "
+                    + result.uiKeys.size() + " `" + ExperimentDiscovery.UI_PREFIX + "*` UI keys in the binary"
+                    + (uiMatch ? "" : ": a current toggle may be missing from the candidates; pass it with --experiments or add it to DEFAULT_EXPERIMENTS")
+                    + (notAccepted.isEmpty() ? "" : "; streamed but not kept in level.dat: " + notAccepted));
+        }
+        List<String> packStack = all.packStackExperiments().stream().filter(e -> e.endsWith("=true"))
+            .map(e -> e.substring(0, e.length() - 5)).sorted().toList();
+        report.check(packStack.equals(streamed) ? Report.Status.PASS : Report.Status.DIFF, "Experiments: resource pack stack",
+            packStack.equals(streamed) ? "lists the same toggles as start game" : "lists " + packStack + ", start game " + streamed);
+        result.uiKeyOf = ExperimentDiscovery.matchUiKeys(result.current, result.uiKeys);
+
+        // Attribution
+        String mode = options.getOrDefault("experiment-attribution", "each");
+        if (!List.of("each", "all", "none").contains(mode)) {
+            throw new IllegalArgumentException("--experiment-attribution must be each, all or none");
+        }
+        if (mode.equals("each") && result.current.size() > EACH_LIMIT) {
+            report.check(Report.Status.INFO, "Experiments: attribution", result.current.size() + " current toggles (more than "
+                + EACH_LIMIT + "): only all together");
+            mode = "all";
+        }
+        result.attribution = mode;
+        if (!mode.equals("none") && runs.vanilla != null) {
+            CapturedData base = CapturedData.read(runs.vanilla);
+            Set<String> creativeBefore = ExperimentAttribution.creativeItems(base);
+            BdsRunner runner = new BdsRunner(root.resolve("bds-addon"));
+            Path dumpLog = work.resolve("experiments/bds-dump-all.log");
+            try {
+                runner.rerun(server, dumpLog, timeout, port, toggles);
+                result.all = ExperimentAttribution.diff(base, CapturedData.read(work.resolve("experiments/all")), dump, BdsDump.read(dumpLog));
+                if (mode.equals("each")) {
+                    for (String toggle : result.current) {
+                        LevelDat.setExperiments(levelDat, List.of(toggle));
+                        // The dump reruns switch server.properties to their own world
+                        BdsServer.configure(server, properties);
+                        Path out = work.resolve("experiments").resolve(toggle);
+                        try (BdsServer bds = new BdsServer(server, false)) {
+                            bds.start(work.resolve("experiments/bds-" + toggle + ".log"));
+                            bds.awaitStarted(timeout);
+                            List<String> codes = ExperimentDiscovery.activeCodes(bds.lines(line -> line.contains("Experiment(s) active")));
+                            if (codes != null && codes.size() == 1) {
+                                result.codes.put(toggle, codes.getFirst());
+                            }
+                            appliedCheck(toggle, List.of(toggle), capture(address, runs, out, null, "experiments capture (" + toggle + ")"));
+                        }
+                        Path log = work.resolve("experiments/bds-dump-" + toggle + ".log");
+                        runner.rerun(server, log, timeout, port, List.of(toggle));
+                        ExperimentAttribution.Diff diff = ExperimentAttribution.diff(base, CapturedData.read(out), dump, BdsDump.read(log));
+                        result.each.put(toggle, diff);
+                        result.content.put(toggle, diff.content(creativeBefore));
+                    }
+                    result.unexplained = ExperimentAttribution.unexplained(result.all, result.each);
+                } else if (result.current.size() == 1) {
+                    result.content.put(result.current.getFirst(), result.all.content(creativeBefore));
+                }
+            } finally {
+                // The dump world back without experiments
+                LevelDat.setExperiments(server.resolve("worlds").resolve(BdsRunner.WORLD).resolve("level.dat"), List.of());
+            }
+        }
+        result.millis = (System.nanoTime() - started) / 1_000_000;
+    }
+
+    /** Whether start game reported exactly the requested toggles; retired ones are kept but never streamed. */
+    private void appliedCheck(String what, List<String> requested, Capture.Summary summary) {
+        List<String> echoed = summary.enabledExperiments();
+        List<String> retired = retiredToggles;
+        List<String> expected = requested.stream().filter(t -> !retired.contains(t)).sorted().toList();
+        boolean ok = echoed.equals(expected);
+        report.check(ok ? Report.Status.PASS : Report.Status.FAIL, "Experiments applied (" + what + ")",
+            ok ? "start game reports " + echoed : "requested " + expected + ", start game reports " + echoed
+                + (requested.stream().anyMatch(t -> !echoed.contains(t)) ? " (BDS dropped or retired toggles)" : ""));
+    }
+
+    /** Retired toggles of this run: BDS keeps them in level.dat but never streams them. */
+    private List<String> retiredToggles = List.of();
+
+    /** Toggle ids of the committed experiment records ({@code generator/experiments/*.json}). */
+    private Set<String> recordedToggles() throws IOException {
+        Set<String> ids = new TreeSet<>();
+        if (!Files.isDirectory(experimentRecords)) {
+            return ids;
+        }
+        try (Stream<Path> files = Files.list(experimentRecords)) {
+            for (Path file : files.filter(f -> f.toString().endsWith(".json")).toList()) {
+                JsonObject toggles = JsonParser.parseString(Files.readString(file)).getAsJsonObject().getAsJsonObject("toggles");
+                if (toggles != null) {
+                    ids.addAll(toggles.keySet());
+                }
+            }
+        }
+        return ids;
+    }
+
+    /**
+     * The "Experiments" report section, the committed record {@code generator/experiments/<bds version>.json} and the
+     * experiment marks of the bundled version.
+     */
+    private void experimentsReport(BdsDistribution distribution, Runs runs, Staging staging) throws IOException {
+        ExperimentRun result = runs.experiments;
+        List<String> lines = new ArrayList<>();
+        lines.add("Source: **" + result.source + "**" + (result.candidates > 0 ? " (" + result.candidates + " candidates)" : "")
+            + ", attribution: " + result.attribution + ", " + (result.millis / 1000) + " s for this step.");
+        lines.add("");
+        lines.add("| Toggle | Status | Log code | UI key | Name | Items | Blocks | Creative stacks |");
+        lines.add("|---|---|---|---|---|---|---|---|");
+        for (String toggle : result.current) {
+            String key = result.uiKeyOf.get(toggle);
+            ExperimentAttribution.Diff diff = result.each.get(toggle);
+            ExperimentContent content = result.content.get(toggle);
+            lines.add("| `" + toggle + "` | current | " + result.codes.getOrDefault(toggle, "") + " | " + (key == null ? "" : "`" + key + "`")
+                + " | " + (key == null ? "" : result.displayNames.getOrDefault(key, "")) + " | "
+                + (content == null ? "" : content.items().size()) + " | " + (content == null ? "" : content.blocks().size()) + " | "
+                + (diff == null ? "" : diff.creativeAdded().size()) + " |");
+        }
+        for (String toggle : result.retired) {
+            lines.add("| `" + toggle + "` | retired | | | | | | |");
+        }
+        lines.add("");
+        result.each.forEach((toggle, diff) -> {
+            lines.add("**" + toggle + "**" + (diff.isEmpty() ? ": no item, block or creative change" : ""));
+            lines.add("");
+            diff.lines().forEach(line -> lines.add("- " + line));
+            lines.add("");
+        });
+        if (result.all != null) {
+            lines.add("**All toggles together**" + (result.all.isEmpty() ? ": no change" : ""));
+            lines.add("");
+            result.all.lines().forEach(line -> lines.add("- " + line));
+            lines.add("");
+        }
+        if (!result.unexplained.isEmpty()) {
+            lines.add("Only with several toggles together (not explained by any single one): " + String.join(", ", result.unexplained));
+            report.check(Report.Status.INFO, "Experiments: interactions", result.unexplained.size() + " changes only appear with several toggles together");
+        }
+        docsExperiments(result, lines);
+        report.section("Experiments", lines);
+
+        if (!result.source.equals("discovered") || (preview && !importPreview)) {
+            return;
+        }
+        stage(experimentRecords.resolve(distribution.version() + ".json"), record(distribution, runs), "experiment record");
+        if (runs.bundledName != null && result.attribution.equals("each")) {
+            Path file = staging.resources.resolve(runs.bundledName + ".nbt");
+            VanillaData data = read(file);
+            Map<String, ExperimentContent> marks = new TreeMap<>();
+            result.content.forEach((toggle, content) -> {
+                if (!content.isEmpty()) {
+                    marks.put(toggle, content);
+                }
+            });
+            boolean same = new TreeMap<>(data.experiments()).equals(marks);
+            report.check(same ? Report.Status.PASS : Report.Status.DIFF, "Experiment marks vs bundled " + runs.bundledName,
+                same ? "identical" : "bundled " + new TreeSet<>(data.experiments().keySet()) + ", captured " + marks.keySet());
+            Files.write(file, write(data.withExperiments(marks)));
+        }
+    }
+
+    /** Which toggle each experiment named in the creator docs ({@code codegen/model/components.json}) is. */
+    private void docsExperiments(ExperimentRun result, List<String> lines) throws IOException {
+        Path model = root.resolve("codegen/model/components.json");
+        if (!Files.exists(model)) {
+            return;
+        }
+        Set<String> names = new TreeSet<>();
+        for (var component : JsonParser.parseString(Files.readString(model)).getAsJsonObject().getAsJsonArray("components")) {
+            var experiments = component.getAsJsonObject().getAsJsonArray("experiments");
+            if (experiments != null) {
+                experiments.forEach(name -> names.add(name.getAsString()));
+            }
+        }
+        if (names.isEmpty()) {
+            return;
+        }
+        Map<String, String> byName = new TreeMap<>();
+        result.retired.forEach(t -> byName.put(ExperimentDiscovery.normalizeName(t), t + " (retired)"));
+        result.current.forEach(t -> byName.put(ExperimentDiscovery.normalizeName(t), t));
+        result.uiKeyOf.forEach((toggle, key) -> {
+            String display = result.displayNames.get(key);
+            if (display != null) {
+                byName.put(ExperimentDiscovery.normalizeName(display), toggle);
+            }
+        });
+        lines.add("");
+        lines.add("Experiments the creator docs name (`codegen/model/components.json`):");
+        lines.add("");
+        List<String> unknown = new ArrayList<>();
+        for (String name : names) {
+            String toggle = byName.get(ExperimentDiscovery.normalizeName(name));
+            lines.add("- " + name + ": " + (toggle == null ? "**no toggle of this BDS**" : "`" + toggle + "`"));
+            if (toggle == null && !name.startsWith("experimental (")) {
+                unknown.add(name);
+            }
+        }
+        report.check(unknown.isEmpty() ? Report.Status.PASS : Report.Status.INFO, "Experiments: creator docs",
+            unknown.isEmpty() ? "every experiment the docs name is a toggle" : "the docs name experiments this BDS does not have: " + unknown);
+    }
+
+    /**
+     * {@code generator/experiments/<bds version>.json}: toggles and per toggle content. Candidate counts differ by
+     * platform and stay in the report; ids of earlier records are candidates again, so the toggle set converges.
+     */
+    private byte[] record(BdsDistribution distribution, Runs runs) {
+        ExperimentRun result = runs.experiments;
+        JsonObject json = new JsonObject();
+        json.addProperty("bdsVersion", distribution.version());
+        if (runs.protocol != null) {
+            json.addProperty("protocol", runs.protocol);
+        }
+        JsonObject toggles = new JsonObject();
+        List<String> all = new ArrayList<>(result.current);
+        all.addAll(result.retired);
+        all.stream().sorted().forEach(toggle -> {
+            JsonObject entry = new JsonObject();
+            entry.addProperty("status", result.current.contains(toggle) ? "current" : "retired");
+            if (result.codes.containsKey(toggle)) {
+                entry.addProperty("logCode", result.codes.get(toggle));
+            }
+            String key = result.uiKeyOf.get(toggle);
+            if (key != null) {
+                entry.addProperty("uiKey", key);
+                if (result.displayNames.containsKey(key)) {
+                    entry.addProperty("name", result.displayNames.get(key));
+                }
+            }
+            ExperimentAttribution.Diff diff = result.each.get(toggle);
+            if (diff != null) {
+                JsonObject content = new JsonObject();
+                content.add("itemsAdded", array(diff.itemsAdded()));
+                content.add("itemsChanged", array(diff.itemsChanged()));
+                content.add("scriptItemsAdded", array(diff.scriptItemsAdded()));
+                content.add("blocksAdded", array(diff.blocksAdded()));
+                content.add("dataDrivenBlocks", array(diff.dataDrivenBlocks()));
+                content.add("creativeAdded", array(diff.creativeAdded()));
+                content.add("removed", array(diff.removed()));
+                entry.add("content", content);
+            }
+            toggles.add(toggle, entry);
+        });
+        json.add("toggles", toggles);
+        json.add("uiKeys", array(List.copyOf(result.uiKeys)));
+        if (!result.unexplained.isEmpty()) {
+            json.add("onlyTogether", array(result.unexplained));
+        }
+        return (new com.google.gson.GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(json) + "\n")
+            .getBytes(StandardCharsets.UTF_8);
+    }
+
+    private static com.google.gson.JsonArray array(List<String> values) {
+        com.google.gson.JsonArray array = new com.google.gson.JsonArray();
+        values.forEach(array::add);
+        return array;
     }
 
     // ---------------------------------------------------------------------------------------------------------------
@@ -494,6 +885,7 @@ final class Update {
     private void networkData(BdsDistribution distribution, BdsDump dump, Runs runs, Staging staging) throws Exception {
         String name = runs.existing != null ? runs.existing : options.getOrDefault("name", versionName(distribution.version()));
         report.header.put("Bundled version", runs.existing != null ? name + " (existing, same protocol)" : name + " (NEW protocol)");
+        runs.bundledName = name;
         // The capture in the bundled format, imported into a scratch directory
         Path scratch = staging.directory.resolveSibling("imported");
         Files.createDirectories(scratch);
@@ -515,7 +907,7 @@ final class Update {
             }
             // Refresh what comes from the Script API (item tags, block defaults); keep the network data
             VanillaData refreshed = new VanillaData(bundled.version(), bundled.blockStates(), bundled.items(), bundled.dataDrivenBlocks(),
-                bundled.creative(), captured.itemTags(), Importer.readFallbacks(fallbacks.resolve(name + ".json")), captured.blockDefaults());
+                bundled.creative(), captured.itemTags(), Importer.readFallbacks(fallbacks.resolve(name + ".json")), captured.blockDefaults(), bundled.experiments());
             DataDiff bds = DataDiff.of(bundled, refreshed, false, true);
             report.check(bds.identical() ? Report.Status.PASS : Report.Status.DIFF, "Item tags and block defaults vs bundled " + name,
                 bds.identical() ? "identical" : bds.count() + " differences");
