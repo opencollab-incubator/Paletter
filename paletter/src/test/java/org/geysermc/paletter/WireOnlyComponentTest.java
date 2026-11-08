@@ -86,6 +86,22 @@ class WireOnlyComponentTest {
     }
 
     @Test
+    void renderOffsetPresetsAreABareStringNotAComponent() {
+        for (DataVersion version : PALETTER.versions()) {
+            NbtMap only = components(base().component(RenderOffsets.preset(RenderOffsets.Preset.CHESTPLATES)).build(), version);
+            assertEquals("chestplates", only.getString("render_offsets"));
+            assertFalse(only.containsKey("minecraft:render_offsets"));
+
+            NbtMap both = components(base().component(new RenderOffsets(
+                new RenderOffsets.Hand(RenderOffsets.Offset.scale(1, 1, 1), null), null, RenderOffsets.Preset.BOOTS)).build(), version);
+            assertEquals("boots", both.getString("render_offsets"));
+            assertTrue(both.getCompound("minecraft:render_offsets").containsKey("main_hand"));
+        }
+        assertEquals("helmets", RenderOffsets.Preset.HELMETS.value());
+        assertNull(new RenderOffsets(null, null).preset());
+    }
+
+    @Test
     void renderOffsetsWritePositionRotationScaleAndLeaveOutEmptyParts() {
         RenderOffsets offsets = new RenderOffsets(
             new RenderOffsets.Hand(new RenderOffsets.Offset(new RenderOffsets.Vec3(1, 2, 3), new RenderOffsets.Vec3(4, 5, 6),

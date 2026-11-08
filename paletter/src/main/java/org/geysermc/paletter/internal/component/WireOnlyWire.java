@@ -72,6 +72,14 @@ public final class WireOnlyWire {
     // empty parts are left out.
     private static void renderOffsets(RenderOffsets c, WireNode out) {
         out.remove("minecraft:render_offsets");
+        out.remove("render_offsets");
+        if (c.preset() != null) {
+            // A bare string, not a minecraft: component; only Geyser sends it
+            out.put("render_offsets", c.preset().value());
+            if (c.mainHand() == null && c.offHand() == null) {
+                return;
+            }
+        }
         WireNode node = out.child("minecraft:render_offsets");
         hand(node, "main_hand", c.mainHand());
         hand(node, "off_hand", c.offHand());

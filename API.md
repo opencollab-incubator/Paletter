@@ -99,7 +99,9 @@ override and compile path as the generated components:
   1.26.63.1 rejects it at every `format_version`); Paletter assumes current clients still honour it on the wire and keeps
   sending it for legacy content. It will be removed if clients stop honouring it. `new RenderOffsets(Hand mainHand, Hand offHand)`,
   `Hand(Offset firstPerson, Offset thirdPerson)`, `Offset(Vec3 position, Vec3 rotation, Vec3 scale)` (`Offset.scale(x, y, z)`),
-  `Vec3(float x, float y, float z)`; null parts are left out.
+  `Vec3(float x, float y, float z)`; null parts are left out. `RenderOffsets.preset(Preset)` (or the third constructor
+  argument) is Geyser's legacy armor form: a bare string `render_offsets` (`boots`, `leggings`, `chestplates`,
+  `helmets`; not a `minecraft:` component) naming the client's built-in offsets; alone it sends no `minecraft:render_offsets`.
 - `OnPlayerPlacing.of(String triggerType)` (`minecraft:on_player_placing`, a block component, `WireOnlyBlockComponent`, `@Deprecated` but not
   for removal): retired from the add-on format like `render_offsets`, assumed to be honoured by clients; sent as
   `{triggerType}`. Geyser sends `geyser:place_event`, an event no pack handles, so the client does not double place blocks.
