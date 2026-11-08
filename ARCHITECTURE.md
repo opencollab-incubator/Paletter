@@ -11,7 +11,7 @@ what is API in [API.md](API.md), the commands in [tools/README.md](tools/README.
 | Stage | Does | Owned by |
 |---|---|---|
 | 1. blocks | Vanilla states of the version, custom blocks and their properties, block fallbacks, network ids (sequential or hashed), canonical table | `BlockPalette` (+ `CanonicalBlocks`, `BlockInterner`, `BlockNetworkIds`); custom blocks are encoded by `internal.component.BlockCompiler` |
-| 2. items | Vanilla item definitions, custom items, overrides, item fallbacks, block items, tags, canonical table | `ItemPalette` (+ `CanonicalItems`); components are encoded by `internal.component.ItemCompiler` |
+| 2. items | Vanilla item definitions, custom items, overrides, item fallbacks, block items (`ItemPalette#blockOf`, decided from the bundled block to item relation first), tags, canonical table | `ItemPalette` (+ `CanonicalItems`); components are encoded by `internal.component.ItemCompiler` |
 | 3. creative | The creative layout (vanilla order from the data, then placements and edits of the layers) and the packet content | `CreativeLayout`, `CreativeEditor`, `CreativePlacement`, `CreativeContent` |
 | 4. output | The immutable `Palette`: definition registries for the codec, `StartGamePacket`, item component and creative content packets | `Palette`, `PaletteReport` (what was adapted, replaced or dropped) |
 
@@ -31,7 +31,10 @@ data/model/*         ->  tools: infer, components generate, constants generate  
   `tools.data.Importer` turn captures into the bundled format: one `paletter/src/main/resources/paletter/<version>.nbt`
   per Bedrock version plus `versions.txt`, read at runtime by `BundledDataSource` / `PaletteDataCodec`. No JSON, no network
   in the library.
-- `data/fallbacks/` are hand-curated replacements for content older versions lack; they are bundled with the data.
+- Paletter bundles no fallbacks: what an older version lacks is `minecraft:unknown` unless a consumer defines a
+  fallback in a layer. The data carries the block to item relation of the Script API (`block_items`) instead; versions
+  without a dump get the newest relation restricted to what they have (`block-items --from`). `renames.txt` lists
+  renamed identifiers for the forward mapping below.
 - `data/model/` is the component model: `components.json` (docs), `mappings.json` (inferred from BDS captures),
   `transforms.json`, `api.json`, `fixtures.json` (hand-written), `names.json` / `constants-history.json` (constants).
 
@@ -43,12 +46,13 @@ data/model/*         ->  tools: infer, components generate, constants generate  
 | `paletter/src/main/java/...` | Hand-written library. `internal/component/Transforms.java` holds the hand transforms generated encoders call |
 | `paletter/src/main/resources/paletter` | Generated data (`tools` import) |
 | `tools/src/main/java/...` | Hand-written tooling, including the generators (`tools.codegen`, `tools.model`) |
-| `data/model/transforms.json`, `api.json`, `fixtures.json`, `data/fallbacks`, `data/addons/dump` | Hand-written inputs |
+| `data/model/transforms.json`, `api.json`, `fixtures.json`, `data/addons/dump`, `paletter/src/main/resources/paletter/renames.txt` | Hand-written inputs |
 | `data/addons/capture`, `data/addons/creative`, `data/model/mappings.json`, `coverage.md` | Generated (never edit) |
 
 ## Hand-written wire-only components
 
-Fields Bedrock clients read that have no add-on JSON source cannot come from the component model: `minecraft:render_offsets`
+Fields Bedrock clients read that have no add-on JSON source cannot come from the component model (the "known gaps" of
+the README list what that leaves unverified): `minecraft:render_offsets`
 (retired from the add-on format; assumed still honoured on the wire), `item_properties.mining_speed` and
 `item_properties.frame_count` (always sent by BDS, not settable), and the block component `minecraft:on_player_placing` (retired like render_offsets). They are hand-written records in `item/component`
 under the sealed `WireOnlyItemComponent` (blocks: `WireOnlyBlockComponent`), which the generator lists in `ItemComponent`'s `permits` and dispatches in the
@@ -69,8 +73,12 @@ implementing `WireOnlyItemComponent` (and the `permits` clause), a case in `Wire
   uses palette positions (and shifts once custom blocks exist); `HASHED` uses the state hash, which is the same in every
   version, so vanilla `PaletteBlock`s and canonical table pages are shared between palettes.
 - **Resolution** turns a canonical id into what an older version sends: exact, adapted (state values added or removed),
-  fallback (layer, then bundled), or the default (`minecraft:unknown`). `Palette#explain` shows which, and
-  `inspect` prints it.
+  fallback (a layer's), or the default (`minecraft:unknown`). `Palette#explain` shows which, and `inspect` prints it.
+- **Forwarding** is the reverse and makes the canonical lookups version independent: `CanonicalBlocks#forward` /
+  `CanonicalItems#forward` map a state or variant of any bundled version to the newest version's canonical id (exact,
+  renamed through `renames.txt`, or adapted: values the newest block still has are kept, new keys get the default of
+  the newest data, removed keys are dropped) and say why when nothing matches (`Forwarding`). A newly bundled version
+  redefines the canonical table, so consumers keep mapping with the content they know and Paletter maps it forward.
 
 ## Layers and extend
 

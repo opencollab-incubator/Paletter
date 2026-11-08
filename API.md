@@ -110,6 +110,10 @@ override and compile path as the generated components:
 
 Their `name()` is the wire path (`item_properties.mining_speed`, ...), so the one-per-name rule of `CustomItem` holds.
 
+Known gap: because there is no add-on JSON source, the conformance suite (which builds add-ons and compares BDS's wire output) cannot
+cover these four; their shapes come from captures of BDS defaults and the Bedrock documentation, and `WireOnlyComponentTest` only
+checks what Paletter writes. A client rejecting one of them would not show up in `build`.
+
 ## What a palette cannot express
 
 Encoding never fails because of a Bedrock version. If a value cannot be expressed for a palette's version (the field is
@@ -150,10 +154,31 @@ constant overloads of `Palette`, `PaletteLayer.Builder`, `ItemMatcher`, `Creativ
 `CanonicalItems#extendsOrIs`, and the `FallbackDefaults` API of the update pipeline), so the new baseline covers the
 new types too, including every generated constant: removing one now fails `apiCompat`.
 
-Additions since the baseline (`apiCompat` passes, baseline not regenerated): `BedrockItemType#hasVariant` / `#variantOf`, and the
+Additions since the baseline (`apiCompat` passes, baseline not regenerated): `Forwarding` (with `Kind`), `Paletter#forwardBlock` /
+`#forwardItem` / `#explainUnknown` / `#canonicalBlockOf` and their `Palette` counterparts, `Palette#blockOf`,
+`ItemPalette#blockOf`, `CanonicalBlocks#forward`, `CanonicalItems#forward`, `VanillaData#blockItems` / `#withBlockItems` (an added
+record component; the previous constructors stay), and: `BedrockItemType#hasVariant` / `#variantOf`, and the
 debugging aids `Palette#explain` with `BlockExplanation` and `ItemExplanation` (both `@Experimental`: their shape may still grow), and the wire-only item components (`WireOnlyItemComponent`, `RenderOffsets`, `MiningSpeed`, `FrameCount`; `ItemComponent` gains the permitted sub-interface, so code that switches over it exhaustively needs a case for it; likewise `WireOnlyBlockComponent` with `OnPlayerPlacing` for `BlockComponent`).
 
 ### Pre-release changes
+
+- `Paletter#canonicalBlock(NbtMap)`, `#canonicalItem(ItemVariant)` and their `Palette` counterparts accept content of any
+  bundled version instead of returning -1 for what the newest version lacks: they map it forward (state keys adapted,
+  renamed identifiers via the bundled `renames.txt`) and return -1 only if no equivalent exists; `explainUnknown` says
+  why. This changes results that used to be -1, so it needed no baseline change. A new bundled Bedrock version no longer
+  invalidates consumer mappings.
+
+- Paletter bundles no fallbacks anymore: `data/fallbacks` and its import are removed, `VanillaData#fallbacks()` is empty
+  in the bundled data (the type and the codec's reading of old files stay), and content an older version lacks is
+  `minecraft:unknown` unless a layer defines a fallback (`PaletteLayer.Builder#blockFallback` / `#itemFallback` /
+  `#fallbackDefaults`, `force` semantics and experiment marks unchanged). Results of `Palette` for versions that used to
+  have bundled fallbacks changed; the API did not. The removed entries were exported for Geyser to adopt.
+
+- The block an item is sent with is decided by Paletter from the bundled block to item relation first
+  (`ItemPalette#blockOf`, `Palette#blockOf`, `Paletter#canonicalBlockOf`); the old name and creative state heuristics only
+  remain for data without the relation. `ItemPalette#defaultBlock` / `isBlockItem` changed results (doors, signs, crops,
+  banners, beds, cauldrons are block items now; double slab items are not). The data format gained the optional
+  `block_items` key; older files are still read.
 
 1.0.0 is not released, so these API changes replaced the old API directly, without a deprecation cycle (which applies
 from the first release on); the baseline was regenerated with each:

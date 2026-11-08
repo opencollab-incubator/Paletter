@@ -17,7 +17,8 @@ One command line, picocli (`Cli`): `./gradlew :tools:run --args="<command> ..."`
 | Command | Does |
 |---------|------|
 | `update --channel release\|preview [--verify-only] ...` | The whole BDS update pipeline (see the README, "Data") |
-| `import`, `bds-run`, `bds-compare`, `verify`, `check-data` | Importing and checking bundled data |
+| `import`, `bds-run`, `bds-compare`, `verify`, `check-data` | Importing and checking bundled data (`check-data` lists what older versions lack of the newest) |
+| `block-items`, `rewrite`, `data-diff` | Maintaining bundled data without a capture: add the block to item relation (from a stored dump, or derived from a newer version), rewrite files without fallbacks, diff two data files |
 | `spec-capture` | Runs the spec add-on on BDS, writes `data/bds/<version>/spec` |
 | `creative-probe` | Runs a creative add-on on BDS and records the creative order |
 | `capture`, `compare`, `experiments` | The capture client: record a server, diff it with a bundled version, switch experiments in a `level.dat` |
