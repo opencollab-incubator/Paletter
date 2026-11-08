@@ -92,6 +92,10 @@ final class WireSource {
         for (Comp c : members) {
             dispatch.addStatement("case $T value -> $N(value, ctx, out)", ApiSource.className(c), method(c));
         }
+        if (kind == Kind.ITEM) {
+            dispatch.addStatement("case $T value -> $T.write(value, ctx, out)", ClassName.get(kind.pkg(), "WireOnlyItemComponent"),
+                ClassName.get(PKG, "WireOnlyWire"));
+        }
         if (members.isEmpty()) {
             dispatch.addStatement("default -> throw new $T(component.toString())", IllegalArgumentException.class);
         }

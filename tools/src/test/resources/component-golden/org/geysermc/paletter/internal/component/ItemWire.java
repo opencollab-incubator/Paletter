@@ -8,6 +8,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.paletter.item.component.Gadget;
 import org.geysermc.paletter.item.component.ItemComponent;
 import org.geysermc.paletter.item.component.Widget;
+import org.geysermc.paletter.item.component.WireOnlyItemComponent;
 
 /**
  * Encoders of the generated {@link ItemComponent} types: the rules of {@code data/model/mappings.json} per
@@ -27,6 +28,7 @@ public final class ItemWire {
         switch (component) {
             case Gadget value -> gadget(value, ctx, out);
             case Widget value -> widget(value, ctx, out);
+            case WireOnlyItemComponent value -> WireOnlyWire.write(value, ctx, out);
         }
     }
 

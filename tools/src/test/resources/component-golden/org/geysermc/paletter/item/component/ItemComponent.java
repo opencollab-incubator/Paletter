@@ -9,10 +9,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * A custom item component, mirroring Bedrock's add-on JSON: one record per component, generated
  * from the component model in {@code data/model} (creator docs plus what Bedrock Dedicated Server sends). Paletter
  * compiles them to the wire format of each palette's protocol.
+ * <p>
+ * Hand-written wire-only components, for fields with no add-on JSON source: see {@link WireOnlyItemComponent}.
  *
  * @since 1.0.0
  */
-public sealed interface ItemComponent permits Gadget, Widget {
+public sealed interface ItemComponent permits Gadget, Widget, WireOnlyItemComponent {
     /**
      * @return the component name in add-on JSON, e.g. {@code minecraft:durability}
      */

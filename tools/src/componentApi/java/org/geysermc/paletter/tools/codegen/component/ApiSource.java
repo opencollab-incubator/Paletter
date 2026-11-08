@@ -107,10 +107,16 @@ final class ApiSource {
             omitted.forEach(doc::append);
             doc.append("</ul>\n");
         }
+        if (kind == Kind.ITEM) {
+            doc.append("<p>\nHand-written wire-only components, for fields with no add-on JSON source: see {@link WireOnlyItemComponent}.\n");
+        }
         doc.append("\n@since ").append(since).append('\n');
         TypeSpec.Builder type = TypeSpec.interfaceBuilder(kind.iface()).addModifiers(Modifier.PUBLIC, Modifier.SEALED)
             .addJavadoc("$L", doc.toString());
         members.stream().map(ApiSource::className).sorted((a, b) -> a.simpleName().compareTo(b.simpleName())).forEach(type::addPermittedSubclass);
+        if (kind == Kind.ITEM) {
+            type.addPermittedSubclass(ClassName.get(kind.pkg(), "WireOnlyItemComponent"));
+        }
         type.addMethod(MethodSpec.methodBuilder("name").addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .addJavadoc("@return the component name in add-on JSON, e.g. {@code minecraft:durability}\n")
             .returns(STRING.annotated(AnnotationSpec.builder(NON_NULL).build())).build());

@@ -48,6 +48,7 @@ import org.geysermc.paletter.item.component.ThrowableItem;
 import org.geysermc.paletter.item.component.UseAnimation;
 import org.geysermc.paletter.item.component.UseModifiers;
 import org.geysermc.paletter.item.component.Wearable;
+import org.geysermc.paletter.item.component.WireOnlyItemComponent;
 
 /**
  * Encoders of the generated {@link ItemComponent} types: the rules of {@code data/model/mappings.json} per
@@ -107,6 +108,7 @@ public final class ItemWire {
             case UseAnimation value -> useAnimation(value, ctx, out);
             case UseModifiers value -> useModifiers(value, ctx, out);
             case Wearable value -> wearable(value, ctx, out);
+            case WireOnlyItemComponent value -> WireOnlyWire.write(value, ctx, out);
         }
     }
 

@@ -46,6 +46,18 @@ data/model/*         ->  tools: infer, components generate, constants generate  
 | `data/model/transforms.json`, `api.json`, `fixtures.json`, `data/fallbacks`, `data/addons/dump` | Hand-written inputs |
 | `data/addons/capture`, `data/addons/creative`, `data/model/mappings.json`, `coverage.md` | Generated (never edit) |
 
+## Hand-written wire-only components
+
+Fields Bedrock clients read that have no add-on JSON source cannot come from the component model: `minecraft:render_offsets`
+(retired from the add-on format; assumed still honoured on the wire), `item_properties.mining_speed` and
+`item_properties.frame_count` (always sent by BDS, not settable). They are hand-written records in `item/component`
+under the sealed `WireOnlyItemComponent`, which the generator lists in `ItemComponent`'s `permits` and dispatches in the
+generated `ItemWire#write` to `internal/component/WireOnlyWire`. So they are one path with the generated components:
+`CustomItem` and overrides take them, `ItemCompiler` writes them in list order over the defaults. Each has a protocol
+window (`WireOnlyWire.*_FROM`, the first protocol that carries the field; now all bundled versions). To add one: a record
+implementing `WireOnlyItemComponent` (and the `permits` clause), a case in `WireOnlyWire`, a test in
+`WireOnlyComponentTest`.
+
 ## Ids
 
 - **Canonical ids** are dense ints for the newest Bedrock version: a block state's position in its vanilla palette; an
