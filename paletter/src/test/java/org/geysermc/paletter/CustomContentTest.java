@@ -5,6 +5,7 @@ import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
+import org.geysermc.paletter.block.component.Connection;
 import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.block.component.LightEmission;
 import org.geysermc.paletter.block.component.MaterialInstances;
@@ -188,5 +189,18 @@ class CustomContentTest {
         assertTrue(item.getRuntimeId() > ruby.getRuntimeId());
         // The block's own placement still applies
         assertTrue(palette.creativeLayout().stacks().anyMatch(s -> s.identifier().equals(lamp.identifier())));
+    }
+
+    @Test
+    void laterLayersDoNotRepeatOrReattributeEarlierBlockWarnings() {
+        // A connection trait has no wire mapping: compiling it warns
+        CustomBlock fence = CustomBlock.builder("example:fence")
+            .trait(Connection.builder().enabledStates(Connection.EnabledStates.CARDINAL_CONNECTIONS).build())
+            .build();
+        Palette first = PALETTER.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("first").block(fence).build());
+        assertFalse(first.report().warnings().isEmpty());
+        Palette second = first.extend(PaletteLayer.builder("second").block(lamp()).build());
+        assertEquals(first.report().warnings(), second.report().warnings());
+        assertTrue(second.report().warnings().stream().noneMatch(w -> w.source().equals("second")));
     }
 }

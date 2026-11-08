@@ -49,6 +49,7 @@ public final class Paletter {
     private final Map<DataVersion, VanillaData> data = new ConcurrentHashMap<>();
     private final Map<VanillaKey, Palette> vanilla = new ConcurrentHashMap<>();
     private final Map<Key, Palette> palettes = new ConcurrentHashMap<>();
+    private final Map<Palette, Palette> newerThanData = new ConcurrentHashMap<>();
     private final Map<NbtMap, NbtMap> interned = new HashMap<>();
     private final BlockInterner blockInterner = new BlockInterner();
     private volatile CanonicalBlocks canonicalBlocks;
@@ -260,6 +261,17 @@ public final class Paletter {
             Palette parent = palette;
             PaletteLayer layer = layers.get(i);
             palette = palettes.computeIfAbsent(key, k -> PaletteCompiler.extend(parent, layer));
+        }
+        if (protocolVersion > version.protocolVersion() && version.equals(latest())) {
+            // Newer than all data: the latest data is used, and block ids may shift against what the client has
+            return newerThanData.computeIfAbsent(palette, p -> {
+                PaletteReport report = new PaletteReport();
+                report.addAll(p.report());
+                report.warn("paletter", "The requested protocol is newer than the newest bundled data ("
+                    + version + ", protocol " + version.protocolVersion() + "); its data is used, so content the client has"
+                    + " that this version lacks is missing and sequential block ids may differ");
+                return p.withReport(report);
+            });
         }
         return palette;
     }

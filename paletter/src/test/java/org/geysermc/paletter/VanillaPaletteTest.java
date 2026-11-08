@@ -178,4 +178,16 @@ class VanillaPaletteTest {
             assertEquals(category, CreativeCategory.fromBedrockName(category.bedrockName()));
         }
     }
+
+    @Test
+    void aProtocolNewerThanTheDataIsReported() {
+        Paletter paletter = Paletter.bundled();
+        int latest = paletter.latest().protocolVersion();
+        assertTrue(paletter.palette(latest).report().warnings().isEmpty());
+        Palette newer = paletter.palette(latest + 1000);
+        assertEquals(paletter.latest(), newer.version());
+        assertFalse(newer.report().warnings().isEmpty());
+        assertSame(newer, paletter.palette(latest + 1000));
+        assertFalse(newer.extend(PaletteLayer.builder("session").build()).report().warnings().isEmpty());
+    }
 }

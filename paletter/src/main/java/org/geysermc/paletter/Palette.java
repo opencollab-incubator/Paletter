@@ -72,6 +72,13 @@ public final class Palette {
         this.report = report;
     }
 
+    /**
+     * @return this palette with another report, sharing everything else
+     */
+    Palette withReport(PaletteReport report) {
+        return new Palette(data, layers, blocks, items, creativeLayout, creative, report);
+    }
+
     public @NonNull DataVersion version() {
         return data.version();
     }

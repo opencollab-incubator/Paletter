@@ -139,11 +139,18 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
         List<String> byIdentifier = new ArrayList<>(all.size());
         all.forEach(block -> byIdentifier.add(block.identifier()));
         byIdentifier.sort(java.util.Comparator.reverseOrder());
+        Map<String, Integer> blockIds = new HashMap<>();
+        for (int i = 0; i < byIdentifier.size(); i++) {
+            blockIds.put(byIdentifier.get(i), CUSTOM_BLOCK_ID_START + i);
+        }
         List<BlockPropertyData> encoded = new ArrayList<>(all.size());
         WireContext context = WireContext.of(data, report, source);
-        for (CustomBlock block : all) {
-            int blockId = CUSTOM_BLOCK_ID_START + byIdentifier.indexOf(block.identifier());
-            encoded.add(new BlockPropertyData(block.identifier(), BlockCompiler.propertyData(block, blockId, context)));
+        // The blocks already here were reported by their own layers: encode them again into a report nobody reads
+        WireContext earlier = WireContext.of(data, new PaletteReport(), source);
+        for (int i = 0; i < all.size(); i++) {
+            CustomBlock block = all.get(i);
+            WireContext blockContext = i < table.customBlocks.size() ? earlier : context;
+            encoded.add(new BlockPropertyData(block.identifier(), BlockCompiler.propertyData(block, blockIds.get(block.identifier()), blockContext)));
         }
         Table extended = new Table(data, all, encoded, table.mode, interner);
         return new BlockPalette(extended, canonical.extend(key, additional), fallbacks, defaultFallback, interner);
@@ -485,7 +492,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     }
 
     /**
-     * FNV-1a 64 bit hash of a block identifier; the client orders its palette by it once custom blocks exist.
+     * FNV-1 64 bit hash (multiply, then xor: not FNV-1a) of a block identifier; the client orders its palette by it once custom blocks exist.
      */
     public static long nameHash(@NonNull String identifier) {
         long hash = FNV1_64_OFFSET_BASIS;
@@ -494,6 +501,9 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
             hash ^= b;
         }
         return hash;
+    }
+
+    private record HashedState(long hash, NbtMap state) {
     }
 
     private record Schema(List<PaletteBlock> states, Map<String, Set<Object>> values, PaletteBlock defaultState) {
@@ -542,7 +552,15 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
                 states.addAll(customStates);
                 // The client sorts the whole palette by name hash as soon as custom blocks exist. The sort is stable,
                 // so states of one block keep their order. Hashed ids do not depend on it, but keep one order anyway
-                states.sort((a, b) -> Long.compareUnsigned(nameHash(BlockStates.name(a)), nameHash(BlockStates.name(b))));
+                Map<String, Long> hashes = new HashMap<>();
+                List<HashedState> hashed = new ArrayList<>(states.size());
+                for (NbtMap state : states) {
+                    hashed.add(new HashedState(hashes.computeIfAbsent(BlockStates.name(state), BlockPalette::nameHash), state));
+                }
+                hashed.sort((a, b) -> Long.compareUnsigned(a.hash(), b.hash()));
+                for (int i = 0; i < states.size(); i++) {
+                    states.set(i, hashed.get(i).state());
+                }
             }
 
             this.byIndex = new PaletteBlock[states.size()];
