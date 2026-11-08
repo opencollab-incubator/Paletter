@@ -171,12 +171,17 @@ class TransformsTest {
         WireNode repair = new WireNode();
         Transforms.itemDescriptorList(ctx, repair, Repairable.builder().repairItems(
             Repairable.RepairItems.builder().items("minecraft:stick").repairAmount(1.5f).build(),
-            Repairable.RepairItems.builder().items(List.of()).repairAmountExpression("q.max_durability * 0.25").build()).build());
+            Repairable.RepairItems.builder().items(List.of()).repairAmountExpression("q.max_durability * 0.25").build(),
+            Repairable.RepairItems.builder().itemsTags("1").repairAmount(1f).build()).build());
         NbtList<NbtMap> entries = (NbtList<NbtMap>) compound(repair, "minecraft:repairable").getList("repair_items", NbtType.COMPOUND);
         assertEquals("minecraft:stick", entries.get(0).getList("items", NbtType.COMPOUND).getFirst().getString("name"));
         assertEquals(1.5f, entries.get(0).getFloat("repair_amount"));
         assertEquals("q.max_durability * 0.25", entries.get(1).getString("repair_amount"));
         assertTrue(entries.get(1).getList("items", NbtType.COMPOUND).isEmpty());
+        List<NbtMap> tagged = entries.get(2).getList("items", NbtType.COMPOUND);
+        assertEquals(1, tagged.size());
+        assertEquals("1", tagged.getFirst().getString("tags"), "a tag query descriptor is {tags}");
+        assertFalse(tagged.getFirst().containsKey("name"));
     }
 
     @Test

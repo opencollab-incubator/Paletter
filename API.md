@@ -169,6 +169,9 @@ from the first release on); the baseline was regenerated with each:
   `MenuCategory`, `ItemOverride#components(UnaryOperator)` by `ItemOverride#components(ItemComponent...)`. The generated
   API carries `@since 1.0.0`.
 
+- `Repairable.RepairItems` gains `itemsTags` (the `items` string form: a Molang tag query sent as `{tags}`), an added record
+  component, which changes the canonical constructor; the baseline was regenerated.
+
 ### `@since`
 
 Every exported type has `@since` in its javadoc (enforced by `ApiBoundaryTest`); members added later carry their own

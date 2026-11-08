@@ -312,7 +312,7 @@ public final class Transforms {
     }
 
     /**
-     * {@code repair_items}: items as {@code [{name}]}, unknown items dropped, an entry without known items dropped with its
+     * {@code repair_items}: items as {@code [{name}]} (or one {@code {tags}} Molang query), unknown items dropped, an entry without known items dropped with its
      * repair amount; the amount a float, or a Molang string.
      */
     public static void itemDescriptorList(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Repairable c) {
@@ -328,6 +328,10 @@ public final class Transforms {
             e.list("items");
             for (String item : items) {
                 e.element("items").put("name", item);
+            }
+            if (entry.itemsTags() != null) {
+                // The string form is a Molang tag query ({tags}), e.g. query.any_tag('minecraft:planks')
+                e.element("items").put("tags", entry.itemsTags());
             }
             if (entry.repairAmountExpression() != null) {
                 e.put("repair_amount", entry.repairAmountExpression());
