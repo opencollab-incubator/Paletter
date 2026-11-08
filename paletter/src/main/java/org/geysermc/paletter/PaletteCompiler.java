@@ -26,6 +26,7 @@ import org.geysermc.paletter.item.ItemVariant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +68,13 @@ final class PaletteCompiler {
             }
 
             List<ItemVariant> newVariants = new ArrayList<>();
+            // blockItem(...) for a block of this layer takes over the item registration the block would do itself
+            Set<String> explicit = new HashSet<>();
+            layer.itemEntries().forEach(entry -> {
+                if (entry instanceof PaletteLayer.ItemEntry.OfBlock ofBlock) {
+                    explicit.add(ofBlock.block());
+                }
+            });
             for (PaletteLayer.ItemEntry entry : layer.itemEntries()) {
                 switch (entry) {
                     case PaletteLayer.ItemEntry.Custom custom -> newVariants.add(custom.item().variant());
@@ -78,7 +86,7 @@ final class PaletteCompiler {
                 }
             }
             for (CustomBlock block : layer.blocks()) {
-                if (!(block.item() instanceof CustomBlock.BlockItem.None)) {
+                if (!explicit.contains(block.identifier()) && !(block.item() instanceof CustomBlock.BlockItem.None)) {
                     newVariants.add(ItemVariant.of(block.identifier()));
                 }
             }
@@ -114,13 +122,19 @@ final class PaletteCompiler {
                     case PaletteLayer.ItemEntry.OfBlock(String identifier, CustomBlock.BlockItem blockItem, var placement) -> {
                         CustomBlock block = blocks.customBlocks().stream().filter(b -> b.identifier().equals(identifier)).findFirst()
                             .orElseThrow(() -> new PaletteException("Item of unknown custom block " + identifier));
-                        if (items.addBlockItem(block, blockItem, report, source) != null && placement != null) {
-                            placed.add(new Placed(identifier, CreativeStack.of(block.identifier()).withBlockState(block.defaultState()), placement));
+                        // The block of this layer keeps its own placement unless blockItem gives another
+                        CreativePlacement effective = placement != null || layer.blocks().stream().noneMatch(b -> b.identifier().equals(identifier))
+                            ? placement : creativePlacement(block, ordering);
+                        if (items.addBlockItem(block, blockItem, report, source) != null && effective != null) {
+                            placed.add(new Placed(identifier, CreativeStack.of(block.identifier()).withBlockState(block.defaultState()), effective));
                         }
                     }
                 }
             }
             for (CustomBlock block : layer.blocks()) {
+                if (explicit.contains(block.identifier())) {
+                    continue;
+                }
                 CreativePlacement placement = creativePlacement(block, ordering);
                 if (items.addBlockItem(block, report, source) != null && placement != null) {
                     placed.add(new Placed(block.identifier(), CreativeStack.of(block.identifier()).withBlockState(block.defaultState()), placement));

@@ -176,4 +176,17 @@ class CustomContentTest {
             .property(BlockProperty.range("example:a", 0, 4095)).property(BlockProperty.range("example:b", 0, 4095))
             .property(BlockProperty.range("example:c", 0, 4095)).build());
     }
+
+    @Test
+    void blockItemTakesOverTheItemOfABlockOfTheSameLayer() {
+        CustomBlock lamp = lamp();
+        PaletteLayer layer = PaletteLayer.builder("ordered").item(ruby())
+            .blockItem(lamp.identifier(), lamp.item(), null).block(lamp).build();
+        Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), layer);
+        PaletteItem ruby = palette.items().getDefinition("example:ruby");
+        PaletteItem item = palette.items().getDefinition(lamp.identifier());
+        assertTrue(item.getRuntimeId() > ruby.getRuntimeId());
+        // The block's own placement still applies
+        assertTrue(palette.creativeLayout().stacks().anyMatch(s -> s.identifier().equals(lamp.identifier())));
+    }
 }
