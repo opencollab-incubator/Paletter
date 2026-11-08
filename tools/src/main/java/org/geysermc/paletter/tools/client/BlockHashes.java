@@ -1,11 +1,10 @@
 package org.geysermc.paletter.tools.client;
 
-import org.cloudburstmc.nbt.NBTOutputStream;
+import org.geysermc.paletter.tools.data.Nbt;
 import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
-import org.cloudburstmc.nbt.NbtUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,14 +29,14 @@ public final class BlockHashes {
             .putString("name", state.getString("name"))
             .putCompound("states", states.build())
             .build();
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        try (NBTOutputStream output = NbtUtils.createWriterLE(bytes)) {
-            output.writeTag(canonical);
+        byte[] bytes;
+        try {
+            bytes = Nbt.writeLe(canonical);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
         int hash = 0x811c9dc5;
-        for (byte b : bytes.toByteArray()) {
+        for (byte b : bytes) {
             hash ^= b & 0xff;
             hash *= 0x01000193;
         }

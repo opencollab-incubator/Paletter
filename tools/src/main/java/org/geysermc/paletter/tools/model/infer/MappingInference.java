@@ -1,5 +1,6 @@
 package org.geysermc.paletter.tools.model.infer;
 
+import org.geysermc.paletter.tools.data.Nbt;
 import org.geysermc.paletter.tools.client.Capture;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -181,14 +182,14 @@ public final class MappingInference {
         JsonParser.parseString(Files.readString(dir.resolve("variants.json"), StandardCharsets.UTF_8)).getAsJsonArray()
             .forEach(e -> variants.add(Variant.of(e.getAsJsonObject())));
         Map<String, Map<String, Leaf>> wire = new LinkedHashMap<>();
-        NbtMap items = Wire.read(dir.resolve("custom_item_registry.nbt"));
+        NbtMap items = Nbt.read(dir.resolve("custom_item_registry.nbt"));
         for (NbtMap item : items.getList("items", org.cloudburstmc.nbt.NbtType.COMPOUND)) {
             NbtMap data = item.getCompound("data");
             if (item.getBoolean("componentBased") || !data.isEmpty()) {
                 wire.put("item " + item.getString("name"), Wire.flatten(data.getCompound("components")));
             }
         }
-        NbtMap blocks = Wire.read(dir.resolve("custom_block_properties.nbt"));
+        NbtMap blocks = Nbt.read(dir.resolve("custom_block_properties.nbt"));
         for (NbtMap block : blocks.getList("blocks", org.cloudburstmc.nbt.NbtType.COMPOUND)) {
             Map<String, Leaf> flat = Wire.flatten(block.getCompound("properties"));
             flat.remove("vanilla_block_data.block_id");

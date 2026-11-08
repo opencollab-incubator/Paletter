@@ -5,10 +5,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.cloudburstmc.nbt.NBTInputStream;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
-import org.cloudburstmc.nbt.NbtUtils;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.geysermc.paletter.block.BlockFallback;
 import org.geysermc.paletter.block.BlockStates;
@@ -24,9 +22,7 @@ import org.geysermc.paletter.data.VanillaItem;
 import org.geysermc.paletter.data.VersionFallbacks;
 import org.geysermc.paletter.item.ItemFallback;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -151,7 +147,7 @@ public final class Importer {
     static Source readSource(Path source, String name) throws IOException {
         List<NbtMap> rawBlocks = readRawBlocks(file(source, "block_palette.nbt", name));
         List<NbtMap> blocks = rawBlocks.stream().map(BlockStates::normalize).toList();
-        NbtMap components = readGzip(file(source, "item_components.nbt", name));
+        NbtMap components = Nbt.readGzip(file(source, "item_components.nbt", name));
         List<VanillaItem> items = readItems(file(source, "runtime_item_states.json", name), components);
         Path dataDrivenFile = file(source, "data_driven_blocks.nbt", name);
         List<BlockPropertyData> dataDriven = Files.exists(dataDrivenFile) ? readDataDrivenBlocks(dataDrivenFile) : null;
@@ -173,13 +169,7 @@ public final class Importer {
     }
 
     private static List<NbtMap> readRawBlocks(Path file) throws IOException {
-        return List.copyOf(readGzip(file).getList("blocks", NbtType.COMPOUND));
-    }
-
-    private static NbtMap readGzip(Path file) throws IOException {
-        try (InputStream stream = Files.newInputStream(file); NBTInputStream input = NbtUtils.createGZIPReader(stream, true, true)) {
-            return (NbtMap) input.readTag();
-        }
+        return List.copyOf(Nbt.readGzip(file).getList("blocks", NbtType.COMPOUND));
     }
 
     private static List<VanillaItem> readItems(Path statesFile, NbtMap components) throws IOException {
@@ -206,8 +196,8 @@ public final class Importer {
     }
 
     private static List<BlockPropertyData> readDataDrivenBlocks(Path file) throws IOException {
-        try (InputStream stream = Files.newInputStream(file); NBTInputStream input = NbtUtils.createGZIPReader(stream)) {
-            NbtMap root = (NbtMap) input.readTag();
+        {
+            NbtMap root = Nbt.readGzip(file);
             List<BlockPropertyData> blocks = new ArrayList<>();
             root.forEach((name, properties) -> blocks.add(new BlockPropertyData(name, (NbtMap) properties)));
             return blocks;
@@ -249,19 +239,14 @@ public final class Importer {
     }
 
     private static CreativeStack readStack(JsonObject json) throws IOException {
-        NbtMap block = json.has("block_state_b64") ? BlockStates.normalize(readLittleEndian(json.get("block_state_b64").getAsString())) : null;
-        NbtMap tag = json.has("nbt_b64") ? readLittleEndian(json.get("nbt_b64").getAsString()) : null;
+        NbtMap block = json.has("block_state_b64") ? BlockStates.normalize(Nbt.readLeBase64(json.get("block_state_b64").getAsString())) : null;
+        NbtMap tag = json.has("nbt_b64") ? Nbt.readLeBase64(json.get("nbt_b64").getAsString()) : null;
         return new CreativeStack(json.get("id").getAsString(),
             json.has("damage") ? json.get("damage").getAsInt() : 0,
             json.has("count") ? json.get("count").getAsInt() : 1,
             block, tag);
     }
 
-    private static NbtMap readLittleEndian(String base64) throws IOException {
-        try (NBTInputStream input = NbtUtils.createReaderLE(new ByteArrayInputStream(Base64.getDecoder().decode(base64)))) {
-            return (NbtMap) input.readTag();
-        }
-    }
 
     public static Map<String, List<String>> readItemTags(Path file) throws IOException {
         Map<String, List<String>> tags = new TreeMap<>();

@@ -1,5 +1,6 @@
 package org.geysermc.paletter.tools.client;
 
+import org.geysermc.paletter.tools.data.Nbt;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ class BlockHashesTest {
     void customStatesIncludeTraits() throws IOException {
         Path file = Path.of("../data/bds/1.26.63.1/addon/custom_block_properties.nbt");
         Map<String, NbtMap> blocks = new java.util.HashMap<>();
-        for (NbtMap block : CapturedData.readGzip(file).getList("blocks", NbtType.COMPOUND)) {
+        for (NbtMap block : Nbt.readGzip(file).getList("blocks", NbtType.COMPOUND)) {
             blocks.put(block.getString("name"), block.getCompound("properties"));
         }
         // Default states (first of each property, then trait states) as the creative inventory sent them

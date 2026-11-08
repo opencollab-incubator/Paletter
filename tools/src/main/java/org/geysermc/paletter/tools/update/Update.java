@@ -1,5 +1,6 @@
 package org.geysermc.paletter.tools.update;
 
+import org.geysermc.paletter.tools.data.Nbt;
 import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.bds.BdsRunner;
@@ -1042,7 +1043,7 @@ public final class Update {
         boolean same = Files.isDirectory(target);
         for (String file : files) {
             same &= Files.exists(target.resolve(file))
-                && OrderingCheck.readGzip(target.resolve(file)).equals(OrderingCheck.readGzip(runs.customCapture.resolve(file)));
+                && Nbt.readGzip(target.resolve(file)).equals(Nbt.readGzip(runs.customCapture.resolve(file)));
         }
         report.check(same ? Report.Status.PASS : Report.Status.DIFF, "Add-on capture vs " + root.relativize(bdsData),
             same ? "`" + root.relativize(target) + "` has the same NBT" : "`" + root.relativize(target) + "` is missing or differs");

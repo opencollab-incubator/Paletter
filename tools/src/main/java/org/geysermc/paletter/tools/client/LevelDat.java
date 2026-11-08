@@ -1,12 +1,9 @@
 package org.geysermc.paletter.tools.client;
 
-import org.cloudburstmc.nbt.NBTInputStream;
-import org.cloudburstmc.nbt.NBTOutputStream;
+import org.geysermc.paletter.tools.data.Nbt;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
-import org.cloudburstmc.nbt.NbtUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -50,22 +47,13 @@ public final class LevelDat {
         if (length != bytes.length - 8) {
             throw new IOException("level.dat header says " + length + " payload bytes, file has " + (bytes.length - 8));
         }
-        try (NBTInputStream input = NbtUtils.createReaderLE(new ByteArrayInputStream(bytes, 8, bytes.length - 8))) {
-            Object tag = input.readTag();
-            if (!(tag instanceof NbtMap root)) {
-                throw new IOException("level.dat root is not a compound");
-            }
-            return new Contents(storageVersion, root);
-        }
+        return new Contents(storageVersion, Nbt.readLe(bytes, 8, bytes.length - 8));
     }
 
     static byte[] write(Contents contents) throws IOException {
-        ByteArrayOutputStream payload = new ByteArrayOutputStream();
-        try (NBTOutputStream output = NbtUtils.createWriterLE(payload)) {
-            output.writeTag(contents.root());
-        }
-        ByteBuffer out = ByteBuffer.allocate(8 + payload.size()).order(ByteOrder.LITTLE_ENDIAN);
-        out.putInt(contents.storageVersion()).putInt(payload.size()).put(payload.toByteArray());
+        byte[] payload = Nbt.writeLe(contents.root());
+        ByteBuffer out = ByteBuffer.allocate(8 + payload.length).order(ByteOrder.LITTLE_ENDIAN);
+        out.putInt(contents.storageVersion()).putInt(payload.length).put(payload);
         return out.array();
     }
 

@@ -3,17 +3,12 @@ package org.geysermc.paletter.tools.data;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.cloudburstmc.nbt.NBTInputStream;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
-import org.cloudburstmc.nbt.NbtUtils;
 import org.geysermc.paletter.block.BlockPalette;
 import org.geysermc.paletter.block.BlockStates;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -44,7 +39,7 @@ public final class OrderingCheck {
      * @param sequential a capture of the same world with sequential ids
      */
     public void sequential(String label, Path hashed, Path sequential) throws IOException {
-        List<NbtMap> palette = new ArrayList<>(readGzip(hashed.resolve("block_palette.nbt")).getList("blocks", NbtType.COMPOUND));
+        List<NbtMap> palette = new ArrayList<>(Nbt.readGzip(hashed.resolve("block_palette.nbt")).getList("blocks", NbtType.COMPOUND));
         List<NbtMap> sorted = new ArrayList<>(palette);
         sorted.sort(Comparator.comparing((NbtMap state) -> BlockPalette.nameHash(BlockStates.name(state)), Long::compareUnsigned));
         Map<NbtMap, Integer> index = new HashMap<>();
@@ -74,7 +69,7 @@ public final class OrderingCheck {
                 unresolved++;
                 continue;
             }
-            NbtMap state = BlockStates.normalize(readLittleEndian(x.get("block_state_b64").getAsString()));
+            NbtMap state = BlockStates.normalize(Nbt.readLeBase64(x.get("block_state_b64").getAsString()));
             long actual = Long.parseLong(y.get("block_runtime_id").getAsString());
             Integer expected = index.get(state);
             checked++;
@@ -121,7 +116,7 @@ public final class OrderingCheck {
     /** Custom block ids and block item ids of a capture with custom blocks. */
     public void customBlockIds(String label, Path capture) throws IOException {
         List<String[]> custom = new ArrayList<>();
-        for (NbtMap block : readGzip(capture.resolve("raw_start_game_block_properties.nbt")).getList("blocks", NbtType.COMPOUND)) {
+        for (NbtMap block : Nbt.readGzip(capture.resolve("raw_start_game_block_properties.nbt")).getList("blocks", NbtType.COMPOUND)) {
             String name = block.getString("name");
             if (!name.startsWith("minecraft:")) {
                 NbtMap data = block.getCompound("properties").getCompound("vanilla_block_data");
@@ -183,15 +178,4 @@ public final class OrderingCheck {
         }
     }
 
-    public static NbtMap readGzip(Path file) throws IOException {
-        try (InputStream stream = Files.newInputStream(file); NBTInputStream input = NbtUtils.createGZIPReader(stream)) {
-            return (NbtMap) input.readTag();
-        }
-    }
-
-    private static NbtMap readLittleEndian(String base64) throws IOException {
-        try (NBTInputStream input = NbtUtils.createReaderLE(new ByteArrayInputStream(Base64.getDecoder().decode(base64)))) {
-            return (NbtMap) input.readTag();
-        }
-    }
 }

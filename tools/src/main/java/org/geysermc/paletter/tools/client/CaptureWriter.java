@@ -1,15 +1,14 @@
 package org.geysermc.paletter.tools.client;
 
+import org.geysermc.paletter.tools.data.Nbt;
 import org.geysermc.paletter.tools.data.Importer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import org.cloudburstmc.nbt.NBTOutputStream;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
-import org.cloudburstmc.nbt.NbtUtils;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.cloudburstmc.protocol.bedrock.data.ExperimentData;
 import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
@@ -20,9 +19,7 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
 import org.geysermc.paletter.data.VanillaData;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -80,7 +77,7 @@ public final class CaptureWriter {
         StartGamePacket startGame = result.startGame;
 
         // Importer layout
-        writeGzip(directory.resolve("block_palette.nbt"), NbtMap.builder()
+        Nbt.writeGzip(directory.resolve("block_palette.nbt"), NbtMap.builder()
             .putList("blocks", NbtType.COMPOUND, palette).build());
         JsonArray itemStates = new JsonArray();
         NbtMapBuilder components = NbtMap.builder();
@@ -96,19 +93,19 @@ public final class CaptureWriter {
             }
         }
         Files.writeString(directory.resolve("runtime_item_states.json"), GSON.toJson(itemStates));
-        writeGzip(directory.resolve("item_components.nbt"), components.build());
+        Nbt.writeGzip(directory.resolve("item_components.nbt"), components.build());
         Files.writeString(directory.resolve("creative_items.json"), GSON.toJson(creative()));
         NbtMapBuilder dataDriven = NbtMap.builder();
         for (BlockPropertyData block : startGame.getBlockProperties()) {
             dataDriven.putCompound(block.getName(), block.getProperties());
         }
-        writeGzip(directory.resolve("data_driven_blocks.nbt"), dataDriven.build());
+        Nbt.writeGzip(directory.resolve("data_driven_blocks.nbt"), dataDriven.build());
 
         // Raw wire data, in wire order and unmodified
-        writeGzip(directory.resolve("raw_start_game_block_properties.nbt"), blockPropertiesList(startGame.getBlockProperties()));
-        writeGzip(directory.resolve("raw_item_registry.nbt"), itemRegistryList(result.items));
+        Nbt.writeGzip(directory.resolve("raw_start_game_block_properties.nbt"), blockPropertiesList(startGame.getBlockProperties()));
+        Nbt.writeGzip(directory.resolve("raw_item_registry.nbt"), itemRegistryList(result.items));
         if (result.entityIdentifiers != null) {
-            writeGzip(directory.resolve("raw_entity_identifiers.nbt"), result.entityIdentifiers.getIdentifiers());
+            Nbt.writeGzip(directory.resolve("raw_entity_identifiers.nbt"), result.entityIdentifiers.getIdentifiers());
         }
         Files.writeString(directory.resolve("capture.json"), GSON.toJson(summary()));
 
@@ -126,18 +123,18 @@ public final class CaptureWriter {
             .filter(item -> !item.getIdentifier().startsWith("minecraft:")).toList();
         NbtMap blockNbt = blockPropertiesList(blocks);
         NbtMap itemNbt = itemRegistryList(items);
-        writeGzip(directory.resolve("custom_block_properties.nbt"), blockNbt);
-        writeGzip(directory.resolve("custom_item_registry.nbt"), itemNbt);
+        Nbt.writeGzip(directory.resolve("custom_block_properties.nbt"), blockNbt);
+        Nbt.writeGzip(directory.resolve("custom_item_registry.nbt"), itemNbt);
         StringBuilder blockText = new StringBuilder();
         for (BlockPropertyData block : blocks) {
-            blockText.append("# ").append(block.getName()).append('\n').append(Snbt.write(block.getProperties())).append("\n\n");
+            blockText.append("# ").append(block.getName()).append('\n').append(Nbt.snbt(block.getProperties())).append("\n\n");
         }
         Files.writeString(directory.resolve("custom_block_properties.snbt"), blockText);
         StringBuilder itemText = new StringBuilder();
         for (ItemDefinition item : items) {
             itemText.append("# ").append(item.getIdentifier()).append(" id=").append(item.getRuntimeId())
                 .append(" version=").append(item.getVersion()).append(" componentBased=").append(item.isComponentBased())
-                .append('\n').append(Snbt.write(item.getComponentData() == null ? NbtMap.EMPTY : item.getComponentData()))
+                .append('\n').append(Nbt.snbt(item.getComponentData() == null ? NbtMap.EMPTY : item.getComponentData()))
                 .append("\n\n");
         }
         Files.writeString(directory.resolve("custom_item_registry.snbt"), itemText);
@@ -170,7 +167,7 @@ public final class CaptureWriter {
             JsonObject entry = new JsonObject();
             entry.addProperty("states", states.size());
             entry.addProperty("defaultHash", Integer.toUnsignedString(BlockHashes.hash(states.getFirst())));
-            entry.addProperty("default", Snbt.write(states.getFirst().getCompound("states")).replaceAll("\\s+", " "));
+            entry.addProperty("default", Nbt.snbt(states.getFirst().getCompound("states")).replaceAll("\\s+", " "));
             customStates.add(block.getName(), entry);
         }
         Files.writeString(directory.resolve("custom_block_states.json"), GSON.toJson(customStates));
@@ -216,13 +213,13 @@ public final class CaptureWriter {
             json.addProperty("block_runtime_id", Integer.toUnsignedString(block.getRuntimeId()));
             if (state != null) {
                 resolvedHashes++;
-                json.addProperty("block_state_b64", base64(state));
+                json.addProperty("block_state_b64", Nbt.writeLeBase64(state));
             } else {
                 unresolvedHashes.add(block.getRuntimeId());
             }
         }
         if (item.getTag() != null) {
-            json.addProperty("nbt_b64", base64(item.getTag()));
+            json.addProperty("nbt_b64", Nbt.writeLeBase64(item.getTag()));
         }
         return json;
     }
@@ -295,17 +292,4 @@ public final class CaptureWriter {
         return NbtMap.builder().putList("items", NbtType.COMPOUND, list).build();
     }
 
-    private static void writeGzip(Path file, NbtMap tag) throws IOException {
-        try (OutputStream stream = Files.newOutputStream(file); NBTOutputStream output = NbtUtils.createGZIPWriter(stream)) {
-            output.writeTag(tag);
-        }
-    }
-
-    private static String base64(NbtMap tag) throws IOException {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        try (NBTOutputStream output = NbtUtils.createWriterLE(bytes)) {
-            output.writeTag(tag);
-        }
-        return Base64.getEncoder().encodeToString(bytes.toByteArray());
-    }
 }

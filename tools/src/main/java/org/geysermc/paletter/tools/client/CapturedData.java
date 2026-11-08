@@ -1,13 +1,12 @@
 package org.geysermc.paletter.tools.client;
 
+import org.geysermc.paletter.tools.data.Nbt;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.cloudburstmc.nbt.NBTInputStream;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
-import org.cloudburstmc.nbt.NbtUtils;
 import org.geysermc.paletter.block.BlockStates;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeGroup;
@@ -15,9 +14,7 @@ import org.geysermc.paletter.creative.CreativeLayout;
 import org.geysermc.paletter.creative.CreativeNode;
 import org.geysermc.paletter.creative.CreativeStack;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -32,11 +29,11 @@ public record CapturedData(Map<String, NbtMap> items, Map<String, NbtMap> blockP
 
     public static CapturedData read(Path directory) throws IOException {
         Map<String, NbtMap> items = new LinkedHashMap<>();
-        for (NbtMap item : readGzip(directory.resolve("raw_item_registry.nbt")).getList("items", NbtType.COMPOUND)) {
+        for (NbtMap item : Nbt.readGzip(directory.resolve("raw_item_registry.nbt")).getList("items", NbtType.COMPOUND)) {
             items.put(item.getString("name"), item);
         }
         Map<String, NbtMap> blocks = new LinkedHashMap<>();
-        for (NbtMap block : readGzip(directory.resolve("raw_start_game_block_properties.nbt")).getList("blocks", NbtType.COMPOUND)) {
+        for (NbtMap block : Nbt.readGzip(directory.resolve("raw_start_game_block_properties.nbt")).getList("blocks", NbtType.COMPOUND)) {
             blocks.put(block.getString("name"), block.getCompound("properties"));
         }
         JsonObject creative;
@@ -44,12 +41,6 @@ public record CapturedData(Map<String, NbtMap> items, Map<String, NbtMap> blockP
             creative = JsonParser.parseReader(reader).getAsJsonObject();
         }
         return new CapturedData(items, blocks, creativeLayout(creative));
-    }
-
-    static NbtMap readGzip(Path file) throws IOException {
-        try (InputStream stream = Files.newInputStream(file); NBTInputStream input = NbtUtils.createGZIPReader(stream)) {
-            return (NbtMap) input.readTag();
-        }
     }
 
     /** Same conversion as the generator's importer: wire groups (unnamed = run of loose stacks) to the layout model. */
@@ -81,15 +72,10 @@ public record CapturedData(Map<String, NbtMap> items, Map<String, NbtMap> blockP
     }
 
     private static CreativeStack stack(JsonObject json) throws IOException {
-        NbtMap block = json.has("block_state_b64") ? BlockStates.normalize(le(json.get("block_state_b64").getAsString())) : null;
-        NbtMap tag = json.has("nbt_b64") ? le(json.get("nbt_b64").getAsString()) : null;
+        NbtMap block = json.has("block_state_b64") ? BlockStates.normalize(Nbt.readLeBase64(json.get("block_state_b64").getAsString())) : null;
+        NbtMap tag = json.has("nbt_b64") ? Nbt.readLeBase64(json.get("nbt_b64").getAsString()) : null;
         return new CreativeStack(json.get("id").getAsString(), json.has("damage") ? json.get("damage").getAsInt() : 0,
             json.has("count") ? json.get("count").getAsInt() : 1, block, tag);
     }
 
-    private static NbtMap le(String base64) throws IOException {
-        try (NBTInputStream input = NbtUtils.createReaderLE(new ByteArrayInputStream(Base64.getDecoder().decode(base64)))) {
-            return (NbtMap) input.readTag();
-        }
-    }
 }

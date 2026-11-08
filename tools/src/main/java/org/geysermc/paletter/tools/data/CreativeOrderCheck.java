@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.cloudburstmc.nbt.NBTInputStream;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.nbt.NbtUtils;
@@ -220,9 +219,7 @@ public final class CreativeOrderCheck {
     }
 
     static List<NbtMap> readList(Path file, String key) throws IOException {
-        try (InputStream stream = Files.newInputStream(file); NBTInputStream input = NbtUtils.createGZIPReader(stream)) {
-            return ((NbtMap) input.readTag()).getList(key, NbtType.COMPOUND);
-        }
+        return Nbt.readGzip(file).getList(key, NbtType.COMPOUND);
     }
 
     static JsonObject readJson(Path file) throws IOException {

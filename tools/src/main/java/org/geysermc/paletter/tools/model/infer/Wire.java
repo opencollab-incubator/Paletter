@@ -1,16 +1,9 @@
 package org.geysermc.paletter.tools.model.infer;
 
-import org.cloudburstmc.nbt.NBTInputStream;
 import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
-import org.cloudburstmc.nbt.NbtUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,18 +28,6 @@ public final class Wire {
     }
 
     private Wire() {
-    }
-
-    static NbtMap read(Path file) throws IOException {
-        byte[] bytes = Files.readAllBytes(file);
-        if (bytes.length > 1 && (bytes[0] & 0xff) == 0x1f && (bytes[1] & 0xff) == 0x8b) {
-            try (InputStream gzip = new GZIPInputStream(new ByteArrayInputStream(bytes))) {
-                bytes = gzip.readAllBytes();
-            }
-        }
-        try (NBTInputStream input = NbtUtils.createReader(new ByteArrayInputStream(bytes))) {
-            return (NbtMap) input.readTag();
-        }
     }
 
     static Map<String, Leaf> flatten(NbtMap root) {
