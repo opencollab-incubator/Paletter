@@ -12,6 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,9 +27,11 @@ class KeysTest {
     }
 
     @Test
-    void customTypesAreInterned() {
+    void customTypesAreEqualByIdentifier() {
         BedrockItemType first = BedrockItemType.of("test:thing");
-        assertSame(first, BedrockItemType.of("test:thing"));
+        // Not interned: nothing is kept for identifiers the data does not know
+        assertNotSame(first, BedrockItemType.of("test:thing"));
+        assertEquals(first, BedrockItemType.of("test:thing"));
         assertTrue(first.isCustom());
         assertNotEquals(first, BedrockItemType.of("test:other"));
         assertEquals(first.hashCode(), BedrockItemType.of("test:thing").hashCode());
@@ -43,7 +46,7 @@ class KeysTest {
         }
         BedrockItemVariant unknown = BedrockItemVariant.of("test:thing", 7);
         assertEquals(7, unknown.aux());
-        assertSame(BedrockItemType.of("test:thing"), unknown.type());
+        assertEquals(BedrockItemType.of("test:thing"), unknown.type());
         assertEquals(unknown, BedrockItemVariant.of("test:thing", 7));
     }
 

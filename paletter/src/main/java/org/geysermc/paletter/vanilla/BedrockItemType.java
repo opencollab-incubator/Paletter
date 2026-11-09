@@ -8,9 +8,7 @@ import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.internal.item.ItemVariant;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A Bedrock item type. Vanilla types are the constants of {@link BedrockItems}; a {@link CustomItem} (and the item of a
@@ -22,6 +20,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * Items whose variants differ by damage (potions, banners, goat horns, ...) expose them with {@link #variant(int)} (null if unknown, {@link #variantOf(int)} makes any): the
  * bundled data has no names for them, so they have no constants of their own.
  * <p>
+ * Equality: vanilla types are singletons (the constants); custom types are not interned, so two calls of {@link #of(String)}
+ * with one identifier give equal but not identical types. Compare with {@code equals} (or use them as map keys), never
+ * with {@code ==}. Nothing is kept for identifiers Paletter does not know, so untrusted identifiers cannot grow memory.
+ * <p>
  * Referencing a type loads nothing. A vanilla constant the bundled data does not have (deprecated, or a preview item
  * without the preview loaded) is not {@link #isAvailable() available} and resolves to its fallback, normally
  * {@code minecraft:unknown}.
@@ -29,8 +31,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 0.1.0
  */
 public final class BedrockItemType {
-    private static final Map<String, BedrockItemType> CUSTOM = new ConcurrentHashMap<>();
-
     private final String identifier;
     private final @Nullable String fallback;
     private final boolean custom;
@@ -59,8 +59,8 @@ public final class BedrockItemType {
 
     /**
      * The key of an identifier: the vanilla constant if the identifier (after renames) is vanilla in the newest bundled
-     * data or has a generated constant, else a custom type, the same instance for every call with an identifier.
-     * Loads the data.
+     * data or has a generated constant, else a custom type known by its identifier only. Custom types are not interned (equal, not identical,
+     * for equal identifiers), so unknown identifiers never accumulate. Loads the data.
      *
      * @return the type of an identifier
      */
@@ -75,7 +75,7 @@ public final class BedrockItemType {
         if (known != null) {
             return known;
         }
-        return CUSTOM.computeIfAbsent(identifier, BedrockItemType::new);
+        return new BedrockItemType(identifier);
     }
 
     /**
