@@ -182,6 +182,20 @@ class VanillaConstantsTest {
     }
 
     @Test
+    void constantNames() {
+        assertEquals("STONE", BedrockBlocks.STONE.constantName());
+        assertEquals("APPLE", BedrockItems.APPLE.constantName());
+        assertNull(BedrockItemType.of("example:ruby").constantName());
+        assertNull(BedrockBlockType.of("example:lamp").constantName());
+        for (BedrockBlockType type : BedrockBlockType.vanillaTypes()) {
+            assertNotNull(type.constantName(), type.identifier());
+        }
+        for (BedrockItemType type : BedrockItemType.vanillaTypes()) {
+            assertNotNull(type.constantName(), type.identifier());
+        }
+    }
+
+    @Test
     void everyBlockAndItemHasOneConstant() throws IllegalAccessException {
         Map<String, String> blocks = constants(BedrockBlocks.class);
         for (BedrockBlockType type : BedrockBlockType.vanillaTypes()) {

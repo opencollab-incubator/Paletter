@@ -3852,6 +3852,7 @@ public final class org.geysermc.paletter.vanilla.BedrockBlockState {
 }
 
 public final class org.geysermc.paletter.vanilla.BedrockBlockType {
+    public java.lang.String constantName()
     public org.geysermc.paletter.vanilla.BedrockBlockState defaultState()
     public boolean equals(java.lang.Object)
     public boolean hasProperty(org.geysermc.paletter.vanilla.BedrockState<?>)
@@ -5365,6 +5366,7 @@ public final class org.geysermc.paletter.vanilla.BedrockBlocks {
 
 public final class org.geysermc.paletter.vanilla.BedrockItemType {
     public org.geysermc.paletter.vanilla.BedrockItemVariant base()
+    public java.lang.String constantName()
     public boolean equals(java.lang.Object)
     public boolean hasVariant(int)
     public int hashCode()

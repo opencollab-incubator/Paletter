@@ -149,6 +149,17 @@ public final class BedrockBlockType {
     }
 
     /**
+     * The name of the generated constant of {@link BedrockBlocks} (or the preview blocks) that holds this type, preferring
+     * one that is not deprecated. Loads no data.
+     *
+     * @return the constant's name, e.g. {@code STONE}, or null for a custom type or one without a constant
+     * @since 0.1.0
+     */
+    public @Nullable String constantName() {
+        return ConstantNames.of(this);
+    }
+
+    /**
      * @return true for the type of a {@link CustomBlock}
      */
     public boolean isCustom() {

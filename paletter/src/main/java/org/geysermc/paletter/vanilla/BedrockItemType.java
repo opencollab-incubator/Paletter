@@ -137,6 +137,17 @@ public final class BedrockItemType {
         return identifier;
     }
 
+    /**
+     * The name of the generated constant of {@link BedrockItems} (or the preview items) that holds this type, preferring
+     * one that is not deprecated. Loads no data.
+     *
+     * @return the constant's name, e.g. {@code APPLE}, or null for a custom type or one without a constant
+     * @since 0.1.0
+     */
+    public @Nullable String constantName() {
+        return ConstantNames.of(this);
+    }
+
     public boolean isCustom() {
         return custom;
     }
