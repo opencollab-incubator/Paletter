@@ -83,6 +83,25 @@ between versions (see the [README](README.md#vanilla-constants) for usage):
   disappear without deprecation.
 - Which values a block accepts is data, not API (canonical ids are not exposed at all): they follow the bundled release.
 
+## Experiments
+
+Some content a Bedrock version has only behind an experiment toggle (26.40's poplar wood and cushions behind
+`y_2026_drop_3`). The bundled data marks it (`data/bds/<bds version>/experiments.json`, from BDS captures). In a
+`Paletter` it is **missing by default**: items are not registered, the states of blocks stay in the palette but resolve
+through the fallbacks, so an ordinary (non-forced) `Fallbacks` entry covers it, in the versions that gate it only. `forced()`
+is for content that is really there.
+
+- `Paletter.builder().vanilla(v -> v.experiments("y_2026_drop_3"))` enables toggles; the palettes of the versions that
+  gate content behind them have it present. `Palette#experiments()` lists the toggles such a palette needs,
+  `Palette#applyTo(StartGamePacket)` and `#applyTo(ResourcePackStackPacket)` send them, `Palette#experimentOf(type | registered)`
+  names the toggle that makes a piece of content present (null if none; the registered definitions are shared between
+  palettes, so they do not carry it).
+- `PaletteReport` has one info line (source `vanilla`) per toggle left disabled: `26.40: 89 items, 23 blocks behind
+  `y_2026_drop_3` use fallbacks; enable with vanilla(v -> v.experiments("y_2026_drop_3"))`.
+- The generated constants say it in their javadoc: `@since 26.50` (the first bundled release that has it without an
+  experiment) and "Behind the experiment `y_2026_drop_3` in 26.40."; `@Education` and `isEducation()` mark content only
+  Education Edition worlds have.
+
 ## `@Experimental`
 
 Experimental API is public and supported, but not covered by the compatibility promise: it may change or disappear in

@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * the same palette, as it does from one Paletter.
  */
 public final class Palettes {
+    public static final String[] EXPERIMENTS = {"y_2026_drop_3", "y_2026_drop_4"};
     private static final Map<Key, Paletter> PALETTERS = new ConcurrentHashMap<>();
 
     private Palettes() {
@@ -19,7 +20,8 @@ public final class Palettes {
 
     public static Paletter paletter(BlockNetworkIds mode, PaletteLayer... layers) {
         return PALETTERS.computeIfAbsent(new Key(mode, List.of(layers)), key -> {
-            Paletter.Builder builder = Paletter.builder().blockNetworkIds(mode);
+            // Every experiment on: the tests of the palettes are about the content of a version, not about its gating
+            Paletter.Builder builder = Paletter.builder().blockNetworkIds(mode).vanilla(vanilla -> vanilla.experiments(EXPERIMENTS));
             key.layers.forEach(builder::layer);
             return builder.build();
         });

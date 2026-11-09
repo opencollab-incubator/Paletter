@@ -11,6 +11,8 @@ import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket;
+import org.cloudburstmc.protocol.bedrock.data.ExperimentData;
+import org.cloudburstmc.protocol.bedrock.packet.ResourcePackStackPacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
 import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.BlockRegistry;
@@ -31,6 +33,8 @@ import org.geysermc.paletter.internal.item.ResolvedItem;
 import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.item.RegisteredItem;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.block.RegisteredBlock;
+import org.geysermc.paletter.vanilla.BedrockBlockType;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 
@@ -69,10 +73,13 @@ public final class Palette {
     private final CreativeContent creative;
     private final PaletteReport report;
     private final CreativeOrdering ordering;
+    private final VanillaContent.ExperimentGating gating;
     private final Map<PaletteLayer, WeakReference<Palette>> extensions = new WeakHashMap<>();
 
     Palette(VanillaData data, List<PaletteLayer> layers, BlockRegistry blocks, ItemRegistry items,
-            CreativeLayout creativeLayout, CreativeContent creative, PaletteReport report, CreativeOrdering ordering) {
+            CreativeLayout creativeLayout, CreativeContent creative, PaletteReport report, CreativeOrdering ordering,
+            VanillaContent.ExperimentGating gating) {
+        this.gating = gating;
         this.data = data;
         this.layers = List.copyOf(layers);
         this.blocks = blocks;
@@ -90,11 +97,15 @@ public final class Palette {
         return ordering;
     }
 
+    VanillaContent.ExperimentGating gating() {
+        return gating;
+    }
+
     /**
      * @return this palette with another report, sharing everything else
      */
     Palette withReport(PaletteReport report) {
-        return new Palette(data, layers, blocks, items, creativeLayout, creative, report, ordering);
+        return new Palette(data, layers, blocks, items, creativeLayout, creative, report, ordering, gating);
     }
 
     public @NonNull DataVersion version() {
@@ -461,6 +472,70 @@ public final class Palette {
     public void applyTo(@NonNull StartGamePacket packet) {
         packet.getBlockProperties().addAll(blocks.blockProperties());
         packet.setBlockNetworkIdsHashed(blocks.networkIds() == BlockNetworkIds.HASHED);
+        addExperiments(packet.getExperiments());
+    }
+
+    /**
+     * Adds the experiments of {@link #experiments()} to a resource pack stack packet (the client reads the enabled
+     * experiments from there as well).
+     *
+     * @since 1.0.0
+     */
+    public void applyTo(@NonNull ResourcePackStackPacket packet) {
+        addExperiments(packet.getExperiments());
+    }
+
+    private void addExperiments(List<ExperimentData> experiments) {
+        for (String toggle : gating.enabled()) {
+            if (experiments.stream().noneMatch(existing -> existing.getName().equals(toggle))) {
+                experiments.add(new ExperimentData(toggle, true));
+            }
+        }
+    }
+
+    /**
+     * The experiment toggles this palette needs, because the Paletter enabled them ({@code vanilla(v -> v.experiments(...))})
+     * and this version has content behind them: {@link #applyTo(StartGamePacket)} sends them. Empty by default, the
+     * content behind a toggle is missing then (see {@link VanillaContent#experiments}).
+     *
+     * @return the toggle ids, sorted
+     * @since 1.0.0
+     */
+    public @NonNull List<String> experiments() {
+        return gating.enabled();
+    }
+
+    /**
+     * @return the enabled experiment toggle that makes an item present in this palette, or null if the item needs none.
+     *         (Definitions are shared between palettes, so the registered item does not know; ask the palette.)
+     * @since 1.0.0
+     */
+    public @Nullable String experimentOf(@NonNull BedrockItemType type) {
+        return gating.ofItem(type.identifier());
+    }
+
+    /**
+     * @return the enabled experiment toggle that makes a block present in this palette, or null if the block needs none
+     * @since 1.0.0
+     */
+    public @Nullable String experimentOf(@NonNull BedrockBlockType type) {
+        return gating.ofBlock(type.identifier());
+    }
+
+    /**
+     * @return the enabled experiment toggle that makes an item present in this palette, or null
+     * @since 1.0.0
+     */
+    public @Nullable String experimentOf(@NonNull RegisteredItem item) {
+        return gating.ofItem(item.getIdentifier());
+    }
+
+    /**
+     * @return the enabled experiment toggle that makes a block present in this palette, or null
+     * @since 1.0.0
+     */
+    public @Nullable String experimentOf(@NonNull RegisteredBlock block) {
+        return gating.ofBlock(block.identifier());
     }
 
     public @NonNull List<BlockPropertyData> blockProperties() {

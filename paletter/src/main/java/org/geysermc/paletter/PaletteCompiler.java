@@ -47,9 +47,12 @@ final class PaletteCompiler {
 
     static Palette vanilla(VanillaData loaded, BlockNetworkIds mode, CanonicalBlocks canonicalBlocks, CanonicalItems canonicalItems,
                            BlockInterner interner, Fallbacks fallbacks, VanillaContent content, CreativeOrdering ordering) {
-        VanillaData data = content.apply(loaded);
+        VanillaContent.Applied applied = content.apply(loaded);
+        VanillaData data = applied.data();
         PaletteReport report = new PaletteReport();
+        applied.gating().notes().forEach(note -> report.info("vanilla", note));
         BlockRegistry blocks = BlockRegistry.build(data, mode, canonicalBlocks, interner)
+            .withMissing(applied.gating().missingBlocks())
             .withFallbacks(fallbacks.blocks(data.version()))
             .withDefaultFallback(fallbacks.defaultBlock());
         ItemRegistry.Builder builder = ItemRegistry.vanilla(data, blocks, canonicalItems);
@@ -59,7 +62,7 @@ final class PaletteCompiler {
         ItemRegistry items = builder.build(layout, report);
         CreativeContent creative = CreativeContent.compile(layout, items, report);
         prepareCanonical(blocks, null, items, null, report);
-        Palette palette = new Palette(data, List.of(), blocks, items, layout, creative, report, ordering);
+        Palette palette = new Palette(data, List.of(), blocks, items, layout, creative, report, ordering, applied.gating());
         return palette;
     }
 
@@ -191,7 +194,7 @@ final class PaletteCompiler {
 
             List<PaletteLayer> layers = new ArrayList<>(parent.layers());
             layers.add(layer);
-            return new Palette(data, layers, blocks, itemPalette, layout, content, report, parent.ordering());
+            return new Palette(data, layers, blocks, itemPalette, layout, content, report, parent.ordering(), parent.gating());
         } catch (PaletteException e) {
             throw new PaletteException("Unable to compile layer " + source + " for " + data.version() + ": " + e.getMessage(), e);
         }

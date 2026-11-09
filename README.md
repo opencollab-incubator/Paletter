@@ -123,7 +123,9 @@ fallback)`), and otherwise the default: the block `minecraft:unknown` and the it
 which every client knows and shows as a placeholder (`Fallbacks.UNKNOWN`). `Fallbacks.NONE` restores air and missing
 items. Targets are keys: `ItemFallback.of(BedrockItemType|BedrockItemVariant)` (the type keeps the aux of the replaced item),
 `BlockFallback.of(BedrockBlockType|BedrockBlockState)` (the type carries matching state values over, the state is used as
-is); `.forced()` also replaces content that exists in a version but only behind an experiment.
+is); `.forced()` also replaces content that really exists in a version. Content a version has only behind an experiment toggle
+(26.40's poplar wood and cushions behind `y_2026_drop_3`) is missing unless the Paletter enables the toggle with
+`vanilla(v -> v.experiments("y_2026_drop_3"))`, so plain fallbacks apply to it (see [API.md](API.md#experiments)).
 **Paletter bundles no fallbacks**: which replacement is right (poplar wood to pale oak, ...) is the consumer's decision.
 `check-data` lists what older versions lack and what they only have behind an experiment toggle.
 
@@ -668,8 +670,8 @@ Results (November 2026):
 - Block tags are dumped but not bundled. The block to item relation is bundled; 26.40 and 26.50 have no BDS dump, so
   their relation is the 26.60 one restricted to the blocks and items they have (`block-items --from 26.60`).
 - Content Geyser used to get from the bundled curated fallbacks (poplar wood to pale oak, concrete and wool slabs to
-  vanilla ones, ...) is `unknown` now until the consumer defines it. 26.40 was not captured with experiments, so
-  content it only has behind an experiment is not marked there; a consumer needs `force` fallbacks for those.
+  vanilla ones, ...) is `unknown` now until the consumer defines it. 26.40's experiment marks come from the BDS 1.26.45.1
+  capture (`experiment-marks`): its content behind `y_2026_drop_3` is missing by default, a plain fallback covers it.
 - `renames.txt` is empty: no identifier rename between the bundled versions is known yet, so `Paletter#block` /
   `Paletter#item` only adapt states and report removed content; add a line `block|item <old> <new>` (and the
   `renamed` entry of `names.json`), or `item <old>@<aux> <new>[@<aux>]` for a legacy variant that became its own item, when

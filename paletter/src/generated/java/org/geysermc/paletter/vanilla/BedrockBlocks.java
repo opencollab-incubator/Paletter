@@ -6757,8 +6757,9 @@ public final class BedrockBlocks {
 
     /**
      * {@code minecraft:orange_poplar_leaves}: {@link BedrockStates#PERSISTENT_BIT}, {@link BedrockStates#UPDATE_BIT}; 4 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType ORANGE_POPLAR_LEAVES = VanillaTypes.block("minecraft:orange_poplar_leaves");
 
@@ -7639,120 +7640,137 @@ public final class BedrockBlocks {
 
     /**
      * {@code minecraft:poplar_button}: {@link BedrockStates#BUTTON_PRESSED_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_BUTTON = VanillaTypes.block("minecraft:poplar_button");
 
     /**
      * {@code minecraft:poplar_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_DOOR = VanillaTypes.block("minecraft:poplar_door");
 
     /**
      * {@code minecraft:poplar_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_DOUBLE_SLAB = VanillaTypes.block("minecraft:poplar_double_slab");
 
     /**
      * {@code minecraft:poplar_fence}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_FENCE = VanillaTypes.block("minecraft:poplar_fence");
 
     /**
      * {@code minecraft:poplar_fence_gate}: {@link BedrockStates#IN_WALL_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}; 16 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_FENCE_GATE = VanillaTypes.block("minecraft:poplar_fence_gate");
 
     /**
      * {@code minecraft:poplar_hanging_sign}: {@link BedrockStates#ATTACHED_BIT}, {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#GROUND_SIGN_DIRECTION}, {@link BedrockStates#HANGING}; 384 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_HANGING_SIGN = VanillaTypes.block("minecraft:poplar_hanging_sign");
 
     /**
      * {@code minecraft:poplar_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_LOG = VanillaTypes.block("minecraft:poplar_log");
 
     /**
      * {@code minecraft:poplar_planks}, 1 state.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_PLANKS = VanillaTypes.block("minecraft:poplar_planks");
 
     /**
      * {@code minecraft:poplar_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_PRESSURE_PLATE = VanillaTypes.block("minecraft:poplar_pressure_plate");
 
     /**
      * {@code minecraft:poplar_sapling}: {@link BedrockStates#AGE_BIT}; 2 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_SAPLING = VanillaTypes.block("minecraft:poplar_sapling");
 
     /**
      * {@code minecraft:poplar_shelf}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#POWERED_BIT}, {@link BedrockStates#POWERED_SHELF_TYPE}; 32 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_SHELF = VanillaTypes.block("minecraft:poplar_shelf");
 
     /**
      * {@code minecraft:poplar_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_SLAB = VanillaTypes.block("minecraft:poplar_slab");
 
     /**
      * {@code minecraft:poplar_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_STAIRS = VanillaTypes.block("minecraft:poplar_stairs");
 
     /**
      * {@code minecraft:poplar_standing_sign}: {@link BedrockStates#GROUND_SIGN_DIRECTION}; 16 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_STANDING_SIGN = VanillaTypes.block("minecraft:poplar_standing_sign");
 
     /**
      * {@code minecraft:poplar_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_TRAPDOOR = VanillaTypes.block("minecraft:poplar_trapdoor");
 
     /**
      * {@code minecraft:poplar_wall_sign}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_WALL_SIGN = VanillaTypes.block("minecraft:poplar_wall_sign");
 
     /**
      * {@code minecraft:poplar_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_WOOD = VanillaTypes.block("minecraft:poplar_wood");
 
@@ -8262,8 +8280,9 @@ public final class BedrockBlocks {
 
     /**
      * {@code minecraft:red_poplar_leaves}: {@link BedrockStates#PERSISTENT_BIT}, {@link BedrockStates#UPDATE_BIT}; 4 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType RED_POPLAR_LEAVES = VanillaTypes.block("minecraft:red_poplar_leaves");
 
@@ -9074,8 +9093,9 @@ public final class BedrockBlocks {
 
     /**
      * {@code minecraft:straw_bed}: {@link BedrockStates#HEAD_PIECE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OCCUPIED_BIT}; 16 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType STRAW_BED = VanillaTypes.block("minecraft:straw_bed");
 
@@ -9214,15 +9234,17 @@ public final class BedrockBlocks {
 
     /**
      * {@code minecraft:stripped_poplar_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType STRIPPED_POPLAR_LOG = VanillaTypes.block("minecraft:stripped_poplar_log");
 
     /**
      * {@code minecraft:stripped_poplar_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType STRIPPED_POPLAR_WOOD = VanillaTypes.block("minecraft:stripped_poplar_wood");
 
@@ -10639,8 +10661,9 @@ public final class BedrockBlocks {
 
     /**
      * {@code minecraft:yellow_poplar_leaves}: {@link BedrockStates#PERSISTENT_BIT}, {@link BedrockStates#UPDATE_BIT}; 4 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
      *
-     * @since 26.40
+     * @since 26.50
      */
     public static final BedrockBlockType YELLOW_POPLAR_LEAVES = VanillaTypes.block("minecraft:yellow_poplar_leaves");
 

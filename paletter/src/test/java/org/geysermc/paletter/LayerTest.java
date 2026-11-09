@@ -246,21 +246,28 @@ class LayerTest {
         assertEquals(BlockResolution.Kind.FALLBACK, fallback.kind());
         assertEquals("minecraft:smooth_quartz_stairs", fallback.block().identifier());
 
-        // Experimental in 26.40: it is in the palette, so it is sent as is, until a force fallback replaces it
+        // Behind y_2026_drop_3 in 26.40: the state is in the palette, but without the experiment it is missing, so a
+        // plain (non-forced) fallback applies, and the default one without
         NbtMap poplar = latest.blocks().states("minecraft:poplar_planks").getFirst().getState();
         assertNotNull(oldest.blocks().exact(poplar));
-        assertEquals("minecraft:poplar_planks", oldest.blocks().resolve(poplar).block().identifier());
-        Palette forced = Paletter.builder().fallbacks(Fallbacks.builder()
-            .block(BedrockBlocks.POPLAR_PLANKS, BlockFallback.of(BedrockBlocks.PALE_OAK_PLANKS).forced())
-            .item(BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.PALE_OAK_BOAT).forced()).build())
+        assertNull(oldest.blocks().resolve(poplar).block());
+        assertEquals(BlockExplanation.Kind.DEFAULT, oldest.explain(poplar).kind());
+        Palette flat = Paletter.builder().fallbacks(Fallbacks.builder()
+            .block(BedrockBlocks.POPLAR_PLANKS, BlockFallback.of(BedrockBlocks.PALE_OAK_PLANKS))
+            .item(BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.PALE_OAK_BOAT)).build())
             .build().palette(PALETTER.version(OLDEST).protocolVersion());
-        assertEquals("minecraft:pale_oak_planks", forced.blocks().resolve(poplar).block().identifier());
+        assertEquals("minecraft:pale_oak_planks", flat.blocks().resolve(poplar).block().identifier());
 
         // The same for items
-        assertFalse(oldest.items().resolve(ItemVariant.of("minecraft:poplar_boat")).fallback());
-        ResolvedItem boat = forced.items().resolve(ItemVariant.of("minecraft:poplar_boat"));
+        ResolvedItem boat = flat.items().resolve(ItemVariant.of("minecraft:poplar_boat"));
         assertTrue(boat.fallback());
         assertEquals("minecraft:pale_oak_boat", boat.definition().getIdentifier());
+        // With the experiment enabled the content is there; in the newest version it is regular content
+        Palette enabled = Paletter.builder().vanilla(vanilla -> vanilla.experiments("y_2026_drop_3")).fallbacks(Fallbacks.builder()
+            .block(BedrockBlocks.POPLAR_PLANKS, BlockFallback.of(BedrockBlocks.PALE_OAK_PLANKS)).build())
+            .build().palette(PALETTER.version(OLDEST).protocolVersion());
+        assertEquals("minecraft:poplar_planks", enabled.blocks().resolve(poplar).block().identifier());
+        assertFalse(enabled.items().resolve(ItemVariant.of("minecraft:poplar_boat")).fallback());
         assertFalse(latest.items().resolve(ItemVariant.of("minecraft:poplar_boat")).fallback());
     }
 

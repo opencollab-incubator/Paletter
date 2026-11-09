@@ -413,7 +413,8 @@ public final class ConstantsGenerator {
      *     <li>{@code gatedItems} / {@code gatedBlocks}: per release, what the BDS captures of that release
      *     ({@code data/bds/<bds version>/experiments.json}) show to need a current experiment toggle in that release.
      *     Content that is only gated in the first release that has it is {@code @since} the next one that does not
-     *     gate it (or, if there is none, the first one that has it);</li>
+     *     gate it (or, if there is none, the first one that has it). A block is gated with its item (the block to item
+     *     relation of the release);</li>
      *     <li>{@code educationItems} / {@code educationBlocks}: what BDS offers only to a world with Education Edition
      *     features (captured by {@code education-capture}, {@code data/bds/<bds version>/education.json}).</li>
      * </ul>
@@ -512,7 +513,7 @@ public final class ConstantsGenerator {
         }
 
         /** The bundled release a protocol belongs to: the newest whose first protocol is not above it. */
-        static String releaseOf(List<Bundle> releases, int protocol) {
+        public static String releaseOf(List<Bundle> releases, int protocol) {
             String name = null;
             for (Bundle bundle : releases) {
                 if (bundle.protocol() <= protocol) {
@@ -547,7 +548,7 @@ public final class ConstantsGenerator {
                 if (first == null) {
                     first = release.version().name();
                 }
-                if (!(blocks ? gatedBlocks : gatedItems).getOrDefault(release.version().name(), Map.of()).containsKey(identifier)) {
+                if (toggle(release, blocks, identifier) == null) {
                     return release.version().name();
                 }
             }
@@ -563,7 +564,7 @@ public final class ConstantsGenerator {
             Map<String, List<String>> versions = new TreeMap<>();
             for (VanillaData release : releases) {
                 String name = release.version().name();
-                String toggle = (blocks ? gatedBlocks : gatedItems).getOrDefault(name, Map.of()).get(identifier);
+                String toggle = toggle(release, blocks, identifier);
                 if (toggle != null && has(release, blocks, identifier)) {
                     versions.computeIfAbsent(toggle, t -> new ArrayList<>()).add(name);
                 }
@@ -574,6 +575,17 @@ public final class ConstantsGenerator {
             List<String> clauses = new ArrayList<>();
             versions.forEach((toggle, names) -> clauses.add("{@code " + toggle + "} in " + String.join(", ", names)));
             return String.join("; ", clauses);
+        }
+
+        /** The toggle that gates the identifier in a release: for a block also the one its item is gated by. */
+        private String toggle(VanillaData release, boolean blocks, String identifier) {
+            String name = release.version().name();
+            if (!blocks) {
+                return gatedItems.getOrDefault(name, Map.of()).get(identifier);
+            }
+            String toggle = gatedBlocks.getOrDefault(name, Map.of()).get(identifier);
+            String item = release.blockItems().get(identifier);
+            return toggle != null || item == null ? toggle : gatedItems.getOrDefault(name, Map.of()).get(item);
         }
 
         boolean isEducation(String kind, String identifier) {

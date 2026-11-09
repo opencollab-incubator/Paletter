@@ -36,11 +36,13 @@ class FallbackQueryTest {
 
     @Test
     void theNewestVersionSendsEverythingAsItself() {
-        Palette newest = PALETTER.palette(Integer.MAX_VALUE);
+        Palette newest = Palettes.palette(Integer.MAX_VALUE);
         for (BedrockItemVariant variant : newest.itemVariants()) {
             assertFalse(newest.isFallback(variant), variant.toString());
             assertNull(newest.fallbackOf(variant), variant.toString());
         }
+        // Content behind an experiment the Paletter did not enable is missing even in the newest version
+        assertTrue(PALETTER.palette(Integer.MAX_VALUE).isFallback(BedrockItems.ICICLE.base()));
     }
 
     @Test
