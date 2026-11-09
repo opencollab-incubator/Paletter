@@ -1,4 +1,4 @@
-package org.geysermc.paletter.block;
+package org.geysermc.paletter.internal.block;
 
 import java.util.Arrays;
 
@@ -6,12 +6,12 @@ import java.util.Arrays;
  * Minimal open addressing int to non negative int map, for hashed runtime id to palette position. Immutable after
  * construction, so reads need no synchronization and never allocate.
  */
-final class IntIndex {
+public final class IntIndex {
     private final int[] keys;
     private final int[] values;
     private final int mask;
 
-    IntIndex(int expected) {
+    public IntIndex(int expected) {
         int capacity = Integer.highestOneBit(Math.max(4, expected) * 2 - 1) << 1;
         this.keys = new int[capacity];
         this.values = new int[capacity];
@@ -27,7 +27,7 @@ final class IntIndex {
     /**
      * @return the previous value, or -1
      */
-    int put(int key, int value) {
+    public int put(int key, int value) {
         int slot = mix(key) & mask;
         while (values[slot] != -1) {
             if (keys[slot] == key) {
@@ -45,7 +45,7 @@ final class IntIndex {
     /**
      * @return the value, or -1
      */
-    int get(int key) {
+    public int get(int key) {
         int slot = mix(key) & mask;
         int value;
         while ((value = values[slot]) != -1) {

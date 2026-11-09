@@ -2,10 +2,13 @@ package org.geysermc.paletter.block;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.Origin;
 import org.geysermc.paletter.annotation.Internal;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,6 +24,7 @@ import java.util.Map;
 @Internal
 public final class BlockInterner {
     private final Map<NbtMap, RegisteredBlockState> blocks = new HashMap<>();
+    private final Map<VanillaBlockKey, RegisteredBlock> vanillaTypes = new HashMap<>();
     private final Map<IntPage, int[]> intPages = new HashMap<>();
     private final Map<BlockPage, RegisteredBlockState[]> blockPages = new HashMap<>();
     private int sharedPages;
@@ -36,6 +40,15 @@ public final class BlockInterner {
             blocks.put(state, block);
         }
         return block;
+    }
+
+    /**
+     * @return the shared vanilla block with these states (shared instances, compared by identity) and data
+     */
+    synchronized @NonNull RegisteredBlock vanillaType(@NonNull String identifier, @NonNull List<RegisteredBlockState> states,
+                                                      @Nullable NbtMap propertyData, @Nullable NbtMap defaultState) {
+        return vanillaTypes.computeIfAbsent(new VanillaBlockKey(identifier, states, propertyData, defaultState),
+            key -> new RegisteredBlock(identifier, Origin.VANILLA, states, null, propertyData, defaultState));
     }
 
     synchronized int @NonNull [] intern(int @NonNull [] page) {
@@ -63,6 +76,10 @@ public final class BlockInterner {
      */
     public synchronized int @NonNull [] pageStats() {
         return new int[] {pages, sharedPages};
+    }
+
+    private record VanillaBlockKey(String identifier, List<RegisteredBlockState> states, @Nullable NbtMap propertyData,
+                                   @Nullable NbtMap defaultState) {
     }
 
     private record IntPage(int[] values) {
