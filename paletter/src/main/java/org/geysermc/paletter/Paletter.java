@@ -17,7 +17,9 @@ import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.property.Properties;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.vanilla.BedrockBlockType;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 
@@ -510,5 +512,25 @@ public final class Paletter {
 
     private static final class Holder {
         private static final Paletter BUNDLED = builder().build();
+    }
+
+    // ---- Properties ----
+
+    /**
+     * @return the properties of a vanilla item in a version, without compiling a palette; empty for custom items and for
+     * items the version does not have. Equal to {@code palette.items().item(...).properties()} of a palette of that version
+     * @since 1.0.0
+     */
+    public @NonNull Properties properties(@NonNull BedrockItemType type, @NonNull DataVersion version) {
+        return source.properties().item(type.identifier(), version);
+    }
+
+    /**
+     * @return the properties of a vanilla block in a version, without compiling a palette; empty for custom blocks and for
+     * blocks the version does not have
+     * @since 1.0.0
+     */
+    public @NonNull Properties properties(@NonNull BedrockBlockType type, @NonNull DataVersion version) {
+        return source.properties().block(type.identifier(), version);
     }
 }

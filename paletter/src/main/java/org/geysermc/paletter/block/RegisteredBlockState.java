@@ -7,8 +7,11 @@ import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
 import org.geysermc.paletter.Origin;
 import org.geysermc.paletter.block.component.BlockComponent;
 import org.geysermc.paletter.internal.block.StateConditions;
+import org.geysermc.paletter.internal.property.PropertySplit;
+import org.geysermc.paletter.property.Properties;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +35,7 @@ public final class RegisteredBlockState implements BlockDefinition {
     private int indexInBlock;
     private volatile @Nullable BedrockBlockState key;
     private volatile @Nullable List<BlockComponent> components;
+    private volatile @Nullable Properties properties;
 
     RegisteredBlockState(int runtimeId, NbtMap state, boolean custom) {
         this.runtimeId = runtimeId;
@@ -129,6 +133,31 @@ public final class RegisteredBlockState implements BlockDefinition {
                 result = List.copyOf(merged.values());
             }
             components = result;
+        }
+        return result;
+    }
+
+    /**
+     * @return the properties in effect for this state: those of the block, with the components of the permutations
+     * that apply to the state set on top
+     */
+    public @NonNull Properties properties() {
+        Properties result = properties;
+        if (result == null) {
+            RegisteredBlock block = block();
+            NbtMap data = block.propertyData();
+            List<NbtMap> overlay = new ArrayList<>();
+            if (data != null && data.get("permutations") instanceof List<?> permutations) {
+                NbtMap states = states();
+                for (Object entry : permutations) {
+                    if (entry instanceof NbtMap permutation
+                        && StateConditions.matches(permutation.getString("condition"), states)) {
+                        overlay.add(permutation.getCompound("components"));
+                    }
+                }
+            }
+            result = overlay.isEmpty() ? block.properties() : PropertySplit.split(data, overlay);
+            properties = result;
         }
         return result;
     }

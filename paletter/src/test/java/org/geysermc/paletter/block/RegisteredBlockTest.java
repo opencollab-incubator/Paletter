@@ -45,8 +45,8 @@ class RegisteredBlockTest {
         assertEquals(Origin.VANILLA, wheat.origin());
         assertTrue(wheat.components().isEmpty());
         assertNull(wheat.customBlock());
-        assertEquals(1, wheat.properties().size());
-        BlockProperty<?> growth = wheat.properties().getFirst();
+        assertEquals(1, wheat.stateProperties().size());
+        BlockProperty<?> growth = wheat.stateProperties().getFirst();
         assertEquals("growth", growth.name());
         assertEquals(BlockProperty.Type.INTEGER, growth.type());
         assertEquals(List.of(0, 1, 2, 3, 4, 5, 6, 7), growth.values());
@@ -98,7 +98,7 @@ class RegisteredBlockTest {
             assertEquals(Origin.custom("content"), block.origin());
             assertEquals(lamp(), block.customBlock());
             assertEquals(lamp().components(), block.components());
-            assertEquals(List.of("example:lit", "example:color"), block.properties().stream().map(BlockProperty::name).toList());
+            assertEquals(List.of("example:lit", "example:color"), block.stateProperties().stream().map(BlockProperty::name).toList());
             assertEquals(4, block.states().size());
             assertEquals("example:lamp", block.propertyData() == null ? null : blocks.blockProperties().stream()
                 .filter(data -> data.getProperties().equals(block.propertyData())).findFirst().orElseThrow().getName());
