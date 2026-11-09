@@ -121,7 +121,8 @@ class BehaviourTest {
         assertEquals(3f, behaviour.get(state, BlockBehaviour.DESTROY_TIME));
         assertEquals(10, behaviour.get(state, BlockBehaviour.LIGHT_EMISSION));
         assertEquals(BlockShape.of(0, 0, 0, 1, 0.5f, 1), behaviour.get(state, BlockBehaviour.COLLISION_SHAPE));
-        assertNull(behaviour.get(state, BlockBehaviour.EXPLOSION_RESISTANCE), "not on the wire");
+        assertEquals(0f, behaviour.get(state, BlockBehaviour.EXPLOSION_RESISTANCE), "not on the wire: the BDS default");
+        assertTrue(behaviour.provenance(state, BlockBehaviour.EXPLOSION_RESISTANCE).bdsDefault());
         assertEquals(Provenance.Source.USER, behaviour.provenance(state, BlockBehaviour.FRICTION).source());
         assertEquals(behaviour.get(state, BlockBehaviour.FRICTION), behaviour.blocks(BlockBehaviour.FRICTION).get(state));
 
@@ -181,6 +182,71 @@ class BehaviourTest {
             assertFalse(stone.disputed());
             assertFalse(stone.postProcessed());
         }
+    }
+
+    /** Where a door's panel is, by what the probe measured on BDS 1.26.63.1: the 0.1825 thick panel in every state. */
+    private static BlockShape probedPanel(String direction, boolean open, boolean hinge) {
+        float high = 1 - 0.1825f;
+        float low = 0.1825f;
+        // closed: the panel is on the side the door faces; open: a quarter turn towards the hinge
+        boolean xAxis = open ? direction.equals("east") || direction.equals("west") : direction.equals("north") || direction.equals("south");
+        boolean highSide = !open ? direction.equals("north") || direction.equals("east")
+            : hinge ? direction.equals("south") || direction.equals("east") : direction.equals("north") || direction.equals("west");
+        float min = highSide ? high : 0;
+        float max = highSide ? 1 : low;
+        return xAxis ? BlockShape.of(min, 0, 0, max, 1, 1) : BlockShape.of(0, 0, min, 1, 1, max);
+    }
+
+    @Test
+    void doorsAreWhereTheProbeMeasuredThem() {
+        Palette palette = PALETTER.vanilla(LATEST);
+        int checked = 0;
+        for (String door : List.of("minecraft:wooden_door", "minecraft:iron_door", "minecraft:copper_door", "minecraft:crimson_door")) {
+            for (RegisteredBlockState state : palette.blocks().states(door)) {
+                String direction = state.states().getString("minecraft:cardinal_direction");
+                BlockShape expected = probedPanel(direction, state.states().getByte("open_bit") != 0, state.states().getByte("door_hinge_bit") != 0);
+                Provenance provenance = palette.behaviour().provenance(state, BlockBehaviour.COLLISION_SHAPE);
+                assertEquals(expected, palette.behaviour().get(state, BlockBehaviour.COLLISION_SHAPE), state.toString());
+                assertEquals(Provenance.Source.BDS_PROBE, provenance.source(), state.toString());
+                assertFalse(provenance.thirdParty());
+                assertFalse(provenance.disputed(), "BDS settled the dispute of Data (0.1875) and Allay (0.1825)");
+                assertTrue(provenance.postProcessing().startsWith("composed:"), provenance.postProcessing());
+                checked++;
+            }
+        }
+        assertEquals(4 * 32, checked);
+        // The probe measured the collision, not the outline: that stays what the dumps say, disputed
+        RegisteredBlockState door = palette.blocks().states("minecraft:iron_door").getFirst();
+        Provenance outline = palette.behaviour().provenance(door, BlockBehaviour.OUTLINE_SHAPE);
+        assertEquals(Provenance.Source.CLOUDBURST_DATA, outline.source());
+        assertTrue(outline.disputed());
+    }
+
+    @Test
+    void customBlocksGetTheDefaultsTheProbeMeasured() {
+        CustomBlock block = CustomBlock.builder("test:plain").build();
+        Palette palette = PALETTER.vanilla(LATEST).extend(PaletteLayer.builder("test").block(block).build());
+        Behaviour behaviour = palette.behaviour();
+        RegisteredBlockState state = palette.blocks().block("test:plain").defaultState();
+
+        assertEquals(0.6f, behaviour.get(state, BlockBehaviour.FRICTION));
+        assertEquals(0f, behaviour.get(state, BlockBehaviour.EXPLOSION_RESISTANCE));
+        assertEquals(15, behaviour.get(state, BlockBehaviour.LIGHT_DAMPENING));
+        assertEquals(0, behaviour.get(state, BlockBehaviour.LIGHT_EMISSION));
+        assertEquals(BlockShape.FULL_CUBE, behaviour.get(state, BlockBehaviour.COLLISION_SHAPE));
+        assertEquals(0, behaviour.get(state, BlockBehaviour.BURN_ODDS));
+        assertEquals(0, behaviour.get(state, BlockBehaviour.FLAME_ODDS));
+        for (BehaviourKey<?> key : List.of(BlockBehaviour.FRICTION, BlockBehaviour.LIGHT_DAMPENING, BlockBehaviour.COLLISION_SHAPE)) {
+            Provenance provenance = behaviour.provenance(state, key);
+            assertTrue(provenance.bdsDefault(), key.toString());
+            assertFalse(provenance.userSet());
+            assertTrue(provenance.reference().contains("BDS_PROBE data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801)"),
+                provenance.reference());
+        }
+        // What a custom block that sets neither has is not known: no selection box and no destroy time were measured
+        assertTrue(behaviour.provenance(state, BlockBehaviour.DESTROY_TIME).unknownDefault());
+        assertTrue(behaviour.provenance(state, BlockBehaviour.OUTLINE_SHAPE).unknownDefault());
+        assertNull(behaviour.get(state, BlockBehaviour.OUTLINE_SHAPE));
     }
 
     @Test

@@ -8,7 +8,7 @@
 
 Values come from BDS directly wherever possible; third-party dumps rank below and are marked (`Provenance#thirdParty()`). Strongest first:
 
-1. Paletter's own captures of BDS: native capture (`NATIVE`, none yet), Script API dumps (`SCRIPT_API`), and what BDS sends clients (`WIRE`, ranked at runtime from the component data of the palette).
+1. Paletter's own captures of BDS: native capture (`NATIVE`, none yet), Script API dumps (`SCRIPT_API`), experiments on BDS (`BDS_PROBE`: `behaviour-probe`, the collision of doors) and what BDS sends clients (`WIRE`, ranked at runtime from the component data of the palette).
 2. `CLOUDBURST_DATA`: CloudburstMC/Data (Apache-2.0), a native BDS dump. Third party. It post-processes some values (see Post-processed values).
 3. `ALLAY_DATA`: AllayMC/Allay `data/` (MIT), the raw Endstone DevTools dump of BDS. Third party. Used only for what CloudburstMC/Data does not have (items: attack damage, armour, toughness, enchant value, furnace fuel and XP; CloudburstMC/Data has no item behaviour file in any commit of its history), and as the other opinion for disputes.
 
@@ -29,6 +29,7 @@ In application order (per version the weakest source first; the strongest decide
 | 26.50 | CLOUDBURST_DATA | `CloudburstMC/Data@88a2436a2d5c605da082a00fee5f103f888a9160` | 2026-10-20 | blocks.json, same block states |
 | 26.50 | SCRIPT_API | `Paletter data/bds/1.26.52.3/dump.json.gz` |  | BDS 1.26.52.3 |
 | 26.60 | CLOUDBURST_DATA | `CloudburstMC/Data@0021592b1a4253528bad1e1d8b537e306e097557` | 2026-10-28 | blocks.json, same block states |
+| 26.60 | BDS_PROBE | `Paletter data/bds/1.26.63.1/behaviour-probe/capture.json` |  | BDS 1.26.63.1, Build ID 53340801 |
 | 26.60 | SCRIPT_API | `Paletter data/bds/1.26.63.1/dump.json.gz` |  | BDS 1.26.63.1 |
 
 ## Coverage
@@ -41,7 +42,7 @@ Per key and version: who decides the values of the version's block states / item
 | `block:explosion_resistance` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
 | `block:friction` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
 | `block:solid` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
-| `block:collision_shape` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
+| `block:collision_shape` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | BDS_PROBE 704<br>CLOUDBURST_DATA 23256<br> |
 | `block:outline_shape` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
 | `block:light_emission` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
 | `block:light_dampening` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
@@ -84,7 +85,7 @@ Stored values a second third-party source disagrees on, with no direct BDS captu
 | 26.40 block:outline_shape | 704 | acacia_door, bamboo_door, birch_door, cherry_door, copper_door, crimson_door, dark_oak_door, exposed_copper_door, iron_door, jungle_door, mangrove_door, oxidized_copper_door, pale_oak_door, poplar_door, spruce_door, warped_door, waxed_copper_door, waxed_exposed_copper_door, waxed_oxidized_copper_door, waxed_weathered_copper_door, weathered_copper_door, wooden_door | warped_door[door_hinge_bit=false,cardinal_direction=south,open_bit=false,upper_block_bit=false] (3763596343): [0.0, 0.0, 0.0, 0.1875, 1.0, 1.0] (CLOUDBURST_DATA) / [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] (ALLAY_DATA@26.30) |
 | 26.50 block:collision_shape | 736 | acacia_door, bamboo, bamboo_door, birch_door, cherry_door, copper_door, crimson_door, dark_oak_door, exposed_copper_door, iron_door, jungle_door, mangrove_door, oxidized_copper_door, pale_oak_door, pointed_dripstone, poplar_door, spruce_door, sulfur_spike, warped_door, waxed_copper_door, waxed_exposed_copper_door, waxed_oxidized_copper_door, waxed_weathered_copper_door, weathered_copper_door, wooden_door | warped_door[door_hinge_bit=false,cardinal_direction=south,open_bit=false,upper_block_bit=false] (3763596343): [0.0, 0.0, 0.0, 0.1875, 1.0, 1.0] (CLOUDBURST_DATA) / [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] (ALLAY_DATA@26.50) |
 | 26.50 block:outline_shape | 817 | 79 blocks | warped_door[door_hinge_bit=false,cardinal_direction=south,open_bit=false,upper_block_bit=false] (3763596343): [0.0, 0.0, 0.0, 0.1875, 1.0, 1.0] (CLOUDBURST_DATA) / [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] (ALLAY_DATA@26.50) |
-| 26.60 block:collision_shape | 736 | acacia_door, bamboo, bamboo_door, birch_door, cherry_door, copper_door, crimson_door, dark_oak_door, exposed_copper_door, iron_door, jungle_door, mangrove_door, oxidized_copper_door, pale_oak_door, pointed_dripstone, poplar_door, spruce_door, sulfur_spike, warped_door, waxed_copper_door, waxed_exposed_copper_door, waxed_oxidized_copper_door, waxed_weathered_copper_door, weathered_copper_door, wooden_door | warped_door[door_hinge_bit=false,cardinal_direction=south,open_bit=false,upper_block_bit=false] (3763596343): [0.0, 0.0, 0.0, 0.1875, 1.0, 1.0] (CLOUDBURST_DATA) / [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] (ALLAY_DATA@26.50) |
+| 26.60 block:collision_shape | 32 | bamboo, pointed_dripstone, sulfur_spike | sulfur_spike[dripstone_thickness=tip,hanging=false] (4015984009): [0.3125, 0.0, 0.3125, 0.6875, 0.6875, 0.6875] (CLOUDBURST_DATA) / [0.220833, 0.0, 0.254166, 0.595833, 0.6875, 0.629166] (ALLAY_DATA@26.50) |
 | 26.60 block:outline_shape | 817 | 79 blocks | warped_door[door_hinge_bit=false,cardinal_direction=south,open_bit=false,upper_block_bit=false] (3763596343): [0.0, 0.0, 0.0, 0.1875, 1.0, 1.0] (CLOUDBURST_DATA) / [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] (ALLAY_DATA@26.50) |
 
 ## Post-processed values
@@ -97,16 +98,22 @@ Values the source itself says it post-processed after reading BDS (`Provenance#p
 - 26.40 block:outline_shape: shapeSource: door_state_correction (carried from 26.50: the value is the same) (704 states)
 - 26.50 block:collision_shape: shapeSource: door_state_correction (704 states)
 - 26.50 block:outline_shape: shapeSource: door_state_correction (704 states)
-- 26.60 block:collision_shape: shapeSource: door_state_correction (704 states)
+- 26.60 block:collision_shape: composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured (704 states)
 - 26.60 block:outline_shape: shapeSource: door_state_correction (704 states)
 
 ## Custom content: defaults and unverified conversions
 
 Behaviour of custom blocks and items matches BDS: `Provenance#userSet()` tells a component the user set from a BDS default. The default of a key (what BDS uses when the component is absent) comes from `data/behaviour/custom-defaults.json`, each entry with its BDS evidence; without an entry the value is absent and the provenance is `UNKNOWN_DEFAULT`. Adding a default is one entry in that file and a rerun of the import.
 
-Known defaults: none yet. Every default of a custom block or item is unknown.
+- `block:friction` = 0.6 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
+- `block:explosion_resistance` = 0.0 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
+- `block:light_dampening` = 15 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
+- `block:light_emission` = 0 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
+- `block:collision_shape` = [0.0, 0.0, 0.0, 1.0, 1.0, 1.0] (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
+- `block:burn_odds` = 0 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
+- `block:flame_odds` = 0 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
 
-Unverified conversions (`Provenance#unverified()`): `block:friction` of custom blocks is 1 minus the `minecraft:friction` value; no BDS evidence confirms the conversion yet.
+Unverified conversions (`Provenance#unverified()`): none. The friction of a custom block is 1 minus the `minecraft:friction` value, confirmed on BDS by the probe (`friction.components` of its capture).
 
 ## Disagreements
 
@@ -125,6 +132,12 @@ Every pair of captures of the same version, on the ids both cover. The stronger 
 |---|---|---|---|
 | `block:collision_shape` | 22091 | 736 | warped_door[door_hinge_bit=false,cardinal_direction=south,open_bit=false,upper_block_bit=false] (3763596343): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.0, 0.0, 0.0, 0.1875, 1.0, 1.0]<br>warped_door[door_hinge_bit=false,cardinal_direction=west,open_bit=false,upper_block_bit=false] (3673010788): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.0, 0.0, 0.0, 1.0, 1.0, 0.1875]<br>warped_door[door_hinge_bit=false,cardinal_direction=north,open_bit=false,upper_block_bit=false] (382742353): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.8125, 0.0, 0.0, 1.0, 1.0, 1.0]<br>in acacia_door 32, bamboo 12, bamboo_door 32, birch_door 32, cherry_door 32, copper_door 32, crimson_door 32, dark_oak_door 32, exposed_copper_door 32, iron_door 32, jungle_door 32, mangrove_door 32, oxidized_copper_door 32, pale_oak_door 32, pointed_dripstone 10, poplar_door 32, spruce_door 32, sulfur_spike 10, warped_door 32, waxed_copper_door 32, waxed_exposed_copper_door 32, waxed_oxidized_copper_door 32, waxed_weathered_copper_door 32, weathered_copper_door 32, wooden_door 32 |
 | `block:outline_shape` | 22091 | 817 | warped_door[door_hinge_bit=false,cardinal_direction=south,open_bit=false,upper_block_bit=false] (3763596343): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.0, 0.0, 0.0, 0.1875, 1.0, 1.0]<br>warped_door[door_hinge_bit=false,cardinal_direction=west,open_bit=false,upper_block_bit=false] (3673010788): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.0, 0.0, 0.0, 1.0, 1.0, 0.1875]<br>warped_door[door_hinge_bit=false,cardinal_direction=north,open_bit=false,upper_block_bit=false] (382742353): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.8125, 0.0, 0.0, 1.0, 1.0, 1.0]<br>in acacia_door 32, allium 1, azure_bluet 1, bamboo 12, bamboo_door 32, bamboo_sapling 2, birch_door 32, blue_orchid 1, brain_coral 1, brain_coral_fan 2, bubble_coral 1, bubble_coral_fan 2, cherry_door 32, closed_eyeblossom 1, copper_door 32, cornflower 1, crimson_door 32, crimson_roots 1, dandelion 1, dark_oak_door 32, dead_brain_coral 1, dead_brain_coral_fan 2, dead_bubble_coral 1, dead_bubble_coral_fan 2, dead_fire_coral 1, dead_fire_coral_fan 2, dead_horn_coral 1, dead_horn_coral_fan 2, dead_tube_coral 1, dead_tube_coral_fan 2, exposed_copper_door 32, fern 1, fire_coral 1, fire_coral_fan 2, golden_dandelion 1, hanging_roots 1, horn_coral 1, horn_coral_fan 2, iron_door 32, jungle_door 32, ... (79 in all) |
+
+### 26.60: CLOUDBURST_DATA vs BDS_PROBE
+
+| Key | Compared | Different | Examples (CLOUDBURST_DATA / BDS_PROBE) |
+|---|---|---|---|
+| `block:collision_shape` | 704 | 704 | warped_door[door_hinge_bit=false,cardinal_direction=south,open_bit=false,upper_block_bit=false] (3763596343): [0.0, 0.0, 0.0, 0.1875, 1.0, 1.0] / [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0]<br>warped_door[door_hinge_bit=false,cardinal_direction=west,open_bit=false,upper_block_bit=false] (3673010788): [0.0, 0.0, 0.0, 1.0, 1.0, 0.1875] / [0.0, 0.0, 0.0, 1.0, 1.0, 0.1825]<br>warped_door[door_hinge_bit=false,cardinal_direction=north,open_bit=false,upper_block_bit=false] (382742353): [0.8125, 0.0, 0.0, 1.0, 1.0, 1.0] / [0.8175, 0.0, 0.0, 1.0, 1.0, 1.0]<br>in acacia_door 32, bamboo_door 32, birch_door 32, cherry_door 32, copper_door 32, crimson_door 32, dark_oak_door 32, exposed_copper_door 32, iron_door 32, jungle_door 32, mangrove_door 32, oxidized_copper_door 32, pale_oak_door 32, poplar_door 32, spruce_door 32, warped_door 32, waxed_copper_door 32, waxed_exposed_copper_door 32, waxed_oxidized_copper_door 32, waxed_weathered_copper_door 32, weathered_copper_door 32, wooden_door 32 |
 
 ## Unmapped source fields
 
