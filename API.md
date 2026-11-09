@@ -11,13 +11,14 @@ The API is exactly the packages exported by [`paletter/src/module/java/module-in
 
 | Package | Contents |
 |---|---|
-| `org.geysermc.paletter` | `Paletter`, `Palette`, `PaletteLayer`, `PaletteReport`, `PaletteException` |
+| `org.geysermc.paletter` | `Paletter` (builder, global policy), `Palette`, `PaletteLayer` (content), `Fallbacks`, `VanillaContent`, `Origin`, `PaletteReport`, `PaletteException`, `BlockExplanation`, `ItemExplanation` |
 | `org.geysermc.paletter.annotation` | `@Experimental`, `@Internal`, `@BedrockFormat` |
-| `org.geysermc.paletter.block` | palettes, `CustomBlock`, `BlockProperty`, ... |
+| `org.geysermc.paletter.block` | `BlockRegistry`, `RegisteredBlock`, `RegisteredBlockState`, `BlockNetworkIds`, `BlockFallback`, `CustomBlock`, `BlockProperty` |
 | `org.geysermc.paletter.block.component` | generated block components and traits (`BlockComponent`, `BlockTrait`, `Geometry`, `MaterialInstances`, `PlacementDirection`, `MenuCategory`, ...) |
-| `org.geysermc.paletter.creative` | the creative inventory model and editor |
-| `org.geysermc.paletter.data` | `DataVersion`, data sources, bundled vanilla data model |
-| `org.geysermc.paletter.item` | palettes, `CustomItem`, `ItemOverride`, ... |
+| `org.geysermc.paletter.creative` | the creative inventory model (`CreativeLayout`, `CreativeItem(BedrockItemStack)`, `CreativeGroup`) and editor |
+| `org.geysermc.paletter.property` | versioned properties of keys: `Properties`, `Property`, `PropertyKind` |
+| `org.geysermc.paletter.data` | `DataVersion`, `PaletteDataSource` (`bundled()`, `directory(Path)`) |
+| `org.geysermc.paletter.item` | `ItemRegistry`, `RegisteredItem`, `BedrockItemStack`, `ItemFallback`, `CustomItem`, `ItemOverride` |
 | `org.geysermc.paletter.item.component` | generated item components (`ItemComponent`, `Durability`, `KineticWeapon`, `Food`, `Wearable`, `MenuCategory`, ...) |
 | `org.geysermc.paletter.vanilla` | vanilla constants (generated `BedrockBlocks`, `BedrockStates`, `BedrockItems`) and their types: `BedrockBlockType`, `BedrockBlockState`, `BedrockItemType`, `BedrockItemVariant`, `BoolState`, `IntState`, `EnumState`, `StringState` |
 | `org.geysermc.paletter.vanilla.state` | generated enums of string block states (`CardinalDirection`, `Direction`, ...) |
@@ -27,7 +28,7 @@ Not API, and free to change in any release:
 - everything under `org.geysermc.paletter.internal` (the generated encoders, the compile core and the hand transforms in
   `internal.component`);
 - public types and members of exported packages annotated **`@Internal`** (plumbing shared between Paletter's own
-  packages, e.g. `ItemRegistry.Builder`, `BlockRegistry#withCustomBlocks`, `PaletteDataCodec`);
+  packages, e.g. `ItemRegistry.Builder`, `BlockRegistry#withCustomBlocks`, `PaletteDataSource#load`);
 - the bundled data format, the tools module.
 
 Types of dependencies that appear in the API (Cloudburst protocol types such as `NbtMap`, `ItemData`,
@@ -151,7 +152,7 @@ The baseline was regenerated once since, when the vanilla constants were added (
 passed against the previous baseline first (no incompatible change, only additions: the `vanilla` packages, the
 constant overloads of `Palette`, `PaletteLayer.Builder`, `ItemMatcher`, `CreativePlacement`, `BlockDescriptor`,
 `PlacementFilter`, `Repairable.Entry`, `BlockFallback`, `ItemFallback`, `CustomBlock#type`, `CustomItem#type`,
-`CanonicalItems#extendsOrIs`, and the `FallbackDefaults` API of the update pipeline), so the new baseline covers the
+`CanonicalItems#extendsOrIs`, and the fallback defaults of the update pipeline), so the new baseline covers the
 new types too, including every generated constant: removing one now fails `apiCompat`.
 
 Additions since the baseline (`apiCompat` passes, baseline not regenerated): `Forwarding` (with `Kind`), `Paletter#forwardBlock` /
@@ -161,6 +162,22 @@ record component; the previous constructors stay), and: `BedrockItemType#hasVari
 debugging aids `Palette#explain` with `BlockExplanation` and `ItemExplanation` (both `@Experimental`: their shape may still grow), and the wire-only item components (`WireOnlyItemComponent`, `RenderOffsets`, `MiningSpeed`, `FrameCount`; `ItemComponent` gains the permitted sub-interface, so code that switches over it exhaustively needs a case for it; likewise `WireOnlyBlockComponent` with `OnPlayerPlacing` for `BlockComponent`).
 
 ### Pre-release changes
+
+- **Model v2** (pre-release; the baseline was regenerated). Three concepts: keys (`BedrockItemType`, `BedrockItemVariant`
+  = type + aux, `BedrockBlockType`, `BedrockBlockState`; vanilla constants or `X.of("namespace:id")`), registered content
+  (`RegisteredItem`, `RegisteredBlock`, `RegisteredBlockState`: the key inside one palette) and stacks
+  (`BedrockItemStack`, which replaces `CreativeStack`; `CreativeItem` wraps one). Policy is global and content is a
+  layer: `Paletter.builder()` takes the data source, versions, `BlockNetworkIds`, one `Fallbacks` (typed:
+  `ItemFallback.of(BedrockItemType|BedrockItemVariant)`, `BlockFallback.of(BedrockBlockType|BedrockBlockState)`), the
+  `VanillaContent` that exists, the creative ordering, reports and the global layers; a `PaletteLayer` is content only.
+  Removed: the `palette(protocol, mode, layers...)` overloads (`Paletter#palette(protocol|codec)` is the one way; session
+  content goes through `Palette#extend`, a patch over the shared palette), `Paletter.create`, per layer fallbacks and
+  `FallbackDefaults`, `ResolvedItem`, the raw `ItemVariant` record, `BlockResolution` (now internal; `BlockExplanation` and
+  `ItemExplanation` have their own `Kind`), `BedrockItemType.custom`, `RegisteredBlockState#block/origin/components/properties`
+  (a hashed state is shared between versions, so ask the palette: `BlockRegistry#block(state)`,
+  `RegisteredBlock#components(state)`, `#properties(state)`), `BlockInterner` and `CreativeLocation` (internal).
+  `Palette#encode` / `#decode` convert stacks, `Paletter#properties(key, version)` and `RegisteredItem#properties` give
+  the versioned properties, `PaletteDataSource#directory(Path)` reads data in the bundled format from a directory.
 
 - **Canonical ids are not exposed anymore** (pre-release, baseline regenerated; `apiCompat` failed against the old one, as
   it should). Public lookups return interned handles instead of ints: `Paletter#block(NbtMap)` ->
@@ -189,8 +206,8 @@ debugging aids `Palette#explain` with `BlockExplanation` and `ItemExplanation` (
 
 - Paletter bundles no fallbacks anymore: `data/fallbacks` and its import are removed, `VanillaData#fallbacks()` is empty
   in the bundled data (the type and the codec's reading of old files stay), and content an older version lacks is
-  `minecraft:unknown` unless a layer defines a fallback (`PaletteLayer.Builder#blockFallback` / `#itemFallback` /
-  `#fallbackDefaults`, `force` semantics and experiment marks unchanged). Results of `Palette` for versions that used to
+  `minecraft:unknown` unless the `Fallbacks` of the Paletter define one (`force` semantics and experiment marks
+  unchanged). Results of `Palette` for versions that used to
   have bundled fallbacks changed; the API did not. The removed entries were exported for Geyser to adopt.
 
 - The block an item is sent with is decided by Paletter from the bundled block to item relation first
