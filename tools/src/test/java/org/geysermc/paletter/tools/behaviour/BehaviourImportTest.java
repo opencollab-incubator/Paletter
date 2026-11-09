@@ -2,6 +2,7 @@ package org.geysermc.paletter.tools.behaviour;
 
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.behaviour.BlockBehaviour;
+import org.geysermc.paletter.behaviour.BlockShape;
 import org.geysermc.paletter.behaviour.ItemBehaviour;
 import org.geysermc.paletter.behaviour.Provenance;
 import org.geysermc.paletter.data.DataVersion;
@@ -20,6 +21,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BehaviourImportTest {
@@ -179,7 +181,7 @@ class BehaviourImportTest {
     @Test
     void customDefaultsComeFromTheirDataFileWithEvidence(@TempDir Path directory) throws IOException {
         BehaviourImport importer = new BehaviourImport(bundled());
-        importer.customDefaults(directory.resolve("missing.json"));
+        importer.customDefaults(directory, directory.resolve("missing.json"));
         assertNull(importer.build().defaultOf(BlockBehaviour.FRICTION), "no file: unknown");
 
         Path file = directory.resolve("defaults.json");
@@ -187,7 +189,7 @@ class BehaviourImportTest {
             {"defaults": [{"key": "block:friction", "value": 0.6, "source": "NATIVE", "reference": "LeviLamina capture"},
                           {"key": "item:max_stack_size", "value": 64, "source": "SCRIPT_API", "reference": "probe"}]}
             """);
-        importer.customDefaults(file);
+        importer.customDefaults(directory, file);
         BehaviourStore store = importer.build();
         assertEquals(0.6f, store.defaultOf(BlockBehaviour.FRICTION).value());
         assertEquals(Provenance.Source.NATIVE, store.defaultOf(BlockBehaviour.FRICTION).source());
@@ -196,8 +198,110 @@ class BehaviourImportTest {
 
         Files.writeString(file, "{\"defaults\": [{\"key\": \"block:friction\", \"value\": 0.6, \"source\": \"CLOUDBURST_DATA\", \"reference\": \"x\"}]}");
         BehaviourImport third = new BehaviourImport(bundled());
-        third.customDefaults(file);
+        third.customDefaults(directory, file);
         org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, third::build);
+    }
+
+    private static NbtMap door(String name, String direction, boolean open, boolean hinge, boolean upper) {
+        return NbtMap.builder().putString("name", name).putCompound("states", NbtMap.builder()
+            .putString("minecraft:cardinal_direction", direction).putByte("open_bit", (byte) (open ? 1 : 0))
+            .putByte("door_hinge_bit", (byte) (hinge ? 1 : 0)).putByte("upper_block_bit", (byte) (upper ? 1 : 0)).build()).build();
+    }
+
+    private static final String PROBE_CAPTURE = """
+        {"bds": {"version": "1.0.0.1", "build": "42"},
+         "defaults": [{"key": "block:friction", "value": 0.6, "method": "slid"},
+                      {"key": "block:light_dampening", "value": 15, "method": "tunnel"},
+                      {"key": "block:collision_shape", "value": [[0, 0, 0, 1, 1, 1]], "method": "pushed"}],
+         "doors": {"minecraft:door": [
+           {"states": {"minecraft:cardinal_direction": "north", "open_bit": false, "door_hinge_bit": false, "upper_block_bit": false}, "axis": "x", "min": 0.8175, "max": 1.0},
+           {"states": {"minecraft:cardinal_direction": "north", "open_bit": true, "door_hinge_bit": true, "upper_block_bit": true}, "axis": "z", "min": 0.0, "max": 0.1825},
+           {"states": {"minecraft:cardinal_direction": "west", "open_bit": true, "door_hinge_bit": true, "upper_block_bit": true}, "axis": "z", "min": 0.0, "max": 0.1825}]}}
+        """;
+
+    /** V1 has two door states the probe measured, one it did not (hash 3) and a block that is no door (4). */
+    private static BehaviourImport.Bundled withDoors() {
+        Map<Integer, NbtMap> states = new LinkedHashMap<>();
+        states.put(1, door("minecraft:door", "north", false, false, false));
+        states.put(2, door("minecraft:door", "north", true, true, true));
+        states.put(3, door("minecraft:door", "east", false, false, false));
+        states.put(4, NbtMap.builder().putString("name", "minecraft:stone").putCompound("states", NbtMap.EMPTY).build());
+        return new BehaviourImport.Bundled(V1, states, Set.of());
+    }
+
+    private static Path probeDirectory(Path bds) throws IOException {
+        Path build = Files.createDirectories(bds.resolve("1.0.0.1").resolve("behaviour-probe"));
+        Files.writeString(bds.resolve("1.0.0.1").resolve("experiments.json"), "{\"protocol\": 10}");
+        Files.writeString(build.resolve("capture.json"), PROBE_CAPTURE);
+        return build;
+    }
+
+    @Test
+    void theProbeSettlesTheDoorDisputeForTheStatesItMeasured(@TempDir Path bds) throws IOException {
+        probeDirectory(bds);
+        BehaviourImport importer = new BehaviourImport(List.of(withDoors()));
+        importer.probe(bds);
+        assertEquals(1, importer.captures().size());
+        BehaviourImport.Capture probe = importer.captures().getFirst();
+        assertEquals(Provenance.Source.BDS_PROBE, probe.source());
+        assertEquals("BDS 1.0.0.1, Build ID 42", probe.match());
+        assertEquals(Set.of(1, 2), probe.blocks().ids, "the states of the capture, found in the palette by name and state values");
+
+        // Data says 0.1875 (corrected), Allay 0.1825 raw: disputed everywhere but where the probe measured
+        Values<Integer> data = new Values<>();
+        Values<Integer> allay = new Values<>();
+        for (int hash = 1; hash <= 4; hash++) {
+            data.put(BlockBehaviour.COLLISION_SHAPE, hash, BlockShape.of(0, 0, 0, 0.1875f, 1, 1));
+            allay.put(BlockBehaviour.COLLISION_SHAPE, hash, BlockShape.of(0, 0, 0, 0.1825f, 1, 1));
+        }
+        importer.captures().add(capture(Provenance.Source.CLOUDBURST_DATA, V1, data));
+        importer.captures().add(capture(Provenance.Source.ALLAY_DATA, V1, allay));
+        BehaviourStore store = importer.build();
+
+        BehaviourStore.Resolved north = store.block(BlockBehaviour.COLLISION_SHAPE, 1, V1);
+        assertEquals(BlockShape.of(0.8175f, 0, 0, 1, 1, 1), north.value());
+        assertEquals(Provenance.Source.BDS_PROBE, north.capture().source());
+        assertTrue(north.disputes().isEmpty(), "BDS settled it");
+        assertTrue(north.postProcessing().startsWith("composed:"), north.postProcessing());
+        assertEquals(BlockShape.of(0, 0, 0, 1, 1, 0.1825f), store.block(BlockBehaviour.COLLISION_SHAPE, 2, V1).value());
+
+        BehaviourStore.Resolved unmeasured = store.block(BlockBehaviour.COLLISION_SHAPE, 3, V1);
+        assertEquals(Provenance.Source.CLOUDBURST_DATA, unmeasured.capture().source());
+        assertEquals(1, unmeasured.disputes().size(), "a door state the probe did not measure stays disputed");
+        assertEquals(1, store.block(BlockBehaviour.COLLISION_SHAPE, 4, V1).disputes().size());
+        assertNull(store.block(BlockBehaviour.OUTLINE_SHAPE, 1, V1), "the probe measured collision only");
+    }
+
+    @Test
+    void aProbeOfAnotherBuildOnlyCountsForItsOwnVersion(@TempDir Path bds) throws IOException {
+        probeDirectory(bds);
+        BehaviourImport importer = new BehaviourImport(List.of(withDoors(), version(V2, 4, Set.of())));
+        importer.probe(bds);
+        assertEquals(List.of(V1), importer.captures().stream().map(BehaviourImport.Capture::version).toList(), "protocol 10 is V1's");
+    }
+
+    @Test
+    void customDefaultsCanNameTheCaptureThatMeasuredThem(@TempDir Path root) throws IOException {
+        probeDirectory(root.resolve("data/bds"));
+        Path file = root.resolve("defaults.json");
+        String capture = "data/bds/1.0.0.1/behaviour-probe/capture.json";
+        Files.writeString(file, "{\"defaults\": ["
+            + "{\"key\": \"block:friction\", \"source\": \"BDS_PROBE\", \"capture\": \"" + capture + "\"},"
+            + "{\"key\": \"block:light_dampening\", \"source\": \"BDS_PROBE\", \"capture\": \"" + capture + "\"},"
+            + "{\"key\": \"block:collision_shape\", \"source\": \"BDS_PROBE\", \"capture\": \"" + capture + "\"}]}");
+        BehaviourImport importer = new BehaviourImport(bundled());
+        importer.customDefaults(root, file);
+        BehaviourStore store = importer.build();
+        assertEquals(0.6f, store.defaultOf(BlockBehaviour.FRICTION).value());
+        assertEquals(15, store.defaultOf(BlockBehaviour.LIGHT_DAMPENING).value());
+        assertEquals(BlockShape.FULL_CUBE, store.defaultOf(BlockBehaviour.COLLISION_SHAPE).value());
+        assertEquals(Provenance.Source.BDS_PROBE, store.defaultOf(BlockBehaviour.FRICTION).source());
+        assertEquals(capture + " (BDS 1.0.0.1, Build ID 42)", store.defaultOf(BlockBehaviour.FRICTION).reference());
+        BehaviourStore read = BehaviourStore.read(new java.io.ByteArrayInputStream(bytes(store)));
+        assertEquals(BlockShape.FULL_CUBE, read.defaultOf(BlockBehaviour.COLLISION_SHAPE).value(), "shapes survive the file");
+
+        Files.writeString(file, "{\"defaults\": [{\"key\": \"block:flame_odds\", \"source\": \"BDS_PROBE\", \"capture\": \"" + capture + "\"}]}");
+        assertThrows(IOException.class, () -> new BehaviourImport(bundled()).customDefaults(root, file), "the capture has no such default");
     }
 
     private static byte[] bytes(BehaviourStore store) throws IOException {

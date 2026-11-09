@@ -1,11 +1,15 @@
 package org.geysermc.paletter.tools.behaviour;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.behaviour.BehaviourKey;
+import org.geysermc.paletter.behaviour.BlockBehaviour;
+import org.geysermc.paletter.behaviour.BlockShape;
 import org.geysermc.paletter.behaviour.ItemBehaviour;
 import org.geysermc.paletter.behaviour.Provenance;
 import org.geysermc.paletter.block.BlockHashes;
@@ -40,8 +44,8 @@ import java.util.zip.GZIPInputStream;
  * every commit of their dump files is read and identified by its block state hashes), and Paletter's own Script API
  * dumps in {@code data/bds}. See {@link BehaviourStore} for the format and {@link BehaviourReport} for what it reports.
  * <p>
- * Ranking, strongest first: Paletter's own captures of BDS (native, Script API; the wire is ranked at runtime), then
- * CloudburstMC/Data, then Allay. Allay only decides what Data does not have (items). Third-party values the sources
+ * Ranking, strongest first: Paletter's own captures of BDS (native, Script API, the behaviour probe; the wire is ranked at
+ * runtime), then CloudburstMC/Data, then Allay. Allay only decides what Data does not have (items). Third-party values the sources
  * disagree on without BDS evidence settling it are stored as disputes next to the value that is used, and values Data
  * says it post-processed are marked. The output has no timestamps: the same inputs give the same bytes.
  */
@@ -102,7 +106,8 @@ public final class BehaviourImport {
         Path resources = root.resolve("paletter/src/main/resources/paletter");
         BehaviourImport importer = new BehaviourImport(bundled(resources));
         importer.scriptApi(root.resolve("data/bds"));
-        importer.customDefaults(root.resolve(DEFAULTS_FILE));
+        importer.probe(root.resolve("data/bds"));
+        importer.customDefaults(root, root.resolve(DEFAULTS_FILE));
         if (cloudburstData != null) {
             importer.cloudburstData(new GitHistory(cloudburstData));
         }
@@ -130,43 +135,160 @@ public final class BehaviourImport {
     }
 
     /**
-     * {@code data/behaviour/custom-defaults.json}: {@code {"defaults": [{"key": "block:friction", "value": 0.6,
-     * "source": "NATIVE", "reference": "what captured it"}]}}, the values BDS uses for custom blocks and items that do
-     * not set the component. A missing file or list means no default is known. Values are never guessed: every entry
-     * names a direct BDS source and its evidence.
+     * {@code data/behaviour/custom-defaults.json}: the values BDS uses for custom blocks and items that do not set the
+     * component, each with the BDS evidence it comes from. An entry is either
+     * {@code {"key": "block:friction", "value": 0.6, "source": "NATIVE", "reference": "what captured it"}}, or names the
+     * capture that measured it, {@code {"key": "block:friction", "source": "BDS_PROBE", "capture":
+     * "data/bds/1.26.63.1/behaviour-probe/capture.json"}}: the value is that capture's default of the key (a number, a
+     * boolean, a string, or a list of boxes of six coordinates for shapes). A missing file or list means no default is
+     * known. Values are never guessed: every entry names a direct BDS source and its evidence.
+     *
+     * @param root the repository root, which {@code capture} paths are relative to
      */
-    void customDefaults(Path file) throws IOException {
+    void customDefaults(Path root, Path file) throws IOException {
         if (!Files.isRegularFile(file)) {
             return;
         }
-        JsonObject root = JsonParser.parseString(Files.readString(file)).getAsJsonObject();
-        if (!root.has("defaults")) {
+        JsonObject json = JsonParser.parseString(Files.readString(file)).getAsJsonObject();
+        if (!json.has("defaults")) {
             return;
         }
-        for (JsonElement element : root.getAsJsonArray("defaults")) {
+        for (JsonElement element : json.getAsJsonArray("defaults")) {
             JsonObject entry = element.getAsJsonObject();
             String name = entry.get("key").getAsString();
-            BehaviourKey<?> key = name.startsWith("block:") ? org.geysermc.paletter.behaviour.BlockBehaviour.key(name.substring(6))
+            BehaviourKey<?> key = name.startsWith("block:") ? BlockBehaviour.key(name.substring(6))
                 : name.startsWith("item:") ? ItemBehaviour.key(name.substring(5)) : null;
             if (key == null) {
                 throw new IOException(file + ": unknown key " + name);
             }
-            JsonElement value = entry.get("value");
-            Object typed;
-            if (key.type() == Float.class) {
-                typed = (float) value.getAsDouble();
-            } else if (key.type() == Integer.class) {
-                typed = value.getAsInt();
-            } else if (key.type() == Boolean.class) {
-                typed = value.getAsBoolean();
-            } else if (key.type() == String.class) {
-                typed = value.getAsString();
+            JsonElement value;
+            String reference;
+            if (entry.has("capture")) {
+                String capture = entry.get("capture").getAsString();
+                JsonObject measured = JsonParser.parseString(Files.readString(root.resolve(capture))).getAsJsonObject();
+                value = null;
+                for (JsonElement candidate : measured.getAsJsonArray("defaults")) {
+                    if (candidate.getAsJsonObject().get("key").getAsString().equals(name)) {
+                        value = candidate.getAsJsonObject().get("value");
+                    }
+                }
+                if (value == null) {
+                    throw new IOException(file + ": " + capture + " has no default of " + name);
+                }
+                JsonObject bds = measured.getAsJsonObject("bds");
+                reference = capture + " (BDS " + bds.get("version").getAsString() + ", Build ID " + bds.get("build").getAsString() + ")";
             } else {
-                throw new IOException(file + ": defaults of " + key + " are not supported (type " + key.type().getSimpleName() + ")");
+                value = entry.get("value");
+                reference = entry.get("reference").getAsString();
             }
-            customDefaults.add(new CustomDefault(key, typed, Provenance.Source.valueOf(entry.get("source").getAsString()),
-                entry.get("reference").getAsString()));
+            customDefaults.add(new CustomDefault(key, typed(key, value, file), Provenance.Source.valueOf(entry.get("source").getAsString()),
+                reference));
         }
+    }
+
+    private static Object typed(BehaviourKey<?> key, JsonElement value, Path file) throws IOException {
+        if (key.type() == Float.class) {
+            return (float) value.getAsDouble();
+        } else if (key.type() == Integer.class) {
+            return value.getAsInt();
+        } else if (key.type() == Boolean.class) {
+            return value.getAsBoolean();
+        } else if (key.type() == String.class) {
+            return value.getAsString();
+        } else if (key.type() == BlockShape.class) {
+            return shape(value.getAsJsonArray());
+        }
+        throw new IOException(file + ": defaults of " + key + " are not supported (type " + key.type().getSimpleName() + ")");
+    }
+
+    /** @param boxes a list of boxes, each {@code [minX, minY, minZ, maxX, maxY, maxZ]} */
+    private static BlockShape shape(JsonArray boxes) {
+        float[] coordinates = new float[boxes.size() * 6];
+        for (int box = 0; box < boxes.size(); box++) {
+            for (int i = 0; i < 6; i++) {
+                coordinates[box * 6 + i] = boxes.get(box).getAsJsonArray().get(i).getAsFloat();
+            }
+        }
+        return BlockShape.of(coordinates);
+    }
+
+    /**
+     * {@code data/bds/<bds>/behaviour-probe/capture.json}: the collision of every door state, measured on BDS (see
+     * {@link BehaviourProbe}). The probe measures the axis the panel is thin on; the panel's length and height are the
+     * block's 0 to 1, which the capture does not measure and the note on every value says. Only for the bundled version
+     * the BDS build is of.
+     */
+    void probe(Path bds) throws IOException {
+        if (!Files.isDirectory(bds)) {
+            return;
+        }
+        Map<DataVersion, Path> newest = new TreeMap<>();
+        try (Stream<Path> dirs = Files.list(bds)) {
+            for (Path dir : dirs.sorted((a, b) -> compare(bdsOrder(a), bdsOrder(b))).toList()) {
+                Path experiments = dir.resolve("experiments.json");
+                if (Files.isRegularFile(dir.resolve(BehaviourProbe.DIRECTORY).resolve(BehaviourProbe.CAPTURE)) && Files.isRegularFile(experiments)) {
+                    DataVersion version = versionOfProtocol(JsonParser.parseString(Files.readString(experiments)).getAsJsonObject()
+                        .get("protocol").getAsInt());
+                    if (version != null) {
+                        newest.put(version, dir);
+                    }
+                }
+            }
+        }
+        for (Map.Entry<DataVersion, Path> entry : newest.entrySet()) {
+            String bdsVersion = entry.getValue().getFileName().toString();
+            JsonObject capture = JsonParser.parseString(Files.readString(entry.getValue().resolve(BehaviourProbe.DIRECTORY)
+                .resolve(BehaviourProbe.CAPTURE))).getAsJsonObject();
+            Values<Integer> blocks = new Values<>();
+            Bundled bundled = bundled(entry.getKey());
+            for (Map.Entry<String, JsonElement> door : capture.getAsJsonObject("doors").entrySet()) {
+                for (JsonElement element : door.getValue().getAsJsonArray()) {
+                    JsonObject panel = element.getAsJsonObject();
+                    Integer hash = hashOf(bundled, door.getKey(), panel.getAsJsonObject("states"));
+                    if (hash == null) {
+                        log.add(Provenance.Source.BDS_PROBE + " " + bdsVersion + ": no " + door.getKey() + " state " + panel.get("states")
+                            + " in " + entry.getKey().name());
+                        continue;
+                    }
+                    float min = panel.get("min").getAsFloat();
+                    float max = panel.get("max").getAsFloat();
+                    blocks.put(BlockBehaviour.COLLISION_SHAPE, hash, panel.get("axis").getAsString().equals("x")
+                        ? BlockShape.of(min, 0, 0, max, 1, 1) : BlockShape.of(0, 0, min, 1, 1, max));
+                    blocks.postProcessed(BlockBehaviour.COLLISION_SHAPE, hash, "composed: the axis the panel is thin on is measured (bodies "
+                        + "stopped at both faces); its length and height are the block's 0 to 1, not measured");
+                }
+            }
+            captures.add(new Capture(Provenance.Source.BDS_PROBE, "Paletter data/bds/" + bdsVersion + "/" + BehaviourProbe.DIRECTORY + "/"
+                + BehaviourProbe.CAPTURE, "", entry.getKey(), "BDS " + bdsVersion + ", Build ID "
+                + capture.getAsJsonObject("bds").get("build").getAsString(), blocks, new Values<>()));
+        }
+    }
+
+    /** @return the state of a palette whose block is {@code block} and whose door states are the capture's, or null */
+    private static Integer hashOf(Bundled bundled, String block, JsonObject states) {
+        for (Map.Entry<Integer, NbtMap> state : bundled.states().entrySet()) {
+            NbtMap map = state.getValue();
+            if (!map.getString("name").equals(block)) {
+                continue;
+            }
+            NbtMap values = map.getCompound("states");
+            boolean same = true;
+            for (Map.Entry<String, JsonElement> wanted : states.entrySet()) {
+                same &= matches(values.get(wanted.getKey()), wanted.getValue().getAsJsonPrimitive());
+            }
+            if (same) {
+                return state.getKey();
+            }
+        }
+        return null;
+    }
+
+    /** A palette state value (a byte for bits, else a string or an int) against the capture's boolean, string or number. */
+    private static boolean matches(Object actual, JsonPrimitive wanted) {
+        if (actual == null) {
+            return false;
+        }
+        return actual instanceof Byte bit && wanted.isBoolean() ? (bit != 0) == wanted.getAsBoolean() : actual.toString().equals(wanted.getAsString());
     }
 
     // ---- Sources ----
@@ -381,15 +503,15 @@ public final class BehaviourImport {
             notes.add(noted);
             Capture capture = captures.get(a);
             Values<I> own = values.apply(capture);
-            if (!capture.source().thirdParty()) {
-                continue;
-            }
             int self = a;
             own.postProcessed.forEach((key, byId) -> byId.forEach((id, note) -> {
                 if (covered.get(self).contains(id) && own.byKey.getOrDefault(key, Map.of()).containsKey(id)) {
                     noted.computeIfAbsent(key, k -> new LinkedHashMap<>()).put(id, note);
                 }
             }));
+            if (!capture.source().thirdParty()) {
+                continue;
+            }
             for (int b = 0; b < n; b++) {
                 Capture other = captures.get(b);
                 if (b == a || !other.version().equals(capture.version()) || !other.source().thirdParty()
@@ -547,7 +669,7 @@ public final class BehaviourImport {
             .putString("do_not_edit", "Generated file: regenerate it with the command, never edit it")
             .putString("command", COMMAND)
             .putString("reproducible", "The same sources at the same commits give the same bytes: no timestamps, ordered output")
-            .putString("ranking", "Direct BDS evidence (native capture, Script API, wire) > CloudburstMC/Data > Allay")
+            .putString("ranking", "Direct BDS evidence (native capture, Script API, behaviour probe, wire) > CloudburstMC/Data > Allay")
             .putList("bundled_versions", org.cloudburstmc.nbt.NbtType.STRING, bundled.stream().map(b -> b.version().name()).toList())
             .putList("sources", org.cloudburstmc.nbt.NbtType.COMPOUND, sources)
             .putInt("custom_defaults", customDefaults.size())
@@ -559,6 +681,7 @@ public final class BehaviourImport {
             case CLOUDBURST_DATA -> "https://github.com/CloudburstMC/Data (Apache-2.0): native BDS dump; post-processes some values (shapeSource)";
             case ALLAY_DATA -> "https://github.com/AllayMC/Allay data/ (MIT): raw Endstone DevTools dump of BDS";
             case SCRIPT_API -> "Paletter data/bds: BDS Script API dumps";
+            case BDS_PROBE -> "Paletter data/bds: experiments on BDS (behaviour-probe): door collision";
             default -> source.name();
         };
     }

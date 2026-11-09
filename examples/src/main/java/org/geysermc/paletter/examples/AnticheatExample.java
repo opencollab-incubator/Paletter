@@ -106,10 +106,13 @@ public final class AnticheatExample {
             + (provenance.inherited() ? " (inherited from " + provenance.captured() + ")" : ""));
         System.out.println("  third-party dump: " + provenance.thirdParty() + ", disputed: " + provenance.disputed());
 
-        // A custom block: was the value set by the server, or is it a BDS default? (Not known yet: no value then)
+        // A custom block: was the value set by the server, or is it a BDS default (measured on BDS), or not known (no value)?
         RegisteredBlockState custom = palette.blocks().block("example:slippery").defaultState();
         System.out.println("custom friction set by the user: " + behaviour.isUserSet(custom, BlockBehaviour.FRICTION)
             + ", conversion unverified: " + behaviour.provenance(custom, BlockBehaviour.FRICTION).unverified());
+        System.out.println("custom explosion resistance: " + behaviour.get(custom, BlockBehaviour.EXPLOSION_RESISTANCE) + " ("
+            + behaviour.provenance(custom, BlockBehaviour.EXPLOSION_RESISTANCE).source() + ", BDS default: "
+            + behaviour.provenance(custom, BlockBehaviour.EXPLOSION_RESISTANCE).bdsDefault() + ")");
         System.out.println("custom destroy time: " + behaviour.get(custom, BlockBehaviour.DESTROY_TIME) + " ("
             + behaviour.provenance(custom, BlockBehaviour.DESTROY_TIME).source() + ")");
 

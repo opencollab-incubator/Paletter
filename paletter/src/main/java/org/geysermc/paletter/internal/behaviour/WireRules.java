@@ -25,8 +25,9 @@ import java.util.function.Function;
 public final class WireRules {
     private static final Map<BehaviourKey<?>, Function<Properties, Object>> BLOCK = Map.of(
         BlockBehaviour.DESTROY_TIME, p -> floatOf(p.component("minecraft:destructible_by_mining"), "value"),
-        // Engine friction is 1 - the component value (component 0.4 = the default 0.6). No vanilla block sends
-        // minecraft:friction, so this rule is not checked against a dump yet (needs a native capture of a custom block)
+        // Engine friction is 1 - the component value (component 0.4 = the default 0.6): measured on BDS 1.26.63.1 for the
+        // values 0 to 0.9 (data/bds/1.26.63.1/behaviour-probe, friction.components). No vanilla block sends
+        // minecraft:friction, so no dump checks this rule
         BlockBehaviour.FRICTION, p -> {
             Float value = floatOf(p.component("minecraft:friction"), "value");
             return value == null ? null : 1 - value;
@@ -60,9 +61,9 @@ public final class WireRules {
     );
     /**
      * Keys whose rule converts the component value into the engine's unit without a BDS capture that confirms the
-     * conversion. Remove a key when a capture of a custom block / item confirms it.
+     * conversion. Add a key when a rule is written without one, remove it when a capture of a custom block / item confirms it.
      */
-    private static final Set<BehaviourKey<?>> UNVERIFIED = Set.of(BlockBehaviour.FRICTION);
+    private static final Set<BehaviourKey<?>> UNVERIFIED = Set.of();
 
     private WireRules() {
     }

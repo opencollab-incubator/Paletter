@@ -418,8 +418,9 @@ p.userSet();          // custom content: the user's component (else a BDS defaul
 - **Where values come from** (the ranking, strongest first): values come from BDS directly wherever possible, then from
   third-party dumps of BDS, which are marked as such and never guessed or hand-written.
   1. Paletter's own captures of BDS: a native capture (LeviLamina, run by hand, none yet), the Script API dumps in
-     `data/bds` (max stack size, durability) and what BDS sends clients (the component data of data driven blocks and
-     component based items), which wins over a third-party value at runtime.
+     `data/bds` (max stack size, durability), experiments on BDS (`behaviour-probe`, `Source.BDS_PROBE`: the collision of
+     every door state, and the defaults of custom blocks) and what BDS sends clients (the component data of data driven
+     blocks and component based items), which wins over a third-party value at runtime.
   2. [CloudburstMC/Data](https://github.com/CloudburstMC/Data) (Apache-2.0): a native BDS dump of every block state. It
      post-processes some values (`shapeSource: door_state_correction` on doors); `Provenance#postProcessing()` says so.
   3. [AllayMC/Allay](https://github.com/AllayMC/Allay) `data/` (MIT), the raw Endstone DevTools dump of BDS. Used only
@@ -429,17 +430,22 @@ p.userSet();          // custom content: the user's component (else a BDS defaul
   `behaviour import` reads their git history and identifies each commit's version by its block state hashes. A value is
   stored once and holds until a later capture changes it; a version without a capture of its own inherits it, which
   `Provenance#inherited()` and [data/behaviour/REPORT.md](data/behaviour/REPORT.md) show.
-- **Disputes**: where the third-party sources disagree and no BDS evidence settles it (doors: Allay 0.1825 thick, Data
-  0.1875; plant model offsets), the stronger source's value is returned and `Provenance#disputed()` is true, with the other
-  values in `Provenance#alternatives()`. The report lists every dispute; nothing is picked silently.
+- **Disputes**: where the third-party sources disagree and no BDS evidence settles it (door outlines and, before 26.60,
+  door collision: Allay 0.1825 thick, Data 0.1875; plant model offsets), the stronger source's value is returned and
+  `Provenance#disputed()` is true, with the other values in `Provenance#alternatives()`. The report lists every dispute;
+  nothing is picked silently. The probe measured the collision of every door in every state on BDS 1.26.63.1 (26.60): the
+  panel is 0.1825 thick, at the positions the door's state says (`Provenance#postProcessing()` says which axes were
+  measured), so 26.60 door collision is not disputed.
 - **Custom blocks and items** answer the same keys from their components, read from the data the palette sends with the
   rules that also read vanilla data driven blocks (checked against the dumps): `Friction`, `DestructibleByMining`,
   `LightEmission`, `LightDampening`, `CollisionBox`, `SelectionBox` (with `Transformation` y rotations), `MaxStackSize`,
   `Durability`, `Damage`, `UseModifiers`, `UseAnimation`. `Provenance#userSet()` (or `Behaviour#isUserSet`) tells a value
   the user set from one that is not; a key without the component gets the BDS default, if one is known, else no value and
-  `Provenance.Source.UNKNOWN_DEFAULT`. The defaults are data: an entry with its BDS evidence in
-  `data/behaviour/custom-defaults.json`, then `behaviour import` (none are known yet, none are invented). The friction
-  conversion (engine friction is 1 minus the component value) is `Provenance#unverified()` until BDS evidence confirms it.
+  `Provenance.Source.UNKNOWN_DEFAULT`. The defaults are data: an entry in `data/behaviour/custom-defaults.json` naming
+  the capture that measured it, then `behaviour import`. Measured by the probe on BDS 1.26.63.1: friction 0.6, explosion
+  resistance 0, light dampening 15, light emission 0, a full cube collision box, not flammable. Not known (no value): the
+  selection box and the destroy time. The friction conversion (engine friction is 1 minus the component value) is
+  measured too, so `Provenance#unverified()` is false.
 - **Session palettes** (`palette.extend(layer)`) share the parent palette's dense `BlockTable` values (the same array);
   only the block states the layers added have values of their own.
 - Shapes are those of a state alone: shapes that depend on neighbours or the position (scaffolding, plant offsets)

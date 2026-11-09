@@ -411,6 +411,7 @@ public record org.geysermc.paletter.behaviour.Provenance$Alternative {
 public enum org.geysermc.paletter.behaviour.Provenance$Source {
     public static final org.geysermc.paletter.behaviour.Provenance$Source ALLAY_DATA
     public static final org.geysermc.paletter.behaviour.Provenance$Source BDS_DEFAULT
+    public static final org.geysermc.paletter.behaviour.Provenance$Source BDS_PROBE
     public static final org.geysermc.paletter.behaviour.Provenance$Source CLOUDBURST_DATA
     public static final org.geysermc.paletter.behaviour.Provenance$Source NATIVE
     public static final org.geysermc.paletter.behaviour.Provenance$Source SCRIPT_API

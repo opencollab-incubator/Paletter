@@ -6,6 +6,7 @@ import org.geysermc.paletter.behaviour.BlockBehaviour;
 import org.geysermc.paletter.behaviour.BlockShape;
 import org.geysermc.paletter.behaviour.ItemBehaviour;
 import org.geysermc.paletter.internal.behaviour.BehaviourStore;
+import org.geysermc.paletter.internal.behaviour.WireRules;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,8 +68,9 @@ final class BehaviourReport {
     private void ranking(StringBuilder out) {
         out.append("## Ranking\n\nValues come from BDS directly wherever possible; third-party dumps rank below and are marked "
             + "(`Provenance#thirdParty()`). Strongest first:\n\n"
-            + "1. Paletter's own captures of BDS: native capture (`NATIVE`, none yet), Script API dumps (`SCRIPT_API`), and what BDS sends "
-            + "clients (`WIRE`, ranked at runtime from the component data of the palette).\n"
+            + "1. Paletter's own captures of BDS: native capture (`NATIVE`, none yet), Script API dumps (`SCRIPT_API`), experiments on BDS "
+            + "(`BDS_PROBE`: `behaviour-probe`, the collision of doors) and what BDS sends clients (`WIRE`, ranked at runtime from the "
+            + "component data of the palette).\n"
             + "2. `CLOUDBURST_DATA`: CloudburstMC/Data (Apache-2.0), a native BDS dump. Third party. It post-processes some values "
             + "(see Post-processed values).\n"
             + "3. `ALLAY_DATA`: AllayMC/Allay `data/` (MIT), the raw Endstone DevTools dump of BDS. Third party. Used only for what "
@@ -185,12 +187,16 @@ final class BehaviourReport {
         if (customDefaults.isEmpty()) {
             out.append("Known defaults: none yet. Every default of a custom block or item is unknown.\n\n");
         } else {
-            customDefaults.forEach(d -> out.append("- `").append(d.key()).append("` = ").append(d.value()).append(" (")
+            customDefaults.forEach(d -> out.append("- `").append(d.key()).append("` = ").append(format(d.value())).append(" (")
                 .append(d.source()).append(": ").append(d.reference()).append(")\n"));
             out.append('\n');
         }
-        out.append("Unverified conversions (`Provenance#unverified()`): `block:friction` of custom blocks is 1 minus the "
-            + "`minecraft:friction` value; no BDS evidence confirms the conversion yet.\n\n");
+        List<BehaviourKey<?>> unverified = new ArrayList<>(BlockBehaviour.keys());
+        unverified.addAll(ItemBehaviour.keys());
+        unverified.removeIf(key -> !WireRules.unverified(key));
+        out.append("Unverified conversions (`Provenance#unverified()`): ").append(unverified.isEmpty() ? "none" : unverified.toString())
+            .append(". The friction of a custom block is 1 minus the `minecraft:friction` value, confirmed on BDS by the probe "
+                + "(`friction.components` of its capture).\n\n");
     }
 
     private void disagreements(StringBuilder out) {

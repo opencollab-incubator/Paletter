@@ -9,8 +9,8 @@ import java.util.List;
  * Where a behaviour value comes from, and how far to trust it.
  * <p>
  * Values come from BDS itself wherever possible (Paletter's own captures: {@link Source#NATIVE}, {@link Source#SCRIPT_API},
- * {@link Source#WIRE}); third-party dumps of BDS ({@link Source#CLOUDBURST_DATA}, {@link Source#ALLAY_DATA}) rank below
- * them and say so ({@link #thirdParty()}). Where sources disagree and no BDS evidence settles it, the value is
+ * {@link Source#BDS_PROBE}, {@link Source#WIRE}); third-party dumps of BDS ({@link Source#CLOUDBURST_DATA},
+ * {@link Source#ALLAY_DATA}) rank below them and say so ({@link #thirdParty()}). Where sources disagree and no BDS evidence settles it, the value is
  * {@link #disputed()} and the other sources' values are in {@link #alternatives()}: nothing is picked silently.
  * Custom content says whether a value was set by the user ({@link #userSet()}) or is a BDS default.
  *
@@ -22,8 +22,9 @@ import java.util.List;
  *                     direct from BDS settles it; empty if the value is not disputed
  * @param postProcessing how the source itself post-processed the value (e.g. {@code door_state_correction}: the
  *                       dump's author corrected it after the BDS dump), or null if the source did not say so
- * @param unverified true if the value goes through a conversion no BDS evidence confirmed yet (e.g. the friction of a
- *                   custom block: engine friction is assumed to be 1 minus the component value)
+ * @param unverified true if the value goes through a conversion no BDS evidence confirmed yet (none at present: the
+ *                   friction of a custom block, engine friction 1 minus the component value, is confirmed by a
+ *                   {@link Source#BDS_PROBE} capture)
  * @since 0.1.0
  */
 public record Provenance(@NonNull Source source, @NonNull String reference, @NonNull String captured, @NonNull String version,
@@ -123,6 +124,8 @@ public record Provenance(@NonNull Source source, @NonNull String reference, @Non
         NATIVE(false),
         /** BDS Script API, captured by Paletter's tools. */
         SCRIPT_API(false),
+        /** Experiments on BDS (bodies pushed into blocks, light, explosions, fire), run by Paletter's {@code behaviour-probe}. */
+        BDS_PROBE(false),
         /** What BDS sends clients: the component data of vanilla items and data driven blocks. */
         WIRE(false),
         /** CloudburstMC/Data (Apache-2.0), a native BDS dump; third party, and it post-processes some values. */

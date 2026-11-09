@@ -151,11 +151,16 @@ class BehaviourTest {
         assertFalse(Provenance.Source.WIRE.thirdParty());
         assertTrue(Provenance.Source.CLOUDBURST_DATA.ordinal() < Provenance.Source.ALLAY_DATA.ordinal(), "Data ranks above Allay");
         assertTrue(Provenance.Source.WIRE.ordinal() < Provenance.Source.CLOUDBURST_DATA.ordinal(), "BDS evidence ranks above third parties");
+        assertFalse(Provenance.Source.BDS_PROBE.thirdParty());
+        assertTrue(Provenance.Source.BDS_PROBE.ordinal() < Provenance.Source.CLOUDBURST_DATA.ordinal(), "the probe is direct BDS evidence");
     }
 
     @Test
-    void doorsAreDisputedAndPostProcessedInEveryVersion() {
+    void doorsAreDisputedAndPostProcessedInEveryVersionTheProbeDidNotMeasure() {
         for (DataVersion version : PALETTER.versions()) {
+            if (version.equals(LATEST)) {
+                continue; // measured: doorsAreWhereTheProbeMeasuredThem
+            }
             Palette palette = PALETTER.vanilla(version);
             boolean disputed = false;
             for (RegisteredBlockState state : palette.blocks().states("minecraft:iron_door")) {
@@ -189,7 +194,8 @@ class BehaviourTest {
         Provenance friction = behaviour.provenance(state, BlockBehaviour.FRICTION);
         assertTrue(friction.userSet());
         assertTrue(behaviour.isUserSet(state, BlockBehaviour.FRICTION));
-        assertTrue(friction.unverified(), "the 1 - value conversion has no BDS evidence yet");
+        assertFalse(friction.unverified(), "the 1 - value conversion is confirmed by the probe");
+        assertEquals(0.9f, behaviour.get(state, BlockBehaviour.FRICTION), 1e-6f, "component 0.1: engine friction 1 - 0.1");
         assertFalse(friction.thirdParty());
 
         // No component and no known BDS default: no value, and the provenance says why
