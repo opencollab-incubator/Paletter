@@ -63,10 +63,7 @@ public final class WireShapes {
 
     /** The data driven items and blocks of a bundled palette file. */
     public static WireShapes ofPalette(Path file) throws IOException {
-        VanillaData data;
-        try (InputStream stream = Files.newInputStream(file)) {
-            data = PaletteDataCodec.read(stream);
-        }
+        VanillaData data = BundledFiles.read(file);
         WireShapes shapes = new WireShapes();
         for (VanillaItem item : data.items()) {
             if (item.componentBased() && item.componentData() != null) {

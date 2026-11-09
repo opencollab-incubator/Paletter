@@ -2,6 +2,7 @@ package org.geysermc.paletter.data;
 
 import org.geysermc.paletter.internal.data.Renames;
 
+import org.geysermc.paletter.internal.data.PropertyStore;
 import org.geysermc.paletter.internal.data.VanillaData;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -35,6 +36,15 @@ public interface PaletteDataSource {
     @org.geysermc.paletter.annotation.Internal
     default @NonNull Renames renames() {
         return Renames.NONE;
+    }
+
+    /**
+     * @return the versioned properties of items and blocks; the bundled source reads {@code properties.nbt}, the
+     * default has none (data in format 1 carries its own)
+     */
+    @org.geysermc.paletter.annotation.Internal
+    default @NonNull PropertyStore properties() {
+        return PropertyStore.empty();
     }
 
     /**

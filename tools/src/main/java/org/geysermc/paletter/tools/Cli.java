@@ -10,6 +10,7 @@ import org.geysermc.paletter.tools.client.CaptureClient;
 import org.geysermc.paletter.tools.client.CaptureWriter;
 import org.geysermc.paletter.tools.client.CapturedData;
 import org.geysermc.paletter.tools.client.LevelDat;
+import org.geysermc.paletter.tools.data.BundledFiles;
 import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.data.Checker;
 import org.geysermc.paletter.tools.data.Importer;
@@ -45,7 +46,7 @@ import java.util.concurrent.Callable;
  */
 @Command(name = "paletter-tools", mixinStandardHelpOptions = true, subcommands = {
     Cli.Import.class, Cli.BdsRun.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.SpecCaptureCommand.class,
-    Cli.VerifyCommand.class, Cli.CheckData.class, Cli.BlockItemsCommand.class, Cli.RewriteCommand.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class,
+    Cli.VerifyCommand.class, Cli.CheckData.class, Cli.BlockItemsCommand.class, Cli.RewriteCommand.class, Cli.DataRewriteCommand.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
     Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class
@@ -139,6 +140,17 @@ public final class Cli implements Runnable {
                 Files.write(file, bytes.toByteArray());
                 System.out.println("Rewrote " + file);
             }
+            return 0;
+        }
+    }
+
+    @Command(name = "data-rewrite", description = "Rewrites every bundled version file (format 2, without item components and data driven blocks) "
+        + "and rebuilds properties.nbt from all of them. Reads format 1 and 2; checks before writing that putting the data together again "
+        + "gives back exactly what was read.")
+    static final class DataRewriteCommand extends Rooted implements Callable<Integer> {
+        @Override
+        public Integer call() throws Exception {
+            BundledFiles.rewrite(resources());
             return 0;
         }
     }
@@ -558,18 +570,11 @@ public final class Cli implements Runnable {
 
     /** The bundled Paletter version {@code name} from the library jar. */
     public static VanillaData reference(String name) throws IOException {
-        try (InputStream stream = Cli.class.getResourceAsStream("/paletter/" + name + ".nbt")) {
-            if (stream == null) {
-                throw new IOException("No bundled Paletter version " + name);
-            }
-            return PaletteDataCodec.read(stream);
-        }
+        return org.geysermc.paletter.data.PaletteDataSource.bundled().load(new org.geysermc.paletter.data.DataVersion(name, 0));
     }
 
     static VanillaData readPalette(Path file) throws IOException {
-        try (InputStream stream = Files.newInputStream(file)) {
-            return PaletteDataCodec.read(stream);
-        }
+        return BundledFiles.read(file);
     }
 
     private static void put(Map<String, String> options, String name, String value) {

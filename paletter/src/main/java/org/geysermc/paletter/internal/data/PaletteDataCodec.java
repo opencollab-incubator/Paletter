@@ -37,11 +37,12 @@ import java.util.TreeSet;
 /**
  * The bundled data format: one gzipped big endian NBT compound per version. Written by the generator, read at runtime.
  * <pre>
- * format: int                      {@value #FORMAT}
+ * format: int                      {@value #FORMAT} (1 is still read: it also has the items' components and data_driven_blocks)
  * name: string, protocol: int      the data version
  * blocks: [{name, states}]         vanilla block states in runtime id order
- * items: [{name, id, version, component_based, components?}]
- * data_driven_blocks: {name: properties}
+ * items: [{name, id, version, component_based}]
+ *                                  (format 1: components?, and data_driven_blocks: {name: properties}; format 2 keeps
+ *                                  both in properties.nbt, see PropertyStore)
  * creative: {construction|nature|equipment|items: [node]}
  *     node: {group: name, icon?: stack, stacks: [stack]} or a stack
  *     stack: {id, damage?, count?, block?: {name, states}, nbt?}
@@ -57,7 +58,9 @@ import java.util.TreeSet;
  */
 @Internal
 public final class PaletteDataCodec {
-    public static final int FORMAT = 1;
+    public static final int FORMAT = 2;
+    /** The format before properties moved to their own file; still read, and written on request. */
+    public static final int FORMAT_1 = 1;
 
     private PaletteDataCodec() {
     }
@@ -68,8 +71,8 @@ public final class PaletteDataCodec {
             root = (NbtMap) input.readTag();
         }
         int format = root.getInt("format", -1);
-        if (format != FORMAT) {
-            throw new IOException("Unsupported Paletter data format " + format + ", expected " + FORMAT);
+        if (format != FORMAT && format != FORMAT_1) {
+            throw new IOException("Unsupported Paletter data format " + format + ", expected " + FORMAT_1 + " or " + FORMAT);
         }
         DataVersion version = new DataVersion(root.getString("name"), root.getInt("protocol"));
 
@@ -155,8 +158,19 @@ public final class PaletteDataCodec {
      * Writes the data. Maps are written sorted by key, so the same data always produces the same bytes.
      */
     public static void write(@NonNull VanillaData data, @NonNull OutputStream stream) throws IOException {
+        write(data, stream, FORMAT);
+    }
+
+    /**
+     * Writes the data in {@link #FORMAT} or the older {@link #FORMAT_1}. Format 2 leaves out the item components and
+     * the data driven blocks of {@code data}: they belong in the {@link PropertyStore}.
+     */
+    public static void write(@NonNull VanillaData data, @NonNull OutputStream stream, int format) throws IOException {
+        if (format != FORMAT && format != FORMAT_1) {
+            throw new IllegalArgumentException("Unsupported Paletter data format " + format);
+        }
         NbtMapBuilder root = NbtMap.builder()
-            .putInt("format", FORMAT)
+            .putInt("format", format)
             .putString("name", data.version().name())
             .putInt("protocol", data.version().protocolVersion());
 
@@ -169,18 +183,20 @@ public final class PaletteDataCodec {
                 .putInt("id", item.runtimeId())
                 .putInt("version", item.version())
                 .putBoolean("component_based", item.componentBased());
-            if (item.componentData() != null) {
+            if (format == FORMAT_1 && item.componentData() != null) {
                 builder.putCompound("components", item.componentData());
             }
             items.add(builder.build());
         }
         root.putList("items", NbtType.COMPOUND, items);
 
-        NbtMapBuilder dataDriven = NbtMap.builder();
-        for (BlockPropertyData block : data.dataDrivenBlocks()) {
-            dataDriven.putCompound(block.getName(), block.getProperties());
+        if (format == FORMAT_1) {
+            NbtMapBuilder dataDriven = NbtMap.builder();
+            for (BlockPropertyData block : data.dataDrivenBlocks()) {
+                dataDriven.putCompound(block.getName(), block.getProperties());
+            }
+            root.putCompound("data_driven_blocks", dataDriven.build());
         }
-        root.putCompound("data_driven_blocks", dataDriven.build());
 
         NbtMapBuilder creative = NbtMap.builder();
         for (CreativeCategory category : CreativeCategory.values()) {
