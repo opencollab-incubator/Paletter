@@ -17,7 +17,7 @@ import org.geysermc.paletter.internal.component.Check;
  * Add-on JSON: {@code "minecraft:embedded_visual"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_embedded_visual.md}.
  *
  * @param geometry The "minecraft:geometry" component that will be used when rendered inside of another block. Add-on JSON {@code
- *        geometry}. Required. Compiled by the hand transform {@code geometry}.
+ *        geometry}. Required. Compiled by the hand transform {@code embedded_geometry}.
  * @param materialInstances The "minecraft:material_instances" component that will be used when rendered inside of another block. Value
  *        must have at most 64 items. Add-on JSON {@code material_instances}. Optional (null: not set). Compiled by the
  *        hand transform {@code material_instances_inline}.

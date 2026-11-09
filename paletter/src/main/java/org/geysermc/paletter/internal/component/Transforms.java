@@ -57,8 +57,9 @@ public final class Transforms {
 
     /**
      * {@code minecraft:collision_box} as a list of boxes: {@code enabled} and per box min/max in 0..16 block space. BDS
-     * 1.26.63.1 mirrors x: {@code minX = 8 - origin.x - size.x}, {@code maxX = 8 - origin.x}; y is {@code origin.y} to
-     * {@code origin.y + size.y}, z {@code 8 + origin.z} to that plus {@code size.z}. The boolean form is written by the
+     * from protocol 2225 (26.60; captures of 1.26.63.1) mirrors x: {@code minX = 8 - origin.x - size.x},
+     * {@code maxX = 8 - origin.x}; y is {@code origin.y} to {@code origin.y + size.y}, z {@code 8 + origin.z} to that
+     * plus {@code size.z}. Earlier protocols: {@link #collisionBoxesUnmirrored}. The boolean form is written by the
      * generated rules.
      */
     public static void collisionBoxes(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull CollisionBox c) {
@@ -83,6 +84,32 @@ public final class Transforms {
         }
     }
 
+    /**
+     * {@code minecraft:collision_box} of the protocols before 2225 (26.40, 26.50; captures of 1.26.45.1 and 1.26.52.3):
+     * x is not mirrored, it runs like z: {@code minX = 8 + origin.x}, {@code maxX = minX + size.x}.
+     */
+    public static void collisionBoxesUnmirrored(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull CollisionBox c) {
+        if (c.enabled() != null) {
+            return;
+        }
+        out.put("minecraft:collision_box.enabled", (byte) 1);
+        out.list("minecraft:collision_box.boxes");
+        for (CollisionBox.Entry box : c.boxes()) {
+            CollisionBox.Vec3 origin = box.origin() == null ? new CollisionBox.Vec3(-8, 0, -8) : box.origin();
+            CollisionBox.Vec3 size = box.size() == null ? new CollisionBox.Vec3(16, 16, 16) : box.size();
+            WireNode b = out.element("minecraft:collision_box.boxes");
+            float x1 = 8f + origin.x();
+            float x2 = x1 + size.x();
+            float y1 = origin.y();
+            float y2 = origin.y() + size.y();
+            float z1 = 8f + origin.z();
+            float z2 = z1 + size.z();
+            b.put("minX", Math.min(x1, x2)).put("maxX", Math.max(x1, x2));
+            b.put("minY", Math.min(y1, y2)).put("maxY", Math.max(y1, y2));
+            b.put("minZ", Math.min(z1, z2)).put("maxZ", Math.max(z1, z2));
+        }
+    }
+
     // ---- geometry ----------------------------------------------------------------------------------------------------
 
     /**
@@ -96,10 +123,22 @@ public final class Transforms {
     }
 
     /**
-     * The geometry of {@code minecraft:embedded_visual}, same shape (unverified: BDS rejected every variant).
+     * The geometry of {@code minecraft:embedded_visual}: the shape of {@code minecraft:geometry} without its four flags,
+     * with {@code n_way_visual_rotation} when set (protocol 2225 and later; BDS 1.26.63.1). Before: {@link #embeddedGeometryBeforeRotation}.
      */
-    public static void geometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull EmbeddedVisual c) {
-        // Without the four flags minecraft:geometry has, with n_way_visual_rotation when set (BDS 1.26.63.1)
+    public static void embeddedGeometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull EmbeddedVisual c) {
+        embeddedGeometry(out, c, true);
+    }
+
+    /**
+     * The geometry of {@code minecraft:embedded_visual} before protocol 2225 (26.40, 26.50: BDS 1.26.45.1 and 1.26.52.3):
+     * the same without {@code n_way_visual_rotation}, which those builds do not send.
+     */
+    public static void embeddedGeometryBeforeRotation(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull EmbeddedVisual c) {
+        embeddedGeometry(out, c, false);
+    }
+
+    private static void embeddedGeometry(WireNode out, EmbeddedVisual c, boolean withRotation) {
         EmbeddedVisual.Geometry g = c.geometry();
         NbtMapBuilder geometry = geometry(g.identifier(), g.boneVisibility(), g.culling(), g.cullingLayer(), g.cullingShape(), g.uvLock())
             .toBuilder();
@@ -110,7 +149,7 @@ public final class Transforms {
             geometry.remove("culling");
         }
         EmbeddedVisual.NWayVisualRotation rotation = g.nWayVisualRotation();
-        if (rotation != null) {
+        if (rotation != null && withRotation) {
             NbtMapBuilder r = NbtMap.builder();
             if (rotation.x() != null) {
                 r.putString("x", rotation.x());
@@ -296,6 +335,27 @@ public final class Transforms {
             out.put(name, converted);
         });
         return out.build();
+    }
+
+    // ---- block_name ----------------------------------------------------------------------------------------------------
+
+    /**
+     * {@code block_placer.block}: the block's name, or an empty string for a vanilla block this version does not have (as
+     * BDS sends it: {@code minecraft:icicle} is {@code ""} in 26.40 and 26.50). A name of another namespace is a custom block,
+     * which may be registered after the item, so it is sent as it is.
+     */
+    public static void blockName(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull BlockPlacer c) {
+        String block = c.block();
+        if (block == null) {
+            return;
+        }
+        boolean vanilla = block.indexOf(':') < 0 || block.startsWith("minecraft:");
+        if (vanilla && ctx.registry().blockStates(block) == null) {
+            ctx.drop(BlockPlacer.NAME, "block " + block + " is not a block of this version (sent as an empty name, like BDS)");
+            out.put("minecraft:block_placer.block", "");
+            return;
+        }
+        out.put("minecraft:block_placer.block", block);
     }
 
     // ---- item descriptors --------------------------------------------------------------------------------------------

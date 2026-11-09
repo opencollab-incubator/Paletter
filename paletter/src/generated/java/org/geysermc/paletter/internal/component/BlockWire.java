@@ -81,6 +81,37 @@ public final class BlockWire {
     }
 
     private static void blockEntity(BlockEntity c, WireContext ctx, WireNode out) {
+        int protocol = ctx.protocol();
+        if (protocol < 2193) {
+            blockEntityUntil2193(c, ctx, out);
+        } else if (protocol >= 2193 && protocol < 2225) {
+            blockEntityFrom2193Until2225(c, ctx, out);
+        } else if (protocol >= 2225) {
+            blockEntityFrom2225(c, ctx, out);
+        }
+    }
+
+    private static void blockEntityUntil2193(BlockEntity c, WireContext ctx, WireNode out) {
+        ctx.drop(BlockEntity.NAME, "is not sent to clients (BDS: server-only)");
+    }
+
+    private static void blockEntityFrom2193Until2225(BlockEntity c, WireContext ctx, WireNode out) {
+        BlockEntity.Container v0 = c.container();
+        if (v0 != null) {
+            int v1 = v0.slotCount();
+            ctx.drop(BlockEntity.NAME, "container.slot_count has no known wire mapping");
+            String v2 = v0.title();
+            if (v2 != null) {
+            } else {
+                out.put("minecraft:container.slot_count", (byte) 1);
+            }
+        } else {
+            out.put("minecraft:container.slot_count", (byte) 1);
+        }
+        boolean v3 = c.dynamicProperties();
+    }
+
+    private static void blockEntityFrom2225(BlockEntity c, WireContext ctx, WireNode out) {
         BlockEntity.Container v0 = c.container();
         if (v0 != null) {
             int v1 = v0.slotCount();
@@ -104,7 +135,12 @@ public final class BlockWire {
             out.put("minecraft:collision_box.boxes", Wire.EMPTY_LIST);
             out.put("minecraft:collision_box.enabled", Wire.bool(v0));
         }
-        Transforms.collisionBoxes(ctx, out, c);
+        int transformProtocol = ctx.protocol();
+        if (transformProtocol < 2225) {
+            Transforms.collisionBoxesUnmirrored(ctx, out, c);
+        } else {
+            Transforms.collisionBoxes(ctx, out, c);
+        }
     }
 
     private static void connectionRule(ConnectionRule c, WireContext ctx, WireNode out) {
@@ -150,7 +186,12 @@ public final class BlockWire {
     }
 
     private static void embeddedVisual(EmbeddedVisual c, WireContext ctx, WireNode out) {
-        Transforms.geometry(ctx, out, c);
+        int transformProtocol = ctx.protocol();
+        if (transformProtocol < 2225) {
+            Transforms.embeddedGeometryBeforeRotation(ctx, out, c);
+        } else {
+            Transforms.embeddedGeometry(ctx, out, c);
+        }
         Transforms.materialInstancesInline(ctx, out, c);
     }
 
@@ -168,6 +209,67 @@ public final class BlockWire {
     }
 
     private static void itemVisual(ItemVisual c, WireContext ctx, WireNode out) {
+        int protocol = ctx.protocol();
+        if (protocol < 2225) {
+            itemVisualUntil2225(c, ctx, out);
+        } else if (protocol >= 2225) {
+            itemVisualFrom2225(c, ctx, out);
+        }
+    }
+
+    private static void itemVisualUntil2225(ItemVisual c, WireContext ctx, WireNode out) {
+        out.put("minecraft:item_visual.geometryDescription.bone_visibility", NbtMap.EMPTY);
+        out.put("minecraft:item_visual.geometryDescription.ignoreGeometryForIsSolid", (byte) 0);
+        out.put("minecraft:item_visual.geometryDescription.isV1Fullblock", (byte) 0);
+        out.put("minecraft:item_visual.geometryDescription.needsLegacyTopRotation", (byte) 0);
+        out.put("minecraft:item_visual.geometryDescription.useBlockTypeLightAbsorption", (byte) 0);
+        out.put("minecraft:item_visual.geometryDescription.uv_lock", (byte) 0);
+        out.put("minecraft:item_visual.materialInstancesDescription.mappings", NbtMap.EMPTY);
+        out.put("minecraft:item_visual.materialInstancesDescription.materials", NbtMap.EMPTY);
+        out.put("minecraft:item_visual.materialInstancesDescription.materials.*.ambient_occlusion", 1.0f);
+        out.put("minecraft:item_visual.materialInstancesDescription.materials.*.packed_bools", (byte) 5);
+        out.put("minecraft:item_visual.materialInstancesDescription.materials.*.render_method", "opaque");
+        out.put("minecraft:item_visual.materialInstancesDescription.materials.*.texture", "paletter_tex");
+        out.put("minecraft:item_visual.materialInstancesDescription.materials.*.tint_method", "none");
+        ItemVisual.Geometry v0 = c.geometry();
+        Map<String, String> v1 = v0.boneVisibility();
+        String v2 = v0.culling();
+        if (v2 != null) {
+            out.put("minecraft:item_visual.geometryDescription.culling", v2);
+        } else {
+            out.put("minecraft:item_visual.geometryDescription.culling", "");
+        }
+        String v3 = v0.cullingLayer();
+        if (v3 != null) {
+            out.put("minecraft:item_visual.geometryDescription.culling_layer", v3);
+        } else {
+            out.put("minecraft:item_visual.geometryDescription.culling_layer", "minecraft:culling_layer.undefined");
+        }
+        String v4 = v0.cullingShape();
+        if (v4 != null) {
+            out.put("minecraft:item_visual.geometryDescription.culling_shape", v4);
+        } else {
+            out.put("minecraft:item_visual.geometryDescription.culling_shape", "");
+        }
+        String v5 = v0.identifier();
+        out.put("minecraft:item_visual.geometryDescription.identifier", v5);
+        ItemVisual.NWayVisualRotation v6 = v0.nWayVisualRotation();
+        if (v6 != null) {
+            String v7 = v6.x();
+            if (v7 != null) {
+            }
+            String v8 = v6.y();
+            if (v8 != null) {
+            }
+            String v9 = v6.z();
+            if (v9 != null) {
+            }
+        }
+        boolean v10 = v0.uvLock();
+        Transforms.materialInstancesPacked(ctx, out, c);
+    }
+
+    private static void itemVisualFrom2225(ItemVisual c, WireContext ctx, WireNode out) {
         out.put("minecraft:item_visual.geometryDescription.bone_visibility", NbtMap.EMPTY);
         out.put("minecraft:item_visual.geometryDescription.ignoreGeometryForIsSolid", (byte) 0);
         out.put("minecraft:item_visual.geometryDescription.isV1Fullblock", (byte) 0);
@@ -359,6 +461,19 @@ public final class BlockWire {
     }
 
     private static void replaceable(Replaceable c, WireContext ctx, WireNode out) {
+        int protocol = ctx.protocol();
+        if (protocol < 2193) {
+            replaceableUntil2193(c, ctx, out);
+        } else if (protocol >= 2193) {
+            replaceableFrom2193(c, ctx, out);
+        }
+    }
+
+    private static void replaceableUntil2193(Replaceable c, WireContext ctx, WireNode out) {
+        ctx.drop(Replaceable.NAME, "is not sent to clients (BDS: server-only)");
+    }
+
+    private static void replaceableFrom2193(Replaceable c, WireContext ctx, WireNode out) {
         out.put("minecraft:replaceable", NbtMap.EMPTY);
     }
 

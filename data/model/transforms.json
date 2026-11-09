@@ -12,6 +12,10 @@
     "transform": "block_descriptor_states",
     "why": "Descriptor states become a list of {state, type, value} with the value as the state's int/string/byte. The type depends on the state's definition in the block registry, not on the JSON value. A state the named block does not have makes BDS drop the descriptor, so arbitrary sample state names give no mapping."
   },
+  "item:minecraft:block_placer:block": {
+    "transform": "block_name",
+    "why": "BDS resolves the name against its block registry and sends an empty string for a vanilla block it does not have (minecraft:ice_crystal and minecraft:icicle in 26.40 and 26.50), so the leaf is the name or empty depending on the version's blocks; a rule over the JSON value alone fits only the newest version."
+  },
   "item:minecraft:block_placer:use_on[].states": {
     "transform": "block_descriptor_states",
     "why": "Same block descriptor as placement_filter: state values are resolved against the named block (e.g. pillar_axis 'y' -> 0). Unknown states drop the entry, so the mapping depends on registry data, not on the JSON alone."
@@ -42,6 +46,7 @@
   },
   "block:minecraft:collision_box:[]": {
     "transform": "collision_boxes",
+    "windows": [{"until": 2225, "transform": "collision_boxes_unmirrored"}, {"since": 2225, "transform": "collision_boxes"}],
     "why": "Each box's min/max leaves depend on both origin and size (min = origin + (8, 0, 8), max = min + size; BDS orders min and max per axis), so single-field variation fits spurious linear rules to each and they conflict on every leaf."
   },
   "block:minecraft:geometry:": {
@@ -57,7 +62,8 @@
     "why": "Each entry's items become [{name}] (names as written, not namespaced) next to repair_amount, a float for numbers and a string for Molang. The two JSON types of repair_amount land on the same leaf with different NBT types, which no single rule fits."
   },
   "block:minecraft:embedded_visual:geometry": {
-    "transform": "geometry",
+    "transform": "embedded_geometry",
+    "windows": [{"until": 2225, "transform": "embedded_geometry_before_rotation"}, {"since": 2225, "transform": "embedded_geometry"}],
     "why": "The same geometry description as minecraft:geometry, inline. BDS rejected every embedded_visual variant of the capture, so this shape is the documented one with the wire keys of minecraft:geometry (unverified)."
   },
   "block:minecraft:transformation:rotation": {
