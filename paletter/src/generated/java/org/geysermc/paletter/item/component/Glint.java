@@ -10,9 +10,10 @@ import org.geysermc.paletter.annotation.BedrockFormat;
 /**
  * Determines whether the item has the enchanted glint render effect on it.
  * <p>
- * Add-on JSON: {@code "minecraft:glint"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_glint.md}.
+ * Add-on JSON: {@code "minecraft:glint"}.
  *
  * @param value Whether the item has the enchanted glint render effect. Add-on JSON {@code value}. Optional (null: not set).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_glint?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:glint</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")

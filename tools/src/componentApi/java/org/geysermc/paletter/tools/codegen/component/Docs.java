@@ -11,8 +11,24 @@ import java.util.Locale;
  */
 final class Docs {
     private static final int WIDTH = 110;
+    private static final String LEARN = "https://learn.microsoft.com/en-us/minecraft/creator/";
+    private static final String CONTENT_VIEW = "?view=minecraft-bedrock-stable";
 
     private Docs() {
+    }
+
+    /**
+     * The Microsoft Learn page of a docs page of the MicrosoftDocs/minecraft-creator repository: the path below
+     * {@code creator/} lowercased and without {@code .md}, which is how Learn publishes it.
+     *
+     * @param page a path of the repository, e.g. {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_glint.md}
+     * @return the URL, or null if the path is empty or not a page below {@code creator/}
+     */
+    static String learnUrl(String page) {
+        if (page == null || !page.startsWith("creator/") || !page.endsWith(".md")) {
+            return null;
+        }
+        return LEARN + page.substring("creator/".length(), page.length() - ".md".length()).toLowerCase(Locale.ROOT) + CONTENT_VIEW;
     }
 
     /** Markdown docs text to javadoc: HTML escaped, code spans and links kept readable, no stray javadoc tags. */

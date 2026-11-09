@@ -14,7 +14,7 @@ import org.geysermc.paletter.internal.component.Check;
 /**
  * A widget with <code>every</code> field kind.
  * <p>
- * Add-on JSON: {@code "test:widget"}, documented in {@code test/widget.md}.
+ * Add-on JSON: {@code "test:widget"}.
  *
  * @param count How many. Add-on JSON {@code count}. Default: <code>1</code>. Range [1, 64] (BDS 9.9.9).
  * @param label The label. Add-on JSON {@code label}. Required.
@@ -30,6 +30,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param shape A shape or its id. Add-on JSON {@code shape}. Optional (null: not set).
  * @param offset Add-on JSON {@code offset}. Default: <code>[0,1,0]</code>.
  * @param moreNested Nested things under any other key. Add-on JSON {@code nested}. Default: <code>&#123;&#125;</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/test_widget?view=minecraft-bedrock-stable">Microsoft Learn: test:widget</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.0")

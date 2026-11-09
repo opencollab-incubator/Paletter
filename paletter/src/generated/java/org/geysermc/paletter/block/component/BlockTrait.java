@@ -10,6 +10,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * from the component model in {@code data/model} (creator docs plus what Bedrock Dedicated Server sends). Paletter
  * compiles them to the wire format of each palette's protocol.
  *
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockstateandtraitlistings?view=minecraft-bedrock-stable">Microsoft Learn: block states and traits</a>
  * @since 1.0.0
  */
 public sealed interface BlockTrait permits Connection, MultiBlock, PlacementDirection, PlacementPosition {

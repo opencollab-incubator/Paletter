@@ -11,10 +11,11 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * when it travels on the block. Higher values result in more friction (less sliding). The default value is 0.4,
  * which is used by most blocks. Ice uses 0.02 for its slippery surface.
  * <p>
- * Add-on JSON: {@code "minecraft:friction"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_friction.md}.
+ * Add-on JSON: {@code "minecraft:friction"}.
  *
  * @param value The number form of the component (add-on JSON &#123;&#64;code "minecraft:friction": &lt;number&gt;&#125;).
  *        Required.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_friction?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:friction</a>
  * @since 1.0.0
  */
 public record Friction(float value) implements BlockComponent {

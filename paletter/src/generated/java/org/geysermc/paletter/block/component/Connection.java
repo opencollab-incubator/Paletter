@@ -15,11 +15,12 @@ import org.geysermc.paletter.annotation.Experimental;
  * blocks change. The values of these states are set when the block is placed. Requires Experimental Toggle
  * "Upcoming Creator Features" and Minecraft version 1.21.130.
  * <p>
- * Add-on JSON: {@code "minecraft:connection"}, documented in {@code creator/Reference/Content/BlockReference/Examples/traits/connection.md}.
+ * Add-on JSON: {@code "minecraft:connection"}.
  * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
  *
  * @param enabledStates Which states to enable. Must specify at least one. Valid value is <code>minecraft:cardinal_connections</code>.
  *        Add-on JSON {@code enabled_states}. Required.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/traits/connection?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:connection</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")

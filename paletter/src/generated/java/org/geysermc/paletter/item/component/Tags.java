@@ -12,9 +12,10 @@ import org.geysermc.paletter.annotation.BedrockFormat;
 /**
  * Determines which tags are included on a given item.
  * <p>
- * Add-on JSON: {@code "minecraft:tags"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_tags.md}.
+ * Add-on JSON: {@code "minecraft:tags"}.
  *
  * @param tags An array that can contain multiple item tags. Add-on JSON {@code tags}. Default: <code>[]</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_tags?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:tags</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.50")

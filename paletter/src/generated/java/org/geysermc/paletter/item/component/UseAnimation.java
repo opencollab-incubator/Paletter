@@ -10,10 +10,11 @@ import org.geysermc.paletter.annotation.BedrockFormat;
 /**
  * Use_animation specifies which animation is played when the player uses the item.
  * <p>
- * Add-on JSON: {@code "minecraft:use_animation"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_use_animation.md}.
+ * Add-on JSON: {@code "minecraft:use_animation"}.
  *
  * @param value Specifies which animation to play when the item is used. Add-on JSON {@code value}. Optional (null: not set).
  *        Compiled by the hand transform {@code use_animation_id}.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_use_animation?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:use_animation</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")

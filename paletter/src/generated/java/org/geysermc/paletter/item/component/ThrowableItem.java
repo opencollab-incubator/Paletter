@@ -11,7 +11,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * Makes an item throwable by the player, similar to a snowball or ender pearl. Use with minecraft:projectile to
  * specify which entity is spawned when thrown.
  * <p>
- * Add-on JSON: {@code "minecraft:throwable"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_throwable.md}.
+ * Add-on JSON: {@code "minecraft:throwable"}.
  *
  * @param doSwingAnimation Determines whether the item should use the swing animation when thrown. Default is set to false. Add-on JSON
  *        {@code do_swing_animation}. Default: <code>false</code>.
@@ -25,6 +25,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *        Default: <code>0</code>.
  * @param scalePowerByDrawDuration Whether or not the power of the throw increases with duration charged. Default is set to false. Add-on JSON
  *        {@code scale_power_by_draw_duration}. Default: <code>false</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_throwable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:throwable</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")

@@ -5,19 +5,26 @@ package org.geysermc.paletter.block.component;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.ServerOnly;
 import org.geysermc.paletter.internal.component.Check;
 
 /**
  * Adds per-instance metadata for this block.
  * <p>
- * Add-on JSON: {@code "minecraft:block_entity"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_block_entity.md}.
+ * Add-on JSON: {@code "minecraft:block_entity"}.
+ * Server only below protocol 2193: BDS accepts it in packs but sends nothing to clients there (BDS 1.26.36.1,
+ * 1.26.45.1), so those palettes leave it out and add a report warning. Sent from protocol 2193 (BDS 1.26.52.3).
  *
  * @param container Adds a container to this block. Add-on JSON {@code container}. Optional (null: not set).
  * @param dynamicProperties Dynamic-properties can store and retrieve variables on a block via scripting, more at
  *        https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/blockdynamicpropertiescomponent.
  *        Add-on JSON {@code dynamic_properties}. Default: <code>false</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_block_entity?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:block_entity</a>
  * @since 1.0.0
  */
+@ServerOnly(
+        until = 2193
+)
 public record BlockEntity(BlockEntity. @Nullable Container container,
         boolean dynamicProperties) implements BlockComponent {
     /**

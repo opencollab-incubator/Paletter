@@ -12,10 +12,11 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Adds the "minecraft:block_face" and/or "minecraft:vertical_half" BlockStates. The value of these state(s) are
  * set when the block is placed.
  * <p>
- * Add-on JSON: {@code "minecraft:placement_position"}, documented in {@code creator/Reference/Content/BlockReference/Examples/traits/placement_position.md}.
+ * Add-on JSON: {@code "minecraft:placement_position"}.
  *
  * @param enabledStates Which states to enable. Must specify at least one. Valid values are <code>minecraft:block_face</code> and
  *        <code>minecraft:vertical_half</code>. Add-on JSON {@code enabled_states}. Required.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/traits/placement_position?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:placement_position</a>
  * @since 1.0.0
  */
 public record PlacementPosition(

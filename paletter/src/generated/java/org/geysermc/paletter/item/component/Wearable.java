@@ -12,7 +12,7 @@ import org.geysermc.paletter.internal.component.Check;
 /**
  * Sets the wearable item component, which allows an item to be worn by a player in a specified equipment slot.
  * <p>
- * Add-on JSON: {@code "minecraft:wearable"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_wearable.md}.
+ * Add-on JSON: {@code "minecraft:wearable"}.
  *
  * @param hidesPlayerLocation Determines whether the Player's location is hidden on Locator Maps and the Locator Bar when the wearable item
  *        is worn. Default is false. Add-on JSON {@code hides_player_location}. Default: <code>false</code>.
@@ -20,6 +20,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        <code>0</code>. Range [0, inf) (BDS 1.26.63.1).
  * @param slot Specifies where the item can be worn. If any non-hand slot is chosen, the max stack size is set to 1. Add-on
  *        JSON {@code slot}. Required.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_wearable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:wearable</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")

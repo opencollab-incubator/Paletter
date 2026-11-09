@@ -11,7 +11,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
 /**
  * Used by record items to play music.
  * <p>
- * Add-on JSON: {@code "minecraft:record"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_record.md}.
+ * Add-on JSON: {@code "minecraft:record"}.
  *
  * @param comparatorSignal Specifies signal strength for comparator blocks to use, from 1 - 13. Add-on JSON {@code comparator_signal}.
  *        Default: <code>1</code>.
@@ -19,6 +19,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *        <code>0</code>.
  * @param soundEvent Sound event type: 13, cat, blocks, chirp, far, mall, mellohi, stal, strad, ward, 11, wait, pigstep, otherside,
  *        5, relic. Add-on JSON {@code sound_event}. Default: <code>"undefined"</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_record?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:record</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")

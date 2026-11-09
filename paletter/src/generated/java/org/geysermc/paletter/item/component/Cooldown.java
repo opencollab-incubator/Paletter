@@ -12,7 +12,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * Adds a cooldown to an item, preventing it from being used again for a specified duration. Items sharing the
  * same category will enter cooldown together when any one of them is used.
  * <p>
- * Add-on JSON: {@code "minecraft:cooldown"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_cooldown.md}.
+ * Add-on JSON: {@code "minecraft:cooldown"}.
  *
  * @param category A string identifier that groups items together. When an item with a cooldown is used, all items sharing the
  *        same category also enter cooldown. Add-on JSON {@code category}. Required.
@@ -21,6 +21,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param type The type of action that triggers the cooldown. Use 'use' for items consumed on use, or 'attack' for weapons.
  *        Default is 'use'. This item requires a format version of at least 1.21.130. Add-on JSON {@code type}. Default:
  *        <code>"use"</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_cooldown?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:cooldown</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")

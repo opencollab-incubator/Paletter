@@ -169,9 +169,20 @@ public final class ComponentGenerator {
                 model.oldestCaptured = captured.getFirst();
                 model.newestCaptured = captured.getLast();
             }
+            in.mappings().getAsJsonArray("captures").forEach(e -> {
+                JsonObject capture = e.getAsJsonObject();
+                if (capture.has("protocol") && capture.has("bdsVersion")) {
+                    model.captureVersions.put(capture.get("protocol").getAsInt(), capture.get("bdsVersion").getAsString());
+                }
+            });
         }
+        if (in.components().has("lists")) {
+            in.components().getAsJsonObject("lists").entrySet().forEach(e -> model.lists.put(e.getKey(), e.getValue().getAsString()));
+        }
+        model.replacements.putAll(Replacements.derive(in.components(), in.mappings(), in.fixtures(), captureReference()));
         for (JsonObject doc : docs) {
             String id = doc.get("id").getAsString();
+            model.pages.put(id, text(doc, "page"));
             String category = doc.get("category").getAsString();
             JsonObject mapping = mappings.has(id) ? mappings.getAsJsonObject(id) : null;
             String status = mapping == null ? "not captured" : mapping.get("status").getAsString();
@@ -219,6 +230,15 @@ public final class ComponentGenerator {
         }
     }
 
+    /** The capture directory of the newest BDS, e.g. data/bds/1.26.63.1/spec (where the BDS messages of the model come from), or null. */
+    private String captureReference() {
+        if (in.mappings().has("captures") && !in.mappings().getAsJsonArray("captures").isEmpty()) {
+            JsonObject last = in.mappings().getAsJsonArray("captures").asList().getLast().getAsJsonObject();
+            return last.has("capture") ? last.get("capture").getAsString() : null;
+        }
+        return null;
+    }
+
     private String bdsVersion() {
         if (in.mappings().has("captures") && !in.mappings().getAsJsonArray("captures").isEmpty()) {
             return in.mappings().getAsJsonArray("captures").asList().getLast().getAsJsonObject().get("bdsVersion").getAsString();
@@ -246,6 +266,8 @@ public final class ComponentGenerator {
         if (c.latest() == null) {
             throw new GenerationException(c.id + " has no window that sends it");
         }
+        c.serverOnly = serverOnly(c);
+        c.replacement = model.replacements.get(c.id);
         c.transform = transform(c.id, "");
         c.standalone = standalone != null;
 
@@ -475,6 +497,15 @@ public final class ComponentGenerator {
                     + "', which the runtime does not implement");
             }
         }));
+    }
+
+    /** @return the window in which BDS only accepts the component, or null; one is all the annotation can state */
+    private static Window serverOnly(Comp c) {
+        List<Window> serverOnly = c.windows.stream().filter(w -> w.status().equals("server-only")).toList();
+        if (serverOnly.size() > 1) {
+            throw new GenerationException(c.id + " is server only in " + serverOnly.size() + " protocol windows; @ServerOnly states one range");
+        }
+        return serverOnly.isEmpty() ? null : serverOnly.getFirst();
     }
 
     private static List<Window> windows(String id, JsonObject mapping) {

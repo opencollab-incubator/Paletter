@@ -16,7 +16,7 @@ import org.geysermc.paletter.vanilla.BedrockBlockType;
 /**
  * Sets the item as a placer item component for blocks. Items with this component will place a block when used.
  * <p>
- * Add-on JSON: {@code "minecraft:block_placer"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_block_placer.md}.
+ * Add-on JSON: {@code "minecraft:block_placer"}.
  *
  * @param alignedPlacement When true, block placement through this item is aligned while the interaction button is held down. When true,
  *        block placement through this item is aligned while the interaction button is held down. Supported from
@@ -30,6 +30,7 @@ import org.geysermc.paletter.vanilla.BedrockBlockType;
  *        Add-on JSON {@code replace_block_item}. Default: <code>false</code>.
  * @param useOn List of block descriptors of the blocks that this item can be used on. If left empty, all blocks will be
  *        allowed. Value must have at most 256 items. Add-on JSON {@code use_on}. Default: <code>[]</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_block_placer?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:block_placer</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.50")

@@ -33,12 +33,12 @@ public final class ComponentIndex {
     /**
      * The oldest protocol a spec capture of BDS exists for: the shapes in {@code data/model/mappings.json} were observed from here.
      */
-    public static final int OLDEST_CAPTURED_PROTOCOL = Integer.MIN_VALUE;
+    public static final int OLDEST_CAPTURED_PROTOCOL = 100;
 
     /**
      * The newest protocol a spec capture of BDS exists for: a palette of a newer protocol is encoded with the shape observed here.
      */
-    public static final int NEWEST_CAPTURED_PROTOCOL = Integer.MAX_VALUE;
+    public static final int NEWEST_CAPTURED_PROTOCOL = 200;
 
     static {
         BLOCK.put("test:glow", Glow.class);

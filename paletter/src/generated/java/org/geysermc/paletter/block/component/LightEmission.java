@@ -11,10 +11,11 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Reference values: torch (14), glowstone (15), redstone torch (7), soul torch (10). Monsters cannot spawn on
  * blocks with light level 8 or higher.
  * <p>
- * Add-on JSON: {@code "minecraft:light_emission"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_light_emission.md}.
+ * Add-on JSON: {@code "minecraft:light_emission"}.
  *
  * @param value The integer form of the component (add-on JSON &#123;&#64;code "minecraft:light_emission":
  *        &lt;integer&gt;&#125;). Required.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_light_emission?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:light_emission</a>
  * @since 1.0.0
  */
 public record LightEmission(int value) implements BlockComponent {

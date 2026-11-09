@@ -14,7 +14,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  * Compels an item to shoot projectiles, similarly to a bow or crossbow. Must have the minecraft:use_modifiers
  * component in order to function properly.
  * <p>
- * Add-on JSON: {@code "minecraft:shooter"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_shooter.md}.
+ * Add-on JSON: {@code "minecraft:shooter"}.
  *
  * @param ammunition A list of ammunition entries that define which items can be used as projectiles for this shooter. A list of
  *        ammunition entries that define which items can be used as projectiles for this shooter. Each entry specifies
@@ -26,6 +26,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  *        maximum power. Default is 0. Add-on JSON {@code max_draw_duration}. Default: <code>0</code>.
  * @param scalePowerByDrawDuration When true, the projectile's launch power increases based on how long the player holds the use button before
  *        releasing. Default is false. Add-on JSON {@code scale_power_by_draw_duration}. Default: <code>false</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_shooter?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:shooter</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")

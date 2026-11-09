@@ -13,7 +13,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * with this component cannot destroy blocks, as the attack action always takes priority, regardless of what the
  * user is looking at.
  * <p>
- * Add-on JSON: {@code "minecraft:piercing_weapon"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_piercing_weapon.md}.
+ * Add-on JSON: {@code "minecraft:piercing_weapon"}.
  *
  * @param creativeReach Defines the reach used when the user is in Creative Mode. Defaults to "reach" if unspecified. Add-on JSON
  *        {@code creative_reach}. Optional (null: not set).
@@ -23,6 +23,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *        blocks) along the user's view vector where entities can be hit. Only targets within this distance are
  *        considered. Block collisions between the user and target block damage and its effects. Add-on JSON {@code
  *        reach}. Default: <code>&#123;"max":3,"min":0&#125;</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_piercing_weapon?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:piercing_weapon</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")

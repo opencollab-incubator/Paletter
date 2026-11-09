@@ -14,13 +14,14 @@ import org.geysermc.paletter.internal.component.Check;
  * The description identifier of the geometry and material used to render this block when it it is embedded
  * inside of another block (for example, a flower inside of a flower pot).
  * <p>
- * Add-on JSON: {@code "minecraft:embedded_visual"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_embedded_visual.md}.
+ * Add-on JSON: {@code "minecraft:embedded_visual"}.
  *
  * @param geometry The "minecraft:geometry" component that will be used when rendered inside of another block. Add-on JSON {@code
  *        geometry}. Required. Compiled by the hand transform {@code embedded_geometry}.
  * @param materialInstances The "minecraft:material_instances" component that will be used when rendered inside of another block. Value
  *        must have at most 64 items. Add-on JSON {@code material_instances}. Optional (null: not set). Compiled by the
  *        hand transform {@code material_instances_inline}.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_embedded_visual?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:embedded_visual</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.120")

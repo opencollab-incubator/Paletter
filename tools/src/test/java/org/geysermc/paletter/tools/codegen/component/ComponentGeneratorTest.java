@@ -49,9 +49,11 @@ class ComponentGeneratorTest {
 
     static JsonObject components() {
         return json("""
-            {"components": [
+            {"lists": {"item": "creator/Reference/Content/ItemReference/Examples/ItemComponentList.md",
+                       "block": "creator/Reference/Content/BlockReference/Examples/BlockComponents/BlockComponentsList.md"},
+             "components": [
               {"id": "item:test:widget", "kind": "item", "category": "component", "name": "test:widget", "status": "active",
-               "doc": "A widget with `every` field kind.", "page": "test/widget.md", "minFormatVersion": "1.20.0", "experiments": [],
+               "doc": "A widget with `every` field kind.", "page": "creator/Reference/Content/ItemReference/Examples/ItemComponents/test_widget.md", "minFormatVersion": "1.20.0", "experiments": [],
                "forms": [{"type": "object"}],
                "fields": [
                  {"path": "count", "types": [{"type": "integer"}], "defaultValue": 1, "required": false, "enumValues": [], "examples": [], "doc": "How many."},
@@ -75,23 +77,38 @@ class ComponentGeneratorTest {
                  {"path": "shape.id", "types": [{"type": "string"}], "required": false, "enumValues": [], "examples": [], "doc": ""},
                  {"path": "shape.size", "types": [{"type": "integer"}], "defaultValue": 1, "required": false, "enumValues": [], "examples": [], "doc": ""},
                  {"path": "offset", "types": [{"type": "vec3"}], "defaultValue": [0, 1, 0], "required": false, "enumValues": [], "examples": [], "doc": ""}
-               ], "notes": []},
+               ], "notes": ["Renamed from `test:former` in 1.0."]},
               {"id": "item:test:gadget", "kind": "item", "category": "component", "name": "test:gadget", "status": "deprecated",
-               "doc": "Old.", "page": "", "experiments": ["Test Toggle"], "forms": [{"type": "object"}, {"type": "boolean"}],
+               "doc": "Old. Use test:widget instead.", "page": "", "experiments": ["Test Toggle"], "forms": [{"type": "object"}, {"type": "boolean"}],
                "fields": [{"path": "value", "types": [{"type": "boolean"}], "required": false, "enumValues": [], "examples": [], "doc": "On."},
                           {"path": "level", "types": [{"type": "integer"}], "required": false, "enumValues": [], "examples": [],
                            "doc": "Only sent from protocol 200 on."}],
                "notes": []},
               {"id": "block:test:hidden", "kind": "block", "category": "component", "name": "test:hidden", "status": "active",
-               "doc": "Server side.", "page": "", "experiments": [], "forms": [{"type": "object"}], "fields": [], "notes": []},
+               "doc": "Server side.", "page": "creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_hidden.md", "experiments": [], "forms": [{"type": "object"}], "fields": [], "notes": []},
               {"id": "block:test:glow", "kind": "block", "category": "component", "name": "test:glow", "status": "active",
-               "doc": "Light.", "page": "", "experiments": [], "forms": [{"type": "integer"}], "fields": [], "notes": []}
+               "doc": "Light.", "page": "creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_glow.md", "experiments": [], "forms": [{"type": "integer"}], "fields": [], "notes": []},
+              {"id": "item:test:old", "kind": "item", "category": "component", "name": "test:old", "status": "deprecated",
+               "doc": "Gone.", "page": "creator/Reference/Content/ItemReference/Examples/ItemComponents/test_old.md", "experiments": [],
+               "forms": [{"type": "object"}], "fields": [], "notes": []},
+              {"id": "item:test:former", "kind": "item", "category": "component", "name": "test:former", "status": "deprecated",
+               "doc": "Gone.", "page": "creator/Reference/Content/ItemReference/Examples/ItemComponents/test_former.md", "experiments": [],
+               "forms": [{"type": "object"}], "fields": [], "notes": []},
+              {"id": "item:test:count", "kind": "item", "category": "component", "name": "test:count", "status": "deprecated",
+               "doc": "Gone.", "page": "creator/Reference/Content/ItemReference/Examples/ItemComponents/test_count.md", "experiments": [],
+               "forms": [{"type": "object"}], "fields": [], "notes": []},
+              {"id": "item:test:quiet", "kind": "item", "category": "component", "name": "test:quiet", "status": "active",
+               "doc": "Server side.", "page": "creator/Reference/Content/ItemReference/Examples/ItemComponents/test_quiet.md", "experiments": [],
+               "forms": [{"type": "object"}], "fields": [], "notes": []},
+              {"id": "item:test:ancient", "kind": "item", "category": "component", "name": "test:ancient", "status": "deprecated",
+               "doc": "Gone.", "page": "not/below/creator.md", "experiments": [], "forms": [{"type": "object"}], "fields": [], "notes": []}
             ]}""");
     }
 
     static JsonObject mappings() {
         return json("""
-            {"captures": [{"bdsVersion": "9.9.9"}], "components": {
+            {"captures": [{"capture": "data/bds/8.8.8/spec", "bdsVersion": "8.8.8", "protocol": 100},
+                         {"capture": "data/bds/9.9.9/spec", "bdsVersion": "9.9.9", "protocol": 200}], "components": {
               "item:test:widget": {"status": "sent", "wire": ["test:widget"], "constants": {"test:widget.version": "2 (int)"},
                 "fields": {
                   "count": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "int", "tags": [], "wire": "test:widget.count"}],
@@ -123,14 +140,20 @@ class ComponentGeneratorTest {
                   "fields": {"value": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:gadget.on"}]},
                              "level": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "int", "tags": [], "wire": "test:gadget.level"}]}}}},
               "block:test:hidden": {"status": "server-only", "fields": {}},
-              "block:test:glow": {"status": "sent", "wire": ["test:glow"],
-                "forms": {"integer": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:glow.emission"}]}},
-                "fields": {}, "protocols": [100]}
+              "block:test:glow": {"status": "server-only", "fields": {}, "protocols": [100],
+                "protocol200": {"status": "sent", "wire": ["test:glow"],
+                  "forms": {"integer": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:glow.emission"}]}},
+                  "fields": {}}},
+              "item:test:old": {"status": "rejected", "note": "item:test:old has been deprecated. Use test:widget instead", "fields": {}, "protocols": [100]},
+              "item:test:former": {"status": "rejected", "fields": {}, "protocols": [100]},
+              "item:test:count": {"status": "rejected", "fields": {}, "protocols": [100]},
+              "item:test:quiet": {"status": "server-only", "fields": {}, "protocols": [100]},
+              "item:test:ancient": {"status": "rejected", "fields": {}, "protocols": [100]}
             }}""");
     }
 
     static Inputs inputs() {
-        return new Inputs(components(), json("{\"errata\": []}"),
+        return new Inputs(components(), json("{\"errata\": [], \"replacedBy\": {\"item:test:ancient\": {\"by\": [\"item:test:widget\"], \"evidence\": \"hand evidence\"}}}"),
             json("{\"item:test:widget\": {\"count\": [\"range 1 64\"]}}"), mappings(),
             json("{\"item:test:widget:colors\": {\"transform\": \"test_map\", \"why\": \"a map\"}}"),
             json("{\"since\": \"1.0.0\", \"keyedExtras\": {\"item:test:widget\": "
@@ -173,6 +196,8 @@ class ComponentGeneratorTest {
         assertEquals(List.of("item:test:gadget", "block:test:glow", "item:test:widget"),
             model.components.stream().map(c -> c.id).sorted((a, b) -> a.substring(a.indexOf(':')).compareTo(b.substring(b.indexOf(':')))).toList());
         assertTrue(model.omitted.get("block:test:hidden").startsWith("server only"), model.omitted.toString());
+        assertEquals(Set.of("item:test:old", "item:test:former", "item:test:count", "item:test:ancient", "item:test:quiet"),
+            model.omitted.keySet().stream().filter(id -> id.startsWith("item:test:") && !id.equals("item:test:widget")).collect(java.util.stream.Collectors.toSet()));
         ApiModel.Comp widget = model.components.stream().filter(c -> c.id.equals("item:test:widget")).findFirst().orElseThrow();
         ApiModel.Field speed = widget.root.fields.stream().filter(f -> f.json.equals("speed")).findFirst().orElseThrow();
         assertEquals(null, speed.defaultValue, "BDS contradicts the docs default: left unset");
@@ -184,6 +209,68 @@ class ComponentGeneratorTest {
         assertEquals(Integer.MIN_VALUE, gadget.windows.get(0).since());
         assertEquals(200, gadget.windows.get(0).until());
         assertEquals(200, gadget.windows.get(1).since());
+    }
+
+    // ---- Links and annotations -----------------------------------------------------------------------------------
+
+    @Test
+    void learnLinksFollowTheDocsPaths() {
+        assertEquals("https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_render_offsets?view=minecraft-bedrock-stable",
+            Docs.learnUrl("creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_render_offsets.md"));
+        assertEquals("https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_light_emission?view=minecraft-bedrock-stable",
+            Docs.learnUrl("creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_light_emission.md"));
+        assertEquals(null, Docs.learnUrl(""));
+        assertEquals(null, Docs.learnUrl(null));
+        assertEquals(null, Docs.learnUrl("not/below/creator.md"));
+        assertEquals(null, Docs.learnUrl("creator/Reference/Content/Image.png"));
+    }
+
+    @Test
+    void aComponentThatIsServerOnlyInOneWindowCarriesTheRange() {
+        ApiModel model = ComponentGenerator.model(inputs());
+        ApiModel.Comp glow = model.component("block:test:glow");
+        assertEquals(Integer.MIN_VALUE, glow.serverOnly.since());
+        assertEquals(200, glow.serverOnly.until());
+        assertEquals(null, model.component("item:test:widget").serverOnly);
+        assertEquals(null, model.component("item:test:gadget").serverOnly);
+        Map<String, String> files = ComponentGenerator.generate(inputs());
+        assertTrue(files.get("org/geysermc/paletter/block/component/Glow.java").contains("@ServerOnly(\n        until = 200\n)"));
+        assertTrue(!files.get("org/geysermc/paletter/item/component/Widget.java").contains("@ServerOnly"));
+    }
+
+    @Test
+    void twoServerOnlyWindowsFail() {
+        fails("block:test:glow is server only in 2 protocol windows; @ServerOnly states one range",
+            in -> in.mappings().getAsJsonObject("components").getAsJsonObject("block:test:glow")
+                .add("protocol300", json("{\"status\": \"server-only\", \"fields\": {}}")));
+    }
+
+    @Test
+    void replacementsComeFromTheDataAndTheHandEntries() {
+        ApiModel model = ComponentGenerator.model(inputs());
+        assertEquals(List.of("item:test:widget"), model.replacements.get("item:test:gadget").by());
+        assertEquals(List.of("item:test:widget"), model.replacements.get("item:test:old").by());
+        assertEquals(List.of("item:test:widget"), model.replacements.get("item:test:former").by());
+        assertEquals(List.of("item:test:widget"), model.replacements.get("item:test:count").by());
+        assertTrue(model.replacements.get("item:test:ancient").hand());
+        assertTrue(model.replacements.values().stream().filter(r -> !r.hand()).allMatch(r -> !r.evidence().isBlank()));
+        assertEquals(null, model.replacements.get("item:test:widget"));
+        assertEquals(List.of("item:test:widget"), model.component("item:test:gadget").replacement.by());
+        String gadget = ComponentGenerator.generate(inputs()).get("org/geysermc/paletter/item/component/Gadget.java");
+        assertTrue(gadget.contains("@Deprecated\n@ReplacedBy(Widget.class)"), gadget);
+    }
+
+    @Test
+    void handReplacementsNeedEvidenceAndKnownComponents() {
+        fails("fixtures.json replacedBy item:test:ancient needs an evidence",
+            in -> in.fixtures().getAsJsonObject("replacedBy").getAsJsonObject("item:test:ancient").addProperty("evidence", " "));
+        fails("fixtures.json replacedBy: unknown component item:test:nothing", in -> in.fixtures().getAsJsonObject("replacedBy")
+            .add("item:test:nothing", json("{\"by\": [\"item:test:widget\"], \"evidence\": \"x\"}")));
+        fails("fixtures.json replacedBy item:test:ancient: unknown successor item:test:nothing", in -> in.fixtures().getAsJsonObject("replacedBy")
+            .getAsJsonObject("item:test:ancient").add("by", json("{\"a\": [\"item:test:nothing\"]}").getAsJsonArray("a")));
+        fails("fixtures.json replacedBy item:test:old is derived from the data already (BDS message (data/bds/9.9.9/spec): \"Use test:widget instead\"); remove it",
+            in -> in.fixtures().getAsJsonObject("replacedBy")
+                .add("item:test:old", json("{\"by\": [\"item:test:widget\"], \"evidence\": \"x\"}")));
     }
 
     // ---- Determinism ---------------------------------------------------------------------------------------------

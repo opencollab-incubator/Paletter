@@ -15,7 +15,7 @@ import org.geysermc.paletter.internal.component.Check;
  * existing geometry identifier in any of the loaded resource packs or be one of the currently supported Vanilla
  * identifiers: "minecraft:geometry.full_block" or "minecraft:geometry.cross".
  * <p>
- * Add-on JSON: {@code "minecraft:geometry"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_geometry.md}.
+ * Add-on JSON: {@code "minecraft:geometry"}.
  * Compiled by the hand transform {@code geometry} (see {@code data/model/transforms.json}).
  *
  * @param boneVisibility An optional list of true/false values that define the visibility of individual bones in the geometry file. An
@@ -68,6 +68,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        the cube faces are square. This item requires a format version of at least 1.21.100. With UV locking, a single
  *        geometry can be reused for multiple texture rotations without authoring a new geometry per rotation. Add-on
  *        JSON {@code uv_lock}. Optional (null: not set).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_geometry?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:geometry</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.19.40")

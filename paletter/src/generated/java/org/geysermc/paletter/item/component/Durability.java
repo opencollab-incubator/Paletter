@@ -13,7 +13,7 @@ import org.geysermc.paletter.internal.component.Check;
  * Sets how much damage the item can take before breaking, and allows the item to be combined at an anvil,
  * grindstone, or crafting table.
  * <p>
- * Add-on JSON: {@code "minecraft:durability"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_durability.md}.
+ * Add-on JSON: {@code "minecraft:durability"}.
  *
  * @param damageChance Specifies the percentage chance of this item losing durability. Specifies the percentage chance of this item
  *        losing durability. Default is set to 100. Defined as an int range with min and max value. Check that the
@@ -21,6 +21,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        {@code damage_chance}. Default: <code>&#123;"max":100,"min":100&#125;</code>.
  * @param maxDurability Max durability is the amount of damage that this item can take before breaking. This is a required parameter
  *        and has a minimum of 0. Add-on JSON {@code max_durability}. Required. Range [0, inf) (BDS 1.26.63.1).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_durability?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:durability</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.0")

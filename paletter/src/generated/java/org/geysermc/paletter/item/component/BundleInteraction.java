@@ -11,11 +11,12 @@ import org.geysermc.paletter.internal.component.Check;
 /**
  * Enables the bundle-specific interaction scheme and tooltip for an item.
  * <p>
- * Add-on JSON: {@code "minecraft:bundle_interaction"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_bundle_interaction.md}.
+ * Add-on JSON: {@code "minecraft:bundle_interaction"}.
  *
  * @param numViewableSlots The maximum number of slots in the bundle viewable by the plater. Can be from 1 to 64. Default is 12. Value
  *        must be &gt;= 1. Value must be &lt;= 64. Add-on JSON {@code num_viewable_slots}. Default: <code>12</code>.
  *        Range [1, 64] (BDS 1.26.63.1).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_bundle_interaction?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:bundle_interaction</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.40")

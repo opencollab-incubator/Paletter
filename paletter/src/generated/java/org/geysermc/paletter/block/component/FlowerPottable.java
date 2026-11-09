@@ -9,8 +9,9 @@ import org.geysermc.paletter.annotation.BedrockFormat;
 /**
  * When added to a block type, indicates that this block can be placed inside a flower pot.
  * <p>
- * Add-on JSON: {@code "minecraft:flower_pottable"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_flower_pottable.md}.
+ * Add-on JSON: {@code "minecraft:flower_pottable"}.
  *
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_flower_pottable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:flower_pottable</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.120")

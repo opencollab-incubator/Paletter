@@ -14,7 +14,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * Defines whether other blocks such as fences, walls, bars, and glass panes are allowed to connect to this
  * block.
  * <p>
- * Add-on JSON: {@code "minecraft:connection_rule"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_connection_rule.md}.
+ * Add-on JSON: {@code "minecraft:connection_rule"}.
  * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
  *
  * @param acceptsConnectionsFrom The type of block allowed to connect to this block. Note that the "only_fences" option allows connections from
@@ -23,6 +23,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * @param enabledDirections The cardinal directions that connection is enabled for. Note that if "none" is specified for
  *        "accepts_connections_from", this field will not be used. Add-on JSON {@code enabled_directions}. Default:
  *        <code>["south","north","east","west"]</code>. Compiled by the hand transform {@code face_list}.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_connection_rule?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:connection_rule</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")

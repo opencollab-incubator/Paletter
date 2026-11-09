@@ -12,7 +12,7 @@ import org.geysermc.paletter.internal.component.Check;
 /**
  * Determines the icon to represent the item in the UI and elsewhere.
  * <p>
- * Add-on JSON: {@code "minecraft:icon"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_icon.md}.
+ * Add-on JSON: {@code "minecraft:icon"}.
  * Compiled by the hand transform {@code icon_textures} (see {@code data/model/transforms.json}).
  *
  * @param textures This map contains the different textures that can be used for the item's icon. This map contains the different
@@ -21,6 +21,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        resource_pack/textures/item_texture.json 'texture_data' object associated with the texture file. Add-on JSON
  *        {@code textures}. Optional (null: not set).
  * @param texture The string form: the icon's default texture (item_texture.json short name). Optional (null: not set).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_icon?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:icon</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.0")

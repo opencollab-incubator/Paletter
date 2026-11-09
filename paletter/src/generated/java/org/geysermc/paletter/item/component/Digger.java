@@ -17,12 +17,13 @@ import org.geysermc.paletter.vanilla.BedrockBlockType;
  * Configures an item as a digging tool, allowing it to break specific blocks faster than normal. Define which
  * blocks are affected and the speed multiplier for each.
  * <p>
- * Add-on JSON: {@code "minecraft:digger"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_digger.md}.
+ * Add-on JSON: {@code "minecraft:digger"}.
  *
  * @param destroySpeeds An array of objects that define which blocks this item can dig and at what speed. Each entry specifies a block
  *        (by ID or tag query) and a speed multiplier. Add-on JSON {@code destroy_speeds}. Default: <code>[]</code>.
  * @param useEfficiency When true, the Efficiency enchantment will increase the dig speed of this item. Default is false. Add-on JSON
  *        {@code use_efficiency}. Default: <code>false</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_digger?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:digger</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")

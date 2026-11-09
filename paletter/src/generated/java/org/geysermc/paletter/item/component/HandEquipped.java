@@ -10,10 +10,11 @@ import org.geysermc.paletter.annotation.BedrockFormat;
 /**
  * The hand_equipped component determines if an item is rendered like a tool while it is in a player's hand.
  * <p>
- * Add-on JSON: {@code "minecraft:hand_equipped"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_hand_equipped.md}.
+ * Add-on JSON: {@code "minecraft:hand_equipped"}.
  *
  * @param value Determines whether the item is rendered like a tool while in the player's hand. Add-on JSON {@code value}.
  *        Optional (null: not set).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_hand_equipped?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:hand_equipped</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")

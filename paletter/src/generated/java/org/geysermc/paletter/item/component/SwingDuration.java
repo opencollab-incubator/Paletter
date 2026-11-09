@@ -12,11 +12,12 @@ import org.geysermc.paletter.internal.component.Check;
  * Duration, in seconds, of the item's swing animation played when mining or attacking. Affects visuals only and
  * does not impact attack frequency or other gameplay mechanics.
  * <p>
- * Add-on JSON: {@code "minecraft:swing_duration"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_swing_duration.md}.
+ * Add-on JSON: {@code "minecraft:swing_duration"}.
  *
  * @param value Duration, in seconds, of the item's swing animation played when mining or attacking. Affects visuals only and
  *        does not impact attack frequency or other gameplay mechanics. Add-on JSON {@code value}. Default:
  *        <code>0.30000001192092896</code>. Range [0, inf) (BDS 1.26.63.1).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_swing_duration?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:swing_duration</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.120")

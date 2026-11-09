@@ -13,7 +13,7 @@ import org.geysermc.paletter.internal.component.Check;
 /**
  * If added to a block, indicates that it produces a redstone signal.
  * <p>
- * Add-on JSON: {@code "minecraft:redstone_producer"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_redstone_producer.md}.
+ * Add-on JSON: {@code "minecraft:redstone_producer"}.
  *
  * @param connectedFaces The list of faces that are considered connected to the circuit. If a face is not connected, it will not
  *        provide power to the block touching that face. By default, all faces are connected. Add-on JSON {@code
@@ -31,6 +31,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        not set). The docs give the default <code>false</code>, but BDS sends
  *        minecraft:redstone_producer.transform_relative = 1 (byte) when it is omitted; so it is unset by default, and
  *        the encoder sends what BDS sends then.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_producer?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:redstone_producer</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.120")

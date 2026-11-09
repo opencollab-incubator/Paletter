@@ -11,13 +11,14 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * Overrides the swing sounds emitted by the user. Each field accepts the name of any sound event defined in
  * <code>sound_definitions.json</code>, including the built-in vanilla sound events.
  * <p>
- * Add-on JSON: {@code "minecraft:swing_sounds"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_swing_sounds.md}.
+ * Add-on JSON: {@code "minecraft:swing_sounds"}.
  *
  * @param attackCriticalHit Sound played when an attack hits and deals critical damage. Add-on JSON {@code attack_critical_hit}. Optional
  *        (null: not set).
  * @param attackHit Sound played when an attack hits. Add-on JSON {@code attack_hit}. Optional (null: not set).
  * @param attackMiss Sound played when an attack misses or deals no damage due to invulnerability. Add-on JSON {@code attack_miss}.
  *        Optional (null: not set).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_swing_sounds?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:swing_sounds</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")

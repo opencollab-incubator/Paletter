@@ -11,11 +11,12 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * Specifies the base rarity and subsequently color of the item name when the player hovers the cursor over the
  * item.
  * <p>
- * Add-on JSON: {@code "minecraft:rarity"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_rarity.md}.
+ * Add-on JSON: {@code "minecraft:rarity"}.
  *
  * @param value Sets the base rarity of the item. The rarity of an item automatically increases when enchanted, either to Rare
  *        when the base rarity is Common or Uncommon, or Epic when the base rarity is Rare. Add-on JSON {@code value}.
  *        Optional (null: not set).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_rarity?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:rarity</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.30")

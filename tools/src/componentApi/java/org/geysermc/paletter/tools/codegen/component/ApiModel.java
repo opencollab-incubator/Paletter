@@ -31,6 +31,19 @@ final class ApiModel {
     final List<Comp> components = new ArrayList<>();
     /** Components not generated, by reason (server only, rejected, ...): listed in the docs of the interfaces. */
     final Map<String, String> omitted = new LinkedHashMap<>();
+    /** The docs page of every component of the model, by id (also the omitted ones). */
+    final Map<String, String> pages = new LinkedHashMap<>();
+    /** The docs pages that list the components, by kind ({@code item}, {@code block}, {@code trait}). */
+    final Map<String, String> lists = new LinkedHashMap<>();
+    /** The replacement of deprecated or rejected components, by component id (generated or not). */
+    final Map<String, Replacements.Replacement> replacements = new LinkedHashMap<>();
+    /** Protocol and BDS version of every capture, oldest first (the bounds of the windows are protocols). */
+    final java.util.TreeMap<Integer, String> captureVersions = new java.util.TreeMap<>();
+    /** @return the generated component with an id, or null */
+    Comp component(String id) {
+        return components.stream().filter(c -> c.id.equals(id)).findFirst().orElse(null);
+    }
+
     /** Hand transforms that differ per protocol, by the name transforms.json gives them: who runs for which protocols. */
     final Map<String, List<TransformWindow>> transformWindows = new LinkedHashMap<>();
     /** The oldest and the newest protocol a spec capture exists for (the window shapes are observed in between). */
@@ -63,6 +76,10 @@ final class ApiModel {
         /** Component level transform (transforms.json path ""), or null. */
         String transform;
         final List<Window> windows = new ArrayList<>();
+        /** The window in which BDS accepts the component but sends nothing to clients, or null. */
+        Window serverOnly;
+        /** What replaces this component, or null. */
+        Replacements.Replacement replacement;
 
         /** @return the newest window that sends the component (the API follows its shape), or null */
         Window latest() {

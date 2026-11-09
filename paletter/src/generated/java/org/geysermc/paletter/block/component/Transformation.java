@@ -11,7 +11,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
 /**
  * The block's translation, rotation and scale with respect to the center of its world position.
  * <p>
- * Add-on JSON: {@code "minecraft:transformation"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_transformation.md}.
+ * Add-on JSON: {@code "minecraft:transformation"}.
  *
  * @param rotation The block's rotation in increments of 90 degrees Add-on JSON {@code rotation}. Default: <code>[0,0,0]</code>.
  *        Compiled by the hand transform {@code quarter_turns}.
@@ -21,6 +21,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param scalePivot The point to apply scale around. This item requires a format version of at least 1.21.0. Add-on JSON {@code
  *        scale_pivot}. Default: <code>[0,0,0]</code>.
  * @param translation The block's translation Add-on JSON {@code translation}. Default: <code>[0,0,0]</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_transformation?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:transformation</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.19.80")

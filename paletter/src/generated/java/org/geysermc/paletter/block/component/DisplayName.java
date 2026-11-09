@@ -13,10 +13,11 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * inventory and hotbar. If the string given can not be resolved as a loc string, the raw string given will be
  * displayed. If this component is omitted, the name of the block will be used as the display name.
  * <p>
- * Add-on JSON: {@code "minecraft:display_name"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_display_name.md}.
+ * Add-on JSON: {@code "minecraft:display_name"}.
  *
  * @param value The string form of the component (add-on JSON &#123;&#64;code "minecraft:display_name": &lt;string&gt;&#125;).
  *        Required.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_display_name?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:display_name</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.19.60")

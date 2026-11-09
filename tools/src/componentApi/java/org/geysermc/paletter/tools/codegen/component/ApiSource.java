@@ -49,6 +49,8 @@ final class ApiSource {
     static final ClassName NULLABLE = ClassName.get("org.checkerframework.checker.nullness.qual", "Nullable");
     static final ClassName BEDROCK_FORMAT = ClassName.get("org.geysermc.paletter.annotation", "BedrockFormat");
     static final ClassName EXPERIMENTAL = ClassName.get("org.geysermc.paletter.annotation", "Experimental");
+    static final ClassName SERVER_ONLY = ClassName.get("org.geysermc.paletter.annotation", "ServerOnly");
+    static final ClassName REPLACED_BY = ClassName.get("org.geysermc.paletter.annotation", "ReplacedBy");
     static final ClassName CHECK = ClassName.get("org.geysermc.paletter.internal.component", "Check");
     static final ClassName ITEM_TYPE = ClassName.get("org.geysermc.paletter.vanilla", "BedrockItemType");
     static final ClassName BLOCK_TYPE = ClassName.get("org.geysermc.paletter.vanilla", "BedrockBlockType");
@@ -59,10 +61,12 @@ final class ApiSource {
     static final ClassName STRING = ClassName.get(String.class);
 
     private final Comp c;
+    private final ApiModel model;
     private final String since;
 
-    private ApiSource(Comp c, String since) {
+    private ApiSource(Comp c, ApiModel model, String since) {
         this.c = c;
+        this.model = model;
         this.since = since;
     }
 
@@ -72,7 +76,7 @@ final class ApiSource {
 
     static void write(ApiModel model, String since, Map<String, String> files) {
         for (Comp c : model.components) {
-            files.put(c.kind.pkg().replace('.', '/') + "/" + c.className + ".java", file(c.kind.pkg(), new ApiSource(c, since).record(c.root, true)));
+            files.put(c.kind.pkg().replace('.', '/') + "/" + c.className + ".java", file(c.kind.pkg(), new ApiSource(c, model, since).record(c.root, true)));
         }
         for (Kind kind : Kind.values()) {
             List<Comp> members = model.components.stream().filter(c -> c.kind == kind && !c.standalone).toList();
@@ -104,7 +108,16 @@ final class ApiSource {
         String prefix = kind == Kind.TRAIT ? "block:trait:" : kind == Kind.ITEM ? "item:" : "block:minecraft:";
         model.omitted.forEach((id, reason) -> {
             if (id.startsWith(prefix) && (kind == Kind.TRAIT || !id.startsWith("block:trait:"))) {
-                omitted.add("    <li>{@code " + id.substring(id.indexOf(':') + 1) + "}: " + Docs.escape(reason) + "</li>\n");
+                StringBuilder item = new StringBuilder("    <li>{@code " + id.substring(id.indexOf(':') + 1) + "}: " + Docs.escape(reason));
+                Replacements.Replacement replacement = model.replacements.get(id);
+                if (replacement != null) {
+                    item.append("; ").append(replacementText(model, kind, replacement));
+                }
+                String url = Docs.learnUrl(model.pages.get(id));
+                if (url != null) {
+                    item.append(" (<a href=\"").append(url).append("\">Microsoft Learn</a>)");
+                }
+                omitted.add(item.append("</li>\n").toString());
             }
         });
         if (!omitted.isEmpty()) {
@@ -114,6 +127,12 @@ final class ApiSource {
         }
         if (kind == Kind.ITEM) {
             doc.append("<p>\nHand-written wire-only components, for fields with no add-on JSON source: see {@link WireOnlyItemComponent}.\n");
+        }
+        String list = Docs.learnUrl(model.lists.get(kind == Kind.ITEM ? "item" : kind == Kind.BLOCK ? "block" : "trait"));
+        if (list != null) {
+            doc.append("\n@see <a href=\"").append(list).append("\">Microsoft Learn: ")
+                .append(kind == Kind.ITEM ? "item components" : kind == Kind.BLOCK ? "block components" : "block states and traits")
+                .append("</a>");
         }
         doc.append("\n@since ").append(since).append('\n');
         TypeSpec.Builder type = TypeSpec.interfaceBuilder(kind.iface()).addModifiers(Modifier.PUBLIC, Modifier.SEALED)
@@ -138,6 +157,44 @@ final class ApiSource {
         return type.build();
     }
 
+    /** "replaced by {@link A}, {@code b}: evidence": generated successors of the same kind are linked, others named. */
+    private static String replacementText(ApiModel model, Kind kind, Replacements.Replacement r) {
+        List<String> by = new ArrayList<>();
+        for (String id : r.by()) {
+            Comp successor = model.component(id);
+            by.add(successor != null && successor.kind == kind ? "{@link " + successor.className + "}"
+                : "{@code " + id.substring(id.indexOf(':') + 1) + "}");
+        }
+        return "replaced by " + String.join(", ", by) + (r.hand() ? " (stated in fixtures.json: " : " (") + Docs.escape(r.evidence()) + ")";
+    }
+
+    private String replacementDoc(Replacements.Replacement r) {
+        return replacementText(model, c.kind, r);
+    }
+
+    /** The paragraph that says in which protocols BDS accepts the component without sending it. */
+    private String serverOnlyDoc() {
+        ApiModel.Window w = c.serverOnly;
+        String range = w.since() == Integer.MIN_VALUE ? "below protocol " + w.until()
+            : w.until() == Integer.MAX_VALUE ? "from protocol " + w.since() : "from protocol " + w.since() + " below " + w.until();
+        List<String> captured = new ArrayList<>();
+        model.captureVersions.forEach((protocol, bds) -> {
+            if (protocol >= w.since() && protocol < w.until()) {
+                captured.add(bds);
+            }
+        });
+        StringBuilder text = new StringBuilder("Server only ").append(range).append(": BDS accepts it in packs but sends nothing to clients there");
+        if (!captured.isEmpty()) {
+            text.append(" (BDS ").append(String.join(", ", captured)).append(")");
+        }
+        text.append(", so those palettes leave it out and add a report warning.");
+        Map.Entry<Integer, String> sent = w.until() == Integer.MAX_VALUE ? null : model.captureVersions.ceilingEntry(w.until());
+        if (sent != null) {
+            text.append(" Sent from protocol ").append(w.until()).append(" (BDS ").append(sent.getValue()).append(").");
+        }
+        return String.join("\n", Docs.wrap(text.toString())) + "\n";
+    }
+
     // ---- Records -----------------------------------------------------------------------------------------------------
 
     private ClassName name(ObjType o) {
@@ -153,7 +210,10 @@ final class ApiSource {
         doc.append(lines(text.isEmpty() ? "The {@code " + o.path + "} object." : Docs.escape(text)));
         if (top && !c.standalone) {
             doc.append("<p>\nAdd-on JSON: {@code \"").append(c.name).append("\"}")
-                .append(c.page.isEmpty() ? "" : ", documented in {@code " + c.page + "}").append(".\n");
+                .append(c.page.isEmpty() || Docs.learnUrl(c.page) != null ? "" : ", documented in {@code " + c.page + "}").append(".\n");
+            if (c.serverOnly != null) {
+                doc.append(serverOnlyDoc());
+            }
             if (!c.experiments.isEmpty()) {
                 doc.append("Bedrock requires the experiment").append(c.experiments.size() > 1 ? "s " : " ")
                     .append(String.join(", ", c.experiments.stream().map(Docs::escape).toList())).append(" for it (in some format versions).\n");
@@ -171,7 +231,16 @@ final class ApiSource {
             }
         }
         if (top) {
+            String url = c.standalone ? null : Docs.learnUrl(c.page);
+            if (url != null) {
+                doc.append("@see <a href=\"").append(url).append("\">Microsoft Learn: ").append(Docs.escape(c.name)).append("</a>\n");
+            }
             doc.append("@since ").append(since).append('\n');
+            if (c.replacement != null) {
+                doc.append("@deprecated ").append(replacementDoc(c.replacement)).append('\n');
+            } else if (c.deprecated()) {
+                doc.append("@deprecated marked deprecated by the Minecraft creator documentation\n");
+            }
         }
         type.addJavadoc("$L", doc.toString());
         if (top && c.minFormat != null) {
@@ -180,8 +249,27 @@ final class ApiSource {
         if (top && !c.experiments.isEmpty()) {
             type.addAnnotation(EXPERIMENTAL);
         }
-        if (top && c.deprecated()) {
+        if (top && c.serverOnly != null) {
+            AnnotationSpec.Builder serverOnly = AnnotationSpec.builder(SERVER_ONLY);
+            if (c.serverOnly.since() != Integer.MIN_VALUE) {
+                serverOnly.addMember("since", "$L", c.serverOnly.since());
+            }
+            if (c.serverOnly.until() != Integer.MAX_VALUE) {
+                serverOnly.addMember("until", "$L", c.serverOnly.until());
+            }
+            type.addAnnotation(serverOnly.build());
+        }
+        if (top && (c.deprecated() || c.replacement != null)) {
             type.addAnnotation(Deprecated.class);
+        }
+        if (top && c.replacement != null) {
+            List<ClassName> generated = c.replacement.by().stream().map(model::component).filter(java.util.Objects::nonNull)
+                .filter(s -> s.kind == c.kind).map(ApiSource::className).toList();
+            if (!generated.isEmpty()) {
+                AnnotationSpec.Builder replaced = AnnotationSpec.builder(REPLACED_BY);
+                generated.forEach(s -> replaced.addMember("value", "$T.class", s));
+                type.addAnnotation(replaced.build());
+            }
         }
         if (top && !c.standalone) {
             type.addSuperinterface(ClassName.get(c.kind.pkg(), c.kind.iface()));

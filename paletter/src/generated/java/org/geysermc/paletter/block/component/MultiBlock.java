@@ -18,7 +18,7 @@ import org.geysermc.paletter.internal.component.Check;
  * state. This state requires Minecraft Bedrock version 1.26.10 and above. Before version 1.26.40, the
  * experimental toggle "Upcoming Creator Features" is required.
  * <p>
- * Add-on JSON: {@code "minecraft:multi_block"}, documented in {@code creator/Reference/Content/BlockReference/Examples/traits/multi_block.md}.
+ * Add-on JSON: {@code "minecraft:multi_block"}.
  * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
  *
  * @param enabledStates Which states to enable. The only valid (and required) value is <code>minecraft:multi_block_part</code>. Add-on
@@ -27,6 +27,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        parts}. Default: <code>2</code>. One of [2, 3, 4].
  * @param direction Required property to define direction to place the block parts. Valid values are <code>"up", "down", "north",
  *        "south", "west", "east"</code>. Add-on JSON {@code direction}. Required.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/traits/multi_block?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:multi_block</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.26.10")

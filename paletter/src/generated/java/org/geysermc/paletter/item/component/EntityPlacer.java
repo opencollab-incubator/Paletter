@@ -17,7 +17,7 @@ import org.geysermc.paletter.vanilla.BedrockBlockType;
  * Allows an item to place entities into the world. Additionally, in version 1.19.80 and above, the component
  * allows the item to set the spawn type of a monster spawner.
  * <p>
- * Add-on JSON: {@code "minecraft:entity_placer"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_entity_placer.md}.
+ * Add-on JSON: {@code "minecraft:entity_placer"}.
  *
  * @param dispenseOn List of block descriptors of the blocks that this item can be dispensed on. If left empty, all blocks will be
  *        allowed. Add-on JSON {@code dispense_on}. Default: <code>[]</code>.
@@ -26,6 +26,7 @@ import org.geysermc.paletter.vanilla.BedrockBlockType;
  *        Add-on JSON {@code entity}. Optional (null: not set).
  * @param useOn List of block descriptors of the blocks that this item can be used on. If left empty, all blocks will be
  *        allowed. Add-on JSON {@code use_on}. Default: <code>[]</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_entity_placer?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:entity_placer</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")

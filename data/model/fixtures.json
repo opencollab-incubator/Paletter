@@ -146,5 +146,12 @@
     "item:description:identifier": "the identifier of every variant",
     "block:description:identifier": "the identifier of every variant",
     "block:description:states": "varied by block:states"
+  },
+  "replacedBy": {
+    "_comment": "Components that replace a deprecated or rejected one when neither the docs text, the docs notes, the BDS message nor a field name says so (see Replacements): by (component ids) and the evidence, both required.",
+    "block:minecraft:queued_ticking": {
+      "by": ["block:minecraft:tick"],
+      "evidence": "BDS 1.26.63.1 rejects queued_ticking as deprecated (data/bds/1.26.63.1/spec/content-log.txt: member \"minecraft:queued_ticking\" is deprecated); the docs page of minecraft:tick lists the interval_range and looping fields of queued_ticking and sends the onTick event to custom components (queued_ticking triggers a named event instead)."
+    }
   }
 }

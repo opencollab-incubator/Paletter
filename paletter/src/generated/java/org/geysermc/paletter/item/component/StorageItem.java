@@ -15,7 +15,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  * Enables an item to store data of the dynamic container associated with it. A dynamic container is a container
  * for storing items that is linked to an item instead of a block or an entity.
  * <p>
- * Add-on JSON: {@code "minecraft:storage_item"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_storage_item.md}.
+ * Add-on JSON: {@code "minecraft:storage_item"}.
  *
  * @param allowNestedStorageItems Determines whether another Storage Item is allowed inside of this item. Default is true. Add-on JSON {@code
  *        allow_nested_storage_items}. Default: <code>true</code>.
@@ -25,6 +25,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  *        <code>[]</code>.
  * @param maxSlots The maximum allowed weight of the sum of all contained items. Maximum is 64. Default is 64. Value must be
  *        &lt;= 64. Add-on JSON {@code max_slots}. Default: <code>64</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_storage_item?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:storage_item</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.40")

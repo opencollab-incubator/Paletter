@@ -12,12 +12,13 @@ import org.geysermc.paletter.annotation.Experimental;
  * Determines interactions the block will have with different precipitations. Three possible values: obrain,
  * obstruct_rain_accumulate_snow and none.
  * <p>
- * Add-on JSON: {@code "minecraft:precipitation_interactions"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_precipitation_interactions.md}.
+ * Add-on JSON: {@code "minecraft:precipitation_interactions"}.
  * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
  *
  * @param precipitationBehavior What behavior should the block have. Possible values: obrain, obstruct_rain_accumulate_snow, snowlogging, and
  *        none Add-on JSON {@code precipitation_behavior}. Optional (null: not set). The docs give the default
  *        "accumulate snow", which is not a value of this type; unset, BDS's behaviour applies.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_precipitation_interactions?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:precipitation_interactions</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.120")

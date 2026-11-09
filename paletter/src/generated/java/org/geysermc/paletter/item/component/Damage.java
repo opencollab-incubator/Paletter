@@ -11,10 +11,11 @@ import org.geysermc.paletter.internal.component.Check;
 /**
  * The damage component determines how much extra damage the item does on attack.
  * <p>
- * Add-on JSON: {@code "minecraft:damage"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_damage.md}.
+ * Add-on JSON: {@code "minecraft:damage"}.
  *
  * @param value The amount of extra damage this item deals when attacking. This value is added to the base attack damage. Must
  *        be a positive integer. Add-on JSON {@code value}. Optional (null: not set). Range [0, 32767] (BDS 1.26.63.1).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_damage?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:damage</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")

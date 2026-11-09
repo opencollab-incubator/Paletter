@@ -11,9 +11,10 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * Sets the item display name within Minecraft: Bedrock Edition. This component may also be used to pull from the
  * localization file by referencing a key from it.
  * <p>
- * Add-on JSON: {@code "minecraft:display_name"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_display_name.md}.
+ * Add-on JSON: {@code "minecraft:display_name"}.
  *
  * @param value Name shown for an item. Add-on JSON {@code value}. Optional (null: not set).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_display_name?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:display_name</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.0")

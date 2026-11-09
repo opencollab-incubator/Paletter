@@ -10,8 +10,18 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * from the component model in {@code data/model} (creator docs plus what Bedrock Dedicated Server sends). Paletter
  * compiles them to the wire format of each palette's protocol.
  * <p>
+ * Documented but not generated:
+ * <ul>
+ *     <li>{@code test:ancient}: rejected by BDS 9.9.9; replaced by {@link Widget} (stated in fixtures.json: hand evidence)</li>
+ *     <li>{@code test:count}: rejected by BDS 9.9.9; replaced by {@link Widget} (the docs of test:widget list a field count) (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/test_count?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code test:former}: rejected by BDS 9.9.9; replaced by {@link Widget} (docs note of test:widget: "Renamed from <code>test:former</code> in 1.0.") (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/test_former?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code test:old}: rejected by BDS 9.9.9; replaced by {@link Widget} (BDS message (data/bds/9.9.9/spec): "Use test:widget instead") (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/test_old?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code test:quiet}: server only: BDS accepts it but sends nothing to clients (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/test_quiet?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ * </ul>
+ * <p>
  * Hand-written wire-only components, for fields with no add-on JSON source: see {@link WireOnlyItemComponent}.
  *
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponentlist?view=minecraft-bedrock-stable">Microsoft Learn: item components</a>
  * @since 1.0.0
  */
 public sealed interface ItemComponent permits Gadget, Widget, WireOnlyItemComponent {

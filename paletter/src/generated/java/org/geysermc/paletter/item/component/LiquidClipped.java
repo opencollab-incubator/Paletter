@@ -11,10 +11,11 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * The liquid_clipped component determines whether the item interacts with liquid blocks on use. To allow
  * placement of blocks on liquids, see the 'placement_filter' block component.
  * <p>
- * Add-on JSON: {@code "minecraft:liquid_clipped"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_liquid_clipped.md}.
+ * Add-on JSON: {@code "minecraft:liquid_clipped"}.
  *
  * @param value Deterines whether the item interacts with liquid blocks on use. Add-on JSON {@code value}. Optional (null: not
  *        set).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_liquid_clipped?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:liquid_clipped</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")

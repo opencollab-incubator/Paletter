@@ -11,7 +11,7 @@ import org.geysermc.paletter.internal.component.Check;
 /**
  * Determines how long an item takes to use in combination with components such as Shooter, Throwable, or Food.
  * <p>
- * Add-on JSON: {@code "minecraft:use_modifiers"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_use_modifiers.md}.
+ * Add-on JSON: {@code "minecraft:use_modifiers"}.
  *
  * @param emitVibrations Whether vibrations are emitted when the item starts or stops being used. Add-on JSON {@code emit_vibrations}.
  *        Default: <code>true</code>.
@@ -28,6 +28,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        and the encoder sends what BDS sends then.
  * @param useDuration Time, in seconds, that the item takes to use. Add-on JSON {@code use_duration}. Default: <code>0</code>. Range
  *        [0, inf) (BDS 1.26.63.1).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_use_modifiers?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:use_modifiers</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.50")

@@ -13,7 +13,7 @@ import org.geysermc.paletter.internal.component.Check;
  * Determines what enchantments can be applied to the item. Not all enchantments will have an effect on all item
  * components.
  * <p>
- * Add-on JSON: {@code "minecraft:enchantable"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_enchantable.md}.
+ * Add-on JSON: {@code "minecraft:enchantable"}.
  *
  * @param slot Specifies which types of enchantments can be applied. Specifies which types of enchantments can be applied.
  *        For example, <code>bow</code> would allow this item to be enchanted as if it were a bow. Value must match a
@@ -22,6 +22,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        Add-on JSON {@code slot}. Required.
  * @param value Specifies the value of the enchantment (minimum of 0). Add-on JSON {@code value}. Required. Range [0, inf)
  *        (BDS 1.26.63.1).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_enchantable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:enchantable</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")

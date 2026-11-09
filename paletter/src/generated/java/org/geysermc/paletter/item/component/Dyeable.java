@@ -13,12 +13,13 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * color when undyed. The item stores its color in NBT data and renders with the player-chosen tint, enabling
  * customizable cosmetic appearances for armor and equipment.
  * <p>
- * Add-on JSON: {@code "minecraft:dyeable"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_dyeable.md}.
+ * Add-on JSON: {@code "minecraft:dyeable"}.
  *
  * @param defaultColor Add-on JSON {@code default_color}. Default: <code>[255,255,255]</code>. Compiled by the hand transform {@code
  *        rgb_color}.
  * @param defaultColorHex The string form of &#123;&#64;code default_color&#125; (hex); excludes &#123;&#64;link #defaultColor()&#125;.
  *        Add-on JSON {@code default_color}. Compiled by the hand transform {@code rgb_color}.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_dyeable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:dyeable</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.30")

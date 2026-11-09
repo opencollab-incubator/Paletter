@@ -13,11 +13,12 @@ import org.geysermc.paletter.internal.component.Check;
 /**
  * The description identifier of the geometry and material used to render the item of this block.
  * <p>
- * Add-on JSON: {@code "minecraft:item_visual"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_item_visual.md}.
+ * Add-on JSON: {@code "minecraft:item_visual"}.
  *
  * @param geometry The "minecraft:geometry" component of the item. Add-on JSON {@code geometry}. Required.
  * @param materialInstances The "minecraft:material_instances" component of the item. Value must have at most 64 items. Add-on JSON {@code
  *        material_instances}. Required. Compiled by the hand transform {@code material_instances_packed}.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_item_visual?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:item_visual</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.60")

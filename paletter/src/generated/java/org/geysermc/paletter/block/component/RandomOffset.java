@@ -15,7 +15,7 @@ import org.geysermc.paletter.internal.component.Check;
  * the collision box to extend beyond the bounds of a cube, the offset range will automatically adjust to keep
  * the collision box within the cube. Culling for this block is performed without considering the random offset.
  * <p>
- * Add-on JSON: {@code "minecraft:random_offset"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_random_offset.md}.
+ * Add-on JSON: {@code "minecraft:random_offset"}.
  *
  * @param x X coordinate Add-on JSON {@code x}. Default:
  *        <code>&#123;"range":&#123;"max":0,"min":0&#125;,"steps":0&#125;</code>.
@@ -23,6 +23,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        <code>&#123;"range":&#123;"max":0,"min":0&#125;,"steps":0&#125;</code>.
  * @param z Z coordinate Add-on JSON {@code z}. Default:
  *        <code>&#123;"range":&#123;"max":0,"min":0&#125;,"steps":0&#125;</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_random_offset?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:random_offset</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.100")

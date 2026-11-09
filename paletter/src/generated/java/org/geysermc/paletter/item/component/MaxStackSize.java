@@ -11,11 +11,12 @@ import org.geysermc.paletter.internal.component.Check;
 /**
  * Determines how many of an item can be stacked together.
  * <p>
- * Add-on JSON: {@code "minecraft:max_stack_size"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_max_stack_size.md}.
+ * Add-on JSON: {@code "minecraft:max_stack_size"}.
  *
  * @param value How many of an item that can be stacked together. Add-on JSON {@code value}. Optional (null: not set). The
  *        docs give the default <code>64</code>, but BDS sends item_properties.max_stack_size = 1 (int) when it is
  *        omitted; so it is unset by default, and the encoder sends what BDS sends then. Range [1, 64] (BDS 1.26.63.1).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_max_stack_size?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:max_stack_size</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")

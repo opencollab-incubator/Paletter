@@ -12,7 +12,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
 /**
  * Sets the item as a food component, allowing it to be edible to the player.
  * <p>
- * Add-on JSON: {@code "minecraft:food"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_food.md}.
+ * Add-on JSON: {@code "minecraft:food"}.
  *
  * @param canAlwaysEat If true you can always eat this item (even when not hungry). Default is set to false. Add-on JSON {@code
  *        can_always_eat}. Default: <code>false</code>.
@@ -24,6 +24,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  * @param usingConvertsTo When used, converts to the item specified by the string in this field. Default does not convert item. Add-on
  *        JSON {@code using_converts_to}. Optional (null: not set). The docs give the default {}, which is not a value
  *        of this type; unset, BDS's behaviour applies. Compiled by the hand transform {@code item_descriptor_name}.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_food?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:food</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")

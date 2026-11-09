@@ -16,10 +16,11 @@ import org.geysermc.paletter.annotation.Experimental;
  * "minecraft:placement_direction" block trait. Custom blocks without this component will default to unit cube
  * support. The type of support shape for this block. Currently, the options are: "fence" and "stair".
  * <p>
- * Add-on JSON: {@code "minecraft:support"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_support.md}.
+ * Add-on JSON: {@code "minecraft:support"}.
  * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
  *
  * @param shape Required field. The type of support shape for this block. Add-on JSON {@code shape}. Required.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_support?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:support</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")

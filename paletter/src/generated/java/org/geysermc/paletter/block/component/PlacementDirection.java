@@ -14,7 +14,7 @@ import org.geysermc.paletter.internal.component.Check;
  * <code>minecraft:corner</code> states and setter function to the block. The values of these states are set when
  * the block is placed.
  * <p>
- * Add-on JSON: {@code "minecraft:placement_direction"}, documented in {@code creator/Reference/Content/BlockReference/Examples/traits/placement_direction.md}.
+ * Add-on JSON: {@code "minecraft:placement_direction"}.
  *
  * @param enabledStates Which states to enable. Must specify at least one. Valid values are <code>minecraft:cardinal_direction</code>,
  *        <code>minecraft:corner_and_cardinal_direction</code>, and <code>minecraft:facing_direction</code>. Add-on JSON
@@ -25,6 +25,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param blocksToCornerWith A list of block descriptors that define the blocks to connect with the corner shape. Requires
  *        <code>minecraft:corner_and_cardinal_direction</code> to be enabled. Add-on JSON {@code blocks_to_corner_with}.
  *        Optional (null: not set).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/traits/placement_direction?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:placement_direction</a>
  * @since 1.0.0
  */
 public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates> enabledStates,

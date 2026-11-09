@@ -12,29 +12,30 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * <p>
  * Documented but not generated:
  * <ul>
- *     <li>{@code minecraft:block_light_absorption}: rejected by BDS 1.26.63.1</li>
- *     <li>{@code minecraft:block_light_emission}: rejected by BDS 1.26.63.1</li>
- *     <li>{@code minecraft:bone_visibility}: rejected by BDS 1.26.63.1</li>
- *     <li>{@code minecraft:breathability}: rejected by BDS 1.26.63.1</li>
- *     <li>{@code minecraft:chest_obstruction}: server only: BDS accepts it but sends nothing to clients</li>
- *     <li>{@code minecraft:custom_components}: not modelled: binds script custom components; needs a script module</li>
- *     <li>{@code minecraft:destroy_time}: rejected by BDS 1.26.63.1</li>
- *     <li>{@code minecraft:destructible_by_explosion}: server only: BDS accepts it but sends nothing to clients</li>
- *     <li>{@code minecraft:entity_fall_on}: server only: BDS accepts it but sends nothing to clients</li>
- *     <li>{@code minecraft:explosion_resistance}: rejected by BDS 1.26.63.1</li>
- *     <li>{@code minecraft:flammable}: server only: BDS accepts it but sends nothing to clients</li>
- *     <li>{@code minecraft:instrument_sound}: server only: BDS accepts it but sends nothing to clients</li>
- *     <li>{@code minecraft:loot}: server only: BDS accepts it but sends nothing to clients</li>
- *     <li>{@code minecraft:map_color}: server only: BDS accepts it but sends nothing to clients</li>
- *     <li>{@code minecraft:movable}: server only: BDS accepts it but sends nothing to clients</li>
- *     <li>{@code minecraft:queued_ticking}: rejected by BDS 1.26.63.1</li>
- *     <li>{@code minecraft:random_ticking}: rejected by BDS 1.26.63.1</li>
- *     <li>{@code minecraft:redstone_consumer}: server only: BDS accepts it but sends nothing to clients</li>
- *     <li>{@code minecraft:tag}: not modelled: tag:&lt;name&gt; components; the docs page has no table (probed by hand in capture/addon: rejected by 1.26.60)</li>
- *     <li>{@code minecraft:tick}: server only: BDS accepts it but sends nothing to clients</li>
- *     <li>{@code minecraft:unit_cube}: rejected by BDS 1.26.63.1</li>
+ *     <li>{@code minecraft:block_light_absorption}: rejected by BDS 1.26.63.1; replaced by {@link LightDampening} (docs text: "Use minecraft:light_dampening in newer format versions.") (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_block_light_absorption?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:block_light_emission}: rejected by BDS 1.26.63.1; replaced by {@link LightEmission} (docs text: "Use minecraft:light_emission in newer format versions.") (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_block_light_emission?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:bone_visibility}: rejected by BDS 1.26.63.1; replaced by {@link Geometry} (the docs of minecraft:geometry list a field bone_visibility) (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_bone_visibility?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:breathability}: rejected by BDS 1.26.63.1 (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_breathability?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:chest_obstruction}: server only: BDS accepts it but sends nothing to clients (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_chest_obstruction?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:custom_components}: not modelled: binds script custom components; needs a script module (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_custom_components?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:destroy_time}: rejected by BDS 1.26.63.1; replaced by {@link DestructibleByMining} (docs text: "Use minecraft:destructible_by_mining in newer format versions.") (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_destroy_time?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:destructible_by_explosion}: server only: BDS accepts it but sends nothing to clients (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_destructible_by_explosion?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:entity_fall_on}: server only: BDS accepts it but sends nothing to clients (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_entity_fall_on?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:explosion_resistance}: rejected by BDS 1.26.63.1; replaced by {@code minecraft:destructible_by_explosion} (docs text: "Use minecraft:destructible_by_explosion in newer format versions.") (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_explosion_resistance?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:flammable}: server only: BDS accepts it but sends nothing to clients (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_flammable?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:instrument_sound}: server only: BDS accepts it but sends nothing to clients (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_instrument_sound?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:loot}: server only: BDS accepts it but sends nothing to clients (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_loot?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:map_color}: server only: BDS accepts it but sends nothing to clients (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_map_color?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:movable}: server only: BDS accepts it but sends nothing to clients (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_movable?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:queued_ticking}: rejected by BDS 1.26.63.1; replaced by {@code minecraft:tick} (stated in fixtures.json: BDS 1.26.63.1 rejects queued_ticking as deprecated (data/bds/1.26.63.1/spec/content-log.txt: member "minecraft:queued_ticking" is deprecated); the docs page of minecraft:tick lists the interval_range and looping fields of queued_ticking and sends the onTick event to custom components (queued_ticking triggers a named event instead).) (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_queued_ticking?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:random_ticking}: rejected by BDS 1.26.63.1 (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_random_ticking?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:redstone_consumer}: server only: BDS accepts it but sends nothing to clients (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_consumer?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:tag}: not modelled: tag:&lt;name&gt; components; the docs page has no table (probed by hand in capture/addon: rejected by 1.26.60) (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_tag?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:tick}: server only: BDS accepts it but sends nothing to clients (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_tick?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:unit_cube}: rejected by BDS 1.26.63.1 (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_unit_cube?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
  * </ul>
  *
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/blockcomponentslist?view=minecraft-bedrock-stable">Microsoft Learn: block components</a>
  * @since 1.0.0
  */
 public sealed interface BlockComponent permits BlockEntity, CollisionBox, ConnectionRule, CraftingTable, DestructibleByMining, DestructionParticles, DisplayName, EmbeddedVisual, FlowerPottable, Friction, Geometry, ItemVisual, LightDampening, LightEmission, LiquidDetection, MaterialInstances, PlacementFilter, PrecipitationInteractions, RandomOffset, RedstoneConductivity, RedstoneProducer, Replaceable, SelectionBox, Support, Transformation, WireOnlyBlockComponent {

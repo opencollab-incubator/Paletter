@@ -17,7 +17,7 @@ import org.geysermc.paletter.internal.component.Check;
  * "damage_multiplier" and "damage_modifier" are applied, the resulting damage is floored to the nearest lower
  * integer.
  * <p>
- * Add-on JSON: {@code "minecraft:kinetic_weapon"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_kinetic_weapon.md}.
+ * Add-on JSON: {@code "minecraft:kinetic_weapon"}.
  *
  * @param creativeReach Defines the reach used when the user is in Creative Mode. Defaults to "reach" if unspecified. Add-on JSON
  *        {@code creative_reach}. Optional (null: not set).
@@ -39,6 +39,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        blocks) along the user's view vector where entities can be hit. Only targets within this distance are
  *        considered. Block collisions between the user and target block damage and its effects. Add-on JSON {@code
  *        reach}. Default: <code>&#123;"max":3,"min":0&#125;</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_kinetic_weapon?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:kinetic_weapon</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")

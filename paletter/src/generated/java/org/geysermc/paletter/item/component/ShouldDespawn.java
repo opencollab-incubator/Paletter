@@ -10,10 +10,11 @@ import org.geysermc.paletter.annotation.BedrockFormat;
 /**
  * Should_despawn component determines if the item should eventually despawn while floating in the world.
  * <p>
- * Add-on JSON: {@code "minecraft:should_despawn"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_should_despawn.md}.
+ * Add-on JSON: {@code "minecraft:should_despawn"}.
  *
  * @param value Determines whether the item should eventually despawn while floating in the world. Add-on JSON {@code value}.
  *        Optional (null: not set).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_should_despawn?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:should_despawn</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")

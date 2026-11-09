@@ -262,6 +262,15 @@ public @interface org.geysermc.paletter.annotation.Experimental {
 public @interface org.geysermc.paletter.annotation.Internal {
 }
 
+public @interface org.geysermc.paletter.annotation.ReplacedBy {
+    public abstract java.lang.Class<?>[] value()
+}
+
+public @interface org.geysermc.paletter.annotation.ServerOnly {
+    public abstract int since()
+    public abstract int until()
+}
+
 public record org.geysermc.paletter.block.BlockFallback {
     public static final org.geysermc.paletter.block.BlockFallback UNKNOWN
     public <init>(org.geysermc.paletter.vanilla.BedrockBlockType, org.geysermc.paletter.vanilla.BedrockBlockState, boolean)

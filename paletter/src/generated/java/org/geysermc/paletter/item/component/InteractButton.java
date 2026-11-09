@@ -10,11 +10,12 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * A boolean or string that determines if the interact button is shown in touch controls, and what text is
  * displayed on the button. When set to 'true', the default 'Use Item' text will be used.
  * <p>
- * Add-on JSON: {@code "minecraft:interact_button"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_interact_button.md}.
+ * Add-on JSON: {@code "minecraft:interact_button"}.
  *
  * @param enabled The boolean form: &#123;&#64;code true&#125; shows the interact button with the default text. Optional (null:
  *        not set).
  * @param text The string form: the button text (a localization key or literal). Optional (null: not set).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_interact_button?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:interact_button</a>
  * @since 1.0.0
  */
 public record InteractButton(@Nullable Boolean enabled,

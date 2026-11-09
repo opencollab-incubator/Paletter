@@ -12,19 +12,20 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * <p>
  * Documented but not generated:
  * <ul>
- *     <li>{@code minecraft:chargeable}: rejected by BDS 1.26.63.1</li>
- *     <li>{@code minecraft:custom_components}: not modelled: binds script custom components; needs a script module</li>
- *     <li>{@code minecraft:damage_absorption}: server only: BDS accepts it but sends nothing to clients</li>
- *     <li>{@code minecraft:durability_sensor}: server only: BDS accepts it but sends nothing to clients</li>
- *     <li>{@code minecraft:hand_equippped}: not modelled: misspelled duplicate page of minecraft:hand_equipped</li>
- *     <li>{@code minecraft:render_offsets}: rejected by BDS 1.26.63.1</li>
- *     <li>{@code minecraft:seed}: rejected by BDS 1.26.63.1</li>
- *     <li>{@code minecraft:use_duration}: rejected by BDS 1.26.63.1</li>
- *     <li>{@code minecraft:weapon}: rejected by BDS 1.26.63.1</li>
+ *     <li>{@code minecraft:chargeable}: rejected by BDS 1.26.63.1; replaced by {@link UseModifiers} (docs note: "Released without an experimental toggle in 1.20.30; renamed to <code>minecraft:use_modifiers</code> in 1.20.50.") (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_chargeable?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:custom_components}: not modelled: binds script custom components; needs a script module (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_custom_components?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:damage_absorption}: server only: BDS accepts it but sends nothing to clients (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_damage_absorption?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:durability_sensor}: server only: BDS accepts it but sends nothing to clients (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_durability_sensor?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:hand_equippped}: not modelled: misspelled duplicate page of minecraft:hand_equipped (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_hand_equippped?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:render_offsets}: rejected by BDS 1.26.63.1 (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_render_offsets?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:seed}: rejected by BDS 1.26.63.1; replaced by {@link BlockPlacer} (BDS message (data/bds/1.26.63.1/spec): "Use minecraft:block_placer instead") (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_seed?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:use_duration}: rejected by BDS 1.26.63.1; replaced by {@link UseModifiers} (the docs of minecraft:use_modifiers list a field use_duration) (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_use_duration?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:weapon}: rejected by BDS 1.26.63.1; replaced by {@link Damage}, {@link Cooldown}, {@link Durability} (docs note: "use minecraft:damage to set attack damage, minecraft:cooldown for attack speed, and minecraft:durability for durability.") (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_weapon?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
  * </ul>
  * <p>
  * Hand-written wire-only components, for fields with no add-on JSON source: see {@link WireOnlyItemComponent}.
  *
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponentlist?view=minecraft-bedrock-stable">Microsoft Learn: item components</a>
  * @since 1.0.0
  */
 public sealed interface ItemComponent permits AllowOffHand, BlockPlacer, BundleInteraction, CanDestroyInCreative, Compostable, Cooldown, Damage, Digger, DisplayName, Durability, Dyeable, Enchantable, EntityPlacer, FireResistant, Food, Fuel, Glint, HandEquipped, HoverTextColor, Icon, InteractButton, KineticWeapon, LiquidClipped, MaxStackSize, MusicRecord, PiercingWeapon, Projectile, Rarity, Repairable, Shooter, ShouldDespawn, StackedByData, StorageItem, StorageWeightLimit, StorageWeightModifier, SwingDuration, SwingSounds, Tags, ThrowableItem, UseAnimation, UseModifiers, Wearable, WireOnlyItemComponent {

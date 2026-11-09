@@ -11,7 +11,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
 /**
  * Sets the particles that will be used when block is destroyed.
  * <p>
- * Add-on JSON: {@code "minecraft:destruction_particles"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_destruction_particles.md}.
+ * Add-on JSON: {@code "minecraft:destruction_particles"}.
  *
  * @param particleCount Sets number of particles to spawn on block destruction. Value must be &lt;= 255. Add-on JSON {@code
  *        particle_count}. Default: <code>100</code>.
@@ -19,6 +19,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param tintMethod Tint multiplied to the color. Tint method logic varies, but often refers to the "rain" and "temperature" of
  *        the biome the block is placed in to compute the tint. Add-on JSON {@code tint_method}. Default:
  *        <code>"none"</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_destruction_particles?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:destruction_particles</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.80")

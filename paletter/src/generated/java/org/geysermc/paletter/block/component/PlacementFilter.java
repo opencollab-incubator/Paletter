@@ -20,10 +20,11 @@ import org.geysermc.paletter.vanilla.BedrockBlockType;
  * liquid blocks, ensure that an item block is created with a 'liquid_clipped' component set to 'true' and a
  * 'block_placer' component with 'replace_block_item' set to 'true'.
  * <p>
- * Add-on JSON: {@code "minecraft:placement_filter"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_placement_filter.md}.
+ * Add-on JSON: {@code "minecraft:placement_filter"}.
  *
  * @param conditions List of conditions where the block can be placed/survive Value must have at most 64 items. Add-on JSON {@code
  *        conditions}. Default: <code>[]</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_placement_filter?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:placement_filter</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.19.60")

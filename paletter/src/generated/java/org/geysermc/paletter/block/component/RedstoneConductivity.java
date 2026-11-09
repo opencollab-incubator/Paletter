@@ -10,12 +10,13 @@ import org.geysermc.paletter.annotation.BedrockFormat;
 /**
  * The basic redstone properties of a block. If the component is not provided the default values are used.
  * <p>
- * Add-on JSON: {@code "minecraft:redstone_conductivity"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_redstone_conductivity.md}.
+ * Add-on JSON: {@code "minecraft:redstone_conductivity"}.
  *
  * @param allowsWireToStepDown Specifies if redstone wire can stair-step downward on the block. Add-on JSON {@code allows_wire_to_step_down}.
  *        Default: <code>true</code>.
  * @param redstoneConductor Specifies if the block can be powered by redstone. Add-on JSON {@code redstone_conductor}. Default:
  *        <code>false</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_conductivity?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:redstone_conductivity</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.40")

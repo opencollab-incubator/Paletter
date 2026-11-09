@@ -30,6 +30,19 @@ public final class BlockWire {
     }
 
     private static void glow(Glow c, WireContext ctx, WireNode out) {
+        int protocol = ctx.protocol();
+        if (protocol < 200) {
+            glowUntil200(c, ctx, out);
+        } else if (protocol >= 200) {
+            glowFrom200(c, ctx, out);
+        }
+    }
+
+    private static void glowUntil200(Glow c, WireContext ctx, WireNode out) {
+        ctx.drop(Glow.NAME, "is not sent to clients (BDS: server-only)");
+    }
+
+    private static void glowFrom200(Glow c, WireContext ctx, WireNode out) {
         int v0 = c.value();
         out.put("test:glow.emission", Wire.toByte(v0));
     }

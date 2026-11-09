@@ -14,7 +14,7 @@ import org.geysermc.paletter.internal.component.Check;
  * material instance. Material instance can either be a full material instance or a name to another already
  * defined instance. Limited to 64 instances.
  * <p>
- * Add-on JSON: {@code "minecraft:material_instances"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_material_instances.md}.
+ * Add-on JSON: {@code "minecraft:material_instances"}.
  * Compiled by the hand transform {@code material_instances} (see {@code data/model/transforms.json}).
  *
  * @param all Add-on JSON {@code *}. Optional (null: not set).
@@ -44,6 +44,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        own fields. Add-on JSON {@code *}. Default: <code>&#123;&#125;</code>.
  * @param aliases Aliases with any other name: the key is an instance name, the value the instance it points at. Add-on JSON
  *        {@code *}. Default: <code>&#123;&#125;</code>.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_material_instances?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:material_instances</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.19.40")

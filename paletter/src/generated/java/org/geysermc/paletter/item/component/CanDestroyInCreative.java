@@ -11,10 +11,11 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * The can_destroy_in_creative component determines if the item can be used by a player to break blocks when in
  * creative mode.
  * <p>
- * Add-on JSON: {@code "minecraft:can_destroy_in_creative"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_can_destroy_in_creative.md}.
+ * Add-on JSON: {@code "minecraft:can_destroy_in_creative"}.
  *
  * @param value Determines whether the item can be used to destroy blocks while in creative mode. Add-on JSON {@code value}.
  *        Optional (null: not set).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_can_destroy_in_creative?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:can_destroy_in_creative</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")

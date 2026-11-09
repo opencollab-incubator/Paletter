@@ -13,9 +13,10 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * The definitions for how a block behaves when detecting liquid. Only one rule definition is allowed per liquid
  * type - if multiple are specified, the first will be used and the rest will be ignored.
  * <p>
- * Add-on JSON: {@code "minecraft:liquid_detection"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_liquid_detection.md}.
+ * Add-on JSON: {@code "minecraft:liquid_detection"}.
  *
  * @param detectionRules Add-on JSON {@code detection_rules}. Required.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_liquid_detection?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:liquid_detection</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.60")

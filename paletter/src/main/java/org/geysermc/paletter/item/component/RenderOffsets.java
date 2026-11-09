@@ -19,6 +19,7 @@ import java.util.Objects;
  * @param mainHand the main hand, or null to leave it out
  * @param offHand the off hand, or null to leave it out
  * @param preset the built-in offsets of an armor piece, or null
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_render_offsets?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:render_offsets</a>
  * @since 1.0.0
  * @deprecated retired from the add-on format, still sent for legacy content; will be removed if clients stop honouring it
  */

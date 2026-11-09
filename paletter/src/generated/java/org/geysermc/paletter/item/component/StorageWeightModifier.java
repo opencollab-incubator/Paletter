@@ -11,11 +11,12 @@ import org.geysermc.paletter.internal.component.Check;
 /**
  * Specifies the maximum weight limit that a storage item can hold.
  * <p>
- * Add-on JSON: {@code "minecraft:storage_weight_modifier"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_storage_weight_modifier.md}.
+ * Add-on JSON: {@code "minecraft:storage_weight_modifier"}.
  *
  * @param weightInStorageItem The weight of this item when inside another Storage Item. Default is 4. 0 means item is not allowed in another
  *        Storage Item. Add-on JSON {@code weight_in_storage_item}. Default: <code>4</code>. Range [0, inf) (BDS
  *        1.26.63.1).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_storage_weight_modifier?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:storage_weight_modifier</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.110")

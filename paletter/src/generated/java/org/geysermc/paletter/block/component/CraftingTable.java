@@ -14,7 +14,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * Makes your block into a custom crafting table which enables the crafting table UI and the ability to craft
  * recipes.
  * <p>
- * Add-on JSON: {@code "minecraft:crafting_table"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_crafting_table.md}.
+ * Add-on JSON: {@code "minecraft:crafting_table"}.
  * Bedrock requires the experiment Holiday Creator Features for it (in some format versions).
  *
  * @param craftingTags Defines the tags recipes should define to be crafted on this table. Limited to 64 tags. Each tag is limited to
@@ -25,6 +25,7 @@ import org.geysermc.paletter.annotation.Experimental;
  *        name displayed will default to the name specified in the "display_name" component. If this block has no
  *        "display_name" component, the name displayed will default to the name of the block. Value must have at most
  *        256 items. Add-on JSON {@code table_name}. Optional (null: not set).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_crafting_table?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:crafting_table</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.19.50")

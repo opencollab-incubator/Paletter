@@ -13,13 +13,14 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * When combined with minecraft:throwable, this component specifies which entity is spawned when the item is
  * thrown.
  * <p>
- * Add-on JSON: {@code "minecraft:projectile"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_projectile.md}.
+ * Add-on JSON: {@code "minecraft:projectile"}.
  *
  * @param minimumCriticalPower Specifies how long a player must charge a projectile for it to critically hit. Add-on JSON {@code
  *        minimum_critical_power}. Default: <code>0</code>.
  * @param projectileEntity Which entity is to be fired as a projectile. Value must match a regular expression pattern of
  *        "^(?:&#92;w+(?:&#92;.&#92;w+)*:(?=&#92;w))?(?:&#92;w+(?:&#92;.&#92;w+)*)(?:&lt;((?:&#92;w+(?:&#92;.&#92;w+)*:(?=&#92;w))?&#92;w+(?:&#92;.&#92;w+)*)*&gt;)?$".
  *        Add-on JSON {@code projectile_entity}. Required.
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_projectile?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:projectile</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")

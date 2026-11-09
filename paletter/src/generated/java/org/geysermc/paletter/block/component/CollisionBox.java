@@ -15,13 +15,14 @@ import org.geysermc.paletter.annotation.Experimental;
  * 16x16x16 block). If set to false, the block's collision with entities is disabled, allowing entities to pass
  * through. If this component is omitted, default values are used.
  * <p>
- * Add-on JSON: {@code "minecraft:collision_box"}, documented in {@code creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_collision_box.md}.
+ * Add-on JSON: {@code "minecraft:collision_box"}.
  * Bedrock requires the experiments Holiday Creator Features, Upcoming Creator Features for it (in some format versions).
  *
  * @param boxes The entries of the component (add-on JSON: the component's value is this list). Default: <code>[]</code>.
  *        Compiled by the hand transform {@code collision_boxes}.
  * @param enabled The boolean form of the component (add-on JSON &#123;&#64;code "minecraft:collision_box":
  *        &lt;boolean&gt;&#125;). Optional (null: not set).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_collision_box?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:collision_box</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.19.50")

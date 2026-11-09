@@ -11,11 +11,12 @@ import org.geysermc.paletter.internal.component.Check;
 /**
  * Specifies that an item is compostable and provides the chance of creating a composting layer in the composter.
  * <p>
- * Add-on JSON: {@code "minecraft:compostable"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_compostable.md}.
+ * Add-on JSON: {@code "minecraft:compostable"}.
  *
  * @param compostingChance The chance of this item to create a layer upon composting with the composter. Valid value range is 1 - 100
  *        inclusive Value must be &gt;= 1. Value must be &lt;= 100. Add-on JSON {@code composting_chance}. Required.
  *        Range [1, 100] (BDS 1.26.63.1).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_compostable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:compostable</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.60")

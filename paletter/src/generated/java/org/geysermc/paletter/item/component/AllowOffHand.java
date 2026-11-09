@@ -10,10 +10,11 @@ import org.geysermc.paletter.annotation.BedrockFormat;
 /**
  * The allow_off_hand component determines whether the item can be placed in the off hand slot of the inventory.
  * <p>
- * Add-on JSON: {@code "minecraft:allow_off_hand"}, documented in {@code creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_allow_off_hand.md}.
+ * Add-on JSON: {@code "minecraft:allow_off_hand"}.
  *
  * @param value Determines whether the item can be placed in the off hand slot. Add-on JSON {@code value}. Optional (null: not
  *        set).
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_allow_off_hand?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:allow_off_hand</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
