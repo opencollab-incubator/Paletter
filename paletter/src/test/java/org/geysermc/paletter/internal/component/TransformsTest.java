@@ -97,6 +97,20 @@ class TransformsTest {
     }
 
     @Test
+    void molangRepairAmountBefore26_40IsACompound() {
+        Repairable repairable = Repairable.builder().repairItems(Repairable.RepairItems.builder().items(List.of("minecraft:stick"))
+            .repairAmountExpression("q.max_durability * 0.25").build()).build();
+        WireNode now = new WireNode();
+        Transforms.itemDescriptorList(ctx, now, repairable);
+        assertEquals("q.max_durability * 0.25", now.build().getCompound("minecraft:repairable").getList("repair_items", NbtType.COMPOUND).getFirst().getString("repair_amount"));
+        WireNode before = new WireNode();
+        Transforms.itemDescriptorListMolangCompound(ctx, before, repairable);
+        NbtMap amount = before.build().getCompound("minecraft:repairable").getList("repair_items", NbtType.COMPOUND).getFirst().getCompound("repair_amount");
+        assertEquals("q.max_durability * 0.25", amount.getString("expression"));
+        assertEquals((short) 0, amount.getShort("version"));
+    }
+
+    @Test
     void embeddedGeometryBefore26_60HasNoRotation() {
         EmbeddedVisual visual = EmbeddedVisual.builder()
             .geometry(EmbeddedVisual.Geometry.builder().identifier("minecraft:geometry.cross")

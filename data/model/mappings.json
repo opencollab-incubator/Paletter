@@ -1,6 +1,13 @@
 {
   "captures": [
     {
+      "capture": "data/bds/1.26.36.1/spec",
+      "bdsVersion": "1.26.36.1",
+      "protocol": 1001,
+      "variants": 2001,
+      "accepted": 1559
+    },
+    {
       "capture": "data/bds/1.26.45.1/spec",
       "bdsVersion": "1.26.45.1",
       "protocol": 2169,
@@ -119,7 +126,8 @@
         "menu_category.is_hidden_in_commands": "0 (byte)"
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -213,7 +221,8 @@
         }
       },
       "protocols": [
-        2169
+        1001,
+        2168
       ],
       "protocol2193": {
         "variants": {
@@ -492,7 +501,8 @@
       },
       "fields": {},
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -539,7 +549,8 @@
       },
       "fields": {},
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -555,7 +566,8 @@
       "baseRejected": "minecraft:bone_visibility: this component was found in the input, but is not present in the Schema",
       "fields": {},
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -596,7 +608,8 @@
       },
       "fields": {},
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -616,7 +629,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -1165,7 +1179,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193
       ],
       "protocol2225": {
@@ -1619,7 +1634,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -1685,7 +1701,8 @@
         "minecraft:crafting_table.grid_size": "3 (int)"
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -1728,7 +1745,8 @@
       },
       "fields": {},
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -1764,7 +1782,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -1985,7 +2004,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -2056,7 +2076,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -2104,7 +2125,8 @@
       },
       "fields": {},
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -2353,7 +2375,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193
       ],
       "protocol2225": {
@@ -2638,7 +2661,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -2681,7 +2705,8 @@
       },
       "fields": {},
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -2740,7 +2765,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -2759,7 +2785,8 @@
         "minecraft:flower_pottable.usePreR26U2FlowerPotOffset": "0 (byte)"
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -2822,7 +2849,8 @@
       },
       "fields": {},
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -2835,7 +2863,8 @@
       "status": "untestable",
       "note": "the control (companions only) and the base were rejected: components: Block needs both a \"geometry\" and \"material_instances\" component.",
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -2863,7 +2892,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -3107,7 +3137,8 @@
         "minecraft:item_visual.materialInstancesDescription.materials.*.tint_method": "none (string)"
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193
       ],
       "protocol2225": {
@@ -3496,7 +3527,8 @@
       },
       "fields": {},
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -3552,7 +3584,8 @@
       },
       "fields": {},
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -3724,7 +3757,8 @@
         "minecraft:liquid_detection.detectionRules[].stopsLiquidFromDirection": "0 (byte)"
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -3750,7 +3784,8 @@
       },
       "fields": {},
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -3798,7 +3833,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -5270,7 +5306,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -5301,7 +5338,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -5579,7 +5617,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -5622,7 +5661,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -5680,7 +5720,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -6015,7 +6056,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -6045,7 +6087,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -6100,7 +6143,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -6134,7 +6178,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -6231,7 +6276,8 @@
         "minecraft:redstone_producer.allowPowerUp": "0 (byte)"
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -6245,7 +6291,8 @@
       "status": "server-only",
       "fields": {},
       "protocols": [
-        2169
+        1001,
+        2168
       ],
       "protocol2193": {
         "variants": {
@@ -6355,7 +6402,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -6391,7 +6439,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -6429,7 +6478,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -6925,7 +6975,8 @@
         "minecraft:transformation.hasJsonVersionBeforeValidation": "0 (byte)"
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -6941,7 +6992,8 @@
       "baseRejected": "minecraft:unit_cube: member \"minecraft:unit_cube\" is deprecated",
       "fields": {},
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -7068,7 +7120,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -7162,7 +7215,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -7198,15 +7252,16 @@
         "traits[].update_flags": "3 (int)"
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
     },
     "block:trait:minecraft:multi_block": {
       "variants": {
-        "accepted": 11,
-        "rejected": 3
+        "accepted": 7,
+        "rejected": 7
       },
       "wire": [
         "traits"
@@ -7247,13 +7302,18 @@
           }
         },
         "direction": {
-          "accepted": 6,
-          "rejected": 1,
+          "accepted": 2,
+          "rejected": 5,
           "rejectedValues": [
-            "omitted"
+            "omitted",
+            "string:north",
+            "string:south",
+            "string:west",
+            "string:east"
           ],
           "bdsErrors": [
-            "direction: missing required field"
+            "direction: missing required field",
+            "direction: Invalid enum value"
           ],
           "status": "inferred",
           "rules": [
@@ -7261,11 +7321,7 @@
               "kind": "table",
               "table": {
                 "down": "0",
-                "east": "5",
-                "north": "2",
-                "south": "3",
-                "up": "1",
-                "west": "4"
+                "up": "1"
               },
               "nbt": "byte",
               "tags": [
@@ -7280,14 +7336,97 @@
       },
       "constants": {
         "traits[].enabled_states.multi_block": "1 (byte)",
-        "traits[].name": "minecraft:multi_block (string)",
-        "traits[].place_behavior": "0 (byte)"
+        "traits[].name": "minecraft:multi_block (string)"
       },
       "protocols": [
-        2169,
-        2193,
-        2225
-      ]
+        1001
+      ],
+      "protocol2168": {
+        "variants": {
+          "accepted": 11,
+          "rejected": 3
+        },
+        "wire": [
+          "traits"
+        ],
+        "status": "sent",
+        "fields": {
+          "enabled_states": {
+            "accepted": 1,
+            "rejected": 2,
+            "rejectedValues": [
+              "omitted",
+              "array<string>:[]"
+            ],
+            "bdsErrors": [
+              "enabled_states: missing required field",
+              "enabled_states: expected array with at least 1 elements"
+            ],
+            "status": "no-evidence"
+          },
+          "parts": {
+            "accepted": 3,
+            "rejected": 0,
+            "status": "inferred",
+            "rules": [
+              {
+                "kind": "identity",
+                "nbt": "byte",
+                "tags": [
+                  "renamed",
+                  "nested",
+                  "type:integer->byte"
+                ],
+                "wire": "traits[].part_count"
+              }
+            ],
+            "whenAbsent": {
+              "traits[].part_count": "2 (byte)"
+            }
+          },
+          "direction": {
+            "accepted": 6,
+            "rejected": 1,
+            "rejectedValues": [
+              "omitted"
+            ],
+            "bdsErrors": [
+              "direction: missing required field"
+            ],
+            "status": "inferred",
+            "rules": [
+              {
+                "kind": "table",
+                "table": {
+                  "down": "0",
+                  "east": "5",
+                  "north": "2",
+                  "south": "3",
+                  "up": "1",
+                  "west": "4"
+                },
+                "nbt": "byte",
+                "tags": [
+                  "nested",
+                  "type:string->byte",
+                  "enum->int"
+                ],
+                "wire": "traits[].direction"
+              }
+            ]
+          }
+        },
+        "constants": {
+          "traits[].enabled_states.multi_block": "1 (byte)",
+          "traits[].name": "minecraft:multi_block (string)",
+          "traits[].place_behavior": "0 (byte)"
+        },
+        "protocols": [
+          2168,
+          2193,
+          2225
+        ]
+      }
     },
     "block:trait:minecraft:placement_direction": {
       "variants": {
@@ -7310,7 +7449,7 @@
           "bdsErrors": [
             "enabled_states: missing required field",
             "enabled_states: expected array with at least 1 elements",
-            "minecraft:placement_direction: \"y_rotation_offset\" can only be used when \"minecraft:cardinal_direction\", \"minecraft:facing_direction\", and/or \"minecraft:sixteen_way_rotation\" are enabled in \"enabled_states\"."
+            "minecraft:placement_direction: \"y_rotation_offset\" can only be used when \"minecraft:cardinal_direction\" and/or \"minecraft:facing_direction\" are enabled in \"enabled_states\"."
           ],
           "status": "inferred",
           "rules": [
@@ -7384,7 +7523,7 @@
             "array<any>:[]"
           ],
           "bdsErrors": [
-            "minecraft:placement_direction: \"y_rotation_offset\" can only be used when \"minecraft:cardinal_direction\", \"minecraft:facing_direction\", and/or \"minecraft:sixteen_way_rotation\" are enabled in \"enabled_states\"."
+            "minecraft:placement_direction: \"y_rotation_offset\" can only be used when \"minecraft:cardinal_direction\" and/or \"minecraft:facing_direction\" are enabled in \"enabled_states\"."
           ],
           "status": "dropped"
         },
@@ -7409,7 +7548,8 @@
         "traits[].name": "minecraft:placement_direction (string)"
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -7470,7 +7610,8 @@
         "traits[].name": "minecraft:placement_position (string)"
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -7600,7 +7741,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -7674,7 +7816,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -7983,7 +8126,8 @@
         "minecraft:publisher_on_use_on.autoSucceedOnClient": "0 (byte)"
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193
       ],
       "protocol2225": {
@@ -8328,7 +8472,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -8402,7 +8547,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -8454,7 +8600,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -8501,7 +8648,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -8574,7 +8722,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -8672,7 +8821,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -8701,7 +8851,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -9116,7 +9267,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -9149,7 +9301,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -9246,7 +9399,8 @@
         "minecraft:durability.damage_chance.max": "100 (int)"
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -9290,7 +9444,7 @@
             "string:paletter_b"
           ],
           "bdsErrors": [
-            "sound_event: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (567 others). Found: paletter_b",
+            "sound_event: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: paletter_b",
             "[Item]  Error Parsing Item <id>:"
           ],
           "status": "dropped"
@@ -9311,7 +9465,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -9358,7 +9513,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -9442,7 +9598,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -9939,7 +10096,8 @@
         "minecraft:publisher_on_use_on.autoSucceedOnClient": "0 (byte)"
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -9974,7 +10132,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -10099,7 +10258,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -10166,7 +10326,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -10240,7 +10401,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -10314,7 +10476,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -10388,7 +10551,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -10444,7 +10608,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -10509,7 +10674,8 @@
       },
       "fields": {},
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -11042,7 +11208,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -11116,7 +11283,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -11217,7 +11385,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -11358,7 +11527,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -11415,7 +11585,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -11475,7 +11646,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -11542,7 +11714,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -11589,7 +11762,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -11743,7 +11917,11 @@
         "repair_items[].repair_amount": {
           "accepted": 8,
           "rejected": 0,
-          "status": "inferred",
+          "transform": {
+            "transform": "item_descriptor_list",
+            "why": "Each entry's items become [{name}] (names as written, not namespaced) next to repair_amount, a float for numbers and a string for Molang. The two JSON types of repair_amount land on the same leaf with different NBT types, which no single rule fits."
+          },
+          "status": "hand-rule",
           "rules": [
             {
               "kind": "constant",
@@ -11761,28 +11939,245 @@
                 "injected-default"
               ],
               "wire": "minecraft:repairable.repair_items[].items[].name"
-            },
-            {
-              "kind": "identity",
-              "nbt": "float",
-              "tags": [
-                "type:integer->float"
-              ],
-              "wire": "minecraft:repairable.repair_items[].repair_amount"
             }
           ],
           "whenAbsent": {
             "minecraft:repairable.repair_items": "[] (list<void>)",
             "minecraft:repairable.repair_items[].items[].name": "omitted",
-            "minecraft:repairable.repair_items[].repair_amount": "omitted"
-          }
+            "minecraft:repairable.repair_items[].repair_amount": "omitted",
+            "minecraft:repairable.repair_items[].repair_amount.expression": "omitted",
+            "minecraft:repairable.repair_items[].repair_amount.version": "omitted"
+          },
+          "unexplained": [
+            {
+              "wire": "minecraft:repairable.repair_items[0].repair_amount",
+              "samples": [
+                "<absent> -> -",
+                "0 -> 0.0 (float)",
+                "0.5 -> 0.5 (float)",
+                "1 -> 1.0 (float)",
+                "2.25 -> 2.25 (float)",
+                "30 -> 30.0 (float)"
+              ]
+            },
+            {
+              "wire": "minecraft:repairable.repair_items[0].repair_amount.expression",
+              "samples": [
+                "<absent> -> -",
+                "0 -> -",
+                "0.5 -> -",
+                "1 -> -",
+                "2.25 -> -",
+                "30 -> -"
+              ]
+            },
+            {
+              "wire": "minecraft:repairable.repair_items[0].repair_amount.version",
+              "samples": [
+                "<absent> -> -",
+                "0 -> -",
+                "0.5 -> -",
+                "1 -> -",
+                "2.25 -> -",
+                "30 -> -"
+              ]
+            }
+          ]
         }
       },
       "protocols": [
-        2169,
-        2193,
-        2225
-      ]
+        1001
+      ],
+      "protocol2168": {
+        "variants": {
+          "accepted": 15,
+          "rejected": 18
+        },
+        "wire": [
+          "minecraft:repairable"
+        ],
+        "status": "sent",
+        "fields": {
+          "repair_items": {
+            "accepted": 3,
+            "rejected": 4,
+            "rejectedValues": [
+              "string:paletter_a",
+              "string:paletter_b",
+              "object:{}",
+              "object:minimal"
+            ],
+            "bdsErrors": [
+              "repair_items: expected an array",
+              "[Item]  Error Parsing Item <id>:"
+            ],
+            "status": "inferred",
+            "rules": [
+              {
+                "kind": "empty-list",
+                "nbt": "list<void>",
+                "tags": [
+                  "presence"
+                ],
+                "wire": "minecraft:repairable.repair_items"
+              },
+              {
+                "kind": "structure",
+                "tags": [
+                  "explained-by-child-fields"
+                ],
+                "wire": "minecraft:repairable.repair_items[].items[].name"
+              },
+              {
+                "kind": "structure",
+                "tags": [
+                  "explained-by-child-fields"
+                ],
+                "wire": "minecraft:repairable.repair_items[].repair_amount"
+              }
+            ],
+            "whenAbsent": {
+              "minecraft:repairable.repair_items": "[] (list<void>)",
+              "minecraft:repairable.repair_items[].items[].name": "omitted",
+              "minecraft:repairable.repair_items[].repair_amount": "omitted"
+            }
+          },
+          "repair_items.items": {
+            "accepted": 0,
+            "rejected": 5,
+            "rejectedValues": [
+              "string:paletter_a",
+              "string:paletter_b",
+              "map<string>:{}",
+              "map<string>:{1}",
+              "map<string>:{2}"
+            ],
+            "bdsErrors": [
+              "repair_items: expected an array",
+              "[Item]  Error Parsing Item <id>:"
+            ],
+            "status": "rejected"
+          },
+          "repair_items.repair_amount": {
+            "accepted": 0,
+            "rejected": 9,
+            "rejectedValues": [
+              "map<string>:{}",
+              "map<string>:{1}",
+              "map<string>:{2}",
+              "number:0",
+              "number:0.5",
+              "number:1",
+              "number:2.25",
+              "number:30",
+              "number:-1"
+            ],
+            "bdsErrors": [
+              "repair_items: expected an array",
+              "[Item]  Error Parsing Item <id>:"
+            ],
+            "status": "rejected"
+          },
+          "repair_items[].items": {
+            "accepted": 3,
+            "rejected": 0,
+            "transform": {
+              "transform": "item_descriptor_list",
+              "why": "Each entry's items become [{name}] (names as written, not namespaced) next to repair_amount, a float for numbers and a string for Molang. The two JSON types of repair_amount land on the same leaf with different NBT types, which no single rule fits."
+            },
+            "status": "hand-rule",
+            "rules": [
+              {
+                "kind": "empty-list",
+                "nbt": "list<void>",
+                "tags": [
+                  "presence"
+                ],
+                "wire": "minecraft:repairable.repair_items[].items"
+              },
+              {
+                "kind": "identity",
+                "element": 0,
+                "nbt": "string",
+                "tags": [
+                  "renamed",
+                  "nested",
+                  "list-element"
+                ],
+                "wire": "minecraft:repairable.repair_items[].items[].name"
+              }
+            ],
+            "whenAbsent": {
+              "minecraft:repairable.repair_items": "[] (list<void>)",
+              "minecraft:repairable.repair_items[].items": "omitted",
+              "minecraft:repairable.repair_items[].items[].name": "omitted",
+              "minecraft:repairable.repair_items[].repair_amount": "omitted"
+            },
+            "unexplained": [
+              {
+                "wire": "minecraft:repairable.repair_items",
+                "samples": [
+                  "<absent> -> [] (list<void>)",
+                  "[] -> -",
+                  "[\"minecraft:stick\"] -> -",
+                  "[\"minecraft:stick\",\"paletter_b\"] -> -"
+                ]
+              },
+              {
+                "wire": "minecraft:repairable.repair_items[0].repair_amount",
+                "samples": [
+                  "<absent> -> -",
+                  "[] -> 1.5 (float)",
+                  "[\"minecraft:stick\"] -> 1.5 (float)",
+                  "[\"minecraft:stick\",\"paletter_b\"] -> 1.5 (float)"
+                ]
+              }
+            ]
+          },
+          "repair_items[].repair_amount": {
+            "accepted": 8,
+            "rejected": 0,
+            "status": "inferred",
+            "rules": [
+              {
+                "kind": "constant",
+                "value": "<not sent>",
+                "tags": [
+                  "injected-default"
+                ],
+                "wire": "minecraft:repairable.repair_items"
+              },
+              {
+                "kind": "constant",
+                "value": "minecraft:stick",
+                "nbt": "string",
+                "tags": [
+                  "injected-default"
+                ],
+                "wire": "minecraft:repairable.repair_items[].items[].name"
+              },
+              {
+                "kind": "identity",
+                "nbt": "float",
+                "tags": [
+                  "type:integer->float"
+                ],
+                "wire": "minecraft:repairable.repair_items[].repair_amount"
+              }
+            ],
+            "whenAbsent": {
+              "minecraft:repairable.repair_items": "[] (list<void>)",
+              "minecraft:repairable.repair_items[].items[].name": "omitted",
+              "minecraft:repairable.repair_items[].repair_amount": "omitted"
+            }
+          }
+        },
+        "protocols": [
+          2168,
+          2193,
+          2225
+        ]
+      }
     },
     "item:minecraft:seed": {
       "variants": {
@@ -11808,7 +12203,7 @@
             "minecraft:seed: this component was found in the input, but is not present in the Schema",
             "[Item]  Error Parsing Item <id>:",
             "[Json] upgrade items/seed_3.json | \"minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead\"",
-            "[Json] upgrade items/seed_3.json | Final json version 1.26.45 raised warnings upgrading from document version 1.26.45"
+            "[Json] upgrade items/seed_3.json | Final json version 1.26.36 raised warnings upgrading from document version 1.26.36"
           ],
           "unknownToBds": true,
           "status": "rejected",
@@ -11827,7 +12222,7 @@
             "minecraft:seed: this component was found in the input, but is not present in the Schema",
             "[Item]  Error Parsing Item <id>:",
             "[Json] upgrade items/seed_8.json | \"minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead\"",
-            "[Json] upgrade items/seed_8.json | Final json version 1.26.45 raised warnings upgrading from document version 1.26.45"
+            "[Json] upgrade items/seed_8.json | Final json version 1.26.36 raised warnings upgrading from document version 1.26.36"
           ],
           "unknownToBds": true,
           "status": "rejected",
@@ -11844,7 +12239,7 @@
             "minecraft:seed: this component was found in the input, but is not present in the Schema",
             "[Item]  Error Parsing Item <id>:",
             "[Json] upgrade items/seed_12.json | \"minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead\"",
-            "[Json] upgrade items/seed_12.json | Final json version 1.26.45 raised warnings upgrading from document version 1.26.45"
+            "[Json] upgrade items/seed_12.json | Final json version 1.26.36 raised warnings upgrading from document version 1.26.36"
           ],
           "unknownToBds": true,
           "status": "rejected",
@@ -11866,7 +12261,7 @@
             "minecraft:seed: this component was found in the input, but is not present in the Schema",
             "[Item]  Error Parsing Item <id>:",
             "[Json] upgrade items/seed_14.json | \"minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead\"",
-            "[Json] upgrade items/seed_14.json | Final json version 1.26.45 raised warnings upgrading from document version 1.26.45"
+            "[Json] upgrade items/seed_14.json | Final json version 1.26.36 raised warnings upgrading from document version 1.26.36"
           ],
           "unknownToBds": true,
           "status": "rejected",
@@ -11874,7 +12269,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -12234,7 +12630,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -12308,7 +12705,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -12382,7 +12780,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -12477,7 +12876,8 @@
         "minecraft:storage_item.banned_items": "[] (list<void>)"
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -12518,7 +12918,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -12558,7 +12959,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -12598,7 +13000,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -12620,7 +13023,7 @@
             "string:paletter_b"
           ],
           "bdsErrors": [
-            "attack_critical_hit: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (567 others). Found: paletter_b",
+            "attack_critical_hit: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: paletter_b",
             "[Item]  Error Parsing Item <id>:"
           ],
           "status": "inferred",
@@ -12643,7 +13046,7 @@
             "string:paletter_b"
           ],
           "bdsErrors": [
-            "attack_hit: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (567 others). Found: paletter_b",
+            "attack_hit: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: paletter_b",
             "[Item]  Error Parsing Item <id>:"
           ],
           "status": "inferred",
@@ -12666,7 +13069,7 @@
             "string:paletter_b"
           ],
           "bdsErrors": [
-            "attack_miss: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (567 others). Found: paletter_b",
+            "attack_miss: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: paletter_b",
             "[Item]  Error Parsing Item <id>:"
           ],
           "status": "inferred",
@@ -12684,7 +13087,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -12752,7 +13156,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -12877,7 +13282,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -12963,7 +13369,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -13020,7 +13427,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -13091,7 +13499,7 @@
             "string:paletter_b"
           ],
           "bdsErrors": [
-            "start_sound: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (567 others). Found: paletter_b",
+            "start_sound: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: paletter_b",
             "[Item]  Error Parsing Item <id>:"
           ],
           "status": "inferred",
@@ -13162,7 +13570,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -13224,7 +13633,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]
@@ -13358,7 +13768,8 @@
         }
       },
       "protocols": [
-        2169,
+        1001,
+        2168,
         2193,
         2225
       ]

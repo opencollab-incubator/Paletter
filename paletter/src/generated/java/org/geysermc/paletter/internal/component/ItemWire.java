@@ -505,7 +505,12 @@ public final class ItemWire {
     }
 
     private static void repairable(Repairable c, WireContext ctx, WireNode out) {
-        Transforms.itemDescriptorList(ctx, out, c);
+        int transformProtocol = ctx.protocol();
+        if (transformProtocol < 2168) {
+            Transforms.itemDescriptorListMolangCompound(ctx, out, c);
+        } else {
+            Transforms.itemDescriptorList(ctx, out, c);
+        }
     }
 
     private static void shooter(Shooter c, WireContext ctx, WireNode out) {

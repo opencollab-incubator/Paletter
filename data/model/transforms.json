@@ -59,6 +59,7 @@
   },
   "item:minecraft:repairable:repair_items": {
     "transform": "item_descriptor_list",
+    "windows": [{"until": 2168, "transform": "item_descriptor_list_molang_compound"}, {"since": 2168, "transform": "item_descriptor_list"}],
     "why": "Each entry's items become [{name}] (names as written, not namespaced) next to repair_amount, a float for numbers and a string for Molang. The two JSON types of repair_amount land on the same leaf with different NBT types, which no single rule fits."
   },
   "block:minecraft:embedded_visual:geometry": {

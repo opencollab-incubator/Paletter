@@ -101,7 +101,7 @@ public final class ComponentIndex {
     /**
      * The oldest protocol a spec capture of BDS exists for: the shapes in {@code data/model/mappings.json} were observed from here.
      */
-    public static final int OLDEST_CAPTURED_PROTOCOL = 2169;
+    public static final int OLDEST_CAPTURED_PROTOCOL = 1001;
 
     /**
      * The newest protocol a spec capture of BDS exists for: a palette of a newer protocol is encoded with the shape observed here.

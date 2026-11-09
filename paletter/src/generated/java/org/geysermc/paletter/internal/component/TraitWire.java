@@ -44,6 +44,30 @@ public final class TraitWire {
     }
 
     private static void multiBlock(MultiBlock c, WireContext ctx, WireNode out) {
+        int protocol = ctx.protocol();
+        if (protocol < 2168) {
+            multiBlockUntil2168(c, ctx, out);
+        } else if (protocol >= 2168) {
+            multiBlockFrom2168(c, ctx, out);
+        }
+    }
+
+    private static void multiBlockUntil2168(MultiBlock c, WireContext ctx, WireNode out) {
+        out.put("enabled_states.multi_block", (byte) 1);
+        out.put("name", "minecraft:multi_block");
+        List<MultiBlock.EnabledStates> v0 = c.enabledStates();
+        ctx.drop(MultiBlock.NAME, "enabled_states has no known wire mapping");
+        int v1 = c.parts();
+        out.put("part_count", Wire.toByte(v1));
+        MultiBlock.Direction v2 = c.direction();
+        switch (v2.value()) {
+            case "down" -> out.put("direction", (byte) 0);
+            case "up" -> out.put("direction", (byte) 1);
+            default -> ctx.drop(MultiBlock.NAME, "direction = " + v2.value() + " has no known wire value");
+        }
+    }
+
+    private static void multiBlockFrom2168(MultiBlock c, WireContext ctx, WireNode out) {
         out.put("enabled_states.multi_block", (byte) 1);
         out.put("name", "minecraft:multi_block");
         out.put("place_behavior", (byte) 0);

@@ -375,9 +375,22 @@ public final class Transforms {
 
     /**
      * {@code repair_items}: items as {@code [{name}]} (or one {@code {tags}} Molang query), unknown items dropped, an entry without known items dropped with its
-     * repair amount; the amount a float, or a Molang string.
+     * repair amount; the amount a float, or a Molang string (from protocol 2168, 26.40; before:
+     * {@link #itemDescriptorListMolangCompound}).
      */
     public static void itemDescriptorList(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Repairable c) {
+        itemDescriptorList(ctx, out, c, false);
+    }
+
+    /**
+     * {@code repair_items} before protocol 2168 (26.30; BDS 1.26.36.1): a Molang repair amount is a compound
+     * {@code {expression, version: 0s}}, not a string.
+     */
+    public static void itemDescriptorListMolangCompound(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Repairable c) {
+        itemDescriptorList(ctx, out, c, true);
+    }
+
+    private static void itemDescriptorList(WireContext ctx, WireNode out, Repairable c, boolean molangCompound) {
         out.list("minecraft:repairable.repair_items");
         for (Repairable.RepairItems entry : c.repairItems()) {
             List<String> items = entry.items() == null ? List.of() : entry.items();
@@ -395,7 +408,9 @@ public final class Transforms {
                 // The string form is a Molang tag query ({tags}), e.g. query.any_tag('minecraft:planks')
                 e.element("items").put("tags", entry.itemsTags());
             }
-            if (entry.repairAmountExpression() != null) {
+            if (entry.repairAmountExpression() != null && molangCompound) {
+                e.child("repair_amount").put("expression", entry.repairAmountExpression()).put("version", (short) 0);
+            } else if (entry.repairAmountExpression() != null) {
                 e.put("repair_amount", entry.repairAmountExpression());
             } else if (entry.repairAmount() != null) {
                 e.put("repair_amount", entry.repairAmount());
