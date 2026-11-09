@@ -22,6 +22,7 @@ import org.geysermc.paletter.tools.model.docs.DocsFetcher;
 import org.geysermc.paletter.tools.model.docs.DocsParser;
 import org.geysermc.paletter.tools.model.infer.MappingInference;
 import org.geysermc.paletter.tools.update.CreativeProbe;
+import org.geysermc.paletter.tools.update.EducationProbe;
 import org.geysermc.paletter.tools.update.SpecCapture;
 import org.geysermc.paletter.tools.update.Update;
 import picocli.CommandLine;
@@ -46,7 +47,7 @@ import java.util.concurrent.Callable;
  */
 @Command(name = "paletter-tools", mixinStandardHelpOptions = true, subcommands = {
     Cli.Import.class, Cli.BdsRun.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.SpecCaptureCommand.class,
-    Cli.VerifyCommand.class, Cli.CheckData.class, Cli.BlockItemsCommand.class, Cli.RewriteCommand.class, Cli.DataRewriteCommand.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class,
+    Cli.VerifyCommand.class, Cli.CheckData.class, Cli.BlockItemsCommand.class, Cli.RewriteCommand.class, Cli.DataRewriteCommand.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
     Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class
@@ -327,6 +328,30 @@ public final class Cli implements Runnable {
             put(options, "reference", reference);
             put(options, "experiments", experiments);
             CreativeProbe.run(root(), options);
+            return 0;
+        }
+    }
+
+    @Command(name = "education-capture", description = "Starts a world on BDS with Education Edition features off and on, captures both and "
+        + "writes the identifiers only the education world has to data/bds/VERSION/education.json (input of constants generate).")
+    static final class EducationCaptureCommand extends Rooted implements Callable<Integer> {
+        @Option(names = "--version") String version;
+        @Option(names = "--cache") String cache;
+        @Option(names = "--port") String port;
+        @Option(names = "--reference") String reference;
+        @Option(names = "--out") String out;
+        @Option(names = "--timeout") String timeout;
+
+        @Override
+        public Integer call() throws Exception {
+            Map<String, String> options = new HashMap<>();
+            put(options, "version", version);
+            put(options, "cache", cache);
+            put(options, "port", port);
+            put(options, "reference", reference);
+            put(options, "out", out);
+            put(options, "timeout", timeout);
+            EducationProbe.run(root(), options);
             return 0;
         }
     }

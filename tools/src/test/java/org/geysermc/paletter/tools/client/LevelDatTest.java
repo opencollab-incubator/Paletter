@@ -32,6 +32,17 @@ class LevelDatTest {
     }
 
     @Test
+    void educationFeaturesAreASeparateSwitchThatKeepsTheRest() throws IOException {
+        byte[] bytes = levelDat(NbtMap.builder().putBoolean("gametest", true).build());
+        assertEquals(false, LevelDat.read(bytes).root().getBoolean(LevelDat.EDUCATION, false));
+        byte[] on = LevelDat.education(bytes, true);
+        assertEquals(true, LevelDat.read(on).root().getBoolean(LevelDat.EDUCATION, false));
+        assertEquals(List.of("gametest"), LevelDat.enabled(LevelDat.experiments(on)));
+        assertEquals("test", LevelDat.read(on).root().getString("LevelName"));
+        assertEquals(false, LevelDat.read(LevelDat.education(on, false)).root().getBoolean(LevelDat.EDUCATION, true));
+    }
+
+    @Test
     void readsTheExperimentsCompound() throws IOException {
         byte[] bytes = levelDat(NbtMap.builder().putBoolean("gametest", true).putBoolean("poi", false)
             .putBoolean(LevelDat.EVER_USED, true).putBoolean(LevelDat.SAVED_WITH_TOGGLED, true).build());
