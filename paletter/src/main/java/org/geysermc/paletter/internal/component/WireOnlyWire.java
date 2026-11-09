@@ -13,14 +13,21 @@ import java.util.List;
 
 /**
  * Encoders of the hand-written {@link WireOnlyItemComponent}s and {@link WireOnlyBlockComponent}s, dispatched from the generated {@code ItemWire}. Each has a
- * protocol window ({@code *_FROM}: the first protocol that carries the field); all bundled versions (26.40 and later)
- * carry all of them. Not API.
+ * protocol window ({@code *_FROM}: the first protocol that carries the field). {@code mining_speed} and {@code frame_count} are
+ * leaves of the {@code item_properties} BDS sends for every custom item, in every spec capture (the oldest is protocol
+ * 1001, 26.30): their window starts there. {@code render_offsets} and {@code on_player_placing} are not sent by BDS at all
+ * (it rejects them: only clients of Geyser's own packs read them), so no capture says from when a client takes them; they
+ * are assumed for every bundled version. Not API.
  */
 @SuppressWarnings("deprecation")
 public final class WireOnlyWire {
+    /** Not sent by BDS: no capture to date it from, assumed. */
     static final int RENDER_OFFSETS_FROM = 0;
-    static final int MINING_SPEED_FROM = 0;
-    static final int FRAME_COUNT_FROM = 0;
+    /** The oldest spec capture (BDS 1.26.36.1) already has it in {@code item_properties}. */
+    public static final int MINING_SPEED_FROM = 1001;
+    /** The oldest spec capture (BDS 1.26.36.1) already has it in {@code item_properties}. */
+    public static final int FRAME_COUNT_FROM = 1001;
+    /** Not sent by BDS: no capture to date it from, assumed. */
     static final int ON_PLAYER_PLACING_FROM = 0;
 
     private WireOnlyWire() {
