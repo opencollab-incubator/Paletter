@@ -50,6 +50,7 @@ Internally:
 
 ```
 BDS (download, run)  ->  tools: update / capture / spec-capture / import  ->  data/ + paletter/src/main/resources/paletter
+CloudburstMC/Data, Allay, Script API dumps  ->  tools: behaviour import  ->  paletter/.../behaviour.nbt + data/behaviour/REPORT.md
 creator docs         ->  tools: docs                                       ->  data/model/components.json
 data/model/*         ->  tools: infer, components generate, constants generate  ->  paletter/src/generated/java
 ```

@@ -7,7 +7,7 @@ in the javadoc; this file is the policy.
 
 The packages exported by [`module-info.java`](paletter/src/module/java/module-info.java):
 `org.geysermc.paletter` (`Paletter`, `Palette`, `PaletteLayer`, `Fallbacks`, `VanillaContent`, reports),
-`.annotation`, `.block` and `.block.component`, `.item` and `.item.component`, `.creative`, `.property`, `.data`,
+`.annotation`, `.behaviour`, `.block` and `.block.component`, `.item` and `.item.component`, `.creative`, `.property`, `.data`,
 `.vanilla` and `.vanilla.state` (the generated constants).
 
 Not API, free to change in any release:

@@ -392,6 +392,39 @@ loose at the end of the category. `APPEND` is the old behaviour. The rule, its e
 captures are in [`data/bds/CREATIVE-ORDER.md`](data/bds/CREATIVE-ORDER.md). The same placement is written into the item's
 `creative_category`/`creative_group` and the block's `menu_category`.
 
+## Behaviour
+
+What BDS knows about blocks and items but never sends (friction, destroy time, collision shapes, light, max stack size,
+attack damage, ...), per state and per version, for servers and anticheats that need the same values as vanilla:
+
+```java
+Behaviour behaviour = palette.behaviour();                       // or paletter.vanilla(version).behaviour()
+Float friction = behaviour.get(BedrockBlocks.ICE.defaultState(), BlockBehaviour.FRICTION);          // 0.98
+BlockShape stairs = behaviour.get(state, BlockBehaviour.COLLISION_SHAPE);                            // several boxes
+Integer eating = behaviour.get(BedrockItems.APPLE, ItemBehaviour.USE_DURATION);                     // 32 ticks
+
+BlockTable<Float> frictions = behaviour.blocks(BlockBehaviour.FRICTION);   // dense, once per palette
+float f = frictions.byRuntimeId(runtimeIdUnderTheFeet);                    // an array load per lookup
+
+Provenance p = behaviour.provenance(registeredState, BlockBehaviour.FRICTION);
+// CLOUDBURST_DATA CloudburstMC/Data@0021592..., captured 26.60; p.inherited() when the version has no capture
+```
+
+- **Keys** are `BlockBehaviour` and `ItemBehaviour` constants, typed (`Float`, `Integer`, `Boolean`, `String`,
+  `BlockShape`). A null value means no source says (e.g. `CLIMBABLE` until the native capture exists).
+- **Vanilla values** come from native BDS dumps: CloudburstMC/Data (Apache-2.0, blocks), AllayMC/Allay's `data/`
+  (MIT, items; blocks as a cross-check) and Paletter's own Script API dumps (max stack size, durability), imported by
+  `behaviour import` from their git history; each commit's version is identified by its block state hashes. A value
+  is stored once and holds until a later capture changes it; a version without a capture of its own inherits it,
+  which `Provenance#inherited()` and [data/behaviour/REPORT.md](data/behaviour/REPORT.md) show. The report also lists
+  where the sources disagree.
+- **Custom blocks and items** answer the same keys from their components, read from the data the palette sends with the
+  rules that also read vanilla data driven blocks (checked against the dumps): `Friction`, `DestructibleByMining`,
+  `LightEmission`, `LightDampening`, `CollisionBox`, `SelectionBox` (with `Transformation` y rotations), `MaxStackSize`,
+  `Durability`, `Damage`, `UseModifiers`, `UseAnimation`.
+- Shapes are those of a state alone: shapes that depend on neighbours or the position (scaffolding, plant offsets)
+  are the caller's.
+
 ## Data
 
 Bundled data lives in `paletter/src/main/resources/paletter/`: `versions.txt` and one gzipped NBT file per version
