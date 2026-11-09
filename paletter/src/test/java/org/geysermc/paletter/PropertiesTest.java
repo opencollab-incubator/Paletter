@@ -1,7 +1,7 @@
 package org.geysermc.paletter;
 
 import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.paletter.block.BlockNetworkIds;
+import org.geysermc.paletter.block.BlockHashes;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlock;
@@ -111,7 +111,7 @@ class PropertiesTest {
             .component(LightEmission.of(3))
             .permutation("q.block_state('example:on')", LightEmission.of(15))
             .build();
-        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), BlockNetworkIds.HASHED, PaletteLayer.builder("x").block(block).build());
+        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("x").block(block).build());
         RegisteredBlock registered = palette.blocks().block("example:glow");
         assertNotNull(registered);
         assertNotNull(registered.properties().component("minecraft:light_emission"));

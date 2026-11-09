@@ -5,7 +5,6 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
-import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.Geometry;
@@ -44,7 +43,7 @@ public final class TranslatorExample {
         PaletteLayer translator = PaletteLayer.builder("translator").item(ruby).block(lamp).build();
 
         // Hashed block ids: a state has the same id in every version, and custom blocks can also come per session
-        Paletter paletter = Paletter.builder().blockNetworkIds(BlockNetworkIds.HASHED).layer(translator).build();
+        Paletter paletter = Paletter.builder().layer(translator).build();
 
         // Java block state id -> Bedrock block handle, once (0 air, 1 stone, 2 lamp). Handles are the same in every version
         Palette shared = paletter.palette(Bedrock_v2225.CODEC);

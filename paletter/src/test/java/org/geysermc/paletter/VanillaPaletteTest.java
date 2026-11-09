@@ -182,6 +182,11 @@ class VanillaPaletteTest {
         }
     }
 
+    private static boolean hasNote(Palette palette) {
+        return palette.report().entries().stream().anyMatch(entry -> entry.level() == PaletteReport.Level.INFO
+            && entry.message().contains("newer than the newest bundled data"));
+    }
+
     @Test
     void aProtocolNewerThanTheDataIsReported() {
         Paletter paletter = Paletter.bundled();
@@ -189,8 +194,10 @@ class VanillaPaletteTest {
         assertTrue(paletter.palette(latest).report().warnings().isEmpty());
         Palette newer = paletter.palette(latest + 1000);
         assertEquals(paletter.latest(), newer.version());
-        assertFalse(newer.report().warnings().isEmpty());
+        assertTrue(newer.report().warnings().isEmpty());
+        assertTrue(hasNote(newer));
         assertSame(newer, paletter.palette(latest + 1000));
-        assertFalse(newer.extend(PaletteLayer.builder("session").build()).report().warnings().isEmpty());
+        assertTrue(hasNote(newer.extend(PaletteLayer.builder("session").build())));
+        assertFalse(hasNote(paletter.palette(latest)));
     }
 }

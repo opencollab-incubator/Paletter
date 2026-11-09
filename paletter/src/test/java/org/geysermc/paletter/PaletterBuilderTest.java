@@ -1,6 +1,6 @@
 package org.geysermc.paletter;
 
-import org.geysermc.paletter.block.BlockNetworkIds;
+import org.geysermc.paletter.block.BlockHashes;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeOrdering;
@@ -53,7 +53,6 @@ class PaletterBuilderTest {
         for (DataVersion version : PALETTER.versions()) {
             Palette expected = PALETTER.palette(version.protocolVersion());
             Palette actual = built.palette(version.protocolVersion());
-            assertEquals(BlockNetworkIds.SEQUENTIAL, actual.blockNetworkIds());
             assertEquals(expected.blocks().size(), actual.blocks().size(), version.toString());
             assertEquals(expected.items().definitions().size(), actual.items().definitions().size(), version.toString());
             assertEquals(stacks(expected), stacks(actual), version.toString());
@@ -227,32 +226,13 @@ class PaletterBuilderTest {
     }
 
     @Test
-    void customBlocksInASessionLayerNeedHashedIds() {
-        PaletteLayer session = PaletteLayer.builder("session").block(CustomBlock.builder("test:block").build()).build();
-        int protocol = PALETTER.latest().protocolVersion();
-
-        Palette sequential = Paletter.builder().build().palette(protocol);
-        PaletteException e = assertThrows(PaletteException.class, () -> sequential.extend(session));
-        assertTrue(e.getMessage().startsWith("Custom blocks in a session layer need BlockNetworkIds.HASHED"), e.getMessage());
-
-        Palette hashed = Paletter.builder().blockNetworkIds(BlockNetworkIds.HASHED).build().palette(protocol);
-        Palette extended = hashed.extend(session);
-        assertEquals(1, extended.blocks().customBlocks().size());
-        assertEquals(BlockNetworkIds.HASHED, extended.blockNetworkIds());
-
-        // Global layers are long lived: custom blocks are fine in sequential mode
-        Paletter global = Paletter.builder().layer(session).build();
-        assertEquals(1, global.palette(protocol).blocks().customBlocks().size());
-    }
-
-    @Test
     void creativeOrderingIsGlobal() {
         PaletteLayer layer = PaletteLayer.builder("blocks").block(CustomBlock.builder("test:block_menu_only").menuCategory(
             org.geysermc.paletter.block.component.MenuCategory.builder()
                 .category(org.geysermc.paletter.block.component.MenuCategory.Category.CONSTRUCTION).build()).build()).build();
         int protocol = PALETTER.latest().protocolVersion();
-        Palette bds = Paletter.builder().blockNetworkIds(BlockNetworkIds.HASHED).layer(layer).build().palette(protocol);
-        Palette append = Paletter.builder().blockNetworkIds(BlockNetworkIds.HASHED).creativeOrdering(CreativeOrdering.APPEND).layer(layer).build()
+        Palette bds = Paletter.builder().layer(layer).build().palette(protocol);
+        Palette append = Paletter.builder().creativeOrdering(CreativeOrdering.APPEND).layer(layer).build()
             .palette(protocol);
         assertTrue(stacks(bds).contains("test:block_menu_only:0"));
         assertFalse(stacks(append).contains("test:block_menu_only:0"));

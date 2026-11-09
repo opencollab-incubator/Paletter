@@ -16,7 +16,7 @@ import org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket;
 import org.cloudburstmc.protocol.bedrock.data.ExperimentData;
 import org.cloudburstmc.protocol.bedrock.packet.ResourcePackStackPacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
-import org.geysermc.paletter.block.BlockNetworkIds;
+import org.geysermc.paletter.block.BlockHashes;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.block.BlockResolution;
 import org.geysermc.paletter.internal.block.BlockStates;
@@ -44,8 +44,10 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 /**
@@ -137,13 +139,6 @@ public final class Palette {
         return items;
     }
 
-    /**
-     * @return how block runtime ids are assigned in this palette
-     */
-    public @NonNull BlockNetworkIds blockNetworkIds() {
-        return blocks.networkIds();
-    }
-
     // ---- Content handles ----
 
     /**
@@ -226,7 +221,7 @@ public final class Palette {
     }
 
     /**
-     * @return the runtime id to send for a state, in this palette's {@link #blockNetworkIds()} mode. A field read and an
+     * @return the runtime id to send for a state: its hash, see {@link BlockHashes}. A field read and an
      *         array load, it does not allocate
      * @throws IllegalArgumentException if the state is not in this palette (a custom block of a layer it does not have).
      *         Use {@link #runtimeIdOrDefault(BedrockBlockState, int)} where that can happen at runtime
@@ -436,7 +431,7 @@ public final class Palette {
             chain.add(sent.identifier());
         }
         return new BlockExplanation(normalized, blocks.canonical().handle(canonical), kind, List.copyOf(chain), sent == null ? null : sent.getState(),
-            sent == null ? -1 : sent.getRuntimeId(), sent == null ? -1 : BlockNetworkIds.hash(sent.getState()));
+            sent == null ? -1 : sent.getRuntimeId(), sent == null ? -1 : BlockHashes.hash(sent.getState()));
     }
 
     /**
@@ -530,6 +525,13 @@ public final class Palette {
     /**
      * Compiles one more layer on top of this palette, e.g. for one session. Results are cached per layer
      * instance for as long as the layer is referenced.
+     * <p>
+     * Never throws for a problem with the layer's content (a duplicate custom id, a block hash collision, a duplicate
+     * item, an exception from a component encoder or a callback): the palette is returned unchanged, with an
+     * {@link PaletteReport.Level#ERROR} entry in its {@link #report()} (a copy of this palette's report, which is not
+     * modified) naming the layer, the version and the cause. Check {@link PaletteReport#errors()}.
+     *
+     * @return the palette with the layer, or this palette (with the error in its report) if the layer failed
      */
     public @NonNull Palette extend(@NonNull PaletteLayer layer) {
         synchronized (extensions) {
@@ -562,11 +564,18 @@ public final class Palette {
 
     /**
      * Adds the block properties (vanilla data driven and custom blocks) to a start game packet, and sets
-     * {@code blockNetworkIdsHashed} to match {@link #blockNetworkIds()}.
+     * {@code blockNetworkIdsHashed}: block runtime ids are always hashed. Applying a palette again to the same packet
+     * changes nothing.
      */
     public void applyTo(@NonNull StartGamePacket packet) {
-        packet.getBlockProperties().addAll(blocks.blockProperties());
-        packet.setBlockNetworkIdsHashed(blocks.networkIds() == BlockNetworkIds.HASHED);
+        List<BlockPropertyData> existing = packet.getBlockProperties();
+        Set<BlockPropertyData> present = new HashSet<>(existing);
+        for (BlockPropertyData property : blocks.blockProperties()) {
+            if (present.add(property)) {
+                existing.add(property);
+            }
+        }
+        packet.setBlockNetworkIdsHashed(true);
         addExperiments(packet.getExperiments());
     }
 
@@ -649,7 +658,7 @@ public final class Palette {
     public String toString() {
         List<String> ids = new ArrayList<>();
         layers.forEach(layer -> ids.add(layer.id()));
-        return "Palette{" + version() + ", " + blockNetworkIds() + ", layers=" + ids + ", " + blocks.size() + " block states, "
+        return "Palette{" + version() + ", layers=" + ids + ", " + blocks.size() + " block states, "
             + items.definitions().size() + " items, " + creative.size() + " creative entries}";
     }
 }

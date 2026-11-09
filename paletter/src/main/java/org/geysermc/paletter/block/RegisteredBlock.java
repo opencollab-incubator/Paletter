@@ -23,7 +23,7 @@ import java.util.Set;
  * A block (type level) inside one palette: its {@linkplain #stateProperties() state properties}, {@linkplain #components()
  * components} and {@linkplain #origin() origin}, and its {@linkplain #states() states}, which carry the runtime ids.
  * <p>
- * In {@link BlockNetworkIds#HASHED} palettes, vanilla states are shared between the palettes of all versions, while
+ * Vanilla states are shared between the palettes of all versions, while
  * the state set of a block can differ between versions, so a state does not know its block:
  * {@link BlockRegistry#block(String)} and {@link BlockRegistry#block(RegisteredBlockState)} give the block of the
  * palette you ask.

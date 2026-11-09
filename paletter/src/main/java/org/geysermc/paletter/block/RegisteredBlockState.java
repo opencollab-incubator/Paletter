@@ -14,7 +14,7 @@ import java.util.List;
  * A block state definition in a compiled palette: the runtime id of a state. Instances are unique per palette and
  * compared by identity, so {@code ==} between definitions from the same palette is safe.
  * <p>
- * In {@link BlockNetworkIds#HASHED} palettes, vanilla states are additionally shared between all palettes of a
+ * Vanilla states are additionally shared between all palettes of a
  * {@link org.geysermc.paletter.Paletter}, across versions: equal state, same instance. That is why a state does not
  * know its block, the state set of a block can differ between versions. Ask the palette you have the state from,
  * {@link BlockRegistry#block(RegisteredBlockState)}, for its {@link RegisteredBlock}, which also has the effective
@@ -51,7 +51,7 @@ public final class RegisteredBlockState implements BlockDefinition {
     }
 
     /**
-     * @return the runtime id: a palette position, or the state hash in {@link BlockNetworkIds#HASHED} palettes
+     * @return the runtime id: the hash of the state, see {@link BlockHashes#hash}
      */
     @Override
     public int getRuntimeId() {

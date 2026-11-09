@@ -8,6 +8,7 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
 import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.block.component.LightEmission;
+import org.geysermc.paletter.block.BlockHashes;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.BlockFallback;
@@ -175,7 +176,7 @@ class LayerTest {
     }
 
     @Test
-    void customBlocksAreSortedIntoThePaletteLikeTheClientDoes() {
+    void customBlocksKeepVanillaIdsAndGetHashedOnes() {
         CustomBlock lamp = CustomBlock.builder("geyser:lamp")
             .property(BlockProperty.bool("geyser:lit"))
             .property(BlockProperty.ints("geyser:color", 0, 1, 2))
@@ -190,14 +191,13 @@ class LayerTest {
 
         assertEquals(vanilla.blocks().size() + 6, blocks.size());
         assertEquals(6, blocks.states("geyser:lamp").size());
-        for (int i = 1; i < blocks.size(); i++) {
-            assertTrue(Long.compareUnsigned(BlockRegistry.nameHash(blocks.byRuntimeId(i - 1).identifier()),
-                BlockRegistry.nameHash(blocks.byRuntimeId(i).identifier())) <= 0, "not sorted at " + i);
-        }
-        // Vanilla ids shifted, and can be translated
-        assertTrue(blocks.isRemapped());
+        // Ids are hashes: vanilla blocks keep theirs, whatever is added
         for (int i = 0; i < vanilla.blocks().size(); i += 97) {
-            assertEquals(vanilla.blocks().byRuntimeId(i).getState(), blocks.byRuntimeId(blocks.remapVanilla(i)).getState());
+            assertEquals(vanilla.blocks().byIndex(i).getState(), blocks.byIndex(i).getState());
+            assertEquals(vanilla.blocks().byIndex(i).getRuntimeId(), blocks.byIndex(i).getRuntimeId());
+        }
+        for (RegisteredBlockState state : blocks.states("geyser:lamp")) {
+            assertEquals(BlockHashes.hash(state.getState()), state.getRuntimeId());
         }
 
         RegisteredBlockState defaultState = blocks.defaultState("geyser:lamp");

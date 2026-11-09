@@ -1,6 +1,6 @@
 package org.geysermc.paletter;
 
-import org.geysermc.paletter.block.BlockNetworkIds;
+import org.geysermc.paletter.block.BlockHashes;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.internal.item.ItemVariant;
 import org.geysermc.paletter.vanilla.BedrockItems;
@@ -17,7 +17,7 @@ class ExplainTest {
 
     @Test
     void exactBlock() {
-        Palette palette = Palettes.paletter(BlockNetworkIds.HASHED).vanilla(PALETTER.latest());
+        Palette palette = Palettes.paletter().vanilla(PALETTER.latest());
         BlockExplanation explanation = palette.explain(BlockStates.of("minecraft:stone"));
         int canonical = Ids.block(PALETTER, BlockStates.of("minecraft:stone"));
         assertNotNull(explanation.handle());
@@ -33,7 +33,7 @@ class ExplainTest {
     @Test
     void oldVersionShowsFallbackChain() {
         Palette oldest = PALETTER.vanilla(PALETTER.versions().getFirst());
-        Palette newest = Palettes.paletter(BlockNetworkIds.SEQUENTIAL).vanilla(PALETTER.latest());
+        Palette newest = Palettes.paletter().vanilla(PALETTER.latest());
         boolean found = false;
         for (int i = 0; i < Ids.blockCount(newest) && !found; i++) {
             BlockExplanation explanation = oldest.explain(Ids.canonicalBlocks(newest).state(i));
@@ -54,7 +54,7 @@ class ExplainTest {
 
     @Test
     void items() {
-        Palette palette = Palettes.paletter(BlockNetworkIds.HASHED).vanilla(PALETTER.latest());
+        Palette palette = Palettes.paletter().vanilla(PALETTER.latest());
         ItemExplanation apple = palette.explain(BedrockItems.APPLE.base());
         assertNotNull(apple.handle());
         assertEquals(ItemExplanation.Kind.EXACT, apple.kind());

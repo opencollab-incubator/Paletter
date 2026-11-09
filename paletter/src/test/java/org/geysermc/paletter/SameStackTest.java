@@ -3,7 +3,6 @@ package org.geysermc.paletter;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.definitions.SimpleItemDefinition;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
-import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.BedrockItemStack;
@@ -23,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** Stacks are the same only if everything but the net id is: {@link Palette#sameStack}, {@code ItemData#equals}, {@code BedrockItemStack#equals}. */
 class SameStackTest {
-    private static final Paletter HASHED = Palettes.paletter(BlockNetworkIds.HASHED);
+    private static final Paletter HASHED = Palettes.paletter();
     private static final NbtMap ENCHANTED = NbtMap.builder().putInt("Damage", 4).build();
     private static final NbtMap RENAMED = NbtMap.builder().putString("name", "sword").build();
 

@@ -7,7 +7,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
-import org.geysermc.paletter.block.BlockNetworkIds;
+import org.geysermc.paletter.block.BlockHashes;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.CustomBlock;
@@ -43,16 +43,16 @@ class CanonicalTest {
     @Test
     void hashMatchesTheIdsBdsSends() {
         // network_id values from BDS block palette dumps (26.60)
-        assertEquals(-604749536, BlockNetworkIds.hash(BlockStates.of("minecraft:air")));
-        assertEquals(-2, BlockNetworkIds.hash(BlockStates.of("minecraft:unknown")));
+        assertEquals(-604749536, BlockHashes.hash(BlockStates.of("minecraft:air")));
+        assertEquals(-2, BlockHashes.hash(BlockStates.of("minecraft:unknown")));
         // State order must not matter: the hash sorts by key
         NbtMap stairs = BlockStates.of("minecraft:oak_stairs", NbtMap.builder()
             .putInt("weirdo_direction", 1)
             .putByte("upside_down_bit", (byte) 0)
             .putString("minecraft:corner", "none")
             .build());
-        assertEquals(-61009414, BlockNetworkIds.hash(stairs));
-        assertEquals(-61009414, BlockNetworkIds.hash(stairs.toBuilder().putInt("version", 18168865).build()));
+        assertEquals(-61009414, BlockHashes.hash(stairs));
+        assertEquals(-61009414, BlockHashes.hash(stairs.toBuilder().putInt("version", 18168865).build()));
     }
 
     @Test
@@ -61,12 +61,12 @@ class CanonicalTest {
         assertEquals(latest.blocks().size(), Ids.blockCount(PALETTER));
         assertEquals(Ids.blockCount(PALETTER), Ids.blockCount(latest));
         for (int i = 0; i < Ids.blockCount(latest); i++) {
-            assertEquals(i, Ids.runtimeId(latest, i));
-            assertSame(latest.blocks().byRuntimeId(i), Ids.blockAt(latest, i));
+            assertEquals(Ids.blockAt(latest, i).getRuntimeId(), Ids.runtimeId(latest, i));
+            assertSame(latest.blocks().byRuntimeId(Ids.runtimeId(latest, i)), Ids.blockAt(latest, i));
             assertEquals(i, latest.blocks().canonical(Ids.blockAt(latest, i)));
         }
         NbtMap withExtras = BlockStates.of("minecraft:air").toBuilder().putInt("version", 1).build();
-        assertEquals(latest.blocks().air().getRuntimeId(), Ids.block(PALETTER, withExtras));
+        assertEquals(latest.blocks().canonical(latest.blocks().air()), Ids.block(PALETTER, withExtras));
         assertEquals(-1, Ids.block(PALETTER, BlockStates.of("test:nope")));
     }
 
@@ -100,25 +100,19 @@ class CanonicalTest {
 
     @Test
     void hashedIdsAreEqualAcrossVersions() {
-        Palette oldest = Palettes.palette(OLDEST, BlockNetworkIds.HASHED);
-        Palette latest = Palettes.palette(LATEST, BlockNetworkIds.HASHED);
-        Palette sequential = PALETTER.palette(OLDEST);
+        Palette oldest = Palettes.palette(OLDEST);
+        Palette latest = Palettes.palette(LATEST);
         int shared = 0;
-        int differentSequential = 0;
         for (int i = 0; i < latest.blocks().size(); i++) {
             RegisteredBlockState block = latest.blocks().byIndex(i);
             RegisteredBlockState old = oldest.blocks().exact(block.getState());
-            assertEquals(BlockNetworkIds.hash(block.getState()), block.getRuntimeId());
+            assertEquals(BlockHashes.hash(block.getState()), block.getRuntimeId());
             if (old != null) {
                 shared++;
                 assertEquals(block.getRuntimeId(), old.getRuntimeId(), block.toString());
-                if (i != sequential.blocks().exact(block.getState()).getRuntimeId()) {
-                    differentSequential++;
-                }
             }
         }
         assertTrue(shared > 10000, "only " + shared + " states in common");
-        assertTrue(differentSequential > 0, "sequential ids should have shifted between versions");
 
         // The registry is keyed by hash
         RegisteredBlockState air = latest.blocks().air();
@@ -130,32 +124,27 @@ class CanonicalTest {
         StartGamePacket packet = new StartGamePacket();
         latest.applyTo(packet);
         assertTrue(packet.isBlockNetworkIdsHashed());
-        StartGamePacket sequentialPacket = new StartGamePacket();
-        sequential.applyTo(sequentialPacket);
-        assertFalse(sequentialPacket.isBlockNetworkIdsHashed());
     }
 
     @Test
     void customBlocksGetAppendedCanonicalIdsAndHashedIds() {
         PaletteLayer layer = PaletteLayer.builder("blocks").block(lamp()).build();
-        Palette hashed = Palettes.palette(LATEST, BlockNetworkIds.HASHED, layer);
-        Palette sequential = Palettes.palette(OLDEST, layer);
+        Palette hashed = Palettes.palette(LATEST, layer);
+        Palette older = Palettes.palette(OLDEST, layer);
         NbtMap lit = BlockStates.of("test:lamp", Map.of("test:lit", (byte) 1));
 
         int canonical = Ids.block(hashed, lit);
         assertTrue(canonical >= Ids.blockCount(PALETTER), "custom states are appended");
         assertEquals(Ids.blockCount(PALETTER) + 2, Ids.blockCount(hashed));
-        assertEquals(canonical, Ids.block(sequential, lit), "same layer, same canonical ids in every version and mode");
+        assertEquals(canonical, Ids.block(older, lit), "same layer, same canonical ids in every version");
         // Same instance for every version: compiled once per layer
-        assertSame(Ids.canonicalBlocks(hashed), Ids.canonicalBlocks(sequential));
+        assertSame(Ids.canonicalBlocks(hashed), Ids.canonicalBlocks(older));
 
-        assertEquals(BlockNetworkIds.hash(lit), Ids.runtimeId(hashed, canonical));
-        assertFalse(hashed.blocks().isRemapped());
-        assertTrue(sequential.blocks().isRemapped());
-        assertEquals(lit, Ids.blockAt(sequential, canonical).getState());
-        // Vanilla states keep their canonical ids, while their sequential runtime ids shifted
+        assertEquals(BlockHashes.hash(lit), Ids.runtimeId(hashed, canonical));
+        assertEquals(BlockHashes.hash(lit), Ids.runtimeId(older, canonical), "the same id in every version");
+        assertEquals(lit, Ids.blockAt(older, canonical).getState());
         int air = Ids.block(PALETTER, BlockStates.of("minecraft:air"));
-        assertSame(sequential.blocks().air(), Ids.blockAt(sequential, air));
+        assertSame(older.blocks().air(), Ids.blockAt(older, air));
     }
 
     @Test
@@ -166,7 +155,7 @@ class CanonicalTest {
         String second = null;
         for (int i = 0; first == null; i++) {
             String name = "test:block_" + i;
-            String previous = seen.put(BlockNetworkIds.hash(BlockStates.of(name)), name);
+            String previous = seen.put(BlockHashes.hash(BlockStates.of(name)), name);
             if (previous != null) {
                 first = previous;
                 second = name;
@@ -176,17 +165,15 @@ class CanonicalTest {
             .block(CustomBlock.builder(first).build())
             .block(CustomBlock.builder(second).build())
             .build();
-        PaletteException exception = assertThrows(PaletteException.class, () -> Palettes.palette(LATEST, BlockNetworkIds.HASHED, layer));
+        PaletteException exception = assertThrows(PaletteException.class, () -> Palettes.palette(LATEST, layer));
         assertTrue(exception.getMessage().contains("collision"), exception.getMessage());
-        // Sequential ids do not care
-        assertNotNull(Palettes.palette(LATEST, layer));
     }
 
     @Test
     void everyCanonicalItemRoundTripsThroughMatch() {
         for (DataVersion version : PALETTER.versions()) {
-            for (BlockNetworkIds mode : BlockNetworkIds.values()) {
-                Palette palette = Palettes.paletter(mode).vanilla(version);
+            {
+                Palette palette = Palettes.paletter().vanilla(version);
                 int mismatches = 0;
                 int missing = 0;
                 for (int i = 0; i < Ids.itemCount(palette); i++) {
@@ -208,7 +195,7 @@ class CanonicalTest {
                 if (version.equals(PALETTER.latest())) {
                     assertEquals(0, mismatches + missing, "every variant of the newest version is its own stack");
                 }
-                System.out.println(version + " " + mode + ": " + Ids.itemCount(palette) + " canonical items, "
+                System.out.println(version + ": " + Ids.itemCount(palette) + " canonical items, "
                     + missing + " missing, " + mismatches + " share a stack with another");
             }
         }
@@ -216,7 +203,7 @@ class CanonicalTest {
 
     @Test
     void blockItemsMatchByDefinitionAndNormalizeTheirDefaultState() {
-        Palette palette = Palettes.paletter(BlockNetworkIds.HASHED).vanilla(PALETTER.latest());
+        Palette palette = Palettes.paletter().vanilla(PALETTER.latest());
         int planks = Ids.item(PALETTER, ItemVariant.of("minecraft:oak_planks"));
         ResolvedItem resolved = Ids.itemAt(palette, planks);
         assertEquals("minecraft:oak_planks", resolved.block().identifier());
@@ -241,11 +228,11 @@ class CanonicalTest {
             .build();
 
         int vanilla = Ids.itemCount(PALETTER);
-        for (BlockNetworkIds mode : BlockNetworkIds.values()) {
+        {
             for (DataVersion version : PALETTER.versions()) {
-                Palette palette = Palettes.palette(version.protocolVersion(), mode, layer);
+                Palette palette = Palettes.palette(version.protocolVersion(), layer);
                 assertEquals(vanilla + 1, Ids.itemCount(palette));
-                assertEquals(vanilla, Ids.item(palette, apple3), "stable across versions and modes");
+                assertEquals(vanilla, Ids.item(palette, apple3), "stable across versions");
                 assertEquals(Ids.item(PALETTER, ItemVariant.of("minecraft:apple")), Ids.item(palette, ItemVariant.of("minecraft:apple")));
 
                 RegisteredItem apple = palette.items().getDefinition("minecraft:apple");
@@ -260,7 +247,7 @@ class CanonicalTest {
 
     @Test
     void missingCanonicalContentIsReported() {
-        Palette oldest = Palettes.paletter(BlockNetworkIds.SEQUENTIAL).vanilla(PALETTER.version(OLDEST));
+        Palette oldest = Palettes.paletter().vanilla(PALETTER.version(OLDEST));
         // No fallbacks are bundled: every state of a block the oldest version lacks is without a block there
         long lacking = PALETTER.vanillaData(PALETTER.latest()).blockStates().stream()
             .filter(state -> !oldest.blocks().contains(BlockStates.name(state))).count();
@@ -276,13 +263,13 @@ class CanonicalTest {
         Palette layered = Palettes.palette(OLDEST, PaletteLayer.builder("empty").build());
         assertEquals(oldest.report().entries().size(), layered.report().entries().size());
         // The newest version has everything
-        assertTrue(Palettes.paletter(BlockNetworkIds.SEQUENTIAL).vanilla(PALETTER.latest()).report().entries().stream()
+        assertTrue(Palettes.paletter().vanilla(PALETTER.latest()).report().entries().stream()
             .noneMatch(entry -> entry.source().equals("canonical")));
     }
 
     @Test
     void hashedPalettesShareVanillaBlocksAndTablesAcrossVersions() {
-        Paletter paletter = Palettes.paletter(BlockNetworkIds.HASHED, PaletteLayer.builder("lamp").block(lamp()).build());
+        Paletter paletter = Palettes.paletter(PaletteLayer.builder("lamp").block(lamp()).build());
         Palette oldest = paletter.vanilla(PALETTER.version(OLDEST));
         Palette latest = paletter.vanilla(PALETTER.latest());
         Palette withBlocks = paletter.palette(LATEST);

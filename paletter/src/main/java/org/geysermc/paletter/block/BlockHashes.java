@@ -13,23 +13,17 @@ import java.io.UncheckedIOException;
 import java.util.TreeMap;
 
 /**
- * How block runtime ids are assigned, i.e. which ids are written to chunks, block updates and item stacks.
- * Chosen per palette, see {@link org.geysermc.paletter.Paletter#palette(int)}.
+ * Block network ids. Palettes always use hashed ids: the runtime id of a block state is the hash of the state
+ * ({@link #hash(NbtMap)}), what the client expects when {@code StartGamePacket#blockNetworkIdsHashed} is set (which
+ * {@link org.geysermc.paletter.Palette#applyTo(org.cloudburstmc.protocol.bedrock.packet.StartGamePacket)} does). A state
+ * has the same id in every version and in every palette, custom blocks included, so tables and encoded chunks can be
+ * shared between client versions.
  *
  * @since 0.1.0
  */
-public enum BlockNetworkIds {
-    /**
-     * Ids are positions in the palette: vanilla order, re-sorted by name hash once custom blocks exist. Ids of the same
-     * state differ between versions, and adding a custom block shifts vanilla ids.
-     */
-    SEQUENTIAL,
-    /**
-     * Ids are hashes of the block state ({@link #hash(NbtMap)}), what the client expects when
-     * {@code StartGamePacket#blockNetworkIdsHashed} is set. A state has the same id in every version and in every
-     * palette, custom blocks included, so tables and encoded chunks can be shared between client versions.
-     */
-    HASHED;
+public final class BlockHashes {
+    private BlockHashes() {
+    }
 
     /**
      * The id {@code minecraft:unknown} has in hashed palettes; the game special cases it.

@@ -35,8 +35,8 @@ class RegisteredBlockTest {
             .build();
     }
 
-    private static Palette palette(BlockNetworkIds mode) {
-        return Palettes.palette(PALETTER.latest().protocolVersion(), mode, PaletteLayer.builder("content").block(lamp()).build());
+    private static Palette palette() {
+        return Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").block(lamp()).build());
     }
 
     @Test
@@ -66,8 +66,8 @@ class RegisteredBlockTest {
 
     @Test
     void everyStateBelongsToABlockOfTheRegistry() {
-        for (BlockNetworkIds mode : BlockNetworkIds.values()) {
-            BlockRegistry blocks = Palettes.palette(PALETTER.latest().protocolVersion(), mode).blocks();
+        {
+            BlockRegistry blocks = Palettes.palette(PALETTER.latest().protocolVersion()).blocks();
             int states = 0;
             for (RegisteredBlock block : blocks.blocks()) {
                 assertSame(block, blocks.block(block.identifier()));
@@ -93,8 +93,8 @@ class RegisteredBlockTest {
 
     @Test
     void customBlocksCarryTheirComponentsPermutationsAndOrigin() {
-        for (BlockNetworkIds mode : BlockNetworkIds.values()) {
-            BlockRegistry blocks = palette(mode).blocks();
+        {
+            BlockRegistry blocks = palette().blocks();
             RegisteredBlock block = blocks.block("example:lamp");
             assertNotNull(block);
             assertEquals(Origin.custom("content"), block.origin());
@@ -126,7 +126,7 @@ class RegisteredBlockTest {
             .component(LightEmission.of(3))
             .permutation("q.block_state('example:on')", LightEmission.of(15))
             .build();
-        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), BlockNetworkIds.HASHED, PaletteLayer.builder("x").block(block).build());
+        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("x").block(block).build());
         RegisteredBlock glow = palette.blocks().block("example:glow");
         for (RegisteredBlockState state : glow.states()) {
             assertEquals(1, glow.components(state).size());
@@ -138,7 +138,7 @@ class RegisteredBlockTest {
     @Test
     void sharedHashedStatesAreNeverAskedForAWrongVersionBlock() {
         // A hashed state is the same instance in every version, so only the palette can say which block it is in
-        Paletter paletter = Paletter.builder().blockNetworkIds(BlockNetworkIds.HASHED).build();
+        Paletter paletter = Paletter.builder().build();
         for (org.geysermc.paletter.data.DataVersion version : paletter.versions()) {
             BlockRegistry blocks = paletter.palette(version.protocolVersion()).blocks();
             for (RegisteredBlock block : blocks.blocks()) {
@@ -171,7 +171,7 @@ class RegisteredBlockTest {
     @Test
     void aPatchesBlocksCarryTheirOwnPropertyDataBecauseTheBlockIdsShift() {
         CustomBlock zebra = CustomBlock.builder("example:zebra").property(BlockProperty.bool("example:on")).build();
-        Palette base = Palettes.palette(PALETTER.latest().protocolVersion(), BlockNetworkIds.HASHED,
+        Palette base = Palettes.palette(PALETTER.latest().protocolVersion(),
             PaletteLayer.builder("content").block(lamp()).build());
         // Block ids follow the identifiers in descending order: zebra comes before the lamp, so the lamp's id moves
         Palette patched = base.extend(PaletteLayer.builder("session").block(zebra).build());

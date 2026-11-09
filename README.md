@@ -21,7 +21,6 @@ PaletteLayer layer = PaletteLayer.builder("server")
     .build();
 
 Paletter paletter = Paletter.builder()                  // the policy, the same for every palette
-    .blockNetworkIds(BlockNetworkIds.HASHED)
     .fallbacks(Fallbacks.builder().item(BedrockItems.POPLAR_BOAT, BedrockItems.OAK_BOAT).build())
     .layer(layer)                                       // content
     .build();
@@ -30,7 +29,7 @@ Palette palette = paletter.palette(codec);              // once per client versi
 Palette forSession = palette.extend(sessionLayer);      // optional, per session
 
 palette.applyTo(codecHelper);                  // item + block definition registries
-palette.applyTo(startGamePacket);              // block properties, blockNetworkIdsHashed
+palette.applyTo(startGamePacket);              // block properties, hashed block ids flag
 session.sendPacket(palette.itemComponentPacket());
 session.sendPacket(palette.creativeContentPacket());
 ```
@@ -66,7 +65,7 @@ instance per entry per palette, and they differ per version. `Palette#sameStack(
 A *stack* is `BedrockItemStack`: variant, count, NBT, optional block state. Cloudburst `ItemData` only appears where a
 packet needs it (`Palette#encode`, `Palette#decode`).
 
-**Paletter and Palette.** `Paletter.builder()` is the global policy: the data source, the versions, `BlockNetworkIds`, one
+**Paletter and Palette.** `Paletter.builder()` is the global policy: the data source, the versions, one
 `Fallbacks` (never per layer), which vanilla content exists (`.vanilla(v -> v.remove(...).experiments(...))`), the creative
 ordering, a report callback, and the global layers. `paletter.palette(protocol)` compiles a `Palette` per data version, once,
 and caches it: vanilla data of one version plus the layers, immutable and thread safe.
@@ -77,9 +76,12 @@ every palette.
 
 **Extend.** `Palette#extend(layer)` is a patch over the shared palette, meant for short lived layers (a session): items it
 adds get ids after the base, lookups check the patch and then the base, the creative layout is rebuilt from the edited one,
-and everything the layer does not touch is the same instance as in the base, so `==` keeps working. Custom blocks in a
-session layer need `BlockNetworkIds.HASHED` (a clear `PaletteException` otherwise); then the patch only holds the added
-states.
+and everything the layer does not touch is the same instance as in the base, so `==` keeps working. The patch of custom
+blocks only holds the added states. `extend` never throws for a problem with the layer's content (a duplicate custom id,
+a hash collision, a duplicate item, an exception from a component encoder or a callback): it returns the palette it was
+called on, unchanged, with a `PaletteReport.Level.ERROR` entry in the returned palette's report (`report().errors()`)
+naming the layer, the version and the cause. Layers given to the builder are startup configuration and fail loudly with a
+`PaletteException` at the first `palette(...)`; `Paletter#warmUp()` compiles every version up front.
 
 **Properties.** What a key is made of: item components, data driven block data, custom components. They are versioned per
 Bedrock version (vanilla) or come from the layer (custom), the same generated component records for both, and bundled once
@@ -92,7 +94,7 @@ palette; `paletter.properties(key, version)` without one. Overrides edit the com
 | Lookup                          | Result                                              |
 |---------------------------------|-----------------------------------------------------|
 | `Paletter#block(NbtMap)`, `Paletter#item(identifier, aux)` | the key of a state or variant of **any** bundled version, or null (see below) |
-| `Palette#runtimeId(BedrockBlockState)` | runtime id in the palette's network id mode, a field read and an array load; throws for a state the palette lacks, `runtimeIdOrDefault(state, id)` does not |
+| `Palette#runtimeId(BedrockBlockState)` | runtime id (the state hash), a field read and an array load; throws for a state the palette lacks, `runtimeIdOrDefault(state, id)` does not |
 | `Palette#block(BedrockBlockState)` | `RegisteredBlockState`: exact, adapted, fallback, else air; throws for a state the palette lacks, `blockOrNull(state)` returns null |
 | `Palette#item(BedrockItemType\|BedrockItemVariant)` | `RegisteredItem`, or null if the version has neither the item nor a fallback |
 | `Palette#encode(BedrockItemStack)` | `ItemData` for the client, fallbacks applied: an item the version lacks and one nobody registered take the same stand-in (the default fallback, `minecraft:unknown`), air only without one |
@@ -107,14 +109,13 @@ made against 26.50 therefore keeps working when 26.60 becomes the newest version
 ints of the newest version every table is built on, are plumbing in `internal`; canonical content a version lacks and that has
 no fallback is listed in the palette's report.
 
-**Block network ids.** `BlockNetworkIds.SEQUENTIAL` uses palette positions (vanilla order, re-sorted by name hash once
-custom blocks exist, so a custom block shifts vanilla ids). `BlockNetworkIds.HASHED` uses what the client expects when
-`StartGamePacket#blockNetworkIdsHashed` is set: FNV-1a 32 over the little endian NBT of `{name, states}` with states
-sorted by key and no `version` (`minecraft:unknown` is -2). A state then has the same id in every version and palette, so
-ids and encoded chunks can be shared between client versions. Paletter does so itself: hashed palettes of all versions
-share one `RegisteredBlockState` per vanilla state and equal pages of their canonical tables (which is why a state does not
-know its block: ask the palette, `BlockRegistry#block(state)`). Hash collisions within a palette fail compilation.
-`Palette#applyTo(StartGamePacket)` sets the flag to match.
+**Block network ids.** Always hashed, what the client expects when `StartGamePacket#blockNetworkIdsHashed` is set (which
+`Palette#applyTo(StartGamePacket)` does): FNV-1a 32 over the little endian NBT of `{name, states}` with states sorted by
+key and no `version` (`minecraft:unknown` is -2), `BlockHashes#hash`. A state has the same id in every version and
+palette, so ids and encoded chunks can be shared between client versions. Paletter does so itself: palettes of all
+versions share one `RegisteredBlockState` per vanilla state and equal pages of their canonical tables (which is why a
+state does not know its block: ask the palette, `BlockRegistry#block(state)`). A hash collision fails compilation of the
+layer that causes it.
 
 **One mapping for all versions.** Map against the newest version only. For older versions, a palette adapts states
 automatically (states added or removed between versions, e.g. stair corners) and applies the fallbacks of the `Fallbacks`
@@ -156,7 +157,7 @@ meaningless block definitions on other items are ignored.
 A server or proxy that speaks Bedrock natively stores blocks and items as keys, and converts at the network edge:
 
 ```java
-Paletter paletter = Paletter.builder().blockNetworkIds(BlockNetworkIds.HASHED).layer(serverLayer).build();
+Paletter paletter = Paletter.builder().layer(serverLayer).build();
 Palette palette = paletter.palette(session.getCodec());
 palette.applyTo(session.getPeer().getCodecHelper());
 palette.applyTo(startGame);
@@ -179,7 +180,7 @@ A translator keeps its own mapping, written once against the newest Bedrock vers
 The keys are version independent; each client version only adds Paletter's per palette arrays.
 
 ```java
-Paletter paletter = Paletter.builder().blockNetworkIds(BlockNetworkIds.HASHED).layer(translatorLayer).build();
+Paletter paletter = Paletter.builder().layer(translatorLayer).build();
 
 // Java block state id -> Bedrock block key, once
 BedrockBlockState[] javaToBedrock = new BedrockBlockState[javaStateCount];
@@ -201,7 +202,7 @@ int[] javaToRuntime = new int[javaStateCount];
 for (int javaId = 0; javaId < javaStateCount; javaId++) {
     javaToRuntime[javaId] = palette.runtimeId(javaToBedrock[javaId]);
 }
-// With HASHED ids, javaToRuntime is equal between versions for every state they share, so it can be deduplicated
+// Block ids are hashes, so javaToRuntime is equal between versions for every state they share, so it can be deduplicated
 
 // Items, both directions. Variants the translator maps to that are not in creative get ids from its layer:
 //   PaletteLayer.builder("translator").variant(BedrockItemVariant.of("minecraft:banner", 15))...

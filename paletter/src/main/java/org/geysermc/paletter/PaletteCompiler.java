@@ -4,7 +4,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.geysermc.paletter.internal.block.BlockInterner;
-import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.CanonicalBlocks;
@@ -45,13 +44,13 @@ final class PaletteCompiler {
     private PaletteCompiler() {
     }
 
-    static Palette vanilla(VanillaData loaded, BlockNetworkIds mode, CanonicalBlocks canonicalBlocks, CanonicalItems canonicalItems,
+    static Palette vanilla(VanillaData loaded, CanonicalBlocks canonicalBlocks, CanonicalItems canonicalItems,
                            BlockInterner interner, Fallbacks fallbacks, VanillaContent content, CreativeOrdering ordering) {
         VanillaContent.Applied applied = content.apply(loaded);
         VanillaData data = applied.data();
         PaletteReport report = new PaletteReport();
         applied.gating().notes().forEach(note -> report.info("vanilla", note));
-        BlockRegistry blocks = BlockRegistry.build(data, mode, canonicalBlocks, interner)
+        BlockRegistry blocks = BlockRegistry.build(data, canonicalBlocks, interner)
             .withMissing(applied.gating().missingBlocks())
             .withFallbacks(fallbacks.blocks(data.version()))
             .withDefaultFallback(fallbacks.defaultBlock());
@@ -67,14 +66,22 @@ final class PaletteCompiler {
     }
 
     /**
-     * @param session true if the layer is compiled for one session: custom blocks then need hashed block network ids
+     * @param session true if the layer is compiled for one session: a layer that cannot be applied then leaves the parent
+     *                unchanged, with an error in its report, instead of throwing (global layers are startup configuration
+     *                and fail loudly)
      */
     static Palette extend(Palette parent, PaletteLayer layer, boolean session) {
-        if (session && !layer.blocks().isEmpty() && parent.blockNetworkIds() != BlockNetworkIds.HASHED) {
-            throw new PaletteException("Custom blocks in a session layer need BlockNetworkIds.HASHED: layer " + layer.id()
-                + " adds " + layer.blocks().size() + " custom blocks to a " + parent.blockNetworkIds() + " palette");
+        try {
+            return extendUnchecked(parent, layer);
+        } catch (PaletteException e) {
+            if (!session) {
+                throw e;
+            }
+            PaletteReport report = new PaletteReport();
+            report.addAll(parent.report());
+            report.error(layer.id(), e.getMessage() + " (the layer is not applied to the " + parent.version() + " palette)");
+            return parent.withReport(report);
         }
-        return extendUnchecked(parent, layer);
     }
 
     private static Palette extendUnchecked(Palette parent, PaletteLayer layer) {
@@ -197,6 +204,10 @@ final class PaletteCompiler {
             return new Palette(data, layers, blocks, itemPalette, layout, content, report, parent.ordering(), parent.gating());
         } catch (PaletteException e) {
             throw new PaletteException("Unable to compile layer " + source + " for " + data.version() + ": " + e.getMessage(), e);
+        } catch (RuntimeException e) {
+            // A component encoder or a consumer callback (override modifier, creative edit) failed
+            throw new PaletteException("Unable to compile layer " + source + " for " + data.version() + ": "
+                + e.getClass().getSimpleName() + (e.getMessage() == null ? "" : ": " + e.getMessage()), e);
         }
     }
 

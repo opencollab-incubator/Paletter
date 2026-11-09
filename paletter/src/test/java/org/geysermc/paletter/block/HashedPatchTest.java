@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HashedPatchTest {
     private static final Paletter PALETTER = Paletter.bundled();
-    private static final Paletter HASHED = Palettes.paletter(BlockNetworkIds.HASHED);
+    private static final Paletter HASHED = Palettes.paletter();
 
     private static CustomBlock block(String identifier, int values) {
         return CustomBlock.builder(identifier)
@@ -57,7 +57,7 @@ class HashedPatchTest {
                 assertTrue(own.isCustom());
                 assertEquals(i, blocks.indexOf(own));
                 assertSame(own, blocks.byRuntimeId(own.getRuntimeId()));
-                assertEquals(BlockNetworkIds.hash(own.getState()), own.getRuntimeId());
+                assertEquals(BlockHashes.hash(own.getState()), own.getRuntimeId());
                 assertSame(own, blocks.resolve(own.getState()).block());
             }
             assertEquals(-1, vanilla.indexOf(blocks.byIndex(vanilla.size())));
@@ -119,20 +119,15 @@ class HashedPatchTest {
     }
 
     @Test
-    void collisionsAreRejected() {
+    void collisionsLeaveTheBaseUnchangedWithAnErrorInTheReport() {
         int protocol = PALETTER.latest().protocolVersion();
         Palette base = HASHED.palette(protocol);
-        assertThrows(Exception.class, () -> base.extend(PaletteLayer.builder("a").block(LAMP).build())
-            .extend(PaletteLayer.builder("b").block(LAMP).build()));
-        assertThrows(Exception.class, () -> base.extend(PaletteLayer.builder("a").block(block("minecraft:stone", 2)).build()));
-    }
-
-    @Test
-    void sequentialPalettesAreStillRebuilt() {
-        int protocol = PALETTER.latest().protocolVersion();
-        BlockRegistry blocks = Palettes.palette(protocol, BlockNetworkIds.SEQUENTIAL, PaletteLayer.builder("content").block(LAMP).build()).blocks();
-        assertEquals(blocks.size(), blocks.ownStateCount());
-        NbtMap state = blocks.block("example:lamp").states().getFirst().getState();
-        assertSame(blocks.exact(state), blocks.block("example:lamp").states().getFirst());
+        Palette first = base.extend(PaletteLayer.builder("a").block(LAMP).build());
+        Palette twice = first.extend(PaletteLayer.builder("b").block(LAMP).build());
+        assertEquals(1, twice.report().errors().size());
+        assertSame(first.blocks(), twice.blocks());
+        Palette vanillaName = base.extend(PaletteLayer.builder("a").block(block("minecraft:stone", 2)).build());
+        assertSame(base.blocks(), vanillaName.blocks());
+        assertEquals(1, vanillaName.report().errors().size());
     }
 }

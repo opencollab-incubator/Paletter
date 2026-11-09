@@ -35,6 +35,16 @@ public final class VanillaContent {
     }
 
     /**
+     * @return an independent copy, so a built Paletter does not share state with its builder
+     */
+    VanillaContent copy() {
+        VanillaContent copy = new VanillaContent();
+        copy.removed.addAll(removed);
+        copy.experiments = Set.copyOf(experiments);
+        return copy;
+    }
+
+    /**
      * Does not register the item.
      */
     public @NonNull VanillaContent remove(@NonNull BedrockItemType item) {

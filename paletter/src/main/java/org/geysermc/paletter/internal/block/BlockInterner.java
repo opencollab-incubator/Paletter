@@ -5,7 +5,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.Origin;
 import org.geysermc.paletter.annotation.Internal;
-import org.geysermc.paletter.block.BlockNetworkIds;
+import org.geysermc.paletter.block.BlockHashes;
 import org.geysermc.paletter.block.RegisteredBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
 
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Shares what {@link BlockNetworkIds#HASHED} palettes of different versions have in common: vanilla
+ * Shares what {@link BlockHashes#HASHED} palettes of different versions have in common: vanilla
  * {@link RegisteredBlockState}s (a state has the same hash in every version) and pages of canonical id tables with equal
  * content. One per {@link org.geysermc.paletter.Paletter}.
  * <p>
@@ -39,7 +39,7 @@ public final class BlockInterner {
     public synchronized @NonNull RegisteredBlockState vanillaBlock(@NonNull NbtMap state) {
         RegisteredBlockState block = blocks.get(state);
         if (block == null) {
-            block = new RegisteredBlockState(BlockNetworkIds.hash(state), state, false);
+            block = new RegisteredBlockState(BlockHashes.hash(state), state, false);
             blocks.put(state, block);
         }
         return block;

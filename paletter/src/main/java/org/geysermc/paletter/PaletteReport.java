@@ -23,7 +23,12 @@ public final class PaletteReport {
         /**
          * Likely a mistake in a layer, e.g. a creative anchor that matched nothing.
          */
-        WARNING
+        WARNING,
+        /**
+         * Content was not applied: a session layer that failed to compile (see {@link Palette#extend}) leaves the
+         * palette it was applied to unchanged.
+         */
+        ERROR
     }
 
     /**
@@ -46,6 +51,10 @@ public final class PaletteReport {
         entries.add(new Entry(Level.WARNING, source, message));
     }
 
+    public void error(@NonNull String source, @NonNull String message) {
+        entries.add(new Entry(Level.ERROR, source, message));
+    }
+
     public @NonNull List<Entry> entries() {
         synchronized (entries) {
             return List.copyOf(entries);
@@ -54,6 +63,13 @@ public final class PaletteReport {
 
     public @NonNull List<Entry> warnings() {
         return entries().stream().filter(entry -> entry.level() == Level.WARNING).toList();
+    }
+
+    /**
+     * @return the entries of level {@link Level#ERROR}
+     */
+    public @NonNull List<Entry> errors() {
+        return entries().stream().filter(entry -> entry.level() == Level.ERROR).toList();
     }
 
     void addAll(PaletteReport other) {

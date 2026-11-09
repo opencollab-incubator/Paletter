@@ -1,6 +1,5 @@
 package org.geysermc.paletter;
 
-import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.block.CustomBlock;
@@ -36,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class PaletteIdentityTest {
     private static final Paletter PALETTER = Paletter.bundled();
-    private static final Paletter HASHED = Palettes.paletter(BlockNetworkIds.HASHED);
+    private static final Paletter HASHED = Palettes.paletter();
 
     private static final CustomItem RUBY = CustomItem.builder("identity:ruby")
         .creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
@@ -77,20 +76,17 @@ class PaletteIdentityTest {
     }
 
     @Test
-    void everyEntryIsOneInstanceInEveryVersionAndMode() {
-        for (BlockNetworkIds mode : BlockNetworkIds.values()) {
-            Paletter paletter = Palettes.paletter(mode);
-            for (DataVersion version : paletter.versions()) {
-                Palette palette = paletter.palette(version.protocolVersion());
-                assertOneInstancePerItem(palette.items());
-                assertOneInstancePerBlock(palette.blocks());
-                // Asking twice gives the same palette, and handles give the same instances
-                assertSame(palette, paletter.palette(version.protocolVersion()));
-                for (BedrockBlockType type : BedrockBlockType.vanillaTypes().subList(0, 50)) {
-                    for (BedrockBlockState state : type.states()) {
-                        assertSame(palette.block(state), palette.block(state));
-                        assertSame(palette.block(state), palette.blocks().getDefinition(palette.runtimeId(state)));
-                    }
+    void everyEntryIsOneInstanceInEveryVersion() {
+        for (DataVersion version : HASHED.versions()) {
+            Palette palette = HASHED.palette(version.protocolVersion());
+            assertOneInstancePerItem(palette.items());
+            assertOneInstancePerBlock(palette.blocks());
+            // Asking twice gives the same palette, and handles give the same instances
+            assertSame(palette, HASHED.palette(version.protocolVersion()));
+            for (BedrockBlockType type : BedrockBlockType.vanillaTypes().subList(0, 50)) {
+                for (BedrockBlockState state : type.states()) {
+                    assertSame(palette.block(state), palette.block(state));
+                    assertSame(palette.block(state), palette.blocks().getDefinition(palette.runtimeId(state)));
                 }
             }
         }

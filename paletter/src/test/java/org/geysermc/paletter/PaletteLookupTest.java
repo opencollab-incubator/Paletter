@@ -1,6 +1,5 @@
 package org.geysermc.paletter;
 
-import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
@@ -17,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /** The throwing and the non-throwing lookup of a block state that a palette may not have. */
 class PaletteLookupTest {
-    private static final Paletter HASHED = Palettes.paletter(BlockNetworkIds.HASHED);
+    private static final Paletter HASHED = Palettes.paletter();
     private static final CustomBlock LAMP = CustomBlock.builder("lookup:lamp")
         .property(BlockProperty.bool("lookup:lit"))
         .component(Geometry.of("minecraft:geometry.full_block"))
