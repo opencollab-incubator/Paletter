@@ -56,9 +56,13 @@ The Javadoc of the latest `main` is at https://opencollab-incubator.github.io/Pa
 `BedrockItemVariant` (type + aux), `BedrockBlockType`, `BedrockBlockState` (type + state values). Vanilla keys are the
 generated constants (see [Vanilla constants](#vanilla-constants)), custom ones are `BedrockItemType.of("example:ruby")` or
 `BedrockBlockType.of(customBlock)`; same classes. A key needs no existence in any version, and renames and splits of
-identifiers Bedrock made (`renames.txt`) map to the same or a new key. *Registered* is a key inside one palette:
+identifiers Bedrock made (`renames.txt`) map to the same or a new key. Vanilla keys are identity singletons; a custom
+key of an identifier Paletter does not know is a plain value, equal by identifier but not interned (nothing accumulates for
+the JVM lifetime), so compare keys with `equals`. *Registered* is a key inside one palette:
 `RegisteredItem`, and `RegisteredBlock` (the block) with its `RegisteredBlockState`s (runtime id, components, origin).
-They implement Cloudburst's `ItemDefinition` / `BlockDefinition` and are compared by identity; they differ per version.
+They implement Cloudburst's `ItemDefinition` / `BlockDefinition` and are compared by identity (as Cloudburst does); there is one
+instance per entry per palette, and they differ per version. `Palette#sameStack(ItemData, ItemData)` compares whole stacks
+(definition, damage, count, NBT, block, ...) and maps definitions of other palettes to this one first.
 A *stack* is `BedrockItemStack`: variant, count, NBT, optional block state. Cloudburst `ItemData` only appears where a
 packet needs it (`Palette#encode`, `Palette#decode`).
 
@@ -88,11 +92,11 @@ palette; `paletter.properties(key, version)` without one. Overrides edit the com
 | Lookup                          | Result                                              |
 |---------------------------------|-----------------------------------------------------|
 | `Paletter#block(NbtMap)`, `Paletter#item(identifier, aux)` | the key of a state or variant of **any** bundled version, or null (see below) |
-| `Palette#runtimeId(BedrockBlockState)` | runtime id in the palette's network id mode, a field read and an array load |
-| `Palette#block(BedrockBlockState)` | `RegisteredBlockState`: exact, adapted, fallback, else air |
+| `Palette#runtimeId(BedrockBlockState)` | runtime id in the palette's network id mode, a field read and an array load; throws for a state the palette lacks, `runtimeIdOrDefault(state, id)` does not |
+| `Palette#block(BedrockBlockState)` | `RegisteredBlockState`: exact, adapted, fallback, else air; throws for a state the palette lacks, `blockOrNull(state)` returns null |
 | `Palette#item(BedrockItemType\|BedrockItemVariant)` | `RegisteredItem`, or null if the version has neither the item nor a fallback |
-| `Palette#encode(BedrockItemStack)` | `ItemData` for the client, fallbacks applied |
-| `Palette#decode(ItemData)` | the `BedrockItemStack` a client sent, or null if unknown |
+| `Palette#encode(BedrockItemStack)` | `ItemData` for the client, fallbacks applied: an item the version lacks and one nobody registered take the same stand-in (the default fallback, `minecraft:unknown`), air only without one |
+| `Palette#decode(ItemData)` | the `BedrockItemStack` a client sent, or null if unknown; the damage it carried is kept even where the item has no such variant |
 | `BlockRegistry#block(RegisteredBlockState)` | the `RegisteredBlock` of a state in this palette |
 
 `Paletter#block` / `Paletter#item` accept content of any bundled version, not only the newest: a state or variant the

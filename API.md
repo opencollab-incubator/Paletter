@@ -59,6 +59,15 @@ between versions:
 - A state constant never changes its type; generation fails until the state gets a new name in `names.json`.
 - `BedrockPreviewBlocks` and `BedrockPreviewItems` (content of a bundled preview only) are `@Experimental`.
 
+## Identity and equality
+
+- Vanilla keys (the constants) are identity singletons. A key of an identifier Paletter does not know is a value: equal by
+  identifier, not interned, never held by Paletter. Compare keys with `equals`; never rely on `==` for a custom key.
+- `RegisteredItem`, `RegisteredBlockState` are compared by identity, like Cloudburst definitions: one instance per entry per
+  palette, shared by every palette extending it that does not change the entry.
+- Lookups that take caller input do not cache it, and an unregistered item is sent as the configured default fallback, never as
+  air by one path and `minecraft:unknown` by another.
+
 ## Experiments
 
 Content a Bedrock version has only behind an experiment toggle is missing by default (items unregistered, block states

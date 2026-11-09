@@ -32,7 +32,7 @@ Blocks come before items (block items need them) and creative last.
 
 ## Ids
 
-Consumers never see canonical ids; lookups return interned keys (`Paletter#block`, `#item`, `Palette#runtimeId(key)`).
+Consumers never see canonical ids; lookups return keys (`Paletter#block`, `#item`, `Palette#runtimeId(key)`): vanilla ones are the constant singletons, custom ones values equal by identifier that no static map holds (a client can make up identifiers, so nothing may accumulate per identifier; caches in the registries keep canonical entries only).
 Internally:
 
 - **Canonical ids** are dense ints for the newest bundled version (position in its block palette / item table), the same
