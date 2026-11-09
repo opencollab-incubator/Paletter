@@ -39,6 +39,7 @@ The API is stable: semantic versioning, a deprecation cycle and a binary compati
 what is API, what `@Experimental` and `@Internal` mean, and the policy.
 How the pieces fit together, and recipes for the common changes, are in [ARCHITECTURE.md](ARCHITECTURE.md);
 runnable examples are in [examples/](examples).
+The Javadoc of the latest `main` is at https://opencollab-incubator.github.io/Paletter/latest/.
 
 
 | Path        | What                                                                                           |

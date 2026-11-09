@@ -1,0 +1,75 @@
+# Builds the Javadoc of the `paletter` module and publishes it to GitHub Pages (branch gh-pages):
+#   push to main      -> /latest/
+#   published release -> /X.Y.Z/ (tag vX.Y.Z)
+# Only the target folder is replaced, other versions are kept; index.html lists them. Enable Pages with source
+# "Deploy from a branch" -> gh-pages / (root). No secrets: the default GITHUB_TOKEN pushes the branch.
+
+name: Javadoc
+
+on:
+  push:
+    branches: [main]
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: javadoc
+  cancel-in-progress: false
+
+jobs:
+  javadoc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build Javadoc
+        run: ./gradlew --max-workers=1 :paletter:javadoc
+      - name: Publish to gh-pages
+        env:
+          EVENT: ${{ github.event_name }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          if [ "$EVENT" = "release" ]; then
+            target="${TAG#v}"
+          else
+            target="latest"
+          fi
+          cp -r paletter/build/docs/javadoc "$RUNNER_TEMP/javadoc"
+          repo="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          if git ls-remote --exit-code --heads "$repo" gh-pages > /dev/null; then
+            git clone --branch gh-pages --depth 1 "$repo" "$RUNNER_TEMP/pages"
+          else
+            git init "$RUNNER_TEMP/pages"
+            git -C "$RUNNER_TEMP/pages" checkout --orphan gh-pages
+            git -C "$RUNNER_TEMP/pages" remote add origin "$repo"
+          fi
+          cd "$RUNNER_TEMP/pages"
+          rm -rf "$target"
+          cp -r "$RUNNER_TEMP/javadoc" "$target"
+          touch .nojekyll
+          {
+            echo '<!doctype html><meta charset="utf-8"><title>Paletter Javadoc</title>'
+            echo '<h1>Paletter Javadoc</h1><ul>'
+            [ -d latest ] && echo '<li><a href="latest/">latest</a> (main)</li>'
+            for d in $(ls -d [0-9]*/ 2>/dev/null | tr -d / | sort -rV); do
+              echo "<li><a href=\"$d/\">$d</a></li>"
+            done
+            echo '</ul>'
+          } > index.html
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing changed"
+          else
+            git commit -m "Javadoc $target (${GITHUB_SHA::7})"
+            git push origin gh-pages
+          fi
