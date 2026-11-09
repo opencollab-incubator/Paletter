@@ -11,12 +11,13 @@ For someone about to change Paletter. Usage is in the [README](README.md), polic
 | Registered | `RegisteredItem`, `RegisteredBlock`, `RegisteredBlockState`: a key inside one palette, with components, `Origin` and runtime id | per palette |
 | Stack | `BedrockItemStack`: variant, count, NBT, optional block state | never |
 
-A `Paletter` holds the policy shared by every palette (data source, versions, block network ids, `Fallbacks`, vanilla
+A `Paletter` holds the policy shared by every palette (data source, versions, `Fallbacks`, vanilla
 content, creative ordering, reports) and the global layers. A `PaletteLayer` is content only (custom items and blocks,
 overrides, creative edits, tags) and knows neither protocol nor policy. `Paletter#palette(protocol)` compiles one
 immutable `Palette` per data version and caches it; `Palette#encode` / `#decode` convert stacks to and from Cloudburst
 `ItemData`, which only appears at that boundary. `Palette#extend(layer)` is a session patch over the shared palette:
-what the layer does not touch is the same instance as in the base, and custom blocks need `BlockNetworkIds.HASHED`.
+what the layer does not touch is the same instance as in the base. A session layer that cannot be applied leaves the base
+as it is and adds an `ERROR` to the report of the palette `extend` returns.
 
 ## Compile stages
 
@@ -37,7 +38,7 @@ Internally:
 
 - **Canonical ids** are dense ints for the newest bundled version (position in its block palette / item table), the same
   for every protocol, held in a hidden field of the key. Custom content gets ids appended after them.
-- **Runtime ids** are per palette: `SEQUENTIAL` uses palette positions, `HASHED` the state hash (equal in every version,
+- **Runtime ids** are the state hash (equal in every version,
   so vanilla states are shared between palettes).
 - **Resolution** turns a canonical id into what an older version sends: exact, adapted, fallback, or `minecraft:unknown`
   (`Palette#explain`, `inspect`). **Forwarding** is the reverse: a state or variant of any bundled version maps to the

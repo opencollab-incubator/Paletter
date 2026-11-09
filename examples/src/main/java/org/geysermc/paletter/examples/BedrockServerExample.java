@@ -8,7 +8,6 @@ import org.geysermc.paletter.Fallbacks;
 import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
-import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.RegisteredItem;
 import org.geysermc.paletter.item.component.DisplayName;
@@ -35,7 +34,6 @@ public final class BedrockServerExample {
 
         // The global policy: one Paletter, one fallback policy, the content of the server as a layer
         Paletter paletter = Paletter.builder()
-            .blockNetworkIds(BlockNetworkIds.HASHED)
             .fallbacks(Fallbacks.builder().item(BedrockItems.POPLAR_BOAT, BedrockItems.OAK_BOAT).build())
             .layer(server)
             .build();
@@ -44,7 +42,7 @@ public final class BedrockServerExample {
         BedrockCodec codec = Bedrock_v2225.CODEC;
         Palette palette = paletter.palette(codec);
 
-        // Login: definition registries for the codec, block properties and the id mode for start game
+        // Login: definition registries for the codec, block properties and hashed block ids for start game
         palette.applyTo(codec.createHelper());
         StartGamePacket startGame = new StartGamePacket();
         palette.applyTo(startGame);

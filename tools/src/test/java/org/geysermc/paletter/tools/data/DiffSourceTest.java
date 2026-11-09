@@ -9,7 +9,7 @@ import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.nbt.NbtUtils;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
-import org.geysermc.paletter.block.BlockNetworkIds;
+import org.geysermc.paletter.block.BlockHashes;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.creative.CreativeCategory;
@@ -197,7 +197,7 @@ class DiffSourceTest {
         // Corrupt one network_id in the palette file
         List<NbtMap> blocks = new ArrayList<>();
         for (NbtMap state : data.blockStates()) {
-            blocks.add(state.toBuilder().putInt("network_id", BlockNetworkIds.hash(state)).putInt("version", 1).build());
+            blocks.add(state.toBuilder().putInt("network_id", BlockHashes.hash(state)).putInt("version", 1).build());
         }
         blocks.set(0, blocks.get(0).toBuilder().putInt("network_id", 42).build());
         writeGzip(directory.resolve("block_palette.nbt"), NbtMap.builder().putList("blocks", NbtType.COMPOUND, blocks).build());
@@ -285,7 +285,7 @@ class DiffSourceTest {
     static void write(VanillaData data, Path directory, boolean networkIds) throws IOException {
         List<NbtMap> blocks = new ArrayList<>();
         for (NbtMap state : data.blockStates()) {
-            blocks.add(networkIds ? state.toBuilder().putInt("network_id", BlockNetworkIds.hash(state)).putInt("version", 18168865).build() : state);
+            blocks.add(networkIds ? state.toBuilder().putInt("network_id", BlockHashes.hash(state)).putInt("version", 18168865).build() : state);
         }
         writeGzip(directory.resolve("block_palette.nbt"), NbtMap.builder().putList("blocks", NbtType.COMPOUND, blocks).build());
 

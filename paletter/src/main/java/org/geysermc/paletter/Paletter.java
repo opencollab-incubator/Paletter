@@ -8,7 +8,6 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.internal.block.BlockInterner;
-import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.data.DataVersion;
@@ -41,7 +40,7 @@ import java.util.function.Predicate;
  * PaletteLayer layer = PaletteLayer.builder("server")...build();
  *
  * // Once per client version, shared by all sessions on it
- * Palette palette = paletter.palette(codec, BlockNetworkIds.HASHED, layer);
+ * Palette palette = paletter.palette(codec);
  * // Optionally per session, sharing everything it does not change
  * Palette sessionPalette = palette.extend(sessionLayer);
  * }</pre>
@@ -56,7 +55,6 @@ import java.util.function.Predicate;
 public final class Paletter {
     private final PaletteDataSource source;
     private final Predicate<DataVersion> versionFilter;
-    private final BlockNetworkIds networkIds;
     private final Fallbacks fallbacks;
     private final VanillaContent vanillaContent;
     private final CreativeOrdering creativeOrdering;
@@ -74,16 +72,15 @@ public final class Paletter {
     private Paletter(Builder builder) {
         this.source = builder.source;
         this.versionFilter = builder.versions;
-        this.networkIds = builder.networkIds;
         this.fallbacks = builder.fallbacks;
-        this.vanillaContent = builder.vanillaContent;
+        this.vanillaContent = builder.vanillaContent.copy();
         this.creativeOrdering = builder.creativeOrdering;
         this.reports = builder.reports;
         this.globalLayers = List.copyOf(builder.layers);
     }
 
     /**
-     * @return a builder with the defaults: bundled data, all versions, {@link BlockNetworkIds#SEQUENTIAL},
+     * @return a builder with the defaults: bundled data, all versions,
      *         {@link Fallbacks#UNKNOWN}, all vanilla content, {@link CreativeOrdering#BDS}, no layers
      * @since 0.1.0
      */
@@ -285,12 +282,12 @@ public final class Paletter {
 
     /**
      * @return the plain vanilla palette of a data version (with this instance's fallbacks and vanilla content, but
-     *         without its layers), with this instance's block network ids
+     *         without its layers)
      * @since 0.1.0
      */
     public @NonNull Palette vanilla(@NonNull DataVersion version) {
         return vanilla.computeIfAbsent(version,
-            key -> PaletteCompiler.vanilla(vanillaData(key), networkIds, canonicalBlocks(), canonicalItems(), blockInterner,
+            key -> PaletteCompiler.vanilla(vanillaData(key), canonicalBlocks(), canonicalItems(), blockInterner,
                 fallbacks, vanillaContent, creativeOrdering));
     }
 
@@ -302,24 +299,59 @@ public final class Paletter {
      */
     public @NonNull Palette palette(int protocolVersion) {
         DataVersion version = version(protocolVersion);
+        Palette palette = compiled(version);
+        if (protocolVersion > version.protocolVersion() && version.equals(latest())) {
+            // Newer than all data: the latest data is used, and content the client has may be missing
+            String message = "The requested protocol is newer than the newest bundled data (" + version + ", protocol "
+                + version.protocolVersion() + "); its data is used, so content the client has that this version lacks is missing";
+            boolean[] created = {false};
+            Palette noted = newerThanData.computeIfAbsent(palette, p -> {
+                created[0] = true;
+                PaletteReport report = new PaletteReport();
+                report.addAll(p.report());
+                report.info("paletter", message);
+                return p.withReport(report);
+            });
+            if (created[0]) {
+                // Reported outside the computation, so the consumer may use this Paletter; only the note: the rest of
+                // the report went to the consumer with the palette itself
+                PaletteReport note = new PaletteReport();
+                note.info("paletter", message);
+                reports.accept(note);
+            }
+            return noted;
+        }
+        return palette;
+    }
+
+    /**
+     * Compiles the palettes of all served versions now, instead of on first use, so no session pays for it. Each is
+     * passed to the {@link Builder#reports reports} consumer as usual.
+     *
+     * @return this instance
+     * @throws PaletteException if a global layer cannot be compiled
+     * @since 0.1.0
+     */
+    public @NonNull Paletter warmUp() {
+        for (DataVersion version : versions()) {
+            compiled(version);
+        }
+        return this;
+    }
+
+    private Palette compiled(DataVersion version) {
+        boolean[] created = {false};
         Palette palette = compiled.computeIfAbsent(version, v -> {
+            created[0] = true;
             Palette result = vanilla(v);
             for (PaletteLayer layer : globalLayers) {
                 result = PaletteCompiler.extend(result, layer, false);
             }
-            reports.accept(result.report());
             return result;
         });
-        if (protocolVersion > version.protocolVersion() && version.equals(latest())) {
-            // Newer than all data: the latest data is used, and block ids may shift against what the client has
-            return newerThanData.computeIfAbsent(palette, p -> {
-                PaletteReport report = new PaletteReport();
-                report.addAll(p.report());
-                report.warn("paletter", "The requested protocol is newer than the newest bundled data ("
-                    + version + ", protocol " + version.protocolVersion() + "); its data is used, so content the client has"
-                    + " that this version lacks is missing and sequential block ids may differ");
-                return p.withReport(report);
-            });
+        if (created[0]) {
+            // Outside computeIfAbsent: a consumer that asks for another palette would update the map recursively
+            reports.accept(palette.report());
         }
         return palette;
     }
@@ -339,7 +371,6 @@ public final class Paletter {
     public static final class Builder {
         private PaletteDataSource source = PaletteDataSource.bundled();
         private Predicate<DataVersion> versions = version -> true;
-        private BlockNetworkIds networkIds = BlockNetworkIds.SEQUENTIAL;
         private Fallbacks fallbacks = Fallbacks.UNKNOWN;
         private final VanillaContent vanillaContent = new VanillaContent();
         private CreativeOrdering creativeOrdering = CreativeOrdering.BDS;
@@ -363,14 +394,6 @@ public final class Paletter {
          */
         public @NonNull Builder versions(@NonNull Predicate<DataVersion> versions) {
             this.versions = Objects.requireNonNull(versions);
-            return this;
-        }
-
-        /**
-         * @param ids how block runtime ids are assigned; default {@link BlockNetworkIds#SEQUENTIAL}
-         */
-        public @NonNull Builder blockNetworkIds(@NonNull BlockNetworkIds ids) {
-            this.networkIds = Objects.requireNonNull(ids);
             return this;
         }
 
@@ -401,7 +424,9 @@ public final class Paletter {
         }
 
         /**
-         * @param reports called once for each palette compiled (with this instance's layers applied), with its report
+         * @param reports called once for each palette compiled (with this instance's layers applied), with its report, and
+         *                once with a one entry report for a palette served for a protocol newer than the newest data.
+         *                Called outside any internal lock: it may use this Paletter
          */
         public @NonNull Builder reports(@NonNull Consumer<PaletteReport> reports) {
             this.reports = Objects.requireNonNull(reports);

@@ -91,7 +91,6 @@ public final class org.geysermc.paletter.Palette {
     public org.geysermc.paletter.vanilla.BedrockBlockState block(org.cloudburstmc.nbt.NbtMap)
     public org.geysermc.paletter.block.RegisteredBlockState block(org.geysermc.paletter.vanilla.BedrockBlockState)
     public org.geysermc.paletter.vanilla.BedrockBlockState blockKeyOf(org.geysermc.paletter.vanilla.BedrockItemVariant)
-    public org.geysermc.paletter.block.BlockNetworkIds blockNetworkIds()
     public org.geysermc.paletter.block.RegisteredBlockState blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)
     public java.util.List<org.cloudburstmc.protocol.bedrock.data.BlockPropertyData> blockProperties()
     public org.geysermc.paletter.block.BlockRegistry blocks()
@@ -192,6 +191,8 @@ public record org.geysermc.paletter.PaletteLayer$Override {
 public final class org.geysermc.paletter.PaletteReport {
     public <init>()
     public java.util.List<org.geysermc.paletter.PaletteReport$Entry> entries()
+    public void error(java.lang.String, java.lang.String)
+    public java.util.List<org.geysermc.paletter.PaletteReport$Entry> errors()
     public void info(java.lang.String, java.lang.String)
     public void warn(java.lang.String, java.lang.String)
     public java.util.List<org.geysermc.paletter.PaletteReport$Entry> warnings()
@@ -208,6 +209,7 @@ public record org.geysermc.paletter.PaletteReport$Entry {
 }
 
 public enum org.geysermc.paletter.PaletteReport$Level {
+    public static final org.geysermc.paletter.PaletteReport$Level ERROR
     public static final org.geysermc.paletter.PaletteReport$Level INFO
     public static final org.geysermc.paletter.PaletteReport$Level WARNING
     public static org.geysermc.paletter.PaletteReport$Level valueOf(java.lang.String)
@@ -230,10 +232,10 @@ public final class org.geysermc.paletter.Paletter {
     public org.geysermc.paletter.Palette vanilla(org.geysermc.paletter.data.DataVersion)
     public org.geysermc.paletter.data.DataVersion version(int)
     public java.util.List<org.geysermc.paletter.data.DataVersion> versions()
+    public org.geysermc.paletter.Paletter warmUp()
 }
 
 public static final class org.geysermc.paletter.Paletter$Builder {
-    public org.geysermc.paletter.Paletter$Builder blockNetworkIds(org.geysermc.paletter.block.BlockNetworkIds)
     public org.geysermc.paletter.Paletter build()
     public org.geysermc.paletter.Paletter$Builder creativeOrdering(org.geysermc.paletter.creative.CreativeOrdering)
     public org.geysermc.paletter.Paletter$Builder data(org.geysermc.paletter.data.PaletteDataSource)
@@ -285,13 +287,9 @@ public record org.geysermc.paletter.block.BlockFallback {
     public final java.lang.String toString()
 }
 
-public enum org.geysermc.paletter.block.BlockNetworkIds {
-    public static final org.geysermc.paletter.block.BlockNetworkIds HASHED
-    public static final org.geysermc.paletter.block.BlockNetworkIds SEQUENTIAL
+public final class org.geysermc.paletter.block.BlockHashes {
     public static final int UNKNOWN_HASH = -2
     public static int hash(org.cloudburstmc.nbt.NbtMap)
-    public static org.geysermc.paletter.block.BlockNetworkIds valueOf(java.lang.String)
-    public static org.geysermc.paletter.block.BlockNetworkIds[] values()
 }
 
 public record org.geysermc.paletter.block.BlockProperty<T> extends java.lang.Record {
@@ -334,10 +332,7 @@ public final class org.geysermc.paletter.block.BlockRegistry implements org.clou
     public org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition getDefinition(int)
     public int indexOf(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)
     public boolean isRegistered(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)
-    public boolean isRemapped()
     public static long nameHash(java.lang.String)
-    public org.geysermc.paletter.block.BlockNetworkIds networkIds()
-    public int remapVanilla(int)
     public boolean sharesStatesWith(org.geysermc.paletter.block.BlockRegistry)
     public int size()
     public java.util.List<org.geysermc.paletter.block.RegisteredBlockState> states(java.lang.String)

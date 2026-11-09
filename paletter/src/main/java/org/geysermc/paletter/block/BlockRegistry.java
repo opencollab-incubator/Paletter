@@ -45,8 +45,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * canonical id ({@link #runtimeId(int)}, {@link #block(int)}: array lookups, see {@link CanonicalBlocks}). Differences
  * to older versions (renamed or missing blocks, added or removed states) are handled here.
  * <p>
- * Runtime ids depend on the palette's {@link BlockNetworkIds} mode: palette positions, or state hashes. Each state also
- * has a dense position, {@link #indexOf}, in both modes; in hashed palettes vanilla definitions are shared between versions.
+ * Runtime ids are state hashes ({@link BlockHashes}). Each state also has a dense position, {@link #indexOf}; vanilla
+ * definitions are shared between versions.
  *
  * @since 0.1.0
  */
@@ -95,9 +95,9 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @param interner shares blocks and tables between hashed palettes; one per Paletter
      */
     @Internal
-    public static @NonNull BlockRegistry build(@NonNull VanillaData data, @NonNull BlockNetworkIds mode, @NonNull CanonicalBlocks canonical,
+    public static @NonNull BlockRegistry build(@NonNull VanillaData data, @NonNull CanonicalBlocks canonical,
                                               @NonNull BlockInterner interner) {
-        return new BlockRegistry(new Table(null, data, List.of(), Map.of(), List.of(), mode, interner), canonical, data.fallbacks().blocks(),
+        return new BlockRegistry(new Table(null, data, List.of(), Map.of(), List.of(), interner), canonical, data.fallbacks().blocks(),
             BlockFallback.UNKNOWN, Set.of(), interner, null);
     }
 
@@ -184,19 +184,13 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         encoded.sort(java.util.Comparator.comparing(BlockPropertyData::getName).reversed());
         Map<String, Origin> origins = new HashMap<>(table.origins);
         additional.forEach(block -> origins.put(block.identifier(), Origin.custom(source)));
-        // Hashed ids do not depend on the other states: only the added states get a table, over this one. Sequential ids
-        // are positions, which the client re-sorts as a whole, so that table is rebuilt
-        boolean patch = table.mode == BlockNetworkIds.HASHED;
-        Table extended = new Table(patch ? table : null, data, all, Map.copyOf(origins), encoded, table.mode, interner);
-        return new BlockRegistry(extended, canonical.extend(key, additional), fallbacks, defaultFallback, missing, interner, patch ? this : null);
+        // Hashed ids do not depend on the other states: only the added states get a table, over this one
+        Table extended = new Table(table, data, all, Map.copyOf(origins), encoded, interner);
+        return new BlockRegistry(extended, canonical.extend(key, additional), fallbacks, defaultFallback, missing, interner, this);
     }
 
     public @NonNull DataVersion version() {
         return table.version;
-    }
-
-    public @NonNull BlockNetworkIds networkIds() {
-        return table.mode;
     }
 
     /**
@@ -228,8 +222,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
-     * @return the dense position of a block in this palette, {@code 0} to {@code size() - 1} (equal to the runtime id
-     * in {@link BlockNetworkIds#SEQUENTIAL} palettes), or -1 if it is not registered here
+     * @return the dense position of a block in this palette, {@code 0} to {@code size() - 1} (not the runtime id, which is the hash), or -1 if it is not registered here
      */
     public int indexOf(@NonNull BlockDefinition definition) {
         int index = indexOfRuntimeId(definition.getRuntimeId());
@@ -350,7 +343,6 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         for (int i = firstIndex; i < reverse.length; i++) {
             reverse[i] = canonical.index(table.byIndex(i).getState());
         }
-        boolean share = table.mode == BlockNetworkIds.HASHED;
         for (int page = firstPage; page < pageCount; page++) {
             int start = page << PAGE_BITS;
             int length = Math.min(PAGE_SIZE, size - start);
@@ -374,8 +366,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                     reverse[index] = id;
                 }
             }
-            // In hashed palettes vanilla blocks are shared between versions, so most pages are equal between them
-            if (share && vanillaOnly) {
+            // Vanilla blocks are shared between versions, so most pages are equal between them
+            if (vanillaOnly) {
                 pageBlocks = interner.intern(pageBlocks);
                 pageIds = interner.intern(pageIds);
             }
@@ -550,24 +542,6 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         return table.customBlocks;
     }
 
-    /**
-     * Custom blocks are sorted in between vanilla blocks, shifting vanilla runtime ids. Data stored against vanilla
-     * ids (e.g. cached chunks) can be translated with this. The identity in {@link BlockNetworkIds#HASHED} palettes.
-     *
-     * @param vanillaRuntimeId the runtime id in the plain vanilla palette of the same mode
-     * @return the runtime id in this palette
-     */
-    public int remapVanilla(int vanillaRuntimeId) {
-        return table.vanillaToRuntime == null ? vanillaRuntimeId : table.vanillaToRuntime[vanillaRuntimeId];
-    }
-
-    /**
-     * @return true if vanilla runtime ids differ from this palette's, i.e. {@link #remapVanilla} is not the identity
-     */
-    public boolean isRemapped() {
-        return table.vanillaToRuntime != null;
-    }
-
     public @NonNull Map<String, BlockFallback> fallbacks() {
         return fallbacks;
     }
@@ -581,7 +555,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
 
     @Override
     public String toString() {
-        return "BlockRegistry{" + version() + ", " + table.mode + ", " + size() + " states, " + table.customBlocks.size() + " custom blocks}";
+        return "BlockRegistry{" + version() + ", " + size() + " states, " + table.customBlocks.size() + " custom blocks}";
     }
 
     /**
@@ -610,12 +584,10 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         private final @Nullable Table parent;
         private final int parentSize;
         private final DataVersion version;
-        private final BlockNetworkIds mode;
         /** Own states: all of them without a parent. */
         private final RegisteredBlockState[] own;
-        private final @Nullable IntIndex ownByHash;
+        private final IntIndex ownByHash;
         private final Map<NbtMap, RegisteredBlockState> ownByState;
-        private final int @Nullable [] vanillaToRuntime;
         private final List<BlockPropertyData> blockProperties;
         /** Every custom block, including the parent's. */
         private final List<CustomBlock> customBlocks;
@@ -625,11 +597,10 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         private final RegisteredBlockState air;
 
         private Table(@Nullable Table parent, VanillaData data, List<CustomBlock> customBlocks, Map<String, Origin> origins,
-                      List<BlockPropertyData> customProperties, BlockNetworkIds mode, BlockInterner interner) {
+                      List<BlockPropertyData> customProperties, BlockInterner interner) {
             this.parent = parent;
             this.parentSize = parent == null ? 0 : parent.size();
             this.version = data.version();
-            this.mode = mode;
             this.customBlocks = List.copyOf(customBlocks);
             this.origins = origins;
             List<CustomBlock> ownCustom = parent == null ? this.customBlocks : this.customBlocks.subList(parent.customBlocks.size(), this.customBlocks.size());
@@ -669,15 +640,13 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
 
             this.own = new RegisteredBlockState[states.size()];
             Object2ObjectOpenHashMap<NbtMap, RegisteredBlockState> byState = new Object2ObjectOpenHashMap<>(states.size());
-            IntIndex byHash = mode == BlockNetworkIds.HASHED ? new IntIndex(states.size()) : null;
+            IntIndex byHash = new IntIndex(states.size());
             for (int i = 0; i < states.size(); i++) {
                 NbtMap state = states.get(i);
                 boolean custom = customStates.contains(state);
                 RegisteredBlockState block;
-                if (byHash == null) {
-                    block = new RegisteredBlockState(i, state, custom);
-                } else if (custom) {
-                    block = new RegisteredBlockState(BlockNetworkIds.hash(state), state, true);
+                if (custom) {
+                    block = new RegisteredBlockState(BlockHashes.hash(state), state, true);
                 } else {
                     // A vanilla state has the same hash in every version: share the definition
                     block = interner.vanillaBlock(state);
@@ -685,32 +654,20 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                 if (byState.put(state, block) != null) {
                     throw new PaletteException("Duplicate block state in " + version + " palette: " + state);
                 }
-                if (byHash != null) {
-                    int collision = byHash.put(block.getRuntimeId(), i);
-                    if (collision != -1) {
-                        throw new PaletteException("Block network id hash collision in the " + version + " palette: "
-                            + own[collision].getState() + " and " + state + " both hash to " + block.getRuntimeId());
-                    }
-                    int inParent = parent == null ? -1 : parent.indexOfRuntimeId(block.getRuntimeId());
-                    if (inParent != -1) {
-                        throw new PaletteException("Block network id hash collision in the " + version + " palette: "
-                            + parent.byIndex(inParent).getState() + " and " + state + " both hash to " + block.getRuntimeId());
-                    }
+                int collision = byHash.put(block.getRuntimeId(), i);
+                if (collision != -1) {
+                    throw new PaletteException("Block network id hash collision in the " + version + " palette: "
+                        + own[collision].getState() + " and " + state + " both hash to " + block.getRuntimeId());
+                }
+                int inParent = parent == null ? -1 : parent.indexOfRuntimeId(block.getRuntimeId());
+                if (inParent != -1) {
+                    throw new PaletteException("Block network id hash collision in the " + version + " palette: "
+                        + parent.byIndex(inParent).getState() + " and " + state + " both hash to " + block.getRuntimeId());
                 }
                 own[i] = block;
             }
             this.ownByState = byState;
             this.ownByHash = byHash;
-
-            if (customStates.isEmpty() || mode == BlockNetworkIds.HASHED) {
-                this.vanillaToRuntime = null;
-            } else {
-                int[] remap = new int[data.blockStates().size()];
-                for (int i = 0; i < remap.length; i++) {
-                    remap[i] = byState.get(data.blockStates().get(i)).getRuntimeId();
-                }
-                this.vanillaToRuntime = remap;
-            }
 
             List<BlockPropertyData> properties = new ArrayList<>(data.dataDrivenBlocks());
             properties.addAll(customProperties);
@@ -731,10 +688,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                 CustomBlock custom = customByName.get(name);
                 if (custom != null) {
                     blocks.put(name, new RegisteredBlock(name, origins.get(name), entry.getValue(), custom, propertyData.get(name), custom.defaultState()));
-                } else if (byHash != null) {
-                    blocks.put(name, interner.vanillaType(name, entry.getValue(), propertyData.get(name), data.blockDefaults().get(name)));
                 } else {
-                    blocks.put(name, new RegisteredBlock(name, Origin.VANILLA, entry.getValue(), null, propertyData.get(name), data.blockDefaults().get(name)));
+                    blocks.put(name, interner.vanillaType(name, entry.getValue(), propertyData.get(name), data.blockDefaults().get(name)));
                 }
             }
             if (parent != null) {
@@ -764,9 +719,6 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         }
 
         int indexOfRuntimeId(int runtimeId) {
-            if (ownByHash == null) {
-                return runtimeId >= 0 && runtimeId < own.length ? runtimeId : -1;
-            }
             int index = ownByHash.get(runtimeId);
             if (index != -1) {
                 return parentSize + index;

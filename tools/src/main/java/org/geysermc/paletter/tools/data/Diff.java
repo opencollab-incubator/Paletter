@@ -3,7 +3,7 @@ package org.geysermc.paletter.tools.data;
 import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
-import org.geysermc.paletter.block.BlockNetworkIds;
+import org.geysermc.paletter.block.BlockHashes;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.creative.CreativeCategory;
@@ -852,7 +852,7 @@ public final class Diff {
         Map<Integer, NbtMap> bundledHashes = new HashMap<>();
         List<String> bundledCollisions = new ArrayList<>();
         for (NbtMap state : bundled.blockStates()) {
-            NbtMap previous = bundledHashes.put(BlockNetworkIds.hash(state), state);
+            NbtMap previous = bundledHashes.put(BlockHashes.hash(state), state);
             if (previous != null && !previous.equals(state)) {
                 bundledCollisions.add(describe(previous) + " and " + describe(state));
             }
@@ -865,7 +865,7 @@ public final class Diff {
         int nameHashes = 0;
         for (NbtMap raw : read.rawBlocks()) {
             NbtMap state = BlockStates.normalize(raw);
-            int hash = BlockNetworkIds.hash(state);
+            int hash = BlockHashes.hash(state);
             NbtMap previous = sourceHashes.put(hash, state);
             if (previous != null && !previous.equals(state)) {
                 section.differences.add("hash collision in the source: " + describe(previous) + " and " + describe(state));
