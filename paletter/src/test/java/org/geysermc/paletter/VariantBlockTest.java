@@ -5,6 +5,7 @@ import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.vanilla.BedrockBlockType;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
@@ -86,5 +87,41 @@ class VariantBlockTest {
         assertNotNull(block);
         assertEquals(palette.blockOf(palette.fallbackOf(missing)), block);
         assertEquals(BedrockBlocks.UNKNOWN, block.key().type());
+    }
+
+    @Test
+    void theBlockKeyIsExplicit() {
+        BedrockItemVariant planks = BedrockItems.OAK_PLANKS.base();
+        for (var version : PALETTER.versions()) {
+            Palette palette = PALETTER.palette(version.protocolVersion());
+            BedrockBlockState key = palette.blockKeyOf(planks);
+            assertNotNull(key, version.toString());
+            // The same key Paletter gives without a palette, and the palette's runtime id of it
+            assertSame(PALETTER.blockOf(planks), key, version.toString());
+            assertEquals(palette.blockOf(planks).getRuntimeId(), palette.runtimeId(key), version.toString());
+        }
+        assertNull(PALETTER.palette(PALETTER.latest().protocolVersion()).blockKeyOf(BedrockItems.STICK.base()));
+
+        // A fallback: the key of the block its fallback is sent with, where Paletter#blockOf knows the real block
+        Palette oldest = PALETTER.palette(2168);
+        for (BedrockItemVariant variant : PALETTER.palette(PALETTER.latest().protocolVersion()).itemVariants()) {
+            if (oldest.isFallback(variant) && PALETTER.blockOf(variant) != null) {
+                assertEquals(BedrockBlocks.UNKNOWN, oldest.blockKeyOf(variant).type());
+                assertNotNull(PALETTER.blockOf(variant));
+                break;
+            }
+        }
+    }
+
+    @Test
+    void theBlockKeyOfACustomBlockItemIsTheCustomState() {
+        CustomBlock lamp = CustomBlock.builder("variant:keyed")
+            .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION)).build();
+        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("test:keyed").block(lamp).build());
+        BedrockItemVariant item = BedrockItemType.of("variant:keyed").base();
+        BedrockBlockState key = palette.blockKeyOf(item);
+        assertNotNull(key);
+        assertEquals(BedrockBlockType.of(lamp), key.type());
+        assertNull(PALETTER.blockOf(item), "Paletter alone does not know custom content");
     }
 }

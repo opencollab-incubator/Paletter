@@ -240,6 +240,8 @@ public final class Paletter {
     /**
      * The block state an item places, version independent: the block the newest version sends the item with
      * ({@link Palette#blockOf}). Accepts variants of any bundled version like {@link #item(String, int)}.
+     * Vanilla variants of the newest data only; for a palette's view (fallbacks, custom content) use
+     * {@link Palette#blockKeyOf}.
      *
      * @return the block state, or null if the item is not a block item or has no handle
      * @since 1.0.0

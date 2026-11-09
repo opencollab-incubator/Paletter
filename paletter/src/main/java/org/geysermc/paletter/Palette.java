@@ -250,6 +250,22 @@ public final class Palette {
     }
 
     /**
+     * The version independent key of {@link #blockOf}: the block state an item variant is sent with, as a
+     * {@link BedrockBlockState}, for every kind of variant (vanilla, extra, custom block items, fallbacks). Unlike
+     * {@link Paletter#blockOf}, which knows the vanilla variants of the newest data only, this follows the palette: the
+     * fallback's block in an old version, the custom block of a layer. {@link #runtimeId(BedrockBlockState)} gives its
+     * runtime id here.
+     *
+     * @return the block's key, or null if the item is not a block item here (or the state has no key: a vanilla state
+     *         that is not in the newest bundled data)
+     * @since 1.0.0
+     */
+    public @Nullable BedrockBlockState blockKeyOf(@NonNull BedrockItemVariant variant) {
+        RegisteredBlockState block = items.blockOf(variant);
+        return block == null ? null : block.key();
+    }
+
+    /**
      * @return the item of a type as registered in this palette, or null if it has none (an item of a layer this palette
      *         does not have, or one that does not exist in this version; fallbacks are not applied, see {@link #encode})
      * @since 1.0.0
