@@ -29,9 +29,19 @@ class CreativeOrderingTest {
         return CustomItem.builder(identifier).creative(placement).build();
     }
 
+    private static List<String> stacks(Palette palette) {
+        List<String> stacks = new java.util.ArrayList<>();
+        palette.creativeLayout().forEachStack(stack -> stacks.add(stack.identifier() + ":" + stack.damage()));
+        return stacks;
+    }
+
     @Test
     void bdsIsTheDefault() {
-        assertEquals(CreativeOrdering.BDS, PaletteLayer.builder("x").build().creativeOrdering());
+        PaletteLayer layer = PaletteLayer.builder("x")
+            .item(item("test:item", CreativePlacement.loose(CreativeCategory.CONSTRUCTION))).build();
+        Palette explicit = Paletter.builder().creativeOrdering(CreativeOrdering.BDS).build().palette(LATEST, layer);
+        Palette defaulted = PALETTER.palette(LATEST, layer);
+        assertEquals(stacks(explicit), stacks(defaulted));
     }
 
     @Test
@@ -91,7 +101,7 @@ class CreativeOrderingTest {
         assertEquals("test:block_menu_only", ((CreativeStack) construction.get(construction.size() - 2)).identifier());
         assertEquals("test:item", ((CreativeStack) construction.getLast()).identifier());
 
-        Palette append = PALETTER.palette(LATEST, PaletteLayer.builder("blocks").creativeOrdering(CreativeOrdering.APPEND)
+        Palette append = Paletter.builder().creativeOrdering(CreativeOrdering.APPEND).build().palette(LATEST, PaletteLayer.builder("blocks")
             .item(item("test:item", CreativePlacement.loose(CreativeCategory.CONSTRUCTION)))
             .block(CustomBlock.builder("test:block_menu_only").menuCategory(org.geysermc.paletter.block.component.MenuCategory.builder()
                 .category(org.geysermc.paletter.block.component.MenuCategory.Category.CONSTRUCTION).build()).build())

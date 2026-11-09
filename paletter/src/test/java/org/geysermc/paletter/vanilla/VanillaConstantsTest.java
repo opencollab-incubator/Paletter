@@ -2,6 +2,7 @@ package org.geysermc.paletter.vanilla;
 
 import org.geysermc.paletter.Ids;
 import org.cloudburstmc.nbt.NbtMap;
+import org.geysermc.paletter.Fallbacks;
 import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
@@ -245,7 +246,6 @@ class VanillaConstantsTest {
         CustomItem ruby = CustomItem.builder("example:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)
             .after(BedrockItems.DIAMOND)).build();
         PaletteLayer layer = PaletteLayer.builder("custom").block(lamp).item(ruby)
-            .blockFallback(BedrockBlocks.STONE, BedrockBlocks.DIRT)
             .overrideItem(BedrockItems.CAKE, item -> { })
             .build();
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), layer);
@@ -284,7 +284,6 @@ class VanillaConstantsTest {
     void constantsWhereIdentifiersAreAccepted() {
         PaletteLayer layer = PaletteLayer.builder("server")
             .overrideItem(BedrockItems.CAKE, item -> item.components(org.geysermc.paletter.item.component.MaxStackSize.of(1)))
-            .blockFallback(BedrockBlocks.ICICLE, BedrockBlocks.STONE)
             .item(CustomItem.builder("example:ruby")
                 .component(org.geysermc.paletter.item.component.Repairable.builder()
                     .repairItems(org.geysermc.paletter.item.component.Repairable.RepairItems.builder().items(BedrockItems.DIAMOND).build())
@@ -297,7 +296,9 @@ class VanillaConstantsTest {
                 .build())
             .creative(editor -> editor.remove(ItemMatcher.of(BedrockItems.EMPTY_MAP.variant(2))))
             .build();
-        Palette palette = PALETTER.palette(PALETTER.versions().getFirst().protocolVersion(), layer);
+        Paletter server = Paletter.builder().fallbacks(Fallbacks.builder().block(BedrockBlocks.ICICLE, BedrockBlocks.STONE).build())
+            .layer(layer).build();
+        Palette palette = server.palette(PALETTER.versions().getFirst().protocolVersion());
         assertNotNull(palette.item(BedrockItems.CAKE));
         boolean[] emptyMap2 = new boolean[1];
         palette.creativeLayout().forEachStack(stack -> emptyMap2[0] |= ItemMatcher.of(BedrockItems.EMPTY_MAP.variant(2)).matches(stack));

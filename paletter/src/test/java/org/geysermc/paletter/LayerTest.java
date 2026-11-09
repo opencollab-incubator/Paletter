@@ -248,8 +248,9 @@ class LayerTest {
         assertEquals(BlockResolution.Kind.DEFAULT, oldest.explain(concreteStairs).kind());
         assertEquals("minecraft:unknown", oldest.explain(concreteStairs).sent().get("name"));
         // ... unless the consumer defines a fallback
-        Palette withFallback = PALETTER.palette(PALETTER.version(OLDEST).protocolVersion(), PaletteLayer.builder("fallbacks")
-            .blockFallback("minecraft:white_concrete_stairs", new BlockFallback("minecraft:smooth_quartz_stairs", false, false)).build());
+        Palette withFallback = Paletter.builder().fallbacks(Fallbacks.builder()
+            .block("minecraft:white_concrete_stairs", new BlockFallback("minecraft:smooth_quartz_stairs", false, false)).build())
+            .build().palette(PALETTER.version(OLDEST).protocolVersion());
         BlockResolution fallback = withFallback.blocks().resolve(concreteStairs);
         assertEquals(BlockResolution.Kind.FALLBACK, fallback.kind());
         assertEquals("minecraft:smooth_quartz_stairs", fallback.block().identifier());
@@ -258,9 +259,10 @@ class LayerTest {
         NbtMap poplar = latest.blocks().states("minecraft:poplar_planks").getFirst().getState();
         assertNotNull(oldest.blocks().exact(poplar));
         assertEquals("minecraft:poplar_planks", oldest.blocks().resolve(poplar).block().identifier());
-        Palette forced = PALETTER.palette(PALETTER.version(OLDEST).protocolVersion(), PaletteLayer.builder("force")
-            .blockFallback("minecraft:poplar_planks", new BlockFallback("minecraft:pale_oak_planks", false, true))
-            .itemFallback("minecraft:poplar_boat", new ItemFallback("minecraft:pale_oak_boat", true)).build());
+        Palette forced = Paletter.builder().fallbacks(Fallbacks.builder()
+            .block("minecraft:poplar_planks", new BlockFallback("minecraft:pale_oak_planks", false, true))
+            .item("minecraft:poplar_boat", new ItemFallback("minecraft:pale_oak_boat", true)).build())
+            .build().palette(PALETTER.version(OLDEST).protocolVersion());
         assertEquals("minecraft:pale_oak_planks", forced.blocks().resolve(poplar).block().identifier());
 
         // The same for items
@@ -274,15 +276,16 @@ class LayerTest {
     @Test
     void fallbacksNeverShadowAnItemsOwnCanonicalId() {
         // A layer sends poplar boats as pale oak boats in 26.40; pale oak boats must still match themselves there
-        PaletteLayer layer = PaletteLayer.builder("force").itemFallback("minecraft:poplar_boat", new ItemFallback("minecraft:pale_oak_boat", true)).build();
+        Paletter forcing = Paletter.builder().fallbacks(Fallbacks.builder()
+            .item("minecraft:poplar_boat", new ItemFallback("minecraft:pale_oak_boat", true)).build()).build();
         int poplar = Ids.item(PALETTER, ItemVariant.of("minecraft:poplar_boat"));
         int paleOak = Ids.item(PALETTER, ItemVariant.of("minecraft:pale_oak_boat"));
         for (DataVersion version : PALETTER.versions()) {
-            Palette palette = PALETTER.palette(version.protocolVersion(), layer);
+            Palette palette = forcing.palette(version.protocolVersion());
             ResolvedItem resolved = Ids.itemAt(palette, paleOak);
             assertEquals(paleOak, Ids.match(palette, resolved.toItemData().build()), version.toString());
         }
-        Palette oldest = PALETTER.palette(PALETTER.version(OLDEST).protocolVersion(), layer);
+        Palette oldest = forcing.palette(PALETTER.version(OLDEST).protocolVersion());
         assertTrue(Ids.itemAt(oldest, poplar).fallback());
         assertEquals("minecraft:pale_oak_boat", Ids.itemAt(oldest, poplar).definition().getIdentifier());
     }

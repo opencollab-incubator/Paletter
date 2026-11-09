@@ -9,6 +9,7 @@ import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.block.BlockInterner;
 import org.geysermc.paletter.block.BlockNetworkIds;
+import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataSource;
@@ -26,7 +27,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Entry point: vanilla Bedrock data for every supported version, and the palettes compiled from it.
@@ -49,6 +53,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class Paletter {
     private final PaletteDataSource source;
+    private final Predicate<DataVersion> versionFilter;
+    private final BlockNetworkIds networkIds;
+    private final Fallbacks fallbacks;
+    private final VanillaContent vanillaContent;
+    private final CreativeOrdering creativeOrdering;
+    private final Consumer<PaletteReport> reports;
+    private final List<PaletteLayer> globalLayers;
+    private final Map<VanillaKey, Palette> compiled = new ConcurrentHashMap<>();
     private final Map<DataVersion, VanillaData> data = new ConcurrentHashMap<>();
     private final Map<VanillaKey, Palette> vanilla = new ConcurrentHashMap<>();
     private final Map<Key, Palette> palettes = new ConcurrentHashMap<>();
@@ -58,8 +70,24 @@ public final class Paletter {
     private volatile CanonicalBlocks canonicalBlocks;
     private volatile CanonicalItems canonicalItems;
 
-    private Paletter(PaletteDataSource source) {
-        this.source = source;
+    private Paletter(Builder builder) {
+        this.source = builder.source;
+        this.versionFilter = builder.versions;
+        this.networkIds = builder.networkIds;
+        this.fallbacks = builder.fallbacks;
+        this.vanillaContent = builder.vanillaContent;
+        this.creativeOrdering = builder.creativeOrdering;
+        this.reports = builder.reports;
+        this.globalLayers = List.copyOf(builder.layers);
+    }
+
+    /**
+     * @return a builder with the defaults: bundled data, all versions, {@link BlockNetworkIds#SEQUENTIAL},
+     *         {@link Fallbacks#UNKNOWN}, all vanilla content, {@link CreativeOrdering#BDS}, no layers
+     * @since 1.0.0
+     */
+    public static @NonNull Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -70,17 +98,22 @@ public final class Paletter {
     }
 
     public static @NonNull Paletter create(@NonNull PaletteDataSource source) {
-        return new Paletter(source);
+        return builder().data(source).build();
     }
 
     /**
-     * @return all data versions, oldest first
+     * @return the data versions this instance serves (those the builder's predicate accepts), oldest first
      */
     public @NonNull List<DataVersion> versions() {
-        return source.versions();
+        return source.versions().stream().filter(versionFilter).toList();
     }
 
     public @NonNull DataVersion latest() {
+        return versions().getLast();
+    }
+
+    /** The newest version of the data, whether served or not: canonical ids are defined by it. */
+    private DataVersion newest() {
         return source.versions().getLast();
     }
 
@@ -90,13 +123,13 @@ public final class Paletter {
      */
     public @NonNull DataVersion version(int protocolVersion) {
         DataVersion found = null;
-        for (DataVersion version : source.versions()) {
+        for (DataVersion version : versions()) {
             if (version.protocolVersion() <= protocolVersion) {
                 found = version;
             }
         }
         if (found == null) {
-            throw new IllegalArgumentException("No Bedrock data for protocol " + protocolVersion + "; oldest is " + source.versions().getFirst());
+            throw new IllegalArgumentException("No Bedrock data for protocol " + protocolVersion + "; oldest is " + versions().getFirst());
         }
         return found;
     }
@@ -145,7 +178,7 @@ public final class Paletter {
             synchronized (this) {
                 blocks = canonicalBlocks;
                 if (blocks == null) {
-                    canonicalBlocks = blocks = CanonicalBlocks.of(vanillaData(latest()), source.renames());
+                    canonicalBlocks = blocks = CanonicalBlocks.of(vanillaData(newest()), source.renames());
                 }
             }
         }
@@ -162,7 +195,7 @@ public final class Paletter {
             synchronized (this) {
                 items = canonicalItems;
                 if (items == null) {
-                    canonicalItems = items = CanonicalItems.of(vanillaData(latest()), source.renames());
+                    canonicalItems = items = CanonicalItems.of(vanillaData(newest()), source.renames());
                 }
             }
         }
@@ -204,7 +237,7 @@ public final class Paletter {
         if (canonical == -1) {
             return null;
         }
-        var block = vanilla(latest()).blockOf(canonicalItems().variant(canonical));
+        var block = vanilla(newest()).blockOf(canonicalItems().variant(canonical));
         return block == null ? null : block(block.getState());
     }
 
@@ -238,37 +271,71 @@ public final class Paletter {
     // ---- Palettes ----
 
     /**
-     * @return the plain vanilla palette of a data version, with sequential block network ids
+     * @return the plain vanilla palette of a data version (with this instance's fallbacks and vanilla content, but
+     *         without its layers), with this instance's block network ids
      */
     public @NonNull Palette vanilla(@NonNull DataVersion version) {
-        return vanilla(version, BlockNetworkIds.SEQUENTIAL);
+        return vanilla(version, networkIds);
     }
 
     /**
-     * @return the plain vanilla palette of a data version
+     * @return the plain vanilla palette of a data version, without this instance's layers
      */
+    @Internal
     public @NonNull Palette vanilla(@NonNull DataVersion version, @NonNull BlockNetworkIds mode) {
         return vanilla.computeIfAbsent(new VanillaKey(version, mode),
-            key -> PaletteCompiler.vanilla(vanillaData(key.version()), key.mode(), canonicalBlocks(), canonicalItems(), blockInterner));
+            key -> PaletteCompiler.vanilla(vanillaData(key.version()), key.mode(), canonicalBlocks(), canonicalItems(), blockInterner,
+                fallbacks, vanillaContent, creativeOrdering));
     }
 
     /**
-     * Compiles (or returns the cached) palette of a protocol version with the given layers, in order.
+     * The palette of a protocol version: vanilla content plus this instance's layers, compiled once per data version
+     * and cached.
+     */
+    public @NonNull Palette palette(int protocolVersion) {
+        return palette(protocolVersion, networkIds, List.of());
+    }
+
+    public @NonNull Palette palette(@NonNull BedrockCodec codec) {
+        return palette(codec.getProtocolVersion(), networkIds, List.of());
+    }
+
+    /**
+     * The vanilla palette of a data version with this instance's global layers applied, compiled once and reported once.
+     */
+    private Palette global(DataVersion version, BlockNetworkIds mode) {
+        return compiled.computeIfAbsent(new VanillaKey(version, mode), key -> {
+            Palette palette = vanilla(version, mode);
+            for (int i = 0; i < globalLayers.size(); i++) {
+                palette = layered(version, mode, globalLayers.subList(0, i + 1), palette);
+            }
+            reports.accept(palette.report());
+            return palette;
+        });
+    }
+
+    private Palette layered(DataVersion version, BlockNetworkIds mode, List<PaletteLayer> prefix, Palette parent) {
+        Key key = new Key(version, mode, List.copyOf(prefix));
+        PaletteLayer layer = prefix.getLast();
+        return palettes.computeIfAbsent(key, k -> PaletteCompiler.extend(parent, layer, false));
+    }
+
+    /**
+     * Compiles (or returns the cached) palette of a protocol version with extra layers on top of this instance's.
      * Every prefix of the layer list is cached too, so palettes sharing their first layers share those results.
-     * Meant for long lived layers; use {@link Palette#extend} for short lived ones like sessions.
      *
      * @param mode how block runtime ids are assigned. {@link BlockNetworkIds#HASHED} gives a state the same id in
      *             every version; {@link Palette#applyTo(org.cloudburstmc.protocol.bedrock.packet.StartGamePacket)}
      *             tells the client which mode is used
      */
+    @Internal
     public @NonNull Palette palette(int protocolVersion, @NonNull BlockNetworkIds mode, @NonNull List<PaletteLayer> layers) {
         DataVersion version = version(protocolVersion);
-        Palette palette = vanilla(version, mode);
-        for (int i = 0; i < layers.size(); i++) {
-            Key key = new Key(version, mode, List.copyOf(layers.subList(0, i + 1)));
-            Palette parent = palette;
-            PaletteLayer layer = layers.get(i);
-            palette = palettes.computeIfAbsent(key, k -> PaletteCompiler.extend(parent, layer));
+        Palette palette = global(version, mode);
+        List<PaletteLayer> all = new ArrayList<>(globalLayers);
+        for (PaletteLayer layer : layers) {
+            all.add(layer);
+            palette = layered(version, mode, all, palette);
         }
         if (protocolVersion > version.protocolVersion() && version.equals(latest())) {
             // Newer than all data: the latest data is used, and block ids may shift against what the client has
@@ -278,31 +345,38 @@ public final class Paletter {
                 report.warn("paletter", "The requested protocol is newer than the newest bundled data ("
                     + version + ", protocol " + version.protocolVersion() + "); its data is used, so content the client has"
                     + " that this version lacks is missing and sequential block ids may differ");
-                return p.withReport(report);
+                Palette wrapped = p.withReport(report);
+                PaletteCompiler.orderingOf(wrapped, creativeOrdering);
+                return wrapped;
             });
         }
         return palette;
     }
 
     /**
-     * Like {@link #palette(int, BlockNetworkIds, List)} with {@link BlockNetworkIds#SEQUENTIAL} ids.
+     * Like {@link #palette(int, BlockNetworkIds, List)} with this instance's block network ids.
      */
+    @Internal
     public @NonNull Palette palette(int protocolVersion, @NonNull List<PaletteLayer> layers) {
-        return palette(protocolVersion, BlockNetworkIds.SEQUENTIAL, layers);
+        return palette(protocolVersion, networkIds, layers);
     }
 
+    @Internal
     public @NonNull Palette palette(int protocolVersion, @NonNull PaletteLayer... layers) {
-        return palette(protocolVersion, BlockNetworkIds.SEQUENTIAL, List.of(layers));
+        return palette(protocolVersion, networkIds, List.of(layers));
     }
 
+    @Internal
     public @NonNull Palette palette(int protocolVersion, @NonNull BlockNetworkIds mode, @NonNull PaletteLayer... layers) {
         return palette(protocolVersion, mode, List.of(layers));
     }
 
+    @Internal
     public @NonNull Palette palette(@NonNull BedrockCodec codec, @NonNull PaletteLayer... layers) {
-        return palette(codec.getProtocolVersion(), BlockNetworkIds.SEQUENTIAL, List.of(layers));
+        return palette(codec.getProtocolVersion(), networkIds, List.of(layers));
     }
 
+    @Internal
     public @NonNull Palette palette(@NonNull BedrockCodec codec, @NonNull BlockNetworkIds mode, @NonNull PaletteLayer... layers) {
         return palette(codec.getProtocolVersion(), mode, List.of(layers));
     }
@@ -344,7 +418,97 @@ public final class Paletter {
         }
     }
 
+    /**
+     * Configures the global policy of a {@link Paletter}: everything that is the same for every palette it compiles.
+     *
+     * @since 1.0.0
+     */
+    public static final class Builder {
+        private PaletteDataSource source = PaletteDataSource.bundled();
+        private Predicate<DataVersion> versions = version -> true;
+        private BlockNetworkIds networkIds = BlockNetworkIds.SEQUENTIAL;
+        private Fallbacks fallbacks = Fallbacks.UNKNOWN;
+        private final VanillaContent vanillaContent = new VanillaContent();
+        private CreativeOrdering creativeOrdering = CreativeOrdering.BDS;
+        private Consumer<PaletteReport> reports = report -> {
+        };
+        private final List<PaletteLayer> layers = new ArrayList<>();
+
+        private Builder() {
+        }
+
+        /**
+         * @param source where the vanilla data comes from; default the data bundled in the library
+         */
+        public @NonNull Builder data(@NonNull PaletteDataSource source) {
+            this.source = Objects.requireNonNull(source);
+            return this;
+        }
+
+        /**
+         * @param versions which data versions are served; default all
+         */
+        public @NonNull Builder versions(@NonNull Predicate<DataVersion> versions) {
+            this.versions = Objects.requireNonNull(versions);
+            return this;
+        }
+
+        /**
+         * @param ids how block runtime ids are assigned; default {@link BlockNetworkIds#SEQUENTIAL}
+         */
+        public @NonNull Builder blockNetworkIds(@NonNull BlockNetworkIds ids) {
+            this.networkIds = Objects.requireNonNull(ids);
+            return this;
+        }
+
+        /**
+         * @param fallbacks what content a version lacks becomes; default {@link Fallbacks#UNKNOWN}
+         */
+        public @NonNull Builder fallbacks(@NonNull Fallbacks fallbacks) {
+            this.fallbacks = Objects.requireNonNull(fallbacks);
+            return this;
+        }
+
+        /**
+         * Selects which vanilla content exists. The content is only valid inside the consumer.
+         */
+        public @NonNull Builder vanilla(@NonNull Consumer<VanillaContent> content) {
+            Objects.requireNonNull(content).accept(vanillaContent);
+            return this;
+        }
+
+        /**
+         * @param ordering how custom items and blocks without an anchored placement are ordered in the creative
+         *                 inventory; {@link CreativeOrdering#BDS} (the default) puts them exactly where BDS puts
+         *                 add-on content
+         */
+        public @NonNull Builder creativeOrdering(@NonNull CreativeOrdering ordering) {
+            this.creativeOrdering = Objects.requireNonNull(ordering);
+            return this;
+        }
+
+        /**
+         * @param reports called once for each palette compiled (with this instance's layers applied), with its report
+         */
+        public @NonNull Builder reports(@NonNull Consumer<PaletteReport> reports) {
+            this.reports = Objects.requireNonNull(reports);
+            return this;
+        }
+
+        /**
+         * Adds content applied to every palette, after the layers added before it.
+         */
+        public @NonNull Builder layer(@NonNull PaletteLayer layer) {
+            layers.add(Objects.requireNonNull(layer));
+            return this;
+        }
+
+        public @NonNull Paletter build() {
+            return new Paletter(this);
+        }
+    }
+
     private static final class Holder {
-        private static final Paletter BUNDLED = new Paletter(PaletteDataSource.bundled());
+        private static final Paletter BUNDLED = builder().build();
     }
 }

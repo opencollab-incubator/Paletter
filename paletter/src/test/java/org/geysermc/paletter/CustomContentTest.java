@@ -4,6 +4,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.geysermc.paletter.block.BlockProperty;
+import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.Connection;
 import org.geysermc.paletter.block.component.Geometry;
@@ -197,7 +198,8 @@ class CustomContentTest {
         CustomBlock fence = CustomBlock.builder("example:fence")
             .trait(Connection.builder().enabledStates(Connection.EnabledStates.CARDINAL_CONNECTIONS).build())
             .build();
-        Palette first = PALETTER.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("first").block(fence).build());
+        Palette first = Paletter.builder().blockNetworkIds(BlockNetworkIds.HASHED).build()
+            .palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("first").block(fence).build());
         assertFalse(first.report().warnings().isEmpty());
         Palette second = first.extend(PaletteLayer.builder("second").block(lamp()).build());
         assertEquals(first.report().warnings(), second.report().warnings());

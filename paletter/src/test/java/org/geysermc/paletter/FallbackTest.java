@@ -5,7 +5,6 @@ import org.geysermc.paletter.block.BlockFallback;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.BlockResolution;
 import org.geysermc.paletter.data.DataVersion;
-import org.geysermc.paletter.data.FallbackDefaults;
 import org.geysermc.paletter.internal.data.VersionFallbacks;
 import org.geysermc.paletter.item.ItemFallback;
 import org.geysermc.paletter.item.ItemVariant;
@@ -20,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Content of the newest version that an older one lacks: Paletter bundles no fallbacks, so it is the
- * {@code minecraft:unknown} default, which the layer API overrides.
+ * {@code minecraft:unknown} default, which the {@link Fallbacks} policy of a Paletter overrides.
  */
 class FallbackTest {
     private static final Paletter PALETTER = Paletter.bundled();
@@ -56,8 +55,13 @@ class FallbackTest {
         throw new AssertionError("the oldest version has every item of the newest");
     }
 
-    private static PaletteLayer.Builder broken(Palette vanilla, int item, String id) {
-        return PaletteLayer.builder(id).itemFallback(Ids.canonicalItems(vanilla).variant(item).identifier(), "paletter:nothing");
+    /** Points the item at nothing, which keeps a test independent of other fallbacks. */
+    private static Fallbacks.Builder broken(Palette vanilla, int item) {
+        return Fallbacks.builder().item(Ids.canonicalItems(vanilla).variant(item).identifier(), ItemFallback.of("paletter:nothing"));
+    }
+
+    private static Paletter with(Fallbacks.Builder fallbacks) {
+        return Paletter.builder().fallbacks(fallbacks.build()).build();
     }
 
     @Test
@@ -68,7 +72,7 @@ class FallbackTest {
         assertTrue(palette.blocks().missingCanonical().contains(Ids.canonicalBlocks(palette).state(block)));
 
         int item = missingItem(palette);
-        ResolvedItem resolved = PALETTER.palette(OLDEST, broken(palette, item, "broken").build()).items().item(item);
+        ResolvedItem resolved = with(broken(palette, item)).palette(OLDEST).items().item(item);
         assertNotNull(resolved);
         assertEquals("minecraft:unknown", resolved.definition().getIdentifier());
         assertTrue(resolved.fallback());
@@ -85,18 +89,18 @@ class FallbackTest {
     }
 
     @Test
-    void layerFallbacksAreHowConsumersReplaceTheDefault() {
+    void fallbacksAreHowConsumersReplaceTheDefault() {
         Palette palette = PALETTER.palette(OLDEST);
         int block = blockWithoutFallback(palette);
         String name = BlockStates.name(Ids.canonicalBlocks(palette).state(block));
         assertEquals("minecraft:unknown", BlockStates.name(Ids.blockAt(palette, block).getState()));
-        Palette layered = PALETTER.palette(OLDEST, PaletteLayer.builder("fallback").blockFallback(name, BlockFallback.of("minecraft:dirt")).build());
+        Palette layered = with(Fallbacks.builder().block(name, BlockFallback.of("minecraft:dirt"))).palette(OLDEST);
         assertEquals("minecraft:dirt", BlockStates.name(Ids.blockAt(layered, block).getState()));
         assertEquals(BlockResolution.Kind.FALLBACK, layered.explain(Ids.canonicalBlocks(palette).state(block)).kind());
     }
 
     @Test
-    void layerFallbacksApplyPerVersion() {
+    void fallbacksApplyPerVersion() {
         Palette vanilla = PALETTER.palette(OLDEST);
         int block = blockWithoutFallback(vanilla);
         int missing = missingBlock(vanilla, BlockStates.name(Ids.canonicalBlocks(vanilla).state(block)));
@@ -104,19 +108,18 @@ class FallbackTest {
         String missingName = BlockStates.name(Ids.canonicalBlocks(vanilla).state(missing));
         String oldest = vanilla.version().name();
 
-        PaletteLayer layer = PaletteLayer.builder("fallbacks")
-            .blockFallback(name, BlockFallback.of("minecraft:dirt"))                  // every version
-            .blockFallback(oldest, name, BlockFallback.of("minecraft:stone"))         // this version: wins
-            .blockFallback("1.0", missingName, BlockFallback.of("minecraft:stone"))   // another version: ignored
+        Fallbacks fallbacks = Fallbacks.builder()
+            .block(name, BlockFallback.of("minecraft:dirt"))                  // every version
+            .block(oldest, name, BlockFallback.of("minecraft:stone"))         // this version: wins
+            .block("1.0", missingName, BlockFallback.of("minecraft:stone"))   // another version: ignored
             .build();
-        Palette palette = PALETTER.palette(OLDEST, layer);
+        Palette palette = Paletter.builder().fallbacks(fallbacks).build().palette(OLDEST);
         assertEquals("minecraft:stone", BlockStates.name(Ids.blockAt(palette, block).getState()));
         assertEquals("minecraft:unknown", BlockStates.name(Ids.blockAt(palette, missing).getState()));
 
         int item = missingItem(vanilla);
         String itemName = Ids.canonicalItems(vanilla).variant(item).identifier();
-        Palette withItem = PALETTER.palette(OLDEST, PaletteLayer.builder("items")
-            .itemFallback(oldest, itemName, ItemFallback.of("minecraft:stick")).build());
+        Palette withItem = with(Fallbacks.builder().item(oldest, itemName, ItemFallback.of("minecraft:stick"))).palette(OLDEST);
         assertEquals("minecraft:stick", Ids.itemAt(withItem, item).definition().getIdentifier());
     }
 
@@ -126,17 +129,18 @@ class FallbackTest {
         int block = blockWithoutFallback(vanilla);
         int item = missingItem(vanilla);
 
-        Palette none = PALETTER.palette(OLDEST, broken(vanilla, item, "none").fallbackDefaults(FallbackDefaults.NONE).build());
+        Palette none = with(broken(vanilla, item).defaultBlock(null).defaultItem(null)).palette(OLDEST);
+        Palette noneConstant = Paletter.builder().fallbacks(Fallbacks.NONE).build().palette(OLDEST);
+        assertSame(noneConstant.blocks().air(), Ids.blockAt(noneConstant, block));
         assertSame(none.blocks().air(), Ids.blockAt(none, block));
         assertNull(Ids.itemAt(none, item));
 
-        Palette custom = PALETTER.palette(OLDEST, broken(vanilla, item, "custom")
-            .fallbackDefaults(new FallbackDefaults(BlockFallback.of("minecraft:bedrock"), ItemFallback.of("minecraft:barrier")))
-            .build());
+        Palette custom = with(broken(vanilla, item)
+            .defaultBlock(BlockFallback.of("minecraft:bedrock")).defaultItem(ItemFallback.of("minecraft:barrier"))).palette(OLDEST);
         assertEquals("minecraft:bedrock", BlockStates.name(Ids.blockAt(custom, block).getState()));
         assertEquals("minecraft:barrier", Ids.itemAt(custom, item).definition().getIdentifier());
 
-        // Layers above inherit the default of the layers below
+        // Session layers inherit the policy
         Palette above = custom.extend(PaletteLayer.builder("session").build());
         assertEquals("minecraft:bedrock", BlockStates.name(Ids.blockAt(above, block).getState()));
     }
@@ -152,11 +156,11 @@ class FallbackTest {
             }
         }
         assertEquals(2, missing.size(), "fixture: the oldest version lacks two items of the newest");
-        PaletteLayer.Builder layer = PaletteLayer.builder("shared");
+        Fallbacks.Builder fallbacks = Fallbacks.builder();
         for (int item : missing) {
-            layer.itemFallback(Ids.canonicalItems(vanilla).variant(item).identifier(), "paletter:nothing");
+            fallbacks.item(Ids.canonicalItems(vanilla).variant(item).identifier(), ItemFallback.of("paletter:nothing"));
         }
-        Palette palette = PALETTER.palette(OLDEST, layer.build());
+        Palette palette = with(fallbacks).palette(OLDEST);
         ResolvedItem first = Ids.itemAt(palette, missing.get(0));
         ResolvedItem second = Ids.itemAt(palette, missing.get(1));
         assertSame(first.definition(), second.definition());
@@ -170,7 +174,7 @@ class FallbackTest {
         assertTrue(matched != missing.get(0) && matched != missing.get(1));
 
         // A fallback reached by one canonical id only still matches it, and direct variants are unaffected
-        Palette single = PALETTER.palette(OLDEST, broken(vanilla, missing.get(0), "single").build());
+        Palette single = with(broken(vanilla, missing.get(0))).palette(OLDEST);
         int apple = Ids.item(PALETTER, ItemVariant.of("minecraft:apple"));
         assertEquals(apple, Ids.match(single, Ids.itemAt(single, apple).toItemData().build()));
         assertEquals(unknown == -1 ? missing.get(0) : unknown, Ids.match(single, Ids.itemAt(single, missing.get(0)).toItemData().build()));
@@ -186,7 +190,7 @@ class FallbackTest {
             .findFirst().orElseThrow(() -> new AssertionError("fixture: the oldest version lacks a block item of the newest"));
         int id = Ids.canonicalItems(vanilla).index(stack.variant());
         assertTrue(id != -1);
-        Palette palette = PALETTER.palette(OLDEST, broken(vanilla, id, "broken").build());
+        Palette palette = with(broken(vanilla, id)).palette(OLDEST);
         ResolvedItem plain = Ids.itemAt(palette, id);
         assertNotNull(plain);
         assertEquals(plain, palette.items().resolve(stack.variant()));

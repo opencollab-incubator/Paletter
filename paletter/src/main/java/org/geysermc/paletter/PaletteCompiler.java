@@ -24,6 +24,7 @@ import org.geysermc.paletter.item.ItemRegistry;
 import org.geysermc.paletter.item.ItemVariant;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +32,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.function.BiConsumer;
 
 /**
@@ -41,17 +43,50 @@ final class PaletteCompiler {
     private PaletteCompiler() {
     }
 
-    static Palette vanilla(VanillaData data, BlockNetworkIds mode, CanonicalBlocks canonicalBlocks, CanonicalItems canonicalItems,
-                           BlockInterner interner) {
-        PaletteReport report = new PaletteReport();
-        BlockRegistry blocks = BlockRegistry.build(data, mode, canonicalBlocks, interner);
-        ItemRegistry items = ItemRegistry.vanilla(data, blocks, canonicalItems).build(data.creative(), report);
-        CreativeContent creative = CreativeContent.compile(data.creative(), items, report);
-        prepareCanonical(blocks, null, items, null, report);
-        return new Palette(data, List.of(), blocks, items, data.creative(), creative, report);
+    /** The creative ordering of the Paletter a palette was compiled by; extensions compiled later use it too. */
+    private static final Map<Palette, CreativeOrdering> ORDERINGS = Collections.synchronizedMap(new WeakHashMap<>());
+
+    static void orderingOf(Palette palette, CreativeOrdering ordering) {
+        ORDERINGS.put(palette, ordering);
     }
 
-    static Palette extend(Palette parent, PaletteLayer layer) {
+    static Palette vanilla(VanillaData loaded, BlockNetworkIds mode, CanonicalBlocks canonicalBlocks, CanonicalItems canonicalItems,
+                           BlockInterner interner, Fallbacks fallbacks, VanillaContent content, CreativeOrdering ordering) {
+        VanillaData data = content.apply(loaded);
+        PaletteReport report = new PaletteReport();
+        BlockRegistry blocks = BlockRegistry.build(data, mode, canonicalBlocks, interner)
+            .withFallbacks(fallbacks.blocks(data.version()))
+            .withDefaultFallback(fallbacks.defaultBlock());
+        ItemRegistry.Builder builder = ItemRegistry.vanilla(data, blocks, canonicalItems);
+        fallbacks.items(data.version()).forEach(builder::fallback);
+        builder.defaultFallback(fallbacks.defaultItem());
+        ItemRegistry items = builder.build(data.creative(), report);
+        CreativeContent creative = CreativeContent.compile(data.creative(), items, report);
+        prepareCanonical(blocks, null, items, null, report);
+        Palette palette = new Palette(data, List.of(), blocks, items, data.creative(), creative, report);
+        orderingOf(palette, ordering);
+        return palette;
+    }
+
+    /**
+     * @param session true if the layer is compiled for one session: custom blocks then need hashed block network ids
+     */
+    static Palette extend(Palette parent, PaletteLayer layer, boolean session) {
+        if (session && !layer.blocks().isEmpty() && parent.blockNetworkIds() != BlockNetworkIds.HASHED) {
+            throw new PaletteException("Custom blocks in a session layer need BlockNetworkIds.HASHED: layer " + layer.id()
+                + " adds " + layer.blocks().size() + " custom blocks to a " + parent.blockNetworkIds() + " palette");
+        }
+        Palette extended = extendUnchecked(parent, layer);
+        orderingOf(extended, ordering(parent));
+        return extended;
+    }
+
+    private static CreativeOrdering ordering(Palette palette) {
+        CreativeOrdering ordering = ORDERINGS.get(palette);
+        return ordering == null ? CreativeOrdering.BDS : ordering;
+    }
+
+    private static Palette extendUnchecked(Palette parent, PaletteLayer layer) {
         VanillaData data = parent.vanillaData();
         String source = layer.id();
         PaletteReport report = new PaletteReport();
@@ -61,11 +96,7 @@ final class PaletteCompiler {
             // Blocks first: items need to know which blocks exist, and custom blocks re-number all states.
             // Without custom blocks or block fallbacks the parent's block palette (and its canonical table) is shared
             BlockRegistry blocks = parent.blocks()
-                .withCustomBlocks(data, layer, layer.blocks(), report, source)
-                .withFallbacks(layer.blockFallbacks(data.version()));
-            if (layer.fallbackDefaults() != null) {
-                blocks = blocks.withDefaultFallback(layer.fallbackDefaults().block());
-            }
+                .withCustomBlocks(data, layer, layer.blocks(), report, source);
 
             List<ItemVariant> newVariants = new ArrayList<>();
             // blockItem(...) for a block of this layer takes over the item registration the block would do itself
@@ -97,10 +128,6 @@ final class PaletteCompiler {
             ItemRegistry.Builder items = parent.items().extend(blocks, canonicalItems);
             // Components refer to items of this layer registered later: declare them all first
             registered.forEach(items::declare);
-            layer.itemFallbacks(data.version()).forEach(items::fallback);
-            if (layer.fallbackDefaults() != null) {
-                items.defaultFallback(layer.fallbackDefaults().item());
-            }
             for (PaletteLayer.Override override : layer.overrides()) {
                 if (!items.override(override.identifier(), override.modifier(), report, source)) {
                     report.info(source, "Not overriding " + override.identifier() + ": the item does not exist in " + data.version());
@@ -108,7 +135,7 @@ final class PaletteCompiler {
             }
 
             CreativeEditor creative = parent.creativeLayout().edit();
-            CreativeOrdering ordering = layer.creativeOrdering();
+            CreativeOrdering ordering = ordering(parent);
             // Placements in registration order (custom items and block items interleaved, then items of blocks)
             List<Placed> placed = new ArrayList<>();
             for (PaletteLayer.ItemEntry entry : layer.itemEntries()) {
