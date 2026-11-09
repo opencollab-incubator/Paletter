@@ -1,5 +1,6 @@
 package org.geysermc.paletter;
 
+import org.geysermc.paletter.annotation.Internal;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.creative.CreativePlacement;
@@ -10,7 +11,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.ItemOverride;
-import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.internal.item.ItemVariant;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -106,6 +107,7 @@ public final class PaletteLayer {
     /**
      * @return item variants this layer gives canonical ids to, besides its custom items
      */
+    @Internal
     public @NonNull List<ItemVariant> variants() {
         return variants;
     }
@@ -220,19 +222,20 @@ public final class PaletteLayer {
         }
 
         /**
-         * Gives an item variant a canonical id, so it can be used with {@link Palette#item(int)} and is recognized by
-         * {@link Palette#match}. Needed for variants of the newest version that are neither an item's base variant nor
+         * Gives an item variant a canonical id, so that {@link Palette#decode} recognizes it. Needed for variants of the newest version that are neither an item's base variant nor
          * in the creative inventory, e.g. a damage value or block state a consumer maps to. Ids are appended after
          * the custom items of this layer, in call order; variants that already have one keep it. Like every canonical id
          * they are the same in every version.
          */
+        @Internal
         public @NonNull Builder variant(@NonNull ItemVariant variant) {
             variants.add(Objects.requireNonNull(variant));
             return this;
         }
 
         /**
-         * Gives a variant a canonical id, like {@link #variant(ItemVariant)}.
+         * Gives a variant a canonical id, so that {@link Palette#decode} recognizes it. Needed for variants of the newest version that are
+         * neither an item's base variant nor in the creative inventory.
          *
          * @since 1.0.0
          */
@@ -240,6 +243,7 @@ public final class PaletteLayer {
             return variant(variant.toItemVariant());
         }
 
+        @Internal
         public @NonNull Builder variants(@NonNull Collection<ItemVariant> variants) {
             variants.forEach(this::variant);
             return this;

@@ -5,7 +5,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.item.CustomItem;
-import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.internal.item.ItemVariant;
 
 import java.util.List;
 import java.util.Map;
@@ -46,7 +46,7 @@ public final class BedrockItemType {
         this.identifier = Objects.requireNonNull(identifier);
         this.fallback = null;
         this.custom = true;
-        BedrockItemVariant base = new BedrockItemVariant(this, 0, null, -1);
+        BedrockItemVariant base = new BedrockItemVariant(this, 0, -1);
         this.linked = new Linked(this, true, base, List.of(base));
     }
 
@@ -105,7 +105,7 @@ public final class BedrockItemType {
 
     void linkAbsent(@Nullable BedrockItemType fallbackType) {
         if (fallbackType == null) {
-            BedrockItemVariant base = new BedrockItemVariant(this, 0, null, -1);
+            BedrockItemVariant base = new BedrockItemVariant(this, 0, -1);
             this.linked = new Linked(this, false, base, List.of(base));
         } else {
             Linked target = fallbackType.linked();
@@ -169,7 +169,7 @@ public final class BedrockItemType {
     public @Nullable BedrockItemVariant variant(int damage) {
         Linked linked = linked();
         for (BedrockItemVariant variant : linked.variants) {
-            if (variant.damage() == damage && variant.blockState() == null) {
+            if (variant.aux() == damage) {
                 return variant;
             }
         }
@@ -192,7 +192,7 @@ public final class BedrockItemType {
      */
     public @NonNull BedrockItemVariant variantOf(int damage) {
         BedrockItemVariant known = variant(damage);
-        return known != null ? known : new BedrockItemVariant(linked().owner, damage, null, -1);
+        return known != null ? known : new BedrockItemVariant(linked().owner, damage, -1);
     }
 
     /**
@@ -205,6 +205,7 @@ public final class BedrockItemType {
     /**
      * @return the base variant as an {@link ItemVariant} (of the {@link #resolved()} type)
      */
+    @Internal
     public @NonNull ItemVariant toItemVariant() {
         return base().toItemVariant();
     }

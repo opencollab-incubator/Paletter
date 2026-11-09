@@ -2,19 +2,21 @@ package org.geysermc.paletter;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.annotation.Experimental;
 import org.geysermc.paletter.block.BlockResolution;
 import org.geysermc.paletter.creative.CreativeLocation;
-import org.geysermc.paletter.item.ItemVariant;
 
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 
 import java.util.List;
 
 /**
- * What a palette does with an item variant, for debugging: {@link Palette#explain(ItemVariant)}.
+ * What a palette does with an item variant, for debugging: {@link Palette#explain(String, int, NbtMap)}.
  *
- * @param requested the variant asked for
+ * @param identifier the item identifier asked for
+ * @param aux the aux (damage) value asked for
+ * @param blockState the block state asked for, as {@code {name, states}}, or null
  * @param handle its handle, or null if it has none in this palette
  * @param kind how it was resolved for this palette's version ({@code ADAPTED} does not occur for items)
  * @param chain the identifiers involved: the requested item, then the item it resolved to if that is another one
@@ -27,18 +29,19 @@ import java.util.List;
  * @since 1.0.0
  */
 @Experimental
-public record ItemExplanation(@NonNull ItemVariant requested, @Nullable BedrockItemVariant handle, BlockResolution.@NonNull Kind kind,
+public record ItemExplanation(@NonNull String identifier, int aux, @Nullable NbtMap blockState,
+                              @Nullable BedrockItemVariant handle, BlockResolution.@NonNull Kind kind,
                               @NonNull List<String> chain, @Nullable String item, int runtimeId, int damage,
                               @Nullable String block, int blockRuntimeId, @Nullable CreativeLocation creative) {
     @Override
     public String toString() {
         StringBuilder out = new StringBuilder();
-        out.append("item ").append(requested.identifier());
-        if (requested.damage() != 0) {
-            out.append(':').append(requested.damage());
+        out.append("item ").append(identifier);
+        if (aux != 0) {
+            out.append(':').append(aux);
         }
-        if (requested.blockState() != null) {
-            out.append(' ').append(BlockExplanation.describe(requested.blockState()));
+        if (blockState != null) {
+            out.append(' ').append(BlockExplanation.describe(blockState));
         }
         out.append('\n');
         out.append("  handle:       ").append(handle == null ? "none" : handle).append('\n');

@@ -10,7 +10,7 @@ import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.vanilla.BlockLayout;
 import org.geysermc.paletter.internal.CanonicalItems;
-import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.internal.item.ItemVariant;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -104,8 +104,7 @@ final class VanillaIndex {
             ItemVariant variant = items.variant(i);
             BedrockItemType type = itemsById.computeIfAbsent(variant.identifier(),
                 id -> constantItems.computeIfAbsent(id, key -> new BedrockItemType(key, VanillaTypes.UNKNOWN)));
-            BedrockBlockState blockState = variant.blockState() == null ? null : state(blocks.index(variant.blockState()));
-            BedrockItemVariant handle = new BedrockItemVariant(type, variant.damage(), blockState, i);
+            BedrockItemVariant handle = new BedrockItemVariant(type, variant.damage(), i);
             itemsByCanonical[i] = handle;
             variants.computeIfAbsent(variant.identifier(), id -> new ArrayList<>()).add(handle);
         }

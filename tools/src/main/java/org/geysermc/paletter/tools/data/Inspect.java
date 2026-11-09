@@ -3,12 +3,13 @@ package org.geysermc.paletter.tools.data;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.geysermc.paletter.Palette;
+import org.geysermc.paletter.ItemExplanation;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.data.DataVersion;
-import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.internal.item.ItemVariant;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -35,8 +36,12 @@ public final class Inspect {
             Palette palette = paletter.vanilla(v, BlockNetworkIds.HASHED);
             out.println("== " + v.name() + " (protocol " + v.protocolVersion() + ")");
             out.println(block != null ? palette.explain(parseBlock(paletter.vanilla(paletter.latest(), BlockNetworkIds.HASHED), block))
-                : palette.explain(parseItem(item)));
+                : explain(palette, parseItem(item)));
         }
+    }
+
+    private static ItemExplanation explain(Palette palette, ItemVariant item) {
+        return palette.explain(item.identifier(), item.damage());
     }
 
     private static DataVersion find(Paletter paletter, String name) {

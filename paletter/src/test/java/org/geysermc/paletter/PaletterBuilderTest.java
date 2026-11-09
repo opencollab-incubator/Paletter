@@ -11,7 +11,7 @@ import org.geysermc.paletter.internal.data.ExperimentContent;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.ItemFallback;
-import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.internal.item.ItemVariant;
 import org.geysermc.paletter.vanilla.BedrockItems;
 import org.junit.jupiter.api.Test;
 

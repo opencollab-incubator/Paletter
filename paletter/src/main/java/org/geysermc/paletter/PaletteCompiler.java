@@ -21,7 +21,7 @@ import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.ItemRegistry;
-import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.internal.item.ItemVariant;
 
 import java.util.ArrayList;
 import java.util.Collections;

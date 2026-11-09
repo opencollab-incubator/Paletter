@@ -1,5 +1,6 @@
 package org.geysermc.paletter;
 
+import org.geysermc.paletter.internal.item.ResolvedItem;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.BlockProperty;
@@ -11,7 +12,6 @@ import org.geysermc.paletter.data.PaletteDataSource;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.MaxStackSize;
-import org.geysermc.paletter.item.ResolvedItem;
 import org.junit.jupiter.api.Test;
 
 import java.lang.management.ManagementFactory;

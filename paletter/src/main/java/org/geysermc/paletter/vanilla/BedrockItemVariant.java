@@ -1,32 +1,27 @@
 package org.geysermc.paletter.vanilla;
 
-import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.internal.data.Renames;
-import org.geysermc.paletter.item.ItemVariant;
-
-import java.util.Objects;
+import org.geysermc.paletter.internal.item.ItemVariant;
 
 /**
- * A variant of a {@link BedrockItemType}: its damage value and, for the few block items that differ only in the block
- * they place, a block state. Obtained from {@link BedrockItemType#variant(int)} and {@link BedrockItemType#variants()}.
+ * A variant of a {@link BedrockItemType}: the type and its aux (damage) value. The block a stack places is not part of
+ * the variant, it belongs to the stack ({@link org.geysermc.paletter.item.BedrockItemStack#blockState()}). Obtained from
+ * {@link BedrockItemType#variant(int)} and {@link BedrockItemType#variants()}.
  *
  * @since 1.0.0
  */
 public final class BedrockItemVariant {
     private final BedrockItemType type;
-    private final int damage;
-    private final @Nullable BedrockBlockState blockState;
+    private final int aux;
     private final int id;
-    private volatile @Nullable ItemVariant variant;
+    private volatile ItemVariant variant;
 
-    BedrockItemVariant(BedrockItemType type, int damage, @Nullable BedrockBlockState blockState, int id) {
+    BedrockItemVariant(BedrockItemType type, int aux, int id) {
         this.type = type;
-        this.damage = damage;
-        this.blockState = blockState;
+        this.aux = aux;
         this.id = id;
     }
 
@@ -36,27 +31,23 @@ public final class BedrockItemVariant {
      * @return the variant of a canonical id (not null for an id in range)
      */
     @Internal
-    public static @NonNull BedrockItemVariant fromCanonical(@NonNull CanonicalItems canonical, @NonNull CanonicalBlocks blocks, int id) {
+    public static @NonNull BedrockItemVariant fromCanonical(@NonNull CanonicalItems canonical, int id) {
         VanillaIndex index = VanillaIndex.get();
         if (id < canonical.vanillaSize() && canonical.root() == index.items) {
             return index.itemsByCanonical[id];
         }
         ItemVariant variant = canonical.variant(id);
         BedrockItemType type = BedrockItemType.vanilla(variant.identifier());
-        BedrockBlockState state = null;
-        if (variant.blockState() != null) {
-            state = BedrockBlockState.fromCanonical(blocks, blocks.index(variant.blockState()));
-        }
         if (type != null) {
             for (BedrockItemVariant known : type.variants()) {
-                if (known.damage() == variant.damage() && Objects.equals(known.blockState(), state)) {
+                if (known.aux() == variant.damage()) {
                     return known;
                 }
             }
         } else {
             type = BedrockItemType.custom(variant.identifier());
         }
-        return new BedrockItemVariant(type, variant.damage(), state, -1);
+        return new BedrockItemVariant(type, variant.damage(), -1);
     }
 
     /**
@@ -85,21 +76,18 @@ public final class BedrockItemVariant {
         return type;
     }
 
-    public int damage() {
-        return damage;
-    }
-
     /**
-     * @return the block state that tells this variant apart, or null
+     * @return the aux (damage) value
      */
-    public @Nullable BedrockBlockState blockState() {
-        return blockState;
+    public int aux() {
+        return aux;
     }
 
+    @Internal
     public @NonNull ItemVariant toItemVariant() {
         ItemVariant variant = this.variant;
         if (variant == null) {
-            variant = new ItemVariant(type.identifier(), damage, blockState == null ? null : blockState.toNbt());
+            variant = ItemVariant.of(type.identifier(), aux);
             this.variant = variant;
         }
         return variant;
@@ -118,13 +106,12 @@ public final class BedrockItemVariant {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof BedrockItemVariant other && damage == other.damage && type.equals(other.type)
-            && Objects.equals(blockState, other.blockState);
+        return this == o || o instanceof BedrockItemVariant other && aux == other.aux && type.equals(other.type);
     }
 
     @Override
     public int hashCode() {
-        return 31 * type.hashCode() + damage;
+        return 31 * type.hashCode() + aux;
     }
 
     @Override

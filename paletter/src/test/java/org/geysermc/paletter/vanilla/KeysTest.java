@@ -41,10 +41,10 @@ class KeysTest {
         assertSame(BedrockItems.APPLE.base(), BedrockItemVariant.of("minecraft:apple", 0));
         assertSame(BedrockItems.APPLE.base(), BedrockItemVariant.of(BedrockItems.APPLE, 0));
         for (BedrockItemVariant known : BedrockItems.POTION.variants()) {
-            assertSame(known, BedrockItemVariant.of(BedrockItems.POTION, known.damage()));
+            assertSame(known, BedrockItemVariant.of(BedrockItems.POTION, known.aux()));
         }
         BedrockItemVariant unknown = BedrockItemVariant.of("test:thing", 7);
-        assertEquals(7, unknown.damage());
+        assertEquals(7, unknown.aux());
         assertSame(BedrockItemType.of("test:thing"), unknown.type());
         assertEquals(unknown, BedrockItemVariant.of("test:thing", 7));
     }
@@ -54,7 +54,7 @@ class KeysTest {
         Renames renames = Renames.parse(List.of("item test:old_apple minecraft:apple"));
         assertEquals("minecraft:apple", renames.item("test:old_apple"));
         CanonicalItems items = CanonicalItems.of(PALETTER.vanillaData(PALETTER.latest()), renames);
-        Forwarding forwarding = items.forward(item("test:old_apple", 0), Ids.canonicalBlocks(PALETTER));
+        Forwarding forwarding = items.forward(item("test:old_apple", 0));
         assertEquals(Forwarding.Kind.RENAMED, forwarding.kind());
         assertEquals(BedrockItems.APPLE.base().canonicalIn(items), forwarding.canonical());
     }
@@ -68,10 +68,10 @@ class KeysTest {
         assertNull(renames.item("minecraft:apple"));
 
         CanonicalItems items = CanonicalItems.of(PALETTER.vanillaData(PALETTER.latest()), renames);
-        Forwarding forwarding = items.forward(item("minecraft:apple", 5), Ids.canonicalBlocks(PALETTER));
+        Forwarding forwarding = items.forward(item("minecraft:apple", 5));
         assertEquals(Forwarding.Kind.RENAMED, forwarding.kind());
         assertEquals(BedrockItems.GOLDEN_APPLE.base().canonicalIn(items), forwarding.canonical());
-        Forwarding other = items.forward(item("test:legacy", 2), Ids.canonicalBlocks(PALETTER));
+        Forwarding other = items.forward(item("test:legacy", 2));
         assertEquals(BedrockItems.APPLE.base().canonicalIn(items), other.canonical());
     }
 
@@ -84,7 +84,7 @@ class KeysTest {
         assertNotEquals(BedrockItemType.of("test:apple"), vanilla);
     }
 
-    private static org.geysermc.paletter.item.ItemVariant item(String id, int damage) {
-        return org.geysermc.paletter.item.ItemVariant.of(id, damage);
+    private static org.geysermc.paletter.internal.item.ItemVariant item(String id, int damage) {
+        return org.geysermc.paletter.internal.item.ItemVariant.of(id, damage);
     }
 }

@@ -16,7 +16,7 @@ import org.geysermc.paletter.data.PaletteDataSource;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.internal.CanonicalItems;
-import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.internal.item.ItemVariant;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
@@ -216,28 +216,30 @@ public final class Paletter {
         return blocks.handle(Canonicals.block(blocks, state));
     }
 
-    /**
-     * @param variant an item variant of <em>any</em> bundled version; one the newest version lacks is mapped forward
-     * @return its handle, or null if the newest version has no equivalent (see {@link #explainUnknown(ItemVariant)})
+        /**
+     * @param identifier an item identifier of <em>any</em> bundled version; an item the newest version lacks is mapped
+     *                   forward (renames and splits)
+     * @param aux the aux (damage) value
+     * @return its handle, or null if the newest version has no equivalent (see {@link #explainUnknown(String, int)})
      * @since 1.0.0
      */
-    public @Nullable BedrockItemVariant item(@NonNull ItemVariant variant) {
-        return canonicalItems().handle(Canonicals.item(canonicalItems(), canonicalBlocks(), variant), canonicalBlocks());
+    public @Nullable BedrockItemVariant item(@NonNull String identifier, int aux) {
+        return canonicalItems().handle(Canonicals.item(canonicalItems(), ItemVariant.of(identifier, aux)));
     }
 
     /**
      * The block state an item places, version independent: the block the newest version sends the item with
-     * ({@link Palette#blockOf}). Accepts variants of any bundled version like {@link #item(ItemVariant)}.
+     * ({@link Palette#blockOf}). Accepts variants of any bundled version like {@link #item(String, int)}.
      *
      * @return the block state, or null if the item is not a block item or has no handle
      * @since 1.0.0
      */
-    public @Nullable BedrockBlockState blockOf(@NonNull ItemVariant variant) {
-        int canonical = Canonicals.item(canonicalItems(), canonicalBlocks(), variant);
+    public @Nullable BedrockBlockState blockOf(@NonNull BedrockItemVariant variant) {
+        int canonical = Canonicals.item(canonicalItems(), variant.toItemVariant());
         if (canonical == -1) {
             return null;
         }
-        var block = vanilla(newest()).blockOf(canonicalItems().variant(canonical));
+        var block = vanilla(newest()).blockOf(variant);
         return block == null ? null : block(block.getState());
     }
 
@@ -251,12 +253,11 @@ public final class Paletter {
     }
 
     /**
-     * @return why an item variant has no handle (the item was removed, it has no such damage value or block
-     *         state), or null if it has one
+     * @return why an item has no handle (the item was removed, it has no such aux value), or null if it has one
      * @since 1.0.0
      */
-    public @Nullable String explainUnknown(@NonNull ItemVariant variant) {
-        Forwarding forwarding = Canonicals.forwardItem(canonicalItems(), canonicalBlocks(), variant);
+    public @Nullable String explainUnknown(@NonNull String identifier, int aux) {
+        Forwarding forwarding = Canonicals.forwardItem(canonicalItems(), ItemVariant.of(identifier, aux));
         return forwarding.known() ? null : forwarding.detail();
     }
 
