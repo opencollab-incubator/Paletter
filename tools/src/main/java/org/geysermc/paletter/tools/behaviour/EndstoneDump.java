@@ -94,7 +94,15 @@ final class EndstoneDump {
             for (Map.Entry<String, JsonElement> entry : state.entrySet()) {
                 if (entry.getKey().equals("geometry")) {
                     for (Map.Entry<String, JsonElement> part : entry.getValue().getAsJsonObject().entrySet()) {
-                        read(values, hash, "geometry." + part.getKey(), part.getValue(), BLOCK_FIELDS, BLOCK_IGNORED);
+                        if (part.getKey().equals("shapeSource")) {
+                            // The dump's author says the shapes of this state were not read from BDS as they are
+                            values.reportsPostProcessing.add(BlockBehaviour.COLLISION_SHAPE);
+                            values.reportsPostProcessing.add(BlockBehaviour.OUTLINE_SHAPE);
+                            values.postProcessed(BlockBehaviour.COLLISION_SHAPE, hash, "shapeSource: " + part.getValue().getAsString());
+                            values.postProcessed(BlockBehaviour.OUTLINE_SHAPE, hash, "shapeSource: " + part.getValue().getAsString());
+                        } else {
+                            read(values, hash, "geometry." + part.getKey(), part.getValue(), BLOCK_FIELDS, BLOCK_IGNORED);
+                        }
                     }
                 } else {
                     read(values, hash, entry.getKey(), entry.getValue(), BLOCK_FIELDS, BLOCK_IGNORED);

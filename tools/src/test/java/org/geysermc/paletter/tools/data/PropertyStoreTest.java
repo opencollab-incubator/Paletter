@@ -129,7 +129,6 @@ class PropertyStoreTest {
         assertNotNull(wire);
         assertEquals("w", wire.value());
         assertEquals("wire:wire_key", wire.fullName());
-        assertTrue(properties.of(PropertyKind.BEHAVIOUR).isEmpty());
         assertEquals(Properties.EMPTY, store.item("test:missing", V1));
         assertEquals(Properties.EMPTY, store.item("test:a", new DataVersion("9.9", 999)));
     }
@@ -212,18 +211,15 @@ class PropertyStoreTest {
     }
 
     @Test
-    void behaviourPropertiesComeInThroughTheBuilder() throws Exception {
+    void propertiesComeInThroughTheBuilder() throws Exception {
         PropertyStore.Builder builder = new PropertyStore.Builder(List.of(V2, V1));
-        builder.put(PropertyStore.Owner.BLOCK, "test:b", PropertyKind.BEHAVIOUR, "friction", V1, 0.6f);
-        builder.put(PropertyStore.Owner.BLOCK, "test:b", PropertyKind.BEHAVIOUR, "friction", V2, 0.6f);
+        builder.put(PropertyStore.Owner.BLOCK, "test:b", PropertyKind.WIRE, "friction", V1, 0.6f);
+        builder.put(PropertyStore.Owner.BLOCK, "test:b", PropertyKind.WIRE, "friction", V2, 0.6f);
         PropertyStore store = roundTrip(builder.build());
         assertEquals(1, store.rangeCount());
-        Property friction = store.block("test:b", V2).get(PropertyKind.BEHAVIOUR, "friction");
+        Property friction = store.block("test:b", V2).get(PropertyKind.WIRE, "friction");
         assertNotNull(friction);
         assertEquals(0.6f, friction.value());
-        // behaviour is not network data: it does not end up in the data driven blocks
-        assertTrue(store.attach(data(V1, List.of(), List.of())).dataDrivenBlocks().stream()
-            .allMatch(block -> block.getProperties().isEmpty()));
     }
 
     @Test

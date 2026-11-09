@@ -104,6 +104,14 @@ public final class AnticheatExample {
         Provenance provenance = behaviour.provenance(ice, BlockBehaviour.FRICTION);
         System.out.println("blue ice friction from " + provenance.source() + " " + provenance.reference()
             + (provenance.inherited() ? " (inherited from " + provenance.captured() + ")" : ""));
+        System.out.println("  third-party dump: " + provenance.thirdParty() + ", disputed: " + provenance.disputed());
+
+        // A custom block: was the value set by the server, or is it a BDS default? (Not known yet: no value then)
+        RegisteredBlockState custom = palette.blocks().block("example:slippery").defaultState();
+        System.out.println("custom friction set by the user: " + behaviour.isUserSet(custom, BlockBehaviour.FRICTION)
+            + ", conversion unverified: " + behaviour.provenance(custom, BlockBehaviour.FRICTION).unverified());
+        System.out.println("custom destroy time: " + behaviour.get(custom, BlockBehaviour.DESTROY_TIME) + " ("
+            + behaviour.provenance(custom, BlockBehaviour.DESTROY_TIME).source() + ")");
 
         // Items: how long eating takes, the stack size, the damage of a weapon
         RegisteredItem apple = palette.item(BedrockItems.APPLE);

@@ -87,10 +87,13 @@ public final class Palette {
     private final Map<PaletteLayer, WeakReference<Palette>> extensions = new WeakHashMap<>();
     private final Supplier<BehaviourStore> behaviourStore;
     private volatile Behaviour behaviour;
+    /** The palette this one extends, or is a copy of: its block states are a prefix of this one's. Null for vanilla palettes. */
+    private final @Nullable Palette parent;
 
     Palette(VanillaData data, List<PaletteLayer> layers, BlockRegistry blocks, ItemRegistry items,
             CreativeLayout creativeLayout, CreativeContent creative, PaletteReport report, CreativeOrdering ordering,
-            VanillaContent.ExperimentGating gating, Supplier<BehaviourStore> behaviourStore) {
+            VanillaContent.ExperimentGating gating, Supplier<BehaviourStore> behaviourStore, @Nullable Palette parent) {
+        this.parent = parent;
         this.behaviourStore = behaviourStore;
         this.gating = gating;
         this.data = data;
@@ -118,7 +121,7 @@ public final class Palette {
      * @return this palette with another report, sharing everything else
      */
     Palette withReport(PaletteReport report) {
-        return new Palette(data, layers, blocks, items, creativeLayout, creative, report, ordering, gating, behaviourStore);
+        return new Palette(data, layers, blocks, items, creativeLayout, creative, report, ordering, gating, behaviourStore, this);
     }
 
     Supplier<BehaviourStore> behaviourStore() {
@@ -136,7 +139,7 @@ public final class Palette {
             synchronized (this) {
                 result = behaviour;
                 if (result == null) {
-                    behaviour = result = Behaviour.of(this, behaviourStore.get());
+                    behaviour = result = Behaviour.of(this, behaviourStore.get(), parent == null ? null : parent.behaviour());
                 }
             }
         }

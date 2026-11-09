@@ -565,6 +565,20 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         return table == other.table;
     }
 
+    /**
+     * @return true if this palette has the states of the other one, in the same dense positions ({@link #indexOf}), and
+     * possibly more after them: it is the other palette or was built by adding custom blocks to it
+     */
+    @Internal
+    public boolean extendsStatesOf(@NonNull BlockRegistry other) {
+        for (Table t = table; t != null; t = t.parent) {
+            if (t == other.table) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return "BlockRegistry{" + version() + ", " + size() + " states, " + table.customBlocks.size() + " custom blocks}";

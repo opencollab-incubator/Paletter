@@ -7,6 +7,8 @@ import org.geysermc.paletter.behaviour.Provenance.Source;
 import org.geysermc.paletter.data.DataVersion;
 import org.junit.jupiter.api.Test;
 
+import org.cloudburstmc.nbt.NbtMap;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -93,6 +95,64 @@ class BehaviourStoreTest {
         int capture = builder.capture(V1, Source.CLOUDBURST_DATA, "x", List.of(1), List.of());
         assertThrows(IllegalArgumentException.class, () -> builder.blocks(BlockBehaviour.FRICTION, capture, Map.of(2, 0.6f)));
         assertThrows(IllegalArgumentException.class, () -> builder.items(BlockBehaviour.FRICTION, capture, Map.of()));
+    }
+
+    /** Two sources of V1 that disagree on state 1 (with a note on the stronger one), an item, a default and metadata. */
+    private static BehaviourStore marked() {
+        BehaviourStore.Builder builder = new BehaviourStore.Builder(List.of(V1, V2));
+        int weak = builder.capture(V1, Source.ALLAY_DATA, "allay", List.of(1, 2), List.of("a:x", "a:y"));
+        builder.blocks(BlockBehaviour.COLLISION_SHAPE, weak, Map.of(1, SLAB, 2, BlockShape.FULL_CUBE));
+        int strong = builder.capture(V1, Source.CLOUDBURST_DATA, "cb", List.of(1, 2), List.of());
+        builder.blocks(BlockBehaviour.COLLISION_SHAPE, strong, Map.of(1, BlockShape.FULL_CUBE, 2, BlockShape.FULL_CUBE));
+        builder.dispute(BlockBehaviour.COLLISION_SHAPE, strong, weak, Map.of(1, SLAB));
+        builder.postProcessed(BlockBehaviour.COLLISION_SHAPE, strong, List.of(1), "shapeSource: corrected");
+        builder.items(ItemBehaviour.ATTACK_DAMAGE, weak, Map.of("a:x", 4, "a:y", 5));
+        builder.dispute(ItemBehaviour.ATTACK_DAMAGE, weak, strong, Map.of("a:y", 6));
+        builder.postProcessed(ItemBehaviour.ATTACK_DAMAGE, weak, List.of("a:x"), "rounded");
+        builder.defaultOf(BlockBehaviour.FRICTION, 0.6f, Source.NATIVE, "capture of 2026-11");
+        builder.metadata(NbtMap.builder().putString("command", "make it").build());
+        return builder.build();
+    }
+
+    @Test
+    void disputesPostProcessingDefaultsAndMetadataAreStoredAndRead() throws IOException {
+        for (BehaviourStore store : List.of(marked(), BehaviourStore.read(new ByteArrayInputStream(bytes(marked()))))) {
+            BehaviourStore.Resolved disputed = store.block(BlockBehaviour.COLLISION_SHAPE, 1, V2);
+            assertEquals(BlockShape.FULL_CUBE, disputed.value());
+            assertEquals("shapeSource: corrected", disputed.postProcessing());
+            assertEquals(1, disputed.disputes().size());
+            assertEquals(SLAB, disputed.disputes().getFirst().value());
+            assertEquals(Source.ALLAY_DATA, disputed.disputes().getFirst().capture().source());
+            BehaviourStore.Resolved plain = store.block(BlockBehaviour.COLLISION_SHAPE, 2, V1);
+            assertNull(plain.postProcessing());
+            assertEquals(List.of(), plain.disputes());
+            BehaviourStore.Resolved item = store.item(ItemBehaviour.ATTACK_DAMAGE, "a:y", V1);
+            assertEquals(5, item.value());
+            assertEquals(6, item.disputes().getFirst().value());
+            assertEquals("rounded", store.item(ItemBehaviour.ATTACK_DAMAGE, "a:x", V1).postProcessing());
+            assertEquals(0.6f, store.defaultOf(BlockBehaviour.FRICTION).value());
+            assertEquals(Source.NATIVE, store.defaultOf(BlockBehaviour.FRICTION).source());
+            assertNull(store.defaultOf(BlockBehaviour.DESTROY_TIME), "an unknown default stays unknown");
+            assertEquals("make it", store.metadata().getString("command"));
+        }
+    }
+
+    @Test
+    void aDefaultNeedsDirectEvidence() {
+        BehaviourStore.Builder builder = new BehaviourStore.Builder(List.of(V1));
+        assertThrows(IllegalArgumentException.class, () -> builder.defaultOf(BlockBehaviour.FRICTION, 0.6f, Source.CLOUDBURST_DATA, "a third party"));
+        assertThrows(IllegalArgumentException.class, () -> builder.defaultOf(BlockBehaviour.FRICTION, 0.6f, Source.NATIVE, " "));
+        assertThrows(IllegalArgumentException.class, () -> builder.defaultOf(BlockBehaviour.FRICTION, 0.6f, Source.USER, "x"));
+        assertThrows(IllegalArgumentException.class, () -> builder.defaultOf(BlockBehaviour.FRICTION, 0.6f, Source.UNKNOWN_DEFAULT, "x"));
+    }
+
+    @Test
+    void marksNeedCoveredIdsAndAnotherCapture() {
+        BehaviourStore.Builder builder = new BehaviourStore.Builder(List.of(V1));
+        int a = builder.capture(V1, Source.CLOUDBURST_DATA, "a", List.of(1), List.of());
+        int b = builder.capture(V1, Source.ALLAY_DATA, "b", List.of(1), List.of());
+        assertThrows(IllegalArgumentException.class, () -> builder.postProcessed(BlockBehaviour.FRICTION, a, List.of(2), "x"));
+        assertThrows(IllegalArgumentException.class, () -> builder.dispute(BlockBehaviour.FRICTION, a, a, Map.of(1, 0.5f)));
     }
 
     private static byte[] bytes(BehaviourStore store) throws IOException {

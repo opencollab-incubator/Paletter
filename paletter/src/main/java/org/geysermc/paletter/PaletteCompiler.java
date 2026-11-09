@@ -64,7 +64,7 @@ final class PaletteCompiler {
         ItemRegistry items = builder.build(layout, report);
         CreativeContent creative = CreativeContent.compile(layout, items, report);
         prepareCanonical(blocks, null, items, null, report);
-        Palette palette = new Palette(data, List.of(), blocks, items, layout, creative, report, ordering, applied.gating(), behaviour);
+        Palette palette = new Palette(data, List.of(), blocks, items, layout, creative, report, ordering, applied.gating(), behaviour, null);
         return palette;
     }
 
@@ -205,7 +205,7 @@ final class PaletteCompiler {
             List<PaletteLayer> layers = new ArrayList<>(parent.layers());
             layers.add(layer);
             return new Palette(data, layers, blocks, itemPalette, layout, content, report, parent.ordering(), parent.gating(),
-                parent.behaviourStore());
+                parent.behaviourStore(), parent);
         } catch (PaletteException e) {
             throw new PaletteException("Unable to compile layer " + source + " for " + data.version() + ": " + e.getMessage(), e);
         } catch (RuntimeException e) {

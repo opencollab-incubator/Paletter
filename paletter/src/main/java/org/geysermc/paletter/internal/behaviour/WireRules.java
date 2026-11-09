@@ -13,6 +13,7 @@ import org.geysermc.paletter.property.Properties;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -43,7 +44,42 @@ public final class WireRules {
         ItemBehaviour.MAX_DAMAGE, p -> intOf(p.component("minecraft:durability"), "max_durability")
     );
 
+    /** The add-on components (names in add-on JSON) a key's rule reads: what a user sets to set the key. */
+    private static final Map<BehaviourKey<?>, List<String>> COMPONENTS = Map.ofEntries(
+        Map.entry(BlockBehaviour.DESTROY_TIME, List.of("minecraft:destructible_by_mining")),
+        Map.entry(BlockBehaviour.FRICTION, List.of("minecraft:friction")),
+        Map.entry(BlockBehaviour.LIGHT_EMISSION, List.of("minecraft:light_emission")),
+        Map.entry(BlockBehaviour.LIGHT_DAMPENING, List.of("minecraft:light_dampening")),
+        Map.entry(BlockBehaviour.COLLISION_SHAPE, List.of("minecraft:collision_box", "minecraft:transformation")),
+        Map.entry(BlockBehaviour.OUTLINE_SHAPE, List.of("minecraft:selection_box", "minecraft:transformation")),
+        Map.entry(ItemBehaviour.MAX_STACK_SIZE, List.of("minecraft:max_stack_size")),
+        Map.entry(ItemBehaviour.ATTACK_DAMAGE, List.of("minecraft:damage")),
+        Map.entry(ItemBehaviour.USE_DURATION, List.of("minecraft:use_modifiers")),
+        Map.entry(ItemBehaviour.USE_ANIMATION, List.of("minecraft:use_animation")),
+        Map.entry(ItemBehaviour.MAX_DAMAGE, List.of("minecraft:durability"))
+    );
+    /**
+     * Keys whose rule converts the component value into the engine's unit without a BDS capture that confirms the
+     * conversion. Remove a key when a capture of a custom block / item confirms it.
+     */
+    private static final Set<BehaviourKey<?>> UNVERIFIED = Set.of(BlockBehaviour.FRICTION);
+
     private WireRules() {
+    }
+
+    /**
+     * @return the add-on component names (e.g. {@code minecraft:friction}) a user sets to set the key; empty if the
+     * component data does not carry the key
+     */
+    public static @NonNull List<String> components(@NonNull BehaviourKey<?> key) {
+        return COMPONENTS.getOrDefault(key, List.of());
+    }
+
+    /**
+     * @return true if the rule's conversion of the component value is not confirmed by BDS evidence yet
+     */
+    public static boolean unverified(@NonNull BehaviourKey<?> key) {
+        return UNVERIFIED.contains(key);
     }
 
     /**

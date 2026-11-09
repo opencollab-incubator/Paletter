@@ -8,17 +8,53 @@ import org.geysermc.paletter.block.BlockRegistry;
 /**
  * The values of one {@link BehaviourKey} for every block state of a palette, by the dense index of
  * {@link BlockRegistry#indexOf}: an array load, no allocation. From {@link Behaviour#blocks(BehaviourKey)}.
+ * <p>
+ * A table of a palette that extends another one ({@code palette.extend(layer)}) shares the vanilla values of the other
+ * one's table (the same array) and only has values of its own for the block states the layers added.
  *
  * @param <T> the value type
  * @since 0.1.0
  */
 public final class BlockTable<T> {
     private final BlockRegistry registry;
-    private final Object[] values;
+    /** The values of the first {@code sharedSize} states: shared with the tables of the palettes this one extends. */
+    private final Object[] shared;
+    private final int sharedSize;
+    /** The values of the states after them. */
+    private final Object[] own;
 
     BlockTable(BlockRegistry registry, Object[] values) {
+        this(registry, values, values.length, new Object[0]);
+    }
+
+    private BlockTable(BlockRegistry registry, Object[] shared, int sharedSize, Object[] own) {
         this.registry = registry;
-        this.values = values;
+        this.shared = shared;
+        this.sharedSize = sharedSize;
+        this.own = own;
+    }
+
+    /**
+     * @return a table over another registry that has the states of this table's registry first, then the {@code added}
+     * values of the states after them
+     */
+    BlockTable<T> extend(BlockRegistry extended, Object[] added) {
+        Object[] all = new Object[own.length + added.length];
+        System.arraycopy(own, 0, all, 0, own.length);
+        System.arraycopy(added, 0, all, own.length, added.length);
+        return new BlockTable<>(extended, shared, sharedSize, all);
+    }
+
+    /**
+     * @return this table over the registry of a palette with the same states
+     */
+    BlockTable<T> with(BlockRegistry same) {
+        return new BlockTable<>(same, shared, sharedSize, own);
+    }
+
+    /** @return the array of values shared with the tables this one extends, for tests */
+    Object[] shared() {
+        return shared;
     }
 
     /**
@@ -27,7 +63,7 @@ public final class BlockTable<T> {
      */
     @SuppressWarnings("unchecked")
     public @Nullable T get(int index) {
-        return (T) values[index];
+        return (T) (index < sharedSize ? shared[index] : own[index - sharedSize]);
     }
 
     /**
@@ -51,6 +87,6 @@ public final class BlockTable<T> {
      * @return the number of block states, equal to the registry's {@link BlockRegistry#size()}
      */
     public int size() {
-        return values.length;
+        return sharedSize + own.length;
     }
 }

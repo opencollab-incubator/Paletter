@@ -50,6 +50,19 @@ class EndstoneDumpTest {
     }
 
     @Test
+    void notesWhatTheSourceSaysItPostProcessed() throws IOException {
+        Values<Integer> values = EndstoneDump.blocks(new StringReader("""
+            [{"name": "minecraft:door", "blockStateHash": 1, "geometry": {"collision": {"space": "sampled", "boxes": [[0, 0, 0, 0.1875, 1, 1]]},
+                "outline": {"space": "sampled", "box": [0, 0, 0, 0.1875, 1, 1]}, "shapeSource": "door_state_correction"}},
+             {"name": "minecraft:stone", "blockStateHash": 2, "geometry": {"collision": {"space": "sampled", "boxes": [[0, 0, 0, 1, 1, 1]]}}}]
+            """));
+        assertEquals(Map.of(1, "shapeSource: door_state_correction"), values.postProcessed.get(BlockBehaviour.COLLISION_SHAPE));
+        assertEquals(Map.of(1, "shapeSource: door_state_correction"), values.postProcessed.get(BlockBehaviour.OUTLINE_SHAPE));
+        assertTrue(values.reportsPostProcessing.contains(BlockBehaviour.COLLISION_SHAPE), "the stone has no note: it was not post-processed");
+        assertTrue(values.unmappedFields.isEmpty(), values.unmappedFields.toString());
+    }
+
+    @Test
     void decodesOnlyWhatATruncationExplains() {
         assertEquals(1.8f, EndstoneDump.decode(1.799999));
         assertEquals(0.9f, EndstoneDump.decode(0.899999), "0.899999f and 0.9f both print so: the shorter");

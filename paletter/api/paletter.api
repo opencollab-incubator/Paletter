@@ -283,6 +283,8 @@ public final class org.geysermc.paletter.behaviour.Behaviour {
     public <T> T get(org.geysermc.paletter.item.RegisteredItem, org.geysermc.paletter.behaviour.BehaviourKey<T>)
     public <T> T get(org.geysermc.paletter.vanilla.BedrockBlockState, org.geysermc.paletter.behaviour.BehaviourKey<T>)
     public <T> T get(org.geysermc.paletter.vanilla.BedrockItemType, org.geysermc.paletter.behaviour.BehaviourKey<T>)
+    public boolean isUserSet(org.geysermc.paletter.block.RegisteredBlockState, org.geysermc.paletter.behaviour.BehaviourKey<?>)
+    public boolean isUserSet(org.geysermc.paletter.item.RegisteredItem, org.geysermc.paletter.behaviour.BehaviourKey<?>)
     public org.geysermc.paletter.behaviour.Provenance provenance(org.geysermc.paletter.block.RegisteredBlockState, org.geysermc.paletter.behaviour.BehaviourKey<?>)
     public org.geysermc.paletter.behaviour.Provenance provenance(org.geysermc.paletter.item.RegisteredItem, org.geysermc.paletter.behaviour.BehaviourKey<?>)
 }
@@ -374,23 +376,48 @@ public final class org.geysermc.paletter.behaviour.ItemBehaviour {
 
 public record org.geysermc.paletter.behaviour.Provenance {
     public <init>(org.geysermc.paletter.behaviour.Provenance$Source, java.lang.String, java.lang.String, java.lang.String)
+    public <init>(org.geysermc.paletter.behaviour.Provenance$Source, java.lang.String, java.lang.String, java.lang.String, java.util.List<org.geysermc.paletter.behaviour.Provenance$Alternative>, java.lang.String, boolean)
+    public java.util.List<org.geysermc.paletter.behaviour.Provenance$Alternative> alternatives()
+    public boolean bdsDefault()
     public java.lang.String captured()
+    public boolean disputed()
     public final boolean equals(java.lang.Object)
     public final int hashCode()
     public boolean inherited()
+    public boolean postProcessed()
+    public java.lang.String postProcessing()
+    public java.lang.String reference()
+    public org.geysermc.paletter.behaviour.Provenance$Source source()
+    public boolean thirdParty()
+    public final java.lang.String toString()
+    public boolean unknownDefault()
+    public static org.geysermc.paletter.behaviour.Provenance unknownDefault(java.lang.String)
+    public boolean unverified()
+    public boolean userSet()
+    public java.lang.String version()
+}
+
+public record org.geysermc.paletter.behaviour.Provenance$Alternative {
+    public <init>(org.geysermc.paletter.behaviour.Provenance$Source, java.lang.String, java.lang.String, java.lang.Object)
+    public java.lang.String captured()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
     public java.lang.String reference()
     public org.geysermc.paletter.behaviour.Provenance$Source source()
     public final java.lang.String toString()
-    public java.lang.String version()
+    public java.lang.Object value()
 }
 
 public enum org.geysermc.paletter.behaviour.Provenance$Source {
     public static final org.geysermc.paletter.behaviour.Provenance$Source ALLAY_DATA
+    public static final org.geysermc.paletter.behaviour.Provenance$Source BDS_DEFAULT
     public static final org.geysermc.paletter.behaviour.Provenance$Source CLOUDBURST_DATA
-    public static final org.geysermc.paletter.behaviour.Provenance$Source COMPONENT
     public static final org.geysermc.paletter.behaviour.Provenance$Source NATIVE
     public static final org.geysermc.paletter.behaviour.Provenance$Source SCRIPT_API
+    public static final org.geysermc.paletter.behaviour.Provenance$Source UNKNOWN_DEFAULT
+    public static final org.geysermc.paletter.behaviour.Provenance$Source USER
     public static final org.geysermc.paletter.behaviour.Provenance$Source WIRE
+    public boolean thirdParty()
     public static org.geysermc.paletter.behaviour.Provenance$Source valueOf(java.lang.String)
     public static org.geysermc.paletter.behaviour.Provenance$Source[] values()
 }
@@ -3948,7 +3975,6 @@ public record org.geysermc.paletter.property.Property {
 }
 
 public enum org.geysermc.paletter.property.PropertyKind {
-    public static final org.geysermc.paletter.property.PropertyKind BEHAVIOUR
     public static final org.geysermc.paletter.property.PropertyKind COMPONENT
     public static final org.geysermc.paletter.property.PropertyKind WIRE
     public java.lang.String prefix()

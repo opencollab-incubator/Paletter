@@ -54,26 +54,32 @@ import java.util.TreeSet;
  * blocks: {key: [{capture: int, mask?: byte[], values}]}   mask: a bit per id the capture covers (sorted), set if
  *                                   the column has a value for it; no mask: every covered id
  * items: {key: [{capture: int, mask?: byte[], values}]}
+ * postprocessed: [{key, capture, ids, note}]   the capture's values of these ids were post-processed by its source
+ * disputes: [{key, capture, alt_capture, ids, values}]   another capture of the same version said {@code values} for
+ *                                   these ids while the capture decided; nothing direct from BDS settled it
+ * defaults: [{key, source, reference, values: [one]}]   the BDS default of custom content without the component
+ * metadata: {...}                   what generated the file and from which sources (informational)
  * </pre>
  * Values by key type: float list, int array, byte array (booleans), string list, int array of shape indexes.
  */
 @Internal
 public final class BehaviourStore {
     public static final int FORMAT = 1;
-    private static final BehaviourStore EMPTY = new BehaviourStore(List.of(), new int[0], List.of(), Map.of(), Map.of());
+    private static final BehaviourStore EMPTY = new BehaviourStore(List.of(), new int[0], List.of(), Map.of(), Map.of(), Map.of(), Map.of(), Map.of(), NbtMap.EMPTY);
 
     /**
      * One source's capture of one version.
      *
+     * @param index its position in {@link #captures()}
      * @param order the block states it covers in storage order: the order of the previous capture of the same source
      *              without the states it lost, then the new ones in the order the importer gave (palette order, so the
      *              states of a block sit together and their values compress well)
      * @param blocks the same states, sorted, for lookups
      */
-    public record Capture(@NonNull String version, int versionIndex, Provenance.@NonNull Source source,
+    public record Capture(int index, @NonNull String version, int versionIndex, Provenance.@NonNull Source source,
                           @NonNull String reference, int @NonNull [] order, int @NonNull [] blocks, @NonNull Set<String> items) {
-        Capture(String version, int versionIndex, Provenance.Source source, String reference, int[] order, Set<String> items) {
-            this(version, versionIndex, source, reference, order, Arrays.stream(order).sorted().toArray(), items);
+        Capture(int index, String version, int versionIndex, Provenance.Source source, String reference, int[] order, Set<String> items) {
+            this(index, version, versionIndex, source, reference, order, Arrays.stream(order).sorted().toArray(), items);
         }
 
         boolean covers(int block) {
@@ -93,8 +99,32 @@ public final class BehaviourStore {
     private record Column<I>(int capture, I ids, Object[] values) {
     }
 
-    /** A value and the capture that decided it. */
-    public record Resolved(@NonNull Object value, @NonNull Capture capture) {
+    /**
+     * A value and the capture that decided it.
+     *
+     * @param postProcessing how the capture's source post-processed the value, or null
+     * @param disputes what other captures of the same version said, if they differ and nothing direct settles it
+     */
+    public record Resolved(@NonNull Object value, @NonNull Capture capture, @Nullable String postProcessing,
+                           @NonNull List<Dispute> disputes) {
+        public Resolved(Object value, Capture capture) {
+            this(value, capture, null, List.of());
+        }
+    }
+
+    /** Another capture's value for the same id. */
+    public record Dispute(@NonNull Capture capture, @NonNull Object value) {
+    }
+
+    /** The BDS default of a key for custom content, and the evidence it comes from. */
+    public record Default(@NonNull Object value, Provenance.@NonNull Source source, @NonNull String reference) {
+    }
+
+    /**
+     * Facts about the values one capture decided for some ids of a key: post-processed by the source ({@code note}), or
+     * disputed by the capture {@code altCapture} ({@code altValues[i]} is its value for {@code ids[i]}).
+     */
+    private record Mark<I>(int capture, I ids, @Nullable String note, int altCapture, Object @Nullable [] altValues) {
     }
 
     private final List<String> versions;
@@ -102,14 +132,24 @@ public final class BehaviourStore {
     private final List<Capture> captures;
     private final Map<BehaviourKey<?>, List<Column<int[]>>> blocks;
     private final Map<BehaviourKey<?>, List<Column<String[]>>> items;
+    private final Map<BehaviourKey<?>, List<Mark<int[]>>> blockMarks;
+    private final Map<BehaviourKey<?>, List<Mark<String[]>>> itemMarks;
+    private final Map<BehaviourKey<?>, Default> defaults;
+    private final NbtMap metadata;
 
     private BehaviourStore(List<String> versions, int[] protocols, List<Capture> captures,
-                           Map<BehaviourKey<?>, List<Column<int[]>>> blocks, Map<BehaviourKey<?>, List<Column<String[]>>> items) {
+                           Map<BehaviourKey<?>, List<Column<int[]>>> blocks, Map<BehaviourKey<?>, List<Column<String[]>>> items,
+                           Map<BehaviourKey<?>, List<Mark<int[]>>> blockMarks, Map<BehaviourKey<?>, List<Mark<String[]>>> itemMarks,
+                           Map<BehaviourKey<?>, Default> defaults, NbtMap metadata) {
         this.versions = versions;
         this.protocols = protocols;
         this.captures = captures;
         this.blocks = blocks;
         this.items = items;
+        this.blockMarks = blockMarks;
+        this.itemMarks = itemMarks;
+        this.defaults = defaults;
+        this.metadata = metadata;
     }
 
     public static @NonNull BehaviourStore empty() {
@@ -122,6 +162,16 @@ public final class BehaviourStore {
 
     public @NonNull List<Capture> captures() {
         return captures;
+    }
+
+    /** @return what generated the file and from which sources; empty for a store built in memory */
+    public @NonNull NbtMap metadata() {
+        return metadata;
+    }
+
+    /** @return the BDS default of a key for custom content without the component, or null if it is not known */
+    public @Nullable Default defaultOf(@NonNull BehaviourKey<?> key) {
+        return defaults.get(key);
     }
 
     /** @return the keys with data */
@@ -161,13 +211,39 @@ public final class BehaviourStore {
                     Column<int[]> column = columns.get(j);
                     int found = Arrays.binarySearch(column.ids(), stateHash);
                     if (found >= 0) {
-                        return new Resolved(column.values()[found], capture);
+                        return resolved(column.values()[found], capture, blockMarks.get(key), stateHash, (ids, id) -> Arrays.binarySearch(ids, (int) id));
                     }
                 }
                 return null;
             }
         }
         return null;
+    }
+
+    private <I> Resolved resolved(Object value, Capture capture, @Nullable List<Mark<I>> marks, Object id,
+                                  java.util.function.ToIntBiFunction<I, Object> find) {
+        String note = null;
+        List<Dispute> disputes = List.of();
+        if (marks != null) {
+            for (Mark<I> mark : marks) {
+                if (mark.capture() != capture.index()) {
+                    continue;
+                }
+                int at = find.applyAsInt(mark.ids(), id);
+                if (at < 0) {
+                    continue;
+                }
+                if (mark.altCapture() < 0) {
+                    note = mark.note();
+                } else {
+                    if (disputes.isEmpty()) {
+                        disputes = new ArrayList<>();
+                    }
+                    disputes.add(new Dispute(captures.get(mark.altCapture()), mark.altValues()[at]));
+                }
+            }
+        }
+        return note == null && disputes.isEmpty() ? new Resolved(value, capture) : new Resolved(value, capture, note, List.copyOf(disputes));
     }
 
     /** @return the value of an item in a version, or null if no capture covers it */
@@ -184,7 +260,7 @@ public final class BehaviourStore {
                     Column<String[]> column = columns.get(j);
                     int found = Arrays.binarySearch(column.ids(), identifier);
                     if (found >= 0) {
-                        return new Resolved(column.values()[found], capture);
+                        return resolved(column.values()[found], capture, itemMarks.get(key), identifier, (ids, id) -> Arrays.binarySearch(ids, (String) id));
                     }
                 }
                 return null;
@@ -206,6 +282,10 @@ public final class BehaviourStore {
         private final Map<BehaviourKey<?>, List<Column<String[]>>> items = new LinkedHashMap<>();
         /** The value each id resolves to after the captures added so far, per key. */
         private final Map<BehaviourKey<?>, Map<Object, Object>> current = new HashMap<>();
+        private final Map<BehaviourKey<?>, List<Mark<int[]>>> blockMarks = new LinkedHashMap<>();
+        private final Map<BehaviourKey<?>, List<Mark<String[]>>> itemMarks = new LinkedHashMap<>();
+        private final Map<BehaviourKey<?>, Default> defaults = new LinkedHashMap<>();
+        private NbtMap metadata = NbtMap.EMPTY;
 
         public Builder(@NonNull List<DataVersion> versions) {
             List<DataVersion> sorted = versions.stream().sorted().toList();
@@ -234,7 +314,7 @@ public final class BehaviourStore {
             Set<Integer> now = new java.util.LinkedHashSet<>(blocks);
             Set<Integer> then = before == null ? Set.of() : boxed(before.blocks());
             int[] added = now.stream().filter(id -> !then.contains(id)).mapToInt(Integer::intValue).toArray();
-            captures.add(new Capture(version.name(), index, source, reference, order(before, sortedDifference(then, now), added),
+            captures.add(new Capture(captures.size(), version.name(), index, source, reference, order(before, sortedDifference(then, now), added),
                 Set.copyOf(items)));
             return captures.size() - 1;
         }
@@ -259,6 +339,97 @@ public final class BehaviourStore {
             String[] ids = changed.keySet().stream().map(String.class::cast).sorted().toArray(String[]::new);
             items.computeIfAbsent(key, k -> new ArrayList<>()).add(new Column<>(capture, ids, valuesOf(ids.length, i -> changed.get(ids[i]))));
             return this;
+        }
+
+        /**
+         * Says that the capture's source post-processed the values it gave for these ids of the key (e.g. corrected
+         * them after the BDS dump).
+         *
+         * @param ids block state hashes ({@link Integer}) or item identifiers ({@link String}) the capture covers
+         */
+        public @NonNull Builder postProcessed(@NonNull BehaviourKey<?> key, int capture, @NonNull Collection<?> ids, @NonNull String note) {
+            checkMark(key, capture, ids);
+            addMark(key, new MarkInput(capture, sorted(key, ids), Objects.requireNonNull(note), -1, null));
+            return this;
+        }
+
+        /**
+         * Says that another capture, {@code altCapture}, gave other values than the capture that decided, and that nothing
+         * direct from BDS settles which is right. It is a capture of the same version, or of another one if the deciding
+         * capture's value is the same as in the version where the dispute was seen.
+         *
+         * @param values the alternative value of every disputed id the capture covers
+         */
+        public <T> @NonNull Builder dispute(@NonNull BehaviourKey<T> key, int capture, int altCapture, @NonNull Map<?, T> values) {
+            checkMark(key, capture, values.keySet());
+            if (altCapture == capture || altCapture < 0 || altCapture >= captures.size()) {
+                throw new IllegalArgumentException(key + ": capture " + altCapture + " is not another capture than " + capture);
+            }
+            for (Object value : values.values()) {
+                if (!key.type().isInstance(value)) {
+                    throw new IllegalArgumentException(key + ": dispute value " + value);
+                }
+            }
+            addMark(key, new MarkInput(capture, sorted(key, values.keySet()), null, altCapture, values));
+            return this;
+        }
+
+        /**
+         * Sets the BDS default of a key for custom content that does not set the component. Without it the default is
+         * unknown.
+         */
+        public <T> @NonNull Builder defaultOf(@NonNull BehaviourKey<T> key, @NonNull T value, Provenance.@NonNull Source source,
+                                              @NonNull String reference) {
+            if (!key.type().isInstance(value)) {
+                throw new IllegalArgumentException(key + ": default " + value);
+            }
+            if (source.thirdParty() || source == Provenance.Source.USER || source == Provenance.Source.BDS_DEFAULT
+                || source == Provenance.Source.UNKNOWN_DEFAULT || reference.isBlank()) {
+                // A default is what BDS itself does: captured by a direct source, with the evidence named
+                throw new IllegalArgumentException(key + ": a default needs a direct BDS source and a reference, got " + source);
+            }
+            defaults.put(key, new Default(value, source, reference));
+            return this;
+        }
+
+        /** Sets what the written file says about how it was generated. */
+        public @NonNull Builder metadata(@NonNull NbtMap metadata) {
+            this.metadata = Objects.requireNonNull(metadata);
+            return this;
+        }
+
+        private record MarkInput(int capture, Object[] ids, @Nullable String note, int altCapture, @Nullable Map<?, ?> alt) {
+        }
+
+        private void checkMark(BehaviourKey<?> key, int capture, Collection<?> ids) {
+            if (capture < 0 || capture >= captures.size()) {
+                throw new IllegalArgumentException(key + ": no capture " + capture);
+            }
+            for (Object id : ids) {
+                boolean covered = key.owner() == BehaviourKey.Owner.BLOCK
+                    ? id instanceof Integer hash && captures.get(capture).covers(hash)
+                    : id instanceof String name && captures.get(capture).items().contains(name);
+                if (!covered) {
+                    throw new IllegalArgumentException(key + ": " + id + " is not covered by capture " + capture);
+                }
+            }
+        }
+
+        private static Object[] sorted(BehaviourKey<?> key, Collection<?> ids) {
+            return key.owner() == BehaviourKey.Owner.BLOCK
+                ? ids.stream().map(Integer.class::cast).sorted().toArray() : ids.stream().map(String.class::cast).sorted().toArray();
+        }
+
+        @SuppressWarnings("unchecked")
+        private void addMark(BehaviourKey<?> key, MarkInput input) {
+            Object[] alt = input.alt() == null ? null : Arrays.stream(input.ids()).map(id -> input.alt().get(id)).toArray();
+            if (key.owner() == BehaviourKey.Owner.BLOCK) {
+                blockMarks.computeIfAbsent(key, k -> new ArrayList<>()).add(new Mark<>(input.capture(),
+                    Arrays.stream(input.ids()).mapToInt(id -> (Integer) id).toArray(), input.note(), input.altCapture(), alt));
+            } else {
+                itemMarks.computeIfAbsent(key, k -> new ArrayList<>()).add(new Mark<>(input.capture(),
+                    Arrays.copyOf(input.ids(), input.ids().length, String[].class), input.note(), input.altCapture(), alt));
+            }
         }
 
         private void check(BehaviourKey<?> key, BehaviourKey.Owner owner, int capture, Set<?> ids, java.util.function.Predicate<Object> covered) {
@@ -299,11 +470,12 @@ public final class BehaviourStore {
         }
 
         public @NonNull BehaviourStore build() {
-            return new BehaviourStore(List.copyOf(names), protocols.clone(), List.copyOf(captures), copy(blocks), copy(items));
+            return new BehaviourStore(List.copyOf(names), protocols.clone(), List.copyOf(captures), copy(blocks), copy(items),
+                copy(blockMarks), copy(itemMarks), new LinkedHashMap<>(defaults), metadata);
         }
 
-        private static <I> Map<BehaviourKey<?>, List<Column<I>>> copy(Map<BehaviourKey<?>, List<Column<I>>> map) {
-            Map<BehaviourKey<?>, List<Column<I>>> copy = new LinkedHashMap<>();
+        private static <C> Map<BehaviourKey<?>, List<C>> copy(Map<BehaviourKey<?>, List<C>> map) {
+            Map<BehaviourKey<?>, List<C>> copy = new LinkedHashMap<>();
             map.forEach((key, columns) -> copy.put(key, List.copyOf(columns)));
             return copy;
         }
@@ -333,7 +505,7 @@ public final class BehaviourStore {
             items.removeAll(entry.getList("items_removed", NbtType.STRING));
             items.addAll(entry.getList("items_added", NbtType.STRING));
             String version = entry.getString("version");
-            Capture capture = new Capture(version, versions.indexOf(version), source, entry.getString("reference"),
+            Capture capture = new Capture(captures.size(), version, versions.indexOf(version), source, entry.getString("reference"),
                 order(before, entry.getIntArray("blocks_removed"), entry.getIntArray("blocks_added")), Set.copyOf(items));
             captures.add(capture);
             previous.put(source.name(), capture);
@@ -388,7 +560,53 @@ public final class BehaviourStore {
             }
             items.put(key, List.copyOf(columns));
         }
-        return new BehaviourStore(versions, root.getIntArray("protocols"), List.copyOf(captures), blocks, items);
+        Map<BehaviourKey<?>, List<Mark<int[]>>> blockMarks = new LinkedHashMap<>();
+        Map<BehaviourKey<?>, List<Mark<String[]>>> itemMarks = new LinkedHashMap<>();
+        readMarks(root.getList("postprocessed", NbtType.COMPOUND), false, shapes, blockMarks, itemMarks);
+        readMarks(root.getList("disputes", NbtType.COMPOUND), true, shapes, blockMarks, itemMarks);
+        Map<BehaviourKey<?>, Default> defaults = new LinkedHashMap<>();
+        for (NbtMap entry : root.getList("defaults", NbtType.COMPOUND)) {
+            BehaviourKey<?> key = keyOf(entry.getString("key"));
+            if (key != null) {
+                defaults.put(key, new Default(readValues(key, entry, 1, shapes, new HashMap<>())[0],
+                    Provenance.Source.valueOf(entry.getString("source")), entry.getString("reference")));
+            }
+        }
+        return new BehaviourStore(versions, root.getIntArray("protocols"), List.copyOf(captures), blocks, items,
+            blockMarks, itemMarks, defaults, root.getCompound("metadata"));
+    }
+
+    /** @return the key of a {@code block:name} or {@code item:name}, or null for one of a newer library */
+    private static @Nullable BehaviourKey<?> keyOf(String qualified) {
+        if (qualified.startsWith("block:")) {
+            return BlockBehaviour.key(qualified.substring("block:".length()));
+        }
+        return qualified.startsWith("item:") ? ItemBehaviour.key(qualified.substring("item:".length())) : null;
+    }
+
+    private static void readMarks(List<NbtMap> entries, boolean disputes, List<BlockShape> shapes,
+                                  Map<BehaviourKey<?>, List<Mark<int[]>>> blockMarks, Map<BehaviourKey<?>, List<Mark<String[]>>> itemMarks)
+        throws IOException {
+        for (NbtMap entry : entries) {
+            BehaviourKey<?> key = keyOf(entry.getString("key"));
+            if (key == null) {
+                continue;
+            }
+            int size;
+            if (key.owner() == BehaviourKey.Owner.BLOCK) {
+                int[] ids = entry.getIntArray("ids");
+                size = ids.length;
+                blockMarks.computeIfAbsent(key, k -> new ArrayList<>()).add(new Mark<>(entry.getInt("capture"), ids,
+                    disputes ? null : entry.getString("note"), disputes ? entry.getInt("alt_capture") : -1,
+                    disputes ? readValues(key, entry, size, shapes, new HashMap<>()) : null));
+            } else {
+                String[] ids = entry.getList("ids", NbtType.STRING).toArray(String[]::new);
+                size = ids.length;
+                itemMarks.computeIfAbsent(key, k -> new ArrayList<>()).add(new Mark<>(entry.getInt("capture"), ids,
+                    disputes ? null : entry.getString("note"), disputes ? entry.getInt("alt_capture") : -1,
+                    disputes ? readValues(key, entry, size, shapes, new HashMap<>()) : null));
+            }
+        }
     }
 
     private static Object[] readValues(BehaviourKey<?> key, NbtMap column, int size, List<BlockShape> shapes,
@@ -469,6 +687,13 @@ public final class BehaviourStore {
             }
             itemKeys.putList(key.name(), NbtType.COMPOUND, list);
         });
+        List<NbtMap> postProcessed = new ArrayList<>();
+        List<NbtMap> disputes = new ArrayList<>();
+        writeMarks(blockMarks, postProcessed, disputes, shapes);
+        writeMarks(itemMarks, postProcessed, disputes, shapes);
+        List<NbtMap> defaultList = new ArrayList<>();
+        defaults.forEach((key, value) -> defaultList.add(writeValues(key, NbtMap.builder().putString("key", key.toString())
+            .putString("source", value.source().name()).putString("reference", value.reference()), new Object[] {value.value()}, shapes).build()));
         @SuppressWarnings("rawtypes")
         List<NbtList> shapeList = new ArrayList<>();
         for (BlockShape shape : shapes.keySet()) {
@@ -487,10 +712,34 @@ public final class BehaviourStore {
             .putList("shapes", NbtType.LIST, shapeList)
             .putCompound("blocks", blockKeys.build())
             .putCompound("items", itemKeys.build())
+            .putList("postprocessed", NbtType.COMPOUND, postProcessed)
+            .putList("disputes", NbtType.COMPOUND, disputes)
+            .putList("defaults", NbtType.COMPOUND, defaultList)
+            .putCompound("metadata", metadata)
             .build();
         try (NBTOutputStream output = NbtUtils.createGZIPWriter(stream)) {
             output.writeTag(root);
         }
+    }
+
+    private static <I> void writeMarks(Map<BehaviourKey<?>, List<Mark<I>>> marks, List<NbtMap> postProcessed, List<NbtMap> disputes,
+                                       Map<BlockShape, Integer> shapes) {
+        marks.forEach((key, list) -> {
+            for (Mark<I> mark : list) {
+                NbtMapBuilder entry = NbtMap.builder().putString("key", key.toString()).putInt("capture", mark.capture());
+                if (mark.ids() instanceof int[] ids) {
+                    entry.putIntArray("ids", ids);
+                } else {
+                    entry.putList("ids", NbtType.STRING, Arrays.asList((String[]) mark.ids()));
+                }
+                if (mark.altCapture() < 0) {
+                    postProcessed.add(entry.putString("note", mark.note()).build());
+                } else {
+                    entry.putInt("alt_capture", mark.altCapture());
+                    disputes.add(writeValues(key, entry, mark.altValues(), shapes).build());
+                }
+            }
+        });
     }
 
     private static NbtMapBuilder writeValues(BehaviourKey<?> key, NbtMapBuilder entry, Object[] values, Map<BlockShape, Integer> shapes) {

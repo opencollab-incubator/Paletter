@@ -87,12 +87,123 @@ class BehaviourImportTest {
         assertNull(store.block(BlockBehaviour.FRICTION, 101, V1));
         assertEquals(7, store.item(ItemBehaviour.ATTACK_DAMAGE, "minecraft:sword", V3).value());
 
-        String report = new BehaviourReport(bundled(), importer.captures(), store, importer.log).render();
+        String report = new BehaviourReport(bundled(), importer.captures(), store, importer.log, importer.customDefaults()).render();
         assertTrue(report.contains("| 1.0: ALLAY_DATA vs CLOUDBURST_DATA") || report.contains("### 1.0: ALLAY_DATA vs CLOUDBURST_DATA"), report);
         assertTrue(report.contains("b1[] (1): 0.5 / 0.7"), report);
         assertTrue(report.contains("inherited from 2.0 CLOUDBURST_DATA 101"), report);
         assertTrue(report.contains("inherited from 1.0 ALLAY_DATA 1"), report);
         assertTrue(report.contains("`block:climbable` | none 100"), report);
+    }
+
+    private static BehaviourImport.Capture capture(Provenance.Source source, DataVersion version, Values<Integer> blocks) {
+        return new BehaviourImport.Capture(source, source.name().toLowerCase() + "@" + version.name(), "2026-01-01", version, "test", blocks, new Values<>());
+    }
+
+    private static Values<Integer> friction(float... values) {
+        Values<Integer> blocks = new Values<>();
+        for (int i = 0; i < values.length; i++) {
+            blocks.put(BlockBehaviour.FRICTION, i + 1, values[i]);
+        }
+        return blocks;
+    }
+
+    /** V1: Data and Allay disagree on state 1; a direct source settles state 2. V2: only Data, the same values. */
+    private static BehaviourImport disputeScenario() {
+        BehaviourImport importer = new BehaviourImport(bundled());
+        importer.captures().add(capture(Provenance.Source.CLOUDBURST_DATA, V1, friction(0.7f, 0.7f, 0.7f)));
+        importer.captures().add(capture(Provenance.Source.ALLAY_DATA, V1, friction(0.5f, 0.5f, 0.7f)));
+        Values<Integer> direct = new Values<>();
+        direct.put(BlockBehaviour.FRICTION, 2, 0.6f);
+        importer.captures().add(capture(Provenance.Source.SCRIPT_API, V1, direct));
+        importer.captures().add(capture(Provenance.Source.CLOUDBURST_DATA, V2, friction(0.7f, 0.7f, 0.7f)));
+        return importer;
+    }
+
+    @Test
+    void disagreementsAreDisputedUnlessBdsSettlesThem() {
+        BehaviourStore store = disputeScenario().build();
+        BehaviourStore.Resolved one = store.block(BlockBehaviour.FRICTION, 1, V1);
+        assertEquals(0.7f, one.value(), "CloudburstMC/Data ranks above Allay");
+        assertEquals(1, one.disputes().size());
+        assertEquals(0.5f, one.disputes().getFirst().value());
+        assertEquals(Provenance.Source.ALLAY_DATA, one.disputes().getFirst().capture().source());
+        assertEquals(0.6f, store.block(BlockBehaviour.FRICTION, 2, V1).value(), "the direct capture decides");
+        assertTrue(store.block(BlockBehaviour.FRICTION, 2, V1).disputes().isEmpty(), "BDS settled it");
+        assertTrue(store.block(BlockBehaviour.FRICTION, 3, V1).disputes().isEmpty(), "they agree");
+    }
+
+    @Test
+    void aDisputeIsCarriedToVersionsWithTheSameValueAndNoOtherSource() {
+        BehaviourStore store = disputeScenario().build();
+        BehaviourStore.Resolved carried = store.block(BlockBehaviour.FRICTION, 1, V2);
+        assertEquals(1, carried.disputes().size(), "V2 only has Data, but its value is the one Allay disputed in V1");
+        assertEquals("1.0", carried.disputes().getFirst().capture().version());
+        assertTrue(store.block(BlockBehaviour.FRICTION, 3, V2).disputes().isEmpty());
+    }
+
+    @Test
+    void whatASourceSaysItPostProcessedIsMarkedAndCarried() {
+        BehaviourImport importer = new BehaviourImport(bundled());
+        Values<Integer> newer = friction(0.7f);
+        newer.reportsPostProcessing.add(BlockBehaviour.FRICTION);
+        newer.postProcessed(BlockBehaviour.FRICTION, 1, "shapeSource: corrected");
+        importer.captures().add(capture(Provenance.Source.CLOUDBURST_DATA, V2, newer));
+        importer.captures().add(capture(Provenance.Source.CLOUDBURST_DATA, V1, friction(0.7f, 0.8f)));
+        BehaviourStore store = importer.build();
+        assertEquals("shapeSource: corrected", store.block(BlockBehaviour.FRICTION, 1, V2).postProcessing());
+        String carried = store.block(BlockBehaviour.FRICTION, 1, V1).postProcessing();
+        assertTrue(carried.startsWith("shapeSource: corrected (carried from 2.0"), carried);
+        assertNull(store.block(BlockBehaviour.FRICTION, 2, V1).postProcessing());
+    }
+
+    @Test
+    void theOutputIsReproducibleAndSaysWhereItCameFrom() throws IOException {
+        byte[] first = bytes(disputeScenario().build());
+        assertTrue(java.util.Arrays.equals(first, bytes(disputeScenario().build())), "the same inputs give the same bytes");
+        BehaviourStore read = BehaviourStore.read(new java.io.ByteArrayInputStream(first));
+        NbtMap metadata = read.metadata();
+        assertEquals(BehaviourImport.COMMAND, metadata.getString("command"));
+        assertTrue(metadata.getString("do_not_edit").contains("Generated"));
+        assertEquals(4, metadata.getList("sources", org.cloudburstmc.nbt.NbtType.COMPOUND).size());
+        NbtMap source = metadata.getList("sources", org.cloudburstmc.nbt.NbtType.COMPOUND).stream()
+            .filter(m -> m.getString("source").equals("CLOUDBURST_DATA")).findFirst().orElseThrow();
+        assertEquals("third-party dump of BDS", source.getString("kind"));
+        assertTrue(source.getString("what").contains("CloudburstMC/Data"));
+        BehaviourImport importer = disputeScenario();
+        String report = new BehaviourReport(bundled(), importer.captures(), importer.build(), importer.log, importer.customDefaults()).render();
+        assertTrue(report.startsWith("<!-- Generated by `behaviour import`"), report.substring(0, 60));
+        assertTrue(report.contains("## Disputed values"), report);
+        assertTrue(report.contains("0.7 (CLOUDBURST_DATA) / 0.5 (ALLAY_DATA@1.0)"), report);
+    }
+
+    @Test
+    void customDefaultsComeFromTheirDataFileWithEvidence(@TempDir Path directory) throws IOException {
+        BehaviourImport importer = new BehaviourImport(bundled());
+        importer.customDefaults(directory.resolve("missing.json"));
+        assertNull(importer.build().defaultOf(BlockBehaviour.FRICTION), "no file: unknown");
+
+        Path file = directory.resolve("defaults.json");
+        Files.writeString(file, """
+            {"defaults": [{"key": "block:friction", "value": 0.6, "source": "NATIVE", "reference": "LeviLamina capture"},
+                          {"key": "item:max_stack_size", "value": 64, "source": "SCRIPT_API", "reference": "probe"}]}
+            """);
+        importer.customDefaults(file);
+        BehaviourStore store = importer.build();
+        assertEquals(0.6f, store.defaultOf(BlockBehaviour.FRICTION).value());
+        assertEquals(Provenance.Source.NATIVE, store.defaultOf(BlockBehaviour.FRICTION).source());
+        assertEquals(64, store.defaultOf(ItemBehaviour.MAX_STACK_SIZE).value());
+        assertNull(store.defaultOf(BlockBehaviour.DESTROY_TIME));
+
+        Files.writeString(file, "{\"defaults\": [{\"key\": \"block:friction\", \"value\": 0.6, \"source\": \"CLOUDBURST_DATA\", \"reference\": \"x\"}]}");
+        BehaviourImport third = new BehaviourImport(bundled());
+        third.customDefaults(file);
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, third::build);
+    }
+
+    private static byte[] bytes(BehaviourStore store) throws IOException {
+        java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+        store.write(out);
+        return out.toByteArray();
     }
 
     private static String dump(int states, float friction) {
