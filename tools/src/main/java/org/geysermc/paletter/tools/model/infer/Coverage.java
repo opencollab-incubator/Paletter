@@ -240,9 +240,9 @@ public final class Coverage {
             md.append("- ").append(note.version()).append(" `").append(note.component()).append("`: ")
                 .append(note.text().length() > 220 ? note.text().substring(0, 220) + "..." : note.text()).append('\n');
         }
-        if (!captures.isEmpty() && !captures.getFirst().unattributed().isEmpty()) {
+        if (!captures.isEmpty() && !captures.getLast().unattributed().isEmpty()) {
             md.append("\n## Content log lines without a variant\n\n");
-            captures.getFirst().unattributed().stream().distinct().limit(20).forEach(l -> md.append("- `").append(l.replace("`", "'")).append("`\n"));
+            captures.getLast().unattributed().stream().distinct().limit(20).forEach(l -> md.append("- `").append(l.replace("`", "'")).append("`\n"));
         }
         return md.toString();
     }

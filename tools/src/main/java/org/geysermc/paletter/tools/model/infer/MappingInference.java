@@ -76,7 +76,7 @@ public final class MappingInference {
     }
 
     record Capture(String name, String bdsVersion, int protocol, List<Variant> variants, Map<String, Map<String, Leaf>> wire,
-                   Map<String, List<String>> log, List<String> unattributed) {
+                   Map<String, List<String>> log, List<String> unattributed, Feedback feedback) {
     }
 
     /** @return false (in check mode) if a committed output differs */
@@ -87,15 +87,18 @@ public final class MappingInference {
         transforms = Files.exists(modelDir.resolve("transforms.json"))
             ? JsonParser.parseString(Files.readString(modelDir.resolve("transforms.json"))).getAsJsonObject() : new JsonObject();
         List<Capture> captures = new ArrayList<>();
-        feedback = new Feedback();
         Path dir = root.resolve(org.geysermc.paletter.tools.Layout.BDS);
         if (Files.isDirectory(dir)) {
             try (Stream<Path> dirs = Files.list(dir)) {
-                for (Path capture : dirs.map(d -> d.resolve("spec")).filter(d -> Files.exists(d.resolve("variants.json"))).sorted().toList()) {
+                for (Path capture : dirs.map(d -> d.resolve("spec")).filter(d -> Files.exists(d.resolve("variants.json"))).toList()) {
                     captures.add(load(capture));
                 }
             }
         }
+        // By protocol, not by name: the oldest build first, the newest last
+        captures.sort(java.util.Comparator.comparingInt(Capture::protocol));
+        // What BDS says about the schema is read from the newest build only: an older one knows fewer members
+        feedback = captures.isEmpty() ? new Feedback() : captures.getLast().feedback();
         JsonObject mappings = new JsonObject();
         JsonArray sources = new JsonArray();
         for (Capture capture : captures) {
@@ -112,31 +115,21 @@ public final class MappingInference {
         JsonObject components = new JsonObject();
         Coverage coverage = new Coverage(model, fixtures, transforms);
         for (Component component : model.components()) {
-            JsonObject merged = null;
-            List<Integer> protocols = new ArrayList<>();
+            List<JsonObject> results = new ArrayList<>();
+            List<Integer> resultProtocols = new ArrayList<>();
             for (Capture capture : captures) {
                 JsonObject result = analyze(capture, component);
-                if (result == null) {
-                    continue;
-                }
-                if (merged == null) {
-                    merged = result;
-                    protocols.add(capture.protocol());
-                } else if (stripProtocols(merged).equals(stripProtocols(result))) {
-                    protocols.add(capture.protocol());
-                } else {
-                    // A different mapping in another protocol: kept per protocol
-                    merged.add("protocol" + capture.protocol(), result);
+                if (result != null) {
+                    results.add(result);
+                    resultProtocols.add(capture.protocol());
                 }
             }
+            JsonObject merged = merge(results, resultProtocols);
             if (merged == null) {
                 continue;
             }
-            JsonArray window = new JsonArray();
-            protocols.forEach(window::add);
-            merged.add("protocols", window);
             components.add(component.id(), merged);
-            coverage.add(component, merged);
+            coverage.add(component, newest(merged));
         }
         mappings.add("components", components);
         String mappingsText = Model.GSON.toJson(mappings) + "\n";
@@ -163,10 +156,82 @@ public final class MappingInference {
         return keys;
     }
 
-    private static JsonObject stripProtocols(JsonObject o) {
-        JsonObject copy = o.deepCopy();
-        copy.remove("protocols");
-        return copy;
+    /**
+     * One result per capture (oldest first) into the component's windows: a capture whose wire relevant part
+     * ({@link #wireShape}) equals the previous window's joins that window ({@code protocols}); a different one starts a
+     * new window, kept beside the first as {@code protocol<N>} (N: its first protocol). A window whose status is not
+     * {@code sent} (rejected, server only) records that the component is not on the wire there.
+     *
+     * @return the first window with the others attached, or null without results
+     */
+    static JsonObject merge(List<JsonObject> results, List<Integer> protocols) {
+        JsonObject first = null;
+        JsonObject current = null;
+        JsonElement currentShape = null;
+        JsonArray currentProtocols = null;
+        for (int i = 0; i < results.size(); i++) {
+            JsonObject result = results.get(i);
+            JsonElement shape = wireShape(result);
+            if (current != null && shape.equals(currentShape)) {
+                currentProtocols.add(protocols.get(i));
+                continue;
+            }
+            current = result;
+            currentShape = shape;
+            currentProtocols = new JsonArray();
+            currentProtocols.add(protocols.get(i));
+            current.add("protocols", currentProtocols);
+            if (first == null) {
+                first = current;
+            } else {
+                first.add("protocol" + protocols.get(i), current);
+            }
+        }
+        return first;
+    }
+
+    /** @return the window of the newest capture of a merged component */
+    static JsonObject newest(JsonObject merged) {
+        JsonObject newest = merged;
+        int newestProtocol = merged.getAsJsonArray("protocols").get(0).getAsInt();
+        for (String key : merged.keySet()) {
+            if (key.matches("protocol\\d+") && Integer.parseInt(key.substring("protocol".length())) > newestProtocol) {
+                newestProtocol = Integer.parseInt(key.substring("protocol".length()));
+                newest = merged.getAsJsonObject(key);
+            }
+        }
+        return newest;
+    }
+
+    /**
+     * What of a result decides the bytes on the wire: the status, the wire keys, the constants and per form and field
+     * its status, rules, transform and absent values. What BDS said about the JSON (errors, ranges, accepted and
+     * rejected counts) is not part of it: another build with other messages or a different variant count is no new window.
+     */
+    static JsonElement wireShape(JsonObject result) {
+        JsonObject shape = new JsonObject();
+        for (String key : List.of("status", "wire", "constants")) {
+            if (result.has(key)) {
+                shape.add(key, result.get(key));
+            }
+        }
+        for (String group : List.of("forms", "fields")) {
+            if (!result.has(group)) {
+                continue;
+            }
+            JsonObject kept = new JsonObject();
+            for (Map.Entry<String, JsonElement> e : result.getAsJsonObject(group).entrySet()) {
+                JsonObject field = new JsonObject();
+                for (String key : List.of("status", "rules", "transform", "whenAbsent")) {
+                    if (e.getValue().getAsJsonObject().has(key)) {
+                        field.add(key, e.getValue().getAsJsonObject().get(key));
+                    }
+                }
+                kept.add(e.getKey(), field);
+            }
+            shape.add(group, kept);
+        }
+        return shape;
     }
 
     private static String read(Path file) throws IOException {
@@ -207,6 +272,7 @@ public final class MappingInference {
         }
         Map<String, List<String>> log = new TreeMap<>();
         List<String> unattributed = new ArrayList<>();
+        Feedback feedback = new Feedback();
         Pattern blockFile = Pattern.compile("blocks/([a-z0-9_]+)\\.json");
         Pattern itemFile = Pattern.compile("items/([a-z0-9_]+)\\.json");
         Pattern itemName = Pattern.compile("'(paletter:[a-z0-9_]+)'");
@@ -230,7 +296,7 @@ public final class MappingInference {
             }
         }
         return new Capture(dir.getFileName().toString(), meta.get("bdsVersion").getAsString(), meta.get("protocol").getAsInt(),
-            variants, byVariant, log, unattributed);
+            variants, byVariant, log, unattributed, feedback);
     }
 
     // ---------------------------------------------------------------------------------------------------------------

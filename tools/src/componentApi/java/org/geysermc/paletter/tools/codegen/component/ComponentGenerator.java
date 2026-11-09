@@ -18,6 +18,7 @@ import org.geysermc.paletter.tools.codegen.component.ApiModel.Scalar;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.ScalarKind;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Shorthand;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.States;
+import org.geysermc.paletter.tools.codegen.component.ApiModel.TransformWindow;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Type;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Vec3;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Window;
@@ -153,6 +154,21 @@ public final class ComponentGenerator {
             if (!in.knownTransforms().contains(name)) {
                 throw new GenerationException("transforms.json: " + key + " names the transform '" + name + "', which the runtime does not implement");
             }
+            if (in.transforms().getAsJsonObject(key).has("windows")) {
+                List<TransformWindow> windows = transformWindows(key, name, in.transforms().getAsJsonObject(key).getAsJsonArray("windows"));
+                List<TransformWindow> other = model.transformWindows.put(name, windows);
+                if (other != null && !other.equals(windows)) {
+                    throw new GenerationException("transforms.json: the transform '" + name + "' has different windows in two entries");
+                }
+            }
+        }
+        if (in.mappings().has("captures") && !in.mappings().getAsJsonArray("captures").isEmpty()) {
+            List<Integer> captured = in.mappings().getAsJsonArray("captures").asList().stream()
+                .filter(e -> e.getAsJsonObject().has("protocol")).map(e -> e.getAsJsonObject().get("protocol").getAsInt()).sorted().toList();
+            if (!captured.isEmpty()) {
+                model.oldestCaptured = captured.getFirst();
+                model.newestCaptured = captured.getLast();
+            }
         }
         for (JsonObject doc : docs) {
             String id = doc.get("id").getAsString();
@@ -172,16 +188,23 @@ public final class ComponentGenerator {
                 model.omitted.put(id, "part of the definition core (CustomItem / CustomBlock)");
                 continue;
             }
-            if (status.equals("server-only")) {
-                model.omitted.put(id, "server only: BDS accepts it but sends nothing to clients");
-                continue;
+            // The status of the newest capture decides, unless an older one sent the component: then it is generated, and
+            // the windows that do not send it leave it out of their palettes with a report entry
+            List<Window> observed = mapping == null ? List.of() : windows(id, mapping);
+            if (!observed.isEmpty()) {
+                status = observed.getLast().status();
             }
-            if (!status.equals("sent") && !status.equals("untestable")) {
-                model.omitted.put(id, status.equals("rejected") ? "rejected by BDS " + bdsVersion() : status);
+            if (observed.stream().noneMatch(Window::sent)) {
+                if (status.equals("server-only")) {
+                    model.omitted.put(id, "server only: BDS accepts it but sends nothing to clients");
+                } else {
+                    model.omitted.put(id, status.equals("rejected") ? "rejected by BDS " + bdsVersion() : status);
+                }
                 continue;
             }
             model.components.add(component(doc, mapping, standalone));
         }
+        checkWindowNames(in.knownTransforms());
         Map<String, String> names = new TreeMap<>();
         for (Comp c : model.components) {
             if (JAVA_LANG.contains(c.className)) {
@@ -198,7 +221,7 @@ public final class ComponentGenerator {
 
     private String bdsVersion() {
         if (in.mappings().has("captures") && !in.mappings().getAsJsonArray("captures").isEmpty()) {
-            return in.mappings().getAsJsonArray("captures").get(0).getAsJsonObject().get("bdsVersion").getAsString();
+            return in.mappings().getAsJsonArray("captures").asList().getLast().getAsJsonObject().get("bdsVersion").getAsString();
         }
         return "";
     }
@@ -220,6 +243,9 @@ public final class ComponentGenerator {
         c.className = className != null ? className : standalone != null ? standalone : pascal(c.name.replaceFirst("^[a-z_]+:", ""));
         javaName(c.className, c.id);
         c.windows.addAll(windows(c.id, mapping));
+        if (c.latest() == null) {
+            throw new GenerationException(c.id + " has no window that sends it");
+        }
         c.transform = transform(c.id, "");
         c.standalone = standalone != null;
 
@@ -353,7 +379,7 @@ public final class ComponentGenerator {
         // The newest window that observed the form
         Window w = null;
         for (Window candidate : c.windows) {
-            if (candidate.form(form) != null) {
+            if (candidate.sent() && candidate.form(form) != null) {
                 w = candidate;
             }
         }
@@ -411,6 +437,46 @@ public final class ComponentGenerator {
 
     // ---- Windows -----------------------------------------------------------------------------------------------------
 
+    /**
+     * The windows of a hand transform ({@code transforms.json}: {@code "windows": [{"until": 2225, "transform": "a"},
+     * {"since": 2225, "transform": "b"}]}): they must cover every protocol once, in order, name transforms the runtime
+     * implements, and end with the entry's own transform (the one for the newest protocols).
+     */
+    static List<TransformWindow> transformWindows(String key, String transform, JsonArray array) {
+        List<TransformWindow> windows = new ArrayList<>();
+        for (JsonElement e : array) {
+            JsonObject w = e.getAsJsonObject();
+            windows.add(new TransformWindow(w.has("since") ? w.get("since").getAsInt() : Integer.MIN_VALUE,
+                w.has("until") ? w.get("until").getAsInt() : Integer.MAX_VALUE, w.get("transform").getAsString()));
+        }
+        if (windows.size() < 2) {
+            throw new GenerationException("transforms.json: " + key + " lists " + windows.size() + " windows; a window list needs at least two");
+        }
+        if (windows.getFirst().since() != Integer.MIN_VALUE || windows.getLast().until() != Integer.MAX_VALUE) {
+            throw new GenerationException("transforms.json: the windows of " + key + " must start without 'since' and end without 'until'");
+        }
+        for (int i = 0; i + 1 < windows.size(); i++) {
+            if (windows.get(i).until() != windows.get(i + 1).since() || windows.get(i).since() >= windows.get(i).until()) {
+                throw new GenerationException("transforms.json: the windows of " + key + " leave a gap, overlap or are empty at "
+                    + windows.get(i) + " / " + windows.get(i + 1));
+            }
+        }
+        if (!windows.getLast().transform().equals(transform)) {
+            throw new GenerationException("transforms.json: the last window of " + key + " must be the entry's transform '" + transform + "'");
+        }
+        return List.copyOf(windows);
+    }
+
+    /** Names the runtime must implement: checked by the caller against {@code knownTransforms}. */
+    private void checkWindowNames(Set<String> known) {
+        model.transformWindows.forEach((name, windows) -> windows.forEach(w -> {
+            if (!known.contains(w.transform())) {
+                throw new GenerationException("transforms.json: a window of '" + name + "' names the transform '" + w.transform()
+                    + "', which the runtime does not implement");
+            }
+        }));
+    }
+
     private static List<Window> windows(String id, JsonObject mapping) {
         if (mapping == null) {
             return List.of();
@@ -424,10 +490,19 @@ public final class ComponentGenerator {
         for (String key : mapping.keySet()) {
             Matcher m = Pattern.compile("protocol(\\d+)").matcher(key);
             if (m.matches()) {
-                int protocol = Integer.parseInt(m.group(1));
-                JsonObject other = byProtocol.put(protocol, mapping.getAsJsonObject(key));
-                if (other != null) {
-                    throw new GenerationException("conflicting windows: " + id + " has two mappings for protocol " + protocol);
+                // The window's own protocols (the captures with this mapping), else just the one in the key
+                JsonObject window = mapping.getAsJsonObject(key);
+                List<Integer> protocols = new ArrayList<>();
+                if (window.has("protocols")) {
+                    window.getAsJsonArray("protocols").forEach(p -> protocols.add(p.getAsInt()));
+                } else {
+                    protocols.add(Integer.parseInt(m.group(1)));
+                }
+                for (int protocol : protocols) {
+                    JsonObject other = byProtocol.put(protocol, window);
+                    if (other != null) {
+                        throw new GenerationException("conflicting windows: " + id + " has two mappings for protocol " + protocol);
+                    }
                 }
             }
         }
@@ -557,7 +632,7 @@ public final class ComponentGenerator {
             return List.of("object");
         }
         // Forms BDS rejected entirely are not offered
-        Window w = c.windows.isEmpty() ? null : c.windows.getLast();
+        Window w = c.latest();
         List<String> usable = new ArrayList<>();
         for (String form : forms) {
             String key = form.startsWith("array<object") ? "array<object>" : form;
@@ -641,7 +716,7 @@ public final class ComponentGenerator {
             feedback.getAsJsonArray(feedbackPath).forEach(n -> notes.add(n.getAsString()));
         }
         // Required unless BDS accepted the field's omission (it then knows what to send)
-        Window latest = c.windows.isEmpty() ? null : c.windows.getLast();
+        Window latest = c.latest();
         JsonObject observed = latest == null ? null : latest.field(d.path);
         boolean omissionAccepted = observed != null && observed.has("whenAbsent");
         boolean optional = in.api().has("optional") && in.api().getAsJsonArray("optional").asList().stream()
@@ -770,7 +845,7 @@ public final class ComponentGenerator {
             return object.fields.stream().filter(f -> f.json.equals(name)).findFirst()
                 .orElseThrow(() -> new GenerationException("api.json unions: " + c.id + " " + d.path + " shorthand '" + name + "' is no field of it"));
         }
-        Window w = c.windows.isEmpty() ? null : c.windows.getLast();
+        Window w = c.latest();
         JsonObject own = w == null ? null : w.field(d.path);
         Set<String> leaves = own == null ? Set.of() : valueLeaves(own);
         if (!leaves.isEmpty()) {
@@ -1027,6 +1102,9 @@ public final class ComponentGenerator {
      */
     private void checkConflicts(Comp c) {
         for (Window w : c.windows) {
+            if (!w.sent()) {
+                continue;
+            }
             Map<String, List<String>> owners = new TreeMap<>();
             collectOwners(c, w, c.root, owners, false);
             for (Map.Entry<String, List<String>> e : owners.entrySet()) {
@@ -1112,7 +1190,7 @@ public final class ComponentGenerator {
      * (nullable) and the encoder writes what BDS sends.
      */
     private void applyDefaults(Comp c, ObjType o) {
-        Window w = c.windows.isEmpty() ? null : c.windows.getLast();
+        Window w = c.latest();
         for (Field f : o.fields) {
             ObjType child = objectOf(f.type);
             if (child != null) {

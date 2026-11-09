@@ -31,6 +31,21 @@ final class ApiModel {
     final List<Comp> components = new ArrayList<>();
     /** Components not generated, by reason (server only, rejected, ...): listed in the docs of the interfaces. */
     final Map<String, String> omitted = new LinkedHashMap<>();
+    /** Hand transforms that differ per protocol, by the name transforms.json gives them: who runs for which protocols. */
+    final Map<String, List<TransformWindow>> transformWindows = new LinkedHashMap<>();
+    /** The oldest and the newest protocol a spec capture exists for (the window shapes are observed in between). */
+    int oldestCaptured = Integer.MIN_VALUE;
+    int newestCaptured = Integer.MAX_VALUE;
+
+    /**
+     * A protocol window of a hand transform.
+     *
+     * @param since first protocol of the window, or {@link Integer#MIN_VALUE}
+     * @param until first protocol after the window, or {@link Integer#MAX_VALUE}
+     * @param transform the {@code Transforms} method that encodes it (snake_case)
+     */
+    record TransformWindow(int since, int until, String transform) {
+    }
 
     static final class Comp {
         String id;
@@ -48,6 +63,17 @@ final class ApiModel {
         /** Component level transform (transforms.json path ""), or null. */
         String transform;
         final List<Window> windows = new ArrayList<>();
+
+        /** @return the newest window that sends the component (the API follows its shape), or null */
+        Window latest() {
+            for (int i = windows.size() - 1; i >= 0; i--) {
+                if (windows.get(i).sent()) {
+                    return windows.get(i);
+                }
+            }
+            return null;
+        }
+
         /** Enums declared in the component, by name. */
         final Map<String, EnumType> enums = new LinkedHashMap<>();
         /** Nested record types, by name (root excluded). */
@@ -69,6 +95,16 @@ final class ApiModel {
 
     /** A protocol window: the mapping observed for [since, until). */
     record Window(int since, int until, JsonObject mapping) {
+        /** @return what BDS did with the component in this window: sent, untestable, server-only, rejected */
+        String status() {
+            return mapping.get("status").getAsString();
+        }
+
+        /** @return whether the component reaches the wire in this window; else its palettes leave it out and report it */
+        boolean sent() {
+            return status().equals("sent") || status().equals("untestable");
+        }
+
         boolean bounded() {
             return since != Integer.MIN_VALUE || until != Integer.MAX_VALUE;
         }

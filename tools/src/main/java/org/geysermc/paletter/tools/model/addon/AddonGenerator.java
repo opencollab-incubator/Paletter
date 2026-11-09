@@ -178,6 +178,19 @@ public final class AddonGenerator {
         variants.add(new Variant(identifier, c.kind(), file, c.id(), role, path, label, value, json, definition));
     }
 
+    /**
+     * The whole item or block file of a variant that was generated before (the {@code variants.json} of a capture: the
+     * component and the JSON it was given), rebuilt as the capture's add-on had it, so the capture stays valid after the
+     * model moved on.
+     *
+     * @param json the component's JSON of the variant ({@code null} for a control without the component)
+     */
+    public JsonObject definitionOf(String componentId, String identifier, JsonElement json) {
+        Component c = model.components().stream().filter(x -> x.id().equals(componentId)).findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("no component " + componentId));
+        return definition(c, identifier, json);
+    }
+
     /** The whole item or block file of a variant. */
     private JsonObject definition(Component c, String identifier, JsonElement json) {
         JsonObject description = new JsonObject();
