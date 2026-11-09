@@ -4,6 +4,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
+import org.geysermc.paletter.Lookup;
+import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockBlockType;
@@ -91,7 +93,7 @@ public final class RegisteredBlockState implements BlockDefinition {
                 List<BedrockBlockState> keys = block == null ? List.of() : BedrockBlockType.of(block).states();
                 key = indexInBlock < keys.size() ? keys.get(indexInBlock) : null;
             } else {
-                key = BedrockBlockState.vanilla(state);
+                key = Paletter.bundled().block(state, Lookup.STRICT);
             }
             this.key = key;
         }

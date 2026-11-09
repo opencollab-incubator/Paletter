@@ -104,7 +104,11 @@ palette; `paletter.properties(key, version)` without one. Overrides edit the com
 `Paletter#block` / `Paletter#item` accept content of any bundled version, not only the newest: a state or variant the
 newest version lacks is mapped forward (state keys added, removed or reset like an older palette adapts newer states,
 renamed identifiers via `renames.txt`), and one that no longer exists returns null with a reason (`explainUnknown`). A mapping
-made against 26.50 therefore keeps working when 26.60 becomes the newest version. Content of a layer has keys of its own
+made against 26.50 therefore keeps working when 26.60 becomes the newest version. To match strictly instead, pass a `Lookup`:
+`paletter.block(state, Lookup.STRICT)` (also `item(identifier, aux, lookup)`, `blockType` and `itemType`) accepts only content that exists
+as is in the newest version's data, `Lookup.of(version)` only content of that data version, and `.withRenames()` additionally what the
+newest version has under a new name; the handles and types returned are always those of the newest data. The key classes
+(`BedrockBlockType`, `BedrockItemType`, ...) have no such lookups of their own: whether content exists in some data is asked of `Paletter`. Content of a layer has keys of its own
 (`BedrockBlockType.of(customBlock)`, `customItem.type()`), valid in every palette that has the layer. Canonical ids, the dense
 ints of the newest version every table is built on, are plumbing in `internal`; canonical content a version lacks and that has
 no fallback is listed in the palette's report.

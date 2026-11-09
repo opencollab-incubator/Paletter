@@ -34,23 +34,6 @@ public final class BedrockBlockState {
     }
 
     /**
-     * @return the state of a vanilla canonical id of {@link org.geysermc.paletter.Paletter#bundled()}, or null if
-     *         there is no such id. Loads the data
-     */
-    public static @Nullable BedrockBlockState vanilla(int canonical) {
-        return VanillaIndex.get().state(canonical);
-    }
-
-    /**
-     * @param state a block state of the newest bundled version as {@code {name, states}}
-     * @return its state object, or null if the newest version has no such state. Loads the data
-     */
-    public static @Nullable BedrockBlockState vanilla(@NonNull NbtMap state) {
-        VanillaIndex index = VanillaIndex.get();
-        return index.state(index.blocks.index(state));
-    }
-
-    /**
      * Plumbing of {@link org.geysermc.paletter.Palette}: the handle of a canonical id.
      *
      * @return the state of a canonical id of any palette lineage, or null if there is no such id or the state is not
@@ -67,7 +50,7 @@ public final class BedrockBlockState {
         }
         CustomBlock block = canonical.customBlockAt(id);
         if (block == null) {
-            return vanilla(canonical.state(id));
+            return index.state(index.blocks.index(canonical.state(id)));
         }
         int base = canonical.customBase(block.identifier(), block.stateCount());
         if (base == -1) {

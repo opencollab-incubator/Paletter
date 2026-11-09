@@ -86,13 +86,6 @@ public final class BedrockItemType {
     }
 
     /**
-     * @return the vanilla type of an identifier in the newest bundled data, or null if there is none. Loads the data
-     */
-    public static @Nullable BedrockItemType vanilla(@NonNull String identifier) {
-        return VanillaIndex.get().item(identifier);
-    }
-
-    /**
      * @return every vanilla item type of the newest bundled data, in runtime id order. Loads the data
      */
     public static @NonNull List<BedrockItemType> vanillaTypes() {

@@ -3860,8 +3860,6 @@ public final class org.geysermc.paletter.vanilla.BedrockBlockState {
     public org.cloudburstmc.nbt.NbtMap toNbt()
     public java.lang.String toString()
     public org.geysermc.paletter.vanilla.BedrockBlockType type()
-    public static org.geysermc.paletter.vanilla.BedrockBlockState vanilla(int)
-    public static org.geysermc.paletter.vanilla.BedrockBlockState vanilla(org.cloudburstmc.nbt.NbtMap)
     public <T> org.geysermc.paletter.vanilla.BedrockBlockState with(org.geysermc.paletter.vanilla.BedrockState<T>, T)
     public org.geysermc.paletter.vanilla.BedrockBlockState with(org.geysermc.paletter.vanilla.BoolState, boolean)
     public org.geysermc.paletter.vanilla.BedrockBlockState with(org.geysermc.paletter.vanilla.IntState, int)
@@ -3886,7 +3884,6 @@ public final class org.geysermc.paletter.vanilla.BedrockBlockType {
     public java.util.List<org.geysermc.paletter.vanilla.BedrockBlockState> states()
     public java.lang.String toString()
     public <T> java.util.List<T> values(org.geysermc.paletter.vanilla.BedrockState<T>)
-    public static org.geysermc.paletter.vanilla.BedrockBlockType vanilla(java.lang.String)
     public static java.util.List<org.geysermc.paletter.vanilla.BedrockBlockType> vanillaTypes()
 }
 
@@ -5394,7 +5391,6 @@ public final class org.geysermc.paletter.vanilla.BedrockItemType {
     public static org.geysermc.paletter.vanilla.BedrockItemType of(org.geysermc.paletter.item.CustomItem)
     public org.geysermc.paletter.vanilla.BedrockItemType resolved()
     public java.lang.String toString()
-    public static org.geysermc.paletter.vanilla.BedrockItemType vanilla(java.lang.String)
     public static java.util.List<org.geysermc.paletter.vanilla.BedrockItemType> vanillaTypes()
     public org.geysermc.paletter.vanilla.BedrockItemVariant variant(int)
     public org.geysermc.paletter.vanilla.BedrockItemVariant variantOf(int)

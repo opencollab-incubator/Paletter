@@ -95,13 +95,6 @@ public final class BedrockBlockType {
     }
 
     /**
-     * @return the vanilla type of an identifier in the newest bundled data, or null if there is none. Loads the data
-     */
-    public static @Nullable BedrockBlockType vanilla(@NonNull String identifier) {
-        return VanillaIndex.get().block(identifier);
-    }
-
-    /**
      * @return every vanilla block type of the newest bundled data, in palette order. Loads the data
      */
     public static @NonNull List<BedrockBlockType> vanillaTypes() {
