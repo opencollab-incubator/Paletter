@@ -5,7 +5,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.internal.CanonicalBlocks;
-import org.geysermc.paletter.data.VanillaData;
+import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.vanilla.BlockLayout;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.item.ItemVariant;

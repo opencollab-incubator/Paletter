@@ -6,7 +6,7 @@ import org.cloudburstmc.protocol.bedrock.codec.v407.serializer.PacketViolationWa
 import org.cloudburstmc.protocol.bedrock.data.PacketRecipient;
 import org.cloudburstmc.protocol.bedrock.packet.LoginPacket;
 import org.cloudburstmc.protocol.bedrock.packet.PacketViolationWarningPacket;
-import org.geysermc.paletter.data.VanillaData;
+import org.geysermc.paletter.internal.data.VanillaData;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

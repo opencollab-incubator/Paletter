@@ -1,4 +1,4 @@
-package org.geysermc.paletter.block;
+package org.geysermc.paletter.internal.block;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;

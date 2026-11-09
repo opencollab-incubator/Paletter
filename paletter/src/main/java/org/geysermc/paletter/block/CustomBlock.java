@@ -1,5 +1,7 @@
 package org.geysermc.paletter.block;
 
+import org.geysermc.paletter.internal.block.BlockStates;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;

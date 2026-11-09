@@ -1,7 +1,7 @@
 package org.geysermc.paletter.tools.bds;
 
 import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 

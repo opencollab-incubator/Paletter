@@ -5,8 +5,8 @@ import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.BlockNetworkIds;
-import org.geysermc.paletter.block.BlockStates;
-import org.geysermc.paletter.block.PaletteBlock;
+import org.geysermc.paletter.internal.block.BlockStates;
+import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.ItemVariant;
 
@@ -51,7 +51,7 @@ public final class Inspect {
         if (!name.contains(":")) {
             name = "minecraft:" + name;
         }
-        PaletteBlock defaults = newest.blocks().defaultState(name);
+        RegisteredBlockState defaults = newest.blocks().defaultState(name);
         NbtMap states = defaults == null ? NbtMap.EMPTY : defaults.states();
         if (bracket != -1) {
             if (!spec.endsWith("]")) {

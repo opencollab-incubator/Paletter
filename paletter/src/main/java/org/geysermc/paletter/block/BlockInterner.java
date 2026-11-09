@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * Shares what {@link BlockNetworkIds#HASHED} palettes of different versions have in common: vanilla
- * {@link PaletteBlock}s (a state has the same hash in every version) and pages of canonical id tables with equal
+ * {@link RegisteredBlockState}s (a state has the same hash in every version) and pages of canonical id tables with equal
  * content. One per {@link org.geysermc.paletter.Paletter}.
  * <p>
  * Internal: shared between Paletter's packages, not API.
@@ -20,19 +20,19 @@ import java.util.Map;
  */
 @Internal
 public final class BlockInterner {
-    private final Map<NbtMap, PaletteBlock> blocks = new HashMap<>();
+    private final Map<NbtMap, RegisteredBlockState> blocks = new HashMap<>();
     private final Map<IntPage, int[]> intPages = new HashMap<>();
-    private final Map<BlockPage, PaletteBlock[]> blockPages = new HashMap<>();
+    private final Map<BlockPage, RegisteredBlockState[]> blockPages = new HashMap<>();
     private int sharedPages;
     private int pages;
 
     /**
      * @return the shared hashed definition of a vanilla state; its hash is computed once
      */
-    synchronized @NonNull PaletteBlock vanillaBlock(@NonNull NbtMap state) {
-        PaletteBlock block = blocks.get(state);
+    synchronized @NonNull RegisteredBlockState vanillaBlock(@NonNull NbtMap state) {
+        RegisteredBlockState block = blocks.get(state);
         if (block == null) {
-            block = new PaletteBlock(BlockNetworkIds.hash(state), state, false);
+            block = new RegisteredBlockState(BlockNetworkIds.hash(state), state, false);
             blocks.put(state, block);
         }
         return block;
@@ -48,9 +48,9 @@ public final class BlockInterner {
         return page;
     }
 
-    synchronized @NonNull PaletteBlock @NonNull [] intern(@NonNull PaletteBlock @NonNull [] page) {
+    synchronized @NonNull RegisteredBlockState @NonNull [] intern(@NonNull RegisteredBlockState @NonNull [] page) {
         pages++;
-        PaletteBlock[] existing = blockPages.putIfAbsent(new BlockPage(page), page);
+        RegisteredBlockState[] existing = blockPages.putIfAbsent(new BlockPage(page), page);
         if (existing != null) {
             sharedPages++;
             return existing;
@@ -80,7 +80,7 @@ public final class BlockInterner {
     /**
      * Compared by element identity: interned blocks are unique per state.
      */
-    private record BlockPage(PaletteBlock[] values) {
+    private record BlockPage(RegisteredBlockState[] values) {
         @Override
         public boolean equals(Object o) {
             if (!(o instanceof BlockPage other) || values.length != other.values.length) {
@@ -97,7 +97,7 @@ public final class BlockInterner {
         @Override
         public int hashCode() {
             int hash = 1;
-            for (PaletteBlock block : values) {
+            for (RegisteredBlockState block : values) {
                 hash = 31 * hash + System.identityHashCode(block);
             }
             return hash;

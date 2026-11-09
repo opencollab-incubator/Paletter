@@ -7,7 +7,7 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemGroup;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket;
 import org.geysermc.paletter.PaletteReport;
-import org.geysermc.paletter.item.ItemPalette;
+import org.geysermc.paletter.item.ItemRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ public final class CreativeContent {
         this.entries = entries;
     }
 
-    public static @NonNull CreativeContent compile(@NonNull CreativeLayout layout, @NonNull ItemPalette items, @NonNull PaletteReport report) {
+    public static @NonNull CreativeContent compile(@NonNull CreativeLayout layout, @NonNull ItemRegistry items, @NonNull PaletteReport report) {
         List<CreativeItemGroup> groups = new ArrayList<>();
         List<CreativeItemData> contents = new ArrayList<>();
         List<CreativeEntry> entries = new ArrayList<>();
@@ -91,7 +91,7 @@ public final class CreativeContent {
         return packet;
     }
 
-    private record Compiler(ItemPalette items, PaletteReport report, List<CreativeItemGroup> groups,
+    private record Compiler(ItemRegistry items, PaletteReport report, List<CreativeItemGroup> groups,
                             List<CreativeItemData> contents, List<CreativeEntry> entries) {
 
         void emit(CreativeCategory category, String name, @Nullable CreativeStack icon, List<CreativeStack> stacks) {

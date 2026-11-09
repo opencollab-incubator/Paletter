@@ -13,7 +13,7 @@ import org.geysermc.paletter.PaletteReport;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.data.DataVersion;
-import org.geysermc.paletter.data.VanillaData;
+import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.component.BlockCompiler;
 import org.geysermc.paletter.internal.component.ItemCompiler;
 import org.geysermc.paletter.internal.component.WireContext;

@@ -5,8 +5,8 @@ import org.geysermc.paletter.tools.bds.BdsServer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.geysermc.paletter.tools.client.Capture;
-import org.geysermc.paletter.data.PaletteDataCodec;
-import org.geysermc.paletter.data.VanillaData;
+import org.geysermc.paletter.internal.data.PaletteDataCodec;
+import org.geysermc.paletter.internal.data.VanillaData;
 
 import java.io.InputStream;
 import java.net.InetSocketAddress;

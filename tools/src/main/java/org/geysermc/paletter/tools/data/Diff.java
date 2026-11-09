@@ -4,14 +4,14 @@ import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.geysermc.paletter.block.BlockNetworkIds;
-import org.geysermc.paletter.block.BlockPalette;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.block.BlockRegistry;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeGroup;
 import org.geysermc.paletter.creative.CreativeNode;
 import org.geysermc.paletter.creative.CreativeStack;
-import org.geysermc.paletter.data.VanillaData;
-import org.geysermc.paletter.data.VanillaItem;
+import org.geysermc.paletter.internal.data.VanillaData;
+import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.client.CapturedData;
 
@@ -878,7 +878,7 @@ public final class Diff {
             }
             if (raw.get("name_hash") instanceof Number nameHash) {
                 nameHashes++;
-                long expected = BlockPalette.nameHash(BlockStates.name(state));
+                long expected = BlockRegistry.nameHash(BlockStates.name(state));
                 if (nameHash.longValue() != expected) {
                     section.differences.add(describe(state) + ": name_hash " + Long.toUnsignedString(nameHash.longValue())
                         + " in the source, computed FNV-1 64 " + Long.toUnsignedString(expected));
@@ -1142,7 +1142,7 @@ public final class Diff {
         for (int i = 1; i < states.size(); i++) {
             String previous = BlockStates.name(states.get(i - 1));
             String current = BlockStates.name(states.get(i));
-            if (Long.compareUnsigned(BlockPalette.nameHash(previous), BlockPalette.nameHash(current)) > 0) {
+            if (Long.compareUnsigned(BlockRegistry.nameHash(previous), BlockRegistry.nameHash(current)) > 0) {
                 return "#" + i + " " + current + " after " + previous;
             }
         }

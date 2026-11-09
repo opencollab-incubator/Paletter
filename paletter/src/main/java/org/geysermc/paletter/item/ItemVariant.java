@@ -4,7 +4,7 @@ import org.geysermc.paletter.internal.CanonicalItems;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.internal.block.BlockStates;
 
 /**
  * A Bedrock item variant, independent of any protocol version: what a stack "is", without count or NBT.

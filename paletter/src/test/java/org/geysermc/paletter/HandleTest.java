@@ -3,7 +3,7 @@ package org.geysermc.paletter;
 import com.sun.management.ThreadMXBean;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.BlockProperty;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;

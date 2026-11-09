@@ -1,5 +1,11 @@
 package org.geysermc.paletter.data;
 
+import org.geysermc.paletter.internal.data.Renames;
+
+import org.geysermc.paletter.internal.data.VanillaData;
+
+import org.geysermc.paletter.internal.data.PaletteDataCodec;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.BufferedReader;

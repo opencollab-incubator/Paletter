@@ -6,9 +6,9 @@ import com.google.gson.JsonObject;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
-import org.geysermc.paletter.data.PaletteDataCodec;
-import org.geysermc.paletter.data.VanillaData;
-import org.geysermc.paletter.data.VanillaItem;
+import org.geysermc.paletter.internal.data.PaletteDataCodec;
+import org.geysermc.paletter.internal.data.VanillaData;
+import org.geysermc.paletter.internal.data.VanillaItem;
 
 import java.io.IOException;
 import java.io.InputStream;

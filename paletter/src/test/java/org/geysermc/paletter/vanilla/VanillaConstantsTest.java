@@ -7,7 +7,7 @@ import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.BlockFallback;
 import org.geysermc.paletter.block.BlockProperty;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeCategory;

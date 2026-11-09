@@ -15,16 +15,16 @@ import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import org.geysermc.paletter.PaletteException;
 import org.geysermc.paletter.PaletteReport;
 import org.geysermc.paletter.annotation.Internal;
-import org.geysermc.paletter.block.BlockPalette;
+import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.block.BlockResolution;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.CustomBlock;
-import org.geysermc.paletter.block.PaletteBlock;
+import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.creative.CreativeLayout;
 import org.geysermc.paletter.creative.CreativeStack;
 import org.geysermc.paletter.data.DataVersion;
-import org.geysermc.paletter.data.VanillaData;
-import org.geysermc.paletter.data.VanillaItem;
+import org.geysermc.paletter.internal.data.VanillaData;
+import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.internal.component.ItemCompiler;
 import org.geysermc.paletter.internal.component.WireContext;
 import org.geysermc.paletter.item.component.BlockPlacer;
@@ -58,18 +58,18 @@ import java.util.function.Consumer;
  *
  * @since 1.0.0
  */
-public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
+public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     private static final NbtMap NO_BLOCK = NbtMap.builder().putString("name", "paletter:no_block").build();
 
     private final DataVersion version;
-    private final BlockPalette blocks;
-    private final Int2ObjectMap<PaletteItem> byRuntimeId;
-    private final Map<String, PaletteItem> byIdentifier;
-    private final List<PaletteItem> definitions;
+    private final BlockRegistry blocks;
+    private final Int2ObjectMap<RegisteredItem> byRuntimeId;
+    private final Map<String, RegisteredItem> byIdentifier;
+    private final List<RegisteredItem> definitions;
     private final Map<String, NbtMap> blockOverrides;
     private final Set<String> customBlockItems;
     private final Map<String, Set<String>> itemBlocks;
-    private final Map<String, PaletteBlock> defaultBlocks;
+    private final Map<String, RegisteredBlockState> defaultBlocks;
     private final Set<String> multiStateBlockItems;
     private final Map<String, ItemFallback> fallbacks;
     private final @Nullable ItemFallback defaultFallback;
@@ -80,13 +80,13 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     private final Map<ItemVariant, Optional<ResolvedItem>> resolutions = new ConcurrentHashMap<>();
     private volatile @Nullable CanonicalTable canonicalTable;
 
-    private ItemPalette(Builder builder, Map<String, PaletteBlock> defaultBlocks, Set<String> multiStateBlockItems) {
+    private ItemRegistry(Builder builder, Map<String, RegisteredBlockState> defaultBlocks, Set<String> multiStateBlockItems) {
         this.version = builder.version;
         this.blocks = builder.blocks;
         this.byRuntimeId = builder.byRuntimeId;
         this.byIdentifier = builder.byIdentifier;
-        List<PaletteItem> definitions = new ArrayList<>(builder.byRuntimeId.values());
-        definitions.sort(Comparator.comparingInt(PaletteItem::getRuntimeId));
+        List<RegisteredItem> definitions = new ArrayList<>(builder.byRuntimeId.values());
+        definitions.sort(Comparator.comparingInt(RegisteredItem::getRuntimeId));
         this.definitions = List.copyOf(definitions);
         this.blockOverrides = Map.copyOf(builder.blockOverrides);
         this.customBlockItems = Set.copyOf(builder.customBlockItems);
@@ -107,11 +107,11 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
      * Starts the item palette of a version from its vanilla items.
      */
     @Internal
-    public static @NonNull Builder vanilla(@NonNull VanillaData data, @NonNull BlockPalette blocks, @NonNull CanonicalItems canonical) {
+    public static @NonNull Builder vanilla(@NonNull VanillaData data, @NonNull BlockRegistry blocks, @NonNull CanonicalItems canonical) {
         Builder builder = new Builder(data.version(), blocks, data.fallbacks().items(), canonical);
         data.blockItems().forEach((block, item) -> builder.itemBlocks.computeIfAbsent(item, i -> new TreeSet<>()).add(block));
         for (VanillaItem item : data.items()) {
-            builder.put(new PaletteItem(item.identifier(), item.runtimeId(), ItemVersion.from(item.version()),
+            builder.put(new RegisteredItem(item.identifier(), item.runtimeId(), ItemVersion.from(item.version()),
                 item.componentBased(), item.componentData(), false));
         }
         data.itemTags().forEach((tag, items) -> builder.tags.put(tag, new LinkedHashSet<>(items)));
@@ -125,7 +125,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
      * @param canonical the canonical ids of the new palette: this palette's, or these with custom items appended
      */
     @Internal
-    public @NonNull Builder extend(@NonNull BlockPalette blocks, @NonNull CanonicalItems canonical) {
+    public @NonNull Builder extend(@NonNull BlockRegistry blocks, @NonNull CanonicalItems canonical) {
         return new Builder(this, blocks, canonical);
     }
 
@@ -133,7 +133,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         return version;
     }
 
-    public @NonNull BlockPalette blocks() {
+    public @NonNull BlockRegistry blocks() {
         return blocks;
     }
 
@@ -148,12 +148,12 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     // ---- Definitions ----
 
     @Override
-    public @Nullable PaletteItem getDefinition(int runtimeId) {
+    public @Nullable RegisteredItem getDefinition(int runtimeId) {
         return byRuntimeId.get(runtimeId);
     }
 
     @Override
-    public @Nullable PaletteItem getDefinition(@NonNull String identifier) {
+    public @Nullable RegisteredItem getDefinition(@NonNull String identifier) {
         return byIdentifier.get(identifier);
     }
 
@@ -165,7 +165,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     /**
      * @return all definitions in runtime id order. This is what the item component packet carries
      */
-    public @NonNull List<PaletteItem> definitions() {
+    public @NonNull List<RegisteredItem> definitions() {
         return definitions;
     }
 
@@ -206,7 +206,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
      * @return the block, or null if the item is not a block item here (or does not exist and has no fallback)
      * @since 1.0.0
      */
-    public @Nullable PaletteBlock blockOf(@NonNull ItemVariant variant) {
+    public @Nullable RegisteredBlockState blockOf(@NonNull ItemVariant variant) {
         ResolvedItem resolved = resolve(variant);
         return resolved == null ? null : resolved.block();
     }
@@ -214,7 +214,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     /**
      * @return the block this item is sent with by default, or null if it is not a block item; see {@link #blockOf}
      */
-    public @Nullable PaletteBlock defaultBlock(@NonNull ItemDefinition definition) {
+    public @Nullable RegisteredBlockState defaultBlock(@NonNull ItemDefinition definition) {
         return defaultBlocks.get(definition.getIdentifier());
     }
 
@@ -253,7 +253,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
 
     private @Nullable ResolvedItem resolveUncached(ItemVariant variant) {
         ItemFallback forced = fallbacks.get(variant.identifier());
-        PaletteItem item = forced != null && forced.force() ? null : byIdentifier.get(variant.identifier());
+        RegisteredItem item = forced != null && forced.force() ? null : byIdentifier.get(variant.identifier());
         boolean fallback = false;
         if (item == null) {
             ItemFallback target = fallbacks.get(variant.identifier());
@@ -263,7 +263,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             }
             fallback = true;
         }
-        PaletteBlock block = defaultBlocks.get(item.getIdentifier());
+        RegisteredBlockState block = defaultBlocks.get(item.getIdentifier());
         if (variant.blockState() != null && !fallback && block != null) {
             BlockResolution resolution = blocks.resolve(variant.blockState());
             if (resolution.block() != null) {
@@ -381,7 +381,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             items[i] = resolveUncached(canonical.variant(i));
             if (items[i] == null) {
                 missing.add(canonical.variant(i));
-                PaletteItem fallback = defaultFallback == null ? null : byIdentifier.get(defaultFallback.target());
+                RegisteredItem fallback = defaultFallback == null ? null : byIdentifier.get(defaultFallback.target());
                 if (fallback != null) {
                     items[i] = new ResolvedItem(fallback, 0, defaultBlocks.get(fallback.getIdentifier()), true);
                 }
@@ -396,7 +396,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
                     continue;
                 }
                 ItemVariant variant = canonical.variant(i);
-                PaletteBlock block = variant.blockState() != null && item.block() != defaultBlocks.get(item.definition().getIdentifier())
+                RegisteredBlockState block = variant.blockState() != null && item.block() != defaultBlocks.get(item.definition().getIdentifier())
                     ? item.block() : null;
                 List<Candidate> list = candidates.computeIfAbsent(item.definition().getRuntimeId(), id -> new ArrayList<>(1));
                 boolean fallback = pass == 1;
@@ -420,7 +420,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         return new CanonicalTable(items, byRuntimeId, List.copyOf(missing));
     }
 
-    private record Candidate(int damage, @Nullable PaletteBlock block, int canonical, boolean fallback) {
+    private record Candidate(int damage, @Nullable RegisteredBlockState block, int canonical, boolean fallback) {
     }
 
     private record CanonicalTable(ResolvedItem[] items, Int2ObjectMap<Candidate[]> byRuntimeId, List<ItemVariant> missing) {
@@ -432,11 +432,11 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
      * @return the item data, or null if the item does not exist in this version
      */
     public @Nullable ItemData toItemData(@NonNull CreativeStack stack) {
-        PaletteItem item = byIdentifier.get(stack.identifier());
+        RegisteredItem item = byIdentifier.get(stack.identifier());
         if (item == null) {
             return null;
         }
-        PaletteBlock block = defaultBlocks.get(item.getIdentifier());
+        RegisteredBlockState block = defaultBlocks.get(item.getIdentifier());
         if (stack.blockState() != null) {
             BlockResolution resolution = blocks.resolve(stack.blockState());
             if (resolution.kind() == BlockResolution.Kind.EXACT || resolution.kind() == BlockResolution.Kind.ADAPTED) {
@@ -454,7 +454,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
 
     @Override
     public String toString() {
-        return "ItemPalette{" + version + ", " + definitions.size() + " items, " + customItems.size() + " custom}";
+        return "ItemRegistry{" + version + ", " + definitions.size() + " items, " + customItems.size() + " custom}";
     }
 
     /**
@@ -463,9 +463,9 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
     @Internal
     public static final class Builder {
         private final DataVersion version;
-        private final BlockPalette blocks;
-        private final Int2ObjectMap<PaletteItem> byRuntimeId;
-        private final Map<String, PaletteItem> byIdentifier;
+        private final BlockRegistry blocks;
+        private final Int2ObjectMap<RegisteredItem> byRuntimeId;
+        private final Map<String, RegisteredItem> byIdentifier;
         private final Map<String, NbtMap> blockOverrides;
         private final Set<String> customBlockItems;
         /** The bundled block to item relation, inverted: item to the blocks that it places, sorted. Empty for data without it. */
@@ -479,7 +479,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         /** Identifiers the layer is about to register: they exist for components compiled before their registration. */
         private final Set<String> declared = new HashSet<>();
 
-        private Builder(DataVersion version, BlockPalette blocks, Map<String, ItemFallback> fallbacks, CanonicalItems canonical) {
+        private Builder(DataVersion version, BlockRegistry blocks, Map<String, ItemFallback> fallbacks, CanonicalItems canonical) {
             this.version = version;
             this.blocks = blocks;
             this.byRuntimeId = new Int2ObjectOpenHashMap<>();
@@ -493,7 +493,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             this.customItems = new ArrayList<>();
         }
 
-        private Builder(ItemPalette parent, BlockPalette blocks, CanonicalItems canonical) {
+        private Builder(ItemRegistry parent, BlockRegistry blocks, CanonicalItems canonical) {
             this.version = parent.version;
             this.blocks = blocks;
             this.byRuntimeId = new Int2ObjectOpenHashMap<>(parent.byRuntimeId);
@@ -509,7 +509,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             this.nextRuntimeId = parent.nextRuntimeId;
         }
 
-        private void put(PaletteItem item) {
+        private void put(RegisteredItem item) {
             byRuntimeId.put(item.getRuntimeId(), item);
             byIdentifier.put(item.getIdentifier(), item);
             nextRuntimeId = Math.max(nextRuntimeId, item.getRuntimeId() + 1);
@@ -523,7 +523,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             declared.add(identifier);
         }
 
-        public @Nullable PaletteItem get(@NonNull String identifier) {
+        public @Nullable RegisteredItem get(@NonNull String identifier) {
             return byIdentifier.get(identifier);
         }
 
@@ -532,7 +532,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
          */
         public boolean override(@NonNull String identifier, @NonNull Consumer<ItemOverride> modifier, @NonNull PaletteReport report,
                                 @NonNull String source) {
-            PaletteItem original = byIdentifier.get(identifier);
+            RegisteredItem original = byIdentifier.get(identifier);
             if (original == null) {
                 return false;
             }
@@ -548,12 +548,12 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             return true;
         }
 
-        public @NonNull PaletteItem addCustom(@NonNull CustomItem custom, @NonNull PaletteReport report, @NonNull String source) {
+        public @NonNull RegisteredItem addCustom(@NonNull CustomItem custom, @NonNull PaletteReport report, @NonNull String source) {
             checkUnused(custom.identifier());
             int runtimeId = nextRuntimeId;
             NbtMap componentData = ItemCompiler.componentData(custom.identifier(), runtimeId, custom.components(), custom.menuCategory(),
                 custom.creative(), context(report, source));
-            PaletteItem item = new PaletteItem(custom.identifier(), runtimeId, ItemVersion.DATA_DRIVEN, true, componentData, true);
+            RegisteredItem item = new RegisteredItem(custom.identifier(), runtimeId, ItemVersion.DATA_DRIVEN, true, componentData, true);
             put(item);
             customItems.add(custom);
             for (String tag : custom.tags()) {
@@ -575,7 +575,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
 
                 @Override
                 public @Nullable NbtMap blockStates(@NonNull String identifier) {
-                    PaletteBlock block = blocks.defaultState(identifier.indexOf(':') < 0 ? "minecraft:" + identifier : identifier);
+                    RegisteredBlockState block = blocks.defaultState(identifier.indexOf(':') < 0 ? "minecraft:" + identifier : identifier);
                     return block == null ? null : block.states();
                 }
             });
@@ -584,7 +584,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
         /**
          * Registers the item of a custom block, unless the block has none.
          */
-        public @Nullable PaletteItem addBlockItem(@NonNull CustomBlock block, @NonNull PaletteReport report, @NonNull String source) {
+        public @Nullable RegisteredItem addBlockItem(@NonNull CustomBlock block, @NonNull PaletteReport report, @NonNull String source) {
             return addBlockItem(block, block.item(), report, source);
         }
 
@@ -593,16 +593,16 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
          *
          * @return the item, or null for {@link CustomBlock.BlockItem#NONE}
          */
-        public @Nullable PaletteItem addBlockItem(@NonNull CustomBlock block, CustomBlock.@NonNull BlockItem blockItem,
+        public @Nullable RegisteredItem addBlockItem(@NonNull CustomBlock block, CustomBlock.@NonNull BlockItem blockItem,
                                                   @NonNull PaletteReport report, @NonNull String source) {
-            PaletteItem item;
+            RegisteredItem item;
             switch (blockItem) {
                 case CustomBlock.BlockItem.None none -> {
                     return null;
                 }
                 case CustomBlock.BlockItem.Simple simple -> {
                     checkUnused(block.identifier());
-                    item = new PaletteItem(block.identifier(), nextRuntimeId, ItemVersion.NONE, false, null, true);
+                    item = new RegisteredItem(block.identifier(), nextRuntimeId, ItemVersion.NONE, false, null, true);
                 }
                 case CustomBlock.BlockItem.DataDriven dataDriven -> {
                     checkUnused(block.identifier());
@@ -611,7 +611,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
                         components.add(BlockPlacer.builder().block(block.identifier()).build());
                     }
                     int runtimeId = nextRuntimeId;
-                    item = new PaletteItem(block.identifier(), runtimeId, ItemVersion.DATA_DRIVEN, true,
+                    item = new RegisteredItem(block.identifier(), runtimeId, ItemVersion.DATA_DRIVEN, true,
                         ItemCompiler.componentData(block.identifier(), runtimeId, components, null, block.creative(),
                             context(report, source)), true);
                 }
@@ -643,7 +643,7 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
             tags.computeIfAbsent(tag, t -> new LinkedHashSet<>()).addAll(identifiers);
         }
 
-        public @NonNull ItemPalette build(@NonNull CreativeLayout layout, @NonNull PaletteReport report) {
+        public @NonNull ItemRegistry build(@NonNull CreativeLayout layout, @NonNull PaletteReport report) {
             Map<String, Set<NbtMap>> creativeStates = new HashMap<>();
             Set<String> creativeWithoutBlock = new HashSet<>();
             layout.forEachStack(stack -> {
@@ -654,11 +654,11 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
                 }
             });
 
-            Map<String, PaletteBlock> defaultBlocks = new HashMap<>();
+            Map<String, RegisteredBlockState> defaultBlocks = new HashMap<>();
             Set<String> multiState = new HashSet<>();
-            for (PaletteItem item : byIdentifier.values()) {
+            for (RegisteredItem item : byIdentifier.values()) {
                 String identifier = item.getIdentifier();
-                PaletteBlock block = null;
+                RegisteredBlockState block = null;
                 NbtMap override = blockOverrides.get(identifier);
                 Set<NbtMap> states = creativeStates.get(identifier);
                 Set<String> placed = itemBlocks.get(identifier);
@@ -689,14 +689,14 @@ public final class ItemPalette implements DefinitionRegistry<ItemDefinition> {
                     defaultBlocks.put(identifier, block);
                 }
             }
-            return new ItemPalette(this, defaultBlocks, multiState);
+            return new ItemRegistry(this, defaultBlocks, multiState);
         }
 
-        private @Nullable PaletteBlock bundledBlock(String identifier, Set<String> placed, @Nullable Set<NbtMap> creativeStates) {
+        private @Nullable RegisteredBlockState bundledBlock(String identifier, Set<String> placed, @Nullable Set<NbtMap> creativeStates) {
             if (creativeStates != null) {
                 NbtMap first = creativeStates.iterator().next();
                 if (placed.contains(BlockStates.name(first))) {
-                    PaletteBlock block = blocks.resolve(first).block();
+                    RegisteredBlockState block = blocks.resolve(first).block();
                     if (block != null) {
                         return block;
                     }

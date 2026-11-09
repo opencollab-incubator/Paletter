@@ -2,7 +2,7 @@ package org.geysermc.paletter;
 
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
-import org.geysermc.paletter.block.PaletteBlock;
+import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.internal.Canonicals;
@@ -118,7 +118,7 @@ public final class Ids {
         return p.blocks().runtimeId(canonical);
     }
 
-    public static PaletteBlock blockAt(Palette p, int canonical) {
+    public static RegisteredBlockState blockAt(Palette p, int canonical) {
         return p.blocks().block(canonical);
     }
 

@@ -14,7 +14,7 @@ import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.CustomItem;
-import org.geysermc.paletter.item.PaletteItem;
+import org.geysermc.paletter.item.RegisteredItem;
 import org.geysermc.paletter.item.component.DisplayName;
 import org.geysermc.paletter.item.component.Durability;
 import org.geysermc.paletter.item.component.Food;
@@ -75,7 +75,7 @@ class CustomContentTest {
     @Test
     void itemsGetTheCustomItemPropertiesAndTheirComponents() {
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").item(ruby()).build());
-        PaletteItem ruby = palette.items().getDefinition("example:ruby");
+        RegisteredItem ruby = palette.items().getDefinition("example:ruby");
         NbtMap components = ruby.getComponentData().getCompound("components");
         NbtMap properties = components.getCompound("item_properties");
         assertEquals(16, properties.getInt("max_stack_size"));
@@ -184,8 +184,8 @@ class CustomContentTest {
         PaletteLayer layer = PaletteLayer.builder("ordered").item(ruby())
             .blockItem(lamp.identifier(), lamp.item(), null).block(lamp).build();
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), layer);
-        PaletteItem ruby = palette.items().getDefinition("example:ruby");
-        PaletteItem item = palette.items().getDefinition(lamp.identifier());
+        RegisteredItem ruby = palette.items().getDefinition("example:ruby");
+        RegisteredItem item = palette.items().getDefinition(lamp.identifier());
         assertTrue(item.getRuntimeId() > ruby.getRuntimeId());
         // The block's own placement still applies
         assertTrue(palette.creativeLayout().stacks().anyMatch(s -> s.identifier().equals(lamp.identifier())));

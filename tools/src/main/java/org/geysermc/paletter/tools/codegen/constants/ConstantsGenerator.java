@@ -6,9 +6,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.geysermc.paletter.data.PaletteDataCodec;
-import org.geysermc.paletter.data.VanillaData;
-import org.geysermc.paletter.data.VanillaItem;
+import org.geysermc.paletter.internal.data.PaletteDataCodec;
+import org.geysermc.paletter.internal.data.VanillaData;
+import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.internal.vanilla.BlockLayout;
 
 import java.io.IOException;

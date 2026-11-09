@@ -3,11 +3,11 @@ package org.geysermc.paletter;
 import org.geysermc.paletter.internal.Forwarding;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataSource;
-import org.geysermc.paletter.data.Renames;
-import org.geysermc.paletter.data.VanillaData;
+import org.geysermc.paletter.internal.data.Renames;
+import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.item.ItemVariant;
 import org.junit.jupiter.api.Test;
 

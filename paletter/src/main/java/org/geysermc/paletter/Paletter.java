@@ -12,8 +12,8 @@ import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataSource;
-import org.geysermc.paletter.data.VanillaData;
-import org.geysermc.paletter.data.VanillaItem;
+import org.geysermc.paletter.internal.data.VanillaData;
+import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.item.ItemVariant;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
@@ -101,6 +101,7 @@ public final class Paletter {
         return found;
     }
 
+    @Internal
     public @NonNull VanillaData vanillaData(@NonNull DataVersion version) {
         return data.computeIfAbsent(version, v -> {
             try {

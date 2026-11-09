@@ -12,7 +12,7 @@ import org.cloudburstmc.nbt.NbtMap;
  * @param kind how it was resolved
  * @since 1.0.0
  */
-public record BlockResolution(@NonNull NbtMap requested, @Nullable PaletteBlock block, @NonNull Kind kind) {
+public record BlockResolution(@NonNull NbtMap requested, @Nullable RegisteredBlockState block, @NonNull Kind kind) {
 
     public enum Kind {
         /**

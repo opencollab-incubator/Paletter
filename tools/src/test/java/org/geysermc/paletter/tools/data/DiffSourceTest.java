@@ -10,18 +10,18 @@ import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.nbt.NbtUtils;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.geysermc.paletter.block.BlockNetworkIds;
-import org.geysermc.paletter.block.BlockPalette;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.block.BlockRegistry;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeGroup;
 import org.geysermc.paletter.creative.CreativeLayout;
 import org.geysermc.paletter.creative.CreativeNode;
 import org.geysermc.paletter.creative.CreativeStack;
 import org.geysermc.paletter.data.DataVersion;
-import org.geysermc.paletter.data.PaletteDataCodec;
-import org.geysermc.paletter.data.VanillaData;
-import org.geysermc.paletter.data.VanillaItem;
-import org.geysermc.paletter.data.VersionFallbacks;
+import org.geysermc.paletter.internal.data.PaletteDataCodec;
+import org.geysermc.paletter.internal.data.VanillaData;
+import org.geysermc.paletter.internal.data.VanillaItem;
+import org.geysermc.paletter.internal.data.VersionFallbacks;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -253,7 +253,7 @@ class DiffSourceTest {
         for (String facing : List.of("north", "south")) {
             states.add(BlockStates.of("test:door", Map.of("facing", facing)));
         }
-        states.sort(Comparator.comparing((NbtMap state) -> BlockPalette.nameHash(BlockStates.name(state)), Long::compareUnsigned));
+        states.sort(Comparator.comparing((NbtMap state) -> BlockRegistry.nameHash(BlockStates.name(state)), Long::compareUnsigned));
 
         NbtMap swordComponents = NbtMap.builder()
             .putCompound("components", NbtMap.builder().putString("minecraft:icon", "sword").build())

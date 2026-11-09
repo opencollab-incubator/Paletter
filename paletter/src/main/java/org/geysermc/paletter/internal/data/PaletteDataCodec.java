@@ -1,4 +1,6 @@
-package org.geysermc.paletter.data;
+package org.geysermc.paletter.internal.data;
+
+import org.geysermc.paletter.data.DataVersion;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NBTInputStream;
@@ -10,7 +12,7 @@ import org.cloudburstmc.nbt.NbtUtils;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.block.BlockFallback;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeGroup;
 import org.geysermc.paletter.creative.CreativeLayout;

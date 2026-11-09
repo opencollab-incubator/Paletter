@@ -1,5 +1,7 @@
 package org.geysermc.paletter.block;
 
+import org.geysermc.paletter.internal.block.BlockStates;
+
 import org.geysermc.paletter.internal.CanonicalBlocks;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -13,7 +15,7 @@ import org.geysermc.paletter.PaletteException;
 import org.geysermc.paletter.PaletteReport;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.data.DataVersion;
-import org.geysermc.paletter.data.VanillaData;
+import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.component.BlockCompiler;
 import org.geysermc.paletter.internal.component.WireContext;
 
@@ -41,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @since 1.0.0
  */
-public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
+public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> {
     /**
      * Numeric ids of custom blocks start here, to stay clear of vanilla block ids.
      */
@@ -65,7 +67,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     private final Map<NbtMap, BlockResolution> resolutions = new ConcurrentHashMap<>();
     private volatile @Nullable CanonicalTable canonicalTable;
 
-    private BlockPalette(Table table, CanonicalBlocks canonical, Map<String, BlockFallback> fallbacks,
+    private BlockRegistry(Table table, CanonicalBlocks canonical, Map<String, BlockFallback> fallbacks,
                          @Nullable BlockFallback defaultFallback, BlockInterner interner) {
         this.table = table;
         this.canonical = canonical;
@@ -81,9 +83,9 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
      * @param interner shares blocks and tables between hashed palettes; one per Paletter
      */
     @Internal
-    public static @NonNull BlockPalette build(@NonNull VanillaData data, @NonNull BlockNetworkIds mode, @NonNull CanonicalBlocks canonical,
+    public static @NonNull BlockRegistry build(@NonNull VanillaData data, @NonNull BlockNetworkIds mode, @NonNull CanonicalBlocks canonical,
                                               @NonNull BlockInterner interner) {
-        return new BlockPalette(new Table(data, List.of(), List.of(), mode, interner), canonical, data.fallbacks().blocks(),
+        return new BlockRegistry(new Table(data, List.of(), List.of(), mode, interner), canonical, data.fallbacks().blocks(),
             BlockFallback.UNKNOWN, interner);
     }
 
@@ -91,13 +93,13 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
      * @return a palette sharing all states with this one, with additional fallbacks, or this palette if there are none
      */
     @Internal
-    public @NonNull BlockPalette withFallbacks(@NonNull Map<String, BlockFallback> extraFallbacks) {
+    public @NonNull BlockRegistry withFallbacks(@NonNull Map<String, BlockFallback> extraFallbacks) {
         if (extraFallbacks.isEmpty()) {
             return this;
         }
         Map<String, BlockFallback> merged = new HashMap<>(fallbacks);
         merged.putAll(extraFallbacks);
-        return new BlockPalette(table, canonical, Map.copyOf(merged), defaultFallback, interner);
+        return new BlockRegistry(table, canonical, Map.copyOf(merged), defaultFallback, interner);
     }
 
     /**
@@ -105,11 +107,11 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
      * @return a palette sharing all states with this one, with this default fallback, or this palette if it has it
      */
     @Internal
-    public @NonNull BlockPalette withDefaultFallback(@Nullable BlockFallback fallback) {
+    public @NonNull BlockRegistry withDefaultFallback(@Nullable BlockFallback fallback) {
         if (java.util.Objects.equals(fallback, defaultFallback)) {
             return this;
         }
-        return new BlockPalette(table, canonical, fallbacks, fallback, interner);
+        return new BlockRegistry(table, canonical, fallbacks, fallback, interner);
     }
 
     /**
@@ -128,7 +130,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
      * @return a palette with these custom blocks added, keeping this palette's fallbacks, or this palette if there are none
      */
     @Internal
-    public @NonNull BlockPalette withCustomBlocks(@NonNull VanillaData data, @NonNull Object key, @NonNull List<CustomBlock> additional,
+    public @NonNull BlockRegistry withCustomBlocks(@NonNull VanillaData data, @NonNull Object key, @NonNull List<CustomBlock> additional,
                                                   @NonNull PaletteReport report, @NonNull String source) {
         if (additional.isEmpty()) {
             return this;
@@ -156,7 +158,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
         // The property list BDS sends follows its block ids too
         encoded.sort(java.util.Comparator.comparing(BlockPropertyData::getName).reversed());
         Table extended = new Table(data, all, encoded, table.mode, interner);
-        return new BlockPalette(extended, canonical.extend(key, additional), fallbacks, defaultFallback, interner);
+        return new BlockRegistry(extended, canonical.extend(key, additional), fallbacks, defaultFallback, interner);
     }
 
     public @NonNull DataVersion version() {
@@ -182,7 +184,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
         return table.byIndex.length;
     }
 
-    public @Nullable PaletteBlock byRuntimeId(int runtimeId) {
+    public @Nullable RegisteredBlockState byRuntimeId(int runtimeId) {
         int index = indexOfRuntimeId(runtimeId);
         return index == -1 ? null : table.byIndex[index];
     }
@@ -191,7 +193,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
      * @param index a dense position, see {@link #indexOf}
      * @throws IndexOutOfBoundsException if there is no such position
      */
-    public @NonNull PaletteBlock byIndex(int index) {
+    public @NonNull RegisteredBlockState byIndex(int index) {
         return table.byIndex[index];
     }
 
@@ -219,7 +221,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
 
     @Override
     public boolean isRegistered(@NonNull BlockDefinition definition) {
-        return definition instanceof PaletteBlock && indexOf(definition) != -1;
+        return definition instanceof RegisteredBlockState && indexOf(definition) != -1;
     }
 
     // ---- Canonical ids ----
@@ -232,7 +234,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
      * @throws IndexOutOfBoundsException if the id is not one of {@link #canonical()}
      */
 @Internal
-    public @NonNull PaletteBlock block(int canonical) {
+    public @NonNull RegisteredBlockState block(int canonical) {
         return canonicalTable().blocks[canonical >>> PAGE_BITS][canonical & PAGE_MASK];
     }
 
@@ -300,7 +302,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     private CanonicalTable buildCanonicalTable() {
         int size = canonical.size();
         int pageCount = (size + PAGE_SIZE - 1) >>> PAGE_BITS;
-        PaletteBlock[][] blocks = new PaletteBlock[pageCount][];
+        RegisteredBlockState[][] blocks = new RegisteredBlockState[pageCount][];
         int[][] runtimeIds = new int[pageCount][];
         int[] reverse = new int[table.byIndex.length];
         for (int i = 0; i < reverse.length; i++) {
@@ -311,15 +313,15 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
         for (int page = 0; page < pageCount; page++) {
             int start = page << PAGE_BITS;
             int length = Math.min(PAGE_SIZE, size - start);
-            PaletteBlock[] pageBlocks = new PaletteBlock[length];
+            RegisteredBlockState[] pageBlocks = new RegisteredBlockState[length];
             int[] pageIds = new int[length];
             boolean vanillaOnly = true;
             for (int j = 0; j < length; j++) {
                 int id = start + j;
                 NbtMap state = canonical.state(id);
-                PaletteBlock block = resolve(state).block();
+                RegisteredBlockState block = resolve(state).block();
                 if (block == null) {
-                    PaletteBlock fallback = defaultBlock();
+                    RegisteredBlockState fallback = defaultBlock();
                     block = fallback != null ? fallback : table.air;
                     missing.add(state);
                 }
@@ -342,7 +344,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
         return new CanonicalTable(blocks, runtimeIds, reverse, List.copyOf(missing));
     }
 
-    private record CanonicalTable(PaletteBlock[][] blocks, int[][] runtimeIds, int[] reverse, List<NbtMap> missing) {
+    private record CanonicalTable(RegisteredBlockState[][] blocks, int[][] runtimeIds, int[] reverse, List<NbtMap> missing) {
     }
 
     // ---- States ----
@@ -351,7 +353,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
      * @param state a block state as {@code {name, states}}
      * @return the definition of exactly this state, or null
      */
-    public @Nullable PaletteBlock exact(@NonNull NbtMap state) {
+    public @Nullable RegisteredBlockState exact(@NonNull NbtMap state) {
         return table.byState.get(BlockStates.normalize(state));
     }
 
@@ -368,7 +370,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     public @NonNull BlockResolution resolve(@NonNull NbtMap state) {
         NbtMap normalized = BlockStates.normalize(state);
         BlockFallback forced = fallbacks.get(BlockStates.name(normalized));
-        PaletteBlock exact = forced != null && forced.force() ? null : table.byState.get(normalized);
+        RegisteredBlockState exact = forced != null && forced.force() ? null : table.byState.get(normalized);
         if (exact != null) {
             return new BlockResolution(normalized, exact, BlockResolution.Kind.EXACT);
         }
@@ -401,7 +403,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
             Set<Object> allowed = schema.values.get(entry.getKey());
             adapted.put(entry.getKey(), value != null && allowed.contains(value) ? value : entry.getValue());
         }
-        PaletteBlock block = table.byState.get(BlockStates.of(name, adapted.build()));
+        RegisteredBlockState block = table.byState.get(BlockStates.of(name, adapted.build()));
         return new BlockResolution(state, block != null ? block : schema.defaultState, kind);
     }
 
@@ -409,8 +411,8 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
      * Resolves a list of states at once. States that cannot be resolved at all map to {@code missing}; everything that
      * was not exact is recorded in the report.
      */
-    public @NonNull PaletteBlock[] table(@NonNull List<NbtMap> states, @NonNull PaletteBlock missing, @NonNull PaletteReport report) {
-        PaletteBlock[] result = new PaletteBlock[states.size()];
+    public @NonNull RegisteredBlockState[] table(@NonNull List<NbtMap> states, @NonNull RegisteredBlockState missing, @NonNull PaletteReport report) {
+        RegisteredBlockState[] result = new RegisteredBlockState[states.size()];
         Map<BlockResolution.Kind, Integer> counts = new LinkedHashMap<>();
         for (int i = 0; i < result.length; i++) {
             BlockResolution resolution = resolve(states.get(i));
@@ -430,13 +432,13 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     /**
      * @return the default state of a block, or null if the block does not exist
      */
-    public @Nullable PaletteBlock defaultState(@NonNull String identifier) {
+    public @Nullable RegisteredBlockState defaultState(@NonNull String identifier) {
         Schema schema = table.schemas().get(identifier);
         return schema == null ? null : schema.defaultState;
     }
 
     /** The default state of the default fallback's target, or null if there is none (or it is not in this version). */
-    private @Nullable PaletteBlock defaultBlock() {
+    private @Nullable RegisteredBlockState defaultBlock() {
         return defaultFallback == null ? null : defaultState(defaultFallback.target());
     }
 
@@ -447,12 +449,12 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     /**
      * @return every state of a block, in palette order
      */
-    public @NonNull List<PaletteBlock> states(@NonNull String identifier) {
+    public @NonNull List<RegisteredBlockState> states(@NonNull String identifier) {
         Schema schema = table.schemas().get(identifier);
         return schema == null ? List.of() : schema.states;
     }
 
-    public @NonNull PaletteBlock air() {
+    public @NonNull RegisteredBlockState air() {
         return table.air;
     }
 
@@ -492,13 +494,13 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     /**
      * @return true if this palette has exactly the states (and runtime ids) of the other one
      */
-    public boolean sharesStatesWith(@NonNull BlockPalette other) {
+    public boolean sharesStatesWith(@NonNull BlockRegistry other) {
         return table == other.table;
     }
 
     @Override
     public String toString() {
-        return "BlockPalette{" + version() + ", " + table.mode + ", " + size() + " states, " + table.customBlocks.size() + " custom blocks}";
+        return "BlockRegistry{" + version() + ", " + table.mode + ", " + size() + " states, " + table.customBlocks.size() + " custom blocks}";
     }
 
     /**
@@ -516,7 +518,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     private record HashedState(long hash, NbtMap state) {
     }
 
-    private record Schema(List<PaletteBlock> states, Map<String, Set<Object>> values, PaletteBlock defaultState) {
+    private record Schema(List<RegisteredBlockState> states, Map<String, Set<Object>> values, RegisteredBlockState defaultState) {
     }
 
     /**
@@ -525,14 +527,14 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
     private static final class Table {
         private final DataVersion version;
         private final BlockNetworkIds mode;
-        private final PaletteBlock[] byIndex;
+        private final RegisteredBlockState[] byIndex;
         private final @Nullable IntIndex byHash;
-        private final Map<NbtMap, PaletteBlock> byState;
+        private final Map<NbtMap, RegisteredBlockState> byState;
         private final int @Nullable [] vanillaToRuntime;
         private final List<BlockPropertyData> blockProperties;
         private final List<CustomBlock> customBlocks;
         private final Map<String, NbtMap> defaults;
-        private final PaletteBlock air;
+        private final RegisteredBlockState air;
         private volatile Map<String, Schema> schemas;
 
         private Table(VanillaData data, List<CustomBlock> customBlocks, List<BlockPropertyData> customProperties, BlockNetworkIds mode,
@@ -565,7 +567,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
                 Map<String, Long> hashes = new HashMap<>();
                 List<HashedState> hashed = new ArrayList<>(states.size());
                 for (NbtMap state : states) {
-                    hashed.add(new HashedState(hashes.computeIfAbsent(BlockStates.name(state), BlockPalette::nameHash), state));
+                    hashed.add(new HashedState(hashes.computeIfAbsent(BlockStates.name(state), BlockRegistry::nameHash), state));
                 }
                 hashed.sort((a, b) -> Long.compareUnsigned(a.hash(), b.hash()));
                 for (int i = 0; i < states.size(); i++) {
@@ -573,17 +575,17 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
                 }
             }
 
-            this.byIndex = new PaletteBlock[states.size()];
-            Object2ObjectOpenHashMap<NbtMap, PaletteBlock> byState = new Object2ObjectOpenHashMap<>(states.size());
+            this.byIndex = new RegisteredBlockState[states.size()];
+            Object2ObjectOpenHashMap<NbtMap, RegisteredBlockState> byState = new Object2ObjectOpenHashMap<>(states.size());
             IntIndex byHash = mode == BlockNetworkIds.HASHED ? new IntIndex(states.size()) : null;
             for (int i = 0; i < states.size(); i++) {
                 NbtMap state = states.get(i);
                 boolean custom = customStates.contains(state);
-                PaletteBlock block;
+                RegisteredBlockState block;
                 if (byHash == null) {
-                    block = new PaletteBlock(i, state, custom);
+                    block = new RegisteredBlockState(i, state, custom);
                 } else if (custom) {
-                    block = new PaletteBlock(BlockNetworkIds.hash(state), state, true);
+                    block = new RegisteredBlockState(BlockNetworkIds.hash(state), state, true);
                 } else {
                     // A vanilla state has the same hash in every version: share the definition
                     block = interner.vanillaBlock(state);
@@ -617,7 +619,7 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
             defaults.putAll(customDefaults);
             this.defaults = Map.copyOf(defaults);
 
-            PaletteBlock air = byState.get(BlockStates.of("minecraft:air"));
+            RegisteredBlockState air = byState.get(BlockStates.of("minecraft:air"));
             if (air == null) {
                 throw new PaletteException("The " + version + " palette has no air");
             }
@@ -638,18 +640,18 @@ public final class BlockPalette implements DefinitionRegistry<BlockDefinition> {
         }
 
         private Map<String, Schema> buildSchemas() {
-            Map<String, List<PaletteBlock>> byName = new HashMap<>();
-            for (PaletteBlock block : byIndex) {
+            Map<String, List<RegisteredBlockState>> byName = new HashMap<>();
+            for (RegisteredBlockState block : byIndex) {
                 byName.computeIfAbsent(block.identifier(), name -> new ArrayList<>()).add(block);
             }
             Map<String, Schema> schemas = new HashMap<>(byName.size());
-            for (Map.Entry<String, List<PaletteBlock>> entry : byName.entrySet()) {
+            for (Map.Entry<String, List<RegisteredBlockState>> entry : byName.entrySet()) {
                 Map<String, Set<Object>> values = new HashMap<>();
-                for (PaletteBlock block : entry.getValue()) {
+                for (RegisteredBlockState block : entry.getValue()) {
                     block.states().forEach((key, value) -> values.computeIfAbsent(key, k -> new LinkedHashSet<>()).add(value));
                 }
                 NbtMap knownDefault = defaults.get(entry.getKey());
-                PaletteBlock defaultState = knownDefault == null ? null : byState.get(knownDefault);
+                RegisteredBlockState defaultState = knownDefault == null ? null : byState.get(knownDefault);
                 if (defaultState == null) {
                     // Palette dumps do not say which state is the default; the first is the best guess
                     defaultState = entry.getValue().getFirst();

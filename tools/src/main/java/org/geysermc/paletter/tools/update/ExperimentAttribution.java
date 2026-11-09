@@ -4,7 +4,7 @@ import org.geysermc.paletter.tools.bds.BdsDump;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.tools.client.CapturedData;
 import org.geysermc.paletter.creative.CreativeStack;
-import org.geysermc.paletter.data.ExperimentContent;
+import org.geysermc.paletter.internal.data.ExperimentContent;
 
 import java.util.ArrayList;
 import java.util.List;

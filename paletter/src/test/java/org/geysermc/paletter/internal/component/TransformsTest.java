@@ -20,7 +20,7 @@ import org.geysermc.paletter.block.component.PlacementFilter;
 import org.geysermc.paletter.block.component.RedstoneProducer;
 import org.geysermc.paletter.block.component.SelectionBox;
 import org.geysermc.paletter.block.component.Transformation;
-import org.geysermc.paletter.data.VanillaData;
+import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.item.component.BlockPlacer;
 import org.geysermc.paletter.item.component.Digger;
 import org.geysermc.paletter.item.component.Dyeable;

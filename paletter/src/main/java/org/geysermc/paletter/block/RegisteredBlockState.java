@@ -10,16 +10,16 @@ import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
  * <p>
  * In {@link BlockNetworkIds#HASHED} palettes, vanilla states are additionally shared between all palettes of a
  * {@link org.geysermc.paletter.Paletter}, across versions: equal state, same instance. The position of a state in its
- * palette is {@link BlockPalette#indexOf}.
+ * palette is {@link BlockRegistry#indexOf}.
  *
  * @since 1.0.0
  */
-public final class PaletteBlock implements BlockDefinition {
+public final class RegisteredBlockState implements BlockDefinition {
     private final int runtimeId;
     private final NbtMap state;
     private final boolean custom;
 
-    PaletteBlock(int runtimeId, NbtMap state, boolean custom) {
+    RegisteredBlockState(int runtimeId, NbtMap state, boolean custom) {
         this.runtimeId = runtimeId;
         this.state = state;
         this.custom = custom;
@@ -57,6 +57,6 @@ public final class PaletteBlock implements BlockDefinition {
 
     @Override
     public String toString() {
-        return "PaletteBlock{" + runtimeId + " " + state.getString("name") + state.getCompound("states") + "}";
+        return "RegisteredBlockState{" + runtimeId + " " + state.getString("name") + state.getCompound("states") + "}";
     }
 }

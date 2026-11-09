@@ -5,16 +5,16 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemCategory;
 import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemGroup;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeContent;
 import org.geysermc.paletter.creative.CreativeEntry;
 import org.geysermc.paletter.data.DataVersion;
-import org.geysermc.paletter.data.ExperimentContent;
-import org.geysermc.paletter.data.PaletteDataCodec;
-import org.geysermc.paletter.data.VanillaData;
+import org.geysermc.paletter.internal.data.ExperimentContent;
+import org.geysermc.paletter.internal.data.PaletteDataCodec;
+import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.item.ItemVariant;
-import org.geysermc.paletter.item.PaletteItem;
+import org.geysermc.paletter.item.RegisteredItem;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -56,7 +56,7 @@ class VanillaPaletteTest {
     @Test
     void definitionsAreRegisteredByIdentity() {
         Palette palette = PALETTER.vanilla(PALETTER.latest());
-        PaletteItem apple = palette.items().getDefinition("minecraft:apple");
+        RegisteredItem apple = palette.items().getDefinition("minecraft:apple");
         assertNotNull(apple);
         assertSame(apple, palette.items().getDefinition(apple.getRuntimeId()));
         assertTrue(palette.items().isRegistered(apple));
@@ -108,8 +108,8 @@ class VanillaPaletteTest {
     @Test
     void blockItemsKnowTheirBlock() {
         Palette palette = PALETTER.vanilla(PALETTER.latest());
-        PaletteItem planks = palette.items().getDefinition("minecraft:oak_planks");
-        PaletteItem apple = palette.items().getDefinition("minecraft:apple");
+        RegisteredItem planks = palette.items().getDefinition("minecraft:oak_planks");
+        RegisteredItem apple = palette.items().getDefinition("minecraft:apple");
         assertNotNull(planks);
         assertNotNull(apple);
         assertTrue(palette.items().isBlockItem(planks));

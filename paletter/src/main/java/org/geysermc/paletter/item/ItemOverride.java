@@ -4,7 +4,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.internal.component.ItemCompiler;
 import org.geysermc.paletter.internal.component.WireContext;
 import org.geysermc.paletter.item.component.ItemComponent;
@@ -25,7 +25,7 @@ import java.util.List;
  * @since 1.0.0
  */
 public final class ItemOverride {
-    private final PaletteItem original;
+    private final RegisteredItem original;
     private @Nullable ItemVersion version;
     private @Nullable Boolean componentBased;
     private final List<ItemComponent> components = new ArrayList<>();
@@ -33,14 +33,14 @@ public final class ItemOverride {
     private boolean blockSet;
     private @Nullable NbtMap block;
 
-    ItemOverride(PaletteItem original) {
+    ItemOverride(RegisteredItem original) {
         this.original = original;
     }
 
     /**
      * @return the definition before this override
      */
-    public @NonNull PaletteItem original() {
+    public @NonNull RegisteredItem original() {
         return original;
     }
 
@@ -109,7 +109,7 @@ public final class ItemOverride {
         return block;
     }
 
-    PaletteItem apply(WireContext context) {
+    RegisteredItem apply(WireContext context) {
         NbtMap componentData = original.getComponentData();
         if (fresh || (componentData == null && !components.isEmpty())) {
             componentData = ItemCompiler.componentData(original.getIdentifier(), original.getRuntimeId(), components, null, null, context);
@@ -121,7 +121,7 @@ public final class ItemOverride {
             }
             componentData = ItemCompiler.override(componentData, components, context);
         }
-        return new PaletteItem(original.getIdentifier(), original.getRuntimeId(),
+        return new RegisteredItem(original.getIdentifier(), original.getRuntimeId(),
             version != null ? version : original.getVersion(),
             componentBased != null ? componentBased : original.isComponentBased(),
             componentData, original.isCustom());

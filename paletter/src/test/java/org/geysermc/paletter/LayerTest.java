@@ -7,13 +7,13 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
 import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.block.component.LightEmission;
-import org.geysermc.paletter.block.BlockPalette;
+import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.BlockFallback;
 import org.geysermc.paletter.block.BlockResolution;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.CustomBlock;
-import org.geysermc.paletter.block.PaletteBlock;
+import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeEntry;
 import org.geysermc.paletter.creative.CreativePlacement;
@@ -26,7 +26,7 @@ import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.MaxStackSize;
 import org.geysermc.paletter.item.ItemFallback;
 import org.geysermc.paletter.item.ItemVariant;
-import org.geysermc.paletter.item.PaletteItem;
+import org.geysermc.paletter.item.RegisteredItem;
 import org.geysermc.paletter.item.ResolvedItem;
 import org.geysermc.paletter.item.component.ThrowableItem;
 import org.junit.jupiter.api.Test;
@@ -66,11 +66,11 @@ class LayerTest {
     void customItemsGetRuntimeIdsComponentsAndCreativePlacement() {
         Palette vanilla = PALETTER.vanilla(PALETTER.version(LATEST));
         Palette palette = PALETTER.palette(LATEST, minecartLayer());
-        PaletteItem furnace = palette.items().getDefinition("geysermc:furnace_minecart");
+        RegisteredItem furnace = palette.items().getDefinition("geysermc:furnace_minecart");
         assertNotNull(furnace);
         assertTrue(furnace.isCustom());
         assertEquals(ItemVersion.DATA_DRIVEN, furnace.getVersion());
-        int maxVanilla = vanilla.items().definitions().stream().mapToInt(PaletteItem::getRuntimeId).max().orElseThrow();
+        int maxVanilla = vanilla.items().definitions().stream().mapToInt(RegisteredItem::getRuntimeId).max().orElseThrow();
         assertEquals(maxVanilla + 1, furnace.getRuntimeId());
 
         NbtMap data = furnace.getComponentData();
@@ -106,7 +106,7 @@ class LayerTest {
     @Test
     void damageVariantsMatchTheirCanonicalId() {
         Palette palette = PALETTER.palette(LATEST);
-        PaletteItem potion = palette.items().getDefinition("minecraft:potion");
+        RegisteredItem potion = palette.items().getDefinition("minecraft:potion");
         int five = Ids.item(PALETTER, ItemVariant.of("minecraft:potion", 5));
         int base = Ids.item(PALETTER, ItemVariant.of("minecraft:potion"));
         assertTrue(five >= 0 && base >= 0 && five != base);
@@ -166,13 +166,13 @@ class LayerTest {
         Palette vanilla = PALETTER.vanilla(PALETTER.version(LATEST));
         Palette palette = PALETTER.palette(LATEST, layer);
 
-        PaletteItem cake = palette.items().getDefinition("minecraft:cake");
+        RegisteredItem cake = palette.items().getDefinition("minecraft:cake");
         assertNotSame(vanilla.items().getDefinition("minecraft:cake"), cake);
         assertEquals(vanilla.items().getDefinition("minecraft:cake").getRuntimeId(), cake.getRuntimeId());
         assertTrue(cake.isComponentBased());
         assertEquals(1, cake.getComponentData().getCompound("components").getCompound("item_properties").getInt("max_stack_size"));
 
-        PaletteItem rocket = palette.items().getDefinition("minecraft:firework_rocket");
+        RegisteredItem rocket = palette.items().getDefinition("minecraft:firework_rocket");
         assertEquals(ItemVersion.DATA_DRIVEN, rocket.getVersion());
         assertTrue(rocket.getComponentData().getCompound("components").containsKey("minecraft:throwable"));
 
@@ -195,13 +195,13 @@ class LayerTest {
             .build();
         Palette vanilla = PALETTER.vanilla(PALETTER.version(LATEST));
         Palette palette = PALETTER.palette(LATEST, PaletteLayer.builder("blocks").block(lamp).build());
-        BlockPalette blocks = palette.blocks();
+        BlockRegistry blocks = palette.blocks();
 
         assertEquals(vanilla.blocks().size() + 6, blocks.size());
         assertEquals(6, blocks.states("geyser:lamp").size());
         for (int i = 1; i < blocks.size(); i++) {
-            assertTrue(Long.compareUnsigned(BlockPalette.nameHash(blocks.byRuntimeId(i - 1).identifier()),
-                BlockPalette.nameHash(blocks.byRuntimeId(i).identifier())) <= 0, "not sorted at " + i);
+            assertTrue(Long.compareUnsigned(BlockRegistry.nameHash(blocks.byRuntimeId(i - 1).identifier()),
+                BlockRegistry.nameHash(blocks.byRuntimeId(i).identifier())) <= 0, "not sorted at " + i);
         }
         // Vanilla ids shifted, and can be translated
         assertTrue(blocks.isRemapped());
@@ -209,17 +209,17 @@ class LayerTest {
             assertEquals(vanilla.blocks().byRuntimeId(i).getState(), blocks.byRuntimeId(blocks.remapVanilla(i)).getState());
         }
 
-        PaletteBlock defaultState = blocks.defaultState("geyser:lamp");
+        RegisteredBlockState defaultState = blocks.defaultState("geyser:lamp");
         assertEquals(1, defaultState.states().getInt("geyser:color"));
         assertEquals((byte) 0, defaultState.states().getByte("geyser:lit"));
 
         BlockPropertyData properties = blocks.blockProperties().stream().filter(p -> p.getName().equals("geyser:lamp")).findFirst().orElseThrow();
-        assertEquals(BlockPalette.CUSTOM_BLOCK_ID_START, properties.getProperties().getCompound("vanilla_block_data").getInt("block_id"));
+        assertEquals(BlockRegistry.CUSTOM_BLOCK_ID_START, properties.getProperties().getCompound("vanilla_block_data").getInt("block_id"));
         assertEquals("items", properties.getProperties().getCompound("menu_category").getString("category"));
         // Vanilla data driven blocks are still sent
         assertEquals(vanilla.blocks().blockProperties().size() + 1, blocks.blockProperties().size());
 
-        PaletteItem item = palette.items().getDefinition("geyser:lamp");
+        RegisteredItem item = palette.items().getDefinition("geyser:lamp");
         assertSame(defaultState, palette.items().defaultBlock(item));
         CreativeItemData last = palette.creative().items().getLast();
         assertSame(item, last.getItem().getDefinition());

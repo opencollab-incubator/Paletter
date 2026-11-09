@@ -1,4 +1,4 @@
-package org.geysermc.paletter.data;
+package org.geysermc.paletter.internal.data;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;

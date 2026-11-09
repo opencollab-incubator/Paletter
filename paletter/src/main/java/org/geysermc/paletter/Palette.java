@@ -13,18 +13,18 @@ import org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
 import org.geysermc.paletter.block.BlockNetworkIds;
-import org.geysermc.paletter.block.BlockPalette;
+import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.block.BlockResolution;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.internal.CanonicalBlocks;
-import org.geysermc.paletter.block.PaletteBlock;
+import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.creative.CreativeContent;
 import org.geysermc.paletter.creative.CreativeLayout;
 import org.geysermc.paletter.creative.ItemMatcher;
 import org.geysermc.paletter.data.DataVersion;
-import org.geysermc.paletter.data.VanillaData;
+import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.CanonicalItems;
-import org.geysermc.paletter.item.ItemPalette;
+import org.geysermc.paletter.item.ItemRegistry;
 import org.geysermc.paletter.item.ItemVariant;
 import org.geysermc.paletter.item.ResolvedItem;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
@@ -60,14 +60,14 @@ import java.util.WeakHashMap;
 public final class Palette {
     private final VanillaData data;
     private final List<PaletteLayer> layers;
-    private final BlockPalette blocks;
-    private final ItemPalette items;
+    private final BlockRegistry blocks;
+    private final ItemRegistry items;
     private final CreativeLayout creativeLayout;
     private final CreativeContent creative;
     private final PaletteReport report;
     private final Map<PaletteLayer, WeakReference<Palette>> extensions = new WeakHashMap<>();
 
-    Palette(VanillaData data, List<PaletteLayer> layers, BlockPalette blocks, ItemPalette items,
+    Palette(VanillaData data, List<PaletteLayer> layers, BlockRegistry blocks, ItemRegistry items,
             CreativeLayout creativeLayout, CreativeContent creative, PaletteReport report) {
         this.data = data;
         this.layers = List.copyOf(layers);
@@ -89,6 +89,7 @@ public final class Palette {
         return data.version();
     }
 
+    @Internal
     public @NonNull VanillaData vanillaData() {
         return data;
     }
@@ -101,12 +102,12 @@ public final class Palette {
     }
 
     @Internal
-    public @NonNull BlockPalette blocks() {
+    public @NonNull BlockRegistry blocks() {
         return blocks;
     }
 
     @Internal
-    public @NonNull ItemPalette items() {
+    public @NonNull ItemRegistry items() {
         return items;
     }
 
@@ -179,7 +180,7 @@ public final class Palette {
      * @throws IllegalArgumentException if the state is not in this palette (a custom block of a layer it does not have)
      * @since 1.0.0
      */
-    public @NonNull PaletteBlock block(@NonNull BedrockBlockState state) {
+    public @NonNull RegisteredBlockState block(@NonNull BedrockBlockState state) {
         return blocks.block(requireCanonical(state));
     }
 
@@ -203,12 +204,12 @@ public final class Palette {
 
     /**
      * The block state an item variant is sent with in this palette's version: Paletter alone decides it, see
-     * {@link ItemPalette#blockOf}. A block state of the variant wins over the item's block.
+     * {@link ItemRegistry#blockOf}. A block state of the variant wins over the item's block.
      *
      * @return the block, or null if the item is not a block item (or does not exist in this version and has no fallback)
      * @since 1.0.0
      */
-    public @Nullable PaletteBlock blockOf(@NonNull ItemVariant variant) {
+    public @Nullable RegisteredBlockState blockOf(@NonNull ItemVariant variant) {
         return items.blockOf(variant);
     }
 
@@ -246,7 +247,7 @@ public final class Palette {
         BlockResolution resolution = blocks.resolve(normalized);
         BlockResolution.Kind kind = resolution.block() != null ? resolution.kind()
             : blocks.defaultFallback() != null ? BlockResolution.Kind.DEFAULT : BlockResolution.Kind.MISSING;
-        PaletteBlock sent = kind == BlockResolution.Kind.MISSING ? null
+        RegisteredBlockState sent = kind == BlockResolution.Kind.MISSING ? null
             : canonical != -1 ? blocks.block(canonical) : resolution.block();
         List<String> chain = new ArrayList<>(List.of(BlockStates.name(normalized)));
         if (sent != null && !sent.identifier().equals(chain.getFirst())) {
@@ -286,7 +287,7 @@ public final class Palette {
         if (item != null && !item.equals(variant.identifier())) {
             chain.add(item);
         }
-        PaletteBlock block = sent == null ? null : sent.block();
+        RegisteredBlockState block = sent == null ? null : sent.block();
         ItemMatcher matcher = ItemMatcher.id(variant.identifier()).and(ItemMatcher.damage(variant.damage()));
         if (variant.blockState() != null) {
             matcher = matcher.and(ItemMatcher.blockState(variant.blockState()));
@@ -307,7 +308,7 @@ public final class Palette {
     }
 
     /**
-     * @return the variant a stack the client sent is, or null; see {@link ItemPalette#match(ItemData)}
+     * @return the variant a stack the client sent is, or null; see {@link ItemRegistry#match(ItemData)}
      * @since 1.0.0
      */
     public @Nullable BedrockItemVariant match(@NonNull ItemData data) {

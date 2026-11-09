@@ -2,11 +2,11 @@ package org.geysermc.paletter;
 
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.BlockFallback;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.BlockResolution;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.FallbackDefaults;
-import org.geysermc.paletter.data.VersionFallbacks;
+import org.geysermc.paletter.internal.data.VersionFallbacks;
 import org.geysermc.paletter.item.ItemFallback;
 import org.geysermc.paletter.item.ItemVariant;
 import org.geysermc.paletter.item.ResolvedItem;

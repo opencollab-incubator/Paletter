@@ -14,7 +14,7 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
  *
  * @since 1.0.0
  */
-public final class PaletteItem implements ItemDefinition {
+public final class RegisteredItem implements ItemDefinition {
     private final String identifier;
     private final int runtimeId;
     private final ItemVersion version;
@@ -22,7 +22,7 @@ public final class PaletteItem implements ItemDefinition {
     private final @Nullable NbtMap componentData;
     private final boolean custom;
 
-    PaletteItem(String identifier, int runtimeId, ItemVersion version, boolean componentBased, @Nullable NbtMap componentData, boolean custom) {
+    RegisteredItem(String identifier, int runtimeId, ItemVersion version, boolean componentBased, @Nullable NbtMap componentData, boolean custom) {
         this.identifier = identifier.intern();
         this.runtimeId = runtimeId;
         this.version = version;
@@ -65,6 +65,6 @@ public final class PaletteItem implements ItemDefinition {
 
     @Override
     public String toString() {
-        return "PaletteItem{" + identifier + " " + runtimeId + (custom ? " custom" : "") + "}";
+        return "RegisteredItem{" + identifier + " " + runtimeId + (custom ? " custom" : "") + "}";
     }
 }

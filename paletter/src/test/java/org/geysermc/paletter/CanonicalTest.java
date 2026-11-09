@@ -8,14 +8,14 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
 import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.BlockProperty;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.CustomBlock;
-import org.geysermc.paletter.block.PaletteBlock;
+import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.ItemVariant;
-import org.geysermc.paletter.item.PaletteItem;
+import org.geysermc.paletter.item.RegisteredItem;
 import org.geysermc.paletter.item.ResolvedItem;
 import org.junit.jupiter.api.Test;
 
@@ -75,7 +75,7 @@ class CanonicalTest {
         for (DataVersion version : PALETTER.versions()) {
             Palette palette = PALETTER.vanilla(version);
             for (int i = 0; i < Ids.blockCount(palette); i++) {
-                PaletteBlock resolved = palette.blocks().resolve(Ids.canonicalBlocks(palette).state(i)).block();
+                RegisteredBlockState resolved = palette.blocks().resolve(Ids.canonicalBlocks(palette).state(i)).block();
                 // Blocks a version lacks fall back to minecraft:unknown by default
                 assertSame(resolved == null ? palette.blocks().defaultState("minecraft:unknown") : resolved, Ids.blockAt(palette, i));
                 assertEquals(Ids.blockAt(palette, i).getRuntimeId(), Ids.runtimeId(palette, i));
@@ -83,7 +83,7 @@ class CanonicalTest {
             // Every block of the version maps back to a canonical id resolving to it, unless nothing resolves to it
             int unmapped = 0;
             for (int i = 0; i < palette.blocks().size(); i++) {
-                PaletteBlock block = palette.blocks().byIndex(i);
+                RegisteredBlockState block = palette.blocks().byIndex(i);
                 int canonical = palette.blocks().canonical(block);
                 if (canonical == -1) {
                     unmapped++;
@@ -106,8 +106,8 @@ class CanonicalTest {
         int shared = 0;
         int differentSequential = 0;
         for (int i = 0; i < latest.blocks().size(); i++) {
-            PaletteBlock block = latest.blocks().byIndex(i);
-            PaletteBlock old = oldest.blocks().exact(block.getState());
+            RegisteredBlockState block = latest.blocks().byIndex(i);
+            RegisteredBlockState old = oldest.blocks().exact(block.getState());
             assertEquals(BlockNetworkIds.hash(block.getState()), block.getRuntimeId());
             if (old != null) {
                 shared++;
@@ -121,7 +121,7 @@ class CanonicalTest {
         assertTrue(differentSequential > 0, "sequential ids should have shifted between versions");
 
         // The registry is keyed by hash
-        PaletteBlock air = latest.blocks().air();
+        RegisteredBlockState air = latest.blocks().air();
         assertEquals(-604749536, air.getRuntimeId());
         assertSame(air, latest.blocks().getDefinition(-604749536));
         assertSame(air, Ids.blockAt(latest, Ids.block(PALETTER, BlockStates.of("minecraft:air"))));
@@ -230,7 +230,7 @@ class CanonicalTest {
     @Test
     void layersAddCanonicalVariants() {
         Palette latest = PALETTER.vanilla(PALETTER.latest());
-        PaletteBlock log = latest.blocks().states("minecraft:oak_log").stream()
+        RegisteredBlockState log = latest.blocks().states("minecraft:oak_log").stream()
             .filter(state -> state != latest.items().defaultBlock(latest.items().getDefinition("minecraft:oak_log")))
             .findFirst().orElseThrow();
         ItemVariant apple3 = ItemVariant.of("minecraft:apple", 3);
@@ -253,7 +253,7 @@ class CanonicalTest {
                 assertEquals(vanilla + 1, Ids.item(palette, sidewaysLog));
                 assertEquals(Ids.item(PALETTER, ItemVariant.of("minecraft:apple")), Ids.item(palette, ItemVariant.of("minecraft:apple")));
 
-                PaletteItem apple = palette.items().getDefinition("minecraft:apple");
+                RegisteredItem apple = palette.items().getDefinition("minecraft:apple");
                 assertEquals(3, Ids.itemAt(palette, vanilla).damage());
                 assertEquals(vanilla, Ids.match(palette, ItemData.builder().definition(apple).damage(3).count(1).build()));
                 assertEquals(Ids.item(PALETTER, ItemVariant.of("minecraft:apple")),
@@ -308,7 +308,7 @@ class CanonicalTest {
         // Every state 26.40 has unchanged (about two thirds) uses the same instance
         assertTrue(shared > Ids.blockCount(latest) / 2, shared + " shared");
         // Registries still only know their own version's states
-        PaletteBlock newOnly = Ids.blockAt(latest, Ids.block(PALETTER, latest.blocks().states("minecraft:white_concrete_stairs").getFirst().getState()));
+        RegisteredBlockState newOnly = Ids.blockAt(latest, Ids.block(PALETTER, latest.blocks().states("minecraft:white_concrete_stairs").getFirst().getState()));
         assertTrue(latest.blocks().isRegistered(newOnly));
         assertFalse(oldest.blocks().isRegistered(newOnly));
         assertEquals(-1, oldest.blocks().indexOf(newOnly));

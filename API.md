@@ -27,7 +27,7 @@ Not API, and free to change in any release:
 - everything under `org.geysermc.paletter.internal` (the generated encoders, the compile core and the hand transforms in
   `internal.component`);
 - public types and members of exported packages annotated **`@Internal`** (plumbing shared between Paletter's own
-  packages, e.g. `ItemPalette.Builder`, `BlockPalette#withCustomBlocks`, `PaletteDataCodec`);
+  packages, e.g. `ItemRegistry.Builder`, `BlockRegistry#withCustomBlocks`, `PaletteDataCodec`);
 - the bundled data format, the tools module.
 
 Types of dependencies that appear in the API (Cloudburst protocol types such as `NbtMap`, `ItemData`,
@@ -156,7 +156,7 @@ new types too, including every generated constant: removing one now fails `apiCo
 
 Additions since the baseline (`apiCompat` passes, baseline not regenerated): `Forwarding` (with `Kind`), `Paletter#forwardBlock` /
 `#forwardItem` / `#explainUnknown` / `#canonicalBlockOf` and their `Palette` counterparts, `Palette#blockOf`,
-`ItemPalette#blockOf`, `CanonicalBlocks#forward`, `CanonicalItems#forward`, `VanillaData#blockItems` / `#withBlockItems` (an added
+`ItemRegistry#blockOf`, `CanonicalBlocks#forward`, `CanonicalItems#forward`, `VanillaData#blockItems` / `#withBlockItems` (an added
 record component; the previous constructors stay), and: `BedrockItemType#hasVariant` / `#variantOf`, and the
 debugging aids `Palette#explain` with `BlockExplanation` and `ItemExplanation` (both `@Experimental`: their shape may still grow), and the wire-only item components (`WireOnlyItemComponent`, `RenderOffsets`, `MiningSpeed`, `FrameCount`; `ItemComponent` gains the permitted sub-interface, so code that switches over it exhaustively needs a case for it; likewise `WireOnlyBlockComponent` with `OnPlayerPlacing` for `BlockComponent`).
 
@@ -172,8 +172,8 @@ debugging aids `Palette#explain` with `BlockExplanation` and `ItemExplanation` (
   Removed from the API (moved to `org.geysermc.paletter.internal` or `@Internal`): `Paletter#canonicalBlock` /
   `#canonicalItem` / `#canonicalBlockOf` / `#forwardBlock` / `#forwardItem` / `#canonicalBlockCount` /
   `#canonicalItemCount`, their `Palette` counterparts and the `int` overloads of `Palette#runtimeId/block/item/match`,
-  `CanonicalBlocks`, `CanonicalItems` and `Forwarding` (now `internal`), and the canonical id members of `BlockPalette`
-  and `ItemPalette`. Consumers hold handles where they held ids; where they sized an array by the id count they key a
+  `CanonicalBlocks`, `CanonicalItems` and `Forwarding` (now `internal`), and the canonical id members of `BlockRegistry`
+  and `ItemRegistry`. Consumers hold handles where they held ids; where they sized an array by the id count they key a
   map by handle.
 
 - Paletter owns the order of custom blocks: the custom entries of `Palette#blockProperties()` and the runtime ids of the
@@ -194,8 +194,8 @@ debugging aids `Palette#explain` with `BlockExplanation` and `ItemExplanation` (
   have bundled fallbacks changed; the API did not. The removed entries were exported for Geyser to adopt.
 
 - The block an item is sent with is decided by Paletter from the bundled block to item relation first
-  (`ItemPalette#blockOf`, `Palette#blockOf`, `Paletter#canonicalBlockOf`); the old name and creative state heuristics only
-  remain for data without the relation. `ItemPalette#defaultBlock` / `isBlockItem` changed results (doors, signs, crops,
+  (`ItemRegistry#blockOf`, `Palette#blockOf`, `Paletter#canonicalBlockOf`); the old name and creative state heuristics only
+  remain for data without the relation. `ItemRegistry#defaultBlock` / `isBlockItem` changed results (doors, signs, crops,
   banners, beds, cauldrons are block items now; double slab items are not). The data format gained the optional
   `block_items` key; older files are still read.
 

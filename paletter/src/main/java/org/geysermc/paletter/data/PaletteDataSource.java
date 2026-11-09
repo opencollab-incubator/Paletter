@@ -1,5 +1,9 @@
 package org.geysermc.paletter.data;
 
+import org.geysermc.paletter.internal.data.Renames;
+
+import org.geysermc.paletter.internal.data.VanillaData;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.IOException;
@@ -21,6 +25,7 @@ public interface PaletteDataSource {
     /**
      * Loads the data of the given version. Called at most once per version by {@link org.geysermc.paletter.Paletter}.
      */
+    @org.geysermc.paletter.annotation.Internal
     @NonNull VanillaData load(@NonNull DataVersion version) throws IOException;
 
     /**

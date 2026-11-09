@@ -1,8 +1,8 @@
 package org.geysermc.paletter;
 
 import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.paletter.block.BlockStates;
-import org.geysermc.paletter.block.PaletteBlock;
+import org.geysermc.paletter.internal.block.BlockStates;
+import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.ItemVariant;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
@@ -51,9 +51,9 @@ class BlockOfTest {
     @Test
     void aBlockStateOfTheVariantWins() {
         Palette palette = paletter.vanilla(paletter.latest());
-        PaletteBlock log = palette.blockOf(ItemVariant.of("minecraft:oak_log"));
+        RegisteredBlockState log = palette.blockOf(ItemVariant.of("minecraft:oak_log"));
         assertNotNull(log);
-        PaletteBlock sideways = palette.blockOf(ItemVariant.of("minecraft:oak_log")
+        RegisteredBlockState sideways = palette.blockOf(ItemVariant.of("minecraft:oak_log")
             .withBlockState(BlockStates.of("minecraft:oak_log", Map.of("pillar_axis", "x"))));
         assertNotNull(sideways);
         assertEquals("x", sideways.states().getString("pillar_axis"));
@@ -70,7 +70,7 @@ class BlockOfTest {
 
     /**
      * Command blocks and jigsaws: a creative state of the item wins over the block's default state (per the precedence
-     * of {@link org.geysermc.paletter.item.ItemPalette#blockOf}). The bundled creative data has no stack of them (they are
+     * of {@link org.geysermc.paletter.item.ItemRegistry#blockOf}). The bundled creative data has no stack of them (they are
      * operator items), so the default state is what is sent.
      */
     @Test
@@ -86,7 +86,7 @@ class BlockOfTest {
                         creative.add(stack.blockState());
                     }
                 });
-                PaletteBlock block = palette.blockOf(ItemVariant.of(id));
+                RegisteredBlockState block = palette.blockOf(ItemVariant.of(id));
                 assertNotNull(block, version + " " + id);
                 NbtMap expected = creative.isEmpty() ? palette.blocks().defaultState(id).getState() : creative.getFirst();
                 assertEquals(BlockStates.normalize(expected), BlockStates.normalize(block.getState()), version + " " + id);
@@ -95,7 +95,7 @@ class BlockOfTest {
     }
 
     private static String block(Palette palette, String item) {
-        PaletteBlock block = palette.blockOf(ItemVariant.of(item));
+        RegisteredBlockState block = palette.blockOf(ItemVariant.of(item));
         return block == null ? null : block.identifier();
     }
 }

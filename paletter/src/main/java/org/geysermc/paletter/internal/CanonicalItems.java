@@ -9,10 +9,10 @@ import org.geysermc.paletter.PaletteException;
 import org.geysermc.paletter.item.ItemVariant;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 import org.geysermc.paletter.annotation.Internal;
-import org.geysermc.paletter.data.Renames;
+import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.creative.CreativeLayout;
-import org.geysermc.paletter.data.VanillaData;
-import org.geysermc.paletter.data.VanillaItem;
+import org.geysermc.paletter.internal.data.VanillaData;
+import org.geysermc.paletter.internal.data.VanillaItem;
 
 import java.util.ArrayList;
 import java.util.Comparator;

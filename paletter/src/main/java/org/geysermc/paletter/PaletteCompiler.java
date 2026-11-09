@@ -5,8 +5,8 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.geysermc.paletter.block.BlockInterner;
 import org.geysermc.paletter.block.BlockNetworkIds;
-import org.geysermc.paletter.block.BlockStates;
-import org.geysermc.paletter.block.BlockPalette;
+import org.geysermc.paletter.internal.block.BlockStates;
+import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeContent;
@@ -17,10 +17,10 @@ import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.creative.CreativeStack;
 import org.geysermc.paletter.data.DataVersion;
-import org.geysermc.paletter.data.VanillaData;
+import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.item.CustomItem;
-import org.geysermc.paletter.item.ItemPalette;
+import org.geysermc.paletter.item.ItemRegistry;
 import org.geysermc.paletter.item.ItemVariant;
 
 import java.util.ArrayList;
@@ -44,8 +44,8 @@ final class PaletteCompiler {
     static Palette vanilla(VanillaData data, BlockNetworkIds mode, CanonicalBlocks canonicalBlocks, CanonicalItems canonicalItems,
                            BlockInterner interner) {
         PaletteReport report = new PaletteReport();
-        BlockPalette blocks = BlockPalette.build(data, mode, canonicalBlocks, interner);
-        ItemPalette items = ItemPalette.vanilla(data, blocks, canonicalItems).build(data.creative(), report);
+        BlockRegistry blocks = BlockRegistry.build(data, mode, canonicalBlocks, interner);
+        ItemRegistry items = ItemRegistry.vanilla(data, blocks, canonicalItems).build(data.creative(), report);
         CreativeContent creative = CreativeContent.compile(data.creative(), items, report);
         prepareCanonical(blocks, null, items, null, report);
         return new Palette(data, List.of(), blocks, items, data.creative(), creative, report);
@@ -60,7 +60,7 @@ final class PaletteCompiler {
         try {
             // Blocks first: items need to know which blocks exist, and custom blocks re-number all states.
             // Without custom blocks or block fallbacks the parent's block palette (and its canonical table) is shared
-            BlockPalette blocks = parent.blocks()
+            BlockRegistry blocks = parent.blocks()
                 .withCustomBlocks(data, layer, layer.blocks(), report, source)
                 .withFallbacks(layer.blockFallbacks(data.version()));
             if (layer.fallbackDefaults() != null) {
@@ -94,7 +94,7 @@ final class PaletteCompiler {
             newVariants.addAll(layer.variants());
             CanonicalItems canonicalItems = parent.items().canonical().extend(layer, newVariants);
 
-            ItemPalette.Builder items = parent.items().extend(blocks, canonicalItems);
+            ItemRegistry.Builder items = parent.items().extend(blocks, canonicalItems);
             // Components refer to items of this layer registered later: declare them all first
             registered.forEach(items::declare);
             layer.itemFallbacks(data.version()).forEach(items::fallback);
@@ -170,7 +170,7 @@ final class PaletteCompiler {
             layer.tags().forEach(items::tag);
 
             CreativeLayout layout = creative.build();
-            ItemPalette itemPalette = items.build(layout, report);
+            ItemRegistry itemPalette = items.build(layout, report);
             CreativeContent content = CreativeContent.compile(layout, itemPalette, report);
             prepareCanonical(blocks, parent.blocks(), itemPalette, parent.items(), report);
 
@@ -204,7 +204,7 @@ final class PaletteCompiler {
      * Builds the canonical tables eagerly, and reports what they lack (only what is new compared to the parent, whose
      * report entries are already included).
      */
-    private static void prepareCanonical(BlockPalette blocks, BlockPalette parentBlocks, ItemPalette items, ItemPalette parentItems,
+    private static void prepareCanonical(BlockRegistry blocks, BlockRegistry parentBlocks, ItemRegistry items, ItemRegistry parentItems,
                                          PaletteReport report) {
         blocks.prepareCanonical();
         items.prepareCanonical();

@@ -8,7 +8,7 @@ import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.OnPlayerPlacing;
 import org.geysermc.paletter.item.CustomItem;
-import org.geysermc.paletter.item.PaletteItem;
+import org.geysermc.paletter.item.RegisteredItem;
 import org.geysermc.paletter.item.component.FrameCount;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.MaxStackSize;
@@ -205,7 +205,7 @@ class WireOnlyComponentTest {
         for (DataVersion version : PALETTER.versions()) {
             Palette palette = PALETTER.palette(version.protocolVersion(), PaletteLayer.builder("fixes")
                 .overrideItem("minecraft:cake", item -> item.components(MiningSpeed.of(2f))).build());
-            PaletteItem cake = palette.items().getDefinition("minecraft:cake");
+            RegisteredItem cake = palette.items().getDefinition("minecraft:cake");
             NbtMap data = cake.getComponentData();
             assertEquals("minecraft:cake", data.getString("name"), version.toString());
             assertEquals(cake.getRuntimeId(), data.getInt("id"), version.toString());

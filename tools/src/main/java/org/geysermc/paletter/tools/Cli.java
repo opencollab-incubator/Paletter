@@ -1,8 +1,8 @@
 package org.geysermc.paletter.tools;
 
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
-import org.geysermc.paletter.data.PaletteDataCodec;
-import org.geysermc.paletter.data.VanillaData;
+import org.geysermc.paletter.internal.data.PaletteDataCodec;
+import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.bds.BdsRunner;
 import org.geysermc.paletter.tools.client.Capture;
@@ -135,7 +135,7 @@ public final class Cli implements Runnable {
                 java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
                 VanillaData data = readPalette(file);
                 PaletteDataCodec.write(new VanillaData(data.version(), data.blockStates(), data.items(), data.dataDrivenBlocks(), data.creative(),
-                    data.itemTags(), org.geysermc.paletter.data.VersionFallbacks.NONE, data.blockDefaults(), data.experiments(), data.blockItems()), bytes);
+                    data.itemTags(), org.geysermc.paletter.internal.data.VersionFallbacks.NONE, data.blockDefaults(), data.experiments(), data.blockItems()), bytes);
                 Files.write(file, bytes.toByteArray());
                 System.out.println("Rewrote " + file);
             }

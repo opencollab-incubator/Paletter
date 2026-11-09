@@ -6,11 +6,11 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.PaletteException;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.annotation.Internal;
-import org.geysermc.paletter.data.Renames;
-import org.geysermc.paletter.data.VanillaData;
+import org.geysermc.paletter.internal.data.Renames;
+import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 
 import java.util.ArrayList;

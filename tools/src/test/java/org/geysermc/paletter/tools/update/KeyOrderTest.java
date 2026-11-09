@@ -2,9 +2,9 @@ package org.geysermc.paletter.tools.update;
 
 import org.geysermc.paletter.tools.update.Update;
 import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.paletter.block.BlockStates;
-import org.geysermc.paletter.data.PaletteDataCodec;
-import org.geysermc.paletter.data.VanillaData;
+import org.geysermc.paletter.internal.block.BlockStates;
+import org.geysermc.paletter.internal.data.PaletteDataCodec;
+import org.geysermc.paletter.internal.data.VanillaData;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;

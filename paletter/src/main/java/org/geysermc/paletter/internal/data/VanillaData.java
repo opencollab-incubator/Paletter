@@ -1,4 +1,6 @@
-package org.geysermc.paletter.data;
+package org.geysermc.paletter.internal.data;
+
+import org.geysermc.paletter.data.DataVersion;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;
@@ -24,7 +26,7 @@ import java.util.Map;
  *                    {@code y_2026_drop_4}); empty if the version was not captured with experiments
  * @param blockItems the block to item relation of the Script API: block identifier to the identifier of the item that
  *                   places it (several blocks can share an item: slabs and double slabs, signs and wall signs). Empty
- *                   for data that predates it; {@code ItemPalette} then guesses
+ *                   for data that predates it; {@code ItemRegistry} then guesses
  *
  * @since 1.0.0
  */

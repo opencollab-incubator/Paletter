@@ -2,7 +2,7 @@ package org.geysermc.paletter;
 
 import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.BlockResolution;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.item.ItemVariant;
 import org.geysermc.paletter.vanilla.BedrockItems;
 import org.junit.jupiter.api.Test;

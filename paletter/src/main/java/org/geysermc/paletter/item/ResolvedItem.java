@@ -3,7 +3,7 @@ package org.geysermc.paletter.item;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
-import org.geysermc.paletter.block.PaletteBlock;
+import org.geysermc.paletter.block.RegisteredBlockState;
 
 /**
  * An {@link ItemVariant} resolved against one palette: what to send to the client.
@@ -14,7 +14,7 @@ import org.geysermc.paletter.block.PaletteBlock;
  * @param fallback true if the variant does not exist in this version and a replacement was used
  * @since 1.0.0
  */
-public record ResolvedItem(@NonNull PaletteItem definition, int damage, @Nullable PaletteBlock block, boolean fallback) {
+public record ResolvedItem(@NonNull RegisteredItem definition, int damage, @Nullable RegisteredBlockState block, boolean fallback) {
 
     /**
      * @return an item data builder with definition, damage, block and a count of 1 filled in

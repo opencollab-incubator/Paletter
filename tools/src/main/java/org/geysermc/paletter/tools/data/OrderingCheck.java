@@ -5,8 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
-import org.geysermc.paletter.block.BlockPalette;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.block.BlockRegistry;
+import org.geysermc.paletter.internal.block.BlockStates;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -21,7 +21,7 @@ import java.util.Map;
  * Assertions about how BDS numbers blocks, checked against every run (first confirmed by hand on BDS 1.26.63.1):
  * <ul>
  *     <li><b>sequential palette order</b>: with {@code block-network-ids-are-hashes=false} a block's runtime id is its
- *     index in the palette sorted by the FNV-1 64 hash of the block name ({@link BlockPalette#nameHash}, unsigned;
+ *     index in the palette sorted by the FNV-1 64 hash of the block name ({@link BlockRegistry#nameHash}, unsigned;
  *     stable, so the states of a block keep their order). Checked by capturing the same world once hashed and once
  *     sequential: every creative stack's state (resolved through its hash) must sit at the sequential id BDS sent;</li>
  *     <li><b>custom block ids</b>: {@code vanilla_block_data.block_id} of custom blocks is 10000, 10001, ... in
@@ -41,7 +41,7 @@ public final class OrderingCheck {
     public void sequential(String label, Path hashed, Path sequential) throws IOException {
         List<NbtMap> palette = new ArrayList<>(Nbt.readGzip(hashed.resolve("block_palette.nbt")).getList("blocks", NbtType.COMPOUND));
         List<NbtMap> sorted = new ArrayList<>(palette);
-        sorted.sort(Comparator.comparing((NbtMap state) -> BlockPalette.nameHash(BlockStates.name(state)), Long::compareUnsigned));
+        sorted.sort(Comparator.comparing((NbtMap state) -> BlockRegistry.nameHash(BlockStates.name(state)), Long::compareUnsigned));
         Map<NbtMap, Integer> index = new HashMap<>();
         for (int i = 0; i < sorted.size(); i++) {
             index.put(BlockStates.normalize(sorted.get(i)), i);
@@ -102,8 +102,8 @@ public final class OrderingCheck {
     /** The vanilla palette as bundled must already be in sequential (name hash) order. */
     public void bundledOrder(String label, List<NbtMap> states) {
         for (int i = 1; i < states.size(); i++) {
-            long previous = BlockPalette.nameHash(BlockStates.name(states.get(i - 1)));
-            long current = BlockPalette.nameHash(BlockStates.name(states.get(i)));
+            long previous = BlockRegistry.nameHash(BlockStates.name(states.get(i - 1)));
+            long current = BlockRegistry.nameHash(BlockStates.name(states.get(i)));
             if (Long.compareUnsigned(previous, current) > 0) {
                 failures.add(label + ": palette not in FNV-1 64 name order at #" + i + " (" + BlockStates.name(states.get(i - 1))
                     + " before " + BlockStates.name(states.get(i)) + ")");
@@ -133,17 +133,17 @@ public final class OrderingCheck {
         descending.sort(Comparator.reverseOrder());
         boolean contiguous = true;
         for (int i = 0; i < custom.size(); i++) {
-            contiguous &= Integer.parseInt(custom.get(i)[1]) == BlockPalette.CUSTOM_BLOCK_ID_START + i;
+            contiguous &= Integer.parseInt(custom.get(i)[1]) == BlockRegistry.CUSTOM_BLOCK_ID_START + i;
         }
         if (names.equals(descending) && contiguous) {
-            passes.add(label + ": " + custom.size() + " custom block ids are " + BlockPalette.CUSTOM_BLOCK_ID_START
+            passes.add(label + ": " + custom.size() + " custom block ids are " + BlockRegistry.CUSTOM_BLOCK_ID_START
                 + "+ in descending identifier order");
         } else {
             int first = 0;
             while (first < names.size() && names.get(first).equals(descending.get(first))) {
                 first++;
             }
-            failures.add(label + ": custom block ids are not " + BlockPalette.CUSTOM_BLOCK_ID_START + "+ in descending identifier order"
+            failures.add(label + ": custom block ids are not " + BlockRegistry.CUSTOM_BLOCK_ID_START + "+ in descending identifier order"
                 + (contiguous ? "" : " (not contiguous)") + (first < names.size()
                 ? "; first difference at #" + first + ": " + names.get(first) + " has the id of " + descending.get(first) : ""));
         }

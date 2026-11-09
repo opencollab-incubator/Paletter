@@ -19,16 +19,16 @@ import org.geysermc.paletter.tools.model.infer.Coverage;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.paletter.block.BlockPalette;
-import org.geysermc.paletter.block.BlockStates;
+import org.geysermc.paletter.block.BlockRegistry;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.tools.client.Capture;
 import org.geysermc.paletter.tools.client.CapturedData;
 import org.geysermc.paletter.tools.client.LevelDat;
 import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator;
 import org.geysermc.paletter.data.DataVersion;
-import org.geysermc.paletter.data.ExperimentContent;
-import org.geysermc.paletter.data.PaletteDataCodec;
-import org.geysermc.paletter.data.VanillaData;
+import org.geysermc.paletter.internal.data.ExperimentContent;
+import org.geysermc.paletter.internal.data.PaletteDataCodec;
+import org.geysermc.paletter.internal.data.VanillaData;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -1195,7 +1195,7 @@ public final class Update {
                 generated.add(name + " (new, " + combinations.size() + " states)");
             }
         });
-        states.sort(Comparator.comparing((NbtMap state) -> BlockPalette.nameHash(BlockStates.name(state)), Long::compareUnsigned));
+        states.sort(Comparator.comparing((NbtMap state) -> BlockRegistry.nameHash(BlockStates.name(state)), Long::compareUnsigned));
         if (!generated.isEmpty() || !removed.isEmpty()) {
             report.check(Report.Status.INFO, "Reference palette", latest.name() + " adjusted with the Script API: "
                 + (generated.isEmpty() ? "" : "generated " + String.join(", ", generated)) + (removed.isEmpty() ? "" : "; removed " + removed));
