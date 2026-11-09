@@ -62,6 +62,13 @@ Content a Bedrock version has only behind an experiment toggle is missing by def
 resolve through the fallbacks); `Paletter.builder().vanilla(v -> v.experiments(...))` enables it. The constants' javadoc
 carries `@since <Bedrock release>`, the experiment, and `@Education` for Education Edition only content.
 
+## Format versions
+
+The wire has no add-on `format_version`: Bedrock only sees the component data of the palette's protocol. Paletter emits each
+palette's own protocol shape, whatever format version a component was documented for, so components can be mixed freely
+(`@BedrockFormat` is informational). What a protocol cannot express is left out with a report warning; a component BDS
+accepts but never sends carries `@ServerOnly` with the protocol range.
+
 ## Hand-written wire-only components
 
 Four wire fields have no add-on JSON source, so they are not generated: `RenderOffsets` and `OnPlayerPlacing` (retired

@@ -13,7 +13,7 @@ paletter nor its sources, so it can regenerate them when they do not compile. Ja
 | Input (`data/model`) | Kind | Used for |
 |---|---|---|
 | `components.json` | generated from the creator docs | components, fields, types, defaults, enums, ranges, docs text, format versions, experiments |
-| `fixtures.json` | hand | `errata` (what the docs omit), `probeOnly` and `skip` |
+| `fixtures.json` | hand | `errata` (what the docs omit), `probeOnly` and `skip`, `replacedBy` (a replacement no data says, with its evidence) |
 | `bds-feedback.json` | generated from BDS's content log | required fields and ranges BDS enforces (they win over the docs), fields BDS does not know |
 | `mappings.json` | inferred from BDS captures | per component and protocol window: status, value form and field rules, `whenAbsent`, `constants` |
 | `transforms.json` | hand | fields or whole components (path `""`) compiled by a named hand transform, with why |
@@ -27,6 +27,22 @@ factories, vanilla-constant overloads), the sealed `ItemComponent` / `BlockCompo
 
 Generated components are those BDS sends or that only failed for want of a companion; server-only and rejected ones
 are listed in the interfaces' javadoc.
+
+Links and annotations, all from the data:
+
+- **`@see` links**: the Microsoft Learn page of a component is its `components.json` `page` below `creator/`, lowercased,
+  without `.md`, plus `?view=minecraft-bedrock-stable` (`Docs.learnUrl`). Records link their page, the sealed interfaces
+  the list pages (`lists` in `components.json`, written by `docs`) and every omitted component its page. The hand-written
+  wire-only component with a docs page (`RenderOffsets`) carries the same link by hand; `GeneratedMetadataTest` checks it.
+- **`@ServerOnly(since, until)`**: on a record with a protocol window whose status is `server-only` (the bounds are the
+  window's). The javadoc names the BDS versions captured in the range and the one that sends it. One range per component
+  (generation fails otherwise). Components server only in every protocol are not generated, only listed.
+- **`@Deprecated @ReplacedBy({X.class})`** (`Replacements`): for a component the docs mark `deprecated` or `legacy`, or
+  that BDS rejects, the successors come from the first of: a sentence "Use minecraft:x ..." in its docs text, docs notes or
+  BDS's own message (`mappings.json` `note`); a "renamed to/from" docs note; an active component with a top level field
+  of its name. Otherwise a `fixtures.json` `replacedBy` entry (`by` and a required `evidence`; an entry the data derives
+  already fails generation). The annotations land on generated records only; for components that are not generated
+  (rejected ones are not) the replacement and its evidence appear in the interface's "Documented but not generated" list.
 
 Rules:
 
