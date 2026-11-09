@@ -4,7 +4,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.Paletter;
+import org.geysermc.paletter.data.PaletteDataSource;
 import org.geysermc.paletter.internal.CanonicalBlocks;
+import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.vanilla.BlockLayout;
 import org.geysermc.paletter.internal.CanonicalItems;
@@ -35,6 +37,8 @@ final class VanillaIndex {
     private final Map<String, BedrockItemType> itemsById;
     /** Blocks whose states are not a full product in a stride order, and so use a lookup table. */
     final List<String> tableBlocks;
+    final Renames renames = PaletteDataSource.bundled().renames();
+    private final Map<String, BedrockItemType> itemConstants;
 
     private VanillaIndex() {
         // Collect every constant first, so the data links to the constant objects
@@ -62,6 +66,7 @@ final class VanillaIndex {
             }
         }
 
+        this.itemConstants = constantItems;
         Paletter paletter = Paletter.bundled();
         VanillaData latest = paletter.vanillaData(paletter.latest());
         this.blocks = paletter.canonicalBlocks();
@@ -156,6 +161,12 @@ final class VanillaIndex {
 
     @Nullable BedrockBlockType block(String identifier) {
         return blocksById.get(identifier);
+    }
+
+    /** The vanilla type of the data, else a generated constant the data does not have, else null. */
+    @Nullable BedrockItemType itemOrConstant(String identifier) {
+        BedrockItemType type = itemsById.get(identifier);
+        return type != null ? type : itemConstants.get(identifier);
     }
 
     @Nullable BedrockItemType item(String identifier) {

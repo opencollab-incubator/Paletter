@@ -8,7 +8,9 @@ import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.ItemVariant;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A Bedrock item type. Vanilla types are the constants of {@link BedrockItems}; a {@link CustomItem} (and the item of a
@@ -27,6 +29,8 @@ import java.util.Objects;
  * @since 1.0.0
  */
 public final class BedrockItemType {
+    private static final Map<String, BedrockItemType> CUSTOM = new ConcurrentHashMap<>();
+
     private final String identifier;
     private final @Nullable String fallback;
     private final boolean custom;
@@ -47,17 +51,38 @@ public final class BedrockItemType {
     }
 
     /**
-     * @return the type of a custom item, or of the item of a custom block
+     * The key of an identifier: the vanilla constant if the identifier (after renames) is vanilla in the newest bundled
+     * data or has a generated constant, else a custom type, the same instance for every call with an identifier.
+     * Loads the data.
+     *
+     * @return the type of an identifier
      */
-    public static @NonNull BedrockItemType custom(@NonNull String identifier) {
-        return new BedrockItemType(identifier);
+    public static @NonNull BedrockItemType of(@NonNull String identifier) {
+        Objects.requireNonNull(identifier);
+        VanillaIndex index = VanillaIndex.get();
+        String renamed = index.renames.item(identifier);
+        if (renamed != null && index.itemOrConstant(renamed) != null) {
+            identifier = renamed;
+        }
+        BedrockItemType known = index.itemOrConstant(identifier);
+        if (known != null) {
+            return known;
+        }
+        return CUSTOM.computeIfAbsent(identifier, BedrockItemType::new);
     }
 
     /**
-     * @return the type of a custom item
+     * @return the type of a custom item, or of the item of a custom block; same as {@link #of(String)}
+     */
+    public static @NonNull BedrockItemType custom(@NonNull String identifier) {
+        return of(identifier);
+    }
+
+    /**
+     * @return the type of a custom item; same as {@link #of(String)}
      */
     public static @NonNull BedrockItemType of(@NonNull CustomItem item) {
-        return new BedrockItemType(item.identifier());
+        return of(item.identifier());
     }
 
     /**
@@ -194,7 +219,7 @@ public final class BedrockItemType {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof BedrockItemType other && custom && other.custom && identifier.equals(other.identifier);
+        return this == o || o instanceof BedrockItemType other && identifier.equals(other.identifier);
     }
 
     @Override

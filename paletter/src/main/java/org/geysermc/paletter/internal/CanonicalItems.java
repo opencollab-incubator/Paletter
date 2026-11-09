@@ -190,6 +190,13 @@ public final class CanonicalItems {
         List<String> detail = new ArrayList<>();
         ItemVariant mapped = variant;
         String identifier = variant.identifier();
+        Renames.Split split = renames.split(identifier, variant.damage());
+        if (split != null) {
+            mapped = mapped.withIdentifier(split.identifier()).withDamage(split.aux());
+            identifier = split.identifier();
+            kind = Forwarding.Kind.RENAMED;
+            detail.add("split into " + split.identifier() + (split.aux() != 0 ? "@" + split.aux() : ""));
+        }
         if (lookup(ItemVariant.of(identifier)) == -1) {
             String renamed = renames.item(identifier);
             if (renamed == null || lookup(ItemVariant.of(renamed)) == -1) {

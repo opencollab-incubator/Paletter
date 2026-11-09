@@ -5,6 +5,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.internal.CanonicalItems;
+import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.item.ItemVariant;
 
 import java.util.Objects;
@@ -56,6 +57,28 @@ public final class BedrockItemVariant {
             type = BedrockItemType.custom(variant.identifier());
         }
         return new BedrockItemVariant(type, variant.damage(), state, -1);
+    }
+
+    /**
+     * The variant of an identifier and aux value, applying renames and splits (a legacy variant that became its own
+     * type). Loads the data.
+     *
+     * @return the variant
+     */
+    public static @NonNull BedrockItemVariant of(@NonNull String identifier, int aux) {
+        Renames.Split split = VanillaIndex.get().renames.split(identifier, aux);
+        if (split != null) {
+            return of(BedrockItemType.of(split.identifier()), split.aux());
+        }
+        return of(BedrockItemType.of(identifier), aux);
+    }
+
+    /**
+     * @return the known variant of the type with this aux value (the same instance as {@code type.variant(aux)}), else
+     *         a new variant
+     */
+    public static @NonNull BedrockItemVariant of(@NonNull BedrockItemType type, int aux) {
+        return type.variantOf(aux);
     }
 
     public @NonNull BedrockItemType type() {
