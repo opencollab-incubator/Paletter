@@ -1,13 +1,11 @@
 # Paletter
 
-Bedrock item and block palettes, ready for the wire. Paletter bundles vanilla data for every supported version, compiles
-it together with layers of custom content, and hands out Cloudburst protocol types: definition registries for the codec,
+Paletter is a library to handle Bedrock item and block palettes - from vanilla to adding custom ones. 
+Paletter bundles vanilla data for every supported version, compiles it together with layers of custom content, 
+and hands out Cloudburst protocol types: definition registries for the codec,
 the item component packet, the creative content packet and block properties for start game.
 
-Paletter is Bedrock only. It knows nothing about Java Edition, so it serves Bedrock server software, proxies and tools as
-well as translators like Geyser. A consumer maps its own content to **canonical ids** of the **newest** Bedrock version,
-dense ints that Paletter defines once per release; everything else (runtime ids in either network id mode, palette
-ordering, older versions, the creative inventory, custom item and block NBT) is Paletter's job.
+A palette can have multiple layers, which could be extended per client if desired.
 
 ```java
 Paletter paletter = Paletter.bundled();
@@ -43,7 +41,7 @@ runnable examples are in [examples/](examples).
 |-------------|------------------------------------------------------------------------------------------------|
 | `paletter/` | The library (the only shipped module). Depends on Cloudburst `bedrock-codec` (its types are the public API) and fastutil. No JSON, no network. Hand-written sources are in `src/main/java`; everything generated (the component API in `item/component` and `block/component`, the vanilla constants and state enums) is in `src/generated/java`, same packages, never edited by hand. |
 | `tools/`    | All tooling, one module, never shipped, one command line (`./gradlew :tools:run --args="<command> ..."`, see [tools/README.md](tools/README.md)): the BDS update pipeline and data import (`tools.bds`, `tools.data`, `tools.update`), the headless Bedrock client that records what BDS sends (`tools.client`), the component model from Microsoft's creator docs and its wire inference (`tools.model`), and the generators of the component API and the constants (`tools.codegen`). |
-| `data/`     | Every non-code input: `model/` (the component model and the generators' inputs: `components.json`, `mappings.json`, `names.json`, ...), `fallbacks/`, `bds/<bds version>/` (captures, Script API dump, experiment record, report; see [data/README.md](data/README.md)) and `addons/` (the add-on packs run on BDS: `capture`, `creative`, `dump`). |
+| `data/`     | Every non-code input: `model/` (the component model and the generators' inputs: `components.json`, `mappings.json`, `names.json`, ...), `bds/<bds version>/` (captures, Script API dump, experiment record, report; see [data/README.md](data/README.md)) and `addons/` (the add-on packs run on BDS: `capture`, `creative`, `dump`). |
 
 
 
@@ -66,6 +64,11 @@ are stable for a Paletter release and the same for every protocol version. Custo
 appended after the vanilla ones, per lineage of layers: the same layer stack gives the same ids in every version.
 A layer can also give ids to further variants of the newest version (`PaletteLayer.Builder#variant`), e.g. damage values
 or block states a consumer maps to that are not in the creative inventory; `Palette#match` recognizes them too.
+`Paletter#canonicalBlock` / `canonicalItem` accept content of **any** bundled version, not only the newest: a state or
+variant the newest version lacks is mapped forward (state keys added, removed or reset like an older palette adapts
+newer states, renamed identifiers via the bundled `renames.txt`), and one that no longer exists returns -1 with the
+reason (`Paletter#forwardBlock` / `forwardItem` return a `Forwarding` with kind and detail, `explainUnknown` the reason
+only). A mapping made against 26.50 therefore keeps working when 26.60 becomes the newest version.
 The tables are built when a palette is compiled; canonical content a version lacks and that has no fallback (sent as
 `minecraft:unknown`, see below) is listed in the palette's report.
 Each palette turns them into what its version needs with flat arrays built once per palette and shared where possible:
@@ -92,20 +95,21 @@ fail compilation.
 `Palette#applyTo(StartGamePacket)` sets the flag to match.
 
 **One mapping for all versions.** Map against the newest version only. For older versions, `BlockPalette#resolve` adapts
-states automatically (states added or removed between versions, e.g. stair corners) and applies bundled fallbacks for
-blocks that do not exist (or are experimental) there; `ItemPalette#resolve` does the same for items. The canonical tables
+states automatically (states added or removed between versions, e.g. stair corners) and applies the fallbacks a layer
+defines for blocks that do not exist (or are experimental) there; `ItemPalette#resolve` does the same for items. The canonical tables
 are filled with these results. When matching stacks from the client, a variant that only reached a version through a
 fallback never shadows an item's own variant, and a stack that is only the fallback of several canonical ids (e.g. the
 shared `minecraft:unknown`) matches none of them (-1).
 
 **Fallbacks.** Canonical content an older version lacks resolves, in this order, to: a fallback a layer set for that
 version (`PaletteLayer.Builder#blockFallback(version, identifier, fallback)`, `#itemFallback(version, ...)`), a layer
-fallback for every version (`#blockFallback(identifier, fallback)`), the bundled fallback (`data/fallbacks/`,
-curated replacements such as poplar wood to pale oak), and otherwise the default: the block `minecraft:unknown` and the
+fallback for every version (`#blockFallback(identifier, fallback)`), and otherwise the default: the block `minecraft:unknown` and the
 item `minecraft:unknown` (its block item), which every client knows and shows as a placeholder
 (`FallbackDefaults.UNKNOWN`). A layer changes the default for itself and the layers above it with
 `#fallbackDefaults(...)`; `FallbackDefaults.NONE` restores air and missing items. `BlockFallback#force` /
 `ItemFallback#force` also replace content that exists in a version but only behind an experiment.
+**Paletter bundles no fallbacks**: which replacement is right (poplar wood to pale oak, ...) is the consumer's decision.
+`check-data` lists what older versions lack and what they only have behind an experiment toggle.
 
 ```java
 PaletteLayer.builder("server")
@@ -116,8 +120,12 @@ PaletteLayer.builder("server")
     .build();
 ```
 
-**Block items.** The item palette knows which block each block item is sent with (from the creative inventory, a layer
-override, or the block of the same name), and ignores the meaningless block definitions clients send with other items.
+**Block items.** Paletter alone decides which block an item is sent with: `Palette#blockOf(ItemVariant)` (a block state
+of the variant wins), `Paletter#canonicalBlockOf(ItemVariant)` version independent. The order is a layer override, then
+the bundled block to item relation of the Script API (`VanillaData#blockItems`, bundle key `block_items`: the block whose
+creative state the item has, else the block named like the item, else the first block placing it), then the creative
+stacks' block states, then (data without the relation) the block of the same name, then custom block items. Clients'
+meaningless block definitions on other items are ignored.
 
 ## Using Paletter from a Bedrock-only project
 
@@ -368,7 +376,7 @@ captures are in [`data/bds/CREATIVE-ORDER.md`](data/bds/CREATIVE-ORDER.md). The 
 
 Bundled data lives in `paletter/src/main/resources/paletter/`: `versions.txt` and one gzipped NBT file per version
 (format documented in `PaletteDataCodec`). Each file holds block states, items with their components, data driven blocks,
-the creative layout, item tags, default block states and the fallbacks for that version. The current bundle (26.40, 26.50,
+the creative layout, item tags, default block states and the block to item relation for that version (no fallbacks). The current bundle (26.40, 26.50,
 26.60, about 470 KB instead of about 2.9 MB) combines the network data Geyser shipped with BDS dumps of the same versions:
 
 | Version | Network data (block palette, items, components, creative) | BDS dump (item tags, block defaults) |
@@ -525,9 +533,9 @@ discovers them for every build, so captures include experimental content without
    `data/bds/<bds version>/experiments.json` (toggles, status, code, UI key, name, content per toggle) is committed, and
    the bundled version gets **experiment marks** (`VanillaData#experiments`, bundle key `experiments`, only written when
    present): per toggle the items and blocks it adds or turns on and its creative stacks. The bundle itself stays a
-   capture without experiments. `check` uses the marks: content an older version has only behind a toggle but the newest
-   has without one needs a `force` fallback (or an `unmapped` entry) there, and a `force` fallback for content that is
-   not gated is reported as unused.
+   capture without experiments. `check-data` uses the marks: content an older version has only behind a toggle but the
+   newest has without one is listed, since the older palette would send it to clients that never enabled the toggle
+   unless the consumer defines a fallback with `force`.
 
 `--experiments a,b` still overrides discovery (no oracle; the toggles are verified against start game).
 
@@ -552,10 +560,8 @@ property `paletter.previews` is `true`, and `check` ignores them.
 
 **Still manual**, each listed in the report's TODO section:
 
-- Nothing is required for new content: blocks and items an older bundled version lacks fall back to `minecraft:unknown`.
-  The report lists them per version (INFO) as candidates for a curated fallback in `data/fallbacks/<old version>.json`
-  (a target; `null` just records that unknown is intended). Re-import the older versions after adding some; `check`
-  verifies the targets.
+- Nothing is required for new content: blocks and items an older bundled version lacks fall back to `minecraft:unknown`
+  unless a consumer defines a fallback. The report lists them per version (INFO); Paletter bundles no fallbacks.
 - The state order *within* blocks generated from the Script API (only creative stacks verify it; other blocks' ids do
   not depend on it). BDS cannot be asked for it; `Update#keyOrder` infers it from the previous release (existing states
   keep varying fastest, new ones follow in the order other blocks use, directions north, east, south, west, up, down),
@@ -647,10 +653,19 @@ Results (November 2026):
   versions add `minecraft:mushrooms_for_stew` and no longer have `minecraft:observer` and `minecraft:redstone_lamp` in
   `minecraft:sulfur_cube_archetype_slow_bouncy`; 26.50 and 26.60 also add the poplar wood set to the wood tags (boats,
   door, signs, logs, planks, slab) and wool slabs and stairs to `minecraft:vibration_damper`.
-- Block tags and block to item are dumped but not bundled.
+- Block tags are dumped but not bundled. The block to item relation is bundled; 26.40 and 26.50 have no BDS dump, so
+  their relation is the 26.60 one restricted to the blocks and items they have (`block-items --from 26.60`).
+- Content Geyser used to get from the bundled curated fallbacks (poplar wood to pale oak, concrete and wool slabs to
+  vanilla ones, ...) is `unknown` now until the consumer defines it. 26.40 was not captured with experiments, so
+  content it only has behind an experiment is not marked there; a consumer needs `force` fallbacks for those.
+- `renames.txt` is empty: no identifier rename between the bundled versions is known yet, so `canonicalBlock` /
+  `canonicalItem` only adapt states and report removed content; add a line `block|item <old> <new>` (and the
+  `renamed` entry of `names.json`) when Bedrock renames one.
 - The component API covers every component BDS 1.26.63.1 sends to clients. Geyser-only wire data that is not an add-on
-  component (custom `mining_speed`/`frame_count` item properties, the legacy `render_offsets`, `on_player_placing`) has
-  no API: there is no raw NBT escape hatch.
+  component (custom `mining_speed`/`frame_count` item properties, the legacy `render_offsets`, `on_player_placing`) is
+  covered by the hand-written wire-only components (`MiningSpeed`, `FrameCount`, `RenderOffsets`, `OnPlayerPlacing`, see
+  API.md); there is still no raw NBT escape hatch, and the wire-only fields have no add-on JSON source to verify them
+  against.
 - Not covered: biome definitions, entity identifiers and other data Geyser ships that is not about items or blocks.
 - The BDS addon needs `@minecraft/server` 2.1.0; tested with BDS 1.26.45.1, 1.26.51.1, 1.26.63.1 and the
   1.26.70.23 preview.
