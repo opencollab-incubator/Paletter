@@ -15,7 +15,6 @@ import org.geysermc.paletter.creative.CreativeLayout;
 import org.geysermc.paletter.creative.CreativeNode;
 import org.geysermc.paletter.creative.CreativeStack;
 import org.geysermc.paletter.data.DataVersion;
-import org.geysermc.paletter.internal.data.PaletteDataCodec;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.internal.data.VersionFallbacks;
@@ -88,10 +87,8 @@ public final class Importer {
 
         Map<String, String> blockItems = bdsDump == null ? Map.of() : blockItems(BdsDump.read(bdsDump), blocks, items);
         VanillaData data = new VanillaData(version, blocks, items, dataDriven, creative, tags, VersionFallbacks.NONE, defaults, Map.of(), blockItems);
-        Files.createDirectories(output);
-        try (OutputStream stream = Files.newOutputStream(output.resolve(name + ".nbt"))) {
-            PaletteDataCodec.write(data, stream);
-        }
+        // The version file has no components; properties.nbt gets them, next to those of the other versions
+        BundledFiles.write(output, data);
         updateIndex(version, preview);
         System.out.printf("Wrote %s: %d block states, %d items, %d data driven blocks, %d creative stacks, %d item tags, %d block defaults, %d blocks with an item%n",
             version, blocks.size(), items.size(), dataDriven.size(), creative.stacks().count(), tags.size(),

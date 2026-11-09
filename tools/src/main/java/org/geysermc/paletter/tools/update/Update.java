@@ -27,7 +27,7 @@ import org.geysermc.paletter.tools.client.LevelDat;
 import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.ExperimentContent;
-import org.geysermc.paletter.internal.data.PaletteDataCodec;
+import org.geysermc.paletter.tools.data.BundledFiles;
 import org.geysermc.paletter.internal.data.VanillaData;
 
 import java.io.ByteArrayInputStream;
@@ -1430,15 +1430,12 @@ public final class Update {
     }
 
     private static VanillaData read(Path file) throws IOException {
-        try (InputStream stream = Files.newInputStream(file)) {
-            return PaletteDataCodec.read(stream);
-        }
+        return BundledFiles.read(file);
     }
 
+    /** A version file (format 2): the properties are not in it, {@code properties.nbt} keeps them. */
     private static byte[] write(VanillaData data) throws IOException {
-        java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
-        PaletteDataCodec.write(data, bytes);
-        return bytes.toByteArray();
+        return BundledFiles.bytes(data);
     }
 
     private static byte[] gzip(String text) throws IOException {

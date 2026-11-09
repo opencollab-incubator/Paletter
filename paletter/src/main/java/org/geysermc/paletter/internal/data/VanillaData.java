@@ -15,7 +15,8 @@ import java.util.Map;
  *
  * @param version the data version
  * @param blockStates every vanilla block state as {@code {name, states}}, in vanilla runtime id order
- * @param items every vanilla item
+ * @param items every vanilla item. The component data of the items and the data driven blocks are not part of the
+ *              bundled version files (format 2): the {@link PropertyStore} puts them together
  * @param dataDrivenBlocks block property data of vanilla data driven blocks, sent in the start game packet
  * @param creative the vanilla creative inventory layout
  * @param itemTags vanilla item tags: tag to item identifiers
@@ -75,6 +76,16 @@ public record VanillaData(
 
     /** The same data with another block to item relation. */
     public @NonNull VanillaData withBlockItems(@NonNull Map<String, String> blockItems) {
+        return new VanillaData(version, blockStates, items, dataDrivenBlocks, creative, itemTags, fallbacks, blockDefaults, experiments, blockItems);
+    }
+
+    /** The same data with other items. */
+    public @NonNull VanillaData withItems(@NonNull List<VanillaItem> items) {
+        return new VanillaData(version, blockStates, items, dataDrivenBlocks, creative, itemTags, fallbacks, blockDefaults, experiments, blockItems);
+    }
+
+    /** The same data with other data driven blocks. */
+    public @NonNull VanillaData withDataDrivenBlocks(@NonNull List<BlockPropertyData> dataDrivenBlocks) {
         return new VanillaData(version, blockStates, items, dataDrivenBlocks, creative, itemTags, fallbacks, blockDefaults, experiments, blockItems);
     }
 

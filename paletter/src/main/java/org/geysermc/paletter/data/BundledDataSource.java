@@ -5,6 +5,7 @@ import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.internal.data.VanillaData;
 
 import org.geysermc.paletter.internal.data.PaletteDataCodec;
+import org.geysermc.paletter.internal.data.PropertyStore;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -22,7 +23,8 @@ import java.util.List;
  * Reads data from {@code /paletter/} on the classpath of the library: {@code versions.txt} lists one
  * {@code <name> <protocol> [preview]} line per version (preview versions are skipped unless the system property
  * {@code paletter.previews} is {@code true}), and each version is stored in {@code <name>.nbt}
- * (written by the generator, see {@link PaletteDataCodec}).
+ * (written by the generator, see {@link PaletteDataCodec}). Item components and data driven blocks are stored once with
+ * their version ranges in {@code properties.nbt} (see {@link PropertyStore}).
  */
 final class BundledDataSource implements PaletteDataSource {
     static final BundledDataSource INSTANCE = new BundledDataSource();
@@ -31,6 +33,7 @@ final class BundledDataSource implements PaletteDataSource {
     static final String PREVIEWS_PROPERTY = "paletter.previews";
 
     private volatile List<DataVersion> versions;
+    private volatile PropertyStore properties;
 
     private BundledDataSource() {
     }
@@ -71,8 +74,21 @@ final class BundledDataSource implements PaletteDataSource {
     @Override
     public @NonNull VanillaData load(@NonNull DataVersion version) throws IOException {
         try (InputStream stream = open(version.name() + ".nbt")) {
-            return PaletteDataCodec.read(stream);
+            return properties().attach(PaletteDataCodec.read(stream));
         }
+    }
+
+    @Override
+    public @NonNull PropertyStore properties() {
+        PropertyStore properties = this.properties;
+        if (properties == null) {
+            try (InputStream stream = BundledDataSource.class.getResourceAsStream(ROOT + "properties.nbt")) {
+                this.properties = properties = stream == null ? PropertyStore.empty() : PropertyStore.read(stream);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Unable to read the bundled Paletter properties", e);
+            }
+        }
+        return properties;
     }
 
     @Override

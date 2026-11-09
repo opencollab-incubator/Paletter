@@ -179,9 +179,7 @@ public final class SpecCapture {
         List<Importer.IndexEntry> index = Importer.readIndex(resources);
         Importer.IndexEntry entry = index.stream().filter(e -> e.protocol() == protocol).findFirst()
             .orElse(index.stream().filter(e -> !e.preview()).reduce((a, b) -> b).orElseThrow());
-        try (InputStream stream = Files.newInputStream(resources.resolve(entry.name() + ".nbt"))) {
-            return PaletteDataCodec.read(stream);
-        }
+        return org.geysermc.paletter.tools.data.BundledFiles.read(resources.resolve(entry.name() + ".nbt"));
     }
 
     private static void freshWorld(Path server, Path addon) throws IOException {
