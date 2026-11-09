@@ -1,0 +1,7 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {"identifier": "probe:friction_80"},
+    "components": {"minecraft:friction": 0.8}
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {"identifier": "probe:destructible_by_explosion"},
+    "components": {"minecraft:destructible_by_explosion": true}
+  }
+}

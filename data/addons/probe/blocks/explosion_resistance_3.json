@@ -1,0 +1,7 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {"identifier": "probe:explosion_resistance_3"},
+    "components": {"minecraft:destructible_by_explosion": {"explosion_resistance": 3}}
+  }
+}

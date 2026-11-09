@@ -1,0 +1,30 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Paletter behaviour probe",
+    "description": "Measures what BDS does with custom blocks that do not set a component, and the collision of vanilla doors; prints PROBE lines to the server console",
+    "uuid": "3b1c6a9e-2f47-4d1a-9c55-7e0b1d2c3a41",
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 21, 80]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "5e2a8c71-1b3d-4f6e-8a90-c1d2e3f4a5b6",
+      "version": [1, 0, 0]
+    },
+    {
+      "type": "script",
+      "language": "javascript",
+      "uuid": "9d4b2e61-7c8a-4b3f-a1d2-e3f4a5b6c7d8",
+      "entry": "scripts/main.js",
+      "version": [1, 0, 0]
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.1.0"
+    }
+  ]
+}
