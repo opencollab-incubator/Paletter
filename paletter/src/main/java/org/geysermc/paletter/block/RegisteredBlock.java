@@ -5,6 +5,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.Origin;
 import org.geysermc.paletter.block.component.BlockComponent;
+import org.geysermc.paletter.internal.property.PropertySplit;
+import org.geysermc.paletter.property.Properties;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockBlockType;
 
@@ -15,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A block (type level) inside one palette: its {@linkplain #properties() properties}, {@linkplain #components()
+ * A block (type level) inside one palette: its {@linkplain #stateProperties() state properties}, {@linkplain #components()
  * components} and {@linkplain #origin() origin}, and its {@linkplain #states() states}, which carry the runtime ids.
  * <p>
  * In {@link BlockNetworkIds#HASHED} palettes, vanilla states are shared between the palettes of all versions, while
@@ -35,6 +37,7 @@ public final class RegisteredBlock {
     private volatile @Nullable RegisteredBlockState defaultState;
     private volatile @Nullable List<BlockProperty<?>> properties;
     private volatile @Nullable BedrockBlockType key;
+    private volatile @Nullable Properties propertiesCache;
     private volatile @Nullable List<BedrockBlockState> customKeys;
 
     RegisteredBlock(String identifier, Origin origin, List<RegisteredBlockState> states, @Nullable CustomBlock customBlock,
@@ -105,7 +108,7 @@ public final class RegisteredBlock {
      * @return the properties that make up the states. Vanilla: derived from the states, values in palette order;
      * custom: the {@link CustomBlock#stateProperties()}
      */
-    public @NonNull List<BlockProperty<?>> properties() {
+    public @NonNull List<BlockProperty<?>> stateProperties() {
         List<BlockProperty<?>> result = properties;
         if (result == null) {
             result = customBlock != null ? customBlock.stateProperties() : derive();
@@ -155,6 +158,19 @@ public final class RegisteredBlock {
      * In a palette patched with more custom blocks, ids inside the data of earlier custom blocks can be older than
      * what {@link BlockRegistry#blockProperties()} sends; that list is authoritative
      */
+    /**
+     * @return the component and wire properties of this block, from its {@link #propertyData()} (named like the bundled
+     * property store: {@code component:}, {@code wire:}); empty for blocks without property data
+     * @since 1.0.0
+     */
+    public @NonNull Properties properties() {
+        Properties result = propertiesCache;
+        if (result == null) {
+            propertiesCache = result = PropertySplit.split(propertyData);
+        }
+        return result;
+    }
+
     public @Nullable NbtMap propertyData() {
         return propertyData;
     }

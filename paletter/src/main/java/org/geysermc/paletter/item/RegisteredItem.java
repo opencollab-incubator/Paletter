@@ -6,7 +6,9 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
 import org.geysermc.paletter.Origin;
+import org.geysermc.paletter.internal.property.PropertySplit;
 import org.geysermc.paletter.item.component.ItemComponent;
+import org.geysermc.paletter.property.Properties;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 
 import java.util.List;
@@ -29,6 +31,7 @@ public final class RegisteredItem implements ItemDefinition {
     private final List<ItemComponent> components;
     private final @Nullable CustomItem customItem;
     private volatile @Nullable BedrockItemType key;
+    private volatile @Nullable Properties properties;
 
     RegisteredItem(String identifier, int runtimeId, ItemVersion version, boolean componentBased, @Nullable NbtMap componentData,
                    Origin origin, List<ItemComponent> components, @Nullable CustomItem customItem) {
@@ -96,6 +99,19 @@ public final class RegisteredItem implements ItemDefinition {
      */
     public @NonNull List<ItemComponent> components() {
         return components;
+    }
+
+    /**
+     * @return the properties of this item: its component data split the way the bundled property store names them
+     * ({@code component:}, {@code wire:}). For a vanilla item that is what the store holds for the palette's version;
+     * for a custom item or an overridden one it reflects the components the layers set
+     */
+    public @NonNull Properties properties() {
+        Properties result = properties;
+        if (result == null) {
+            properties = result = PropertySplit.split(componentData);
+        }
+        return result;
     }
 
     /**
