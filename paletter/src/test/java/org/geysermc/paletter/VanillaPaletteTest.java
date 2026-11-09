@@ -131,9 +131,10 @@ class VanillaPaletteTest {
 
     @Test
     void dataCodecRoundTrips() throws Exception {
+        // Format 1 carries the item components; format 2 leaves them to the property store (PropertyStoreTest)
         VanillaData data = PALETTER.vanillaData(PALETTER.latest());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PaletteDataCodec.write(data, out);
+        PaletteDataCodec.write(data, out, PaletteDataCodec.FORMAT_1);
         VanillaData read = PaletteDataCodec.read(new ByteArrayInputStream(out.toByteArray()));
         assertEquals(data.version(), read.version());
         assertEquals(data.blockStates(), read.blockStates());
@@ -147,16 +148,16 @@ class VanillaPaletteTest {
     void experimentMarksRoundTripAndAreOptional() throws Exception {
         VanillaData data = PALETTER.vanillaData(PALETTER.latest());
         ByteArrayOutputStream plain = new ByteArrayOutputStream();
-        PaletteDataCodec.write(data.withExperiments(java.util.Map.of()), plain);
+        PaletteDataCodec.write(data.withExperiments(java.util.Map.of()), plain, PaletteDataCodec.FORMAT_1);
         ByteArrayOutputStream again = new ByteArrayOutputStream();
-        PaletteDataCodec.write(PaletteDataCodec.read(new ByteArrayInputStream(plain.toByteArray())), again);
+        PaletteDataCodec.write(PaletteDataCodec.read(new ByteArrayInputStream(plain.toByteArray())), again, PaletteDataCodec.FORMAT_1);
         // Without marks nothing is written: data captured without experiments keeps its bytes
         assertEquals(java.util.Arrays.toString(plain.toByteArray()), java.util.Arrays.toString(again.toByteArray()));
 
         ExperimentContent drop = new ExperimentContent(List.of("minecraft:ice_ball", "minecraft:icicle"), List.of("minecraft:icicle"),
             List.of("minecraft:arrow:48", "minecraft:ice_ball"));
         ByteArrayOutputStream marked = new ByteArrayOutputStream();
-        PaletteDataCodec.write(data.withExperiments(java.util.Map.of("y_2026_drop_4", drop)), marked);
+        PaletteDataCodec.write(data.withExperiments(java.util.Map.of("y_2026_drop_4", drop)), marked, PaletteDataCodec.FORMAT_1);
         VanillaData read = PaletteDataCodec.read(new ByteArrayInputStream(marked.toByteArray()));
         assertEquals(java.util.Map.of("y_2026_drop_4", drop), read.experiments());
         assertEquals(List.of("y_2026_drop_4"), read.experimentsOfBlock("minecraft:icicle"));

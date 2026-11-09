@@ -216,11 +216,7 @@ class DiffSourceTest {
     /** The bundled data exported into the layout must verify as identical: the importer and verify agree. */
     @Test
     void bundledRoundTrip() throws Exception {
-        VanillaData data;
-        try (InputStream stream = DiffSourceTest.class.getResourceAsStream("/paletter/" + NAME + ".nbt")) {
-            assertNotNull(stream);
-            data = PaletteDataCodec.read(stream);
-        }
+        VanillaData data = org.geysermc.paletter.data.PaletteDataSource.bundled().load(new DataVersion(NAME, 0));
         write(data, directory, true);
         Diff verify = Diff.source(directory, NAME, data, "bundled");
         assertTrue(verify.identical(), verify.markdown(20));
