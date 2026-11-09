@@ -241,7 +241,7 @@ public final class MappingInference {
     // ---------------------------------------------------------------------------------------------------------------
     // Loading
 
-    private Capture load(Path dir) throws IOException {
+    static Capture load(Path dir) throws IOException {
         JsonObject meta = JsonParser.parseString(Files.readString(dir.resolve("capture.json"))).getAsJsonObject();
         List<Variant> variants = new ArrayList<>();
         JsonParser.parseString(Files.readString(dir.resolve("variants.json"), StandardCharsets.UTF_8)).getAsJsonArray()

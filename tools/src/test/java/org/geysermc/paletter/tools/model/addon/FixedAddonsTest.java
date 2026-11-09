@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** The generated add-ons are the committed ones (data/addons), and the large probe is the one that was captured. */
 class FixedAddonsTest {
@@ -25,6 +26,25 @@ class FixedAddonsTest {
         FixedAddons.writeCapture(out);
         assertSame(out.resolve("behavior_pack"), ROOT.resolve("data/addons/capture/behavior_pack"));
         assertSame(out.resolve("resource_pack"), ROOT.resolve("data/addons/capture/resource_pack"));
+    }
+
+    @Test
+    void packsOfAnOlderBuildAskForItsFormatVersion(@TempDir Path out) throws IOException {
+        FixedAddons.writeCapture(out.resolve("capture"), "1.26.30");
+        FixedAddons.writeCreative(out.resolve("creative"), "1.26.30");
+        for (String manifest : List.of("capture/behavior_pack/manifest.json", "capture/resource_pack/manifest.json", "creative/behavior_pack/manifest.json")) {
+            String text = Files.readString(out.resolve(manifest));
+            assertTrue(text.replaceAll("\\s", "").contains("\"min_engine_version\":[1,26,30]"), manifest + ": " + text);
+        }
+        try (Stream<Path> walk = Files.walk(out)) {
+            for (Path file : walk.filter(f -> f.toString().contains("items") || f.toString().contains("blocks")).filter(Files::isRegularFile)
+                .filter(f -> f.toString().endsWith(".json") && !f.toString().contains("block_culling")).toList()) {
+                String text = Files.readString(file);
+                if (text.contains("\"format_version\"") && !file.toString().contains("models") && !file.toString().contains("textures")) {
+                    assertTrue(text.contains("\"format_version\": \"1.26.30\""), file + ": " + text.substring(0, 80));
+                }
+            }
+        }
     }
 
     @Test
