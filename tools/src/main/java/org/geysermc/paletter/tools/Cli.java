@@ -51,7 +51,7 @@ import java.util.concurrent.Callable;
     Cli.VerifyCommand.class, Cli.CheckData.class, Cli.BlockItemsCommand.class, Cli.RewriteCommand.class, Cli.DataRewriteCommand.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class, Cli.ExperimentMarksCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
-    Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class
+    Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class, Cli.BehaviourCommand.class
 })
 public final class Cli implements Runnable {
     /** The docs commit the committed model was generated from (MicrosoftDocs/minecraft-creator main, 2026-11-06). */
@@ -565,6 +565,28 @@ public final class Cli implements Runnable {
         public Integer call() {
             org.geysermc.paletter.tools.data.Inspect.run(org.geysermc.paletter.Paletter.builder().build(), version, block, item, System.out);
             return 0;
+        }
+    }
+
+    @Command(name = "behaviour", description = "Behaviour values of vanilla blocks and items (friction, shapes, max stack size, ...)",
+        subcommands = {BehaviourCommand.Import.class})
+    static final class BehaviourCommand implements Runnable {
+        @Override
+        public void run() {
+            CommandLine.usage(this, System.out);
+        }
+
+        @Command(name = "import", description = "Reads the git history of the dump sources and the Script API dumps of data/bds, "
+            + "writes resources/behaviour.nbt and data/behaviour/REPORT.md")
+        static final class Import extends Rooted implements Callable<Integer> {
+            @Option(names = "--cloudburst-data", description = "Checkout of https://github.com/CloudburstMC/Data") Path cloudburstData;
+            @Option(names = "--allay", description = "Checkout of https://github.com/AllayMC/Allay (git clone --filter=blob:none is enough)") Path allay;
+
+            @Override
+            public Integer call() throws Exception {
+                org.geysermc.paletter.tools.behaviour.BehaviourImport.run(root(), cloudburstData, allay);
+                return 0;
+            }
         }
     }
 
