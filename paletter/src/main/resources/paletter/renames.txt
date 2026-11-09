@@ -1,1 +1,2 @@
 # Identifiers Bedrock renamed: block|item <old identifier> <new identifier>. Keep in sync with "renamed" in data/model/names.json.
+# Splits: item <old id>@<aux> <new id>[@<aux>] (a legacy variant that became its own type).
