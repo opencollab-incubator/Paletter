@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 /**
  * {@code codegen/model/components.json}: the add-on JSON side of every item and block component, as the official
@@ -17,10 +18,12 @@ import java.util.List;
  *
  * @param source     where the docs come from (repository and pinned commit)
  * @param license    license of the docs content the model is derived from
+ * @param lists      the docs pages that list the components ({@code item}, {@code block}, {@code trait}), relative to the repository
  * @param components every component and pseudo component (description, menu_category, states, traits, permutations)
  * @param formatNotes every statement of the docs that ties behaviour to a format version
  */
-public record Model(String source, String commit, String license, List<Component> components, List<FormatNote> formatNotes) {
+public record Model(String source, String commit, String license, Map<String, String> lists,
+             List<Component> components, List<FormatNote> formatNotes) {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     /**

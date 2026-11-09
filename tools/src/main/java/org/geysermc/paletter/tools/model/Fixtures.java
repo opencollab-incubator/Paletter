@@ -169,7 +169,7 @@ public final class Fixtures {
             components.put(id, new Component(c.id(), c.kind(), c.category(), c.name(), c.status(), c.doc(), c.page(), c.minFormatVersion(),
                 c.experiments(), forms, fields, c.notes()));
         }
-        return new Model(model.source(), model.commit(), model.license(), new ArrayList<>(components.values()), model.formatNotes());
+        return new Model(model.source(), model.commit(), model.license(), model.lists(), new ArrayList<>(components.values()), model.formatNotes());
     }
 
     /** {@code integer}, {@code array<object>}, {@code map<string>}, ... */

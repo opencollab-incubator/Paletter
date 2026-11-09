@@ -2,6 +2,11 @@
   "source": "https://github.com/MicrosoftDocs/minecraft-creator (creator/Reference/Content/)",
   "commit": "457cdeaa5aa428429884b092895f3979b1f69ad3",
   "license": "Derived from the Minecraft creator documentation by Microsoft, CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/); see codegen/model/ATTRIBUTION.md",
+  "lists": {
+    "item": "creator/Reference/Content/ItemReference/Examples/ItemComponentList.md",
+    "block": "creator/Reference/Content/BlockReference/Examples/BlockComponents/BlockComponentsList.md",
+    "trait": "creator/Reference/Content/BlockReference/Examples/BlockStateAndTraitListings.md"
+  },
   "components": [
     {
       "id": "block:description",
