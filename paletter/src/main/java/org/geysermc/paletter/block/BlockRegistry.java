@@ -25,6 +25,7 @@ import org.geysermc.paletter.internal.component.WireContext;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -259,6 +260,15 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * @return whether {@link #block(int)} is a stand-in for this canonical id (the default fallback or air) because the
+     *         state has no block of its own in this version, see {@link #missingCanonical()}
+     */
+@Internal
+    public boolean isMissing(int canonical) {
+        return canonicalTable().missingIds.get(canonical);
+    }
+
+    /**
      * Like {@link #block(int)}, but only the runtime id. An array lookup.
      */
 @Internal
@@ -326,6 +336,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         int[][] runtimeIds = new int[pageCount][];
         int[] reverse = new int[table.size()];
         Set<NbtMap> missing = new LinkedHashSet<>();
+        BitSet missingIds = new BitSet(size);
         int firstPage = 0;
         int firstIndex = 0;
         // A patch over a registry with the same fallbacks resolves the canonical ids below the parent's size the same
@@ -340,6 +351,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             firstIndex = table.parentSize;
             System.arraycopy(parentTable.reverse, 0, reverse, 0, firstIndex);
             missing.addAll(parentTable.missing);
+            missingIds.or(parentTable.missingIds.get(0, firstPage << PAGE_BITS));
         }
         for (int i = firstIndex; i < reverse.length; i++) {
             reverse[i] = canonical.index(table.byIndex(i).getState());
@@ -358,6 +370,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                     RegisteredBlockState fallback = defaultBlock();
                     block = fallback != null ? fallback : table.air;
                     missing.add(state);
+                    missingIds.set(id);
                 }
                 pageBlocks[j] = block;
                 pageIds[j] = block.getRuntimeId();
@@ -375,10 +388,11 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             blocks[page] = pageBlocks;
             runtimeIds[page] = pageIds;
         }
-        return new CanonicalTable(blocks, runtimeIds, reverse, List.copyOf(missing));
+        return new CanonicalTable(blocks, runtimeIds, reverse, List.copyOf(missing), missingIds);
     }
 
-    private record CanonicalTable(RegisteredBlockState[][] blocks, int[][] runtimeIds, int[] reverse, List<NbtMap> missing) {
+    private record CanonicalTable(RegisteredBlockState[][] blocks, int[][] runtimeIds, int[] reverse, List<NbtMap> missing,
+                                  BitSet missingIds) {
     }
 
     // ---- States ----

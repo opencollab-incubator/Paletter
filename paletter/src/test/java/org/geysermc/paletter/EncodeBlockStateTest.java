@@ -3,6 +3,7 @@ package org.geysermc.paletter;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.geysermc.paletter.block.BlockProperty;
+import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.block.component.Geometry;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
@@ -69,10 +71,26 @@ class EncodeBlockStateTest {
 
     @Test
     void anOlderVersionEncodesLikeItsResolvedNbtToo() {
-        // It has canonical states without a block of their own, so it does not use the id lookup
         Palette palette = PALETTER.palette(OLDEST);
+        BlockRegistry blocks = palette.blocks();
         assertSameAsResolve(palette, "minecraft:oak_planks", state("minecraft:oak_planks", Map.of()));
         assertSameAsResolve(palette, "minecraft:oak_log", state("minecraft:oak_log", Map.of("pillar_axis", "x")));
+
+        // A canonical state this version has no block for: the table would say the default fallback, the NBT says none
+        NbtMap missing = blocks.missingCanonical().getFirst();
+        BedrockBlockState missingState = PALETTER.block(missing);
+        assertNotNull(missingState);
+        assertTrue(blocks.isMissing(missingState.canonicalIn(blocks.canonical())));
+        assertSameAsResolve(palette, "minecraft:oak_planks", missingState);
+
+        // A canonical state this version only has by resolving it: it is not an exact state, and not missing
+        NbtMap adapted = null;
+        for (int id = 0; id < blocks.canonical().size() && adapted == null; id++) {
+            NbtMap state = blocks.canonical().state(id);
+            adapted = !blocks.isMissing(id) && blocks.exact(state) == null ? state : null;
+        }
+        assertNotNull(adapted, "the oldest version resolves some states of the newest");
+        assertSameAsResolve(palette, "minecraft:oak_planks", PALETTER.block(adapted));
     }
 
     @Test
