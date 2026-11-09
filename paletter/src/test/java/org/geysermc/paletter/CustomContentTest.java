@@ -189,7 +189,7 @@ class CustomContentTest {
         RegisteredItem item = palette.items().getDefinition(lamp.identifier());
         assertTrue(item.getRuntimeId() > ruby.getRuntimeId());
         // The block's own placement still applies
-        assertTrue(palette.creativeLayout().stacks().anyMatch(s -> s.identifier().equals(lamp.identifier())));
+        assertTrue(palette.creativeLayout().stacks().anyMatch(s -> s.type().identifier().equals(lamp.identifier())));
     }
 
     @Test

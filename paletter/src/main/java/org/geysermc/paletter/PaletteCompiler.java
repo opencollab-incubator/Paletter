@@ -8,6 +8,7 @@ import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.CanonicalBlocks;
+import org.geysermc.paletter.internal.Canonicals;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeContent;
 import org.geysermc.paletter.creative.CreativeEditor;
@@ -15,7 +16,10 @@ import org.geysermc.paletter.creative.CreativeLayout;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
-import org.geysermc.paletter.creative.CreativeStack;
+import org.geysermc.paletter.internal.creative.RawConverter;
+import org.geysermc.paletter.item.BedrockItemStack;
+import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.CanonicalItems;
@@ -60,10 +64,11 @@ final class PaletteCompiler {
         ItemRegistry.Builder builder = ItemRegistry.vanilla(data, blocks, canonicalItems);
         fallbacks.items(data.version()).forEach(builder::fallback);
         builder.defaultFallback(fallbacks.defaultItem());
-        ItemRegistry items = builder.build(data.creative(), report);
-        CreativeContent creative = CreativeContent.compile(data.creative(), items, report);
+        CreativeLayout layout = RawConverter.convert(data.creative(), blocks, report);
+        ItemRegistry items = builder.build(layout, report);
+        CreativeContent creative = CreativeContent.compile(layout, items, report);
         prepareCanonical(blocks, null, items, null, report);
-        Palette palette = new Palette(data, List.of(), blocks, items, data.creative(), creative, report);
+        Palette palette = new Palette(data, List.of(), blocks, items, layout, creative, report);
         orderingOf(palette, ordering);
         return palette;
     }
@@ -143,7 +148,7 @@ final class PaletteCompiler {
                     case PaletteLayer.ItemEntry.Custom(CustomItem custom) -> {
                         items.addCustom(custom, report, source);
                         if (custom.creative() != null) {
-                            placed.add(new Placed(null, CreativeStack.of(custom.identifier()), custom.creative()));
+                            placed.add(new Placed(null, BedrockItemStack.of(BedrockItemType.of(custom.identifier())), custom.creative()));
                         }
                     }
                     case PaletteLayer.ItemEntry.OfBlock(String identifier, CustomBlock.BlockItem blockItem, var placement) -> {
@@ -153,7 +158,7 @@ final class PaletteCompiler {
                         CreativePlacement effective = placement != null || layer.blocks().stream().noneMatch(b -> b.identifier().equals(identifier))
                             ? placement : creativePlacement(block, ordering);
                         if (items.addBlockItem(block, blockItem, report, source) != null && effective != null) {
-                            placed.add(new Placed(identifier, CreativeStack.of(block.identifier()).withBlockState(block.defaultState()), effective));
+                            placed.add(new Placed(identifier, blockItemStack(block, blocks), effective));
                         }
                     }
                 }
@@ -168,7 +173,7 @@ final class PaletteCompiler {
                 }
                 CreativePlacement placement = creativePlacement(block, ordering);
                 if (items.addBlockItem(block, report, source) != null && placement != null) {
-                    placed.add(new Placed(block.identifier(), CreativeStack.of(block.identifier()).withBlockState(block.defaultState()), placement));
+                    placed.add(new Placed(block.identifier(), blockItemStack(block, blocks), placement));
                 }
             }
             if (ordering == CreativeOrdering.APPEND) {
@@ -209,8 +214,13 @@ final class PaletteCompiler {
         }
     }
 
+    private static BedrockItemStack blockItemStack(CustomBlock block, BlockRegistry blocks) {
+        BedrockBlockState state = blocks.canonical().handle(Canonicals.block(blocks.canonical(), block.defaultState()));
+        return BedrockItemStack.of(BedrockItemType.of(block.identifier())).withBlockState(state);
+    }
+
     /** A creative placement to apply; {@code block} is the custom block if the stack is a block item. */
-    private record Placed(@Nullable String block, CreativeStack stack, CreativePlacement placement) {
+    private record Placed(@Nullable String block, BedrockItemStack stack, CreativePlacement placement) {
     }
 
     /**

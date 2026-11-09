@@ -3,6 +3,7 @@ package org.geysermc.paletter.creative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
+import org.geysermc.paletter.item.BedrockItemStack;
 
 /**
  * One compiled creative inventory entry.
@@ -15,5 +16,5 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
  * @since 1.0.0
  */
 public record CreativeEntry(int netId, @NonNull CreativeCategory category, @Nullable String group,
-                            @NonNull CreativeStack stack, @NonNull ItemData item) {
+                            @NonNull BedrockItemStack stack, @NonNull ItemData item) {
 }

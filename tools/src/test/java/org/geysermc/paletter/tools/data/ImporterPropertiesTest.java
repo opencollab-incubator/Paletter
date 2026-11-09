@@ -3,7 +3,7 @@ package org.geysermc.paletter.tools.data;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
-import org.geysermc.paletter.creative.CreativeLayout;
+import org.geysermc.paletter.internal.creative.RawLayout;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.internal.data.PaletteDataCodec;
@@ -51,7 +51,7 @@ class ImporterPropertiesTest {
             .putString("menu_category", "construction").putCompound("components", NbtMap.builder()
                 .putCompound("minecraft:light_emission", NbtMap.builder().putInt("emission", 7).build()).build()).build()));
         return new VanillaData(version, List.of(BlockStates.of("test:lamp", Map.of("lit", (byte) 0))), items, blocks,
-            CreativeLayout.of(Map.of()), Map.of(), VersionFallbacks.NONE, Map.of());
+            RawLayout.of(Map.of()), Map.of(), VersionFallbacks.NONE, Map.of());
     }
 
     private void importVersion(VanillaData data, Path output) throws Exception {

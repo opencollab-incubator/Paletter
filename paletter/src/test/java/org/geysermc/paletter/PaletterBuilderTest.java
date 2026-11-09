@@ -38,7 +38,7 @@ class PaletterBuilderTest {
 
     private static List<String> stacks(Palette palette) {
         List<String> stacks = new ArrayList<>();
-        palette.creativeLayout().forEachStack(stack -> stacks.add(stack.identifier() + ":" + stack.damage()));
+        palette.creativeLayout().forEachStack(stack -> stacks.add(stack.type().identifier() + ":" + stack.variant().aux()));
         return stacks;
     }
 

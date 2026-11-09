@@ -2,6 +2,7 @@ package org.geysermc.paletter.creative;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 
@@ -57,7 +58,7 @@ public record CreativePlacement(@NonNull CreativeCategory category, @Nullable St
     /**
      * Applies this placement to an editor with {@link CreativeOrdering#APPEND}.
      */
-    public void apply(@NonNull CreativeEditor editor, @NonNull CreativeStack stack) {
+    public void apply(@NonNull CreativeEditor editor, @NonNull BedrockItemStack stack) {
         apply(editor, stack, CreativeOrdering.APPEND);
     }
 
@@ -67,7 +68,7 @@ public record CreativePlacement(@NonNull CreativeCategory category, @Nullable St
      *
      * @since 1.0.0
      */
-    public void apply(@NonNull CreativeEditor editor, @NonNull CreativeStack stack, @NonNull CreativeOrdering ordering) {
+    public void apply(@NonNull CreativeEditor editor, @NonNull BedrockItemStack stack, @NonNull CreativeOrdering ordering) {
         if (ordering == CreativeOrdering.BDS) {
             CreativeEditor.Insertion insertion = editor.insert(stack);
             if (after != null && insertion.after(after)) {
@@ -91,7 +92,7 @@ public record CreativePlacement(@NonNull CreativeCategory category, @Nullable St
         return group.startsWith("minecraft:") ? group.substring("minecraft:".length()) : group;
     }
 
-    private void applyAppend(@NonNull CreativeEditor editor, @NonNull CreativeStack stack) {
+    private void applyAppend(@NonNull CreativeEditor editor, @NonNull BedrockItemStack stack) {
         CreativeEditor.Insertion insertion = editor.insert(stack);
         if (after != null && insertion.after(after)) {
             return;

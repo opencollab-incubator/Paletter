@@ -18,9 +18,10 @@ import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeEntry;
 import org.geysermc.paletter.creative.CreativePlacement;
-import org.geysermc.paletter.creative.CreativeStack;
 import org.geysermc.paletter.creative.ItemMatcher;
 import org.geysermc.paletter.data.DataVersion;
+import org.geysermc.paletter.item.BedrockItemStack;
+import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.component.DisplayName;
 import org.geysermc.paletter.item.component.Icon;
@@ -294,15 +295,15 @@ class LayerTest {
     void creativeEditsRunPerVersionAndDropMissingItems() {
         PaletteLayer layer = PaletteLayer.builder("creative")
             .creative(editor -> editor.remove(ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.damage(2))))
-            .creative(editor -> editor.insert(CreativeStack.of("minecraft:poplar_boat")).loose(CreativeCategory.ITEMS))
+            .creative(editor -> editor.insert(BedrockItemStack.of(BedrockItemType.of("minecraft:poplar_boat"))).loose(CreativeCategory.ITEMS))
             .build();
         Palette latest = PALETTER.palette(LATEST, layer);
         Palette oldest = PALETTER.palette(OLDEST, layer);
-        assertTrue(latest.creativeLayout().locate(ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.damage(2))).isEmpty());
+        assertFalse(latest.creativeLayout().contains(ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.damage(2))));
         assertEquals("minecraft:poplar_boat", latest.creative().items().getLast().getItem().getDefinition().getIdentifier());
         // Poplar boats exist in 26.40's item list (experimental), so they are kept; unknown items would be dropped
         PaletteLayer unknown = PaletteLayer.builder("unknown")
-            .creative(editor -> editor.insert(CreativeStack.of("test:does_not_exist")).loose(CreativeCategory.ITEMS))
+            .creative(editor -> editor.insert(BedrockItemStack.of(BedrockItemType.of("test:does_not_exist"))).loose(CreativeCategory.ITEMS))
             .build();
         Palette withUnknown = PALETTER.palette(OLDEST, unknown);
         assertEquals(PALETTER.vanilla(PALETTER.version(OLDEST)).creative().size(), withUnknown.creative().size());

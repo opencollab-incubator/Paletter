@@ -5,7 +5,7 @@ import org.geysermc.paletter.data.DataVersion;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
-import org.geysermc.paletter.creative.CreativeLayout;
+import org.geysermc.paletter.internal.creative.RawLayout;
 
 import java.util.List;
 import java.util.Map;
@@ -36,7 +36,7 @@ public record VanillaData(
     @NonNull List<NbtMap> blockStates,
     @NonNull List<VanillaItem> items,
     @NonNull List<BlockPropertyData> dataDrivenBlocks,
-    @NonNull CreativeLayout creative,
+    @NonNull RawLayout creative,
     @NonNull Map<String, List<String>> itemTags,
     @NonNull VersionFallbacks fallbacks,
     @NonNull Map<String, NbtMap> blockDefaults,
@@ -55,7 +55,7 @@ public record VanillaData(
 
     /** Data without the block to item relation. */
     public VanillaData(@NonNull DataVersion version, @NonNull List<NbtMap> blockStates, @NonNull List<VanillaItem> items,
-                       @NonNull List<BlockPropertyData> dataDrivenBlocks, @NonNull CreativeLayout creative,
+                       @NonNull List<BlockPropertyData> dataDrivenBlocks, @NonNull RawLayout creative,
                        @NonNull Map<String, List<String>> itemTags, @NonNull VersionFallbacks fallbacks,
                        @NonNull Map<String, NbtMap> blockDefaults, @NonNull Map<String, ExperimentContent> experiments) {
         this(version, blockStates, items, dataDrivenBlocks, creative, itemTags, fallbacks, blockDefaults, experiments, Map.of());
@@ -63,7 +63,7 @@ public record VanillaData(
 
     /** Data without experiment information. */
     public VanillaData(@NonNull DataVersion version, @NonNull List<NbtMap> blockStates, @NonNull List<VanillaItem> items,
-                       @NonNull List<BlockPropertyData> dataDrivenBlocks, @NonNull CreativeLayout creative,
+                       @NonNull List<BlockPropertyData> dataDrivenBlocks, @NonNull RawLayout creative,
                        @NonNull Map<String, List<String>> itemTags, @NonNull VersionFallbacks fallbacks,
                        @NonNull Map<String, NbtMap> blockDefaults) {
         this(version, blockStates, items, dataDrivenBlocks, creative, itemTags, fallbacks, blockDefaults, Map.of(), Map.of());

@@ -328,7 +328,7 @@ public final class Palette {
             items.canonical().handle(canonical), kind, List.copyOf(chain), item,
             sent == null ? -1 : sent.definition().getRuntimeId(), sent == null ? 0 : sent.damage(),
             block == null ? null : BlockExplanation.describe(block.getState()), block == null ? -1 : block.getRuntimeId(),
-            creativeLayout().locate(matcher).orElse(null));
+            creativeLayout().contains(matcher), creativeLayout().groupOf(matcher));
     }
 
     /**

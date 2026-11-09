@@ -1,6 +1,9 @@
 package org.geysermc.paletter.creative;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.internal.creative.CreativeLocation;
+import org.geysermc.paletter.item.BedrockItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,31 +65,31 @@ public final class CreativeLayout {
     /**
      * @return every stack in display order, including stacks inside groups. Group icons are not included
      */
-    public @NonNull Stream<CreativeStack> stacks() {
-        List<CreativeStack> stacks = new ArrayList<>();
+    public @NonNull Stream<BedrockItemStack> stacks() {
+        List<BedrockItemStack> stacks = new ArrayList<>();
         forEachStack(stacks::add);
         return stacks.stream();
     }
 
-    public void forEachStack(@NonNull Consumer<CreativeStack> consumer) {
+    public void forEachStack(@NonNull Consumer<BedrockItemStack> consumer) {
         for (CreativeCategory category : CreativeCategory.values()) {
             for (CreativeNode node : categories.get(category)) {
                 switch (node) {
-                    case CreativeStack stack -> consumer.accept(stack);
+                    case CreativeItem item -> consumer.accept(item.stack());
                     case CreativeGroup group -> group.stacks().forEach(consumer);
                 }
             }
         }
     }
 
-    public @NonNull List<CreativeLocation> locateAll(@NonNull ItemMatcher matcher) {
+    private @NonNull List<CreativeLocation> locateAll(@NonNull ItemMatcher matcher) {
         List<CreativeLocation> locations = new ArrayList<>();
         for (CreativeCategory category : CreativeCategory.values()) {
             List<CreativeNode> nodes = categories.get(category);
             for (int i = 0; i < nodes.size(); i++) {
                 switch (nodes.get(i)) {
-                    case CreativeStack stack -> {
-                        if (matcher.matches(stack)) {
+                    case CreativeItem item -> {
+                        if (matcher.matches(item.stack())) {
                             locations.add(new CreativeLocation(category, null, i));
                         }
                     }
@@ -103,9 +106,21 @@ public final class CreativeLayout {
         return locations;
     }
 
-    public @NonNull Optional<CreativeLocation> locate(@NonNull ItemMatcher matcher) {
+    /**
+     * @return true if a stack matching the matcher is in the layout, loose or in a group
+     * @since 1.0.0
+     */
+    public boolean contains(@NonNull ItemMatcher matcher) {
+        return !locateAll(matcher).isEmpty();
+    }
+
+    /**
+     * @return the name of the group holding the first stack matching the matcher, or null if there is none or it is loose
+     * @since 1.0.0
+     */
+    public @Nullable String groupOf(@NonNull ItemMatcher matcher) {
         List<CreativeLocation> all = locateAll(matcher);
-        return all.isEmpty() ? Optional.empty() : Optional.of(all.getFirst());
+        return all.isEmpty() ? null : all.getFirst().group();
     }
 
     /**

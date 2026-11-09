@@ -2,13 +2,15 @@ package org.geysermc.paletter;
 
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeEditor;
+import org.geysermc.paletter.creative.CreativeEntry;
 import org.geysermc.paletter.creative.CreativeGroup;
 import org.geysermc.paletter.creative.CreativeLayout;
-import org.geysermc.paletter.creative.CreativeLocation;
+import org.geysermc.paletter.creative.CreativeItem;
 import org.geysermc.paletter.creative.CreativeNode;
 import org.geysermc.paletter.creative.CreativePlacement;
-import org.geysermc.paletter.creative.CreativeStack;
 import org.geysermc.paletter.creative.ItemMatcher;
+import org.geysermc.paletter.item.BedrockItemStack;
+import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;
@@ -23,11 +25,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CreativeEditorTest {
-    private static final CreativeStack A = CreativeStack.of("test:a");
-    private static final CreativeStack B = CreativeStack.of("test:b");
-    private static final CreativeStack C = CreativeStack.of("test:c");
-    private static final CreativeStack LOOSE = CreativeStack.of("test:loose");
-    private static final CreativeStack NEW = CreativeStack.of("test:new");
+    private static final Paletter PALETTER = Paletter.bundled();
+    private static final BedrockItemStack A = stack("test:a");
+    private static final BedrockItemStack B = stack("test:b");
+    private static final BedrockItemStack C = stack("test:c");
+    private static final BedrockItemStack LOOSE = stack("test:loose");
+    private static final BedrockItemStack NEW = stack("test:new");
+
+    private static BedrockItemStack stack(String identifier) {
+        return BedrockItemStack.of(BedrockItemType.of(identifier));
+    }
 
     /**
      * ITEMS: [group "g1" {a, b}], loose, [group "g2" {c}]
@@ -36,7 +43,7 @@ class CreativeEditorTest {
         Map<CreativeCategory, List<CreativeNode>> categories = new EnumMap<>(CreativeCategory.class);
         categories.put(CreativeCategory.ITEMS, List.of(
             new CreativeGroup("g1", null, List.of(A, B)),
-            LOOSE,
+            new CreativeItem(LOOSE),
             new CreativeGroup("g2", C, List.of(C))));
         return CreativeLayout.of(categories);
     }
@@ -53,7 +60,10 @@ class CreativeEditorTest {
     void insertBeforeALooseAnchorIsLoose() {
         CreativeEditor editor = layout().edit();
         assertTrue(editor.insert(NEW).before(ItemMatcher.id("test:loose")));
-        assertEquals(new CreativeLocation(CreativeCategory.ITEMS, null, 1), editor.locate(ItemMatcher.id("test:new")).orElseThrow());
+        assertEquals(new CreativeItem(NEW), editor.view(CreativeCategory.ITEMS).get(1));
+        assertTrue(editor.contains(ItemMatcher.id("test:new")));
+        assertNull(editor.groupOf(ItemMatcher.id("test:new")));
+        assertEquals("g1", editor.groupOf(ItemMatcher.id("test:a")));
     }
 
     @Test
@@ -112,15 +122,15 @@ class CreativeEditorTest {
     void dissolveKeepsStacksInPlace() {
         CreativeEditor editor = layout().edit();
         assertTrue(editor.dissolveGroup("g1"));
-        assertEquals(List.of(A, B, LOOSE), editor.view(CreativeCategory.ITEMS).subList(0, 3));
+        assertEquals(List.of(new CreativeItem(A), new CreativeItem(B), new CreativeItem(LOOSE)), editor.view(CreativeCategory.ITEMS).subList(0, 3));
     }
 
     @Test
     void sortAndReplace() {
         CreativeEditor editor = layout().edit();
-        editor.group("g1").orElseThrow().sort(Comparator.comparing(CreativeStack::identifier).reversed());
-        assertEquals(1, editor.replace(ItemMatcher.id("test:b"), stack -> stack.withDamage(3)));
-        assertEquals(List.of(B.withDamage(3), A), editor.build().group("g1").orElseThrow().stacks());
+        editor.group("g1").orElseThrow().sort(Comparator.comparing((BedrockItemStack stack) -> stack.type().identifier()).reversed());
+        assertEquals(1, editor.replace(ItemMatcher.id("test:b"), stack -> stack.withVariant(stack.type().variantOf(3))));
+        assertEquals(List.of(B.withVariant(B.type().variantOf(3)), A), editor.build().group("g1").orElseThrow().stacks());
     }
 
     @Test
@@ -129,13 +139,13 @@ class CreativeEditorTest {
         CreativePlacement.group(CreativeCategory.ITEMS, "g1").after(ItemMatcher.id("test:c")).apply(editor, NEW);
         assertEquals(List.of(C, NEW), editor.build().group("g2").orElseThrow().stacks());
 
-        CreativeStack other = CreativeStack.of("test:other");
+        BedrockItemStack other = stack("test:other");
         CreativePlacement.group(CreativeCategory.NATURE, "new_group").after(ItemMatcher.id("test:missing")).apply(editor, other);
         assertEquals(List.of(other), editor.build().group("new_group").orElseThrow().stacks());
 
-        CreativeStack third = CreativeStack.of("test:third");
+        BedrockItemStack third = stack("test:third");
         CreativePlacement.loose(CreativeCategory.ITEMS).apply(editor, third);
-        assertEquals(third, editor.view(CreativeCategory.ITEMS).getLast());
+        assertEquals(new CreativeItem(third), editor.view(CreativeCategory.ITEMS).getLast());
     }
 
     @Test
@@ -144,5 +154,26 @@ class CreativeEditorTest {
         CreativeEditor editor = original.edit();
         editor.remove(ItemMatcher.id("test:a"));
         assertEquals(List.of(A, B), original.group("g1").orElseThrow().stacks());
+    }
+
+    @Test
+    void vanillaLayoutIsMadeOfStacksThatEncodeToTheEntries() {
+        Palette palette = PALETTER.palette(2225);
+        List<BedrockItemStack> layoutStacks = palette.creativeLayout().stacks().toList();
+        assertTrue(layoutStacks.stream().anyMatch(stack -> stack.blockState() != null), "block items keep their state");
+        for (int netId = 1; netId <= palette.creative().size(); netId += 97) {
+            CreativeEntry entry = palette.creative().entry(netId);
+            assertEquals(entry.item().getDefinition(), palette.encode(entry.stack()).getDefinition());
+            assertEquals(entry.item().getBlockDefinition(), palette.encode(entry.stack()).getBlockDefinition());
+        }
+    }
+
+    @Test
+    void containsAndGroupOfLookThroughTheLayout() {
+        CreativeLayout layout = layout();
+        assertTrue(layout.contains(ItemMatcher.id("test:b")));
+        assertFalse(layout.contains(ItemMatcher.id("test:missing")));
+        assertEquals("g2", layout.groupOf(ItemMatcher.id("test:c")));
+        assertNull(layout.groupOf(ItemMatcher.id("test:loose")));
     }
 }

@@ -5,7 +5,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.annotation.Experimental;
 import org.geysermc.paletter.block.BlockResolution;
-import org.geysermc.paletter.creative.CreativeLocation;
 
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 
@@ -25,14 +24,15 @@ import java.util.List;
  * @param damage the damage value that is sent
  * @param block the block sent with the item (its block item's block, or the default block), or null
  * @param blockRuntimeId the runtime id of that block, or -1
- * @param creative where the variant is in the creative inventory, or null if it is not
+ * @param creative whether the variant is in the creative inventory
+ * @param creativeGroup the creative group it is in, or null if it is loose or not in the creative inventory
  * @since 1.0.0
  */
 @Experimental
 public record ItemExplanation(@NonNull String identifier, int aux, @Nullable NbtMap blockState,
                               @Nullable BedrockItemVariant handle, BlockResolution.@NonNull Kind kind,
                               @NonNull List<String> chain, @Nullable String item, int runtimeId, int damage,
-                              @Nullable String block, int blockRuntimeId, @Nullable CreativeLocation creative) {
+                              @Nullable String block, int blockRuntimeId, boolean creative, @Nullable String creativeGroup) {
     @Override
     public String toString() {
         StringBuilder out = new StringBuilder();
@@ -56,11 +56,10 @@ public record ItemExplanation(@NonNull String identifier, int aux, @Nullable Nbt
             out.append("  block:        ").append(block == null ? "none" : block + " (runtime id " + blockRuntimeId + ")").append('\n');
         }
         out.append("  creative:     ");
-        if (creative == null) {
+        if (!creative) {
             out.append("not in the creative inventory");
         } else {
-            out.append(creative.category().name().toLowerCase());
-            out.append(creative.group() == null ? "" : ", group " + creative.group()).append(", index ").append(creative.index());
+            out.append(creativeGroup == null ? "loose" : "group " + creativeGroup);
         }
         return out.toString();
     }

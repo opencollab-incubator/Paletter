@@ -4,7 +4,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
-import org.geysermc.paletter.creative.CreativeLayout;
+import org.geysermc.paletter.internal.creative.RawLayout;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataSource;
 import org.geysermc.paletter.internal.block.BlockStates;
@@ -58,7 +58,7 @@ class PropertyStoreTest {
     }
 
     private static VanillaData data(DataVersion version, List<VanillaItem> items, List<BlockPropertyData> blocks) {
-        return new VanillaData(version, List.of(BlockStates.of("test:b", Map.of())), items, blocks, CreativeLayout.of(Map.of()),
+        return new VanillaData(version, List.of(BlockStates.of("test:b", Map.of())), items, blocks, RawLayout.of(Map.of()),
             Map.of(), VersionFallbacks.NONE, Map.of());
     }
 

@@ -1,7 +1,8 @@
-package org.geysermc.paletter.creative;
+package org.geysermc.paletter.internal.creative;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.creative.CreativeCategory;
 
 /**
  * Where a stack is in a creative layout.

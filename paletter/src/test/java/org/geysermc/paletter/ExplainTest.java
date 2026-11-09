@@ -61,7 +61,7 @@ class ExplainTest {
         assertEquals(BlockResolution.Kind.EXACT, apple.kind());
         assertEquals("minecraft:apple", apple.item());
         assertNull(apple.block());
-        assertNotNull(apple.creative());
+        assertTrue(apple.creative());
 
         ItemExplanation stone = palette.explain("minecraft:stone", 0);
         assertNotNull(stone.block());
@@ -69,7 +69,7 @@ class ExplainTest {
 
         ItemExplanation unknown = palette.explain("minecraft:potion", 9999);
         assertNull(unknown.handle());
-        assertNull(unknown.creative());
+        assertFalse(unknown.creative());
         assertTrue(unknown.toString().contains("not in the creative inventory"), unknown.toString());
         assertFalse(apple.toString().isEmpty());
     }

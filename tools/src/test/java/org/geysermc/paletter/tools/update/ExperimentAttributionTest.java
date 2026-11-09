@@ -6,10 +6,10 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.tools.client.CapturedData;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativeGroup;
-import org.geysermc.paletter.creative.CreativeLayout;
-import org.geysermc.paletter.creative.CreativeNode;
-import org.geysermc.paletter.creative.CreativeStack;
+import org.geysermc.paletter.internal.creative.RawGroup;
+import org.geysermc.paletter.internal.creative.RawLayout;
+import org.geysermc.paletter.internal.creative.RawNode;
+import org.geysermc.paletter.internal.creative.RawStack;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.ExperimentContent;
 import org.geysermc.paletter.internal.data.VanillaData;
@@ -35,16 +35,16 @@ class ExperimentAttributionTest {
             .putInt("version", version).putCompound("data", NbtMap.EMPTY).build();
     }
 
-    private static CapturedData capture(List<NbtMap> items, Map<String, NbtMap> blocks, List<CreativeStack> creative) {
+    private static CapturedData capture(List<NbtMap> items, Map<String, NbtMap> blocks, List<RawStack> creative) {
         Map<String, NbtMap> byName = new LinkedHashMap<>();
         items.forEach(item -> byName.put(item.getString("name"), item));
-        Map<CreativeCategory, List<CreativeNode>> categories = new java.util.EnumMap<>(CreativeCategory.class);
-        categories.put(CreativeCategory.ITEMS, List.of(new CreativeGroup("itemGroup.name.test", null, creative)));
-        return new CapturedData(byName, blocks, CreativeLayout.of(categories));
+        Map<CreativeCategory, List<RawNode>> categories = new java.util.EnumMap<>(CreativeCategory.class);
+        categories.put(CreativeCategory.ITEMS, List.of(new RawGroup("itemGroup.name.test", null, creative)));
+        return new CapturedData(byName, blocks, RawLayout.of(categories));
     }
 
-    private static CreativeStack stack(String id, int damage) {
-        return new CreativeStack(id, damage, 1, null, null);
+    private static RawStack stack(String id, int damage) {
+        return new RawStack(id, damage, 1, null, null);
     }
 
     private static BdsDump dump(Set<String> items, Set<String> blocks) {
@@ -122,7 +122,7 @@ class ExperimentAttributionTest {
     void checkerListsContentOlderVersionsLack() {
         VanillaData latest = data("27.0", Map.of(), VersionFallbacks.NONE);
         VanillaData older = new VanillaData(new DataVersion("26.50", 1), List.of(BlockStates.of("minecraft:stone", NbtMap.EMPTY)),
-            List.of(new VanillaItem("minecraft:stone", 1, 2, false, null)), List.of(), CreativeLayout.of(Map.of()), Map.of(),
+            List.of(new VanillaItem("minecraft:stone", 1, 2, false, null)), List.of(), RawLayout.of(Map.of()), Map.of(),
             VersionFallbacks.NONE, Map.of(), Map.of());
         assertEquals(List.of("block minecraft:icicle", "item minecraft:icicle"), Checker.missing(older, latest));
     }
@@ -130,7 +130,7 @@ class ExperimentAttributionTest {
     private static VanillaData data(String name, Map<String, ExperimentContent> experiments, VersionFallbacks fallbacks) {
         List<NbtMap> states = List.of(BlockStates.of("minecraft:stone", NbtMap.EMPTY), BlockStates.of("minecraft:icicle", NbtMap.EMPTY));
         List<VanillaItem> items = List.of(new VanillaItem("minecraft:stone", 1, 2, false, null), new VanillaItem("minecraft:icicle", 2, 2, false, null));
-        return new VanillaData(new DataVersion(name, 1), states, items, List.of(), CreativeLayout.of(Map.of()), Map.of(), fallbacks, Map.of(),
+        return new VanillaData(new DataVersion(name, 1), states, items, List.of(), RawLayout.of(Map.of()), Map.of(), fallbacks, Map.of(),
             experiments);
     }
 }

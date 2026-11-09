@@ -2,6 +2,8 @@ package org.geysermc.paletter.creative;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.item.BedrockItemStack;
+import org.geysermc.paletter.vanilla.BedrockItemType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +22,7 @@ import java.util.function.UnaryOperator;
  * Placement is relative to things that already exist, never by raw index, so edits keep working when a new
  * Bedrock version shuffles the vanilla layout:
  * <pre>{@code
- * editor.insert(CreativeStack.of("geysermc:furnace_minecart")).after(ItemMatcher.id("minecraft:hopper_minecart"));
+ * editor.insert(BedrockItemStack.of(BedrockItemType.of("geysermc:furnace_minecart"))).after(ItemMatcher.id("minecraft:hopper_minecart"));
  * editor.groupOrCreate(CreativeCategory.ITEMS, "geyser:tools").add(stack).placeAfterGroup("itemGroup.name.minecart");
  * editor.remove(ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.damage(2)));
  * }</pre>
@@ -37,7 +39,7 @@ public final class CreativeEditor {
             List<Object> nodes = new ArrayList<>();
             for (CreativeNode node : base.nodes(category)) {
                 switch (node) {
-                    case CreativeStack stack -> nodes.add(stack);
+                    case CreativeItem item -> nodes.add(item);
                     case CreativeGroup group -> nodes.add(new MutableGroup(group.name(), group.icon(), new ArrayList<>(group.stacks())));
                 }
             }
@@ -52,13 +54,21 @@ public final class CreativeEditor {
         return categories.get(category).stream().map(CreativeEditor::freeze).toList();
     }
 
-    public @NonNull Optional<CreativeLocation> locate(@NonNull ItemMatcher matcher) {
-        Position position = find(matcher, null);
-        return position == null ? Optional.empty() : Optional.of(position.location());
+    /**
+     * @return true if a stack matching the matcher is in the layout being edited
+     * @since 1.0.0
+     */
+    public boolean contains(@NonNull ItemMatcher matcher) {
+        return find(matcher, null) != null;
     }
 
-    public @NonNull List<CreativeLocation> locateAll(@NonNull ItemMatcher matcher) {
-        return build().locateAll(matcher);
+    /**
+     * @return the name of the group holding the first stack matching the matcher, or null if there is none or it is loose
+     * @since 1.0.0
+     */
+    public @Nullable String groupOf(@NonNull ItemMatcher matcher) {
+        Position position = find(matcher, null);
+        return position == null || position.group == null ? null : position.group.name;
     }
 
     public @NonNull Optional<GroupEditor> group(@NonNull String name) {
@@ -114,18 +124,18 @@ public final class CreativeEditor {
         List<Object> nodes = categories.get(categoryOf(group));
         int index = nodes.indexOf(group);
         nodes.remove(index);
-        nodes.addAll(index, group.stacks);
+        nodes.addAll(index, items(group.stacks));
         return true;
     }
 
     /**
      * Starts inserting stacks. Nothing happens until a placement method of the returned insertion is called.
      */
-    public @NonNull Insertion insert(@NonNull CreativeStack... stacks) {
+    public @NonNull Insertion insert(@NonNull BedrockItemStack... stacks) {
         return new Insertion(List.of(stacks), null);
     }
 
-    public @NonNull Insertion insert(@NonNull List<CreativeStack> stacks) {
+    public @NonNull Insertion insert(@NonNull List<BedrockItemStack> stacks) {
         return new Insertion(List.copyOf(stacks), null);
     }
 
@@ -133,7 +143,7 @@ public final class CreativeEditor {
      * Starts moving all stacks matching a matcher. They are only removed once a placement succeeds.
      */
     public @NonNull Insertion move(@NonNull ItemMatcher matcher) {
-        List<CreativeStack> stacks = new ArrayList<>();
+        List<BedrockItemStack> stacks = new ArrayList<>();
         forEachStack(stacks::add, matcher);
         return new Insertion(stacks, matcher);
     }
@@ -148,8 +158,8 @@ public final class CreativeEditor {
         for (List<Object> nodes : categories.values()) {
             for (int i = nodes.size() - 1; i >= 0; i--) {
                 Object node = nodes.get(i);
-                if (node instanceof CreativeStack stack) {
-                    if (matcher.matches(stack)) {
+                if (node instanceof CreativeItem item) {
+                    if (matcher.matches(item.stack())) {
                         nodes.remove(i);
                         removed++;
                     }
@@ -172,14 +182,14 @@ public final class CreativeEditor {
      *
      * @return the amount of stacks replaced
      */
-    public int replace(@NonNull ItemMatcher matcher, @NonNull UnaryOperator<CreativeStack> replacement) {
+    public int replace(@NonNull ItemMatcher matcher, @NonNull UnaryOperator<BedrockItemStack> replacement) {
         int replaced = 0;
         for (List<Object> nodes : categories.values()) {
             for (int i = 0; i < nodes.size(); i++) {
                 Object node = nodes.get(i);
-                if (node instanceof CreativeStack stack) {
-                    if (matcher.matches(stack)) {
-                        nodes.set(i, Objects.requireNonNull(replacement.apply(stack)));
+                if (node instanceof CreativeItem item) {
+                    if (matcher.matches(item.stack())) {
+                        nodes.set(i, new CreativeItem(Objects.requireNonNull(replacement.apply(item.stack()))));
                         replaced++;
                     }
                 } else {
@@ -212,11 +222,11 @@ public final class CreativeEditor {
      * after a successful placement, further calls do nothing and return false.
      */
     public final class Insertion {
-        private final List<CreativeStack> stacks;
+        private final List<BedrockItemStack> stacks;
         private final @Nullable ItemMatcher moving;
         private boolean done;
 
-        private Insertion(List<CreativeStack> stacks, @Nullable ItemMatcher moving) {
+        private Insertion(List<BedrockItemStack> stacks, @Nullable ItemMatcher moving) {
             this.stacks = stacks;
             this.moving = moving;
         }
@@ -296,7 +306,7 @@ public final class CreativeEditor {
                 return false;
             }
             removeMoving();
-            categories.get(category).addAll(stacks);
+            categories.get(category).addAll(items(stacks));
             return done = true;
         }
 
@@ -321,7 +331,7 @@ public final class CreativeEditor {
             removeMoving();
             MutableGroup group = Objects.requireNonNull(findGroup(name));
             List<Object> nodes = categories.get(categoryOf(group));
-            nodes.addAll(nodes.indexOf(group) + offset, stacks);
+            nodes.addAll(nodes.indexOf(group) + offset, items(stacks));
             return done = true;
         }
 
@@ -335,7 +345,7 @@ public final class CreativeEditor {
             if (position.group != null) {
                 position.group.stacks.addAll(position.index + offset, stacks);
             } else {
-                categories.get(position.category).addAll(position.index + offset, stacks);
+                categories.get(position.category).addAll(position.index + offset, items(stacks));
             }
             return done = true;
         }
@@ -365,19 +375,19 @@ public final class CreativeEditor {
             return categoryOf(group);
         }
 
-        public @Nullable CreativeStack icon() {
+        public @Nullable BedrockItemStack icon() {
             return group.icon;
         }
 
         /**
          * @param icon the icon, or null to use the first stack that exists in the client's version
          */
-        public @NonNull GroupEditor icon(@Nullable CreativeStack icon) {
+        public @NonNull GroupEditor icon(@Nullable BedrockItemStack icon) {
             group.icon = icon;
             return this;
         }
 
-        public @NonNull List<CreativeStack> stacks() {
+        public @NonNull List<BedrockItemStack> stacks() {
             return List.copyOf(group.stacks);
         }
 
@@ -385,12 +395,12 @@ public final class CreativeEditor {
             return group.stacks.size();
         }
 
-        public @NonNull GroupEditor add(@NonNull CreativeStack... stacks) {
+        public @NonNull GroupEditor add(@NonNull BedrockItemStack... stacks) {
             group.stacks.addAll(Arrays.asList(stacks));
             return this;
         }
 
-        public @NonNull GroupEditor add(int index, @NonNull CreativeStack stack) {
+        public @NonNull GroupEditor add(int index, @NonNull BedrockItemStack stack) {
             group.stacks.add(index, stack);
             return this;
         }
@@ -401,7 +411,7 @@ public final class CreativeEditor {
             return before - group.stacks.size();
         }
 
-        public @NonNull GroupEditor sort(@NonNull Comparator<CreativeStack> comparator) {
+        public @NonNull GroupEditor sort(@NonNull Comparator<BedrockItemStack> comparator) {
             group.stacks.sort(comparator);
             return this;
         }
@@ -463,9 +473,13 @@ public final class CreativeEditor {
         }
     }
 
+    private static List<CreativeItem> items(List<BedrockItemStack> stacks) {
+        return stacks.stream().map(CreativeItem::new).toList();
+    }
+
     private static CreativeNode freeze(Object node) {
-        if (node instanceof CreativeStack stack) {
-            return stack;
+        if (node instanceof CreativeItem item) {
+            return item;
         }
         MutableGroup group = (MutableGroup) node;
         return new CreativeGroup(group.name, group.icon, group.stacks);
@@ -508,14 +522,15 @@ public final class CreativeEditor {
             List<Object> nodes = categories.get(category);
             for (int i = 0; i < nodes.size(); i++) {
                 Object node = nodes.get(i);
-                if (node instanceof CreativeStack stack) {
+                if (node instanceof CreativeItem item) {
+                    BedrockItemStack stack = item.stack();
                     if (matcher.matches(stack) && (excluding == null || !excluding.matches(stack))) {
                         return new Position(category, null, i);
                     }
                 } else {
                     MutableGroup group = (MutableGroup) node;
                     for (int j = 0; j < group.stacks.size(); j++) {
-                        CreativeStack stack = group.stacks.get(j);
+                        BedrockItemStack stack = group.stacks.get(j);
                         if (matcher.matches(stack) && (excluding == null || !excluding.matches(stack))) {
                             return new Position(category, group, j);
                         }
@@ -526,15 +541,15 @@ public final class CreativeEditor {
         return null;
     }
 
-    private void forEachStack(java.util.function.Consumer<CreativeStack> consumer, ItemMatcher matcher) {
+    private void forEachStack(java.util.function.Consumer<BedrockItemStack> consumer, ItemMatcher matcher) {
         for (CreativeCategory category : CreativeCategory.values()) {
             for (Object node : categories.get(category)) {
-                if (node instanceof CreativeStack stack) {
-                    if (matcher.matches(stack)) {
-                        consumer.accept(stack);
+                if (node instanceof CreativeItem item) {
+                    if (matcher.matches(item.stack())) {
+                        consumer.accept(item.stack());
                     }
                 } else {
-                    for (CreativeStack stack : ((MutableGroup) node).stacks) {
+                    for (BedrockItemStack stack : ((MutableGroup) node).stacks) {
                         if (matcher.matches(stack)) {
                             consumer.accept(stack);
                         }
@@ -546,10 +561,10 @@ public final class CreativeEditor {
 
     private static final class MutableGroup {
         private final String name;
-        private @Nullable CreativeStack icon;
-        private final List<CreativeStack> stacks;
+        private @Nullable BedrockItemStack icon;
+        private final List<BedrockItemStack> stacks;
 
-        private MutableGroup(String name, @Nullable CreativeStack icon, List<CreativeStack> stacks) {
+        private MutableGroup(String name, @Nullable BedrockItemStack icon, List<BedrockItemStack> stacks) {
             this.name = name;
             this.icon = icon;
             this.stacks = stacks;
@@ -557,8 +572,5 @@ public final class CreativeEditor {
     }
 
     private record Position(CreativeCategory category, @Nullable MutableGroup group, int index) {
-        CreativeLocation location() {
-            return new CreativeLocation(category, group == null ? null : group.name, index);
-        }
     }
 }

@@ -2,8 +2,6 @@ package org.geysermc.paletter;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.paletter.creative.CreativeEditor;
-import org.geysermc.paletter.creative.ItemMatcher;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.vanilla.BedrockItemType;
@@ -75,9 +73,8 @@ public final class VanillaContent {
         }
         Map<String, List<String>> tags = new LinkedHashMap<>();
         data.itemTags().forEach((tag, ids) -> tags.put(tag, ids.stream().filter(id -> !remove.contains(id)).toList()));
-        CreativeEditor creative = data.creative().edit();
-        remove.forEach(id -> creative.remove(ItemMatcher.id(id)));
-        return new VanillaData(data.version(), data.blockStates(), items, data.dataDrivenBlocks(), creative.build(), tags,
+        return new VanillaData(data.version(), data.blockStates(), items, data.dataDrivenBlocks(),
+            data.creative().remove(stack -> remove.contains(stack.identifier())), tags,
             data.fallbacks(), data.blockDefaults(), data.experiments(), data.blockItems());
     }
 }

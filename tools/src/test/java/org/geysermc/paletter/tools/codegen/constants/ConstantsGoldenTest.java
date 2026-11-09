@@ -6,9 +6,9 @@ import com.google.gson.JsonParser;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativeLayout;
-import org.geysermc.paletter.creative.CreativeNode;
-import org.geysermc.paletter.creative.CreativeStack;
+import org.geysermc.paletter.internal.creative.RawLayout;
+import org.geysermc.paletter.internal.creative.RawNode;
+import org.geysermc.paletter.internal.creative.RawStack;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.PaletteDataCodec;
 import org.geysermc.paletter.internal.data.VanillaData;
@@ -116,15 +116,15 @@ class ConstantsGoldenTest {
     }
 
     private static VanillaData data(String name, int protocol, List<List<NbtMap>> blocks, List<VanillaItem> items) {
-        Map<CreativeCategory, List<CreativeNode>> creative = new EnumMap<>(CreativeCategory.class);
+        Map<CreativeCategory, List<RawNode>> creative = new EnumMap<>(CreativeCategory.class);
         for (CreativeCategory category : CreativeCategory.values()) {
             creative.put(category, List.of());
         }
-        creative.put(CreativeCategory.ITEMS, List.of(CreativeStack.of("minecraft:potion"), CreativeStack.of("minecraft:potion").withDamage(5),
-            CreativeStack.of("minecraft:potion").withDamage(7)));
+        creative.put(CreativeCategory.ITEMS, List.of(RawStack.of("minecraft:potion"), RawStack.of("minecraft:potion").withDamage(5),
+            RawStack.of("minecraft:potion").withDamage(7)));
         List<NbtMap> states = new ArrayList<>();
         blocks.forEach(states::addAll);
-        return new VanillaData(new DataVersion(name, protocol), states, items, List.of(), CreativeLayout.of(creative), Map.of(),
+        return new VanillaData(new DataVersion(name, protocol), states, items, List.of(), RawLayout.of(creative), Map.of(),
             VersionFallbacks.NONE, Map.of());
     }
 

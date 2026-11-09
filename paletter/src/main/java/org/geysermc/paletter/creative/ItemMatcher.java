@@ -3,6 +3,8 @@ package org.geysermc.paletter.creative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.internal.block.BlockStates;
+import org.geysermc.paletter.item.BedrockItemStack;
+import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 
@@ -21,7 +23,7 @@ import java.util.function.Predicate;
 @FunctionalInterface
 public interface ItemMatcher {
 
-    boolean matches(@NonNull CreativeStack stack);
+    boolean matches(@NonNull BedrockItemStack stack);
 
     default @NonNull ItemMatcher and(@NonNull ItemMatcher other) {
         return new And(this, other);
@@ -65,9 +67,18 @@ public interface ItemMatcher {
     }
 
     /**
+     * Matches stacks that carry this block state.
+     *
+     * @since 1.0.0
+     */
+    static @NonNull ItemMatcher blockState(@NonNull BedrockBlockState blockState) {
+        return new BlockState(BlockStates.normalize(blockState.toNbt()));
+    }
+
+    /**
      * Matches stacks equal to the given stack in every respect, including count and NBT.
      */
-    static @NonNull ItemMatcher exact(@NonNull CreativeStack stack) {
+    static @NonNull ItemMatcher exact(@NonNull BedrockItemStack stack) {
         return new Exact(stack);
     }
 
@@ -75,14 +86,14 @@ public interface ItemMatcher {
         return new Namespace(namespace.endsWith(":") ? namespace : namespace + ":");
     }
 
-    static @NonNull ItemMatcher of(@NonNull String description, @NonNull Predicate<CreativeStack> predicate) {
+    static @NonNull ItemMatcher of(@NonNull String description, @NonNull Predicate<BedrockItemStack> predicate) {
         return new Custom(description, predicate);
     }
 
     record Id(@NonNull String identifier) implements ItemMatcher {
         @Override
-        public boolean matches(@NonNull CreativeStack stack) {
-            return stack.identifier().equals(identifier);
+        public boolean matches(@NonNull BedrockItemStack stack) {
+            return stack.type().identifier().equals(identifier);
         }
 
         @Override
@@ -93,8 +104,8 @@ public interface ItemMatcher {
 
     record Damage(int damage) implements ItemMatcher {
         @Override
-        public boolean matches(@NonNull CreativeStack stack) {
-            return stack.damage() == damage;
+        public boolean matches(@NonNull BedrockItemStack stack) {
+            return stack.variant().aux() == damage;
         }
 
         @Override
@@ -105,8 +116,8 @@ public interface ItemMatcher {
 
     record BlockState(@NonNull NbtMap blockState) implements ItemMatcher {
         @Override
-        public boolean matches(@NonNull CreativeStack stack) {
-            return blockState.equals(stack.blockState());
+        public boolean matches(@NonNull BedrockItemStack stack) {
+            return stack.blockState() != null && blockState.equals(stack.blockState().toNbt());
         }
 
         @Override
@@ -115,9 +126,9 @@ public interface ItemMatcher {
         }
     }
 
-    record Exact(@NonNull CreativeStack stack) implements ItemMatcher {
+    record Exact(@NonNull BedrockItemStack stack) implements ItemMatcher {
         @Override
-        public boolean matches(@NonNull CreativeStack other) {
+        public boolean matches(@NonNull BedrockItemStack other) {
             return stack.equals(other);
         }
 
@@ -129,8 +140,8 @@ public interface ItemMatcher {
 
     record Namespace(@NonNull String prefix) implements ItemMatcher {
         @Override
-        public boolean matches(@NonNull CreativeStack stack) {
-            return stack.identifier().startsWith(prefix);
+        public boolean matches(@NonNull BedrockItemStack stack) {
+            return stack.type().identifier().startsWith(prefix);
         }
 
         @Override
@@ -141,7 +152,7 @@ public interface ItemMatcher {
 
     record And(@NonNull ItemMatcher first, @NonNull ItemMatcher second) implements ItemMatcher {
         @Override
-        public boolean matches(@NonNull CreativeStack stack) {
+        public boolean matches(@NonNull BedrockItemStack stack) {
             return first.matches(stack) && second.matches(stack);
         }
 
@@ -153,7 +164,7 @@ public interface ItemMatcher {
 
     record Not(@NonNull ItemMatcher matcher) implements ItemMatcher {
         @Override
-        public boolean matches(@NonNull CreativeStack stack) {
+        public boolean matches(@NonNull BedrockItemStack stack) {
             return !matcher.matches(stack);
         }
 
@@ -163,13 +174,13 @@ public interface ItemMatcher {
         }
     }
 
-    record Custom(@NonNull String description, @NonNull Predicate<CreativeStack> predicate) implements ItemMatcher {
+    record Custom(@NonNull String description, @NonNull Predicate<BedrockItemStack> predicate) implements ItemMatcher {
         public Custom {
             Objects.requireNonNull(predicate);
         }
 
         @Override
-        public boolean matches(@NonNull CreativeStack stack) {
+        public boolean matches(@NonNull BedrockItemStack stack) {
             return predicate.test(stack);
         }
 

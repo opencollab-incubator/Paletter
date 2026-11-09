@@ -3,7 +3,7 @@ package org.geysermc.paletter.tools.update;
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.tools.client.CapturedData;
-import org.geysermc.paletter.creative.CreativeStack;
+import org.geysermc.paletter.internal.creative.RawStack;
 import org.geysermc.paletter.internal.data.ExperimentContent;
 
 import java.util.ArrayList;
@@ -131,7 +131,7 @@ public final class ExperimentAttribution {
         return ids;
     }
 
-    private static String key(CreativeStack stack) {
+    private static String key(RawStack stack) {
         return stack.damage() == 0 ? stack.identifier() : stack.identifier() + ":" + stack.damage();
     }
 

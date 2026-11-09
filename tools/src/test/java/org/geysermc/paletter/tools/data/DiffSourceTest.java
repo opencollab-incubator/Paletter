@@ -13,10 +13,10 @@ import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativeGroup;
-import org.geysermc.paletter.creative.CreativeLayout;
-import org.geysermc.paletter.creative.CreativeNode;
-import org.geysermc.paletter.creative.CreativeStack;
+import org.geysermc.paletter.internal.creative.RawGroup;
+import org.geysermc.paletter.internal.creative.RawLayout;
+import org.geysermc.paletter.internal.creative.RawNode;
+import org.geysermc.paletter.internal.creative.RawStack;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.PaletteDataCodec;
 import org.geysermc.paletter.internal.data.VanillaData;
@@ -135,13 +135,13 @@ class DiffSourceTest {
     @Test
     void creativeMove() throws Exception {
         VanillaData data = fixture();
-        Map<CreativeCategory, List<CreativeNode>> categories = new EnumMap<>(CreativeCategory.class);
+        Map<CreativeCategory, List<RawNode>> categories = new EnumMap<>(CreativeCategory.class);
         for (CreativeCategory category : CreativeCategory.values()) {
             categories.put(category, new ArrayList<>(data.creative().nodes(category)));
         }
-        List<CreativeNode> items = categories.get(CreativeCategory.ITEMS);
+        List<RawNode> items = categories.get(CreativeCategory.ITEMS);
         items.add(items.remove(0)); // the loose apple goes last
-        write(with(data, data.blockStates(), data.items(), CreativeLayout.of(categories)), directory, true);
+        write(with(data, data.blockStates(), data.items(), RawLayout.of(categories)), directory, true);
 
         Diff verify = Diff.source(directory, NAME, data, "fixture");
         assertOnly(verify, "Creative layout");
@@ -162,13 +162,13 @@ class DiffSourceTest {
         assertTrue(Diff.source(directory, NAME, a, "fixture").identical());
     }
 
-    private static CreativeLayout lampLayout(VanillaData data, NbtMap state) {
-        Map<CreativeCategory, List<CreativeNode>> categories = new EnumMap<>(CreativeCategory.class);
+    private static RawLayout lampLayout(VanillaData data, NbtMap state) {
+        Map<CreativeCategory, List<RawNode>> categories = new EnumMap<>(CreativeCategory.class);
         for (CreativeCategory category : CreativeCategory.values()) {
             categories.put(category, new ArrayList<>(data.creative().nodes(category)));
         }
         categories.get(CreativeCategory.CONSTRUCTION).add(stack("test:lamp", 0, state, null));
-        return CreativeLayout.of(categories);
+        return RawLayout.of(categories);
     }
 
     /** A capture leaves empty item components out, CloudburstMC/Data keeps them: both import as empty. */
@@ -262,28 +262,28 @@ class DiffSourceTest {
             new VanillaItem("test:sword", 2, 2, true, swordComponents));
 
         NbtMap lampTag = NbtMap.builder().putString("Name", "Lamp").putByte("custom", (byte) 1).build();
-        Map<CreativeCategory, List<CreativeNode>> creative = new EnumMap<>(CreativeCategory.class);
+        Map<CreativeCategory, List<RawNode>> creative = new EnumMap<>(CreativeCategory.class);
         creative.put(CreativeCategory.CONSTRUCTION, List.of(
-            new CreativeGroup("itemGroup.name.lamps", stack("test:lamp", 0, null, null), List.of(
+            new RawGroup("itemGroup.name.lamps", stack("test:lamp", 0, null, null), List.of(
                 stack("test:lamp", 0, BlockStates.of("test:lamp", Map.of("lit", (byte) 0, "power", 0)), null),
                 stack("test:lamp", 0, BlockStates.of("test:lamp", Map.of("lit", (byte) 1, "power", 2)), lampTag)))));
         creative.put(CreativeCategory.ITEMS, List.of(
             stack("test:apple", 0, null, null),
             stack("test:apple", 3, null, null),
-            new CreativeGroup("itemGroup.name.sword", null, List.of(stack("test:sword", 0, null, null)))));
+            new RawGroup("itemGroup.name.sword", null, List.of(stack("test:sword", 0, null, null)))));
         List<BlockPropertyData> dataDriven = List.of(new BlockPropertyData("test:lamp", NbtMap.builder()
             .putList("properties", NbtType.COMPOUND, NbtMap.builder().putString("name", "power").putList("enum", NbtType.INT, 0, 1, 2).build())
             .putCompound("vanilla_block_data", NbtMap.builder().putInt("block_id", 9000).build())
             .build()));
-        return new VanillaData(new DataVersion(NAME, 2225), states, items, dataDriven, CreativeLayout.of(creative), Map.of(),
+        return new VanillaData(new DataVersion(NAME, 2225), states, items, dataDriven, RawLayout.of(creative), Map.of(),
             VersionFallbacks.NONE, Map.of());
     }
 
-    private static CreativeStack stack(String id, int damage, NbtMap block, NbtMap tag) {
-        return new CreativeStack(id, damage, 1, block, tag);
+    private static RawStack stack(String id, int damage, NbtMap block, NbtMap tag) {
+        return new RawStack(id, damage, 1, block, tag);
     }
 
-    private static VanillaData with(VanillaData data, List<NbtMap> states, List<VanillaItem> items, CreativeLayout creative) {
+    private static VanillaData with(VanillaData data, List<NbtMap> states, List<VanillaItem> items, RawLayout creative) {
         return new VanillaData(data.version(), states, items, data.dataDrivenBlocks(), creative, data.itemTags(), data.fallbacks(),
             data.blockDefaults());
     }
@@ -322,10 +322,10 @@ class DiffSourceTest {
         JsonArray items = new JsonArray();
         for (CreativeCategory category : CreativeCategory.values()) {
             boolean looseGroupOpen = false;
-            for (CreativeNode node : data.creative().nodes(category)) {
-                if (node instanceof CreativeGroup group) {
+            for (RawNode node : data.creative().nodes(category)) {
+                if (node instanceof RawGroup group) {
                     groups.add(group(group.name(), category, group.icon()));
-                    for (CreativeStack stack : group.stacks()) {
+                    for (RawStack stack : group.stacks()) {
                         items.add(stack(stack, groups.size() - 1));
                     }
                     looseGroupOpen = false;
@@ -334,7 +334,7 @@ class DiffSourceTest {
                         groups.add(group("", category, null));
                         looseGroupOpen = true;
                     }
-                    items.add(stack((CreativeStack) node, groups.size() - 1));
+                    items.add(stack((RawStack) node, groups.size() - 1));
                 }
             }
         }
@@ -344,7 +344,7 @@ class DiffSourceTest {
         Files.writeString(directory.resolve("creative_items.json"), new Gson().toJson(creative));
     }
 
-    private static JsonObject group(String name, CreativeCategory category, CreativeStack icon) throws IOException {
+    private static JsonObject group(String name, CreativeCategory category, RawStack icon) throws IOException {
         JsonObject json = new JsonObject();
         json.addProperty("name", name);
         json.addProperty("category", category.bedrockName());
@@ -358,7 +358,7 @@ class DiffSourceTest {
         return json;
     }
 
-    private static JsonObject stack(CreativeStack stack, int groupId) throws IOException {
+    private static JsonObject stack(RawStack stack, int groupId) throws IOException {
         JsonObject json = new JsonObject();
         json.addProperty("id", stack.identifier());
         if (stack.damage() != 0) {

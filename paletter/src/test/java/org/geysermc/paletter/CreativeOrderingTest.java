@@ -3,11 +3,12 @@ package org.geysermc.paletter;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeGroup;
-import org.geysermc.paletter.creative.CreativeLocation;
+import org.geysermc.paletter.creative.CreativeItem;
 import org.geysermc.paletter.creative.CreativeNode;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.creative.CreativePlacement;
-import org.geysermc.paletter.creative.CreativeStack;
+import org.geysermc.paletter.item.BedrockItemStack;
+import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.creative.ItemMatcher;
 import org.geysermc.paletter.item.CustomItem;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -31,7 +33,7 @@ class CreativeOrderingTest {
 
     private static List<String> stacks(Palette palette) {
         List<String> stacks = new java.util.ArrayList<>();
-        palette.creativeLayout().forEachStack(stack -> stacks.add(stack.identifier() + ":" + stack.damage()));
+        palette.creativeLayout().forEachStack(stack -> stacks.add(stack.type().identifier() + ":" + stack.variant().aux()));
         return stacks;
     }
 
@@ -52,9 +54,9 @@ class CreativeOrderingTest {
             .build();
         Palette palette = PALETTER.palette(LATEST, layer);
         CreativeGroup swords = palette.creativeLayout().group("itemGroup.name.sword").orElseThrow();
-        List<CreativeStack> stacks = swords.stacks();
-        assertEquals("test:sword_c", stacks.get(stacks.size() - 2).identifier());
-        assertEquals("test:sword_a", stacks.getLast().identifier());
+        List<BedrockItemStack> stacks = swords.stacks();
+        assertEquals("test:sword_c", stacks.get(stacks.size() - 2).type().identifier());
+        assertEquals("test:sword_a", stacks.getLast().type().identifier());
     }
 
     @Test
@@ -68,10 +70,10 @@ class CreativeOrderingTest {
         List<CreativeNode> items = palette.creativeLayout().nodes(CreativeCategory.ITEMS);
         CreativeGroup sword = assertInstanceOf(CreativeGroup.class, items.getLast());
         assertEquals("itemGroup.name.sword", sword.name());
-        assertEquals(List.of(CreativeStack.of("test:wrong_category")), sword.stacks());
+        assertEquals(List.of(BedrockItemStack.of(BedrockItemType.of("test:wrong_category"))), sword.stacks());
 
         List<CreativeNode> nature = palette.creativeLayout().nodes(CreativeCategory.NATURE);
-        assertEquals(CreativeStack.of("test:loose"), nature.getLast());
+        assertEquals(new CreativeItem(BedrockItemStack.of(BedrockItemType.of("test:loose"))), nature.getLast());
         CreativeGroup created = assertInstanceOf(CreativeGroup.class, nature.get(nature.size() - 2));
         assertEquals("test:itemGroup.new", created.name());
     }
@@ -83,10 +85,10 @@ class CreativeOrderingTest {
                 .after(ItemMatcher.id("minecraft:hopper_minecart"))))
             .build();
         Palette palette = PALETTER.palette(LATEST, layer);
-        CreativeLocation hopper = palette.creativeLayout().locate(ItemMatcher.id("minecraft:hopper_minecart")).orElseThrow();
-        CreativeLocation custom = palette.creativeLayout().locate(ItemMatcher.id("test:after_hopper")).orElseThrow();
-        assertEquals(hopper.group(), custom.group());
-        assertEquals(hopper.index() + 1, custom.index());
+        String group = palette.creativeLayout().groupOf(ItemMatcher.id("minecraft:hopper_minecart"));
+        assertEquals(group, palette.creativeLayout().groupOf(ItemMatcher.id("test:after_hopper")));
+        List<String> ids = palette.creativeLayout().group(group).orElseThrow().stacks().stream().map(stack -> stack.type().identifier()).toList();
+        assertEquals(ids.indexOf("minecraft:hopper_minecart") + 1, ids.indexOf("test:after_hopper"));
     }
 
     @Test
@@ -98,15 +100,15 @@ class CreativeOrderingTest {
             .build();
         Palette palette = PALETTER.palette(LATEST, layer);
         List<CreativeNode> construction = palette.creativeLayout().nodes(CreativeCategory.CONSTRUCTION);
-        assertEquals("test:block_menu_only", ((CreativeStack) construction.get(construction.size() - 2)).identifier());
-        assertEquals("test:item", ((CreativeStack) construction.getLast()).identifier());
+        assertEquals("test:block_menu_only", ((CreativeItem) construction.get(construction.size() - 2)).stack().type().identifier());
+        assertEquals("test:item", ((CreativeItem) construction.getLast()).stack().type().identifier());
 
         Palette append = Paletter.builder().creativeOrdering(CreativeOrdering.APPEND).build().palette(LATEST, PaletteLayer.builder("blocks")
             .item(item("test:item", CreativePlacement.loose(CreativeCategory.CONSTRUCTION)))
             .block(CustomBlock.builder("test:block_menu_only").menuCategory(org.geysermc.paletter.block.component.MenuCategory.builder()
                 .category(org.geysermc.paletter.block.component.MenuCategory.Category.CONSTRUCTION).build()).build())
             .build());
-        assertTrue(append.creativeLayout().locate(ItemMatcher.id("test:block_menu_only")).isEmpty());
+        assertFalse(append.creativeLayout().contains(ItemMatcher.id("test:block_menu_only")));
     }
 
     @Test

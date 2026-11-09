@@ -14,10 +14,10 @@ import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.block.BlockFallback;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativeGroup;
-import org.geysermc.paletter.creative.CreativeLayout;
-import org.geysermc.paletter.creative.CreativeNode;
-import org.geysermc.paletter.creative.CreativeStack;
+import org.geysermc.paletter.internal.creative.RawGroup;
+import org.geysermc.paletter.internal.creative.RawLayout;
+import org.geysermc.paletter.internal.creative.RawNode;
+import org.geysermc.paletter.internal.creative.RawStack;
 import org.geysermc.paletter.item.ItemFallback;
 
 import java.io.IOException;
@@ -94,18 +94,18 @@ public final class PaletteDataCodec {
         root.getCompound("data_driven_blocks", NbtMap.EMPTY).forEach((name, properties) ->
             dataDriven.add(new BlockPropertyData(name, (NbtMap) properties)));
 
-        Map<CreativeCategory, List<CreativeNode>> categories = new EnumMap<>(CreativeCategory.class);
+        Map<CreativeCategory, List<RawNode>> categories = new EnumMap<>(CreativeCategory.class);
         NbtMap creative = root.getCompound("creative", NbtMap.EMPTY);
         for (CreativeCategory category : CreativeCategory.values()) {
-            List<CreativeNode> nodes = new ArrayList<>();
+            List<RawNode> nodes = new ArrayList<>();
             for (NbtMap node : creative.getList(category.bedrockName(), NbtType.COMPOUND, List.of())) {
                 if (node.containsKey("group")) {
                     NbtMap icon = node.getCompound("icon", null);
-                    List<CreativeStack> stacks = new ArrayList<>();
+                    List<RawStack> stacks = new ArrayList<>();
                     for (NbtMap stack : node.getList("stacks", NbtType.COMPOUND)) {
                         stacks.add(readStack(stack, interner));
                     }
-                    nodes.add(new CreativeGroup(node.getString("group"), icon == null ? null : readStack(icon, interner), stacks));
+                    nodes.add(new RawGroup(node.getString("group"), icon == null ? null : readStack(icon, interner), stacks));
                 } else {
                     nodes.add(readStack(node, interner));
                 }
@@ -150,7 +150,7 @@ public final class PaletteDataCodec {
         Map<String, String> blockItems = new HashMap<>();
         root.getCompound("block_items", NbtMap.EMPTY).forEach((block, item) -> blockItems.put(block, (String) item));
 
-        return new VanillaData(version, blocks, items, dataDriven, CreativeLayout.of(categories), tags,
+        return new VanillaData(version, blocks, items, dataDriven, RawLayout.of(categories), tags,
             new VersionFallbacks(blockFallbacks, itemFallbacks, unmapped), defaults, experiments, blockItems);
     }
 
@@ -201,10 +201,10 @@ public final class PaletteDataCodec {
         NbtMapBuilder creative = NbtMap.builder();
         for (CreativeCategory category : CreativeCategory.values()) {
             List<NbtMap> nodes = new ArrayList<>();
-            for (CreativeNode node : data.creative().nodes(category)) {
+            for (RawNode node : data.creative().nodes(category)) {
                 switch (node) {
-                    case CreativeStack stack -> nodes.add(writeStack(stack));
-                    case CreativeGroup group -> {
+                    case RawStack stack -> nodes.add(writeStack(stack));
+                    case RawGroup group -> {
                         NbtMapBuilder builder = NbtMap.builder().putString("group", group.name());
                         if (group.icon() != null) {
                             builder.putCompound("icon", writeStack(group.icon()));
@@ -276,15 +276,15 @@ public final class PaletteDataCodec {
         }
     }
 
-    private static CreativeStack readStack(NbtMap nbt, Map<NbtMap, NbtMap> interner) {
+    private static RawStack readStack(NbtMap nbt, Map<NbtMap, NbtMap> interner) {
         NbtMap block = nbt.getCompound("block", null);
         if (block != null) {
             block = BlockStates.of(block.getString("name"), interner.computeIfAbsent(block.getCompound("states"), s -> s));
         }
-        return new CreativeStack(nbt.getString("id"), nbt.getInt("damage", 0), nbt.getInt("count", 1), block, nbt.getCompound("nbt", null));
+        return new RawStack(nbt.getString("id"), nbt.getInt("damage", 0), nbt.getInt("count", 1), block, nbt.getCompound("nbt", null));
     }
 
-    private static NbtMap writeStack(CreativeStack stack) {
+    private static NbtMap writeStack(RawStack stack) {
         NbtMapBuilder builder = NbtMap.builder().putString("id", stack.identifier());
         if (stack.damage() != 0) {
             builder.putInt("damage", stack.damage());

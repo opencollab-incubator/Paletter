@@ -10,10 +10,10 @@ import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativeGroup;
-import org.geysermc.paletter.creative.CreativeLayout;
-import org.geysermc.paletter.creative.CreativeNode;
-import org.geysermc.paletter.creative.CreativeStack;
+import org.geysermc.paletter.internal.creative.RawGroup;
+import org.geysermc.paletter.internal.creative.RawLayout;
+import org.geysermc.paletter.internal.creative.RawNode;
+import org.geysermc.paletter.internal.creative.RawStack;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
@@ -69,7 +69,7 @@ public final class Importer {
         List<NbtMap> blocks = read.blocks();
         List<VanillaItem> items = read.items();
         List<BlockPropertyData> dataDriven = read.dataDriven() == null ? List.of() : read.dataDriven();
-        CreativeLayout creative = read.creative();
+        RawLayout creative = read.creative();
 
         Map<String, List<String>> tags = Map.of();
         Map<String, NbtMap> defaults = Map.of();
@@ -174,7 +174,7 @@ public final class Importer {
      * @param dataDriven the data driven blocks, or null if the source has no such file
      */
     record Source(List<NbtMap> rawBlocks, List<NbtMap> blocks, List<VanillaItem> items, NbtMap components,
-                  List<BlockPropertyData> dataDriven, CreativeLayout creative) {
+                  List<BlockPropertyData> dataDriven, RawLayout creative) {
     }
 
     /** Reads a source directory (CloudburstMC/Data or Geyser's versioned layout) without writing anything. */
@@ -185,7 +185,7 @@ public final class Importer {
         List<VanillaItem> items = readItems(file(source, "runtime_item_states.json", name), components);
         Path dataDrivenFile = file(source, "data_driven_blocks.nbt", name);
         List<BlockPropertyData> dataDriven = Files.exists(dataDrivenFile) ? readDataDrivenBlocks(dataDrivenFile) : null;
-        CreativeLayout creative = readCreative(file(source, "creative_items.json", name));
+        RawLayout creative = readCreative(file(source, "creative_items.json", name));
         return new Source(rawBlocks, blocks, items, components, dataDriven, creative);
     }
 
@@ -242,10 +242,10 @@ public final class Importer {
      * The dump stores the creative inventory in wire format: a flat list of groups (unnamed ones being runs of
      * loose stacks) and items pointing at group indexes. Converts it to the layout model.
      */
-    private static CreativeLayout readCreative(Path file) throws IOException {
+    private static RawLayout readCreative(Path file) throws IOException {
         JsonObject root = readJson(file).getAsJsonObject();
         JsonArray groups = root.getAsJsonArray("groups");
-        List<List<CreativeStack>> stacksByGroup = new ArrayList<>();
+        List<List<RawStack>> stacksByGroup = new ArrayList<>();
         for (int i = 0; i < groups.size(); i++) {
             stacksByGroup.add(new ArrayList<>());
         }
@@ -255,27 +255,27 @@ public final class Importer {
             stacksByGroup.get(groupId).add(readStack(item));
         }
 
-        Map<CreativeCategory, List<CreativeNode>> categories = new EnumMap<>(CreativeCategory.class);
+        Map<CreativeCategory, List<RawNode>> categories = new EnumMap<>(CreativeCategory.class);
         for (int i = 0; i < groups.size(); i++) {
             JsonObject group = groups.get(i).getAsJsonObject();
             CreativeCategory category = CreativeCategory.fromBedrockName(group.get("category").getAsString());
-            List<CreativeNode> nodes = categories.computeIfAbsent(category, c -> new ArrayList<>());
+            List<RawNode> nodes = categories.computeIfAbsent(category, c -> new ArrayList<>());
             String name = group.get("name").getAsString();
             if (name.isEmpty()) {
                 nodes.addAll(stacksByGroup.get(i));
             } else {
                 JsonObject icon = group.getAsJsonObject("icon");
-                CreativeStack iconStack = icon == null || icon.get("id").getAsString().equals("minecraft:air") ? null : readStack(icon);
-                nodes.add(new CreativeGroup(name, iconStack, stacksByGroup.get(i)));
+                RawStack iconStack = icon == null || icon.get("id").getAsString().equals("minecraft:air") ? null : readStack(icon);
+                nodes.add(new RawGroup(name, iconStack, stacksByGroup.get(i)));
             }
         }
-        return CreativeLayout.of(categories);
+        return RawLayout.of(categories);
     }
 
-    private static CreativeStack readStack(JsonObject json) throws IOException {
+    private static RawStack readStack(JsonObject json) throws IOException {
         NbtMap block = json.has("block_state_b64") ? BlockStates.normalize(Nbt.readLeBase64(json.get("block_state_b64").getAsString())) : null;
         NbtMap tag = json.has("nbt_b64") ? Nbt.readLeBase64(json.get("nbt_b64").getAsString()) : null;
-        return new CreativeStack(json.get("id").getAsString(),
+        return new RawStack(json.get("id").getAsString(),
             json.has("damage") ? json.get("damage").getAsInt() : 0,
             json.has("count") ? json.get("count").getAsInt() : 1,
             block, tag);

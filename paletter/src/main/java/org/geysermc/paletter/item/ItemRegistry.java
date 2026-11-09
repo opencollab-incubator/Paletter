@@ -27,7 +27,6 @@ import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.creative.CreativeLayout;
-import org.geysermc.paletter.creative.CreativeStack;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
@@ -601,29 +600,16 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     /**
-     * Builds a creative stack for this version.
+     * Builds a creative stack for this version: the item itself, never a fallback.
      *
      * @return the item data, or null if the item does not exist in this version
      */
-    public @Nullable ItemData toItemData(@NonNull CreativeStack stack) {
-        RegisteredItem item = getDefinition(stack.identifier());
-        if (item == null) {
+    public @Nullable ItemData toItemData(@NonNull BedrockItemStack stack) {
+        ResolvedItem resolved = resolve(stack.variant().toItemVariant());
+        if (resolved == null || resolved.fallback()) {
             return null;
         }
-        RegisteredBlockState block = defaultBlockOf(item.getIdentifier());
-        if (stack.blockState() != null) {
-            BlockResolution resolution = blocks.resolve(stack.blockState());
-            if (resolution.kind() == BlockResolution.Kind.EXACT || resolution.kind() == BlockResolution.Kind.ADAPTED) {
-                block = resolution.block();
-            }
-        }
-        return ItemData.builder()
-            .definition(item)
-            .damage(stack.damage())
-            .count(stack.count())
-            .tag(stack.tag())
-            .blockDefinition(block)
-            .build();
+        return encode(stack);
     }
 
     @Override
@@ -830,10 +816,11 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             Map<String, Set<NbtMap>> creativeStates = new HashMap<>();
             Set<String> creativeWithoutBlock = new HashSet<>();
             layout.forEachStack(stack -> {
+                String identifier = stack.type().identifier();
                 if (stack.blockState() != null) {
-                    creativeStates.computeIfAbsent(stack.identifier(), id -> new LinkedHashSet<>()).add(stack.blockState());
+                    creativeStates.computeIfAbsent(identifier, id -> new LinkedHashSet<>()).add(stack.blockState().toNbt());
                 } else {
-                    creativeWithoutBlock.add(stack.identifier());
+                    creativeWithoutBlock.add(identifier);
                 }
             });
 

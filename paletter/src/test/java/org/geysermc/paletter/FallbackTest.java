@@ -7,6 +7,7 @@ import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.BlockResolution;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.VersionFallbacks;
+import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.item.ItemFallback;
 import org.geysermc.paletter.internal.item.ItemVariant;
 import org.junit.jupiter.api.Test;
@@ -180,21 +181,25 @@ class FallbackTest {
         assertEquals(unknown == -1 ? missing.get(0) : unknown, Ids.match(single, Ids.itemAt(single, missing.get(0)).toItemData().build()));
     }
 
+    private static ItemVariant spelled(BedrockItemStack stack) {
+        return stack.variant().toItemVariant().withBlockState(stack.blockState() == null ? null : stack.blockState().toNbt());
+    }
+
     @Test
     void aBlockItemResolvesTheSameSpelledWithItsDefaultBlockState() {
         Palette latest = PALETTER.palette(PALETTER.latest().protocolVersion());
         Palette vanilla = PALETTER.palette(OLDEST);
         // A block item the oldest version lacks, as the newest creative inventory spells it (with a block state)
         var stack = latest.creativeLayout().stacks()
-            .filter(s -> s.blockState() != null && vanilla.items().getDefinition(s.identifier()) == null)
+            .filter(s -> s.blockState() != null && vanilla.items().getDefinition(s.type().identifier()) == null)
             .findFirst().orElseThrow(() -> new AssertionError("fixture: the oldest version lacks a block item of the newest"));
-        int id = Ids.canonicalItems(vanilla).index(stack.variant());
+        int id = Ids.canonicalItems(vanilla).index(spelled(stack));
         assertTrue(id != -1);
         Palette palette = with(broken(vanilla, id)).palette(OLDEST);
         ResolvedItem plain = Ids.itemAt(palette, id);
         assertNotNull(plain);
-        assertEquals(plain, palette.items().resolve(stack.variant()));
-        assertEquals(plain, palette.items().resolve(ItemVariant.of(stack.identifier())));
+        assertEquals(plain, palette.items().resolve(spelled(stack)));
+        assertEquals(plain, palette.items().resolve(ItemVariant.of(stack.type().identifier())));
     }
 
     @Test

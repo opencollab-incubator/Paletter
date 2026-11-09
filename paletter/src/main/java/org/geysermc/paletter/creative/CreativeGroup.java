@@ -2,6 +2,7 @@ package org.geysermc.paletter.creative;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.item.BedrockItemStack;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
  * @param stacks the stacks in the group, in order
  * @since 1.0.0
  */
-public record CreativeGroup(@NonNull String name, @Nullable CreativeStack icon, @NonNull List<CreativeStack> stacks) implements CreativeNode {
+public record CreativeGroup(@NonNull String name, @Nullable BedrockItemStack icon, @NonNull List<BedrockItemStack> stacks) implements CreativeNode {
 
     public CreativeGroup {
         if (name.isEmpty()) {

@@ -15,7 +15,6 @@ import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
-import org.geysermc.paletter.creative.CreativeStack;
 import org.geysermc.paletter.creative.ItemMatcher;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.internal.item.ItemVariant;
@@ -178,8 +177,8 @@ class VanillaConstantsTest {
         assertEquals(9999, palette.encode(BedrockItemStack.of(BedrockItems.POTION.variantOf(9999))).getDamage());
         Palette withVariant = palette.extend(PaletteLayer.builder("variant").variant(BedrockItems.POTION.variantOf(9999)).build());
         assertEquals(9999, withVariant.decode(withVariant.encode(BedrockItemStack.of(BedrockItems.POTION.variantOf(9999)))).variant().aux());
-        assertTrue(ItemMatcher.of(BedrockItems.POTION.variant(5)).matches(new CreativeStack("minecraft:potion", 5, 1, null, null)));
-        assertFalse(ItemMatcher.of(BedrockItems.POTION.variant(5)).matches(new CreativeStack("minecraft:potion", 6, 1, null, null)));
+        assertTrue(ItemMatcher.of(BedrockItems.POTION.variant(5)).matches(BedrockItemStack.of(BedrockItems.POTION.variantOf(5))));
+        assertFalse(ItemMatcher.of(BedrockItems.POTION.variant(5)).matches(BedrockItemStack.of(BedrockItems.POTION.variantOf(6))));
     }
 
     @Test
@@ -304,7 +303,7 @@ class VanillaConstantsTest {
         palette.creativeLayout().forEachStack(stack -> emptyMap2[0] |= ItemMatcher.of(BedrockItems.EMPTY_MAP.variant(2)).matches(stack));
         assertFalse(emptyMap2[0]);
         boolean[] ruby = new boolean[1];
-        palette.creativeLayout().forEachStack(stack -> ruby[0] |= stack.identifier().equals("example:ruby"));
+        palette.creativeLayout().forEachStack(stack -> ruby[0] |= stack.type().identifier().equals("example:ruby"));
         assertTrue(ruby[0]);
         assertEquals(Ids.block(PALETTER, BedrockBlockState.vanilla(BlockStates.of("minecraft:stone"))), Ids.block(PALETTER, BlockStates.of("minecraft:stone")));
     }

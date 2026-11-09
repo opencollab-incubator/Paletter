@@ -7,6 +7,7 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemGroup;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket;
 import org.geysermc.paletter.PaletteReport;
+import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.item.ItemRegistry;
 
 import java.util.ArrayList;
@@ -45,10 +46,10 @@ public final class CreativeContent {
         Compiler compiler = new Compiler(items, report, groups, contents, entries);
 
         for (CreativeCategory category : CreativeCategory.values()) {
-            List<CreativeStack> loose = new ArrayList<>();
+            List<BedrockItemStack> loose = new ArrayList<>();
             for (CreativeNode node : layout.nodes(category)) {
                 switch (node) {
-                    case CreativeStack stack -> loose.add(stack);
+                    case CreativeItem item -> loose.add(item.stack());
                     case CreativeGroup group -> {
                         compiler.emit(category, "", null, loose);
                         loose.clear();
@@ -94,16 +95,16 @@ public final class CreativeContent {
     private record Compiler(ItemRegistry items, PaletteReport report, List<CreativeItemGroup> groups,
                             List<CreativeItemData> contents, List<CreativeEntry> entries) {
 
-        void emit(CreativeCategory category, String name, @Nullable CreativeStack icon, List<CreativeStack> stacks) {
+        void emit(CreativeCategory category, String name, @Nullable BedrockItemStack icon, List<BedrockItemStack> stacks) {
             if (stacks.isEmpty()) {
                 return;
             }
-            List<CreativeStack> resolvedStacks = new ArrayList<>(stacks.size());
+            List<BedrockItemStack> resolvedStacks = new ArrayList<>(stacks.size());
             List<ItemData> resolved = new ArrayList<>(stacks.size());
-            for (CreativeStack stack : stacks) {
+            for (BedrockItemStack stack : stacks) {
                 ItemData data = items.toItemData(stack);
                 if (data == null) {
-                    report.info("creative", "Left out " + stack.variant() + (name.isEmpty() ? "" : " from group " + name)
+                    report.info("creative", "Left out " + stack + (name.isEmpty() ? "" : " from group " + name)
                         + ": the item does not exist in " + items.version());
                     continue;
                 }

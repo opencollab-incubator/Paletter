@@ -7,9 +7,9 @@ import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativeGroup;
-import org.geysermc.paletter.creative.CreativeNode;
-import org.geysermc.paletter.creative.CreativeStack;
+import org.geysermc.paletter.internal.creative.RawGroup;
+import org.geysermc.paletter.internal.creative.RawNode;
+import org.geysermc.paletter.internal.creative.RawStack;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.tools.bds.BdsDump;
@@ -1083,14 +1083,14 @@ public final class Diff {
         return "; after " + (index == 0 ? "nothing" : entries.get(index - 1).text());
     }
 
-    private static List<Entry> entries(List<CreativeNode> nodes) {
+    private static List<Entry> entries(List<RawNode> nodes) {
         List<Entry> out = new ArrayList<>();
         List<String> texts = flatten(nodes);
         int k = 0;
-        for (CreativeNode node : nodes) {
-            if (node instanceof CreativeGroup group) {
+        for (RawNode node : nodes) {
+            if (node instanceof RawGroup group) {
                 out.add(new Entry(texts.get(k++), List.of("group", group.name(), Objects.requireNonNullElse((Object) group.icon(), "-"))));
-                for (CreativeStack stack : group.stacks()) {
+                for (RawStack stack : group.stacks()) {
                     out.add(new Entry(texts.get(k++), List.of(group.name(), stack)));
                 }
             } else {
@@ -1177,20 +1177,20 @@ public final class Diff {
         return items;
     }
 
-    static List<String> flatten(List<CreativeNode> nodes) {
+    static List<String> flatten(List<RawNode> nodes) {
         List<String> out = new ArrayList<>();
-        for (CreativeNode node : nodes) {
-            if (node instanceof CreativeGroup group) {
+        for (RawNode node : nodes) {
+            if (node instanceof RawGroup group) {
                 out.add("[group " + group.name() + " icon " + (group.icon() == null ? "-" : describe(group.icon())) + "]");
                 group.stacks().forEach(stack -> out.add(group.name() + " / " + describe(stack)));
             } else {
-                out.add(describe((CreativeStack) node));
+                out.add(describe((RawStack) node));
             }
         }
         return out;
     }
 
-    private static String describe(CreativeStack stack) {
+    private static String describe(RawStack stack) {
         return stack.identifier() + (stack.damage() != 0 ? "@" + stack.damage() : "") + (stack.count() != 1 ? "x" + stack.count() : "")
             + (stack.blockState() != null ? " " + compact(stack.blockState().getCompound("states")) : "")
             + (stack.tag() != null ? " " + compact(stack.tag()) : "");
