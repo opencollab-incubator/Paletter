@@ -17,7 +17,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param redstoneConductor Specifies if the block can be powered by redstone. Add-on JSON {@code redstone_conductor}. Default:
  *        <code>false</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_conductivity?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:redstone_conductivity</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.21.40")
 public record RedstoneConductivity(boolean allowsWireToStepDown,

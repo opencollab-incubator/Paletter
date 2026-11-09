@@ -39,7 +39,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * @param enabled The boolean form of the component (add-on JSON &#123;&#64;code "minecraft:flammable": &lt;boolean&gt;&#125;).
  *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_flammable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:flammable</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @ServerOnly
 public record Flammable(int catchChanceModifier, int destroyChanceModifier,

@@ -16,7 +16,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param duration How long in seconds will this fuel cook items for. Value must be &gt;= 0.05. Add-on JSON {@code duration}.
  *        Optional (null: not set). Range [0.05, inf) (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_fuel?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:fuel</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.20.0")
 public record Fuel(@Nullable Float duration) implements ItemComponent {

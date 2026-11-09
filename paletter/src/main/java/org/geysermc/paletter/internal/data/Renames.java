@@ -17,7 +17,7 @@ import java.util.Set;
  * The same renames are listed in {@code data/model/names.json} ({@code renamed}), which keeps the old constants as
  * deprecated aliases.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 @Internal
 public record Renames(@NonNull Map<String, String> blocks, @NonNull Map<String, String> items,

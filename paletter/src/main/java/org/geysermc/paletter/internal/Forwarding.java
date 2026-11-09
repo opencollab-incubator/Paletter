@@ -10,11 +10,11 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @param kind how it was found
  * @param detail what was changed on the way (state keys added, removed or reset, the rename), or, for
  *               {@link Kind#UNKNOWN}, why there is no equivalent. Empty for {@link Kind#EXACT}
- * @since 1.0.0
+ * @since 0.1.0
  */
 public record Forwarding(int canonical, @NonNull Kind kind, @NonNull String detail) {
     /**
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public enum Kind {
         /**

@@ -18,7 +18,7 @@ import org.geysermc.paletter.annotation.Education;
  * {@link org.geysermc.paletter.annotation.Education @Education} marks content BDS only offers to worlds with Education
  * Edition features, which {@code isEducation()} of the type answers at runtime.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public final class BedrockItems {
     /**

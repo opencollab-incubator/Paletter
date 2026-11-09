@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * so (for example "Use minecraft:x instead"). Always paired with {@link Deprecated}; the javadoc {@code @deprecated}
  * tag states the evidence. The generated components record where each replacement comes from.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

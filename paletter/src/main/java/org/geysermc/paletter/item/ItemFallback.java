@@ -15,14 +15,14 @@ import java.util.Objects;
  * @param target the replacement item type
  * @param variant the exact replacement variant, or null to keep the aux of the replaced item
  * @param force true to replace the item even though it exists in this version, e.g. because it is experimental there
- * @since 1.0.0
+ * @since 0.1.0
  */
 public record ItemFallback(@NonNull BedrockItemType target, @Nullable BedrockItemVariant variant, boolean force) {
     /**
      * The default for items a version lacks: the {@code minecraft:unknown} item (the block item of
      * {@code minecraft:unknown}).
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public static final ItemFallback UNKNOWN = new ItemFallback(BedrockItems.UNKNOWN, null, false);
 
@@ -35,7 +35,7 @@ public record ItemFallback(@NonNull BedrockItemType target, @Nullable BedrockIte
 
     /**
      * @return a fallback to an item type, keeping the aux of the replaced item
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public static @NonNull ItemFallback of(@NonNull BedrockItemType target) {
         return new ItemFallback(target, null, false);
@@ -43,7 +43,7 @@ public record ItemFallback(@NonNull BedrockItemType target, @Nullable BedrockIte
 
     /**
      * @return a fallback to one variant (type and aux)
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public static @NonNull ItemFallback of(@NonNull BedrockItemVariant target) {
         return new ItemFallback(target.type(), target, false);
@@ -51,7 +51,7 @@ public record ItemFallback(@NonNull BedrockItemType target, @Nullable BedrockIte
 
     /**
      * @return this fallback, used even in versions that have the item
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull ItemFallback forced() {
         return force ? this : new ItemFallback(target, variant, true);

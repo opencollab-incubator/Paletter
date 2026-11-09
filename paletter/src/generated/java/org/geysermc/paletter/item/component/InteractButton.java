@@ -16,7 +16,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *        not set).
  * @param text The string form: the button text (a localization key or literal). Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_interact_button?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:interact_button</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 public record InteractButton(@Nullable Boolean enabled,
         @Nullable String text) implements ItemComponent {

@@ -31,7 +31,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  *        after the block ticks, a new random value will be chosen from the interval_range for when the block will tick
  *        again. Add-on JSON {@code looping}. Default: <code>true</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_tick?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:tick</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @ServerOnly
 public record Tick(@NonNull List<Float> intervalRange, boolean looping) implements BlockComponent {

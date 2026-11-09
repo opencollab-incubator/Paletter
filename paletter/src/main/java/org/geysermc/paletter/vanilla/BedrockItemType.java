@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * without the preview loaded) is not {@link #isAvailable() available} and resolves to its fallback, normally
  * {@code minecraft:unknown}.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public final class BedrockItemType {
     private static final Map<String, BedrockItemType> CUSTOM = new ConcurrentHashMap<>();
@@ -146,7 +146,7 @@ public final class BedrockItemType {
      * constant carries {@link org.geysermc.paletter.annotation.Education @Education} for). Decided from BDS captures when
      * the constants were generated; always false for custom items and for keys made with {@link #of(String)}.
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public boolean isEducation() {
         return education;
@@ -189,7 +189,7 @@ public final class BedrockItemType {
 
     /**
      * @return whether {@link #variant(int)} would return a variant for this damage value
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public boolean hasVariant(int damage) {
         return variant(damage) != null;
@@ -199,7 +199,7 @@ public final class BedrockItemType {
      * @return the variant with a damage value: one of {@link #variants()} if it has a canonical id, else a new variant
      *         without one (no canonical id; a layer can give it one with
      *         {@link org.geysermc.paletter.PaletteLayer.Builder#variant(BedrockItemVariant)})
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull BedrockItemVariant variantOf(int damage) {
         BedrockItemVariant known = variant(damage);

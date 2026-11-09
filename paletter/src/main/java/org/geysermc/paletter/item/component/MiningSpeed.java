@@ -8,7 +8,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * JSON cannot set. Not an add-on component; the name is the wire path.
  *
  * @param value the mining speed sent to the client
- * @since 1.0.0
+ * @since 0.1.0
  */
 @Experimental
 public record MiningSpeed(float value) implements WireOnlyItemComponent {

@@ -18,7 +18,7 @@ import java.util.List;
  * <p>
  * This is a closed set of sources: the loading contract is internal.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public interface PaletteDataSource {
 
@@ -35,7 +35,7 @@ public interface PaletteDataSource {
 
     /**
      * @return identifiers Bedrock renamed, which lets content of older versions map forward to the newest one
-     * @since 1.0.0
+     * @since 0.1.0
      */
     @org.geysermc.paletter.annotation.Internal
     default @NonNull Renames renames() {
@@ -62,7 +62,7 @@ public interface PaletteDataSource {
      * @param directory a directory in the bundled format: {@code versions.txt}, one {@code <name>.nbt} per version, and
      *                  optionally {@code properties.nbt} and {@code renames.txt}. Read when first needed
      * @return a source reading that directory
-     * @since 1.0.0
+     * @since 0.1.0
      */
     static @NonNull PaletteDataSource directory(@NonNull Path directory) {
         return FileDataSource.directory(directory);

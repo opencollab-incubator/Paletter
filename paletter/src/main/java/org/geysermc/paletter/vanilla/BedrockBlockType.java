@@ -27,7 +27,7 @@ import java.util.WeakHashMap;
  * because Bedrock removed the block, or a preview block without the preview loaded) is not {@link #isAvailable()
  * available}: its states are those of its fallback, normally {@code minecraft:unknown}.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public final class BedrockBlockType {
     private static final Map<CustomBlock, BedrockBlockType> CUSTOM = new WeakHashMap<>();
@@ -88,7 +88,7 @@ public final class BedrockBlockType {
      * identifier). The type of a {@link CustomBlock} with states is {@link #of(CustomBlock)}. Loads the data.
      *
      * @return the type of an identifier
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public static @NonNull BedrockBlockType of(@NonNull String identifier) {
         Objects.requireNonNull(identifier);
@@ -159,7 +159,7 @@ public final class BedrockBlockType {
      * constant carries {@link org.geysermc.paletter.annotation.Education @Education} for). Decided from BDS captures when
      * the constants were generated; always false for custom blocks and for keys made with {@link #of(String)}.
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public boolean isEducation() {
         return education;
@@ -276,7 +276,7 @@ public final class BedrockBlockType {
     /**
      * Builds a state from the default state of a type.
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public static final class StateBuilder {
         private BedrockBlockState state;

@@ -19,7 +19,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @param value The string form of the component (add-on JSON &#123;&#64;code "minecraft:breathability":
  *        &lt;string&gt;&#125;). Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_breathability?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:breathability</a>
- * @since 1.0.0
+ * @since 0.1.0
  * @deprecated rejected by every captured BDS (oldest: 1.26.36.1, protocol 1001): minecraft:breathability: member
  *        "minecraft:breathability" is deprecated
  */

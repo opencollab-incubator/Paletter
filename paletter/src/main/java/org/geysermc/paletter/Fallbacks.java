@@ -19,7 +19,7 @@ import java.util.Objects;
  * Paletter bundles no replacements: {@link #UNKNOWN} maps everything a version lacks to {@code minecraft:unknown},
  * {@link #NONE} sends air and leaves items out. Consumers add better replacements with {@link #builder()}.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public final class Fallbacks {
     /**

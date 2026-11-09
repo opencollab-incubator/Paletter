@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * Without {@link #since()} and {@link #until()} the component is server only in every protocol: Bedrock never sends it,
  * so it has no client effect and encoding it is no error; palettes leave it out without a warning.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

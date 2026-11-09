@@ -26,7 +26,7 @@ import java.util.List;
  *     <li>network ids are assigned sequentially from 1, so {@link #entry(int)} is an array lookup.</li>
  * </ul>
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public final class CreativeContent {
     private final List<CreativeItemGroup> groups;

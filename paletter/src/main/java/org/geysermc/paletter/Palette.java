@@ -62,7 +62,7 @@ import java.util.WeakHashMap;
  * for items. {@link #encode} and {@link #decode} translate whole stacks at the protocol boundary. They are field reads and array lookups that do not allocate. The ids behind
  * the handles are not API.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public final class Palette {
     private final VanillaData data;
@@ -146,7 +146,7 @@ public final class Palette {
      *              custom block of this palette's layers, as {@code {name, states}}; extra keys like {@code version}
      *              are ignored
      * @return its handle, or null if there is no equivalent (see {@link #explainUnknown(NbtMap)})
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable BedrockBlockState block(@NonNull NbtMap state) {
         CanonicalBlocks canonical = blocks.canonical();
@@ -158,7 +158,7 @@ public final class Palette {
      *                   of a custom item of this palette's layers
      * @param aux the aux (damage) value
      * @return its handle, or null if there is no equivalent (see {@link #explainUnknown(String, int)})
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable BedrockItemVariant item(@NonNull String identifier, int aux) {
         return items.canonical().handle(Canonicals.item(items.canonical(), ItemVariant.of(identifier, aux)));
@@ -166,7 +166,7 @@ public final class Palette {
 
     /**
      * @return why a block state has no handle in this palette, or null if it has one
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable String explainUnknown(@NonNull NbtMap state) {
         Forwarding forwarding = Canonicals.forwardBlock(blocks.canonical(), state);
@@ -175,7 +175,7 @@ public final class Palette {
 
     /**
      * @return why an item has no handle in this palette, or null if it has one
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable String explainUnknown(@NonNull String identifier, int aux) {
         Forwarding forwarding = Canonicals.forwardItem(items.canonical(), ItemVariant.of(identifier, aux));
@@ -185,7 +185,7 @@ public final class Palette {
     /**
      * @return every item variant this palette knows, in no particular order: the vanilla ones of the newest data, the
      *         custom items and variants of its layers
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull List<BedrockItemVariant> itemVariants() {
         CanonicalItems canonical = items.canonical();
@@ -200,7 +200,7 @@ public final class Palette {
      * @return the block to send for a state; resolved for this version, air if nothing fits. A field read and an array
      *         load, it does not allocate
      * @throws IllegalArgumentException if the state is not in this palette (a custom block of a layer it does not have)
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull RegisteredBlockState block(@NonNull BedrockBlockState state) {
         return blocks.block(requireCanonical(state));
@@ -210,7 +210,7 @@ public final class Palette {
      * @return the runtime id to send for a state, in this palette's {@link #blockNetworkIds()} mode. A field read and an
      *         array load, it does not allocate
      * @throws IllegalArgumentException if the state is not in this palette (a custom block of a layer it does not have)
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public int runtimeId(@NonNull BedrockBlockState state) {
         return blocks.runtimeId(requireCanonical(state));
@@ -231,7 +231,7 @@ public final class Palette {
      * heard of (the block of its item). {@link RegisteredBlockState#key()} is the block as a key.
      *
      * @return the block, or null if the item is not a block item (or does not exist in this version and has no fallback)
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable RegisteredBlockState blockOf(@NonNull BedrockItemVariant variant) {
         return items.blockOf(variant);
@@ -242,7 +242,7 @@ public final class Palette {
      * aid: cheap for every item of a version.
      *
      * @return true if the variant is replaced by a fallback; false if it is sent as itself, or nothing is sent for it
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public boolean isFallback(@NonNull BedrockItemVariant variant) {
         return items.isFallback(variant);
@@ -254,7 +254,7 @@ public final class Palette {
      * {@link Paletter}; the aux is the one of the fallback's variant, else the replaced variant's.
      *
      * @return the replacement, or null if the variant is sent as itself (or not at all: no fallback, see {@link #encode})
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable BedrockItemVariant fallbackOf(@NonNull BedrockItemVariant variant) {
         return items.fallbackOf(variant);
@@ -269,7 +269,7 @@ public final class Palette {
      *
      * @return the block's key, or null if the item is not a block item here (or the state has no key: a vanilla state
      *         that is not in the newest bundled data)
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable BedrockBlockState blockKeyOf(@NonNull BedrockItemVariant variant) {
         RegisteredBlockState block = items.blockOf(variant);
@@ -279,7 +279,7 @@ public final class Palette {
     /**
      * @return the item of a type as registered in this palette, or null if it has none (an item of a layer this palette
      *         does not have, or one that does not exist in this version; fallbacks are not applied, see {@link #encode})
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable RegisteredItem item(@NonNull BedrockItemType type) {
         return items.item(type.identifier());
@@ -287,7 +287,7 @@ public final class Palette {
 
     /**
      * @return the item of a variant as registered in this palette, like {@link #item(BedrockItemType)}
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable RegisteredItem item(@NonNull BedrockItemVariant variant) {
         return item(variant.type());
@@ -302,7 +302,7 @@ public final class Palette {
      *
      * @return the item data, or {@link ItemData#AIR} if there is no item at all (not in this version, no fallback, or not
      *         in this palette)
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull ItemData encode(@NonNull BedrockItemStack stack) {
         return items.encode(stack);
@@ -314,7 +314,7 @@ public final class Palette {
      * version, is not recognized.
      *
      * @return the stack, or null for air or an item this palette cannot identify
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable BedrockItemStack decode(@NonNull ItemData data) {
         return items.decode(data);
@@ -326,7 +326,7 @@ public final class Palette {
      * Explains what this palette does with a block state: canonical, runtime and hashed id, how it was resolved for
      * this version and which state is sent. Slow, for debugging only.
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull BlockExplanation explain(@NonNull NbtMap state) {
         NbtMap normalized = BlockStates.normalize(state);
@@ -347,7 +347,7 @@ public final class Palette {
     /**
      * Like {@link #explain(NbtMap)}, for a vanilla state.
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull BlockExplanation explain(@NonNull BedrockBlockState state) {
         return explain(state.toNbt());
@@ -357,7 +357,7 @@ public final class Palette {
      * Explains what this palette does with an item: canonical and runtime id, how it was resolved for this
      * version, the block it is sent with and its place in the creative inventory. Slow, for debugging only.
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull ItemExplanation explain(@NonNull String identifier, int aux, @Nullable NbtMap blockState) {
         ItemVariant variant = ItemVariant.of(identifier, aux);
@@ -396,7 +396,7 @@ public final class Palette {
     /**
      * Like {@link #explain(String, int, NbtMap)}, without a block state.
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull ItemExplanation explain(@NonNull String identifier, int aux) {
         return explain(identifier, aux, null);
@@ -405,7 +405,7 @@ public final class Palette {
     /**
      * Like {@link #explain(String, int)}, for a variant.
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull ItemExplanation explain(@NonNull BedrockItemVariant variant) {
         return explain(variant.type().identifier(), variant.aux(), null);
@@ -479,7 +479,7 @@ public final class Palette {
      * Adds the experiments of {@link #experiments()} to a resource pack stack packet (the client reads the enabled
      * experiments from there as well).
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public void applyTo(@NonNull ResourcePackStackPacket packet) {
         addExperiments(packet.getExperiments());
@@ -499,7 +499,7 @@ public final class Palette {
      * content behind a toggle is missing then (see {@link VanillaContent#experiments}).
      *
      * @return the toggle ids, sorted
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull List<String> experiments() {
         return gating.enabled();
@@ -508,7 +508,7 @@ public final class Palette {
     /**
      * @return the enabled experiment toggle that makes an item present in this palette, or null if the item needs none.
      *         (Definitions are shared between palettes, so the registered item does not know; ask the palette.)
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable String experimentOf(@NonNull BedrockItemType type) {
         return gating.ofItem(type.identifier());
@@ -516,7 +516,7 @@ public final class Palette {
 
     /**
      * @return the enabled experiment toggle that makes a block present in this palette, or null if the block needs none
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable String experimentOf(@NonNull BedrockBlockType type) {
         return gating.ofBlock(type.identifier());
@@ -524,7 +524,7 @@ public final class Palette {
 
     /**
      * @return the enabled experiment toggle that makes an item present in this palette, or null
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable String experimentOf(@NonNull RegisteredItem item) {
         return gating.ofItem(item.getIdentifier());
@@ -532,7 +532,7 @@ public final class Palette {
 
     /**
      * @return the enabled experiment toggle that makes a block present in this palette, or null
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable String experimentOf(@NonNull RegisteredBlock block) {
         return gating.ofBlock(block.identifier());

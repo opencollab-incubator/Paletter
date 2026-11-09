@@ -32,7 +32,7 @@ import java.util.Objects;
  * @param menuCategory the description's {@code menu_category}, or null: then it follows {@link #creative()} (and without
  *                     one, Bedrock's default)
  * @param creative where it goes in the creative inventory, or null to leave it out
- * @since 1.0.0
+ * @since 0.1.0
  */
 public record CustomItem(@NonNull String identifier, @NonNull List<ItemComponent> components, @Nullable MenuCategory menuCategory,
                          @Nullable CreativePlacement creative) {
@@ -78,7 +78,7 @@ public record CustomItem(@NonNull String identifier, @NonNull List<ItemComponent
 
     /**
      * @return the type of the item, to use it like a vanilla {@link org.geysermc.paletter.vanilla.BedrockItems} constant
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull BedrockItemType type() {
         return BedrockItemType.of(this);

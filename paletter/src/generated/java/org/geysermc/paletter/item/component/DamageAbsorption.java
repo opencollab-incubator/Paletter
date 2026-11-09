@@ -22,7 +22,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * @param absorbableCauses List of damage causes that can be absorbed by the item. By default, no damage cause is absorbed. Value must
  *        have at least 1 items. Add-on JSON {@code absorbable_causes}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_damage_absorption?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:damage_absorption</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.21.20")
 @ServerOnly

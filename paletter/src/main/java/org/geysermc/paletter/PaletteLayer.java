@@ -38,7 +38,7 @@ import java.util.function.Consumer;
  * Adding custom blocks in a layer does re-number block states in {@link org.geysermc.paletter.block.BlockNetworkIds#SEQUENTIAL}
  * palettes, since the client sorts its palette by name hash. Canonical ids never change: custom content is appended.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public final class PaletteLayer {
     private final String id;
@@ -82,7 +82,7 @@ public final class PaletteLayer {
      * @return custom items and items of custom blocks registered with {@link Builder#blockItem}, in registration
      * order: the order their runtime and canonical ids are assigned in. Items of blocks registered with
      * {@link Builder#block} follow them
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull List<ItemEntry> itemEntries() {
         return itemEntries;
@@ -130,11 +130,11 @@ public final class PaletteLayer {
     /**
      * An item a layer registers: a custom item, or the item of a custom block.
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public sealed interface ItemEntry {
         /**
-         * @since 1.0.0
+         * @since 0.1.0
          */
         record Custom(@NonNull CustomItem item) implements ItemEntry {
         }
@@ -143,7 +143,7 @@ public final class PaletteLayer {
          * @param block the identifier of a custom block of this layer or an earlier one
          * @param item how the item is registered
          * @param creative where it goes in the creative inventory, or null to leave it out
-         * @since 1.0.0
+         * @since 0.1.0
          */
         record OfBlock(@NonNull String block, CustomBlock.@NonNull BlockItem item, @Nullable CreativePlacement creative) implements ItemEntry {
         }
@@ -174,7 +174,7 @@ public final class PaletteLayer {
          * layer (registered there with {@link CustomBlock.BlockItem#NONE}), or to order block items among custom items:
          * runtime and canonical ids are assigned in the order of {@link #item} and {@code blockItem} calls.
          *
-         * @since 1.0.0
+         * @since 0.1.0
          */
         public @NonNull Builder blockItem(@NonNull String block, CustomBlock.@NonNull BlockItem item, @Nullable CreativePlacement creative) {
             itemEntries.add(new ItemEntry.OfBlock(Objects.requireNonNull(block), Objects.requireNonNull(item), creative));
@@ -197,7 +197,7 @@ public final class PaletteLayer {
         /**
          * Changes an existing item definition, like {@link #overrideItem(String, Consumer)}.
          *
-         * @since 1.0.0
+         * @since 0.1.0
          */
         public @NonNull Builder overrideItem(@NonNull BedrockItemType type, @NonNull Consumer<ItemOverride> modifier) {
             return overrideItem(type.identifier(), modifier);
@@ -237,7 +237,7 @@ public final class PaletteLayer {
          * Gives a variant a canonical id, so that {@link Palette#decode} recognizes it. Needed for variants of the newest version that are
          * neither an item's base variant nor in the creative inventory.
          *
-         * @since 1.0.0
+         * @since 0.1.0
          */
         public @NonNull Builder variant(@NonNull BedrockItemVariant variant) {
             return variant(variant.toItemVariant());

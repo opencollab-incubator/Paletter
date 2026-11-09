@@ -24,7 +24,7 @@ import org.geysermc.paletter.annotation.Experimental;
  *        "accepts_connections_from", this field will not be used. Add-on JSON {@code enabled_directions}. Default:
  *        <code>["south","north","east","west"]</code>. Compiled by the hand transform {@code face_list}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_connection_rule?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:connection_rule</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.21.130")
 @Experimental

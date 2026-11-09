@@ -23,7 +23,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param enabled The boolean form of the component (add-on JSON &#123;&#64;code "minecraft:selection_box":
  *        &lt;boolean&gt;&#125;). Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_selection_box?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:selection_box</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.19.60")
 public record SelectionBox(SelectionBox. @NonNull Vec3 origin, SelectionBox. @NonNull Vec3 size,

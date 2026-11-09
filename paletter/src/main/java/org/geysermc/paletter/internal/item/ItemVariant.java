@@ -16,7 +16,7 @@ import org.geysermc.paletter.internal.block.BlockStates;
  * @param identifier the item identifier
  * @param damage the damage / aux value
  * @param blockState the block state as {@code {name, states}}, or null for "any" / not a block item
- * @since 1.0.0
+ * @since 0.1.0
  */
 public record ItemVariant(@NonNull String identifier, int damage, @Nullable NbtMap blockState) {
 

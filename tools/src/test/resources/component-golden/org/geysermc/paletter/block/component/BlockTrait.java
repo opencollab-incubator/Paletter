@@ -10,7 +10,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * from the component model in {@code data/model} (creator docs plus what Bedrock Dedicated Server sends). Paletter
  * compiles them to the wire format of each palette's protocol.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public sealed interface BlockTrait permits BlockTrait.None {
     /**

@@ -19,7 +19,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param attackMiss Sound played when an attack misses or deals no damage due to invulnerability. Add-on JSON {@code attack_miss}.
  *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_swing_sounds?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:swing_sounds</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.21.130")
 public record SwingSounds(@Nullable String attackCriticalHit, @Nullable String attackHit,

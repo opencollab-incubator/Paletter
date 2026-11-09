@@ -68,7 +68,7 @@ import java.util.function.Consumer;
  * It also knows which block each block item is sent with, so consumers never have to work that out from the
  * creative inventory themselves.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     private static final NbtMap NO_BLOCK = NbtMap.builder().putString("name", "paletter:no_block").build();
@@ -287,7 +287,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      *
      * @param variant a variant, written against the newest Bedrock version like {@link #resolve(ItemVariant)}
      * @return the block, or null if the item is not a block item here (or does not exist and has no fallback)
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable RegisteredBlockState blockOf(@NonNull BedrockItemVariant variant) {
         ResolvedItem resolved = resolve(variant.toItemVariant());
@@ -303,7 +303,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * @return the variant that is sent in its place (the aux of the fallback's variant, else the aux of the replaced
      *         item), or null if the variant is sent as itself, or nothing is sent for it at all (see
      *         {@link #isFallback})
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable BedrockItemVariant fallbackOf(@NonNull BedrockItemVariant variant) {
         int id = variant.canonicalIn(canonical);
@@ -317,7 +317,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     /**
      * @return true if this version sends the variant as another item, see {@link #fallbackOf}; false if it is sent as
      *         itself, and for a variant nothing is sent for
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public boolean isFallback(@NonNull BedrockItemVariant variant) {
         int id = variant.canonicalIn(canonical);

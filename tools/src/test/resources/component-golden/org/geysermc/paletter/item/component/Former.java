@@ -14,7 +14,7 @@ import org.geysermc.paletter.annotation.ReplacedBy;
  * report warning, as BDS would never send it to a client.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/test_former?view=minecraft-bedrock-stable">Microsoft Learn: test:former</a>
- * @since 1.0.0
+ * @since 0.1.0
  * @deprecated replaced by {@link Widget} (docs note of test:widget: "Renamed from <code>test:former</code> in 1.0.")
  */
 @Deprecated

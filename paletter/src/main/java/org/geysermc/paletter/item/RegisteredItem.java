@@ -19,7 +19,7 @@ import java.util.List;
  * Instances are compared by identity, and are shared between a palette and every palette extending it, unless a layer
  * overrides that item. So {@code ==} between a definition from a shared palette and one from a session's palette is safe.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public final class RegisteredItem implements ItemDefinition {
     private final String identifier;

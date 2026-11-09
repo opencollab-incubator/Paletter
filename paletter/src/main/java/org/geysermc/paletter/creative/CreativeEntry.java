@@ -13,7 +13,7 @@ import org.geysermc.paletter.item.BedrockItemStack;
  * @param group the group it is in, or null if loose
  * @param stack the stack as defined in the layout
  * @param item the stack as sent to the client
- * @since 1.0.0
+ * @since 0.1.0
  */
 public record CreativeEntry(int netId, @NonNull CreativeCategory category, @Nullable String group,
                             @NonNull BedrockItemStack stack, @NonNull ItemData item) {

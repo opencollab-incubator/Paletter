@@ -24,7 +24,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param z Z coordinate Add-on JSON {@code z}. Default:
  *        <code>&#123;"range":&#123;"max":0,"min":0&#125;,"steps":0&#125;</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_random_offset?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:random_offset</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.21.100")
 public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X y,

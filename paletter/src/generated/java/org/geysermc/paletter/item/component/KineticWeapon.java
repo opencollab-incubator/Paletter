@@ -40,7 +40,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        considered. Block collisions between the user and target block damage and its effects. Add-on JSON {@code
  *        reach}. Default: <code>&#123;"max":3,"min":0&#125;</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_kinetic_weapon?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:kinetic_weapon</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.21.130")
 public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach,

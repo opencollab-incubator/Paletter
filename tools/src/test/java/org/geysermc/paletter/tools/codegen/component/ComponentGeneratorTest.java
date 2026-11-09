@@ -178,7 +178,7 @@ class ComponentGeneratorTest {
             json("{\"item:test:widget:colors\": {\"transform\": \"test_map\", \"why\": \"a map\"}, "
                 + "\"item:test:widget:stripes\": {\"transform\": \"test_map\", \"why\": \"hand written\"}, "
                 + "\"block:test:slab:[]\": {\"transform\": \"test_map\", \"why\": \"hand written\"}}"),
-            json("{\"since\": \"1.0.0\", \"keyedExtras\": {\"item:test:widget\": "
+            json("{\"since\": \"0.1.0\", \"keyedExtras\": {\"item:test:widget\": "
                 + "{\"from\": \"nested\", \"field\": \"moreNested\", \"doc\": \"Nested things under any other key.\"}}, "
                 + "\"openEnums\": [\"item:test:widget:rarity\"], \"optional\": [\"item:test:widget:reach\"], "
                 + "\"descriptors\": {\"item:test:widget:fuel\": \"item\"}, "

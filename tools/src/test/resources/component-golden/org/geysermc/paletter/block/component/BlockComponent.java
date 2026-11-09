@@ -11,7 +11,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * compiles them to the wire format of each palette's protocol.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/blockcomponentslist?view=minecraft-bedrock-stable">Microsoft Learn: block components</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 public sealed interface BlockComponent permits Glow, Hidden, Slab, WireOnlyBlockComponent {
     /**

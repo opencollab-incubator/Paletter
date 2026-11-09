@@ -32,7 +32,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        minecraft:redstone_producer.transform_relative = 1 (byte) when it is omitted; so it is unset by default, and
  *        the encoder sends what BDS sends then.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_producer?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:redstone_producer</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.21.120")
 public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> connectedFaces,

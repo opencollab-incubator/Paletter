@@ -22,7 +22,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * Hand-written wire-only components, for fields with no add-on JSON source: see {@link WireOnlyItemComponent}.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponentlist?view=minecraft-bedrock-stable">Microsoft Learn: item components</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 public sealed interface ItemComponent permits AllowOffHand, BlockPlacer, BundleInteraction, CanDestroyInCreative, Compostable, Cooldown, Damage, DamageAbsorption, Digger, DisplayName, Durability, DurabilitySensor, Dyeable, Enchantable, EntityPlacer, FireResistant, Food, Fuel, Glint, HandEquipped, HoverTextColor, Icon, InteractButton, KineticWeapon, LiquidClipped, MaxStackSize, MusicRecord, PiercingWeapon, Projectile, Rarity, Repairable, Seed, Shooter, ShouldDespawn, StackedByData, StorageItem, StorageWeightLimit, StorageWeightModifier, SwingDuration, SwingSounds, Tags, ThrowableItem, UseAnimation, UseDuration, UseModifiers, Wearable, WireOnlyItemComponent {
     /**

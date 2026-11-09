@@ -21,7 +21,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/blockdynamicpropertiescomponent.
  *        Add-on JSON {@code dynamic_properties}. Default: <code>false</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_block_entity?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:block_entity</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @ServerOnly(
         until = 2193

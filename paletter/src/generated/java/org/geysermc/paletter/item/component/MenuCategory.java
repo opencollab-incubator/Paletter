@@ -17,7 +17,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *        group}. Optional (null: not set).
  * @param hiddenInCommands Determines whether or not this item can be used with commands. Commands can use items by default. Add-on JSON
  *        {@code is_hidden_in_commands}. Optional (null: not set).
- * @since 1.0.0
+ * @since 0.1.0
  */
 public record MenuCategory(MenuCategory. @Nullable Category category, @Nullable String group,
         @Nullable Boolean hiddenInCommands) {

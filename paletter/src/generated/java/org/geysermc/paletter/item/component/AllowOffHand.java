@@ -15,7 +15,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param value Determines whether the item can be placed in the off hand slot. Add-on JSON {@code value}. Optional (null: not
  *        set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_allow_off_hand?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:allow_off_hand</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.20.30")
 public record AllowOffHand(@Nullable Boolean value) implements ItemComponent {

@@ -22,7 +22,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *        scale_pivot}. Default: <code>[0,0,0]</code>.
  * @param translation The block's translation Add-on JSON {@code translation}. Default: <code>[0,0,0]</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_transformation?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:transformation</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.19.80")
 public record Transformation(Transformation. @NonNull Vec3 rotation,

@@ -14,7 +14,7 @@ import org.geysermc.paletter.annotation.ReplacedBy;
  * report warning, as BDS would never send it to a client.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/test_count?view=minecraft-bedrock-stable">Microsoft Learn: test:count</a>
- * @since 1.0.0
+ * @since 0.1.0
  * @deprecated replaced by {@link Widget} (the docs of test:widget list a field count)
  */
 @Deprecated

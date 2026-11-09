@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  * may still change them before releasing them, and Paletter's generated API follows. They graduate, without source
  * changes, once Bedrock releases them.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

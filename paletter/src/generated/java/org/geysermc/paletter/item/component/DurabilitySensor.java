@@ -23,7 +23,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  *        the threshold with the lowest durability after applying the damage is considered. Value must have at least 1
  *        items. Add-on JSON {@code durability_thresholds}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_durability_sensor?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:durability_sensor</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.21.20")
 @ServerOnly

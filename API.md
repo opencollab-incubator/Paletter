@@ -30,6 +30,9 @@ itself gates behind an experiment carry it.
 - **minor**: additions and deprecations; source and binary compatible.
 - **major**: removals of API deprecated before.
 
+The current version is 0.1.0-SNAPSHOT: while the major version is 0, any minor release may also change or remove API
+(the policy below applies in full from 1.0.0).
+
 A new Bedrock version is never a reason for a major release: a capture adds a protocol window to
 `data/model/mappings.json`, the encoders are regenerated and the component records stay the same.
 

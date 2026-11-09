@@ -16,7 +16,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  *
  * @param value The integer form of the component (add-on JSON &#123;&#64;code "test:glow": &lt;integer&gt;&#125;). Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_glow?view=minecraft-bedrock-stable">Microsoft Learn: test:glow</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @ServerOnly(
         until = 200

@@ -11,7 +11,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * compiles them to the wire format of each palette's protocol.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockstateandtraitlistings?view=minecraft-bedrock-stable">Microsoft Learn: block states and traits</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 public sealed interface BlockTrait permits Connection, MultiBlock, PlacementDirection, PlacementPosition {
     /**

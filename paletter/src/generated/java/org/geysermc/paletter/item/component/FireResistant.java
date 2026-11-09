@@ -14,7 +14,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @param value Determines whether the item is immune to burning when dropped in fire or lava. Add-on JSON {@code value}.
  *        Default: <code>true</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_fire_resistant?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:fire_resistant</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 public record FireResistant(boolean value) implements ItemComponent {
     /**

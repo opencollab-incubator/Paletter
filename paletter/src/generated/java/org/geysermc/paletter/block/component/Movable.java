@@ -28,7 +28,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  *        the "same" property. This will only work with the movement_type: "push_pull". "none" - The default and will
  *        not move adjacent blocks. Add-on JSON {@code sticky}. Default: <code>"none"</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_movable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:movable</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.21.100")
 @ServerOnly

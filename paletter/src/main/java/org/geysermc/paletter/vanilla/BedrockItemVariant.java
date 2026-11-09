@@ -11,7 +11,7 @@ import org.geysermc.paletter.internal.item.ItemVariant;
  * the variant, it belongs to the stack ({@link org.geysermc.paletter.item.BedrockItemStack#blockState()}). Obtained from
  * {@link BedrockItemType#variant(int)} and {@link BedrockItemType#variants()}.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public final class BedrockItemVariant {
     private final BedrockItemType type;

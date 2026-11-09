@@ -29,7 +29,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param useDuration Time, in seconds, that the item takes to use. Add-on JSON {@code use_duration}. Default: <code>0</code>. Range
  *        [0, inf) (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_use_modifiers?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:use_modifiers</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.20.50")
 public record UseModifiers(boolean emitVibrations, @Nullable Float movementModifier,

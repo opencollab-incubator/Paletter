@@ -13,7 +13,7 @@ import org.geysermc.paletter.annotation.ReplacedBy;
  * Retired: rejected by every captured BDS (oldest: 8.8.8, protocol 100). Its encoder writes nothing and adds a
  * report warning, as BDS would never send it to a client.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @deprecated replaced by {@link Widget} (stated in fixtures.json: hand evidence)
  */
 @Deprecated

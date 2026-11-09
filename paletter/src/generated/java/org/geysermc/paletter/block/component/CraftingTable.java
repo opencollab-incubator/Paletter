@@ -26,7 +26,7 @@ import org.geysermc.paletter.annotation.Experimental;
  *        "display_name" component, the name displayed will default to the name of the block. Value must have at most
  *        256 items. Add-on JSON {@code table_name}. Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_crafting_table?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:crafting_table</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.19.50")
 @Experimental

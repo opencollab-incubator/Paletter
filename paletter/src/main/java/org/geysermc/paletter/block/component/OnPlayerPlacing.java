@@ -14,7 +14,7 @@ import java.util.Objects;
  * clients stop honouring it. Sent as {@code {triggerType: <string>}}.
  *
  * @param triggerType the event name, e.g. {@code geyser:place_event}
- * @since 1.0.0
+ * @since 0.1.0
  * @deprecated retired from the add-on format, still sent for legacy content; will be removed if clients stop honouring it
  */
 @Deprecated

@@ -19,7 +19,7 @@ import org.geysermc.paletter.annotation.ReplacedBy;
  * @param value The integer form of the component (add-on JSON &#123;&#64;code "minecraft:block_light_emission":
  *        &lt;integer&gt;&#125;). Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_block_light_emission?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:block_light_emission</a>
- * @since 1.0.0
+ * @since 0.1.0
  * @deprecated replaced by {@link LightEmission} (docs text: "Use minecraft:light_emission in newer format versions.")
  */
 @Deprecated

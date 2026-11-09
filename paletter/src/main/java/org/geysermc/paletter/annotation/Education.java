@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * started with and without {@code educationFeaturesEnabled}, see {@code tools} {@code education-capture}), not from a
  * list. The types answer it at runtime with {@code isEducation()}.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

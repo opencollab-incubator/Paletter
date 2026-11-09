@@ -23,7 +23,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param value Specifies the value of the enchantment (minimum of 0). Add-on JSON {@code value}. Required. Range [0, inf)
  *        (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_enchantable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:enchantable</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.20.30")
 public record Enchantable(@NonNull String slot, int value) implements ItemComponent {

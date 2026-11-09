@@ -8,7 +8,7 @@ package org.geysermc.paletter.block.component;
  *     <li>{@link OnPlayerPlacing}: {@code minecraft:on_player_placing}, retired from the add-on format</li>
  * </ul>
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 @SuppressWarnings("deprecation")
 public sealed interface WireOnlyBlockComponent extends BlockComponent permits OnPlayerPlacing {

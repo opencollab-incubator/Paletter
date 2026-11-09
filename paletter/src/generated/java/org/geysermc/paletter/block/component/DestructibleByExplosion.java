@@ -24,7 +24,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param enabled The boolean form of the component (add-on JSON &#123;&#64;code "minecraft:destructible_by_explosion":
  *        &lt;boolean&gt;&#125;). Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_destructible_by_explosion?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:destructible_by_explosion</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @ServerOnly
 public record DestructibleByExplosion(float explosionResistance,

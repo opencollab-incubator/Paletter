@@ -16,7 +16,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @param value The number form of the component (add-on JSON &#123;&#64;code "minecraft:friction": &lt;number&gt;&#125;).
  *        Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_friction?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:friction</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 public record Friction(float value) implements BlockComponent {
     /**

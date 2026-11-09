@@ -33,7 +33,7 @@ import java.util.WeakHashMap;
  * A variant is an identifier and an aux value; the block state of a stack is not part of it, so creative stacks that
  * differ only by block state are one variant. [@link #index(ItemVariant)] ignores the block state of a variant.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public final class CanonicalItems {
     private final @Nullable CanonicalItems parent;
@@ -149,7 +149,7 @@ public final class CanonicalItems {
      * split are looked up under their new identifier and aux. A variant the newest version does not have (the item is gone,
      * or has no such aux value) is {@link Forwarding.Kind#UNKNOWN} with the reason.
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull Forwarding forward(@NonNull ItemVariant variant) {
         int exact = index(variant);
@@ -239,7 +239,7 @@ public final class CanonicalItems {
 
     /**
      * @return true if the other indices are these, or these with variants appended
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public boolean extendsOrIs(@NonNull CanonicalItems other) {
         if (other == root) {

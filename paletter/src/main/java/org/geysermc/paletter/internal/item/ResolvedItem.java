@@ -13,7 +13,7 @@ import org.geysermc.paletter.item.RegisteredItem;
  * @param damage the damage value to send
  * @param block the block to send, or null
  * @param fallback true if the variant does not exist in this version and a replacement was used
- * @since 1.0.0
+ * @since 0.1.0
  */
 public record ResolvedItem(@NonNull RegisteredItem definition, int damage, @Nullable RegisteredBlockState block, boolean fallback) {
 

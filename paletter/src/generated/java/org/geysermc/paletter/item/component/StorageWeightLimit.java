@@ -15,7 +15,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param maxWeightLimit The maximum allowed weight of the sum of all contained items. Maximum is 64. Default is 64. Value must be
  *        &lt;= 64. Add-on JSON {@code max_weight_limit}. Default: <code>64</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_storage_weight_limit?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:storage_weight_limit</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.21.110")
 public record StorageWeightLimit(int maxWeightLimit) implements ItemComponent {

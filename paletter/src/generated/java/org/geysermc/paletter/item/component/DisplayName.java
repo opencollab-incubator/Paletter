@@ -15,7 +15,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *
  * @param value Name shown for an item. Add-on JSON {@code value}. Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_display_name?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:display_name</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.20.0")
 public record DisplayName(@Nullable String value) implements ItemComponent {

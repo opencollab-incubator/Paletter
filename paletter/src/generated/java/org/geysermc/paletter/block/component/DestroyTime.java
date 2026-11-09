@@ -19,7 +19,7 @@ import org.geysermc.paletter.annotation.ReplacedBy;
  * @param value The boolean form of the component (add-on JSON &#123;&#64;code "minecraft:destroy_time":
  *        &lt;boolean&gt;&#125;). Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_destroy_time?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:destroy_time</a>
- * @since 1.0.0
+ * @since 0.1.0
  * @deprecated replaced by {@link DestructibleByMining} (docs text: "Use minecraft:destructible_by_mining in newer format versions.")
  */
 @Deprecated

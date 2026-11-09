@@ -18,7 +18,7 @@ import java.util.TreeSet;
  */
 public final class JavaWriter {
     /** The version the classes themselves appeared in; members only get a {@code @since} of their own if newer. */
-    static final String CLASS_SINCE = "1.0.0";
+    static final String CLASS_SINCE = "0.1.0";
     /** What the member tags of the constants say. */
     private static final String SINCE_DOC = " * <p>\n * The {@code @since} of a constant is the bundled Bedrock release it first appears in, without an experiment toggle\n"
         + " * (decided from the BDS captures in {@code data/bds}); {@code 26.40} is the oldest bundled release, so it may be older.\n"

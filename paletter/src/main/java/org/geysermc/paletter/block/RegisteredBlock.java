@@ -28,7 +28,7 @@ import java.util.Set;
  * {@link BlockRegistry#block(String)} and {@link BlockRegistry#block(RegisteredBlockState)} give the block of the
  * palette you ask.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public final class RegisteredBlock {
     private final String identifier;
@@ -157,7 +157,7 @@ public final class RegisteredBlock {
     /**
      * @return the component and wire properties of this block, from its {@link #propertyData()} (named like the bundled
      * property store: {@code component:}, {@code wire:}); empty for blocks without property data
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull Properties properties() {
         Properties result = propertiesCache;

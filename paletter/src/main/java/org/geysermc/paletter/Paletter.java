@@ -51,7 +51,7 @@ import java.util.function.Predicate;
  * Canonical ids ({@link #canonicalBlocks()}, {@link #canonicalItems()}) are defined by the newest
  * version, and valid in every palette of this instance.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public final class Paletter {
     private final PaletteDataSource source;
@@ -85,7 +85,7 @@ public final class Paletter {
     /**
      * @return a builder with the defaults: bundled data, all versions, {@link BlockNetworkIds#SEQUENTIAL},
      *         {@link Fallbacks#UNKNOWN}, all vanilla content, {@link CreativeOrdering#BDS}, no layers
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public static @NonNull Builder builder() {
         return new Builder();
@@ -219,7 +219,7 @@ public final class Paletter {
      * @return its handle, or null if the newest version has no equivalent (see {@link #explainUnknown(NbtMap)}).
      *         Custom blocks have handles of their own ({@code BedrockBlockType.of(customBlock)}), valid in palettes with
      *         their layer, see {@link Palette#block(NbtMap)}
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable BedrockBlockState block(@NonNull NbtMap state) {
         CanonicalBlocks blocks = canonicalBlocks();
@@ -231,7 +231,7 @@ public final class Paletter {
      *                   forward (renames and splits)
      * @param aux the aux (damage) value
      * @return its handle, or null if the newest version has no equivalent (see {@link #explainUnknown(String, int)})
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable BedrockItemVariant item(@NonNull String identifier, int aux) {
         return canonicalItems().handle(Canonicals.item(canonicalItems(), ItemVariant.of(identifier, aux)));
@@ -244,7 +244,7 @@ public final class Paletter {
      * {@link Palette#blockKeyOf}.
      *
      * @return the block state, or null if the item is not a block item or has no handle
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable BedrockBlockState blockOf(@NonNull BedrockItemVariant variant) {
         int canonical = Canonicals.item(canonicalItems(), variant.toItemVariant());
@@ -257,7 +257,7 @@ public final class Paletter {
 
     /**
      * @return why a block state has no handle (the block was removed, a rename leads nowhere), or null if it has one
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable String explainUnknown(@NonNull NbtMap state) {
         Forwarding forwarding = Canonicals.forwardBlock(canonicalBlocks(), state);
@@ -266,7 +266,7 @@ public final class Paletter {
 
     /**
      * @return why an item has no handle (the item was removed, it has no such aux value), or null if it has one
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @Nullable String explainUnknown(@NonNull String identifier, int aux) {
         Forwarding forwarding = Canonicals.forwardItem(canonicalItems(), ItemVariant.of(identifier, aux));
@@ -286,7 +286,7 @@ public final class Paletter {
     /**
      * @return the plain vanilla palette of a data version (with this instance's fallbacks and vanilla content, but
      *         without its layers), with this instance's block network ids
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull Palette vanilla(@NonNull DataVersion version) {
         return vanilla.computeIfAbsent(version,
@@ -298,7 +298,7 @@ public final class Paletter {
      * The palette of a protocol version: vanilla content plus this instance's layers, compiled once per data version
      * and cached. Session content goes on top of it with {@link Palette#extend(PaletteLayer)}.
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull Palette palette(int protocolVersion) {
         DataVersion version = version(protocolVersion);
@@ -325,7 +325,7 @@ public final class Paletter {
     }
 
     /**
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull Palette palette(@NonNull BedrockCodec codec) {
         return palette(codec.getProtocolVersion());
@@ -334,7 +334,7 @@ public final class Paletter {
     /**
      * Configures the global policy of a {@link Paletter}: everything that is the same for every palette it compiles.
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public static final class Builder {
         private PaletteDataSource source = PaletteDataSource.bundled();
@@ -430,7 +430,7 @@ public final class Paletter {
     /**
      * @return the properties of a vanilla item in a version, without compiling a palette; empty for custom items and for
      * items the version does not have. Equal to {@code palette.items().item(...).properties()} of a palette of that version
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull Properties properties(@NonNull BedrockItemType type, @NonNull DataVersion version) {
         return source.properties().item(type.identifier(), version);
@@ -439,7 +439,7 @@ public final class Paletter {
     /**
      * @return the properties of a vanilla block in a version, without compiling a palette; empty for custom blocks and for
      * blocks the version does not have
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull Properties properties(@NonNull BedrockBlockType type, @NonNull DataVersion version) {
         return source.properties().block(type.identifier(), version);

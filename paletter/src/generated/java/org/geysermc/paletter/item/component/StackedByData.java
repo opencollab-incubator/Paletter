@@ -16,7 +16,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param value Determines whether the same item with different aux values can stack. Also defines whether the item entities
  *        can merge while floating in the world. Add-on JSON {@code value}. Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_stacked_by_data?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:stacked_by_data</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.20.30")
 public record StackedByData(@Nullable Boolean value) implements ItemComponent {

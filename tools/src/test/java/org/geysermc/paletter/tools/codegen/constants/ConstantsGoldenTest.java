@@ -158,12 +158,12 @@ class ConstantsGoldenTest {
     private static JsonObject entry(String identifier) {
         JsonObject entry = new JsonObject();
         entry.addProperty("identifier", identifier);
-        entry.addProperty("since", "1.0.0");
+        entry.addProperty("since", "0.1.0");
         return entry;
     }
 
     /**
-     * Two generations: 1.0.0 from a release without the lamp (plus history entries of content that is gone since), then
+     * Two generations: 0.1.0 from a release without the lamp (plus history entries of content that is gone since), then
      * 2.1.0 from the full release and a preview.
      *
      * @param shuffle reorders the blocks of the palette, the items and the keys of names.json and the history
@@ -173,7 +173,7 @@ class ConstantsGoldenTest {
         throws IOException {
         Path first = temp.resolve("first");
         write(first, List.of(data("1.0", 100, shuffleBlocks.apply(releaseBlocks(false)), shuffleItems.apply(releaseItems(false)))), List.of(false));
-        JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(first, shuffleJson.apply(names()), new JsonObject(), "1.0.0")
+        JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(first, shuffleJson.apply(names()), new JsonObject(), "0.1.0")
             .files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
         // A history from before the Bedrock versions were recorded: they are derived from the releases and captures again
         for (String section : List.of("blocks", "items")) {
@@ -321,13 +321,13 @@ class ConstantsGoldenTest {
 
     private static String failure(Path temp, List<List<NbtMap>> blocks, JsonObject names, JsonObject history) throws IOException {
         write(temp, List.of(data("9.9", 999, blocks, releaseItems(false))), List.of(false));
-        return assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(temp, names, history, "1.0.0")).getMessage();
+        return assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(temp, names, history, "0.1.0")).getMessage();
     }
 
     private static String historyFailure(Path temp, UnaryOperator<JsonObject> edit) throws IOException {
         Path base = temp.resolve("base");
         write(base, List.of(data("9.9", 999, releaseBlocks(false), releaseItems(false))), List.of(false));
-        JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(base, names(), new JsonObject(), "1.0.0")
+        JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(base, names(), new JsonObject(), "0.1.0")
             .files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
         return assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(base, names(), edit.apply(history), "2.1.0")).getMessage();
     }
@@ -387,14 +387,14 @@ class ConstantsGoldenTest {
     void inconsistentHistoryFailsClearly(@TempDir Path temp) throws IOException {
         assertEquals("data/model/constants-history.json: blocks.GONE lacks \"identifier\"", historyFailure(temp.resolve("a"), history -> {
             JsonObject entry = new JsonObject();
-            entry.addProperty("since", "1.0.0");
+            entry.addProperty("since", "0.1.0");
             history.getAsJsonObject("blocks").add("GONE", entry);
             return history;
         }));
         assertEquals("data/model/constants-history.json: blocks.GONE is an alias of NOWHERE, which is neither generated nor in the history",
             historyFailure(temp.resolve("b"), history -> {
                 JsonObject entry = entry("minecraft:gone");
-                entry.addProperty("deprecated", "1.0.0");
+                entry.addProperty("deprecated", "0.1.0");
                 entry.addProperty("replacement", "NOWHERE");
                 history.getAsJsonObject("blocks").add("GONE", entry);
                 return history;
@@ -406,18 +406,18 @@ class ConstantsGoldenTest {
             }));
         assertEquals("data/model/constants-history.json: states.GONE has the unknown kind \"float\" (bool, int or enum)",
             historyFailure(temp.resolve("d"), history -> {
-                history.getAsJsonObject("states").add("GONE", JsonParser.parseString("{\"name\":\"gone\",\"kind\":\"float\",\"since\":\"1.0.0\"}"));
+                history.getAsJsonObject("states").add("GONE", JsonParser.parseString("{\"name\":\"gone\",\"kind\":\"float\",\"since\":\"0.1.0\"}"));
                 return history;
             }));
         assertEquals("data/model/constants-history.json: states.GONE is an enum state without \"enum\"",
             historyFailure(temp.resolve("e"), history -> {
-                history.getAsJsonObject("states").add("GONE", JsonParser.parseString("{\"name\":\"gone\",\"kind\":\"enum\",\"since\":\"1.0.0\"}"));
+                history.getAsJsonObject("states").add("GONE", JsonParser.parseString("{\"name\":\"gone\",\"kind\":\"enum\",\"since\":\"0.1.0\"}"));
                 return history;
             }));
         assertEquals("BedrockStates.GONE needs enum Nowhere, which is not in the history",
             historyFailure(temp.resolve("f"), history -> {
                 history.getAsJsonObject("states").add("GONE",
-                    JsonParser.parseString("{\"name\":\"gone\",\"kind\":\"enum\",\"enum\":\"Nowhere\",\"since\":\"1.0.0\"}"));
+                    JsonParser.parseString("{\"name\":\"gone\",\"kind\":\"enum\",\"enum\":\"Nowhere\",\"since\":\"0.1.0\"}"));
                 return history;
             }));
         assertEquals("data/model/constants-history.json: enums.WallSide.NONE lacks \"since\"", historyFailure(temp.resolve("g"), history -> {

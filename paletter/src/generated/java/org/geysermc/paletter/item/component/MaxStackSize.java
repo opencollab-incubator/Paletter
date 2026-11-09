@@ -17,7 +17,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        docs give the default <code>64</code>, but BDS sends item_properties.max_stack_size = 1 (int) when it is
  *        omitted; so it is unset by default, and the encoder sends what BDS sends then. Range [1, 64] (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_max_stack_size?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:max_stack_size</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.20.10")
 public record MaxStackSize(@Nullable Integer value) implements ItemComponent {

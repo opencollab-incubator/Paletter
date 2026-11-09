@@ -28,7 +28,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  *        note block). Use "note.none" to specify no sound for this face. Add-on JSON {@code up}. Default:
  *        <code>"note.harp"</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_instrument_sound?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:instrument_sound</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @Experimental
 @ServerOnly

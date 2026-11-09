@@ -16,7 +16,7 @@ import org.geysermc.paletter.annotation.ReplacedBy;
  *
  * @param value On. Add-on JSON {@code value}. Optional (null: not set).
  * @param level Only sent from protocol 200 on. Add-on JSON {@code level}. Optional (null: not set).
- * @since 1.0.0
+ * @since 0.1.0
  * @deprecated replaced by {@link Widget} (docs text: "Use test:widget instead.")
  */
 @Experimental

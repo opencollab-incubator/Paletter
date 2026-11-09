@@ -10,7 +10,7 @@ package org.geysermc.paletter.item.component;
  *     <li>{@link FrameCount}: {@code item_properties.frame_count}</li>
  * </ul>
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 @SuppressWarnings("deprecation")
 public sealed interface WireOnlyItemComponent extends ItemComponent permits RenderOffsets, MiningSpeed, FrameCount {

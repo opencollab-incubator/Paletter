@@ -8,7 +8,7 @@ import org.geysermc.paletter.vanilla.StateValue;
 /**
  * Values of {@code redstone_east}, {@code redstone_north}, {@code redstone_south}, {@code redstone_west}.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public enum RedstoneConnection implements StateValue {
     /**

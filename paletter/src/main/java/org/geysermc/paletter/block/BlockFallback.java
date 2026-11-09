@@ -17,14 +17,14 @@ import java.util.Objects;
  *              replacement have in common (the others use the replacement's defaults)
  * @param force true to replace the block even though it exists in this version. Needed for blocks that are in the
  *              palette, but only usable with an experiment enabled
- * @since 1.0.0
+ * @since 0.1.0
  */
 public record BlockFallback(@NonNull BedrockBlockType target, @Nullable BedrockBlockState state, boolean force) {
     /**
      * The default for blocks a version lacks: {@code minecraft:unknown}, which every client knows and shows as a
      * placeholder block.
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public static final BlockFallback UNKNOWN = new BlockFallback(BedrockBlocks.UNKNOWN, null, false);
 
@@ -37,7 +37,7 @@ public record BlockFallback(@NonNull BedrockBlockType target, @Nullable BedrockB
 
     /**
      * @return a fallback to a block type, carrying over matching state values
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public static @NonNull BlockFallback of(@NonNull BedrockBlockType target) {
         return new BlockFallback(target, null, false);
@@ -45,7 +45,7 @@ public record BlockFallback(@NonNull BedrockBlockType target, @Nullable BedrockB
 
     /**
      * @return a fallback to exactly one block state
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public static @NonNull BlockFallback of(@NonNull BedrockBlockState target) {
         return new BlockFallback(target.type(), target, false);
@@ -53,7 +53,7 @@ public record BlockFallback(@NonNull BedrockBlockType target, @Nullable BedrockB
 
     /**
      * @return this fallback, used even in versions that have the block
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public @NonNull BlockFallback forced() {
         return force ? this : new BlockFallback(target, state, true);

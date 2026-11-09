@@ -8,7 +8,7 @@ import org.geysermc.paletter.vanilla.StateValue;
 /**
  * Values of {@code vault_state}.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public enum VaultState implements StateValue {
     /**

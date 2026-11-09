@@ -19,7 +19,7 @@ import org.geysermc.paletter.annotation.Experimental;
  *        none Add-on JSON {@code precipitation_behavior}. Optional (null: not set). The docs give the default
  *        "accumulate snow", which is not a value of this type; unset, BDS's behaviour applies.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_precipitation_interactions?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:precipitation_interactions</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.21.120")
 @Experimental

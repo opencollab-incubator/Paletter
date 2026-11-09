@@ -24,7 +24,7 @@ import java.util.List;
  * @param blockRuntimeId the runtime id of that block, or -1
  * @param creative whether the variant is in the creative inventory
  * @param creativeGroup the creative group it is in, or null if it is loose or not in the creative inventory
- * @since 1.0.0
+ * @since 0.1.0
  */
 @Experimental
 public record ItemExplanation(@NonNull String identifier, int aux, @Nullable NbtMap blockState,
@@ -35,7 +35,7 @@ public record ItemExplanation(@NonNull String identifier, int aux, @Nullable Nbt
     /**
      * How a {@link Palette} resolved something for its version.
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public enum Kind {
         /**

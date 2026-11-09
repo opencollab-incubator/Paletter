@@ -16,7 +16,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *
  * @param tags An array that can contain multiple item tags. Add-on JSON {@code tags}. Default: <code>[]</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_tags?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:tags</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.20.50")
 public record Tags(@NonNull List<String> tags) implements ItemComponent {

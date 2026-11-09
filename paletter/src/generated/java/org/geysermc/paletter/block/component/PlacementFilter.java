@@ -25,7 +25,7 @@ import org.geysermc.paletter.vanilla.BedrockBlockType;
  * @param conditions List of conditions where the block can be placed/survive Value must have at most 64 items. Add-on JSON {@code
  *        conditions}. Default: <code>[]</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_placement_filter?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:placement_filter</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.19.60")
 public record PlacementFilter(

@@ -20,7 +20,7 @@ import java.util.Objects;
  * @param offHand the off hand, or null to leave it out
  * @param preset the built-in offsets of an armor piece, or null
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_render_offsets?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:render_offsets</a>
- * @since 1.0.0
+ * @since 0.1.0
  * @deprecated retired from the add-on format, still sent for legacy content; will be removed if clients stop honouring it
  */
 @Deprecated
@@ -49,7 +49,7 @@ public record RenderOffsets(@Nullable Hand mainHand, @Nullable Hand offHand, @Nu
     /**
      * The client's built-in render offsets of an armor piece (the legacy {@code render_offsets} string).
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public enum Preset {
         /** {@code boots} */
@@ -85,7 +85,7 @@ public record RenderOffsets(@Nullable Hand mainHand, @Nullable Hand offHand, @Nu
      *
      * @param firstPerson the first person view, or null to leave it out
      * @param thirdPerson the third person view, or null to leave it out
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public record Hand(@Nullable Offset firstPerson, @Nullable Offset thirdPerson) {
     }
@@ -96,7 +96,7 @@ public record RenderOffsets(@Nullable Hand mainHand, @Nullable Hand offHand, @Nu
      * @param position the position offset, or null
      * @param rotation the rotation, or null
      * @param scale the scale, or null
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public record Offset(@Nullable Vec3 position, @Nullable Vec3 rotation, @Nullable Vec3 scale) {
         /**
@@ -110,7 +110,7 @@ public record RenderOffsets(@Nullable Hand mainHand, @Nullable Hand offHand, @Nu
     /**
      * Three floats, sent as a list of three.
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public record Vec3(float x, float y, float z) {
     }

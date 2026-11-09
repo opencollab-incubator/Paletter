@@ -5,7 +5,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 /**
  * What kind of data a {@link Property} is.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public enum PropertyKind {
     /** One entry of the component compound an item or block sends over the network ({@code minecraft:max_stack_size}). */

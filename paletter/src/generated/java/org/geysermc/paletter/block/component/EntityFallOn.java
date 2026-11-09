@@ -20,7 +20,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * @param minFallDistance The minimum distance in blocks that an actor needs to fall before events are triggered. Add-on JSON {@code
  *        min_fall_distance}. Default: <code>0</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_entity_fall_on?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:entity_fall_on</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @ServerOnly
 public record EntityFallOn(float minFallDistance) implements BlockComponent {

@@ -26,7 +26,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param scalePowerByDrawDuration Whether or not the power of the throw increases with duration charged. Default is set to false. Add-on JSON
  *        {@code scale_power_by_draw_duration}. Default: <code>false</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_throwable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:throwable</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.20.10")
 public record ThrowableItem(boolean doSwingAnimation, float launchPowerScale, float maxDrawDuration,

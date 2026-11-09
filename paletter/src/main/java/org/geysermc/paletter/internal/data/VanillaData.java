@@ -29,7 +29,7 @@ import java.util.Map;
  *                   places it (several blocks can share an item: slabs and double slabs, signs and wall signs). Empty
  *                   for data that predates it; {@code ItemRegistry} then guesses
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public record VanillaData(
     @NonNull DataVersion version,

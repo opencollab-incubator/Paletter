@@ -15,7 +15,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param value The color of the item hover text. Add-on JSON {@code value}. Optional (null: not set). Compiled by the hand
  *        transform {@code formatting_code}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_hover_text_color?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:hover_text_color</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.20.10")
 public record HoverTextColor(@Nullable String value) implements ItemComponent {

@@ -22,7 +22,7 @@ import java.util.List;
  * {@linkplain RegisteredBlock#properties(RegisteredBlockState) properties} of a state. The position of a state in its
  * palette is {@link BlockRegistry#indexOf}.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public final class RegisteredBlockState implements BlockDefinition {
     private final int runtimeId;

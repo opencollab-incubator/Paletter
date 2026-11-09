@@ -21,7 +21,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param slot Specifies where the item can be worn. If any non-hand slot is chosen, the max stack size is set to 1. Add-on
  *        JSON {@code slot}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_wearable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:wearable</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.20.30")
 public record Wearable(boolean hidesPlayerLocation, int protection,

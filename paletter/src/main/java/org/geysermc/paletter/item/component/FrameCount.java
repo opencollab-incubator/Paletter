@@ -9,7 +9,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * component; the name is the wire path.
  *
  * @param value the frame count sent to the client, at least 1
- * @since 1.0.0
+ * @since 0.1.0
  */
 @Experimental
 public record FrameCount(int value) implements WireOnlyItemComponent {

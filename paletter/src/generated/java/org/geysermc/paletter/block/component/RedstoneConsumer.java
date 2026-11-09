@@ -25,7 +25,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * @param propagatesPower Optional Boolean to control whether a signal can pass through this block or not, defaults to false. Add-on
  *        JSON {@code propagates_power}. Default: <code>false</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_consumer?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:redstone_consumer</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @BedrockFormat("1.21.130")
 @Experimental

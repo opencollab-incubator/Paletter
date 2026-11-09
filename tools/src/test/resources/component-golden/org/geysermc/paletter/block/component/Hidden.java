@@ -14,7 +14,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * effect. Palettes leave it out without a warning.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_hidden?view=minecraft-bedrock-stable">Microsoft Learn: test:hidden</a>
- * @since 1.0.0
+ * @since 0.1.0
  */
 @ServerOnly
 public record Hidden() implements BlockComponent {

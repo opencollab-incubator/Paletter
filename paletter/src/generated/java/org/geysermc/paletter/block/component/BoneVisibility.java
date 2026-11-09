@@ -16,7 +16,7 @@ import org.geysermc.paletter.annotation.ReplacedBy;
  * report warning, as BDS would never send it to a client.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_bone_visibility?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:bone_visibility</a>
- * @since 1.0.0
+ * @since 0.1.0
  * @deprecated replaced by {@link Geometry} (the docs of minecraft:geometry list a field bone_visibility)
  */
 @Deprecated

@@ -9,7 +9,7 @@ import java.util.Objects;
  * Where a registered item or block of a palette comes from: the vanilla data, or the layer that added it.
  *
  * @param layer the id of the layer ({@link PaletteLayer#id()}) that added the content, or null for vanilla content
- * @since 1.0.0
+ * @since 0.1.0
  */
 public record Origin(@Nullable String layer) {
     /**
