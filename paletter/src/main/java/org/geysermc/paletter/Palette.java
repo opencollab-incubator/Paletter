@@ -215,7 +215,9 @@ public final class Palette {
 
     /**
      * The block an item variant is sent with in this palette's version, in its default state: Paletter alone decides it,
-     * see {@link ItemRegistry#blockOf}. A stack may carry a block state of its own, see {@link #encode}.
+     * see {@link ItemRegistry#blockOf}. A stack may carry a block state of its own, see {@link #encode}. Works for every
+     * variant: known, registered with {@code PaletteLayer.Builder#variant}, of a custom block item, or one Paletter has never
+     * heard of (the block of its item). {@link RegisteredBlockState#key()} is the block as a key.
      *
      * @return the block, or null if the item is not a block item (or does not exist in this version and has no fallback)
      * @since 1.0.0
