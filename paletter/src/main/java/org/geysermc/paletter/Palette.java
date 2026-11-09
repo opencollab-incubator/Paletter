@@ -14,7 +14,7 @@ import org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
 import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.BlockRegistry;
-import org.geysermc.paletter.block.BlockResolution;
+import org.geysermc.paletter.internal.block.BlockResolution;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.block.RegisteredBlockState;
@@ -280,9 +280,9 @@ public final class Palette {
         NbtMap normalized = BlockStates.normalize(state);
         int canonical = Canonicals.block(blocks.canonical(), normalized);
         BlockResolution resolution = blocks.resolve(normalized);
-        BlockResolution.Kind kind = resolution.block() != null ? resolution.kind()
-            : blocks.defaultFallback() != null ? BlockResolution.Kind.DEFAULT : BlockResolution.Kind.MISSING;
-        RegisteredBlockState sent = kind == BlockResolution.Kind.MISSING ? null
+        BlockExplanation.Kind kind = resolution.block() != null ? BlockExplanation.Kind.valueOf(resolution.kind().name())
+            : blocks.defaultFallback() != null ? BlockExplanation.Kind.DEFAULT : BlockExplanation.Kind.MISSING;
+        RegisteredBlockState sent = kind == BlockExplanation.Kind.MISSING ? null
             : canonical != -1 ? blocks.block(canonical) : resolution.block();
         List<String> chain = new ArrayList<>(List.of(BlockStates.name(normalized)));
         if (sent != null && !sent.identifier().equals(chain.getFirst())) {
@@ -312,11 +312,11 @@ public final class Palette {
         int canonical = Canonicals.item(items.canonical(), variant);
         ResolvedItem direct = items.resolve(variant);
         ResolvedItem sent = canonical != -1 ? items.item(canonical) : direct;
-        BlockResolution.Kind kind;
+        ItemExplanation.Kind kind;
         if (direct != null) {
-            kind = direct.fallback() ? BlockResolution.Kind.FALLBACK : BlockResolution.Kind.EXACT;
+            kind = direct.fallback() ? ItemExplanation.Kind.FALLBACK : ItemExplanation.Kind.EXACT;
         } else {
-            kind = sent != null ? BlockResolution.Kind.DEFAULT : BlockResolution.Kind.MISSING;
+            kind = sent != null ? ItemExplanation.Kind.DEFAULT : ItemExplanation.Kind.MISSING;
         }
         List<String> chain = new ArrayList<>(List.of(identifier));
         String item = sent == null ? null : sent.definition().getIdentifier();

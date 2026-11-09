@@ -867,7 +867,7 @@ public final class Update {
                 + source + "), see the list");
             List<String> section = new ArrayList<>(List.of("Paletter bundles no fallbacks: these fall back to `minecraft:unknown` "
                 + "(block and item) in the older version unless a consumer defines a fallback "
-                + "(`PaletteLayer.Builder#blockFallback` / `#itemFallback`). Nothing is required here.", ""));
+                + "(`Fallbacks.builder()` of `Paletter.builder()`). Nothing is required here.", ""));
             section.addAll(lines);
             report.section("Fallbacks (" + source + "): content that falls back to unknown", section);
         }
@@ -965,7 +965,7 @@ public final class Update {
             }
             Path directory = Path.of(capture[1]);
             Path custom = Path.of(capture[2]);
-            CreativeOrderCheck.Result result = CreativeOrderCheck.check(org.geysermc.paletter.Paletter.bundled(), runs.protocol,
+            CreativeOrderCheck.Result result = CreativeOrderCheck.check(runs.protocol,
                 directory.resolve("creative_items.json"), custom.resolve("custom_item_registry.nbt"), custom.resolve("custom_block_properties.nbt"));
             if (result.matches()) {
                 report.check(Report.Status.PASS, "Creative order (" + capture[0] + ")", "CreativeOrdering.BDS reproduces the "

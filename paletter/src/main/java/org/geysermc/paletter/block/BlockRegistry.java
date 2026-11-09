@@ -6,6 +6,7 @@ import org.geysermc.paletter.internal.block.IntIndex;
 
 import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.internal.block.BlockInterner;
+import org.geysermc.paletter.internal.block.BlockResolution;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -391,6 +392,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * </ol>
      * Results are cached. On hot paths, prefer canonical ids ({@link #block(int)}).
      */
+    @Internal
     public @NonNull BlockResolution resolve(@NonNull NbtMap state) {
         NbtMap normalized = BlockStates.normalize(state);
         BlockFallback forced = fallbacks.get(BlockStates.name(normalized));

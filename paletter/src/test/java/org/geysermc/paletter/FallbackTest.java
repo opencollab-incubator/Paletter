@@ -4,7 +4,6 @@ import org.geysermc.paletter.internal.item.ResolvedItem;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.BlockFallback;
 import org.geysermc.paletter.internal.block.BlockStates;
-import org.geysermc.paletter.block.BlockResolution;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.VersionFallbacks;
 import org.geysermc.paletter.item.BedrockItemStack;
@@ -104,7 +103,7 @@ class FallbackTest {
         assertEquals("minecraft:unknown", BlockStates.name(Ids.blockAt(palette, block).getState()));
         Palette layered = with(Fallbacks.builder().block(BedrockBlockType.of(name), BlockFallback.of(BedrockBlocks.DIRT))).palette(OLDEST);
         assertEquals("minecraft:dirt", BlockStates.name(Ids.blockAt(layered, block).getState()));
-        assertEquals(BlockResolution.Kind.FALLBACK, layered.explain(Ids.canonicalBlocks(palette).state(block)).kind());
+        assertEquals(BlockExplanation.Kind.FALLBACK, layered.explain(Ids.canonicalBlocks(palette).state(block)).kind());
     }
 
     @Test

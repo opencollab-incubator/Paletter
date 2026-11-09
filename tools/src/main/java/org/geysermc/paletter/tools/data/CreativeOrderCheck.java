@@ -72,11 +72,11 @@ public final class CreativeOrderCheck {
      * @param customItems {@code custom_item_registry.nbt} of the capture
      * @param customBlocks {@code custom_block_properties.nbt} of the capture
      */
-    public static Result check(Paletter paletter, int protocol, Path creativeItems, Path customItems, Path customBlocks) throws IOException {
-        return check(paletter, protocol, creativeItems, customItems, customBlocks, CreativeOrdering.BDS);
+    public static Result check(int protocol, Path creativeItems, Path customItems, Path customBlocks) throws IOException {
+        return check(protocol, creativeItems, customItems, customBlocks, CreativeOrdering.BDS);
     }
 
-    public static Result check(Paletter paletter, int protocol, Path creativeItems, Path customItems, Path customBlocks,
+    public static Result check(int protocol, Path creativeItems, Path customItems, Path customBlocks,
                         CreativeOrdering ordering) throws IOException {
         PaletteLayer layer = layer(readList(customItems, "items"), readList(customBlocks, "blocks"));
         // The ordering is global policy: compile with a Paletter of its own (on the bundled data, like every caller)

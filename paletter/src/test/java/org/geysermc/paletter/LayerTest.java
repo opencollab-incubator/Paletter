@@ -11,7 +11,7 @@ import org.geysermc.paletter.block.component.LightEmission;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.BlockFallback;
-import org.geysermc.paletter.block.BlockResolution;
+import org.geysermc.paletter.internal.block.BlockResolution;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
@@ -248,7 +248,7 @@ class LayerTest {
 
         // A block that does not exist in 26.40: nothing is bundled, the palette sends minecraft:unknown
         NbtMap concreteStairs = latest.blocks().states("minecraft:white_concrete_stairs").getFirst().getState();
-        assertEquals(BlockResolution.Kind.DEFAULT, oldest.explain(concreteStairs).kind());
+        assertEquals(BlockExplanation.Kind.DEFAULT, oldest.explain(concreteStairs).kind());
         assertEquals("minecraft:unknown", oldest.explain(concreteStairs).sent().get("name"));
         // ... unless the consumer defines a fallback
         Palette withFallback = Paletter.builder().fallbacks(Fallbacks.builder()

@@ -1,7 +1,6 @@
 package org.geysermc.paletter;
 
 import org.geysermc.paletter.block.BlockNetworkIds;
-import org.geysermc.paletter.block.BlockResolution;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.internal.item.ItemVariant;
 import org.geysermc.paletter.vanilla.BedrockItems;
@@ -22,7 +21,7 @@ class ExplainTest {
         BlockExplanation explanation = palette.explain(BlockStates.of("minecraft:stone"));
         int canonical = Ids.block(PALETTER, BlockStates.of("minecraft:stone"));
         assertNotNull(explanation.handle());
-        assertEquals(BlockResolution.Kind.EXACT, explanation.kind());
+        assertEquals(BlockExplanation.Kind.EXACT, explanation.kind());
         assertEquals(Ids.runtimeId(palette, canonical), explanation.runtimeId());
         assertEquals(explanation.runtimeId(), explanation.hashedId());
         String text = explanation.toString();
@@ -38,13 +37,13 @@ class ExplainTest {
         boolean found = false;
         for (int i = 0; i < Ids.blockCount(newest) && !found; i++) {
             BlockExplanation explanation = oldest.explain(Ids.canonicalBlocks(newest).state(i));
-            if (explanation.kind() == BlockResolution.Kind.FALLBACK || explanation.kind() == BlockResolution.Kind.DEFAULT) {
+            if (explanation.kind() == BlockExplanation.Kind.FALLBACK || explanation.kind() == BlockExplanation.Kind.DEFAULT) {
                 found = true;
                 assertNotNull(explanation.handle());
                 assertEquals(Ids.runtimeId(oldest, i), explanation.runtimeId());
                 assertNotNull(explanation.sent());
                 assertTrue(explanation.toString().contains(explanation.kind().name().toLowerCase()));
-                if (explanation.kind() == BlockResolution.Kind.FALLBACK) {
+                if (explanation.kind() == BlockExplanation.Kind.FALLBACK) {
                     assertEquals(2, explanation.chain().size());
                     assertTrue(explanation.toString().contains(" -> "));
                 }
@@ -58,7 +57,7 @@ class ExplainTest {
         Palette palette = Palettes.paletter(BlockNetworkIds.HASHED).vanilla(PALETTER.latest());
         ItemExplanation apple = palette.explain(BedrockItems.APPLE.base());
         assertNotNull(apple.handle());
-        assertEquals(BlockResolution.Kind.EXACT, apple.kind());
+        assertEquals(ItemExplanation.Kind.EXACT, apple.kind());
         assertEquals("minecraft:apple", apple.item());
         assertNull(apple.block());
         assertTrue(apple.creative());

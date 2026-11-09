@@ -1,17 +1,21 @@
-package org.geysermc.paletter.block;
+package org.geysermc.paletter.internal.block;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
+import org.geysermc.paletter.annotation.Internal;
+import org.geysermc.paletter.block.BlockFallback;
+import org.geysermc.paletter.block.RegisteredBlockState;
 
 /**
- * The result of resolving a block state against a palette.
+ * The result of resolving a block state against a palette; {@link org.geysermc.paletter.BlockExplanation} is the public
+ * form.
  *
  * @param requested the state that was asked for
  * @param block the resolved definition, or null if nothing suitable exists
  * @param kind how it was resolved
- * @since 1.0.0
  */
+@Internal
 public record BlockResolution(@NonNull NbtMap requested, @Nullable RegisteredBlockState block, @NonNull Kind kind) {
 
     public enum Kind {
@@ -30,9 +34,7 @@ public record BlockResolution(@NonNull NbtMap requested, @Nullable RegisteredBlo
         FALLBACK,
         /**
          * The block does not exist in this version and has no fallback of its own; the palette's default fallback
-         * ({@link BlockFallback#UNKNOWN} unless a layer set {@link org.geysermc.paletter.data.FallbackDefaults}) was used.
-         *
-         * @since 1.0.0
+         * ({@link BlockFallback#UNKNOWN} unless the policy set another) was used.
          */
         DEFAULT,
         /**

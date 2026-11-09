@@ -21,7 +21,7 @@ import java.util.TreeSet;
 /**
  * Reports what the bundled versions do not cover for each other: every block and item of the newest version that an
  * older version lacks. Paletter bundles no fallbacks, so these fall back to {@code minecraft:unknown} unless a consumer
- * defines a fallback ({@code PaletteLayer.Builder#blockFallback}, {@code #itemFallback}). Nothing here is an error; the
+ * defines a fallback ({@code Fallbacks.builder()} of {@code Paletter.builder()}). Nothing here is an error; the
  * list is what a consumer has to decide about.
  */
 public final class Checker {

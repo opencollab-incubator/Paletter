@@ -1,6 +1,5 @@
 package org.geysermc.paletter.tools.data;
 
-import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,7 +22,7 @@ class CreativeOrderCheckTest {
     @CsvSource({"addon, 149", "creative-probe, 30", "creative-large, 700"})
     void bdsOrderingMatchesTheCapture(String capture, int customStacks) throws Exception {
         Path directory = CAPTURES.resolve(capture);
-        CreativeOrderCheck.Result result = CreativeOrderCheck.check(Paletter.bundled(), 2225,
+        CreativeOrderCheck.Result result = CreativeOrderCheck.check(2225,
             directory.resolve("creative_items.json.gz"), directory.resolve("custom_item_registry.nbt"),
             directory.resolve("custom_block_properties.nbt"));
         assertTrue(result.matches(), String.join("\n", result.differences()));
@@ -33,7 +32,7 @@ class CreativeOrderCheckTest {
     @Test
     void appendOrderingDoesNot() throws Exception {
         Path directory = CAPTURES.resolve("creative-probe");
-        CreativeOrderCheck.Result result = CreativeOrderCheck.check(Paletter.bundled(), 2225,
+        CreativeOrderCheck.Result result = CreativeOrderCheck.check(2225,
             directory.resolve("creative_items.json.gz"), directory.resolve("custom_item_registry.nbt"),
             directory.resolve("custom_block_properties.nbt"), CreativeOrdering.APPEND);
         assertFalse(result.matches());

@@ -10,8 +10,8 @@ import java.util.Set;
 /**
  * Replacements for blocks and items of the newest bundled version, for an older version that lacks them.
  * <p>
- * The bundled data carries none (consumers define fallbacks with {@code PaletteLayer.Builder#blockFallback} and
- * {@code #itemFallback}; Paletter only falls back to {@code minecraft:unknown}); the type stays for data sources that
+ * The bundled data carries none (consumers define fallbacks with {@code Fallbacks.builder()} of
+ * {@code Paletter.builder()}; Paletter only falls back to {@code minecraft:unknown}); the type stays for data sources that
  * provide some, and files of older Paletter releases that still contain them. Added or removed block states need no
  * entries: they are adapted automatically.
  *

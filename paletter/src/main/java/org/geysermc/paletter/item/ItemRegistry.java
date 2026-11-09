@@ -22,7 +22,7 @@ import org.geysermc.paletter.PaletteException;
 import org.geysermc.paletter.PaletteReport;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.block.BlockRegistry;
-import org.geysermc.paletter.block.BlockResolution;
+import org.geysermc.paletter.internal.block.BlockResolution;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;

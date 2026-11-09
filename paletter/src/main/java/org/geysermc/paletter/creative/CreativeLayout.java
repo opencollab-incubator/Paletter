@@ -2,7 +2,6 @@ package org.geysermc.paletter.creative;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.paletter.internal.creative.CreativeLocation;
 import org.geysermc.paletter.item.BedrockItemStack;
 
 import java.util.ArrayList;
@@ -149,5 +148,14 @@ public final class CreativeLayout {
                 .append(" nodes/").append(groups).append(" groups, ");
         }
         return builder.append('}').toString();
+    }
+
+    /**
+     * Where a stack is in the layout.
+     *
+     * @param group the group name, or null if the stack is loose
+     * @param index the index inside the group, or the node index inside the category if loose
+     */
+    private record CreativeLocation(@NonNull CreativeCategory category, @Nullable String group, int index) {
     }
 }
