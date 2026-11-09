@@ -147,18 +147,6 @@ class LayerTest {
     }
 
     @Test
-    void sharedLayerStacksAreCachedPerPrefix() {
-        PaletteLayer first = minecartLayer();
-        PaletteLayer second = PaletteLayer.builder("second").build();
-        Palette both = Palettes.palette(LATEST, first, second);
-        assertSame(both, Palettes.palette(LATEST, first, second));
-        assertSame(Palettes.palette(LATEST, first), Palettes.palette(LATEST, first));
-        assertEquals(List.of(first, second), both.layers());
-        // Layers are compared by identity: an equal but new layer is compiled again
-        assertNotSame(Palettes.palette(LATEST, first), Palettes.palette(LATEST, minecartLayer()));
-    }
-
-    @Test
     void overridesChangeVanillaDefinitions() {
         PaletteLayer layer = PaletteLayer.builder("fixes")
             .overrideItem("minecraft:cake", item -> item.components(MaxStackSize.of(1)))

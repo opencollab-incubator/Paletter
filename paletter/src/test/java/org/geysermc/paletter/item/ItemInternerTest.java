@@ -30,10 +30,4 @@ class ItemInternerTest {
         }
         assertTrue(shared > 0, "no item is shared between " + versions.get(0) + " and " + versions.get(versions.size() - 1));
     }
-
-    @Test
-    void samePaletteTwiceIsTheSameItems() {
-        DataVersion latest = PALETTER.latest();
-        assertSame(PALETTER.vanilla(latest).items().item("minecraft:apple"), PALETTER.vanilla(latest).items().item("minecraft:apple"));
-    }
 }

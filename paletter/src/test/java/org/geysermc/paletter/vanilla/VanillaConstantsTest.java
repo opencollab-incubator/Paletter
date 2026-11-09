@@ -306,27 +306,4 @@ class VanillaConstantsTest {
         assertTrue(ruby[0]);
         assertEquals(Ids.block(PALETTER, BedrockBlockState.vanilla(BlockStates.of("minecraft:stone"))), Ids.block(PALETTER, BlockStates.of("minecraft:stone")));
     }
-
-    @Test
-    void initialization() {
-        // Class init time and data linking, for the record; the first use loads the newest bundled data
-        long start = System.nanoTime();
-        BoolState open = BedrockStates.OPEN_BIT;
-        long states = System.nanoTime() - start;
-        start = System.nanoTime();
-        BedrockBlockType stone = BedrockBlocks.STONE;
-        long blocks = System.nanoTime() - start;
-        start = System.nanoTime();
-        BedrockItemType apple = BedrockItems.APPLE;
-        long items = System.nanoTime() - start;
-        start = System.nanoTime();
-        stone.defaultState();
-        long linked = System.nanoTime() - start;
-        start = System.nanoTime();
-        BedrockBlocks.WOODEN_DOOR.state().with(open, true).build();
-        long door = System.nanoTime() - start;
-        System.out.printf("class init: BedrockStates %.1f ms, BedrockBlocks %.1f ms, BedrockItems %.1f ms (%s, %s, %s); "
-            + "first state (loads and links the newest data) %.1f ms; next type's states %.2f ms%n",
-            states / 1e6, blocks / 1e6, items / 1e6, stone, apple, open, linked / 1e6, door / 1e6);
-    }
 }

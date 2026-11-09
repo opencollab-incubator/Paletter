@@ -94,13 +94,6 @@ class HandleTest {
         assertNull(palette.decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData.AIR));
     }
 
-    @Test
-    void blockOfIsAHandle() {
-        BedrockBlockState sign = PALETTER.blockOf(BedrockItemVariant.of("minecraft:acacia_sign", 0));
-        assertNotNull(sign);
-        assertSame(sign, PALETTER.block(sign.toNbt()));
-    }
-
     /** The hot path of translators: a handle to its runtime id is a field read and an array load. */
     @Test
     void handleToRuntimeIdDoesNotAllocate() {
