@@ -4,7 +4,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * How a block state or item variant of <em>any</em> bundled version maps to the canonical ids, which the newest
- * version defines (see {@link Paletter#forwardBlock} and {@link Paletter#forwardItem}).
+ * version defines (see {@link org.geysermc.paletter.Paletter#canonicalBlocks} and {@link org.geysermc.paletter.Paletter#canonicalItems}).
  *
  * @param canonical the canonical id, or -1 if the content does not exist (anymore) in the newest version
  * @param kind how it was found

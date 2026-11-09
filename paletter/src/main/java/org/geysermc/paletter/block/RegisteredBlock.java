@@ -144,7 +144,7 @@ public final class RegisteredBlock {
 
     /**
      * @return the components of the type: those of the {@link CustomBlock}, empty for vanilla blocks. See
-     * {@link RegisteredBlockState#components()} for what applies to one state
+     * {@link RegisteredBlock#components(RegisteredBlockState)} for what applies to one state
      */
     public @NonNull List<BlockComponent> components() {
         return customBlock != null ? customBlock.components() : List.of();

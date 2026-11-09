@@ -48,7 +48,7 @@ import java.util.function.Predicate;
  * Everything is loaded lazily and cached; instances are thread safe. Block states and item components that are equal
  * across versions are the same instances.
  * <p>
- * Canonical ids ({@link #canonicalBlock(NbtMap)}, {@link #canonicalItem(ItemVariant)}) are defined by the newest
+ * Canonical ids ({@link #canonicalBlocks()}, {@link #canonicalItems()}) are defined by the newest
  * version, and valid in every palette of this instance.
  *
  * @since 1.0.0

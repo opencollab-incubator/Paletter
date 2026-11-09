@@ -213,7 +213,7 @@ public record CustomBlock(
     /**
      * @return the type of the block, to use it like a vanilla {@link org.geysermc.paletter.vanilla.BedrockBlocks}
      *         constant. Its states have canonical ids per layer lineage, see
-     *         {@link org.geysermc.paletter.Palette#canonicalBlock(org.geysermc.paletter.vanilla.BedrockBlockState)}
+     *         {@link org.geysermc.paletter.Palette#runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState)}
      * @since 1.0.0
      */
     public @NonNull BedrockBlockType type() {

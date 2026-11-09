@@ -14,7 +14,7 @@ import java.util.TreeMap;
 
 /**
  * How block runtime ids are assigned, i.e. which ids are written to chunks, block updates and item stacks.
- * Chosen per palette, see {@link org.geysermc.paletter.Paletter#palette(int, BlockNetworkIds, java.util.List)}.
+ * Chosen per palette, see {@link org.geysermc.paletter.Paletter#palette(int)}.
  *
  * @since 1.0.0
  */

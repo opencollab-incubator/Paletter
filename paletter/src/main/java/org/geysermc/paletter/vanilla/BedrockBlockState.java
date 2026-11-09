@@ -12,8 +12,8 @@ import org.geysermc.paletter.internal.CanonicalBlocks;
  * One state of a {@link BedrockBlockType}. There is one instance per state, so {@link #with} does not allocate, and
  * states can be compared with {@code ==}.
  * <p>
- * Canonical ids come from {@link org.geysermc.paletter.Paletter#canonicalBlock(BedrockBlockState)} (vanilla states) and
- * {@link org.geysermc.paletter.Palette#canonicalBlock(BedrockBlockState)} (vanilla and custom states). For a vanilla
+ * Canonical ids come from {@link org.geysermc.paletter.Paletter#canonicalBlocks()} (vanilla states) and
+ * {@link org.geysermc.paletter.Palette#runtimeId(BedrockBlockState)} (vanilla and custom states). For a vanilla
  * state both are an addition, not a hash lookup: the first state of its block plus the sum of each value's index times
  * the stride of its property, computed once (Bedrock enumerates every block's states as the full product of its values;
  * blocks that are not get a lookup table). Custom block states have canonical ids per layer lineage only.

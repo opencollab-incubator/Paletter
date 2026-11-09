@@ -35,7 +35,7 @@ public enum CreativeOrdering {
      *     <li>Without a group: loose, at the end of the category.</li>
      * </ol>
      * A custom block without a {@link org.geysermc.paletter.block.CustomBlock#creative() creative placement} but with
-     * a {@link org.geysermc.paletter.block.CustomBlock.Menu menu category} is placed by its menu category, like BDS
+     * a {@link org.geysermc.paletter.block.component.MenuCategory menu category} is placed by its menu category, like BDS
      * does.
      */
     BDS,
