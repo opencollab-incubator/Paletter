@@ -45,7 +45,7 @@ runnable examples are in [examples/](examples).
 |-------------|------------------------------------------------------------------------------------------------|
 | `paletter/` | The library (the only shipped module). Depends on Cloudburst `bedrock-codec` (its types are the public API) and fastutil. No JSON, no network. Hand-written sources are in `src/main/java`; everything generated (the component API in `item/component` and `block/component`, the vanilla constants and state enums) is in `src/generated/java`, same packages, never edited by hand. |
 | `tools/`    | All tooling, one module, never shipped, one command line (`./gradlew :tools:run --args="<command> ..."`, see [tools/README.md](tools/README.md)): the BDS update pipeline and data import (`tools.bds`, `tools.data`, `tools.update`), the headless Bedrock client that records what BDS sends (`tools.client`), the component model from Microsoft's creator docs and its wire inference (`tools.model`), and the generators of the component API and the constants (`tools.codegen`). |
-| `data/`     | Every non-code input: `model/` (the component model and the generators' inputs: `components.json`, `mappings.json`, `names.json`, ...), `bds/<bds version>/` (captures, Script API dump, experiment record, report; see [data/README.md](data/README.md)) and `addons/` (the add-on packs run on BDS: `capture`, `creative`, `dump`). |
+| `data/`     | Every non-code input: `model/` (the component model and the generators' inputs: `components.json`, `mappings.json`, `names.json`, ...), `bds/<bds version>/` (captures, Script API dump, experiment record; see [data/README.md](data/README.md)) and `addons/` (the add-on packs run on BDS: `capture`, `creative`, `dump`). |
 
 
 
@@ -514,7 +514,7 @@ download (about 100 MB, once per build). What it does, in `<cache>/runs/<platfor
    staged data with `data/model/constants-history.json`; the report lists the constants added and deprecated. A name
    collision or a state that changes its kind fails this step until `data/model/names.json` settles it.
 
-The report (`data/bds/1.26.70.23/report.md` is an example) lists checks with PASS/DIFF/FAIL, every difference, and a
+The report lists checks with PASS/DIFF/FAIL, every difference, and a
 **TODO** list of what needs a decision.
 
 ### Experiments

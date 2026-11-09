@@ -17,7 +17,7 @@ import java.util.TreeSet;
  * has no anchor ({@link CreativePlacement#after()} is null). A placement with an anchor is an explicit override and
  * goes right after the anchor under every policy.
  * <p>
- * The rule BDS follows, and the evidence for it, is in {@code capture/CREATIVE-ORDER.md}.
+ * The rule BDS follows, and the evidence for it, is in {@code data/bds/CREATIVE-ORDER.md}.
  *
  * @since 1.0.0
  */
@@ -58,7 +58,7 @@ public enum CreativeOrdering {
      * then the vanilla data driven blocks in descending identifier order. This reproduces the map's iteration order.
      * BDS numbers custom blocks in descending order of their <i>file names</i>; Paletter, which has no files, numbers
      * them by identifier, descending, which is the same for the usual add-on layout of one file per block named after
-     * it (see {@code capture/CREATIVE-ORDER.md}).
+     * it (see {@code data/bds/CREATIVE-ORDER.md}).
      *
      * @param customBlocks every custom block identifier of the palette, in block id order
      * @param vanillaDataDrivenBlocks the identifiers of the version's vanilla data driven blocks

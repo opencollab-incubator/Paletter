@@ -1,288 +1,89 @@
-# Paletter API and compatibility policy
+# API and compatibility policy
 
-Paletter is consumed by Geyser and by Bedrock-only server software. Consumers describe content in Bedrock terms and
-never deal with the wire encoding: NBT shapes, key names, numeric quirks and their changes between Bedrock versions are
-Paletter's job alone. This document says what the API is, what Paletter promises about it, and how the promise is
-enforced.
+Consumers (Geyser is one) describe content in Bedrock terms and never deal with wire encoding. Method-level details are
+in the javadoc; this file is the policy.
 
 ## What is API
 
-The API is exactly the packages exported by [`paletter/src/module/java/module-info.java`](paletter/src/module/java/module-info.java):
+The packages exported by [`module-info.java`](paletter/src/module/java/module-info.java):
+`org.geysermc.paletter` (`Paletter`, `Palette`, `PaletteLayer`, `Fallbacks`, `VanillaContent`, reports),
+`.annotation`, `.block` and `.block.component`, `.item` and `.item.component`, `.creative`, `.property`, `.data`,
+`.vanilla` and `.vanilla.state` (the generated constants).
 
-| Package | Contents |
-|---|---|
-| `org.geysermc.paletter` | `Paletter` (builder, global policy), `Palette`, `PaletteLayer` (content), `Fallbacks`, `VanillaContent`, `Origin`, `PaletteReport`, `PaletteException`, `BlockExplanation`, `ItemExplanation` |
-| `org.geysermc.paletter.annotation` | `@Experimental`, `@Internal`, `@BedrockFormat`, `@Education` |
-| `org.geysermc.paletter.block` | `BlockRegistry`, `RegisteredBlock`, `RegisteredBlockState`, `BlockNetworkIds`, `BlockFallback`, `CustomBlock`, `BlockProperty` |
-| `org.geysermc.paletter.block.component` | generated block components and traits (`BlockComponent`, `BlockTrait`, `Geometry`, `MaterialInstances`, `PlacementDirection`, `MenuCategory`, ...) |
-| `org.geysermc.paletter.creative` | the creative inventory model (`CreativeLayout`, `CreativeItem(BedrockItemStack)`, `CreativeGroup`) and editor |
-| `org.geysermc.paletter.property` | versioned properties of keys: `Properties`, `Property`, `PropertyKind` |
-| `org.geysermc.paletter.data` | `DataVersion`, `PaletteDataSource` (`bundled()`, `directory(Path)`) |
-| `org.geysermc.paletter.item` | `ItemRegistry`, `RegisteredItem`, `BedrockItemStack`, `ItemFallback`, `CustomItem`, `ItemOverride` |
-| `org.geysermc.paletter.item.component` | generated item components (`ItemComponent`, `Durability`, `KineticWeapon`, `Food`, `Wearable`, `MenuCategory`, ...) |
-| `org.geysermc.paletter.vanilla` | vanilla constants (generated `BedrockBlocks`, `BedrockStates`, `BedrockItems`) and their types: `BedrockBlockType`, `BedrockBlockState`, `BedrockItemType`, `BedrockItemVariant`, `BoolState`, `IntState`, `EnumState`, `StringState` |
-| `org.geysermc.paletter.vanilla.state` | generated enums of string block states (`CardinalDirection`, `Direction`, ...) |
+Not API, free to change in any release:
 
-Not API, and free to change in any release:
+- everything under `org.geysermc.paletter.internal` (generated encoders, compile core, hand transforms);
+- public members of exported packages annotated `@Internal`;
+- the bundled data format and the tools module.
 
-- everything under `org.geysermc.paletter.internal` (the generated encoders, the compile core and the hand transforms in
-  `internal.component`);
-- public types and members of exported packages annotated **`@Internal`** (plumbing shared between Paletter's own
-  packages, e.g. `ItemRegistry.Builder`, `BlockRegistry#withCustomBlocks`, `PaletteDataSource#load`);
-- the bundled data format, the tools module.
+Types of dependencies that appear in the API (Cloudburst's `NbtMap`, `ItemData`, `BlockDefinition`, `StartGamePacket`)
+are part of it: a Cloudburst upgrade that changes them counts as an API change.
 
-Types of dependencies that appear in the API (Cloudburst protocol types such as `NbtMap`, `ItemData`,
-`BlockDefinition`, `StartGamePacket`) are part of it; a Cloudburst upgrade that changes them is treated like a change of
-Paletter's API.
+`@Experimental` API is public and supported but may change in a minor release without deprecation. Components Bedrock
+itself gates behind an experiment carry it.
 
 ## Versioning
 
-Paletter follows [semantic versioning](https://semver.org) for the API:
+[Semantic versioning](https://semver.org):
 
-- **patch** (`2.0.x`): bug fixes, new bundled Bedrock versions, encoder updates for changed wire shapes. No API changes.
-- **minor** (`2.x.0`): additions (types, methods, enum constants, semantic values), deprecations. Source and binary
-  compatible for consumers.
-- **major** (`x.0.0`): removals and incompatible changes, only of API deprecated as described below.
+- **patch**: bug fixes, new bundled Bedrock versions, encoder updates for changed wire shapes. No API changes.
+- **minor**: additions and deprecations; source and binary compatible.
+- **major**: removals of API deprecated before.
 
-A new Bedrock version is never a reason for a major release. When Bedrock changes how a component is sent, a capture
-of the new version adds a protocol window to `data/model/mappings.json` and the encoders are regenerated; the
-component records stay the same (see "Versioned encoding" in the [README](README.md#components)). Consumer code does not
-change. New documented components and fields are additions.
+A new Bedrock version is never a reason for a major release: a capture adds a protocol window to
+`data/model/mappings.json`, the encoders are regenerated and the component records stay the same.
 
-## Deprecation cycle
+## Deprecation
 
-1. Deprecate in minor release N, with the replacement available in the same release:
-   `@Deprecated(since = "2.N.0", forRemoval = true)` plus a javadoc `@deprecated` naming the replacement.
-2. Remove no earlier than the next major release **and** at least two minor releases after N (deprecated in 2.3, it
-   stays through at least 2.5 and is removed in 3.0 at the earliest).
-3. Every deprecation and removal is listed in the release notes.
+1. Deprecate in minor release N with the replacement available, `@Deprecated(since = "...", forRemoval = true)` and a
+   javadoc `@deprecated` naming it.
+2. Remove no earlier than the next major release and at least two minor releases after N.
+3. List every deprecation and removal in the release notes.
 
-Bedrock removing a feature does not remove API: the generated record or field stays, and palettes of versions that
-cannot express it leave the value out with a `PaletteReport` warning (see below). It is deprecated only if no supported
-version can express it anymore.
+Bedrock removing a feature does not remove API: palettes of versions that cannot express a value leave it out and add
+a `WARNING` to `Palette#report()`. It is deprecated only if no supported version can express it anymore.
 
 ## Vanilla constants
 
-The generated classes of `org.geysermc.paletter.vanilla` (`BedrockBlocks`, `BedrockStates`, `BedrockItems`, the enums of
-`org.geysermc.paletter.vanilla.state`) are API like any other, with rules that follow from Bedrock changing content
-between versions (see the [README](README.md#vanilla-constants) for usage):
+`BedrockBlocks`, `BedrockStates`, `BedrockItems` and the enums of `vanilla.state` follow from Bedrock changing content
+between versions:
 
-- Constants are `static final` **objects**, never compile time constants: consumers hold handles and never ids, so a
-  Paletter release may renumber them freely.
-- **Additions** (new constants, enum values, enums) are binary compatible and arrive in minor releases, or in patch
-  releases that bundle a new Bedrock version.
-- **Removals** go through the deprecation cycle: when the newest bundled data no longer has a block, item, state or
-  enum value, the constant stays, `@Deprecated(since = "<the release>", forRemoval = true)`, and resolves to its
-  fallback (`minecraft:unknown` unless `data/model/names.json` names another). A rename keeps the old constant as a
-  deprecated alias of the new one. `data/model/constants-history.json` is the record of every constant the generator ever
-  produced, so a regeneration cannot drop one; deprecated constants are removed from it (and the classes) only in a
-  major release.
-- A state constant never changes its type (`BoolState`, `IntState`, `EnumState<E>`): if Bedrock changes a state's kind,
-  generation fails until the state gets a new name in `data/model/names.json`. Enum assignment is sticky the same way.
-- `BedrockPreviewBlocks` and `BedrockPreviewItems` (content of a bundled preview only) are `@Experimental`: they move or
-  disappear without deprecation.
-- Which values a block accepts is data, not API (canonical ids are not exposed at all): they follow the bundled release.
+- Constants are `static final` objects, never compile time constants: consumers hold handles, not ids.
+- Additions arrive in minor releases, or in patch releases that bundle a new Bedrock version.
+- Removals go through the deprecation cycle: the constant stays, deprecated, and resolves to its fallback
+  (`minecraft:unknown` unless `data/model/names.json` names another); a rename keeps the old constant as an alias.
+  `data/model/constants-history.json` records every constant ever generated, so regeneration cannot drop one.
+- A state constant never changes its type; generation fails until the state gets a new name in `names.json`.
+- `BedrockPreviewBlocks` and `BedrockPreviewItems` (content of a bundled preview only) are `@Experimental`.
 
 ## Experiments
 
-Some content a Bedrock version has only behind an experiment toggle (26.40's poplar wood and cushions behind
-`y_2026_drop_3`). The bundled data marks it (`data/bds/<bds version>/experiments.json`, from BDS captures). In a
-`Paletter` it is **missing by default**: items are not registered, the states of blocks stay in the palette but resolve
-through the fallbacks, so an ordinary (non-forced) `Fallbacks` entry covers it, in the versions that gate it only. `forced()`
-is for content that is really there.
-
-- `Paletter.builder().vanilla(v -> v.experiments("y_2026_drop_3"))` enables toggles; the palettes of the versions that
-  gate content behind them have it present. `Palette#experiments()` lists the toggles such a palette needs,
-  `Palette#applyTo(StartGamePacket)` and `#applyTo(ResourcePackStackPacket)` send them, `Palette#experimentOf(type | registered)`
-  names the toggle that makes a piece of content present (null if none; the registered definitions are shared between
-  palettes, so they do not carry it).
-- `PaletteReport` has one info line (source `vanilla`) per toggle left disabled: `26.40: 89 items, 23 blocks behind
-  `y_2026_drop_3` use fallbacks; enable with vanilla(v -> v.experiments("y_2026_drop_3"))`.
-- The generated constants say it in their javadoc: `@since 26.50` (the first bundled release that has it without an
-  experiment) and "Behind the experiment `y_2026_drop_3` in 26.40."; `@Education` and `isEducation()` mark content only
-  Education Edition worlds have.
-
-## `@Experimental`
-
-Experimental API is public and supported, but not covered by the compatibility promise: it may change or disappear in
-a minor release without a deprecation cycle (changes are still listed in the release notes). The generated components
-Bedrock gates behind an experiment (e.g. `minecraft:support`, `minecraft:connection_rule`, the `minecraft:connection`
-and `minecraft:multi_block` traits) carry it: Bedrock may still change them before releasing them, and Paletter follows.
+Content a Bedrock version has only behind an experiment toggle is missing by default (items unregistered, block states
+resolve through the fallbacks); `Paletter.builder().vanilla(v -> v.experiments(...))` enables it. The constants' javadoc
+carries `@since <Bedrock release>`, the experiment, and `@Education` for Education Edition only content.
 
 ## Hand-written wire-only components
 
-Four wire fields have no add-on JSON source, so they are not generated. They are hand-written `WireOnlyItemComponent`s /
-`WireOnlyBlockComponent`s (sealed `ItemComponent` / `BlockComponent` sub-interfaces, `@since 1.0.0`) that go through the same `CustomItem`, `PaletteLayer` item
-override and compile path as the generated components:
+Four wire fields have no add-on JSON source, so they are not generated: `RenderOffsets` and `OnPlayerPlacing` (retired
+from the add-on format, deprecated but not for removal; Paletter assumes clients still honour them), `MiningSpeed` and
+`FrameCount` (`@Experimental`). They are sealed `WireOnlyItemComponent` / `WireOnlyBlockComponent` implementations and
+take the same path as generated components (`CustomItem`, item overrides, compile). Their shapes come from captures of
+BDS defaults, not from the conformance suite, so a client rejecting one would not show up in `build`. Details in their
+javadoc.
 
-- `RenderOffsets` (`minecraft:render_offsets`, `@Deprecated` but not for removal): retired from the add-on format (BDS
-  1.26.63.1 rejects it at every `format_version`); Paletter assumes current clients still honour it on the wire and keeps
-  sending it for legacy content. It will be removed if clients stop honouring it. `new RenderOffsets(Hand mainHand, Hand offHand)`,
-  `Hand(Offset firstPerson, Offset thirdPerson)`, `Offset(Vec3 position, Vec3 rotation, Vec3 scale)` (`Offset.scale(x, y, z)`),
-  `Vec3(float x, float y, float z)`; null parts are left out. `RenderOffsets.preset(Preset)` (or the third constructor
-  argument) is Geyser's legacy armor form: a bare string `render_offsets` (`boots`, `leggings`, `chestplates`,
-  `helmets`; not a `minecraft:` component) naming the client's built-in offsets; alone it sends no `minecraft:render_offsets`.
-- `OnPlayerPlacing.of(String triggerType)` (`minecraft:on_player_placing`, a block component, `WireOnlyBlockComponent`, `@Deprecated` but not
-  for removal): retired from the add-on format like `render_offsets`, assumed to be honoured by clients; sent as
-  `{triggerType}`. Geyser sends `geyser:place_event`, an event no pack handles, so the client does not double place blocks.
-- `MiningSpeed.of(float)` (`item_properties.mining_speed`, `@Experimental`, BDS default 1.0).
-- `FrameCount.of(int)` (`item_properties.frame_count`, `@Experimental`, BDS default 1, at least 1).
+## How it is enforced
 
-Their `name()` is the wire path (`item_properties.mining_speed`, ...), so the one-per-name rule of `CustomItem` holds.
+`./gradlew build` runs:
 
-Known gap: because there is no add-on JSON source, the conformance suite (which builds add-ons and compares BDS's wire output) cannot
-cover these four; their shapes come from captures of BDS defaults and the Bedrock documentation, and `WireOnlyComponentTest` only
-checks what Paletter writes. A client rejecting one of them would not show up in `build`.
+- `:paletter:apiCheck`: the committed dump [`paletter/api/paletter.api`](paletter/api/paletter.api) (a sorted listing of
+  every public and protected member of the exported packages, `@Internal` left out) must equal what the compiled
+  classes give. Run `:paletter:apiDump` with any API change and commit the file: its diff is the API review (a removed
+  line is a break).
+- `:paletter:apiCompat`: japicmp against the last released artifact named in `paletter/api/released.version`
+  (skipped while the file is absent or empty; write the version into it after each release).
+- `:paletter:compileModuleInfo`: every exported package exists.
+- `ApiBoundaryTest`: no exported signature references `internal`, an `@Internal` type or a non exported package, and
+  every exported type has `@since`.
 
-## What a palette cannot express
-
-Encoding never fails because of a Bedrock version. If a value cannot be expressed for a palette's version (the field is
-not sent in that protocol window, it has no known wire mapping, or a descriptor names an item the version lacks), it is
-left out of that palette and a `WARNING` is added to `Palette#report()`, naming the layer, the item or block and the
-component. Consumers decide what to log.
-
-## How compatibility is enforced
-
-`./gradlew build` (via `check`) runs:
-
-- **`:paletter:apiCheck`**: compares [`paletter/api/paletter.api`](paletter/api/paletter.api), the committed API dump, with
-  what the compiled classes give, and fails with the lines that differ. See "The API dump".
-- **`:paletter:apiCompat`**: [japicmp](https://github.com/siom79/japicmp) compares the exported packages of the current
-  jar with the last released artifact (`@Internal` and `@Experimental` API excluded). Skipped while there is no release,
-  see "The release check".
-- **`:paletter:compileModuleInfo`**: compiles `module-info.java` against the main classes, so every exported package
-  exists.
-- **`ApiBoundaryTest`**: fails if a public or protected signature of an exported type (supertypes, fields, methods,
-  constructors, record components, type parameters) references a type of `org.geysermc.paletter.internal`, an
-  `@Internal` type or a non-exported Paletter package; and if an exported type has no `@since` in its javadoc.
-
-### The API dump
-
-[`paletter/api/paletter.api`](paletter/api/paletter.api) is a sorted, plain-text listing of every public and protected
-class, field, constant, constructor and method of the exported packages, with generic signatures, `@Deprecated` and
-`@Experimental` marks, `permits` lists and constant values; `@Internal` members and classes and everything outside the
-exported packages are left out. It is generated from the compiled classes (ASM, `tools` module, `apiDump` source set) and
-never edited by hand:
-
-- `./gradlew :paletter:apiDump` rewrites it. Run it with any change of the API and commit the file with the change: the
-  diff of `paletter.api` is the review of the API change (a removed line is a break; an added line an addition).
-- `./gradlew :paletter:apiCheck`, part of `check`, fails with the added and removed lines when the committed file is stale,
-  so an API change cannot go unnoticed and the file never lags behind.
-
-The dump is a review aid, not a promise by itself: within a minor line only additions are acceptable, removals follow the
-deprecation cycle above. The generator is tested on a small synthetic class set (`ApiDumpTest`, golden file in
-`tools/src/test/resources/api-dump-golden`).
-
-### The release check
-
-Compatibility with what was released is checked against the released artifact, resolved from a Maven repository, not
-against a file in the repository. `paletter/api/released.version` names the version (the file is absent or empty until the
-first release, and `:paletter:apiCompat` is skipped). After a release, write its version into the file: `apiCompat` then
-downloads `org.geysermc.paletter:paletter:<version>` (the repositories of the root build) and runs japicmp over the exported
-packages, failing on any binary incompatible change. Bump the file with each release; a major release that intends a break
-also bumps the major version.
-
-### Pre-release changes
-
-(Until the API dump replaced it, a jar of the exported classes in the repository was the baseline; mentions of "the baseline"
-below are about that.)
-
-- **Queries Geyser needs** (additions): `Palette#isFallback(BedrockItemVariant)` / `#fallbackOf(BedrockItemVariant)` say, from the
-  canonical table and without `explain`, whether (and as which variant) a palette sends an item through a fallback;
-  `Palette#blockOf` documents that it works for every variant and `Palette#blockKeyOf(BedrockItemVariant)` gives the
-  version independent `BedrockBlockState` of it; `ItemRegistry#isFallback` / `#fallbackOf`. `BedrockItemType#isEducation()`,
-  `BedrockBlockType#isEducation()` and `@Education` mark Education Edition content (from BDS captures); the generated
-  constants carry `@since <bundled Bedrock release>`. `Palette#experiments()`, `#experimentOf(...)` and
-  `#applyTo(ResourcePackStackPacket)` belong to the experiment gating below.
-- **Experiment content is missing by default** (behaviour change, API unchanged): `VanillaContent#experiments` used to
-  default to every toggle enabled; the default is now none, so the content a version has only behind a toggle counts as
-  missing and plain fallbacks apply. See "Experiments".
-- **Model v2** (pre-release; the baseline was regenerated). Three concepts: keys (`BedrockItemType`, `BedrockItemVariant`
-  = type + aux, `BedrockBlockType`, `BedrockBlockState`; vanilla constants or `X.of("namespace:id")`), registered content
-  (`RegisteredItem`, `RegisteredBlock`, `RegisteredBlockState`: the key inside one palette) and stacks
-  (`BedrockItemStack`, which replaces `CreativeStack`; `CreativeItem` wraps one). Policy is global and content is a
-  layer: `Paletter.builder()` takes the data source, versions, `BlockNetworkIds`, one `Fallbacks` (typed:
-  `ItemFallback.of(BedrockItemType|BedrockItemVariant)`, `BlockFallback.of(BedrockBlockType|BedrockBlockState)`), the
-  `VanillaContent` that exists, the creative ordering, reports and the global layers; a `PaletteLayer` is content only.
-  Removed: the `palette(protocol, mode, layers...)` overloads (`Paletter#palette(protocol|codec)` is the one way; session
-  content goes through `Palette#extend`, a patch over the shared palette), `Paletter.create`, per layer fallbacks and
-  `FallbackDefaults`, `ResolvedItem`, the raw `ItemVariant` record, `BlockResolution` (now internal; `BlockExplanation` and
-  `ItemExplanation` have their own `Kind`), `BedrockItemType.custom`, `RegisteredBlockState#block/origin/components/properties`
-  (a hashed state is shared between versions, so ask the palette: `BlockRegistry#block(state)`,
-  `RegisteredBlock#components(state)`, `#properties(state)`), `BlockInterner` and `CreativeLocation` (internal).
-  `Palette#encode` / `#decode` convert stacks, `Paletter#properties(key, version)` and `RegisteredItem#properties` give
-  the versioned properties, `PaletteDataSource#directory(Path)` reads data in the bundled format from a directory.
-
-- **Canonical ids are not exposed anymore** (pre-release, baseline regenerated; `apiCompat` failed against the old one, as
-  it should). Public lookups return interned handles instead of ints: `Paletter#block(NbtMap)` ->
-  `@Nullable BedrockBlockState` (a state of any bundled version, forwarded), `Paletter#item(ItemVariant)` ->
-  `@Nullable BedrockItemVariant`, `Paletter#blockOf(ItemVariant)` -> `@Nullable BedrockBlockState`, the same `block` /
-  `item` on `Palette` (custom content of its layers included), `Palette#match(ItemData)` ->
-  `@Nullable BedrockItemVariant`, and `Palette#itemVariants()` to enumerate. `Palette#runtimeId/block/item(handle)` stay;
-  `explainUnknown` and `explain` stay (`BlockExplanation` / `ItemExplanation` carry a `handle` instead of `canonical`).
-  Removed from the API (moved to `org.geysermc.paletter.internal` or `@Internal`): `Paletter#canonicalBlock` /
-  `#canonicalItem` / `#canonicalBlockOf` / `#forwardBlock` / `#forwardItem` / `#canonicalBlockCount` /
-  `#canonicalItemCount`, their `Palette` counterparts and the `int` overloads of `Palette#runtimeId/block/item/match`,
-  `CanonicalBlocks`, `CanonicalItems` and `Forwarding` (now `internal`), and the canonical id members of `BlockRegistry`
-  and `ItemRegistry`. Consumers hold handles where they held ids; where they sized an array by the id count they key a
-  map by handle.
-
-- Paletter owns the order of custom blocks: the custom entries of `Palette#blockProperties()` and the runtime ids of the
-  items Paletter registers for the blocks of a layer are in identifier order, descending, whatever order the layers register the blocks in (block ids
-  already were). Items registered with `PaletteLayer.Builder#blockItem` keep the slot the consumer gave them among the
-  custom items, so their order is the consumer's. Consumers need not sort blocks.
-
-- `Paletter#canonicalBlock(NbtMap)`, `#canonicalItem(ItemVariant)` and their `Palette` counterparts accept content of any
-  bundled version instead of returning -1 for what the newest version lacks: they map it forward (state keys adapted,
-  renamed identifiers via the bundled `renames.txt`) and return -1 only if no equivalent exists; `explainUnknown` says
-  why. This changes results that used to be -1, so it needed no baseline change. A new bundled Bedrock version no longer
-  invalidates consumer mappings.
-
-- Paletter bundles no fallbacks anymore: `data/fallbacks` and its import are removed, `VanillaData#fallbacks()` is empty
-  in the bundled data (the type and the codec's reading of old files stay), and content an older version lacks is
-  `minecraft:unknown` unless the `Fallbacks` of the Paletter define one (`force` semantics and experiment marks
-  unchanged). Results of `Palette` for versions that used to
-  have bundled fallbacks changed; the API did not. The removed entries were exported for Geyser to adopt.
-
-- The block an item is sent with is decided by Paletter from the bundled block to item relation first
-  (`ItemRegistry#blockOf`, `Palette#blockOf`, `Paletter#canonicalBlockOf`); the old name and creative state heuristics only
-  remain for data without the relation. `ItemRegistry#defaultBlock` / `isBlockItem` changed results (doors, signs, crops,
-  banners, beds, cauldrons are block items now; double slab items are not). The data format gained the optional
-  `block_items` key; older files are still read.
-
-1.0.0 is not released, so these API changes replaced the old API directly, without a deprecation cycle (which applies
-from the first release on); the baseline was regenerated with each:
-
-- `BedrockBlockState#id()`, `BedrockItemType#id()` and `BedrockItemVariant#id()` are removed. They returned the canonical
-  id in `Paletter.bundled()` and -1 for custom content, a trap for code that handles both. Canonical ids come only from
-  `Paletter#canonicalBlock(BedrockBlockState)` / `#canonicalItem(BedrockItemType|BedrockItemVariant)` (vanilla content;
-  for vanilla constants still an addition or field read, no hash lookup) and `Palette#canonicalBlock` /
-  `#canonicalItem` (any content, custom included).
-
-- `BedrockItemType#variant(int)` returns null for a damage value that is not a known variant of the newest data (it used
-  to return a new variant without canonical id). `hasVariant(int)` and `variantOf(int)` (the old behaviour) are added.
-  Binary compatible, so the baseline was not regenerated.
-
-- The hand-written semantic component API (`ItemComponents`, `BlockComponents` and the values in `item.component` /
-  `block.component`, including the `@Experimental` raw NBT escape hatches) is replaced by the components generated from
-  the add-on component model (see the [README](README.md#components)); `CustomBlock.Menu` by the generated
-  `MenuCategory`, `ItemOverride#components(UnaryOperator)` by `ItemOverride#components(ItemComponent...)`. The generated
-  API carries `@since 1.0.0`.
-
-- `Repairable.RepairItems` gains `itemsTags` (the `items` string form: a Molang tag query sent as `{tags}`), an added record
-  component, which changes the canonical constructor; the baseline was regenerated.
-
-- `MaterialInstances` gains `instances` and `aliases` (maps for any instance name other than `*` and the six faces, which
-  geometry bones refer to), again an added record component; the baseline was regenerated.
-
-### `@since`
-
-Every exported type has `@since` in its javadoc (enforced by `ApiBoundaryTest`); members added later carry their own
-`@since 2.N.0`. Members without one have been there since their type.
-
-### JPMS
-
-The jar declares `Automatic-Module-Name: org.geysermc.paletter`. `module-info.java` is the declaration of the API
-boundary but is not packaged yet: Cloudburst's dependencies split packages over several jars (fastutil's
-`it.unimi.dsi.fastutil.ints` and `...objects` live in a dozen automatic modules), so no module graph containing them
-resolves on the module path. It ships once the dependencies are modular.
+The jar declares `Automatic-Module-Name: org.geysermc.paletter`; `module-info.java` documents the boundary but is not
+packaged, because Cloudburst's dependencies split packages over several jars.

@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * The block states traits add. The client derives them from the trait (they are not in the block's {@code properties}
  * on the wire), so every palette has to enumerate them the same way: the first value is the default. Values verified
- * against BDS 1.26.63.1 block hashes ({@code capture/WIRE-NOTES.md}, Traits).
+ * against BDS 1.26.63.1 block hashes ({@code data/bds/WIRE-NOTES.md}, Traits).
  */
 public final class TraitStates {
     private static final String[] CARDINAL = {"south", "west", "north", "east"};

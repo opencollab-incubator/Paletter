@@ -32,5 +32,5 @@ Gradle tasks (run from anywhere in the build): `generateConstants`, `checkConsta
 The `check` tasks are part of `./gradlew build`; the generated sources they guard are in `paletter/src/generated/java`.
 Golden files: `./gradlew :tools:test -PupdateGolden=true` after an intended change of generator output, then review.
 
-Other documents: [docs/DEVIATIONS.md](docs/DEVIATIONS.md) (migration notes of the generated encoders),
-[../data/bds/WIRE-NOTES.md](../data/bds/WIRE-NOTES.md) (what BDS sends), [../data/bds/CREATIVE-ORDER.md](../data/bds/CREATIVE-ORDER.md).
+Other documents: [../data/bds/WIRE-NOTES.md](../data/bds/WIRE-NOTES.md) (what BDS sends),
+[../data/bds/CREATIVE-ORDER.md](../data/bds/CREATIVE-ORDER.md).

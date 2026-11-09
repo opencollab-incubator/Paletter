@@ -1,160 +1,89 @@
 # Code generation
 
+Both generators write into `paletter/src/generated/java`; the matching `check` task (part of `build`) fails if the
+committed sources differ. After an intended change of generator output: `./gradlew :tools:test -PupdateGolden=true`,
+then review the golden diff.
+
 ## The component API
 
-`./gradlew :tools:generateComponentApi` writes Paletter's custom item and block component API and its encoders from the
-component model in `data/model`; `./gradlew :tools:checkComponentApi` (part of `check`) fails if the committed
-sources differ. Code: `org.geysermc.paletter.tools.codegen.component` in the `componentApi` source set, which needs neither
-paletter nor its sources, so it can regenerate them when they do not compile. Java is emitted with JavaPoet
-(`com.palantir.javapoet`, the maintained fork of square/javapoet; a codegen-only dependency).
+`./gradlew :tools:generateComponentApi` (check: `checkComponentApi`) writes the custom item and block component API and
+its encoders from `data/model`. Code: `tools.codegen.component`, in the `componentApi` source set, which needs neither
+paletter nor its sources, so it can regenerate them when they do not compile. Java is emitted with JavaPoet.
 
-Inputs (all in `data/model`):
-
-| File | Kind | What the generator takes from it |
+| Input (`data/model`) | Kind | Used for |
 |---|---|---|
-| `components.json` | generated from the creator docs | components, fields, JSON types, defaults, enums, ranges, docs text, minimum format versions, experiments, status |
-| `fixtures.json` | hand | `errata` (types and fields the docs omit; added to the documented ones), `probeOnly` and `skip` (left out) |
-| `bds-feedback.json` | generated from BDS's content log | required fields and ranges BDS enforces (they win over the docs), fields BDS does not know (left out) |
+| `components.json` | generated from the creator docs | components, fields, types, defaults, enums, ranges, docs text, format versions, experiments |
+| `fixtures.json` | hand | `errata` (what the docs omit), `probeOnly` and `skip` |
+| `bds-feedback.json` | generated from BDS's content log | required fields and ranges BDS enforces (they win over the docs), fields BDS does not know |
 | `mappings.json` | inferred from BDS captures | per component and protocol window: status, value form and field rules, `whenAbsent`, `constants` |
-| `transforms.json` | hand | fields (or whole components, path `""`) compiled by a named hand transform, with why |
-| `api.json` | hand | Java shaping only: class, field and type names, union resolution, value form fields, descriptors, `keyedExtras` (a map for the keys a keyed set leaves to the caller), open enums, `since` |
+| `transforms.json` | hand | fields or whole components (path `""`) compiled by a named hand transform, with why |
+| `api.json` | hand | Java shaping only: names, union resolution, value forms, descriptors, `keyedExtras`, open enums, `since` |
 
-Outputs: per generated component a record in `org.geysermc.paletter.item.component` / `block.component` (nested records
-for object types, merged when identical; enums; `Vec3`; builder; `of(...)` factories for value forms and shorthands;
-vanilla-constant overloads for descriptors), the sealed `ItemComponent` / `BlockComponent` / `BlockTrait`, and in
-`org.geysermc.paletter.internal.component` the encoders `ItemWire`, `BlockWire`, `TraitWire` and `ComponentIndex`.
-Hand-written there: the compile core (`ItemCompiler`, `BlockCompiler`, `TraitStates`, `WireNode`, `WireContext`,
-`Wire`, `Check`) and `Transforms`, whose public static methods are the transform names (camelCase); the generator reads
-them from its source and fails on a name transforms.json uses that it does not implement.
+Output: a record per component in `item.component` / `block.component` (nested records, enums, builder, `of(...)`
+factories, vanilla-constant overloads), the sealed `ItemComponent` / `BlockComponent` / `BlockTrait`, and the encoders
+`ItemWire`, `BlockWire`, `TraitWire`, `ComponentIndex` in `internal.component`. The compile core (`ItemCompiler`,
+`BlockCompiler`, `TraitStates`, `WireNode`, ...) and `Transforms` are hand-written; the transform names in
+`transforms.json` are `Transforms`' public static methods, which the generator reads from its source.
 
-Which components: those BDS sends (`sent`) or that only failed for want of a companion (`untestable`, e.g.
-`minecraft:geometry`). Server-only and rejected components are listed in the interfaces' javadoc instead. The
-descriptions' `menu_category` is generated as the standalone record `MenuCategory`; states, permutations and the
-description itself are the definition core (`CustomItem`, `CustomBlock`, `BlockProperty`).
-
-Rules of the generated code:
-
-- **Defaults** are the documented defaults (an object's default names its fields' defaults), unless BDS sends something
-  else when the field is omitted; such a field stays unset (nullable) and the encoder writes BDS's value. The javadoc
-  says which.
-- **Required** fields (docs or BDS) are checked by `build()`; a BDS-only requirement is dropped when BDS accepted the
-  omission. **Ranges** BDS reports win over documented ones; both are checked by the record constructor.
-- **Encoders** follow each window's rules (see `WireSource`): constants first; per field, set: its value rules
-  (identity, linear, table, affix, bitset, count) and the constants its presence switches on for leaves no other field
-  owns; unset: its `whenAbsent` leaves, never another field's. Lists of objects become element loops. Hand transforms
-  run after the generic fields of their record. A field with no rule in a window is dropped with a report warning when
-  set.
-- **Protocol windows**: each mapping in `mappings.json` holds for the protocols in its `protocols` (the captures with that
-  mapping); a different mapping starts `protocol<N>` (N: its first protocol) and is compared with the window before it.
-  The oldest window also holds below its capture, the newest above (a palette of a newer protocol gets an INFO report
-  entry, `ComponentIndex.NEWEST_CAPTURED_PROTOCOL`). A window whose status is not `sent` (the build rejects the component
-  or keeps it server only) makes the encoder leave the component out with a report warning; windows that encode the same
-  are one. Components with several windows dispatch on `ctx.protocol()`.
-- **Hand transforms per protocol**: a `transforms.json` entry may list `windows` (`{"until": 2225, "transform": "a"},
-  {"since": 2225, "transform": "b"}`: gap free, ending with the entry's own transform); the encoders dispatch on the protocol
-  before calling the transform. `collision_box` (x mirrored from 2225), the geometry of `embedded_visual` (no
-  `n_way_visual_rotation` before 2225) are windowed this way; `block_placer.block` resolves against the version's blocks.
-
-Generation fails, naming component and field, on: an unknown transform, two mappings for one protocol, name collisions
-(two components, a `java.lang` name, keywords, two nested types), two fields deciding one wire leaf, an object or list
-of objects without documented fields, an ambiguous union, value forms without fields, a rule at the wrong list depth.
-
-Tests: `ComponentGeneratorTest` (golden sources of a synthetic model covering every field kind, determinism with
-shuffled inputs, every failure message; `-PupdateGolden=true` rewrites `src/test/resources/component-golden`),
-`GeneratedApiTest` (the committed API: required fields, ranges, defaults equal the docs or are explained),
-`ComponentConformanceTest` (once per spec capture: every accepted variant, from the capture's own `variants.json`,
-rebuilt through the generated API for that protocol and compared with BDS's NBT; outcomes other than pass are committed
-per protocol in `data/model/conformance-known-<protocol>.txt`), `VanillaShapeOracleTest` (per bundled version: the NBT
-types of the compiled components against that version's own vanilla data driven items and blocks),
-`BundledVersionsCapturedTest` (every bundled version has a spec capture), `ComponentWindowsTest` and `WindowMergeTest`
-(the window logic on synthetic input), and in paletter
-`TransformsTest` (every hand transform) and `CustomContentTest` (the definition core, every bundled version).
-
-When a new BDS version changes the wire: `update` runs `spec-capture` and the inference itself and lists every leaf whose
-value differs from the previous capture (`SpecDiff`: variant, path, old and new value) as a wire change. A different
-mapping lands as a new protocol window; then `./gradlew :tools:generateComponentApi`, review (a changed hand transform needs
-a window in `transforms.json`), and run the conformance suite, which needs a `conformance-known-<protocol>.txt` for the new
-capture (`-PupdateGolden=true`, then write the reasons).
-## Wire shapes (change detection)
-
-There is no separate wire shape spec any more: the `update` pipeline reads the observed NBT paths and types of the add-on
-capture and of the vanilla data driven items and blocks (`WireShapes`), reports added, removed or retyped fields and
-components that are no longer sent as wire format changes (`Diff.shapes`), and checks that every captured path is a wire
-path of `data/model/mappings.json`. Paths the model does not cover yet are listed in `data/model/wire-gaps.txt`; `UpdateTest`
-fails when an entry became covered or a captured path is neither mapped nor listed.
-splits.
-
-## Vanilla constants
-
-`./gradlew :tools:generateConstants` writes `org.geysermc.paletter.vanilla.BedrockBlocks`, `BedrockStates`,
-`BedrockItems`, the enums in `org.geysermc.paletter.vanilla.state` and, while a preview is bundled,
-`BedrockPreviewBlocks` / `BedrockPreviewItems`; `./gradlew :tools:checkConstants` (part of `check`) fails if they, or
-the history, differ from what the committed inputs give. The generator's `update` pipeline runs the same code on the data
-it stages (see the README). Code: `org.geysermc.paletter.tools.codegen.constants`.
-
-Inputs:
-
-- the newest bundled **release** in `paletter/src/main/resources/paletter/versions.txt` (and the newest preview newer
-  than it, if any: its content the release lacks goes to the preview classes, which are not part of the history);
-- [`names.json`](names.json): names that differ from the default, and what removed content becomes;
-- [`constants-history.json`](constants-history.json): every constant generated so far, with `since` (the Paletter
-  version from the root `build.gradle.kts`, without `-SNAPSHOT`) and, once deprecated, `deprecated` plus `replacement`
-  (an alias) or `fallback`. Written by every generation; commit it with the classes.
+Generated components are those BDS sends or that only failed for want of a companion; server-only and rejected ones
+are listed in the interfaces' javadoc.
 
 Rules:
 
+- **Defaults** are the documented ones unless BDS sends something else for an omitted field; that field stays unset and
+  the encoder writes BDS's value.
+- **Required** fields and **ranges** (BDS's win over the docs) are checked by `build()` and the record constructor.
+- **Encoders** follow each window's rules (`WireSource`): constants, then per field its value rule (identity, linear,
+  table, affix, bitset, count) and the constants its presence switches on; unset fields write their `whenAbsent` leaves.
+  Hand transforms run after the generic fields. A field with no rule in a window is dropped with a report warning.
+- **Protocol windows**: each mapping holds for the protocols listed in `protocols`; a different mapping starts
+  `protocol<N>` and is compared with the window before it. The oldest window also holds below its capture, the newest
+  above (INFO entry, `ComponentIndex.NEWEST_CAPTURED_PROTOCOL`). A window whose status is not `sent` makes the encoder
+  leave the component out with a warning.
+- **Hand transforms per protocol**: a `transforms.json` entry may list `windows` (`{"until": 2225, "transform": "a"},
+  {"since": 2225, "transform": "b"}`, gap free, ending with the entry's own transform).
+
+Generation fails, naming component and field, on an unknown transform, two mappings for one protocol, name collisions,
+two fields deciding one wire leaf, an object without documented fields, an ambiguous union, or a rule at the wrong list
+depth.
+
+When a new BDS version changes the wire, `update` runs `spec-capture` and the inference and lists every differing leaf
+(`SpecDiff`) as a wire change. A different mapping lands as a new window; then regenerate, review (a changed hand
+transform needs a window), and write `conformance-known-<protocol>.txt` for the new capture (`-PupdateGolden=true`, then
+the reasons).
+
+## Vanilla constants
+
+`./gradlew :tools:generateConstants` (check: `checkConstants`) writes `BedrockBlocks`, `BedrockStates`, `BedrockItems`,
+the enums in `vanilla.state` and, while a preview is bundled, `BedrockPreviewBlocks` / `BedrockPreviewItems`. Code:
+`tools.codegen.constants`; `update` runs the same code on the data it stages.
+
+Inputs: the newest bundled release in `versions.txt` (and a newer preview, whose extra content goes to the preview
+classes); `names.json` (names that differ from the default, what removed content becomes);
+`constants-history.json` (every constant generated so far with `since`, and once deprecated `deprecated` plus
+`replacement` or `fallback`; written by every generation, commit it with the classes).
+
 - **Names**: UPPER_SNAKE of the identifier path (`minecraft:item.bed` -> `ITEM_BED`; other namespaces keep theirs as a
-  prefix), of the state name for states (`minecraft:cardinal_direction` -> `CARDINAL_DIRECTION`), enum values from their
-  string. Enums are named after the PascalCase of the first of their states, without a trailing direction
-  (`wall_connection_type_east` -> `WallConnectionType`). Generation **fails** on duplicates or names that are no Java
-  identifiers; `names.json` (`blocks`, `items`, `states`: identifier -> constant; `enums`: state -> enum) settles them.
-  Today: `minecraft:facing_direction` (string) is `MINECRAFT_FACING_DIRECTION` next to the integer `facing_direction`,
-  and three enums are named by hand.
-- **Types**: byte states with values 0/1 are `BoolState`, integer states `IntState` (`range` if contiguous), string
-  states `EnumState` of an enum shared by every state with the same value set. A state keeps its enum once it has one
-  (new values are appended to it), and a state that changes its kind fails generation.
-- **Arithmetic ids**: `internal.vanilla.BlockLayout` (shared with the runtime) checks every block of the release: its
-  states must be the full cartesian product of its values (properties sorted, values in order of first appearance), and
-  every state's offset from the block's first state must be `sum(value index * stride)`. Blocks that are not get a lookup
-  table at runtime; the generator prints them, writes the reason into the constant's javadoc, and the update report lists
-  them. For 26.60: 1480 blocks, none needs a table. Generation fails only if a block's states are not contiguous, are
-  duplicated or lack properties other states of the block have.
-- **Removed content**: a history entry the data no longer has stays as a deprecated constant. If its identifier still
-  exists under another constant name (a `names.json` change), or `names.json` `renamed` maps it to a new identifier, it
-  becomes an alias of that constant; otherwise it resolves to `names.json` `fallbacks` or `minecraft:unknown`. Removed
-  states and enum values stay deprecated as well. `deprecated` is set once, so later generations keep the version.
-- **New content** gets "Added in Paletter X." in its javadoc when the Paletter version is newer than the class (1.0.0).
-- **`@since` of a constant is a Bedrock version**: the first bundled release (`versions.txt`) that has the block or item
-  and does not offer it only through an experiment. Which content an experiment toggle adds in a release is read from the
-  BDS captures, `data/bds/<bds version>/experiments.json` (toggles with status `current`; `itemsAdded`,
-  `scriptItemsAdded`, `blocksAdded`, `dataDrivenBlocks`), assigned to the release of its protocol. Content only gated in
-  the first release that has it is `@since` the next release that does not gate it (26.40's poplar and wool slabs are
-  behind `y_2026_drop_3`, so they are `@since 26.50`); content that is gated everywhere is `@since` the first release
-  that has it. The javadoc says "Behind the experiment `x` in 26.40." for every gated release. The oldest bundled release
-  (26.40) cannot say whether something is older. The value is recorded as `bedrock` in the history and stays when a release
-  leaves the bundle; delete the `bedrock` entries to derive them again after a capture changed.
-- **Education Edition**: `data/bds/<bds version>/education.json`, written by `education-capture` (see below), lists the items
-  and blocks only a world with `educationFeaturesEnabled` has. Constants of them carry `@Education` and are created by
-  `VanillaTypes.educationItem` / `educationBlock`, so `BedrockItemType#isEducation()` / `BedrockBlockType#isEducation()`
-  answer at runtime. The history records `education: true`, which no later capture clears.
+  prefix), of the state name for states, enum values from their string. Enums are named after the PascalCase of their
+  first state without a trailing direction. Duplicates and non-identifiers fail; `names.json` settles them.
+- **Types**: byte states with values 0/1 are `BoolState`, integer states `IntState`, string states `EnumState` of an enum
+  shared by every state with the same value set. A state keeps its enum (new values are appended); a state that changes
+  its kind fails generation.
+- **Arithmetic ids**: `internal.vanilla.BlockLayout` (shared with the runtime) checks that a block's states are the full
+  cartesian product of its values and that each state's offset is `sum(value index * stride)`. Other blocks get a
+  lookup table at runtime; the generator prints them and writes the reason into the javadoc.
+- **Removed content** stays as a deprecated constant: an alias if its identifier exists under another constant or
+  `names.json` `renamed` maps it, otherwise it resolves to `names.json` `fallbacks` or `minecraft:unknown`. `deprecated`
+  is set once.
+- **`@since` is a Bedrock version**: the first bundled release that has the content and does not offer it only through
+  an experiment (toggles and their content come from `data/bds/<version>/experiments.json`). Content gated in the first
+  release that has it is `@since` the next one; the javadoc says "Behind the experiment `x` in 26.40." for gated
+  releases. The oldest bundled release cannot say whether something is older. The value is recorded as `bedrock` in the
+  history; delete those entries to derive them again after a capture changed.
+- **Education Edition**: `data/bds/<version>/education.json`, written by `education-capture`, lists content only an
+  education world has. Constants of them carry `@Education`, and `isEducation()` answers at runtime.
 
-### `education-capture`
-
-`./gradlew :tools:run --args="education-capture --version 1.26.63.1"` starts one world on that BDS (RakNet), once with
-`educationFeaturesEnabled` off and once on (a `level.dat` flag, read back to check BDS kept it), captures what BDS sends a
-client both times and writes the identifiers the education world adds to the item registry, the start game block
-properties and the creative inventory (and the blocks of those creative stacks) to `data/bds/<version>/education.json`.
-It fails if the two captures do not differ. The result is the same for 1.26.45.1, 1.26.52.3 and 1.26.63.1 (172 items, 164
-blocks: elements, chemistry items, hard glass, colored torches, ...). Limit: content that BDS offers to no creative
-inventory even with education on is not found.
-
-`ConstantsGoldenTest` runs the generator on a small synthetic bundle (bool, int and string states, a shared value set, a
-name collision settled by names, a lookup table block, a removed block, a rename, a removed item with a curated fallback,
-a preview-only block and item) and compares every output byte for byte with `src/test/resources/constants-golden`
-(after an intended change: `./gradlew :tools:test -PupdateGolden=true`, then review the diff). It also checks that
-generating twice, and with blocks, items and JSON keys shuffled, gives identical bytes, and the error message of every
-failure: broken data (non-contiguous, duplicate or incomplete states, mixed value kinds), invalid or colliding names,
-inconsistent history entries. `BlockLayoutTest` (paletter) covers stride derivation and the lookup table fallback.
-`ConstantsGeneratorTest` runs on the real bundle: reproducibility of the committed output, deprecation with a synthetic
-history, naming failures and previews, and compiles what it generates; `VanillaConstantsTest` (paletter) round-trips every block state of the release, compares 200k random `with()`
-chains with palette lookups and checks that `with()` does not allocate.
+`education-capture --version <bds version>` starts one world on that BDS with `educationFeaturesEnabled` off and on,
+captures what BDS sends a client both times, and writes the identifiers the education world adds (item registry, block
+properties, creative inventory). It fails if the captures do not differ. Content BDS offers to no creative inventory is
+not found.

@@ -40,7 +40,7 @@ import java.util.zip.GZIPInputStream;
 /**
  * Checks {@link CreativeOrdering#BDS} against a capture: the custom items and blocks BDS sent (with their menu
  * categories, item runtime ids and block ids, i.e. BDS's registration order) are compiled through Paletter as one
- * layer, and the resulting creative inventory must show exactly what BDS sent. See capture/CREATIVE-ORDER.md.
+ * layer, and the resulting creative inventory must show exactly what BDS sent. See data/bds/CREATIVE-ORDER.md.
  * <p>
  * Compared is what the client shows: per category, the groups and loose runs in order with their stacks (identifier
  * and damage). Two packet details are not compared, since they do not change what the client shows: BDS appends the

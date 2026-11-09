@@ -962,7 +962,7 @@ public final class Update {
     /** Add-on definitions BDS rejects (content log errors and warnings) against the committed list. */
     /**
      * Paletter's default creative ordering ({@code CreativeOrdering.BDS}) against what BDS sent for the add-on and the
-     * creative order probe (capture/CREATIVE-ORDER.md). A difference means BDS changed where it puts custom content.
+     * creative order probe (data/bds/CREATIVE-ORDER.md). A difference means BDS changed where it puts custom content.
      */
     private void creativeOrder(Runs runs) throws IOException {
         if (runs.existing == null) {
@@ -991,7 +991,7 @@ public final class Update {
                 result.differences().forEach(difference -> lines.add("- `" + difference.replace("`", "'") + "`"));
                 report.section("Creative order: " + capture[0], lines);
                 report.todos.add("Creative order: BDS changed where it puts custom items/blocks (" + capture[0] + "); see "
-                    + "capture/CREATIVE-ORDER.md, update CreativeOrdering.BDS and the committed probe captures");
+                    + "data/bds/CREATIVE-ORDER.md, update CreativeOrdering.BDS and the committed probe captures");
             }
         }
     }

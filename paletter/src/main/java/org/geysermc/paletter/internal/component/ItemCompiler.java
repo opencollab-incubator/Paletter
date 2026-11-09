@@ -28,7 +28,7 @@ public final class ItemCompiler {
                                                 @Nullable MenuCategory menu, @Nullable CreativePlacement creative,
                                                 @NonNull WireContext ctx) {
         WireNode out = new WireNode();
-        // What BDS 1.26.63.1 sends in item_properties for every custom item (capture/WIRE-NOTES.md, Common item shape)
+        // What BDS 1.26.63.1 sends in item_properties for every custom item (data/bds/WIRE-NOTES.md, Common item shape)
         WireNode p = out.child("item_properties");
         p.put("allow_off_hand", (byte) 0);
         p.put("can_destroy_in_creative", (byte) 1);

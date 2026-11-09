@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  * Generates the vanilla constants ({@code org.geysermc.paletter.vanilla.BedrockBlocks}, {@code BedrockStates},
  * {@code BedrockItems}, the state enums and, when a preview is bundled, {@code BedrockPreviewBlocks} /
  * {@code BedrockPreviewItems}) from the newest bundled release, {@code codegen/names.json} and
- * {@code codegen/constants-history.json}. See {@code codegen/README.md}.
+ * {@code data/model/constants-history.json}. See {@code tools/docs/codegen.md}.
  * <p>
  * Used by {@code :tools:generateConstants} / {@code checkConstants} ({@link Main}) and by the generator's
  * {@code update} pipeline.

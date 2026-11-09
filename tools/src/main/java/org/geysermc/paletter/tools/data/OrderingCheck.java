@@ -26,7 +26,7 @@ import java.util.Map;
  *     sequential: every creative stack's state (resolved through its hash) must sit at the sequential id BDS sent;</li>
  *     <li><b>custom block ids</b>: {@code vanilla_block_data.block_id} of custom blocks is 10000, 10001, ... in
  *     <i>descending</i> identifier order (BDS uses descending <i>file name</i> order; the capture add-on names each file
- *     after its block, capture/CREATIVE-ORDER.md), and a custom block's item has runtime id {@code 255 - block_id}.</li>
+ *     after its block, data/bds/CREATIVE-ORDER.md), and a custom block's item has runtime id {@code 255 - block_id}.</li>
  * </ul>
  */
 public final class OrderingCheck {

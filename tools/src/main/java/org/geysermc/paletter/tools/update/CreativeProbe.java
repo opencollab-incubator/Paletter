@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 
 /**
  * {@code creative-probe}: runs an add-on on its own copy of BDS and captures the creative inventory, once per server
- * start, to see where BDS puts custom content (see capture/CREATIVE-ORDER.md). Options: {@code --addon DIR} (with
+ * start, to see where BDS puts custom content (see data/bds/CREATIVE-ORDER.md). Options: {@code --addon DIR} (with
  * {@code behavior_pack}, optional {@code resource_pack}), {@code --out DIR}, {@code --version 1.26.63.1},
  * {@code --reference 26.60} (bundled version the capture resolves block hashes against), {@code --protocol 2225},
  * {@code --starts 2}, {@code --experiments a,b} (none by default), {@code --port 19290}, {@code --cache DIR}.
