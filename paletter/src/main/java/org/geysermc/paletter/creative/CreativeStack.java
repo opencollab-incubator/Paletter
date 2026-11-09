@@ -1,10 +1,11 @@
 package org.geysermc.paletter.creative;
 
+import org.geysermc.paletter.annotation.Internal;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.internal.block.BlockStates;
-import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.internal.item.ItemVariant;
 
 /**
  * A stack in the creative inventory, described by identifiers only. It is resolved against the item and block
@@ -36,6 +37,7 @@ public record CreativeStack(@NonNull String identifier, int damage, int count, @
         return new CreativeStack(identifier, 0, 1, null, null);
     }
 
+    @Internal
     public static @NonNull CreativeStack of(@NonNull ItemVariant variant) {
         return new CreativeStack(variant.identifier(), variant.damage(), 1, variant.blockState(), null);
     }
@@ -59,6 +61,7 @@ public record CreativeStack(@NonNull String identifier, int damage, int count, @
     /**
      * @return the item variant this stack represents (its NBT and count are not part of a variant)
      */
+    @Internal
     public @NonNull ItemVariant variant() {
         return new ItemVariant(identifier, damage, blockState);
     }

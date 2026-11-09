@@ -1,5 +1,7 @@
 package org.geysermc.paletter.item;
 
+import org.geysermc.paletter.annotation.Internal;
+import org.geysermc.paletter.internal.item.ItemVariant;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.creative.CreativePlacement;
@@ -82,6 +84,7 @@ public record CustomItem(@NonNull String identifier, @NonNull List<ItemComponent
         return BedrockItemType.of(this);
     }
 
+    @Internal
     public @NonNull ItemVariant variant() {
         return ItemVariant.of(identifier);
     }

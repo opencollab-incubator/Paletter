@@ -48,13 +48,12 @@ public interface ItemMatcher {
     }
 
     /**
-     * Matches the stacks of a variant: its item, damage and, if it has one, block state.
+     * Matches the stacks of a variant: its item and aux value.
      *
      * @since 1.0.0
      */
     static @NonNull ItemMatcher of(@NonNull BedrockItemVariant variant) {
-        ItemMatcher matcher = new Id(variant.type().identifier()).and(new Damage(variant.damage()));
-        return variant.blockState() == null ? matcher : matcher.and(new BlockState(variant.blockState().toNbt()));
+        return new Id(variant.type().identifier()).and(new Damage(variant.aux()));
     }
 
     static @NonNull ItemMatcher damage(int damage) {

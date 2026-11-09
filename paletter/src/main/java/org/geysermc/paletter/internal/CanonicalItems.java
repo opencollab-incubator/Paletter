@@ -4,19 +4,16 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.PaletteException;
-import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.internal.item.ItemVariant;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.internal.data.Renames;
-import org.geysermc.paletter.creative.CreativeLayout;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +30,8 @@ import java.util.WeakHashMap;
  * </ol>
  * Custom items and custom block items of layers are appended per lineage of layers, like custom block states.
  * <p>
- * A creative block state that is the item's default block (its first creative block state, which is what it is sent
- * with without one) is not a variant of its own; {@link #index(ItemVariant)} treats both spellings alike.
+ * A variant is an identifier and an aux value; the block state of a stack is not part of it, so creative stacks that
+ * differ only by block state are one variant. [@link #index(ItemVariant)] ignores the block state of a variant.
  *
  * @since 1.0.0
  */
@@ -45,13 +42,11 @@ public final class CanonicalItems {
     private final ItemVariant[] variants;
     private final BedrockItemVariant[] handles;
     private final Object2IntMap<ItemVariant> index;
-    private final Map<String, NbtMap> defaultStates;
     private final Map<Object, CanonicalItems> extensions = new WeakHashMap<>();
     private final Renames renames;
     private final String version;
 
-    private CanonicalItems(@Nullable CanonicalItems parent, List<ItemVariant> variants, Map<String, NbtMap> defaultStates,
-                           Renames renames, String version) {
+    private CanonicalItems(@Nullable CanonicalItems parent, List<ItemVariant> variants, Renames renames, String version) {
         this.parent = parent;
         this.root = parent == null ? this : parent.root;
         this.renames = renames;
@@ -59,7 +54,6 @@ public final class CanonicalItems {
         this.offset = parent == null ? 0 : parent.size();
         this.variants = variants.toArray(ItemVariant[]::new);
         this.handles = new BedrockItemVariant[this.variants.length];
-        this.defaultStates = Map.copyOf(defaultStates);
         Object2IntOpenHashMap<ItemVariant> index = new Object2IntOpenHashMap<>(variants.size());
         index.defaultReturnValue(-1);
         for (int i = 0; i < this.variants.length; i++) {
@@ -84,31 +78,18 @@ public final class CanonicalItems {
      */
     @Internal
     public static @NonNull CanonicalItems of(@NonNull VanillaData newest, @NonNull Renames renames) {
-        Map<String, NbtMap> defaultStates = new HashMap<>();
         Set<ItemVariant> variants = new LinkedHashSet<>();
         List<VanillaItem> items = new ArrayList<>(newest.items());
         items.sort(Comparator.comparingInt(VanillaItem::runtimeId));
         for (VanillaItem item : items) {
             variants.add(ItemVariant.of(item.identifier()));
         }
-        CreativeLayout creative = newest.creative();
-        creative.forEachStack(stack -> {
-            if (stack.blockState() != null) {
-                defaultStates.putIfAbsent(stack.identifier(), stack.blockState());
-            }
-        });
-        creative.forEachStack(stack -> {
-            ItemVariant variant = normalize(stack.variant(), defaultStates);
-            variants.add(variant);
-        });
-        return new CanonicalItems(null, List.copyOf(variants), defaultStates, renames, newest.version().toString());
+        newest.creative().forEachStack(stack -> variants.add(normalize(stack.variant())));
+        return new CanonicalItems(null, List.copyOf(variants), renames, newest.version().toString());
     }
 
-    private static ItemVariant normalize(ItemVariant variant, Map<String, NbtMap> defaultStates) {
-        if (variant.blockState() != null && variant.blockState().equals(defaultStates.get(variant.identifier()))) {
-            return variant.withBlockState(null);
-        }
-        return variant;
+    private static ItemVariant normalize(ItemVariant variant) {
+        return variant.blockState() == null ? variant : variant.withBlockState(null);
     }
 
     /**
@@ -125,10 +106,9 @@ public final class CanonicalItems {
         synchronized (extensions) {
             CanonicalItems existing = extensions.get(key);
             if (existing == null) {
-                Map<String, NbtMap> defaults = root().defaultStates;
                 Set<ItemVariant> variants = new LinkedHashSet<>();
                 for (ItemVariant variant : additional) {
-                    ItemVariant normalized = normalize(variant, defaults);
+                    ItemVariant normalized = normalize(variant);
                     if (lookup(normalized) == -1) {
                         variants.add(normalized);
                     }
@@ -136,7 +116,7 @@ public final class CanonicalItems {
                 if (variants.isEmpty()) {
                     return this;
                 }
-                existing = new CanonicalItems(this, List.copyOf(variants), Map.of(), renames, version);
+                existing = new CanonicalItems(this, List.copyOf(variants), renames, version);
                 extensions.put(key, existing);
             }
             return existing;
@@ -158,30 +138,20 @@ public final class CanonicalItems {
     }
 
     /**
-     * @return the canonical id of a variant, or -1 if it is not one. A block state equal to the item's default is
-     * ignored
+     * @return@return the canonical id of a variant, or -1 if it is not one. A block state is ignored
      */
     public int index(@NonNull ItemVariant variant) {
-        int found = lookup(variant);
-        if (found == -1 && variant.blockState() != null) {
-            ItemVariant normalized = normalize(variant, root().defaultStates);
-            if (normalized != variant) {
-                found = lookup(normalized);
-            }
-        }
-        return found;
+        return lookup(normalize(variant));
     }
 
     /**
-     * Maps a variant of <em>any</em> bundled version to the canonical ids, which the newest version defines. The
-     * block states of variants are mapped like {@link CanonicalBlocks#forward}; an item Bedrock renamed is looked up
-     * under its new identifier. A variant the newest version does not have (the item is gone, or has no such damage
-     * value or block state) is {@link Forwarding.Kind#UNKNOWN} with the reason.
+     * Maps a variant of <em>any</em> bundled version to the canonical ids, which the newest version defines. Items Bedrock renamed or
+     * split are looked up under their new identifier and aux. A variant the newest version does not have (the item is gone,
+     * or has no such aux value) is {@link Forwarding.Kind#UNKNOWN} with the reason.
      *
-     * @param blocks the canonical blocks to map block states with
      * @since 1.0.0
      */
-    public @NonNull Forwarding forward(@NonNull ItemVariant variant, @NonNull CanonicalBlocks blocks) {
+    public @NonNull Forwarding forward(@NonNull ItemVariant variant) {
         int exact = index(variant);
         if (exact != -1) {
             return new Forwarding(exact, Forwarding.Kind.EXACT, "");
@@ -207,21 +177,9 @@ public final class CanonicalItems {
             kind = Forwarding.Kind.RENAMED;
             detail.add("renamed to " + renamed);
         }
-        if (mapped.blockState() != null) {
-            Forwarding block = blocks.forward(mapped.blockState());
-            if (!block.known()) {
-                return Forwarding.unknown("block state of " + variant + ": " + block.detail());
-            }
-            if (block.kind() != Forwarding.Kind.EXACT) {
-                detail.add("block state: " + block.detail());
-            }
-            mapped = mapped.withBlockState(blocks.state(block.canonical()));
-        }
         int found = index(mapped);
         if (found == -1) {
-            return Forwarding.unknown("item " + mapped.identifier() + " exists in " + version + ", but has no variant with "
-                + (mapped.blockState() != null ? "block state " + mapped.blockState().getCompound("states") + " and " : "")
-                + "damage " + mapped.damage());
+            return Forwarding.unknown("item " + mapped.identifier() + " exists in " + version + ", but has no variant with aux " + mapped.damage());
         }
         return new Forwarding(found, kind, String.join("; ", detail));
     }
@@ -246,10 +204,9 @@ public final class CanonicalItems {
     }
 
     /**
-     * @param blocks the canonical blocks of the same layers, for variants with a block state
      * @return the handle of a canonical id, or null if there is no such id. Handles of custom content are created once
      */
-    public @Nullable BedrockItemVariant handle(int canonical, @NonNull CanonicalBlocks blocks) {
+    public @Nullable BedrockItemVariant handle(int canonical) {
         if (canonical < 0 || canonical >= size()) {
             return null;
         }
@@ -260,7 +217,7 @@ public final class CanonicalItems {
         int local = canonical - current.offset;
         BedrockItemVariant handle = current.handles[local];
         if (handle == null) {
-            handle = BedrockItemVariant.fromCanonical(this, blocks, canonical);
+            handle = BedrockItemVariant.fromCanonical(this, canonical);
             current.handles[local] = handle;
         }
         return handle;

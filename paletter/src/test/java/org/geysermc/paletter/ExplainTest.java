@@ -3,7 +3,7 @@ package org.geysermc.paletter;
 import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.BlockResolution;
 import org.geysermc.paletter.internal.block.BlockStates;
-import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.internal.item.ItemVariant;
 import org.geysermc.paletter.vanilla.BedrockItems;
 import org.junit.jupiter.api.Test;
 
@@ -63,11 +63,11 @@ class ExplainTest {
         assertNull(apple.block());
         assertNotNull(apple.creative());
 
-        ItemExplanation stone = palette.explain(ItemVariant.of("minecraft:stone"));
+        ItemExplanation stone = palette.explain("minecraft:stone", 0);
         assertNotNull(stone.block());
         assertTrue(stone.toString().contains("block:"), stone.toString());
 
-        ItemExplanation unknown = palette.explain(ItemVariant.of("minecraft:potion", 9999));
+        ItemExplanation unknown = palette.explain("minecraft:potion", 9999);
         assertNull(unknown.handle());
         assertNull(unknown.creative());
         assertTrue(unknown.toString().contains("not in the creative inventory"), unknown.toString());

@@ -12,6 +12,7 @@ import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.component.DisplayName;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.MaxStackSize;
+import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItems;
@@ -49,10 +50,10 @@ public final class BedrockServerExample {
         System.out.println("stone: runtime id " + palette.runtimeId(stone));
 
         // Items: handle -> stack for the client, and back
-        ItemData stack = palette.item(ruby.type()).toItemData().count(3).build();
-        System.out.println("match(ruby stack) is ruby: " + (palette.match(stack) == ruby.type().base()));
-        ItemData apple = palette.item(BedrockItems.APPLE).toItemData().build();
-        System.out.println("match(apple) = " + palette.match(apple));
+        ItemData stack = palette.encode(BedrockItemStack.of(ruby.type().base(), 3));
+        System.out.println("decode(ruby stack) is ruby: " + (palette.decode(stack).variant() == ruby.type().base()));
+        ItemData apple = palette.encode(BedrockItemStack.of(BedrockItems.APPLE));
+        System.out.println("decode(apple) = " + palette.decode(apple));
 
         // Debugging: why does this id look the way it does?
         System.out.println(palette.explain(BedrockBlocks.STONE.defaultState()));

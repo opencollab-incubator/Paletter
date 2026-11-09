@@ -1,5 +1,6 @@
 package org.geysermc.paletter.item;
 
+import org.geysermc.paletter.internal.item.ResolvedItem;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.geysermc.paletter.Ids;
 import org.geysermc.paletter.Origin;

@@ -1,5 +1,7 @@
 package org.geysermc.paletter;
 
+import org.geysermc.paletter.item.BedrockItemStack;
+import org.geysermc.paletter.internal.item.ResolvedItem;
 import com.sun.management.ThreadMXBean;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.BlockProperty;
@@ -8,8 +10,7 @@ import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.CustomItem;
-import org.geysermc.paletter.item.ItemVariant;
-import org.geysermc.paletter.item.ResolvedItem;
+import org.geysermc.paletter.internal.item.ItemVariant;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockBlockType;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
@@ -53,13 +54,13 @@ class HandleTest {
 
     @Test
     void itemsResolveToHandles() {
-        BedrockItemVariant apple = PALETTER.item(ItemVariant.of("minecraft:apple"));
+        BedrockItemVariant apple = PALETTER.item("minecraft:apple", 0);
         assertSame(BedrockItems.APPLE.base(), apple);
-        BedrockItemVariant potion = PALETTER.item(ItemVariant.of("minecraft:potion", 5));
+        BedrockItemVariant potion = PALETTER.item("minecraft:potion", 5);
         assertSame(BedrockItems.POTION.variant(5), potion);
-        assertNull(PALETTER.item(ItemVariant.of("minecraft:potion", 9999)));
-        assertNotNull(PALETTER.explainUnknown(ItemVariant.of("minecraft:potion", 9999)));
-        assertNull(PALETTER.item(ItemVariant.of("minecraft:not_an_item")));
+        assertNull(PALETTER.item("minecraft:potion", 9999));
+        assertNotNull(PALETTER.explainUnknown("minecraft:potion", 9999));
+        assertNull(PALETTER.item("minecraft:not_an_item", 0));
     }
 
     @Test
@@ -72,28 +73,30 @@ class HandleTest {
             assertSame(state, palette.block(state.toNbt()));
         }
         assertNull(PALETTER.block(type.defaultState().toNbt()));
-        BedrockItemVariant handle = palette.item(ItemVariant.of("example:ruby"));
+        BedrockItemVariant handle = palette.item("example:ruby", 0);
         assertNotNull(handle);
         assertEquals(ruby.type().base(), handle);
-        assertSame(handle, palette.item(ItemVariant.of("example:ruby")), "custom handles are created once");
+        assertSame(handle, palette.item("example:ruby", 0), "custom handles are created once");
         assertNotNull(palette.item(handle));
         assertTrue(palette.itemVariants().contains(handle));
         assertTrue(palette.itemVariants().contains(BedrockItems.APPLE.base()));
-        assertNull(PALETTER.item(ItemVariant.of("example:ruby")));
+        assertNull(PALETTER.item("example:ruby", 0));
     }
 
     @Test
-    void matchReturnsTheHandle() {
+    void decodeReturnsTheStack() {
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
-        ResolvedItem apple = palette.item(BedrockItems.APPLE);
-        assertNotNull(apple);
-        assertSame(BedrockItems.APPLE.base(), palette.match(apple.toItemData().build()));
-        assertNull(palette.match(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData.AIR));
+        var apple = palette.encode(BedrockItemStack.of(BedrockItems.APPLE.base(), 3));
+        BedrockItemStack decoded = palette.decode(apple);
+        assertNotNull(decoded);
+        assertSame(BedrockItems.APPLE.base(), decoded.variant());
+        assertEquals(3, decoded.count());
+        assertNull(palette.decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData.AIR));
     }
 
     @Test
     void blockOfIsAHandle() {
-        BedrockBlockState sign = PALETTER.blockOf(ItemVariant.of("minecraft:acacia_sign"));
+        BedrockBlockState sign = PALETTER.blockOf(BedrockItemVariant.of("minecraft:acacia_sign", 0));
         assertNotNull(sign);
         assertSame(sign, PALETTER.block(sign.toNbt()));
     }

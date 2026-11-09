@@ -1,5 +1,6 @@
 package org.geysermc.paletter;
 
+import org.geysermc.paletter.internal.item.ResolvedItem;
 import org.geysermc.paletter.internal.Forwarding;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -14,9 +15,8 @@ import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
-import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.internal.item.ItemVariant;
 import org.geysermc.paletter.item.RegisteredItem;
-import org.geysermc.paletter.item.ResolvedItem;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -230,17 +230,13 @@ class CanonicalTest {
     @Test
     void layersAddCanonicalVariants() {
         Palette latest = PALETTER.vanilla(PALETTER.latest());
-        RegisteredBlockState log = latest.blocks().states("minecraft:oak_log").stream()
-            .filter(state -> state != latest.items().defaultBlock(latest.items().getDefinition("minecraft:oak_log")))
-            .findFirst().orElseThrow();
         ItemVariant apple3 = ItemVariant.of("minecraft:apple", 3);
-        ItemVariant sidewaysLog = new ItemVariant("minecraft:oak_log", 0, log.getState());
         assertEquals(-1, Ids.item(PALETTER, apple3));
-        assertEquals(-1, Ids.item(PALETTER, sidewaysLog));
+        // A block state is not part of a variant: stacks of one block item are one variant
+        assertEquals(Ids.item(PALETTER, ItemVariant.of("minecraft:oak_log")), Ids.item(PALETTER, new ItemVariant("minecraft:oak_log", 0, latest.blocks().states("minecraft:oak_log").getLast().getState())));
         PaletteLayer layer = PaletteLayer.builder("variants")
             .variant(apple3)
             .variant(ItemVariant.of("minecraft:apple"))     // already canonical: keeps its id, nothing appended
-            .variant(sidewaysLog)
             .variant(apple3)                                // duplicates are ignored
             .build();
 
@@ -248,9 +244,8 @@ class CanonicalTest {
         for (BlockNetworkIds mode : BlockNetworkIds.values()) {
             for (DataVersion version : PALETTER.versions()) {
                 Palette palette = PALETTER.palette(version.protocolVersion(), mode, layer);
-                assertEquals(vanilla + 2, Ids.itemCount(palette));
+                assertEquals(vanilla + 1, Ids.itemCount(palette));
                 assertEquals(vanilla, Ids.item(palette, apple3), "stable across versions and modes");
-                assertEquals(vanilla + 1, Ids.item(palette, sidewaysLog));
                 assertEquals(Ids.item(PALETTER, ItemVariant.of("minecraft:apple")), Ids.item(palette, ItemVariant.of("minecraft:apple")));
 
                 RegisteredItem apple = palette.items().getDefinition("minecraft:apple");
@@ -259,12 +254,6 @@ class CanonicalTest {
                 assertEquals(Ids.item(PALETTER, ItemVariant.of("minecraft:apple")),
                     Ids.match(palette, ItemData.builder().definition(apple).damage(4).count(1).build()));
 
-                // Block state variants are told apart by the block the client sends
-                ResolvedItem logItem = Ids.itemAt(palette, vanilla + 1);
-                assertEquals(log.getState(), logItem.block().getState(), version.toString());
-                assertEquals(vanilla + 1, Ids.match(palette, logItem.toItemData().build()));
-                int baseLog = Ids.item(PALETTER, ItemVariant.of("minecraft:oak_log"));
-                assertEquals(baseLog, Ids.match(palette, Ids.itemAt(palette, baseLog).toItemData().build()));
             }
         }
     }

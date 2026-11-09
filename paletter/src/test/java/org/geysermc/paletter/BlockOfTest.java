@@ -1,10 +1,13 @@
 package org.geysermc.paletter;
 
+import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
+import org.geysermc.paletter.item.BedrockItemStack;
+import org.geysermc.paletter.vanilla.BedrockItemVariant;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.data.DataVersion;
-import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.internal.item.ItemVariant;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.junit.jupiter.api.Test;
 
@@ -41,31 +44,31 @@ class BlockOfTest {
             assertEquals("minecraft:carrots", block(palette, "minecraft:carrot"));
             // a slab item places the slab, never the double slab
             assertEquals("minecraft:acacia_slab", block(palette, "minecraft:acacia_slab"));
-            assertNull(palette.blockOf(ItemVariant.of("minecraft:acacia_double_slab")));
+            assertNull(palette.blockOf(BedrockItemVariant.of("minecraft:acacia_double_slab", 0)));
             // items that place nothing
-            assertNull(palette.blockOf(ItemVariant.of("minecraft:stick")));
-            assertNull(palette.blockOf(ItemVariant.of("minecraft:diamond_sword")));
+            assertNull(palette.blockOf(BedrockItemVariant.of("minecraft:stick", 0)));
+            assertNull(palette.blockOf(BedrockItemVariant.of("minecraft:diamond_sword", 0)));
         }
     }
 
     @Test
-    void aBlockStateOfTheVariantWins() {
+    void aBlockStateOfTheStackWins() {
         Palette palette = paletter.vanilla(paletter.latest());
-        RegisteredBlockState log = palette.blockOf(ItemVariant.of("minecraft:oak_log"));
+        RegisteredBlockState log = palette.blockOf(BedrockItemVariant.of("minecraft:oak_log", 0));
         assertNotNull(log);
-        RegisteredBlockState sideways = palette.blockOf(ItemVariant.of("minecraft:oak_log")
-            .withBlockState(BlockStates.of("minecraft:oak_log", Map.of("pillar_axis", "x"))));
-        assertNotNull(sideways);
-        assertEquals("x", sideways.states().getString("pillar_axis"));
+        BedrockBlockState sideways = paletter.block(BlockStates.of("minecraft:oak_log", Map.of("pillar_axis", "x")));
+        ItemData data = palette.encode(BedrockItemStack.of(BedrockItemVariant.of("minecraft:oak_log", 0)).withBlockState(sideways));
+        assertNotNull(data.getBlockDefinition());
+        assertEquals("x", palette.blocks().byRuntimeId(data.getBlockDefinition().getRuntimeId()).states().getString("pillar_axis"));
     }
 
     @Test
     void blockOfIsVersionIndependent() {
-        BedrockBlockState block = paletter.blockOf(ItemVariant.of("minecraft:acacia_sign"));
+        BedrockBlockState block = paletter.blockOf(BedrockItemVariant.of("minecraft:acacia_sign", 0));
         assertNotNull(block);
         assertEquals("minecraft:acacia_standing_sign", block.type().identifier());
-        assertNull(paletter.blockOf(ItemVariant.of("minecraft:stick")));
-        assertNull(paletter.blockOf(ItemVariant.of("minecraft:not_an_item")));
+        assertNull(paletter.blockOf(BedrockItemVariant.of("minecraft:stick", 0)));
+        assertNull(paletter.blockOf(BedrockItemVariant.of("minecraft:not_an_item", 0)));
     }
 
     /**
@@ -86,7 +89,7 @@ class BlockOfTest {
                         creative.add(stack.blockState());
                     }
                 });
-                RegisteredBlockState block = palette.blockOf(ItemVariant.of(id));
+                RegisteredBlockState block = palette.blockOf(BedrockItemVariant.of(id, 0));
                 assertNotNull(block, version + " " + id);
                 NbtMap expected = creative.isEmpty() ? palette.blocks().defaultState(id).getState() : creative.getFirst();
                 assertEquals(BlockStates.normalize(expected), BlockStates.normalize(block.getState()), version + " " + id);
@@ -95,7 +98,7 @@ class BlockOfTest {
     }
 
     private static String block(Palette palette, String item) {
-        RegisteredBlockState block = palette.blockOf(ItemVariant.of(item));
+        RegisteredBlockState block = palette.blockOf(BedrockItemVariant.of(item, 0));
         return block == null ? null : block.identifier();
     }
 }

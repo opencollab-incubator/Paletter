@@ -12,10 +12,10 @@ import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.CustomItem;
-import org.geysermc.paletter.item.ItemVariant;
 import org.geysermc.paletter.item.component.DisplayName;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
 
@@ -63,12 +63,12 @@ public final class TranslatorExample {
         // Items, both directions: handle <-> the translator's own item table
         Map<BedrockItemVariant, String> bedrockToJava = new HashMap<>();
         bedrockToJava.put(ruby.type().base(), "java:ruby");
-        ItemData toClient = shared.item(ruby.type()).toItemData().count(2).build();
-        System.out.println("from client: " + bedrockToJava.get(shared.match(toClient)));
+        ItemData toClient = shared.encode(BedrockItemStack.of(ruby.type().base(), 2));
+        System.out.println("from client: " + bedrockToJava.get(shared.decode(toClient).variant()));
 
         // A session: a short lived layer on top of the shared palette; what it does not touch stays identical
         Palette session = shared.extend(PaletteLayer.builder("session")
-            .variant(ItemVariant.of("minecraft:potion", 9999)).build());
+            .variant(BedrockItemVariant.of("minecraft:potion", 9999)).build());
         System.out.println("session shares the block palette: " + (session.blocks() == shared.blocks()));
         System.out.println("session adds item ids: " + (session.itemVariants().size() - shared.itemVariants().size()));
     }

@@ -8,7 +8,7 @@ import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataSource;
 import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.internal.data.VanillaData;
-import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.internal.item.ItemVariant;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -80,7 +80,7 @@ class ForwardTest {
         assertTrue(forwarding.detail().contains("minecraft:removed_in_a_later_version"));
         assertEquals(forwarding.detail(), paletter.explainUnknown(gone));
         assertNull(paletter.explainUnknown(BlockStates.of("minecraft:air")));
-        assertNotNull(paletter.explainUnknown(ItemVariant.of("minecraft:removed_in_a_later_version")));
+        assertNotNull(paletter.explainUnknown("minecraft:removed_in_a_later_version", 0));
     }
 
     @Test
@@ -93,7 +93,7 @@ class ForwardTest {
                 int id = Ids.item(paletter, variant);
                 if (id == -1) {
                     // only variants of the newest version are allowed to be unknown (creative changed): say why
-                    assertNotNull(paletter.explainUnknown(variant), variant.toString());
+                    assertNotNull(paletter.explainUnknown(variant.identifier(), variant.damage()), variant.toString());
                 }
             });
         }

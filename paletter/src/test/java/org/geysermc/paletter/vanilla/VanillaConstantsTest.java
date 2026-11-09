@@ -1,5 +1,7 @@
 package org.geysermc.paletter.vanilla;
 
+import org.geysermc.paletter.item.BedrockItemStack;
+import org.geysermc.paletter.internal.item.ResolvedItem;
 import org.geysermc.paletter.Ids;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.Fallbacks;
@@ -16,8 +18,7 @@ import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.creative.CreativeStack;
 import org.geysermc.paletter.creative.ItemMatcher;
 import org.geysermc.paletter.item.CustomItem;
-import org.geysermc.paletter.item.ItemVariant;
-import org.geysermc.paletter.item.ResolvedItem;
+import org.geysermc.paletter.internal.item.ItemVariant;
 import org.geysermc.paletter.vanilla.state.CardinalDirection;
 import org.geysermc.paletter.vanilla.state.PillarAxis;
 import org.junit.jupiter.api.Test;
@@ -171,13 +172,12 @@ class VanillaConstantsTest {
         assertSame(BedrockItems.APPLE, BedrockItemType.vanilla("minecraft:apple"));
 
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
-        ResolvedItem apple = palette.item(BedrockItems.APPLE);
-        assertEquals("minecraft:apple", apple.definition().getIdentifier());
-        assertEquals(5, palette.item(BedrockItems.POTION.variant(5)).damage());
-        assertNull(palette.item(BedrockItems.POTION.variantOf(9999)));
-        // A layer gives the variant an id
+        assertEquals("minecraft:apple", palette.item(BedrockItems.APPLE).getIdentifier());
+        assertEquals(5, palette.encode(BedrockItemStack.of(BedrockItems.POTION.variant(5))).getDamage());
+        // Any aux value encodes; only variants with an id are recognized when decoding
+        assertEquals(9999, palette.encode(BedrockItemStack.of(BedrockItems.POTION.variantOf(9999))).getDamage());
         Palette withVariant = palette.extend(PaletteLayer.builder("variant").variant(BedrockItems.POTION.variantOf(9999)).build());
-        assertNotNull(withVariant.item(BedrockItems.POTION.variantOf(9999)));
+        assertEquals(9999, withVariant.decode(withVariant.encode(BedrockItemStack.of(BedrockItems.POTION.variantOf(9999)))).variant().aux());
         assertTrue(ItemMatcher.of(BedrockItems.POTION.variant(5)).matches(new CreativeStack("minecraft:potion", 5, 1, null, null)));
         assertFalse(ItemMatcher.of(BedrockItems.POTION.variant(5)).matches(new CreativeStack("minecraft:potion", 6, 1, null, null)));
     }
@@ -274,7 +274,7 @@ class VanillaConstantsTest {
         assertThrows(IllegalArgumentException.class, () -> vanilla.runtimeId(east));
 
         assertEquals(Ids.item(palette, ItemVariant.of("example:ruby")), Ids.item(palette, ruby.type()));
-        assertEquals("example:ruby", palette.item(ruby.type()).definition().getIdentifier());
+        assertEquals("example:ruby", palette.item(ruby.type()).getIdentifier());
         assertEquals(Ids.item(palette, ItemVariant.of("example:lamp")), Ids.item(palette, lamp.itemType()));
         assertEquals(BlockFallback.of("minecraft:dirt"), BlockFallback.of(BedrockBlocks.DIRT));
     }

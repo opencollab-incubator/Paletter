@@ -1,9 +1,10 @@
-package org.geysermc.paletter.item;
+package org.geysermc.paletter.internal.item;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.geysermc.paletter.block.RegisteredBlockState;
+import org.geysermc.paletter.item.RegisteredItem;
 
 /**
  * An {@link ItemVariant} resolved against one palette: what to send to the client.

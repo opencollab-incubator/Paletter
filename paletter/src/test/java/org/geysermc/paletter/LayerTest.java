@@ -1,5 +1,6 @@
 package org.geysermc.paletter;
 
+import org.geysermc.paletter.internal.item.ResolvedItem;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemData;
@@ -25,9 +26,8 @@ import org.geysermc.paletter.item.component.DisplayName;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.MaxStackSize;
 import org.geysermc.paletter.item.ItemFallback;
-import org.geysermc.paletter.item.ItemVariant;
+import org.geysermc.paletter.internal.item.ItemVariant;
 import org.geysermc.paletter.item.RegisteredItem;
-import org.geysermc.paletter.item.ResolvedItem;
 import org.geysermc.paletter.item.component.ThrowableItem;
 import org.junit.jupiter.api.Test;
 

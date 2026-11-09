@@ -1,5 +1,6 @@
 package org.geysermc.paletter;
 
+import org.geysermc.paletter.internal.item.ResolvedItem;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.geysermc.paletter.block.RegisteredBlockState;
@@ -7,8 +8,7 @@ import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.internal.Canonicals;
 import org.geysermc.paletter.internal.Forwarding;
-import org.geysermc.paletter.item.ItemVariant;
-import org.geysermc.paletter.item.ResolvedItem;
+import org.geysermc.paletter.internal.item.ItemVariant;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
@@ -70,11 +70,11 @@ public final class Ids {
     }
 
     public static int item(Paletter p, ItemVariant variant) {
-        return Canonicals.item(canonicalItems(p), canonicalBlocks(p), variant);
+        return Canonicals.item(canonicalItems(p), variant);
     }
 
     public static int item(Palette p, ItemVariant variant) {
-        return Canonicals.item(canonicalItems(p), canonicalBlocks(p), variant);
+        return Canonicals.item(canonicalItems(p), variant);
     }
 
     public static int item(Paletter p, BedrockItemType type) {
@@ -94,7 +94,7 @@ public final class Ids {
     }
 
     public static int blockOf(Paletter p, ItemVariant variant) {
-        BedrockBlockState block = p.blockOf(variant);
+        BedrockBlockState block = p.blockOf(BedrockItemVariant.of(variant.identifier(), variant.damage()));
         return block == null ? -1 : block(p, block);
     }
 
@@ -107,11 +107,11 @@ public final class Ids {
     }
 
     public static Forwarding forwardItem(Paletter p, ItemVariant variant) {
-        return Canonicals.forwardItem(canonicalItems(p), canonicalBlocks(p), variant);
+        return Canonicals.forwardItem(canonicalItems(p), variant);
     }
 
     public static Forwarding forwardItem(Palette p, ItemVariant variant) {
-        return Canonicals.forwardItem(canonicalItems(p), canonicalBlocks(p), variant);
+        return Canonicals.forwardItem(canonicalItems(p), variant);
     }
 
     public static int runtimeId(Palette p, int canonical) {

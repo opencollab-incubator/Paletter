@@ -25,8 +25,10 @@ import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.item.ItemRegistry;
-import org.geysermc.paletter.item.ItemVariant;
-import org.geysermc.paletter.item.ResolvedItem;
+import org.geysermc.paletter.internal.item.ItemVariant;
+import org.geysermc.paletter.internal.item.ResolvedItem;
+import org.geysermc.paletter.item.BedrockItemStack;
+import org.geysermc.paletter.item.RegisteredItem;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
@@ -50,9 +52,9 @@ import java.util.WeakHashMap;
  * session.sendPacket(palette.creativeContentPacket());
  * }</pre>
  * Translating content uses handles, version independent and interned objects ({@link BedrockBlockState},
- * {@link BedrockItemVariant}): {@link #block(NbtMap)} and {@link #item(ItemVariant)} find them once, then
+ * {@link BedrockItemVariant}): {@link #block(NbtMap)} and {@link #item(String, int)} find them once, then
  * {@link #runtimeId(BedrockBlockState)} and {@link #block(BedrockBlockState)} for blocks, {@link #item(BedrockItemVariant)}
- * and {@link #match(ItemData)} for items. They are field reads and array lookups that do not allocate. The ids behind
+ * for items. {@link #encode} and {@link #decode} translate whole stacks at the protocol boundary. They are field reads and array lookups that do not allocate. The ids behind
  * the handles are not API.
  *
  * @since 1.0.0
@@ -101,12 +103,10 @@ public final class Palette {
         return layers;
     }
 
-    @Internal
     public @NonNull BlockRegistry blocks() {
         return blocks;
     }
 
-    @Internal
     public @NonNull ItemRegistry items() {
         return items;
     }
@@ -133,13 +133,14 @@ public final class Palette {
     }
 
     /**
-     * @param variant an item variant of any bundled version (mapped forward as in {@link Paletter#item(ItemVariant)})
-     *                or of a custom item of this palette's layers
-     * @return its handle, or null if there is no equivalent (see {@link #explainUnknown(ItemVariant)})
+     * @param identifier an item identifier of any bundled version (mapped forward as in {@link Paletter#item(String, int)}) or
+     *                   of a custom item of this palette's layers
+     * @param aux the aux (damage) value
+     * @return its handle, or null if there is no equivalent (see {@link #explainUnknown(String, int)})
      * @since 1.0.0
      */
-    public @Nullable BedrockItemVariant item(@NonNull ItemVariant variant) {
-        return items.canonical().handle(Canonicals.item(items.canonical(), blocks.canonical(), variant), blocks.canonical());
+    public @Nullable BedrockItemVariant item(@NonNull String identifier, int aux) {
+        return items.canonical().handle(Canonicals.item(items.canonical(), ItemVariant.of(identifier, aux)));
     }
 
     /**
@@ -152,11 +153,11 @@ public final class Palette {
     }
 
     /**
-     * @return why an item variant has no handle in this palette, or null if it has one
+     * @return why an item has no handle in this palette, or null if it has one
      * @since 1.0.0
      */
-    public @Nullable String explainUnknown(@NonNull ItemVariant variant) {
-        Forwarding forwarding = Canonicals.forwardItem(items.canonical(), blocks.canonical(), variant);
+    public @Nullable String explainUnknown(@NonNull String identifier, int aux) {
+        Forwarding forwarding = Canonicals.forwardItem(items.canonical(), ItemVariant.of(identifier, aux));
         return forwarding.known() ? null : forwarding.detail();
     }
 
@@ -169,7 +170,7 @@ public final class Palette {
         CanonicalItems canonical = items.canonical();
         List<BedrockItemVariant> variants = new ArrayList<>(canonical.size());
         for (int id = 0; id < canonical.size(); id++) {
-            variants.add(canonical.handle(id, blocks.canonical()));
+            variants.add(canonical.handle(id));
         }
         return Collections.unmodifiableList(variants);
     }
@@ -203,34 +204,58 @@ public final class Palette {
     }
 
     /**
-     * The block state an item variant is sent with in this palette's version: Paletter alone decides it, see
-     * {@link ItemRegistry#blockOf}. A block state of the variant wins over the item's block.
+     * The block an item variant is sent with in this palette's version, in its default state: Paletter alone decides it,
+     * see {@link ItemRegistry#blockOf}. A stack may carry a block state of its own, see {@link #encode}.
      *
      * @return the block, or null if the item is not a block item (or does not exist in this version and has no fallback)
      * @since 1.0.0
      */
-    public @Nullable RegisteredBlockState blockOf(@NonNull ItemVariant variant) {
+    public @Nullable RegisteredBlockState blockOf(@NonNull BedrockItemVariant variant) {
         return items.blockOf(variant);
     }
 
     /**
-     * @return what to send for the base variant of an item type, or null if it is not in this palette, or does not
-     *         exist in this version and has no fallback
+     * @return the item of a type as registered in this palette, or null if it has none (an item of a layer this palette
+     *         does not have, or one that does not exist in this version; fallbacks are not applied, see {@link #encode})
      * @since 1.0.0
      */
-    public @Nullable ResolvedItem item(@NonNull BedrockItemType type) {
-        return item(type.base());
+    public @Nullable RegisteredItem item(@NonNull BedrockItemType type) {
+        return items.item(type.identifier());
     }
 
     /**
-     * @return what to send for a variant, or null if it is not in this palette (see
-     *         {@link PaletteLayer.Builder#variant(BedrockItemVariant)}), or does not exist in this version and has no
-     *         fallback
+     * @return the item of a variant as registered in this palette, like {@link #item(BedrockItemType)}
      * @since 1.0.0
      */
-    public @Nullable ResolvedItem item(@NonNull BedrockItemVariant variant) {
-        int canonical = variant.canonicalIn(items.canonical());
-        return canonical == -1 ? null : items.item(canonical);
+    public @Nullable RegisteredItem item(@NonNull BedrockItemVariant variant) {
+        return item(variant.type());
+    }
+
+    // ---- Stacks ----
+
+    /**
+     * Encodes a stack for this palette's version: the item with the aux value, count and NBT, and the block the stack
+     * places (its own block state if it has one and the item places blocks, else the item's default block). An item
+     * this version does not have is replaced according to the fallback policy.
+     *
+     * @return the item data, or {@link ItemData#AIR} if there is no item at all (not in this version, no fallback, or not
+     *         in this palette)
+     * @since 1.0.0
+     */
+    public @NonNull ItemData encode(@NonNull BedrockItemStack stack) {
+        return items.encode(stack);
+    }
+
+    /**
+     * Decodes a stack the client sent. The block state is set only if the stack's block differs from the item's default
+     * block. The stack of a fallback shared by several variants, or of an item that is not a variant of the newest
+     * version, is not recognized.
+     *
+     * @return the stack, or null for air or an item this palette cannot identify
+     * @since 1.0.0
+     */
+    public @Nullable BedrockItemStack decode(@NonNull ItemData data) {
+        return items.decode(data);
     }
 
     // ---- Debugging ----
@@ -267,13 +292,14 @@ public final class Palette {
     }
 
     /**
-     * Explains what this palette does with an item variant: canonical and runtime id, how it was resolved for this
+     * Explains what this palette does with an item: canonical and runtime id, how it was resolved for this
      * version, the block it is sent with and its place in the creative inventory. Slow, for debugging only.
      *
      * @since 1.0.0
      */
-    public @NonNull ItemExplanation explain(@NonNull ItemVariant variant) {
-        int canonical = Canonicals.item(items.canonical(), blocks.canonical(), variant);
+    public @NonNull ItemExplanation explain(@NonNull String identifier, int aux, @Nullable NbtMap blockState) {
+        ItemVariant variant = ItemVariant.of(identifier, aux);
+        int canonical = Canonicals.item(items.canonical(), variant);
         ResolvedItem direct = items.resolve(variant);
         ResolvedItem sent = canonical != -1 ? items.item(canonical) : direct;
         BlockResolution.Kind kind;
@@ -282,37 +308,45 @@ public final class Palette {
         } else {
             kind = sent != null ? BlockResolution.Kind.DEFAULT : BlockResolution.Kind.MISSING;
         }
-        List<String> chain = new ArrayList<>(List.of(variant.identifier()));
+        List<String> chain = new ArrayList<>(List.of(identifier));
         String item = sent == null ? null : sent.definition().getIdentifier();
-        if (item != null && !item.equals(variant.identifier())) {
+        if (item != null && !item.equals(identifier)) {
             chain.add(item);
         }
         RegisteredBlockState block = sent == null ? null : sent.block();
-        ItemMatcher matcher = ItemMatcher.id(variant.identifier()).and(ItemMatcher.damage(variant.damage()));
-        if (variant.blockState() != null) {
-            matcher = matcher.and(ItemMatcher.blockState(variant.blockState()));
+        if (blockState != null && sent != null && !sent.fallback() && block != null) {
+            RegisteredBlockState own = blocks.resolve(blockState).block();
+            if (own != null) {
+                block = own;
+            }
         }
-        return new ItemExplanation(variant, items.canonical().handle(canonical, blocks.canonical()), kind, List.copyOf(chain), item,
+        ItemMatcher matcher = ItemMatcher.id(identifier).and(ItemMatcher.damage(aux));
+        if (blockState != null) {
+            matcher = matcher.and(ItemMatcher.blockState(blockState));
+        }
+        return new ItemExplanation(identifier, aux, blockState == null ? null : BlockStates.normalize(blockState),
+            items.canonical().handle(canonical), kind, List.copyOf(chain), item,
             sent == null ? -1 : sent.definition().getRuntimeId(), sent == null ? 0 : sent.damage(),
             block == null ? null : BlockExplanation.describe(block.getState()), block == null ? -1 : block.getRuntimeId(),
             creativeLayout().locate(matcher).orElse(null));
     }
 
     /**
-     * Like {@link #explain(ItemVariant)}, for a vanilla variant.
+     * Like {@link #explain(String, int, NbtMap)}, without a block state.
+     *
+     * @since 1.0.0
+     */
+    public @NonNull ItemExplanation explain(@NonNull String identifier, int aux) {
+        return explain(identifier, aux, null);
+    }
+
+    /**
+     * Like {@link #explain(String, int)}, for a variant.
      *
      * @since 1.0.0
      */
     public @NonNull ItemExplanation explain(@NonNull BedrockItemVariant variant) {
-        return explain(variant.toItemVariant());
-    }
-
-    /**
-     * @return the variant a stack the client sent is, or null; see {@link ItemRegistry#match(ItemData)}
-     * @since 1.0.0
-     */
-    public @Nullable BedrockItemVariant match(@NonNull ItemData data) {
-        return items.canonical().handle(items.match(data), blocks.canonical());
+        return explain(variant.type().identifier(), variant.aux(), null);
     }
 
     /**

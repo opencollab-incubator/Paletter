@@ -1,4 +1,4 @@
-package org.geysermc.paletter.item;
+package org.geysermc.paletter.internal.item;
 
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.checkerframework.checker.nullness.qual.NonNull;

@@ -3,6 +3,8 @@ package org.geysermc.paletter.item;
 import org.geysermc.paletter.Origin;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.internal.item.ItemInterner;
+import org.geysermc.paletter.internal.item.ItemVariant;
+import org.geysermc.paletter.internal.item.ResolvedItem;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -27,6 +29,8 @@ import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.creative.CreativeLayout;
 import org.geysermc.paletter.creative.CreativeStack;
 import org.geysermc.paletter.data.DataVersion;
+import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.vanilla.BedrockItemVariant;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.internal.component.ItemCompiler;
@@ -58,7 +62,8 @@ import java.util.function.Consumer;
  * <ul>
  *     <li>{@link #item(int)} / {@link #resolve(ItemVariant)}: what to send for a canonical id or a variant (written
  *     against the newest Bedrock version);</li>
- *     <li>{@link #match(ItemData)}: which canonical id a stack the client sent is.</li>
+ *     <li>{@link #match(ItemData)}: which canonical id a stack the client sent is;</li>
+ *     <li>{@link #encode} and {@link #decode}: whole stacks, see {@link org.geysermc.paletter.Palette}.</li>
  * </ul>
  * It also knows which block each block item is sent with, so consumers never have to work that out from the
  * creative inventory themselves.
@@ -284,8 +289,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * @return the block, or null if the item is not a block item here (or does not exist and has no fallback)
      * @since 1.0.0
      */
-    public @Nullable RegisteredBlockState blockOf(@NonNull ItemVariant variant) {
-        ResolvedItem resolved = resolve(variant);
+    public @Nullable RegisteredBlockState blockOf(@NonNull BedrockItemVariant variant) {
+        ResolvedItem resolved = resolve(variant.toItemVariant());
         return resolved == null ? null : resolved.block();
     }
 
@@ -317,6 +322,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      *
      * @return the resolved item, or null if the item does not exist and has no fallback
      */
+    @Internal
     public @Nullable ResolvedItem resolve(@NonNull ItemVariant variant) {
         CanonicalTable table = canonicalTable;
         if (table != null) {
@@ -367,10 +373,9 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
 
     /**
      * Identifies a stack the client sent: its runtime id is looked up in a hash table, then the few variants of that
-     * item are told apart by damage and, for block items, the block definition. The block definitions clients send
-     * with other items are ignored. Does not allocate.
+     * item are told apart by damage. Does not allocate.
      * <p>
-     * Order: a variant with this damage and block, then a variant with this damage, then the item's base variant.
+     * Order: a variant with this damage, then the item's base variant.
      * A variant that only reached this version through a fallback never shadows the item's own variants, and never
      * serves as a base variant. A stack that exists here only as the fallback of <em>several</em> canonical ids (e.g. the
      * shared {@code minecraft:unknown} of the default fallback) is not matched: any of them would be an arbitrary claim.
@@ -390,16 +395,11 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             return -1;
         }
         int damage = data.getDamage();
-        BlockDefinition block = data.getBlockDefinition();
         boolean damageMatched = false;
         int damageMatch = -1;
         int base = -1;
         for (Candidate candidate : candidates) {
-            if (candidate.block != null) {
-                if (candidate.damage == damage && block != null && block.getRuntimeId() == candidate.block.getRuntimeId()) {
-                    return candidate.canonical;
-                }
-            } else if (candidate.damage == damage) {
+            if (candidate.damage == damage) {
                 if (!damageMatched) {
                     damageMatched = true;
                     damageMatch = candidate.canonical;
@@ -409,6 +409,59 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             }
         }
         return damageMatched ? damageMatch : base;
+    }
+
+    /**
+     * What to send for a stack: its item resolved for this version (fallbacks applied), the aux value, count and NBT,
+     * and the block the stack places: its own block state if it has one and the item places blocks here, else the item's
+     * default block.
+     *
+     * @return the item data, or {@link ItemData#AIR} if the item does not exist in this version and has no fallback
+     */
+    @Internal
+    public @NonNull ItemData encode(@NonNull BedrockItemStack stack) {
+        ResolvedItem resolved = resolve(stack.variant().toItemVariant());
+        if (resolved == null) {
+            return ItemData.AIR;
+        }
+        RegisteredBlockState block = resolved.block();
+        if (stack.blockState() != null && !resolved.fallback() && block != null) {
+            RegisteredBlockState own = blocks.resolve(stack.blockState().toNbt()).block();
+            if (own != null) {
+                block = own;
+            }
+        }
+        return ItemData.builder()
+            .definition(resolved.definition())
+            .damage(resolved.damage())
+            .count(stack.count())
+            .tag(stack.nbt())
+            .blockDefinition(block)
+            .build();
+    }
+
+    /**
+     * Identifies a stack the client sent, see {@link #match(ItemData)}. The block state is set only if the stack's
+     * block differs from the item's default block.
+     *
+     * @return the stack, or null for air or a stack that is no variant of the newest version
+     */
+    @Internal
+    public @Nullable BedrockItemStack decode(@NonNull ItemData data) {
+        int canonicalId = match(data);
+        if (canonicalId == -1) {
+            return null;
+        }
+        BedrockBlockState state = null;
+        BlockDefinition block = data.getBlockDefinition();
+        if (block != null) {
+            RegisteredBlockState expected = item(canonicalId).block();
+            int blockId = blocks.canonical(block);
+            if (blockId != -1 && (expected == null || expected.getRuntimeId() != block.getRuntimeId())) {
+                state = blocks.canonical().handle(blockId);
+            }
+        }
+        return new BedrockItemStack(canonical.handle(canonicalId), Math.max(1, data.getCount()), data.getTag(), state);
     }
 
     /**
@@ -523,27 +576,24 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                 if (item.fallback() != fallback) {
                     continue;
                 }
-                ItemVariant variant = canonical.variant(i);
-                RegisteredBlockState block = variant.blockState() != null && item.block() != defaultBlockOf(item.definition().getIdentifier())
-                    ? item.block() : null;
                 int taken = -1;
                 for (int c = 0; c < list.size(); c++) {
-                    if (list.get(c).damage == item.damage() && list.get(c).block == block) {
+                    if (list.get(c).damage == item.damage()) {
                         taken = c;
                     }
                 }
                 if (taken == -1) {
-                    list.add(new Candidate(item.damage(), block, i, fallback));
+                    list.add(new Candidate(item.damage(), i, fallback));
                 } else if (fallback && list.get(taken).fallback) {
                     // Shared by the fallbacks of several canonical ids: claiming any of them would be arbitrary
-                    list.set(taken, new Candidate(item.damage(), block, -1, true));
+                    list.set(taken, new Candidate(item.damage(), -1, true));
                 }
             }
         }
         return list.toArray(Candidate[]::new);
     }
 
-    private record Candidate(int damage, @Nullable RegisteredBlockState block, int canonical, boolean fallback) {
+    private record Candidate(int damage, int canonical, boolean fallback) {
     }
 
     private record CanonicalTable(ResolvedItem[] items, Int2ObjectMap<Candidate[]> byRuntimeId, Int2ObjectMap<IntList> indices,
