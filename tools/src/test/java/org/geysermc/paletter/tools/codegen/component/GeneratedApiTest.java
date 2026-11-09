@@ -1,7 +1,12 @@
 package org.geysermc.paletter.tools.codegen.component;
 
 import com.google.gson.JsonElement;
+import org.geysermc.paletter.block.component.CollisionBox;
+import org.geysermc.paletter.block.component.DestructibleByMining;
+import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.internal.component.ComponentIndex;
+import org.geysermc.paletter.item.component.KineticWeapon;
+import org.geysermc.paletter.item.component.Rarity;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -9,10 +14,13 @@ import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -103,6 +111,29 @@ class GeneratedApiTest {
         }
         System.out.println("required checks " + required + ", range checks " + ranges + ", defaults " + defaults);
         assertTrue(required > 0 && ranges > 0 && defaults > 0);
+    }
+
+    /** The JSON BDS accepts that the docs do not model, as the API expresses it (the conformance suite checks each against BDS's NBT). */
+    @Test
+    void theFormsBdsAcceptsAreInTheApi() {
+        // One collision box as an object is the list of one
+        CollisionBox.Entry entry = CollisionBox.Entry.builder().size(1, 2, 3).build();
+        assertEquals(CollisionBox.builder().boxes(entry).build(), CollisionBox.of(entry));
+        assertEquals("boxes[]", ComponentIndex.FORMS.get(CollisionBox.class).get("object"));
+        // An open enum takes any string
+        assertEquals("paletter_value", Rarity.of("paletter_value").value());
+        // The kinetic conditions are optional: BDS reads a missing speed as 0
+        KineticWeapon.Conditions conditions = KineticWeapon.Conditions.builder().build();
+        assertEquals(0f, conditions.minSpeed());
+        assertEquals(0f, conditions.minRelativeSpeed());
+        // A descriptor entry may name no item
+        assertNull(DestructibleByMining.ItemSpecificSpeeds.builder().destroySpeed(1f).build().item());
+        assertEquals(Map.of("item", "item"), ComponentIndex.DESCRIPTORS.get(DestructibleByMining.ItemSpecificSpeeds.class));
+        // uv_lock is a boolean or a list of bones, never both
+        assertEquals(List.of("a", "b"), Geometry.builder().identifier("g").uvLockBones("a", "b").build().uvLockBones());
+        Geometry both = Geometry.builder().identifier("g").uvLock(true).uvLockBones("a").build();
+        assertNull(both.uvLock(), "the last form set wins");
+        assertThrows(IllegalArgumentException.class, () -> new Geometry(null, null, "x", "y", "g", null, true, List.of("a")));
     }
 
     private static Method setter(Object builder, ApiModel.Field f) throws NoSuchMethodException {

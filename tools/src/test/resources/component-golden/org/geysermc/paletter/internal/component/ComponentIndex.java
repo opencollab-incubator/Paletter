@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.geysermc.paletter.block.component.Glow;
 import org.geysermc.paletter.block.component.Hidden;
+import org.geysermc.paletter.block.component.Slab;
 import org.geysermc.paletter.item.component.Ancient;
 import org.geysermc.paletter.item.component.Count;
 import org.geysermc.paletter.item.component.Former;
@@ -32,9 +33,16 @@ public final class ComponentIndex {
     public static final Map<Class<?>, Map<String, String>> JSON_KEYS = new LinkedHashMap<>();
 
     /**
-     * Synthetic fields of value forms: record class -> JSON type (boolean, string, ...) -> record component.
+     * Synthetic fields of value forms: record class -> JSON type (boolean, string, ...) -> record component. A record
+     * component ending in {@code []} is the list field the value form is one entry of (the object form of a list).
      */
     public static final Map<Class<?>, Map<String, String>> FORMS = new LinkedHashMap<>();
+
+    /**
+     * The item and block descriptor fields (api.json {@code descriptors}) that are a name: record class -> record component ->
+     * {@code item} or {@code block}. Add-on JSON writes a descriptor as a name or as an object with {@code name}.
+     */
+    public static final Map<Class<?>, Map<String, String>> DESCRIPTORS = new LinkedHashMap<>();
 
     /**
      * The oldest protocol a spec capture of BDS exists for: the shapes in {@code data/model/mappings.json} were observed from here.
@@ -52,6 +60,10 @@ public final class ComponentIndex {
         FORMS.put(Glow.class, Map.of("integer", "value"));
         BLOCK.put("test:hidden", Hidden.class);
         keys(Hidden.class);
+        BLOCK.put("test:slab", Slab.class);
+        keys(Slab.class);
+        keys(Slab.Entry.class, "size", "size");
+        FORMS.put(Slab.class, Map.of("array<object>", "parts", "object", "parts[]"));
         ITEM.put("test:ancient", Ancient.class);
         keys(Ancient.class);
         ITEM.put("test:count", Count.class);
@@ -65,10 +77,11 @@ public final class ComponentIndex {
         ITEM.put("test:quiet", Quiet.class);
         keys(Quiet.class);
         ITEM.put("test:widget", Widget.class);
-        keys(Widget.class, "count", "count", "label", "label", "mode", "mode", "speed", "speed", "nested", "nested", "tags", "tags", "entries", "entries", "colors", "colors", "shape", "shape", "offset", "offset");
+        keys(Widget.class, "count", "count", "label", "label", "mode", "mode", "speed", "speed", "nested", "nested", "tags", "tags", "entries", "entries", "colors", "colors", "shape", "shape", "offset", "offset", "rarity", "rarity", "stripes", "stripes", "fuel", "fuel", "reach", "reach");
         keys(Widget.NestedThing.class, "x", "x", "flag", "flag");
         keys(Widget.Entry.class, "name", "name");
         keys(Widget.Shape.class, "id", "id", "size", "size");
+        DESCRIPTORS.put(Widget.class, Map.of("fuel", "item"));
     }
 
     private ComponentIndex() {

@@ -148,7 +148,23 @@ public final class ItemWire {
         out.put("test:widget.ox", Wire.toFloat(v15.x()));
         out.put("test:widget.oy", Wire.toFloat(v15.y()));
         out.put("test:widget.oz", Wire.toFloat(v15.z()));
-        Map<String, Widget.NestedThing> v16 = c.moreNested();
+        String v16 = c.rarity();
+        if (v16 != null) {
+            switch (v16) {
+                case "common" -> out.put("test:widget.rarity", "common");
+                case "rare" -> out.put("test:widget.rarity", "rare");
+                default -> out.put("test:widget.rarity", "common");
+            }
+        } else {
+            out.put("test:widget.rarity", "common");
+        }
+        String v17 = c.fuel();
+        if (v17 != null) {
+            out.put("test:widget.fuel", v17);
+        }
+        float v18 = c.reach();
+        out.put("test:widget.reach", Wire.toFloat(v18));
+        Map<String, Widget.NestedThing> v19 = c.moreNested();
         Transforms.testMap(ctx, out, c);
     }
 }

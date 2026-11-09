@@ -496,15 +496,14 @@ public final class ItemWire {
     }
 
     private static void rarity(Rarity c, WireContext ctx, WireNode out) {
-        Rarity.Value v0 = c.value();
+        String v0 = c.value();
         if (v0 != null) {
-            switch (v0.value()) {
+            switch (v0) {
                 case "common" -> out.put("minecraft:rarity.value", "common");
                 case "epic" -> out.put("minecraft:rarity.value", "epic");
-                case "paletter_value" -> out.put("minecraft:rarity.value", "common");
                 case "rare" -> out.put("minecraft:rarity.value", "rare");
                 case "uncommon" -> out.put("minecraft:rarity.value", "uncommon");
-                default -> ctx.drop(Rarity.NAME, "value = " + v0.value() + " has no known wire value");
+                default -> out.put("minecraft:rarity.value", "common");
             }
         } else {
             out.put("minecraft:rarity.value", "common");
@@ -538,27 +537,20 @@ public final class ItemWire {
         out.list("minecraft:shooter.ammunition");
         for (Shooter.Ammunition e1 : v0) {
             WireNode n2 = out.element("minecraft:shooter.ammunition");
-            String v3 = e1.item();
-            if (v3 != null) {
-                n2.remove("item");
-                n2.put("item.name", v3);
-            } else {
-                n2.remove("item");
-                n2.remove("item.name");
-            }
-            boolean v4 = e1.searchInventory();
-            n2.put("search_inventory", Wire.bool(v4));
-            boolean v5 = e1.useInCreative();
-            n2.put("use_in_creative", Wire.bool(v5));
-            boolean v6 = e1.useOffhand();
-            n2.put("use_offhand", Wire.bool(v6));
+            boolean v3 = e1.searchInventory();
+            n2.put("search_inventory", Wire.bool(v3));
+            boolean v4 = e1.useInCreative();
+            n2.put("use_in_creative", Wire.bool(v4));
+            boolean v5 = e1.useOffhand();
+            n2.put("use_offhand", Wire.bool(v5));
+            Transforms.ammunitionItemDescriptor(ctx, n2, e1);
         }
-        boolean v7 = c.chargeOnDraw();
-        out.put("minecraft:shooter.charge_on_draw", Wire.bool(v7));
-        float v8 = c.maxDrawDuration();
-        out.put("minecraft:shooter.max_draw_duration", Wire.toFloat(v8));
-        boolean v9 = c.scalePowerByDrawDuration();
-        out.put("minecraft:shooter.scale_power_by_draw_duration", Wire.bool(v9));
+        boolean v6 = c.chargeOnDraw();
+        out.put("minecraft:shooter.charge_on_draw", Wire.bool(v6));
+        float v7 = c.maxDrawDuration();
+        out.put("minecraft:shooter.max_draw_duration", Wire.toFloat(v7));
+        boolean v8 = c.scalePowerByDrawDuration();
+        out.put("minecraft:shooter.scale_power_by_draw_duration", Wire.bool(v8));
     }
 
     private static void shouldDespawn(ShouldDespawn c, WireContext ctx, WireNode out) {

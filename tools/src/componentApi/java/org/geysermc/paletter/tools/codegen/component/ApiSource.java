@@ -387,6 +387,10 @@ final class ApiSource {
         if (f.allowed != null) {
             s.append(" One of ").append(f.allowed.stream().map(Docs::number).toList()).append('.');
         }
+        if (f.documentedValues != null && f.documentedValues.size() <= 10 && !f.documentedValues.stream().allMatch(f.doc::contains)) {
+            s.append(" Documented values: ").append(String.join(", ", f.documentedValues.stream().map(v -> "{@code " + Docs.escape(v) + "}").toList()))
+                .append("; BDS takes other strings too.");
+        }
         if (f.transform != null) {
             s.append(" Compiled by the hand transform {@code ").append(f.transform).append("}.");
         }
@@ -507,6 +511,11 @@ final class ApiSource {
                 shorthand(type, o, s.field(), s.jsonType(), signatures);
             }
         }
+        if (top) {
+            for (Map.Entry<String, String> form : c.elementForms.entrySet()) {
+                elementForm(type, o, form.getKey(), form.getValue(), signatures);
+            }
+        }
         if (o.shorthand != null) {
             shorthand(type, o, o.shorthand, o.shorthandType, signatures);
         }
@@ -527,6 +536,28 @@ final class ApiSource {
                 }
             }
         }
+    }
+
+    /** {@code of(Entry)}: the object form of a component whose value is a list of objects (api.json forms {@code listElementOf}). */
+    private void elementForm(TypeSpec.Builder type, ObjType o, String jsonType, String list, Set<String> signatures) {
+        Field target = o.fields.stream().filter(f -> f.java.equals(list)).findFirst().orElseThrow();
+        ClassName entry = className(c).nestedClass(((ObjRef) ((ListOf) target.type).element()).type().name);
+        if (!signatures.add(entry.toString())) {
+            return;
+        }
+        StringBuilder doc = new StringBuilder("The $L form: one entry, the same as a list of that entry in {@code $L}.");
+        ApiModel.Window rejecting = c.windows.stream().filter(w -> w.sent() && w.form(jsonType) != null
+            && w.form(jsonType).get("status").getAsString().equals("rejected")).findFirst().orElse(null);
+        if (rejecting != null) {
+            Map.Entry<Integer, String> first = rejecting.since() == Integer.MIN_VALUE ? null : model.captureVersions.floorEntry(rejecting.since());
+            doc.append(" BDS rejects this form since ")
+                .append(first == null ? "protocol " + rejecting.since() : first.getValue() + " (protocol " + first.getKey() + ")")
+                .append("; the list is accepted by every captured BDS.");
+        }
+        type.addMethod(MethodSpec.methodBuilder("of").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+            .addJavadoc(doc + "\n\n@return the value with everything else at its default\n", jsonType, target.java)
+            .addParameter(nonNull(entry), "entry").returns(nonNull(name(o)))
+            .addStatement("return builder().$N(entry).build()", target.java).build());
     }
 
     private void shorthand(TypeSpec.Builder type, ObjType o, Field target, String jsonType, Set<String> signatures) {

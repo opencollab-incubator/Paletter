@@ -349,9 +349,9 @@ size as a component and an item property, tags as `item_tags` and `minecraft:tag
 id), and the item properties BDS sends for every custom item (`mining_speed`, `frame_count`, ...) are always there.
 
 The conformance suite (`ComponentConformanceTest` in tools) rebuilds every variant of the BDS 1.26.63.1 capture that
-BDS accepted from its add-on JSON through the generated API and compares Paletter's NBT with BDS's: 1215 of the 1368
-accepted variants are identical, none differ; the others use server-only components (132) or JSON forms the API does not
-model (21), each listed with its reason in `data/model/conformance-known-<protocol>.txt`. See `tools/docs/codegen.md` and
+BDS accepted from its add-on JSON through the generated API and compares Paletter's NBT with BDS's: all 1368
+accepted variants are identical, and the suite has no list of exceptions: a variant the API cannot express or encodes differently
+fails the build (the same holds for every captured BDS back to 1.26.36.1). See `tools/docs/codegen.md` and
 `tools/docs/model.md`.
 
 ## The creative inventory

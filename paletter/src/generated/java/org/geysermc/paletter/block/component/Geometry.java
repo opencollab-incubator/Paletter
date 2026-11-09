@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package org.geysermc.paletter.block.component;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -68,6 +69,8 @@ import org.geysermc.paletter.internal.component.Check;
  *        the cube faces are square. This item requires a format version of at least 1.21.100. With UV locking, a single
  *        geometry can be reused for multiple texture rotations without authoring a new geometry per rotation. Add-on
  *        JSON {@code uv_lock}. Optional (null: not set).
+ * @param uvLockBones The list of strings form of &#123;&#64;code uv_lock&#125; (bones); excludes &#123;&#64;link #uvLock()&#125;.
+ *        Add-on JSON {@code uv_lock}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_geometry?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:geometry</a>
  * @since 1.0.0
  */
@@ -76,7 +79,8 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
         @BedrockFormat("1.20.60") @Nullable String culling, @NonNull String cullingLayer,
         @BedrockFormat("1.26.30") @NonNull String cullingShape, @NonNull String identifier,
         @BedrockFormat("1.26.30") Geometry. @Nullable NWayVisualRotation nWayVisualRotation,
-        @BedrockFormat("1.21.100") @Nullable Boolean uvLock) implements BlockComponent {
+        @BedrockFormat("1.21.100") @Nullable Boolean uvLock,
+        @Nullable List<String> uvLockBones) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -87,6 +91,10 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
         Objects.requireNonNull(cullingLayer, "Geometry.cullingLayer");
         Objects.requireNonNull(cullingShape, "Geometry.cullingShape");
         Objects.requireNonNull(identifier, "Geometry.identifier");
+        if (uvLock != null && uvLockBones != null) {
+            throw new IllegalArgumentException("Geometry sets both uvLock and uvLockBones");
+        }
+        uvLockBones = uvLockBones == null ? null : List.copyOf(uvLockBones);
     }
 
     @Override
@@ -122,6 +130,7 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
         builder.identifier = identifier;
         builder.nWayVisualRotation = nWayVisualRotation;
         builder.uvLock = uvLock;
+        builder.uvLockBones = uvLockBones;
         return builder;
     }
 
@@ -142,6 +151,8 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
         private @Nullable NWayVisualRotation nWayVisualRotation;
 
         private @Nullable Boolean uvLock;
+
+        private @Nullable List<String> uvLockBones;
 
         private Builder() {
         }
@@ -196,11 +207,32 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
         }
 
         /**
-         * Sets {@code uv_lock}.
+         * Sets {@code uv_lock} (clears the other form).
          */
         public @NonNull Builder uvLock(@Nullable Boolean uvLock) {
             this.uvLock = uvLock;
+            if (uvLock != null) {
+                this.uvLockBones = null;
+            }
             return this;
+        }
+
+        /**
+         * Sets {@code uv_lock} (clears the other form).
+         */
+        public @NonNull Builder uvLockBones(@Nullable List<String> uvLockBones) {
+            this.uvLockBones = uvLockBones;
+            if (uvLockBones != null) {
+                this.uvLock = null;
+            }
+            return this;
+        }
+
+        /**
+         * Sets {@code uv_lock}.
+         */
+        public @NonNull Builder uvLockBones(@NonNull String... uvLockBones) {
+            return uvLockBones(List.of(uvLockBones));
         }
 
         /**
@@ -211,7 +243,7 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
             if (identifier == null) {
                 throw new IllegalStateException("Geometry.identifier is required");
             }
-            return new Geometry(boneVisibility, culling, cullingLayer, cullingShape, identifier, nWayVisualRotation, uvLock);
+            return new Geometry(boneVisibility, culling, cullingLayer, cullingShape, identifier, nWayVisualRotation, uvLock, uvLockBones);
         }
     }
 

@@ -40,6 +40,10 @@
     "transform": "item_descriptor_name",
     "why": "The docs type it as a string or keyed set of strings; BDS takes a string or {name}, sends {name: <item>} for a known item and {} otherwise. The output depends on whether the item exists, which no rule over the JSON value captures."
   },
+  "item:minecraft:shooter:ammunition[].item": {
+    "transform": "ammunition_item_descriptor",
+    "why": "An item descriptor like using_converts_to: BDS sends {name} for a known item and {} for the descriptors it cannot resolve (item: {} and objects without a name were captured as {}), where the inferred identity of item.name would leave the compound out."
+  },
   "item:minecraft:hover_text_color:value": {
     "transform": "formatting_code",
     "why": "The component keeps the color name; item_properties.hover_text_color gets the formatting code (red -> §c, dark_purple -> §5) and is left out for unknown names. The docs give no enum for the field, so a value table cannot be generalized. Implement it with Bedrock's text color table. With no value, BDS sends the component with an empty value."
@@ -51,6 +55,7 @@
   },
   "block:minecraft:geometry:": {
     "transform": "geometry",
+    "windows": [{"until": 2225, "transform": "geometry_before_uv_lock_list"}, {"since": 2225, "transform": "geometry"}],
     "why": "BDS rejected every variant's companions (status untestable), so no rule was inferred. The wire shape is known from every material_instances variant, which carries a geometry: {identifier, bone_visibility, culling, culling_layer, culling_shape, uv_lock, ignoreGeometryForIsSolid, isV1Fullblock, needsLegacyTopRotation, useBlockTypeLightAbsorption}; item_visual sends the same shape as geometryDescription."
   },
   "block:minecraft:material_instances:": {
@@ -106,6 +111,11 @@
   "block:minecraft:selection_box:": {
     "transform": "selection_box",
     "why": "Every origin variant was rejected (BDS validates the box against the block bounds), so origin has no rule; the wire always carries enabled, origin and size, the full cube when the false form disables selection."
+  },
+  "block:minecraft:block_entity:container": {
+    "transform": "block_entity_container",
+    "windows": [{"until": 2225, "transform": "block_entity_container_slots_only"}, {"since": 2225, "transform": "block_entity_container"}],
+    "why": "BDS 1.26.52.3 (protocol 2193) knows only slot_count and rejects title, so every capture variant that carries the base's title was rejected and the only accepted container variant (title omitted) made the inference attribute slot_count to the omission of title (cross-field) and apply it with no container at all. The container wire is slot_count (byte) and, from 2225, title; nothing without a container."
   },
   "item:minecraft:use_animation:value": {
     "transform": "use_animation_id",

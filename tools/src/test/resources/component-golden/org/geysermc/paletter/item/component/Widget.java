@@ -10,6 +10,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.BedrockFormat;
 import org.geysermc.paletter.internal.component.Check;
+import org.geysermc.paletter.vanilla.BedrockItemType;
 
 /**
  * A widget with <code>every</code> field kind.
@@ -29,6 +30,14 @@ import org.geysermc.paletter.internal.component.Check;
  *        test_map}.
  * @param shape A shape or its id. Add-on JSON {@code shape}. Optional (null: not set).
  * @param offset Add-on JSON {@code offset}. Default: <code>[0,1,0]</code>.
+ * @param rarity How rare. Add-on JSON {@code rarity}. Optional (null: not set). Documented values: {@code common}, {@code
+ *        rare}; BDS takes other strings too.
+ * @param stripes Stripes on or off, or the striped parts. Add-on JSON {@code stripes}. Optional (null: not set). Compiled by
+ *        the hand transform {@code test_map}.
+ * @param stripesNames The list of strings form of &#123;&#64;code stripes&#125; (names); excludes &#123;&#64;link #stripes()&#125;.
+ *        Add-on JSON {@code stripes}. Compiled by the hand transform {@code test_map}.
+ * @param fuel The item it burns. Add-on JSON {@code fuel}. Optional (null: not set).
+ * @param reach The docs require it; BDS takes it omitted. Add-on JSON {@code reach}. Default: <code>3</code>.
  * @param moreNested Nested things under any other key. Add-on JSON {@code nested}. Default: <code>&#123;&#125;</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/test_widget?view=minecraft-bedrock-stable">Microsoft Learn: test:widget</a>
  * @since 1.0.0
@@ -37,8 +46,9 @@ import org.geysermc.paletter.internal.component.Check;
 public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mode,
         @Nullable Float speed, Widget. @Nullable NestedThing nested, @NonNull List<String> tags,
         @Nullable List<Widget.Entry> entries, @Nullable Map<String, String> colors,
-        Widget. @Nullable Shape shape, Widget. @NonNull Vec3 offset,
-        @NonNull Map<String, Widget.NestedThing> moreNested) implements ItemComponent {
+        Widget. @Nullable Shape shape, Widget. @NonNull Vec3 offset, @Nullable String rarity,
+        @Nullable Boolean stripes, @Nullable List<String> stripesNames, @Nullable String fuel,
+        float reach, @NonNull Map<String, Widget.NestedThing> moreNested) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -52,6 +62,10 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         entries = entries == null ? null : List.copyOf(entries);
         colors = colors == null ? null : Check.copy(colors, "Widget.colors");
         Objects.requireNonNull(offset, "Widget.offset");
+        if (stripes != null && stripesNames != null) {
+            throw new IllegalArgumentException("Widget sets both stripes and stripesNames");
+        }
+        stripesNames = stripesNames == null ? null : List.copyOf(stripesNames);
         moreNested = Check.copy(moreNested, "Widget.moreNested");
     }
 
@@ -82,6 +96,11 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         builder.colors = colors;
         builder.shape = shape;
         builder.offset = offset;
+        builder.rarity = rarity;
+        builder.stripes = stripes;
+        builder.stripesNames = stripesNames;
+        builder.fuel = fuel;
+        builder.reach = reach;
         builder.moreNested = moreNested;
         return builder;
     }
@@ -109,6 +128,16 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         private @Nullable Shape shape;
 
         private @Nullable Vec3 offset = new Vec3(0.0f, 1.0f, 0.0f);
+
+        private @Nullable String rarity;
+
+        private @Nullable Boolean stripes;
+
+        private @Nullable List<String> stripesNames;
+
+        private @Nullable String fuel;
+
+        private @Nullable Float reach = 3.0f;
 
         private @Nullable Map<String, NestedThing> moreNested = Map.of();
 
@@ -224,6 +253,66 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         }
 
         /**
+         * Sets {@code rarity}.
+         */
+        public @NonNull Builder rarity(@Nullable String rarity) {
+            this.rarity = rarity;
+            return this;
+        }
+
+        /**
+         * Sets {@code stripes} (clears the other form).
+         */
+        public @NonNull Builder stripes(@Nullable Boolean stripes) {
+            this.stripes = stripes;
+            if (stripes != null) {
+                this.stripesNames = null;
+            }
+            return this;
+        }
+
+        /**
+         * Sets {@code stripes} (clears the other form).
+         */
+        public @NonNull Builder stripesNames(@Nullable List<String> stripesNames) {
+            this.stripesNames = stripesNames;
+            if (stripesNames != null) {
+                this.stripes = null;
+            }
+            return this;
+        }
+
+        /**
+         * Sets {@code stripes}.
+         */
+        public @NonNull Builder stripesNames(@NonNull String... stripesNames) {
+            return stripesNames(List.of(stripesNames));
+        }
+
+        /**
+         * Sets {@code fuel}.
+         */
+        public @NonNull Builder fuel(@Nullable String fuel) {
+            this.fuel = fuel;
+            return this;
+        }
+
+        /**
+         * Sets {@code fuel} to a vanilla or custom item.
+         */
+        public @NonNull Builder fuel(@NonNull BedrockItemType fuel) {
+            return fuel(fuel.identifier());
+        }
+
+        /**
+         * Sets {@code reach}.
+         */
+        public @NonNull Builder reach(float reach) {
+            this.reach = reach;
+            return this;
+        }
+
+        /**
          * Sets {@code nested}.
          */
         public @NonNull Builder moreNested(@NonNull Map<String, NestedThing> moreNested) {
@@ -239,7 +328,7 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
             if (label == null) {
                 throw new IllegalStateException("Widget.label is required");
             }
-            return new Widget(count, label, mode, speed, nested, tags, entries, colors, shape, offset, moreNested);
+            return new Widget(count, label, mode, speed, nested, tags, entries, colors, shape, offset, rarity, stripes, stripesNames, fuel, reach, moreNested);
         }
     }
 

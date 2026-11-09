@@ -2,6 +2,7 @@ package org.geysermc.paletter.tools.codegen.component;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.geysermc.paletter.block.BlockProperty;
@@ -27,6 +28,18 @@ import java.util.Map;
  * Builds add-on JSON through the generated API, the way a consumer would: every JSON object through its record's builder
  * (setters found by the JSON key of {@link ComponentIndex#JSON_KEYS}), value forms through the {@code of} factories or the
  * form fields. Nothing here knows a component; what the API cannot express fails with {@link Unbindable}.
+ * <p>
+ * Where add-on JSON has several spellings of one value, the binder maps them to the one call the API offers; each mapping
+ * is a claim the conformance test checks against what BDS sent for that spelling:
+ * <ul>
+ * <li>an object value form that is one entry of a list ({@code ComponentIndex.FORMS} {@code "object" -> "list[]"}) is the
+ * {@code of(entry)} factory;</li>
+ * <li>a descriptor field ({@code ComponentIndex.DESCRIPTORS}) given as an object is its {@code name}, and as an object
+ * without one or as an empty list it is not set;</li>
+ * <li>an empty list for an object is that object with nothing set;</li>
+ * <li>the JSON constants {@code true} and {@code false} where a Molang expression (a string) is taken are the strings
+ * {@code "true"} and {@code "false"}.</li>
+ * </ul>
  */
 final class ApiBinder {
     static final class Unbindable extends RuntimeException {
@@ -137,7 +150,8 @@ final class ApiBinder {
 
     static Object bind(Class<?> type, JsonElement value) {
         try {
-            if (value.isJsonObject() && ComponentIndex.JSON_KEYS.containsKey(type)) {
+            Map<String, String> forms = ComponentIndex.FORMS.getOrDefault(type, Map.of());
+            if (value.isJsonObject() && ComponentIndex.JSON_KEYS.containsKey(type) && !forms.containsKey("object")) {
                 Object builder = type.getMethod("builder").invoke(null);
                 Map<String, String> keys = ComponentIndex.JSON_KEYS.get(type);
                 for (Map.Entry<String, JsonElement> e : value.getAsJsonObject().entrySet()) {
@@ -150,9 +164,8 @@ final class ApiBinder {
                 return builder.getClass().getMethod("build").invoke(builder);
             }
             // A value form: a form field, or a shorthand factory
-            Map<String, String> forms = ComponentIndex.FORMS.getOrDefault(type, Map.of());
             String form = jsonType(value);
-            if (forms.containsKey(form)) {
+            if (forms.containsKey(form) && !forms.get(form).endsWith("[]")) {
                 Object builder = type.getMethod("builder").invoke(null);
                 set(builder, forms.get(form), value);
                 return builder.getClass().getMethod("build").invoke(builder);
@@ -204,6 +217,21 @@ final class ApiBinder {
             }
         }
         candidates.sort(Comparator.comparing((Method m) -> !m.getName().equals(java)).thenComparing(m -> m.getParameterTypes()[0].isArray()));
+        // A descriptor: its name, or nothing
+        Map<String, String> descriptors = ComponentIndex.DESCRIPTORS.getOrDefault(builder.getClass().getEnclosingClass(), Map.of());
+        if (descriptors.containsKey(java) && (value.isJsonObject() || value.isJsonArray() && value.getAsJsonArray().isEmpty())) {
+            JsonElement name = value.isJsonObject() ? value.getAsJsonObject().get("name") : null;
+            value = name == null ? JsonNull.INSTANCE : name;
+        }
+        if (value.isJsonNull()) {
+            for (Method m : candidates) {
+                if (m.getParameterTypes()[0] == String.class) {
+                    m.invoke(builder, (Object) null);
+                    return;
+                }
+            }
+            throw new Unbindable("no setter " + java + " takes nothing");
+        }
         // A vector object with some axes: a consumer takes the default vector and changes those axes
         for (Method m : candidates) {
             Class<?> p = m.getParameterTypes()[0];
@@ -308,7 +336,11 @@ final class ApiBinder {
             Type v = ((ParameterizedType) type).getActualTypeArguments()[1];
             Map<String, Object> out = new LinkedHashMap<>();
             for (Map.Entry<String, JsonElement> e : value.getAsJsonObject().entrySet()) {
-                out.put(e.getKey(), v == Object.class ? stateValue(e.getValue()) : convert(v, e.getValue()));
+                JsonElement entry = e.getValue();
+                if (v == String.class && entry.isJsonPrimitive() && entry.getAsJsonPrimitive().isBoolean()) {
+                    entry = new JsonPrimitive(entry.getAsString()); // a Molang constant
+                }
+                out.put(e.getKey(), v == Object.class ? stateValue(entry) : convert(v, entry));
             }
             return out;
         }
@@ -338,7 +370,7 @@ final class ApiBinder {
                     throw new IllegalStateException(e);
                 }
             }
-            return bind(raw, value);
+            return bind(raw, value.isJsonArray() && value.getAsJsonArray().isEmpty() ? new JsonObject() : value);
         }
         throw new Unbindable("unsupported parameter " + type);
     }

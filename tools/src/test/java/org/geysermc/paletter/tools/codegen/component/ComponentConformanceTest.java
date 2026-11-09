@@ -57,20 +57,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * build is checked against what that build was given, not against what today's model would generate.
  * <p>
  * Outcomes per variant: {@code pass}, {@code fail} (different NBT), {@code unbindable} (the generated API cannot express
- * the JSON, e.g. a field it leaves out), {@code not-generated} (it uses a component that is not generated, e.g. a server
- * only companion with no wire effect). The table goes to {@code build/reports/component-conformance-<protocol>.md}; the
- * expected outcome of every variant that does not pass is committed per protocol in
- * {@code data/model/conformance-known-<protocol>.txt}, with a reason, so the test fails on any change either way.
+ * the JSON), {@code not-generated} (it uses a component that is not generated). Only {@code pass} is accepted: BDS always
+ * wins, so nothing is waived and there is no list of known exceptions. The table goes to
+ * {@code build/reports/component-conformance-<protocol>.md}.
  */
 class ComponentConformanceTest {
     static final Path ROOT = Path.of(System.getProperty("paletter.root", ".."));
     static final Path MODEL = ROOT.resolve("data/model");
 
     record Outcome(String identifier, String component, String status, String detail) {
-    }
-
-    static Path knownFile(int protocol) {
-        return MODEL.resolve("conformance-known-" + protocol + ".txt");
     }
 
     /** The spec captures, oldest protocol first. */
@@ -101,7 +96,6 @@ class ComponentConformanceTest {
     private void conformance(Path capture, boolean newest) throws IOException {
         JsonObject meta = JsonParser.parseString(Files.readString(capture.resolve("capture.json"))).getAsJsonObject();
         int protocol = meta.get("protocol").getAsInt();
-        Path knownFile = knownFile(protocol);
 
         JsonObject[] recorded = JsonParser.parseString(Files.readString(capture.resolve("variants.json"), StandardCharsets.UTF_8))
             .getAsJsonArray().asList().stream().map(JsonElement::getAsJsonObject).toArray(JsonObject[]::new);
@@ -171,42 +165,11 @@ class ComponentConformanceTest {
         Files.writeString(out, report.toString(), StandardCharsets.UTF_8);
         System.out.println(report.substring(0, report.indexOf("\n## Not passing")));
 
-        // Against the committed expectations
-        Map<String, String> known = new TreeMap<>();
-        Map<String, String> reasons = new TreeMap<>();
-        if (Files.exists(knownFile)) {
-            for (String line : Files.readAllLines(knownFile, StandardCharsets.UTF_8)) {
-                if (!line.isBlank() && !line.startsWith("#")) {
-                    String[] parts = line.split(" ", 3);
-                    known.put(parts[0], parts[1]);
-                    reasons.put(parts[0], parts.length > 2 ? parts[2] : "");
-                }
-            }
-        }
-        Map<String, String> actual = new TreeMap<>();
-        outcomes.stream().filter(o -> !o.status().equals("pass")).forEach(o -> actual.put(o.identifier(), o.status()));
-        List<String> changes = new ArrayList<>();
-        for (String id : new TreeSet<>(union(known.keySet(), actual.keySet()))) {
-            String was = known.getOrDefault(id, "pass");
-            String now = actual.getOrDefault(id, "pass");
-            if (!was.equals(now)) {
-                changes.add(id + ": expected " + was + ", got " + now);
-            }
-        }
-        if (Boolean.getBoolean("paletter.updateGolden")) {
-            StringBuilder s = new StringBuilder("# Accepted BDS variants (protocol " + protocol + ") the generated API does not reproduce, with why. Written by\n"
-                + "# ComponentConformanceTest (-PupdateGolden=true); a variant not listed must pass. Reasons are kept by hand.\n");
-            for (Outcome o : outcomes) {
-                if (!o.status().equals("pass")) {
-                    s.append(o.identifier()).append(' ').append(o.status()).append(' ')
-                        .append(reasons.getOrDefault(o.identifier(), o.detail().replace('\n', ' '))).append('\n');
-                }
-            }
-            Files.writeString(knownFile, s.toString(), StandardCharsets.UTF_8);
-            return;
-        }
-        assertTrue(changes.isEmpty(), "conformance of protocol " + protocol + " changed (see build/reports/component-conformance-" + protocol
-            + ".md):\n  " + String.join("\n  ", changes));
+        // No waivers: BDS decides, so every accepted variant must be reproduced exactly
+        List<String> notPassing = outcomes.stream().filter(o -> !o.status().equals("pass"))
+            .map(o -> o.identifier() + " " + o.status() + ": " + o.detail()).toList();
+        assertTrue(notPassing.isEmpty(), "protocol " + protocol + ": " + notPassing.size() + " variants BDS accepted are not reproduced by the generated API"
+            + " (see build/reports/component-conformance-" + protocol + ".md):\n  " + String.join("\n  ", notPassing));
     }
 
     private static Set<String> union(Set<String> a, Set<String> b) {

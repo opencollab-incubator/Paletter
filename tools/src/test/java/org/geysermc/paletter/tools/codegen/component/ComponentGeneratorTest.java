@@ -76,7 +76,13 @@ class ComponentGeneratorTest {
                   "examples": [], "doc": "A shape or its id."},
                  {"path": "shape.id", "types": [{"type": "string"}], "required": false, "enumValues": [], "examples": [], "doc": ""},
                  {"path": "shape.size", "types": [{"type": "integer"}], "defaultValue": 1, "required": false, "enumValues": [], "examples": [], "doc": ""},
-                 {"path": "offset", "types": [{"type": "vec3"}], "defaultValue": [0, 1, 0], "required": false, "enumValues": [], "examples": [], "doc": ""}
+                 {"path": "offset", "types": [{"type": "vec3"}], "defaultValue": [0, 1, 0], "required": false, "enumValues": [], "examples": [], "doc": ""},
+                 {"path": "rarity", "types": [{"type": "string"}], "required": false, "enumValues": ["common", "rare"], "examples": [], "doc": "How rare."},
+                 {"path": "stripes", "types": [{"type": "boolean"}, {"type": "array", "items": {"type": "string"}}], "required": false,
+                  "enumValues": [], "examples": [], "doc": "Stripes on or off, or the striped parts."},
+                 {"path": "fuel", "types": [{"type": "string"}], "required": false, "enumValues": [], "examples": [], "doc": "The item it burns."},
+                 {"path": "reach", "types": [{"type": "number"}], "defaultValue": 3, "required": true, "enumValues": [], "examples": [],
+                  "doc": "The docs require it; BDS takes it omitted."}
                ], "notes": ["Renamed from `test:former` in 1.0."]},
               {"id": "item:test:gadget", "kind": "item", "category": "component", "name": "test:gadget", "status": "deprecated",
                "doc": "Old. Use test:widget instead.", "page": "", "experiments": ["Test Toggle"], "forms": [{"type": "object"}, {"type": "boolean"}],
@@ -86,6 +92,11 @@ class ComponentGeneratorTest {
                "notes": []},
               {"id": "block:test:hidden", "kind": "block", "category": "component", "name": "test:hidden", "status": "active",
                "doc": "Server side.", "page": "creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_hidden.md", "experiments": [], "forms": [{"type": "object"}], "fields": [], "notes": []},
+              {"id": "block:test:slab", "kind": "block", "category": "component", "name": "test:slab", "status": "active",
+               "doc": "Parts.", "page": "creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_slab.md", "experiments": [],
+               "forms": [{"type": "array", "items": {"type": "object"}}, {"type": "object"}],
+               "fields": [{"path": "[].size", "types": [{"type": "number"}], "defaultValue": 16, "required": false, "enumValues": [], "examples": [], "doc": "Size."}],
+               "notes": []},
               {"id": "block:test:glow", "kind": "block", "category": "component", "name": "test:glow", "status": "active",
                "doc": "Light.", "page": "creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_glow.md", "experiments": [], "forms": [{"type": "integer"}], "fields": [], "notes": []},
               {"id": "item:test:old", "kind": "item", "category": "component", "name": "test:old", "status": "deprecated",
@@ -128,6 +139,12 @@ class ComponentGeneratorTest {
                   "shape": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "string", "tags": [], "wire": "test:widget.shape.id"}]},
                   "shape.id": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "string", "tags": [], "wire": "test:widget.shape.id"}]},
                   "shape.size": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "short", "tags": [], "wire": "test:widget.shape.size"}]},
+                  "rarity": {"status": "inferred", "rules": [{"kind": "table", "table": {"common": "common", "odd": "common", "rare": "rare"}, "nbt": "string",
+                             "tags": [], "wire": "test:widget.rarity"}], "whenAbsent": {"test:widget.rarity": "common (string)"}},
+                  "stripes": {"status": "hand-rule"},
+                  "fuel": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "string", "tags": [], "wire": "test:widget.fuel"}]},
+                  "reach": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "float", "tags": [], "wire": "test:widget.reach"}],
+                            "whenAbsent": {"test:widget.reach": "3.0 (float)"}},
                   "offset": {"status": "inferred", "rules": [{"kind": "identity", "element": 0, "nbt": "float", "tags": [], "wire": "test:widget.ox"},
                              {"kind": "identity", "element": 1, "nbt": "float", "tags": [], "wire": "test:widget.oy"},
                              {"kind": "identity", "element": 2, "nbt": "float", "tags": [], "wire": "test:widget.oz"}]}
@@ -140,6 +157,9 @@ class ComponentGeneratorTest {
                   "fields": {"value": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:gadget.on"}]},
                              "level": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "int", "tags": [], "wire": "test:gadget.level"}]}}}},
               "block:test:hidden": {"status": "server-only", "fields": {}},
+              "block:test:slab": {"status": "sent", "wire": ["test:slab"], "fields": {"[].size": {"status": "hand-rule"}}, "protocols": [100],
+                "protocol200": {"status": "sent", "wire": ["test:slab"], "forms": {"object": {"status": "rejected"}},
+                  "fields": {"[].size": {"status": "hand-rule"}}}},
               "block:test:glow": {"status": "server-only", "fields": {}, "protocols": [100],
                 "protocol200": {"status": "sent", "wire": ["test:glow"],
                   "forms": {"integer": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:glow.emission"}]}},
@@ -155,9 +175,16 @@ class ComponentGeneratorTest {
     static Inputs inputs() {
         return new Inputs(components(), json("{\"errata\": [], \"replacedBy\": {\"item:test:ancient\": {\"by\": [\"item:test:widget\"], \"evidence\": \"hand evidence\"}}}"),
             json("{\"item:test:widget\": {\"count\": [\"range 1 64\"]}}"), mappings(),
-            json("{\"item:test:widget:colors\": {\"transform\": \"test_map\", \"why\": \"a map\"}}"),
+            json("{\"item:test:widget:colors\": {\"transform\": \"test_map\", \"why\": \"a map\"}, "
+                + "\"item:test:widget:stripes\": {\"transform\": \"test_map\", \"why\": \"hand written\"}, "
+                + "\"block:test:slab:[]\": {\"transform\": \"test_map\", \"why\": \"hand written\"}}"),
             json("{\"since\": \"1.0.0\", \"keyedExtras\": {\"item:test:widget\": "
-                + "{\"from\": \"nested\", \"field\": \"moreNested\", \"doc\": \"Nested things under any other key.\"}}}"), TRANSFORMS, "9.0.0");
+                + "{\"from\": \"nested\", \"field\": \"moreNested\", \"doc\": \"Nested things under any other key.\"}}, "
+                + "\"openEnums\": [\"item:test:widget:rarity\"], \"optional\": [\"item:test:widget:reach\"], "
+                + "\"descriptors\": {\"item:test:widget:fuel\": \"item\"}, "
+                + "\"unions\": {\"item:test:widget:stripes\": {\"use\": \"boolean\", \"alternative\": {\"array<string>\": \"names\"}}}, "
+                + "\"rootLists\": {\"block:test:slab\": \"parts\"}, "
+                + "\"forms\": {\"block:test:slab\": {\"object\": {\"listElementOf\": \"parts\"}}}}"), TRANSFORMS, "9.0.0");
     }
 
     // ---- Golden files --------------------------------------------------------------------------------------------
@@ -194,7 +221,7 @@ class ComponentGeneratorTest {
     void theModelIsWhatTheGoldenSourcesShow() {
         ApiModel model = ComponentGenerator.model(inputs());
         assertEquals(Set.of("item:test:gadget", "block:test:glow", "item:test:widget", "block:test:hidden", "item:test:old", "item:test:former",
-                "item:test:count", "item:test:ancient", "item:test:quiet"),
+                "item:test:count", "item:test:ancient", "item:test:quiet", "block:test:slab"),
             model.components.stream().map(c -> c.id).collect(java.util.stream.Collectors.toSet()));
         assertEquals(Set.of(), model.omitted.keySet(), "server only and rejected components are generated too");
         // Server only in every window: the whole range, no bounds
@@ -281,6 +308,90 @@ class ComponentGeneratorTest {
                 .add("item:test:old", json("{\"by\": [\"item:test:widget\"], \"evidence\": \"x\"}")));
     }
 
+    // ---- Forms BDS accepts that the docs do not model ---------------------------------------------------------------
+
+    private static final String WIDGET_WIRE = "org/geysermc/paletter/internal/component/ItemWire.java";
+
+    @Test
+    void anOpenEnumSendsWhatBdsSentForUndocumentedValues() {
+        // The table has "odd -> common" from an undocumented sample: every string the docs do not list is "common"
+        String wire = ComponentGenerator.generate(inputs()).get(WIDGET_WIRE);
+        assertTrue(wire.contains("default -> out.put(\"test:widget.rarity\", \"common\")"), wire);
+        assertTrue(!wire.contains("case \"odd\""), "the undocumented sample is the default, not a case");
+        String widget = ComponentGenerator.generate(inputs()).get("org/geysermc/paletter/item/component/Widget.java");
+        assertTrue(widget.contains("@Nullable String rarity"), widget);
+        assertTrue(widget.contains("Documented values: {@code common}, {@code\n *        rare}; BDS takes other strings too."), widget);
+        assertTrue(!widget.contains("enum Rarity"), "an open enum has no constants");
+    }
+
+    @Test
+    void anOpenEnumWhoseUndocumentedSamplesDisagreeKeepsTheirCasesAndDropsTheRest() {
+        Inputs in = inputs();
+        in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:widget").getAsJsonObject("fields").getAsJsonObject("rarity")
+            .getAsJsonArray("rules").get(0).getAsJsonObject().getAsJsonObject("table").addProperty("odd_too", "rare");
+        String wire = ComponentGenerator.generate(in).get(WIDGET_WIRE);
+        assertTrue(wire.contains("case \"odd\" -> out.put(\"test:widget.rarity\", \"common\")"), wire);
+        assertTrue(wire.contains("case \"odd_too\" -> out.put(\"test:widget.rarity\", \"rare\")"), wire);
+        assertTrue(wire.contains("default -> ctx.drop(Widget.NAME, \"rarity = \" + v16 + \" has no known wire value\")"), wire);
+    }
+
+    @Test
+    void anOpenEnumWithoutUndocumentedSamplesDropsUnknownValues() {
+        Inputs in = inputs();
+        in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:widget").getAsJsonObject("fields").getAsJsonObject("rarity")
+            .getAsJsonArray("rules").get(0).getAsJsonObject().getAsJsonObject("table").remove("odd");
+        assertTrue(ComponentGenerator.generate(in).get(WIDGET_WIRE).contains("default -> ctx.drop(Widget.NAME, \"rarity = \""));
+    }
+
+    @Test
+    void anOptionalFieldIsNotRequiredWhateverTheDocsSay() {
+        String widget = ComponentGenerator.generate(inputs()).get("org/geysermc/paletter/item/component/Widget.java");
+        assertTrue(widget.contains("private @Nullable Float reach = 3.0f;"), widget);
+        assertTrue(!widget.contains("Widget.reach is required"), widget);
+        Inputs in = inputs();
+        in.api().remove("optional");
+        assertTrue(ComponentGenerator.generate(in).get("org/geysermc/paletter/item/component/Widget.java").contains("Widget.reach is required"));
+    }
+
+    @Test
+    void aUnionAlternativeMayBeAListOfStrings() {
+        String widget = ComponentGenerator.generate(inputs()).get("org/geysermc/paletter/item/component/Widget.java");
+        assertTrue(widget.contains("@Nullable List<String> stripesNames"), widget);
+        assertTrue(widget.contains("public @NonNull Builder stripesNames(@NonNull String... stripesNames)"), widget);
+        assertTrue(widget.contains("Widget sets both stripes and stripesNames"), widget);
+    }
+
+    @Test
+    void anObjectFormThatIsOneEntryOfTheListIsAFactoryAndAnIndexEntry() {
+        Map<String, String> files = ComponentGenerator.generate(inputs());
+        String slab = files.get("org/geysermc/paletter/block/component/Slab.java");
+        assertTrue(slab.contains("public static @NonNull Slab of(@NonNull Entry entry)"), slab);
+        assertTrue(slab.contains("return builder().parts(entry).build();"), slab);
+        assertTrue(slab.contains("BDS rejects this form since 9.9.9 (protocol 200); the list is accepted by every captured BDS."), slab);
+        assertTrue(files.get("org/geysermc/paletter/internal/component/ComponentIndex.java")
+            .contains("FORMS.put(Slab.class, Map.of(\"array<object>\", \"parts\", \"object\", \"parts[]\"))"));
+        // Without the declaration the object form is not offered
+        Inputs in = inputs();
+        in.api().getAsJsonObject("forms").remove("block:test:slab");
+        assertTrue(!ComponentGenerator.generate(in).get("org/geysermc/paletter/block/component/Slab.java").contains("of(@NonNull Entry entry)"));
+    }
+
+    @Test
+    void anElementFormNeedsItsFormAndAListOfObjects() {
+        fails("api.json forms: block:test:slab object is an entry of 'nothing', which is no list of objects",
+            in -> in.api().getAsJsonObject("forms").getAsJsonObject("block:test:slab").getAsJsonObject("object").addProperty("listElementOf", "nothing"));
+        fails("api.json forms: block:test:slab has no boolean value form for listElementOf", in -> {
+            JsonObject forms = in.api().getAsJsonObject("forms").getAsJsonObject("block:test:slab");
+            forms.add("boolean", forms.remove("object"));
+        });
+    }
+
+    @Test
+    void descriptorFieldsAreIndexedForTools() {
+        assertTrue(ComponentGenerator.generate(inputs()).get("org/geysermc/paletter/internal/component/ComponentIndex.java")
+            .contains("DESCRIPTORS.put(Widget.class, Map.of(\"fuel\", \"item\"))"));
+    }
+
     // ---- Determinism ---------------------------------------------------------------------------------------------
 
     @Test
@@ -360,7 +471,7 @@ class ComponentGeneratorTest {
             fields.asList().removeIf(f -> f.getAsJsonObject().get("path").getAsString().startsWith("nested."));
         });
         fails("block:test:glow has the value forms [integer, boolean] but no object fields; name a field per form in api.json forms",
-            in -> in.components().getAsJsonArray("components").get(3).getAsJsonObject().getAsJsonArray("forms").add(json("{\"type\": \"boolean\"}")));
+            in -> in.components().getAsJsonArray("components").get(4).getAsJsonObject().getAsJsonArray("forms").add(json("{\"type\": \"boolean\"}")));
         fails("ambiguous union: item:test:widget shape has a scalar form that fills no single field of Shape; settle it in api.json unions", in -> {
             JsonArray fields = in.components().getAsJsonArray("components").get(0).getAsJsonObject().getAsJsonArray("fields");
             fields.asList().removeIf(f -> f.getAsJsonObject().get("path").getAsString().equals("shape.id"));

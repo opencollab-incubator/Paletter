@@ -4,8 +4,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
+import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.BlockComponent;
+import org.geysermc.paletter.block.component.BlockEntity;
 import org.geysermc.paletter.block.component.CollisionBox;
 import org.geysermc.paletter.block.component.ConnectionRule;
 import org.geysermc.paletter.block.component.DestructibleByMining;
@@ -27,6 +29,7 @@ import org.geysermc.paletter.item.component.Food;
 import org.geysermc.paletter.item.component.HoverTextColor;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.Repairable;
+import org.geysermc.paletter.item.component.Shooter;
 import org.geysermc.paletter.item.component.UseAnimation;
 
 import java.util.LinkedHashMap;
@@ -119,7 +122,19 @@ public final class Transforms {
      */
     public static void geometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Geometry c) {
         out.put("minecraft:geometry", geometry(c.identifier(), c.boneVisibility(), c.culling(), c.cullingLayer(), c.cullingShape(),
-            c.uvLock()));
+            c.uvLock(), c.uvLockBones()));
+    }
+
+    /**
+     * {@code minecraft:geometry} before protocol 2225 (26.60): BDS 1.26.36.1, 1.26.45.1 and 1.26.52.3 reject {@code uv_lock} as a list of
+     * bones (only BDS 1.26.63.1 accepts it), so a list is dropped with a report entry and the boolean {@code false} is sent.
+     */
+    public static void geometryBeforeUvLockList(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Geometry c) {
+        if (c.uvLockBones() != null) {
+            ctx.drop(Geometry.NAME, "uv_lock as a list of bones is only accepted by BDS from protocol 2225 (26.60)");
+        }
+        out.put("minecraft:geometry", geometry(c.identifier(), c.boneVisibility(), c.culling(), c.cullingLayer(), c.cullingShape(),
+            c.uvLock(), null));
     }
 
     /**
@@ -140,7 +155,7 @@ public final class Transforms {
 
     private static void embeddedGeometry(WireNode out, EmbeddedVisual c, boolean withRotation) {
         EmbeddedVisual.Geometry g = c.geometry();
-        NbtMapBuilder geometry = geometry(g.identifier(), g.boneVisibility(), g.culling(), g.cullingLayer(), g.cullingShape(), g.uvLock())
+        NbtMapBuilder geometry = geometry(g.identifier(), g.boneVisibility(), g.culling(), g.cullingLayer(), g.cullingShape(), g.uvLock(), null)
             .toBuilder();
         for (String flag : List.of("ignoreGeometryForIsSolid", "isV1Fullblock", "needsLegacyTopRotation", "useBlockTypeLightAbsorption")) {
             geometry.remove(flag);
@@ -166,7 +181,8 @@ public final class Transforms {
     }
 
     static @NonNull NbtMap geometry(String identifier, @Nullable Map<String, String> bones, @Nullable String culling,
-                                    @Nullable String cullingLayer, @Nullable String cullingShape, @Nullable Boolean uvLock) {
+                                    @Nullable String cullingLayer, @Nullable String cullingShape, @Nullable Boolean uvLock,
+                                    @Nullable List<String> uvLockBones) {
         NbtMapBuilder visibility = NbtMap.builder();
         if (bones != null) {
             bones.forEach((bone, expression) -> visibility.putString(bone, switch (expression) {
@@ -175,7 +191,7 @@ public final class Transforms {
                 default -> expression;
             }));
         }
-        return NbtMap.builder()
+        NbtMapBuilder geometry = NbtMap.builder()
             .putCompound("bone_visibility", visibility.build())
             .putString("culling", culling == null ? "" : culling)
             .putString("culling_layer", cullingLayer == null ? DEFAULT_CULLING_LAYER : cullingLayer)
@@ -185,8 +201,12 @@ public final class Transforms {
             .putByte("isV1Fullblock", (byte) 0)
             .putByte("needsLegacyTopRotation", (byte) 0)
             .putByte("useBlockTypeLightAbsorption", (byte) 0)
-            .putByte("uv_lock", Wire.bool(Boolean.TRUE.equals(uvLock)))
-            .build();
+            .putByte("uv_lock", Wire.bool(Boolean.TRUE.equals(uvLock)));
+        if (uvLockBones != null) {
+            // BDS 1.26.63.1: the bones as a list of strings instead of the byte
+            geometry.putList("uv_lock", NbtType.STRING, uvLockBones);
+        }
+        return geometry.build();
     }
 
     // ---- material_instances ----------------------------------------------------------------------------------------
@@ -374,6 +394,20 @@ public final class Transforms {
     }
 
     /**
+     * {@code ammunition[].item}: {@code {name}} for an item the registry knows, {@code {}} for any other descriptor (as BDS
+     * sends {@code "item": {}} and objects without a {@code name}); an entry without item is sent with the empty descriptor too.
+     */
+    public static void ammunitionItemDescriptor(@NonNull WireContext ctx, @NonNull WireNode out, Shooter.@NonNull Ammunition c) {
+        String item = c.item();
+        NbtMap descriptor = item != null && ctx.registry().itemExists(item)
+            ? NbtMap.builder().putString("name", Wire.namespaced(item)).build() : NbtMap.EMPTY;
+        if (item != null && descriptor.isEmpty()) {
+            ctx.drop(Shooter.NAME, "ammunition[].item " + item + " is not an item");
+        }
+        out.put("item", descriptor);
+    }
+
+    /**
      * {@code repair_items}: items as {@code [{name}]} (or one {@code {tags}} Molang query), unknown items dropped, an entry without known items dropped with its
      * repair amount; the amount a float, or a Molang string (from protocol 2168, 26.40; before:
      * {@link #itemDescriptorListMolangCompound}).
@@ -554,7 +588,8 @@ public final class Transforms {
 
     /**
      * {@code minecraft:destructible_by_mining}: {@code value} is seconds_to_destroy, -1 for the false form; item specific
-     * speeds in the legacy item descriptor shape, only when there are any.
+     * speeds in the legacy item descriptor shape, only when the list is not empty (a list of entries without item is sent empty,
+     * as BDS does for {@code "item": []}).
      */
     public static void destructibleByMining(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull DestructibleByMining c) {
         float value = Boolean.FALSE.equals(c.enabled()) ? -1f : Boolean.TRUE.equals(c.enabled()) ? 0f : c.secondsToDestroy();
@@ -562,6 +597,9 @@ public final class Transforms {
         if (c.itemSpecificSpeeds() != null && !c.itemSpecificSpeeds().isEmpty()) {
             out.list("minecraft:destructible_by_mining.item_specific_speeds");
             for (DestructibleByMining.ItemSpecificSpeeds speed : c.itemSpecificSpeeds()) {
+                if (speed.item() == null) {
+                    continue; // BDS keeps the list but drops an entry that names no item ("item": [] in add-on JSON)
+                }
                 WireNode e = out.element("minecraft:destructible_by_mining.item_specific_speeds");
                 e.put("destroy_speed", speed.destroySpeed());
                 e.put("item", NbtMap.builder().putString("Name", Wire.namespaced(speed.item())).putShort("Aux", (short) 32767).build());
@@ -569,6 +607,39 @@ public final class Transforms {
         }
     }
 
+
+    // ---- block_entity_container ---------------------------------------------------------------------------------------
+
+    /**
+     * {@code minecraft:block_entity} container from protocol 2225 (26.60; BDS 1.26.63.1): {@code container.slot_count} as a byte
+     * and the optional {@code container.title}; without a container nothing is sent.
+     */
+    public static void blockEntityContainer(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull BlockEntity c) {
+        BlockEntity.Container container = c.container();
+        if (container == null) {
+            return;
+        }
+        out.put("minecraft:container.slot_count", Wire.toByte(container.slotCount()));
+        if (container.title() != null) {
+            out.put("minecraft:container.title", container.title());
+        }
+    }
+
+    /**
+     * {@code minecraft:block_entity} container before protocol 2225 (BDS 1.26.52.3, protocol 2193): the schema has
+     * {@code slot_count} only and rejects {@code title}, so a title is dropped with a report entry; without a container nothing
+     * is sent. (BDS 1.26.36.1 and 1.26.45.1 do not know the container at all: the component is server only there.)
+     */
+    public static void blockEntityContainerSlotsOnly(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull BlockEntity c) {
+        BlockEntity.Container container = c.container();
+        if (container == null) {
+            return;
+        }
+        out.put("minecraft:container.slot_count", Wire.toByte(container.slotCount()));
+        if (container.title() != null) {
+            ctx.drop(BlockEntity.NAME, "container.title is not known to BDS before protocol 2225 (26.60)");
+        }
+    }
 
     // ---- selection_box -----------------------------------------------------------------------------------------------
 

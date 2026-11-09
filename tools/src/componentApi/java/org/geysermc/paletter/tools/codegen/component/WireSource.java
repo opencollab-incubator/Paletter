@@ -532,15 +532,19 @@ final class WireSource {
                 CodeBlock key = key(t, expr);
                 b.beginControlFlow("switch ($L)", key);
                 JsonObject table = r.getAsJsonObject("table");
+                String fallback = openFallback(f, table);
                 for (String k : new TreeSet<>(table.keySet())) {
                     String v = table.get(k).getAsString();
-                    if (v.equals("<not sent>")) {
-                        b.addStatement("case $S -> $N.remove($S)", k, node, rel);
-                    } else {
-                        b.addStatement("case $S -> $N.put($S, $L)", k, node, rel, literal(v + " (" + nbt + ")"));
+                    if (fallback != null && !f.documentedValues.contains(k) && v.equals(fallback)) {
+                        continue; // an undocumented value: the default below
                     }
+                    putCase(node, rel, "case $S", k, v, nbt);
                 }
-                b.addStatement("default -> ctx.drop($T.NAME, $S + $L + $S)", ApiSource.className(c), f.path + " = ", key, " has no known wire value");
+                if (fallback != null) {
+                    putCase(node, rel, "default", null, fallback, nbt);
+                } else {
+                    b.addStatement("default -> ctx.drop($T.NAME, $S + $L + $S)", ApiSource.className(c), f.path + " = ", key, " has no known wire value");
+                }
                 b.endControlFlow();
             }
             case "affix" -> put(node, rel, CodeBlock.of("$S + $T.namespaced($L) + $S", r.get("prefix").getAsString(), WIRE, stringOf(t, expr),
@@ -568,6 +572,32 @@ final class WireSource {
         }
         if (guarded) {
             b.endControlFlow();
+        }
+    }
+
+    /**
+     * What BDS sends for every string an open enum does not document: the one output of the table entries observed for
+     * undocumented values (the capture's own samples), or null if there are none or they disagree.
+     */
+    private static String openFallback(Field f, JsonObject table) {
+        if (f.documentedValues == null) {
+            return null;
+        }
+        Set<String> outputs = new TreeSet<>();
+        for (String k : table.keySet()) {
+            if (!f.documentedValues.contains(k)) {
+                outputs.add(table.get(k).getAsString());
+            }
+        }
+        return outputs.size() == 1 ? outputs.iterator().next() : null;
+    }
+
+    private void putCase(String node, String rel, String label, String key, String value, String nbt) {
+        String head = key == null ? label : CodeBlock.of(label, key).toString();
+        if (value.equals("<not sent>")) {
+            b.addStatement("$L -> $N.remove($S)", head, node, rel);
+        } else {
+            b.addStatement("$L -> $N.put($S, $L)", head, node, rel, literal(value + " (" + nbt + ")"));
         }
     }
 
@@ -807,7 +837,12 @@ final class WireSource {
         }
         type.addField(FieldSpec.builder(keyMap, "JSON_KEYS", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL).initializer("new $T<>()", linked).build());
         type.addField(FieldSpec.builder(keyMap, "FORMS", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-            .addJavadoc("Synthetic fields of value forms: record class -> JSON type (boolean, string, ...) -> record component.\n")
+            .addJavadoc("Synthetic fields of value forms: record class -> JSON type (boolean, string, ...) -> record component. A record\n"
+                + "component ending in {@code []} is the list field the value form is one entry of (the object form of a list).\n")
+            .initializer("new $T<>()", linked).build());
+        type.addField(FieldSpec.builder(keyMap, "DESCRIPTORS", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+            .addJavadoc("The item and block descriptor fields (api.json {@code descriptors}) that are a name: record class -> record component ->\n"
+                + "{@code item} or {@code block}. Add-on JSON writes a descriptor as a name or as an object with {@code name}.\n")
             .initializer("new $T<>()", linked).build());
         CodeBlock.Builder init = CodeBlock.builder();
         for (Comp c : model.components) {
@@ -824,8 +859,13 @@ final class WireSource {
                     forms.add(CodeBlock.of("$S, $S", f.form, f.java));
                 }
             }
+            c.elementForms.forEach((form, list) -> forms.add(CodeBlock.of("$S, $S", form, list + "[]")));
             if (!forms.isEmpty()) {
                 init.addStatement("FORMS.put($T.class, $T.of($L))", cls, ApiSource.MAP, CodeBlock.join(forms, ", "));
+            }
+            descriptors(init, cls, c.root);
+            for (ObjType o : c.types.values()) {
+                descriptors(init, cls.nestedClass(o.name), o);
             }
         }
         type.addStaticBlock(init.build());
@@ -843,6 +883,18 @@ final class WireSource {
             .beginControlFlow("for (int i = 0; i < keys.length; i += 2)").addStatement("map.put(keys[i], keys[i + 1])").endControlFlow()
             .addStatement("JSON_KEYS.put(type, $T.unmodifiableMap(map))", ClassName.get("java.util", "Collections")).build());
         return type.build();
+    }
+
+    private static void descriptors(CodeBlock.Builder init, ClassName cls, ObjType o) {
+        List<CodeBlock> pairs = new ArrayList<>();
+        for (Field f : o.fields) {
+            if (f.descriptor != null && f.type instanceof Scalar s && s.kind() == ScalarKind.STRING) {
+                pairs.add(CodeBlock.of("$S, $S", f.java, f.descriptor));
+            }
+        }
+        if (!pairs.isEmpty()) {
+            init.addStatement("DESCRIPTORS.put($T.class, $T.of($L))", cls, ApiSource.MAP, CodeBlock.join(pairs, ", "));
+        }
     }
 
     private static void keys(CodeBlock.Builder init, ClassName cls, ObjType o) {

@@ -599,6 +599,7 @@ public enum org.geysermc.paletter.block.component.ChestObstruction$ObstructionRu
     public final boolean equals(java.lang.Object)
     public final int hashCode()
     public java.lang.String name()
+    public static org.geysermc.paletter.block.component.CollisionBox of(org.geysermc.paletter.block.component.CollisionBox$Entry)
     public static org.geysermc.paletter.block.component.CollisionBox of(boolean)
     public org.geysermc.paletter.block.component.CollisionBox$Builder toBuilder()
     public final java.lang.String toString()
@@ -1020,7 +1021,7 @@ public static final class org.geysermc.paletter.block.component.Friction$Builder
 
 public record org.geysermc.paletter.block.component.Geometry implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:geometry"
-    public <init>(java.util.Map<java.lang.String, java.lang.String>, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.geysermc.paletter.block.component.Geometry$NWayVisualRotation, java.lang.Boolean)
+    public <init>(java.util.Map<java.lang.String, java.lang.String>, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.geysermc.paletter.block.component.Geometry$NWayVisualRotation, java.lang.Boolean, java.util.List<java.lang.String>)
     public java.util.Map<java.lang.String, java.lang.String> boneVisibility()
     public static org.geysermc.paletter.block.component.Geometry$Builder builder()
     public java.lang.String culling()
@@ -1035,6 +1036,7 @@ public record org.geysermc.paletter.block.component.Geometry implements org.geys
     public org.geysermc.paletter.block.component.Geometry$Builder toBuilder()
     public final java.lang.String toString()
     public java.lang.Boolean uvLock()
+    public java.util.List<java.lang.String> uvLockBones()
 }
 
 public static final class org.geysermc.paletter.block.component.Geometry$Builder {
@@ -1046,6 +1048,8 @@ public static final class org.geysermc.paletter.block.component.Geometry$Builder
     public org.geysermc.paletter.block.component.Geometry$Builder identifier(java.lang.String)
     public org.geysermc.paletter.block.component.Geometry$Builder nWayVisualRotation(org.geysermc.paletter.block.component.Geometry$NWayVisualRotation)
     public org.geysermc.paletter.block.component.Geometry$Builder uvLock(java.lang.Boolean)
+    public org.geysermc.paletter.block.component.Geometry$Builder uvLockBones(java.util.List<java.lang.String>)
+    public org.geysermc.paletter.block.component.Geometry$Builder uvLockBones(java.lang.String...)
 }
 
 public enum org.geysermc.paletter.block.component.Geometry$NWayVisualRotation {
@@ -3319,31 +3323,20 @@ public static final class org.geysermc.paletter.item.component.Projectile$Builde
 
 public record org.geysermc.paletter.item.component.Rarity implements org.geysermc.paletter.item.component.ItemComponent {
     public static final java.lang.String NAME = "minecraft:rarity"
-    public <init>(org.geysermc.paletter.item.component.Rarity$Value)
+    public <init>(java.lang.String)
     public static org.geysermc.paletter.item.component.Rarity$Builder builder()
     public final boolean equals(java.lang.Object)
     public final int hashCode()
     public java.lang.String name()
-    public static org.geysermc.paletter.item.component.Rarity of(org.geysermc.paletter.item.component.Rarity$Value)
+    public static org.geysermc.paletter.item.component.Rarity of(java.lang.String)
     public org.geysermc.paletter.item.component.Rarity$Builder toBuilder()
     public final java.lang.String toString()
-    public org.geysermc.paletter.item.component.Rarity$Value value()
+    public java.lang.String value()
 }
 
 public static final class org.geysermc.paletter.item.component.Rarity$Builder {
     public org.geysermc.paletter.item.component.Rarity build()
-    public org.geysermc.paletter.item.component.Rarity$Builder value(org.geysermc.paletter.item.component.Rarity$Value)
-}
-
-public enum org.geysermc.paletter.item.component.Rarity$Value {
-    public static final org.geysermc.paletter.item.component.Rarity$Value COMMON
-    public static final org.geysermc.paletter.item.component.Rarity$Value EPIC
-    public static final org.geysermc.paletter.item.component.Rarity$Value RARE
-    public static final org.geysermc.paletter.item.component.Rarity$Value UNCOMMON
-    public static org.geysermc.paletter.item.component.Rarity$Value fromValue(java.lang.String)
-    public java.lang.String value()
-    public static org.geysermc.paletter.item.component.Rarity$Value valueOf(java.lang.String)
-    public static org.geysermc.paletter.item.component.Rarity$Value[] values()
+    public org.geysermc.paletter.item.component.Rarity$Builder value(java.lang.String)
 }
 
 @Deprecated public record org.geysermc.paletter.item.component.RenderOffsets implements org.geysermc.paletter.item.component.WireOnlyItemComponent {

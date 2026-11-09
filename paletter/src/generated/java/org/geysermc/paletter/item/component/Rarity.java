@@ -15,12 +15,13 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *
  * @param value Sets the base rarity of the item. The rarity of an item automatically increases when enchanted, either to Rare
  *        when the base rarity is Common or Uncommon, or Epic when the base rarity is Rare. Add-on JSON {@code value}.
- *        Optional (null: not set).
+ *        Optional (null: not set). Documented values: {@code common}, {@code uncommon}, {@code rare}, {@code epic}; BDS
+ *        takes other strings too.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_rarity?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:rarity</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.30")
-public record Rarity(Rarity. @Nullable Value value) implements ItemComponent {
+public record Rarity(@Nullable String value) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -36,7 +37,7 @@ public record Rarity(Rarity. @Nullable Value value) implements ItemComponent {
      *
      * @return the value with everything else at its default
      */
-    public static @NonNull Rarity of(@NonNull Value value) {
+    public static @NonNull Rarity of(@NonNull String value) {
         return builder().value(value).build();
     }
 
@@ -60,7 +61,7 @@ public record Rarity(Rarity. @Nullable Value value) implements ItemComponent {
      * Builds {@link Rarity}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable Value value;
+        private @Nullable String value;
 
         private Builder() {
         }
@@ -68,7 +69,7 @@ public record Rarity(Rarity. @Nullable Value value) implements ItemComponent {
         /**
          * Sets {@code value}.
          */
-        public @NonNull Builder value(@Nullable Value value) {
+        public @NonNull Builder value(@Nullable String value) {
             this.value = value;
             return this;
         }
@@ -79,57 +80,6 @@ public record Rarity(Rarity. @Nullable Value value) implements ItemComponent {
          */
         public @NonNull Rarity build() {
             return new Rarity(value);
-        }
-    }
-
-    /**
-     * The documented values; {@link #value()} is the add-on JSON string.
-     */
-    public enum Value {
-        /**
-         * {@code common}
-         */
-        COMMON("common"),
-
-        /**
-         * {@code uncommon}
-         */
-        UNCOMMON("uncommon"),
-
-        /**
-         * {@code rare}
-         */
-        RARE("rare"),
-
-        /**
-         * {@code epic}
-         */
-        EPIC("epic");
-
-        private final String value;
-
-        Value(String value) {
-            this.value = value;
-        }
-
-        /**
-         * @return the value in add-on JSON
-         */
-        public @NonNull String value() {
-            return value;
-        }
-
-        /**
-         * @return the constant of an add-on JSON value
-         * @throws IllegalArgumentException if the value is not documented
-         */
-        public static @NonNull Value fromValue(@NonNull String value) {
-            for (Value constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a Value: " + value);
         }
     }
 }

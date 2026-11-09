@@ -259,10 +259,10 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
      * @param maxDuration Time, in ticks, during which the effect can be applied after "delay" elapses. If negative, the effect is
      *        applied indefinitely. Add-on JSON {@code max_duration}. Default: <code>-1</code>.
      * @param minRelativeSpeed Minimum relative speed of the user with respect to the target (projected onto the view vector via a dot
-     *        product) required for the effect to be applied. Add-on JSON {@code min_relative_speed}. Required. Range [0,
-     *        inf) (BDS 1.26.63.1).
+     *        product) required for the effect to be applied. Add-on JSON {@code min_relative_speed}. Default:
+     *        <code>0</code>. Range [0, inf) (BDS 1.26.63.1).
      * @param minSpeed Minimum user's speed (projected onto the view vector via a dot product) required for the effect to be applied.
-     *        Add-on JSON {@code min_speed}. Required. Range [0, inf) (BDS 1.26.63.1).
+     *        Add-on JSON {@code min_speed}. Default: <code>0</code>. Range [0, inf) (BDS 1.26.63.1).
      */
     public record Conditions(int maxDuration, float minRelativeSpeed, float minSpeed) {
         public Conditions {
@@ -294,9 +294,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
         public static final class Builder {
             private @Nullable Integer maxDuration = -1;
 
-            private @Nullable Float minRelativeSpeed;
+            private @Nullable Float minRelativeSpeed = 0.0f;
 
-            private @Nullable Float minSpeed;
+            private @Nullable Float minSpeed = 0.0f;
 
             private Builder() {
             }
@@ -330,12 +330,6 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
              * @throws IllegalArgumentException if a value is out of range
              */
             public @NonNull Conditions build() {
-                if (minRelativeSpeed == null) {
-                    throw new IllegalStateException("KineticWeapon.Conditions.minRelativeSpeed is required");
-                }
-                if (minSpeed == null) {
-                    throw new IllegalStateException("KineticWeapon.Conditions.minSpeed is required");
-                }
                 return new Conditions(maxDuration, minRelativeSpeed, minSpeed);
             }
         }

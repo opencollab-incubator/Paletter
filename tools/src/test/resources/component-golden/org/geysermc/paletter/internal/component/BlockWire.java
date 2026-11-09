@@ -7,6 +7,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.paletter.block.component.BlockComponent;
 import org.geysermc.paletter.block.component.Glow;
 import org.geysermc.paletter.block.component.Hidden;
+import org.geysermc.paletter.block.component.Slab;
 import org.geysermc.paletter.block.component.WireOnlyBlockComponent;
 
 /**
@@ -27,6 +28,7 @@ public final class BlockWire {
         switch (component) {
             case Glow value -> glow(value, ctx, out);
             case Hidden value -> hidden(value, ctx, out);
+            case Slab value -> slab(value, ctx, out);
             case WireOnlyBlockComponent value -> WireOnlyWire.write(value, ctx, out);
         }
     }
@@ -51,5 +53,9 @@ public final class BlockWire {
 
     private static void hidden(Hidden c, WireContext ctx, WireNode out) {
         // server only: BDS sends nothing to clients
+    }
+
+    private static void slab(Slab c, WireContext ctx, WireNode out) {
+        Transforms.testMap(ctx, out, c);
     }
 }

@@ -71,8 +71,37 @@ depth.
 
 When a new BDS version changes the wire, `update` runs `spec-capture` and the inference and lists every differing leaf
 (`SpecDiff`) as a wire change. A different mapping lands as a new window; then regenerate, review (a changed hand
-transform needs a window), and write `conformance-known-<protocol>.txt` for the new capture (`-PupdateGolden=true`, then
-the reasons).
+transform needs a window). `ComponentConformanceTest` runs for the new capture too and has no list of exceptions: every
+variant BDS accepted must come out identical, so a form the new build accepts that the API cannot express is fixed in the
+model (see "Forms BDS accepts that the docs do not model"), never waived.
+
+## Forms BDS accepts that the docs do not model
+
+BDS wins over the docs. `ComponentConformanceTest` rebuilds every accepted variant through the generated API and compares
+the NBT; an add-on JSON the API cannot express, or expresses wrongly, fails the build. The ways to close such a gap, all
+data driven:
+
+- **Optional fields** (`api.json` `optional`): a field the docs make required but BDS accepts omitted; the builder applies
+  the documented default and BDS's `whenAbsent` is what the encoder writes (the six `min_speed` and `min_relative_speed`
+  of `kinetic_weapon`, `item_specific_speeds[].item`).
+- **Open enums** (`openEnums`): the field is a string and the javadoc lists the documented values. When the inferred table
+  has entries for undocumented samples that all send one value, that value is the `default` of the encoder's switch (BDS
+  answers `common` for every unknown `rarity`); undocumented samples that disagree stay cases and the rest is dropped
+  with a report warning.
+- **A union alternative that is a list** (`unions` `{"array<string>": "bones"}`): `uv_lock` is a boolean or a list of
+  bone names (BDS 1.26.63.1), a second field excluding the first, written by the hand transform (which has windows: older
+  builds reject the list).
+- **An object that is one entry of the component's list** (`forms` `{"object": {"listElementOf": "boxes"}}`): a `of(Entry)`
+  factory and the index entry `"object" -> "boxes[]"`. The javadoc says since which BDS the form is rejected
+  (`collision_box` takes `{origin, size}` before 26.60; `{}` is one default box).
+- **Hand transforms with windows** for what differs per build (the `block_entity` container: BDS 1.26.52.3 knows
+  `slot_count` only; `ammunition[].item`: a descriptor BDS sends as `{name}` or `{}`).
+
+Add-on JSON spellings that mean one API call are mapped by the conformance binder (`ApiBinder`), which reads them from the
+generated `ComponentIndex` and is itself checked by the comparison with BDS: an object form of a list (`FORMS`), a
+descriptor field (`DESCRIPTORS`: an item or block name) written as `{name}`, as an object without a name or as an empty list
+(not set), an empty list for an object (that object with nothing set), and the JSON constants `true` and `false` where a
+Molang string is taken.
 
 ## Vanilla constants
 

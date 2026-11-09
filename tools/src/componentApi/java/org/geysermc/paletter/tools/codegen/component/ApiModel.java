@@ -73,6 +73,8 @@ final class ApiModel {
         ObjType root;
         /** Non-object value forms: JSON type -> field they set ({@code of(...)} factories). */
         final List<Shorthand> shorthands = new ArrayList<>();
+        /** Object value forms that are one entry of a list field (api.json forms {@code listElementOf}): JSON type -> list field. */
+        final Map<String, String> elementForms = new LinkedHashMap<>();
         /** Component level transform (transforms.json path ""), or null. */
         String transform;
         final List<Window> windows = new ArrayList<>();
@@ -243,6 +245,8 @@ final class ApiModel {
         String transform;
         /** "item" or "block": overloads taking vanilla constants. */
         String descriptor;
+        /** The documented values of an open enum (api.json openEnums): the field is a string, the values are only documented. */
+        List<String> documentedValues;
         /** Synthetic field from a value form (no JSON key of its own), with that form's mapping. */
         String form;
         /** A union alternative kept as its own field next to the main one: the main field's java name. */

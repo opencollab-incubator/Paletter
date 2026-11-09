@@ -53,6 +53,15 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
     }
 
     /**
+     * The object form: one entry, the same as a list of that entry in {@code boxes}. BDS rejects this form since 1.26.63.1 (protocol 2225); the list is accepted by every captured BDS.
+     *
+     * @return the value with everything else at its default
+     */
+    public static @NonNull CollisionBox of(@NonNull Entry entry) {
+        return builder().boxes(entry).build();
+    }
+
+    /**
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {

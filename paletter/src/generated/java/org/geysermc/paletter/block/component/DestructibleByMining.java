@@ -4,7 +4,6 @@
 package org.geysermc.paletter.block.component;
 
 import java.util.List;
-import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.BedrockFormat;
@@ -154,13 +153,9 @@ public record DestructibleByMining(float baseTimeToDestroy,
      * requires UpcomingFeatures experiment to be enabled.
      *
      * @param destroySpeed Required. A destroy speed applied while using the defined 'item'. Add-on JSON {@code destroy_speed}. Required.
-     * @param item Required. A filter for the item used while mining. Add-on JSON {@code item}. Required.
+     * @param item Required. A filter for the item used while mining. Add-on JSON {@code item}. Optional (null: not set).
      */
-    public record ItemSpecificSpeeds(float destroySpeed, @NonNull String item) {
-        public ItemSpecificSpeeds {
-            Objects.requireNonNull(item, "DestructibleByMining.ItemSpecificSpeeds.item");
-        }
-
+    public record ItemSpecificSpeeds(float destroySpeed, @Nullable String item) {
         /**
          * @return a builder with the defaults applied
          */
@@ -200,7 +195,7 @@ public record DestructibleByMining(float baseTimeToDestroy,
             /**
              * Sets {@code item}.
              */
-            public @NonNull Builder item(@NonNull String item) {
+            public @NonNull Builder item(@Nullable String item) {
                 this.item = item;
                 return this;
             }
@@ -219,9 +214,6 @@ public record DestructibleByMining(float baseTimeToDestroy,
             public @NonNull ItemSpecificSpeeds build() {
                 if (destroySpeed == null) {
                     throw new IllegalStateException("DestructibleByMining.ItemSpecificSpeeds.destroySpeed is required");
-                }
-                if (item == null) {
-                    throw new IllegalStateException("DestructibleByMining.ItemSpecificSpeeds.item is required");
                 }
                 return new ItemSpecificSpeeds(destroySpeed, item);
             }

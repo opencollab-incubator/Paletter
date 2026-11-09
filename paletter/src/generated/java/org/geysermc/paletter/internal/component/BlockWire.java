@@ -118,10 +118,8 @@ public final class BlockWire {
         int protocol = ctx.protocol();
         if (protocol < 2193) {
             blockEntityUntil2193(c, ctx, out);
-        } else if (protocol >= 2193 && protocol < 2225) {
-            blockEntityFrom2193Until2225(c, ctx, out);
-        } else if (protocol >= 2225) {
-            blockEntityFrom2225(c, ctx, out);
+        } else if (protocol >= 2193) {
+            blockEntityFrom2193(c, ctx, out);
         }
     }
 
@@ -129,38 +127,14 @@ public final class BlockWire {
         ctx.drop(BlockEntity.NAME, "is not sent to clients (BDS: server-only)");
     }
 
-    private static void blockEntityFrom2193Until2225(BlockEntity c, WireContext ctx, WireNode out) {
-        BlockEntity.Container v0 = c.container();
-        if (v0 != null) {
-            int v1 = v0.slotCount();
-            ctx.drop(BlockEntity.NAME, "container.slot_count has no known wire mapping");
-            String v2 = v0.title();
-            if (v2 != null) {
-            } else {
-                out.put("minecraft:container.slot_count", (byte) 1);
-            }
+    private static void blockEntityFrom2193(BlockEntity c, WireContext ctx, WireNode out) {
+        boolean v0 = c.dynamicProperties();
+        int transformProtocol = ctx.protocol();
+        if (transformProtocol < 2225) {
+            Transforms.blockEntityContainerSlotsOnly(ctx, out, c);
         } else {
-            out.put("minecraft:container.slot_count", (byte) 1);
+            Transforms.blockEntityContainer(ctx, out, c);
         }
-        boolean v3 = c.dynamicProperties();
-    }
-
-    private static void blockEntityFrom2225(BlockEntity c, WireContext ctx, WireNode out) {
-        BlockEntity.Container v0 = c.container();
-        if (v0 != null) {
-            int v1 = v0.slotCount();
-            out.put("minecraft:container.slot_count", Wire.toByte(v1));
-            String v2 = v0.title();
-            if (v2 != null) {
-                out.put("minecraft:container.title", v2);
-            } else {
-                out.remove("minecraft:container.title");
-            }
-        } else {
-            out.remove("minecraft:container.slot_count");
-            out.remove("minecraft:container.title");
-        }
-        boolean v3 = c.dynamicProperties();
     }
 
     private static void blockLightAbsorption(BlockLightAbsorption c, WireContext ctx,
@@ -281,7 +255,12 @@ public final class BlockWire {
     }
 
     private static void geometry(Geometry c, WireContext ctx, WireNode out) {
-        Transforms.geometry(ctx, out, c);
+        int transformProtocol = ctx.protocol();
+        if (transformProtocol < 2225) {
+            Transforms.geometryBeforeUvLockList(ctx, out, c);
+        } else {
+            Transforms.geometry(ctx, out, c);
+        }
     }
 
     private static void instrumentSound(InstrumentSound c, WireContext ctx, WireNode out) {

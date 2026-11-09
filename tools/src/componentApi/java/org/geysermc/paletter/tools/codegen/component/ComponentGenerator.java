@@ -352,6 +352,7 @@ public final class ComponentGenerator {
             c.root.fields.add(field);
             c.shorthands.add(new Shorthand(type, field));
         }
+        elementForms(c, forms);
         for (Field f : c.root.fields) {
             javaName(f.java, c.id + " " + (f.path == null ? "" : f.path));
         }
@@ -360,6 +361,28 @@ public final class ComponentGenerator {
         dedupeTypes(c);
         checkConflicts(c);
         return c;
+    }
+
+    /**
+     * api.json forms {@code {"object": {"listElementOf": "boxes"}}}: the component's value is a list of objects, and an add-on
+     * may also write one object for the list of one entry. The API has the list only; the form is an {@code of(Entry)}
+     * factory, and the conformance binder reads it from the index.
+     */
+    private void elementForms(Comp c, List<String> forms) {
+        JsonObject declared = api("forms").has(c.id) ? api("forms").getAsJsonObject(c.id) : new JsonObject();
+        for (String form : declared.keySet()) {
+            JsonObject d = declared.getAsJsonObject(form);
+            if (!d.has("listElementOf")) {
+                continue;
+            }
+            String list = d.get("listElementOf").getAsString();
+            if (!forms.contains(form)) {
+                throw new GenerationException("api.json forms: " + c.id + " has no " + form + " value form for listElementOf");
+            }
+            c.root.fields.stream().filter(f -> f.java.equals(list) && f.type instanceof ListOf l && l.element() instanceof ObjRef).findFirst()
+                .orElseThrow(() -> new GenerationException("api.json forms: " + c.id + " " + form + " is an entry of '" + list + "', which is no list of objects"));
+            c.elementForms.put(form, list);
+        }
     }
 
     /**
@@ -767,6 +790,9 @@ public final class ComponentGenerator {
         f.transform = transform(c.id, d.path);
         f.descriptor = apiString("descriptors", c.id + ":" + d.path);
         f.type = type(c, d, fields);
+        if (isOpenEnum(c, d) && !d.enumValues.isEmpty() && f.type instanceof Scalar s && s.kind() == ScalarKind.STRING) {
+            f.documentedValues = d.enumValues.stream().map(JsonElement::getAsString).toList();
+        }
         f.docsDefault = d.defaultValue;
         JsonObject feedback = in.feedback().has(c.id) ? in.feedback().getAsJsonObject(c.id) : new JsonObject();
         List<String> notes = new ArrayList<>();
@@ -820,15 +846,24 @@ public final class ComponentGenerator {
                 a.path = d.path;
                 a.json = f.json;
                 a.java = f.java + pascal(alt.get(type).getAsString());
-                a.type = scalarType(c, type, a.java, List.of());
+                a.type = alternativeType(c, type, a.java);
                 a.mappingKey = d.path;
                 a.alternativeOf = f;
                 a.transform = f.transform;
-                a.doc = "The " + type + " form of {@code " + f.json + "} (" + alt.get(type).getAsString() + "); excludes {@link #" + f.java + "()}.";
+                a.doc = "The " + (type.startsWith("array<") ? "list of " + type.substring(6, type.length() - 1) + "s" : type) + " form of {@code " + f.json + "} (" + alt.get(type).getAsString() + "); excludes {@link #" + f.java + "()}.";
                 f.alternatives.add(a);
             }
         }
         return f;
+    }
+
+    /** The type of a union alternative: a scalar ({@code string}) or a list of scalars ({@code array<string>}). */
+    private Type alternativeType(Comp c, String type, String fieldName) {
+        JsonObject parsed = parseType(type);
+        if (parsed.get("type").getAsString().equals("array")) {
+            return new ListOf(scalarType(c, parsed.getAsJsonObject("items").get("type").getAsString(), fieldName, List.of()));
+        }
+        return scalarType(c, type, fieldName, List.of());
     }
 
     private Type type(Comp c, DocField d, List<DocField> fields) {
@@ -994,9 +1029,13 @@ public final class ComponentGenerator {
     }
 
     private List<JsonElement> enumValuesOf(Comp c, DocField d) {
-        boolean open = in.api().has("openEnums") && in.api().getAsJsonArray("openEnums").asList().stream()
+        return isOpenEnum(c, d) ? List.of() : d.enumValues;
+    }
+
+    /** api.json {@code openEnums}: BDS takes (and answers) strings the docs do not list, so the field is a string. */
+    private boolean isOpenEnum(Comp c, DocField d) {
+        return in.api().has("openEnums") && in.api().getAsJsonArray("openEnums").asList().stream()
             .anyMatch(e -> e.getAsString().equals(c.id + ":" + d.path));
-        return open ? List.of() : d.enumValues;
     }
 
     private Type scalarType(Comp c, String type, String fieldName, List<JsonElement> enumValues) {

@@ -6,6 +6,7 @@ import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.paletter.PaletteReport;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.CustomBlock;
+import org.geysermc.paletter.block.component.BlockEntity;
 import org.geysermc.paletter.block.component.CollisionBox;
 import org.geysermc.paletter.block.component.ConnectionRule;
 import org.geysermc.paletter.block.component.DestructibleByMining;
@@ -29,6 +30,7 @@ import org.geysermc.paletter.item.component.Food;
 import org.geysermc.paletter.item.component.HoverTextColor;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.Repairable;
+import org.geysermc.paletter.item.component.Shooter;
 import org.geysermc.paletter.item.component.UseAnimation;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItems;
@@ -362,5 +364,88 @@ class TransformsTest {
         WireNode none = new WireNode();
         Transforms.useAnimationId(ctx, none, UseAnimation.builder().build());
         assertEquals(0, compound(none, "item_properties").getInt("use_animation"));
+    }
+
+    @Test
+    void uvLockAsAListOfBonesIsSentFrom26_60AndDroppedBefore() {
+        Geometry geometry = Geometry.builder().identifier("geometry.lamp").uvLockBones("lid", "base").build();
+        WireNode now = new WireNode();
+        Transforms.geometry(ctx, now, geometry);
+        assertEquals(List.of("lid", "base"), compound(now, "minecraft:geometry").getList("uv_lock", NbtType.STRING));
+        assertTrue(report.entries().isEmpty());
+
+        WireNode before = new WireNode();
+        Transforms.geometryBeforeUvLockList(ctx, before, geometry);
+        assertEquals((byte) 0, compound(before, "minecraft:geometry").getByte("uv_lock"), "the boolean false stays");
+        assertEquals(1, report.warnings().size());
+
+        WireNode flag = new WireNode();
+        Transforms.geometryBeforeUvLockList(ctx, flag, Geometry.builder().identifier("geometry.lamp").uvLock(true).build());
+        assertEquals((byte) 1, compound(flag, "minecraft:geometry").getByte("uv_lock"));
+        assertEquals(1, report.warnings().size(), "the boolean form is fine before 26.60");
+    }
+
+    @Test
+    void anItemSpecificSpeedWithoutAnItemKeepsTheListAndSendsNoEntry() {
+        WireNode out = new WireNode();
+        Transforms.destructibleByMining(ctx, out, DestructibleByMining.builder().itemSpecificSpeeds(
+            DestructibleByMining.ItemSpecificSpeeds.builder().destroySpeed(1.5f).build()).build());
+        NbtMap wire = compound(out, "minecraft:destructible_by_mining");
+        assertTrue(wire.containsKey("item_specific_speeds"));
+        assertTrue(wire.getList("item_specific_speeds", NbtType.COMPOUND).isEmpty());
+
+        WireNode named = new WireNode();
+        Transforms.destructibleByMining(ctx, named, DestructibleByMining.builder().itemSpecificSpeeds(
+            DestructibleByMining.ItemSpecificSpeeds.builder().destroySpeed(1.5f).item("minecraft:stick").build(),
+            DestructibleByMining.ItemSpecificSpeeds.builder().destroySpeed(2f).build()).build());
+        List<NbtMap> speeds = compound(named, "minecraft:destructible_by_mining").getList("item_specific_speeds", NbtType.COMPOUND);
+        assertEquals(1, speeds.size());
+        assertEquals("minecraft:stick", speeds.getFirst().getCompound("item").getString("Name"));
+    }
+
+    @Test
+    void theBlockEntityContainerHasATitleOnlyFrom26_60() {
+        BlockEntity titled = BlockEntity.builder().container(BlockEntity.Container.builder().slotCount(9).title("Box").build()).build();
+        WireNode now = new WireNode();
+        Transforms.blockEntityContainer(ctx, now, titled);
+        NbtMap container = compound(now, "minecraft:container");
+        assertEquals((byte) 9, container.getByte("slot_count"));
+        assertEquals("Box", container.getString("title"));
+
+        WireNode before = new WireNode();
+        Transforms.blockEntityContainerSlotsOnly(ctx, before, titled);
+        assertEquals((byte) 9, compound(before, "minecraft:container").getByte("slot_count"));
+        assertFalse(compound(before, "minecraft:container").containsKey("title"));
+        assertEquals(1, report.warnings().size());
+
+        // No container, nothing sent (the slot count default belongs to the container)
+        for (boolean slotsOnly : new boolean[]{false, true}) {
+            WireNode none = new WireNode();
+            if (slotsOnly) {
+                Transforms.blockEntityContainerSlotsOnly(ctx, none, BlockEntity.builder().build());
+            } else {
+                Transforms.blockEntityContainer(ctx, none, BlockEntity.builder().build());
+            }
+            assertTrue(none.isEmpty());
+        }
+    }
+
+    @Test
+    void anAmmunitionItemIsADescriptorThatIsEmptyWhenItNamesNoKnownItem() {
+        WireNode known = new WireNode();
+        Transforms.ammunitionItemDescriptor(ctx, known, Shooter.Ammunition.builder().item("minecraft:stick").build());
+        assertEquals("minecraft:stick", compound(known, "item").getString("name"));
+        assertTrue(report.entries().isEmpty());
+
+        WireNode none = new WireNode();
+        Transforms.ammunitionItemDescriptor(ctx, none, Shooter.Ammunition.builder().build());
+        assertTrue(compound(none, "item").isEmpty());
+        assertTrue(none.build().containsKey("item"), "{} is sent, not left out");
+        assertTrue(report.entries().isEmpty());
+
+        WireNode unknown = new WireNode();
+        Transforms.ammunitionItemDescriptor(ctx, unknown, Shooter.Ammunition.builder().item("minecraft:no_such_item").build());
+        assertTrue(compound(unknown, "item").isEmpty());
+        assertEquals(1, report.warnings().size());
     }
 }

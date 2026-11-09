@@ -115,9 +115,16 @@ public final class ComponentIndex {
     public static final Map<Class<?>, Map<String, String>> JSON_KEYS = new LinkedHashMap<>();
 
     /**
-     * Synthetic fields of value forms: record class -> JSON type (boolean, string, ...) -> record component.
+     * Synthetic fields of value forms: record class -> JSON type (boolean, string, ...) -> record component. A record
+     * component ending in {@code []} is the list field the value form is one entry of (the object form of a list).
      */
     public static final Map<Class<?>, Map<String, String>> FORMS = new LinkedHashMap<>();
+
+    /**
+     * The item and block descriptor fields (api.json {@code descriptors}) that are a name: record class -> record component ->
+     * {@code item} or {@code block}. Add-on JSON writes a descriptor as a name or as an object with {@code name}.
+     */
+    public static final Map<Class<?>, Map<String, String>> DESCRIPTORS = new LinkedHashMap<>();
 
     /**
      * The oldest protocol a spec capture of BDS exists for: the shapes in {@code data/model/mappings.json} were observed from here.
@@ -151,7 +158,7 @@ public final class ComponentIndex {
         BLOCK.put("minecraft:collision_box", CollisionBox.class);
         keys(CollisionBox.class);
         keys(CollisionBox.Entry.class, "origin", "origin", "size", "size");
-        FORMS.put(CollisionBox.class, Map.of("array<object>", "boxes", "boolean", "enabled"));
+        FORMS.put(CollisionBox.class, Map.of("array<object>", "boxes", "boolean", "enabled", "object", "boxes[]"));
         BLOCK.put("minecraft:connection_rule", ConnectionRule.class);
         keys(ConnectionRule.class, "accepts_connections_from", "acceptsConnectionsFrom", "enabled_directions", "enabledDirections");
         BLOCK.put("minecraft:crafting_table", CraftingTable.class);
@@ -166,6 +173,7 @@ public final class ComponentIndex {
         keys(DestructibleByMining.class, "base_time_to_destroy", "baseTimeToDestroy", "item_specific_speeds", "itemSpecificSpeeds", "seconds_to_destroy", "secondsToDestroy");
         keys(DestructibleByMining.ItemSpecificSpeeds.class, "destroy_speed", "destroySpeed", "item", "item");
         FORMS.put(DestructibleByMining.class, Map.of("boolean", "enabled"));
+        DESCRIPTORS.put(DestructibleByMining.ItemSpecificSpeeds.class, Map.of("item", "item"));
         BLOCK.put("minecraft:destruction_particles", DestructionParticles.class);
         keys(DestructionParticles.class, "particle_count", "particleCount", "texture", "texture", "tint_method", "tintMethod");
         BLOCK.put("minecraft:display_name", DisplayName.class);
@@ -219,6 +227,7 @@ public final class ComponentIndex {
         keys(PlacementFilter.class, "conditions", "conditions");
         keys(PlacementFilter.BlockFilter.class, "name", "name", "states", "states", "tags", "tags");
         keys(PlacementFilter.Conditions.class, "allowed_faces", "allowedFaces", "block_filter", "blockFilter");
+        DESCRIPTORS.put(PlacementFilter.BlockFilter.class, Map.of("name", "block"));
         BLOCK.put("minecraft:precipitation_interactions", PrecipitationInteractions.class);
         keys(PrecipitationInteractions.class, "precipitation_behavior", "precipitationBehavior");
         BLOCK.put("minecraft:random_offset", RandomOffset.class);
@@ -260,6 +269,8 @@ public final class ComponentIndex {
         ITEM.put("minecraft:block_placer", BlockPlacer.class);
         keys(BlockPlacer.class, "aligned_placement", "alignedPlacement", "block", "block", "replace_block_item", "replaceBlockItem", "use_on", "useOn");
         keys(BlockPlacer.UseOn.class, "name", "name", "states", "states", "tags", "tags");
+        DESCRIPTORS.put(BlockPlacer.class, Map.of("block", "block"));
+        DESCRIPTORS.put(BlockPlacer.UseOn.class, Map.of("name", "block"));
         ITEM.put("minecraft:bundle_interaction", BundleInteraction.class);
         keys(BundleInteraction.class, "num_viewable_slots", "numViewableSlots");
         ITEM.put("minecraft:can_destroy_in_creative", CanDestroyInCreative.class);
@@ -276,6 +287,7 @@ public final class ComponentIndex {
         keys(Digger.class, "destroy_speeds", "destroySpeeds", "use_efficiency", "useEfficiency");
         keys(Digger.Block.class, "name", "name", "states", "states", "tags", "tags");
         keys(Digger.DestroySpeeds.class, "block", "block", "speed", "speed");
+        DESCRIPTORS.put(Digger.Block.class, Map.of("name", "block"));
         ITEM.put("minecraft:display_name", org.geysermc.paletter.item.component.DisplayName.class);
         keys(org.geysermc.paletter.item.component.DisplayName.class, "value", "value");
         ITEM.put("minecraft:durability", Durability.class);
@@ -291,10 +303,12 @@ public final class ComponentIndex {
         ITEM.put("minecraft:entity_placer", EntityPlacer.class);
         keys(EntityPlacer.class, "dispense_on", "dispenseOn", "entity", "entity", "use_on", "useOn");
         keys(EntityPlacer.UseOn.class, "name", "name", "states", "states", "tags", "tags");
+        DESCRIPTORS.put(EntityPlacer.UseOn.class, Map.of("name", "block"));
         ITEM.put("minecraft:fire_resistant", FireResistant.class);
         keys(FireResistant.class, "value", "value");
         ITEM.put("minecraft:food", Food.class);
         keys(Food.class, "can_always_eat", "canAlwaysEat", "nutrition", "nutrition", "saturation_modifier", "saturationModifier", "using_converts_to", "usingConvertsTo");
+        DESCRIPTORS.put(Food.class, Map.of("usingConvertsTo", "item"));
         ITEM.put("minecraft:fuel", Fuel.class);
         keys(Fuel.class, "duration", "duration");
         ITEM.put("minecraft:glint", Glint.class);
@@ -336,6 +350,7 @@ public final class ComponentIndex {
         ITEM.put("minecraft:shooter", Shooter.class);
         keys(Shooter.class, "ammunition", "ammunition", "charge_on_draw", "chargeOnDraw", "max_draw_duration", "maxDrawDuration", "scale_power_by_draw_duration", "scalePowerByDrawDuration");
         keys(Shooter.Ammunition.class, "item", "item", "search_inventory", "searchInventory", "use_in_creative", "useInCreative", "use_offhand", "useOffhand");
+        DESCRIPTORS.put(Shooter.Ammunition.class, Map.of("item", "item"));
         ITEM.put("minecraft:should_despawn", ShouldDespawn.class);
         keys(ShouldDespawn.class, "value", "value");
         ITEM.put("minecraft:stacked_by_data", StackedByData.class);

@@ -7,6 +7,9 @@
     "block:minecraft:collision_box": {
       "boolean": {
         "field": "enabled"
+      },
+      "object": {
+        "listElementOf": "boxes"
       }
     },
     "block:minecraft:geometry": {
@@ -92,7 +95,10 @@
   },
   "unions": {
     "block:minecraft:geometry:uv_lock": {
-      "use": "boolean"
+      "use": "boolean",
+      "alternative": {
+        "array<string>": "bones"
+      }
     },
     "block:minecraft:material_instances:*": {
       "alternative": {
@@ -206,7 +212,8 @@
     "block:minecraft:embedded_visual:geometry.culling_layer",
     "block:minecraft:item_visual:geometry.culling_layer",
     "item:minecraft:record:sound_event",
-    "item:description:group"
+    "item:description:group",
+    "item:minecraft:rarity:value"
   ],
   "exclude": [
     "block:minecraft:collision_box:[].min",
@@ -221,7 +228,14 @@
   },
   "optional": [
     "block:minecraft:destructible_by_mining:seconds_to_destroy",
-    "block:minecraft:destructible_by_explosion:explosion_resistance"
+    "block:minecraft:destructible_by_explosion:explosion_resistance",
+    "block:minecraft:destructible_by_mining:item_specific_speeds[].item",
+    "item:minecraft:kinetic_weapon:damage_conditions.min_speed",
+    "item:minecraft:kinetic_weapon:damage_conditions.min_relative_speed",
+    "item:minecraft:kinetic_weapon:dismount_conditions.min_speed",
+    "item:minecraft:kinetic_weapon:dismount_conditions.min_relative_speed",
+    "item:minecraft:kinetic_weapon:knockback_conditions.min_speed",
+    "item:minecraft:kinetic_weapon:knockback_conditions.min_relative_speed"
   ],
   "noDefaults": [
     "item:description:category"
