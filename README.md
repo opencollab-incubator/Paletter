@@ -350,7 +350,7 @@ id), and the item properties BDS sends for every custom item (`mining_speed`, `f
 The conformance suite (`ComponentConformanceTest` in tools) rebuilds every variant of the BDS 1.26.63.1 capture that
 BDS accepted from its add-on JSON through the generated API and compares Paletter's NBT with BDS's: 1215 of the 1368
 accepted variants are identical, none differ; the others use server-only components (132) or JSON forms the API does not
-model (21), each listed with its reason in `data/model/conformance-known.txt`. See `tools/docs/codegen.md` and
+model (21), each listed with its reason in `data/model/conformance-known-<protocol>.txt`. See `tools/docs/codegen.md` and
 `tools/docs/model.md`.
 
 ## The creative inventory
