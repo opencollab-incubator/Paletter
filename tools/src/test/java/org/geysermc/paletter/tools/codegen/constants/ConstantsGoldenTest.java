@@ -175,6 +175,10 @@ class ConstantsGoldenTest {
         write(first, List.of(data("1.0", 100, shuffleBlocks.apply(releaseBlocks(false)), shuffleItems.apply(releaseItems(false)))), List.of(false));
         JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(first, shuffleJson.apply(names()), new JsonObject(), "1.0.0")
             .files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
+        // A history from before the Bedrock versions were recorded: they are derived from the releases and captures again
+        for (String section : List.of("blocks", "items")) {
+            history.getAsJsonObject(section).asMap().values().forEach(value -> value.getAsJsonObject().remove("bedrock"));
+        }
         history.getAsJsonObject("blocks").add("REMOVED_BLOCK", entry("minecraft:removed_block"));
         history.getAsJsonObject("blocks").add("OLD_DOOR", entry("minecraft:old_door"));
         history.getAsJsonObject("items").add("OLD_STICK", entry("minecraft:old_stick"));
@@ -189,7 +193,34 @@ class ConstantsGoldenTest {
             data("1.0", 100, releaseBlocks(false), releaseItems(false)),
             data("1.1", 110, shuffleBlocks.apply(releaseBlocks(true)), shuffleItems.apply(releaseItems(true))),
             data("1.2", 120, shuffleBlocks.apply(previewBlocks), shuffleItems.apply(previewItems))), List.of(false, false, true));
-        return ConstantsGenerator.generate(second, shuffleJson.apply(names()), shuffleJson.apply(history), "2.1.0");
+        return ConstantsGenerator.generate(second, shuffleJson.apply(names()), shuffleJson.apply(history), "2.1.0",
+            ConstantsGenerator.Sources.read(second, captures(temp.resolve("bds"))));
+    }
+
+    /**
+     * What BDS captured, as {@code data/bds} has it: in release 1.0 (protocol 100 to 109) the block test_sparse and the
+     * item potion are behind a current experiment toggle (a retired toggle gates nothing), and a world with Education
+     * Edition features has the apple item and the test_block block (found by the 1.1 capture, which is why the union of
+     * all captures counts).
+     */
+    static Path captures(Path bds) throws IOException {
+        Path old = Files.createDirectories(bds.resolve("1.0.5"));
+        Files.writeString(old.resolve("experiments.json"), """
+            {
+              "bdsVersion": "1.0.5", "protocol": 105,
+              "toggles": {
+                "drop": {"status": "current", "content": {"itemsAdded": ["minecraft:potion"], "scriptItemsAdded": [],
+                  "blocksAdded": ["minecraft:test_sparse"], "dataDrivenBlocks": []}},
+                "old": {"status": "retired"},
+                "other": {"status": "retired", "content": {"itemsAdded": ["minecraft:apple"], "blocksAdded": ["minecraft:test_door"]}}
+              }
+            }
+            """);
+        Path newer = Files.createDirectories(bds.resolve("1.1.2"));
+        Files.writeString(newer.resolve("education.json"), """
+            {"bdsVersion": "1.1.2", "protocol": 115, "items": ["minecraft:apple"], "blocks": ["minecraft:test_block"]}
+            """);
+        return bds;
     }
 
     private static ConstantsGenerator.Result generate(Path temp) throws IOException {

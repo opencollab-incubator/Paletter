@@ -61,6 +61,70 @@ class ConstantsGeneratorTest {
         return entry;
     }
 
+    private static VanillaData version(String name, int protocol, String... items) {
+        return new VanillaData(new DataVersion(name, protocol), List.of(BlockStates.of("minecraft:air", Map.of()), BlockStates.of("minecraft:unknown", Map.of())),
+            java.util.stream.IntStream.range(0, items.length).mapToObj(i -> new VanillaItem(items[i], i + 1, 0, false, null)).toList(),
+            List.of(), org.geysermc.paletter.internal.creative.RawLayout.empty(), Map.of(),
+            org.geysermc.paletter.internal.data.VersionFallbacks.NONE, Map.of());
+    }
+
+    private static ConstantsGenerator.Sources sources(Map<String, Map<String, String>> gated, java.util.Set<String> education,
+                                                      VanillaData... releases) {
+        return new ConstantsGenerator.Sources(List.of(releases), gated, Map.of(), education, java.util.Set.of());
+    }
+
+    @Test
+    void sinceIsTheFirstReleaseWithoutAnExperiment() {
+        ConstantsGenerator.Sources sources = sources(
+            Map.of("1.0", Map.of("minecraft:gated", "drop"), "1.1", Map.of("minecraft:always", "other")), java.util.Set.of(),
+            version("1.0", 100, "minecraft:plain", "minecraft:gated", "minecraft:always"),
+            version("1.1", 110, "minecraft:plain", "minecraft:gated", "minecraft:always", "minecraft:fresh"),
+            version("1.2", 120, "minecraft:plain", "minecraft:gated", "minecraft:fresh"));
+        assertEquals("1.0", sources.firstVersion("items", "minecraft:plain"));
+        // Gated in the release that has it first, regular in the next
+        assertEquals("1.1", sources.firstVersion("items", "minecraft:gated"));
+        assertEquals("{@code drop} in 1.0", sources.gating("items", "minecraft:gated"));
+        // Never regular in a release that has it: the first release that has it
+        assertEquals("1.0", sources.firstVersion("items", "minecraft:always"));
+        assertEquals("{@code other} in 1.1", sources.gating("items", "minecraft:always"));
+        assertEquals("1.1", sources.firstVersion("items", "minecraft:fresh"));
+        assertNull(sources.gating("items", "minecraft:fresh"));
+        // Not in any release (a removed constant without a record): the oldest
+        assertEquals("1.0", sources.firstVersion("items", "minecraft:gone"));
+    }
+
+    @Test
+    void theHistoryKeepsWhatItRecorded() {
+        ConstantsGenerator.Sources sources = sources(Map.of(), java.util.Set.of("minecraft:apple"),
+            version("1.0", 100, "minecraft:apple", "minecraft:potion"), version("1.1", 110, "minecraft:apple", "minecraft:potion"));
+        JsonObject old = new JsonObject();
+        JsonObject potion = entry("minecraft:potion");
+        potion.addProperty("bedrock", "0.9");
+        JsonObject apple = entry("minecraft:apple");
+        JsonObject items = new JsonObject();
+        items.add("POTION", potion);
+        items.add("APPLE", apple);
+        old.add("items", items);
+        JsonObject itemHistory = history(ConstantsGenerator.generate(sources.releases().getLast(), null, names(), old, "2.0.0", sources))
+            .getAsJsonObject("items");
+        // A recorded version stays (a release leaving the bundle must not change it), the others are derived
+        assertEquals("0.9", itemHistory.getAsJsonObject("POTION").get("bedrock").getAsString());
+        assertEquals("1.0", itemHistory.getAsJsonObject("APPLE").get("bedrock").getAsString());
+        assertTrue(itemHistory.getAsJsonObject("APPLE").get("education").getAsBoolean());
+        assertFalse(itemHistory.getAsJsonObject("POTION").has("education"));
+
+        // Education is sticky as well: a capture that no longer lists it does not clear it
+        apple.addProperty("education", true);
+        JsonObject again = history(ConstantsGenerator.generate(sources.releases().getLast(), null, names(), old, "2.0.0",
+            sources(Map.of(), java.util.Set.of(), version("1.0", 100, "minecraft:apple", "minecraft:potion"), version("1.1", 110, "minecraft:apple", "minecraft:potion"))))
+            .getAsJsonObject("items");
+        assertTrue(again.getAsJsonObject("APPLE").get("education").getAsBoolean());
+    }
+
+    private static JsonObject names() {
+        return new JsonObject();
+    }
+
     @Test
     void committedOutputIsReproducible() throws IOException {
         ConstantsGenerator.Result result = ConstantsGenerator.generate(ROOT);
@@ -108,11 +172,14 @@ class ConstantsGeneratorTest {
                 @Deprecated(since = "2.1.0", forRemoval = true)
                 public static final BedrockBlockType OLD_STONE_NAME = STONE;
             """));
+        // New in Paletter 2.1.0 (prose), in the newest release (the @since: Bedrock's version)
         assertTrue(blocks.contains("""
-                 * @since 2.1.0
+                 * Added in Paletter 2.1.0.
+                 *
+                 * @since %s
                  */
                 public static final BedrockBlockType STONE = VanillaTypes.block("minecraft:stone");
-            """));
+            """.formatted(release.version().name())));
         String items = second.files().get(ITEMS);
         assertTrue(items.contains("public static final BedrockItemType OLD_ITEM = APPLE;"));
         assertTrue(items.contains("@deprecated Bedrock renamed it to {@link #APPLE}"));

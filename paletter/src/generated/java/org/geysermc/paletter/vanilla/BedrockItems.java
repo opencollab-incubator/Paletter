@@ -2,6 +2,8 @@
 // data/model/constants-history.json. Do not edit; see tools/docs/codegen.md.
 package org.geysermc.paletter.vanilla;
 
+import org.geysermc.paletter.annotation.Education;
+
 /**
  * Every item type of Bedrock 26.60, the newest bundled release. The constants are resolved against
  * the newest data of {@link org.geysermc.paletter.Paletter#bundled()} on first use; referencing them loads nothing.
@@ -10,10407 +12,14958 @@ package org.geysermc.paletter.vanilla;
  * <p>
  * Constants are added when Bedrock adds items (binary compatible). Items Bedrock removes stay, deprecated, and
  * resolve to their fallback; renamed items keep their old constant, deprecated, as an alias of the new one.
+ * <p>
+ * The {@code @since} of a constant is the bundled Bedrock release it first appears in, without an experiment toggle
+ * (decided from the BDS captures in {@code data/bds}); {@code 26.40} is the oldest bundled release, so it may be older.
+ * {@link org.geysermc.paletter.annotation.Education @Education} marks content BDS only offers to worlds with Education
+ * Edition features, which {@code isEducation()} of the type answers at runtime.
  *
  * @since 1.0.0
  */
 public final class BedrockItems {
     /**
      * {@code minecraft:acacia_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_BOAT = VanillaTypes.item("minecraft:acacia_boat");
 
     /**
      * {@code minecraft:acacia_button}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_BUTTON = VanillaTypes.item("minecraft:acacia_button");
 
     /**
      * {@code minecraft:acacia_chest_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_CHEST_BOAT = VanillaTypes.item("minecraft:acacia_chest_boat");
 
     /**
      * {@code minecraft:acacia_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_DOOR = VanillaTypes.item("minecraft:acacia_door");
 
     /**
      * {@code minecraft:acacia_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_DOUBLE_SLAB = VanillaTypes.item("minecraft:acacia_double_slab");
 
     /**
      * {@code minecraft:acacia_fence}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_FENCE = VanillaTypes.item("minecraft:acacia_fence");
 
     /**
      * {@code minecraft:acacia_fence_gate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_FENCE_GATE = VanillaTypes.item("minecraft:acacia_fence_gate");
 
     /**
      * {@code minecraft:acacia_hanging_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_HANGING_SIGN = VanillaTypes.item("minecraft:acacia_hanging_sign");
 
     /**
      * {@code minecraft:acacia_leaves}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_LEAVES = VanillaTypes.item("minecraft:acacia_leaves");
 
     /**
      * {@code minecraft:acacia_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_LOG = VanillaTypes.item("minecraft:acacia_log");
 
     /**
      * {@code minecraft:acacia_planks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_PLANKS = VanillaTypes.item("minecraft:acacia_planks");
 
     /**
      * {@code minecraft:acacia_pressure_plate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_PRESSURE_PLATE = VanillaTypes.item("minecraft:acacia_pressure_plate");
 
     /**
      * {@code minecraft:acacia_sapling}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_SAPLING = VanillaTypes.item("minecraft:acacia_sapling");
 
     /**
      * {@code minecraft:acacia_shelf}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_SHELF = VanillaTypes.item("minecraft:acacia_shelf");
 
     /**
      * {@code minecraft:acacia_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_SIGN = VanillaTypes.item("minecraft:acacia_sign");
 
     /**
      * {@code minecraft:acacia_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_SLAB = VanillaTypes.item("minecraft:acacia_slab");
 
     /**
      * {@code minecraft:acacia_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_STAIRS = VanillaTypes.item("minecraft:acacia_stairs");
 
     /**
      * {@code minecraft:acacia_standing_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_STANDING_SIGN = VanillaTypes.item("minecraft:acacia_standing_sign");
 
     /**
      * {@code minecraft:acacia_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_TRAPDOOR = VanillaTypes.item("minecraft:acacia_trapdoor");
 
     /**
      * {@code minecraft:acacia_wall_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_WALL_SIGN = VanillaTypes.item("minecraft:acacia_wall_sign");
 
     /**
      * {@code minecraft:acacia_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACACIA_WOOD = VanillaTypes.item("minecraft:acacia_wood");
 
     /**
      * {@code minecraft:activator_rail}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ACTIVATOR_RAIL = VanillaTypes.item("minecraft:activator_rail");
 
     /**
      * {@code minecraft:agent_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType AGENT_SPAWN_EGG = VanillaTypes.item("minecraft:agent_spawn_egg");
 
     /**
      * {@code minecraft:air}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType AIR = VanillaTypes.item("minecraft:air");
 
     /**
      * {@code minecraft:allay_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ALLAY_SPAWN_EGG = VanillaTypes.item("minecraft:allay_spawn_egg");
 
     /**
      * {@code minecraft:allium}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ALLIUM = VanillaTypes.item("minecraft:allium");
 
     /**
      * {@code minecraft:allow}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ALLOW = VanillaTypes.item("minecraft:allow");
 
     /**
      * {@code minecraft:amethyst_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType AMETHYST_BLOCK = VanillaTypes.item("minecraft:amethyst_block");
 
     /**
      * {@code minecraft:amethyst_cluster}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType AMETHYST_CLUSTER = VanillaTypes.item("minecraft:amethyst_cluster");
 
     /**
      * {@code minecraft:amethyst_shard}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType AMETHYST_SHARD = VanillaTypes.item("minecraft:amethyst_shard");
 
     /**
      * {@code minecraft:ancient_debris}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ANCIENT_DEBRIS = VanillaTypes.item("minecraft:ancient_debris");
 
     /**
      * {@code minecraft:andesite}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ANDESITE = VanillaTypes.item("minecraft:andesite");
 
     /**
      * {@code minecraft:andesite_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ANDESITE_DOUBLE_SLAB = VanillaTypes.item("minecraft:andesite_double_slab");
 
     /**
      * {@code minecraft:andesite_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ANDESITE_SLAB = VanillaTypes.item("minecraft:andesite_slab");
 
     /**
      * {@code minecraft:andesite_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ANDESITE_STAIRS = VanillaTypes.item("minecraft:andesite_stairs");
 
     /**
      * {@code minecraft:andesite_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ANDESITE_WALL = VanillaTypes.item("minecraft:andesite_wall");
 
     /**
      * {@code minecraft:angler_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ANGLER_POTTERY_SHERD = VanillaTypes.item("minecraft:angler_pottery_sherd");
 
     /**
      * {@code minecraft:anvil}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ANVIL = VanillaTypes.item("minecraft:anvil");
 
     /**
      * {@code minecraft:apple}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType APPLE = VanillaTypes.item("minecraft:apple");
 
     /**
      * {@code minecraft:archer_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ARCHER_POTTERY_SHERD = VanillaTypes.item("minecraft:archer_pottery_sherd");
 
     /**
      * {@code minecraft:armadillo_scute}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ARMADILLO_SCUTE = VanillaTypes.item("minecraft:armadillo_scute");
 
     /**
      * {@code minecraft:armadillo_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ARMADILLO_SPAWN_EGG = VanillaTypes.item("minecraft:armadillo_spawn_egg");
 
     /**
      * {@code minecraft:armor_stand}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ARMOR_STAND = VanillaTypes.item("minecraft:armor_stand");
 
     /**
      * {@code minecraft:arms_up_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ARMS_UP_POTTERY_SHERD = VanillaTypes.item("minecraft:arms_up_pottery_sherd");
 
     /**
      * {@code minecraft:arrow}: 42 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ARROW = VanillaTypes.item("minecraft:arrow");
 
     /**
      * {@code minecraft:axolotl_bucket}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType AXOLOTL_BUCKET = VanillaTypes.item("minecraft:axolotl_bucket");
 
     /**
      * {@code minecraft:axolotl_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType AXOLOTL_SPAWN_EGG = VanillaTypes.item("minecraft:axolotl_spawn_egg");
 
     /**
      * {@code minecraft:azalea}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType AZALEA = VanillaTypes.item("minecraft:azalea");
 
     /**
      * {@code minecraft:azalea_leaves}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType AZALEA_LEAVES = VanillaTypes.item("minecraft:azalea_leaves");
 
     /**
      * {@code minecraft:azalea_leaves_flowered}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType AZALEA_LEAVES_FLOWERED = VanillaTypes.item("minecraft:azalea_leaves_flowered");
 
     /**
      * {@code minecraft:azure_bluet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType AZURE_BLUET = VanillaTypes.item("minecraft:azure_bluet");
 
     /**
      * {@code minecraft:baked_potato}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAKED_POTATO = VanillaTypes.item("minecraft:baked_potato");
 
     /**
      * {@code minecraft:balloon}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType BALLOON = VanillaTypes.item("minecraft:balloon");
+    @Education
+    public static final BedrockItemType BALLOON = VanillaTypes.educationItem("minecraft:balloon");
 
     /**
      * {@code minecraft:bamboo}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO = VanillaTypes.item("minecraft:bamboo");
 
     /**
      * {@code minecraft:bamboo_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_BLOCK = VanillaTypes.item("minecraft:bamboo_block");
 
     /**
      * {@code minecraft:bamboo_button}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_BUTTON = VanillaTypes.item("minecraft:bamboo_button");
 
     /**
      * {@code minecraft:bamboo_chest_raft}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_CHEST_RAFT = VanillaTypes.item("minecraft:bamboo_chest_raft");
 
     /**
      * {@code minecraft:bamboo_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_DOOR = VanillaTypes.item("minecraft:bamboo_door");
 
     /**
      * {@code minecraft:bamboo_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_DOUBLE_SLAB = VanillaTypes.item("minecraft:bamboo_double_slab");
 
     /**
      * {@code minecraft:bamboo_fence}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_FENCE = VanillaTypes.item("minecraft:bamboo_fence");
 
     /**
      * {@code minecraft:bamboo_fence_gate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_FENCE_GATE = VanillaTypes.item("minecraft:bamboo_fence_gate");
 
     /**
      * {@code minecraft:bamboo_hanging_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_HANGING_SIGN = VanillaTypes.item("minecraft:bamboo_hanging_sign");
 
     /**
      * {@code minecraft:bamboo_mosaic}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_MOSAIC = VanillaTypes.item("minecraft:bamboo_mosaic");
 
     /**
      * {@code minecraft:bamboo_mosaic_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_MOSAIC_DOUBLE_SLAB = VanillaTypes.item("minecraft:bamboo_mosaic_double_slab");
 
     /**
      * {@code minecraft:bamboo_mosaic_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_MOSAIC_SLAB = VanillaTypes.item("minecraft:bamboo_mosaic_slab");
 
     /**
      * {@code minecraft:bamboo_mosaic_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_MOSAIC_STAIRS = VanillaTypes.item("minecraft:bamboo_mosaic_stairs");
 
     /**
      * {@code minecraft:bamboo_planks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_PLANKS = VanillaTypes.item("minecraft:bamboo_planks");
 
     /**
      * {@code minecraft:bamboo_pressure_plate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_PRESSURE_PLATE = VanillaTypes.item("minecraft:bamboo_pressure_plate");
 
     /**
      * {@code minecraft:bamboo_raft}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_RAFT = VanillaTypes.item("minecraft:bamboo_raft");
 
     /**
      * {@code minecraft:bamboo_sapling}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_SAPLING = VanillaTypes.item("minecraft:bamboo_sapling");
 
     /**
      * {@code minecraft:bamboo_shelf}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_SHELF = VanillaTypes.item("minecraft:bamboo_shelf");
 
     /**
      * {@code minecraft:bamboo_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_SIGN = VanillaTypes.item("minecraft:bamboo_sign");
 
     /**
      * {@code minecraft:bamboo_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_SLAB = VanillaTypes.item("minecraft:bamboo_slab");
 
     /**
      * {@code minecraft:bamboo_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_STAIRS = VanillaTypes.item("minecraft:bamboo_stairs");
 
     /**
      * {@code minecraft:bamboo_standing_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_STANDING_SIGN = VanillaTypes.item("minecraft:bamboo_standing_sign");
 
     /**
      * {@code minecraft:bamboo_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_TRAPDOOR = VanillaTypes.item("minecraft:bamboo_trapdoor");
 
     /**
      * {@code minecraft:bamboo_wall_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAMBOO_WALL_SIGN = VanillaTypes.item("minecraft:bamboo_wall_sign");
 
     /**
      * {@code minecraft:banner}: 15 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BANNER = VanillaTypes.item("minecraft:banner");
 
     /**
      * {@code minecraft:banner_pattern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BANNER_PATTERN = VanillaTypes.item("minecraft:banner_pattern");
 
     /**
      * {@code minecraft:barrel}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BARREL = VanillaTypes.item("minecraft:barrel");
 
     /**
      * {@code minecraft:barrier}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BARRIER = VanillaTypes.item("minecraft:barrier");
 
     /**
      * {@code minecraft:basalt}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BASALT = VanillaTypes.item("minecraft:basalt");
 
     /**
      * {@code minecraft:bat_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BAT_SPAWN_EGG = VanillaTypes.item("minecraft:bat_spawn_egg");
 
     /**
      * {@code minecraft:beacon}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BEACON = VanillaTypes.item("minecraft:beacon");
 
     /**
      * {@code minecraft:bed}: 15 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BED = VanillaTypes.item("minecraft:bed");
 
     /**
      * {@code minecraft:bedrock}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BEDROCK = VanillaTypes.item("minecraft:bedrock");
 
     /**
      * {@code minecraft:beef}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BEEF = VanillaTypes.item("minecraft:beef");
 
     /**
      * {@code minecraft:beehive}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BEEHIVE = VanillaTypes.item("minecraft:beehive");
 
     /**
      * {@code minecraft:beetroot}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BEETROOT = VanillaTypes.item("minecraft:beetroot");
 
     /**
      * {@code minecraft:beetroot_seeds}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BEETROOT_SEEDS = VanillaTypes.item("minecraft:beetroot_seeds");
 
     /**
      * {@code minecraft:beetroot_soup}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BEETROOT_SOUP = VanillaTypes.item("minecraft:beetroot_soup");
 
     /**
      * {@code minecraft:bee_nest}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BEE_NEST = VanillaTypes.item("minecraft:bee_nest");
 
     /**
      * {@code minecraft:bee_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BEE_SPAWN_EGG = VanillaTypes.item("minecraft:bee_spawn_egg");
 
     /**
      * {@code minecraft:bell}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BELL = VanillaTypes.item("minecraft:bell");
 
     /**
      * {@code minecraft:big_dripleaf}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIG_DRIPLEAF = VanillaTypes.item("minecraft:big_dripleaf");
 
     /**
      * {@code minecraft:birch_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_BOAT = VanillaTypes.item("minecraft:birch_boat");
 
     /**
      * {@code minecraft:birch_button}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_BUTTON = VanillaTypes.item("minecraft:birch_button");
 
     /**
      * {@code minecraft:birch_chest_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_CHEST_BOAT = VanillaTypes.item("minecraft:birch_chest_boat");
 
     /**
      * {@code minecraft:birch_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_DOOR = VanillaTypes.item("minecraft:birch_door");
 
     /**
      * {@code minecraft:birch_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_DOUBLE_SLAB = VanillaTypes.item("minecraft:birch_double_slab");
 
     /**
      * {@code minecraft:birch_fence}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_FENCE = VanillaTypes.item("minecraft:birch_fence");
 
     /**
      * {@code minecraft:birch_fence_gate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_FENCE_GATE = VanillaTypes.item("minecraft:birch_fence_gate");
 
     /**
      * {@code minecraft:birch_hanging_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_HANGING_SIGN = VanillaTypes.item("minecraft:birch_hanging_sign");
 
     /**
      * {@code minecraft:birch_leaves}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_LEAVES = VanillaTypes.item("minecraft:birch_leaves");
 
     /**
      * {@code minecraft:birch_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_LOG = VanillaTypes.item("minecraft:birch_log");
 
     /**
      * {@code minecraft:birch_planks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_PLANKS = VanillaTypes.item("minecraft:birch_planks");
 
     /**
      * {@code minecraft:birch_pressure_plate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_PRESSURE_PLATE = VanillaTypes.item("minecraft:birch_pressure_plate");
 
     /**
      * {@code minecraft:birch_sapling}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_SAPLING = VanillaTypes.item("minecraft:birch_sapling");
 
     /**
      * {@code minecraft:birch_shelf}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_SHELF = VanillaTypes.item("minecraft:birch_shelf");
 
     /**
      * {@code minecraft:birch_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_SIGN = VanillaTypes.item("minecraft:birch_sign");
 
     /**
      * {@code minecraft:birch_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_SLAB = VanillaTypes.item("minecraft:birch_slab");
 
     /**
      * {@code minecraft:birch_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_STAIRS = VanillaTypes.item("minecraft:birch_stairs");
 
     /**
      * {@code minecraft:birch_standing_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_STANDING_SIGN = VanillaTypes.item("minecraft:birch_standing_sign");
 
     /**
      * {@code minecraft:birch_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_TRAPDOOR = VanillaTypes.item("minecraft:birch_trapdoor");
 
     /**
      * {@code minecraft:birch_wall_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_WALL_SIGN = VanillaTypes.item("minecraft:birch_wall_sign");
 
     /**
      * {@code minecraft:birch_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BIRCH_WOOD = VanillaTypes.item("minecraft:birch_wood");
 
     /**
      * {@code minecraft:blackstone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACKSTONE = VanillaTypes.item("minecraft:blackstone");
 
     /**
      * {@code minecraft:blackstone_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACKSTONE_DOUBLE_SLAB = VanillaTypes.item("minecraft:blackstone_double_slab");
 
     /**
      * {@code minecraft:blackstone_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACKSTONE_SLAB = VanillaTypes.item("minecraft:blackstone_slab");
 
     /**
      * {@code minecraft:blackstone_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACKSTONE_STAIRS = VanillaTypes.item("minecraft:blackstone_stairs");
 
     /**
      * {@code minecraft:blackstone_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACKSTONE_WALL = VanillaTypes.item("minecraft:blackstone_wall");
 
     /**
      * {@code minecraft:black_bundle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACK_BUNDLE = VanillaTypes.item("minecraft:black_bundle");
 
     /**
      * {@code minecraft:black_candle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACK_CANDLE = VanillaTypes.item("minecraft:black_candle");
 
     /**
      * {@code minecraft:black_candle_cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACK_CANDLE_CAKE = VanillaTypes.item("minecraft:black_candle_cake");
 
     /**
      * {@code minecraft:black_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACK_CARPET = VanillaTypes.item("minecraft:black_carpet");
 
     /**
      * {@code minecraft:black_concrete}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACK_CONCRETE = VanillaTypes.item("minecraft:black_concrete");
 
     /**
      * {@code minecraft:black_concrete_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BLACK_CONCRETE_DOUBLE_SLAB = VanillaTypes.item("minecraft:black_concrete_double_slab");
 
     /**
      * {@code minecraft:black_concrete_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACK_CONCRETE_POWDER = VanillaTypes.item("minecraft:black_concrete_powder");
 
     /**
      * {@code minecraft:black_concrete_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BLACK_CONCRETE_SLAB = VanillaTypes.item("minecraft:black_concrete_slab");
 
     /**
      * {@code minecraft:black_concrete_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BLACK_CONCRETE_STAIRS = VanillaTypes.item("minecraft:black_concrete_stairs");
 
     /**
      * {@code minecraft:black_cushion}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BLACK_CUSHION = VanillaTypes.item("minecraft:black_cushion");
 
     /**
      * {@code minecraft:black_dye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACK_DYE = VanillaTypes.item("minecraft:black_dye");
 
     /**
      * {@code minecraft:black_glazed_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACK_GLAZED_TERRACOTTA = VanillaTypes.item("minecraft:black_glazed_terracotta");
 
     /**
      * {@code minecraft:black_harness}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACK_HARNESS = VanillaTypes.item("minecraft:black_harness");
 
     /**
      * {@code minecraft:black_shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACK_SHULKER_BOX = VanillaTypes.item("minecraft:black_shulker_box");
 
     /**
      * {@code minecraft:black_stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACK_STAINED_GLASS = VanillaTypes.item("minecraft:black_stained_glass");
 
     /**
      * {@code minecraft:black_stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACK_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:black_stained_glass_pane");
 
     /**
      * {@code minecraft:black_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACK_TERRACOTTA = VanillaTypes.item("minecraft:black_terracotta");
 
     /**
      * {@code minecraft:black_wool}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLACK_WOOL = VanillaTypes.item("minecraft:black_wool");
 
     /**
      * {@code minecraft:black_wool_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BLACK_WOOL_DOUBLE_SLAB = VanillaTypes.item("minecraft:black_wool_double_slab");
 
     /**
      * {@code minecraft:black_wool_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BLACK_WOOL_SLAB = VanillaTypes.item("minecraft:black_wool_slab");
 
     /**
      * {@code minecraft:black_wool_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BLACK_WOOL_STAIRS = VanillaTypes.item("minecraft:black_wool_stairs");
 
     /**
      * {@code minecraft:blade_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLADE_POTTERY_SHERD = VanillaTypes.item("minecraft:blade_pottery_sherd");
 
     /**
      * {@code minecraft:blast_furnace}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLAST_FURNACE = VanillaTypes.item("minecraft:blast_furnace");
 
     /**
      * {@code minecraft:blaze_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLAZE_POWDER = VanillaTypes.item("minecraft:blaze_powder");
 
     /**
      * {@code minecraft:blaze_rod}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLAZE_ROD = VanillaTypes.item("minecraft:blaze_rod");
 
     /**
      * {@code minecraft:blaze_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLAZE_SPAWN_EGG = VanillaTypes.item("minecraft:blaze_spawn_egg");
 
     /**
      * {@code minecraft:bleach}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType BLEACH = VanillaTypes.item("minecraft:bleach");
+    @Education
+    public static final BedrockItemType BLEACH = VanillaTypes.educationItem("minecraft:bleach");
 
     /**
      * {@code minecraft:blue_bundle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLUE_BUNDLE = VanillaTypes.item("minecraft:blue_bundle");
 
     /**
      * {@code minecraft:blue_candle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLUE_CANDLE = VanillaTypes.item("minecraft:blue_candle");
 
     /**
      * {@code minecraft:blue_candle_cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLUE_CANDLE_CAKE = VanillaTypes.item("minecraft:blue_candle_cake");
 
     /**
      * {@code minecraft:blue_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLUE_CARPET = VanillaTypes.item("minecraft:blue_carpet");
 
     /**
      * {@code minecraft:blue_concrete}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLUE_CONCRETE = VanillaTypes.item("minecraft:blue_concrete");
 
     /**
      * {@code minecraft:blue_concrete_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BLUE_CONCRETE_DOUBLE_SLAB = VanillaTypes.item("minecraft:blue_concrete_double_slab");
 
     /**
      * {@code minecraft:blue_concrete_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLUE_CONCRETE_POWDER = VanillaTypes.item("minecraft:blue_concrete_powder");
 
     /**
      * {@code minecraft:blue_concrete_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BLUE_CONCRETE_SLAB = VanillaTypes.item("minecraft:blue_concrete_slab");
 
     /**
      * {@code minecraft:blue_concrete_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BLUE_CONCRETE_STAIRS = VanillaTypes.item("minecraft:blue_concrete_stairs");
 
     /**
      * {@code minecraft:blue_cushion}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BLUE_CUSHION = VanillaTypes.item("minecraft:blue_cushion");
 
     /**
      * {@code minecraft:blue_dye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLUE_DYE = VanillaTypes.item("minecraft:blue_dye");
 
     /**
      * {@code minecraft:blue_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLUE_EGG = VanillaTypes.item("minecraft:blue_egg");
 
     /**
      * {@code minecraft:blue_glazed_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLUE_GLAZED_TERRACOTTA = VanillaTypes.item("minecraft:blue_glazed_terracotta");
 
     /**
      * {@code minecraft:blue_harness}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLUE_HARNESS = VanillaTypes.item("minecraft:blue_harness");
 
     /**
      * {@code minecraft:blue_ice}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLUE_ICE = VanillaTypes.item("minecraft:blue_ice");
 
     /**
      * {@code minecraft:blue_orchid}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLUE_ORCHID = VanillaTypes.item("minecraft:blue_orchid");
 
     /**
      * {@code minecraft:blue_shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLUE_SHULKER_BOX = VanillaTypes.item("minecraft:blue_shulker_box");
 
     /**
      * {@code minecraft:blue_stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLUE_STAINED_GLASS = VanillaTypes.item("minecraft:blue_stained_glass");
 
     /**
      * {@code minecraft:blue_stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLUE_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:blue_stained_glass_pane");
 
     /**
      * {@code minecraft:blue_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLUE_TERRACOTTA = VanillaTypes.item("minecraft:blue_terracotta");
 
     /**
      * {@code minecraft:blue_wool}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BLUE_WOOL = VanillaTypes.item("minecraft:blue_wool");
 
     /**
      * {@code minecraft:blue_wool_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BLUE_WOOL_DOUBLE_SLAB = VanillaTypes.item("minecraft:blue_wool_double_slab");
 
     /**
      * {@code minecraft:blue_wool_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BLUE_WOOL_SLAB = VanillaTypes.item("minecraft:blue_wool_slab");
 
     /**
      * {@code minecraft:blue_wool_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BLUE_WOOL_STAIRS = VanillaTypes.item("minecraft:blue_wool_stairs");
 
     /**
      * {@code minecraft:board}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BOARD = VanillaTypes.item("minecraft:board");
 
     /**
      * {@code minecraft:boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BOAT = VanillaTypes.item("minecraft:boat");
 
     /**
      * {@code minecraft:bogged_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BOGGED_SPAWN_EGG = VanillaTypes.item("minecraft:bogged_spawn_egg");
 
     /**
      * {@code minecraft:bolt_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BOLT_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:bolt_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:bone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BONE = VanillaTypes.item("minecraft:bone");
 
     /**
      * {@code minecraft:bone_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BONE_BLOCK = VanillaTypes.item("minecraft:bone_block");
 
     /**
      * {@code minecraft:bone_meal}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BONE_MEAL = VanillaTypes.item("minecraft:bone_meal");
 
     /**
      * {@code minecraft:book}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BOOK = VanillaTypes.item("minecraft:book");
 
     /**
      * {@code minecraft:bookshelf}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BOOKSHELF = VanillaTypes.item("minecraft:bookshelf");
 
     /**
      * {@code minecraft:border_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BORDER_BLOCK = VanillaTypes.item("minecraft:border_block");
 
     /**
      * {@code minecraft:bordure_indented_banner_pattern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BORDURE_INDENTED_BANNER_PATTERN = VanillaTypes.item("minecraft:bordure_indented_banner_pattern");
 
     /**
      * {@code minecraft:bow}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BOW = VanillaTypes.item("minecraft:bow");
 
     /**
      * {@code minecraft:bowl}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BOWL = VanillaTypes.item("minecraft:bowl");
 
     /**
      * {@code minecraft:brain_coral}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BRAIN_CORAL = VanillaTypes.item("minecraft:brain_coral");
 
     /**
      * {@code minecraft:brain_coral_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BRAIN_CORAL_BLOCK = VanillaTypes.item("minecraft:brain_coral_block");
 
     /**
      * {@code minecraft:brain_coral_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BRAIN_CORAL_FAN = VanillaTypes.item("minecraft:brain_coral_fan");
 
     /**
      * {@code minecraft:brain_coral_wall_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BRAIN_CORAL_WALL_FAN = VanillaTypes.item("minecraft:brain_coral_wall_fan");
 
     /**
      * {@code minecraft:bread}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BREAD = VanillaTypes.item("minecraft:bread");
 
     /**
      * {@code minecraft:breeze_rod}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BREEZE_ROD = VanillaTypes.item("minecraft:breeze_rod");
 
     /**
      * {@code minecraft:breeze_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BREEZE_SPAWN_EGG = VanillaTypes.item("minecraft:breeze_spawn_egg");
 
     /**
      * {@code minecraft:brewer_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BREWER_POTTERY_SHERD = VanillaTypes.item("minecraft:brewer_pottery_sherd");
 
     /**
      * {@code minecraft:brewing_stand}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BREWING_STAND = VanillaTypes.item("minecraft:brewing_stand");
 
     /**
      * {@code minecraft:brick}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BRICK = VanillaTypes.item("minecraft:brick");
 
     /**
      * {@code minecraft:brick_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BRICK_BLOCK = VanillaTypes.item("minecraft:brick_block");
 
     /**
      * {@code minecraft:brick_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BRICK_DOUBLE_SLAB = VanillaTypes.item("minecraft:brick_double_slab");
 
     /**
      * {@code minecraft:brick_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BRICK_SLAB = VanillaTypes.item("minecraft:brick_slab");
 
     /**
      * {@code minecraft:brick_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BRICK_STAIRS = VanillaTypes.item("minecraft:brick_stairs");
 
     /**
      * {@code minecraft:brick_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BRICK_WALL = VanillaTypes.item("minecraft:brick_wall");
 
     /**
      * {@code minecraft:brown_bundle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BROWN_BUNDLE = VanillaTypes.item("minecraft:brown_bundle");
 
     /**
      * {@code minecraft:brown_candle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BROWN_CANDLE = VanillaTypes.item("minecraft:brown_candle");
 
     /**
      * {@code minecraft:brown_candle_cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BROWN_CANDLE_CAKE = VanillaTypes.item("minecraft:brown_candle_cake");
 
     /**
      * {@code minecraft:brown_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BROWN_CARPET = VanillaTypes.item("minecraft:brown_carpet");
 
     /**
      * {@code minecraft:brown_concrete}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BROWN_CONCRETE = VanillaTypes.item("minecraft:brown_concrete");
 
     /**
      * {@code minecraft:brown_concrete_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BROWN_CONCRETE_DOUBLE_SLAB = VanillaTypes.item("minecraft:brown_concrete_double_slab");
 
     /**
      * {@code minecraft:brown_concrete_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BROWN_CONCRETE_POWDER = VanillaTypes.item("minecraft:brown_concrete_powder");
 
     /**
      * {@code minecraft:brown_concrete_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BROWN_CONCRETE_SLAB = VanillaTypes.item("minecraft:brown_concrete_slab");
 
     /**
      * {@code minecraft:brown_concrete_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BROWN_CONCRETE_STAIRS = VanillaTypes.item("minecraft:brown_concrete_stairs");
 
     /**
      * {@code minecraft:brown_cushion}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BROWN_CUSHION = VanillaTypes.item("minecraft:brown_cushion");
 
     /**
      * {@code minecraft:brown_dye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BROWN_DYE = VanillaTypes.item("minecraft:brown_dye");
 
     /**
      * {@code minecraft:brown_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BROWN_EGG = VanillaTypes.item("minecraft:brown_egg");
 
     /**
      * {@code minecraft:brown_glazed_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BROWN_GLAZED_TERRACOTTA = VanillaTypes.item("minecraft:brown_glazed_terracotta");
 
     /**
      * {@code minecraft:brown_harness}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BROWN_HARNESS = VanillaTypes.item("minecraft:brown_harness");
 
     /**
      * {@code minecraft:brown_mushroom}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BROWN_MUSHROOM = VanillaTypes.item("minecraft:brown_mushroom");
 
     /**
      * {@code minecraft:brown_mushroom_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BROWN_MUSHROOM_BLOCK = VanillaTypes.item("minecraft:brown_mushroom_block");
 
     /**
      * {@code minecraft:brown_shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BROWN_SHULKER_BOX = VanillaTypes.item("minecraft:brown_shulker_box");
 
     /**
      * {@code minecraft:brown_stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BROWN_STAINED_GLASS = VanillaTypes.item("minecraft:brown_stained_glass");
 
     /**
      * {@code minecraft:brown_stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BROWN_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:brown_stained_glass_pane");
 
     /**
      * {@code minecraft:brown_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BROWN_TERRACOTTA = VanillaTypes.item("minecraft:brown_terracotta");
 
     /**
      * {@code minecraft:brown_wool}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BROWN_WOOL = VanillaTypes.item("minecraft:brown_wool");
 
     /**
      * {@code minecraft:brown_wool_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BROWN_WOOL_DOUBLE_SLAB = VanillaTypes.item("minecraft:brown_wool_double_slab");
 
     /**
      * {@code minecraft:brown_wool_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BROWN_WOOL_SLAB = VanillaTypes.item("minecraft:brown_wool_slab");
 
     /**
      * {@code minecraft:brown_wool_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType BROWN_WOOL_STAIRS = VanillaTypes.item("minecraft:brown_wool_stairs");
 
     /**
      * {@code minecraft:brush}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BRUSH = VanillaTypes.item("minecraft:brush");
 
     /**
      * {@code minecraft:bubble_column}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BUBBLE_COLUMN = VanillaTypes.item("minecraft:bubble_column");
 
     /**
      * {@code minecraft:bubble_coral}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BUBBLE_CORAL = VanillaTypes.item("minecraft:bubble_coral");
 
     /**
      * {@code minecraft:bubble_coral_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BUBBLE_CORAL_BLOCK = VanillaTypes.item("minecraft:bubble_coral_block");
 
     /**
      * {@code minecraft:bubble_coral_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BUBBLE_CORAL_FAN = VanillaTypes.item("minecraft:bubble_coral_fan");
 
     /**
      * {@code minecraft:bubble_coral_wall_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BUBBLE_CORAL_WALL_FAN = VanillaTypes.item("minecraft:bubble_coral_wall_fan");
 
     /**
      * {@code minecraft:bucket}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BUCKET = VanillaTypes.item("minecraft:bucket");
 
     /**
      * {@code minecraft:budding_amethyst}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BUDDING_AMETHYST = VanillaTypes.item("minecraft:budding_amethyst");
 
     /**
      * {@code minecraft:bundle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BUNDLE = VanillaTypes.item("minecraft:bundle");
 
     /**
      * {@code minecraft:burn_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BURN_POTTERY_SHERD = VanillaTypes.item("minecraft:burn_pottery_sherd");
 
     /**
      * {@code minecraft:bush}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType BUSH = VanillaTypes.item("minecraft:bush");
 
     /**
      * {@code minecraft:cactus}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CACTUS = VanillaTypes.item("minecraft:cactus");
 
     /**
      * {@code minecraft:cactus_flower}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CACTUS_FLOWER = VanillaTypes.item("minecraft:cactus_flower");
 
     /**
      * {@code minecraft:cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CAKE = VanillaTypes.item("minecraft:cake");
 
     /**
      * {@code minecraft:calcite}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CALCITE = VanillaTypes.item("minecraft:calcite");
 
     /**
      * {@code minecraft:calibrated_sculk_sensor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CALIBRATED_SCULK_SENSOR = VanillaTypes.item("minecraft:calibrated_sculk_sensor");
 
     /**
      * {@code minecraft:camel_husk_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CAMEL_HUSK_SPAWN_EGG = VanillaTypes.item("minecraft:camel_husk_spawn_egg");
 
     /**
      * {@code minecraft:camel_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CAMEL_SPAWN_EGG = VanillaTypes.item("minecraft:camel_spawn_egg");
 
     /**
      * {@code minecraft:camera}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CAMERA = VanillaTypes.item("minecraft:camera");
 
     /**
      * {@code minecraft:campfire}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CAMPFIRE = VanillaTypes.item("minecraft:campfire");
 
     /**
      * {@code minecraft:candle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CANDLE = VanillaTypes.item("minecraft:candle");
 
     /**
      * {@code minecraft:candle_cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CANDLE_CAKE = VanillaTypes.item("minecraft:candle_cake");
 
     /**
      * {@code minecraft:carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CARPET = VanillaTypes.item("minecraft:carpet");
 
     /**
      * {@code minecraft:carrot}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CARROT = VanillaTypes.item("minecraft:carrot");
 
     /**
      * {@code minecraft:carrots}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CARROTS = VanillaTypes.item("minecraft:carrots");
 
     /**
      * {@code minecraft:carrot_on_a_stick}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CARROT_ON_A_STICK = VanillaTypes.item("minecraft:carrot_on_a_stick");
 
     /**
      * {@code minecraft:cartography_table}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CARTOGRAPHY_TABLE = VanillaTypes.item("minecraft:cartography_table");
 
     /**
      * {@code minecraft:carved_pumpkin}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CARVED_PUMPKIN = VanillaTypes.item("minecraft:carved_pumpkin");
 
     /**
      * {@code minecraft:cat_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CAT_SPAWN_EGG = VanillaTypes.item("minecraft:cat_spawn_egg");
 
     /**
      * {@code minecraft:cauldron}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CAULDRON = VanillaTypes.item("minecraft:cauldron");
 
     /**
      * {@code minecraft:cave_spider_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CAVE_SPIDER_SPAWN_EGG = VanillaTypes.item("minecraft:cave_spider_spawn_egg");
 
     /**
      * {@code minecraft:cave_vines}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CAVE_VINES = VanillaTypes.item("minecraft:cave_vines");
 
     /**
      * {@code minecraft:cave_vines_body_with_berries}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CAVE_VINES_BODY_WITH_BERRIES = VanillaTypes.item("minecraft:cave_vines_body_with_berries");
 
     /**
      * {@code minecraft:cave_vines_head_with_berries}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CAVE_VINES_HEAD_WITH_BERRIES = VanillaTypes.item("minecraft:cave_vines_head_with_berries");
 
     /**
      * {@code minecraft:chainmail_boots}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHAINMAIL_BOOTS = VanillaTypes.item("minecraft:chainmail_boots");
 
     /**
      * {@code minecraft:chainmail_chestplate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHAINMAIL_CHESTPLATE = VanillaTypes.item("minecraft:chainmail_chestplate");
 
     /**
      * {@code minecraft:chainmail_helmet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHAINMAIL_HELMET = VanillaTypes.item("minecraft:chainmail_helmet");
 
     /**
      * {@code minecraft:chainmail_leggings}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHAINMAIL_LEGGINGS = VanillaTypes.item("minecraft:chainmail_leggings");
 
     /**
      * {@code minecraft:chain_command_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHAIN_COMMAND_BLOCK = VanillaTypes.item("minecraft:chain_command_block");
 
     /**
      * {@code minecraft:chalkboard}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHALKBOARD = VanillaTypes.item("minecraft:chalkboard");
 
     /**
      * {@code minecraft:charcoal}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHARCOAL = VanillaTypes.item("minecraft:charcoal");
 
     /**
      * {@code minecraft:chemical_heat}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType CHEMICAL_HEAT = VanillaTypes.item("minecraft:chemical_heat");
+    @Education
+    public static final BedrockItemType CHEMICAL_HEAT = VanillaTypes.educationItem("minecraft:chemical_heat");
 
     /**
      * {@code minecraft:chemistry_table}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHEMISTRY_TABLE = VanillaTypes.item("minecraft:chemistry_table");
 
     /**
      * {@code minecraft:cherry_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_BOAT = VanillaTypes.item("minecraft:cherry_boat");
 
     /**
      * {@code minecraft:cherry_button}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_BUTTON = VanillaTypes.item("minecraft:cherry_button");
 
     /**
      * {@code minecraft:cherry_chest_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_CHEST_BOAT = VanillaTypes.item("minecraft:cherry_chest_boat");
 
     /**
      * {@code minecraft:cherry_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_DOOR = VanillaTypes.item("minecraft:cherry_door");
 
     /**
      * {@code minecraft:cherry_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_DOUBLE_SLAB = VanillaTypes.item("minecraft:cherry_double_slab");
 
     /**
      * {@code minecraft:cherry_fence}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_FENCE = VanillaTypes.item("minecraft:cherry_fence");
 
     /**
      * {@code minecraft:cherry_fence_gate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_FENCE_GATE = VanillaTypes.item("minecraft:cherry_fence_gate");
 
     /**
      * {@code minecraft:cherry_hanging_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_HANGING_SIGN = VanillaTypes.item("minecraft:cherry_hanging_sign");
 
     /**
      * {@code minecraft:cherry_leaves}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_LEAVES = VanillaTypes.item("minecraft:cherry_leaves");
 
     /**
      * {@code minecraft:cherry_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_LOG = VanillaTypes.item("minecraft:cherry_log");
 
     /**
      * {@code minecraft:cherry_planks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_PLANKS = VanillaTypes.item("minecraft:cherry_planks");
 
     /**
      * {@code minecraft:cherry_pressure_plate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_PRESSURE_PLATE = VanillaTypes.item("minecraft:cherry_pressure_plate");
 
     /**
      * {@code minecraft:cherry_sapling}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_SAPLING = VanillaTypes.item("minecraft:cherry_sapling");
 
     /**
      * {@code minecraft:cherry_shelf}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_SHELF = VanillaTypes.item("minecraft:cherry_shelf");
 
     /**
      * {@code minecraft:cherry_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_SIGN = VanillaTypes.item("minecraft:cherry_sign");
 
     /**
      * {@code minecraft:cherry_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_SLAB = VanillaTypes.item("minecraft:cherry_slab");
 
     /**
      * {@code minecraft:cherry_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_STAIRS = VanillaTypes.item("minecraft:cherry_stairs");
 
     /**
      * {@code minecraft:cherry_standing_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_STANDING_SIGN = VanillaTypes.item("minecraft:cherry_standing_sign");
 
     /**
      * {@code minecraft:cherry_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_TRAPDOOR = VanillaTypes.item("minecraft:cherry_trapdoor");
 
     /**
      * {@code minecraft:cherry_wall_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_WALL_SIGN = VanillaTypes.item("minecraft:cherry_wall_sign");
 
     /**
      * {@code minecraft:cherry_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHERRY_WOOD = VanillaTypes.item("minecraft:cherry_wood");
 
     /**
      * {@code minecraft:chest}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHEST = VanillaTypes.item("minecraft:chest");
 
     /**
      * {@code minecraft:chest_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHEST_BOAT = VanillaTypes.item("minecraft:chest_boat");
 
     /**
      * {@code minecraft:chest_minecart}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHEST_MINECART = VanillaTypes.item("minecraft:chest_minecart");
 
     /**
      * {@code minecraft:chicken}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHICKEN = VanillaTypes.item("minecraft:chicken");
 
     /**
      * {@code minecraft:chicken_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHICKEN_SPAWN_EGG = VanillaTypes.item("minecraft:chicken_spawn_egg");
 
     /**
      * {@code minecraft:chipped_anvil}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHIPPED_ANVIL = VanillaTypes.item("minecraft:chipped_anvil");
 
     /**
      * {@code minecraft:chiseled_bookshelf}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHISELED_BOOKSHELF = VanillaTypes.item("minecraft:chiseled_bookshelf");
 
     /**
      * {@code minecraft:chiseled_cinnabar}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHISELED_CINNABAR = VanillaTypes.item("minecraft:chiseled_cinnabar");
 
     /**
      * {@code minecraft:chiseled_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHISELED_COPPER = VanillaTypes.item("minecraft:chiseled_copper");
 
     /**
      * {@code minecraft:chiseled_deepslate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHISELED_DEEPSLATE = VanillaTypes.item("minecraft:chiseled_deepslate");
 
     /**
      * {@code minecraft:chiseled_nether_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHISELED_NETHER_BRICKS = VanillaTypes.item("minecraft:chiseled_nether_bricks");
 
     /**
      * {@code minecraft:chiseled_polished_blackstone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHISELED_POLISHED_BLACKSTONE = VanillaTypes.item("minecraft:chiseled_polished_blackstone");
 
     /**
      * {@code minecraft:chiseled_quartz_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHISELED_QUARTZ_BLOCK = VanillaTypes.item("minecraft:chiseled_quartz_block");
 
     /**
      * {@code minecraft:chiseled_red_sandstone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHISELED_RED_SANDSTONE = VanillaTypes.item("minecraft:chiseled_red_sandstone");
 
     /**
      * {@code minecraft:chiseled_resin_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHISELED_RESIN_BRICKS = VanillaTypes.item("minecraft:chiseled_resin_bricks");
 
     /**
      * {@code minecraft:chiseled_sandstone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHISELED_SANDSTONE = VanillaTypes.item("minecraft:chiseled_sandstone");
 
     /**
      * {@code minecraft:chiseled_stone_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHISELED_STONE_BRICKS = VanillaTypes.item("minecraft:chiseled_stone_bricks");
 
     /**
      * {@code minecraft:chiseled_sulfur}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHISELED_SULFUR = VanillaTypes.item("minecraft:chiseled_sulfur");
 
     /**
      * {@code minecraft:chiseled_tuff}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHISELED_TUFF = VanillaTypes.item("minecraft:chiseled_tuff");
 
     /**
      * {@code minecraft:chiseled_tuff_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHISELED_TUFF_BRICKS = VanillaTypes.item("minecraft:chiseled_tuff_bricks");
 
     /**
      * {@code minecraft:chorus_flower}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHORUS_FLOWER = VanillaTypes.item("minecraft:chorus_flower");
 
     /**
      * {@code minecraft:chorus_fruit}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHORUS_FRUIT = VanillaTypes.item("minecraft:chorus_fruit");
 
     /**
      * {@code minecraft:chorus_plant}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CHORUS_PLANT = VanillaTypes.item("minecraft:chorus_plant");
 
     /**
      * {@code minecraft:cinnabar}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CINNABAR = VanillaTypes.item("minecraft:cinnabar");
 
     /**
      * {@code minecraft:cinnabar_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CINNABAR_BRICKS = VanillaTypes.item("minecraft:cinnabar_bricks");
 
     /**
      * {@code minecraft:cinnabar_brick_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CINNABAR_BRICK_DOUBLE_SLAB = VanillaTypes.item("minecraft:cinnabar_brick_double_slab");
 
     /**
      * {@code minecraft:cinnabar_brick_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CINNABAR_BRICK_SLAB = VanillaTypes.item("minecraft:cinnabar_brick_slab");
 
     /**
      * {@code minecraft:cinnabar_brick_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CINNABAR_BRICK_STAIRS = VanillaTypes.item("minecraft:cinnabar_brick_stairs");
 
     /**
      * {@code minecraft:cinnabar_brick_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CINNABAR_BRICK_WALL = VanillaTypes.item("minecraft:cinnabar_brick_wall");
 
     /**
      * {@code minecraft:cinnabar_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CINNABAR_DOUBLE_SLAB = VanillaTypes.item("minecraft:cinnabar_double_slab");
 
     /**
      * {@code minecraft:cinnabar_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CINNABAR_SLAB = VanillaTypes.item("minecraft:cinnabar_slab");
 
     /**
      * {@code minecraft:cinnabar_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CINNABAR_STAIRS = VanillaTypes.item("minecraft:cinnabar_stairs");
 
     /**
      * {@code minecraft:cinnabar_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CINNABAR_WALL = VanillaTypes.item("minecraft:cinnabar_wall");
 
     /**
      * {@code minecraft:clay}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CLAY = VanillaTypes.item("minecraft:clay");
 
     /**
      * {@code minecraft:clay_ball}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CLAY_BALL = VanillaTypes.item("minecraft:clay_ball");
 
     /**
      * {@code minecraft:client_request_placeholder_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CLIENT_REQUEST_PLACEHOLDER_BLOCK = VanillaTypes.item("minecraft:client_request_placeholder_block");
 
     /**
      * {@code minecraft:clock}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CLOCK = VanillaTypes.item("minecraft:clock");
 
     /**
      * {@code minecraft:closed_eyeblossom}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CLOSED_EYEBLOSSOM = VanillaTypes.item("minecraft:closed_eyeblossom");
 
     /**
      * {@code minecraft:coal}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COAL = VanillaTypes.item("minecraft:coal");
 
     /**
      * {@code minecraft:coal_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COAL_BLOCK = VanillaTypes.item("minecraft:coal_block");
 
     /**
      * {@code minecraft:coal_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COAL_ORE = VanillaTypes.item("minecraft:coal_ore");
 
     /**
      * {@code minecraft:coarse_dirt}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COARSE_DIRT = VanillaTypes.item("minecraft:coarse_dirt");
 
     /**
      * {@code minecraft:coast_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COAST_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:coast_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:cobbled_deepslate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COBBLED_DEEPSLATE = VanillaTypes.item("minecraft:cobbled_deepslate");
 
     /**
      * {@code minecraft:cobbled_deepslate_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COBBLED_DEEPSLATE_DOUBLE_SLAB = VanillaTypes.item("minecraft:cobbled_deepslate_double_slab");
 
     /**
      * {@code minecraft:cobbled_deepslate_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COBBLED_DEEPSLATE_SLAB = VanillaTypes.item("minecraft:cobbled_deepslate_slab");
 
     /**
      * {@code minecraft:cobbled_deepslate_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COBBLED_DEEPSLATE_STAIRS = VanillaTypes.item("minecraft:cobbled_deepslate_stairs");
 
     /**
      * {@code minecraft:cobbled_deepslate_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COBBLED_DEEPSLATE_WALL = VanillaTypes.item("minecraft:cobbled_deepslate_wall");
 
     /**
      * {@code minecraft:cobblestone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COBBLESTONE = VanillaTypes.item("minecraft:cobblestone");
 
     /**
      * {@code minecraft:cobblestone_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COBBLESTONE_DOUBLE_SLAB = VanillaTypes.item("minecraft:cobblestone_double_slab");
 
     /**
      * {@code minecraft:cobblestone_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COBBLESTONE_SLAB = VanillaTypes.item("minecraft:cobblestone_slab");
 
     /**
      * {@code minecraft:cobblestone_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COBBLESTONE_WALL = VanillaTypes.item("minecraft:cobblestone_wall");
 
     /**
      * {@code minecraft:cocoa}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COCOA = VanillaTypes.item("minecraft:cocoa");
 
     /**
      * {@code minecraft:cocoa_beans}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COCOA_BEANS = VanillaTypes.item("minecraft:cocoa_beans");
 
     /**
      * {@code minecraft:cod}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COD = VanillaTypes.item("minecraft:cod");
 
     /**
      * {@code minecraft:cod_bucket}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COD_BUCKET = VanillaTypes.item("minecraft:cod_bucket");
 
     /**
      * {@code minecraft:cod_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COD_SPAWN_EGG = VanillaTypes.item("minecraft:cod_spawn_egg");
 
     /**
      * {@code minecraft:colored_torch_blue}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType COLORED_TORCH_BLUE = VanillaTypes.item("minecraft:colored_torch_blue");
+    @Education
+    public static final BedrockItemType COLORED_TORCH_BLUE = VanillaTypes.educationItem("minecraft:colored_torch_blue");
 
     /**
      * {@code minecraft:colored_torch_bp}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COLORED_TORCH_BP = VanillaTypes.item("minecraft:colored_torch_bp");
 
     /**
      * {@code minecraft:colored_torch_green}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType COLORED_TORCH_GREEN = VanillaTypes.item("minecraft:colored_torch_green");
+    @Education
+    public static final BedrockItemType COLORED_TORCH_GREEN = VanillaTypes.educationItem("minecraft:colored_torch_green");
 
     /**
      * {@code minecraft:colored_torch_purple}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType COLORED_TORCH_PURPLE = VanillaTypes.item("minecraft:colored_torch_purple");
+    @Education
+    public static final BedrockItemType COLORED_TORCH_PURPLE = VanillaTypes.educationItem("minecraft:colored_torch_purple");
 
     /**
      * {@code minecraft:colored_torch_red}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType COLORED_TORCH_RED = VanillaTypes.item("minecraft:colored_torch_red");
+    @Education
+    public static final BedrockItemType COLORED_TORCH_RED = VanillaTypes.educationItem("minecraft:colored_torch_red");
 
     /**
      * {@code minecraft:colored_torch_rg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COLORED_TORCH_RG = VanillaTypes.item("minecraft:colored_torch_rg");
 
     /**
      * {@code minecraft:command_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COMMAND_BLOCK = VanillaTypes.item("minecraft:command_block");
 
     /**
      * {@code minecraft:command_block_minecart}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COMMAND_BLOCK_MINECART = VanillaTypes.item("minecraft:command_block_minecart");
 
     /**
      * {@code minecraft:comparator}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COMPARATOR = VanillaTypes.item("minecraft:comparator");
 
     /**
      * {@code minecraft:compass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COMPASS = VanillaTypes.item("minecraft:compass");
 
     /**
      * {@code minecraft:composter}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COMPOSTER = VanillaTypes.item("minecraft:composter");
 
     /**
      * {@code minecraft:compound}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType COMPOUND = VanillaTypes.item("minecraft:compound");
+    @Education
+    public static final BedrockItemType COMPOUND = VanillaTypes.educationItem("minecraft:compound");
 
     /**
      * {@code minecraft:compound_creator}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType COMPOUND_CREATOR = VanillaTypes.item("minecraft:compound_creator");
+    @Education
+    public static final BedrockItemType COMPOUND_CREATOR = VanillaTypes.educationItem("minecraft:compound_creator");
 
     /**
      * {@code minecraft:concrete}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CONCRETE = VanillaTypes.item("minecraft:concrete");
 
     /**
      * {@code minecraft:concrete_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CONCRETE_POWDER = VanillaTypes.item("minecraft:concrete_powder");
 
     /**
      * {@code minecraft:conduit}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CONDUIT = VanillaTypes.item("minecraft:conduit");
 
     /**
      * {@code minecraft:cooked_beef}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COOKED_BEEF = VanillaTypes.item("minecraft:cooked_beef");
 
     /**
      * {@code minecraft:cooked_chicken}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COOKED_CHICKEN = VanillaTypes.item("minecraft:cooked_chicken");
 
     /**
      * {@code minecraft:cooked_cod}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COOKED_COD = VanillaTypes.item("minecraft:cooked_cod");
 
     /**
      * {@code minecraft:cooked_mutton}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COOKED_MUTTON = VanillaTypes.item("minecraft:cooked_mutton");
 
     /**
      * {@code minecraft:cooked_porkchop}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COOKED_PORKCHOP = VanillaTypes.item("minecraft:cooked_porkchop");
 
     /**
      * {@code minecraft:cooked_rabbit}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COOKED_RABBIT = VanillaTypes.item("minecraft:cooked_rabbit");
 
     /**
      * {@code minecraft:cooked_salmon}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COOKED_SALMON = VanillaTypes.item("minecraft:cooked_salmon");
 
     /**
      * {@code minecraft:cookie}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COOKIE = VanillaTypes.item("minecraft:cookie");
 
     /**
      * {@code minecraft:copper_axe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_AXE = VanillaTypes.item("minecraft:copper_axe");
 
     /**
      * {@code minecraft:copper_bars}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_BARS = VanillaTypes.item("minecraft:copper_bars");
 
     /**
      * {@code minecraft:copper_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_BLOCK = VanillaTypes.item("minecraft:copper_block");
 
     /**
      * {@code minecraft:copper_boots}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_BOOTS = VanillaTypes.item("minecraft:copper_boots");
 
     /**
      * {@code minecraft:copper_bulb}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_BULB = VanillaTypes.item("minecraft:copper_bulb");
 
     /**
      * {@code minecraft:copper_chain}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_CHAIN = VanillaTypes.item("minecraft:copper_chain");
 
     /**
      * {@code minecraft:copper_chest}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_CHEST = VanillaTypes.item("minecraft:copper_chest");
 
     /**
      * {@code minecraft:copper_chestplate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_CHESTPLATE = VanillaTypes.item("minecraft:copper_chestplate");
 
     /**
      * {@code minecraft:copper_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_DOOR = VanillaTypes.item("minecraft:copper_door");
 
     /**
      * {@code minecraft:copper_golem_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_GOLEM_SPAWN_EGG = VanillaTypes.item("minecraft:copper_golem_spawn_egg");
 
     /**
      * {@code minecraft:copper_golem_statue}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_GOLEM_STATUE = VanillaTypes.item("minecraft:copper_golem_statue");
 
     /**
      * {@code minecraft:copper_grate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_GRATE = VanillaTypes.item("minecraft:copper_grate");
 
     /**
      * {@code minecraft:copper_helmet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_HELMET = VanillaTypes.item("minecraft:copper_helmet");
 
     /**
      * {@code minecraft:copper_hoe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_HOE = VanillaTypes.item("minecraft:copper_hoe");
 
     /**
      * {@code minecraft:copper_horse_armor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_HORSE_ARMOR = VanillaTypes.item("minecraft:copper_horse_armor");
 
     /**
      * {@code minecraft:copper_ingot}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_INGOT = VanillaTypes.item("minecraft:copper_ingot");
 
     /**
      * {@code minecraft:copper_lantern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_LANTERN = VanillaTypes.item("minecraft:copper_lantern");
 
     /**
      * {@code minecraft:copper_leggings}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_LEGGINGS = VanillaTypes.item("minecraft:copper_leggings");
 
     /**
      * {@code minecraft:copper_nautilus_armor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_NAUTILUS_ARMOR = VanillaTypes.item("minecraft:copper_nautilus_armor");
 
     /**
      * {@code minecraft:copper_nugget}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_NUGGET = VanillaTypes.item("minecraft:copper_nugget");
 
     /**
      * {@code minecraft:copper_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_ORE = VanillaTypes.item("minecraft:copper_ore");
 
     /**
      * {@code minecraft:copper_pickaxe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_PICKAXE = VanillaTypes.item("minecraft:copper_pickaxe");
 
     /**
      * {@code minecraft:copper_shovel}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_SHOVEL = VanillaTypes.item("minecraft:copper_shovel");
 
     /**
      * {@code minecraft:copper_spear}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_SPEAR = VanillaTypes.item("minecraft:copper_spear");
 
     /**
      * {@code minecraft:copper_sword}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_SWORD = VanillaTypes.item("minecraft:copper_sword");
 
     /**
      * {@code minecraft:copper_torch}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_TORCH = VanillaTypes.item("minecraft:copper_torch");
 
     /**
      * {@code minecraft:copper_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COPPER_TRAPDOOR = VanillaTypes.item("minecraft:copper_trapdoor");
 
     /**
      * {@code minecraft:coral}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CORAL = VanillaTypes.item("minecraft:coral");
 
     /**
      * {@code minecraft:coral_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CORAL_BLOCK = VanillaTypes.item("minecraft:coral_block");
 
     /**
      * {@code minecraft:coral_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CORAL_FAN = VanillaTypes.item("minecraft:coral_fan");
 
     /**
      * {@code minecraft:coral_fan_dead}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CORAL_FAN_DEAD = VanillaTypes.item("minecraft:coral_fan_dead");
 
     /**
      * {@code minecraft:cornflower}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CORNFLOWER = VanillaTypes.item("minecraft:cornflower");
 
     /**
      * {@code minecraft:cow_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType COW_SPAWN_EGG = VanillaTypes.item("minecraft:cow_spawn_egg");
 
     /**
      * {@code minecraft:cracked_deepslate_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRACKED_DEEPSLATE_BRICKS = VanillaTypes.item("minecraft:cracked_deepslate_bricks");
 
     /**
      * {@code minecraft:cracked_deepslate_tiles}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRACKED_DEEPSLATE_TILES = VanillaTypes.item("minecraft:cracked_deepslate_tiles");
 
     /**
      * {@code minecraft:cracked_nether_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRACKED_NETHER_BRICKS = VanillaTypes.item("minecraft:cracked_nether_bricks");
 
     /**
      * {@code minecraft:cracked_polished_blackstone_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRACKED_POLISHED_BLACKSTONE_BRICKS = VanillaTypes.item("minecraft:cracked_polished_blackstone_bricks");
 
     /**
      * {@code minecraft:cracked_stone_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRACKED_STONE_BRICKS = VanillaTypes.item("minecraft:cracked_stone_bricks");
 
     /**
      * {@code minecraft:crafter}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRAFTER = VanillaTypes.item("minecraft:crafter");
 
     /**
      * {@code minecraft:crafting_table}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRAFTING_TABLE = VanillaTypes.item("minecraft:crafting_table");
 
     /**
      * {@code minecraft:creaking_heart}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CREAKING_HEART = VanillaTypes.item("minecraft:creaking_heart");
 
     /**
      * {@code minecraft:creaking_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CREAKING_SPAWN_EGG = VanillaTypes.item("minecraft:creaking_spawn_egg");
 
     /**
      * {@code minecraft:creeper_banner_pattern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CREEPER_BANNER_PATTERN = VanillaTypes.item("minecraft:creeper_banner_pattern");
 
     /**
      * {@code minecraft:creeper_head}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CREEPER_HEAD = VanillaTypes.item("minecraft:creeper_head");
 
     /**
      * {@code minecraft:creeper_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CREEPER_SPAWN_EGG = VanillaTypes.item("minecraft:creeper_spawn_egg");
 
     /**
      * {@code minecraft:crimson_button}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_BUTTON = VanillaTypes.item("minecraft:crimson_button");
 
     /**
      * {@code minecraft:crimson_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_DOOR = VanillaTypes.item("minecraft:crimson_door");
 
     /**
      * {@code minecraft:crimson_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_DOUBLE_SLAB = VanillaTypes.item("minecraft:crimson_double_slab");
 
     /**
      * {@code minecraft:crimson_fence}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_FENCE = VanillaTypes.item("minecraft:crimson_fence");
 
     /**
      * {@code minecraft:crimson_fence_gate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_FENCE_GATE = VanillaTypes.item("minecraft:crimson_fence_gate");
 
     /**
      * {@code minecraft:crimson_fungus}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_FUNGUS = VanillaTypes.item("minecraft:crimson_fungus");
 
     /**
      * {@code minecraft:crimson_hanging_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_HANGING_SIGN = VanillaTypes.item("minecraft:crimson_hanging_sign");
 
     /**
      * {@code minecraft:crimson_hyphae}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_HYPHAE = VanillaTypes.item("minecraft:crimson_hyphae");
 
     /**
      * {@code minecraft:crimson_nylium}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_NYLIUM = VanillaTypes.item("minecraft:crimson_nylium");
 
     /**
      * {@code minecraft:crimson_planks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_PLANKS = VanillaTypes.item("minecraft:crimson_planks");
 
     /**
      * {@code minecraft:crimson_pressure_plate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_PRESSURE_PLATE = VanillaTypes.item("minecraft:crimson_pressure_plate");
 
     /**
      * {@code minecraft:crimson_roots}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_ROOTS = VanillaTypes.item("minecraft:crimson_roots");
 
     /**
      * {@code minecraft:crimson_shelf}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_SHELF = VanillaTypes.item("minecraft:crimson_shelf");
 
     /**
      * {@code minecraft:crimson_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_SIGN = VanillaTypes.item("minecraft:crimson_sign");
 
     /**
      * {@code minecraft:crimson_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_SLAB = VanillaTypes.item("minecraft:crimson_slab");
 
     /**
      * {@code minecraft:crimson_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_STAIRS = VanillaTypes.item("minecraft:crimson_stairs");
 
     /**
      * {@code minecraft:crimson_standing_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_STANDING_SIGN = VanillaTypes.item("minecraft:crimson_standing_sign");
 
     /**
      * {@code minecraft:crimson_stem}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_STEM = VanillaTypes.item("minecraft:crimson_stem");
 
     /**
      * {@code minecraft:crimson_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_TRAPDOOR = VanillaTypes.item("minecraft:crimson_trapdoor");
 
     /**
      * {@code minecraft:crimson_wall_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRIMSON_WALL_SIGN = VanillaTypes.item("minecraft:crimson_wall_sign");
 
     /**
      * {@code minecraft:crossbow}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CROSSBOW = VanillaTypes.item("minecraft:crossbow");
 
     /**
      * {@code minecraft:crying_obsidian}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CRYING_OBSIDIAN = VanillaTypes.item("minecraft:crying_obsidian");
 
     /**
      * {@code minecraft:cut_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CUT_COPPER = VanillaTypes.item("minecraft:cut_copper");
 
     /**
      * {@code minecraft:cut_copper_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CUT_COPPER_SLAB = VanillaTypes.item("minecraft:cut_copper_slab");
 
     /**
      * {@code minecraft:cut_copper_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CUT_COPPER_STAIRS = VanillaTypes.item("minecraft:cut_copper_stairs");
 
     /**
      * {@code minecraft:cut_red_sandstone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CUT_RED_SANDSTONE = VanillaTypes.item("minecraft:cut_red_sandstone");
 
     /**
      * {@code minecraft:cut_red_sandstone_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CUT_RED_SANDSTONE_DOUBLE_SLAB = VanillaTypes.item("minecraft:cut_red_sandstone_double_slab");
 
     /**
      * {@code minecraft:cut_red_sandstone_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CUT_RED_SANDSTONE_SLAB = VanillaTypes.item("minecraft:cut_red_sandstone_slab");
 
     /**
      * {@code minecraft:cut_sandstone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CUT_SANDSTONE = VanillaTypes.item("minecraft:cut_sandstone");
 
     /**
      * {@code minecraft:cut_sandstone_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CUT_SANDSTONE_DOUBLE_SLAB = VanillaTypes.item("minecraft:cut_sandstone_double_slab");
 
     /**
      * {@code minecraft:cut_sandstone_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CUT_SANDSTONE_SLAB = VanillaTypes.item("minecraft:cut_sandstone_slab");
 
     /**
      * {@code minecraft:cyan_bundle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CYAN_BUNDLE = VanillaTypes.item("minecraft:cyan_bundle");
 
     /**
      * {@code minecraft:cyan_candle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CYAN_CANDLE = VanillaTypes.item("minecraft:cyan_candle");
 
     /**
      * {@code minecraft:cyan_candle_cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CYAN_CANDLE_CAKE = VanillaTypes.item("minecraft:cyan_candle_cake");
 
     /**
      * {@code minecraft:cyan_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CYAN_CARPET = VanillaTypes.item("minecraft:cyan_carpet");
 
     /**
      * {@code minecraft:cyan_concrete}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CYAN_CONCRETE = VanillaTypes.item("minecraft:cyan_concrete");
 
     /**
      * {@code minecraft:cyan_concrete_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType CYAN_CONCRETE_DOUBLE_SLAB = VanillaTypes.item("minecraft:cyan_concrete_double_slab");
 
     /**
      * {@code minecraft:cyan_concrete_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CYAN_CONCRETE_POWDER = VanillaTypes.item("minecraft:cyan_concrete_powder");
 
     /**
      * {@code minecraft:cyan_concrete_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType CYAN_CONCRETE_SLAB = VanillaTypes.item("minecraft:cyan_concrete_slab");
 
     /**
      * {@code minecraft:cyan_concrete_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType CYAN_CONCRETE_STAIRS = VanillaTypes.item("minecraft:cyan_concrete_stairs");
 
     /**
      * {@code minecraft:cyan_cushion}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType CYAN_CUSHION = VanillaTypes.item("minecraft:cyan_cushion");
 
     /**
      * {@code minecraft:cyan_dye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CYAN_DYE = VanillaTypes.item("minecraft:cyan_dye");
 
     /**
      * {@code minecraft:cyan_glazed_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CYAN_GLAZED_TERRACOTTA = VanillaTypes.item("minecraft:cyan_glazed_terracotta");
 
     /**
      * {@code minecraft:cyan_harness}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CYAN_HARNESS = VanillaTypes.item("minecraft:cyan_harness");
 
     /**
      * {@code minecraft:cyan_shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CYAN_SHULKER_BOX = VanillaTypes.item("minecraft:cyan_shulker_box");
 
     /**
      * {@code minecraft:cyan_stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CYAN_STAINED_GLASS = VanillaTypes.item("minecraft:cyan_stained_glass");
 
     /**
      * {@code minecraft:cyan_stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CYAN_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:cyan_stained_glass_pane");
 
     /**
      * {@code minecraft:cyan_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CYAN_TERRACOTTA = VanillaTypes.item("minecraft:cyan_terracotta");
 
     /**
      * {@code minecraft:cyan_wool}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType CYAN_WOOL = VanillaTypes.item("minecraft:cyan_wool");
 
     /**
      * {@code minecraft:cyan_wool_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType CYAN_WOOL_DOUBLE_SLAB = VanillaTypes.item("minecraft:cyan_wool_double_slab");
 
     /**
      * {@code minecraft:cyan_wool_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType CYAN_WOOL_SLAB = VanillaTypes.item("minecraft:cyan_wool_slab");
 
     /**
      * {@code minecraft:cyan_wool_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType CYAN_WOOL_STAIRS = VanillaTypes.item("minecraft:cyan_wool_stairs");
 
     /**
      * {@code minecraft:damaged_anvil}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DAMAGED_ANVIL = VanillaTypes.item("minecraft:damaged_anvil");
 
     /**
      * {@code minecraft:dandelion}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DANDELION = VanillaTypes.item("minecraft:dandelion");
 
     /**
      * {@code minecraft:danger_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DANGER_POTTERY_SHERD = VanillaTypes.item("minecraft:danger_pottery_sherd");
 
     /**
      * {@code minecraft:darkoak_standing_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARKOAK_STANDING_SIGN = VanillaTypes.item("minecraft:darkoak_standing_sign");
 
     /**
      * {@code minecraft:darkoak_wall_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARKOAK_WALL_SIGN = VanillaTypes.item("minecraft:darkoak_wall_sign");
 
     /**
      * {@code minecraft:dark_oak_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_BOAT = VanillaTypes.item("minecraft:dark_oak_boat");
 
     /**
      * {@code minecraft:dark_oak_button}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_BUTTON = VanillaTypes.item("minecraft:dark_oak_button");
 
     /**
      * {@code minecraft:dark_oak_chest_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_CHEST_BOAT = VanillaTypes.item("minecraft:dark_oak_chest_boat");
 
     /**
      * {@code minecraft:dark_oak_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_DOOR = VanillaTypes.item("minecraft:dark_oak_door");
 
     /**
      * {@code minecraft:dark_oak_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_DOUBLE_SLAB = VanillaTypes.item("minecraft:dark_oak_double_slab");
 
     /**
      * {@code minecraft:dark_oak_fence}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_FENCE = VanillaTypes.item("minecraft:dark_oak_fence");
 
     /**
      * {@code minecraft:dark_oak_fence_gate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_FENCE_GATE = VanillaTypes.item("minecraft:dark_oak_fence_gate");
 
     /**
      * {@code minecraft:dark_oak_hanging_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_HANGING_SIGN = VanillaTypes.item("minecraft:dark_oak_hanging_sign");
 
     /**
      * {@code minecraft:dark_oak_leaves}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_LEAVES = VanillaTypes.item("minecraft:dark_oak_leaves");
 
     /**
      * {@code minecraft:dark_oak_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_LOG = VanillaTypes.item("minecraft:dark_oak_log");
 
     /**
      * {@code minecraft:dark_oak_planks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_PLANKS = VanillaTypes.item("minecraft:dark_oak_planks");
 
     /**
      * {@code minecraft:dark_oak_pressure_plate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_PRESSURE_PLATE = VanillaTypes.item("minecraft:dark_oak_pressure_plate");
 
     /**
      * {@code minecraft:dark_oak_sapling}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_SAPLING = VanillaTypes.item("minecraft:dark_oak_sapling");
 
     /**
      * {@code minecraft:dark_oak_shelf}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_SHELF = VanillaTypes.item("minecraft:dark_oak_shelf");
 
     /**
      * {@code minecraft:dark_oak_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_SIGN = VanillaTypes.item("minecraft:dark_oak_sign");
 
     /**
      * {@code minecraft:dark_oak_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_SLAB = VanillaTypes.item("minecraft:dark_oak_slab");
 
     /**
      * {@code minecraft:dark_oak_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_STAIRS = VanillaTypes.item("minecraft:dark_oak_stairs");
 
     /**
      * {@code minecraft:dark_oak_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_TRAPDOOR = VanillaTypes.item("minecraft:dark_oak_trapdoor");
 
     /**
      * {@code minecraft:dark_oak_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_OAK_WOOD = VanillaTypes.item("minecraft:dark_oak_wood");
 
     /**
      * {@code minecraft:dark_prismarine}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_PRISMARINE = VanillaTypes.item("minecraft:dark_prismarine");
 
     /**
      * {@code minecraft:dark_prismarine_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_PRISMARINE_DOUBLE_SLAB = VanillaTypes.item("minecraft:dark_prismarine_double_slab");
 
     /**
      * {@code minecraft:dark_prismarine_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_PRISMARINE_SLAB = VanillaTypes.item("minecraft:dark_prismarine_slab");
 
     /**
      * {@code minecraft:dark_prismarine_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DARK_PRISMARINE_STAIRS = VanillaTypes.item("minecraft:dark_prismarine_stairs");
 
     /**
      * {@code minecraft:daylight_detector}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DAYLIGHT_DETECTOR = VanillaTypes.item("minecraft:daylight_detector");
 
     /**
      * {@code minecraft:daylight_detector_inverted}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DAYLIGHT_DETECTOR_INVERTED = VanillaTypes.item("minecraft:daylight_detector_inverted");
 
     /**
      * {@code minecraft:deadbush}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEADBUSH = VanillaTypes.item("minecraft:deadbush");
 
     /**
      * {@code minecraft:dead_brain_coral}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_BRAIN_CORAL = VanillaTypes.item("minecraft:dead_brain_coral");
 
     /**
      * {@code minecraft:dead_brain_coral_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_BRAIN_CORAL_BLOCK = VanillaTypes.item("minecraft:dead_brain_coral_block");
 
     /**
      * {@code minecraft:dead_brain_coral_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_BRAIN_CORAL_FAN = VanillaTypes.item("minecraft:dead_brain_coral_fan");
 
     /**
      * {@code minecraft:dead_brain_coral_wall_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_BRAIN_CORAL_WALL_FAN = VanillaTypes.item("minecraft:dead_brain_coral_wall_fan");
 
     /**
      * {@code minecraft:dead_bubble_coral}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_BUBBLE_CORAL = VanillaTypes.item("minecraft:dead_bubble_coral");
 
     /**
      * {@code minecraft:dead_bubble_coral_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_BUBBLE_CORAL_BLOCK = VanillaTypes.item("minecraft:dead_bubble_coral_block");
 
     /**
      * {@code minecraft:dead_bubble_coral_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_BUBBLE_CORAL_FAN = VanillaTypes.item("minecraft:dead_bubble_coral_fan");
 
     /**
      * {@code minecraft:dead_bubble_coral_wall_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_BUBBLE_CORAL_WALL_FAN = VanillaTypes.item("minecraft:dead_bubble_coral_wall_fan");
 
     /**
      * {@code minecraft:dead_fire_coral}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_FIRE_CORAL = VanillaTypes.item("minecraft:dead_fire_coral");
 
     /**
      * {@code minecraft:dead_fire_coral_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_FIRE_CORAL_BLOCK = VanillaTypes.item("minecraft:dead_fire_coral_block");
 
     /**
      * {@code minecraft:dead_fire_coral_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_FIRE_CORAL_FAN = VanillaTypes.item("minecraft:dead_fire_coral_fan");
 
     /**
      * {@code minecraft:dead_fire_coral_wall_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_FIRE_CORAL_WALL_FAN = VanillaTypes.item("minecraft:dead_fire_coral_wall_fan");
 
     /**
      * {@code minecraft:dead_horn_coral}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_HORN_CORAL = VanillaTypes.item("minecraft:dead_horn_coral");
 
     /**
      * {@code minecraft:dead_horn_coral_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_HORN_CORAL_BLOCK = VanillaTypes.item("minecraft:dead_horn_coral_block");
 
     /**
      * {@code minecraft:dead_horn_coral_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_HORN_CORAL_FAN = VanillaTypes.item("minecraft:dead_horn_coral_fan");
 
     /**
      * {@code minecraft:dead_horn_coral_wall_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_HORN_CORAL_WALL_FAN = VanillaTypes.item("minecraft:dead_horn_coral_wall_fan");
 
     /**
      * {@code minecraft:dead_tube_coral}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_TUBE_CORAL = VanillaTypes.item("minecraft:dead_tube_coral");
 
     /**
      * {@code minecraft:dead_tube_coral_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_TUBE_CORAL_BLOCK = VanillaTypes.item("minecraft:dead_tube_coral_block");
 
     /**
      * {@code minecraft:dead_tube_coral_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_TUBE_CORAL_FAN = VanillaTypes.item("minecraft:dead_tube_coral_fan");
 
     /**
      * {@code minecraft:dead_tube_coral_wall_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEAD_TUBE_CORAL_WALL_FAN = VanillaTypes.item("minecraft:dead_tube_coral_wall_fan");
 
     /**
      * {@code minecraft:decorated_pot}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DECORATED_POT = VanillaTypes.item("minecraft:decorated_pot");
 
     /**
      * {@code minecraft:deepslate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE = VanillaTypes.item("minecraft:deepslate");
 
     /**
      * {@code minecraft:deepslate_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_BRICKS = VanillaTypes.item("minecraft:deepslate_bricks");
 
     /**
      * {@code minecraft:deepslate_brick_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_BRICK_DOUBLE_SLAB = VanillaTypes.item("minecraft:deepslate_brick_double_slab");
 
     /**
      * {@code minecraft:deepslate_brick_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_BRICK_SLAB = VanillaTypes.item("minecraft:deepslate_brick_slab");
 
     /**
      * {@code minecraft:deepslate_brick_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_BRICK_STAIRS = VanillaTypes.item("minecraft:deepslate_brick_stairs");
 
     /**
      * {@code minecraft:deepslate_brick_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_BRICK_WALL = VanillaTypes.item("minecraft:deepslate_brick_wall");
 
     /**
      * {@code minecraft:deepslate_coal_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_COAL_ORE = VanillaTypes.item("minecraft:deepslate_coal_ore");
 
     /**
      * {@code minecraft:deepslate_copper_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_COPPER_ORE = VanillaTypes.item("minecraft:deepslate_copper_ore");
 
     /**
      * {@code minecraft:deepslate_diamond_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_DIAMOND_ORE = VanillaTypes.item("minecraft:deepslate_diamond_ore");
 
     /**
      * {@code minecraft:deepslate_emerald_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_EMERALD_ORE = VanillaTypes.item("minecraft:deepslate_emerald_ore");
 
     /**
      * {@code minecraft:deepslate_gold_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_GOLD_ORE = VanillaTypes.item("minecraft:deepslate_gold_ore");
 
     /**
      * {@code minecraft:deepslate_iron_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_IRON_ORE = VanillaTypes.item("minecraft:deepslate_iron_ore");
 
     /**
      * {@code minecraft:deepslate_lapis_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_LAPIS_ORE = VanillaTypes.item("minecraft:deepslate_lapis_ore");
 
     /**
      * {@code minecraft:deepslate_redstone_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_REDSTONE_ORE = VanillaTypes.item("minecraft:deepslate_redstone_ore");
 
     /**
      * {@code minecraft:deepslate_tiles}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_TILES = VanillaTypes.item("minecraft:deepslate_tiles");
 
     /**
      * {@code minecraft:deepslate_tile_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_TILE_DOUBLE_SLAB = VanillaTypes.item("minecraft:deepslate_tile_double_slab");
 
     /**
      * {@code minecraft:deepslate_tile_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_TILE_SLAB = VanillaTypes.item("minecraft:deepslate_tile_slab");
 
     /**
      * {@code minecraft:deepslate_tile_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_TILE_STAIRS = VanillaTypes.item("minecraft:deepslate_tile_stairs");
 
     /**
      * {@code minecraft:deepslate_tile_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEEPSLATE_TILE_WALL = VanillaTypes.item("minecraft:deepslate_tile_wall");
 
     /**
      * {@code minecraft:deny}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DENY = VanillaTypes.item("minecraft:deny");
 
     /**
      * {@code minecraft:deprecated_anvil}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEPRECATED_ANVIL = VanillaTypes.item("minecraft:deprecated_anvil");
 
     /**
      * {@code minecraft:deprecated_purpur_block_1}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEPRECATED_PURPUR_BLOCK_1 = VanillaTypes.item("minecraft:deprecated_purpur_block_1");
 
     /**
      * {@code minecraft:deprecated_purpur_block_2}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DEPRECATED_PURPUR_BLOCK_2 = VanillaTypes.item("minecraft:deprecated_purpur_block_2");
 
     /**
      * {@code minecraft:detector_rail}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DETECTOR_RAIL = VanillaTypes.item("minecraft:detector_rail");
 
     /**
      * {@code minecraft:diamond}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIAMOND = VanillaTypes.item("minecraft:diamond");
 
     /**
      * {@code minecraft:diamond_axe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIAMOND_AXE = VanillaTypes.item("minecraft:diamond_axe");
 
     /**
      * {@code minecraft:diamond_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIAMOND_BLOCK = VanillaTypes.item("minecraft:diamond_block");
 
     /**
      * {@code minecraft:diamond_boots}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIAMOND_BOOTS = VanillaTypes.item("minecraft:diamond_boots");
 
     /**
      * {@code minecraft:diamond_chestplate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIAMOND_CHESTPLATE = VanillaTypes.item("minecraft:diamond_chestplate");
 
     /**
      * {@code minecraft:diamond_helmet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIAMOND_HELMET = VanillaTypes.item("minecraft:diamond_helmet");
 
     /**
      * {@code minecraft:diamond_hoe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIAMOND_HOE = VanillaTypes.item("minecraft:diamond_hoe");
 
     /**
      * {@code minecraft:diamond_horse_armor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIAMOND_HORSE_ARMOR = VanillaTypes.item("minecraft:diamond_horse_armor");
 
     /**
      * {@code minecraft:diamond_leggings}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIAMOND_LEGGINGS = VanillaTypes.item("minecraft:diamond_leggings");
 
     /**
      * {@code minecraft:diamond_nautilus_armor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIAMOND_NAUTILUS_ARMOR = VanillaTypes.item("minecraft:diamond_nautilus_armor");
 
     /**
      * {@code minecraft:diamond_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIAMOND_ORE = VanillaTypes.item("minecraft:diamond_ore");
 
     /**
      * {@code minecraft:diamond_pickaxe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIAMOND_PICKAXE = VanillaTypes.item("minecraft:diamond_pickaxe");
 
     /**
      * {@code minecraft:diamond_shovel}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIAMOND_SHOVEL = VanillaTypes.item("minecraft:diamond_shovel");
 
     /**
      * {@code minecraft:diamond_spear}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIAMOND_SPEAR = VanillaTypes.item("minecraft:diamond_spear");
 
     /**
      * {@code minecraft:diamond_sword}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIAMOND_SWORD = VanillaTypes.item("minecraft:diamond_sword");
 
     /**
      * {@code minecraft:diorite}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIORITE = VanillaTypes.item("minecraft:diorite");
 
     /**
      * {@code minecraft:diorite_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIORITE_DOUBLE_SLAB = VanillaTypes.item("minecraft:diorite_double_slab");
 
     /**
      * {@code minecraft:diorite_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIORITE_SLAB = VanillaTypes.item("minecraft:diorite_slab");
 
     /**
      * {@code minecraft:diorite_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIORITE_STAIRS = VanillaTypes.item("minecraft:diorite_stairs");
 
     /**
      * {@code minecraft:diorite_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIORITE_WALL = VanillaTypes.item("minecraft:diorite_wall");
 
     /**
      * {@code minecraft:dirt}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIRT = VanillaTypes.item("minecraft:dirt");
 
     /**
      * {@code minecraft:dirt_with_roots}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DIRT_WITH_ROOTS = VanillaTypes.item("minecraft:dirt_with_roots");
 
     /**
      * {@code minecraft:disc_fragment_5}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DISC_FRAGMENT_5 = VanillaTypes.item("minecraft:disc_fragment_5");
 
     /**
      * {@code minecraft:disc_press}.
+     *
+     * @since 26.60
      */
     public static final BedrockItemType DISC_PRESS = VanillaTypes.item("minecraft:disc_press");
 
     /**
      * {@code minecraft:dispenser}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DISPENSER = VanillaTypes.item("minecraft:dispenser");
 
     /**
      * {@code minecraft:dolphin_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DOLPHIN_SPAWN_EGG = VanillaTypes.item("minecraft:dolphin_spawn_egg");
 
     /**
      * {@code minecraft:donkey_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DONKEY_SPAWN_EGG = VanillaTypes.item("minecraft:donkey_spawn_egg");
 
     /**
      * {@code minecraft:double_cut_copper_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DOUBLE_CUT_COPPER_SLAB = VanillaTypes.item("minecraft:double_cut_copper_slab");
 
     /**
      * {@code minecraft:double_plant}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DOUBLE_PLANT = VanillaTypes.item("minecraft:double_plant");
 
     /**
      * {@code minecraft:double_stone_block_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DOUBLE_STONE_BLOCK_SLAB = VanillaTypes.item("minecraft:double_stone_block_slab");
 
     /**
      * {@code minecraft:double_stone_block_slab2}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DOUBLE_STONE_BLOCK_SLAB2 = VanillaTypes.item("minecraft:double_stone_block_slab2");
 
     /**
      * {@code minecraft:double_stone_block_slab3}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DOUBLE_STONE_BLOCK_SLAB3 = VanillaTypes.item("minecraft:double_stone_block_slab3");
 
     /**
      * {@code minecraft:double_stone_block_slab4}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DOUBLE_STONE_BLOCK_SLAB4 = VanillaTypes.item("minecraft:double_stone_block_slab4");
 
     /**
      * {@code minecraft:dragon_breath}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DRAGON_BREATH = VanillaTypes.item("minecraft:dragon_breath");
 
     /**
      * {@code minecraft:dragon_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DRAGON_EGG = VanillaTypes.item("minecraft:dragon_egg");
 
     /**
      * {@code minecraft:dragon_head}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DRAGON_HEAD = VanillaTypes.item("minecraft:dragon_head");
 
     /**
      * {@code minecraft:dried_ghast}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DRIED_GHAST = VanillaTypes.item("minecraft:dried_ghast");
 
     /**
      * {@code minecraft:dried_kelp}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DRIED_KELP = VanillaTypes.item("minecraft:dried_kelp");
 
     /**
      * {@code minecraft:dried_kelp_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DRIED_KELP_BLOCK = VanillaTypes.item("minecraft:dried_kelp_block");
 
     /**
      * {@code minecraft:dripstone_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DRIPSTONE_BLOCK = VanillaTypes.item("minecraft:dripstone_block");
 
     /**
      * {@code minecraft:dropper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DROPPER = VanillaTypes.item("minecraft:dropper");
 
     /**
      * {@code minecraft:drowned_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DROWNED_SPAWN_EGG = VanillaTypes.item("minecraft:drowned_spawn_egg");
 
     /**
      * {@code minecraft:dune_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DUNE_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:dune_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:dye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType DYE = VanillaTypes.item("minecraft:dye");
 
     /**
      * {@code minecraft:echo_shard}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ECHO_SHARD = VanillaTypes.item("minecraft:echo_shard");
 
     /**
      * {@code minecraft:egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EGG = VanillaTypes.item("minecraft:egg");
 
     /**
      * {@code minecraft:elder_guardian_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ELDER_GUARDIAN_SPAWN_EGG = VanillaTypes.item("minecraft:elder_guardian_spawn_egg");
 
     /**
      * {@code minecraft:element_0}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_0 = VanillaTypes.item("minecraft:element_0");
+    @Education
+    public static final BedrockItemType ELEMENT_0 = VanillaTypes.educationItem("minecraft:element_0");
 
     /**
      * {@code minecraft:element_1}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_1 = VanillaTypes.item("minecraft:element_1");
+    @Education
+    public static final BedrockItemType ELEMENT_1 = VanillaTypes.educationItem("minecraft:element_1");
 
     /**
      * {@code minecraft:element_10}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_10 = VanillaTypes.item("minecraft:element_10");
+    @Education
+    public static final BedrockItemType ELEMENT_10 = VanillaTypes.educationItem("minecraft:element_10");
 
     /**
      * {@code minecraft:element_100}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_100 = VanillaTypes.item("minecraft:element_100");
+    @Education
+    public static final BedrockItemType ELEMENT_100 = VanillaTypes.educationItem("minecraft:element_100");
 
     /**
      * {@code minecraft:element_101}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_101 = VanillaTypes.item("minecraft:element_101");
+    @Education
+    public static final BedrockItemType ELEMENT_101 = VanillaTypes.educationItem("minecraft:element_101");
 
     /**
      * {@code minecraft:element_102}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_102 = VanillaTypes.item("minecraft:element_102");
+    @Education
+    public static final BedrockItemType ELEMENT_102 = VanillaTypes.educationItem("minecraft:element_102");
 
     /**
      * {@code minecraft:element_103}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_103 = VanillaTypes.item("minecraft:element_103");
+    @Education
+    public static final BedrockItemType ELEMENT_103 = VanillaTypes.educationItem("minecraft:element_103");
 
     /**
      * {@code minecraft:element_104}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_104 = VanillaTypes.item("minecraft:element_104");
+    @Education
+    public static final BedrockItemType ELEMENT_104 = VanillaTypes.educationItem("minecraft:element_104");
 
     /**
      * {@code minecraft:element_105}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_105 = VanillaTypes.item("minecraft:element_105");
+    @Education
+    public static final BedrockItemType ELEMENT_105 = VanillaTypes.educationItem("minecraft:element_105");
 
     /**
      * {@code minecraft:element_106}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_106 = VanillaTypes.item("minecraft:element_106");
+    @Education
+    public static final BedrockItemType ELEMENT_106 = VanillaTypes.educationItem("minecraft:element_106");
 
     /**
      * {@code minecraft:element_107}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_107 = VanillaTypes.item("minecraft:element_107");
+    @Education
+    public static final BedrockItemType ELEMENT_107 = VanillaTypes.educationItem("minecraft:element_107");
 
     /**
      * {@code minecraft:element_108}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_108 = VanillaTypes.item("minecraft:element_108");
+    @Education
+    public static final BedrockItemType ELEMENT_108 = VanillaTypes.educationItem("minecraft:element_108");
 
     /**
      * {@code minecraft:element_109}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_109 = VanillaTypes.item("minecraft:element_109");
+    @Education
+    public static final BedrockItemType ELEMENT_109 = VanillaTypes.educationItem("minecraft:element_109");
 
     /**
      * {@code minecraft:element_11}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_11 = VanillaTypes.item("minecraft:element_11");
+    @Education
+    public static final BedrockItemType ELEMENT_11 = VanillaTypes.educationItem("minecraft:element_11");
 
     /**
      * {@code minecraft:element_110}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_110 = VanillaTypes.item("minecraft:element_110");
+    @Education
+    public static final BedrockItemType ELEMENT_110 = VanillaTypes.educationItem("minecraft:element_110");
 
     /**
      * {@code minecraft:element_111}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_111 = VanillaTypes.item("minecraft:element_111");
+    @Education
+    public static final BedrockItemType ELEMENT_111 = VanillaTypes.educationItem("minecraft:element_111");
 
     /**
      * {@code minecraft:element_112}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_112 = VanillaTypes.item("minecraft:element_112");
+    @Education
+    public static final BedrockItemType ELEMENT_112 = VanillaTypes.educationItem("minecraft:element_112");
 
     /**
      * {@code minecraft:element_113}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_113 = VanillaTypes.item("minecraft:element_113");
+    @Education
+    public static final BedrockItemType ELEMENT_113 = VanillaTypes.educationItem("minecraft:element_113");
 
     /**
      * {@code minecraft:element_114}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_114 = VanillaTypes.item("minecraft:element_114");
+    @Education
+    public static final BedrockItemType ELEMENT_114 = VanillaTypes.educationItem("minecraft:element_114");
 
     /**
      * {@code minecraft:element_115}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_115 = VanillaTypes.item("minecraft:element_115");
+    @Education
+    public static final BedrockItemType ELEMENT_115 = VanillaTypes.educationItem("minecraft:element_115");
 
     /**
      * {@code minecraft:element_116}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_116 = VanillaTypes.item("minecraft:element_116");
+    @Education
+    public static final BedrockItemType ELEMENT_116 = VanillaTypes.educationItem("minecraft:element_116");
 
     /**
      * {@code minecraft:element_117}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_117 = VanillaTypes.item("minecraft:element_117");
+    @Education
+    public static final BedrockItemType ELEMENT_117 = VanillaTypes.educationItem("minecraft:element_117");
 
     /**
      * {@code minecraft:element_118}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_118 = VanillaTypes.item("minecraft:element_118");
+    @Education
+    public static final BedrockItemType ELEMENT_118 = VanillaTypes.educationItem("minecraft:element_118");
 
     /**
      * {@code minecraft:element_12}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_12 = VanillaTypes.item("minecraft:element_12");
+    @Education
+    public static final BedrockItemType ELEMENT_12 = VanillaTypes.educationItem("minecraft:element_12");
 
     /**
      * {@code minecraft:element_13}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_13 = VanillaTypes.item("minecraft:element_13");
+    @Education
+    public static final BedrockItemType ELEMENT_13 = VanillaTypes.educationItem("minecraft:element_13");
 
     /**
      * {@code minecraft:element_14}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_14 = VanillaTypes.item("minecraft:element_14");
+    @Education
+    public static final BedrockItemType ELEMENT_14 = VanillaTypes.educationItem("minecraft:element_14");
 
     /**
      * {@code minecraft:element_15}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_15 = VanillaTypes.item("minecraft:element_15");
+    @Education
+    public static final BedrockItemType ELEMENT_15 = VanillaTypes.educationItem("minecraft:element_15");
 
     /**
      * {@code minecraft:element_16}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_16 = VanillaTypes.item("minecraft:element_16");
+    @Education
+    public static final BedrockItemType ELEMENT_16 = VanillaTypes.educationItem("minecraft:element_16");
 
     /**
      * {@code minecraft:element_17}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_17 = VanillaTypes.item("minecraft:element_17");
+    @Education
+    public static final BedrockItemType ELEMENT_17 = VanillaTypes.educationItem("minecraft:element_17");
 
     /**
      * {@code minecraft:element_18}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_18 = VanillaTypes.item("minecraft:element_18");
+    @Education
+    public static final BedrockItemType ELEMENT_18 = VanillaTypes.educationItem("minecraft:element_18");
 
     /**
      * {@code minecraft:element_19}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_19 = VanillaTypes.item("minecraft:element_19");
+    @Education
+    public static final BedrockItemType ELEMENT_19 = VanillaTypes.educationItem("minecraft:element_19");
 
     /**
      * {@code minecraft:element_2}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_2 = VanillaTypes.item("minecraft:element_2");
+    @Education
+    public static final BedrockItemType ELEMENT_2 = VanillaTypes.educationItem("minecraft:element_2");
 
     /**
      * {@code minecraft:element_20}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_20 = VanillaTypes.item("minecraft:element_20");
+    @Education
+    public static final BedrockItemType ELEMENT_20 = VanillaTypes.educationItem("minecraft:element_20");
 
     /**
      * {@code minecraft:element_21}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_21 = VanillaTypes.item("minecraft:element_21");
+    @Education
+    public static final BedrockItemType ELEMENT_21 = VanillaTypes.educationItem("minecraft:element_21");
 
     /**
      * {@code minecraft:element_22}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_22 = VanillaTypes.item("minecraft:element_22");
+    @Education
+    public static final BedrockItemType ELEMENT_22 = VanillaTypes.educationItem("minecraft:element_22");
 
     /**
      * {@code minecraft:element_23}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_23 = VanillaTypes.item("minecraft:element_23");
+    @Education
+    public static final BedrockItemType ELEMENT_23 = VanillaTypes.educationItem("minecraft:element_23");
 
     /**
      * {@code minecraft:element_24}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_24 = VanillaTypes.item("minecraft:element_24");
+    @Education
+    public static final BedrockItemType ELEMENT_24 = VanillaTypes.educationItem("minecraft:element_24");
 
     /**
      * {@code minecraft:element_25}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_25 = VanillaTypes.item("minecraft:element_25");
+    @Education
+    public static final BedrockItemType ELEMENT_25 = VanillaTypes.educationItem("minecraft:element_25");
 
     /**
      * {@code minecraft:element_26}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_26 = VanillaTypes.item("minecraft:element_26");
+    @Education
+    public static final BedrockItemType ELEMENT_26 = VanillaTypes.educationItem("minecraft:element_26");
 
     /**
      * {@code minecraft:element_27}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_27 = VanillaTypes.item("minecraft:element_27");
+    @Education
+    public static final BedrockItemType ELEMENT_27 = VanillaTypes.educationItem("minecraft:element_27");
 
     /**
      * {@code minecraft:element_28}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_28 = VanillaTypes.item("minecraft:element_28");
+    @Education
+    public static final BedrockItemType ELEMENT_28 = VanillaTypes.educationItem("minecraft:element_28");
 
     /**
      * {@code minecraft:element_29}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_29 = VanillaTypes.item("minecraft:element_29");
+    @Education
+    public static final BedrockItemType ELEMENT_29 = VanillaTypes.educationItem("minecraft:element_29");
 
     /**
      * {@code minecraft:element_3}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_3 = VanillaTypes.item("minecraft:element_3");
+    @Education
+    public static final BedrockItemType ELEMENT_3 = VanillaTypes.educationItem("minecraft:element_3");
 
     /**
      * {@code minecraft:element_30}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_30 = VanillaTypes.item("minecraft:element_30");
+    @Education
+    public static final BedrockItemType ELEMENT_30 = VanillaTypes.educationItem("minecraft:element_30");
 
     /**
      * {@code minecraft:element_31}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_31 = VanillaTypes.item("minecraft:element_31");
+    @Education
+    public static final BedrockItemType ELEMENT_31 = VanillaTypes.educationItem("minecraft:element_31");
 
     /**
      * {@code minecraft:element_32}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_32 = VanillaTypes.item("minecraft:element_32");
+    @Education
+    public static final BedrockItemType ELEMENT_32 = VanillaTypes.educationItem("minecraft:element_32");
 
     /**
      * {@code minecraft:element_33}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_33 = VanillaTypes.item("minecraft:element_33");
+    @Education
+    public static final BedrockItemType ELEMENT_33 = VanillaTypes.educationItem("minecraft:element_33");
 
     /**
      * {@code minecraft:element_34}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_34 = VanillaTypes.item("minecraft:element_34");
+    @Education
+    public static final BedrockItemType ELEMENT_34 = VanillaTypes.educationItem("minecraft:element_34");
 
     /**
      * {@code minecraft:element_35}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_35 = VanillaTypes.item("minecraft:element_35");
+    @Education
+    public static final BedrockItemType ELEMENT_35 = VanillaTypes.educationItem("minecraft:element_35");
 
     /**
      * {@code minecraft:element_36}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_36 = VanillaTypes.item("minecraft:element_36");
+    @Education
+    public static final BedrockItemType ELEMENT_36 = VanillaTypes.educationItem("minecraft:element_36");
 
     /**
      * {@code minecraft:element_37}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_37 = VanillaTypes.item("minecraft:element_37");
+    @Education
+    public static final BedrockItemType ELEMENT_37 = VanillaTypes.educationItem("minecraft:element_37");
 
     /**
      * {@code minecraft:element_38}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_38 = VanillaTypes.item("minecraft:element_38");
+    @Education
+    public static final BedrockItemType ELEMENT_38 = VanillaTypes.educationItem("minecraft:element_38");
 
     /**
      * {@code minecraft:element_39}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_39 = VanillaTypes.item("minecraft:element_39");
+    @Education
+    public static final BedrockItemType ELEMENT_39 = VanillaTypes.educationItem("minecraft:element_39");
 
     /**
      * {@code minecraft:element_4}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_4 = VanillaTypes.item("minecraft:element_4");
+    @Education
+    public static final BedrockItemType ELEMENT_4 = VanillaTypes.educationItem("minecraft:element_4");
 
     /**
      * {@code minecraft:element_40}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_40 = VanillaTypes.item("minecraft:element_40");
+    @Education
+    public static final BedrockItemType ELEMENT_40 = VanillaTypes.educationItem("minecraft:element_40");
 
     /**
      * {@code minecraft:element_41}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_41 = VanillaTypes.item("minecraft:element_41");
+    @Education
+    public static final BedrockItemType ELEMENT_41 = VanillaTypes.educationItem("minecraft:element_41");
 
     /**
      * {@code minecraft:element_42}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_42 = VanillaTypes.item("minecraft:element_42");
+    @Education
+    public static final BedrockItemType ELEMENT_42 = VanillaTypes.educationItem("minecraft:element_42");
 
     /**
      * {@code minecraft:element_43}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_43 = VanillaTypes.item("minecraft:element_43");
+    @Education
+    public static final BedrockItemType ELEMENT_43 = VanillaTypes.educationItem("minecraft:element_43");
 
     /**
      * {@code minecraft:element_44}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_44 = VanillaTypes.item("minecraft:element_44");
+    @Education
+    public static final BedrockItemType ELEMENT_44 = VanillaTypes.educationItem("minecraft:element_44");
 
     /**
      * {@code minecraft:element_45}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_45 = VanillaTypes.item("minecraft:element_45");
+    @Education
+    public static final BedrockItemType ELEMENT_45 = VanillaTypes.educationItem("minecraft:element_45");
 
     /**
      * {@code minecraft:element_46}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_46 = VanillaTypes.item("minecraft:element_46");
+    @Education
+    public static final BedrockItemType ELEMENT_46 = VanillaTypes.educationItem("minecraft:element_46");
 
     /**
      * {@code minecraft:element_47}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_47 = VanillaTypes.item("minecraft:element_47");
+    @Education
+    public static final BedrockItemType ELEMENT_47 = VanillaTypes.educationItem("minecraft:element_47");
 
     /**
      * {@code minecraft:element_48}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_48 = VanillaTypes.item("minecraft:element_48");
+    @Education
+    public static final BedrockItemType ELEMENT_48 = VanillaTypes.educationItem("minecraft:element_48");
 
     /**
      * {@code minecraft:element_49}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_49 = VanillaTypes.item("minecraft:element_49");
+    @Education
+    public static final BedrockItemType ELEMENT_49 = VanillaTypes.educationItem("minecraft:element_49");
 
     /**
      * {@code minecraft:element_5}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_5 = VanillaTypes.item("minecraft:element_5");
+    @Education
+    public static final BedrockItemType ELEMENT_5 = VanillaTypes.educationItem("minecraft:element_5");
 
     /**
      * {@code minecraft:element_50}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_50 = VanillaTypes.item("minecraft:element_50");
+    @Education
+    public static final BedrockItemType ELEMENT_50 = VanillaTypes.educationItem("minecraft:element_50");
 
     /**
      * {@code minecraft:element_51}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_51 = VanillaTypes.item("minecraft:element_51");
+    @Education
+    public static final BedrockItemType ELEMENT_51 = VanillaTypes.educationItem("minecraft:element_51");
 
     /**
      * {@code minecraft:element_52}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_52 = VanillaTypes.item("minecraft:element_52");
+    @Education
+    public static final BedrockItemType ELEMENT_52 = VanillaTypes.educationItem("minecraft:element_52");
 
     /**
      * {@code minecraft:element_53}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_53 = VanillaTypes.item("minecraft:element_53");
+    @Education
+    public static final BedrockItemType ELEMENT_53 = VanillaTypes.educationItem("minecraft:element_53");
 
     /**
      * {@code minecraft:element_54}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_54 = VanillaTypes.item("minecraft:element_54");
+    @Education
+    public static final BedrockItemType ELEMENT_54 = VanillaTypes.educationItem("minecraft:element_54");
 
     /**
      * {@code minecraft:element_55}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_55 = VanillaTypes.item("minecraft:element_55");
+    @Education
+    public static final BedrockItemType ELEMENT_55 = VanillaTypes.educationItem("minecraft:element_55");
 
     /**
      * {@code minecraft:element_56}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_56 = VanillaTypes.item("minecraft:element_56");
+    @Education
+    public static final BedrockItemType ELEMENT_56 = VanillaTypes.educationItem("minecraft:element_56");
 
     /**
      * {@code minecraft:element_57}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_57 = VanillaTypes.item("minecraft:element_57");
+    @Education
+    public static final BedrockItemType ELEMENT_57 = VanillaTypes.educationItem("minecraft:element_57");
 
     /**
      * {@code minecraft:element_58}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_58 = VanillaTypes.item("minecraft:element_58");
+    @Education
+    public static final BedrockItemType ELEMENT_58 = VanillaTypes.educationItem("minecraft:element_58");
 
     /**
      * {@code minecraft:element_59}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_59 = VanillaTypes.item("minecraft:element_59");
+    @Education
+    public static final BedrockItemType ELEMENT_59 = VanillaTypes.educationItem("minecraft:element_59");
 
     /**
      * {@code minecraft:element_6}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_6 = VanillaTypes.item("minecraft:element_6");
+    @Education
+    public static final BedrockItemType ELEMENT_6 = VanillaTypes.educationItem("minecraft:element_6");
 
     /**
      * {@code minecraft:element_60}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_60 = VanillaTypes.item("minecraft:element_60");
+    @Education
+    public static final BedrockItemType ELEMENT_60 = VanillaTypes.educationItem("minecraft:element_60");
 
     /**
      * {@code minecraft:element_61}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_61 = VanillaTypes.item("minecraft:element_61");
+    @Education
+    public static final BedrockItemType ELEMENT_61 = VanillaTypes.educationItem("minecraft:element_61");
 
     /**
      * {@code minecraft:element_62}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_62 = VanillaTypes.item("minecraft:element_62");
+    @Education
+    public static final BedrockItemType ELEMENT_62 = VanillaTypes.educationItem("minecraft:element_62");
 
     /**
      * {@code minecraft:element_63}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_63 = VanillaTypes.item("minecraft:element_63");
+    @Education
+    public static final BedrockItemType ELEMENT_63 = VanillaTypes.educationItem("minecraft:element_63");
 
     /**
      * {@code minecraft:element_64}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_64 = VanillaTypes.item("minecraft:element_64");
+    @Education
+    public static final BedrockItemType ELEMENT_64 = VanillaTypes.educationItem("minecraft:element_64");
 
     /**
      * {@code minecraft:element_65}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_65 = VanillaTypes.item("minecraft:element_65");
+    @Education
+    public static final BedrockItemType ELEMENT_65 = VanillaTypes.educationItem("minecraft:element_65");
 
     /**
      * {@code minecraft:element_66}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_66 = VanillaTypes.item("minecraft:element_66");
+    @Education
+    public static final BedrockItemType ELEMENT_66 = VanillaTypes.educationItem("minecraft:element_66");
 
     /**
      * {@code minecraft:element_67}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_67 = VanillaTypes.item("minecraft:element_67");
+    @Education
+    public static final BedrockItemType ELEMENT_67 = VanillaTypes.educationItem("minecraft:element_67");
 
     /**
      * {@code minecraft:element_68}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_68 = VanillaTypes.item("minecraft:element_68");
+    @Education
+    public static final BedrockItemType ELEMENT_68 = VanillaTypes.educationItem("minecraft:element_68");
 
     /**
      * {@code minecraft:element_69}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_69 = VanillaTypes.item("minecraft:element_69");
+    @Education
+    public static final BedrockItemType ELEMENT_69 = VanillaTypes.educationItem("minecraft:element_69");
 
     /**
      * {@code minecraft:element_7}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_7 = VanillaTypes.item("minecraft:element_7");
+    @Education
+    public static final BedrockItemType ELEMENT_7 = VanillaTypes.educationItem("minecraft:element_7");
 
     /**
      * {@code minecraft:element_70}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_70 = VanillaTypes.item("minecraft:element_70");
+    @Education
+    public static final BedrockItemType ELEMENT_70 = VanillaTypes.educationItem("minecraft:element_70");
 
     /**
      * {@code minecraft:element_71}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_71 = VanillaTypes.item("minecraft:element_71");
+    @Education
+    public static final BedrockItemType ELEMENT_71 = VanillaTypes.educationItem("minecraft:element_71");
 
     /**
      * {@code minecraft:element_72}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_72 = VanillaTypes.item("minecraft:element_72");
+    @Education
+    public static final BedrockItemType ELEMENT_72 = VanillaTypes.educationItem("minecraft:element_72");
 
     /**
      * {@code minecraft:element_73}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_73 = VanillaTypes.item("minecraft:element_73");
+    @Education
+    public static final BedrockItemType ELEMENT_73 = VanillaTypes.educationItem("minecraft:element_73");
 
     /**
      * {@code minecraft:element_74}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_74 = VanillaTypes.item("minecraft:element_74");
+    @Education
+    public static final BedrockItemType ELEMENT_74 = VanillaTypes.educationItem("minecraft:element_74");
 
     /**
      * {@code minecraft:element_75}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_75 = VanillaTypes.item("minecraft:element_75");
+    @Education
+    public static final BedrockItemType ELEMENT_75 = VanillaTypes.educationItem("minecraft:element_75");
 
     /**
      * {@code minecraft:element_76}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_76 = VanillaTypes.item("minecraft:element_76");
+    @Education
+    public static final BedrockItemType ELEMENT_76 = VanillaTypes.educationItem("minecraft:element_76");
 
     /**
      * {@code minecraft:element_77}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_77 = VanillaTypes.item("minecraft:element_77");
+    @Education
+    public static final BedrockItemType ELEMENT_77 = VanillaTypes.educationItem("minecraft:element_77");
 
     /**
      * {@code minecraft:element_78}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_78 = VanillaTypes.item("minecraft:element_78");
+    @Education
+    public static final BedrockItemType ELEMENT_78 = VanillaTypes.educationItem("minecraft:element_78");
 
     /**
      * {@code minecraft:element_79}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_79 = VanillaTypes.item("minecraft:element_79");
+    @Education
+    public static final BedrockItemType ELEMENT_79 = VanillaTypes.educationItem("minecraft:element_79");
 
     /**
      * {@code minecraft:element_8}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_8 = VanillaTypes.item("minecraft:element_8");
+    @Education
+    public static final BedrockItemType ELEMENT_8 = VanillaTypes.educationItem("minecraft:element_8");
 
     /**
      * {@code minecraft:element_80}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_80 = VanillaTypes.item("minecraft:element_80");
+    @Education
+    public static final BedrockItemType ELEMENT_80 = VanillaTypes.educationItem("minecraft:element_80");
 
     /**
      * {@code minecraft:element_81}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_81 = VanillaTypes.item("minecraft:element_81");
+    @Education
+    public static final BedrockItemType ELEMENT_81 = VanillaTypes.educationItem("minecraft:element_81");
 
     /**
      * {@code minecraft:element_82}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_82 = VanillaTypes.item("minecraft:element_82");
+    @Education
+    public static final BedrockItemType ELEMENT_82 = VanillaTypes.educationItem("minecraft:element_82");
 
     /**
      * {@code minecraft:element_83}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_83 = VanillaTypes.item("minecraft:element_83");
+    @Education
+    public static final BedrockItemType ELEMENT_83 = VanillaTypes.educationItem("minecraft:element_83");
 
     /**
      * {@code minecraft:element_84}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_84 = VanillaTypes.item("minecraft:element_84");
+    @Education
+    public static final BedrockItemType ELEMENT_84 = VanillaTypes.educationItem("minecraft:element_84");
 
     /**
      * {@code minecraft:element_85}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_85 = VanillaTypes.item("minecraft:element_85");
+    @Education
+    public static final BedrockItemType ELEMENT_85 = VanillaTypes.educationItem("minecraft:element_85");
 
     /**
      * {@code minecraft:element_86}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_86 = VanillaTypes.item("minecraft:element_86");
+    @Education
+    public static final BedrockItemType ELEMENT_86 = VanillaTypes.educationItem("minecraft:element_86");
 
     /**
      * {@code minecraft:element_87}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_87 = VanillaTypes.item("minecraft:element_87");
+    @Education
+    public static final BedrockItemType ELEMENT_87 = VanillaTypes.educationItem("minecraft:element_87");
 
     /**
      * {@code minecraft:element_88}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_88 = VanillaTypes.item("minecraft:element_88");
+    @Education
+    public static final BedrockItemType ELEMENT_88 = VanillaTypes.educationItem("minecraft:element_88");
 
     /**
      * {@code minecraft:element_89}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_89 = VanillaTypes.item("minecraft:element_89");
+    @Education
+    public static final BedrockItemType ELEMENT_89 = VanillaTypes.educationItem("minecraft:element_89");
 
     /**
      * {@code minecraft:element_9}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_9 = VanillaTypes.item("minecraft:element_9");
+    @Education
+    public static final BedrockItemType ELEMENT_9 = VanillaTypes.educationItem("minecraft:element_9");
 
     /**
      * {@code minecraft:element_90}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_90 = VanillaTypes.item("minecraft:element_90");
+    @Education
+    public static final BedrockItemType ELEMENT_90 = VanillaTypes.educationItem("minecraft:element_90");
 
     /**
      * {@code minecraft:element_91}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_91 = VanillaTypes.item("minecraft:element_91");
+    @Education
+    public static final BedrockItemType ELEMENT_91 = VanillaTypes.educationItem("minecraft:element_91");
 
     /**
      * {@code minecraft:element_92}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_92 = VanillaTypes.item("minecraft:element_92");
+    @Education
+    public static final BedrockItemType ELEMENT_92 = VanillaTypes.educationItem("minecraft:element_92");
 
     /**
      * {@code minecraft:element_93}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_93 = VanillaTypes.item("minecraft:element_93");
+    @Education
+    public static final BedrockItemType ELEMENT_93 = VanillaTypes.educationItem("minecraft:element_93");
 
     /**
      * {@code minecraft:element_94}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_94 = VanillaTypes.item("minecraft:element_94");
+    @Education
+    public static final BedrockItemType ELEMENT_94 = VanillaTypes.educationItem("minecraft:element_94");
 
     /**
      * {@code minecraft:element_95}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_95 = VanillaTypes.item("minecraft:element_95");
+    @Education
+    public static final BedrockItemType ELEMENT_95 = VanillaTypes.educationItem("minecraft:element_95");
 
     /**
      * {@code minecraft:element_96}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_96 = VanillaTypes.item("minecraft:element_96");
+    @Education
+    public static final BedrockItemType ELEMENT_96 = VanillaTypes.educationItem("minecraft:element_96");
 
     /**
      * {@code minecraft:element_97}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_97 = VanillaTypes.item("minecraft:element_97");
+    @Education
+    public static final BedrockItemType ELEMENT_97 = VanillaTypes.educationItem("minecraft:element_97");
 
     /**
      * {@code minecraft:element_98}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_98 = VanillaTypes.item("minecraft:element_98");
+    @Education
+    public static final BedrockItemType ELEMENT_98 = VanillaTypes.educationItem("minecraft:element_98");
 
     /**
      * {@code minecraft:element_99}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_99 = VanillaTypes.item("minecraft:element_99");
+    @Education
+    public static final BedrockItemType ELEMENT_99 = VanillaTypes.educationItem("minecraft:element_99");
 
     /**
      * {@code minecraft:element_constructor}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ELEMENT_CONSTRUCTOR = VanillaTypes.item("minecraft:element_constructor");
+    @Education
+    public static final BedrockItemType ELEMENT_CONSTRUCTOR = VanillaTypes.educationItem("minecraft:element_constructor");
 
     /**
      * {@code minecraft:elytra}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ELYTRA = VanillaTypes.item("minecraft:elytra");
 
     /**
      * {@code minecraft:emerald}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EMERALD = VanillaTypes.item("minecraft:emerald");
 
     /**
      * {@code minecraft:emerald_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EMERALD_BLOCK = VanillaTypes.item("minecraft:emerald_block");
 
     /**
      * {@code minecraft:emerald_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EMERALD_ORE = VanillaTypes.item("minecraft:emerald_ore");
 
     /**
      * {@code minecraft:empty_map}: 1 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EMPTY_MAP = VanillaTypes.item("minecraft:empty_map");
 
     /**
      * {@code minecraft:enchanted_book}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ENCHANTED_BOOK = VanillaTypes.item("minecraft:enchanted_book");
 
     /**
      * {@code minecraft:enchanted_golden_apple}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ENCHANTED_GOLDEN_APPLE = VanillaTypes.item("minecraft:enchanted_golden_apple");
 
     /**
      * {@code minecraft:enchanting_table}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ENCHANTING_TABLE = VanillaTypes.item("minecraft:enchanting_table");
 
     /**
      * {@code minecraft:enderman_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ENDERMAN_SPAWN_EGG = VanillaTypes.item("minecraft:enderman_spawn_egg");
 
     /**
      * {@code minecraft:endermite_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ENDERMITE_SPAWN_EGG = VanillaTypes.item("minecraft:endermite_spawn_egg");
 
     /**
      * {@code minecraft:ender_chest}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ENDER_CHEST = VanillaTypes.item("minecraft:ender_chest");
 
     /**
      * {@code minecraft:ender_dragon_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ENDER_DRAGON_SPAWN_EGG = VanillaTypes.item("minecraft:ender_dragon_spawn_egg");
 
     /**
      * {@code minecraft:ender_eye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ENDER_EYE = VanillaTypes.item("minecraft:ender_eye");
 
     /**
      * {@code minecraft:ender_pearl}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ENDER_PEARL = VanillaTypes.item("minecraft:ender_pearl");
 
     /**
      * {@code minecraft:end_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType END_BRICKS = VanillaTypes.item("minecraft:end_bricks");
 
     /**
      * {@code minecraft:end_brick_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType END_BRICK_STAIRS = VanillaTypes.item("minecraft:end_brick_stairs");
 
     /**
      * {@code minecraft:end_crystal}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType END_CRYSTAL = VanillaTypes.item("minecraft:end_crystal");
 
     /**
      * {@code minecraft:end_gateway}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType END_GATEWAY = VanillaTypes.item("minecraft:end_gateway");
 
     /**
      * {@code minecraft:end_portal}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType END_PORTAL = VanillaTypes.item("minecraft:end_portal");
 
     /**
      * {@code minecraft:end_portal_frame}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType END_PORTAL_FRAME = VanillaTypes.item("minecraft:end_portal_frame");
 
     /**
      * {@code minecraft:end_rod}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType END_ROD = VanillaTypes.item("minecraft:end_rod");
 
     /**
      * {@code minecraft:end_stone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType END_STONE = VanillaTypes.item("minecraft:end_stone");
 
     /**
      * {@code minecraft:end_stone_brick_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType END_STONE_BRICK_DOUBLE_SLAB = VanillaTypes.item("minecraft:end_stone_brick_double_slab");
 
     /**
      * {@code minecraft:end_stone_brick_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType END_STONE_BRICK_SLAB = VanillaTypes.item("minecraft:end_stone_brick_slab");
 
     /**
      * {@code minecraft:end_stone_brick_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType END_STONE_BRICK_WALL = VanillaTypes.item("minecraft:end_stone_brick_wall");
 
     /**
      * {@code minecraft:evoker_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EVOKER_SPAWN_EGG = VanillaTypes.item("minecraft:evoker_spawn_egg");
 
     /**
      * {@code minecraft:experience_bottle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPERIENCE_BOTTLE = VanillaTypes.item("minecraft:experience_bottle");
 
     /**
      * {@code minecraft:explorer_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPLORER_POTTERY_SHERD = VanillaTypes.item("minecraft:explorer_pottery_sherd");
 
     /**
      * {@code minecraft:exposed_chiseled_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPOSED_CHISELED_COPPER = VanillaTypes.item("minecraft:exposed_chiseled_copper");
 
     /**
      * {@code minecraft:exposed_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPOSED_COPPER = VanillaTypes.item("minecraft:exposed_copper");
 
     /**
      * {@code minecraft:exposed_copper_bars}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPOSED_COPPER_BARS = VanillaTypes.item("minecraft:exposed_copper_bars");
 
     /**
      * {@code minecraft:exposed_copper_bulb}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPOSED_COPPER_BULB = VanillaTypes.item("minecraft:exposed_copper_bulb");
 
     /**
      * {@code minecraft:exposed_copper_chain}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPOSED_COPPER_CHAIN = VanillaTypes.item("minecraft:exposed_copper_chain");
 
     /**
      * {@code minecraft:exposed_copper_chest}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPOSED_COPPER_CHEST = VanillaTypes.item("minecraft:exposed_copper_chest");
 
     /**
      * {@code minecraft:exposed_copper_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPOSED_COPPER_DOOR = VanillaTypes.item("minecraft:exposed_copper_door");
 
     /**
      * {@code minecraft:exposed_copper_golem_statue}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPOSED_COPPER_GOLEM_STATUE = VanillaTypes.item("minecraft:exposed_copper_golem_statue");
 
     /**
      * {@code minecraft:exposed_copper_grate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPOSED_COPPER_GRATE = VanillaTypes.item("minecraft:exposed_copper_grate");
 
     /**
      * {@code minecraft:exposed_copper_lantern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPOSED_COPPER_LANTERN = VanillaTypes.item("minecraft:exposed_copper_lantern");
 
     /**
      * {@code minecraft:exposed_copper_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPOSED_COPPER_TRAPDOOR = VanillaTypes.item("minecraft:exposed_copper_trapdoor");
 
     /**
      * {@code minecraft:exposed_cut_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPOSED_CUT_COPPER = VanillaTypes.item("minecraft:exposed_cut_copper");
 
     /**
      * {@code minecraft:exposed_cut_copper_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPOSED_CUT_COPPER_SLAB = VanillaTypes.item("minecraft:exposed_cut_copper_slab");
 
     /**
      * {@code minecraft:exposed_cut_copper_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPOSED_CUT_COPPER_STAIRS = VanillaTypes.item("minecraft:exposed_cut_copper_stairs");
 
     /**
      * {@code minecraft:exposed_double_cut_copper_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPOSED_DOUBLE_CUT_COPPER_SLAB = VanillaTypes.item("minecraft:exposed_double_cut_copper_slab");
 
     /**
      * {@code minecraft:exposed_lightning_rod}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EXPOSED_LIGHTNING_ROD = VanillaTypes.item("minecraft:exposed_lightning_rod");
 
     /**
      * {@code minecraft:eye_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType EYE_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:eye_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:farmland}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FARMLAND = VanillaTypes.item("minecraft:farmland");
 
     /**
      * {@code minecraft:feather}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FEATHER = VanillaTypes.item("minecraft:feather");
 
     /**
      * {@code minecraft:fence}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FENCE = VanillaTypes.item("minecraft:fence");
 
     /**
      * {@code minecraft:fence_gate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FENCE_GATE = VanillaTypes.item("minecraft:fence_gate");
 
     /**
      * {@code minecraft:fermented_spider_eye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FERMENTED_SPIDER_EYE = VanillaTypes.item("minecraft:fermented_spider_eye");
 
     /**
      * {@code minecraft:fern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FERN = VanillaTypes.item("minecraft:fern");
 
     /**
      * {@code minecraft:field_masoned_banner_pattern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FIELD_MASONED_BANNER_PATTERN = VanillaTypes.item("minecraft:field_masoned_banner_pattern");
 
     /**
      * {@code minecraft:filled_map}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FILLED_MAP = VanillaTypes.item("minecraft:filled_map");
 
     /**
      * {@code minecraft:fire}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FIRE = VanillaTypes.item("minecraft:fire");
 
     /**
      * {@code minecraft:firefly_bush}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FIREFLY_BUSH = VanillaTypes.item("minecraft:firefly_bush");
 
     /**
      * {@code minecraft:firework_rocket}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FIREWORK_ROCKET = VanillaTypes.item("minecraft:firework_rocket");
 
     /**
      * {@code minecraft:firework_star}: 15 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FIREWORK_STAR = VanillaTypes.item("minecraft:firework_star");
 
     /**
      * {@code minecraft:fire_charge}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FIRE_CHARGE = VanillaTypes.item("minecraft:fire_charge");
 
     /**
      * {@code minecraft:fire_coral}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FIRE_CORAL = VanillaTypes.item("minecraft:fire_coral");
 
     /**
      * {@code minecraft:fire_coral_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FIRE_CORAL_BLOCK = VanillaTypes.item("minecraft:fire_coral_block");
 
     /**
      * {@code minecraft:fire_coral_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FIRE_CORAL_FAN = VanillaTypes.item("minecraft:fire_coral_fan");
 
     /**
      * {@code minecraft:fire_coral_wall_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FIRE_CORAL_WALL_FAN = VanillaTypes.item("minecraft:fire_coral_wall_fan");
 
     /**
      * {@code minecraft:fishing_rod}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FISHING_ROD = VanillaTypes.item("minecraft:fishing_rod");
 
     /**
      * {@code minecraft:fletching_table}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FLETCHING_TABLE = VanillaTypes.item("minecraft:fletching_table");
 
     /**
      * {@code minecraft:flint}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FLINT = VanillaTypes.item("minecraft:flint");
 
     /**
      * {@code minecraft:flint_and_steel}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FLINT_AND_STEEL = VanillaTypes.item("minecraft:flint_and_steel");
 
     /**
      * {@code minecraft:flowering_azalea}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FLOWERING_AZALEA = VanillaTypes.item("minecraft:flowering_azalea");
 
     /**
      * {@code minecraft:flower_banner_pattern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FLOWER_BANNER_PATTERN = VanillaTypes.item("minecraft:flower_banner_pattern");
 
     /**
      * {@code minecraft:flower_pot}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FLOWER_POT = VanillaTypes.item("minecraft:flower_pot");
 
     /**
      * {@code minecraft:flowing_lava}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FLOWING_LAVA = VanillaTypes.item("minecraft:flowing_lava");
 
     /**
      * {@code minecraft:flowing_water}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FLOWING_WATER = VanillaTypes.item("minecraft:flowing_water");
 
     /**
      * {@code minecraft:flow_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FLOW_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:flow_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:flow_banner_pattern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FLOW_BANNER_PATTERN = VanillaTypes.item("minecraft:flow_banner_pattern");
 
     /**
      * {@code minecraft:flow_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FLOW_POTTERY_SHERD = VanillaTypes.item("minecraft:flow_pottery_sherd");
 
     /**
      * {@code minecraft:fox_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FOX_SPAWN_EGG = VanillaTypes.item("minecraft:fox_spawn_egg");
 
     /**
      * {@code minecraft:frame}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FRAME = VanillaTypes.item("minecraft:frame");
 
     /**
      * {@code minecraft:friend_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FRIEND_POTTERY_SHERD = VanillaTypes.item("minecraft:friend_pottery_sherd");
 
     /**
      * {@code minecraft:frog_spawn}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FROG_SPAWN = VanillaTypes.item("minecraft:frog_spawn");
 
     /**
      * {@code minecraft:frog_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FROG_SPAWN_EGG = VanillaTypes.item("minecraft:frog_spawn_egg");
 
     /**
      * {@code minecraft:frostbite_spawn_egg}.
+     * Behind the experiment {@code y_2026_drop_4} in 26.60: without it the version does not have it.
+     *
+     * @since 26.60
      */
     public static final BedrockItemType FROSTBITE_SPAWN_EGG = VanillaTypes.item("minecraft:frostbite_spawn_egg");
 
     /**
      * {@code minecraft:frosted_ice}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FROSTED_ICE = VanillaTypes.item("minecraft:frosted_ice");
 
     /**
      * {@code minecraft:furnace}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType FURNACE = VanillaTypes.item("minecraft:furnace");
 
     /**
      * {@code minecraft:ghast_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GHAST_SPAWN_EGG = VanillaTypes.item("minecraft:ghast_spawn_egg");
 
     /**
      * {@code minecraft:ghast_tear}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GHAST_TEAR = VanillaTypes.item("minecraft:ghast_tear");
 
     /**
      * {@code minecraft:gilded_blackstone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GILDED_BLACKSTONE = VanillaTypes.item("minecraft:gilded_blackstone");
 
     /**
      * {@code minecraft:glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GLASS = VanillaTypes.item("minecraft:glass");
 
     /**
      * {@code minecraft:glass_bottle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GLASS_BOTTLE = VanillaTypes.item("minecraft:glass_bottle");
 
     /**
      * {@code minecraft:glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GLASS_PANE = VanillaTypes.item("minecraft:glass_pane");
 
     /**
      * {@code minecraft:glistering_melon_slice}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GLISTERING_MELON_SLICE = VanillaTypes.item("minecraft:glistering_melon_slice");
 
     /**
      * {@code minecraft:globe_banner_pattern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GLOBE_BANNER_PATTERN = VanillaTypes.item("minecraft:globe_banner_pattern");
 
     /**
      * {@code minecraft:glowingobsidian}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GLOWINGOBSIDIAN = VanillaTypes.item("minecraft:glowingobsidian");
 
     /**
      * {@code minecraft:glowstone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GLOWSTONE = VanillaTypes.item("minecraft:glowstone");
 
     /**
      * {@code minecraft:glowstone_dust}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GLOWSTONE_DUST = VanillaTypes.item("minecraft:glowstone_dust");
 
     /**
      * {@code minecraft:glow_berries}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GLOW_BERRIES = VanillaTypes.item("minecraft:glow_berries");
 
     /**
      * {@code minecraft:glow_frame}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GLOW_FRAME = VanillaTypes.item("minecraft:glow_frame");
 
     /**
      * {@code minecraft:glow_ink_sac}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GLOW_INK_SAC = VanillaTypes.item("minecraft:glow_ink_sac");
 
     /**
      * {@code minecraft:glow_lichen}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GLOW_LICHEN = VanillaTypes.item("minecraft:glow_lichen");
 
     /**
      * {@code minecraft:glow_squid_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GLOW_SQUID_SPAWN_EGG = VanillaTypes.item("minecraft:glow_squid_spawn_egg");
 
     /**
      * {@code minecraft:glow_stick}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType GLOW_STICK = VanillaTypes.item("minecraft:glow_stick");
+    @Education
+    public static final BedrockItemType GLOW_STICK = VanillaTypes.educationItem("minecraft:glow_stick");
 
     /**
      * {@code minecraft:goat_horn}: 7 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOAT_HORN = VanillaTypes.item("minecraft:goat_horn");
 
     /**
      * {@code minecraft:goat_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOAT_SPAWN_EGG = VanillaTypes.item("minecraft:goat_spawn_egg");
 
     /**
      * {@code minecraft:golden_apple}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLDEN_APPLE = VanillaTypes.item("minecraft:golden_apple");
 
     /**
      * {@code minecraft:golden_axe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLDEN_AXE = VanillaTypes.item("minecraft:golden_axe");
 
     /**
      * {@code minecraft:golden_boots}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLDEN_BOOTS = VanillaTypes.item("minecraft:golden_boots");
 
     /**
      * {@code minecraft:golden_carrot}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLDEN_CARROT = VanillaTypes.item("minecraft:golden_carrot");
 
     /**
      * {@code minecraft:golden_chestplate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLDEN_CHESTPLATE = VanillaTypes.item("minecraft:golden_chestplate");
 
     /**
      * {@code minecraft:golden_dandelion}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLDEN_DANDELION = VanillaTypes.item("minecraft:golden_dandelion");
 
     /**
      * {@code minecraft:golden_helmet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLDEN_HELMET = VanillaTypes.item("minecraft:golden_helmet");
 
     /**
      * {@code minecraft:golden_hoe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLDEN_HOE = VanillaTypes.item("minecraft:golden_hoe");
 
     /**
      * {@code minecraft:golden_horse_armor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLDEN_HORSE_ARMOR = VanillaTypes.item("minecraft:golden_horse_armor");
 
     /**
      * {@code minecraft:golden_leggings}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLDEN_LEGGINGS = VanillaTypes.item("minecraft:golden_leggings");
 
     /**
      * {@code minecraft:golden_nautilus_armor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLDEN_NAUTILUS_ARMOR = VanillaTypes.item("minecraft:golden_nautilus_armor");
 
     /**
      * {@code minecraft:golden_pickaxe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLDEN_PICKAXE = VanillaTypes.item("minecraft:golden_pickaxe");
 
     /**
      * {@code minecraft:golden_rail}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLDEN_RAIL = VanillaTypes.item("minecraft:golden_rail");
 
     /**
      * {@code minecraft:golden_shovel}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLDEN_SHOVEL = VanillaTypes.item("minecraft:golden_shovel");
 
     /**
      * {@code minecraft:golden_spear}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLDEN_SPEAR = VanillaTypes.item("minecraft:golden_spear");
 
     /**
      * {@code minecraft:golden_sword}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLDEN_SWORD = VanillaTypes.item("minecraft:golden_sword");
 
     /**
      * {@code minecraft:gold_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLD_BLOCK = VanillaTypes.item("minecraft:gold_block");
 
     /**
      * {@code minecraft:gold_ingot}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLD_INGOT = VanillaTypes.item("minecraft:gold_ingot");
 
     /**
      * {@code minecraft:gold_nugget}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLD_NUGGET = VanillaTypes.item("minecraft:gold_nugget");
 
     /**
      * {@code minecraft:gold_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GOLD_ORE = VanillaTypes.item("minecraft:gold_ore");
 
     /**
      * {@code minecraft:granite}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRANITE = VanillaTypes.item("minecraft:granite");
 
     /**
      * {@code minecraft:granite_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRANITE_DOUBLE_SLAB = VanillaTypes.item("minecraft:granite_double_slab");
 
     /**
      * {@code minecraft:granite_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRANITE_SLAB = VanillaTypes.item("minecraft:granite_slab");
 
     /**
      * {@code minecraft:granite_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRANITE_STAIRS = VanillaTypes.item("minecraft:granite_stairs");
 
     /**
      * {@code minecraft:granite_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRANITE_WALL = VanillaTypes.item("minecraft:granite_wall");
 
     /**
      * {@code minecraft:grass_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRASS_BLOCK = VanillaTypes.item("minecraft:grass_block");
 
     /**
      * {@code minecraft:grass_path}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRASS_PATH = VanillaTypes.item("minecraft:grass_path");
 
     /**
      * {@code minecraft:gravel}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRAVEL = VanillaTypes.item("minecraft:gravel");
 
     /**
      * {@code minecraft:gray_bundle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRAY_BUNDLE = VanillaTypes.item("minecraft:gray_bundle");
 
     /**
      * {@code minecraft:gray_candle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRAY_CANDLE = VanillaTypes.item("minecraft:gray_candle");
 
     /**
      * {@code minecraft:gray_candle_cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRAY_CANDLE_CAKE = VanillaTypes.item("minecraft:gray_candle_cake");
 
     /**
      * {@code minecraft:gray_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRAY_CARPET = VanillaTypes.item("minecraft:gray_carpet");
 
     /**
      * {@code minecraft:gray_concrete}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRAY_CONCRETE = VanillaTypes.item("minecraft:gray_concrete");
 
     /**
      * {@code minecraft:gray_concrete_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType GRAY_CONCRETE_DOUBLE_SLAB = VanillaTypes.item("minecraft:gray_concrete_double_slab");
 
     /**
      * {@code minecraft:gray_concrete_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRAY_CONCRETE_POWDER = VanillaTypes.item("minecraft:gray_concrete_powder");
 
     /**
      * {@code minecraft:gray_concrete_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType GRAY_CONCRETE_SLAB = VanillaTypes.item("minecraft:gray_concrete_slab");
 
     /**
      * {@code minecraft:gray_concrete_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType GRAY_CONCRETE_STAIRS = VanillaTypes.item("minecraft:gray_concrete_stairs");
 
     /**
      * {@code minecraft:gray_cushion}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType GRAY_CUSHION = VanillaTypes.item("minecraft:gray_cushion");
 
     /**
      * {@code minecraft:gray_dye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRAY_DYE = VanillaTypes.item("minecraft:gray_dye");
 
     /**
      * {@code minecraft:gray_glazed_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRAY_GLAZED_TERRACOTTA = VanillaTypes.item("minecraft:gray_glazed_terracotta");
 
     /**
      * {@code minecraft:gray_harness}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRAY_HARNESS = VanillaTypes.item("minecraft:gray_harness");
 
     /**
      * {@code minecraft:gray_shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRAY_SHULKER_BOX = VanillaTypes.item("minecraft:gray_shulker_box");
 
     /**
      * {@code minecraft:gray_stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRAY_STAINED_GLASS = VanillaTypes.item("minecraft:gray_stained_glass");
 
     /**
      * {@code minecraft:gray_stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRAY_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:gray_stained_glass_pane");
 
     /**
      * {@code minecraft:gray_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRAY_TERRACOTTA = VanillaTypes.item("minecraft:gray_terracotta");
 
     /**
      * {@code minecraft:gray_wool}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRAY_WOOL = VanillaTypes.item("minecraft:gray_wool");
 
     /**
      * {@code minecraft:gray_wool_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType GRAY_WOOL_DOUBLE_SLAB = VanillaTypes.item("minecraft:gray_wool_double_slab");
 
     /**
      * {@code minecraft:gray_wool_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType GRAY_WOOL_SLAB = VanillaTypes.item("minecraft:gray_wool_slab");
 
     /**
      * {@code minecraft:gray_wool_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType GRAY_WOOL_STAIRS = VanillaTypes.item("minecraft:gray_wool_stairs");
 
     /**
      * {@code minecraft:green_bundle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GREEN_BUNDLE = VanillaTypes.item("minecraft:green_bundle");
 
     /**
      * {@code minecraft:green_candle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GREEN_CANDLE = VanillaTypes.item("minecraft:green_candle");
 
     /**
      * {@code minecraft:green_candle_cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GREEN_CANDLE_CAKE = VanillaTypes.item("minecraft:green_candle_cake");
 
     /**
      * {@code minecraft:green_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GREEN_CARPET = VanillaTypes.item("minecraft:green_carpet");
 
     /**
      * {@code minecraft:green_concrete}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GREEN_CONCRETE = VanillaTypes.item("minecraft:green_concrete");
 
     /**
      * {@code minecraft:green_concrete_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType GREEN_CONCRETE_DOUBLE_SLAB = VanillaTypes.item("minecraft:green_concrete_double_slab");
 
     /**
      * {@code minecraft:green_concrete_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GREEN_CONCRETE_POWDER = VanillaTypes.item("minecraft:green_concrete_powder");
 
     /**
      * {@code minecraft:green_concrete_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType GREEN_CONCRETE_SLAB = VanillaTypes.item("minecraft:green_concrete_slab");
 
     /**
      * {@code minecraft:green_concrete_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType GREEN_CONCRETE_STAIRS = VanillaTypes.item("minecraft:green_concrete_stairs");
 
     /**
      * {@code minecraft:green_cushion}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType GREEN_CUSHION = VanillaTypes.item("minecraft:green_cushion");
 
     /**
      * {@code minecraft:green_dye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GREEN_DYE = VanillaTypes.item("minecraft:green_dye");
 
     /**
      * {@code minecraft:green_glazed_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GREEN_GLAZED_TERRACOTTA = VanillaTypes.item("minecraft:green_glazed_terracotta");
 
     /**
      * {@code minecraft:green_harness}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GREEN_HARNESS = VanillaTypes.item("minecraft:green_harness");
 
     /**
      * {@code minecraft:green_shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GREEN_SHULKER_BOX = VanillaTypes.item("minecraft:green_shulker_box");
 
     /**
      * {@code minecraft:green_stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GREEN_STAINED_GLASS = VanillaTypes.item("minecraft:green_stained_glass");
 
     /**
      * {@code minecraft:green_stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GREEN_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:green_stained_glass_pane");
 
     /**
      * {@code minecraft:green_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GREEN_TERRACOTTA = VanillaTypes.item("minecraft:green_terracotta");
 
     /**
      * {@code minecraft:green_wool}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GREEN_WOOL = VanillaTypes.item("minecraft:green_wool");
 
     /**
      * {@code minecraft:green_wool_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType GREEN_WOOL_DOUBLE_SLAB = VanillaTypes.item("minecraft:green_wool_double_slab");
 
     /**
      * {@code minecraft:green_wool_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType GREEN_WOOL_SLAB = VanillaTypes.item("minecraft:green_wool_slab");
 
     /**
      * {@code minecraft:green_wool_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType GREEN_WOOL_STAIRS = VanillaTypes.item("minecraft:green_wool_stairs");
 
     /**
      * {@code minecraft:grindstone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GRINDSTONE = VanillaTypes.item("minecraft:grindstone");
 
     /**
      * {@code minecraft:guardian_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GUARDIAN_SPAWN_EGG = VanillaTypes.item("minecraft:guardian_spawn_egg");
 
     /**
      * {@code minecraft:gunpowder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GUNPOWDER = VanillaTypes.item("minecraft:gunpowder");
 
     /**
      * {@code minecraft:guster_banner_pattern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GUSTER_BANNER_PATTERN = VanillaTypes.item("minecraft:guster_banner_pattern");
 
     /**
      * {@code minecraft:guster_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType GUSTER_POTTERY_SHERD = VanillaTypes.item("minecraft:guster_pottery_sherd");
 
     /**
      * {@code minecraft:hanging_roots}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HANGING_ROOTS = VanillaTypes.item("minecraft:hanging_roots");
 
     /**
      * {@code minecraft:happy_ghast_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HAPPY_GHAST_SPAWN_EGG = VanillaTypes.item("minecraft:happy_ghast_spawn_egg");
 
     /**
      * {@code minecraft:hardened_clay}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HARDENED_CLAY = VanillaTypes.item("minecraft:hardened_clay");
 
     /**
      * {@code minecraft:hard_black_stained_glass}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_BLACK_STAINED_GLASS = VanillaTypes.item("minecraft:hard_black_stained_glass");
+    @Education
+    public static final BedrockItemType HARD_BLACK_STAINED_GLASS = VanillaTypes.educationItem("minecraft:hard_black_stained_glass");
 
     /**
      * {@code minecraft:hard_black_stained_glass_pane}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_BLACK_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:hard_black_stained_glass_pane");
+    @Education
+    public static final BedrockItemType HARD_BLACK_STAINED_GLASS_PANE = VanillaTypes.educationItem("minecraft:hard_black_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_blue_stained_glass}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_BLUE_STAINED_GLASS = VanillaTypes.item("minecraft:hard_blue_stained_glass");
+    @Education
+    public static final BedrockItemType HARD_BLUE_STAINED_GLASS = VanillaTypes.educationItem("minecraft:hard_blue_stained_glass");
 
     /**
      * {@code minecraft:hard_blue_stained_glass_pane}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_BLUE_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:hard_blue_stained_glass_pane");
+    @Education
+    public static final BedrockItemType HARD_BLUE_STAINED_GLASS_PANE = VanillaTypes.educationItem("minecraft:hard_blue_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_brown_stained_glass}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_BROWN_STAINED_GLASS = VanillaTypes.item("minecraft:hard_brown_stained_glass");
+    @Education
+    public static final BedrockItemType HARD_BROWN_STAINED_GLASS = VanillaTypes.educationItem("minecraft:hard_brown_stained_glass");
 
     /**
      * {@code minecraft:hard_brown_stained_glass_pane}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_BROWN_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:hard_brown_stained_glass_pane");
+    @Education
+    public static final BedrockItemType HARD_BROWN_STAINED_GLASS_PANE = VanillaTypes.educationItem("minecraft:hard_brown_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_cyan_stained_glass}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_CYAN_STAINED_GLASS = VanillaTypes.item("minecraft:hard_cyan_stained_glass");
+    @Education
+    public static final BedrockItemType HARD_CYAN_STAINED_GLASS = VanillaTypes.educationItem("minecraft:hard_cyan_stained_glass");
 
     /**
      * {@code minecraft:hard_cyan_stained_glass_pane}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_CYAN_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:hard_cyan_stained_glass_pane");
+    @Education
+    public static final BedrockItemType HARD_CYAN_STAINED_GLASS_PANE = VanillaTypes.educationItem("minecraft:hard_cyan_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_glass}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_GLASS = VanillaTypes.item("minecraft:hard_glass");
+    @Education
+    public static final BedrockItemType HARD_GLASS = VanillaTypes.educationItem("minecraft:hard_glass");
 
     /**
      * {@code minecraft:hard_glass_pane}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_GLASS_PANE = VanillaTypes.item("minecraft:hard_glass_pane");
+    @Education
+    public static final BedrockItemType HARD_GLASS_PANE = VanillaTypes.educationItem("minecraft:hard_glass_pane");
 
     /**
      * {@code minecraft:hard_gray_stained_glass}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_GRAY_STAINED_GLASS = VanillaTypes.item("minecraft:hard_gray_stained_glass");
+    @Education
+    public static final BedrockItemType HARD_GRAY_STAINED_GLASS = VanillaTypes.educationItem("minecraft:hard_gray_stained_glass");
 
     /**
      * {@code minecraft:hard_gray_stained_glass_pane}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_GRAY_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:hard_gray_stained_glass_pane");
+    @Education
+    public static final BedrockItemType HARD_GRAY_STAINED_GLASS_PANE = VanillaTypes.educationItem("minecraft:hard_gray_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_green_stained_glass}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_GREEN_STAINED_GLASS = VanillaTypes.item("minecraft:hard_green_stained_glass");
+    @Education
+    public static final BedrockItemType HARD_GREEN_STAINED_GLASS = VanillaTypes.educationItem("minecraft:hard_green_stained_glass");
 
     /**
      * {@code minecraft:hard_green_stained_glass_pane}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_GREEN_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:hard_green_stained_glass_pane");
+    @Education
+    public static final BedrockItemType HARD_GREEN_STAINED_GLASS_PANE = VanillaTypes.educationItem("minecraft:hard_green_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_light_blue_stained_glass}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_LIGHT_BLUE_STAINED_GLASS = VanillaTypes.item("minecraft:hard_light_blue_stained_glass");
+    @Education
+    public static final BedrockItemType HARD_LIGHT_BLUE_STAINED_GLASS = VanillaTypes.educationItem("minecraft:hard_light_blue_stained_glass");
 
     /**
      * {@code minecraft:hard_light_blue_stained_glass_pane}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_LIGHT_BLUE_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:hard_light_blue_stained_glass_pane");
+    @Education
+    public static final BedrockItemType HARD_LIGHT_BLUE_STAINED_GLASS_PANE = VanillaTypes.educationItem("minecraft:hard_light_blue_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_light_gray_stained_glass}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_LIGHT_GRAY_STAINED_GLASS = VanillaTypes.item("minecraft:hard_light_gray_stained_glass");
+    @Education
+    public static final BedrockItemType HARD_LIGHT_GRAY_STAINED_GLASS = VanillaTypes.educationItem("minecraft:hard_light_gray_stained_glass");
 
     /**
      * {@code minecraft:hard_light_gray_stained_glass_pane}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_LIGHT_GRAY_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:hard_light_gray_stained_glass_pane");
+    @Education
+    public static final BedrockItemType HARD_LIGHT_GRAY_STAINED_GLASS_PANE = VanillaTypes.educationItem("minecraft:hard_light_gray_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_lime_stained_glass}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_LIME_STAINED_GLASS = VanillaTypes.item("minecraft:hard_lime_stained_glass");
+    @Education
+    public static final BedrockItemType HARD_LIME_STAINED_GLASS = VanillaTypes.educationItem("minecraft:hard_lime_stained_glass");
 
     /**
      * {@code minecraft:hard_lime_stained_glass_pane}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_LIME_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:hard_lime_stained_glass_pane");
+    @Education
+    public static final BedrockItemType HARD_LIME_STAINED_GLASS_PANE = VanillaTypes.educationItem("minecraft:hard_lime_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_magenta_stained_glass}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_MAGENTA_STAINED_GLASS = VanillaTypes.item("minecraft:hard_magenta_stained_glass");
+    @Education
+    public static final BedrockItemType HARD_MAGENTA_STAINED_GLASS = VanillaTypes.educationItem("minecraft:hard_magenta_stained_glass");
 
     /**
      * {@code minecraft:hard_magenta_stained_glass_pane}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_MAGENTA_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:hard_magenta_stained_glass_pane");
+    @Education
+    public static final BedrockItemType HARD_MAGENTA_STAINED_GLASS_PANE = VanillaTypes.educationItem("minecraft:hard_magenta_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_orange_stained_glass}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_ORANGE_STAINED_GLASS = VanillaTypes.item("minecraft:hard_orange_stained_glass");
+    @Education
+    public static final BedrockItemType HARD_ORANGE_STAINED_GLASS = VanillaTypes.educationItem("minecraft:hard_orange_stained_glass");
 
     /**
      * {@code minecraft:hard_orange_stained_glass_pane}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_ORANGE_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:hard_orange_stained_glass_pane");
+    @Education
+    public static final BedrockItemType HARD_ORANGE_STAINED_GLASS_PANE = VanillaTypes.educationItem("minecraft:hard_orange_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_pink_stained_glass}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_PINK_STAINED_GLASS = VanillaTypes.item("minecraft:hard_pink_stained_glass");
+    @Education
+    public static final BedrockItemType HARD_PINK_STAINED_GLASS = VanillaTypes.educationItem("minecraft:hard_pink_stained_glass");
 
     /**
      * {@code minecraft:hard_pink_stained_glass_pane}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_PINK_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:hard_pink_stained_glass_pane");
+    @Education
+    public static final BedrockItemType HARD_PINK_STAINED_GLASS_PANE = VanillaTypes.educationItem("minecraft:hard_pink_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_purple_stained_glass}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_PURPLE_STAINED_GLASS = VanillaTypes.item("minecraft:hard_purple_stained_glass");
+    @Education
+    public static final BedrockItemType HARD_PURPLE_STAINED_GLASS = VanillaTypes.educationItem("minecraft:hard_purple_stained_glass");
 
     /**
      * {@code minecraft:hard_purple_stained_glass_pane}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_PURPLE_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:hard_purple_stained_glass_pane");
+    @Education
+    public static final BedrockItemType HARD_PURPLE_STAINED_GLASS_PANE = VanillaTypes.educationItem("minecraft:hard_purple_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_red_stained_glass}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_RED_STAINED_GLASS = VanillaTypes.item("minecraft:hard_red_stained_glass");
+    @Education
+    public static final BedrockItemType HARD_RED_STAINED_GLASS = VanillaTypes.educationItem("minecraft:hard_red_stained_glass");
 
     /**
      * {@code minecraft:hard_red_stained_glass_pane}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_RED_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:hard_red_stained_glass_pane");
+    @Education
+    public static final BedrockItemType HARD_RED_STAINED_GLASS_PANE = VanillaTypes.educationItem("minecraft:hard_red_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HARD_STAINED_GLASS = VanillaTypes.item("minecraft:hard_stained_glass");
 
     /**
      * {@code minecraft:hard_stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HARD_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:hard_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_white_stained_glass}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_WHITE_STAINED_GLASS = VanillaTypes.item("minecraft:hard_white_stained_glass");
+    @Education
+    public static final BedrockItemType HARD_WHITE_STAINED_GLASS = VanillaTypes.educationItem("minecraft:hard_white_stained_glass");
 
     /**
      * {@code minecraft:hard_white_stained_glass_pane}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_WHITE_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:hard_white_stained_glass_pane");
+    @Education
+    public static final BedrockItemType HARD_WHITE_STAINED_GLASS_PANE = VanillaTypes.educationItem("minecraft:hard_white_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_yellow_stained_glass}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_YELLOW_STAINED_GLASS = VanillaTypes.item("minecraft:hard_yellow_stained_glass");
+    @Education
+    public static final BedrockItemType HARD_YELLOW_STAINED_GLASS = VanillaTypes.educationItem("minecraft:hard_yellow_stained_glass");
 
     /**
      * {@code minecraft:hard_yellow_stained_glass_pane}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType HARD_YELLOW_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:hard_yellow_stained_glass_pane");
+    @Education
+    public static final BedrockItemType HARD_YELLOW_STAINED_GLASS_PANE = VanillaTypes.educationItem("minecraft:hard_yellow_stained_glass_pane");
 
     /**
      * {@code minecraft:hay_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HAY_BLOCK = VanillaTypes.item("minecraft:hay_block");
 
     /**
      * {@code minecraft:heartbreak_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HEARTBREAK_POTTERY_SHERD = VanillaTypes.item("minecraft:heartbreak_pottery_sherd");
 
     /**
      * {@code minecraft:heart_of_the_sea}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HEART_OF_THE_SEA = VanillaTypes.item("minecraft:heart_of_the_sea");
 
     /**
      * {@code minecraft:heart_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HEART_POTTERY_SHERD = VanillaTypes.item("minecraft:heart_pottery_sherd");
 
     /**
      * {@code minecraft:heavy_core}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HEAVY_CORE = VanillaTypes.item("minecraft:heavy_core");
 
     /**
      * {@code minecraft:heavy_weighted_pressure_plate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HEAVY_WEIGHTED_PRESSURE_PLATE = VanillaTypes.item("minecraft:heavy_weighted_pressure_plate");
 
     /**
      * {@code minecraft:hoglin_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HOGLIN_SPAWN_EGG = VanillaTypes.item("minecraft:hoglin_spawn_egg");
 
     /**
      * {@code minecraft:honeycomb}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HONEYCOMB = VanillaTypes.item("minecraft:honeycomb");
 
     /**
      * {@code minecraft:honeycomb_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HONEYCOMB_BLOCK = VanillaTypes.item("minecraft:honeycomb_block");
 
     /**
      * {@code minecraft:honey_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HONEY_BLOCK = VanillaTypes.item("minecraft:honey_block");
 
     /**
      * {@code minecraft:honey_bottle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HONEY_BOTTLE = VanillaTypes.item("minecraft:honey_bottle");
 
     /**
      * {@code minecraft:hopper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HOPPER = VanillaTypes.item("minecraft:hopper");
 
     /**
      * {@code minecraft:hopper_minecart}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HOPPER_MINECART = VanillaTypes.item("minecraft:hopper_minecart");
 
     /**
      * {@code minecraft:horn_coral}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HORN_CORAL = VanillaTypes.item("minecraft:horn_coral");
 
     /**
      * {@code minecraft:horn_coral_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HORN_CORAL_BLOCK = VanillaTypes.item("minecraft:horn_coral_block");
 
     /**
      * {@code minecraft:horn_coral_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HORN_CORAL_FAN = VanillaTypes.item("minecraft:horn_coral_fan");
 
     /**
      * {@code minecraft:horn_coral_wall_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HORN_CORAL_WALL_FAN = VanillaTypes.item("minecraft:horn_coral_wall_fan");
 
     /**
      * {@code minecraft:horse_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HORSE_SPAWN_EGG = VanillaTypes.item("minecraft:horse_spawn_egg");
 
     /**
      * {@code minecraft:host_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HOST_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:host_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:howl_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HOWL_POTTERY_SHERD = VanillaTypes.item("minecraft:howl_pottery_sherd");
 
     /**
      * {@code minecraft:husk_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType HUSK_SPAWN_EGG = VanillaTypes.item("minecraft:husk_spawn_egg");
 
     /**
      * {@code minecraft:ice}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ICE = VanillaTypes.item("minecraft:ice");
 
     /**
      * {@code minecraft:ice_bomb}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType ICE_BOMB = VanillaTypes.item("minecraft:ice_bomb");
+    @Education
+    public static final BedrockItemType ICE_BOMB = VanillaTypes.educationItem("minecraft:ice_bomb");
 
     /**
      * {@code minecraft:ice_crystal}.
+     * Behind the experiment {@code y_2026_drop_4} in 26.60: without it the version does not have it.
+     *
+     * @since 26.60
      */
     public static final BedrockItemType ICE_CRYSTAL = VanillaTypes.item("minecraft:ice_crystal");
 
     /**
      * {@code minecraft:icicle}.
+     * Behind the experiment {@code y_2026_drop_4} in 26.60: without it the version does not have it.
+     *
+     * @since 26.60
      */
     public static final BedrockItemType ICICLE = VanillaTypes.item("minecraft:icicle");
 
     /**
      * {@code minecraft:infested_chiseled_stone_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType INFESTED_CHISELED_STONE_BRICKS = VanillaTypes.item("minecraft:infested_chiseled_stone_bricks");
 
     /**
      * {@code minecraft:infested_cobblestone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType INFESTED_COBBLESTONE = VanillaTypes.item("minecraft:infested_cobblestone");
 
     /**
      * {@code minecraft:infested_cracked_stone_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType INFESTED_CRACKED_STONE_BRICKS = VanillaTypes.item("minecraft:infested_cracked_stone_bricks");
 
     /**
      * {@code minecraft:infested_deepslate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType INFESTED_DEEPSLATE = VanillaTypes.item("minecraft:infested_deepslate");
 
     /**
      * {@code minecraft:infested_mossy_stone_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType INFESTED_MOSSY_STONE_BRICKS = VanillaTypes.item("minecraft:infested_mossy_stone_bricks");
 
     /**
      * {@code minecraft:infested_stone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType INFESTED_STONE = VanillaTypes.item("minecraft:infested_stone");
 
     /**
      * {@code minecraft:infested_stone_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType INFESTED_STONE_BRICKS = VanillaTypes.item("minecraft:infested_stone_bricks");
 
     /**
      * {@code minecraft:info_update}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType INFO_UPDATE = VanillaTypes.item("minecraft:info_update");
 
     /**
      * {@code minecraft:info_update2}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType INFO_UPDATE2 = VanillaTypes.item("minecraft:info_update2");
 
     /**
      * {@code minecraft:ink_sac}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType INK_SAC = VanillaTypes.item("minecraft:ink_sac");
 
     /**
      * {@code minecraft:invisible_bedrock}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType INVISIBLE_BEDROCK = VanillaTypes.item("minecraft:invisible_bedrock");
 
     /**
      * {@code minecraft:iron_axe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_AXE = VanillaTypes.item("minecraft:iron_axe");
 
     /**
      * {@code minecraft:iron_bars}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_BARS = VanillaTypes.item("minecraft:iron_bars");
 
     /**
      * {@code minecraft:iron_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_BLOCK = VanillaTypes.item("minecraft:iron_block");
 
     /**
      * {@code minecraft:iron_boots}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_BOOTS = VanillaTypes.item("minecraft:iron_boots");
 
     /**
      * {@code minecraft:iron_chain}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_CHAIN = VanillaTypes.item("minecraft:iron_chain");
 
     /**
      * {@code minecraft:iron_chestplate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_CHESTPLATE = VanillaTypes.item("minecraft:iron_chestplate");
 
     /**
      * {@code minecraft:iron_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_DOOR = VanillaTypes.item("minecraft:iron_door");
 
     /**
      * {@code minecraft:iron_golem_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_GOLEM_SPAWN_EGG = VanillaTypes.item("minecraft:iron_golem_spawn_egg");
 
     /**
      * {@code minecraft:iron_helmet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_HELMET = VanillaTypes.item("minecraft:iron_helmet");
 
     /**
      * {@code minecraft:iron_hoe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_HOE = VanillaTypes.item("minecraft:iron_hoe");
 
     /**
      * {@code minecraft:iron_horse_armor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_HORSE_ARMOR = VanillaTypes.item("minecraft:iron_horse_armor");
 
     /**
      * {@code minecraft:iron_ingot}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_INGOT = VanillaTypes.item("minecraft:iron_ingot");
 
     /**
      * {@code minecraft:iron_leggings}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_LEGGINGS = VanillaTypes.item("minecraft:iron_leggings");
 
     /**
      * {@code minecraft:iron_nautilus_armor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_NAUTILUS_ARMOR = VanillaTypes.item("minecraft:iron_nautilus_armor");
 
     /**
      * {@code minecraft:iron_nugget}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_NUGGET = VanillaTypes.item("minecraft:iron_nugget");
 
     /**
      * {@code minecraft:iron_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_ORE = VanillaTypes.item("minecraft:iron_ore");
 
     /**
      * {@code minecraft:iron_pickaxe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_PICKAXE = VanillaTypes.item("minecraft:iron_pickaxe");
 
     /**
      * {@code minecraft:iron_shovel}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_SHOVEL = VanillaTypes.item("minecraft:iron_shovel");
 
     /**
      * {@code minecraft:iron_spear}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_SPEAR = VanillaTypes.item("minecraft:iron_spear");
 
     /**
      * {@code minecraft:iron_sword}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_SWORD = VanillaTypes.item("minecraft:iron_sword");
 
     /**
      * {@code minecraft:iron_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType IRON_TRAPDOOR = VanillaTypes.item("minecraft:iron_trapdoor");
 
     /**
      * {@code minecraft:item.bed}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_BED = VanillaTypes.item("minecraft:item.bed");
 
     /**
      * {@code minecraft:item.beetroot}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_BEETROOT = VanillaTypes.item("minecraft:item.beetroot");
 
     /**
      * {@code minecraft:item.brewing_stand}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_BREWING_STAND = VanillaTypes.item("minecraft:item.brewing_stand");
 
     /**
      * {@code minecraft:item.cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_CAKE = VanillaTypes.item("minecraft:item.cake");
 
     /**
      * {@code minecraft:item.camera}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_CAMERA = VanillaTypes.item("minecraft:item.camera");
 
     /**
      * {@code minecraft:item.campfire}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_CAMPFIRE = VanillaTypes.item("minecraft:item.campfire");
 
     /**
      * {@code minecraft:item.cauldron}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_CAULDRON = VanillaTypes.item("minecraft:item.cauldron");
 
     /**
      * {@code minecraft:item.flower_pot}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_FLOWER_POT = VanillaTypes.item("minecraft:item.flower_pot");
 
     /**
      * {@code minecraft:item.frame}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_FRAME = VanillaTypes.item("minecraft:item.frame");
 
     /**
      * {@code minecraft:item.glow_frame}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_GLOW_FRAME = VanillaTypes.item("minecraft:item.glow_frame");
 
     /**
      * {@code minecraft:item.hopper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_HOPPER = VanillaTypes.item("minecraft:item.hopper");
 
     /**
      * {@code minecraft:item.kelp}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_KELP = VanillaTypes.item("minecraft:item.kelp");
 
     /**
      * {@code minecraft:item.nether_sprouts}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_NETHER_SPROUTS = VanillaTypes.item("minecraft:item.nether_sprouts");
 
     /**
      * {@code minecraft:item.nether_wart}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_NETHER_WART = VanillaTypes.item("minecraft:item.nether_wart");
 
     /**
      * {@code minecraft:item.reeds}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_REEDS = VanillaTypes.item("minecraft:item.reeds");
 
     /**
      * {@code minecraft:item.soul_campfire}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_SOUL_CAMPFIRE = VanillaTypes.item("minecraft:item.soul_campfire");
 
     /**
      * {@code minecraft:item.straw_bed}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_STRAW_BED = VanillaTypes.item("minecraft:item.straw_bed");
 
     /**
      * {@code minecraft:item.wheat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ITEM_WHEAT = VanillaTypes.item("minecraft:item.wheat");
 
     /**
      * {@code minecraft:jigsaw}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JIGSAW = VanillaTypes.item("minecraft:jigsaw");
 
     /**
      * {@code minecraft:jukebox}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUKEBOX = VanillaTypes.item("minecraft:jukebox");
 
     /**
      * {@code minecraft:jungle_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_BOAT = VanillaTypes.item("minecraft:jungle_boat");
 
     /**
      * {@code minecraft:jungle_button}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_BUTTON = VanillaTypes.item("minecraft:jungle_button");
 
     /**
      * {@code minecraft:jungle_chest_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_CHEST_BOAT = VanillaTypes.item("minecraft:jungle_chest_boat");
 
     /**
      * {@code minecraft:jungle_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_DOOR = VanillaTypes.item("minecraft:jungle_door");
 
     /**
      * {@code minecraft:jungle_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_DOUBLE_SLAB = VanillaTypes.item("minecraft:jungle_double_slab");
 
     /**
      * {@code minecraft:jungle_fence}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_FENCE = VanillaTypes.item("minecraft:jungle_fence");
 
     /**
      * {@code minecraft:jungle_fence_gate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_FENCE_GATE = VanillaTypes.item("minecraft:jungle_fence_gate");
 
     /**
      * {@code minecraft:jungle_hanging_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_HANGING_SIGN = VanillaTypes.item("minecraft:jungle_hanging_sign");
 
     /**
      * {@code minecraft:jungle_leaves}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_LEAVES = VanillaTypes.item("minecraft:jungle_leaves");
 
     /**
      * {@code minecraft:jungle_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_LOG = VanillaTypes.item("minecraft:jungle_log");
 
     /**
      * {@code minecraft:jungle_planks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_PLANKS = VanillaTypes.item("minecraft:jungle_planks");
 
     /**
      * {@code minecraft:jungle_pressure_plate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_PRESSURE_PLATE = VanillaTypes.item("minecraft:jungle_pressure_plate");
 
     /**
      * {@code minecraft:jungle_sapling}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_SAPLING = VanillaTypes.item("minecraft:jungle_sapling");
 
     /**
      * {@code minecraft:jungle_shelf}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_SHELF = VanillaTypes.item("minecraft:jungle_shelf");
 
     /**
      * {@code minecraft:jungle_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_SIGN = VanillaTypes.item("minecraft:jungle_sign");
 
     /**
      * {@code minecraft:jungle_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_SLAB = VanillaTypes.item("minecraft:jungle_slab");
 
     /**
      * {@code minecraft:jungle_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_STAIRS = VanillaTypes.item("minecraft:jungle_stairs");
 
     /**
      * {@code minecraft:jungle_standing_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_STANDING_SIGN = VanillaTypes.item("minecraft:jungle_standing_sign");
 
     /**
      * {@code minecraft:jungle_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_TRAPDOOR = VanillaTypes.item("minecraft:jungle_trapdoor");
 
     /**
      * {@code minecraft:jungle_wall_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_WALL_SIGN = VanillaTypes.item("minecraft:jungle_wall_sign");
 
     /**
      * {@code minecraft:jungle_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType JUNGLE_WOOD = VanillaTypes.item("minecraft:jungle_wood");
 
     /**
      * {@code minecraft:kelp}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType KELP = VanillaTypes.item("minecraft:kelp");
 
     /**
      * {@code minecraft:lab_table}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType LAB_TABLE = VanillaTypes.item("minecraft:lab_table");
+    @Education
+    public static final BedrockItemType LAB_TABLE = VanillaTypes.educationItem("minecraft:lab_table");
 
     /**
      * {@code minecraft:ladder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LADDER = VanillaTypes.item("minecraft:ladder");
 
     /**
      * {@code minecraft:lantern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LANTERN = VanillaTypes.item("minecraft:lantern");
 
     /**
      * {@code minecraft:lapis_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LAPIS_BLOCK = VanillaTypes.item("minecraft:lapis_block");
 
     /**
      * {@code minecraft:lapis_lazuli}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LAPIS_LAZULI = VanillaTypes.item("minecraft:lapis_lazuli");
 
     /**
      * {@code minecraft:lapis_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LAPIS_ORE = VanillaTypes.item("minecraft:lapis_ore");
 
     /**
      * {@code minecraft:large_amethyst_bud}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LARGE_AMETHYST_BUD = VanillaTypes.item("minecraft:large_amethyst_bud");
 
     /**
      * {@code minecraft:large_fern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LARGE_FERN = VanillaTypes.item("minecraft:large_fern");
 
     /**
      * {@code minecraft:lava}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LAVA = VanillaTypes.item("minecraft:lava");
 
     /**
      * {@code minecraft:lava_bucket}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LAVA_BUCKET = VanillaTypes.item("minecraft:lava_bucket");
 
     /**
      * {@code minecraft:lead}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LEAD = VanillaTypes.item("minecraft:lead");
 
     /**
      * {@code minecraft:leaf_litter}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LEAF_LITTER = VanillaTypes.item("minecraft:leaf_litter");
 
     /**
      * {@code minecraft:leather}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LEATHER = VanillaTypes.item("minecraft:leather");
 
     /**
      * {@code minecraft:leather_boots}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LEATHER_BOOTS = VanillaTypes.item("minecraft:leather_boots");
 
     /**
      * {@code minecraft:leather_chestplate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LEATHER_CHESTPLATE = VanillaTypes.item("minecraft:leather_chestplate");
 
     /**
      * {@code minecraft:leather_helmet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LEATHER_HELMET = VanillaTypes.item("minecraft:leather_helmet");
 
     /**
      * {@code minecraft:leather_horse_armor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LEATHER_HORSE_ARMOR = VanillaTypes.item("minecraft:leather_horse_armor");
 
     /**
      * {@code minecraft:leather_leggings}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LEATHER_LEGGINGS = VanillaTypes.item("minecraft:leather_leggings");
 
     /**
      * {@code minecraft:leaves}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LEAVES = VanillaTypes.item("minecraft:leaves");
 
     /**
      * {@code minecraft:leaves2}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LEAVES2 = VanillaTypes.item("minecraft:leaves2");
 
     /**
      * {@code minecraft:lectern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LECTERN = VanillaTypes.item("minecraft:lectern");
 
     /**
      * {@code minecraft:lever}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LEVER = VanillaTypes.item("minecraft:lever");
 
     /**
      * {@code minecraft:lightning_rod}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHTNING_ROD = VanillaTypes.item("minecraft:lightning_rod");
 
     /**
      * {@code minecraft:light_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLOCK = VanillaTypes.item("minecraft:light_block");
 
     /**
      * {@code minecraft:light_block_0}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLOCK_0 = VanillaTypes.item("minecraft:light_block_0");
 
     /**
      * {@code minecraft:light_block_1}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLOCK_1 = VanillaTypes.item("minecraft:light_block_1");
 
     /**
      * {@code minecraft:light_block_10}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLOCK_10 = VanillaTypes.item("minecraft:light_block_10");
 
     /**
      * {@code minecraft:light_block_11}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLOCK_11 = VanillaTypes.item("minecraft:light_block_11");
 
     /**
      * {@code minecraft:light_block_12}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLOCK_12 = VanillaTypes.item("minecraft:light_block_12");
 
     /**
      * {@code minecraft:light_block_13}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLOCK_13 = VanillaTypes.item("minecraft:light_block_13");
 
     /**
      * {@code minecraft:light_block_14}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLOCK_14 = VanillaTypes.item("minecraft:light_block_14");
 
     /**
      * {@code minecraft:light_block_15}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLOCK_15 = VanillaTypes.item("minecraft:light_block_15");
 
     /**
      * {@code minecraft:light_block_2}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLOCK_2 = VanillaTypes.item("minecraft:light_block_2");
 
     /**
      * {@code minecraft:light_block_3}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLOCK_3 = VanillaTypes.item("minecraft:light_block_3");
 
     /**
      * {@code minecraft:light_block_4}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLOCK_4 = VanillaTypes.item("minecraft:light_block_4");
 
     /**
      * {@code minecraft:light_block_5}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLOCK_5 = VanillaTypes.item("minecraft:light_block_5");
 
     /**
      * {@code minecraft:light_block_6}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLOCK_6 = VanillaTypes.item("minecraft:light_block_6");
 
     /**
      * {@code minecraft:light_block_7}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLOCK_7 = VanillaTypes.item("minecraft:light_block_7");
 
     /**
      * {@code minecraft:light_block_8}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLOCK_8 = VanillaTypes.item("minecraft:light_block_8");
 
     /**
      * {@code minecraft:light_block_9}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLOCK_9 = VanillaTypes.item("minecraft:light_block_9");
 
     /**
      * {@code minecraft:light_blue_bundle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLUE_BUNDLE = VanillaTypes.item("minecraft:light_blue_bundle");
 
     /**
      * {@code minecraft:light_blue_candle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLUE_CANDLE = VanillaTypes.item("minecraft:light_blue_candle");
 
     /**
      * {@code minecraft:light_blue_candle_cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLUE_CANDLE_CAKE = VanillaTypes.item("minecraft:light_blue_candle_cake");
 
     /**
      * {@code minecraft:light_blue_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLUE_CARPET = VanillaTypes.item("minecraft:light_blue_carpet");
 
     /**
      * {@code minecraft:light_blue_concrete}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLUE_CONCRETE = VanillaTypes.item("minecraft:light_blue_concrete");
 
     /**
      * {@code minecraft:light_blue_concrete_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIGHT_BLUE_CONCRETE_DOUBLE_SLAB = VanillaTypes.item("minecraft:light_blue_concrete_double_slab");
 
     /**
      * {@code minecraft:light_blue_concrete_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLUE_CONCRETE_POWDER = VanillaTypes.item("minecraft:light_blue_concrete_powder");
 
     /**
      * {@code minecraft:light_blue_concrete_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIGHT_BLUE_CONCRETE_SLAB = VanillaTypes.item("minecraft:light_blue_concrete_slab");
 
     /**
      * {@code minecraft:light_blue_concrete_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIGHT_BLUE_CONCRETE_STAIRS = VanillaTypes.item("minecraft:light_blue_concrete_stairs");
 
     /**
      * {@code minecraft:light_blue_cushion}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIGHT_BLUE_CUSHION = VanillaTypes.item("minecraft:light_blue_cushion");
 
     /**
      * {@code minecraft:light_blue_dye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLUE_DYE = VanillaTypes.item("minecraft:light_blue_dye");
 
     /**
      * {@code minecraft:light_blue_glazed_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLUE_GLAZED_TERRACOTTA = VanillaTypes.item("minecraft:light_blue_glazed_terracotta");
 
     /**
      * {@code minecraft:light_blue_harness}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLUE_HARNESS = VanillaTypes.item("minecraft:light_blue_harness");
 
     /**
      * {@code minecraft:light_blue_shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLUE_SHULKER_BOX = VanillaTypes.item("minecraft:light_blue_shulker_box");
 
     /**
      * {@code minecraft:light_blue_stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLUE_STAINED_GLASS = VanillaTypes.item("minecraft:light_blue_stained_glass");
 
     /**
      * {@code minecraft:light_blue_stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLUE_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:light_blue_stained_glass_pane");
 
     /**
      * {@code minecraft:light_blue_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLUE_TERRACOTTA = VanillaTypes.item("minecraft:light_blue_terracotta");
 
     /**
      * {@code minecraft:light_blue_wool}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_BLUE_WOOL = VanillaTypes.item("minecraft:light_blue_wool");
 
     /**
      * {@code minecraft:light_blue_wool_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIGHT_BLUE_WOOL_DOUBLE_SLAB = VanillaTypes.item("minecraft:light_blue_wool_double_slab");
 
     /**
      * {@code minecraft:light_blue_wool_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIGHT_BLUE_WOOL_SLAB = VanillaTypes.item("minecraft:light_blue_wool_slab");
 
     /**
      * {@code minecraft:light_blue_wool_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIGHT_BLUE_WOOL_STAIRS = VanillaTypes.item("minecraft:light_blue_wool_stairs");
 
     /**
      * {@code minecraft:light_gray_bundle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_GRAY_BUNDLE = VanillaTypes.item("minecraft:light_gray_bundle");
 
     /**
      * {@code minecraft:light_gray_candle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_GRAY_CANDLE = VanillaTypes.item("minecraft:light_gray_candle");
 
     /**
      * {@code minecraft:light_gray_candle_cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_GRAY_CANDLE_CAKE = VanillaTypes.item("minecraft:light_gray_candle_cake");
 
     /**
      * {@code minecraft:light_gray_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_GRAY_CARPET = VanillaTypes.item("minecraft:light_gray_carpet");
 
     /**
      * {@code minecraft:light_gray_concrete}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_GRAY_CONCRETE = VanillaTypes.item("minecraft:light_gray_concrete");
 
     /**
      * {@code minecraft:light_gray_concrete_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIGHT_GRAY_CONCRETE_DOUBLE_SLAB = VanillaTypes.item("minecraft:light_gray_concrete_double_slab");
 
     /**
      * {@code minecraft:light_gray_concrete_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_GRAY_CONCRETE_POWDER = VanillaTypes.item("minecraft:light_gray_concrete_powder");
 
     /**
      * {@code minecraft:light_gray_concrete_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIGHT_GRAY_CONCRETE_SLAB = VanillaTypes.item("minecraft:light_gray_concrete_slab");
 
     /**
      * {@code minecraft:light_gray_concrete_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIGHT_GRAY_CONCRETE_STAIRS = VanillaTypes.item("minecraft:light_gray_concrete_stairs");
 
     /**
      * {@code minecraft:light_gray_cushion}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIGHT_GRAY_CUSHION = VanillaTypes.item("minecraft:light_gray_cushion");
 
     /**
      * {@code minecraft:light_gray_dye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_GRAY_DYE = VanillaTypes.item("minecraft:light_gray_dye");
 
     /**
      * {@code minecraft:light_gray_harness}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_GRAY_HARNESS = VanillaTypes.item("minecraft:light_gray_harness");
 
     /**
      * {@code minecraft:light_gray_shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_GRAY_SHULKER_BOX = VanillaTypes.item("minecraft:light_gray_shulker_box");
 
     /**
      * {@code minecraft:light_gray_stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_GRAY_STAINED_GLASS = VanillaTypes.item("minecraft:light_gray_stained_glass");
 
     /**
      * {@code minecraft:light_gray_stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_GRAY_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:light_gray_stained_glass_pane");
 
     /**
      * {@code minecraft:light_gray_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_GRAY_TERRACOTTA = VanillaTypes.item("minecraft:light_gray_terracotta");
 
     /**
      * {@code minecraft:light_gray_wool}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_GRAY_WOOL = VanillaTypes.item("minecraft:light_gray_wool");
 
     /**
      * {@code minecraft:light_gray_wool_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIGHT_GRAY_WOOL_DOUBLE_SLAB = VanillaTypes.item("minecraft:light_gray_wool_double_slab");
 
     /**
      * {@code minecraft:light_gray_wool_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIGHT_GRAY_WOOL_SLAB = VanillaTypes.item("minecraft:light_gray_wool_slab");
 
     /**
      * {@code minecraft:light_gray_wool_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIGHT_GRAY_WOOL_STAIRS = VanillaTypes.item("minecraft:light_gray_wool_stairs");
 
     /**
      * {@code minecraft:light_weighted_pressure_plate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIGHT_WEIGHTED_PRESSURE_PLATE = VanillaTypes.item("minecraft:light_weighted_pressure_plate");
 
     /**
      * {@code minecraft:lilac}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LILAC = VanillaTypes.item("minecraft:lilac");
 
     /**
      * {@code minecraft:lily_of_the_valley}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LILY_OF_THE_VALLEY = VanillaTypes.item("minecraft:lily_of_the_valley");
 
     /**
      * {@code minecraft:lime_bundle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIME_BUNDLE = VanillaTypes.item("minecraft:lime_bundle");
 
     /**
      * {@code minecraft:lime_candle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIME_CANDLE = VanillaTypes.item("minecraft:lime_candle");
 
     /**
      * {@code minecraft:lime_candle_cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIME_CANDLE_CAKE = VanillaTypes.item("minecraft:lime_candle_cake");
 
     /**
      * {@code minecraft:lime_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIME_CARPET = VanillaTypes.item("minecraft:lime_carpet");
 
     /**
      * {@code minecraft:lime_concrete}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIME_CONCRETE = VanillaTypes.item("minecraft:lime_concrete");
 
     /**
      * {@code minecraft:lime_concrete_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIME_CONCRETE_DOUBLE_SLAB = VanillaTypes.item("minecraft:lime_concrete_double_slab");
 
     /**
      * {@code minecraft:lime_concrete_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIME_CONCRETE_POWDER = VanillaTypes.item("minecraft:lime_concrete_powder");
 
     /**
      * {@code minecraft:lime_concrete_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIME_CONCRETE_SLAB = VanillaTypes.item("minecraft:lime_concrete_slab");
 
     /**
      * {@code minecraft:lime_concrete_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIME_CONCRETE_STAIRS = VanillaTypes.item("minecraft:lime_concrete_stairs");
 
     /**
      * {@code minecraft:lime_cushion}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIME_CUSHION = VanillaTypes.item("minecraft:lime_cushion");
 
     /**
      * {@code minecraft:lime_dye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIME_DYE = VanillaTypes.item("minecraft:lime_dye");
 
     /**
      * {@code minecraft:lime_glazed_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIME_GLAZED_TERRACOTTA = VanillaTypes.item("minecraft:lime_glazed_terracotta");
 
     /**
      * {@code minecraft:lime_harness}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIME_HARNESS = VanillaTypes.item("minecraft:lime_harness");
 
     /**
      * {@code minecraft:lime_shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIME_SHULKER_BOX = VanillaTypes.item("minecraft:lime_shulker_box");
 
     /**
      * {@code minecraft:lime_stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIME_STAINED_GLASS = VanillaTypes.item("minecraft:lime_stained_glass");
 
     /**
      * {@code minecraft:lime_stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIME_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:lime_stained_glass_pane");
 
     /**
      * {@code minecraft:lime_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIME_TERRACOTTA = VanillaTypes.item("minecraft:lime_terracotta");
 
     /**
      * {@code minecraft:lime_wool}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIME_WOOL = VanillaTypes.item("minecraft:lime_wool");
 
     /**
      * {@code minecraft:lime_wool_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIME_WOOL_DOUBLE_SLAB = VanillaTypes.item("minecraft:lime_wool_double_slab");
 
     /**
      * {@code minecraft:lime_wool_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIME_WOOL_SLAB = VanillaTypes.item("minecraft:lime_wool_slab");
 
     /**
      * {@code minecraft:lime_wool_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType LIME_WOOL_STAIRS = VanillaTypes.item("minecraft:lime_wool_stairs");
 
     /**
      * {@code minecraft:lingering_potion}: 46 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LINGERING_POTION = VanillaTypes.item("minecraft:lingering_potion");
 
     /**
      * {@code minecraft:lit_blast_furnace}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIT_BLAST_FURNACE = VanillaTypes.item("minecraft:lit_blast_furnace");
 
     /**
      * {@code minecraft:lit_deepslate_redstone_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIT_DEEPSLATE_REDSTONE_ORE = VanillaTypes.item("minecraft:lit_deepslate_redstone_ore");
 
     /**
      * {@code minecraft:lit_furnace}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIT_FURNACE = VanillaTypes.item("minecraft:lit_furnace");
 
     /**
      * {@code minecraft:lit_pumpkin}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIT_PUMPKIN = VanillaTypes.item("minecraft:lit_pumpkin");
 
     /**
      * {@code minecraft:lit_redstone_lamp}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIT_REDSTONE_LAMP = VanillaTypes.item("minecraft:lit_redstone_lamp");
 
     /**
      * {@code minecraft:lit_redstone_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIT_REDSTONE_ORE = VanillaTypes.item("minecraft:lit_redstone_ore");
 
     /**
      * {@code minecraft:lit_smoker}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LIT_SMOKER = VanillaTypes.item("minecraft:lit_smoker");
 
     /**
      * {@code minecraft:llama_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LLAMA_SPAWN_EGG = VanillaTypes.item("minecraft:llama_spawn_egg");
 
     /**
      * {@code minecraft:lodestone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LODESTONE = VanillaTypes.item("minecraft:lodestone");
 
     /**
      * {@code minecraft:lodestone_compass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LODESTONE_COMPASS = VanillaTypes.item("minecraft:lodestone_compass");
 
     /**
      * {@code minecraft:log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LOG = VanillaTypes.item("minecraft:log");
 
     /**
      * {@code minecraft:log2}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LOG2 = VanillaTypes.item("minecraft:log2");
 
     /**
      * {@code minecraft:loom}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType LOOM = VanillaTypes.item("minecraft:loom");
 
     /**
      * {@code minecraft:mace}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MACE = VanillaTypes.item("minecraft:mace");
 
     /**
      * {@code minecraft:magenta_bundle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MAGENTA_BUNDLE = VanillaTypes.item("minecraft:magenta_bundle");
 
     /**
      * {@code minecraft:magenta_candle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MAGENTA_CANDLE = VanillaTypes.item("minecraft:magenta_candle");
 
     /**
      * {@code minecraft:magenta_candle_cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MAGENTA_CANDLE_CAKE = VanillaTypes.item("minecraft:magenta_candle_cake");
 
     /**
      * {@code minecraft:magenta_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MAGENTA_CARPET = VanillaTypes.item("minecraft:magenta_carpet");
 
     /**
      * {@code minecraft:magenta_concrete}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MAGENTA_CONCRETE = VanillaTypes.item("minecraft:magenta_concrete");
 
     /**
      * {@code minecraft:magenta_concrete_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType MAGENTA_CONCRETE_DOUBLE_SLAB = VanillaTypes.item("minecraft:magenta_concrete_double_slab");
 
     /**
      * {@code minecraft:magenta_concrete_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MAGENTA_CONCRETE_POWDER = VanillaTypes.item("minecraft:magenta_concrete_powder");
 
     /**
      * {@code minecraft:magenta_concrete_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType MAGENTA_CONCRETE_SLAB = VanillaTypes.item("minecraft:magenta_concrete_slab");
 
     /**
      * {@code minecraft:magenta_concrete_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType MAGENTA_CONCRETE_STAIRS = VanillaTypes.item("minecraft:magenta_concrete_stairs");
 
     /**
      * {@code minecraft:magenta_cushion}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType MAGENTA_CUSHION = VanillaTypes.item("minecraft:magenta_cushion");
 
     /**
      * {@code minecraft:magenta_dye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MAGENTA_DYE = VanillaTypes.item("minecraft:magenta_dye");
 
     /**
      * {@code minecraft:magenta_glazed_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MAGENTA_GLAZED_TERRACOTTA = VanillaTypes.item("minecraft:magenta_glazed_terracotta");
 
     /**
      * {@code minecraft:magenta_harness}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MAGENTA_HARNESS = VanillaTypes.item("minecraft:magenta_harness");
 
     /**
      * {@code minecraft:magenta_shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MAGENTA_SHULKER_BOX = VanillaTypes.item("minecraft:magenta_shulker_box");
 
     /**
      * {@code minecraft:magenta_stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MAGENTA_STAINED_GLASS = VanillaTypes.item("minecraft:magenta_stained_glass");
 
     /**
      * {@code minecraft:magenta_stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MAGENTA_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:magenta_stained_glass_pane");
 
     /**
      * {@code minecraft:magenta_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MAGENTA_TERRACOTTA = VanillaTypes.item("minecraft:magenta_terracotta");
 
     /**
      * {@code minecraft:magenta_wool}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MAGENTA_WOOL = VanillaTypes.item("minecraft:magenta_wool");
 
     /**
      * {@code minecraft:magenta_wool_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType MAGENTA_WOOL_DOUBLE_SLAB = VanillaTypes.item("minecraft:magenta_wool_double_slab");
 
     /**
      * {@code minecraft:magenta_wool_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType MAGENTA_WOOL_SLAB = VanillaTypes.item("minecraft:magenta_wool_slab");
 
     /**
      * {@code minecraft:magenta_wool_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType MAGENTA_WOOL_STAIRS = VanillaTypes.item("minecraft:magenta_wool_stairs");
 
     /**
      * {@code minecraft:magma}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MAGMA = VanillaTypes.item("minecraft:magma");
 
     /**
      * {@code minecraft:magma_cream}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MAGMA_CREAM = VanillaTypes.item("minecraft:magma_cream");
 
     /**
      * {@code minecraft:magma_cube_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MAGMA_CUBE_SPAWN_EGG = VanillaTypes.item("minecraft:magma_cube_spawn_egg");
 
     /**
      * {@code minecraft:mangrove_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_BOAT = VanillaTypes.item("minecraft:mangrove_boat");
 
     /**
      * {@code minecraft:mangrove_button}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_BUTTON = VanillaTypes.item("minecraft:mangrove_button");
 
     /**
      * {@code minecraft:mangrove_chest_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_CHEST_BOAT = VanillaTypes.item("minecraft:mangrove_chest_boat");
 
     /**
      * {@code minecraft:mangrove_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_DOOR = VanillaTypes.item("minecraft:mangrove_door");
 
     /**
      * {@code minecraft:mangrove_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_DOUBLE_SLAB = VanillaTypes.item("minecraft:mangrove_double_slab");
 
     /**
      * {@code minecraft:mangrove_fence}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_FENCE = VanillaTypes.item("minecraft:mangrove_fence");
 
     /**
      * {@code minecraft:mangrove_fence_gate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_FENCE_GATE = VanillaTypes.item("minecraft:mangrove_fence_gate");
 
     /**
      * {@code minecraft:mangrove_hanging_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_HANGING_SIGN = VanillaTypes.item("minecraft:mangrove_hanging_sign");
 
     /**
      * {@code minecraft:mangrove_leaves}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_LEAVES = VanillaTypes.item("minecraft:mangrove_leaves");
 
     /**
      * {@code minecraft:mangrove_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_LOG = VanillaTypes.item("minecraft:mangrove_log");
 
     /**
      * {@code minecraft:mangrove_planks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_PLANKS = VanillaTypes.item("minecraft:mangrove_planks");
 
     /**
      * {@code minecraft:mangrove_pressure_plate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_PRESSURE_PLATE = VanillaTypes.item("minecraft:mangrove_pressure_plate");
 
     /**
      * {@code minecraft:mangrove_propagule}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_PROPAGULE = VanillaTypes.item("minecraft:mangrove_propagule");
 
     /**
      * {@code minecraft:mangrove_roots}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_ROOTS = VanillaTypes.item("minecraft:mangrove_roots");
 
     /**
      * {@code minecraft:mangrove_shelf}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_SHELF = VanillaTypes.item("minecraft:mangrove_shelf");
 
     /**
      * {@code minecraft:mangrove_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_SIGN = VanillaTypes.item("minecraft:mangrove_sign");
 
     /**
      * {@code minecraft:mangrove_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_SLAB = VanillaTypes.item("minecraft:mangrove_slab");
 
     /**
      * {@code minecraft:mangrove_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_STAIRS = VanillaTypes.item("minecraft:mangrove_stairs");
 
     /**
      * {@code minecraft:mangrove_standing_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_STANDING_SIGN = VanillaTypes.item("minecraft:mangrove_standing_sign");
 
     /**
      * {@code minecraft:mangrove_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_TRAPDOOR = VanillaTypes.item("minecraft:mangrove_trapdoor");
 
     /**
      * {@code minecraft:mangrove_wall_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_WALL_SIGN = VanillaTypes.item("minecraft:mangrove_wall_sign");
 
     /**
      * {@code minecraft:mangrove_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MANGROVE_WOOD = VanillaTypes.item("minecraft:mangrove_wood");
 
     /**
      * {@code minecraft:material_reducer}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType MATERIAL_REDUCER = VanillaTypes.item("minecraft:material_reducer");
+    @Education
+    public static final BedrockItemType MATERIAL_REDUCER = VanillaTypes.educationItem("minecraft:material_reducer");
 
     /**
      * {@code minecraft:medicine}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType MEDICINE = VanillaTypes.item("minecraft:medicine");
+    @Education
+    public static final BedrockItemType MEDICINE = VanillaTypes.educationItem("minecraft:medicine");
 
     /**
      * {@code minecraft:medium_amethyst_bud}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MEDIUM_AMETHYST_BUD = VanillaTypes.item("minecraft:medium_amethyst_bud");
 
     /**
      * {@code minecraft:melon_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MELON_BLOCK = VanillaTypes.item("minecraft:melon_block");
 
     /**
      * {@code minecraft:melon_seeds}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MELON_SEEDS = VanillaTypes.item("minecraft:melon_seeds");
 
     /**
      * {@code minecraft:melon_slice}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MELON_SLICE = VanillaTypes.item("minecraft:melon_slice");
 
     /**
      * {@code minecraft:melon_stem}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MELON_STEM = VanillaTypes.item("minecraft:melon_stem");
 
     /**
      * {@code minecraft:milk_bucket}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MILK_BUCKET = VanillaTypes.item("minecraft:milk_bucket");
 
     /**
      * {@code minecraft:minecart}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MINECART = VanillaTypes.item("minecraft:minecart");
 
     /**
      * {@code minecraft:miner_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MINER_POTTERY_SHERD = VanillaTypes.item("minecraft:miner_pottery_sherd");
 
     /**
      * {@code minecraft:mob_spawner}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MOB_SPAWNER = VanillaTypes.item("minecraft:mob_spawner");
 
     /**
      * {@code minecraft:mojang_banner_pattern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MOJANG_BANNER_PATTERN = VanillaTypes.item("minecraft:mojang_banner_pattern");
 
     /**
      * {@code minecraft:monster_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MONSTER_EGG = VanillaTypes.item("minecraft:monster_egg");
 
     /**
      * {@code minecraft:mooshroom_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MOOSHROOM_SPAWN_EGG = VanillaTypes.item("minecraft:mooshroom_spawn_egg");
 
     /**
      * {@code minecraft:mossy_cobblestone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MOSSY_COBBLESTONE = VanillaTypes.item("minecraft:mossy_cobblestone");
 
     /**
      * {@code minecraft:mossy_cobblestone_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MOSSY_COBBLESTONE_DOUBLE_SLAB = VanillaTypes.item("minecraft:mossy_cobblestone_double_slab");
 
     /**
      * {@code minecraft:mossy_cobblestone_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MOSSY_COBBLESTONE_SLAB = VanillaTypes.item("minecraft:mossy_cobblestone_slab");
 
     /**
      * {@code minecraft:mossy_cobblestone_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MOSSY_COBBLESTONE_STAIRS = VanillaTypes.item("minecraft:mossy_cobblestone_stairs");
 
     /**
      * {@code minecraft:mossy_cobblestone_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MOSSY_COBBLESTONE_WALL = VanillaTypes.item("minecraft:mossy_cobblestone_wall");
 
     /**
      * {@code minecraft:mossy_stone_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MOSSY_STONE_BRICKS = VanillaTypes.item("minecraft:mossy_stone_bricks");
 
     /**
      * {@code minecraft:mossy_stone_brick_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MOSSY_STONE_BRICK_DOUBLE_SLAB = VanillaTypes.item("minecraft:mossy_stone_brick_double_slab");
 
     /**
      * {@code minecraft:mossy_stone_brick_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MOSSY_STONE_BRICK_SLAB = VanillaTypes.item("minecraft:mossy_stone_brick_slab");
 
     /**
      * {@code minecraft:mossy_stone_brick_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MOSSY_STONE_BRICK_STAIRS = VanillaTypes.item("minecraft:mossy_stone_brick_stairs");
 
     /**
      * {@code minecraft:mossy_stone_brick_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MOSSY_STONE_BRICK_WALL = VanillaTypes.item("minecraft:mossy_stone_brick_wall");
 
     /**
      * {@code minecraft:moss_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MOSS_BLOCK = VanillaTypes.item("minecraft:moss_block");
 
     /**
      * {@code minecraft:moss_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MOSS_CARPET = VanillaTypes.item("minecraft:moss_carpet");
 
     /**
      * {@code minecraft:mourner_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MOURNER_POTTERY_SHERD = VanillaTypes.item("minecraft:mourner_pottery_sherd");
 
     /**
      * {@code minecraft:moving_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MOVING_BLOCK = VanillaTypes.item("minecraft:moving_block");
 
     /**
      * {@code minecraft:mud}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUD = VanillaTypes.item("minecraft:mud");
 
     /**
      * {@code minecraft:muddy_mangrove_roots}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUDDY_MANGROVE_ROOTS = VanillaTypes.item("minecraft:muddy_mangrove_roots");
 
     /**
      * {@code minecraft:mud_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUD_BRICKS = VanillaTypes.item("minecraft:mud_bricks");
 
     /**
      * {@code minecraft:mud_brick_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUD_BRICK_DOUBLE_SLAB = VanillaTypes.item("minecraft:mud_brick_double_slab");
 
     /**
      * {@code minecraft:mud_brick_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUD_BRICK_SLAB = VanillaTypes.item("minecraft:mud_brick_slab");
 
     /**
      * {@code minecraft:mud_brick_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUD_BRICK_STAIRS = VanillaTypes.item("minecraft:mud_brick_stairs");
 
     /**
      * {@code minecraft:mud_brick_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUD_BRICK_WALL = VanillaTypes.item("minecraft:mud_brick_wall");
 
     /**
      * {@code minecraft:mule_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MULE_SPAWN_EGG = VanillaTypes.item("minecraft:mule_spawn_egg");
 
     /**
      * {@code minecraft:mushroom_stem}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSHROOM_STEM = VanillaTypes.item("minecraft:mushroom_stem");
 
     /**
      * {@code minecraft:mushroom_stew}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSHROOM_STEW = VanillaTypes.item("minecraft:mushroom_stew");
 
     /**
      * {@code minecraft:music_disc_11}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_11 = VanillaTypes.item("minecraft:music_disc_11");
 
     /**
      * {@code minecraft:music_disc_13}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_13 = VanillaTypes.item("minecraft:music_disc_13");
 
     /**
      * {@code minecraft:music_disc_5}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_5 = VanillaTypes.item("minecraft:music_disc_5");
 
     /**
      * {@code minecraft:music_disc_blocks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_BLOCKS = VanillaTypes.item("minecraft:music_disc_blocks");
 
     /**
      * {@code minecraft:music_disc_bounce}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_BOUNCE = VanillaTypes.item("minecraft:music_disc_bounce");
 
     /**
      * {@code minecraft:music_disc_cat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_CAT = VanillaTypes.item("minecraft:music_disc_cat");
 
     /**
      * {@code minecraft:music_disc_chirp}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_CHIRP = VanillaTypes.item("minecraft:music_disc_chirp");
 
     /**
      * {@code minecraft:music_disc_creator}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_CREATOR = VanillaTypes.item("minecraft:music_disc_creator");
 
     /**
      * {@code minecraft:music_disc_creator_music_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_CREATOR_MUSIC_BOX = VanillaTypes.item("minecraft:music_disc_creator_music_box");
 
     /**
      * {@code minecraft:music_disc_far}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_FAR = VanillaTypes.item("minecraft:music_disc_far");
 
     /**
      * {@code minecraft:music_disc_lava_chicken}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_LAVA_CHICKEN = VanillaTypes.item("minecraft:music_disc_lava_chicken");
 
     /**
      * {@code minecraft:music_disc_mall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_MALL = VanillaTypes.item("minecraft:music_disc_mall");
 
     /**
      * {@code minecraft:music_disc_mellohi}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_MELLOHI = VanillaTypes.item("minecraft:music_disc_mellohi");
 
     /**
      * {@code minecraft:music_disc_otherside}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_OTHERSIDE = VanillaTypes.item("minecraft:music_disc_otherside");
 
     /**
      * {@code minecraft:music_disc_pigstep}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_PIGSTEP = VanillaTypes.item("minecraft:music_disc_pigstep");
 
     /**
      * {@code minecraft:music_disc_precipice}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_PRECIPICE = VanillaTypes.item("minecraft:music_disc_precipice");
 
     /**
      * {@code minecraft:music_disc_relic}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_RELIC = VanillaTypes.item("minecraft:music_disc_relic");
 
     /**
      * {@code minecraft:music_disc_stal}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_STAL = VanillaTypes.item("minecraft:music_disc_stal");
 
     /**
      * {@code minecraft:music_disc_strad}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_STRAD = VanillaTypes.item("minecraft:music_disc_strad");
 
     /**
      * {@code minecraft:music_disc_tears}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_TEARS = VanillaTypes.item("minecraft:music_disc_tears");
 
     /**
      * {@code minecraft:music_disc_wait}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_WAIT = VanillaTypes.item("minecraft:music_disc_wait");
 
     /**
      * {@code minecraft:music_disc_ward}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUSIC_DISC_WARD = VanillaTypes.item("minecraft:music_disc_ward");
 
     /**
      * {@code minecraft:mutton}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MUTTON = VanillaTypes.item("minecraft:mutton");
 
     /**
      * {@code minecraft:mycelium}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType MYCELIUM = VanillaTypes.item("minecraft:mycelium");
 
     /**
      * {@code minecraft:name_tag}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NAME_TAG = VanillaTypes.item("minecraft:name_tag");
 
     /**
      * {@code minecraft:nautilus_shell}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NAUTILUS_SHELL = VanillaTypes.item("minecraft:nautilus_shell");
 
     /**
      * {@code minecraft:nautilus_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NAUTILUS_SPAWN_EGG = VanillaTypes.item("minecraft:nautilus_spawn_egg");
 
     /**
      * {@code minecraft:netherbrick}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERBRICK = VanillaTypes.item("minecraft:netherbrick");
 
     /**
      * {@code minecraft:netherite_axe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERITE_AXE = VanillaTypes.item("minecraft:netherite_axe");
 
     /**
      * {@code minecraft:netherite_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERITE_BLOCK = VanillaTypes.item("minecraft:netherite_block");
 
     /**
      * {@code minecraft:netherite_boots}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERITE_BOOTS = VanillaTypes.item("minecraft:netherite_boots");
 
     /**
      * {@code minecraft:netherite_chestplate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERITE_CHESTPLATE = VanillaTypes.item("minecraft:netherite_chestplate");
 
     /**
      * {@code minecraft:netherite_helmet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERITE_HELMET = VanillaTypes.item("minecraft:netherite_helmet");
 
     /**
      * {@code minecraft:netherite_hoe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERITE_HOE = VanillaTypes.item("minecraft:netherite_hoe");
 
     /**
      * {@code minecraft:netherite_horse_armor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERITE_HORSE_ARMOR = VanillaTypes.item("minecraft:netherite_horse_armor");
 
     /**
      * {@code minecraft:netherite_ingot}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERITE_INGOT = VanillaTypes.item("minecraft:netherite_ingot");
 
     /**
      * {@code minecraft:netherite_leggings}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERITE_LEGGINGS = VanillaTypes.item("minecraft:netherite_leggings");
 
     /**
      * {@code minecraft:netherite_nautilus_armor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERITE_NAUTILUS_ARMOR = VanillaTypes.item("minecraft:netherite_nautilus_armor");
 
     /**
      * {@code minecraft:netherite_pickaxe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERITE_PICKAXE = VanillaTypes.item("minecraft:netherite_pickaxe");
 
     /**
      * {@code minecraft:netherite_scrap}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERITE_SCRAP = VanillaTypes.item("minecraft:netherite_scrap");
 
     /**
      * {@code minecraft:netherite_shovel}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERITE_SHOVEL = VanillaTypes.item("minecraft:netherite_shovel");
 
     /**
      * {@code minecraft:netherite_spear}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERITE_SPEAR = VanillaTypes.item("minecraft:netherite_spear");
 
     /**
      * {@code minecraft:netherite_sword}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERITE_SWORD = VanillaTypes.item("minecraft:netherite_sword");
 
     /**
      * {@code minecraft:netherite_upgrade_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERITE_UPGRADE_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:netherite_upgrade_smithing_template");
 
     /**
      * {@code minecraft:netherrack}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERRACK = VanillaTypes.item("minecraft:netherrack");
 
     /**
      * {@code minecraft:netherreactor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHERREACTOR = VanillaTypes.item("minecraft:netherreactor");
 
     /**
      * {@code minecraft:nether_brick}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHER_BRICK = VanillaTypes.item("minecraft:nether_brick");
 
     /**
      * {@code minecraft:nether_brick_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHER_BRICK_DOUBLE_SLAB = VanillaTypes.item("minecraft:nether_brick_double_slab");
 
     /**
      * {@code minecraft:nether_brick_fence}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHER_BRICK_FENCE = VanillaTypes.item("minecraft:nether_brick_fence");
 
     /**
      * {@code minecraft:nether_brick_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHER_BRICK_SLAB = VanillaTypes.item("minecraft:nether_brick_slab");
 
     /**
      * {@code minecraft:nether_brick_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHER_BRICK_STAIRS = VanillaTypes.item("minecraft:nether_brick_stairs");
 
     /**
      * {@code minecraft:nether_brick_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHER_BRICK_WALL = VanillaTypes.item("minecraft:nether_brick_wall");
 
     /**
      * {@code minecraft:nether_gold_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHER_GOLD_ORE = VanillaTypes.item("minecraft:nether_gold_ore");
 
     /**
      * {@code minecraft:nether_sprouts}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHER_SPROUTS = VanillaTypes.item("minecraft:nether_sprouts");
 
     /**
      * {@code minecraft:nether_star}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHER_STAR = VanillaTypes.item("minecraft:nether_star");
 
     /**
      * {@code minecraft:nether_wart}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHER_WART = VanillaTypes.item("minecraft:nether_wart");
 
     /**
      * {@code minecraft:nether_wart_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NETHER_WART_BLOCK = VanillaTypes.item("minecraft:nether_wart_block");
 
     /**
      * {@code minecraft:normal_stone_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NORMAL_STONE_DOUBLE_SLAB = VanillaTypes.item("minecraft:normal_stone_double_slab");
 
     /**
      * {@code minecraft:normal_stone_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NORMAL_STONE_SLAB = VanillaTypes.item("minecraft:normal_stone_slab");
 
     /**
      * {@code minecraft:normal_stone_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NORMAL_STONE_STAIRS = VanillaTypes.item("minecraft:normal_stone_stairs");
 
     /**
      * {@code minecraft:noteblock}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NOTEBLOCK = VanillaTypes.item("minecraft:noteblock");
 
     /**
      * {@code minecraft:npc_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType NPC_SPAWN_EGG = VanillaTypes.item("minecraft:npc_spawn_egg");
 
     /**
      * {@code minecraft:oak_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OAK_BOAT = VanillaTypes.item("minecraft:oak_boat");
 
     /**
      * {@code minecraft:oak_chest_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OAK_CHEST_BOAT = VanillaTypes.item("minecraft:oak_chest_boat");
 
     /**
      * {@code minecraft:oak_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OAK_DOUBLE_SLAB = VanillaTypes.item("minecraft:oak_double_slab");
 
     /**
      * {@code minecraft:oak_fence}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OAK_FENCE = VanillaTypes.item("minecraft:oak_fence");
 
     /**
      * {@code minecraft:oak_hanging_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OAK_HANGING_SIGN = VanillaTypes.item("minecraft:oak_hanging_sign");
 
     /**
      * {@code minecraft:oak_leaves}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OAK_LEAVES = VanillaTypes.item("minecraft:oak_leaves");
 
     /**
      * {@code minecraft:oak_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OAK_LOG = VanillaTypes.item("minecraft:oak_log");
 
     /**
      * {@code minecraft:oak_planks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OAK_PLANKS = VanillaTypes.item("minecraft:oak_planks");
 
     /**
      * {@code minecraft:oak_sapling}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OAK_SAPLING = VanillaTypes.item("minecraft:oak_sapling");
 
     /**
      * {@code minecraft:oak_shelf}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OAK_SHELF = VanillaTypes.item("minecraft:oak_shelf");
 
     /**
      * {@code minecraft:oak_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OAK_SIGN = VanillaTypes.item("minecraft:oak_sign");
 
     /**
      * {@code minecraft:oak_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OAK_SLAB = VanillaTypes.item("minecraft:oak_slab");
 
     /**
      * {@code minecraft:oak_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OAK_STAIRS = VanillaTypes.item("minecraft:oak_stairs");
 
     /**
      * {@code minecraft:oak_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OAK_WOOD = VanillaTypes.item("minecraft:oak_wood");
 
     /**
      * {@code minecraft:observer}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OBSERVER = VanillaTypes.item("minecraft:observer");
 
     /**
      * {@code minecraft:obsidian}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OBSIDIAN = VanillaTypes.item("minecraft:obsidian");
 
     /**
      * {@code minecraft:ocelot_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OCELOT_SPAWN_EGG = VanillaTypes.item("minecraft:ocelot_spawn_egg");
 
     /**
      * {@code minecraft:ochre_froglight}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OCHRE_FROGLIGHT = VanillaTypes.item("minecraft:ochre_froglight");
 
     /**
      * {@code minecraft:ominous_bottle}: 4 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OMINOUS_BOTTLE = VanillaTypes.item("minecraft:ominous_bottle");
 
     /**
      * {@code minecraft:ominous_trial_key}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OMINOUS_TRIAL_KEY = VanillaTypes.item("minecraft:ominous_trial_key");
 
     /**
      * {@code minecraft:open_eyeblossom}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OPEN_EYEBLOSSOM = VanillaTypes.item("minecraft:open_eyeblossom");
 
     /**
      * {@code minecraft:orange_bundle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ORANGE_BUNDLE = VanillaTypes.item("minecraft:orange_bundle");
 
     /**
      * {@code minecraft:orange_candle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ORANGE_CANDLE = VanillaTypes.item("minecraft:orange_candle");
 
     /**
      * {@code minecraft:orange_candle_cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ORANGE_CANDLE_CAKE = VanillaTypes.item("minecraft:orange_candle_cake");
 
     /**
      * {@code minecraft:orange_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ORANGE_CARPET = VanillaTypes.item("minecraft:orange_carpet");
 
     /**
      * {@code minecraft:orange_concrete}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ORANGE_CONCRETE = VanillaTypes.item("minecraft:orange_concrete");
 
     /**
      * {@code minecraft:orange_concrete_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType ORANGE_CONCRETE_DOUBLE_SLAB = VanillaTypes.item("minecraft:orange_concrete_double_slab");
 
     /**
      * {@code minecraft:orange_concrete_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ORANGE_CONCRETE_POWDER = VanillaTypes.item("minecraft:orange_concrete_powder");
 
     /**
      * {@code minecraft:orange_concrete_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType ORANGE_CONCRETE_SLAB = VanillaTypes.item("minecraft:orange_concrete_slab");
 
     /**
      * {@code minecraft:orange_concrete_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType ORANGE_CONCRETE_STAIRS = VanillaTypes.item("minecraft:orange_concrete_stairs");
 
     /**
      * {@code minecraft:orange_cushion}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType ORANGE_CUSHION = VanillaTypes.item("minecraft:orange_cushion");
 
     /**
      * {@code minecraft:orange_dye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ORANGE_DYE = VanillaTypes.item("minecraft:orange_dye");
 
     /**
      * {@code minecraft:orange_glazed_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ORANGE_GLAZED_TERRACOTTA = VanillaTypes.item("minecraft:orange_glazed_terracotta");
 
     /**
      * {@code minecraft:orange_harness}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ORANGE_HARNESS = VanillaTypes.item("minecraft:orange_harness");
 
     /**
      * {@code minecraft:orange_poplar_leaves}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType ORANGE_POPLAR_LEAVES = VanillaTypes.item("minecraft:orange_poplar_leaves");
 
     /**
      * {@code minecraft:orange_shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ORANGE_SHULKER_BOX = VanillaTypes.item("minecraft:orange_shulker_box");
 
     /**
      * {@code minecraft:orange_stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ORANGE_STAINED_GLASS = VanillaTypes.item("minecraft:orange_stained_glass");
 
     /**
      * {@code minecraft:orange_stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ORANGE_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:orange_stained_glass_pane");
 
     /**
      * {@code minecraft:orange_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ORANGE_TERRACOTTA = VanillaTypes.item("minecraft:orange_terracotta");
 
     /**
      * {@code minecraft:orange_tulip}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ORANGE_TULIP = VanillaTypes.item("minecraft:orange_tulip");
 
     /**
      * {@code minecraft:orange_wool}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ORANGE_WOOL = VanillaTypes.item("minecraft:orange_wool");
 
     /**
      * {@code minecraft:orange_wool_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType ORANGE_WOOL_DOUBLE_SLAB = VanillaTypes.item("minecraft:orange_wool_double_slab");
 
     /**
      * {@code minecraft:orange_wool_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType ORANGE_WOOL_SLAB = VanillaTypes.item("minecraft:orange_wool_slab");
 
     /**
      * {@code minecraft:orange_wool_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType ORANGE_WOOL_STAIRS = VanillaTypes.item("minecraft:orange_wool_stairs");
 
     /**
      * {@code minecraft:oxeye_daisy}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OXEYE_DAISY = VanillaTypes.item("minecraft:oxeye_daisy");
 
     /**
      * {@code minecraft:oxidized_chiseled_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OXIDIZED_CHISELED_COPPER = VanillaTypes.item("minecraft:oxidized_chiseled_copper");
 
     /**
      * {@code minecraft:oxidized_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OXIDIZED_COPPER = VanillaTypes.item("minecraft:oxidized_copper");
 
     /**
      * {@code minecraft:oxidized_copper_bars}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OXIDIZED_COPPER_BARS = VanillaTypes.item("minecraft:oxidized_copper_bars");
 
     /**
      * {@code minecraft:oxidized_copper_bulb}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OXIDIZED_COPPER_BULB = VanillaTypes.item("minecraft:oxidized_copper_bulb");
 
     /**
      * {@code minecraft:oxidized_copper_chain}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OXIDIZED_COPPER_CHAIN = VanillaTypes.item("minecraft:oxidized_copper_chain");
 
     /**
      * {@code minecraft:oxidized_copper_chest}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OXIDIZED_COPPER_CHEST = VanillaTypes.item("minecraft:oxidized_copper_chest");
 
     /**
      * {@code minecraft:oxidized_copper_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OXIDIZED_COPPER_DOOR = VanillaTypes.item("minecraft:oxidized_copper_door");
 
     /**
      * {@code minecraft:oxidized_copper_golem_statue}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OXIDIZED_COPPER_GOLEM_STATUE = VanillaTypes.item("minecraft:oxidized_copper_golem_statue");
 
     /**
      * {@code minecraft:oxidized_copper_grate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OXIDIZED_COPPER_GRATE = VanillaTypes.item("minecraft:oxidized_copper_grate");
 
     /**
      * {@code minecraft:oxidized_copper_lantern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OXIDIZED_COPPER_LANTERN = VanillaTypes.item("minecraft:oxidized_copper_lantern");
 
     /**
      * {@code minecraft:oxidized_copper_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OXIDIZED_COPPER_TRAPDOOR = VanillaTypes.item("minecraft:oxidized_copper_trapdoor");
 
     /**
      * {@code minecraft:oxidized_cut_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OXIDIZED_CUT_COPPER = VanillaTypes.item("minecraft:oxidized_cut_copper");
 
     /**
      * {@code minecraft:oxidized_cut_copper_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OXIDIZED_CUT_COPPER_SLAB = VanillaTypes.item("minecraft:oxidized_cut_copper_slab");
 
     /**
      * {@code minecraft:oxidized_cut_copper_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OXIDIZED_CUT_COPPER_STAIRS = VanillaTypes.item("minecraft:oxidized_cut_copper_stairs");
 
     /**
      * {@code minecraft:oxidized_double_cut_copper_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OXIDIZED_DOUBLE_CUT_COPPER_SLAB = VanillaTypes.item("minecraft:oxidized_double_cut_copper_slab");
 
     /**
      * {@code minecraft:oxidized_lightning_rod}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType OXIDIZED_LIGHTNING_ROD = VanillaTypes.item("minecraft:oxidized_lightning_rod");
 
     /**
      * {@code minecraft:packed_ice}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PACKED_ICE = VanillaTypes.item("minecraft:packed_ice");
 
     /**
      * {@code minecraft:packed_mud}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PACKED_MUD = VanillaTypes.item("minecraft:packed_mud");
 
     /**
      * {@code minecraft:painting}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PAINTING = VanillaTypes.item("minecraft:painting");
 
     /**
      * {@code minecraft:pale_hanging_moss}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_HANGING_MOSS = VanillaTypes.item("minecraft:pale_hanging_moss");
 
     /**
      * {@code minecraft:pale_moss_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_MOSS_BLOCK = VanillaTypes.item("minecraft:pale_moss_block");
 
     /**
      * {@code minecraft:pale_moss_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_MOSS_CARPET = VanillaTypes.item("minecraft:pale_moss_carpet");
 
     /**
      * {@code minecraft:pale_oak_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_BOAT = VanillaTypes.item("minecraft:pale_oak_boat");
 
     /**
      * {@code minecraft:pale_oak_button}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_BUTTON = VanillaTypes.item("minecraft:pale_oak_button");
 
     /**
      * {@code minecraft:pale_oak_chest_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_CHEST_BOAT = VanillaTypes.item("minecraft:pale_oak_chest_boat");
 
     /**
      * {@code minecraft:pale_oak_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_DOOR = VanillaTypes.item("minecraft:pale_oak_door");
 
     /**
      * {@code minecraft:pale_oak_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_DOUBLE_SLAB = VanillaTypes.item("minecraft:pale_oak_double_slab");
 
     /**
      * {@code minecraft:pale_oak_fence}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_FENCE = VanillaTypes.item("minecraft:pale_oak_fence");
 
     /**
      * {@code minecraft:pale_oak_fence_gate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_FENCE_GATE = VanillaTypes.item("minecraft:pale_oak_fence_gate");
 
     /**
      * {@code minecraft:pale_oak_hanging_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_HANGING_SIGN = VanillaTypes.item("minecraft:pale_oak_hanging_sign");
 
     /**
      * {@code minecraft:pale_oak_leaves}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_LEAVES = VanillaTypes.item("minecraft:pale_oak_leaves");
 
     /**
      * {@code minecraft:pale_oak_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_LOG = VanillaTypes.item("minecraft:pale_oak_log");
 
     /**
      * {@code minecraft:pale_oak_planks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_PLANKS = VanillaTypes.item("minecraft:pale_oak_planks");
 
     /**
      * {@code minecraft:pale_oak_pressure_plate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_PRESSURE_PLATE = VanillaTypes.item("minecraft:pale_oak_pressure_plate");
 
     /**
      * {@code minecraft:pale_oak_sapling}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_SAPLING = VanillaTypes.item("minecraft:pale_oak_sapling");
 
     /**
      * {@code minecraft:pale_oak_shelf}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_SHELF = VanillaTypes.item("minecraft:pale_oak_shelf");
 
     /**
      * {@code minecraft:pale_oak_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_SIGN = VanillaTypes.item("minecraft:pale_oak_sign");
 
     /**
      * {@code minecraft:pale_oak_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_SLAB = VanillaTypes.item("minecraft:pale_oak_slab");
 
     /**
      * {@code minecraft:pale_oak_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_STAIRS = VanillaTypes.item("minecraft:pale_oak_stairs");
 
     /**
      * {@code minecraft:pale_oak_standing_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_STANDING_SIGN = VanillaTypes.item("minecraft:pale_oak_standing_sign");
 
     /**
      * {@code minecraft:pale_oak_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_TRAPDOOR = VanillaTypes.item("minecraft:pale_oak_trapdoor");
 
     /**
      * {@code minecraft:pale_oak_wall_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_WALL_SIGN = VanillaTypes.item("minecraft:pale_oak_wall_sign");
 
     /**
      * {@code minecraft:pale_oak_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PALE_OAK_WOOD = VanillaTypes.item("minecraft:pale_oak_wood");
 
     /**
      * {@code minecraft:panda_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PANDA_SPAWN_EGG = VanillaTypes.item("minecraft:panda_spawn_egg");
 
     /**
      * {@code minecraft:paper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PAPER = VanillaTypes.item("minecraft:paper");
 
     /**
      * {@code minecraft:parched_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PARCHED_SPAWN_EGG = VanillaTypes.item("minecraft:parched_spawn_egg");
 
     /**
      * {@code minecraft:parrot_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PARROT_SPAWN_EGG = VanillaTypes.item("minecraft:parrot_spawn_egg");
 
     /**
      * {@code minecraft:pearlescent_froglight}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PEARLESCENT_FROGLIGHT = VanillaTypes.item("minecraft:pearlescent_froglight");
 
     /**
      * {@code minecraft:peony}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PEONY = VanillaTypes.item("minecraft:peony");
 
     /**
      * {@code minecraft:petrified_oak_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PETRIFIED_OAK_DOUBLE_SLAB = VanillaTypes.item("minecraft:petrified_oak_double_slab");
 
     /**
      * {@code minecraft:petrified_oak_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PETRIFIED_OAK_SLAB = VanillaTypes.item("minecraft:petrified_oak_slab");
 
     /**
      * {@code minecraft:phantom_membrane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PHANTOM_MEMBRANE = VanillaTypes.item("minecraft:phantom_membrane");
 
     /**
      * {@code minecraft:phantom_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PHANTOM_SPAWN_EGG = VanillaTypes.item("minecraft:phantom_spawn_egg");
 
     /**
      * {@code minecraft:photo_item}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType PHOTO_ITEM = VanillaTypes.item("minecraft:photo_item");
 
     /**
      * {@code minecraft:piglin_banner_pattern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PIGLIN_BANNER_PATTERN = VanillaTypes.item("minecraft:piglin_banner_pattern");
 
     /**
      * {@code minecraft:piglin_brute_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PIGLIN_BRUTE_SPAWN_EGG = VanillaTypes.item("minecraft:piglin_brute_spawn_egg");
 
     /**
      * {@code minecraft:piglin_head}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PIGLIN_HEAD = VanillaTypes.item("minecraft:piglin_head");
 
     /**
      * {@code minecraft:piglin_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PIGLIN_SPAWN_EGG = VanillaTypes.item("minecraft:piglin_spawn_egg");
 
     /**
      * {@code minecraft:pig_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PIG_SPAWN_EGG = VanillaTypes.item("minecraft:pig_spawn_egg");
 
     /**
      * {@code minecraft:pillager_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PILLAGER_SPAWN_EGG = VanillaTypes.item("minecraft:pillager_spawn_egg");
 
     /**
      * {@code minecraft:pink_bundle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PINK_BUNDLE = VanillaTypes.item("minecraft:pink_bundle");
 
     /**
      * {@code minecraft:pink_candle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PINK_CANDLE = VanillaTypes.item("minecraft:pink_candle");
 
     /**
      * {@code minecraft:pink_candle_cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PINK_CANDLE_CAKE = VanillaTypes.item("minecraft:pink_candle_cake");
 
     /**
      * {@code minecraft:pink_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PINK_CARPET = VanillaTypes.item("minecraft:pink_carpet");
 
     /**
      * {@code minecraft:pink_concrete}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PINK_CONCRETE = VanillaTypes.item("minecraft:pink_concrete");
 
     /**
      * {@code minecraft:pink_concrete_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType PINK_CONCRETE_DOUBLE_SLAB = VanillaTypes.item("minecraft:pink_concrete_double_slab");
 
     /**
      * {@code minecraft:pink_concrete_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PINK_CONCRETE_POWDER = VanillaTypes.item("minecraft:pink_concrete_powder");
 
     /**
      * {@code minecraft:pink_concrete_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType PINK_CONCRETE_SLAB = VanillaTypes.item("minecraft:pink_concrete_slab");
 
     /**
      * {@code minecraft:pink_concrete_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType PINK_CONCRETE_STAIRS = VanillaTypes.item("minecraft:pink_concrete_stairs");
 
     /**
      * {@code minecraft:pink_cushion}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType PINK_CUSHION = VanillaTypes.item("minecraft:pink_cushion");
 
     /**
      * {@code minecraft:pink_dye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PINK_DYE = VanillaTypes.item("minecraft:pink_dye");
 
     /**
      * {@code minecraft:pink_glazed_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PINK_GLAZED_TERRACOTTA = VanillaTypes.item("minecraft:pink_glazed_terracotta");
 
     /**
      * {@code minecraft:pink_harness}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PINK_HARNESS = VanillaTypes.item("minecraft:pink_harness");
 
     /**
      * {@code minecraft:pink_petals}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PINK_PETALS = VanillaTypes.item("minecraft:pink_petals");
 
     /**
      * {@code minecraft:pink_shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PINK_SHULKER_BOX = VanillaTypes.item("minecraft:pink_shulker_box");
 
     /**
      * {@code minecraft:pink_stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PINK_STAINED_GLASS = VanillaTypes.item("minecraft:pink_stained_glass");
 
     /**
      * {@code minecraft:pink_stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PINK_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:pink_stained_glass_pane");
 
     /**
      * {@code minecraft:pink_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PINK_TERRACOTTA = VanillaTypes.item("minecraft:pink_terracotta");
 
     /**
      * {@code minecraft:pink_tulip}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PINK_TULIP = VanillaTypes.item("minecraft:pink_tulip");
 
     /**
      * {@code minecraft:pink_wool}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PINK_WOOL = VanillaTypes.item("minecraft:pink_wool");
 
     /**
      * {@code minecraft:pink_wool_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType PINK_WOOL_DOUBLE_SLAB = VanillaTypes.item("minecraft:pink_wool_double_slab");
 
     /**
      * {@code minecraft:pink_wool_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType PINK_WOOL_SLAB = VanillaTypes.item("minecraft:pink_wool_slab");
 
     /**
      * {@code minecraft:pink_wool_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType PINK_WOOL_STAIRS = VanillaTypes.item("minecraft:pink_wool_stairs");
 
     /**
      * {@code minecraft:piston}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PISTON = VanillaTypes.item("minecraft:piston");
 
     /**
      * {@code minecraft:piston_arm_collision}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PISTON_ARM_COLLISION = VanillaTypes.item("minecraft:piston_arm_collision");
 
     /**
      * {@code minecraft:pitcher_crop}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PITCHER_CROP = VanillaTypes.item("minecraft:pitcher_crop");
 
     /**
      * {@code minecraft:pitcher_plant}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PITCHER_PLANT = VanillaTypes.item("minecraft:pitcher_plant");
 
     /**
      * {@code minecraft:pitcher_pod}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PITCHER_POD = VanillaTypes.item("minecraft:pitcher_pod");
 
     /**
      * {@code minecraft:planks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PLANKS = VanillaTypes.item("minecraft:planks");
 
     /**
      * {@code minecraft:player_head}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PLAYER_HEAD = VanillaTypes.item("minecraft:player_head");
 
     /**
      * {@code minecraft:plenty_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PLENTY_POTTERY_SHERD = VanillaTypes.item("minecraft:plenty_pottery_sherd");
 
     /**
      * {@code minecraft:podzol}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PODZOL = VanillaTypes.item("minecraft:podzol");
 
     /**
      * {@code minecraft:pointed_dripstone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POINTED_DRIPSTONE = VanillaTypes.item("minecraft:pointed_dripstone");
 
     /**
      * {@code minecraft:poisonous_potato}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POISONOUS_POTATO = VanillaTypes.item("minecraft:poisonous_potato");
 
     /**
      * {@code minecraft:polar_bear_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLAR_BEAR_SPAWN_EGG = VanillaTypes.item("minecraft:polar_bear_spawn_egg");
 
     /**
      * {@code minecraft:polished_andesite}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_ANDESITE = VanillaTypes.item("minecraft:polished_andesite");
 
     /**
      * {@code minecraft:polished_andesite_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_ANDESITE_DOUBLE_SLAB = VanillaTypes.item("minecraft:polished_andesite_double_slab");
 
     /**
      * {@code minecraft:polished_andesite_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_ANDESITE_SLAB = VanillaTypes.item("minecraft:polished_andesite_slab");
 
     /**
      * {@code minecraft:polished_andesite_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_ANDESITE_STAIRS = VanillaTypes.item("minecraft:polished_andesite_stairs");
 
     /**
      * {@code minecraft:polished_basalt}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_BASALT = VanillaTypes.item("minecraft:polished_basalt");
 
     /**
      * {@code minecraft:polished_blackstone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_BLACKSTONE = VanillaTypes.item("minecraft:polished_blackstone");
 
     /**
      * {@code minecraft:polished_blackstone_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_BLACKSTONE_BRICKS = VanillaTypes.item("minecraft:polished_blackstone_bricks");
 
     /**
      * {@code minecraft:polished_blackstone_brick_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB = VanillaTypes.item("minecraft:polished_blackstone_brick_double_slab");
 
     /**
      * {@code minecraft:polished_blackstone_brick_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_BLACKSTONE_BRICK_SLAB = VanillaTypes.item("minecraft:polished_blackstone_brick_slab");
 
     /**
      * {@code minecraft:polished_blackstone_brick_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_BLACKSTONE_BRICK_STAIRS = VanillaTypes.item("minecraft:polished_blackstone_brick_stairs");
 
     /**
      * {@code minecraft:polished_blackstone_brick_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_BLACKSTONE_BRICK_WALL = VanillaTypes.item("minecraft:polished_blackstone_brick_wall");
 
     /**
      * {@code minecraft:polished_blackstone_button}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_BLACKSTONE_BUTTON = VanillaTypes.item("minecraft:polished_blackstone_button");
 
     /**
      * {@code minecraft:polished_blackstone_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_BLACKSTONE_DOUBLE_SLAB = VanillaTypes.item("minecraft:polished_blackstone_double_slab");
 
     /**
      * {@code minecraft:polished_blackstone_pressure_plate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_BLACKSTONE_PRESSURE_PLATE = VanillaTypes.item("minecraft:polished_blackstone_pressure_plate");
 
     /**
      * {@code minecraft:polished_blackstone_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_BLACKSTONE_SLAB = VanillaTypes.item("minecraft:polished_blackstone_slab");
 
     /**
      * {@code minecraft:polished_blackstone_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_BLACKSTONE_STAIRS = VanillaTypes.item("minecraft:polished_blackstone_stairs");
 
     /**
      * {@code minecraft:polished_blackstone_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_BLACKSTONE_WALL = VanillaTypes.item("minecraft:polished_blackstone_wall");
 
     /**
      * {@code minecraft:polished_cinnabar}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_CINNABAR = VanillaTypes.item("minecraft:polished_cinnabar");
 
     /**
      * {@code minecraft:polished_cinnabar_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_CINNABAR_DOUBLE_SLAB = VanillaTypes.item("minecraft:polished_cinnabar_double_slab");
 
     /**
      * {@code minecraft:polished_cinnabar_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_CINNABAR_SLAB = VanillaTypes.item("minecraft:polished_cinnabar_slab");
 
     /**
      * {@code minecraft:polished_cinnabar_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_CINNABAR_STAIRS = VanillaTypes.item("minecraft:polished_cinnabar_stairs");
 
     /**
      * {@code minecraft:polished_cinnabar_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_CINNABAR_WALL = VanillaTypes.item("minecraft:polished_cinnabar_wall");
 
     /**
      * {@code minecraft:polished_deepslate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_DEEPSLATE = VanillaTypes.item("minecraft:polished_deepslate");
 
     /**
      * {@code minecraft:polished_deepslate_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_DEEPSLATE_DOUBLE_SLAB = VanillaTypes.item("minecraft:polished_deepslate_double_slab");
 
     /**
      * {@code minecraft:polished_deepslate_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_DEEPSLATE_SLAB = VanillaTypes.item("minecraft:polished_deepslate_slab");
 
     /**
      * {@code minecraft:polished_deepslate_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_DEEPSLATE_STAIRS = VanillaTypes.item("minecraft:polished_deepslate_stairs");
 
     /**
      * {@code minecraft:polished_deepslate_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_DEEPSLATE_WALL = VanillaTypes.item("minecraft:polished_deepslate_wall");
 
     /**
      * {@code minecraft:polished_diorite}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_DIORITE = VanillaTypes.item("minecraft:polished_diorite");
 
     /**
      * {@code minecraft:polished_diorite_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_DIORITE_DOUBLE_SLAB = VanillaTypes.item("minecraft:polished_diorite_double_slab");
 
     /**
      * {@code minecraft:polished_diorite_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_DIORITE_SLAB = VanillaTypes.item("minecraft:polished_diorite_slab");
 
     /**
      * {@code minecraft:polished_diorite_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_DIORITE_STAIRS = VanillaTypes.item("minecraft:polished_diorite_stairs");
 
     /**
      * {@code minecraft:polished_granite}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_GRANITE = VanillaTypes.item("minecraft:polished_granite");
 
     /**
      * {@code minecraft:polished_granite_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_GRANITE_DOUBLE_SLAB = VanillaTypes.item("minecraft:polished_granite_double_slab");
 
     /**
      * {@code minecraft:polished_granite_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_GRANITE_SLAB = VanillaTypes.item("minecraft:polished_granite_slab");
 
     /**
      * {@code minecraft:polished_granite_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_GRANITE_STAIRS = VanillaTypes.item("minecraft:polished_granite_stairs");
 
     /**
      * {@code minecraft:polished_sulfur}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_SULFUR = VanillaTypes.item("minecraft:polished_sulfur");
 
     /**
      * {@code minecraft:polished_sulfur_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_SULFUR_DOUBLE_SLAB = VanillaTypes.item("minecraft:polished_sulfur_double_slab");
 
     /**
      * {@code minecraft:polished_sulfur_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_SULFUR_SLAB = VanillaTypes.item("minecraft:polished_sulfur_slab");
 
     /**
      * {@code minecraft:polished_sulfur_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_SULFUR_STAIRS = VanillaTypes.item("minecraft:polished_sulfur_stairs");
 
     /**
      * {@code minecraft:polished_sulfur_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_SULFUR_WALL = VanillaTypes.item("minecraft:polished_sulfur_wall");
 
     /**
      * {@code minecraft:polished_tuff}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_TUFF = VanillaTypes.item("minecraft:polished_tuff");
 
     /**
      * {@code minecraft:polished_tuff_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_TUFF_DOUBLE_SLAB = VanillaTypes.item("minecraft:polished_tuff_double_slab");
 
     /**
      * {@code minecraft:polished_tuff_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_TUFF_SLAB = VanillaTypes.item("minecraft:polished_tuff_slab");
 
     /**
      * {@code minecraft:polished_tuff_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_TUFF_STAIRS = VanillaTypes.item("minecraft:polished_tuff_stairs");
 
     /**
      * {@code minecraft:polished_tuff_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POLISHED_TUFF_WALL = VanillaTypes.item("minecraft:polished_tuff_wall");
 
     /**
      * {@code minecraft:poplar_boat}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType POPLAR_BOAT = VanillaTypes.item("minecraft:poplar_boat");
 
     /**
      * {@code minecraft:poplar_button}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType POPLAR_BUTTON = VanillaTypes.item("minecraft:poplar_button");
 
     /**
      * {@code minecraft:poplar_chest_boat}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType POPLAR_CHEST_BOAT = VanillaTypes.item("minecraft:poplar_chest_boat");
 
     /**
      * {@code minecraft:poplar_door}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType POPLAR_DOOR = VanillaTypes.item("minecraft:poplar_door");
 
     /**
      * {@code minecraft:poplar_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POPLAR_DOUBLE_SLAB = VanillaTypes.item("minecraft:poplar_double_slab");
 
     /**
      * {@code minecraft:poplar_fence}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType POPLAR_FENCE = VanillaTypes.item("minecraft:poplar_fence");
 
     /**
      * {@code minecraft:poplar_fence_gate}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType POPLAR_FENCE_GATE = VanillaTypes.item("minecraft:poplar_fence_gate");
 
     /**
      * {@code minecraft:poplar_hanging_sign}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType POPLAR_HANGING_SIGN = VanillaTypes.item("minecraft:poplar_hanging_sign");
 
     /**
      * {@code minecraft:poplar_log}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType POPLAR_LOG = VanillaTypes.item("minecraft:poplar_log");
 
     /**
      * {@code minecraft:poplar_planks}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType POPLAR_PLANKS = VanillaTypes.item("minecraft:poplar_planks");
 
     /**
      * {@code minecraft:poplar_pressure_plate}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType POPLAR_PRESSURE_PLATE = VanillaTypes.item("minecraft:poplar_pressure_plate");
 
     /**
      * {@code minecraft:poplar_sapling}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType POPLAR_SAPLING = VanillaTypes.item("minecraft:poplar_sapling");
 
     /**
      * {@code minecraft:poplar_shelf}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType POPLAR_SHELF = VanillaTypes.item("minecraft:poplar_shelf");
 
     /**
      * {@code minecraft:poplar_sign}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType POPLAR_SIGN = VanillaTypes.item("minecraft:poplar_sign");
 
     /**
      * {@code minecraft:poplar_slab}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType POPLAR_SLAB = VanillaTypes.item("minecraft:poplar_slab");
 
     /**
      * {@code minecraft:poplar_stairs}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType POPLAR_STAIRS = VanillaTypes.item("minecraft:poplar_stairs");
 
     /**
      * {@code minecraft:poplar_standing_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POPLAR_STANDING_SIGN = VanillaTypes.item("minecraft:poplar_standing_sign");
 
     /**
      * {@code minecraft:poplar_trapdoor}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType POPLAR_TRAPDOOR = VanillaTypes.item("minecraft:poplar_trapdoor");
 
     /**
      * {@code minecraft:poplar_wall_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POPLAR_WALL_SIGN = VanillaTypes.item("minecraft:poplar_wall_sign");
 
     /**
      * {@code minecraft:poplar_wood}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType POPLAR_WOOD = VanillaTypes.item("minecraft:poplar_wood");
 
     /**
      * {@code minecraft:popped_chorus_fruit}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POPPED_CHORUS_FRUIT = VanillaTypes.item("minecraft:popped_chorus_fruit");
 
     /**
      * {@code minecraft:poppy}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POPPY = VanillaTypes.item("minecraft:poppy");
 
     /**
      * {@code minecraft:porkchop}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PORKCHOP = VanillaTypes.item("minecraft:porkchop");
 
     /**
      * {@code minecraft:portal}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PORTAL = VanillaTypes.item("minecraft:portal");
 
     /**
      * {@code minecraft:portfolio}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType PORTFOLIO = VanillaTypes.item("minecraft:portfolio");
 
     /**
      * {@code minecraft:potato}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POTATO = VanillaTypes.item("minecraft:potato");
 
     /**
      * {@code minecraft:potatoes}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POTATOES = VanillaTypes.item("minecraft:potatoes");
 
     /**
      * {@code minecraft:potent_sulfur}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POTENT_SULFUR = VanillaTypes.item("minecraft:potent_sulfur");
 
     /**
      * {@code minecraft:potion}: 46 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POTION = VanillaTypes.item("minecraft:potion");
 
     /**
      * {@code minecraft:powder_snow}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POWDER_SNOW = VanillaTypes.item("minecraft:powder_snow");
 
     /**
      * {@code minecraft:powder_snow_bucket}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POWDER_SNOW_BUCKET = VanillaTypes.item("minecraft:powder_snow_bucket");
 
     /**
      * {@code minecraft:powered_comparator}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POWERED_COMPARATOR = VanillaTypes.item("minecraft:powered_comparator");
 
     /**
      * {@code minecraft:powered_repeater}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType POWERED_REPEATER = VanillaTypes.item("minecraft:powered_repeater");
 
     /**
      * {@code minecraft:prismarine}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PRISMARINE = VanillaTypes.item("minecraft:prismarine");
 
     /**
      * {@code minecraft:prismarine_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PRISMARINE_BRICKS = VanillaTypes.item("minecraft:prismarine_bricks");
 
     /**
      * {@code minecraft:prismarine_bricks_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PRISMARINE_BRICKS_STAIRS = VanillaTypes.item("minecraft:prismarine_bricks_stairs");
 
     /**
      * {@code minecraft:prismarine_brick_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PRISMARINE_BRICK_DOUBLE_SLAB = VanillaTypes.item("minecraft:prismarine_brick_double_slab");
 
     /**
      * {@code minecraft:prismarine_brick_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PRISMARINE_BRICK_SLAB = VanillaTypes.item("minecraft:prismarine_brick_slab");
 
     /**
      * {@code minecraft:prismarine_crystals}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PRISMARINE_CRYSTALS = VanillaTypes.item("minecraft:prismarine_crystals");
 
     /**
      * {@code minecraft:prismarine_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PRISMARINE_DOUBLE_SLAB = VanillaTypes.item("minecraft:prismarine_double_slab");
 
     /**
      * {@code minecraft:prismarine_shard}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PRISMARINE_SHARD = VanillaTypes.item("minecraft:prismarine_shard");
 
     /**
      * {@code minecraft:prismarine_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PRISMARINE_SLAB = VanillaTypes.item("minecraft:prismarine_slab");
 
     /**
      * {@code minecraft:prismarine_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PRISMARINE_STAIRS = VanillaTypes.item("minecraft:prismarine_stairs");
 
     /**
      * {@code minecraft:prismarine_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PRISMARINE_WALL = VanillaTypes.item("minecraft:prismarine_wall");
 
     /**
      * {@code minecraft:prize_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PRIZE_POTTERY_SHERD = VanillaTypes.item("minecraft:prize_pottery_sherd");
 
     /**
      * {@code minecraft:pufferfish}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PUFFERFISH = VanillaTypes.item("minecraft:pufferfish");
 
     /**
      * {@code minecraft:pufferfish_bucket}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PUFFERFISH_BUCKET = VanillaTypes.item("minecraft:pufferfish_bucket");
 
     /**
      * {@code minecraft:pufferfish_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PUFFERFISH_SPAWN_EGG = VanillaTypes.item("minecraft:pufferfish_spawn_egg");
 
     /**
      * {@code minecraft:pumpkin}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PUMPKIN = VanillaTypes.item("minecraft:pumpkin");
 
     /**
      * {@code minecraft:pumpkin_pie}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PUMPKIN_PIE = VanillaTypes.item("minecraft:pumpkin_pie");
 
     /**
      * {@code minecraft:pumpkin_seeds}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PUMPKIN_SEEDS = VanillaTypes.item("minecraft:pumpkin_seeds");
 
     /**
      * {@code minecraft:pumpkin_stem}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PUMPKIN_STEM = VanillaTypes.item("minecraft:pumpkin_stem");
 
     /**
      * {@code minecraft:purple_bundle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPLE_BUNDLE = VanillaTypes.item("minecraft:purple_bundle");
 
     /**
      * {@code minecraft:purple_candle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPLE_CANDLE = VanillaTypes.item("minecraft:purple_candle");
 
     /**
      * {@code minecraft:purple_candle_cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPLE_CANDLE_CAKE = VanillaTypes.item("minecraft:purple_candle_cake");
 
     /**
      * {@code minecraft:purple_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPLE_CARPET = VanillaTypes.item("minecraft:purple_carpet");
 
     /**
      * {@code minecraft:purple_concrete}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPLE_CONCRETE = VanillaTypes.item("minecraft:purple_concrete");
 
     /**
      * {@code minecraft:purple_concrete_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType PURPLE_CONCRETE_DOUBLE_SLAB = VanillaTypes.item("minecraft:purple_concrete_double_slab");
 
     /**
      * {@code minecraft:purple_concrete_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPLE_CONCRETE_POWDER = VanillaTypes.item("minecraft:purple_concrete_powder");
 
     /**
      * {@code minecraft:purple_concrete_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType PURPLE_CONCRETE_SLAB = VanillaTypes.item("minecraft:purple_concrete_slab");
 
     /**
      * {@code minecraft:purple_concrete_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType PURPLE_CONCRETE_STAIRS = VanillaTypes.item("minecraft:purple_concrete_stairs");
 
     /**
      * {@code minecraft:purple_cushion}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType PURPLE_CUSHION = VanillaTypes.item("minecraft:purple_cushion");
 
     /**
      * {@code minecraft:purple_dye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPLE_DYE = VanillaTypes.item("minecraft:purple_dye");
 
     /**
      * {@code minecraft:purple_glazed_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPLE_GLAZED_TERRACOTTA = VanillaTypes.item("minecraft:purple_glazed_terracotta");
 
     /**
      * {@code minecraft:purple_harness}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPLE_HARNESS = VanillaTypes.item("minecraft:purple_harness");
 
     /**
      * {@code minecraft:purple_shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPLE_SHULKER_BOX = VanillaTypes.item("minecraft:purple_shulker_box");
 
     /**
      * {@code minecraft:purple_stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPLE_STAINED_GLASS = VanillaTypes.item("minecraft:purple_stained_glass");
 
     /**
      * {@code minecraft:purple_stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPLE_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:purple_stained_glass_pane");
 
     /**
      * {@code minecraft:purple_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPLE_TERRACOTTA = VanillaTypes.item("minecraft:purple_terracotta");
 
     /**
      * {@code minecraft:purple_wool}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPLE_WOOL = VanillaTypes.item("minecraft:purple_wool");
 
     /**
      * {@code minecraft:purple_wool_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType PURPLE_WOOL_DOUBLE_SLAB = VanillaTypes.item("minecraft:purple_wool_double_slab");
 
     /**
      * {@code minecraft:purple_wool_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType PURPLE_WOOL_SLAB = VanillaTypes.item("minecraft:purple_wool_slab");
 
     /**
      * {@code minecraft:purple_wool_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType PURPLE_WOOL_STAIRS = VanillaTypes.item("minecraft:purple_wool_stairs");
 
     /**
      * {@code minecraft:purpur_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPUR_BLOCK = VanillaTypes.item("minecraft:purpur_block");
 
     /**
      * {@code minecraft:purpur_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPUR_DOUBLE_SLAB = VanillaTypes.item("minecraft:purpur_double_slab");
 
     /**
      * {@code minecraft:purpur_pillar}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPUR_PILLAR = VanillaTypes.item("minecraft:purpur_pillar");
 
     /**
      * {@code minecraft:purpur_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPUR_SLAB = VanillaTypes.item("minecraft:purpur_slab");
 
     /**
      * {@code minecraft:purpur_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType PURPUR_STAIRS = VanillaTypes.item("minecraft:purpur_stairs");
 
     /**
      * {@code minecraft:quartz}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType QUARTZ = VanillaTypes.item("minecraft:quartz");
 
     /**
      * {@code minecraft:quartz_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType QUARTZ_BLOCK = VanillaTypes.item("minecraft:quartz_block");
 
     /**
      * {@code minecraft:quartz_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType QUARTZ_BRICKS = VanillaTypes.item("minecraft:quartz_bricks");
 
     /**
      * {@code minecraft:quartz_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType QUARTZ_DOUBLE_SLAB = VanillaTypes.item("minecraft:quartz_double_slab");
 
     /**
      * {@code minecraft:quartz_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType QUARTZ_ORE = VanillaTypes.item("minecraft:quartz_ore");
 
     /**
      * {@code minecraft:quartz_pillar}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType QUARTZ_PILLAR = VanillaTypes.item("minecraft:quartz_pillar");
 
     /**
      * {@code minecraft:quartz_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType QUARTZ_SLAB = VanillaTypes.item("minecraft:quartz_slab");
 
     /**
      * {@code minecraft:quartz_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType QUARTZ_STAIRS = VanillaTypes.item("minecraft:quartz_stairs");
 
     /**
      * {@code minecraft:rabbit}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RABBIT = VanillaTypes.item("minecraft:rabbit");
 
     /**
      * {@code minecraft:rabbit_foot}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RABBIT_FOOT = VanillaTypes.item("minecraft:rabbit_foot");
 
     /**
      * {@code minecraft:rabbit_hide}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RABBIT_HIDE = VanillaTypes.item("minecraft:rabbit_hide");
 
     /**
      * {@code minecraft:rabbit_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RABBIT_SPAWN_EGG = VanillaTypes.item("minecraft:rabbit_spawn_egg");
 
     /**
      * {@code minecraft:rabbit_stew}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RABBIT_STEW = VanillaTypes.item("minecraft:rabbit_stew");
 
     /**
      * {@code minecraft:rail}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RAIL = VanillaTypes.item("minecraft:rail");
 
     /**
      * {@code minecraft:raiser_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RAISER_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:raiser_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:rapid_fertilizer}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType RAPID_FERTILIZER = VanillaTypes.item("minecraft:rapid_fertilizer");
+    @Education
+    public static final BedrockItemType RAPID_FERTILIZER = VanillaTypes.educationItem("minecraft:rapid_fertilizer");
 
     /**
      * {@code minecraft:ravager_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RAVAGER_SPAWN_EGG = VanillaTypes.item("minecraft:ravager_spawn_egg");
 
     /**
      * {@code minecraft:raw_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RAW_COPPER = VanillaTypes.item("minecraft:raw_copper");
 
     /**
      * {@code minecraft:raw_copper_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RAW_COPPER_BLOCK = VanillaTypes.item("minecraft:raw_copper_block");
 
     /**
      * {@code minecraft:raw_gold}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RAW_GOLD = VanillaTypes.item("minecraft:raw_gold");
 
     /**
      * {@code minecraft:raw_gold_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RAW_GOLD_BLOCK = VanillaTypes.item("minecraft:raw_gold_block");
 
     /**
      * {@code minecraft:raw_iron}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RAW_IRON = VanillaTypes.item("minecraft:raw_iron");
 
     /**
      * {@code minecraft:raw_iron_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RAW_IRON_BLOCK = VanillaTypes.item("minecraft:raw_iron_block");
 
     /**
      * {@code minecraft:recovery_compass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RECOVERY_COMPASS = VanillaTypes.item("minecraft:recovery_compass");
 
     /**
      * {@code minecraft:redstone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType REDSTONE = VanillaTypes.item("minecraft:redstone");
 
     /**
      * {@code minecraft:redstone_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType REDSTONE_BLOCK = VanillaTypes.item("minecraft:redstone_block");
 
     /**
      * {@code minecraft:redstone_lamp}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType REDSTONE_LAMP = VanillaTypes.item("minecraft:redstone_lamp");
 
     /**
      * {@code minecraft:redstone_ore}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType REDSTONE_ORE = VanillaTypes.item("minecraft:redstone_ore");
 
     /**
      * {@code minecraft:redstone_torch}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType REDSTONE_TORCH = VanillaTypes.item("minecraft:redstone_torch");
 
     /**
      * {@code minecraft:redstone_wire}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType REDSTONE_WIRE = VanillaTypes.item("minecraft:redstone_wire");
 
     /**
      * {@code minecraft:red_bundle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_BUNDLE = VanillaTypes.item("minecraft:red_bundle");
 
     /**
      * {@code minecraft:red_candle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_CANDLE = VanillaTypes.item("minecraft:red_candle");
 
     /**
      * {@code minecraft:red_candle_cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_CANDLE_CAKE = VanillaTypes.item("minecraft:red_candle_cake");
 
     /**
      * {@code minecraft:red_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_CARPET = VanillaTypes.item("minecraft:red_carpet");
 
     /**
      * {@code minecraft:red_concrete}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_CONCRETE = VanillaTypes.item("minecraft:red_concrete");
 
     /**
      * {@code minecraft:red_concrete_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType RED_CONCRETE_DOUBLE_SLAB = VanillaTypes.item("minecraft:red_concrete_double_slab");
 
     /**
      * {@code minecraft:red_concrete_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_CONCRETE_POWDER = VanillaTypes.item("minecraft:red_concrete_powder");
 
     /**
      * {@code minecraft:red_concrete_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType RED_CONCRETE_SLAB = VanillaTypes.item("minecraft:red_concrete_slab");
 
     /**
      * {@code minecraft:red_concrete_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType RED_CONCRETE_STAIRS = VanillaTypes.item("minecraft:red_concrete_stairs");
 
     /**
      * {@code minecraft:red_cushion}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType RED_CUSHION = VanillaTypes.item("minecraft:red_cushion");
 
     /**
      * {@code minecraft:red_dye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_DYE = VanillaTypes.item("minecraft:red_dye");
 
     /**
      * {@code minecraft:red_flower}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_FLOWER = VanillaTypes.item("minecraft:red_flower");
 
     /**
      * {@code minecraft:red_glazed_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_GLAZED_TERRACOTTA = VanillaTypes.item("minecraft:red_glazed_terracotta");
 
     /**
      * {@code minecraft:red_harness}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_HARNESS = VanillaTypes.item("minecraft:red_harness");
 
     /**
      * {@code minecraft:red_mushroom}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_MUSHROOM = VanillaTypes.item("minecraft:red_mushroom");
 
     /**
      * {@code minecraft:red_mushroom_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_MUSHROOM_BLOCK = VanillaTypes.item("minecraft:red_mushroom_block");
 
     /**
      * {@code minecraft:red_nether_brick}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_NETHER_BRICK = VanillaTypes.item("minecraft:red_nether_brick");
 
     /**
      * {@code minecraft:red_nether_brick_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_NETHER_BRICK_DOUBLE_SLAB = VanillaTypes.item("minecraft:red_nether_brick_double_slab");
 
     /**
      * {@code minecraft:red_nether_brick_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_NETHER_BRICK_SLAB = VanillaTypes.item("minecraft:red_nether_brick_slab");
 
     /**
      * {@code minecraft:red_nether_brick_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_NETHER_BRICK_STAIRS = VanillaTypes.item("minecraft:red_nether_brick_stairs");
 
     /**
      * {@code minecraft:red_nether_brick_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_NETHER_BRICK_WALL = VanillaTypes.item("minecraft:red_nether_brick_wall");
 
     /**
      * {@code minecraft:red_poplar_leaves}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType RED_POPLAR_LEAVES = VanillaTypes.item("minecraft:red_poplar_leaves");
 
     /**
      * {@code minecraft:red_sand}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_SAND = VanillaTypes.item("minecraft:red_sand");
 
     /**
      * {@code minecraft:red_sandstone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_SANDSTONE = VanillaTypes.item("minecraft:red_sandstone");
 
     /**
      * {@code minecraft:red_sandstone_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_SANDSTONE_DOUBLE_SLAB = VanillaTypes.item("minecraft:red_sandstone_double_slab");
 
     /**
      * {@code minecraft:red_sandstone_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_SANDSTONE_SLAB = VanillaTypes.item("minecraft:red_sandstone_slab");
 
     /**
      * {@code minecraft:red_sandstone_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_SANDSTONE_STAIRS = VanillaTypes.item("minecraft:red_sandstone_stairs");
 
     /**
      * {@code minecraft:red_sandstone_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_SANDSTONE_WALL = VanillaTypes.item("minecraft:red_sandstone_wall");
 
     /**
      * {@code minecraft:red_shrub}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType RED_SHRUB = VanillaTypes.item("minecraft:red_shrub");
 
     /**
      * {@code minecraft:red_shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_SHULKER_BOX = VanillaTypes.item("minecraft:red_shulker_box");
 
     /**
      * {@code minecraft:red_stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_STAINED_GLASS = VanillaTypes.item("minecraft:red_stained_glass");
 
     /**
      * {@code minecraft:red_stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:red_stained_glass_pane");
 
     /**
      * {@code minecraft:red_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_TERRACOTTA = VanillaTypes.item("minecraft:red_terracotta");
 
     /**
      * {@code minecraft:red_tulip}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_TULIP = VanillaTypes.item("minecraft:red_tulip");
 
     /**
      * {@code minecraft:red_wool}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RED_WOOL = VanillaTypes.item("minecraft:red_wool");
 
     /**
      * {@code minecraft:red_wool_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType RED_WOOL_DOUBLE_SLAB = VanillaTypes.item("minecraft:red_wool_double_slab");
 
     /**
      * {@code minecraft:red_wool_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType RED_WOOL_SLAB = VanillaTypes.item("minecraft:red_wool_slab");
 
     /**
      * {@code minecraft:red_wool_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType RED_WOOL_STAIRS = VanillaTypes.item("minecraft:red_wool_stairs");
 
     /**
      * {@code minecraft:reinforced_deepslate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType REINFORCED_DEEPSLATE = VanillaTypes.item("minecraft:reinforced_deepslate");
 
     /**
      * {@code minecraft:repeater}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType REPEATER = VanillaTypes.item("minecraft:repeater");
 
     /**
      * {@code minecraft:repeating_command_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType REPEATING_COMMAND_BLOCK = VanillaTypes.item("minecraft:repeating_command_block");
 
     /**
      * {@code minecraft:reserved6}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RESERVED6 = VanillaTypes.item("minecraft:reserved6");
 
     /**
      * {@code minecraft:resin_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RESIN_BLOCK = VanillaTypes.item("minecraft:resin_block");
 
     /**
      * {@code minecraft:resin_brick}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RESIN_BRICK = VanillaTypes.item("minecraft:resin_brick");
 
     /**
      * {@code minecraft:resin_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RESIN_BRICKS = VanillaTypes.item("minecraft:resin_bricks");
 
     /**
      * {@code minecraft:resin_brick_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RESIN_BRICK_DOUBLE_SLAB = VanillaTypes.item("minecraft:resin_brick_double_slab");
 
     /**
      * {@code minecraft:resin_brick_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RESIN_BRICK_SLAB = VanillaTypes.item("minecraft:resin_brick_slab");
 
     /**
      * {@code minecraft:resin_brick_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RESIN_BRICK_STAIRS = VanillaTypes.item("minecraft:resin_brick_stairs");
 
     /**
      * {@code minecraft:resin_brick_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RESIN_BRICK_WALL = VanillaTypes.item("minecraft:resin_brick_wall");
 
     /**
      * {@code minecraft:resin_clump}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RESIN_CLUMP = VanillaTypes.item("minecraft:resin_clump");
 
     /**
      * {@code minecraft:respawn_anchor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RESPAWN_ANCHOR = VanillaTypes.item("minecraft:respawn_anchor");
 
     /**
      * {@code minecraft:rib_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType RIB_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:rib_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:rose_bush}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ROSE_BUSH = VanillaTypes.item("minecraft:rose_bush");
 
     /**
      * {@code minecraft:rotten_flesh}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ROTTEN_FLESH = VanillaTypes.item("minecraft:rotten_flesh");
 
     /**
      * {@code minecraft:saddle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SADDLE = VanillaTypes.item("minecraft:saddle");
 
     /**
      * {@code minecraft:salmon}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SALMON = VanillaTypes.item("minecraft:salmon");
 
     /**
      * {@code minecraft:salmon_bucket}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SALMON_BUCKET = VanillaTypes.item("minecraft:salmon_bucket");
 
     /**
      * {@code minecraft:salmon_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SALMON_SPAWN_EGG = VanillaTypes.item("minecraft:salmon_spawn_egg");
 
     /**
      * {@code minecraft:sand}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SAND = VanillaTypes.item("minecraft:sand");
 
     /**
      * {@code minecraft:sandstone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SANDSTONE = VanillaTypes.item("minecraft:sandstone");
 
     /**
      * {@code minecraft:sandstone_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SANDSTONE_DOUBLE_SLAB = VanillaTypes.item("minecraft:sandstone_double_slab");
 
     /**
      * {@code minecraft:sandstone_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SANDSTONE_SLAB = VanillaTypes.item("minecraft:sandstone_slab");
 
     /**
      * {@code minecraft:sandstone_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SANDSTONE_STAIRS = VanillaTypes.item("minecraft:sandstone_stairs");
 
     /**
      * {@code minecraft:sandstone_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SANDSTONE_WALL = VanillaTypes.item("minecraft:sandstone_wall");
 
     /**
      * {@code minecraft:sapling}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SAPLING = VanillaTypes.item("minecraft:sapling");
 
     /**
      * {@code minecraft:scaffolding}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SCAFFOLDING = VanillaTypes.item("minecraft:scaffolding");
 
     /**
      * {@code minecraft:scrape_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SCRAPE_POTTERY_SHERD = VanillaTypes.item("minecraft:scrape_pottery_sherd");
 
     /**
      * {@code minecraft:sculk}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SCULK = VanillaTypes.item("minecraft:sculk");
 
     /**
      * {@code minecraft:sculk_catalyst}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SCULK_CATALYST = VanillaTypes.item("minecraft:sculk_catalyst");
 
     /**
      * {@code minecraft:sculk_sensor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SCULK_SENSOR = VanillaTypes.item("minecraft:sculk_sensor");
 
     /**
      * {@code minecraft:sculk_shrieker}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SCULK_SHRIEKER = VanillaTypes.item("minecraft:sculk_shrieker");
 
     /**
      * {@code minecraft:sculk_vein}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SCULK_VEIN = VanillaTypes.item("minecraft:sculk_vein");
 
     /**
      * {@code minecraft:seagrass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SEAGRASS = VanillaTypes.item("minecraft:seagrass");
 
     /**
      * {@code minecraft:sea_lantern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SEA_LANTERN = VanillaTypes.item("minecraft:sea_lantern");
 
     /**
      * {@code minecraft:sea_pickle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SEA_PICKLE = VanillaTypes.item("minecraft:sea_pickle");
 
     /**
      * {@code minecraft:sentry_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:sentry_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:shaper_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SHAPER_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:shaper_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:sheaf_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SHEAF_POTTERY_SHERD = VanillaTypes.item("minecraft:sheaf_pottery_sherd");
 
     /**
      * {@code minecraft:shears}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SHEARS = VanillaTypes.item("minecraft:shears");
 
     /**
      * {@code minecraft:sheep_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SHEEP_SPAWN_EGG = VanillaTypes.item("minecraft:sheep_spawn_egg");
 
     /**
      * {@code minecraft:shelf_mushroom}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType SHELF_MUSHROOM = VanillaTypes.item("minecraft:shelf_mushroom");
 
     /**
      * {@code minecraft:shelter_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SHELTER_POTTERY_SHERD = VanillaTypes.item("minecraft:shelter_pottery_sherd");
 
     /**
      * {@code minecraft:shield}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SHIELD = VanillaTypes.item("minecraft:shield");
 
     /**
      * {@code minecraft:short_dry_grass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SHORT_DRY_GRASS = VanillaTypes.item("minecraft:short_dry_grass");
 
     /**
      * {@code minecraft:short_grass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SHORT_GRASS = VanillaTypes.item("minecraft:short_grass");
 
     /**
      * {@code minecraft:shroomlight}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SHROOMLIGHT = VanillaTypes.item("minecraft:shroomlight");
 
     /**
      * {@code minecraft:shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SHULKER_BOX = VanillaTypes.item("minecraft:shulker_box");
 
     /**
      * {@code minecraft:shulker_shell}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SHULKER_SHELL = VanillaTypes.item("minecraft:shulker_shell");
 
     /**
      * {@code minecraft:shulker_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SHULKER_SPAWN_EGG = VanillaTypes.item("minecraft:shulker_spawn_egg");
 
     /**
      * {@code minecraft:silence_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:silence_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:silverfish_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SILVERFISH_SPAWN_EGG = VanillaTypes.item("minecraft:silverfish_spawn_egg");
 
     /**
      * {@code minecraft:silver_glazed_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SILVER_GLAZED_TERRACOTTA = VanillaTypes.item("minecraft:silver_glazed_terracotta");
 
     /**
      * {@code minecraft:skeleton_horse_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SKELETON_HORSE_SPAWN_EGG = VanillaTypes.item("minecraft:skeleton_horse_spawn_egg");
 
     /**
      * {@code minecraft:skeleton_skull}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SKELETON_SKULL = VanillaTypes.item("minecraft:skeleton_skull");
 
     /**
      * {@code minecraft:skeleton_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SKELETON_SPAWN_EGG = VanillaTypes.item("minecraft:skeleton_spawn_egg");
 
     /**
      * {@code minecraft:skull}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SKULL = VanillaTypes.item("minecraft:skull");
 
     /**
      * {@code minecraft:skull_banner_pattern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SKULL_BANNER_PATTERN = VanillaTypes.item("minecraft:skull_banner_pattern");
 
     /**
      * {@code minecraft:skull_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SKULL_POTTERY_SHERD = VanillaTypes.item("minecraft:skull_pottery_sherd");
 
     /**
      * {@code minecraft:slime}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SLIME = VanillaTypes.item("minecraft:slime");
 
     /**
      * {@code minecraft:slime_ball}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SLIME_BALL = VanillaTypes.item("minecraft:slime_ball");
 
     /**
      * {@code minecraft:slime_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SLIME_SPAWN_EGG = VanillaTypes.item("minecraft:slime_spawn_egg");
 
     /**
      * {@code minecraft:small_amethyst_bud}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMALL_AMETHYST_BUD = VanillaTypes.item("minecraft:small_amethyst_bud");
 
     /**
      * {@code minecraft:small_dripleaf_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMALL_DRIPLEAF_BLOCK = VanillaTypes.item("minecraft:small_dripleaf_block");
 
     /**
      * {@code minecraft:smithing_table}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMITHING_TABLE = VanillaTypes.item("minecraft:smithing_table");
 
     /**
      * {@code minecraft:smoker}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMOKER = VanillaTypes.item("minecraft:smoker");
 
     /**
      * {@code minecraft:smooth_basalt}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMOOTH_BASALT = VanillaTypes.item("minecraft:smooth_basalt");
 
     /**
      * {@code minecraft:smooth_quartz}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMOOTH_QUARTZ = VanillaTypes.item("minecraft:smooth_quartz");
 
     /**
      * {@code minecraft:smooth_quartz_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMOOTH_QUARTZ_DOUBLE_SLAB = VanillaTypes.item("minecraft:smooth_quartz_double_slab");
 
     /**
      * {@code minecraft:smooth_quartz_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMOOTH_QUARTZ_SLAB = VanillaTypes.item("minecraft:smooth_quartz_slab");
 
     /**
      * {@code minecraft:smooth_quartz_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMOOTH_QUARTZ_STAIRS = VanillaTypes.item("minecraft:smooth_quartz_stairs");
 
     /**
      * {@code minecraft:smooth_red_sandstone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMOOTH_RED_SANDSTONE = VanillaTypes.item("minecraft:smooth_red_sandstone");
 
     /**
      * {@code minecraft:smooth_red_sandstone_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMOOTH_RED_SANDSTONE_DOUBLE_SLAB = VanillaTypes.item("minecraft:smooth_red_sandstone_double_slab");
 
     /**
      * {@code minecraft:smooth_red_sandstone_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMOOTH_RED_SANDSTONE_SLAB = VanillaTypes.item("minecraft:smooth_red_sandstone_slab");
 
     /**
      * {@code minecraft:smooth_red_sandstone_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMOOTH_RED_SANDSTONE_STAIRS = VanillaTypes.item("minecraft:smooth_red_sandstone_stairs");
 
     /**
      * {@code minecraft:smooth_sandstone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMOOTH_SANDSTONE = VanillaTypes.item("minecraft:smooth_sandstone");
 
     /**
      * {@code minecraft:smooth_sandstone_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMOOTH_SANDSTONE_DOUBLE_SLAB = VanillaTypes.item("minecraft:smooth_sandstone_double_slab");
 
     /**
      * {@code minecraft:smooth_sandstone_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMOOTH_SANDSTONE_SLAB = VanillaTypes.item("minecraft:smooth_sandstone_slab");
 
     /**
      * {@code minecraft:smooth_sandstone_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMOOTH_SANDSTONE_STAIRS = VanillaTypes.item("minecraft:smooth_sandstone_stairs");
 
     /**
      * {@code minecraft:smooth_stone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMOOTH_STONE = VanillaTypes.item("minecraft:smooth_stone");
 
     /**
      * {@code minecraft:smooth_stone_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMOOTH_STONE_DOUBLE_SLAB = VanillaTypes.item("minecraft:smooth_stone_double_slab");
 
     /**
      * {@code minecraft:smooth_stone_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SMOOTH_STONE_SLAB = VanillaTypes.item("minecraft:smooth_stone_slab");
 
     /**
      * {@code minecraft:sniffer_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SNIFFER_EGG = VanillaTypes.item("minecraft:sniffer_egg");
 
     /**
      * {@code minecraft:sniffer_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SNIFFER_SPAWN_EGG = VanillaTypes.item("minecraft:sniffer_spawn_egg");
 
     /**
      * {@code minecraft:snort_pottery_sherd}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SNORT_POTTERY_SHERD = VanillaTypes.item("minecraft:snort_pottery_sherd");
 
     /**
      * {@code minecraft:snout_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:snout_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:snow}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SNOW = VanillaTypes.item("minecraft:snow");
 
     /**
      * {@code minecraft:snowball}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SNOWBALL = VanillaTypes.item("minecraft:snowball");
 
     /**
      * {@code minecraft:snow_golem_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SNOW_GOLEM_SPAWN_EGG = VanillaTypes.item("minecraft:snow_golem_spawn_egg");
 
     /**
      * {@code minecraft:snow_layer}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SNOW_LAYER = VanillaTypes.item("minecraft:snow_layer");
 
     /**
      * {@code minecraft:soul_campfire}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SOUL_CAMPFIRE = VanillaTypes.item("minecraft:soul_campfire");
 
     /**
      * {@code minecraft:soul_fire}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SOUL_FIRE = VanillaTypes.item("minecraft:soul_fire");
 
     /**
      * {@code minecraft:soul_lantern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SOUL_LANTERN = VanillaTypes.item("minecraft:soul_lantern");
 
     /**
      * {@code minecraft:soul_sand}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SOUL_SAND = VanillaTypes.item("minecraft:soul_sand");
 
     /**
      * {@code minecraft:soul_soil}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SOUL_SOIL = VanillaTypes.item("minecraft:soul_soil");
 
     /**
      * {@code minecraft:soul_torch}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SOUL_TORCH = VanillaTypes.item("minecraft:soul_torch");
 
     /**
      * {@code minecraft:sparkler}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType SPARKLER = VanillaTypes.item("minecraft:sparkler");
+    @Education
+    public static final BedrockItemType SPARKLER = VanillaTypes.educationItem("minecraft:sparkler");
 
     /**
      * {@code minecraft:spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPAWN_EGG = VanillaTypes.item("minecraft:spawn_egg");
 
     /**
      * {@code minecraft:spider_eye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPIDER_EYE = VanillaTypes.item("minecraft:spider_eye");
 
     /**
      * {@code minecraft:spider_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPIDER_SPAWN_EGG = VanillaTypes.item("minecraft:spider_spawn_egg");
 
     /**
      * {@code minecraft:spire_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:spire_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:splash_potion}: 46 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPLASH_POTION = VanillaTypes.item("minecraft:splash_potion");
 
     /**
      * {@code minecraft:sponge}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPONGE = VanillaTypes.item("minecraft:sponge");
 
     /**
      * {@code minecraft:spore_blossom}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPORE_BLOSSOM = VanillaTypes.item("minecraft:spore_blossom");
 
     /**
      * {@code minecraft:spruce_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_BOAT = VanillaTypes.item("minecraft:spruce_boat");
 
     /**
      * {@code minecraft:spruce_button}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_BUTTON = VanillaTypes.item("minecraft:spruce_button");
 
     /**
      * {@code minecraft:spruce_chest_boat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_CHEST_BOAT = VanillaTypes.item("minecraft:spruce_chest_boat");
 
     /**
      * {@code minecraft:spruce_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_DOOR = VanillaTypes.item("minecraft:spruce_door");
 
     /**
      * {@code minecraft:spruce_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_DOUBLE_SLAB = VanillaTypes.item("minecraft:spruce_double_slab");
 
     /**
      * {@code minecraft:spruce_fence}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_FENCE = VanillaTypes.item("minecraft:spruce_fence");
 
     /**
      * {@code minecraft:spruce_fence_gate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_FENCE_GATE = VanillaTypes.item("minecraft:spruce_fence_gate");
 
     /**
      * {@code minecraft:spruce_hanging_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_HANGING_SIGN = VanillaTypes.item("minecraft:spruce_hanging_sign");
 
     /**
      * {@code minecraft:spruce_leaves}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_LEAVES = VanillaTypes.item("minecraft:spruce_leaves");
 
     /**
      * {@code minecraft:spruce_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_LOG = VanillaTypes.item("minecraft:spruce_log");
 
     /**
      * {@code minecraft:spruce_planks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_PLANKS = VanillaTypes.item("minecraft:spruce_planks");
 
     /**
      * {@code minecraft:spruce_pressure_plate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_PRESSURE_PLATE = VanillaTypes.item("minecraft:spruce_pressure_plate");
 
     /**
      * {@code minecraft:spruce_sapling}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_SAPLING = VanillaTypes.item("minecraft:spruce_sapling");
 
     /**
      * {@code minecraft:spruce_shelf}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_SHELF = VanillaTypes.item("minecraft:spruce_shelf");
 
     /**
      * {@code minecraft:spruce_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_SIGN = VanillaTypes.item("minecraft:spruce_sign");
 
     /**
      * {@code minecraft:spruce_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_SLAB = VanillaTypes.item("minecraft:spruce_slab");
 
     /**
      * {@code minecraft:spruce_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_STAIRS = VanillaTypes.item("minecraft:spruce_stairs");
 
     /**
      * {@code minecraft:spruce_standing_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_STANDING_SIGN = VanillaTypes.item("minecraft:spruce_standing_sign");
 
     /**
      * {@code minecraft:spruce_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_TRAPDOOR = VanillaTypes.item("minecraft:spruce_trapdoor");
 
     /**
      * {@code minecraft:spruce_wall_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_WALL_SIGN = VanillaTypes.item("minecraft:spruce_wall_sign");
 
     /**
      * {@code minecraft:spruce_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPRUCE_WOOD = VanillaTypes.item("minecraft:spruce_wood");
 
     /**
      * {@code minecraft:spyglass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SPYGLASS = VanillaTypes.item("minecraft:spyglass");
 
     /**
      * {@code minecraft:squid_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SQUID_SPAWN_EGG = VanillaTypes.item("minecraft:squid_spawn_egg");
 
     /**
      * {@code minecraft:stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STAINED_GLASS = VanillaTypes.item("minecraft:stained_glass");
 
     /**
      * {@code minecraft:stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STAINED_GLASS_PANE = VanillaTypes.item("minecraft:stained_glass_pane");
 
     /**
      * {@code minecraft:stained_hardened_clay}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STAINED_HARDENED_CLAY = VanillaTypes.item("minecraft:stained_hardened_clay");
 
     /**
      * {@code minecraft:standing_banner}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STANDING_BANNER = VanillaTypes.item("minecraft:standing_banner");
 
     /**
      * {@code minecraft:standing_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STANDING_SIGN = VanillaTypes.item("minecraft:standing_sign");
 
     /**
      * {@code minecraft:stick}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STICK = VanillaTypes.item("minecraft:stick");
 
     /**
      * {@code minecraft:sticky_piston}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STICKY_PISTON = VanillaTypes.item("minecraft:sticky_piston");
 
     /**
      * {@code minecraft:sticky_piston_arm_collision}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STICKY_PISTON_ARM_COLLISION = VanillaTypes.item("minecraft:sticky_piston_arm_collision");
 
     /**
      * {@code minecraft:stone}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE = VanillaTypes.item("minecraft:stone");
 
     /**
      * {@code minecraft:stonebrick}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONEBRICK = VanillaTypes.item("minecraft:stonebrick");
 
     /**
      * {@code minecraft:stonecutter}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONECUTTER = VanillaTypes.item("minecraft:stonecutter");
 
     /**
      * {@code minecraft:stonecutter_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONECUTTER_BLOCK = VanillaTypes.item("minecraft:stonecutter_block");
 
     /**
      * {@code minecraft:stone_axe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_AXE = VanillaTypes.item("minecraft:stone_axe");
 
     /**
      * {@code minecraft:stone_block_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_BLOCK_SLAB = VanillaTypes.item("minecraft:stone_block_slab");
 
     /**
      * {@code minecraft:stone_block_slab2}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_BLOCK_SLAB2 = VanillaTypes.item("minecraft:stone_block_slab2");
 
     /**
      * {@code minecraft:stone_block_slab3}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_BLOCK_SLAB3 = VanillaTypes.item("minecraft:stone_block_slab3");
 
     /**
      * {@code minecraft:stone_block_slab4}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_BLOCK_SLAB4 = VanillaTypes.item("minecraft:stone_block_slab4");
 
     /**
      * {@code minecraft:stone_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_BRICKS = VanillaTypes.item("minecraft:stone_bricks");
 
     /**
      * {@code minecraft:stone_brick_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_BRICK_DOUBLE_SLAB = VanillaTypes.item("minecraft:stone_brick_double_slab");
 
     /**
      * {@code minecraft:stone_brick_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_BRICK_SLAB = VanillaTypes.item("minecraft:stone_brick_slab");
 
     /**
      * {@code minecraft:stone_brick_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_BRICK_STAIRS = VanillaTypes.item("minecraft:stone_brick_stairs");
 
     /**
      * {@code minecraft:stone_brick_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_BRICK_WALL = VanillaTypes.item("minecraft:stone_brick_wall");
 
     /**
      * {@code minecraft:stone_button}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_BUTTON = VanillaTypes.item("minecraft:stone_button");
 
     /**
      * {@code minecraft:stone_hoe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_HOE = VanillaTypes.item("minecraft:stone_hoe");
 
     /**
      * {@code minecraft:stone_pickaxe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_PICKAXE = VanillaTypes.item("minecraft:stone_pickaxe");
 
     /**
      * {@code minecraft:stone_pressure_plate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_PRESSURE_PLATE = VanillaTypes.item("minecraft:stone_pressure_plate");
 
     /**
      * {@code minecraft:stone_shovel}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_SHOVEL = VanillaTypes.item("minecraft:stone_shovel");
 
     /**
      * {@code minecraft:stone_spear}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_SPEAR = VanillaTypes.item("minecraft:stone_spear");
 
     /**
      * {@code minecraft:stone_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_STAIRS = VanillaTypes.item("minecraft:stone_stairs");
 
     /**
      * {@code minecraft:stone_sword}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STONE_SWORD = VanillaTypes.item("minecraft:stone_sword");
 
     /**
      * {@code minecraft:straw_bed}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType STRAW_BED = VanillaTypes.item("minecraft:straw_bed");
 
     /**
      * {@code minecraft:stray_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRAY_SPAWN_EGG = VanillaTypes.item("minecraft:stray_spawn_egg");
 
     /**
      * {@code minecraft:strider_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIDER_SPAWN_EGG = VanillaTypes.item("minecraft:strider_spawn_egg");
 
     /**
      * {@code minecraft:string}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRING = VanillaTypes.item("minecraft:string");
 
     /**
      * {@code minecraft:stripped_acacia_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_ACACIA_LOG = VanillaTypes.item("minecraft:stripped_acacia_log");
 
     /**
      * {@code minecraft:stripped_acacia_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_ACACIA_WOOD = VanillaTypes.item("minecraft:stripped_acacia_wood");
 
     /**
      * {@code minecraft:stripped_bamboo_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_BAMBOO_BLOCK = VanillaTypes.item("minecraft:stripped_bamboo_block");
 
     /**
      * {@code minecraft:stripped_birch_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_BIRCH_LOG = VanillaTypes.item("minecraft:stripped_birch_log");
 
     /**
      * {@code minecraft:stripped_birch_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_BIRCH_WOOD = VanillaTypes.item("minecraft:stripped_birch_wood");
 
     /**
      * {@code minecraft:stripped_cherry_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_CHERRY_LOG = VanillaTypes.item("minecraft:stripped_cherry_log");
 
     /**
      * {@code minecraft:stripped_cherry_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_CHERRY_WOOD = VanillaTypes.item("minecraft:stripped_cherry_wood");
 
     /**
      * {@code minecraft:stripped_crimson_hyphae}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_CRIMSON_HYPHAE = VanillaTypes.item("minecraft:stripped_crimson_hyphae");
 
     /**
      * {@code minecraft:stripped_crimson_stem}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_CRIMSON_STEM = VanillaTypes.item("minecraft:stripped_crimson_stem");
 
     /**
      * {@code minecraft:stripped_dark_oak_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_DARK_OAK_LOG = VanillaTypes.item("minecraft:stripped_dark_oak_log");
 
     /**
      * {@code minecraft:stripped_dark_oak_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_DARK_OAK_WOOD = VanillaTypes.item("minecraft:stripped_dark_oak_wood");
 
     /**
      * {@code minecraft:stripped_jungle_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_JUNGLE_LOG = VanillaTypes.item("minecraft:stripped_jungle_log");
 
     /**
      * {@code minecraft:stripped_jungle_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_JUNGLE_WOOD = VanillaTypes.item("minecraft:stripped_jungle_wood");
 
     /**
      * {@code minecraft:stripped_mangrove_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_MANGROVE_LOG = VanillaTypes.item("minecraft:stripped_mangrove_log");
 
     /**
      * {@code minecraft:stripped_mangrove_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_MANGROVE_WOOD = VanillaTypes.item("minecraft:stripped_mangrove_wood");
 
     /**
      * {@code minecraft:stripped_oak_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_OAK_LOG = VanillaTypes.item("minecraft:stripped_oak_log");
 
     /**
      * {@code minecraft:stripped_oak_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_OAK_WOOD = VanillaTypes.item("minecraft:stripped_oak_wood");
 
     /**
      * {@code minecraft:stripped_pale_oak_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_PALE_OAK_LOG = VanillaTypes.item("minecraft:stripped_pale_oak_log");
 
     /**
      * {@code minecraft:stripped_pale_oak_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_PALE_OAK_WOOD = VanillaTypes.item("minecraft:stripped_pale_oak_wood");
 
     /**
      * {@code minecraft:stripped_poplar_log}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType STRIPPED_POPLAR_LOG = VanillaTypes.item("minecraft:stripped_poplar_log");
 
     /**
      * {@code minecraft:stripped_poplar_wood}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType STRIPPED_POPLAR_WOOD = VanillaTypes.item("minecraft:stripped_poplar_wood");
 
     /**
      * {@code minecraft:stripped_spruce_log}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_SPRUCE_LOG = VanillaTypes.item("minecraft:stripped_spruce_log");
 
     /**
      * {@code minecraft:stripped_spruce_wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_SPRUCE_WOOD = VanillaTypes.item("minecraft:stripped_spruce_wood");
 
     /**
      * {@code minecraft:stripped_warped_hyphae}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_WARPED_HYPHAE = VanillaTypes.item("minecraft:stripped_warped_hyphae");
 
     /**
      * {@code minecraft:stripped_warped_stem}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRIPPED_WARPED_STEM = VanillaTypes.item("minecraft:stripped_warped_stem");
 
     /**
      * {@code minecraft:structure_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRUCTURE_BLOCK = VanillaTypes.item("minecraft:structure_block");
 
     /**
      * {@code minecraft:structure_void}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType STRUCTURE_VOID = VanillaTypes.item("minecraft:structure_void");
 
     /**
      * {@code minecraft:sugar}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SUGAR = VanillaTypes.item("minecraft:sugar");
 
     /**
      * {@code minecraft:sugar_cane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SUGAR_CANE = VanillaTypes.item("minecraft:sugar_cane");
 
     /**
      * {@code minecraft:sulfur}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SULFUR = VanillaTypes.item("minecraft:sulfur");
 
     /**
      * {@code minecraft:sulfur_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SULFUR_BRICKS = VanillaTypes.item("minecraft:sulfur_bricks");
 
     /**
      * {@code minecraft:sulfur_brick_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SULFUR_BRICK_DOUBLE_SLAB = VanillaTypes.item("minecraft:sulfur_brick_double_slab");
 
     /**
      * {@code minecraft:sulfur_brick_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SULFUR_BRICK_SLAB = VanillaTypes.item("minecraft:sulfur_brick_slab");
 
     /**
      * {@code minecraft:sulfur_brick_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SULFUR_BRICK_STAIRS = VanillaTypes.item("minecraft:sulfur_brick_stairs");
 
     /**
      * {@code minecraft:sulfur_brick_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SULFUR_BRICK_WALL = VanillaTypes.item("minecraft:sulfur_brick_wall");
 
     /**
      * {@code minecraft:sulfur_cube_bucket}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SULFUR_CUBE_BUCKET = VanillaTypes.item("minecraft:sulfur_cube_bucket");
 
     /**
      * {@code minecraft:sulfur_cube_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SULFUR_CUBE_SPAWN_EGG = VanillaTypes.item("minecraft:sulfur_cube_spawn_egg");
 
     /**
      * {@code minecraft:sulfur_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SULFUR_DOUBLE_SLAB = VanillaTypes.item("minecraft:sulfur_double_slab");
 
     /**
      * {@code minecraft:sulfur_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SULFUR_SLAB = VanillaTypes.item("minecraft:sulfur_slab");
 
     /**
      * {@code minecraft:sulfur_spike}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SULFUR_SPIKE = VanillaTypes.item("minecraft:sulfur_spike");
 
     /**
      * {@code minecraft:sulfur_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SULFUR_STAIRS = VanillaTypes.item("minecraft:sulfur_stairs");
 
     /**
      * {@code minecraft:sulfur_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SULFUR_WALL = VanillaTypes.item("minecraft:sulfur_wall");
 
     /**
      * {@code minecraft:sunflower}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SUNFLOWER = VanillaTypes.item("minecraft:sunflower");
 
     /**
      * {@code minecraft:suspicious_gravel}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SUSPICIOUS_GRAVEL = VanillaTypes.item("minecraft:suspicious_gravel");
 
     /**
      * {@code minecraft:suspicious_sand}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SUSPICIOUS_SAND = VanillaTypes.item("minecraft:suspicious_sand");
 
     /**
      * {@code minecraft:suspicious_stew}: 12 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SUSPICIOUS_STEW = VanillaTypes.item("minecraft:suspicious_stew");
 
     /**
      * {@code minecraft:sweet_berries}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SWEET_BERRIES = VanillaTypes.item("minecraft:sweet_berries");
 
     /**
      * {@code minecraft:sweet_berry_bush}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType SWEET_BERRY_BUSH = VanillaTypes.item("minecraft:sweet_berry_bush");
 
     /**
      * {@code minecraft:tadpole_bucket}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TADPOLE_BUCKET = VanillaTypes.item("minecraft:tadpole_bucket");
 
     /**
      * {@code minecraft:tadpole_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TADPOLE_SPAWN_EGG = VanillaTypes.item("minecraft:tadpole_spawn_egg");
 
     /**
      * {@code minecraft:tallgrass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TALLGRASS = VanillaTypes.item("minecraft:tallgrass");
 
     /**
      * {@code minecraft:tall_dry_grass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TALL_DRY_GRASS = VanillaTypes.item("minecraft:tall_dry_grass");
 
     /**
      * {@code minecraft:tall_grass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TALL_GRASS = VanillaTypes.item("minecraft:tall_grass");
 
     /**
      * {@code minecraft:target}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TARGET = VanillaTypes.item("minecraft:target");
 
     /**
      * {@code minecraft:tide_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TIDE_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:tide_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:tinted_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TINTED_GLASS = VanillaTypes.item("minecraft:tinted_glass");
 
     /**
      * {@code minecraft:tnt}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TNT = VanillaTypes.item("minecraft:tnt");
 
     /**
      * {@code minecraft:tnt_minecart}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TNT_MINECART = VanillaTypes.item("minecraft:tnt_minecart");
 
     /**
      * {@code minecraft:torch}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TORCH = VanillaTypes.item("minecraft:torch");
 
     /**
      * {@code minecraft:torchflower}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TORCHFLOWER = VanillaTypes.item("minecraft:torchflower");
 
     /**
      * {@code minecraft:torchflower_crop}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TORCHFLOWER_CROP = VanillaTypes.item("minecraft:torchflower_crop");
 
     /**
      * {@code minecraft:torchflower_seeds}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TORCHFLOWER_SEEDS = VanillaTypes.item("minecraft:torchflower_seeds");
 
     /**
      * {@code minecraft:totem_of_undying}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TOTEM_OF_UNDYING = VanillaTypes.item("minecraft:totem_of_undying");
 
     /**
      * {@code minecraft:trader_llama_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TRADER_LLAMA_SPAWN_EGG = VanillaTypes.item("minecraft:trader_llama_spawn_egg");
 
     /**
      * {@code minecraft:trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TRAPDOOR = VanillaTypes.item("minecraft:trapdoor");
 
     /**
      * {@code minecraft:trapped_chest}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TRAPPED_CHEST = VanillaTypes.item("minecraft:trapped_chest");
 
     /**
      * {@code minecraft:trial_key}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TRIAL_KEY = VanillaTypes.item("minecraft:trial_key");
 
     /**
      * {@code minecraft:trial_spawner}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TRIAL_SPAWNER = VanillaTypes.item("minecraft:trial_spawner");
 
     /**
      * {@code minecraft:trident}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TRIDENT = VanillaTypes.item("minecraft:trident");
 
     /**
      * {@code minecraft:tripwire_hook}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TRIPWIRE_HOOK = VanillaTypes.item("minecraft:tripwire_hook");
 
     /**
      * {@code minecraft:trip_wire}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TRIP_WIRE = VanillaTypes.item("minecraft:trip_wire");
 
     /**
      * {@code minecraft:tropical_fish}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TROPICAL_FISH = VanillaTypes.item("minecraft:tropical_fish");
 
     /**
      * {@code minecraft:tropical_fish_bucket}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TROPICAL_FISH_BUCKET = VanillaTypes.item("minecraft:tropical_fish_bucket");
 
     /**
      * {@code minecraft:tropical_fish_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TROPICAL_FISH_SPAWN_EGG = VanillaTypes.item("minecraft:tropical_fish_spawn_egg");
 
     /**
      * {@code minecraft:tube_coral}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TUBE_CORAL = VanillaTypes.item("minecraft:tube_coral");
 
     /**
      * {@code minecraft:tube_coral_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TUBE_CORAL_BLOCK = VanillaTypes.item("minecraft:tube_coral_block");
 
     /**
      * {@code minecraft:tube_coral_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TUBE_CORAL_FAN = VanillaTypes.item("minecraft:tube_coral_fan");
 
     /**
      * {@code minecraft:tube_coral_wall_fan}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TUBE_CORAL_WALL_FAN = VanillaTypes.item("minecraft:tube_coral_wall_fan");
 
     /**
      * {@code minecraft:tuff}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TUFF = VanillaTypes.item("minecraft:tuff");
 
     /**
      * {@code minecraft:tuff_bricks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TUFF_BRICKS = VanillaTypes.item("minecraft:tuff_bricks");
 
     /**
      * {@code minecraft:tuff_brick_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TUFF_BRICK_DOUBLE_SLAB = VanillaTypes.item("minecraft:tuff_brick_double_slab");
 
     /**
      * {@code minecraft:tuff_brick_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TUFF_BRICK_SLAB = VanillaTypes.item("minecraft:tuff_brick_slab");
 
     /**
      * {@code minecraft:tuff_brick_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TUFF_BRICK_STAIRS = VanillaTypes.item("minecraft:tuff_brick_stairs");
 
     /**
      * {@code minecraft:tuff_brick_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TUFF_BRICK_WALL = VanillaTypes.item("minecraft:tuff_brick_wall");
 
     /**
      * {@code minecraft:tuff_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TUFF_DOUBLE_SLAB = VanillaTypes.item("minecraft:tuff_double_slab");
 
     /**
      * {@code minecraft:tuff_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TUFF_SLAB = VanillaTypes.item("minecraft:tuff_slab");
 
     /**
      * {@code minecraft:tuff_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TUFF_STAIRS = VanillaTypes.item("minecraft:tuff_stairs");
 
     /**
      * {@code minecraft:tuff_wall}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TUFF_WALL = VanillaTypes.item("minecraft:tuff_wall");
 
     /**
      * {@code minecraft:turtle_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TURTLE_EGG = VanillaTypes.item("minecraft:turtle_egg");
 
     /**
      * {@code minecraft:turtle_helmet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TURTLE_HELMET = VanillaTypes.item("minecraft:turtle_helmet");
 
     /**
      * {@code minecraft:turtle_scute}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TURTLE_SCUTE = VanillaTypes.item("minecraft:turtle_scute");
 
     /**
      * {@code minecraft:turtle_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TURTLE_SPAWN_EGG = VanillaTypes.item("minecraft:turtle_spawn_egg");
 
     /**
      * {@code minecraft:twisting_vines}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType TWISTING_VINES = VanillaTypes.item("minecraft:twisting_vines");
 
     /**
      * {@code minecraft:underwater_tnt}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType UNDERWATER_TNT = VanillaTypes.item("minecraft:underwater_tnt");
+    @Education
+    public static final BedrockItemType UNDERWATER_TNT = VanillaTypes.educationItem("minecraft:underwater_tnt");
 
     /**
      * {@code minecraft:underwater_torch}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockItemType UNDERWATER_TORCH = VanillaTypes.item("minecraft:underwater_torch");
+    @Education
+    public static final BedrockItemType UNDERWATER_TORCH = VanillaTypes.educationItem("minecraft:underwater_torch");
 
     /**
      * {@code minecraft:undyed_shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType UNDYED_SHULKER_BOX = VanillaTypes.item("minecraft:undyed_shulker_box");
 
     /**
      * {@code minecraft:unknown}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType UNKNOWN = VanillaTypes.item("minecraft:unknown");
 
     /**
      * {@code minecraft:unlit_redstone_torch}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType UNLIT_REDSTONE_TORCH = VanillaTypes.item("minecraft:unlit_redstone_torch");
 
     /**
      * {@code minecraft:unpowered_comparator}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType UNPOWERED_COMPARATOR = VanillaTypes.item("minecraft:unpowered_comparator");
 
     /**
      * {@code minecraft:unpowered_repeater}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType UNPOWERED_REPEATER = VanillaTypes.item("minecraft:unpowered_repeater");
 
     /**
      * {@code minecraft:vault}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType VAULT = VanillaTypes.item("minecraft:vault");
 
     /**
      * {@code minecraft:verdant_froglight}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType VERDANT_FROGLIGHT = VanillaTypes.item("minecraft:verdant_froglight");
 
     /**
      * {@code minecraft:vex_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType VEX_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:vex_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:vex_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType VEX_SPAWN_EGG = VanillaTypes.item("minecraft:vex_spawn_egg");
 
     /**
      * {@code minecraft:villager_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType VILLAGER_SPAWN_EGG = VanillaTypes.item("minecraft:villager_spawn_egg");
 
     /**
      * {@code minecraft:vindicator_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType VINDICATOR_SPAWN_EGG = VanillaTypes.item("minecraft:vindicator_spawn_egg");
 
     /**
      * {@code minecraft:vine}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType VINE = VanillaTypes.item("minecraft:vine");
 
     /**
      * {@code minecraft:wall_banner}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WALL_BANNER = VanillaTypes.item("minecraft:wall_banner");
 
     /**
      * {@code minecraft:wall_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WALL_SIGN = VanillaTypes.item("minecraft:wall_sign");
 
     /**
      * {@code minecraft:wandering_trader_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WANDERING_TRADER_SPAWN_EGG = VanillaTypes.item("minecraft:wandering_trader_spawn_egg");
 
     /**
      * {@code minecraft:warden_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARDEN_SPAWN_EGG = VanillaTypes.item("minecraft:warden_spawn_egg");
 
     /**
      * {@code minecraft:ward_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARD_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:ward_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:warped_button}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_BUTTON = VanillaTypes.item("minecraft:warped_button");
 
     /**
      * {@code minecraft:warped_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_DOOR = VanillaTypes.item("minecraft:warped_door");
 
     /**
      * {@code minecraft:warped_double_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_DOUBLE_SLAB = VanillaTypes.item("minecraft:warped_double_slab");
 
     /**
      * {@code minecraft:warped_fence}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_FENCE = VanillaTypes.item("minecraft:warped_fence");
 
     /**
      * {@code minecraft:warped_fence_gate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_FENCE_GATE = VanillaTypes.item("minecraft:warped_fence_gate");
 
     /**
      * {@code minecraft:warped_fungus}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_FUNGUS = VanillaTypes.item("minecraft:warped_fungus");
 
     /**
      * {@code minecraft:warped_fungus_on_a_stick}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_FUNGUS_ON_A_STICK = VanillaTypes.item("minecraft:warped_fungus_on_a_stick");
 
     /**
      * {@code minecraft:warped_hanging_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_HANGING_SIGN = VanillaTypes.item("minecraft:warped_hanging_sign");
 
     /**
      * {@code minecraft:warped_hyphae}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_HYPHAE = VanillaTypes.item("minecraft:warped_hyphae");
 
     /**
      * {@code minecraft:warped_nylium}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_NYLIUM = VanillaTypes.item("minecraft:warped_nylium");
 
     /**
      * {@code minecraft:warped_planks}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_PLANKS = VanillaTypes.item("minecraft:warped_planks");
 
     /**
      * {@code minecraft:warped_pressure_plate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_PRESSURE_PLATE = VanillaTypes.item("minecraft:warped_pressure_plate");
 
     /**
      * {@code minecraft:warped_roots}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_ROOTS = VanillaTypes.item("minecraft:warped_roots");
 
     /**
      * {@code minecraft:warped_shelf}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_SHELF = VanillaTypes.item("minecraft:warped_shelf");
 
     /**
      * {@code minecraft:warped_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_SIGN = VanillaTypes.item("minecraft:warped_sign");
 
     /**
      * {@code minecraft:warped_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_SLAB = VanillaTypes.item("minecraft:warped_slab");
 
     /**
      * {@code minecraft:warped_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_STAIRS = VanillaTypes.item("minecraft:warped_stairs");
 
     /**
      * {@code minecraft:warped_standing_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_STANDING_SIGN = VanillaTypes.item("minecraft:warped_standing_sign");
 
     /**
      * {@code minecraft:warped_stem}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_STEM = VanillaTypes.item("minecraft:warped_stem");
 
     /**
      * {@code minecraft:warped_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_TRAPDOOR = VanillaTypes.item("minecraft:warped_trapdoor");
 
     /**
      * {@code minecraft:warped_wall_sign}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_WALL_SIGN = VanillaTypes.item("minecraft:warped_wall_sign");
 
     /**
      * {@code minecraft:warped_wart_block}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WARPED_WART_BLOCK = VanillaTypes.item("minecraft:warped_wart_block");
 
     /**
      * {@code minecraft:water}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WATER = VanillaTypes.item("minecraft:water");
 
     /**
      * {@code minecraft:waterlily}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WATERLILY = VanillaTypes.item("minecraft:waterlily");
 
     /**
      * {@code minecraft:water_bucket}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WATER_BUCKET = VanillaTypes.item("minecraft:water_bucket");
 
     /**
      * {@code minecraft:waxed_chiseled_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_CHISELED_COPPER = VanillaTypes.item("minecraft:waxed_chiseled_copper");
 
     /**
      * {@code minecraft:waxed_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_COPPER = VanillaTypes.item("minecraft:waxed_copper");
 
     /**
      * {@code minecraft:waxed_copper_bars}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_COPPER_BARS = VanillaTypes.item("minecraft:waxed_copper_bars");
 
     /**
      * {@code minecraft:waxed_copper_bulb}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_COPPER_BULB = VanillaTypes.item("minecraft:waxed_copper_bulb");
 
     /**
      * {@code minecraft:waxed_copper_chain}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_COPPER_CHAIN = VanillaTypes.item("minecraft:waxed_copper_chain");
 
     /**
      * {@code minecraft:waxed_copper_chest}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_COPPER_CHEST = VanillaTypes.item("minecraft:waxed_copper_chest");
 
     /**
      * {@code minecraft:waxed_copper_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_COPPER_DOOR = VanillaTypes.item("minecraft:waxed_copper_door");
 
     /**
      * {@code minecraft:waxed_copper_golem_statue}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_COPPER_GOLEM_STATUE = VanillaTypes.item("minecraft:waxed_copper_golem_statue");
 
     /**
      * {@code minecraft:waxed_copper_grate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_COPPER_GRATE = VanillaTypes.item("minecraft:waxed_copper_grate");
 
     /**
      * {@code minecraft:waxed_copper_lantern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_COPPER_LANTERN = VanillaTypes.item("minecraft:waxed_copper_lantern");
 
     /**
      * {@code minecraft:waxed_copper_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_COPPER_TRAPDOOR = VanillaTypes.item("minecraft:waxed_copper_trapdoor");
 
     /**
      * {@code minecraft:waxed_cut_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_CUT_COPPER = VanillaTypes.item("minecraft:waxed_cut_copper");
 
     /**
      * {@code minecraft:waxed_cut_copper_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_CUT_COPPER_SLAB = VanillaTypes.item("minecraft:waxed_cut_copper_slab");
 
     /**
      * {@code minecraft:waxed_cut_copper_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_CUT_COPPER_STAIRS = VanillaTypes.item("minecraft:waxed_cut_copper_stairs");
 
     /**
      * {@code minecraft:waxed_double_cut_copper_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_DOUBLE_CUT_COPPER_SLAB = VanillaTypes.item("minecraft:waxed_double_cut_copper_slab");
 
     /**
      * {@code minecraft:waxed_exposed_chiseled_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_EXPOSED_CHISELED_COPPER = VanillaTypes.item("minecraft:waxed_exposed_chiseled_copper");
 
     /**
      * {@code minecraft:waxed_exposed_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_EXPOSED_COPPER = VanillaTypes.item("minecraft:waxed_exposed_copper");
 
     /**
      * {@code minecraft:waxed_exposed_copper_bars}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_EXPOSED_COPPER_BARS = VanillaTypes.item("minecraft:waxed_exposed_copper_bars");
 
     /**
      * {@code minecraft:waxed_exposed_copper_bulb}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_EXPOSED_COPPER_BULB = VanillaTypes.item("minecraft:waxed_exposed_copper_bulb");
 
     /**
      * {@code minecraft:waxed_exposed_copper_chain}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_EXPOSED_COPPER_CHAIN = VanillaTypes.item("minecraft:waxed_exposed_copper_chain");
 
     /**
      * {@code minecraft:waxed_exposed_copper_chest}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_EXPOSED_COPPER_CHEST = VanillaTypes.item("minecraft:waxed_exposed_copper_chest");
 
     /**
      * {@code minecraft:waxed_exposed_copper_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_EXPOSED_COPPER_DOOR = VanillaTypes.item("minecraft:waxed_exposed_copper_door");
 
     /**
      * {@code minecraft:waxed_exposed_copper_golem_statue}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_EXPOSED_COPPER_GOLEM_STATUE = VanillaTypes.item("minecraft:waxed_exposed_copper_golem_statue");
 
     /**
      * {@code minecraft:waxed_exposed_copper_grate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_EXPOSED_COPPER_GRATE = VanillaTypes.item("minecraft:waxed_exposed_copper_grate");
 
     /**
      * {@code minecraft:waxed_exposed_copper_lantern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_EXPOSED_COPPER_LANTERN = VanillaTypes.item("minecraft:waxed_exposed_copper_lantern");
 
     /**
      * {@code minecraft:waxed_exposed_copper_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_EXPOSED_COPPER_TRAPDOOR = VanillaTypes.item("minecraft:waxed_exposed_copper_trapdoor");
 
     /**
      * {@code minecraft:waxed_exposed_cut_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_EXPOSED_CUT_COPPER = VanillaTypes.item("minecraft:waxed_exposed_cut_copper");
 
     /**
      * {@code minecraft:waxed_exposed_cut_copper_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_EXPOSED_CUT_COPPER_SLAB = VanillaTypes.item("minecraft:waxed_exposed_cut_copper_slab");
 
     /**
      * {@code minecraft:waxed_exposed_cut_copper_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_EXPOSED_CUT_COPPER_STAIRS = VanillaTypes.item("minecraft:waxed_exposed_cut_copper_stairs");
 
     /**
      * {@code minecraft:waxed_exposed_double_cut_copper_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_EXPOSED_DOUBLE_CUT_COPPER_SLAB = VanillaTypes.item("minecraft:waxed_exposed_double_cut_copper_slab");
 
     /**
      * {@code minecraft:waxed_exposed_lightning_rod}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_EXPOSED_LIGHTNING_ROD = VanillaTypes.item("minecraft:waxed_exposed_lightning_rod");
 
     /**
      * {@code minecraft:waxed_lightning_rod}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_LIGHTNING_ROD = VanillaTypes.item("minecraft:waxed_lightning_rod");
 
     /**
      * {@code minecraft:waxed_oxidized_chiseled_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_OXIDIZED_CHISELED_COPPER = VanillaTypes.item("minecraft:waxed_oxidized_chiseled_copper");
 
     /**
      * {@code minecraft:waxed_oxidized_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_OXIDIZED_COPPER = VanillaTypes.item("minecraft:waxed_oxidized_copper");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_bars}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_OXIDIZED_COPPER_BARS = VanillaTypes.item("minecraft:waxed_oxidized_copper_bars");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_bulb}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_OXIDIZED_COPPER_BULB = VanillaTypes.item("minecraft:waxed_oxidized_copper_bulb");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_chain}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_OXIDIZED_COPPER_CHAIN = VanillaTypes.item("minecraft:waxed_oxidized_copper_chain");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_chest}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_OXIDIZED_COPPER_CHEST = VanillaTypes.item("minecraft:waxed_oxidized_copper_chest");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_OXIDIZED_COPPER_DOOR = VanillaTypes.item("minecraft:waxed_oxidized_copper_door");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_golem_statue}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_OXIDIZED_COPPER_GOLEM_STATUE = VanillaTypes.item("minecraft:waxed_oxidized_copper_golem_statue");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_grate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_OXIDIZED_COPPER_GRATE = VanillaTypes.item("minecraft:waxed_oxidized_copper_grate");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_lantern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_OXIDIZED_COPPER_LANTERN = VanillaTypes.item("minecraft:waxed_oxidized_copper_lantern");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_OXIDIZED_COPPER_TRAPDOOR = VanillaTypes.item("minecraft:waxed_oxidized_copper_trapdoor");
 
     /**
      * {@code minecraft:waxed_oxidized_cut_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_OXIDIZED_CUT_COPPER = VanillaTypes.item("minecraft:waxed_oxidized_cut_copper");
 
     /**
      * {@code minecraft:waxed_oxidized_cut_copper_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_OXIDIZED_CUT_COPPER_SLAB = VanillaTypes.item("minecraft:waxed_oxidized_cut_copper_slab");
 
     /**
      * {@code minecraft:waxed_oxidized_cut_copper_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_OXIDIZED_CUT_COPPER_STAIRS = VanillaTypes.item("minecraft:waxed_oxidized_cut_copper_stairs");
 
     /**
      * {@code minecraft:waxed_oxidized_double_cut_copper_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_OXIDIZED_DOUBLE_CUT_COPPER_SLAB = VanillaTypes.item("minecraft:waxed_oxidized_double_cut_copper_slab");
 
     /**
      * {@code minecraft:waxed_oxidized_lightning_rod}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_OXIDIZED_LIGHTNING_ROD = VanillaTypes.item("minecraft:waxed_oxidized_lightning_rod");
 
     /**
      * {@code minecraft:waxed_weathered_chiseled_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_WEATHERED_CHISELED_COPPER = VanillaTypes.item("minecraft:waxed_weathered_chiseled_copper");
 
     /**
      * {@code minecraft:waxed_weathered_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_WEATHERED_COPPER = VanillaTypes.item("minecraft:waxed_weathered_copper");
 
     /**
      * {@code minecraft:waxed_weathered_copper_bars}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_WEATHERED_COPPER_BARS = VanillaTypes.item("minecraft:waxed_weathered_copper_bars");
 
     /**
      * {@code minecraft:waxed_weathered_copper_bulb}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_WEATHERED_COPPER_BULB = VanillaTypes.item("minecraft:waxed_weathered_copper_bulb");
 
     /**
      * {@code minecraft:waxed_weathered_copper_chain}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_WEATHERED_COPPER_CHAIN = VanillaTypes.item("minecraft:waxed_weathered_copper_chain");
 
     /**
      * {@code minecraft:waxed_weathered_copper_chest}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_WEATHERED_COPPER_CHEST = VanillaTypes.item("minecraft:waxed_weathered_copper_chest");
 
     /**
      * {@code minecraft:waxed_weathered_copper_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_WEATHERED_COPPER_DOOR = VanillaTypes.item("minecraft:waxed_weathered_copper_door");
 
     /**
      * {@code minecraft:waxed_weathered_copper_golem_statue}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_WEATHERED_COPPER_GOLEM_STATUE = VanillaTypes.item("minecraft:waxed_weathered_copper_golem_statue");
 
     /**
      * {@code minecraft:waxed_weathered_copper_grate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_WEATHERED_COPPER_GRATE = VanillaTypes.item("minecraft:waxed_weathered_copper_grate");
 
     /**
      * {@code minecraft:waxed_weathered_copper_lantern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_WEATHERED_COPPER_LANTERN = VanillaTypes.item("minecraft:waxed_weathered_copper_lantern");
 
     /**
      * {@code minecraft:waxed_weathered_copper_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_WEATHERED_COPPER_TRAPDOOR = VanillaTypes.item("minecraft:waxed_weathered_copper_trapdoor");
 
     /**
      * {@code minecraft:waxed_weathered_cut_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_WEATHERED_CUT_COPPER = VanillaTypes.item("minecraft:waxed_weathered_cut_copper");
 
     /**
      * {@code minecraft:waxed_weathered_cut_copper_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_WEATHERED_CUT_COPPER_SLAB = VanillaTypes.item("minecraft:waxed_weathered_cut_copper_slab");
 
     /**
      * {@code minecraft:waxed_weathered_cut_copper_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_WEATHERED_CUT_COPPER_STAIRS = VanillaTypes.item("minecraft:waxed_weathered_cut_copper_stairs");
 
     /**
      * {@code minecraft:waxed_weathered_double_cut_copper_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_WEATHERED_DOUBLE_CUT_COPPER_SLAB = VanillaTypes.item("minecraft:waxed_weathered_double_cut_copper_slab");
 
     /**
      * {@code minecraft:waxed_weathered_lightning_rod}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAXED_WEATHERED_LIGHTNING_ROD = VanillaTypes.item("minecraft:waxed_weathered_lightning_rod");
 
     /**
      * {@code minecraft:wayfinder_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:wayfinder_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:weathered_chiseled_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEATHERED_CHISELED_COPPER = VanillaTypes.item("minecraft:weathered_chiseled_copper");
 
     /**
      * {@code minecraft:weathered_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEATHERED_COPPER = VanillaTypes.item("minecraft:weathered_copper");
 
     /**
      * {@code minecraft:weathered_copper_bars}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEATHERED_COPPER_BARS = VanillaTypes.item("minecraft:weathered_copper_bars");
 
     /**
      * {@code minecraft:weathered_copper_bulb}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEATHERED_COPPER_BULB = VanillaTypes.item("minecraft:weathered_copper_bulb");
 
     /**
      * {@code minecraft:weathered_copper_chain}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEATHERED_COPPER_CHAIN = VanillaTypes.item("minecraft:weathered_copper_chain");
 
     /**
      * {@code minecraft:weathered_copper_chest}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEATHERED_COPPER_CHEST = VanillaTypes.item("minecraft:weathered_copper_chest");
 
     /**
      * {@code minecraft:weathered_copper_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEATHERED_COPPER_DOOR = VanillaTypes.item("minecraft:weathered_copper_door");
 
     /**
      * {@code minecraft:weathered_copper_golem_statue}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEATHERED_COPPER_GOLEM_STATUE = VanillaTypes.item("minecraft:weathered_copper_golem_statue");
 
     /**
      * {@code minecraft:weathered_copper_grate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEATHERED_COPPER_GRATE = VanillaTypes.item("minecraft:weathered_copper_grate");
 
     /**
      * {@code minecraft:weathered_copper_lantern}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEATHERED_COPPER_LANTERN = VanillaTypes.item("minecraft:weathered_copper_lantern");
 
     /**
      * {@code minecraft:weathered_copper_trapdoor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEATHERED_COPPER_TRAPDOOR = VanillaTypes.item("minecraft:weathered_copper_trapdoor");
 
     /**
      * {@code minecraft:weathered_cut_copper}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEATHERED_CUT_COPPER = VanillaTypes.item("minecraft:weathered_cut_copper");
 
     /**
      * {@code minecraft:weathered_cut_copper_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEATHERED_CUT_COPPER_SLAB = VanillaTypes.item("minecraft:weathered_cut_copper_slab");
 
     /**
      * {@code minecraft:weathered_cut_copper_stairs}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEATHERED_CUT_COPPER_STAIRS = VanillaTypes.item("minecraft:weathered_cut_copper_stairs");
 
     /**
      * {@code minecraft:weathered_double_cut_copper_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEATHERED_DOUBLE_CUT_COPPER_SLAB = VanillaTypes.item("minecraft:weathered_double_cut_copper_slab");
 
     /**
      * {@code minecraft:weathered_lightning_rod}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEATHERED_LIGHTNING_ROD = VanillaTypes.item("minecraft:weathered_lightning_rod");
 
     /**
      * {@code minecraft:web}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEB = VanillaTypes.item("minecraft:web");
 
     /**
      * {@code minecraft:weeping_vines}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WEEPING_VINES = VanillaTypes.item("minecraft:weeping_vines");
 
     /**
      * {@code minecraft:wet_sponge}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WET_SPONGE = VanillaTypes.item("minecraft:wet_sponge");
 
     /**
      * {@code minecraft:wheat}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WHEAT = VanillaTypes.item("minecraft:wheat");
 
     /**
      * {@code minecraft:wheat_seeds}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WHEAT_SEEDS = VanillaTypes.item("minecraft:wheat_seeds");
 
     /**
      * {@code minecraft:white_bundle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WHITE_BUNDLE = VanillaTypes.item("minecraft:white_bundle");
 
     /**
      * {@code minecraft:white_candle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WHITE_CANDLE = VanillaTypes.item("minecraft:white_candle");
 
     /**
      * {@code minecraft:white_candle_cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WHITE_CANDLE_CAKE = VanillaTypes.item("minecraft:white_candle_cake");
 
     /**
      * {@code minecraft:white_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WHITE_CARPET = VanillaTypes.item("minecraft:white_carpet");
 
     /**
      * {@code minecraft:white_concrete}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WHITE_CONCRETE = VanillaTypes.item("minecraft:white_concrete");
 
     /**
      * {@code minecraft:white_concrete_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType WHITE_CONCRETE_DOUBLE_SLAB = VanillaTypes.item("minecraft:white_concrete_double_slab");
 
     /**
      * {@code minecraft:white_concrete_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WHITE_CONCRETE_POWDER = VanillaTypes.item("minecraft:white_concrete_powder");
 
     /**
      * {@code minecraft:white_concrete_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType WHITE_CONCRETE_SLAB = VanillaTypes.item("minecraft:white_concrete_slab");
 
     /**
      * {@code minecraft:white_concrete_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType WHITE_CONCRETE_STAIRS = VanillaTypes.item("minecraft:white_concrete_stairs");
 
     /**
      * {@code minecraft:white_cushion}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType WHITE_CUSHION = VanillaTypes.item("minecraft:white_cushion");
 
     /**
      * {@code minecraft:white_dye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WHITE_DYE = VanillaTypes.item("minecraft:white_dye");
 
     /**
      * {@code minecraft:white_glazed_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WHITE_GLAZED_TERRACOTTA = VanillaTypes.item("minecraft:white_glazed_terracotta");
 
     /**
      * {@code minecraft:white_harness}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WHITE_HARNESS = VanillaTypes.item("minecraft:white_harness");
 
     /**
      * {@code minecraft:white_shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WHITE_SHULKER_BOX = VanillaTypes.item("minecraft:white_shulker_box");
 
     /**
      * {@code minecraft:white_stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WHITE_STAINED_GLASS = VanillaTypes.item("minecraft:white_stained_glass");
 
     /**
      * {@code minecraft:white_stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WHITE_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:white_stained_glass_pane");
 
     /**
      * {@code minecraft:white_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WHITE_TERRACOTTA = VanillaTypes.item("minecraft:white_terracotta");
 
     /**
      * {@code minecraft:white_tulip}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WHITE_TULIP = VanillaTypes.item("minecraft:white_tulip");
 
     /**
      * {@code minecraft:white_wool}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WHITE_WOOL = VanillaTypes.item("minecraft:white_wool");
 
     /**
      * {@code minecraft:white_wool_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType WHITE_WOOL_DOUBLE_SLAB = VanillaTypes.item("minecraft:white_wool_double_slab");
 
     /**
      * {@code minecraft:white_wool_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType WHITE_WOOL_SLAB = VanillaTypes.item("minecraft:white_wool_slab");
 
     /**
      * {@code minecraft:white_wool_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType WHITE_WOOL_STAIRS = VanillaTypes.item("minecraft:white_wool_stairs");
 
     /**
      * {@code minecraft:wildflowers}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WILDFLOWERS = VanillaTypes.item("minecraft:wildflowers");
 
     /**
      * {@code minecraft:wild_armor_trim_smithing_template}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WILD_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("minecraft:wild_armor_trim_smithing_template");
 
     /**
      * {@code minecraft:wind_charge}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WIND_CHARGE = VanillaTypes.item("minecraft:wind_charge");
 
     /**
      * {@code minecraft:witch_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WITCH_SPAWN_EGG = VanillaTypes.item("minecraft:witch_spawn_egg");
 
     /**
      * {@code minecraft:wither_rose}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WITHER_ROSE = VanillaTypes.item("minecraft:wither_rose");
 
     /**
      * {@code minecraft:wither_skeleton_skull}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WITHER_SKELETON_SKULL = VanillaTypes.item("minecraft:wither_skeleton_skull");
 
     /**
      * {@code minecraft:wither_skeleton_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WITHER_SKELETON_SPAWN_EGG = VanillaTypes.item("minecraft:wither_skeleton_spawn_egg");
 
     /**
      * {@code minecraft:wither_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WITHER_SPAWN_EGG = VanillaTypes.item("minecraft:wither_spawn_egg");
 
     /**
      * {@code minecraft:wolf_armor}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WOLF_ARMOR = VanillaTypes.item("minecraft:wolf_armor");
 
     /**
      * {@code minecraft:wolf_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WOLF_SPAWN_EGG = VanillaTypes.item("minecraft:wolf_spawn_egg");
 
     /**
      * {@code minecraft:wood}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WOOD = VanillaTypes.item("minecraft:wood");
 
     /**
      * {@code minecraft:wooden_axe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WOODEN_AXE = VanillaTypes.item("minecraft:wooden_axe");
 
     /**
      * {@code minecraft:wooden_button}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WOODEN_BUTTON = VanillaTypes.item("minecraft:wooden_button");
 
     /**
      * {@code minecraft:wooden_door}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WOODEN_DOOR = VanillaTypes.item("minecraft:wooden_door");
 
     /**
      * {@code minecraft:wooden_hoe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WOODEN_HOE = VanillaTypes.item("minecraft:wooden_hoe");
 
     /**
      * {@code minecraft:wooden_pickaxe}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WOODEN_PICKAXE = VanillaTypes.item("minecraft:wooden_pickaxe");
 
     /**
      * {@code minecraft:wooden_pressure_plate}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WOODEN_PRESSURE_PLATE = VanillaTypes.item("minecraft:wooden_pressure_plate");
 
     /**
      * {@code minecraft:wooden_shovel}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WOODEN_SHOVEL = VanillaTypes.item("minecraft:wooden_shovel");
 
     /**
      * {@code minecraft:wooden_slab}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WOODEN_SLAB = VanillaTypes.item("minecraft:wooden_slab");
 
     /**
      * {@code minecraft:wooden_spear}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WOODEN_SPEAR = VanillaTypes.item("minecraft:wooden_spear");
 
     /**
      * {@code minecraft:wooden_sword}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WOODEN_SWORD = VanillaTypes.item("minecraft:wooden_sword");
 
     /**
      * {@code minecraft:wool}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WOOL = VanillaTypes.item("minecraft:wool");
 
     /**
      * {@code minecraft:writable_book}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WRITABLE_BOOK = VanillaTypes.item("minecraft:writable_book");
 
     /**
      * {@code minecraft:written_book}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType WRITTEN_BOOK = VanillaTypes.item("minecraft:written_book");
 
     /**
      * {@code minecraft:yellow_bundle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType YELLOW_BUNDLE = VanillaTypes.item("minecraft:yellow_bundle");
 
     /**
      * {@code minecraft:yellow_candle}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType YELLOW_CANDLE = VanillaTypes.item("minecraft:yellow_candle");
 
     /**
      * {@code minecraft:yellow_candle_cake}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType YELLOW_CANDLE_CAKE = VanillaTypes.item("minecraft:yellow_candle_cake");
 
     /**
      * {@code minecraft:yellow_carpet}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType YELLOW_CARPET = VanillaTypes.item("minecraft:yellow_carpet");
 
     /**
      * {@code minecraft:yellow_concrete}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType YELLOW_CONCRETE = VanillaTypes.item("minecraft:yellow_concrete");
 
     /**
      * {@code minecraft:yellow_concrete_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType YELLOW_CONCRETE_DOUBLE_SLAB = VanillaTypes.item("minecraft:yellow_concrete_double_slab");
 
     /**
      * {@code minecraft:yellow_concrete_powder}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType YELLOW_CONCRETE_POWDER = VanillaTypes.item("minecraft:yellow_concrete_powder");
 
     /**
      * {@code minecraft:yellow_concrete_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType YELLOW_CONCRETE_SLAB = VanillaTypes.item("minecraft:yellow_concrete_slab");
 
     /**
      * {@code minecraft:yellow_concrete_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType YELLOW_CONCRETE_STAIRS = VanillaTypes.item("minecraft:yellow_concrete_stairs");
 
     /**
      * {@code minecraft:yellow_cushion}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType YELLOW_CUSHION = VanillaTypes.item("minecraft:yellow_cushion");
 
     /**
      * {@code minecraft:yellow_dye}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType YELLOW_DYE = VanillaTypes.item("minecraft:yellow_dye");
 
     /**
      * {@code minecraft:yellow_glazed_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType YELLOW_GLAZED_TERRACOTTA = VanillaTypes.item("minecraft:yellow_glazed_terracotta");
 
     /**
      * {@code minecraft:yellow_harness}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType YELLOW_HARNESS = VanillaTypes.item("minecraft:yellow_harness");
 
     /**
      * {@code minecraft:yellow_poplar_leaves}.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType YELLOW_POPLAR_LEAVES = VanillaTypes.item("minecraft:yellow_poplar_leaves");
 
     /**
      * {@code minecraft:yellow_shulker_box}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType YELLOW_SHULKER_BOX = VanillaTypes.item("minecraft:yellow_shulker_box");
 
     /**
      * {@code minecraft:yellow_stained_glass}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType YELLOW_STAINED_GLASS = VanillaTypes.item("minecraft:yellow_stained_glass");
 
     /**
      * {@code minecraft:yellow_stained_glass_pane}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType YELLOW_STAINED_GLASS_PANE = VanillaTypes.item("minecraft:yellow_stained_glass_pane");
 
     /**
      * {@code minecraft:yellow_terracotta}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType YELLOW_TERRACOTTA = VanillaTypes.item("minecraft:yellow_terracotta");
 
     /**
      * {@code minecraft:yellow_wool}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType YELLOW_WOOL = VanillaTypes.item("minecraft:yellow_wool");
 
     /**
      * {@code minecraft:yellow_wool_double_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType YELLOW_WOOL_DOUBLE_SLAB = VanillaTypes.item("minecraft:yellow_wool_double_slab");
 
     /**
      * {@code minecraft:yellow_wool_slab}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType YELLOW_WOOL_SLAB = VanillaTypes.item("minecraft:yellow_wool_slab");
 
     /**
      * {@code minecraft:yellow_wool_stairs}.
+     *
+     * @since 26.50
      */
     public static final BedrockItemType YELLOW_WOOL_STAIRS = VanillaTypes.item("minecraft:yellow_wool_stairs");
 
     /**
      * {@code minecraft:zoglin_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ZOGLIN_SPAWN_EGG = VanillaTypes.item("minecraft:zoglin_spawn_egg");
 
     /**
      * {@code minecraft:zombie_head}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ZOMBIE_HEAD = VanillaTypes.item("minecraft:zombie_head");
 
     /**
      * {@code minecraft:zombie_horse_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ZOMBIE_HORSE_SPAWN_EGG = VanillaTypes.item("minecraft:zombie_horse_spawn_egg");
 
     /**
      * {@code minecraft:zombie_nautilus_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ZOMBIE_NAUTILUS_SPAWN_EGG = VanillaTypes.item("minecraft:zombie_nautilus_spawn_egg");
 
     /**
      * {@code minecraft:zombie_pigman_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ZOMBIE_PIGMAN_SPAWN_EGG = VanillaTypes.item("minecraft:zombie_pigman_spawn_egg");
 
     /**
      * {@code minecraft:zombie_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ZOMBIE_SPAWN_EGG = VanillaTypes.item("minecraft:zombie_spawn_egg");
 
     /**
      * {@code minecraft:zombie_villager_spawn_egg}.
+     *
+     * @since 26.40
      */
     public static final BedrockItemType ZOMBIE_VILLAGER_SPAWN_EGG = VanillaTypes.item("minecraft:zombie_villager_spawn_egg");
 

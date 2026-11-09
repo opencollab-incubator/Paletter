@@ -16,24 +16,24 @@
     "WallSide": {"since":"1.0.0","states":["wall_east","wall_west"],"values":{"NONE":{"value":"none","since":"1.0.0"},"SHORT":{"value":"short","since":"1.0.0"},"TALL":{"value":"tall","since":"1.0.0"}}}
   },
   "blocks": {
-    "AIR": {"identifier":"minecraft:air","since":"1.0.0"},
-    "OLD_DOOR": {"identifier":"minecraft:old_door","since":"1.0.0","deprecated":"2.1.0","replacement":"TEST_DOOR"},
-    "REMOVED_BLOCK": {"identifier":"minecraft:removed_block","since":"1.0.0","deprecated":"2.1.0","fallback":"minecraft:unknown"},
-    "TEST_BLOCK": {"identifier":"minecraft:test_block","since":"1.0.0"},
-    "TEST_DOOR": {"identifier":"minecraft:test_door","since":"1.0.0"},
-    "TEST_DOT_BLOCK": {"identifier":"minecraft:test.block","since":"1.0.0"},
-    "TEST_FACE": {"identifier":"minecraft:test_face","since":"1.0.0"},
-    "TEST_LAMP": {"identifier":"minecraft:test_lamp","since":"2.1.0"},
-    "TEST_SPARSE": {"identifier":"minecraft:test_sparse","since":"1.0.0"},
-    "TEST_WALL": {"identifier":"minecraft:test_wall","since":"1.0.0"},
-    "UNKNOWN": {"identifier":"minecraft:unknown","since":"1.0.0"}
+    "AIR": {"identifier":"minecraft:air","since":"1.0.0","bedrock":"1.0"},
+    "OLD_DOOR": {"identifier":"minecraft:old_door","since":"1.0.0","bedrock":"1.0","deprecated":"2.1.0","replacement":"TEST_DOOR"},
+    "REMOVED_BLOCK": {"identifier":"minecraft:removed_block","since":"1.0.0","bedrock":"1.0","deprecated":"2.1.0","fallback":"minecraft:unknown"},
+    "TEST_BLOCK": {"identifier":"minecraft:test_block","since":"1.0.0","bedrock":"1.0","education":true},
+    "TEST_DOOR": {"identifier":"minecraft:test_door","since":"1.0.0","bedrock":"1.0"},
+    "TEST_DOT_BLOCK": {"identifier":"minecraft:test.block","since":"1.0.0","bedrock":"1.0"},
+    "TEST_FACE": {"identifier":"minecraft:test_face","since":"1.0.0","bedrock":"1.0"},
+    "TEST_LAMP": {"identifier":"minecraft:test_lamp","since":"2.1.0","bedrock":"1.1"},
+    "TEST_SPARSE": {"identifier":"minecraft:test_sparse","since":"1.0.0","bedrock":"1.1"},
+    "TEST_WALL": {"identifier":"minecraft:test_wall","since":"1.0.0","bedrock":"1.0"},
+    "UNKNOWN": {"identifier":"minecraft:unknown","since":"1.0.0","bedrock":"1.0"}
   },
   "items": {
-    "APPLE": {"identifier":"minecraft:apple","since":"1.0.0"},
-    "ITEM_TEST_DOOR": {"identifier":"minecraft:item.test_door","since":"1.0.0"},
-    "OLD_STICK": {"identifier":"minecraft:old_stick","since":"1.0.0","deprecated":"2.1.0","fallback":"minecraft:apple"},
-    "POTION": {"identifier":"minecraft:potion","since":"1.0.0"},
-    "TEST_DOOR": {"identifier":"minecraft:test_door","since":"1.0.0"},
-    "TEST_LAMP": {"identifier":"minecraft:test_lamp","since":"2.1.0"}
+    "APPLE": {"identifier":"minecraft:apple","since":"1.0.0","bedrock":"1.0","education":true},
+    "ITEM_TEST_DOOR": {"identifier":"minecraft:item.test_door","since":"1.0.0","bedrock":"1.0"},
+    "OLD_STICK": {"identifier":"minecraft:old_stick","since":"1.0.0","bedrock":"1.0","deprecated":"2.1.0","fallback":"minecraft:apple"},
+    "POTION": {"identifier":"minecraft:potion","since":"1.0.0","bedrock":"1.1"},
+    "TEST_DOOR": {"identifier":"minecraft:test_door","since":"1.0.0","bedrock":"1.0"},
+    "TEST_LAMP": {"identifier":"minecraft:test_lamp","since":"2.1.0","bedrock":"1.1"}
   }
 }

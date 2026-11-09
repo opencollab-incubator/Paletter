@@ -32,6 +32,22 @@ final class VanillaTypes {
         return new BedrockBlockType(identifier, fallback == null ? UNKNOWN : fallback);
     }
 
+    static @NonNull BedrockBlockType educationBlock(@NonNull String identifier) {
+        return educationBlock(identifier, null);
+    }
+
+    static @NonNull BedrockBlockType educationBlock(@NonNull String identifier, @Nullable String fallback) {
+        return new BedrockBlockType(identifier, fallback == null ? UNKNOWN : fallback, true);
+    }
+
+    static @NonNull BedrockItemType educationItem(@NonNull String identifier) {
+        return educationItem(identifier, null);
+    }
+
+    static @NonNull BedrockItemType educationItem(@NonNull String identifier, @Nullable String fallback) {
+        return new BedrockItemType(identifier, fallback == null ? UNKNOWN : fallback, true);
+    }
+
     static @NonNull BedrockItemType item(@NonNull String identifier) {
         return item(identifier, null);
     }

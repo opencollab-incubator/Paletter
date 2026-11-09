@@ -2,6 +2,8 @@
 // data/model/constants-history.json. Do not edit; see tools/docs/codegen.md.
 package org.geysermc.paletter.vanilla;
 
+import org.geysermc.paletter.annotation.Education;
+
 /**
  * Every item type of Bedrock 1.1, the newest bundled release. The constants are resolved against
  * the newest data of {@link org.geysermc.paletter.Paletter#bundled()} on first use; referencing them loads nothing.
@@ -10,22 +12,35 @@ package org.geysermc.paletter.vanilla;
  * <p>
  * Constants are added when Bedrock adds items (binary compatible). Items Bedrock removes stay, deprecated, and
  * resolve to their fallback; renamed items keep their old constant, deprecated, as an alias of the new one.
+ * <p>
+ * The {@code @since} of a constant is the bundled Bedrock release it first appears in, without an experiment toggle
+ * (decided from the BDS captures in {@code data/bds}); {@code 26.40} is the oldest bundled release, so it may be older.
+ * {@link org.geysermc.paletter.annotation.Education @Education} marks content BDS only offers to worlds with Education
+ * Edition features, which {@code isEducation()} of the type answers at runtime.
  *
  * @since 1.0.0
  */
 public final class BedrockItems {
     /**
      * {@code minecraft:apple}.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 1.0
      */
-    public static final BedrockItemType APPLE = VanillaTypes.item("minecraft:apple");
+    @Education
+    public static final BedrockItemType APPLE = VanillaTypes.educationItem("minecraft:apple");
 
     /**
      * {@code minecraft:item.test_door}.
+     *
+     * @since 1.0
      */
     public static final BedrockItemType ITEM_TEST_DOOR = VanillaTypes.item("minecraft:item.test_door");
 
     /**
      * {@code minecraft:old_stick}, no longer in the bundled data.
+     *
+     * @since 1.0
      * @deprecated Bedrock removed the item; resolves to {@code minecraft:apple}
      */
     @Deprecated(since = "2.1.0", forRemoval = true)
@@ -33,18 +48,24 @@ public final class BedrockItems {
 
     /**
      * {@code minecraft:potion}: 2 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     * Behind the experiment {@code drop} in 1.0: without it the version does not have it.
+     *
+     * @since 1.1
      */
     public static final BedrockItemType POTION = VanillaTypes.item("minecraft:potion");
 
     /**
      * {@code minecraft:test_door}.
+     *
+     * @since 1.0
      */
     public static final BedrockItemType TEST_DOOR = VanillaTypes.item("minecraft:test_door");
 
     /**
      * {@code minecraft:test_lamp}.
+     * Added in Paletter 2.1.0.
      *
-     * @since 2.1.0
+     * @since 1.1
      */
     public static final BedrockItemType TEST_LAMP = VanillaTypes.item("minecraft:test_lamp");
 

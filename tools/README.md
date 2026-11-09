@@ -21,6 +21,7 @@ One command line, picocli (`Cli`): `./gradlew :tools:run --args="<command> ..."`
 | `block-items`, `rewrite`, `data-diff` | Maintaining bundled data without a capture: add the block to item relation (from a stored dump, or derived from a newer version), rewrite files without fallbacks, diff two data files |
 | `spec-capture` | Runs the spec add-on on BDS, writes `data/bds/<version>/spec` |
 | `creative-probe` | Runs a creative add-on on BDS and records the creative order |
+| `education-capture` | Starts a world on BDS with Education Edition features off and on and writes what only the education world has to `data/bds/<version>/education.json` (input of the constants generator, [docs/codegen.md](docs/codegen.md)) |
 | `capture`, `compare`, `experiments` | The capture client: record a server, diff it with a bundled version, switch experiments in a `level.dat` |
 | `docs`, `addon [--kind spec\|capture\|creative\|creative-large]`, `infer`, `check-mappings` | The component model ([docs/model.md](docs/model.md)) and the add-on packs |
 | `inspect --version <v\|all> --block '<id[states]>' \| --item '<id[:damage]>'` | Prints `Palette#explain` of a block state or item variant for one or all bundled versions: canonical, runtime and hashed id, how it resolves (exact, adapted, fallback, default), the block sent with an item, the creative location |

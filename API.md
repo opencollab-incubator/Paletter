@@ -12,7 +12,7 @@ The API is exactly the packages exported by [`paletter/src/module/java/module-in
 | Package | Contents |
 |---|---|
 | `org.geysermc.paletter` | `Paletter` (builder, global policy), `Palette`, `PaletteLayer` (content), `Fallbacks`, `VanillaContent`, `Origin`, `PaletteReport`, `PaletteException`, `BlockExplanation`, `ItemExplanation` |
-| `org.geysermc.paletter.annotation` | `@Experimental`, `@Internal`, `@BedrockFormat` |
+| `org.geysermc.paletter.annotation` | `@Experimental`, `@Internal`, `@BedrockFormat`, `@Education` |
 | `org.geysermc.paletter.block` | `BlockRegistry`, `RegisteredBlock`, `RegisteredBlockState`, `BlockNetworkIds`, `BlockFallback`, `CustomBlock`, `BlockProperty` |
 | `org.geysermc.paletter.block.component` | generated block components and traits (`BlockComponent`, `BlockTrait`, `Geometry`, `MaterialInstances`, `PlacementDirection`, `MenuCategory`, ...) |
 | `org.geysermc.paletter.creative` | the creative inventory model (`CreativeLayout`, `CreativeItem(BedrockItemStack)`, `CreativeGroup`) and editor |
