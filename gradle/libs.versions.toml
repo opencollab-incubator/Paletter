@@ -11,6 +11,8 @@ gson = "2.10.1"
 javapoet = "0.22.0"
 junit = "6.0.0"
 picocli = "4.7.7"
+# The API dump (tools module, apiDump source set) reads class files
+asm = "9.9.1"
 
 [libraries]
 protocol-codec = { group = "org.cloudburstmc.protocol", name = "bedrock-codec", version.ref = "protocol" }
@@ -25,4 +27,5 @@ libdatachannel = { group = "dev.opencollab", name = "libdatachannel-java-arch-de
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 picocli = { group = "info.picocli", name = "picocli", version.ref = "picocli" }
 javapoet = { group = "com.palantir.javapoet", name = "javapoet", version.ref = "javapoet" }
+asm-util = { group = "org.ow2.asm", name = "asm-util", version.ref = "asm" }
 junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit" }

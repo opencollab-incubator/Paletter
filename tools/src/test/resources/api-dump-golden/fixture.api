@@ -1,0 +1,84 @@
+public abstract class fix.api.Base<T> {
+    public <init>()
+    public abstract T first()
+    public final int fixed()
+}
+
+public final class fix.api.Circle implements fix.api.Shape {
+    public <init>()
+    public double area()
+}
+
+public @interface fix.api.Marker {
+    public abstract int[] numbers()
+    public abstract java.lang.String value()
+}
+
+public enum fix.api.Mode {
+    public static final fix.api.Mode FAST
+    public static final fix.api.Mode SLOW
+    public int cost()
+    public static fix.api.Mode valueOf(java.lang.String)
+    public static fix.api.Mode[] values()
+}
+
+public sealed interface fix.api.Shape permits fix.api.Circle, fix.api.Square {
+    public static final java.lang.String UNIT = "cm"
+    public abstract double area()
+}
+
+public record fix.api.Square implements fix.api.Shape {
+    public <init>(double, java.util.List<java.lang.String>)
+    public double area()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.util.List<java.lang.String> labels()
+    public double side()
+    public final java.lang.String toString()
+    public static fix.api.Square unit()
+}
+
+public class fix.api.Widget<T extends java.lang.Comparable<T>> extends fix.api.Base<T> implements java.lang.Comparable<fix.api.Widget<T>>, java.lang.Runnable {
+    public static final long BIG = 5000000000L
+    public static final char LETTER = 'x'
+    public static final int LIMIT = 4
+    public static final java.lang.String NAME = "a \"quoted\"\nname"
+    public static final boolean ON = true
+    public static final float RATIO = 0.5f
+    public static final fix.api.Widget<java.lang.String> SHARED
+    public final java.util.List<? extends T> items
+    protected int level
+    public <init>()
+    protected <init>(T)
+    public <init>(java.lang.String, int...)
+    public int compareTo(fix.api.Widget<T>)
+    @Experimental public java.lang.String[] experimental(int[][])
+    public T first()
+    public static <K, V extends java.util.List<K>> java.util.Map<K, V> group(V...)
+    protected void hook()
+    public <R> R map(java.util.function.Function<? super T, ? extends R>, R) throws java.io.IOException
+    @Deprecated public void old()
+    public void run()
+    public void sync()
+}
+
+public interface fix.api.Widget$Callback {
+    public abstract void call(java.lang.String)
+    public static fix.api.Widget$Callback none()
+    public default void twice(java.lang.String)
+}
+
+protected static final class fix.api.Widget$Guarded {
+    protected <init>()
+}
+
+public static class fix.api.Widget$Nested {
+    public <init>()
+}
+
+public @interface org.geysermc.paletter.annotation.Experimental {
+}
+
+public @interface org.geysermc.paletter.annotation.Internal {
+}
+
