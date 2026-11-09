@@ -6,8 +6,13 @@ package org.geysermc.paletter.internal.component;
 import java.util.List;
 import java.util.Map;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.geysermc.paletter.item.component.Ancient;
+import org.geysermc.paletter.item.component.Count;
+import org.geysermc.paletter.item.component.Former;
 import org.geysermc.paletter.item.component.Gadget;
 import org.geysermc.paletter.item.component.ItemComponent;
+import org.geysermc.paletter.item.component.Old;
+import org.geysermc.paletter.item.component.Quiet;
 import org.geysermc.paletter.item.component.Widget;
 import org.geysermc.paletter.item.component.WireOnlyItemComponent;
 
@@ -27,10 +32,27 @@ public final class ItemWire {
     public static void write(@NonNull ItemComponent component, @NonNull WireContext ctx,
             @NonNull WireNode out) {
         switch (component) {
+            case Ancient value -> ancient(value, ctx, out);
+            case Count value -> count(value, ctx, out);
+            case Former value -> former(value, ctx, out);
             case Gadget value -> gadget(value, ctx, out);
+            case Old value -> old(value, ctx, out);
+            case Quiet value -> quiet(value, ctx, out);
             case Widget value -> widget(value, ctx, out);
             case WireOnlyItemComponent value -> WireOnlyWire.write(value, ctx, out);
         }
+    }
+
+    private static void ancient(Ancient c, WireContext ctx, WireNode out) {
+        ctx.drop(Ancient.NAME, "is not sent to clients (BDS: rejected)");
+    }
+
+    private static void count(Count c, WireContext ctx, WireNode out) {
+        ctx.drop(Count.NAME, "is not sent to clients (BDS: rejected)");
+    }
+
+    private static void former(Former c, WireContext ctx, WireNode out) {
+        ctx.drop(Former.NAME, "is not sent to clients (BDS: rejected)");
     }
 
     private static void gadget(Gadget c, WireContext ctx, WireNode out) {
@@ -62,6 +84,14 @@ public final class ItemWire {
         if (v1 != null) {
             out.put("test:gadget.level", Wire.toInt(v1));
         }
+    }
+
+    private static void old(Old c, WireContext ctx, WireNode out) {
+        ctx.drop(Old.NAME, "is not sent to clients (BDS: rejected)");
+    }
+
+    private static void quiet(Quiet c, WireContext ctx, WireNode out) {
+        // server only: BDS sends nothing to clients
     }
 
     private static void widget(Widget c, WireContext ctx, WireNode out) {

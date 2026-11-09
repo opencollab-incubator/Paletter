@@ -24,6 +24,16 @@
         "field": "enabled"
       }
     },
+    "block:minecraft:destructible_by_explosion": {
+      "boolean": {
+        "field": "enabled"
+      }
+    },
+    "block:minecraft:flammable": {
+      "boolean": {
+        "field": "enabled"
+      }
+    },
     "item:minecraft:interact_button": {
       "boolean": {
         "field": "enabled",
@@ -202,12 +212,16 @@
     "block:minecraft:collision_box:[].min",
     "block:minecraft:collision_box:[].max"
   ],
+  "handWritten": {
+    "item:minecraft:render_offsets": "the wire-only RenderOffsets (rejected by BDS, still sent for legacy content)"
+  },
   "classes": {
     "item:minecraft:record": "MusicRecord",
     "item:minecraft:throwable": "ThrowableItem"
   },
   "optional": [
-    "block:minecraft:destructible_by_mining:seconds_to_destroy"
+    "block:minecraft:destructible_by_mining:seconds_to_destroy",
+    "block:minecraft:destructible_by_explosion:explosion_resistance"
   ],
   "noDefaults": [
     "item:description:category"

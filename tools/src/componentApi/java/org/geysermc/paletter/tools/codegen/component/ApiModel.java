@@ -80,6 +80,8 @@ final class ApiModel {
         Window serverOnly;
         /** What replaces this component, or null. */
         Replacements.Replacement replacement;
+        /** The window in which BDS rejects the component, from the first capture that does until the newest (null: it accepts it). */
+        Window rejected;
 
         /** @return the newest window that sends the component (the API follows its shape), or null */
         Window latest() {
@@ -107,6 +109,11 @@ final class ApiModel {
 
         boolean deprecated() {
             return "deprecated".equals(status);
+        }
+
+        /** @return whether no window sends the component (BDS only accepts or rejects it): its encoder writes nothing */
+        boolean neverSent() {
+            return latest() == null;
         }
     }
 

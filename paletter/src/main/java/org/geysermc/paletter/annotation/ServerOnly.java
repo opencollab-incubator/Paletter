@@ -12,7 +12,8 @@ import java.lang.annotation.Target;
  * Bedrock sends it again, the same record is encoded as usual. The range comes from the captures of BDS (the status of the
  * component's protocol windows in {@code data/model/mappings.json}), not from a list.
  * <p>
- * Without {@link #since()} and {@link #until()} the component is server only in every protocol.
+ * Without {@link #since()} and {@link #until()} the component is server only in every protocol: Bedrock never sends it,
+ * so it has no client effect and encoding it is no error; palettes leave it out without a warning.
  *
  * @since 1.0.0
  */

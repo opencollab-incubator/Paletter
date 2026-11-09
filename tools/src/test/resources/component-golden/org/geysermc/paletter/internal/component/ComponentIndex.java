@@ -7,7 +7,13 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.geysermc.paletter.block.component.Glow;
+import org.geysermc.paletter.block.component.Hidden;
+import org.geysermc.paletter.item.component.Ancient;
+import org.geysermc.paletter.item.component.Count;
+import org.geysermc.paletter.item.component.Former;
 import org.geysermc.paletter.item.component.Gadget;
+import org.geysermc.paletter.item.component.Old;
+import org.geysermc.paletter.item.component.Quiet;
 import org.geysermc.paletter.item.component.Widget;
 
 /**
@@ -44,8 +50,20 @@ public final class ComponentIndex {
         BLOCK.put("test:glow", Glow.class);
         keys(Glow.class);
         FORMS.put(Glow.class, Map.of("integer", "value"));
+        BLOCK.put("test:hidden", Hidden.class);
+        keys(Hidden.class);
+        ITEM.put("test:ancient", Ancient.class);
+        keys(Ancient.class);
+        ITEM.put("test:count", Count.class);
+        keys(Count.class);
+        ITEM.put("test:former", Former.class);
+        keys(Former.class);
         ITEM.put("test:gadget", Gadget.class);
         keys(Gadget.class, "value", "value", "level", "level");
+        ITEM.put("test:old", Old.class);
+        keys(Old.class);
+        ITEM.put("test:quiet", Quiet.class);
+        keys(Quiet.class);
         ITEM.put("test:widget", Widget.class);
         keys(Widget.class, "count", "count", "label", "label", "mode", "mode", "speed", "speed", "nested", "nested", "tags", "tags", "entries", "entries", "colors", "colors", "shape", "shape", "offset", "offset");
         keys(Widget.NestedThing.class, "x", "x", "flag", "flag");

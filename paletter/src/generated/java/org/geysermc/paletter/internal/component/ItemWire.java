@@ -12,9 +12,11 @@ import org.geysermc.paletter.item.component.CanDestroyInCreative;
 import org.geysermc.paletter.item.component.Compostable;
 import org.geysermc.paletter.item.component.Cooldown;
 import org.geysermc.paletter.item.component.Damage;
+import org.geysermc.paletter.item.component.DamageAbsorption;
 import org.geysermc.paletter.item.component.Digger;
 import org.geysermc.paletter.item.component.DisplayName;
 import org.geysermc.paletter.item.component.Durability;
+import org.geysermc.paletter.item.component.DurabilitySensor;
 import org.geysermc.paletter.item.component.Dyeable;
 import org.geysermc.paletter.item.component.Enchantable;
 import org.geysermc.paletter.item.component.EntityPlacer;
@@ -35,6 +37,7 @@ import org.geysermc.paletter.item.component.PiercingWeapon;
 import org.geysermc.paletter.item.component.Projectile;
 import org.geysermc.paletter.item.component.Rarity;
 import org.geysermc.paletter.item.component.Repairable;
+import org.geysermc.paletter.item.component.Seed;
 import org.geysermc.paletter.item.component.Shooter;
 import org.geysermc.paletter.item.component.ShouldDespawn;
 import org.geysermc.paletter.item.component.StackedByData;
@@ -46,6 +49,7 @@ import org.geysermc.paletter.item.component.SwingSounds;
 import org.geysermc.paletter.item.component.Tags;
 import org.geysermc.paletter.item.component.ThrowableItem;
 import org.geysermc.paletter.item.component.UseAnimation;
+import org.geysermc.paletter.item.component.UseDuration;
 import org.geysermc.paletter.item.component.UseModifiers;
 import org.geysermc.paletter.item.component.Wearable;
 import org.geysermc.paletter.item.component.WireOnlyItemComponent;
@@ -73,9 +77,11 @@ public final class ItemWire {
             case Compostable value -> compostable(value, ctx, out);
             case Cooldown value -> cooldown(value, ctx, out);
             case Damage value -> damage(value, ctx, out);
+            case DamageAbsorption value -> damageAbsorption(value, ctx, out);
             case Digger value -> digger(value, ctx, out);
             case DisplayName value -> displayName(value, ctx, out);
             case Durability value -> durability(value, ctx, out);
+            case DurabilitySensor value -> durabilitySensor(value, ctx, out);
             case Dyeable value -> dyeable(value, ctx, out);
             case Enchantable value -> enchantable(value, ctx, out);
             case EntityPlacer value -> entityPlacer(value, ctx, out);
@@ -95,6 +101,7 @@ public final class ItemWire {
             case Rarity value -> rarity(value, ctx, out);
             case MusicRecord value -> musicRecord(value, ctx, out);
             case Repairable value -> repairable(value, ctx, out);
+            case Seed value -> seed(value, ctx, out);
             case Shooter value -> shooter(value, ctx, out);
             case ShouldDespawn value -> shouldDespawn(value, ctx, out);
             case StackedByData value -> stackedByData(value, ctx, out);
@@ -106,6 +113,7 @@ public final class ItemWire {
             case Tags value -> tags(value, ctx, out);
             case ThrowableItem value -> throwableItem(value, ctx, out);
             case UseAnimation value -> useAnimation(value, ctx, out);
+            case UseDuration value -> useDuration(value, ctx, out);
             case UseModifiers value -> useModifiers(value, ctx, out);
             case Wearable value -> wearable(value, ctx, out);
             case WireOnlyItemComponent value -> WireOnlyWire.write(value, ctx, out);
@@ -191,6 +199,10 @@ public final class ItemWire {
         }
     }
 
+    private static void damageAbsorption(DamageAbsorption c, WireContext ctx, WireNode out) {
+        // server only: BDS sends nothing to clients
+    }
+
     private static void digger(Digger c, WireContext ctx, WireNode out) {
         List<Digger.DestroySpeeds> v0 = c.destroySpeeds();
         out.list("minecraft:digger.destroy_speeds");
@@ -241,6 +253,10 @@ public final class ItemWire {
         out.put("minecraft:durability.damage_chance.min", Wire.toInt(v2));
         int v3 = c.maxDurability();
         out.put("minecraft:durability.max_durability", Wire.toInt(v3));
+    }
+
+    private static void durabilitySensor(DurabilitySensor c, WireContext ctx, WireNode out) {
+        // server only: BDS sends nothing to clients
     }
 
     private static void dyeable(Dyeable c, WireContext ctx, WireNode out) {
@@ -513,6 +529,10 @@ public final class ItemWire {
         }
     }
 
+    private static void seed(Seed c, WireContext ctx, WireNode out) {
+        ctx.drop(Seed.NAME, "is not sent to clients (BDS: rejected)");
+    }
+
     private static void shooter(Shooter c, WireContext ctx, WireNode out) {
         List<Shooter.Ammunition> v0 = c.ammunition();
         out.list("minecraft:shooter.ammunition");
@@ -634,6 +654,10 @@ public final class ItemWire {
 
     private static void useAnimation(UseAnimation c, WireContext ctx, WireNode out) {
         Transforms.useAnimationId(ctx, out, c);
+    }
+
+    private static void useDuration(UseDuration c, WireContext ctx, WireNode out) {
+        ctx.drop(UseDuration.NAME, "is not sent to clients (BDS: rejected)");
     }
 
     private static void useModifiers(UseModifiers c, WireContext ctx, WireNode out) {

@@ -182,8 +182,13 @@ final class WireSource {
         this.owned = new TreeSet<>();
         this.ownerOf.clear();
         if (w != null && !w.sent()) {
-            // BDS of these protocols does not send the component (server only, or it rejects it): leave it out, say so
-            b.addStatement("ctx.drop($T.NAME, $S)", ApiSource.className(c), "is not sent to clients (BDS: " + w.status() + ")");
+            // BDS of these protocols does not send the component (server only, or it rejects it): leave it out, say so.
+            // Server only in every protocol, it is no error to use: nothing to report
+            if (c.serverOnly != null && !c.serverOnly.bounded()) {
+                b.add("// server only: BDS sends nothing to clients\n");
+            } else {
+                b.addStatement("ctx.drop($T.NAME, $S)", ApiSource.className(c), "is not sent to clients (BDS: " + w.status() + ")");
+            }
             return;
         }
         if (w != null) {

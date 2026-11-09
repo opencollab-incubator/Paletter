@@ -9,30 +9,47 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.component.BlockComponent;
 import org.geysermc.paletter.block.component.BlockEntity;
+import org.geysermc.paletter.block.component.BlockLightAbsorption;
+import org.geysermc.paletter.block.component.BlockLightEmission;
+import org.geysermc.paletter.block.component.BoneVisibility;
+import org.geysermc.paletter.block.component.Breathability;
+import org.geysermc.paletter.block.component.ChestObstruction;
 import org.geysermc.paletter.block.component.CollisionBox;
 import org.geysermc.paletter.block.component.ConnectionRule;
 import org.geysermc.paletter.block.component.CraftingTable;
+import org.geysermc.paletter.block.component.DestroyTime;
+import org.geysermc.paletter.block.component.DestructibleByExplosion;
 import org.geysermc.paletter.block.component.DestructibleByMining;
 import org.geysermc.paletter.block.component.DestructionParticles;
 import org.geysermc.paletter.block.component.DisplayName;
 import org.geysermc.paletter.block.component.EmbeddedVisual;
+import org.geysermc.paletter.block.component.EntityFallOn;
+import org.geysermc.paletter.block.component.ExplosionResistance;
+import org.geysermc.paletter.block.component.Flammable;
 import org.geysermc.paletter.block.component.FlowerPottable;
 import org.geysermc.paletter.block.component.Friction;
 import org.geysermc.paletter.block.component.Geometry;
+import org.geysermc.paletter.block.component.InstrumentSound;
 import org.geysermc.paletter.block.component.ItemVisual;
 import org.geysermc.paletter.block.component.LightDampening;
 import org.geysermc.paletter.block.component.LightEmission;
 import org.geysermc.paletter.block.component.LiquidDetection;
+import org.geysermc.paletter.block.component.Loot;
+import org.geysermc.paletter.block.component.MapColor;
 import org.geysermc.paletter.block.component.MaterialInstances;
+import org.geysermc.paletter.block.component.Movable;
 import org.geysermc.paletter.block.component.PlacementFilter;
 import org.geysermc.paletter.block.component.PrecipitationInteractions;
 import org.geysermc.paletter.block.component.RandomOffset;
 import org.geysermc.paletter.block.component.RedstoneConductivity;
+import org.geysermc.paletter.block.component.RedstoneConsumer;
 import org.geysermc.paletter.block.component.RedstoneProducer;
 import org.geysermc.paletter.block.component.Replaceable;
 import org.geysermc.paletter.block.component.SelectionBox;
 import org.geysermc.paletter.block.component.Support;
+import org.geysermc.paletter.block.component.Tick;
 import org.geysermc.paletter.block.component.Transformation;
+import org.geysermc.paletter.block.component.UnitCube;
 import org.geysermc.paletter.block.component.WireOnlyBlockComponent;
 
 /**
@@ -52,30 +69,47 @@ public final class BlockWire {
             @NonNull WireNode out) {
         switch (component) {
             case BlockEntity value -> blockEntity(value, ctx, out);
+            case BlockLightAbsorption value -> blockLightAbsorption(value, ctx, out);
+            case BlockLightEmission value -> blockLightEmission(value, ctx, out);
+            case BoneVisibility value -> boneVisibility(value, ctx, out);
+            case Breathability value -> breathability(value, ctx, out);
+            case ChestObstruction value -> chestObstruction(value, ctx, out);
             case CollisionBox value -> collisionBox(value, ctx, out);
             case ConnectionRule value -> connectionRule(value, ctx, out);
             case CraftingTable value -> craftingTable(value, ctx, out);
+            case DestroyTime value -> destroyTime(value, ctx, out);
+            case DestructibleByExplosion value -> destructibleByExplosion(value, ctx, out);
             case DestructibleByMining value -> destructibleByMining(value, ctx, out);
             case DestructionParticles value -> destructionParticles(value, ctx, out);
             case DisplayName value -> displayName(value, ctx, out);
             case EmbeddedVisual value -> embeddedVisual(value, ctx, out);
+            case EntityFallOn value -> entityFallOn(value, ctx, out);
+            case ExplosionResistance value -> explosionResistance(value, ctx, out);
+            case Flammable value -> flammable(value, ctx, out);
             case FlowerPottable value -> flowerPottable(value, ctx, out);
             case Friction value -> friction(value, ctx, out);
             case Geometry value -> geometry(value, ctx, out);
+            case InstrumentSound value -> instrumentSound(value, ctx, out);
             case ItemVisual value -> itemVisual(value, ctx, out);
             case LightDampening value -> lightDampening(value, ctx, out);
             case LightEmission value -> lightEmission(value, ctx, out);
             case LiquidDetection value -> liquidDetection(value, ctx, out);
+            case Loot value -> loot(value, ctx, out);
+            case MapColor value -> mapColor(value, ctx, out);
             case MaterialInstances value -> materialInstances(value, ctx, out);
+            case Movable value -> movable(value, ctx, out);
             case PlacementFilter value -> placementFilter(value, ctx, out);
             case PrecipitationInteractions value -> precipitationInteractions(value, ctx, out);
             case RandomOffset value -> randomOffset(value, ctx, out);
             case RedstoneConductivity value -> redstoneConductivity(value, ctx, out);
+            case RedstoneConsumer value -> redstoneConsumer(value, ctx, out);
             case RedstoneProducer value -> redstoneProducer(value, ctx, out);
             case Replaceable value -> replaceable(value, ctx, out);
             case SelectionBox value -> selectionBox(value, ctx, out);
             case Support value -> support(value, ctx, out);
+            case Tick value -> tick(value, ctx, out);
             case Transformation value -> transformation(value, ctx, out);
+            case UnitCube value -> unitCube(value, ctx, out);
             case WireOnlyBlockComponent value -> WireOnlyWire.write(value, ctx, out);
         }
     }
@@ -129,6 +163,27 @@ public final class BlockWire {
         boolean v3 = c.dynamicProperties();
     }
 
+    private static void blockLightAbsorption(BlockLightAbsorption c, WireContext ctx,
+            WireNode out) {
+        ctx.drop(BlockLightAbsorption.NAME, "is not sent to clients (BDS: rejected)");
+    }
+
+    private static void blockLightEmission(BlockLightEmission c, WireContext ctx, WireNode out) {
+        ctx.drop(BlockLightEmission.NAME, "is not sent to clients (BDS: rejected)");
+    }
+
+    private static void boneVisibility(BoneVisibility c, WireContext ctx, WireNode out) {
+        ctx.drop(BoneVisibility.NAME, "is not sent to clients (BDS: rejected)");
+    }
+
+    private static void breathability(Breathability c, WireContext ctx, WireNode out) {
+        ctx.drop(Breathability.NAME, "is not sent to clients (BDS: rejected)");
+    }
+
+    private static void chestObstruction(ChestObstruction c, WireContext ctx, WireNode out) {
+        // server only: BDS sends nothing to clients
+    }
+
     private static void collisionBox(CollisionBox c, WireContext ctx, WireNode out) {
         Boolean v0 = c.enabled();
         if (v0 != null) {
@@ -159,6 +214,15 @@ public final class BlockWire {
         } else {
             out.put("minecraft:crafting_table.table_name", "");
         }
+    }
+
+    private static void destroyTime(DestroyTime c, WireContext ctx, WireNode out) {
+        ctx.drop(DestroyTime.NAME, "is not sent to clients (BDS: rejected)");
+    }
+
+    private static void destructibleByExplosion(DestructibleByExplosion c, WireContext ctx,
+            WireNode out) {
+        // server only: BDS sends nothing to clients
     }
 
     private static void destructibleByMining(DestructibleByMining c, WireContext ctx,
@@ -195,6 +259,18 @@ public final class BlockWire {
         Transforms.materialInstancesInline(ctx, out, c);
     }
 
+    private static void entityFallOn(EntityFallOn c, WireContext ctx, WireNode out) {
+        // server only: BDS sends nothing to clients
+    }
+
+    private static void explosionResistance(ExplosionResistance c, WireContext ctx, WireNode out) {
+        ctx.drop(ExplosionResistance.NAME, "is not sent to clients (BDS: rejected)");
+    }
+
+    private static void flammable(Flammable c, WireContext ctx, WireNode out) {
+        // server only: BDS sends nothing to clients
+    }
+
     private static void flowerPottable(FlowerPottable c, WireContext ctx, WireNode out) {
         out.put("minecraft:flower_pottable.usePreR26U2FlowerPotOffset", (byte) 0);
     }
@@ -206,6 +282,10 @@ public final class BlockWire {
 
     private static void geometry(Geometry c, WireContext ctx, WireNode out) {
         Transforms.geometry(ctx, out, c);
+    }
+
+    private static void instrumentSound(InstrumentSound c, WireContext ctx, WireNode out) {
+        // server only: BDS sends nothing to clients
     }
 
     private static void itemVisual(ItemVisual c, WireContext ctx, WireNode out) {
@@ -362,8 +442,20 @@ public final class BlockWire {
         }
     }
 
+    private static void loot(Loot c, WireContext ctx, WireNode out) {
+        // server only: BDS sends nothing to clients
+    }
+
+    private static void mapColor(MapColor c, WireContext ctx, WireNode out) {
+        // server only: BDS sends nothing to clients
+    }
+
     private static void materialInstances(MaterialInstances c, WireContext ctx, WireNode out) {
         Transforms.materialInstances(ctx, out, c);
+    }
+
+    private static void movable(Movable c, WireContext ctx, WireNode out) {
+        // server only: BDS sends nothing to clients
     }
 
     private static void placementFilter(PlacementFilter c, WireContext ctx, WireNode out) {
@@ -440,6 +532,10 @@ public final class BlockWire {
         out.put("minecraft:redstone_conductivity.redstoneConductor", Wire.bool(v1));
     }
 
+    private static void redstoneConsumer(RedstoneConsumer c, WireContext ctx, WireNode out) {
+        // server only: BDS sends nothing to clients
+    }
+
     private static void redstoneProducer(RedstoneProducer c, WireContext ctx, WireNode out) {
         out.put("minecraft:redstone_producer.allowPowerDown", (byte) 1);
         out.put("minecraft:redstone_producer.allowPowerUp", (byte) 0);
@@ -486,6 +582,10 @@ public final class BlockWire {
         out.put("minecraft:support.shape", v0.value());
     }
 
+    private static void tick(Tick c, WireContext ctx, WireNode out) {
+        // server only: BDS sends nothing to clients
+    }
+
     private static void transformation(Transformation c, WireContext ctx, WireNode out) {
         out.put("minecraft:transformation.hasJsonVersionBeforeValidation", (byte) 0);
         Transformation.Vec3 v0 = c.rotationPivot();
@@ -505,5 +605,9 @@ public final class BlockWire {
         out.put("minecraft:transformation.TY", Wire.toFloat(v3.y()));
         out.put("minecraft:transformation.TZ", Wire.toFloat(v3.z()));
         Transforms.quarterTurns(ctx, out, c);
+    }
+
+    private static void unitCube(UnitCube c, WireContext ctx, WireNode out) {
+        ctx.drop(UnitCube.NAME, "is not sent to clients (BDS: rejected)");
     }
 }

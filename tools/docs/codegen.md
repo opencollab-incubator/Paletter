@@ -25,8 +25,10 @@ factories, vanilla-constant overloads), the sealed `ItemComponent` / `BlockCompo
 `BlockCompiler`, `TraitStates`, `WireNode`, ...) and `Transforms` are hand-written; the transform names in
 `transforms.json` are `Transforms`' public static methods, which the generator reads from its source.
 
-Generated components are those BDS sends or that only failed for want of a companion; server-only and rejected ones
-are listed in the interfaces' javadoc.
+Every component of the docs is generated, including those BDS never sends (server only in every protocol, or rejected;
+for add-on parsing): their encoders write nothing. Omitted, and listed in the interfaces' javadoc with the reason, are
+the ones `skip`, `api.json` `exclude` / `handWritten` or the definition core cover, and the never-sent ones whose
+shape the docs leave open (an object without documented fields).
 
 Links and annotations, all from the data:
 
@@ -36,13 +38,17 @@ Links and annotations, all from the data:
   wire-only component with a docs page (`RenderOffsets`) carries the same link by hand; `GeneratedMetadataTest` checks it.
 - **`@ServerOnly(since, until)`**: on a record with a protocol window whose status is `server-only` (the bounds are the
   window's). The javadoc names the BDS versions captured in the range and the one that sends it. One range per component
-  (generation fails otherwise). Components server only in every protocol are not generated, only listed.
+  (generation fails otherwise). Server only in every protocol, it is `@ServerOnly` without bounds: its encoder writes
+  nothing and adds no warning (using it is no error, it has no client effect).
 - **`@Deprecated @ReplacedBy({X.class})`** (`Replacements`): for a component the docs mark `deprecated` or `legacy`, or
   that BDS rejects, the successors come from the first of: a sentence "Use minecraft:x ..." in its docs text, docs notes or
   BDS's own message (`mappings.json` `note`); a "renamed to/from" docs note; an active component with a top level field
   of its name. Otherwise a `fixtures.json` `replacedBy` entry (`by` and a required `evidence`; an entry the data derives
-  already fails generation). The annotations land on generated records only; for components that are not generated
-  (rejected ones are not) the replacement and its evidence appear in the interface's "Documented but not generated" list.
+  already fails generation). The annotations land on generated records only; for a component that is omitted the
+  replacement and its evidence appear in the interface's "Documented but not generated" list.
+- **Rejected components** (BDS rejects them in the newest capture) are `@Deprecated`; the javadoc says since which
+  captured BDS (the first capture of the rejecting run, or "every captured BDS (oldest: ...)") with BDS's message. Their
+  encoders write nothing and add a report warning.
 
 Rules:
 

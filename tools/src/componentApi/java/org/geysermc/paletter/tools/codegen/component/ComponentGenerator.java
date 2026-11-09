@@ -191,6 +191,10 @@ public final class ComponentGenerator {
                 model.omitted.put(id, "not modelled: " + skip.get(id).getAsString());
                 continue;
             }
+            if (api("handWritten").has(id)) {
+                model.omitted.put(id, "hand-written: " + api("handWritten").get(id).getAsString());
+                continue;
+            }
             if (excluded.contains(id)) {
                 model.omitted.put(id, "excluded in api.json");
                 continue;
@@ -205,11 +209,16 @@ public final class ComponentGenerator {
             if (!observed.isEmpty()) {
                 status = observed.getLast().status();
             }
+            if (observed.stream().noneMatch(Window::sent) && !status.equals("server-only") && !status.equals("rejected")) {
+                model.omitted.put(id, status);
+                continue;
+            }
             if (observed.stream().noneMatch(Window::sent)) {
-                if (status.equals("server-only")) {
-                    model.omitted.put(id, "server only: BDS accepts it but sends nothing to clients");
-                } else {
-                    model.omitted.put(id, status.equals("rejected") ? "rejected by BDS " + bdsVersion() : status);
+                // No capture shows its shape, so the docs alone must settle it; what they leave open keeps it omitted
+                try {
+                    model.components.add(component(doc, mapping, standalone));
+                } catch (GenerationException e) {
+                    model.omitted.put(id, "not generated, the docs leave its shape open: " + e.getMessage());
                 }
                 continue;
             }
@@ -263,10 +272,11 @@ public final class ComponentGenerator {
         c.className = className != null ? className : standalone != null ? standalone : pascal(c.name.replaceFirst("^[a-z_]+:", ""));
         javaName(c.className, c.id);
         c.windows.addAll(windows(c.id, mapping));
-        if (c.latest() == null) {
+        if (c.windows.isEmpty()) {
             throw new GenerationException(c.id + " has no window that sends it");
         }
         c.serverOnly = serverOnly(c);
+        c.rejected = rejected(c);
         c.replacement = model.replacements.get(c.id);
         c.transform = transform(c.id, "");
         c.standalone = standalone != null;
@@ -309,7 +319,9 @@ public final class ComponentGenerator {
             JsonObject declared = form.getValue();
             if (c.autoShorthandForms.contains(type)) {
                 Field target = shorthandTarget(c, type);
-                c.shorthands.add(new Shorthand(type, target));
+                if (target != null) {
+                    c.shorthands.add(new Shorthand(type, target));
+                }
                 continue;
             }
             Field field = new Field();
@@ -417,6 +429,10 @@ public final class ComponentGenerator {
         if (c.root.fields.size() == 1) {
             return c.root.fields.getFirst();
         }
+        if (c.neverSent()) {
+            // Nothing was observed for the form; the docs name no field for it: it is not offered as a shorthand
+            return null;
+        }
         throw new GenerationException(c.id + ": the " + form + " form moves " + leaves + ", which no single field does; "
             + "declare it in api.json forms");
     }
@@ -506,6 +522,18 @@ public final class ComponentGenerator {
             throw new GenerationException(c.id + " is server only in " + serverOnly.size() + " protocol windows; @ServerOnly states one range");
         }
         return serverOnly.isEmpty() ? null : serverOnly.getFirst();
+    }
+
+    /** @return the newest window when BDS rejects the component there (the trailing run of rejecting windows), or null */
+    private static Window rejected(Comp c) {
+        if (c.windows.isEmpty() || !c.windows.getLast().status().equals("rejected")) {
+            return null;
+        }
+        int i = c.windows.size() - 1;
+        while (i > 0 && c.windows.get(i - 1).status().equals("rejected")) {
+            i--;
+        }
+        return new Window(c.windows.get(i).since(), Integer.MAX_VALUE, c.windows.getLast().mapping());
     }
 
     private static List<Window> windows(String id, JsonObject mapping) {

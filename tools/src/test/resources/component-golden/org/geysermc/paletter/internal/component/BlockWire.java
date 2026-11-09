@@ -6,6 +6,7 @@ package org.geysermc.paletter.internal.component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.paletter.block.component.BlockComponent;
 import org.geysermc.paletter.block.component.Glow;
+import org.geysermc.paletter.block.component.Hidden;
 import org.geysermc.paletter.block.component.WireOnlyBlockComponent;
 
 /**
@@ -25,6 +26,7 @@ public final class BlockWire {
             @NonNull WireNode out) {
         switch (component) {
             case Glow value -> glow(value, ctx, out);
+            case Hidden value -> hidden(value, ctx, out);
             case WireOnlyBlockComponent value -> WireOnlyWire.write(value, ctx, out);
         }
     }
@@ -45,5 +47,9 @@ public final class BlockWire {
     private static void glowFrom200(Glow c, WireContext ctx, WireNode out) {
         int v0 = c.value();
         out.put("test:glow.emission", Wire.toByte(v0));
+    }
+
+    private static void hidden(Hidden c, WireContext ctx, WireNode out) {
+        // server only: BDS sends nothing to clients
     }
 }

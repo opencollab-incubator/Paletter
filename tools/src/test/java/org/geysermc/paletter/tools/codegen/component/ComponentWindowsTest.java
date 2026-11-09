@@ -76,16 +76,59 @@ class ComponentWindowsTest {
     }
 
     @Test
-    void aComponentNoWindowSendsIsLeftOut() {
-        ApiModel model = ComponentGenerator.model(inputs(g -> {
+    void aComponentNoWindowSendsIsGeneratedAndEncodesNothing() {
+        Inputs in = inputs(g -> {
             JsonObject w = window("on", 100);
             w.addProperty("status", "rejected");
             g.asMap().putAll(w.asMap());
             g.add("protocol200", window("on", 200));
             g.getAsJsonObject("protocol200").addProperty("status", "server-only");
-        }));
-        assertTrue(model.components.stream().noneMatch(c -> c.id.equals("item:test:gadget")));
-        assertTrue(model.omitted.get("item:test:gadget").startsWith("server only"), model.omitted.toString());
+        });
+        ApiModel model = ComponentGenerator.model(in);
+        ApiModel.Comp gadget = model.component("item:test:gadget");
+        assertTrue(gadget.neverSent());
+        assertEquals(null, gadget.rejected, "the newest window does not reject it");
+        assertTrue(gadget.serverOnly != null && gadget.serverOnly.since() == 200);
+        assertTrue(model.omitted.isEmpty(), model.omitted.toString());
+        // Server only from 200 only: the earlier rejection and the range keep the warning
+        assertTrue(itemWire(in).contains("ctx.drop(Gadget.NAME, \"is not sent to clients (BDS: server-only)\")"));
+    }
+
+    @Test
+    void aRejectedComponentStatesSinceWhenAndWarns() {
+        Inputs in = inputs(g -> {
+            g.asMap().putAll(window("on", 100).asMap());
+            JsonObject rejected = window("on", 200);
+            rejected.addProperty("status", "rejected");
+            rejected.addProperty("note", "test:gadget: gone");
+            g.add("protocol200", rejected);
+        });
+        ApiModel.Comp gadget = ComponentGenerator.model(in).component("item:test:gadget");
+        assertEquals(200, gadget.rejected.since());
+        Map<String, String> files = ComponentGenerator.generate(in);
+        String source = files.get("org/geysermc/paletter/item/component/Gadget.java");
+        assertTrue(source.contains("@Deprecated"), source);
+        assertTrue(source.contains("rejected by BDS since 9.9.9 (protocol 200): test:gadget: gone"), source);
+        assertTrue(source.contains("@deprecated replaced by {@link Widget}"), source);
+        assertTrue(files.get("org/geysermc/paletter/internal/component/ItemWire.java")
+            .contains("ctx.drop(Gadget.NAME, \"is not sent to clients (BDS: rejected)\")"));
+    }
+
+    @Test
+    void aNeverSentComponentWhoseShapeTheDocsLeaveOpenStaysOmitted() {
+        Inputs in = inputs(g -> {
+            JsonObject w = window("on", 100);
+            w.addProperty("status", "rejected");
+            g.asMap().putAll(w.asMap());
+        }, ComponentGeneratorTest.inputs().transforms());
+        JsonObject gadget = in.components().getAsJsonArray("components").asList().stream().map(e -> e.getAsJsonObject())
+            .filter(c -> c.get("id").getAsString().equals("item:test:gadget")).findFirst().orElseThrow();
+        // An object field the docs list no members of
+        JsonObject field = ComponentGeneratorTest.json("{\"path\": \"hit\", \"types\": [{\"type\": \"object\"}], \"required\": false, \"enumValues\": [], \"doc\": \"\"}");
+        gadget.getAsJsonArray("fields").add(field);
+        ApiModel model = ComponentGenerator.model(in);
+        assertEquals(null, model.component("item:test:gadget"));
+        assertTrue(model.omitted.get("item:test:gadget").startsWith("not generated, the docs leave its shape open"), model.omitted.toString());
     }
 
     @Test

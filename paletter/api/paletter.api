@@ -450,7 +450,7 @@ public final class org.geysermc.paletter.block.RegisteredBlockState implements o
     public java.lang.String toString()
 }
 
-public sealed interface org.geysermc.paletter.block.component.BlockComponent permits org.geysermc.paletter.block.component.BlockEntity, org.geysermc.paletter.block.component.CollisionBox, org.geysermc.paletter.block.component.ConnectionRule, org.geysermc.paletter.block.component.CraftingTable, org.geysermc.paletter.block.component.DestructibleByMining, org.geysermc.paletter.block.component.DestructionParticles, org.geysermc.paletter.block.component.DisplayName, org.geysermc.paletter.block.component.EmbeddedVisual, org.geysermc.paletter.block.component.FlowerPottable, org.geysermc.paletter.block.component.Friction, org.geysermc.paletter.block.component.Geometry, org.geysermc.paletter.block.component.ItemVisual, org.geysermc.paletter.block.component.LightDampening, org.geysermc.paletter.block.component.LightEmission, org.geysermc.paletter.block.component.LiquidDetection, org.geysermc.paletter.block.component.MaterialInstances, org.geysermc.paletter.block.component.PlacementFilter, org.geysermc.paletter.block.component.PrecipitationInteractions, org.geysermc.paletter.block.component.RandomOffset, org.geysermc.paletter.block.component.RedstoneConductivity, org.geysermc.paletter.block.component.RedstoneProducer, org.geysermc.paletter.block.component.Replaceable, org.geysermc.paletter.block.component.SelectionBox, org.geysermc.paletter.block.component.Support, org.geysermc.paletter.block.component.Transformation, org.geysermc.paletter.block.component.WireOnlyBlockComponent {
+public sealed interface org.geysermc.paletter.block.component.BlockComponent permits org.geysermc.paletter.block.component.BlockEntity, org.geysermc.paletter.block.component.BlockLightAbsorption, org.geysermc.paletter.block.component.BlockLightEmission, org.geysermc.paletter.block.component.BoneVisibility, org.geysermc.paletter.block.component.Breathability, org.geysermc.paletter.block.component.ChestObstruction, org.geysermc.paletter.block.component.CollisionBox, org.geysermc.paletter.block.component.ConnectionRule, org.geysermc.paletter.block.component.CraftingTable, org.geysermc.paletter.block.component.DestroyTime, org.geysermc.paletter.block.component.DestructibleByExplosion, org.geysermc.paletter.block.component.DestructibleByMining, org.geysermc.paletter.block.component.DestructionParticles, org.geysermc.paletter.block.component.DisplayName, org.geysermc.paletter.block.component.EmbeddedVisual, org.geysermc.paletter.block.component.EntityFallOn, org.geysermc.paletter.block.component.ExplosionResistance, org.geysermc.paletter.block.component.Flammable, org.geysermc.paletter.block.component.FlowerPottable, org.geysermc.paletter.block.component.Friction, org.geysermc.paletter.block.component.Geometry, org.geysermc.paletter.block.component.InstrumentSound, org.geysermc.paletter.block.component.ItemVisual, org.geysermc.paletter.block.component.LightDampening, org.geysermc.paletter.block.component.LightEmission, org.geysermc.paletter.block.component.LiquidDetection, org.geysermc.paletter.block.component.Loot, org.geysermc.paletter.block.component.MapColor, org.geysermc.paletter.block.component.MaterialInstances, org.geysermc.paletter.block.component.Movable, org.geysermc.paletter.block.component.PlacementFilter, org.geysermc.paletter.block.component.PrecipitationInteractions, org.geysermc.paletter.block.component.RandomOffset, org.geysermc.paletter.block.component.RedstoneConductivity, org.geysermc.paletter.block.component.RedstoneConsumer, org.geysermc.paletter.block.component.RedstoneProducer, org.geysermc.paletter.block.component.Replaceable, org.geysermc.paletter.block.component.SelectionBox, org.geysermc.paletter.block.component.Support, org.geysermc.paletter.block.component.Tick, org.geysermc.paletter.block.component.Transformation, org.geysermc.paletter.block.component.UnitCube, org.geysermc.paletter.block.component.WireOnlyBlockComponent {
     public abstract java.lang.String name()
 }
 
@@ -490,8 +490,104 @@ public static final class org.geysermc.paletter.block.component.BlockEntity$Cont
     public org.geysermc.paletter.block.component.BlockEntity$Container$Builder title(java.lang.String)
 }
 
+@Deprecated public record org.geysermc.paletter.block.component.BlockLightAbsorption implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:block_light_absorption"
+    public <init>(int)
+    public static org.geysermc.paletter.block.component.BlockLightAbsorption$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public static org.geysermc.paletter.block.component.BlockLightAbsorption of(int)
+    public org.geysermc.paletter.block.component.BlockLightAbsorption$Builder toBuilder()
+    public final java.lang.String toString()
+    public int value()
+}
+
+public static final class org.geysermc.paletter.block.component.BlockLightAbsorption$Builder {
+    public org.geysermc.paletter.block.component.BlockLightAbsorption build()
+    public org.geysermc.paletter.block.component.BlockLightAbsorption$Builder value(int)
+}
+
+@Deprecated public record org.geysermc.paletter.block.component.BlockLightEmission implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:block_light_emission"
+    public <init>(int)
+    public static org.geysermc.paletter.block.component.BlockLightEmission$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public static org.geysermc.paletter.block.component.BlockLightEmission of(int)
+    public org.geysermc.paletter.block.component.BlockLightEmission$Builder toBuilder()
+    public final java.lang.String toString()
+    public int value()
+}
+
+public static final class org.geysermc.paletter.block.component.BlockLightEmission$Builder {
+    public org.geysermc.paletter.block.component.BlockLightEmission build()
+    public org.geysermc.paletter.block.component.BlockLightEmission$Builder value(int)
+}
+
 public sealed interface org.geysermc.paletter.block.component.BlockTrait permits org.geysermc.paletter.block.component.Connection, org.geysermc.paletter.block.component.MultiBlock, org.geysermc.paletter.block.component.PlacementDirection, org.geysermc.paletter.block.component.PlacementPosition {
     public abstract java.lang.String name()
+}
+
+@Deprecated public record org.geysermc.paletter.block.component.BoneVisibility implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:bone_visibility"
+    public <init>()
+    public static org.geysermc.paletter.block.component.BoneVisibility$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public org.geysermc.paletter.block.component.BoneVisibility$Builder toBuilder()
+    public final java.lang.String toString()
+}
+
+public static final class org.geysermc.paletter.block.component.BoneVisibility$Builder {
+    public org.geysermc.paletter.block.component.BoneVisibility build()
+}
+
+@Deprecated public record org.geysermc.paletter.block.component.Breathability implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:breathability"
+    public <init>(java.lang.String)
+    public static org.geysermc.paletter.block.component.Breathability$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public static org.geysermc.paletter.block.component.Breathability of(java.lang.String)
+    public org.geysermc.paletter.block.component.Breathability$Builder toBuilder()
+    public final java.lang.String toString()
+    public java.lang.String value()
+}
+
+public static final class org.geysermc.paletter.block.component.Breathability$Builder {
+    public org.geysermc.paletter.block.component.Breathability build()
+    public org.geysermc.paletter.block.component.Breathability$Builder value(java.lang.String)
+}
+
+@Experimental public record org.geysermc.paletter.block.component.ChestObstruction implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:chest_obstruction"
+    public <init>(org.geysermc.paletter.block.component.ChestObstruction$ObstructionRule)
+    public static org.geysermc.paletter.block.component.ChestObstruction$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public org.geysermc.paletter.block.component.ChestObstruction$ObstructionRule obstructionRule()
+    public org.geysermc.paletter.block.component.ChestObstruction$Builder toBuilder()
+    public final java.lang.String toString()
+}
+
+public static final class org.geysermc.paletter.block.component.ChestObstruction$Builder {
+    public org.geysermc.paletter.block.component.ChestObstruction build()
+    public org.geysermc.paletter.block.component.ChestObstruction$Builder obstructionRule(org.geysermc.paletter.block.component.ChestObstruction$ObstructionRule)
+}
+
+public enum org.geysermc.paletter.block.component.ChestObstruction$ObstructionRule {
+    public static final org.geysermc.paletter.block.component.ChestObstruction$ObstructionRule ALWAYS
+    public static final org.geysermc.paletter.block.component.ChestObstruction$ObstructionRule NEVER
+    public static final org.geysermc.paletter.block.component.ChestObstruction$ObstructionRule SHAPE
+    public static org.geysermc.paletter.block.component.ChestObstruction$ObstructionRule fromValue(java.lang.String)
+    public java.lang.String value()
+    public static org.geysermc.paletter.block.component.ChestObstruction$ObstructionRule valueOf(java.lang.String)
+    public static org.geysermc.paletter.block.component.ChestObstruction$ObstructionRule[] values()
 }
 
 @Experimental public record org.geysermc.paletter.block.component.CollisionBox implements org.geysermc.paletter.block.component.BlockComponent {
@@ -629,6 +725,44 @@ public static final class org.geysermc.paletter.block.component.CraftingTable$Bu
     public org.geysermc.paletter.block.component.CraftingTable$Builder craftingTags(java.util.List<java.lang.String>)
     public org.geysermc.paletter.block.component.CraftingTable$Builder craftingTags(java.lang.String...)
     public org.geysermc.paletter.block.component.CraftingTable$Builder tableName(java.lang.String)
+}
+
+@Deprecated public record org.geysermc.paletter.block.component.DestroyTime implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:destroy_time"
+    public <init>(boolean)
+    public static org.geysermc.paletter.block.component.DestroyTime$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public static org.geysermc.paletter.block.component.DestroyTime of(boolean)
+    public org.geysermc.paletter.block.component.DestroyTime$Builder toBuilder()
+    public final java.lang.String toString()
+    public boolean value()
+}
+
+public static final class org.geysermc.paletter.block.component.DestroyTime$Builder {
+    public org.geysermc.paletter.block.component.DestroyTime build()
+    public org.geysermc.paletter.block.component.DestroyTime$Builder value(boolean)
+}
+
+public record org.geysermc.paletter.block.component.DestructibleByExplosion implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:destructible_by_explosion"
+    public <init>(float, java.lang.Boolean)
+    public static org.geysermc.paletter.block.component.DestructibleByExplosion$Builder builder()
+    public java.lang.Boolean enabled()
+    public final boolean equals(java.lang.Object)
+    public float explosionResistance()
+    public final int hashCode()
+    public java.lang.String name()
+    public static org.geysermc.paletter.block.component.DestructibleByExplosion of(boolean)
+    public org.geysermc.paletter.block.component.DestructibleByExplosion$Builder toBuilder()
+    public final java.lang.String toString()
+}
+
+public static final class org.geysermc.paletter.block.component.DestructibleByExplosion$Builder {
+    public org.geysermc.paletter.block.component.DestructibleByExplosion build()
+    public org.geysermc.paletter.block.component.DestructibleByExplosion$Builder enabled(java.lang.Boolean)
+    public org.geysermc.paletter.block.component.DestructibleByExplosion$Builder explosionResistance(float)
 }
 
 public record org.geysermc.paletter.block.component.DestructibleByMining implements org.geysermc.paletter.block.component.BlockComponent {
@@ -792,6 +926,65 @@ public static final class org.geysermc.paletter.block.component.EmbeddedVisual$N
     public org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation$Builder z(java.lang.String)
 }
 
+public record org.geysermc.paletter.block.component.EntityFallOn implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:entity_fall_on"
+    public <init>(float)
+    public static org.geysermc.paletter.block.component.EntityFallOn$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public float minFallDistance()
+    public java.lang.String name()
+    public org.geysermc.paletter.block.component.EntityFallOn$Builder toBuilder()
+    public final java.lang.String toString()
+}
+
+public static final class org.geysermc.paletter.block.component.EntityFallOn$Builder {
+    public org.geysermc.paletter.block.component.EntityFallOn build()
+    public org.geysermc.paletter.block.component.EntityFallOn$Builder minFallDistance(float)
+}
+
+@Deprecated public record org.geysermc.paletter.block.component.ExplosionResistance implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:explosion_resistance"
+    public <init>(boolean)
+    public static org.geysermc.paletter.block.component.ExplosionResistance$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public static org.geysermc.paletter.block.component.ExplosionResistance of(boolean)
+    public org.geysermc.paletter.block.component.ExplosionResistance$Builder toBuilder()
+    public final java.lang.String toString()
+    public boolean value()
+}
+
+public static final class org.geysermc.paletter.block.component.ExplosionResistance$Builder {
+    public org.geysermc.paletter.block.component.ExplosionResistance build()
+    public org.geysermc.paletter.block.component.ExplosionResistance$Builder value(boolean)
+}
+
+public record org.geysermc.paletter.block.component.Flammable implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:flammable"
+    public <init>(int, int, boolean, java.lang.Boolean)
+    public static org.geysermc.paletter.block.component.Flammable$Builder builder()
+    public int catchChanceModifier()
+    public int destroyChanceModifier()
+    public java.lang.Boolean enabled()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public boolean lavaFlammable()
+    public java.lang.String name()
+    public static org.geysermc.paletter.block.component.Flammable of(boolean)
+    public org.geysermc.paletter.block.component.Flammable$Builder toBuilder()
+    public final java.lang.String toString()
+}
+
+public static final class org.geysermc.paletter.block.component.Flammable$Builder {
+    public org.geysermc.paletter.block.component.Flammable build()
+    public org.geysermc.paletter.block.component.Flammable$Builder catchChanceModifier(int)
+    public org.geysermc.paletter.block.component.Flammable$Builder destroyChanceModifier(int)
+    public org.geysermc.paletter.block.component.Flammable$Builder enabled(java.lang.Boolean)
+    public org.geysermc.paletter.block.component.Flammable$Builder lavaFlammable(boolean)
+}
+
 public record org.geysermc.paletter.block.component.FlowerPottable implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:flower_pottable"
     public <init>()
@@ -862,6 +1055,93 @@ public enum org.geysermc.paletter.block.component.Geometry$NWayVisualRotation {
     public java.lang.String value()
     public static org.geysermc.paletter.block.component.Geometry$NWayVisualRotation valueOf(java.lang.String)
     public static org.geysermc.paletter.block.component.Geometry$NWayVisualRotation[] values()
+}
+
+@Experimental public record org.geysermc.paletter.block.component.InstrumentSound implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:instrument_sound"
+    public <init>(org.geysermc.paletter.block.component.InstrumentSound$Down, org.geysermc.paletter.block.component.InstrumentSound$Up)
+    public static org.geysermc.paletter.block.component.InstrumentSound$Builder builder()
+    public org.geysermc.paletter.block.component.InstrumentSound$Down down()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public org.geysermc.paletter.block.component.InstrumentSound$Builder toBuilder()
+    public final java.lang.String toString()
+    public org.geysermc.paletter.block.component.InstrumentSound$Up up()
+}
+
+public static final class org.geysermc.paletter.block.component.InstrumentSound$Builder {
+    public org.geysermc.paletter.block.component.InstrumentSound build()
+    public org.geysermc.paletter.block.component.InstrumentSound$Builder down(org.geysermc.paletter.block.component.InstrumentSound$Down)
+    public org.geysermc.paletter.block.component.InstrumentSound$Builder up(org.geysermc.paletter.block.component.InstrumentSound$Up)
+}
+
+public enum org.geysermc.paletter.block.component.InstrumentSound$Down {
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_BANJO
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_BASSATTACK
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_BD
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_BELL
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_BIT
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_CHIME
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_COW_BELL
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_CREEPER
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_DIDGERIDOO
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_ENDERDRAGON
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_FLUTE
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_GUITAR
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_HARP
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_HAT
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_IRON_XYLOPHONE
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_NONE
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_PIGLIN
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_PLING
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_SKELETON
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_SNARE
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_TRUMPET
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_TRUMPET_EXPOSED
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_TRUMPET_OXIDIZED
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_TRUMPET_WEATHERED
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_WITHERSKELETON
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_XYLOPHONE
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Down NOTE_ZOMBIE
+    public static org.geysermc.paletter.block.component.InstrumentSound$Down fromValue(java.lang.String)
+    public java.lang.String value()
+    public static org.geysermc.paletter.block.component.InstrumentSound$Down valueOf(java.lang.String)
+    public static org.geysermc.paletter.block.component.InstrumentSound$Down[] values()
+}
+
+public enum org.geysermc.paletter.block.component.InstrumentSound$Up {
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_BANJO
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_BASSATTACK
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_BD
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_BELL
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_BIT
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_CHIME
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_COW_BELL
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_CREEPER
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_DIDGERIDOO
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_ENDERDRAGON
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_FLUTE
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_GUITAR
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_HARP
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_HAT
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_IRON_XYLOPHONE
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_NONE
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_PIGLIN
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_PLING
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_SKELETON
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_SNARE
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_TRUMPET
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_TRUMPET_EXPOSED
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_TRUMPET_OXIDIZED
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_TRUMPET_WEATHERED
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_WITHERSKELETON
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_XYLOPHONE
+    public static final org.geysermc.paletter.block.component.InstrumentSound$Up NOTE_ZOMBIE
+    public static org.geysermc.paletter.block.component.InstrumentSound$Up fromValue(java.lang.String)
+    public java.lang.String value()
+    public static org.geysermc.paletter.block.component.InstrumentSound$Up valueOf(java.lang.String)
+    public static org.geysermc.paletter.block.component.InstrumentSound$Up[] values()
 }
 
 public record org.geysermc.paletter.block.component.ItemVisual implements org.geysermc.paletter.block.component.BlockComponent {
@@ -1028,6 +1308,43 @@ public enum org.geysermc.paletter.block.component.LiquidDetection$OnLiquidTouche
     public static org.geysermc.paletter.block.component.LiquidDetection$OnLiquidTouches[] values()
 }
 
+public record org.geysermc.paletter.block.component.Loot implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:loot"
+    public <init>(java.lang.String)
+    public static org.geysermc.paletter.block.component.Loot$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public static org.geysermc.paletter.block.component.Loot of(java.lang.String)
+    public org.geysermc.paletter.block.component.Loot$Builder toBuilder()
+    public final java.lang.String toString()
+    public java.lang.String value()
+}
+
+public static final class org.geysermc.paletter.block.component.Loot$Builder {
+    public org.geysermc.paletter.block.component.Loot build()
+    public org.geysermc.paletter.block.component.Loot$Builder value(java.lang.String)
+}
+
+public record org.geysermc.paletter.block.component.MapColor implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:map_color"
+    public <init>(java.lang.String, java.lang.String)
+    public static org.geysermc.paletter.block.component.MapColor$Builder builder()
+    public java.lang.String color()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public java.lang.String tintMethod()
+    public org.geysermc.paletter.block.component.MapColor$Builder toBuilder()
+    public final java.lang.String toString()
+}
+
+public static final class org.geysermc.paletter.block.component.MapColor$Builder {
+    public org.geysermc.paletter.block.component.MapColor build()
+    public org.geysermc.paletter.block.component.MapColor$Builder color(java.lang.String)
+    public org.geysermc.paletter.block.component.MapColor$Builder tintMethod(java.lang.String)
+}
+
 public record org.geysermc.paletter.block.component.MaterialInstances implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:material_instances"
     public <init>(org.geysermc.paletter.block.component.MaterialInstances$Instance, java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$Instance, java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$Instance, java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$Instance, java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$Instance, java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$Instance, java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$Instance, java.lang.String, java.util.Map<java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$Instance>, java.util.Map<java.lang.String, java.lang.String>)
@@ -1144,6 +1461,45 @@ public enum org.geysermc.paletter.block.component.MenuCategory$Category {
     public java.lang.String value()
     public static org.geysermc.paletter.block.component.MenuCategory$Category valueOf(java.lang.String)
     public static org.geysermc.paletter.block.component.MenuCategory$Category[] values()
+}
+
+public record org.geysermc.paletter.block.component.Movable implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:movable"
+    public <init>(org.geysermc.paletter.block.component.Movable$MovementType, org.geysermc.paletter.block.component.Movable$Sticky)
+    public static org.geysermc.paletter.block.component.Movable$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public org.geysermc.paletter.block.component.Movable$MovementType movementType()
+    public java.lang.String name()
+    public org.geysermc.paletter.block.component.Movable$Sticky sticky()
+    public org.geysermc.paletter.block.component.Movable$Builder toBuilder()
+    public final java.lang.String toString()
+}
+
+public static final class org.geysermc.paletter.block.component.Movable$Builder {
+    public org.geysermc.paletter.block.component.Movable build()
+    public org.geysermc.paletter.block.component.Movable$Builder movementType(org.geysermc.paletter.block.component.Movable$MovementType)
+    public org.geysermc.paletter.block.component.Movable$Builder sticky(org.geysermc.paletter.block.component.Movable$Sticky)
+}
+
+public enum org.geysermc.paletter.block.component.Movable$MovementType {
+    public static final org.geysermc.paletter.block.component.Movable$MovementType IMMOVABLE
+    public static final org.geysermc.paletter.block.component.Movable$MovementType POPPED
+    public static final org.geysermc.paletter.block.component.Movable$MovementType PUSH
+    public static final org.geysermc.paletter.block.component.Movable$MovementType PUSH_PULL
+    public static org.geysermc.paletter.block.component.Movable$MovementType fromValue(java.lang.String)
+    public java.lang.String value()
+    public static org.geysermc.paletter.block.component.Movable$MovementType valueOf(java.lang.String)
+    public static org.geysermc.paletter.block.component.Movable$MovementType[] values()
+}
+
+public enum org.geysermc.paletter.block.component.Movable$Sticky {
+    public static final org.geysermc.paletter.block.component.Movable$Sticky NONE
+    public static final org.geysermc.paletter.block.component.Movable$Sticky SAME
+    public static org.geysermc.paletter.block.component.Movable$Sticky fromValue(java.lang.String)
+    public java.lang.String value()
+    public static org.geysermc.paletter.block.component.Movable$Sticky valueOf(java.lang.String)
+    public static org.geysermc.paletter.block.component.Movable$Sticky[] values()
 }
 
 @Experimental public record org.geysermc.paletter.block.component.MultiBlock implements org.geysermc.paletter.block.component.BlockTrait {
@@ -1436,6 +1792,25 @@ public static final class org.geysermc.paletter.block.component.RedstoneConducti
     public org.geysermc.paletter.block.component.RedstoneConductivity$Builder redstoneConductor(boolean)
 }
 
+@Experimental public record org.geysermc.paletter.block.component.RedstoneConsumer implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:redstone_consumer"
+    public <init>(int, boolean)
+    public static org.geysermc.paletter.block.component.RedstoneConsumer$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public int minPower()
+    public java.lang.String name()
+    public boolean propagatesPower()
+    public org.geysermc.paletter.block.component.RedstoneConsumer$Builder toBuilder()
+    public final java.lang.String toString()
+}
+
+public static final class org.geysermc.paletter.block.component.RedstoneConsumer$Builder {
+    public org.geysermc.paletter.block.component.RedstoneConsumer build()
+    public org.geysermc.paletter.block.component.RedstoneConsumer$Builder minPower(int)
+    public org.geysermc.paletter.block.component.RedstoneConsumer$Builder propagatesPower(boolean)
+}
+
 public record org.geysermc.paletter.block.component.RedstoneProducer implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:redstone_producer"
     public <init>(java.util.List<org.geysermc.paletter.block.component.RedstoneProducer$ConnectedFaces>, int, org.geysermc.paletter.block.component.RedstoneProducer$StronglyPoweredFace, java.lang.Boolean)
@@ -1561,6 +1936,26 @@ public enum org.geysermc.paletter.block.component.Support$Shape {
     public static org.geysermc.paletter.block.component.Support$Shape[] values()
 }
 
+public record org.geysermc.paletter.block.component.Tick implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:tick"
+    public <init>(java.util.List<java.lang.Float>, boolean)
+    public static org.geysermc.paletter.block.component.Tick$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.util.List<java.lang.Float> intervalRange()
+    public boolean looping()
+    public java.lang.String name()
+    public org.geysermc.paletter.block.component.Tick$Builder toBuilder()
+    public final java.lang.String toString()
+}
+
+public static final class org.geysermc.paletter.block.component.Tick$Builder {
+    public org.geysermc.paletter.block.component.Tick build()
+    public org.geysermc.paletter.block.component.Tick$Builder intervalRange(java.util.List<java.lang.Float>)
+    public org.geysermc.paletter.block.component.Tick$Builder intervalRange(java.lang.Float...)
+    public org.geysermc.paletter.block.component.Tick$Builder looping(boolean)
+}
+
 public record org.geysermc.paletter.block.component.Transformation implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:transformation"
     public <init>(org.geysermc.paletter.block.component.Transformation$Vec3, org.geysermc.paletter.block.component.Transformation$Vec3, org.geysermc.paletter.block.component.Transformation$Vec3, org.geysermc.paletter.block.component.Transformation$Vec3, org.geysermc.paletter.block.component.Transformation$Vec3)
@@ -1599,6 +1994,21 @@ public record org.geysermc.paletter.block.component.Transformation$Vec3 {
     public float x()
     public float y()
     public float z()
+}
+
+@Deprecated public record org.geysermc.paletter.block.component.UnitCube implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:unit_cube"
+    public <init>()
+    public static org.geysermc.paletter.block.component.UnitCube$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public org.geysermc.paletter.block.component.UnitCube$Builder toBuilder()
+    public final java.lang.String toString()
+}
+
+public static final class org.geysermc.paletter.block.component.UnitCube$Builder {
+    public org.geysermc.paletter.block.component.UnitCube build()
 }
 
 public sealed interface org.geysermc.paletter.block.component.WireOnlyBlockComponent extends org.geysermc.paletter.block.component.BlockComponent permits org.geysermc.paletter.block.component.OnPlayerPlacing {
@@ -2121,6 +2531,24 @@ public static final class org.geysermc.paletter.item.component.Damage$Builder {
     public org.geysermc.paletter.item.component.Damage$Builder value(java.lang.Integer)
 }
 
+public record org.geysermc.paletter.item.component.DamageAbsorption implements org.geysermc.paletter.item.component.ItemComponent {
+    public static final java.lang.String NAME = "minecraft:damage_absorption"
+    public <init>(java.util.List<java.lang.String>)
+    public java.util.List<java.lang.String> absorbableCauses()
+    public static org.geysermc.paletter.item.component.DamageAbsorption$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public org.geysermc.paletter.item.component.DamageAbsorption$Builder toBuilder()
+    public final java.lang.String toString()
+}
+
+public static final class org.geysermc.paletter.item.component.DamageAbsorption$Builder {
+    public org.geysermc.paletter.item.component.DamageAbsorption$Builder absorbableCauses(java.util.List<java.lang.String>)
+    public org.geysermc.paletter.item.component.DamageAbsorption$Builder absorbableCauses(java.lang.String...)
+    public org.geysermc.paletter.item.component.DamageAbsorption build()
+}
+
 public record org.geysermc.paletter.item.component.Digger implements org.geysermc.paletter.item.component.ItemComponent {
     public static final java.lang.String NAME = "minecraft:digger"
     public <init>(java.util.List<org.geysermc.paletter.item.component.Digger$DestroySpeeds>, boolean)
@@ -2233,6 +2661,148 @@ public static final class org.geysermc.paletter.item.component.Durability$Damage
     public org.geysermc.paletter.item.component.Durability$DamageChance build()
     public org.geysermc.paletter.item.component.Durability$DamageChance$Builder max(int)
     public org.geysermc.paletter.item.component.Durability$DamageChance$Builder min(int)
+}
+
+public record org.geysermc.paletter.item.component.DurabilitySensor implements org.geysermc.paletter.item.component.ItemComponent {
+    public static final java.lang.String NAME = "minecraft:durability_sensor"
+    public <init>(java.util.List<org.geysermc.paletter.item.component.DurabilitySensor$DurabilityThresholds>)
+    public static org.geysermc.paletter.item.component.DurabilitySensor$Builder builder()
+    public java.util.List<org.geysermc.paletter.item.component.DurabilitySensor$DurabilityThresholds> durabilityThresholds()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public org.geysermc.paletter.item.component.DurabilitySensor$Builder toBuilder()
+    public final java.lang.String toString()
+}
+
+public static final class org.geysermc.paletter.item.component.DurabilitySensor$Builder {
+    public org.geysermc.paletter.item.component.DurabilitySensor build()
+    public org.geysermc.paletter.item.component.DurabilitySensor$Builder durabilityThresholds(java.util.List<org.geysermc.paletter.item.component.DurabilitySensor$DurabilityThresholds>)
+    public org.geysermc.paletter.item.component.DurabilitySensor$Builder durabilityThresholds(org.geysermc.paletter.item.component.DurabilitySensor$DurabilityThresholds...)
+}
+
+public record org.geysermc.paletter.item.component.DurabilitySensor$DurabilityThresholds {
+    public <init>(int, org.geysermc.paletter.item.component.DurabilitySensor$ParticleType, java.lang.String)
+    public static org.geysermc.paletter.item.component.DurabilitySensor$DurabilityThresholds$Builder builder()
+    public int durability()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public org.geysermc.paletter.item.component.DurabilitySensor$ParticleType particleType()
+    public java.lang.String soundEvent()
+    public org.geysermc.paletter.item.component.DurabilitySensor$DurabilityThresholds$Builder toBuilder()
+    public final java.lang.String toString()
+}
+
+public static final class org.geysermc.paletter.item.component.DurabilitySensor$DurabilityThresholds$Builder {
+    public org.geysermc.paletter.item.component.DurabilitySensor$DurabilityThresholds build()
+    public org.geysermc.paletter.item.component.DurabilitySensor$DurabilityThresholds$Builder durability(int)
+    public org.geysermc.paletter.item.component.DurabilitySensor$DurabilityThresholds$Builder particleType(org.geysermc.paletter.item.component.DurabilitySensor$ParticleType)
+    public org.geysermc.paletter.item.component.DurabilitySensor$DurabilityThresholds$Builder soundEvent(java.lang.String)
+}
+
+public enum org.geysermc.paletter.item.component.DurabilitySensor$ParticleType {
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType BALLOONGAS
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType BLEACH
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType BLOCKFORCEFIELD
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType BLUEFLAME
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType BREEZEWINDEXPLOSION
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType BUBBLE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType BUBBLECOLUMNDOWN
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType BUBBLECOLUMNUP
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType BUBBLEMANUAL
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType CAMPFIRESMOKE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType CAMPFIRESMOKETALL
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType CANDLEFLAME
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType CARROTBOOST
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType COLOREDFLAME
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType CONDUIT
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType CREAKINGCRUMBLE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType CRIT
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType DRAGONBREATH
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType DRAGONBREATHFIRE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType DRAGONBREATHTRAIL
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType DRAGONDESTROYBLOCK
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType DRIPHONEY
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType DRIPLAVA
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType DRIPWATER
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType DUSTPLUME
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType ELECTRICSPARK
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType ENCHANTINGTABLE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType ENDROD
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType EVAPORATION
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType EXPLODE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType EYEBLOSSOMCLOSE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType EYEBLOSSOMOPEN
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType FALLINGBORDERDUST
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType FALLINGDUST
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType FIREWORKS
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType FIREWORKSOVERLAY
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType FIREWORKSSTARTER
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType FLAME
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType FOOD
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType GREENFLAME
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType HEART
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType HUGEEXPLOSION
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType ICEBALLBREAK
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType ICONCRACK
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType INK
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType LARGEEXPLODE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType LARGESMOKE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType LAVA
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType MOBAPPEARANCE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType MOBFLAME
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType MOBSPELL
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType MOBSPELLAMBIENT
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType MOBSPELLINSTANTANEOUS
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType MYCELIUMDUST
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType NONE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType NOTE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType OBSIDIANTEAR
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType ORANGEPOPLARLEAVES
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType PALEOAKLEAVES
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType PAUSEMOBGROWTH
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType PORTAL
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType PORTALREVERSE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType RAINSPLASH
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType REDDUST
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType REDPOPLARLEAVES
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType RESETMOBGROWTH
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType RISINGBORDERDUST
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType SCULKSOUL
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType SHRIEK
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType SHULKERBULLET
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType SLIME
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType SMOKE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType SNEEZE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType SNOWBALLPOOF
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType SNOWFLAKE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType SONICEXPLOSION
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType SOUL
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType SPARKLER
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType SPIT
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType STALACTITEDRIPLAVA
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType STALACTITEDRIPWATER
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType SULFURCUBE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType TERRAIN
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType TOTEM
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType TOWNAURA
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType TRACKINGEMITTER
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType VAULTCONNECTION
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType VILLAGERANGRY
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType VILLAGERHAPPY
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType WATERSPLASH
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType WATERSPLASHMANUAL
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType WATERWAKE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType WAX
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType WHITESMOKE
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType WINDEXPLOSION
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType WITCHSPELL
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType WOLFARMORCRACK
+    public static final org.geysermc.paletter.item.component.DurabilitySensor$ParticleType YELLOWPOPLARLEAVES
+    public static org.geysermc.paletter.item.component.DurabilitySensor$ParticleType fromValue(java.lang.String)
+    public java.lang.String value()
+    public static org.geysermc.paletter.item.component.DurabilitySensor$ParticleType valueOf(java.lang.String)
+    public static org.geysermc.paletter.item.component.DurabilitySensor$ParticleType[] values()
 }
 
 public record org.geysermc.paletter.item.component.Dyeable implements org.geysermc.paletter.item.component.ItemComponent {
@@ -2484,7 +3054,7 @@ public static final class org.geysermc.paletter.item.component.InteractButton$Bu
     public org.geysermc.paletter.item.component.InteractButton$Builder text(java.lang.String)
 }
 
-public sealed interface org.geysermc.paletter.item.component.ItemComponent permits org.geysermc.paletter.item.component.AllowOffHand, org.geysermc.paletter.item.component.BlockPlacer, org.geysermc.paletter.item.component.BundleInteraction, org.geysermc.paletter.item.component.CanDestroyInCreative, org.geysermc.paletter.item.component.Compostable, org.geysermc.paletter.item.component.Cooldown, org.geysermc.paletter.item.component.Damage, org.geysermc.paletter.item.component.Digger, org.geysermc.paletter.item.component.DisplayName, org.geysermc.paletter.item.component.Durability, org.geysermc.paletter.item.component.Dyeable, org.geysermc.paletter.item.component.Enchantable, org.geysermc.paletter.item.component.EntityPlacer, org.geysermc.paletter.item.component.FireResistant, org.geysermc.paletter.item.component.Food, org.geysermc.paletter.item.component.Fuel, org.geysermc.paletter.item.component.Glint, org.geysermc.paletter.item.component.HandEquipped, org.geysermc.paletter.item.component.HoverTextColor, org.geysermc.paletter.item.component.Icon, org.geysermc.paletter.item.component.InteractButton, org.geysermc.paletter.item.component.KineticWeapon, org.geysermc.paletter.item.component.LiquidClipped, org.geysermc.paletter.item.component.MaxStackSize, org.geysermc.paletter.item.component.MusicRecord, org.geysermc.paletter.item.component.PiercingWeapon, org.geysermc.paletter.item.component.Projectile, org.geysermc.paletter.item.component.Rarity, org.geysermc.paletter.item.component.Repairable, org.geysermc.paletter.item.component.Shooter, org.geysermc.paletter.item.component.ShouldDespawn, org.geysermc.paletter.item.component.StackedByData, org.geysermc.paletter.item.component.StorageItem, org.geysermc.paletter.item.component.StorageWeightLimit, org.geysermc.paletter.item.component.StorageWeightModifier, org.geysermc.paletter.item.component.SwingDuration, org.geysermc.paletter.item.component.SwingSounds, org.geysermc.paletter.item.component.Tags, org.geysermc.paletter.item.component.ThrowableItem, org.geysermc.paletter.item.component.UseAnimation, org.geysermc.paletter.item.component.UseModifiers, org.geysermc.paletter.item.component.Wearable, org.geysermc.paletter.item.component.WireOnlyItemComponent {
+public sealed interface org.geysermc.paletter.item.component.ItemComponent permits org.geysermc.paletter.item.component.AllowOffHand, org.geysermc.paletter.item.component.BlockPlacer, org.geysermc.paletter.item.component.BundleInteraction, org.geysermc.paletter.item.component.CanDestroyInCreative, org.geysermc.paletter.item.component.Compostable, org.geysermc.paletter.item.component.Cooldown, org.geysermc.paletter.item.component.Damage, org.geysermc.paletter.item.component.DamageAbsorption, org.geysermc.paletter.item.component.Digger, org.geysermc.paletter.item.component.DisplayName, org.geysermc.paletter.item.component.Durability, org.geysermc.paletter.item.component.DurabilitySensor, org.geysermc.paletter.item.component.Dyeable, org.geysermc.paletter.item.component.Enchantable, org.geysermc.paletter.item.component.EntityPlacer, org.geysermc.paletter.item.component.FireResistant, org.geysermc.paletter.item.component.Food, org.geysermc.paletter.item.component.Fuel, org.geysermc.paletter.item.component.Glint, org.geysermc.paletter.item.component.HandEquipped, org.geysermc.paletter.item.component.HoverTextColor, org.geysermc.paletter.item.component.Icon, org.geysermc.paletter.item.component.InteractButton, org.geysermc.paletter.item.component.KineticWeapon, org.geysermc.paletter.item.component.LiquidClipped, org.geysermc.paletter.item.component.MaxStackSize, org.geysermc.paletter.item.component.MusicRecord, org.geysermc.paletter.item.component.PiercingWeapon, org.geysermc.paletter.item.component.Projectile, org.geysermc.paletter.item.component.Rarity, org.geysermc.paletter.item.component.Repairable, org.geysermc.paletter.item.component.Seed, org.geysermc.paletter.item.component.Shooter, org.geysermc.paletter.item.component.ShouldDespawn, org.geysermc.paletter.item.component.StackedByData, org.geysermc.paletter.item.component.StorageItem, org.geysermc.paletter.item.component.StorageWeightLimit, org.geysermc.paletter.item.component.StorageWeightModifier, org.geysermc.paletter.item.component.SwingDuration, org.geysermc.paletter.item.component.SwingSounds, org.geysermc.paletter.item.component.Tags, org.geysermc.paletter.item.component.ThrowableItem, org.geysermc.paletter.item.component.UseAnimation, org.geysermc.paletter.item.component.UseDuration, org.geysermc.paletter.item.component.UseModifiers, org.geysermc.paletter.item.component.Wearable, org.geysermc.paletter.item.component.WireOnlyItemComponent {
     public abstract java.lang.String name()
 }
 
@@ -2871,6 +3441,43 @@ public static final class org.geysermc.paletter.item.component.Repairable$Repair
     public org.geysermc.paletter.item.component.Repairable$RepairItems$Builder repairAmountExpression(java.lang.String)
 }
 
+@Deprecated public record org.geysermc.paletter.item.component.Seed implements org.geysermc.paletter.item.component.ItemComponent {
+    public static final java.lang.String NAME = "minecraft:seed"
+    public <init>(java.lang.String, java.util.List<java.lang.String>, boolean, org.geysermc.paletter.item.component.Seed$PlantAtFace)
+    public static org.geysermc.paletter.item.component.Seed$Builder builder()
+    public java.lang.String cropResult()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public java.util.List<java.lang.String> plantAt()
+    public boolean plantAtAnySolidSurface()
+    public org.geysermc.paletter.item.component.Seed$PlantAtFace plantAtFace()
+    public org.geysermc.paletter.item.component.Seed$Builder toBuilder()
+    public final java.lang.String toString()
+}
+
+public static final class org.geysermc.paletter.item.component.Seed$Builder {
+    public org.geysermc.paletter.item.component.Seed build()
+    public org.geysermc.paletter.item.component.Seed$Builder cropResult(java.lang.String)
+    public org.geysermc.paletter.item.component.Seed$Builder plantAt(java.util.List<java.lang.String>)
+    public org.geysermc.paletter.item.component.Seed$Builder plantAt(java.lang.String...)
+    public org.geysermc.paletter.item.component.Seed$Builder plantAtAnySolidSurface(boolean)
+    public org.geysermc.paletter.item.component.Seed$Builder plantAtFace(org.geysermc.paletter.item.component.Seed$PlantAtFace)
+}
+
+public enum org.geysermc.paletter.item.component.Seed$PlantAtFace {
+    public static final org.geysermc.paletter.item.component.Seed$PlantAtFace DOWN
+    public static final org.geysermc.paletter.item.component.Seed$PlantAtFace EAST
+    public static final org.geysermc.paletter.item.component.Seed$PlantAtFace NORTH
+    public static final org.geysermc.paletter.item.component.Seed$PlantAtFace SOUTH
+    public static final org.geysermc.paletter.item.component.Seed$PlantAtFace UP
+    public static final org.geysermc.paletter.item.component.Seed$PlantAtFace WEST
+    public static org.geysermc.paletter.item.component.Seed$PlantAtFace fromValue(java.lang.String)
+    public java.lang.String value()
+    public static org.geysermc.paletter.item.component.Seed$PlantAtFace valueOf(java.lang.String)
+    public static org.geysermc.paletter.item.component.Seed$PlantAtFace[] values()
+}
+
 public record org.geysermc.paletter.item.component.Shooter implements org.geysermc.paletter.item.component.ItemComponent {
     public static final java.lang.String NAME = "minecraft:shooter"
     public <init>(java.util.List<org.geysermc.paletter.item.component.Shooter$Ammunition>, boolean, float, boolean)
@@ -3113,6 +3720,24 @@ public record org.geysermc.paletter.item.component.UseAnimation implements org.g
 public static final class org.geysermc.paletter.item.component.UseAnimation$Builder {
     public org.geysermc.paletter.item.component.UseAnimation build()
     public org.geysermc.paletter.item.component.UseAnimation$Builder value(java.lang.String)
+}
+
+@Deprecated public record org.geysermc.paletter.item.component.UseDuration implements org.geysermc.paletter.item.component.ItemComponent {
+    public static final java.lang.String NAME = "minecraft:use_duration"
+    public <init>(java.lang.Float)
+    public static org.geysermc.paletter.item.component.UseDuration$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public static org.geysermc.paletter.item.component.UseDuration of(float)
+    public org.geysermc.paletter.item.component.UseDuration$Builder toBuilder()
+    public final java.lang.String toString()
+    public java.lang.Float value()
+}
+
+public static final class org.geysermc.paletter.item.component.UseDuration$Builder {
+    public org.geysermc.paletter.item.component.UseDuration build()
+    public org.geysermc.paletter.item.component.UseDuration$Builder value(java.lang.Float)
 }
 
 public record org.geysermc.paletter.item.component.UseModifiers implements org.geysermc.paletter.item.component.ItemComponent {

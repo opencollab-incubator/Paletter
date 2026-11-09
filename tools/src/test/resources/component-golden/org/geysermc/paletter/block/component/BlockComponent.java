@@ -13,7 +13,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/blockcomponentslist?view=minecraft-bedrock-stable">Microsoft Learn: block components</a>
  * @since 1.0.0
  */
-public sealed interface BlockComponent permits Glow, WireOnlyBlockComponent {
+public sealed interface BlockComponent permits Glow, Hidden, WireOnlyBlockComponent {
     /**
      * @return the component name in add-on JSON, e.g. {@code minecraft:durability}
      */

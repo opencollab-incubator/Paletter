@@ -175,6 +175,11 @@ final class ApiSource {
     /** The paragraph that says in which protocols BDS accepts the component without sending it. */
     private String serverOnlyDoc() {
         ApiModel.Window w = c.serverOnly;
+        if (!w.bounded()) {
+            String versions = String.join(", ", model.captureVersions.values());
+            return String.join("\n", Docs.wrap("Server only: BDS accepts it in packs but sends nothing to clients"
+                + (versions.isEmpty() ? "" : " (BDS " + versions + ")") + ", so it has no client effect. Palettes leave it out without a warning.")) + "\n";
+        }
         String range = w.since() == Integer.MIN_VALUE ? "below protocol " + w.until()
             : w.until() == Integer.MAX_VALUE ? "from protocol " + w.since() : "from protocol " + w.since() + " below " + w.until();
         List<String> captured = new ArrayList<>();
@@ -195,6 +200,22 @@ final class ApiSource {
         return String.join("\n", Docs.wrap(text.toString())) + "\n";
     }
 
+    /** The sentence that says since when BDS rejects the component (from the captures), with BDS's own message. */
+    private String rejectedText() {
+        ApiModel.Window w = c.rejected;
+        String since;
+        if (model.captureVersions.isEmpty()) {
+            since = "rejected by BDS";
+        } else if (w.since() == Integer.MIN_VALUE) {
+            Map.Entry<Integer, String> oldest = model.captureVersions.firstEntry();
+            since = "rejected by every captured BDS (oldest: " + oldest.getValue() + ", protocol " + oldest.getKey() + ")";
+        } else {
+            Map.Entry<Integer, String> first = model.captureVersions.floorEntry(w.since());
+            since = "rejected by BDS since " + (first == null ? "protocol " + w.since() : first.getValue() + " (protocol " + first.getKey() + ")");
+        }
+        return since + (w.mapping().has("note") ? ": " + w.mapping().get("note").getAsString() : "");
+    }
+
     // ---- Records -----------------------------------------------------------------------------------------------------
 
     private ClassName name(ObjType o) {
@@ -213,6 +234,10 @@ final class ApiSource {
                 .append(c.page.isEmpty() || Docs.learnUrl(c.page) != null ? "" : ", documented in {@code " + c.page + "}").append(".\n");
             if (c.serverOnly != null) {
                 doc.append(serverOnlyDoc());
+            }
+            if (c.rejected != null) {
+                doc.append(String.join("\n", Docs.wrap("Retired: " + Docs.escape(rejectedText())
+                    + ". Its encoder writes nothing and adds a report warning, as BDS would never send it to a client."))).append('\n');
             }
             if (!c.experiments.isEmpty()) {
                 doc.append("Bedrock requires the experiment").append(c.experiments.size() > 1 ? "s " : " ")
@@ -238,6 +263,8 @@ final class ApiSource {
             doc.append("@since ").append(since).append('\n');
             if (c.replacement != null) {
                 doc.append("@deprecated ").append(replacementDoc(c.replacement)).append('\n');
+            } else if (c.rejected != null) {
+                doc.append("@deprecated ").append(String.join("\n       ", Docs.wrap(Docs.escape(rejectedText())))).append('\n');
             } else if (c.deprecated()) {
                 doc.append("@deprecated marked deprecated by the Minecraft creator documentation\n");
             }
@@ -259,7 +286,7 @@ final class ApiSource {
             }
             type.addAnnotation(serverOnly.build());
         }
-        if (top && (c.deprecated() || c.replacement != null)) {
+        if (top && (c.deprecated() || c.replacement != null || c.rejected != null)) {
             type.addAnnotation(Deprecated.class);
         }
         if (top && c.replacement != null) {

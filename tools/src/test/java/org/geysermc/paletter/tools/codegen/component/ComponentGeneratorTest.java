@@ -193,11 +193,19 @@ class ComponentGeneratorTest {
     @Test
     void theModelIsWhatTheGoldenSourcesShow() {
         ApiModel model = ComponentGenerator.model(inputs());
-        assertEquals(List.of("item:test:gadget", "block:test:glow", "item:test:widget"),
-            model.components.stream().map(c -> c.id).sorted((a, b) -> a.substring(a.indexOf(':')).compareTo(b.substring(b.indexOf(':')))).toList());
-        assertTrue(model.omitted.get("block:test:hidden").startsWith("server only"), model.omitted.toString());
-        assertEquals(Set.of("item:test:old", "item:test:former", "item:test:count", "item:test:ancient", "item:test:quiet"),
-            model.omitted.keySet().stream().filter(id -> id.startsWith("item:test:") && !id.equals("item:test:widget")).collect(java.util.stream.Collectors.toSet()));
+        assertEquals(Set.of("item:test:gadget", "block:test:glow", "item:test:widget", "block:test:hidden", "item:test:old", "item:test:former",
+                "item:test:count", "item:test:ancient", "item:test:quiet"),
+            model.components.stream().map(c -> c.id).collect(java.util.stream.Collectors.toSet()));
+        assertEquals(Set.of(), model.omitted.keySet(), "server only and rejected components are generated too");
+        // Server only in every window: the whole range, no bounds
+        ApiModel.Comp hidden = model.component("block:test:hidden");
+        assertTrue(hidden.serverOnly != null && !hidden.serverOnly.bounded());
+        assertTrue(hidden.neverSent());
+        assertEquals(null, hidden.rejected);
+        // Rejected in every window (the oldest capture included)
+        ApiModel.Comp old = model.component("item:test:old");
+        assertTrue(old.rejected != null && old.rejected.since() == Integer.MIN_VALUE);
+        assertEquals(null, old.serverOnly);
         ApiModel.Comp widget = model.components.stream().filter(c -> c.id.equals("item:test:widget")).findFirst().orElseThrow();
         ApiModel.Field speed = widget.root.fields.stream().filter(f -> f.json.equals("speed")).findFirst().orElseThrow();
         assertEquals(null, speed.defaultValue, "BDS contradicts the docs default: left unset");
