@@ -8,8 +8,6 @@ the item component packet, the creative content packet and block properties for 
 A palette can have multiple layers, which could be extended per client if desired.
 
 ```java
-Paletter paletter = Paletter.bundled();
-
 PaletteLayer layer = PaletteLayer.builder("server")
     .item(CustomItem.builder("example:ruby")
         .component(Icon.of("ruby"))
@@ -18,12 +16,18 @@ PaletteLayer layer = PaletteLayer.builder("server")
         .component(Tags.builder().tags("minecraft:gems").build())
         .creative(CreativePlacement.group(CreativeCategory.ITEMS, "itemGroup.name.minerals"))
         .build())
-    .overrideItem("minecraft:cake", item -> item.components(MaxStackSize.of(1)))
-    .creative(editor -> editor.remove(ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.damage(2))))
+    .overrideItem(BedrockItems.CAKE, item -> item.components(MaxStackSize.of(1)))
+    .creative(editor -> editor.remove(ItemMatcher.of(BedrockItems.EMPTY_MAP.variant(2))))
     .build();
 
-Palette palette = paletter.palette(codec, BlockNetworkIds.HASHED, layer);   // once per client version, shared
-Palette forSession = palette.extend(sessionLayer);                          // optional, per session
+Paletter paletter = Paletter.builder()                  // the policy, the same for every palette
+    .blockNetworkIds(BlockNetworkIds.HASHED)
+    .fallbacks(Fallbacks.builder().item(BedrockItems.POPLAR_BOAT, BedrockItems.OAK_BOAT).build())
+    .layer(layer)                                       // content
+    .build();
+
+Palette palette = paletter.palette(codec);              // once per client version, shared
+Palette forSession = palette.extend(sessionLayer);      // optional, per session
 
 palette.applyTo(codecHelper);                  // item + block definition registries
 palette.applyTo(startGamePacket);              // block properties, blockNetworkIdsHashed
@@ -47,81 +51,94 @@ runnable examples are in [examples/](examples).
 
 ## Concepts
 
-**Palette.** Vanilla data of one version plus a stack of layers, compiled. Immutable and thread safe. Item definitions are
-`PaletteItem`, block definitions `PaletteBlock`; both are compared by identity.
+**Keys, registered, stacks.** Three things, kept apart. A *key* is an identity that never changes: `BedrockItemType`,
+`BedrockItemVariant` (type + aux), `BedrockBlockType`, `BedrockBlockState` (type + state values). Vanilla keys are the
+generated constants (see [Vanilla constants](#vanilla-constants)), custom ones are `BedrockItemType.of("example:ruby")` or
+`BedrockBlockType.of(customBlock)`; same classes. A key needs no existence in any version, and renames and splits of
+identifiers Bedrock made (`renames.txt`) map to the same or a new key. *Registered* is a key inside one palette:
+`RegisteredItem`, and `RegisteredBlock` (the block) with its `RegisteredBlockState`s (runtime id, components, origin).
+They implement Cloudburst's `ItemDefinition` / `BlockDefinition` and are compared by identity; they differ per version.
+A *stack* is `BedrockItemStack`: variant, count, NBT, optional block state. Cloudburst `ItemData` only appears where a
+packet needs it (`Palette#encode`, `Palette#decode`).
 
-**Layers.** A `PaletteLayer` is a patch: custom items and blocks, overrides of vanilla items, creative edits and fallbacks.
-Layers do not know protocol versions; the same layer compiles against every version. Stack them to split ownership, e.g.
-a base layer, then plugins or extensions, then a per-session layer. `Paletter#palette` caches every prefix of a layer list;
-`Palette#extend` is meant for short lived layers. Definitions a layer does not touch are shared with the palette it
-extends, so `==` between a session's definitions and the shared ones keeps working; without custom blocks or block
-fallbacks the whole block palette, including its canonical table, is shared.
+**Paletter and Palette.** `Paletter.builder()` is the global policy: the data source, the versions, `BlockNetworkIds`, one
+`Fallbacks` (never per layer), which vanilla content exists (`.vanilla(v -> v.remove(...).experiments(...))`), the creative
+ordering, a report callback, and the global layers. `paletter.palette(protocol)` compiles a `Palette` per data version, once,
+and caches it: vanilla data of one version plus the layers, immutable and thread safe.
 
-**Canonical ids.** Every block state of the newest bundled version has a dense canonical id (`CanonicalBlocks`), in that
-version's vanilla palette order; every item variant of the newest version has one too (`CanonicalItems`: each item's base
-variant in runtime id order, then the other variants of the creative inventory, i.e. damage values like potions). They
-are stable for a Paletter release and the same for every protocol version. Custom blocks and items of a layer get ids
-appended after the vanilla ones, per lineage of layers: the same layer stack gives the same ids in every version.
-A layer can also give ids to further variants of the newest version (`PaletteLayer.Builder#variant`), e.g. damage values
-or block states a consumer maps to that are not in the creative inventory; `Palette#match` recognizes them too.
-`Paletter#canonicalBlock` / `canonicalItem` accept content of **any** bundled version, not only the newest: a state or
-variant the newest version lacks is mapped forward (state keys added, removed or reset like an older palette adapts
-newer states, renamed identifiers via the bundled `renames.txt`), and one that no longer exists returns -1 with the
-reason (`Paletter#forwardBlock` / `forwardItem` return a `Forwarding` with kind and detail, `explainUnknown` the reason
-only). A mapping made against 26.50 therefore keeps working when 26.60 becomes the newest version.
-The tables are built when a palette is compiled; canonical content a version lacks and that has no fallback (sent as
-`minecraft:unknown`, see below) is listed in the palette's report.
-Each palette turns them into what its version needs with flat arrays built once per palette and shared where possible:
+**Layers.** A `PaletteLayer` is content only: custom items and blocks, overrides of vanilla items, creative edits, tags.
+Layers do not know protocol versions; the same layer compiles against every version. Layers given to the builder apply to
+every palette.
 
-| Lookup                          | Cost                               | Result                                              |
-|---------------------------------|------------------------------------|-----------------------------------------------------|
-| `Paletter#canonicalBlock(state)` | hash lookup (state normalized); an addition for a `BedrockBlockState` constant | canonical id or -1 |
-| `Palette#runtimeId(canonical)`  | array                              | runtime id in the palette's network id mode         |
-| `Palette#block(canonical)`      | array                              | `PaletteBlock`: exact, adapted, fallback, else air  |
-| `BlockPalette#canonical(definition)` | array                         | canonical id of a block the client sent             |
-| `Paletter#canonicalItem(variant)` | hash lookup; a field read for a `BedrockItemType`/`BedrockItemVariant` constant | canonical id or -1 |
-| `Palette#item(canonical)`       | array                              | `ResolvedItem`: definition, damage, block, fallback flag; null if missing |
-| `Palette#match(itemData)`       | hash lookup by runtime id + a few candidates | canonical id of a stack the client sent  |
+**Extend.** `Palette#extend(layer)` is a patch over the shared palette, meant for short lived layers (a session): items it
+adds get ids after the base, lookups check the patch and then the base, the creative layout is rebuilt from the edited one,
+and everything the layer does not touch is the same instance as in the base, so `==` keeps working. Custom blocks in a
+session layer need `BlockNetworkIds.HASHED` (a clear `PaletteException` otherwise); then the patch only holds the added
+states.
 
-None of them allocate.
+**Properties.** What a key is made of: item components, data driven block data, custom components. They are versioned per
+Bedrock version (vanilla) or come from the layer (custom), the same generated component records for both, and bundled once
+with the version range they are valid for. `RegisteredItem#properties()`, `RegisteredBlock#properties()` and
+`RegisteredBlock#properties(state)` (a state also has the components of the permutations that match it) give them for a
+palette; `paletter.properties(key, version)` without one. Overrides edit the components of an entry, vanilla or custom alike.
+
+**Lookups.** Keys are version independent, each palette turns them into what its version needs, without allocating:
+
+| Lookup                          | Result                                              |
+|---------------------------------|-----------------------------------------------------|
+| `Paletter#block(NbtMap)`, `Paletter#item(identifier, aux)` | the key of a state or variant of **any** bundled version, or null (see below) |
+| `Palette#runtimeId(BedrockBlockState)` | runtime id in the palette's network id mode, a field read and an array load |
+| `Palette#block(BedrockBlockState)` | `RegisteredBlockState`: exact, adapted, fallback, else air |
+| `Palette#item(BedrockItemType\|BedrockItemVariant)` | `RegisteredItem`, or null if the version has neither the item nor a fallback |
+| `Palette#encode(BedrockItemStack)` | `ItemData` for the client, fallbacks applied |
+| `Palette#decode(ItemData)` | the `BedrockItemStack` a client sent, or null if unknown |
+| `BlockRegistry#block(RegisteredBlockState)` | the `RegisteredBlock` of a state in this palette |
+
+`Paletter#block` / `Paletter#item` accept content of any bundled version, not only the newest: a state or variant the
+newest version lacks is mapped forward (state keys added, removed or reset like an older palette adapts newer states,
+renamed identifiers via `renames.txt`), and one that no longer exists returns null with a reason (`explainUnknown`). A mapping
+made against 26.50 therefore keeps working when 26.60 becomes the newest version. Content of a layer has keys of its own
+(`BedrockBlockType.of(customBlock)`, `customItem.type()`), valid in every palette that has the layer. Canonical ids, the dense
+ints of the newest version every table is built on, are plumbing in `internal`; canonical content a version lacks and that has
+no fallback is listed in the palette's report.
 
 **Block network ids.** `BlockNetworkIds.SEQUENTIAL` uses palette positions (vanilla order, re-sorted by name hash once
 custom blocks exist, so a custom block shifts vanilla ids). `BlockNetworkIds.HASHED` uses what the client expects when
 `StartGamePacket#blockNetworkIdsHashed` is set: FNV-1a 32 over the little endian NBT of `{name, states}` with states
 sorted by key and no `version` (`minecraft:unknown` is -2). A state then has the same id in every version and palette, so
 ids and encoded chunks can be shared between client versions. Paletter does so itself: hashed palettes of all versions
-share one `PaletteBlock` per vanilla state and equal pages of their canonical tables. Hash collisions within a palette
-fail compilation.
+share one `RegisteredBlockState` per vanilla state and equal pages of their canonical tables (which is why a state does not
+know its block: ask the palette, `BlockRegistry#block(state)`). Hash collisions within a palette fail compilation.
 `Palette#applyTo(StartGamePacket)` sets the flag to match.
 
-**One mapping for all versions.** Map against the newest version only. For older versions, `BlockPalette#resolve` adapts
-states automatically (states added or removed between versions, e.g. stair corners) and applies the fallbacks a layer
-defines for blocks that do not exist (or are experimental) there; `ItemPalette#resolve` does the same for items. The canonical tables
-are filled with these results. When matching stacks from the client, a variant that only reached a version through a
-fallback never shadows an item's own variant, and a stack that is only the fallback of several canonical ids (e.g. the
-shared `minecraft:unknown`) matches none of them (-1).
+**One mapping for all versions.** Map against the newest version only. For older versions, a palette adapts states
+automatically (states added or removed between versions, e.g. stair corners) and applies the fallbacks of the `Fallbacks`
+policy for blocks and items that do not exist (or are experimental) there. When matching stacks from the client, a variant
+that only reached a version through a fallback never shadows an item's own variant, and a stack that is only the fallback
+of several variants (e.g. the shared `minecraft:unknown`) matches none of them (`decode` returns null).
 
-**Fallbacks.** Canonical content an older version lacks resolves, in this order, to: a fallback a layer set for that
-version (`PaletteLayer.Builder#blockFallback(version, identifier, fallback)`, `#itemFallback(version, ...)`), a layer
-fallback for every version (`#blockFallback(identifier, fallback)`), and otherwise the default: the block `minecraft:unknown` and the
-item `minecraft:unknown` (its block item), which every client knows and shows as a placeholder
-(`FallbackDefaults.UNKNOWN`). A layer changes the default for itself and the layers above it with
-`#fallbackDefaults(...)`; `FallbackDefaults.NONE` restores air and missing items. `BlockFallback#force` /
-`ItemFallback#force` also replace content that exists in a version but only behind an experiment.
+**Fallbacks.** Content an older version lacks resolves, in this order, to: a fallback for that version
+(`Fallbacks.Builder#block(version, key, fallback)`, `#item(version, ...)`), a fallback for every version (`#block(key,
+fallback)`), and otherwise the default: the block `minecraft:unknown` and the item `minecraft:unknown` (its block item),
+which every client knows and shows as a placeholder (`Fallbacks.UNKNOWN`). `Fallbacks.NONE` restores air and missing
+items. Targets are keys: `ItemFallback.of(BedrockItemType|BedrockItemVariant)` (the type keeps the aux of the replaced item),
+`BlockFallback.of(BedrockBlockType|BedrockBlockState)` (the type carries matching state values over, the state is used as
+is); `.forced()` also replaces content that exists in a version but only behind an experiment.
 **Paletter bundles no fallbacks**: which replacement is right (poplar wood to pale oak, ...) is the consumer's decision.
 `check-data` lists what older versions lack and what they only have behind an experiment toggle.
 
 ```java
-PaletteLayer.builder("server")
-    .blockFallback("minecraft:calcite_stairs", BlockFallback.of("minecraft:stone_stairs"))       // every version
-    .blockFallback("26.40", "minecraft:poplar_log", BlockFallback.of("minecraft:birch_log"))     // one version
-    .itemFallback("26.40", "minecraft:poplar_boat", ItemFallback.of("minecraft:birch_boat"))
-    .fallbackDefaults(new FallbackDefaults(BlockFallback.of("minecraft:barrier"), ItemFallback.UNKNOWN))
+Fallbacks fallbacks = Fallbacks.builder()
+    .block(BedrockBlocks.ICICLE, BedrockBlocks.STONE)                                                      // every version
+    .block(version, BedrockBlocks.POPLAR_LOG, BlockFallback.of(BedrockBlocks.BIRCH_LOG).forced())         // one DataVersion
+    .item(version, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.BIRCH_BOAT))
+    .defaultBlock(BlockFallback.of(BedrockBlocks.BARRIER))
     .build();
+Paletter paletter = Paletter.builder().fallbacks(fallbacks).build();
 ```
 
-**Block items.** Paletter alone decides which block an item is sent with: `Palette#blockOf(ItemVariant)` (a block state
-of the variant wins), `Paletter#canonicalBlockOf(ItemVariant)` version independent. The order is a layer override, then
+**Block items.** Paletter alone decides which block an item is sent with: `Palette#blockOf(BedrockItemVariant)` (a block
+state of the stack wins), `Paletter#blockOf(BedrockItemVariant)` version independent. The order is a layer override, then
 the bundled block to item relation of the Script API (`VanillaData#blockItems`, bundle key `block_items`: the block whose
 creative state the item has, else the block named like the item, else the first block placing it), then the creative
 stacks' block states, then (data without the relation) the block of the same name, then custom block items. Clients'
@@ -129,71 +146,69 @@ meaningless block definitions on other items are ignored.
 
 ## Using Paletter from a Bedrock-only project
 
-A server or proxy that speaks Bedrock natively stores blocks and items by canonical id, and converts at the network edge:
+A server or proxy that speaks Bedrock natively stores blocks and items as keys, and converts at the network edge:
 
 ```java
-Paletter paletter = Paletter.bundled();
-Palette palette = paletter.palette(session.getCodec(), BlockNetworkIds.HASHED, serverLayer);
+Paletter paletter = Paletter.builder().blockNetworkIds(BlockNetworkIds.HASHED).layer(serverLayer).build();
+Palette palette = paletter.palette(session.getCodec());
 palette.applyTo(session.getPeer().getCodecHelper());
 palette.applyTo(startGame);
 
-// World storage uses canonical ids, so it does not care about the client version
-int stone = paletter.canonicalBlock(BlockStates.of("minecraft:stone"));
+// World storage uses keys, so it does not care about the client version
+BedrockBlockState stone = BedrockBlocks.STONE.defaultState();
 int runtimeId = palette.runtimeId(stone);              // write into the chunk / UpdateBlockPacket
 
 // Items
-int ruby = palette.canonicalItem(ItemVariant.of("example:ruby"));
-ItemData stack = palette.item(ruby).toItemData().count(3).build();
+BedrockItemStack ruby = BedrockItemStack.of(rubyItem.type(), 3);
+ItemData stack = palette.encode(ruby);
 
 // What the client sent back
-int canonical = palette.match(inventoryAction.getFromItem());   // -1 if unknown
-ItemVariant variant = palette.canonicalItems().variant(canonical);
+BedrockItemStack received = palette.decode(inventoryAction.getFromItem());   // null if unknown
 ```
 
 ## Using it from a Java <-> Bedrock translator
 
-A translator keeps its own mapping, written once against the newest Bedrock version and turned into canonical ids at
-startup. The tables are version independent; each client version only adds Paletter's per palette arrays.
+A translator keeps its own mapping, written once against the newest Bedrock version and turned into keys at startup.
+The keys are version independent; each client version only adds Paletter's per palette arrays.
 
 ```java
-Paletter paletter = Paletter.bundled();
+Paletter paletter = Paletter.builder().blockNetworkIds(BlockNetworkIds.HASHED).layer(translatorLayer).build();
 
-// Java block state id -> canonical Bedrock block, once
-int[] javaToCanonical = new int[javaStateCount];
+// Java block state id -> Bedrock block key, once
+BedrockBlockState[] javaToBedrock = new BedrockBlockState[javaStateCount];
 for (int javaId = 0; javaId < javaStateCount; javaId++) {
-    NbtMap bedrockState = mappings.bedrockStateOf(javaId);      // newest Bedrock version
-    int canonical = paletter.canonicalBlock(bedrockState);
-    if (canonical == -1) {
-        throw new IllegalStateException("Not a " + paletter.latest() + " block state: " + bedrockState);
+    NbtMap bedrockState = mappings.bedrockStateOf(javaId);      // any bundled version
+    BedrockBlockState key = paletter.block(bedrockState);
+    if (key == null) {
+        throw new IllegalStateException(bedrockState + ": " + paletter.explainUnknown(bedrockState));
     }
-    javaToCanonical[javaId] = canonical;
+    javaToBedrock[javaId] = key;
 }
 
-// Per client version (shared by its sessions); chunk translation is two array lookups per block
-Palette palette = paletter.palette(codec, BlockNetworkIds.HASHED, translatorLayer);
-int runtimeId = palette.runtimeId(javaToCanonical[javaStateId]);
+// Per client version (shared by its sessions); chunk translation is one array lookup per block
+Palette palette = paletter.palette(codec);
+int runtimeId = palette.runtimeId(javaToBedrock[javaStateId]);
 
 // Optionally cache per palette: int[] javaToRuntime, built once
 int[] javaToRuntime = new int[javaStateCount];
 for (int javaId = 0; javaId < javaStateCount; javaId++) {
-    javaToRuntime[javaId] = palette.runtimeId(javaToCanonical[javaId]);
+    javaToRuntime[javaId] = palette.runtimeId(javaToBedrock[javaId]);
 }
 // With HASHED ids, javaToRuntime is equal between versions for every state they share, so it can be deduplicated
 
 // Items, both directions. Variants the translator maps to that are not in creative get ids from its layer:
-//   PaletteLayer.builder("translator").variant(ItemVariant.of("minecraft:banner", 15))...
-int[] javaItemToCanonical = ...;                   // from the translator's item mappings, via palette.canonicalItem(variant)
-JavaItem[] canonicalToJava = new JavaItem[palette.canonicalItemCount()];   // the reverse, also by canonical id
-ItemData toClient = palette.item(javaItemToCanonical[javaItemId]).toItemData().count(count).build();
-JavaItem fromClient = canonicalToJava[palette.match(itemDataFromClient)];
+//   PaletteLayer.builder("translator").variant(BedrockItemVariant.of("minecraft:banner", 15))...
+BedrockItemVariant[] javaItemToBedrock = ...;                 // from the translator's item mappings, via paletter.item(identifier, aux)
+Map<BedrockItemVariant, JavaItem> bedrockToJava = ...;       // the reverse, keyed by variant
+ItemData toClient = palette.encode(BedrockItemStack.of(javaItemToBedrock[javaItemId], count));
+JavaItem fromClient = bedrockToJava.get(palette.decode(itemDataFromClient).variant());
 
-// Custom content of the translator's layer has canonical ids appended after the vanilla ones,
-// identical in every version: look them up on any palette with that layer
-int furnaceMinecart = palette.canonicalItem(ItemVariant.of("geysermc:furnace_minecart"));
+// Custom content of the translator's layer has keys of its own, valid in every version with that layer
+BedrockItemVariant furnaceMinecart = BedrockItemVariant.of("geysermc:furnace_minecart", 0);
 ```
 
-One to one mappings are the translator's business: two Java items claiming the same canonical id is a check on its own
-table (`canonicalToJava[id] != null`), and is what turns bugs like GeyserMC/Geyser#6668 into a startup error.
+One to one mappings are the translator's business: two Java items claiming the same variant is a check on its own table,
+and is what turns bugs like GeyserMC/Geyser#6668 into a startup error.
 
 ## Vanilla constants
 
@@ -214,19 +229,18 @@ CardinalDirection facing = open.get(BedrockStates.CARDINAL_DIRECTION);
 List<Integer> growth = BedrockBlocks.WHEAT.values(BedrockStates.GROWTH);  // [0..7]: what this block accepts
 door.with(BedrockStates.GROWTH, 3);                                      // IllegalArgumentException: not a door state
 
-int canonical = paletter.canonicalBlock(door);     // canonical id, valid in every version; an addition, no hash lookup
-int runtimeId = palette.runtimeId(door);           // = palette.runtimeId(canonical)
+int runtimeId = palette.runtimeId(door);           // valid for the palette's version, an array load
 NbtMap nbt = door.toNbt();                         // {name, states}
-BedrockBlockState back = BedrockBlockState.vanilla(canonical);   // same instance
+BedrockBlockState back = paletter.block(nbt);      // same instance
 
 // Items and their damage variants (the data has no names for those, so they are variant(int), not constants)
-ItemData apple = palette.item(BedrockItems.APPLE).toItemData().count(3).build();
-ItemData potion = palette.item(BedrockItems.POTION.variant(5)).toItemData().build();
+ItemData apple = palette.encode(BedrockItemStack.of(BedrockItems.APPLE, 3));
+ItemData potion = palette.encode(BedrockItemStack.of(BedrockItems.POTION.variant(5)));
 
 // Everywhere an identifier is accepted, a constant is too
+Fallbacks fallbacks = Fallbacks.builder().block(BedrockBlocks.ICICLE, BedrockBlocks.STONE).build();
 PaletteLayer layer = PaletteLayer.builder("server")
     .overrideItem(BedrockItems.CAKE, item -> item.components(MaxStackSize.of(1)))
-    .blockFallback(BedrockBlocks.ICICLE, BedrockBlocks.STONE)
     .item(CustomItem.builder("example:ruby")
         .component(Repairable.builder().repairItems(Repairable.RepairItems.builder().items(BedrockItems.DIAMOND).build()).build())
         .component(Digger.builder().destroySpeeds(Digger.DestroySpeeds.builder()
@@ -238,14 +252,11 @@ PaletteLayer layer = PaletteLayer.builder("server")
 ```
 
 **Custom content is used alike.** `CustomBlock#type()` and `CustomItem#type()` (and `CustomBlock#itemType()`) return
-the same handle types. The handles have no `id()`: canonical ids come only from `Paletter#canonicalBlock/canonicalItem`
-(vanilla content) and `Palette#canonicalBlock/canonicalItem` (anything, custom content included). Custom canonical ids
-depend on the layer stack, so look them up on a palette:
-`palette.runtimeId(lamp.type().defaultState().with(lit, true))`, `palette.canonicalBlock(state)`,
-`palette.item(ruby.type())`. A vanilla constant matches custom properties by name, so a custom
-`minecraft:cardinal_direction` property works with `BedrockStates.CARDINAL_DIRECTION`. Custom properties are typed as
-`BoolState.of(name)`, `IntState.range(name, min, max)` or `StringState.of(name, values...)` (or `EnumState.of(name,
-MyEnum.class)` with an enum implementing `StateValue`).
+the same key types. Their keys are the same in every palette that has the layer, only the runtime ids differ:
+`palette.runtimeId(lamp.type().defaultState().with(lit, true))`, `palette.item(ruby.type())`. A vanilla constant matches
+custom properties by name, so a custom `minecraft:cardinal_direction` property works with `BedrockStates.CARDINAL_DIRECTION`.
+Custom properties are typed as `BoolState.of(name)`, `IntState.range(name, min, max)` or `StringState.of(name, values...)`
+(or `EnumState.of(name, MyEnum.class)` with an enum implementing `StateValue`).
 
 **Typing.** Byte states with the values 0 and 1 are `BoolState`, integer states `IntState` (a range or a list), string
 states `EnumState` with a generated enum in `org.geysermc.paletter.vanilla.state`. States with identical value sets
@@ -255,12 +266,12 @@ state names, 24 enums, 1480 blocks and 2080 items.
 
 **Arithmetic state ids.** Bedrock enumerates the states of every block as the full cartesian product of its values. The
 generator verifies this for every block of the bundled release and derives each property's stride, so a state's
-canonical id is `first state of the block + sum(value index * stride)`, computed once per state; a block that is not a
+state index is `first state of the block + sum(value index * stride)`, computed once per state; a block that is not a
 full product in a stride order would get a lookup table instead and be listed by the generator (none in 26.60).
 States are created per block on first use and interned, so `with()` only indexes an array.
 
 **Versions.** Constants describe the newest bundled release; for older clients the palette resolves them like any
-canonical id (adapted states, fallbacks). A constant whose content the data no longer has (Bedrock removed it) stays,
+other key (adapted states, fallbacks). A constant whose content the data no longer has (Bedrock removed it) stays,
 `@Deprecated(forRemoval = true)`, and resolves to its fallback (`minecraft:unknown` unless `data/model/names.json` names
 another); `isAvailable()` is false. A renamed block or item keeps its old constant as a deprecated alias of the new one.
 Content only in a bundled preview goes to `BedrockPreviewBlocks` / `BedrockPreviewItems` (`@Experimental`, generated only
@@ -343,9 +354,9 @@ model (21), each listed with its reason in `data/model/conformance-known.txt`. S
 ## The creative inventory
 
 The model is `CreativeLayout`: per category, an ordered list of `CreativeNode`s, each either a `CreativeGroup` or a loose
-`CreativeStack` (a sealed interface, so `switch` covers both without `isGroup`/`asGroup` casts). Nodes do not know where they
-are; the layout does, so they cannot disagree with it. Stacks are identifiers, damage, block state and NBT, never
-definitions, so one layout serves every version.
+`CreativeItem` (a sealed interface, so `switch` covers both without `isGroup`/`asGroup` casts). Nodes do not know where they
+are; the layout does, so they cannot disagree with it. A `CreativeItem` holds a `BedrockItemStack` (variant, count, NBT, block
+state), never a definition, so one layout serves every version.
 
 Edits are relative to existing content, so they survive Bedrock reshuffling vanilla:
 
@@ -353,8 +364,9 @@ Edits are relative to existing content, so they survive Bedrock reshuffling vani
 editor.insert(stack).after(ItemMatcher.id("minecraft:hopper_minecart"));
 editor.insert(stack).after(anchor) || editor.insert(stack).intoGroup("itemGroup.name.minecart");
 editor.move(ItemMatcher.namespace("geysermc")).loose(CreativeCategory.ITEMS);
-editor.groupOrCreate(CreativeCategory.ITEMS, "geyser:tools").add(stack).placeAfterGroup("itemGroup.name.minecart");
-editor.replace(ItemMatcher.id("minecraft:firework_rocket"), s -> s.withTag(lore));
+editor.groupOrCreate(CreativeCategory.ITEMS, "geyser:tools").add(stack);
+editor.insert(stack).afterGroup("itemGroup.name.minecart");
+editor.replace(ItemMatcher.id("minecraft:firework_rocket"), s -> s.withNbt(lore));
 ```
 
 `CreativeContent` compiles a layout per palette and enforces the protocol rules: categories in client order and contiguous,
@@ -364,7 +376,7 @@ category mess (protocol enum offset by `ALL`, numeric `creative_category` item p
 enum, `CreativeCategory`.
 
 Custom items and blocks declare a `CreativePlacement` (a block may instead only have a `menu_category`): after an anchor
-if present, else in a named group, else loose at the end of the category. Without an anchor, the layer's
+if present, else in a named group, else loose at the end of the category. Without an anchor, the Paletter's
 `CreativeOrdering` decides the rest. `BDS` (default) puts content exactly where Bedrock Dedicated Server puts add-on
 content: block items first, in the iteration order of BDS's data driven block map, then items in definition order, each
 at the end of the group of its category (created at the end of the category if missing; `minecraft:` prefix ignored) or
@@ -658,9 +670,10 @@ Results (November 2026):
 - Content Geyser used to get from the bundled curated fallbacks (poplar wood to pale oak, concrete and wool slabs to
   vanilla ones, ...) is `unknown` now until the consumer defines it. 26.40 was not captured with experiments, so
   content it only has behind an experiment is not marked there; a consumer needs `force` fallbacks for those.
-- `renames.txt` is empty: no identifier rename between the bundled versions is known yet, so `canonicalBlock` /
-  `canonicalItem` only adapt states and report removed content; add a line `block|item <old> <new>` (and the
-  `renamed` entry of `names.json`) when Bedrock renames one.
+- `renames.txt` is empty: no identifier rename between the bundled versions is known yet, so `Paletter#block` /
+  `Paletter#item` only adapt states and report removed content; add a line `block|item <old> <new>` (and the
+  `renamed` entry of `names.json`), or `item <old>@<aux> <new>[@<aux>]` for a legacy variant that became its own item, when
+  Bedrock renames or splits one.
 - The component API covers every component BDS 1.26.63.1 sends to clients. Geyser-only wire data that is not an add-on
   component (custom `mining_speed`/`frame_count` item properties, the legacy `render_offsets`, `on_player_placing`) is
   covered by the hand-written wire-only components (`MiningSpeed`, `FrameCount`, `RenderOffsets`, `OnPlayerPlacing`, see
