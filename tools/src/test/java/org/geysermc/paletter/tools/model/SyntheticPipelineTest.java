@@ -82,6 +82,35 @@ class SyntheticPipelineTest {
     }
 
     @Test
+    void formatVersionFollowsTheBuild() {
+        assertEquals("1.26.45", AddonGenerator.formatVersionFor("1.26.60", "1.26.45.1"));
+        assertEquals("1.26.52", AddonGenerator.formatVersionFor("1.26.60", "1.26.52.3"));
+        assertEquals("1.26.60", AddonGenerator.formatVersionFor("1.26.60", "1.26.63.1"), "a newer build keeps the model's format");
+        assertEquals("1.26.60", AddonGenerator.formatVersionFor("1.26.60", "1.26.60.0"));
+        assertEquals("1.25.99", AddonGenerator.formatVersionFor("1.26.60", "1.25.99.7"));
+        assertEquals("1.26.60", AddonGenerator.formatVersionFor("1.26.60", "1.27.0.1"));
+    }
+
+    @Test
+    void addonAsksForTheBuildsFormatVersion(@TempDir Path root) throws IOException {
+        Path model = modelDir(root);
+        AddonGenerator generator = new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model), "1.26.45");
+        Path out = root.resolve("addon");
+        generator.write(out);
+        for (String manifest : List.of("behavior_pack/manifest.json", "resource_pack/manifest.json")) {
+            JsonObject header = JsonParser.parseString(Files.readString(out.resolve(manifest))).getAsJsonObject().getAsJsonObject("header");
+            assertEquals("[1,26,45]", header.get("min_engine_version").toString(), manifest);
+        }
+        String item = Files.readString(out.resolve("behavior_pack/" + generator.variants().getFirst().file()));
+        assertEquals("1.26.45", JsonParser.parseString(item).getAsJsonObject().get("format_version").getAsString());
+        // the default is the model's format version
+        Path other = root.resolve("default");
+        generator(model).write(other);
+        assertEquals("1.26.60", JsonParser.parseString(Files.readString(other.resolve("behavior_pack/" + generator.variants().getFirst().file())))
+            .getAsJsonObject().get("format_version").getAsString());
+    }
+
+    @Test
     void inferenceFindsTheServerFunction(@TempDir Path root) throws IOException {
         Path model = modelDir(root);
         AddonGenerator generator = generator(model);

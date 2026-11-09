@@ -58,7 +58,10 @@ public final class SpecCapture {
             : root.resolve(Layout.BDS).resolve(distribution.version()).resolve("spec");
 
         Path modelDir = root.resolve("data/model");
-        AddonGenerator generator = new AddonGenerator(Model.read(modelDir.resolve("components.json")), Fixtures.read(modelDir));
+        Fixtures fixtures = Fixtures.read(modelDir);
+        // The add-on asks for no newer format than the build is: older builds refuse packs of a newer engine version
+        String formatVersion = AddonGenerator.formatVersionFor(fixtures.formatVersion, distribution.version());
+        AddonGenerator generator = new AddonGenerator(Model.read(modelDir.resolve("components.json")), fixtures, formatVersion);
         Path addon = work.resolve("addon");
         generator.write(addon);
 
@@ -128,7 +131,7 @@ public final class SpecCapture {
             metadata.addProperty("bdsVersion", distribution.version());
             metadata.addProperty("protocol", protocol);
             metadata.addProperty("preview", preview);
-            metadata.addProperty("formatVersion", Fixtures.read(modelDir).formatVersion);
+            metadata.addProperty("formatVersion", formatVersion);
             metadata.addProperty("nativeCodec", summary.nativeCodec());
             metadata.addProperty("codecProtocol", summary.codecProtocol());
             JsonArray echoed = new JsonArray();

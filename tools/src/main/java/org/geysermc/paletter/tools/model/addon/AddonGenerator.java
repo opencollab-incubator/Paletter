@@ -46,6 +46,7 @@ public final class AddonGenerator {
 
     private final Model model;
     private final Fixtures fixtures;
+    private final String formatVersion;
     private final List<Variant> variants = new ArrayList<>();
     private final Map<String, Integer> counters = new LinkedHashMap<>();
 
@@ -62,9 +63,49 @@ public final class AddonGenerator {
     }
 
     public AddonGenerator(Model model, Fixtures fixtures) {
+        this(model, fixtures, fixtures.formatVersion);
+    }
+
+    /**
+     * @param formatVersion the {@code format_version} of the item and block files and the {@code min_engine_version} of
+     *                      the packs: BDS refuses packs that ask for a newer engine than it is, so a capture of an older
+     *                      build passes {@link #formatVersionFor}
+     */
+    public AddonGenerator(Model model, Fixtures fixtures, String formatVersion) {
         this.model = fixtures.apply(model);
         this.fixtures = fixtures;
+        this.formatVersion = formatVersion;
         generate();
+    }
+
+    /**
+     * @return the older of the model's format version and the BDS build ({@code 1.26.45.1} -> {@code 1.26.45}), the
+     *         format version a capture of that build can load
+     */
+    public static String formatVersionFor(String modelFormatVersion, String bdsVersion) {
+        int[] model = parse(modelFormatVersion);
+        int[] bds = parse(bdsVersion);
+        for (int i = 0; i < 3; i++) {
+            if (bds[i] != model[i]) {
+                return bds[i] < model[i] ? bds[0] + "." + bds[1] + "." + bds[2] : modelFormatVersion;
+            }
+        }
+        return modelFormatVersion;
+    }
+
+    private static int[] parse(String version) {
+        String[] parts = version.split("\\.");
+        int[] out = new int[3];
+        for (int i = 0; i < 3 && i < parts.length; i++) {
+            out[i] = Integer.parseInt(parts[i]);
+        }
+        return out;
+    }
+
+    /** @return {@code [1, 26, 45]} for the format version {@code 1.26.45}: the {@code min_engine_version} of the packs */
+    static String minEngine(String formatVersion) {
+        int[] v = parse(formatVersion);
+        return "[" + v[0] + ", " + v[1] + ", " + v[2] + "]";
     }
 
     public List<Variant> variants() {
@@ -191,7 +232,7 @@ public final class AddonGenerator {
 
     private JsonObject wrap(Component c, JsonObject body) {
         JsonObject file = new JsonObject();
-        file.addProperty("format_version", fixtures.formatVersion);
+        file.addProperty("format_version", formatVersion);
         file.add("minecraft:" + c.kind(), body);
         return file;
     }
@@ -772,13 +813,13 @@ public final class AddonGenerator {
         json(bp.resolve("loot_tables/paletter_empty.json"), JsonParser.parseString("{\"pools\": []}"));
         json(bp.resolve("manifest.json"), JsonParser.parseString("""
             {"format_version": 2, "header": {"name": "Paletter spec capture", "description": "Generated from data/model: every documented component field, varied",
-              "uuid": "%s", "version": [1, 0, 0], "min_engine_version": [1, 26, 60]},
+              "uuid": "%s", "version": [1, 0, 0], "min_engine_version": %s},
              "modules": [{"type": "data", "uuid": "a1e5c0de-0000-4000-8000-00000000d002", "version": [1, 0, 0]}],
-             "dependencies": [{"uuid": "%s", "version": [1, 0, 0]}]}""".formatted(BP_UUID, RP_UUID)));
+             "dependencies": [{"uuid": "%s", "version": [1, 0, 0]}]}""".formatted(BP_UUID, minEngine(formatVersion), RP_UUID)));
         json(rp.resolve("manifest.json"), JsonParser.parseString("""
             {"format_version": 2, "header": {"name": "Paletter spec capture resources", "description": "Textures and geometry for the spec capture",
-              "uuid": "%s", "version": [1, 0, 0], "min_engine_version": [1, 26, 60]},
-             "modules": [{"type": "resources", "uuid": "a1e5c0de-0000-4000-8000-00000000e002", "version": [1, 0, 0]}]}""".formatted(RP_UUID)));
+              "uuid": "%s", "version": [1, 0, 0], "min_engine_version": %s},
+             "modules": [{"type": "resources", "uuid": "a1e5c0de-0000-4000-8000-00000000e002", "version": [1, 0, 0]}]}""".formatted(RP_UUID, minEngine(formatVersion))));
         json(rp.resolve("textures/terrain_texture.json"), JsonParser.parseString("""
             {"resource_pack_name": "paletter", "texture_name": "atlas.terrain", "padding": 8, "num_mip_levels": 4,
              "texture_data": {"paletter_tex": {"textures": "textures/blocks/paletter_tex"}, "paletter_tex_alt": {"textures": "textures/blocks/paletter_tex_alt"}}}"""));
