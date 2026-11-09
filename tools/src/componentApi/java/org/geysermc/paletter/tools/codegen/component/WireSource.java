@@ -27,6 +27,7 @@ import org.geysermc.paletter.tools.codegen.component.ComponentGenerator.Generati
 
 import javax.lang.model.element.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -61,8 +62,11 @@ final class WireSource {
     private final Map<String, Field> ownerOf = new LinkedHashMap<>();
     private Window window;
 
-    private WireSource(Comp c) {
+    private final ApiModel model;
+
+    private WireSource(Comp c, ApiModel model) {
         this.c = c;
+        this.model = model;
     }
 
     static void write(ApiModel model, Map<String, String> files) {
@@ -106,7 +110,7 @@ final class WireSource {
             .addParameter(ApiSource.nonNull(iface), "component").addParameter(ApiSource.nonNull(WIRE_CONTEXT), "ctx")
             .addParameter(ApiSource.nonNull(WIRE_NODE), "out").addCode(dispatch.build()).build());
         for (Comp c : members) {
-            new WireSource(c).component(type);
+            new WireSource(c, model).component(type);
         }
         return type.build();
     }
@@ -124,15 +128,30 @@ final class WireSource {
 
     private void component(TypeSpec.Builder type) {
         String name = method(c);
-        if (c.windows.size() <= 1) {
+        // The body of each window; neighbours that encode the same (the shapes differ only in what the encoder ignores,
+        // or the component is a hand transform that dispatches itself) are one window
+        List<Window> windows = new ArrayList<>();
+        List<CodeBlock> bodies = new ArrayList<>();
+        for (Window w : c.windows.isEmpty() ? Collections.<Window>singletonList(null) : c.windows) {
+            vars = 0;
             b = CodeBlock.builder();
-            windowBody(c.windows.isEmpty() ? null : c.windows.getFirst());
-            type.addMethod(encoder(name).addCode(b.build()).build());
+            windowBody(w);
+            CodeBlock body = b.build();
+            if (!bodies.isEmpty() && bodies.getLast().toString().equals(body.toString())) {
+                Window last = windows.removeLast();
+                windows.add(new Window(last.since(), w.until(), last.mapping()));
+            } else {
+                windows.add(w);
+                bodies.add(body);
+            }
+        }
+        if (windows.size() <= 1) {
+            type.addMethod(encoder(name).addCode(bodies.getFirst()).build());
             return;
         }
         CodeBlock.Builder dispatch = CodeBlock.builder().addStatement("int protocol = ctx.protocol()");
-        for (int i = 0; i < c.windows.size(); i++) {
-            Window w = c.windows.get(i);
+        for (int i = 0; i < windows.size(); i++) {
+            Window w = windows.get(i);
             List<String> conditions = new ArrayList<>();
             if (w.since() != Integer.MIN_VALUE) {
                 conditions.add("protocol >= " + w.since());
@@ -149,10 +168,8 @@ final class WireSource {
         }
         dispatch.endControlFlow();
         type.addMethod(encoder(name).addCode(dispatch.build()).build());
-        for (Window w : c.windows) {
-            b = CodeBlock.builder();
-            windowBody(w);
-            type.addMethod(encoder(name + window(w)).addCode(b.build()).build());
+        for (int i = 0; i < windows.size(); i++) {
+            type.addMethod(encoder(name + window(windows.get(i))).addCode(bodies.get(i)).build());
         }
     }
 
@@ -164,6 +181,11 @@ final class WireSource {
         this.window = w;
         this.owned = new TreeSet<>();
         this.ownerOf.clear();
+        if (w != null && !w.sent()) {
+            // BDS of these protocols does not send the component (server only, or it rejects it): leave it out, say so
+            b.addStatement("ctx.drop($T.NAME, $S)", ApiSource.className(c), "is not sent to clients (BDS: " + w.status() + ")");
+            return;
+        }
         if (w != null) {
             collectOwned(c.root);
             for (Map.Entry<String, String> e : w.constants().entrySet()) {
@@ -174,7 +196,7 @@ final class WireSource {
             }
         }
         if (c.transform != null) {
-            b.addStatement("$T.$N(ctx, out, c)", TRANSFORMS, ComponentGenerator.camel(c.transform));
+            transformCall(c.transform, "out", "c");
             return;
         }
         if (w == null) {
@@ -182,6 +204,38 @@ final class WireSource {
             return;
         }
         fields(c.root, "c", "out", "");
+    }
+
+    /**
+     * A call of a hand transform; one that has protocol windows in transforms.json dispatches on the protocol, like the
+     * inferred windows of a component do.
+     */
+    private void transformCall(String transform, String node, String value) {
+        List<ApiModel.TransformWindow> windows = model.transformWindows.get(transform);
+        if (windows == null) {
+            b.addStatement("$T.$N(ctx, $N, $N)", TRANSFORMS, ComponentGenerator.camel(transform), node, value);
+            return;
+        }
+        b.addStatement("int transformProtocol = ctx.protocol()");
+        for (int i = 0; i < windows.size(); i++) {
+            ApiModel.TransformWindow w = windows.get(i);
+            List<String> conditions = new ArrayList<>();
+            if (w.since() != Integer.MIN_VALUE) {
+                conditions.add("transformProtocol >= " + w.since());
+            }
+            if (w.until() != Integer.MAX_VALUE) {
+                conditions.add("transformProtocol < " + w.until());
+            }
+            if (i == 0) {
+                b.beginControlFlow("if ($L)", String.join(" && ", conditions));
+            } else if (i + 1 < windows.size()) {
+                b.nextControlFlow("else if ($L)", String.join(" && ", conditions));
+            } else {
+                b.nextControlFlow("else");
+            }
+            b.addStatement("$T.$N(ctx, $N, $N)", TRANSFORMS, ComponentGenerator.camel(w.transform()), node, value);
+        }
+        b.endControlFlow();
     }
 
     private void collectOwned(ObjType o) {
@@ -272,7 +326,7 @@ final class WireSource {
         // Transforms last: they see what the generic rules of their siblings wrote
         for (Field f : fieldsWithAlternatives(o)) {
             if (f.transform != null && transformsCalled.add(f.transform)) {
-                b.addStatement("$T.$N(ctx, $N, $N)", TRANSFORMS, ComponentGenerator.camel(f.transform), node, value);
+                transformCall(f.transform, node, value);
             }
         }
     }
@@ -771,6 +825,12 @@ final class WireSource {
         }
         type.addStaticBlock(init.build());
         type.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build());
+        type.addField(FieldSpec.builder(int.class, "OLDEST_CAPTURED_PROTOCOL", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+            .addJavadoc("The oldest protocol a spec capture of BDS exists for: the shapes in {@code data/model/mappings.json} were observed from here.\n")
+            .initializer("$L", model.oldestCaptured == Integer.MIN_VALUE ? "Integer.MIN_VALUE" : String.valueOf(model.oldestCaptured)).build());
+        type.addField(FieldSpec.builder(int.class, "NEWEST_CAPTURED_PROTOCOL", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+            .addJavadoc("The newest protocol a spec capture of BDS exists for: a palette of a newer protocol is encoded with the shape observed here.\n")
+            .initializer("$L", model.newestCaptured == Integer.MAX_VALUE ? "Integer.MAX_VALUE" : String.valueOf(model.newestCaptured)).build());
         type.addMethod(MethodSpec.methodBuilder("keys").addModifiers(Modifier.PRIVATE, Modifier.STATIC)
             .addParameter(ParameterizedTypeName.get(ClassName.get(Class.class), com.palantir.javapoet.WildcardTypeName.subtypeOf(Object.class)), "type")
             .addParameter(com.palantir.javapoet.ArrayTypeName.of(ApiSource.STRING), "keys").varargs()

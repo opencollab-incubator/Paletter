@@ -22,7 +22,8 @@ import org.geysermc.paletter.vanilla.BedrockBlockType;
  *        block placement through this item is aligned while the interaction button is held down. Supported from
  *        <code>format_version</code> 1.26.0 onward. This item requires a format version of at least 1.26.10. Add-on
  *        JSON {@code aligned_placement}. Default: <code>false</code>.
- * @param block Defines the block that will be placed. Add-on JSON {@code block}. Required.
+ * @param block Defines the block that will be placed. Add-on JSON {@code block}. Required. Compiled by the hand transform
+ *        {@code block_name}.
  * @param replaceBlockItem If true, the item will be registered as the item for this block. If true, the item will be registered as the
  *        item for this block. This item will be returned by default when the block is broken/picked. Note: the
  *        identifier for this item must match the block's identifier for this field to be valid. Defaults to false.

@@ -12,6 +12,9 @@ import org.geysermc.paletter.block.component.MenuCategory;
 /**
  * Compiles a custom block to the block property data of one protocol, in the shape BDS 1.26.63.1 sends:
  * {@code {components, menu_category, molangVersion, vanilla_block_data, properties, traits, permutations, blockTags}}.
+ * <p>
+ * The envelope around the components is one window: the same in every spec capture (protocols 1001 to 2225), which
+ * {@code EnvelopeCapturesTest} checks; a capture that differs fails it and needs a window here.
  */
 public final class BlockCompiler {
     /** The Molang version BDS 1.26.63 sends, as do the vanilla data driven blocks of 26.50 and 26.60. */

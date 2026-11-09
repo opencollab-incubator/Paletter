@@ -35,7 +35,7 @@ class VanillaPaletteTest {
     @Test
     void bundledVersionsLoad() {
         List<DataVersion> versions = PALETTER.versions();
-        assertEquals(List.of("26.40", "26.50", "26.60"), versions.stream().map(DataVersion::name).toList());
+        assertEquals(List.of("26.30", "26.40", "26.50", "26.60"), versions.stream().map(DataVersion::name).toList());
         for (DataVersion version : versions) {
             Palette palette = PALETTER.vanilla(version);
             assertNotNull(palette.blocks().air());
@@ -46,6 +46,8 @@ class VanillaPaletteTest {
 
     @Test
     void protocolVersionsResolveToTheNewestDataNotNewerThanThem() {
+        assertEquals("26.30", PALETTER.version(1001).name());
+        assertEquals("26.30", PALETTER.version(2167).name());
         assertEquals("26.40", PALETTER.version(2168).name());
         // 26.45 has its own protocol, but no new palette
         assertEquals("26.40", PALETTER.version(2169).name());

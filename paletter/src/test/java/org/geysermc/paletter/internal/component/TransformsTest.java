@@ -78,6 +78,71 @@ class TransformsTest {
     }
 
     @Test
+    void collisionBoxesBefore26_60AreNotMirrored() {
+        WireNode out = new WireNode();
+        CollisionBox box = CollisionBox.builder().boxes(CollisionBox.Entry.builder().origin(1, 2, 3).size(1, 2, 3).build()).build();
+        Transforms.collisionBoxesUnmirrored(ctx, out, box);
+        NbtMap wire = compound(out, "minecraft:collision_box");
+        assertEquals((byte) 1, wire.getByte("enabled"));
+        NbtMap b = wire.getList("boxes", NbtType.COMPOUND).getFirst();
+        // x like z: 8 + origin .. + size
+        assertEquals(9f, b.getFloat("minX"));
+        assertEquals(10f, b.getFloat("maxX"));
+        assertEquals(11f, b.getFloat("minZ"));
+        assertEquals(14f - 3f, b.getFloat("minZ"));
+        assertEquals(14f, b.getFloat("maxZ"));
+        WireNode untouched = new WireNode();
+        Transforms.collisionBoxesUnmirrored(ctx, untouched, CollisionBox.builder().enabled(false).build());
+        assertTrue(untouched.isEmpty());
+    }
+
+    @Test
+    void molangRepairAmountBefore26_40IsACompound() {
+        Repairable repairable = Repairable.builder().repairItems(Repairable.RepairItems.builder().items(List.of("minecraft:stick"))
+            .repairAmountExpression("q.max_durability * 0.25").build()).build();
+        WireNode now = new WireNode();
+        Transforms.itemDescriptorList(ctx, now, repairable);
+        assertEquals("q.max_durability * 0.25", now.build().getCompound("minecraft:repairable").getList("repair_items", NbtType.COMPOUND).getFirst().getString("repair_amount"));
+        WireNode before = new WireNode();
+        Transforms.itemDescriptorListMolangCompound(ctx, before, repairable);
+        NbtMap amount = before.build().getCompound("minecraft:repairable").getList("repair_items", NbtType.COMPOUND).getFirst().getCompound("repair_amount");
+        assertEquals("q.max_durability * 0.25", amount.getString("expression"));
+        assertEquals((short) 0, amount.getShort("version"));
+    }
+
+    @Test
+    void embeddedGeometryBefore26_60HasNoRotation() {
+        EmbeddedVisual visual = EmbeddedVisual.builder()
+            .geometry(EmbeddedVisual.Geometry.builder().identifier("minecraft:geometry.cross")
+                .nWayVisualRotation(EmbeddedVisual.NWayVisualRotation.builder().x("a").build()).build())
+            .materialInstances(MaterialInstances.builder().build()).build();
+        WireNode now = new WireNode();
+        Transforms.embeddedGeometry(ctx, now, visual);
+        assertEquals("a", compound(now, "minecraft:embedded_visual").getCompound("geometry").getCompound("n_way_visual_rotation").getString("x"));
+        WireNode before = new WireNode();
+        Transforms.embeddedGeometryBeforeRotation(ctx, before, visual);
+        assertFalse(compound(before, "minecraft:embedded_visual").getCompound("geometry").containsKey("n_way_visual_rotation"));
+    }
+
+    @Test
+    void blockNameIsEmptyForAVanillaBlockTheVersionLacks() {
+        BlockPlacer vanilla = BlockPlacer.builder().block("minecraft:stone").build();
+        WireNode out = new WireNode();
+        Transforms.blockName(ctx, out, vanilla);
+        assertEquals("minecraft:stone", out.build().getCompound("minecraft:block_placer").getString("block"));
+        assertTrue(report.entries().isEmpty());
+
+        WireNode missing = new WireNode();
+        Transforms.blockName(ctx, missing, BlockPlacer.builder().block("minecraft:no_such_block").build());
+        assertEquals("", missing.build().getCompound("minecraft:block_placer").getString("block"));
+        assertEquals(1, report.warnings().size());
+
+        WireNode custom = new WireNode();
+        Transforms.blockName(ctx, custom, BlockPlacer.builder().block("test:lamp").build());
+        assertEquals("test:lamp", custom.build().getCompound("minecraft:block_placer").getString("block"), "a custom block may be registered later");
+    }
+
+    @Test
     void geometry() {
         WireNode out = new WireNode();
         Transforms.geometry(ctx, out, Geometry.builder().identifier("geometry.lamp").boneVisibility(Map.of("lid", "false", "door", "q.block_property('open') == 'true'", "base", "true")).uvLock(true).build());
@@ -92,7 +157,7 @@ class TransformsTest {
         assertEquals((byte) 0, g.getByte("isV1Fullblock"));
 
         WireNode embedded = new WireNode();
-        Transforms.geometry(ctx, embedded, EmbeddedVisual.builder()
+        Transforms.embeddedGeometry(ctx, embedded, EmbeddedVisual.builder()
             .geometry(EmbeddedVisual.Geometry.builder().identifier("minecraft:geometry.cross").build())
             .materialInstances(MaterialInstances.builder().build()).build());
         NbtMap e = compound(embedded, "minecraft:embedded_visual").getCompound("geometry");

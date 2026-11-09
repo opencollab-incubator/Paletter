@@ -54,13 +54,13 @@ public final class ItemWire {
     }
 
     private static void gadgetFrom200(Gadget c, WireContext ctx, WireNode out) {
-        Boolean v2 = c.value();
-        if (v2 != null) {
-            out.put("test:gadget.on", Wire.bool(v2));
+        Boolean v0 = c.value();
+        if (v0 != null) {
+            out.put("test:gadget.on", Wire.bool(v0));
         }
-        Integer v3 = c.level();
-        if (v3 != null) {
-            out.put("test:gadget.level", Wire.toInt(v3));
+        Integer v1 = c.level();
+        if (v1 != null) {
+            out.put("test:gadget.level", Wire.toInt(v1));
         }
     }
 

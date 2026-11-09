@@ -12,6 +12,9 @@ import java.util.List;
 /**
  * Compiles a custom item to the item component data of one protocol: the item properties BDS sends for every custom
  * item, the description's menu category, then each component through its generated encoder.
+ * <p>
+ * The item properties are one window: the same keys and values in every spec capture (protocols 1001 to 2225), which
+ * {@code EnvelopeCapturesTest} checks; a capture that differs fails it and needs a window here.
  */
 public final class ItemCompiler {
     private ItemCompiler() {

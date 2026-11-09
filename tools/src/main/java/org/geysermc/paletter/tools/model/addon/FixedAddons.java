@@ -31,7 +31,8 @@ import java.util.zip.Deflater;
  */
 public final class FixedAddons {
     private static final Gson PRETTY = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    private static final String FORMAT_VERSION = "1.26.60";
+    /** The format version of the committed packs; a build older than it gets packs of its own version ({@code writeCapture(out, formatVersion)}). */
+    public static final String FORMAT_VERSION = "1.26.60";
     private static final String NAMESPACE = "paletter";
     private static final String GEOMETRY = "geometry.paletter_cube";
 
@@ -43,6 +44,15 @@ public final class FixedAddons {
 
     /** Writes {@code behavior_pack} and {@code resource_pack} of the capture add-on into {@code out}. */
     public static void writeCapture(Path out) throws IOException {
+        writeCapture(out, FORMAT_VERSION);
+    }
+
+    /**
+     * @param formatVersion the format version of the items and blocks and the minimum engine version of the packs: BDS
+     *                      refuses packs of a newer engine, so a run on an older build passes
+     *                      {@link AddonGenerator#formatVersionFor}
+     */
+    public static void writeCapture(Path out, String formatVersion) throws IOException {
         Path bp = out.resolve("behavior_pack");
         Path rp = out.resolve("resource_pack");
         delete(bp);
@@ -62,7 +72,7 @@ public final class FixedAddons {
             JsonObject body = new JsonObject();
             body.add("description", description);
             body.add("components", item.get("components"));
-            write(bp.resolve("items/" + name + ".json"), versioned(FORMAT_VERSION, "minecraft:item", body));
+            write(bp.resolve("items/" + name + ".json"), versioned(formatVersion, "minecraft:item", body));
         }
         for (JsonElement element : definitions.getAsJsonArray("blocks")) {
             JsonObject block = element.getAsJsonObject();
@@ -85,18 +95,19 @@ public final class FixedAddons {
             if (extra.has("permutations")) {
                 body.add("permutations", extra.get("permutations"));
             }
-            write(bp.resolve("blocks/" + name + ".json"), versioned(FORMAT_VERSION, "minecraft:block", body));
+            write(bp.resolve("blocks/" + name + ".json"), versioned(formatVersion, "minecraft:block", body));
         }
         write(bp.resolve("loot_tables/paletter_empty.json"), json("{\"pools\": []}"));
         write(bp.resolve("manifest.json"), manifest("Paletter capture", "Custom items and blocks with every component, for wire captures",
             "a1e5c0de-0000-4000-8000-00000000b001", "a1e5c0de-0000-4000-8000-00000000b002", "data",
-            "a1e5c0de-0000-4000-8000-00000000c001"));
+            "a1e5c0de-0000-4000-8000-00000000c001", formatVersion));
 
         write(rp.resolve("manifest.json"), json("""
             {"format_version": 2,
              "header": {"name": "Paletter capture resources", "description": "Textures and geometry for the capture pack",
-                        "uuid": "a1e5c0de-0000-4000-8000-00000000c001", "version": [1, 0, 0], "min_engine_version": [1, 26, 60]},
-             "modules": [{"type": "resources", "uuid": "a1e5c0de-0000-4000-8000-00000000c002", "version": [1, 0, 0]}]}"""));
+                        "uuid": "a1e5c0de-0000-4000-8000-00000000c001", "version": [1, 0, 0], "min_engine_version": %s},
+             "modules": [{"type": "resources", "uuid": "a1e5c0de-0000-4000-8000-00000000c002", "version": [1, 0, 0]}]}""".formatted(
+            AddonGenerator.minEngine(formatVersion))));
         write(rp.resolve("textures/terrain_texture.json"), json("""
             {"resource_pack_name": "paletter", "texture_name": "atlas.terrain", "padding": 8, "num_mip_levels": 4,
              "texture_data": {"paletter_tex": {"textures": "textures/blocks/paletter_tex"},
@@ -131,6 +142,11 @@ public final class FixedAddons {
      * and Paletter (no files) by descending identifier, so the block files are named b&lt;rank in identifier order&gt;.
      */
     public static void writeCreative(Path out) throws IOException {
+        writeCreative(out, FORMAT_VERSION);
+    }
+
+    /** @param formatVersion see {@link #writeCapture(Path, String)} */
+    public static void writeCreative(Path out, String formatVersion) throws IOException {
         Path bp = out.resolve("behavior_pack");
         delete(bp);
         JsonObject definitions = resource("creative.json");
@@ -149,7 +165,7 @@ public final class FixedAddons {
             JsonObject body = new JsonObject();
             body.add("description", description);
             body.add("components", components);
-            write(bp.resolve("items/" + item.get("file").getAsString() + ".json"), versioned(FORMAT_VERSION, "minecraft:item", body));
+            write(bp.resolve("items/" + item.get("file").getAsString() + ".json"), versioned(formatVersion, "minecraft:item", body));
         }
         List<JsonObject> blocks = new ArrayList<>();
         definitions.getAsJsonArray("blocks").forEach(b -> blocks.add(b.getAsJsonObject()));
@@ -164,10 +180,10 @@ public final class FixedAddons {
             JsonObject body = new JsonObject();
             body.add("description", description);
             body.add("components", new JsonObject());
-            write(bp.resolve("blocks/" + String.format("b%02d", rank + 1) + ".json"), versioned(FORMAT_VERSION, "minecraft:block", body));
+            write(bp.resolve("blocks/" + String.format("b%02d", rank + 1) + ".json"), versioned(formatVersion, "minecraft:block", body));
         }
         write(bp.resolve("manifest.json"), manifest("Paletter creative order probe", "Custom items and blocks with every menu_category placement",
-            "a1e5c0de-0000-4000-8000-00000000d001", "a1e5c0de-0000-4000-8000-00000000d002", "data", null));
+            "a1e5c0de-0000-4000-8000-00000000d001", "a1e5c0de-0000-4000-8000-00000000d002", "data", null, formatVersion));
     }
 
     /**
@@ -249,13 +265,14 @@ public final class FixedAddons {
 
     // ---------------------------------------------------------------------------------------------------------------
 
-    private static JsonObject manifest(String name, String description, String uuid, String module, String type, String dependency) {
+    private static JsonObject manifest(String name, String description, String uuid, String module, String type, String dependency,
+                                       String formatVersion) {
         JsonObject header = new JsonObject();
         header.addProperty("name", name);
         header.addProperty("description", description);
         header.addProperty("uuid", uuid);
         header.add("version", json("[1, 0, 0]"));
-        header.add("min_engine_version", json("[1, 26, 60]"));
+        header.add("min_engine_version", json(AddonGenerator.minEngine(formatVersion)));
         JsonObject moduleObject = new JsonObject();
         moduleObject.addProperty("type", type);
         moduleObject.addProperty("uuid", module);

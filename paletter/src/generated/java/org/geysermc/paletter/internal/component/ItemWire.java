@@ -129,25 +129,24 @@ public final class ItemWire {
         out.put("minecraft:publisher_on_use_on.autoSucceedOnClient", (byte) 0);
         boolean v0 = c.alignedPlacement();
         out.put("minecraft:block_placer.alignedPlacement", Wire.bool(v0));
-        String v1 = c.block();
-        out.put("minecraft:block_placer.block", v1);
-        boolean v2 = c.replaceBlockItem();
-        List<BlockPlacer.UseOn> v3 = c.useOn();
+        boolean v1 = c.replaceBlockItem();
+        List<BlockPlacer.UseOn> v2 = c.useOn();
         out.list("minecraft:block_placer.use_on");
-        for (BlockPlacer.UseOn e4 : v3) {
-            WireNode n5 = out.element("minecraft:block_placer.use_on");
-            String v6 = e4.name();
-            if (v6 != null) {
-                n5.put("name", v6);
+        for (BlockPlacer.UseOn e3 : v2) {
+            WireNode n4 = out.element("minecraft:block_placer.use_on");
+            String v5 = e3.name();
+            if (v5 != null) {
+                n4.put("name", v5);
             } else {
-                n5.remove("name");
+                n4.remove("name");
             }
-            String v7 = e4.tags();
-            if (v7 != null) {
-                n5.put("tags", v7);
+            String v6 = e3.tags();
+            if (v6 != null) {
+                n4.put("tags", v6);
             }
-            Transforms.blockDescriptorStates(ctx, n5, e4);
+            Transforms.blockDescriptorStates(ctx, n4, e3);
         }
+        Transforms.blockName(ctx, out, c);
     }
 
     private static void bundleInteraction(BundleInteraction c, WireContext ctx, WireNode out) {
@@ -506,7 +505,12 @@ public final class ItemWire {
     }
 
     private static void repairable(Repairable c, WireContext ctx, WireNode out) {
-        Transforms.itemDescriptorList(ctx, out, c);
+        int transformProtocol = ctx.protocol();
+        if (transformProtocol < 2168) {
+            Transforms.itemDescriptorListMolangCompound(ctx, out, c);
+        } else {
+            Transforms.itemDescriptorList(ctx, out, c);
+        }
     }
 
     private static void shooter(Shooter c, WireContext ctx, WireNode out) {

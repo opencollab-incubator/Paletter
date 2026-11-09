@@ -15,7 +15,11 @@ import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.data.WireShapes;
 import org.geysermc.paletter.tools.Layout;
+import org.geysermc.paletter.tools.model.addon.AddonGenerator;
+import org.geysermc.paletter.tools.model.addon.FixedAddons;
 import org.geysermc.paletter.tools.model.infer.Coverage;
+import org.geysermc.paletter.tools.model.infer.MappingInference;
+import org.geysermc.paletter.tools.model.infer.SpecDiff;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.cloudburstmc.nbt.NbtMap;
@@ -148,6 +152,7 @@ public final class Update {
         BdsDump dump;
         Runs runs = new Runs();
         runs.bdsVersion = distribution.version();
+        runs.formatVersion = AddonGenerator.formatVersionFor(FixedAddons.FORMAT_VERSION, distribution.version());
         try {
             // 1. Script API dump
             Path dumpLog = work.resolve("bds-dump.log");
@@ -186,6 +191,9 @@ public final class Update {
         creativeOrder(runs);
         if (runs.addon != null) {
             shapes(distribution, runs);
+        }
+        if (runs.protocol != null) {
+            specCapture(distribution, work, runs);
         }
         constants(staging);
         staging.apply();
@@ -232,6 +240,8 @@ public final class Update {
         String dumpJson;
         Integer protocol;
         String bdsVersion;
+        /** The format version of the add-on packs of this build: the model's, or the build's own if it is older. */
+        String formatVersion;
         boolean netherNet;
         String existing;
         VanillaData reference;
@@ -382,7 +392,9 @@ public final class Update {
         }
 
         // Creative order probe: every kind of menu category placement, no experiments
-        freshWorld(server, CREATIVE_WORLD, root.resolve(Layout.CREATIVE_ADDON));
+        Path creativePack = work.resolve("creative-pack");
+        FixedAddons.writeCreative(creativePack, runs.formatVersion);
+        freshWorld(server, CREATIVE_WORLD, creativePack);
         properties.put("level-name", CREATIVE_WORLD);
         properties.put("block-network-ids-are-hashes", "true");
         BdsServer.configure(server, properties);
@@ -412,7 +424,8 @@ public final class Update {
      * experiments enabled: the definitions BDS rejects. Leaves the server stopped.
      */
     private List<String> addonWorldContentLog(Path server, Path work, Map<String, String> properties, Runs runs) throws Exception {
-        Path addon = root.resolve(Layout.CAPTURE_ADDON);
+        Path addon = work.resolve("capture-pack");
+        FixedAddons.writeCapture(addon, runs.formatVersion);
         freshWorld(server, ADDON_WORLD, addon);
         properties.put("level-name", ADDON_WORLD);
         properties.put("block-network-ids-are-hashes", "true");
@@ -1001,7 +1014,8 @@ public final class Update {
         if (!lines.isEmpty()) {
             report.section("Add-on content log changes", lines);
         }
-        if (!preview || importPreview) {
+        if ((!preview || importPreview) && !olderThanNewestBundled(runs)) {
+            // The committed log is the newest build's: a backfill of an older build does not replace it
             stage(file, current.getBytes(StandardCharsets.UTF_8), "add-on content log");
         }
     }
@@ -1045,6 +1059,115 @@ public final class Update {
         } else if (!same) {
             report.check(Report.Status.INFO, "Add-on capture", "preview capture not copied to " + root.relativize(bdsData) + " (pass --import-preview)");
         }
+    }
+
+    /**
+     * The spec capture of this build (every documented component field, varied: the add-on is generated for the build's
+     * format version) and the mapping inference over all captures. The capture is compared with the newest earlier one
+     * value by value ({@link SpecDiff}): a changed value (an axis that is mirrored, a unit, an enum id, bit packing) with the
+     * same keys and types is a DIFF as well as a changed shape. Verify-only runs and previews that are not imported write
+     * the capture into the work directory and infer nothing.
+     */
+    private void specCapture(BdsDistribution distribution, Path work, Runs runs) throws Exception {
+        boolean write = !verifyOnly && (!preview || importPreview);
+        Path out = write ? bdsData.resolve(distribution.version()).resolve("spec") : work.resolve("spec");
+        Map<String, String> specOptions = new LinkedHashMap<>(options);
+        specOptions.put("version", distribution.version());
+        specOptions.put("port", String.valueOf(port + 10));
+        specOptions.put("protocol", String.valueOf(runs.protocol));
+        specOptions.put("out", out.toString());
+        Path previous = previousSpecCapture(runs.protocol, out);
+        try {
+            if (new SpecCapture(root, specOptions).run() != 0) {
+                report.check(Report.Status.FAIL, "Spec capture", "failed");
+                return;
+            }
+        } catch (Exception e) {
+            report.fail("Spec capture", e);
+            return;
+        }
+        report.check(Report.Status.INFO, "Spec capture", "`" + (write ? root.relativize(out) : out) + "`");
+        if (write) {
+            report.repoChanges.add("add or update `" + root.relativize(out).toString().replace('\\', '/') + "` (spec capture)");
+        }
+        if (previous != null) {
+            List<SpecDiff.Change> changes = SpecDiff.compare(previous, out);
+            String against = previous.getParent().getFileName().toString();
+            Map<String, List<SpecDiff.Change>> byComponent = new java.util.TreeMap<>();
+            changes.forEach(change -> byComponent.computeIfAbsent(change.component(), k -> new ArrayList<>()).add(change));
+            report.check(changes.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Spec capture values",
+                changes.isEmpty() ? "every variant sent as in " + against : changes.size() + " leaves in " + byComponent.size()
+                    + " components differ from " + against + ", variant by variant");
+            List<String> lines = new ArrayList<>();
+            byComponent.forEach((component, list) -> {
+                long values = list.stream().filter(SpecDiff.Change::valueChange).count();
+                String how = transformOf(component) != null ? "its hand transform `" + transformOf(component) + "` needs a protocol window (transforms.json)"
+                    : "the inferred mapping gets a protocol window (regenerate with :tools:inferMappings and :tools:generateComponentApi)";
+                report.wireChanges.add("spec capture vs " + against + ": " + component + ": " + list.size() + " leaves differ (" + values
+                    + " with another value); " + how);
+                lines.add("- `" + component + "`: " + how);
+                list.stream().limit(6).forEach(change -> lines.add("  - " + change));
+                if (list.size() > 6) {
+                    lines.add("  - ... " + (list.size() - 6) + " more");
+                }
+            });
+            if (!lines.isEmpty()) {
+                report.section("Spec capture value changes vs " + against, lines);
+                report.todos.add("VALUE CHANGE in the spec capture vs " + against + ": review the protocol windows of the components listed in the report");
+            }
+        }
+        if (write) {
+            new MappingInference(root).run(false);
+            report.repoChanges.add("update `" + Layout.MODEL + "/mappings.json`, `coverage.md`, `bds-feedback.json` (inferred from the spec captures)");
+            report.check(Report.Status.INFO, "Component model", "mappings inferred; run :tools:generateComponentApi and the conformance suite (:tools:test) for the new protocol");
+        } else {
+            report.check(Report.Status.INFO, "Component model", "mappings not inferred (verify only or preview not imported)");
+        }
+    }
+
+    /** Whether the build of this run is older than the newest bundled version (a backfill, not an update). */
+    private boolean olderThanNewestBundled(Runs runs) throws IOException {
+        if (runs.protocol == null) {
+            return false;
+        }
+        return Importer.readIndex(resources).stream().anyMatch(entry -> entry.protocol() > runs.protocol && !entry.preview());
+    }
+
+    /** The newest spec capture of a protocol older than {@code protocol}, other than {@code except}. */
+    private Path previousSpecCapture(int protocol, Path except) throws IOException {
+        if (!Files.isDirectory(bdsData)) {
+            return null;
+        }
+        Path best = null;
+        int bestProtocol = Integer.MIN_VALUE;
+        try (Stream<Path> dirs = Files.list(bdsData)) {
+            for (Path dir : dirs.map(d -> d.resolve("spec")).filter(d -> Files.exists(d.resolve("capture.json"))).toList()) {
+                if (dir.equals(except)) {
+                    continue;
+                }
+                int p = JsonParser.parseString(Files.readString(dir.resolve("capture.json"))).getAsJsonObject().get("protocol").getAsInt();
+                if (p < protocol && p > bestProtocol) {
+                    best = dir;
+                    bestProtocol = p;
+                }
+            }
+        }
+        return best;
+    }
+
+    /** The hand transform of a component, if {@code transforms.json} names one (component level or for a field). */
+    private String transformOf(String component) {
+        try {
+            JsonObject transforms = JsonParser.parseString(Files.readString(root.resolve(Layout.MODEL + "/transforms.json"))).getAsJsonObject();
+            for (String key : transforms.keySet()) {
+                if (key.startsWith(component + ":")) {
+                    return transforms.getAsJsonObject(key).get("transform").getAsString();
+                }
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return null;
     }
 
     private void report(Diff diff, String what) {

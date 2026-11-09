@@ -1,0 +1,16 @@
+{
+  "bdsVersion": "1.26.52.3",
+  "protocol": 2193,
+  "preview": false,
+  "formatVersion": "1.26.52",
+  "nativeCodec": true,
+  "codecProtocol": 2193,
+  "experiments": [
+    "upcoming_creator_features\u003dtrue",
+    "gametest\u003dtrue",
+    "experimental_creator_cameras\u003dtrue",
+    "villager_trades_rebalance\u003dtrue",
+    "voxel_shapes\u003dtrue",
+    "poi\u003dtrue"
+  ]
+}

@@ -48,12 +48,22 @@ public final class WireContext {
     }
 
     public static @NonNull WireContext of(@NonNull VanillaData data, @NonNull PaletteReport report, @NonNull String source) {
+        extrapolated(data.version(), report, source);
         return new WireContext(data.version(), report, source, "", registry(data));
     }
 
     public static @NonNull WireContext of(@NonNull DataVersion version, @NonNull PaletteReport report, @NonNull String source,
                                           @NonNull Registry registry) {
+        extrapolated(version, report, source);
         return new WireContext(version, report, source, "", registry);
+    }
+
+    /** A version newer than every capture gets the newest observed shape: said once per context, not silently. */
+    private static void extrapolated(DataVersion version, PaletteReport report, String source) {
+        if (version.protocolVersion() > ComponentIndex.NEWEST_CAPTURED_PROTOCOL) {
+            report.info(source, "custom item and block components of " + version + " are encoded with the shape observed at protocol "
+                + ComponentIndex.NEWEST_CAPTURED_PROTOCOL + ", the newest captured; " + version + " is newer and was not captured");
+        }
     }
 
     private static final Map<VanillaData, Registry> REGISTRIES = java.util.Collections.synchronizedMap(new java.util.WeakHashMap<>());
