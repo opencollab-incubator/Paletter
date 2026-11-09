@@ -21,6 +21,7 @@ module org.geysermc.paletter {
 
     exports org.geysermc.paletter;
     exports org.geysermc.paletter.annotation;
+    exports org.geysermc.paletter.behaviour;
     exports org.geysermc.paletter.block;
     exports org.geysermc.paletter.block.component;
     exports org.geysermc.paletter.creative;

@@ -230,7 +230,10 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         return index != -1 && table.byIndex(index) == definition ? index : -1;
     }
 
-    private int indexOfRuntimeId(int runtimeId) {
+    /**
+     * @return the dense position of the block state with this runtime id, see {@link #indexOf}, or -1 if there is none
+     */
+    public int indexOfRuntimeId(int runtimeId) {
         return table.indexOfRuntimeId(runtimeId);
     }
 

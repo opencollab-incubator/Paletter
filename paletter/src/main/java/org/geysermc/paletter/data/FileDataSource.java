@@ -5,6 +5,7 @@ import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.internal.data.VanillaData;
 
 import org.geysermc.paletter.internal.data.PaletteDataCodec;
+import org.geysermc.paletter.internal.behaviour.BehaviourStore;
 import org.geysermc.paletter.internal.data.PropertyStore;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -27,7 +28,8 @@ import java.util.List;
  * {@code <name> <protocol> [preview]} line per version (preview versions are skipped unless the system property
  * {@code paletter.previews} is {@code true}), and each version is stored in {@code <name>.nbt}
  * (written by the generator, see {@link PaletteDataCodec}). Item components and data driven blocks are stored once with
- * their version ranges in {@code properties.nbt} (see {@link PropertyStore}); {@code renames.txt} is optional.
+ * their version ranges in {@code properties.nbt} (see {@link PropertyStore}), behaviour values in
+ * {@code behaviour.nbt} (see {@link BehaviourStore}); {@code renames.txt} is optional.
  * The files are either {@code /paletter/} on the classpath of the library ({@link PaletteDataSource#bundled()}) or a
  * directory ({@link PaletteDataSource#directory(Path)}).
  */
@@ -41,6 +43,7 @@ final class FileDataSource implements PaletteDataSource {
 
     private volatile List<DataVersion> versions;
     private volatile PropertyStore properties;
+    private volatile BehaviourStore behaviour;
 
     private FileDataSource(Opener opener, String origin) {
         this.opener = opener;
@@ -111,6 +114,19 @@ final class FileDataSource implements PaletteDataSource {
             }
         }
         return properties;
+    }
+
+    @Override
+    public @NonNull BehaviourStore behaviour() {
+        BehaviourStore behaviour = this.behaviour;
+        if (behaviour == null) {
+            try (InputStream stream = opener.open("behaviour.nbt")) {
+                this.behaviour = behaviour = stream == null ? BehaviourStore.empty() : BehaviourStore.read(stream);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Unable to read the Paletter behaviour data in " + origin, e);
+            }
+        }
+        return behaviour;
     }
 
     @Override

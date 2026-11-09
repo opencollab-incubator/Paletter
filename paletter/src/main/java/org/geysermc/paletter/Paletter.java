@@ -288,7 +288,7 @@ public final class Paletter {
     public @NonNull Palette vanilla(@NonNull DataVersion version) {
         return vanilla.computeIfAbsent(version,
             key -> PaletteCompiler.vanilla(vanillaData(key), canonicalBlocks(), canonicalItems(), blockInterner,
-                fallbacks, vanillaContent, creativeOrdering));
+                fallbacks, vanillaContent, creativeOrdering, source::behaviour));
     }
 
     /**
