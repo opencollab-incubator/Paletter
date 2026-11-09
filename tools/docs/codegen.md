@@ -44,9 +44,16 @@ Rules of the generated code:
   owns; unset: its `whenAbsent` leaves, never another field's. Lists of objects become element loops. Hand transforms
   run after the generic fields of their record. A field with no rule in a window is dropped with a report warning when
   set.
-- **Protocol windows**: each mapping in `mappings.json` holds from its protocol (`protocols`, or `protocol<N>` for a
-  different mapping) until the next different one; the oldest also below. Components with several windows dispatch on
-  `ctx.protocol()`.
+- **Protocol windows**: each mapping in `mappings.json` holds for the protocols in its `protocols` (the captures with that
+  mapping); a different mapping starts `protocol<N>` (N: its first protocol) and is compared with the window before it.
+  The oldest window also holds below its capture, the newest above (a palette of a newer protocol gets an INFO report
+  entry, `ComponentIndex.NEWEST_CAPTURED_PROTOCOL`). A window whose status is not `sent` (the build rejects the component
+  or keeps it server only) makes the encoder leave the component out with a report warning; windows that encode the same
+  are one. Components with several windows dispatch on `ctx.protocol()`.
+- **Hand transforms per protocol**: a `transforms.json` entry may list `windows` (`{"until": 2225, "transform": "a"},
+  {"since": 2225, "transform": "b"}`: gap free, ending with the entry's own transform); the encoders dispatch on the protocol
+  before calling the transform. `collision_box` (x mirrored from 2225), the geometry of `embedded_visual` (no
+  `n_way_visual_rotation` before 2225) are windowed this way; `block_placer.block` resolves against the version's blocks.
 
 Generation fails, naming component and field, on: an unknown transform, two mappings for one protocol, name collisions
 (two components, a `java.lang` name, keywords, two nested types), two fields deciding one wire leaf, an object or list
@@ -55,12 +62,19 @@ of objects without documented fields, an ambiguous union, value forms without fi
 Tests: `ComponentGeneratorTest` (golden sources of a synthetic model covering every field kind, determinism with
 shuffled inputs, every failure message; `-PupdateGolden=true` rewrites `src/test/resources/component-golden`),
 `GeneratedApiTest` (the committed API: required fields, ranges, defaults equal the docs or are explained),
-`ComponentConformanceTest` (every accepted variant of the newest capture rebuilt through the generated API and compared
-with BDS's NBT; outcomes other than pass are committed in `data/model/conformance-known.txt`), and in paletter
+`ComponentConformanceTest` (once per spec capture: every accepted variant, from the capture's own `variants.json`,
+rebuilt through the generated API for that protocol and compared with BDS's NBT; outcomes other than pass are committed
+per protocol in `data/model/conformance-known-<protocol>.txt`), `VanillaShapeOracleTest` (per bundled version: the NBT
+types of the compiled components against that version's own vanilla data driven items and blocks),
+`BundledVersionsCapturedTest` (every bundled version has a spec capture), `ComponentWindowsTest` and `WindowMergeTest`
+(the window logic on synthetic input), and in paletter
 `TransformsTest` (every hand transform) and `CustomContentTest` (the definition core, every bundled version).
 
-When a new BDS version changes the wire: ``spec-capture``, `./gradlew :tools:inferMappings` (a different mapping
-lands as a new protocol window), `./gradlew :tools:generateComponentApi`, review, and run the conformance suite.
+When a new BDS version changes the wire: `update` runs `spec-capture` and the inference itself and lists every leaf whose
+value differs from the previous capture (`SpecDiff`: variant, path, old and new value) as a wire change. A different
+mapping lands as a new protocol window; then `./gradlew :tools:generateComponentApi`, review (a changed hand transform needs
+a window in `transforms.json`), and run the conformance suite, which needs a `conformance-known-<protocol>.txt` for the new
+capture (`-PupdateGolden=true`, then write the reasons).
 ## Wire shapes (change detection)
 
 There is no separate wire shape spec any more: the `update` pipeline reads the observed NBT paths and types of the add-on

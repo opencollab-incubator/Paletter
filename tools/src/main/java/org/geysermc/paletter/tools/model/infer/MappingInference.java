@@ -121,7 +121,7 @@ public final class MappingInference {
                 JsonObject result = analyze(capture, component);
                 if (result != null) {
                     results.add(result);
-                    resultProtocols.add(capture.protocol());
+                    resultProtocols.add(dataProtocol(capture.protocol()));
                 }
             }
             JsonObject merged = merge(results, resultProtocols);
@@ -154,6 +154,37 @@ public final class MappingInference {
         Set<String> keys = new TreeSet<>();
         wire.keySet().forEach(k -> keys.add(Wire.segments(k).get(0).replaceAll("\\[\\d+]", "")));
         return keys;
+    }
+
+    /**
+     * The protocol windows are in terms of {@code WireContext.protocol()}, the first protocol of a palette's data version,
+     * not of the protocol the capture was made on (a capture of 1.26.45.1 is protocol 2169, its data version 26.40 starts at
+     * 2168): the first protocol of the newest bundled data version that is not newer than the capture, or the capture's
+     * own protocol if no bundled version is that old.
+     */
+    private int dataProtocol(int capture) {
+        int found = capture;
+        try {
+            Path versions = root.resolve("paletter/src/main/resources/paletter/versions.txt");
+            if (Files.exists(versions)) {
+                int best = Integer.MIN_VALUE;
+                for (String line : Files.readAllLines(versions, StandardCharsets.UTF_8)) {
+                    if (line.isBlank() || line.startsWith("#")) {
+                        continue;
+                    }
+                    int protocol = Integer.parseInt(line.trim().split("\\s+")[1]);
+                    if (protocol <= capture && protocol > best) {
+                        best = protocol;
+                    }
+                }
+                if (best != Integer.MIN_VALUE) {
+                    found = best;
+                }
+            }
+        } catch (IOException e) {
+            throw new java.io.UncheckedIOException(e);
+        }
+        return found;
     }
 
     /**

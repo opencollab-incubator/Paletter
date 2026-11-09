@@ -76,5 +76,9 @@ changes is explained by the first rule that fits all observations:
 `dropped` (server only); one whose every variant is rejected is `rejected` (with BDS's errors and ranges). Leaves no rule
 explains make a field `partial`/`unresolved`; such fields need a named transform in `transforms.json` (`hand-rule`).
 
-Release captures only (1.26.63.1, protocol 2225) for now; a capture per protocol gives a mapping per protocol window
-(`protocols` on each component; a different mapping in another protocol is kept beside it).
+One capture per bundled protocol (`data/bds/<version>/spec`). The add-on of a capture asks for the format version of its
+build (`min(fixtures.formatVersion, build)`, stored in `capture.json`), since a build refuses packs of a newer engine, and
+the capture keeps its own `variants.json`: later steps use the variants that build was given, not today's model. A capture
+whose wire relevant part (status, wire keys, constants, per field status, rules, transform and absent values; not BDS's
+messages or the variant counts) equals the previous window's joins it (`protocols`); a different one is kept beside the first
+as `protocol<N>`. `bds-feedback.json` is read from the newest capture only.
