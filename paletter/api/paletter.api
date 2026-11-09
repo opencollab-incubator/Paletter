@@ -73,6 +73,18 @@ public enum org.geysermc.paletter.ItemExplanation$Kind {
     public static org.geysermc.paletter.ItemExplanation$Kind[] values()
 }
 
+public record org.geysermc.paletter.Lookup {
+    public static final org.geysermc.paletter.Lookup STRICT
+    public <init>(org.geysermc.paletter.data.DataVersion, boolean)
+    public final boolean equals(java.lang.Object)
+    public boolean followRenames()
+    public final int hashCode()
+    public static org.geysermc.paletter.Lookup of(org.geysermc.paletter.data.DataVersion)
+    public java.lang.String toString()
+    public org.geysermc.paletter.data.DataVersion version()
+    public org.geysermc.paletter.Lookup withRenames()
+}
+
 public record org.geysermc.paletter.Origin {
     public static final org.geysermc.paletter.Origin VANILLA
     public <init>(java.lang.String)
@@ -222,12 +234,16 @@ public enum org.geysermc.paletter.PaletteReport$Level {
 
 public final class org.geysermc.paletter.Paletter {
     public org.geysermc.paletter.vanilla.BedrockBlockState block(org.cloudburstmc.nbt.NbtMap)
+    public org.geysermc.paletter.vanilla.BedrockBlockState block(org.cloudburstmc.nbt.NbtMap, org.geysermc.paletter.Lookup)
     public org.geysermc.paletter.vanilla.BedrockBlockState blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)
+    public org.geysermc.paletter.vanilla.BedrockBlockType blockType(java.lang.String, org.geysermc.paletter.Lookup)
     public static org.geysermc.paletter.Paletter$Builder builder()
     public static org.geysermc.paletter.Paletter bundled()
     public java.lang.String explainUnknown(java.lang.String, int)
     public java.lang.String explainUnknown(org.cloudburstmc.nbt.NbtMap)
     public org.geysermc.paletter.vanilla.BedrockItemVariant item(java.lang.String, int)
+    public org.geysermc.paletter.vanilla.BedrockItemVariant item(java.lang.String, int, org.geysermc.paletter.Lookup)
+    public org.geysermc.paletter.vanilla.BedrockItemType itemType(java.lang.String, org.geysermc.paletter.Lookup)
     public org.geysermc.paletter.data.DataVersion latest()
     public org.geysermc.paletter.Palette palette(int)
     public org.geysermc.paletter.Palette palette(org.cloudburstmc.protocol.bedrock.codec.BedrockCodec)

@@ -8,6 +8,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.internal.block.BlockInterner;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.data.DataVersion;
@@ -64,6 +65,8 @@ public final class Paletter {
     private final Map<DataVersion, VanillaData> data = new ConcurrentHashMap<>();
     private final Map<DataVersion, Palette> vanilla = new ConcurrentHashMap<>();
     private final Map<Palette, Palette> newerThanData = new ConcurrentHashMap<>();
+    private final Map<DataVersion, CanonicalBlocks> blocksByVersion = new ConcurrentHashMap<>();
+    private final Map<DataVersion, CanonicalItems> itemsByVersion = new ConcurrentHashMap<>();
     private final Map<NbtMap, NbtMap> interned = new HashMap<>();
     private final BlockInterner blockInterner = new BlockInterner();
     private volatile CanonicalBlocks canonicalBlocks;
@@ -232,6 +235,92 @@ public final class Paletter {
      */
     public @Nullable BedrockItemVariant item(@NonNull String identifier, int aux) {
         return canonicalItems().handle(Canonicals.item(canonicalItems(), ItemVariant.of(identifier, aux)));
+    }
+
+    /**
+     * @param state a block state as {@code {name, states}}; extra keys are ignored
+     * @param lookup which data the state must be in, see {@link Lookup}
+     * @return its handle (of the newest version's state), or null if the lookup does not accept the state
+     * @throws IllegalArgumentException if the version of the lookup is not served by this instance
+     * @since 0.1.0
+     */
+    public @Nullable BedrockBlockState block(@NonNull NbtMap state, @NonNull Lookup lookup) {
+        if (blocksOf(lookup).index(state) == -1 && !lookup.followRenames()) {
+            return null;
+        }
+        return block(state);
+    }
+
+    /**
+     * @param lookup which data the variant must be in, see {@link Lookup}
+     * @return its handle (of the newest version's variant), or null if the lookup does not accept the variant. Aux 0 is
+     *         the base variant, which every item has
+     * @throws IllegalArgumentException if the version of the lookup is not served by this instance
+     * @since 0.1.0
+     */
+    public @Nullable BedrockItemVariant item(@NonNull String identifier, int aux, @NonNull Lookup lookup) {
+        if (itemsOf(lookup).index(ItemVariant.of(identifier, aux)) == -1 && !lookup.followRenames()) {
+            return null;
+        }
+        return item(identifier, aux);
+    }
+
+    /**
+     * @param identifier a block identifier
+     * @param lookup which data the block must be in, see {@link Lookup}
+     * @return the block type (of the newest version), or null if the lookup does not accept the identifier
+     * @throws IllegalArgumentException if the version of the lookup is not served by this instance
+     * @since 0.1.0
+     */
+    public @Nullable BedrockBlockType blockType(@NonNull String identifier, @NonNull Lookup lookup) {
+        String name = identifier;
+        if (stateOf(vanillaData(versionOf(lookup)), identifier) == null) {
+            name = lookup.followRenames() ? source.renames().block(identifier) : null;
+        }
+        NbtMap state = name == null ? null : stateOf(vanillaData(newest()), name);
+        BedrockBlockState handle = state == null ? null : block(state);
+        return handle == null ? null : handle.type();
+    }
+
+    /**
+     * @param identifier an item identifier
+     * @param lookup which data the item must be in, see {@link Lookup}
+     * @return the item type (of the newest version), or null if the lookup does not accept the identifier
+     * @throws IllegalArgumentException if the version of the lookup is not served by this instance
+     * @since 0.1.0
+     */
+    public @Nullable BedrockItemType itemType(@NonNull String identifier, @NonNull Lookup lookup) {
+        BedrockItemVariant base = item(identifier, 0, lookup);
+        return base == null ? null : base.type();
+    }
+
+    private DataVersion versionOf(Lookup lookup) {
+        DataVersion version = lookup.version() == null ? latest() : lookup.version();
+        if (!versions().contains(version)) {
+            throw new IllegalArgumentException(version + " is not served by this Paletter, which has " + versions());
+        }
+        return version;
+    }
+
+    private CanonicalBlocks blocksOf(Lookup lookup) {
+        DataVersion version = versionOf(lookup);
+        return version.equals(newest()) ? canonicalBlocks()
+            : blocksByVersion.computeIfAbsent(version, v -> CanonicalBlocks.of(vanillaData(v).blockStates()));
+    }
+
+    private CanonicalItems itemsOf(Lookup lookup) {
+        DataVersion version = versionOf(lookup);
+        return version.equals(newest()) ? canonicalItems()
+            : itemsByVersion.computeIfAbsent(version, v -> CanonicalItems.of(vanillaData(v)));
+    }
+
+    private static @Nullable NbtMap stateOf(VanillaData data, String identifier) {
+        for (NbtMap state : data.blockStates()) {
+            if (BlockStates.name(state).equals(identifier)) {
+                return state;
+            }
+        }
+        return null;
     }
 
     /**
