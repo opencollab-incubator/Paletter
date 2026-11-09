@@ -121,9 +121,14 @@ public final class ItemOverride {
             }
             componentData = ItemCompiler.override(componentData, components, context);
         }
+        List<ItemComponent> merged = new ArrayList<>(fresh ? List.of() : original.components());
+        for (ItemComponent component : components) {
+            merged.removeIf(existing -> existing.name().equals(component.name()));
+            merged.add(component);
+        }
         return new RegisteredItem(original.getIdentifier(), original.getRuntimeId(),
             version != null ? version : original.getVersion(),
             componentBased != null ? componentBased : original.isComponentBased(),
-            componentData, original.isCustom());
+            componentData, original.origin(), merged, original.customItem());
     }
 }
