@@ -225,6 +225,29 @@ public final class Palette {
     }
 
     /**
+     * Whether this palette sends an item variant as another item, see {@link #fallbackOf}. A lookup, not a debugging
+     * aid: cheap for every item of a version.
+     *
+     * @return true if the variant is replaced by a fallback; false if it is sent as itself, or nothing is sent for it
+     * @since 1.0.0
+     */
+    public boolean isFallback(@NonNull BedrockItemVariant variant) {
+        return items.isFallback(variant);
+    }
+
+    /**
+     * The item variant this palette sends in place of a variant its version lacks (or that a forced {@code Fallbacks}
+     * entry replaces), or the default fallback ({@code minecraft:unknown}). Customised by {@code Fallbacks} of the
+     * {@link Paletter}; the aux is the one of the fallback's variant, else the replaced variant's.
+     *
+     * @return the replacement, or null if the variant is sent as itself (or not at all: no fallback, see {@link #encode})
+     * @since 1.0.0
+     */
+    public @Nullable BedrockItemVariant fallbackOf(@NonNull BedrockItemVariant variant) {
+        return items.fallbackOf(variant);
+    }
+
+    /**
      * @return the item of a type as registered in this palette, or null if it has none (an item of a layer this palette
      *         does not have, or one that does not exist in this version; fallbacks are not applied, see {@link #encode})
      * @since 1.0.0
