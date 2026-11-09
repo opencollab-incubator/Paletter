@@ -23,6 +23,7 @@ import org.geysermc.paletter.tools.model.docs.DocsParser;
 import org.geysermc.paletter.tools.model.infer.MappingInference;
 import org.geysermc.paletter.tools.update.CreativeProbe;
 import org.geysermc.paletter.tools.update.EducationProbe;
+import org.geysermc.paletter.tools.update.ExperimentMarks;
 import org.geysermc.paletter.tools.update.SpecCapture;
 import org.geysermc.paletter.tools.update.Update;
 import picocli.CommandLine;
@@ -47,7 +48,7 @@ import java.util.concurrent.Callable;
  */
 @Command(name = "paletter-tools", mixinStandardHelpOptions = true, subcommands = {
     Cli.Import.class, Cli.BdsRun.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.SpecCaptureCommand.class,
-    Cli.VerifyCommand.class, Cli.CheckData.class, Cli.BlockItemsCommand.class, Cli.RewriteCommand.class, Cli.DataRewriteCommand.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class,
+    Cli.VerifyCommand.class, Cli.CheckData.class, Cli.BlockItemsCommand.class, Cli.RewriteCommand.class, Cli.DataRewriteCommand.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class, Cli.ExperimentMarksCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
     Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class
@@ -328,6 +329,16 @@ public final class Cli implements Runnable {
             put(options, "reference", reference);
             put(options, "experiments", experiments);
             CreativeProbe.run(root(), options);
+            return 0;
+        }
+    }
+
+    @Command(name = "experiment-marks", description = "Writes the experiment marks (content only there behind a toggle) of the bundled versions "
+        + "from the experiment records data/bds/*/experiments.json.")
+    static final class ExperimentMarksCommand extends Rooted implements Callable<Integer> {
+        @Override
+        public Integer call() throws Exception {
+            System.out.println("Changed: " + ExperimentMarks.apply(root()));
             return 0;
         }
     }
