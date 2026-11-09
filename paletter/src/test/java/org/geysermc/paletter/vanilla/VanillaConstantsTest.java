@@ -8,7 +8,6 @@ import org.geysermc.paletter.Fallbacks;
 import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
-import org.geysermc.paletter.block.BlockFallback;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.internal.CanonicalBlocks;
@@ -275,7 +274,6 @@ class VanillaConstantsTest {
         assertEquals(Ids.item(palette, ItemVariant.of("example:ruby")), Ids.item(palette, ruby.type()));
         assertEquals("example:ruby", palette.item(ruby.type()).getIdentifier());
         assertEquals(Ids.item(palette, ItemVariant.of("example:lamp")), Ids.item(palette, lamp.itemType()));
-        assertEquals(BlockFallback.of("minecraft:dirt"), BlockFallback.of(BedrockBlocks.DIRT));
     }
 
     /** The README example. */

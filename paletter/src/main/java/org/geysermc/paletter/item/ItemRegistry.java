@@ -338,11 +338,15 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         ItemFallback forced = fallbacks.get(variant.identifier());
         RegisteredItem item = forced != null && forced.force() ? null : getDefinition(variant.identifier());
         boolean fallback = false;
+        int damage = variant.damage();
         if (item == null) {
             ItemFallback target = fallbacks.get(variant.identifier());
-            item = target == null ? null : getDefinition(target.target());
+            item = target == null ? null : getDefinition(target.target().identifier());
             if (item == null) {
                 return null;
+            }
+            if (target.variant() != null) {
+                damage = target.variant().aux();
             }
             fallback = true;
         }
@@ -353,7 +357,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                 block = resolution.block();
             }
         }
-        return new ResolvedItem(item, variant.damage(), block, fallback);
+        return new ResolvedItem(item, damage, block, fallback);
     }
 
     // ---- Canonical ids ----
@@ -518,9 +522,9 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             items[i] = resolveUncached(variant);
             if (items[i] == null) {
                 missing.add(variant);
-                RegisteredItem fallback = defaultFallback == null ? null : getDefinition(defaultFallback.target());
+                RegisteredItem fallback = defaultFallback == null ? null : getDefinition(defaultFallback.target().identifier());
                 if (fallback != null) {
-                    items[i] = new ResolvedItem(fallback, 0, defaultBlockOf(fallback.getIdentifier()), true);
+                    items[i] = new ResolvedItem(fallback, defaultFallback.variant() == null ? 0 : defaultFallback.variant().aux(), defaultBlockOf(fallback.getIdentifier()), true);
                 }
             }
             if (items[i] == null || items[i].fallback()) {
@@ -528,10 +532,10 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                 unresolved.add(variant.identifier());
                 ItemFallback target = fallbacks.get(variant.identifier());
                 if (target != null) {
-                    unresolved.add(target.target());
+                    unresolved.add(target.target().identifier());
                 }
                 if (defaultFallback != null) {
-                    unresolved.add(defaultFallback.target());
+                    unresolved.add(defaultFallback.target().identifier());
                 }
             }
         }

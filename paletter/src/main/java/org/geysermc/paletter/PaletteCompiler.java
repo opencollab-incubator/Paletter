@@ -252,14 +252,14 @@ final class PaletteCompiler {
                 missing.forEach(state -> names.add(BlockStates.name(state)));
                 report.info("canonical", missing.size() + " canonical block states have no " + blocks.version()
                     + " block and no fallback, and are sent as " + (blocks.defaultFallback() == null ? "air"
-                    : blocks.defaultFallback().target()) + ": " + names);
+                    : blocks.defaultFallback().target().identifier()) + ": " + names);
             }
         }
         List<ItemVariant> missingItems = items.missingCanonical();
         if (!missingItems.isEmpty() && (parentItems == null || !missingItems.equals(parentItems.missingCanonical()))) {
             report.info("canonical", missingItems.size() + " canonical item variants do not exist in " + items.version()
                 + " and have no fallback" + (items.defaultFallback() == null ? "" : ", and are sent as "
-                + items.defaultFallback().target()) + ": " + missingItems);
+                + items.defaultFallback().target().identifier()) + ": " + missingItems);
         }
     }
 }

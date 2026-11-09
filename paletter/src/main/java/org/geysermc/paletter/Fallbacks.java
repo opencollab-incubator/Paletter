@@ -60,9 +60,10 @@ public final class Fallbacks {
     }
 
     /**
-     * @return the item fallbacks that apply to a version: those for every version, overridden by those for this one
+     * @return the item fallbacks that apply to a version, by identifier of the replaced item: those for every version,
+     * overridden by those for this one
      */
-    public @NonNull Map<String, ItemFallback> items(@NonNull DataVersion version) {
+    @NonNull Map<String, ItemFallback> items(@NonNull DataVersion version) {
         Map<String, ItemFallback> specific = versionItems.get(version.name());
         if (specific == null) {
             return items;
@@ -73,9 +74,10 @@ public final class Fallbacks {
     }
 
     /**
-     * @return the block fallbacks that apply to a version: those for every version, overridden by those for this one
+     * @return the block fallbacks that apply to a version, by identifier of the replaced block: those for every version,
+     * overridden by those for this one
      */
-    public @NonNull Map<String, BlockFallback> blocks(@NonNull DataVersion version) {
+    @NonNull Map<String, BlockFallback> blocks(@NonNull DataVersion version) {
         Map<String, BlockFallback> specific = versionBlocks.get(version.name());
         if (specific == null) {
             return blocks;
@@ -114,45 +116,45 @@ public final class Fallbacks {
          * Uses {@code fallback} for an item in every version that lacks it (or, with {@link ItemFallback#force()},
          * in every version).
          */
-        public @NonNull Builder item(@NonNull String id, @NonNull ItemFallback fallback) {
-            items.put(Objects.requireNonNull(id), Objects.requireNonNull(fallback));
+        public @NonNull Builder item(@NonNull BedrockItemType type, @NonNull ItemFallback fallback) {
+            items.put(type.identifier(), Objects.requireNonNull(fallback));
             return this;
         }
 
         public @NonNull Builder item(@NonNull BedrockItemType type, @NonNull BedrockItemType replacement) {
-            return item(type.identifier(), ItemFallback.of(replacement));
-        }
-
-        public @NonNull Builder item(@NonNull BedrockItemType type, @NonNull ItemFallback fallback) {
-            return item(type.identifier(), fallback);
+            return item(type, ItemFallback.of(replacement));
         }
 
         /**
-         * Like {@link #item(String, ItemFallback)} for one data version only (e.g. {@code "26.50"}), overriding the
-         * entry for every version.
+         * Like {@link #item(BedrockItemType, ItemFallback)} for one data version only, overriding the entry for every
+         * version.
          */
-        public @NonNull Builder item(@NonNull String version, @NonNull String id, @NonNull ItemFallback fallback) {
-            versionItems.computeIfAbsent(Objects.requireNonNull(version), v -> new LinkedHashMap<>())
-                .put(Objects.requireNonNull(id), Objects.requireNonNull(fallback));
+        public @NonNull Builder item(@NonNull DataVersion version, @NonNull BedrockItemType type, @NonNull ItemFallback fallback) {
+            versionItems.computeIfAbsent(version.name(), v -> new LinkedHashMap<>())
+                .put(type.identifier(), Objects.requireNonNull(fallback));
             return this;
         }
 
-        public @NonNull Builder block(@NonNull String id, @NonNull BlockFallback fallback) {
-            blocks.put(Objects.requireNonNull(id), Objects.requireNonNull(fallback));
+        /**
+         * Uses {@code fallback} for a block in every version that lacks it (or, with {@link BlockFallback#force()},
+         * in every version).
+         */
+        public @NonNull Builder block(@NonNull BedrockBlockType type, @NonNull BlockFallback fallback) {
+            blocks.put(type.identifier(), Objects.requireNonNull(fallback));
             return this;
         }
 
         public @NonNull Builder block(@NonNull BedrockBlockType type, @NonNull BedrockBlockType replacement) {
-            return block(type.identifier(), BlockFallback.of(replacement));
+            return block(type, BlockFallback.of(replacement));
         }
 
-        public @NonNull Builder block(@NonNull BedrockBlockType type, @NonNull BlockFallback fallback) {
-            return block(type.identifier(), fallback);
-        }
-
-        public @NonNull Builder block(@NonNull String version, @NonNull String id, @NonNull BlockFallback fallback) {
-            versionBlocks.computeIfAbsent(Objects.requireNonNull(version), v -> new LinkedHashMap<>())
-                .put(Objects.requireNonNull(id), Objects.requireNonNull(fallback));
+        /**
+         * Like {@link #block(BedrockBlockType, BlockFallback)} for one data version only, overriding the entry for every
+         * version.
+         */
+        public @NonNull Builder block(@NonNull DataVersion version, @NonNull BedrockBlockType type, @NonNull BlockFallback fallback) {
+            versionBlocks.computeIfAbsent(version.name(), v -> new LinkedHashMap<>())
+                .put(type.identifier(), Objects.requireNonNull(fallback));
             return this;
         }
 

@@ -39,6 +39,7 @@ final class VanillaIndex {
     final List<String> tableBlocks;
     final Renames renames = PaletteDataSource.bundled().renames();
     private final Map<String, BedrockItemType> itemConstants;
+    private final Map<String, BedrockBlockType> blockConstants;
 
     private VanillaIndex() {
         // Collect every constant first, so the data links to the constant objects
@@ -67,6 +68,7 @@ final class VanillaIndex {
         }
 
         this.itemConstants = constantItems;
+        this.blockConstants = constantBlocks;
         Paletter paletter = Paletter.bundled();
         VanillaData latest = paletter.vanillaData(paletter.latest());
         this.blocks = paletter.canonicalBlocks();
@@ -160,6 +162,12 @@ final class VanillaIndex {
 
     @Nullable BedrockBlockType block(String identifier) {
         return blocksById.get(identifier);
+    }
+
+    /** The vanilla type of the data, else a generated constant the data does not have, else null. */
+    @Nullable BedrockBlockType blockOrConstant(String identifier) {
+        BedrockBlockType type = blocksById.get(identifier);
+        return type != null ? type : blockConstants.get(identifier);
     }
 
     /** The vanilla type of the data, else a generated constant the data does not have, else null. */

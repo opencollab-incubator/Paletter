@@ -31,6 +31,7 @@ import java.util.WeakHashMap;
  */
 public final class BedrockBlockType {
     private static final Map<CustomBlock, BedrockBlockType> CUSTOM = new WeakHashMap<>();
+    private static final Map<String, BedrockBlockType> BARE = new java.util.concurrent.ConcurrentHashMap<>();
 
     private final String identifier;
     private final @Nullable String fallback;
@@ -43,6 +44,14 @@ public final class BedrockBlockType {
         this.identifier = Objects.requireNonNull(identifier);
         this.fallback = fallback;
         this.custom = false;
+    }
+
+    private BedrockBlockType(String identifier, boolean bare) {
+        this.identifier = Objects.requireNonNull(identifier);
+        this.fallback = null;
+        this.custom = true;
+        this.layout = BlockTypeLayout.bare(this);
+        this.available = true;
     }
 
     private BedrockBlockType(CustomBlock block) {
@@ -65,6 +74,20 @@ public final class BedrockBlockType {
     /**
      * @return the vanilla type of an identifier in the newest bundled data, or null if there is none. Loads the data
      */
+    /**
+     * The key of an identifier: the vanilla constant if the identifier is a vanilla block of the newest bundled data or
+     * has a generated constant, else a custom type known by its identifier only (no states; the same instance per
+     * identifier). The type of a {@link CustomBlock} with states is {@link #of(CustomBlock)}. Loads the data.
+     *
+     * @return the type of an identifier
+     * @since 1.0.0
+     */
+    public static @NonNull BedrockBlockType of(@NonNull String identifier) {
+        Objects.requireNonNull(identifier);
+        BedrockBlockType known = VanillaIndex.get().blockOrConstant(identifier);
+        return known != null ? known : BARE.computeIfAbsent(identifier, id -> new BedrockBlockType(id, true));
+    }
+
     public static @Nullable BedrockBlockType vanilla(@NonNull String identifier) {
         return VanillaIndex.get().block(identifier);
     }

@@ -3,6 +3,7 @@ package org.geysermc.paletter;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.geysermc.paletter.creative.CreativeCategory;
+import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.item.BedrockItemStack;
@@ -92,9 +93,9 @@ class EncodeDecodeTest {
 
     @Test
     void fallbacksApplyWhenEncodingForAnOlderVersion() {
-        String oldest = PALETTER.version(OLDEST).name();
+        DataVersion oldest = PALETTER.version(OLDEST);
         Fallbacks fallbacks = Fallbacks.builder()
-            .item(oldest, "minecraft:poplar_boat", new ItemFallback("minecraft:stick", true))
+            .item(oldest, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.STICK).forced())
             .build();
         Paletter paletter = Paletter.builder().fallbacks(fallbacks).build();
         Palette palette = paletter.palette(OLDEST);

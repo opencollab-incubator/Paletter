@@ -19,6 +19,8 @@ import org.geysermc.paletter.internal.creative.RawLayout;
 import org.geysermc.paletter.internal.creative.RawNode;
 import org.geysermc.paletter.internal.creative.RawStack;
 import org.geysermc.paletter.item.ItemFallback;
+import org.geysermc.paletter.vanilla.BedrockBlockType;
+import org.geysermc.paletter.vanilla.BedrockItemType;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -126,13 +128,14 @@ public final class PaletteDataCodec {
         Map<String, BlockFallback> blockFallbacks = new HashMap<>();
         fallbacksNbt.getCompound("blocks", NbtMap.EMPTY).forEach((name, value) -> {
             NbtMap fallback = (NbtMap) value;
-            blockFallbacks.put(name, new BlockFallback(fallback.getString("target"), fallback.getBoolean("clear_states"),
+            BedrockBlockType target = BedrockBlockType.of(fallback.getString("target"));
+            blockFallbacks.put(name, new BlockFallback(target, fallback.getBoolean("clear_states") ? target.defaultState() : null,
                 fallback.getBoolean("force")));
         });
         Map<String, ItemFallback> itemFallbacks = new HashMap<>();
         fallbacksNbt.getCompound("items", NbtMap.EMPTY).forEach((name, value) -> {
             NbtMap fallback = (NbtMap) value;
-            itemFallbacks.put(name, new ItemFallback(fallback.getString("target"), fallback.getBoolean("force")));
+            itemFallbacks.put(name, new ItemFallback(BedrockItemType.of(fallback.getString("target")), null, fallback.getBoolean("force")));
         });
         Set<String> unmapped = new HashSet<>(fallbacksNbt.getList("unmapped", NbtType.STRING, List.of()));
 
@@ -241,13 +244,13 @@ public final class PaletteDataCodec {
     private static void writeFallbacks(VanillaData data, NbtMapBuilder root) {
         NbtMapBuilder blockFallbacks = NbtMap.builder();
         new TreeMap<>(data.fallbacks().blocks()).forEach((name, fallback) -> blockFallbacks.putCompound(name, NbtMap.builder()
-            .putString("target", fallback.target())
-            .putBoolean("clear_states", fallback.clearStates())
+            .putString("target", fallback.target().identifier())
+            .putBoolean("clear_states", fallback.state() != null)
             .putBoolean("force", fallback.force())
             .build()));
         NbtMapBuilder itemFallbacks = NbtMap.builder();
         new TreeMap<>(data.fallbacks().items()).forEach((name, fallback) -> itemFallbacks.putCompound(name, NbtMap.builder()
-            .putString("target", fallback.target())
+            .putString("target", fallback.target().identifier())
             .putBoolean("force", fallback.force())
             .build()));
         root.putCompound("fallbacks", NbtMap.builder()

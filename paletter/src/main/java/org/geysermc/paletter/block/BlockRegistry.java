@@ -27,6 +27,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import org.geysermc.paletter.vanilla.BedrockBlockState;
+
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -401,21 +403,22 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     private BlockResolution adapt(NbtMap state) {
         String name = BlockStates.name(state);
         BlockResolution.Kind kind = BlockResolution.Kind.ADAPTED;
-        boolean clearStates = false;
+        BedrockBlockState exactState = null;
         BlockFallback forced = fallbacks.get(name);
         if (table.schema(name) == null || (forced != null && forced.force())) {
             BlockFallback fallback = forced;
-            if (fallback == null || table.schema(fallback.target()) == null) {
+            if (fallback == null || table.schema(fallback.target().identifier()) == null) {
                 return new BlockResolution(state, null, BlockResolution.Kind.MISSING);
             }
-            name = fallback.target();
-            clearStates = fallback.clearStates();
+            name = fallback.target().identifier();
+            exactState = fallback.state();
             kind = BlockResolution.Kind.FALLBACK;
         }
 
         Schema schema = table.schema(name);
-        if (clearStates) {
-            return new BlockResolution(state, schema.defaultState, kind);
+        if (exactState != null) {
+            RegisteredBlockState exact = table.byState(BlockStates.normalize(exactState.toNbt()));
+            return new BlockResolution(state, exact != null ? exact : schema.defaultState, kind);
         }
         NbtMap requested = BlockStates.states(state);
         NbtMapBuilder adapted = NbtMap.builder();
@@ -460,7 +463,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
 
     /** The default state of the default fallback's target, or null if there is none (or it is not in this version). */
     private @Nullable RegisteredBlockState defaultBlock() {
-        return defaultFallback == null ? null : defaultState(defaultFallback.target());
+        return defaultFallback == null ? null : defaultState(defaultFallback.target().identifier());
     }
 
     public boolean contains(@NonNull String identifier) {

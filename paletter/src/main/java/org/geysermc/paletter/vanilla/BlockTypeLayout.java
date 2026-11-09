@@ -78,6 +78,11 @@ final class BlockTypeLayout {
         return new BlockTypeLayout(owner, properties, values, -1, null, defaultOffset);
     }
 
+    /** A type known by its identifier only: no properties, one state. */
+    static BlockTypeLayout bare(BedrockBlockType owner) {
+        return new BlockTypeLayout(owner, new BedrockState<?>[0], new Object[0][], -1, null, 0);
+    }
+
     /**
      * @return the vanilla constant for a state name if it fits the values, else a state made for them
      */
