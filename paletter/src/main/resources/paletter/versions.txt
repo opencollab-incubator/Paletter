@@ -1,4 +1,5 @@
 # <data version> <first protocol version> - written by the generator
+26.30 1001
 26.40 2168
 26.50 2193
 26.60 2225
