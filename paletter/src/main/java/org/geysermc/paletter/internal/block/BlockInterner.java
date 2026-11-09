@@ -1,10 +1,13 @@
-package org.geysermc.paletter.block;
+package org.geysermc.paletter.internal.block;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.Origin;
 import org.geysermc.paletter.annotation.Internal;
+import org.geysermc.paletter.block.BlockNetworkIds;
+import org.geysermc.paletter.block.RegisteredBlock;
+import org.geysermc.paletter.block.RegisteredBlockState;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,7 +36,7 @@ public final class BlockInterner {
     /**
      * @return the shared hashed definition of a vanilla state; its hash is computed once
      */
-    synchronized @NonNull RegisteredBlockState vanillaBlock(@NonNull NbtMap state) {
+    public synchronized @NonNull RegisteredBlockState vanillaBlock(@NonNull NbtMap state) {
         RegisteredBlockState block = blocks.get(state);
         if (block == null) {
             block = new RegisteredBlockState(BlockNetworkIds.hash(state), state, false);
@@ -45,13 +48,13 @@ public final class BlockInterner {
     /**
      * @return the shared vanilla block with these states (shared instances, compared by identity) and data
      */
-    synchronized @NonNull RegisteredBlock vanillaType(@NonNull String identifier, @NonNull List<RegisteredBlockState> states,
+    public synchronized @NonNull RegisteredBlock vanillaType(@NonNull String identifier, @NonNull List<RegisteredBlockState> states,
                                                       @Nullable NbtMap propertyData, @Nullable NbtMap defaultState) {
         return vanillaTypes.computeIfAbsent(new VanillaBlockKey(identifier, states, propertyData, defaultState),
             key -> new RegisteredBlock(identifier, Origin.VANILLA, states, null, propertyData, defaultState));
     }
 
-    synchronized int @NonNull [] intern(int @NonNull [] page) {
+    public synchronized int @NonNull [] intern(int @NonNull [] page) {
         pages++;
         int[] existing = intPages.putIfAbsent(new IntPage(page), page);
         if (existing != null) {
@@ -61,7 +64,7 @@ public final class BlockInterner {
         return page;
     }
 
-    synchronized @NonNull RegisteredBlockState @NonNull [] intern(@NonNull RegisteredBlockState @NonNull [] page) {
+    public synchronized @NonNull RegisteredBlockState @NonNull [] intern(@NonNull RegisteredBlockState @NonNull [] page) {
         pages++;
         RegisteredBlockState[] existing = blockPages.putIfAbsent(new BlockPage(page), page);
         if (existing != null) {

@@ -24,7 +24,7 @@ class CustomOrderTest {
         for (String identifier : identifiers) {
             layer.block(block(identifier));
         }
-        return PALETTER.palette(PALETTER.latest().protocolVersion(), layer.build());
+        return Palettes.palette(PALETTER.latest().protocolVersion(), layer.build());
     }
 
     @Test
@@ -64,7 +64,7 @@ class CustomOrderTest {
             CustomBlock block = block(identifier);
             layer.blockItem(identifier, block.item(), null).block(block);
         }
-        Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), layer.build());
+        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), layer.build());
         int a = palette.items().getDefinition("order:a").getRuntimeId();
         int c = palette.items().getDefinition("order:c").getRuntimeId();
         int b = palette.items().getDefinition("order:b").getRuntimeId();

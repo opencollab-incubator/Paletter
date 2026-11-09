@@ -2,6 +2,7 @@ package org.geysermc.paletter.block;
 
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.Palette;
+import org.geysermc.paletter.Palettes;
 import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.component.Geometry;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HashedPatchTest {
     private static final Paletter PALETTER = Paletter.bundled();
+    private static final Paletter HASHED = Palettes.paletter(BlockNetworkIds.HASHED);
 
     private static CustomBlock block(String identifier, int values) {
         return CustomBlock.builder(identifier)
@@ -35,8 +37,9 @@ class HashedPatchTest {
     void aPatchHoldsOnlyTheAddedStatesAndSharesTheParent() {
         for (DataVersion version : PALETTER.versions()) {
             int protocol = version.protocolVersion();
-            BlockRegistry vanilla = PALETTER.palette(protocol, BlockNetworkIds.HASHED).blocks();
-            Palette patched = PALETTER.palette(protocol, BlockNetworkIds.HASHED, PaletteLayer.builder("content").block(LAMP).build());
+            Palette base = HASHED.palette(protocol);
+            BlockRegistry vanilla = base.blocks();
+            Palette patched = base.extend(PaletteLayer.builder("content").block(LAMP).build());
             BlockRegistry blocks = patched.blocks();
 
             assertEquals(vanilla.size() + 4, blocks.size(), version.toString());
@@ -70,9 +73,9 @@ class HashedPatchTest {
     @Test
     void canonicalTablesReuseTheParentsPages() {
         DataVersion latest = PALETTER.latest();
-        BlockRegistry vanilla = PALETTER.palette(latest.protocolVersion(), BlockNetworkIds.HASHED).blocks();
-        BlockRegistry blocks = PALETTER.palette(latest.protocolVersion(), BlockNetworkIds.HASHED,
-            PaletteLayer.builder("content").block(LAMP).build()).blocks();
+        Palette base = HASHED.palette(latest.protocolVersion());
+        BlockRegistry vanilla = base.blocks();
+        BlockRegistry blocks = base.extend(PaletteLayer.builder("content").block(LAMP).build()).blocks();
         for (int id = 0; id < vanilla.canonical().size(); id++) {
             assertSame(vanilla.block(id), blocks.block(id), "canonical " + id);
             assertEquals(vanilla.runtimeId(id), blocks.runtimeId(id));
@@ -88,11 +91,10 @@ class HashedPatchTest {
     void stackedPatchesGiveWhatOneLayerWithAllBlocksGives() {
         for (DataVersion version : PALETTER.versions()) {
             int protocol = version.protocolVersion();
-            BlockRegistry stacked = PALETTER.palette(protocol, BlockNetworkIds.HASHED,
-                PaletteLayer.builder("a").block(LAMP).build(),
-                PaletteLayer.builder("b").block(ZEBRA).block(APPLE).build()).blocks();
-            BlockRegistry single = PALETTER.palette(protocol, BlockNetworkIds.HASHED,
-                PaletteLayer.builder("all").block(LAMP).block(ZEBRA).block(APPLE).build()).blocks();
+            Palette base = HASHED.palette(protocol);
+            BlockRegistry stacked = base.extend(PaletteLayer.builder("a").block(LAMP).build())
+                .extend(PaletteLayer.builder("b").block(ZEBRA).block(APPLE).build()).blocks();
+            BlockRegistry single = base.extend(PaletteLayer.builder("all").block(LAMP).block(ZEBRA).block(APPLE).build()).blocks();
 
             assertEquals(single.size(), stacked.size());
             assertEquals(single.blockProperties(), stacked.blockProperties(), version.toString());
@@ -119,16 +121,16 @@ class HashedPatchTest {
     @Test
     void collisionsAreRejected() {
         int protocol = PALETTER.latest().protocolVersion();
-        assertThrows(Exception.class, () -> PALETTER.palette(protocol, BlockNetworkIds.HASHED,
-            PaletteLayer.builder("a").block(LAMP).build(), PaletteLayer.builder("b").block(LAMP).build()));
-        assertThrows(Exception.class, () -> PALETTER.palette(protocol, BlockNetworkIds.HASHED,
-            PaletteLayer.builder("a").block(block("minecraft:stone", 2)).build()));
+        Palette base = HASHED.palette(protocol);
+        assertThrows(Exception.class, () -> base.extend(PaletteLayer.builder("a").block(LAMP).build())
+            .extend(PaletteLayer.builder("b").block(LAMP).build()));
+        assertThrows(Exception.class, () -> base.extend(PaletteLayer.builder("a").block(block("minecraft:stone", 2)).build()));
     }
 
     @Test
     void sequentialPalettesAreStillRebuilt() {
         int protocol = PALETTER.latest().protocolVersion();
-        BlockRegistry blocks = PALETTER.palette(protocol, BlockNetworkIds.SEQUENTIAL, PaletteLayer.builder("content").block(LAMP).build()).blocks();
+        BlockRegistry blocks = Palettes.palette(protocol, BlockNetworkIds.SEQUENTIAL, PaletteLayer.builder("content").block(LAMP).build()).blocks();
         assertEquals(blocks.size(), blocks.ownStateCount());
         NbtMap state = blocks.block("example:lamp").states().getFirst().getState();
         assertSame(blocks.exact(state), blocks.block("example:lamp").states().getFirst());

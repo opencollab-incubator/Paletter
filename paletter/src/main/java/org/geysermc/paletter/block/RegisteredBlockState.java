@@ -4,26 +4,23 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
-import org.geysermc.paletter.Origin;
-import org.geysermc.paletter.block.component.BlockComponent;
-import org.geysermc.paletter.internal.block.StateConditions;
-import org.geysermc.paletter.internal.property.PropertySplit;
-import org.geysermc.paletter.property.Properties;
+import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.vanilla.BedrockBlockType;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * A block state definition in a compiled palette. Instances are unique per palette and compared by identity,
- * so {@code ==} between definitions from the same palette is safe.
+ * A block state definition in a compiled palette: the runtime id of a state. Instances are unique per palette and
+ * compared by identity, so {@code ==} between definitions from the same palette is safe.
  * <p>
  * In {@link BlockNetworkIds#HASHED} palettes, vanilla states are additionally shared between all palettes of a
- * {@link org.geysermc.paletter.Paletter}, across versions: equal state, same instance. The position of a state in its
- * palette is {@link BlockRegistry#indexOf}. {@link #block()} of a shared state is the block of the first palette that
- * registered it, see {@link RegisteredBlock}.
+ * {@link org.geysermc.paletter.Paletter}, across versions: equal state, same instance. That is why a state does not
+ * know its block, the state set of a block can differ between versions. Ask the palette you have the state from,
+ * {@link BlockRegistry#block(RegisteredBlockState)}, for its {@link RegisteredBlock}, which also has the effective
+ * {@linkplain RegisteredBlock#components(RegisteredBlockState) components} and
+ * {@linkplain RegisteredBlock#properties(RegisteredBlockState) properties} of a state. The position of a state in its
+ * palette is {@link BlockRegistry#indexOf}.
  *
  * @since 1.0.0
  */
@@ -31,25 +28,25 @@ public final class RegisteredBlockState implements BlockDefinition {
     private final int runtimeId;
     private final NbtMap state;
     private final boolean custom;
-    private volatile @Nullable RegisteredBlock block;
+    /** Custom states belong to one block in every palette they are in; vanilla states are shared and not bound. */
+    private volatile @Nullable CustomBlock customBlock;
     private int indexInBlock;
     private volatile @Nullable BedrockBlockState key;
-    private volatile @Nullable List<BlockComponent> components;
-    private volatile @Nullable Properties properties;
 
-    RegisteredBlockState(int runtimeId, NbtMap state, boolean custom) {
+    @Internal
+    public RegisteredBlockState(int runtimeId, NbtMap state, boolean custom) {
         this.runtimeId = runtimeId;
         this.state = state;
         this.custom = custom;
     }
 
     /**
-     * Binds this state to its block; the first block wins, since vanilla states are shared between palettes.
+     * Binds a custom state to its block and its position there.
      */
-    synchronized void bind(RegisteredBlock block, int index) {
-        if (this.block == null) {
+    synchronized void bind(CustomBlock block, int index) {
+        if (this.customBlock == null) {
             this.indexInBlock = index;
-            this.block = block;
+            this.customBlock = block;
         }
     }
 
@@ -84,82 +81,21 @@ public final class RegisteredBlockState implements BlockDefinition {
     }
 
     /**
-     * @return the block this state belongs to
-     */
-    public @NonNull RegisteredBlock block() {
-        RegisteredBlock block = this.block;
-        if (block == null) {
-            throw new IllegalStateException(this + " is not part of a block");
-        }
-        return block;
-    }
-
-    public @NonNull Origin origin() {
-        return block().origin();
-    }
-
-    /**
      * @return the key of this state, or null for a vanilla state that is not in the newest bundled data
      */
     public @Nullable BedrockBlockState key() {
         BedrockBlockState key = this.key;
         if (key == null) {
-            key = custom ? block().customKey(indexInBlock) : BedrockBlockState.vanilla(state);
+            if (custom) {
+                CustomBlock block = customBlock;
+                List<BedrockBlockState> keys = block == null ? List.of() : BedrockBlockType.of(block).states();
+                key = indexInBlock < keys.size() ? keys.get(indexInBlock) : null;
+            } else {
+                key = BedrockBlockState.vanilla(state);
+            }
             this.key = key;
         }
         return key;
-    }
-
-    /**
-     * @return the components in effect for this state: those of the block, plus those of the permutations of its
-     * {@link CustomBlock} whose condition matches this state, replacing components of the same name. Empty for vanilla
-     */
-    public @NonNull List<BlockComponent> components() {
-        List<BlockComponent> result = components;
-        if (result == null) {
-            RegisteredBlock block = block();
-            CustomBlock customBlock = block.customBlock();
-            if (customBlock == null || customBlock.permutations().isEmpty()) {
-                result = block.components();
-            } else {
-                Map<String, BlockComponent> merged = new LinkedHashMap<>();
-                block.components().forEach(component -> merged.put(component.name(), component));
-                NbtMap states = states();
-                for (CustomBlock.Permutation permutation : customBlock.permutations()) {
-                    if (StateConditions.matches(permutation.condition(), states)) {
-                        permutation.components().forEach(component -> merged.put(component.name(), component));
-                    }
-                }
-                result = List.copyOf(merged.values());
-            }
-            components = result;
-        }
-        return result;
-    }
-
-    /**
-     * @return the properties in effect for this state: those of the block, with the components of the permutations
-     * that apply to the state set on top
-     */
-    public @NonNull Properties properties() {
-        Properties result = properties;
-        if (result == null) {
-            RegisteredBlock block = block();
-            NbtMap data = block.propertyData();
-            List<NbtMap> overlay = new ArrayList<>();
-            if (data != null && data.get("permutations") instanceof List<?> permutations) {
-                NbtMap states = states();
-                for (Object entry : permutations) {
-                    if (entry instanceof NbtMap permutation
-                        && StateConditions.matches(permutation.getString("condition"), states)) {
-                        overlay.add(permutation.getCompound("components"));
-                    }
-                }
-            }
-            result = overlay.isEmpty() ? block.properties() : PropertySplit.split(data, overlay);
-            properties = result;
-        }
-        return result;
     }
 
     @Override

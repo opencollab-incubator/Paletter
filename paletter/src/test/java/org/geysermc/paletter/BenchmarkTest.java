@@ -56,7 +56,7 @@ class BenchmarkTest {
         MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
         long before = usedHeap(memory);
 
-        Paletter paletter = Paletter.create(PaletteDataSource.bundled());
+        Paletter paletter = Paletter.builder().build();
         List<Palette> keep = new ArrayList<>();
         long start = System.nanoTime();
         for (DataVersion version : paletter.versions()) {
@@ -72,9 +72,9 @@ class BenchmarkTest {
         for (BlockNetworkIds mode : List.of(BlockNetworkIds.HASHED, BlockNetworkIds.SEQUENTIAL)) {
             for (DataVersion version : paletter.versions()) {
                 long t0 = System.nanoTime();
-                Palette vanilla = paletter.vanilla(version, mode);
+                Palette vanilla = Palettes.paletter(mode).vanilla(version);
                 long t1 = System.nanoTime();
-                Palette palette = paletter.palette(version.protocolVersion(), mode, shared);
+                Palette palette = Palettes.palette(version.protocolVersion(), mode, shared);
                 long t2 = System.nanoTime();
                 Ids.runtimeId(palette, 0);
                 Ids.itemAt(palette, 0);
@@ -89,7 +89,7 @@ class BenchmarkTest {
         }
         long afterPalettes = usedHeap(memory);
 
-        Palette base = paletter.palette(paletter.latest().protocolVersion(), BlockNetworkIds.HASHED, shared);
+        Palette base = Palettes.palette(paletter.latest().protocolVersion(), BlockNetworkIds.HASHED, shared);
         long t0 = System.nanoTime();
         Palette session = base.extend(sessionLayer());
         Ids.runtimeId(session, 0);

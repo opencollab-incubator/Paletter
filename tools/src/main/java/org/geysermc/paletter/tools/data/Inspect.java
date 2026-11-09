@@ -5,7 +5,6 @@ import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.ItemExplanation;
 import org.geysermc.paletter.Paletter;
-import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.data.DataVersion;
@@ -33,9 +32,9 @@ public final class Inspect {
         }
         List<DataVersion> versions = version.equals("all") ? paletter.versions() : List.of(find(paletter, version));
         for (DataVersion v : versions) {
-            Palette palette = paletter.vanilla(v, BlockNetworkIds.HASHED);
+            Palette palette = paletter.vanilla(v);
             out.println("== " + v.name() + " (protocol " + v.protocolVersion() + ")");
-            out.println(block != null ? palette.explain(parseBlock(paletter.vanilla(paletter.latest(), BlockNetworkIds.HASHED), block))
+            out.println(block != null ? palette.explain(parseBlock(paletter.vanilla(paletter.latest()), block))
                 : explain(palette, parseItem(item)));
         }
     }

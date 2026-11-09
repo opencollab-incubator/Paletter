@@ -5,6 +5,7 @@ import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.internal.block.IntIndex;
 
 import org.geysermc.paletter.internal.CanonicalBlocks;
+import org.geysermc.paletter.internal.block.BlockInterner;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -486,12 +487,24 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * @return the block a state of this palette belongs to
+     * @throws IllegalArgumentException if the state is not of this palette
+     */
+    public @NonNull RegisteredBlock block(@NonNull RegisteredBlockState state) {
+        RegisteredBlock block = table.block(state.identifier());
+        if (block == null || exact(state.getState()) != state) {
+            throw new IllegalArgumentException(state + " is not a state of this palette");
+        }
+        return block;
+    }
+
+    /**
      * @return every block of this palette: vanilla and custom
      */
     public @NonNull Collection<RegisteredBlock> blocks() {
-        List<RegisteredBlock> blocks = new ArrayList<>();
+        Map<String, RegisteredBlock> blocks = new LinkedHashMap<>();
         table.collectBlocks(blocks);
-        return Collections.unmodifiableList(blocks);
+        return List.copyOf(blocks.values());
     }
 
     /**
@@ -705,6 +718,15 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                     blocks.put(name, new RegisteredBlock(name, Origin.VANILLA, entry.getValue(), null, propertyData.get(name), data.blockDefaults().get(name)));
                 }
             }
+            if (parent != null) {
+                // The numeric block ids inside the property data of the parent's custom blocks change when blocks are
+                // added: the patch has blocks of its own for them, over the same states
+                for (CustomBlock custom : this.customBlocks.subList(0, parent.customBlocks.size())) {
+                    RegisteredBlock earlier = parent.block(custom.identifier());
+                    blocks.put(custom.identifier(), new RegisteredBlock(custom.identifier(), origins.get(custom.identifier()),
+                        earlier.states(), custom, propertyData.get(custom.identifier()), custom.defaultState()));
+                }
+            }
             this.ownBlocks = Collections.unmodifiableMap(blocks);
 
             RegisteredBlockState air = parent != null ? parent.air : byState.get(BlockStates.of("minecraft:air"));
@@ -743,11 +765,12 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             return found != null || parent == null ? found : parent.block(identifier);
         }
 
-        void collectBlocks(Collection<RegisteredBlock> into) {
+        /** Blocks of this table replace those of the parent with the same identifier. */
+        void collectBlocks(Map<String, RegisteredBlock> into) {
             if (parent != null) {
                 parent.collectBlocks(into);
             }
-            into.addAll(ownBlocks.values());
+            into.putAll(ownBlocks);
         }
 
         @Nullable Schema schema(String identifier) {

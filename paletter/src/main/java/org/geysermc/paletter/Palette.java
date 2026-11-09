@@ -20,6 +20,7 @@ import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.creative.CreativeContent;
 import org.geysermc.paletter.creative.CreativeLayout;
+import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.creative.ItemMatcher;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.VanillaData;
@@ -67,10 +68,11 @@ public final class Palette {
     private final CreativeLayout creativeLayout;
     private final CreativeContent creative;
     private final PaletteReport report;
+    private final CreativeOrdering ordering;
     private final Map<PaletteLayer, WeakReference<Palette>> extensions = new WeakHashMap<>();
 
     Palette(VanillaData data, List<PaletteLayer> layers, BlockRegistry blocks, ItemRegistry items,
-            CreativeLayout creativeLayout, CreativeContent creative, PaletteReport report) {
+            CreativeLayout creativeLayout, CreativeContent creative, PaletteReport report, CreativeOrdering ordering) {
         this.data = data;
         this.layers = List.copyOf(layers);
         this.blocks = blocks;
@@ -78,13 +80,21 @@ public final class Palette {
         this.creativeLayout = creativeLayout;
         this.creative = creative;
         this.report = report;
+        this.ordering = ordering;
+    }
+
+    /**
+     * @return the creative ordering of the Paletter that compiled this palette; extensions use it too
+     */
+    CreativeOrdering ordering() {
+        return ordering;
     }
 
     /**
      * @return this palette with another report, sharing everything else
      */
     Palette withReport(PaletteReport report) {
-        return new Palette(data, layers, blocks, items, creativeLayout, creative, report);
+        return new Palette(data, layers, blocks, items, creativeLayout, creative, report, ordering);
     }
 
     public @NonNull DataVersion version() {

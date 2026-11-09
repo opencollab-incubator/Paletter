@@ -22,7 +22,7 @@ class KeysTest {
     @Test
     void ofReturnsTheConstants() {
         assertSame(BedrockItems.APPLE, BedrockItemType.of("minecraft:apple"));
-        assertSame(BedrockItems.APPLE, BedrockItemType.custom("minecraft:apple"));
+        assertSame(BedrockItems.APPLE, BedrockItemType.of("minecraft:apple"));
         assertFalse(BedrockItemType.of("minecraft:apple").isCustom());
     }
 
@@ -30,7 +30,7 @@ class KeysTest {
     void customTypesAreInterned() {
         BedrockItemType first = BedrockItemType.of("test:thing");
         assertSame(first, BedrockItemType.of("test:thing"));
-        assertSame(first, BedrockItemType.custom("test:thing"));
+        assertSame(first, BedrockItemType.of("test:thing"));
         assertTrue(first.isCustom());
         assertNotEquals(first, BedrockItemType.of("test:other"));
         assertEquals(first.hashCode(), BedrockItemType.of("test:thing").hashCode());

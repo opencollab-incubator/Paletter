@@ -63,7 +63,6 @@ class PaletterBuilderTest {
         Paletter built = Paletter.builder().build();
         int protocol = PALETTER.latest().protocolVersion();
         assertSame(built.palette(protocol), built.palette(protocol));
-        assertSame(built.palette(protocol), built.palette(protocol, BlockNetworkIds.SEQUENTIAL, List.of()));
         assertSame(PALETTER.palette(OLDEST), PALETTER.palette(OLDEST));
     }
 

@@ -1,7 +1,6 @@
 package org.geysermc.paletter.tools.data;
 
 import org.geysermc.paletter.Paletter;
-import org.geysermc.paletter.block.BlockNetworkIds;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -46,7 +45,7 @@ class InspectTest {
 
     @Test
     void parsesStateTypes() {
-        var newest = PALETTER.vanilla(PALETTER.latest(), BlockNetworkIds.HASHED);
+        var newest = PALETTER.vanilla(PALETTER.latest());
         var state = Inspect.parseBlock(newest, "oak_stairs[upside_down_bit=true,weirdo_direction=2]");
         assertEquals((byte) 1, state.getCompound("states").get("upside_down_bit"));
         assertEquals(2, state.getCompound("states").get("weirdo_direction"));

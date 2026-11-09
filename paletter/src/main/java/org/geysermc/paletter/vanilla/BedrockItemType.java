@@ -72,13 +72,6 @@ public final class BedrockItemType {
     }
 
     /**
-     * @return the type of a custom item, or of the item of a custom block; same as {@link #of(String)}
-     */
-    public static @NonNull BedrockItemType custom(@NonNull String identifier) {
-        return of(identifier);
-    }
-
-    /**
      * @return the type of a custom item; same as {@link #of(String)}
      */
     public static @NonNull BedrockItemType of(@NonNull CustomItem item) {

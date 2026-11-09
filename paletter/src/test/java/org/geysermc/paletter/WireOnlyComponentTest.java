@@ -33,7 +33,7 @@ class WireOnlyComponentTest {
     private static final Paletter PALETTER = Paletter.bundled();
 
     private static NbtMap components(PaletteLayer layer, DataVersion version, String identifier) {
-        Palette palette = PALETTER.palette(version.protocolVersion(), layer);
+        Palette palette = Palettes.palette(version.protocolVersion(), layer);
         assertTrue(palette.report().warnings().isEmpty(), version + ": " + palette.report().warnings());
         return palette.items().getDefinition(identifier).getComponentData().getCompound("components");
     }
@@ -167,7 +167,7 @@ class WireOnlyComponentTest {
 
     @Test
     void overridesOfVanillaItemsWriteThem() {
-        Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("fixes")
+        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("fixes")
             .overrideItem("minecraft:bow", item -> item.components(FrameCount.of(10), MiningSpeed.of(0.5f))).build());
         NbtMap properties = palette.items().getDefinition("minecraft:bow").getComponentData().getCompound("components")
             .getCompound("item_properties");
@@ -186,7 +186,7 @@ class WireOnlyComponentTest {
     @Test
     void onPlayerPlacingIsSentAsTheTriggerType() {
         for (DataVersion version : PALETTER.versions()) {
-            Palette palette = PALETTER.palette(version.protocolVersion(), PaletteLayer.builder("placing")
+            Palette palette = Palettes.palette(version.protocolVersion(), PaletteLayer.builder("placing")
                 .block(CustomBlock.builder("example:slab").component(OnPlayerPlacing.of("geyser:place_event")).build()).build());
             assertTrue(palette.report().warnings().isEmpty(), version + ": " + palette.report().warnings());
             NbtMap components = palette.blocks().blockProperties().stream().filter(b -> b.getName().equals("example:slab")).findFirst()
@@ -203,7 +203,7 @@ class WireOnlyComponentTest {
     void overridesOfLegacyItemsKeepNameAndId() {
         // Legacy items (cake) have no component data of their own: the override starts from {name, id, components}
         for (DataVersion version : PALETTER.versions()) {
-            Palette palette = PALETTER.palette(version.protocolVersion(), PaletteLayer.builder("fixes")
+            Palette palette = Palettes.palette(version.protocolVersion(), PaletteLayer.builder("fixes")
                 .overrideItem("minecraft:cake", item -> item.components(MiningSpeed.of(2f))).build());
             RegisteredItem cake = palette.items().getDefinition("minecraft:cake");
             NbtMap data = cake.getComponentData();

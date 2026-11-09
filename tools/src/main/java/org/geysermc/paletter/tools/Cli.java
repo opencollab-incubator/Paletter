@@ -527,7 +527,7 @@ public final class Cli implements Runnable {
 
         @Override
         public Integer call() {
-            org.geysermc.paletter.tools.data.Inspect.run(org.geysermc.paletter.Paletter.bundled(), version, block, item, System.out);
+            org.geysermc.paletter.tools.data.Inspect.run(org.geysermc.paletter.Paletter.builder().blockNetworkIds(org.geysermc.paletter.block.BlockNetworkIds.HASHED).build(), version, block, item, System.out);
             return 0;
         }
     }

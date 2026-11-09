@@ -67,7 +67,7 @@ class PropertiesTest {
         for (RegisteredBlock block : palette.blocks().blocks()) {
             assertEquals(PALETTER.properties(block.key(), version), block.properties(), block.identifier());
             if (block.properties().get(PropertyKind.WIRE, "permutations") == null) {
-                assertSame(block.properties(), block.states().getFirst().properties());
+                assertSame(block.properties(), block.properties(block.states().getFirst()));
             }
         }
     }
@@ -78,7 +78,7 @@ class PropertiesTest {
         RegisteredItem item = palette.items().item("server:ruby");
         assertNotNull(item);
         assertTrue(item.properties().get(PropertyKind.COMPONENT, "minecraft:max_stack_size") != null);
-        assertEquals(Properties.EMPTY, PALETTER.properties(BedrockItemType.custom("server:ruby"), PALETTER.latest()));
+        assertEquals(Properties.EMPTY, PALETTER.properties(BedrockItemType.of("server:ruby"), PALETTER.latest()));
         assertTrue(item.properties().of(PropertyKind.BEHAVIOUR).isEmpty());
     }
 
@@ -111,17 +111,17 @@ class PropertiesTest {
             .component(LightEmission.of(3))
             .permutation("q.block_state('example:on')", LightEmission.of(15))
             .build();
-        Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), BlockNetworkIds.HASHED, PaletteLayer.builder("x").block(block).build());
+        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), BlockNetworkIds.HASHED, PaletteLayer.builder("x").block(block).build());
         RegisteredBlock registered = palette.blocks().block("example:glow");
         assertNotNull(registered);
         assertNotNull(registered.properties().component("minecraft:light_emission"));
         assertEquals(Properties.EMPTY, PALETTER.properties(BedrockBlockType.of(block), PALETTER.latest()));
         for (RegisteredBlockState state : registered.states()) {
-            NbtMap emission = state.properties().component("minecraft:light_emission");
+            NbtMap emission = registered.properties(state).component("minecraft:light_emission");
             assertNotNull(emission);
             boolean on = state.states().getByte("example:on") == 1;
             assertEquals(on, !emission.equals(registered.properties().component("minecraft:light_emission")), state.toString());
-            assertFalse(on && state.properties().equals(registered.properties()));
+            assertFalse(on && registered.properties(state).equals(registered.properties()));
         }
     }
 }

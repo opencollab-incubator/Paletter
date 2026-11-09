@@ -3,6 +3,7 @@ package org.geysermc.paletter.block;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.geysermc.paletter.Origin;
 import org.geysermc.paletter.Palette;
+import org.geysermc.paletter.Palettes;
 import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.component.Geometry;
@@ -15,9 +16,11 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RegisteredBlockTest {
@@ -33,7 +36,7 @@ class RegisteredBlockTest {
     }
 
     private static Palette palette(BlockNetworkIds mode) {
-        return PALETTER.palette(PALETTER.latest().protocolVersion(), mode, PaletteLayer.builder("content").block(lamp()).build());
+        return Palettes.palette(PALETTER.latest().protocolVersion(), mode, PaletteLayer.builder("content").block(lamp()).build());
     }
 
     @Test
@@ -53,9 +56,8 @@ class RegisteredBlockTest {
         assertEquals(8, wheat.states().size());
         assertSame(blocks.defaultState("minecraft:wheat"), wheat.defaultState());
         for (RegisteredBlockState state : wheat.states()) {
-            assertSame(wheat, state.block());
-            assertEquals(Origin.VANILLA, state.origin());
-            assertTrue(state.components().isEmpty());
+            assertSame(wheat, blocks.block(state));
+            assertTrue(wheat.components(state).isEmpty());
             assertNotNull(state.key());
             assertEquals(state.getState(), state.key().toNbt());
         }
@@ -65,7 +67,7 @@ class RegisteredBlockTest {
     @Test
     void everyStateBelongsToABlockOfTheRegistry() {
         for (BlockNetworkIds mode : BlockNetworkIds.values()) {
-            BlockRegistry blocks = PALETTER.palette(PALETTER.latest().protocolVersion(), mode).blocks();
+            BlockRegistry blocks = Palettes.palette(PALETTER.latest().protocolVersion(), mode).blocks();
             int states = 0;
             for (RegisteredBlock block : blocks.blocks()) {
                 assertSame(block, blocks.block(block.identifier()));
@@ -106,14 +108,13 @@ class RegisteredBlockTest {
             assertEquals(block.key(), lamp().type());
 
             for (RegisteredBlockState state : block.states()) {
-                assertSame(block, state.block());
+                assertSame(block, blocks.block(state));
                 assertTrue(state.isCustom());
-                assertEquals(Origin.custom("content"), state.origin());
                 assertNotNull(state.key());
                 assertEquals(state.getState(), state.key().toNbt());
                 boolean lit = state.states().getByte("example:lit") == 1 && state.states().getString("example:color").equals("green");
-                assertEquals(lit, state.components().stream().anyMatch(LightEmission.class::isInstance), state.toString());
-                assertTrue(state.components().stream().anyMatch(Geometry.class::isInstance));
+                assertEquals(lit, block.components(state).stream().anyMatch(LightEmission.class::isInstance), state.toString());
+                assertTrue(block.components(state).stream().anyMatch(Geometry.class::isInstance));
             }
         }
     }
@@ -125,11 +126,70 @@ class RegisteredBlockTest {
             .component(LightEmission.of(3))
             .permutation("q.block_state('example:on')", LightEmission.of(15))
             .build();
-        Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), BlockNetworkIds.HASHED, PaletteLayer.builder("x").block(block).build());
-        for (RegisteredBlockState state : palette.blocks().block("example:glow").states()) {
-            assertEquals(1, state.components().size());
-            LightEmission emission = (LightEmission) state.components().getFirst();
+        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), BlockNetworkIds.HASHED, PaletteLayer.builder("x").block(block).build());
+        RegisteredBlock glow = palette.blocks().block("example:glow");
+        for (RegisteredBlockState state : glow.states()) {
+            assertEquals(1, glow.components(state).size());
+            LightEmission emission = (LightEmission) glow.components(state).getFirst();
             assertEquals(state.states().getByte("example:on") == 1 ? 15 : 3, emission.value());
         }
+    }
+
+    @Test
+    void sharedHashedStatesAreNeverAskedForAWrongVersionBlock() {
+        // A hashed state is the same instance in every version, so only the palette can say which block it is in
+        Paletter paletter = Paletter.builder().blockNetworkIds(BlockNetworkIds.HASHED).build();
+        for (org.geysermc.paletter.data.DataVersion version : paletter.versions()) {
+            BlockRegistry blocks = paletter.palette(version.protocolVersion()).blocks();
+            for (RegisteredBlock block : blocks.blocks()) {
+                for (RegisteredBlockState state : block.states()) {
+                    assertSame(block, blocks.block(state), version + " " + state);
+                }
+            }
+        }
+        BlockRegistry oldest = paletter.palette(paletter.versions().getFirst().protocolVersion()).blocks();
+        BlockRegistry latest = paletter.palette(paletter.latest().protocolVersion()).blocks();
+        int shared = 0;
+        for (RegisteredBlockState state : oldest.block("minecraft:stone").states()) {
+            RegisteredBlockState same = latest.exact(state.getState());
+            if (same != null) {
+                shared++;
+                assertSame(state, same);
+                assertEquals(latest.block("minecraft:stone").states(), latest.block(same).states());
+                assertEquals(oldest.block("minecraft:stone").states(), oldest.block(state).states());
+            }
+        }
+        assertTrue(shared > 0);
+        // A state of another palette is not asked about
+        RegisteredBlockState onlyInLatest = latest.blocks().stream().flatMap(block -> block.states().stream())
+            .filter(state -> oldest.exact(state.getState()) == null).findFirst().orElse(null);
+        if (onlyInLatest != null) {
+            assertThrows(IllegalArgumentException.class, () -> oldest.block(onlyInLatest));
+        }
+    }
+
+    @Test
+    void aPatchesBlocksCarryTheirOwnPropertyDataBecauseTheBlockIdsShift() {
+        CustomBlock zebra = CustomBlock.builder("example:zebra").property(BlockProperty.bool("example:on")).build();
+        Palette base = Palettes.palette(PALETTER.latest().protocolVersion(), BlockNetworkIds.HASHED,
+            PaletteLayer.builder("content").block(lamp()).build());
+        // Block ids follow the identifiers in descending order: zebra comes before the lamp, so the lamp's id moves
+        Palette patched = base.extend(PaletteLayer.builder("session").block(zebra).build());
+
+        RegisteredBlock before = base.blocks().block("example:lamp");
+        RegisteredBlock after = patched.blocks().block("example:lamp");
+        assertNotEquals(before.propertyData(), after.propertyData());
+        for (BlockPropertyData data : patched.blocks().blockProperties()) {
+            if (data.getName().startsWith("example:")) {
+                assertEquals(data.getProperties(), patched.blocks().block(data.getName()).propertyData(), data.getName());
+            }
+        }
+        for (BlockPropertyData data : base.blocks().blockProperties()) {
+            assertEquals(data.getProperties(), base.blocks().block(data.getName()).propertyData());
+        }
+        // The states are the same instances: only the block is new
+        assertEquals(before.states(), after.states());
+        assertEquals(1, patched.blocks().blocks().stream().filter(block -> block.identifier().equals("example:lamp")).count());
+        assertSame(after, patched.blocks().block(after.states().getFirst()));
     }
 }

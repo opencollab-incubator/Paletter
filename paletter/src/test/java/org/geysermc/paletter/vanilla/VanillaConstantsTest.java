@@ -6,6 +6,7 @@ import org.geysermc.paletter.Ids;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.Fallbacks;
 import org.geysermc.paletter.Palette;
+import org.geysermc.paletter.Palettes;
 import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.BlockProperty;
@@ -246,7 +247,7 @@ class VanillaConstantsTest {
         PaletteLayer layer = PaletteLayer.builder("custom").block(lamp).item(ruby)
             .overrideItem(BedrockItems.CAKE, item -> { })
             .build();
-        Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), layer);
+        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), layer);
 
         BedrockBlockType type = lamp.type();
         assertTrue(type.isCustom());

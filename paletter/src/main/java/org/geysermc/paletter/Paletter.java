@@ -7,7 +7,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
 import org.geysermc.paletter.annotation.Internal;
-import org.geysermc.paletter.block.BlockInterner;
+import org.geysermc.paletter.internal.block.BlockInterner;
 import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.internal.CanonicalBlocks;
@@ -62,10 +62,9 @@ public final class Paletter {
     private final CreativeOrdering creativeOrdering;
     private final Consumer<PaletteReport> reports;
     private final List<PaletteLayer> globalLayers;
-    private final Map<VanillaKey, Palette> compiled = new ConcurrentHashMap<>();
+    private final Map<DataVersion, Palette> compiled = new ConcurrentHashMap<>();
     private final Map<DataVersion, VanillaData> data = new ConcurrentHashMap<>();
-    private final Map<VanillaKey, Palette> vanilla = new ConcurrentHashMap<>();
-    private final Map<Key, Palette> palettes = new ConcurrentHashMap<>();
+    private final Map<DataVersion, Palette> vanilla = new ConcurrentHashMap<>();
     private final Map<Palette, Palette> newerThanData = new ConcurrentHashMap<>();
     private final Map<NbtMap, NbtMap> interned = new HashMap<>();
     private final BlockInterner blockInterner = new BlockInterner();
@@ -99,10 +98,6 @@ public final class Paletter {
         return Holder.BUNDLED;
     }
 
-    public static @NonNull Paletter create(@NonNull PaletteDataSource source) {
-        return builder().data(source).build();
-    }
-
     /**
      * @return the data versions this instance serves (those the builder's predicate accepts), oldest first
      */
@@ -112,6 +107,14 @@ public final class Paletter {
 
     public @NonNull DataVersion latest() {
         return versions().getLast();
+    }
+
+    /**
+     * What is loaded from the data source, and the canonical ids derived from it, only depends on the data source: every
+     * Paletter over the bundled data shares those of {@link #bundled()}, which the generated constants are linked to.
+     */
+    private boolean sharesBundledCanonicals() {
+        return source == PaletteDataSource.bundled() && this != Holder.BUNDLED;
     }
 
     /** The newest version of the data, whether served or not: canonical ids are defined by it. */
@@ -138,6 +141,9 @@ public final class Paletter {
 
     @Internal
     public @NonNull VanillaData vanillaData(@NonNull DataVersion version) {
+        if (sharesBundledCanonicals()) {
+            return Holder.BUNDLED.vanillaData(version);
+        }
         return data.computeIfAbsent(version, v -> {
             try {
                 return intern(source.load(v));
@@ -180,7 +186,8 @@ public final class Paletter {
             synchronized (this) {
                 blocks = canonicalBlocks;
                 if (blocks == null) {
-                    canonicalBlocks = blocks = CanonicalBlocks.of(vanillaData(newest()), source.renames());
+                    canonicalBlocks = blocks = sharesBundledCanonicals() ? Holder.BUNDLED.canonicalBlocks()
+                        : CanonicalBlocks.of(vanillaData(newest()), source.renames());
                 }
             }
         }
@@ -197,7 +204,8 @@ public final class Paletter {
             synchronized (this) {
                 items = canonicalItems;
                 if (items == null) {
-                    canonicalItems = items = CanonicalItems.of(vanillaData(newest()), source.renames());
+                    canonicalItems = items = sharesBundledCanonicals() ? Holder.BUNDLED.canonicalItems()
+                        : CanonicalItems.of(vanillaData(newest()), source.renames());
                 }
             }
         }
@@ -276,70 +284,30 @@ public final class Paletter {
     /**
      * @return the plain vanilla palette of a data version (with this instance's fallbacks and vanilla content, but
      *         without its layers), with this instance's block network ids
+     * @since 1.0.0
      */
     public @NonNull Palette vanilla(@NonNull DataVersion version) {
-        return vanilla(version, networkIds);
-    }
-
-    /**
-     * @return the plain vanilla palette of a data version, without this instance's layers
-     */
-    @Internal
-    public @NonNull Palette vanilla(@NonNull DataVersion version, @NonNull BlockNetworkIds mode) {
-        return vanilla.computeIfAbsent(new VanillaKey(version, mode),
-            key -> PaletteCompiler.vanilla(vanillaData(key.version()), key.mode(), canonicalBlocks(), canonicalItems(), blockInterner,
+        return vanilla.computeIfAbsent(version,
+            key -> PaletteCompiler.vanilla(vanillaData(key), networkIds, canonicalBlocks(), canonicalItems(), blockInterner,
                 fallbacks, vanillaContent, creativeOrdering));
     }
 
     /**
      * The palette of a protocol version: vanilla content plus this instance's layers, compiled once per data version
-     * and cached.
+     * and cached. Session content goes on top of it with {@link Palette#extend(PaletteLayer)}.
+     *
+     * @since 1.0.0
      */
     public @NonNull Palette palette(int protocolVersion) {
-        return palette(protocolVersion, networkIds, List.of());
-    }
-
-    public @NonNull Palette palette(@NonNull BedrockCodec codec) {
-        return palette(codec.getProtocolVersion(), networkIds, List.of());
-    }
-
-    /**
-     * The vanilla palette of a data version with this instance's global layers applied, compiled once and reported once.
-     */
-    private Palette global(DataVersion version, BlockNetworkIds mode) {
-        return compiled.computeIfAbsent(new VanillaKey(version, mode), key -> {
-            Palette palette = vanilla(version, mode);
-            for (int i = 0; i < globalLayers.size(); i++) {
-                palette = layered(version, mode, globalLayers.subList(0, i + 1), palette);
-            }
-            reports.accept(palette.report());
-            return palette;
-        });
-    }
-
-    private Palette layered(DataVersion version, BlockNetworkIds mode, List<PaletteLayer> prefix, Palette parent) {
-        Key key = new Key(version, mode, List.copyOf(prefix));
-        PaletteLayer layer = prefix.getLast();
-        return palettes.computeIfAbsent(key, k -> PaletteCompiler.extend(parent, layer, false));
-    }
-
-    /**
-     * Compiles (or returns the cached) palette of a protocol version with extra layers on top of this instance's.
-     * Every prefix of the layer list is cached too, so palettes sharing their first layers share those results.
-     *
-     * @param mode how block runtime ids are assigned. {@link BlockNetworkIds#HASHED} gives a state the same id in
-     *             every version; {@link Palette#applyTo(org.cloudburstmc.protocol.bedrock.packet.StartGamePacket)}
-     *             tells the client which mode is used
-     */
-    @Internal
-    public @NonNull Palette palette(int protocolVersion, @NonNull BlockNetworkIds mode, @NonNull List<PaletteLayer> layers) {
         DataVersion version = version(protocolVersion);
-        Palette palette = global(version, mode);
-        List<PaletteLayer> all = new ArrayList<>(globalLayers);
-        for (PaletteLayer layer : layers) {
-            all.add(layer);
-            palette = layered(version, mode, all, palette);
-        }
+        Palette palette = compiled.computeIfAbsent(version, v -> {
+            Palette result = vanilla(v);
+            for (PaletteLayer layer : globalLayers) {
+                result = PaletteCompiler.extend(result, layer, false);
+            }
+            reports.accept(result.report());
+            return result;
+        });
         if (protocolVersion > version.protocolVersion() && version.equals(latest())) {
             // Newer than all data: the latest data is used, and block ids may shift against what the client has
             return newerThanData.computeIfAbsent(palette, p -> {
@@ -348,77 +316,17 @@ public final class Paletter {
                 report.warn("paletter", "The requested protocol is newer than the newest bundled data ("
                     + version + ", protocol " + version.protocolVersion() + "); its data is used, so content the client has"
                     + " that this version lacks is missing and sequential block ids may differ");
-                Palette wrapped = p.withReport(report);
-                PaletteCompiler.orderingOf(wrapped, creativeOrdering);
-                return wrapped;
+                return p.withReport(report);
             });
         }
         return palette;
     }
 
     /**
-     * Like {@link #palette(int, BlockNetworkIds, List)} with this instance's block network ids.
+     * @since 1.0.0
      */
-    @Internal
-    public @NonNull Palette palette(int protocolVersion, @NonNull List<PaletteLayer> layers) {
-        return palette(protocolVersion, networkIds, layers);
-    }
-
-    @Internal
-    public @NonNull Palette palette(int protocolVersion, @NonNull PaletteLayer... layers) {
-        return palette(protocolVersion, networkIds, List.of(layers));
-    }
-
-    @Internal
-    public @NonNull Palette palette(int protocolVersion, @NonNull BlockNetworkIds mode, @NonNull PaletteLayer... layers) {
-        return palette(protocolVersion, mode, List.of(layers));
-    }
-
-    @Internal
-    public @NonNull Palette palette(@NonNull BedrockCodec codec, @NonNull PaletteLayer... layers) {
-        return palette(codec.getProtocolVersion(), networkIds, List.of(layers));
-    }
-
-    @Internal
-    public @NonNull Palette palette(@NonNull BedrockCodec codec, @NonNull BlockNetworkIds mode, @NonNull PaletteLayer... layers) {
-        return palette(codec.getProtocolVersion(), mode, List.of(layers));
-    }
-
-    /**
-     * Drops all cached palettes, e.g. after the layers of a reload replaced the old ones. Vanilla data stays loaded.
-     */
-    public void clearPalettes() {
-        palettes.clear();
-    }
-
-    private record VanillaKey(DataVersion version, BlockNetworkIds mode) {
-    }
-
-    /**
-     * Layers are compared by identity, so a rebuilt layer is a new cache entry.
-     */
-    private record Key(DataVersion version, BlockNetworkIds mode, List<PaletteLayer> layers) {
-        @Override
-        public boolean equals(Object o) {
-            if (!(o instanceof Key other) || !version.equals(other.version) || mode != other.mode || layers.size() != other.layers.size()) {
-                return false;
-            }
-            for (int i = 0; i < layers.size(); i++) {
-                if (layers.get(i) != other.layers.get(i)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 31 * version.hashCode() + mode.hashCode();
-            for (PaletteLayer layer : layers) {
-                hash = 31 * hash + System.identityHashCode(layer);
-            }
-            return hash;
-        }
+    public @NonNull Palette palette(@NonNull BedrockCodec codec) {
+        return palette(codec.getProtocolVersion());
     }
 
     /**

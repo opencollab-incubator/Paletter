@@ -18,7 +18,7 @@ class ExplainTest {
 
     @Test
     void exactBlock() {
-        Palette palette = PALETTER.vanilla(PALETTER.latest(), BlockNetworkIds.HASHED);
+        Palette palette = Palettes.paletter(BlockNetworkIds.HASHED).vanilla(PALETTER.latest());
         BlockExplanation explanation = palette.explain(BlockStates.of("minecraft:stone"));
         int canonical = Ids.block(PALETTER, BlockStates.of("minecraft:stone"));
         assertNotNull(explanation.handle());
@@ -33,8 +33,8 @@ class ExplainTest {
 
     @Test
     void oldVersionShowsFallbackChain() {
-        Palette oldest = PALETTER.vanilla(PALETTER.versions().getFirst(), BlockNetworkIds.SEQUENTIAL);
-        Palette newest = PALETTER.vanilla(PALETTER.latest(), BlockNetworkIds.SEQUENTIAL);
+        Palette oldest = PALETTER.vanilla(PALETTER.versions().getFirst());
+        Palette newest = Palettes.paletter(BlockNetworkIds.SEQUENTIAL).vanilla(PALETTER.latest());
         boolean found = false;
         for (int i = 0; i < Ids.blockCount(newest) && !found; i++) {
             BlockExplanation explanation = oldest.explain(Ids.canonicalBlocks(newest).state(i));
@@ -55,7 +55,7 @@ class ExplainTest {
 
     @Test
     void items() {
-        Palette palette = PALETTER.vanilla(PALETTER.latest(), BlockNetworkIds.HASHED);
+        Palette palette = Palettes.paletter(BlockNetworkIds.HASHED).vanilla(PALETTER.latest());
         ItemExplanation apple = palette.explain(BedrockItems.APPLE.base());
         assertNotNull(apple.handle());
         assertEquals(BlockResolution.Kind.EXACT, apple.kind());

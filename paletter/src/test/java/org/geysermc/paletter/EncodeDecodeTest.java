@@ -62,7 +62,7 @@ class EncodeDecodeTest {
     @Test
     void customStacksRoundTrip() {
         CustomItem ruby = CustomItem.builder("example:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
-        Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").item(ruby).build());
+        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").item(ruby).build());
         BedrockItemStack stack = BedrockItemStack.of(ruby.type().base(), 7);
         ItemData data = palette.encode(stack);
         assertEquals("example:ruby", data.getDefinition().getIdentifier());

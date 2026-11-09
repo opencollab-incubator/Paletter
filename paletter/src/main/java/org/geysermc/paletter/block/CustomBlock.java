@@ -225,7 +225,7 @@ public record CustomBlock(
      * @since 1.0.0
      */
     public @Nullable BedrockItemType itemType() {
-        return item instanceof BlockItem.None ? null : BedrockItemType.custom(identifier);
+        return item instanceof BlockItem.None ? null : BedrockItemType.of(identifier);
     }
 
     public @NonNull NbtMap defaultState() {

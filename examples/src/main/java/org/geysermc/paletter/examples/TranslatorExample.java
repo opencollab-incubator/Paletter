@@ -30,8 +30,6 @@ import java.util.Map;
  */
 public final class TranslatorExample {
     public static void main(String[] args) {
-        Paletter paletter = Paletter.bundled();
-
         // The translator's custom content, built with the generated component API
         CustomItem ruby = CustomItem.builder("example:ruby")
             .component(Icon.of("ruby"))
@@ -45,8 +43,11 @@ public final class TranslatorExample {
             .build();
         PaletteLayer translator = PaletteLayer.builder("translator").item(ruby).block(lamp).build();
 
+        // Hashed block ids: a state has the same id in every version, and custom blocks can also come per session
+        Paletter paletter = Paletter.builder().blockNetworkIds(BlockNetworkIds.HASHED).layer(translator).build();
+
         // Java block state id -> Bedrock block handle, once (0 air, 1 stone, 2 lamp). Handles are the same in every version
-        Palette shared = paletter.palette(Bedrock_v2225.CODEC, BlockNetworkIds.HASHED, translator);
+        Palette shared = paletter.palette(Bedrock_v2225.CODEC);
         BedrockBlockState[] javaToBedrock = {
             BedrockBlocks.AIR.defaultState(),
             BedrockBlocks.STONE.defaultState(),
@@ -55,7 +56,7 @@ public final class TranslatorExample {
 
         // Per client version: chunk translation is one array lookup per block. With HASHED ids the vanilla entries are equal
         for (int protocol : new int[]{paletter.versions().getFirst().protocolVersion(), paletter.latest().protocolVersion()}) {
-            Palette palette = paletter.palette(protocol, BlockNetworkIds.HASHED, translator);
+            Palette palette = paletter.palette(protocol);
             int[] javaToRuntime = Arrays.stream(javaToBedrock).mapToInt(palette::runtimeId).toArray();
             System.out.println(protocol + ": java -> runtime ids " + Arrays.toString(javaToRuntime));
         }
@@ -67,9 +68,9 @@ public final class TranslatorExample {
         System.out.println("from client: " + bedrockToJava.get(shared.decode(toClient).variant()));
 
         // A session: a short lived layer on top of the shared palette; what it does not touch stays identical
-        Palette session = shared.extend(PaletteLayer.builder("session")
-            .variant(BedrockItemVariant.of("minecraft:potion", 9999)).build());
+        CustomItem sessionItem = CustomItem.builder("example:session_item").component(Icon.of("session_item")).build();
+        Palette session = shared.extend(PaletteLayer.builder("session").item(sessionItem).build());
         System.out.println("session shares the block palette: " + (session.blocks() == shared.blocks()));
-        System.out.println("session adds item ids: " + (session.itemVariants().size() - shared.itemVariants().size()));
+        System.out.println("session adds item ids: " + (session.items().definitions().size() - shared.items().definitions().size()));
     }
 }

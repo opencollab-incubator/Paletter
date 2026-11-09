@@ -67,7 +67,7 @@ class HandleTest {
     void customContentHasHandlesInItsPalette() {
         CustomBlock lamp = lamp();
         CustomItem ruby = ruby();
-        Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").block(lamp).item(ruby).build());
+        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").block(lamp).item(ruby).build());
         BedrockBlockType type = BedrockBlockType.of(lamp);
         for (BedrockBlockState state : type.states()) {
             assertSame(state, palette.block(state.toNbt()));
@@ -104,7 +104,7 @@ class HandleTest {
     /** The hot path of translators: a handle to its runtime id is a field read and an array load. */
     @Test
     void handleToRuntimeIdDoesNotAllocate() {
-        Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").block(lamp()).build());
+        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").block(lamp()).build());
         List<BedrockBlockState> states = new java.util.ArrayList<>(BedrockBlockType.vanillaTypes().stream()
             .flatMap(type -> type.states().stream()).toList());
         states.addAll(BedrockBlockType.of(lamp()).states());

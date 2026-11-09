@@ -41,8 +41,8 @@ class CreativeOrderingTest {
     void bdsIsTheDefault() {
         PaletteLayer layer = PaletteLayer.builder("x")
             .item(item("test:item", CreativePlacement.loose(CreativeCategory.CONSTRUCTION))).build();
-        Palette explicit = Paletter.builder().creativeOrdering(CreativeOrdering.BDS).build().palette(LATEST, layer);
-        Palette defaulted = PALETTER.palette(LATEST, layer);
+        Palette explicit = Paletter.builder().creativeOrdering(CreativeOrdering.BDS).layer(layer).build().palette(LATEST);
+        Palette defaulted = Palettes.palette(LATEST, layer);
         assertEquals(stacks(explicit), stacks(defaulted));
     }
 
@@ -52,7 +52,7 @@ class CreativeOrderingTest {
             .item(item("test:sword_c", CreativePlacement.group(CreativeCategory.EQUIPMENT, "minecraft:itemGroup.name.sword")))
             .item(item("test:sword_a", CreativePlacement.group(CreativeCategory.EQUIPMENT, "itemGroup.name.sword")))
             .build();
-        Palette palette = PALETTER.palette(LATEST, layer);
+        Palette palette = Palettes.palette(LATEST, layer);
         CreativeGroup swords = palette.creativeLayout().group("itemGroup.name.sword").orElseThrow();
         List<BedrockItemStack> stacks = swords.stacks();
         assertEquals("test:sword_c", stacks.get(stacks.size() - 2).type().identifier());
@@ -66,7 +66,7 @@ class CreativeOrderingTest {
             .item(item("test:new_group", CreativePlacement.group(CreativeCategory.NATURE, "test:itemGroup.new")))
             .item(item("test:loose", CreativePlacement.loose(CreativeCategory.NATURE)))
             .build();
-        Palette palette = PALETTER.palette(LATEST, layer);
+        Palette palette = Palettes.palette(LATEST, layer);
         List<CreativeNode> items = palette.creativeLayout().nodes(CreativeCategory.ITEMS);
         CreativeGroup sword = assertInstanceOf(CreativeGroup.class, items.getLast());
         assertEquals("itemGroup.name.sword", sword.name());
@@ -84,7 +84,7 @@ class CreativeOrderingTest {
             .item(item("test:after_hopper", CreativePlacement.group(CreativeCategory.ITEMS, "itemGroup.name.minecart")
                 .after(ItemMatcher.id("minecraft:hopper_minecart"))))
             .build();
-        Palette palette = PALETTER.palette(LATEST, layer);
+        Palette palette = Palettes.palette(LATEST, layer);
         String group = palette.creativeLayout().groupOf(ItemMatcher.id("minecraft:hopper_minecart"));
         assertEquals(group, palette.creativeLayout().groupOf(ItemMatcher.id("test:after_hopper")));
         List<String> ids = palette.creativeLayout().group(group).orElseThrow().stacks().stream().map(stack -> stack.type().identifier()).toList();
@@ -98,16 +98,16 @@ class CreativeOrderingTest {
             .block(CustomBlock.builder("test:block_menu_only").menuCategory(org.geysermc.paletter.block.component.MenuCategory.builder()
                 .category(org.geysermc.paletter.block.component.MenuCategory.Category.CONSTRUCTION).build()).build())
             .build();
-        Palette palette = PALETTER.palette(LATEST, layer);
+        Palette palette = Palettes.palette(LATEST, layer);
         List<CreativeNode> construction = palette.creativeLayout().nodes(CreativeCategory.CONSTRUCTION);
         assertEquals("test:block_menu_only", ((CreativeItem) construction.get(construction.size() - 2)).stack().type().identifier());
         assertEquals("test:item", ((CreativeItem) construction.getLast()).stack().type().identifier());
 
-        Palette append = Paletter.builder().creativeOrdering(CreativeOrdering.APPEND).build().palette(LATEST, PaletteLayer.builder("blocks")
+        Palette append = Paletter.builder().creativeOrdering(CreativeOrdering.APPEND).layer(PaletteLayer.builder("blocks")
             .item(item("test:item", CreativePlacement.loose(CreativeCategory.CONSTRUCTION)))
             .block(CustomBlock.builder("test:block_menu_only").menuCategory(org.geysermc.paletter.block.component.MenuCategory.builder()
                 .category(org.geysermc.paletter.block.component.MenuCategory.Category.CONSTRUCTION).build()).build())
-            .build());
+            .build()).build().palette(LATEST);
         assertFalse(append.creativeLayout().contains(ItemMatcher.id("test:block_menu_only")));
     }
 

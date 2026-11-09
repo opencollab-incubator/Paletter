@@ -102,7 +102,7 @@ class ForwardTest {
     @Test
     void renamedBlocksAndItemsMapToTheirNewNames() {
         PaletteDataSource bundled = PaletteDataSource.bundled();
-        Paletter renaming = Paletter.create(new PaletteDataSource() {
+        Paletter renaming = Paletter.builder().data(new PaletteDataSource() {
             @Override
             public @NonNull List<DataVersion> versions() {
                 return bundled.versions();
@@ -118,7 +118,7 @@ class ForwardTest {
                 return Renames.parse(List.of("block minecraft:old_stone minecraft:stone", "block minecraft:older_stone minecraft:old_stone",
                     "item minecraft:old_stick minecraft:stick", "item minecraft:gone minecraft:also_gone"));
             }
-        });
+        }).build();
         Forwarding block = Ids.forwardBlock(renaming, BlockStates.of("minecraft:older_stone"));
         assertEquals(Forwarding.Kind.RENAMED, block.kind());
         assertEquals(Ids.block(renaming, BlockStates.of("minecraft:stone", java.util.Map.of("stone_type", "stone"))), block.canonical());

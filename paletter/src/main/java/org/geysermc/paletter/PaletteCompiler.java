@@ -3,7 +3,7 @@ package org.geysermc.paletter;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
-import org.geysermc.paletter.block.BlockInterner;
+import org.geysermc.paletter.internal.block.BlockInterner;
 import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.BlockRegistry;
@@ -28,7 +28,6 @@ import org.geysermc.paletter.item.ItemRegistry;
 import org.geysermc.paletter.internal.item.ItemVariant;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,7 +35,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.function.BiConsumer;
 
 /**
@@ -45,13 +43,6 @@ import java.util.function.BiConsumer;
 final class PaletteCompiler {
 
     private PaletteCompiler() {
-    }
-
-    /** The creative ordering of the Paletter a palette was compiled by; extensions compiled later use it too. */
-    private static final Map<Palette, CreativeOrdering> ORDERINGS = Collections.synchronizedMap(new WeakHashMap<>());
-
-    static void orderingOf(Palette palette, CreativeOrdering ordering) {
-        ORDERINGS.put(palette, ordering);
     }
 
     static Palette vanilla(VanillaData loaded, BlockNetworkIds mode, CanonicalBlocks canonicalBlocks, CanonicalItems canonicalItems,
@@ -68,8 +59,7 @@ final class PaletteCompiler {
         ItemRegistry items = builder.build(layout, report);
         CreativeContent creative = CreativeContent.compile(layout, items, report);
         prepareCanonical(blocks, null, items, null, report);
-        Palette palette = new Palette(data, List.of(), blocks, items, layout, creative, report);
-        orderingOf(palette, ordering);
+        Palette palette = new Palette(data, List.of(), blocks, items, layout, creative, report, ordering);
         return palette;
     }
 
@@ -81,14 +71,7 @@ final class PaletteCompiler {
             throw new PaletteException("Custom blocks in a session layer need BlockNetworkIds.HASHED: layer " + layer.id()
                 + " adds " + layer.blocks().size() + " custom blocks to a " + parent.blockNetworkIds() + " palette");
         }
-        Palette extended = extendUnchecked(parent, layer);
-        orderingOf(extended, ordering(parent));
-        return extended;
-    }
-
-    private static CreativeOrdering ordering(Palette palette) {
-        CreativeOrdering ordering = ORDERINGS.get(palette);
-        return ordering == null ? CreativeOrdering.BDS : ordering;
+        return extendUnchecked(parent, layer);
     }
 
     private static Palette extendUnchecked(Palette parent, PaletteLayer layer) {
@@ -140,7 +123,7 @@ final class PaletteCompiler {
             }
 
             CreativeEditor creative = parent.creativeLayout().edit();
-            CreativeOrdering ordering = ordering(parent);
+            CreativeOrdering ordering = parent.ordering();
             // Placements in registration order (custom items and block items interleaved, then items of blocks)
             List<Placed> placed = new ArrayList<>();
             for (PaletteLayer.ItemEntry entry : layer.itemEntries()) {
@@ -208,7 +191,7 @@ final class PaletteCompiler {
 
             List<PaletteLayer> layers = new ArrayList<>(parent.layers());
             layers.add(layer);
-            return new Palette(data, layers, blocks, itemPalette, layout, content, report);
+            return new Palette(data, layers, blocks, itemPalette, layout, content, report, parent.ordering());
         } catch (PaletteException e) {
             throw new PaletteException("Unable to compile layer " + source + " for " + data.version() + ": " + e.getMessage(), e);
         }

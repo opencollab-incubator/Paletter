@@ -4,16 +4,19 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.Origin;
+import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.block.component.BlockComponent;
+import org.geysermc.paletter.internal.block.StateConditions;
 import org.geysermc.paletter.internal.property.PropertySplit;
 import org.geysermc.paletter.property.Properties;
-import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockBlockType;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -21,9 +24,9 @@ import java.util.Set;
  * components} and {@linkplain #origin() origin}, and its {@linkplain #states() states}, which carry the runtime ids.
  * <p>
  * In {@link BlockNetworkIds#HASHED} palettes, vanilla states are shared between the palettes of all versions, while
- * the state set of a block can differ between versions. {@link RegisteredBlockState#block()} of such a state is the
- * block of the first palette that registered it; {@link BlockRegistry#block(String)} always gives the block of
- * the palette you ask.
+ * the state set of a block can differ between versions, so a state does not know its block:
+ * {@link BlockRegistry#block(String)} and {@link BlockRegistry#block(RegisteredBlockState)} give the block of the
+ * palette you ask.
  *
  * @since 1.0.0
  */
@@ -38,9 +41,9 @@ public final class RegisteredBlock {
     private volatile @Nullable List<BlockProperty<?>> properties;
     private volatile @Nullable BedrockBlockType key;
     private volatile @Nullable Properties propertiesCache;
-    private volatile @Nullable List<BedrockBlockState> customKeys;
 
-    RegisteredBlock(String identifier, Origin origin, List<RegisteredBlockState> states, @Nullable CustomBlock customBlock,
+    @Internal
+    public RegisteredBlock(String identifier, Origin origin, List<RegisteredBlockState> states, @Nullable CustomBlock customBlock,
                     @Nullable NbtMap propertyData, @Nullable NbtMap defaultStateNbt) {
         this.identifier = identifier;
         this.origin = origin;
@@ -48,8 +51,10 @@ public final class RegisteredBlock {
         this.customBlock = customBlock;
         this.propertyData = propertyData;
         this.defaultStateNbt = defaultStateNbt;
-        for (int i = 0; i < this.states.size(); i++) {
-            this.states.get(i).bind(this, i);
+        if (customBlock != null) {
+            for (int i = 0; i < this.states.size(); i++) {
+                this.states.get(i).bind(customBlock, i);
+            }
         }
     }
 
@@ -59,15 +64,11 @@ public final class RegisteredBlock {
 
     /**
      * @return the key of this block: a vanilla type, or the type of its {@link CustomBlock}
-     * @throws IllegalStateException if this is a vanilla block that is not in the newest bundled data
      */
     public @NonNull BedrockBlockType key() {
         BedrockBlockType key = this.key;
         if (key == null) {
-            key = customBlock != null ? BedrockBlockType.of(customBlock) : BedrockBlockType.vanilla(identifier);
-            if (key == null) {
-                throw new IllegalStateException(identifier + " is not in the newest bundled data, so it has no key");
-            }
+            key = customBlock != null ? BedrockBlockType.of(customBlock) : BedrockBlockType.of(identifier);
             this.key = key;
         }
         return key;
@@ -154,11 +155,6 @@ public final class RegisteredBlock {
     }
 
     /**
-     * @return the block property data sent for this block (data driven vanilla blocks and custom blocks), else null.
-     * In a palette patched with more custom blocks, ids inside the data of earlier custom blocks can be older than
-     * what {@link BlockRegistry#blockProperties()} sends; that list is authoritative
-     */
-    /**
      * @return the component and wire properties of this block, from its {@link #propertyData()} (named like the bundled
      * property store: {@code component:}, {@code wire:}); empty for blocks without property data
      * @since 1.0.0
@@ -171,16 +167,51 @@ public final class RegisteredBlock {
         return result;
     }
 
-    public @Nullable NbtMap propertyData() {
-        return propertyData;
+    /**
+     * @return the components in effect for a state of this block: those of the block, plus those of the permutations of
+     * its {@link CustomBlock} whose condition matches the state, replacing components of the same name. Empty for
+     * vanilla blocks
+     */
+    public @NonNull List<BlockComponent> components(@NonNull RegisteredBlockState state) {
+        if (customBlock == null || customBlock.permutations().isEmpty()) {
+            return components();
+        }
+        Map<String, BlockComponent> merged = new LinkedHashMap<>();
+        components().forEach(component -> merged.put(component.name(), component));
+        NbtMap states = state.states();
+        for (CustomBlock.Permutation permutation : customBlock.permutations()) {
+            if (StateConditions.matches(permutation.condition(), states)) {
+                permutation.components().forEach(component -> merged.put(component.name(), component));
+            }
+        }
+        return List.copyOf(merged.values());
     }
 
-    @Nullable BedrockBlockState customKey(int index) {
-        List<BedrockBlockState> keys = customKeys;
-        if (keys == null) {
-            customKeys = keys = key().states();
+    /**
+     * @return the properties in effect for a state of this block: those of the block, with the components of the
+     * permutations that apply to the state set on top
+     */
+    public @NonNull Properties properties(@NonNull RegisteredBlockState state) {
+        List<NbtMap> overlay = new ArrayList<>();
+        if (propertyData != null && propertyData.get("permutations") instanceof List<?> permutations) {
+            NbtMap states = state.states();
+            for (Object entry : permutations) {
+                if (entry instanceof NbtMap permutation
+                    && StateConditions.matches(permutation.getString("condition"), states)) {
+                    overlay.add(permutation.getCompound("components"));
+                }
+            }
         }
-        return index < keys.size() ? keys.get(index) : null;
+        return overlay.isEmpty() ? properties() : PropertySplit.split(propertyData, overlay);
+    }
+
+    /**
+     * @return the block property data sent for this block in this palette (data driven vanilla blocks and custom
+     * blocks), else null. A palette patched with more custom blocks has a {@code RegisteredBlock} of its own for every
+     * custom block, because the numeric block ids inside the data change when blocks are added
+     */
+    public @Nullable NbtMap propertyData() {
+        return propertyData;
     }
 
     @Override

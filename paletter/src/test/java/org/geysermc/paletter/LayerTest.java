@@ -68,7 +68,7 @@ class LayerTest {
     @Test
     void customItemsGetRuntimeIdsComponentsAndCreativePlacement() {
         Palette vanilla = PALETTER.vanilla(PALETTER.version(LATEST));
-        Palette palette = PALETTER.palette(LATEST, minecartLayer());
+        Palette palette = Palettes.palette(LATEST, minecartLayer());
         RegisteredItem furnace = palette.items().getDefinition("geysermc:furnace_minecart");
         assertNotNull(furnace);
         assertTrue(furnace.isCustom());
@@ -94,7 +94,7 @@ class LayerTest {
 
     @Test
     void matchFindsCustomAndVanillaItems() {
-        Palette palette = PALETTER.palette(LATEST, minecartLayer());
+        Palette palette = Palettes.palette(LATEST, minecartLayer());
         ItemData furnace = ItemData.builder().definition(palette.items().getDefinition("geysermc:furnace_minecart")).count(1).build();
         ItemData hopper = ItemData.builder().definition(palette.items().getDefinition("minecraft:hopper_minecart")).count(1).build();
         int furnaceCanonical = Ids.item(palette, ItemVariant.of("geysermc:furnace_minecart"));
@@ -103,7 +103,7 @@ class LayerTest {
         assertEquals(Ids.item(PALETTER, ItemVariant.of("minecraft:hopper_minecart")), Ids.match(palette, hopper));
         assertEquals(-1, Ids.item(PALETTER, ItemVariant.of("geysermc:furnace_minecart")));
         // The same layer gives the same canonical ids in every version
-        assertEquals(furnaceCanonical, Ids.item(PALETTER.palette(OLDEST, minecartLayer()), ItemVariant.of("geysermc:furnace_minecart")));
+        assertEquals(furnaceCanonical, Ids.item(Palettes.palette(OLDEST, minecartLayer()), ItemVariant.of("geysermc:furnace_minecart")));
     }
 
     @Test
@@ -123,7 +123,7 @@ class LayerTest {
 
     @Test
     void sessionLayersShareUnchangedDefinitions() {
-        Palette shared = PALETTER.palette(LATEST, minecartLayer());
+        Palette shared = Palettes.palette(LATEST, minecartLayer());
         PaletteLayer session = PaletteLayer.builder("session")
             .item(CustomItem.builder("server:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build())
             .build();
@@ -150,12 +150,12 @@ class LayerTest {
     void sharedLayerStacksAreCachedPerPrefix() {
         PaletteLayer first = minecartLayer();
         PaletteLayer second = PaletteLayer.builder("second").build();
-        Palette both = PALETTER.palette(LATEST, first, second);
-        assertSame(both, PALETTER.palette(LATEST, first, second));
-        assertSame(PALETTER.palette(LATEST, first), PALETTER.palette(LATEST, first));
+        Palette both = Palettes.palette(LATEST, first, second);
+        assertSame(both, Palettes.palette(LATEST, first, second));
+        assertSame(Palettes.palette(LATEST, first), Palettes.palette(LATEST, first));
         assertEquals(List.of(first, second), both.layers());
         // Layers are compared by identity: an equal but new layer is compiled again
-        assertNotSame(PALETTER.palette(LATEST, first), PALETTER.palette(LATEST, minecartLayer()));
+        assertNotSame(Palettes.palette(LATEST, first), Palettes.palette(LATEST, minecartLayer()));
     }
 
     @Test
@@ -167,7 +167,7 @@ class LayerTest {
             .overrideItem("minecraft:structure_block", item -> item.noBlock())
             .build();
         Palette vanilla = PALETTER.vanilla(PALETTER.version(LATEST));
-        Palette palette = PALETTER.palette(LATEST, layer);
+        Palette palette = Palettes.palette(LATEST, layer);
 
         RegisteredItem cake = palette.items().getDefinition("minecraft:cake");
         assertNotSame(vanilla.items().getDefinition("minecraft:cake"), cake);
@@ -197,7 +197,7 @@ class LayerTest {
             .creative(CreativePlacement.loose(CreativeCategory.ITEMS))
             .build();
         Palette vanilla = PALETTER.vanilla(PALETTER.version(LATEST));
-        Palette palette = PALETTER.palette(LATEST, PaletteLayer.builder("blocks").block(lamp).build());
+        Palette palette = Palettes.palette(LATEST, PaletteLayer.builder("blocks").block(lamp).build());
         BlockRegistry blocks = palette.blocks();
 
         assertEquals(vanilla.blocks().size() + 6, blocks.size());
@@ -299,15 +299,15 @@ class LayerTest {
             .creative(editor -> editor.remove(ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.damage(2))))
             .creative(editor -> editor.insert(BedrockItemStack.of(BedrockItemType.of("minecraft:poplar_boat"))).loose(CreativeCategory.ITEMS))
             .build();
-        Palette latest = PALETTER.palette(LATEST, layer);
-        Palette oldest = PALETTER.palette(OLDEST, layer);
+        Palette latest = Palettes.palette(LATEST, layer);
+        Palette oldest = Palettes.palette(OLDEST, layer);
         assertFalse(latest.creativeLayout().contains(ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.damage(2))));
         assertEquals("minecraft:poplar_boat", latest.creative().items().getLast().getItem().getDefinition().getIdentifier());
         // Poplar boats exist in 26.40's item list (experimental), so they are kept; unknown items would be dropped
         PaletteLayer unknown = PaletteLayer.builder("unknown")
             .creative(editor -> editor.insert(BedrockItemStack.of(BedrockItemType.of("test:does_not_exist"))).loose(CreativeCategory.ITEMS))
             .build();
-        Palette withUnknown = PALETTER.palette(OLDEST, unknown);
+        Palette withUnknown = Palettes.palette(OLDEST, unknown);
         assertEquals(PALETTER.vanilla(PALETTER.version(OLDEST)).creative().size(), withUnknown.creative().size());
         assertTrue(withUnknown.report().entries().stream().anyMatch(entry -> entry.message().contains("test:does_not_exist")));
         assertNotNull(oldest.creative());

@@ -37,15 +37,11 @@ public final class BedrockItemVariant {
             return index.itemsByCanonical[id];
         }
         ItemVariant variant = canonical.variant(id);
-        BedrockItemType type = BedrockItemType.vanilla(variant.identifier());
-        if (type != null) {
-            for (BedrockItemVariant known : type.variants()) {
-                if (known.aux() == variant.damage()) {
-                    return known;
-                }
+        BedrockItemType type = BedrockItemType.of(variant.identifier());
+        for (BedrockItemVariant known : type.variants()) {
+            if (known.aux() == variant.damage()) {
+                return known;
             }
-        } else {
-            type = BedrockItemType.custom(variant.identifier());
         }
         return new BedrockItemVariant(type, variant.damage(), -1);
     }

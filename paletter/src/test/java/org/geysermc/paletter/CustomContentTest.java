@@ -68,14 +68,14 @@ class CustomContentTest {
     void everyBundledVersionCompilesWithoutWarnings() {
         PaletteLayer layer = PaletteLayer.builder("content").item(ruby()).block(lamp()).build();
         for (DataVersion version : PALETTER.versions()) {
-            Palette palette = PALETTER.palette(version.protocolVersion(), layer);
+            Palette palette = Palettes.palette(version.protocolVersion(), layer);
             assertTrue(palette.report().warnings().isEmpty(), version + ": " + palette.report().warnings());
         }
     }
 
     @Test
     void itemsGetTheCustomItemPropertiesAndTheirComponents() {
-        Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").item(ruby()).build());
+        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").item(ruby()).build());
         RegisteredItem ruby = palette.items().getDefinition("example:ruby");
         NbtMap components = ruby.getComponentData().getCompound("components");
         NbtMap properties = components.getCompound("item_properties");
@@ -98,7 +98,7 @@ class CustomContentTest {
         CustomBlock lamp = lamp();
         assertEquals(8, lamp.states().size(), "2 lit values x 4 cardinal directions of the trait");
         assertEquals("south", lamp.defaultState().getCompound("states").getString("minecraft:cardinal_direction"));
-        Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").block(lamp).build());
+        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").block(lamp).build());
         assertEquals(8, palette.blocks().states("example:lamp").size());
         BlockPropertyData data = palette.blocks().blockProperties().stream().filter(b -> b.getName().equals("example:lamp")).findFirst().orElseThrow();
         NbtMap p = data.getProperties();
@@ -117,7 +117,7 @@ class CustomContentTest {
     @Test
     void overridesWriteOverTheOriginalComponentData() {
         Palette vanilla = PALETTER.vanilla(PALETTER.latest());
-        Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("fixes")
+        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("fixes")
             .overrideItem("minecraft:apple", item -> item.components(MaxStackSize.of(8))).build());
         NbtMap before = vanilla.items().getDefinition("minecraft:apple").getComponentData().getCompound("components");
         NbtMap after = palette.items().getDefinition("minecraft:apple").getComponentData().getCompound("components");
@@ -146,7 +146,7 @@ class CustomContentTest {
         CustomItem bowl = CustomItem.builder("example:bowl").component(Icon.of("bowl")).build();
         for (PaletteLayer layer : List.of(PaletteLayer.builder("stew-first").item(stew).item(bowl).build(),
             PaletteLayer.builder("bowl-first").item(bowl).item(stew).build())) {
-            Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), layer);
+            Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), layer);
             NbtMap food = palette.items().getDefinition("example:stew").getComponentData().getCompound("components")
                 .getCompound("minecraft:food");
             assertEquals("example:bowl", food.getCompound("using_converts_to").getString("name"), layer.id());
@@ -184,7 +184,7 @@ class CustomContentTest {
         CustomBlock lamp = lamp();
         PaletteLayer layer = PaletteLayer.builder("ordered").item(ruby())
             .blockItem(lamp.identifier(), lamp.item(), null).block(lamp).build();
-        Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion(), layer);
+        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), layer);
         RegisteredItem ruby = palette.items().getDefinition("example:ruby");
         RegisteredItem item = palette.items().getDefinition(lamp.identifier());
         assertTrue(item.getRuntimeId() > ruby.getRuntimeId());
@@ -198,8 +198,8 @@ class CustomContentTest {
         CustomBlock fence = CustomBlock.builder("example:fence")
             .trait(Connection.builder().enabledStates(Connection.EnabledStates.CARDINAL_CONNECTIONS).build())
             .build();
-        Palette first = Paletter.builder().blockNetworkIds(BlockNetworkIds.HASHED).build()
-            .palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("first").block(fence).build());
+        Palette first = Paletter.builder().blockNetworkIds(BlockNetworkIds.HASHED).layer(PaletteLayer.builder("first").block(fence).build()).build()
+            .palette(PALETTER.latest().protocolVersion());
         assertFalse(first.report().warnings().isEmpty());
         Palette second = first.extend(PaletteLayer.builder("second").block(lamp()).build());
         assertEquals(first.report().warnings(), second.report().warnings());
