@@ -1,0 +1,4 @@
+{
+  "_about": "Input of `behaviour import`, not generated. The values BDS itself uses for custom blocks and items that do not set a component, each with the BDS evidence it was captured from. Never guess or hand-write a value: an entry needs a direct BDS source (NATIVE, SCRIPT_API or WIRE) and a reference naming the capture. Without an entry the default of a key is unknown (Provenance.Source.UNKNOWN_DEFAULT). Entry: {\"key\": \"block:friction\", \"value\": 0.6, \"source\": \"NATIVE\", \"reference\": \"what captured it\"}.",
+  "defaults": []
+}
