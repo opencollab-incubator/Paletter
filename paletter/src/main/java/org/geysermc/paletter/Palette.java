@@ -348,7 +348,7 @@ public final class Palette {
                 return palette;
             }
         }
-        Palette extended = PaletteCompiler.extend(this, layer);
+        Palette extended = PaletteCompiler.extend(this, layer, true);
         synchronized (extensions) {
             WeakReference<Palette> raced = extensions.get(layer);
             Palette palette = raced == null ? null : raced.get();

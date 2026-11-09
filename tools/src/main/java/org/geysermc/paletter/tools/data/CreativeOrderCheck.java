@@ -78,9 +78,11 @@ public final class CreativeOrderCheck {
 
     public static Result check(Paletter paletter, int protocol, Path creativeItems, Path customItems, Path customBlocks,
                         CreativeOrdering ordering) throws IOException {
-        PaletteLayer layer = layer(readList(customItems, "items"), readList(customBlocks, "blocks"), ordering);
-        Palette palette = paletter.palette(protocol, layer);
-        Palette vanilla = paletter.vanilla(palette.version());
+        PaletteLayer layer = layer(readList(customItems, "items"), readList(customBlocks, "blocks"));
+        // The ordering is global policy: compile with a Paletter of its own (on the bundled data, like every caller)
+        Paletter capture = Paletter.builder().creativeOrdering(ordering).layer(layer).build();
+        Palette palette = capture.palette(protocol);
+        Palette vanilla = capture.vanilla(palette.version());
 
         Set<String> vanillaStacks = new HashSet<>();
         vanilla.creative().items().forEach(entry -> vanillaStacks.add(stack(entry.getItem())));
@@ -93,12 +95,12 @@ public final class CreativeOrderCheck {
     /**
      * The custom content as Paletter definitions, in BDS's registration order: blocks by block id, items by runtime id.
      */
-    static PaletteLayer layer(List<NbtMap> items, List<NbtMap> blocks, CreativeOrdering ordering) {
+    static PaletteLayer layer(List<NbtMap> items, List<NbtMap> blocks) {
         Map<String, NbtMap> dataDriven = new LinkedHashMap<>();
         items.stream().filter(item -> item.getBoolean("componentBased"))
             .sorted(Comparator.comparingInt(item -> item.getShort("id")))
             .forEach(item -> dataDriven.put(item.getString("name"), item));
-        PaletteLayer.Builder layer = PaletteLayer.builder("bds-capture").creativeOrdering(ordering);
+        PaletteLayer.Builder layer = PaletteLayer.builder("bds-capture");
         Set<String> blockNames = new HashSet<>();
         blocks.stream()
             .sorted(Comparator.comparingInt(block -> block.getCompound("properties").getCompound("vanilla_block_data").getInt("block_id")))
