@@ -38,18 +38,25 @@ public final class BedrockBlockType {
     private final boolean custom;
     private volatile @Nullable BlockTypeLayout layout;
     private volatile boolean available;
+    private final boolean education;
 
     /** A vanilla type, linked by {@link VanillaIndex}. */
     BedrockBlockType(String identifier, String fallback) {
+        this(identifier, fallback, false);
+    }
+
+    BedrockBlockType(String identifier, String fallback, boolean education) {
         this.identifier = Objects.requireNonNull(identifier);
         this.fallback = fallback;
         this.custom = false;
+        this.education = education;
     }
 
     private BedrockBlockType(String identifier, boolean bare) {
         this.identifier = Objects.requireNonNull(identifier);
         this.fallback = null;
         this.custom = true;
+        this.education = false;
         this.layout = BlockTypeLayout.bare(this);
         this.available = true;
     }
@@ -58,6 +65,7 @@ public final class BedrockBlockType {
         this.identifier = block.identifier();
         this.fallback = null;
         this.custom = true;
+        this.education = false;
         this.layout = BlockTypeLayout.custom(this, block);
         this.available = true;
     }
@@ -144,6 +152,17 @@ public final class BedrockBlockType {
      */
     public boolean isCustom() {
         return custom;
+    }
+
+    /**
+     * Whether BDS only offers this block to worlds with Education Edition features (the same content the generated
+     * constant carries {@link org.geysermc.paletter.annotation.Education @Education} for). Decided from BDS captures when
+     * the constants were generated; always false for custom blocks and for keys made with {@link #of(String)}.
+     *
+     * @since 1.0.0
+     */
+    public boolean isEducation() {
+        return education;
     }
 
     /**

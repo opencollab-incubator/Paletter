@@ -11,6 +11,8 @@ import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket;
+import org.cloudburstmc.protocol.bedrock.data.ExperimentData;
+import org.cloudburstmc.protocol.bedrock.packet.ResourcePackStackPacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
 import org.geysermc.paletter.block.BlockNetworkIds;
 import org.geysermc.paletter.block.BlockRegistry;
@@ -31,6 +33,8 @@ import org.geysermc.paletter.internal.item.ResolvedItem;
 import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.item.RegisteredItem;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.block.RegisteredBlock;
+import org.geysermc.paletter.vanilla.BedrockBlockType;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 
@@ -69,10 +73,13 @@ public final class Palette {
     private final CreativeContent creative;
     private final PaletteReport report;
     private final CreativeOrdering ordering;
+    private final VanillaContent.ExperimentGating gating;
     private final Map<PaletteLayer, WeakReference<Palette>> extensions = new WeakHashMap<>();
 
     Palette(VanillaData data, List<PaletteLayer> layers, BlockRegistry blocks, ItemRegistry items,
-            CreativeLayout creativeLayout, CreativeContent creative, PaletteReport report, CreativeOrdering ordering) {
+            CreativeLayout creativeLayout, CreativeContent creative, PaletteReport report, CreativeOrdering ordering,
+            VanillaContent.ExperimentGating gating) {
+        this.gating = gating;
         this.data = data;
         this.layers = List.copyOf(layers);
         this.blocks = blocks;
@@ -90,11 +97,15 @@ public final class Palette {
         return ordering;
     }
 
+    VanillaContent.ExperimentGating gating() {
+        return gating;
+    }
+
     /**
      * @return this palette with another report, sharing everything else
      */
     Palette withReport(PaletteReport report) {
-        return new Palette(data, layers, blocks, items, creativeLayout, creative, report, ordering);
+        return new Palette(data, layers, blocks, items, creativeLayout, creative, report, ordering, gating);
     }
 
     public @NonNull DataVersion version() {
@@ -215,13 +226,54 @@ public final class Palette {
 
     /**
      * The block an item variant is sent with in this palette's version, in its default state: Paletter alone decides it,
-     * see {@link ItemRegistry#blockOf}. A stack may carry a block state of its own, see {@link #encode}.
+     * see {@link ItemRegistry#blockOf}. A stack may carry a block state of its own, see {@link #encode}. Works for every
+     * variant: known, registered with {@code PaletteLayer.Builder#variant}, of a custom block item, or one Paletter has never
+     * heard of (the block of its item). {@link RegisteredBlockState#key()} is the block as a key.
      *
      * @return the block, or null if the item is not a block item (or does not exist in this version and has no fallback)
      * @since 1.0.0
      */
     public @Nullable RegisteredBlockState blockOf(@NonNull BedrockItemVariant variant) {
         return items.blockOf(variant);
+    }
+
+    /**
+     * Whether this palette sends an item variant as another item, see {@link #fallbackOf}. A lookup, not a debugging
+     * aid: cheap for every item of a version.
+     *
+     * @return true if the variant is replaced by a fallback; false if it is sent as itself, or nothing is sent for it
+     * @since 1.0.0
+     */
+    public boolean isFallback(@NonNull BedrockItemVariant variant) {
+        return items.isFallback(variant);
+    }
+
+    /**
+     * The item variant this palette sends in place of a variant its version lacks (or that a forced {@code Fallbacks}
+     * entry replaces), or the default fallback ({@code minecraft:unknown}). Customised by {@code Fallbacks} of the
+     * {@link Paletter}; the aux is the one of the fallback's variant, else the replaced variant's.
+     *
+     * @return the replacement, or null if the variant is sent as itself (or not at all: no fallback, see {@link #encode})
+     * @since 1.0.0
+     */
+    public @Nullable BedrockItemVariant fallbackOf(@NonNull BedrockItemVariant variant) {
+        return items.fallbackOf(variant);
+    }
+
+    /**
+     * The version independent key of {@link #blockOf}: the block state an item variant is sent with, as a
+     * {@link BedrockBlockState}, for every kind of variant (vanilla, extra, custom block items, fallbacks). Unlike
+     * {@link Paletter#blockOf}, which knows the vanilla variants of the newest data only, this follows the palette: the
+     * fallback's block in an old version, the custom block of a layer. {@link #runtimeId(BedrockBlockState)} gives its
+     * runtime id here.
+     *
+     * @return the block's key, or null if the item is not a block item here (or the state has no key: a vanilla state
+     *         that is not in the newest bundled data)
+     * @since 1.0.0
+     */
+    public @Nullable BedrockBlockState blockKeyOf(@NonNull BedrockItemVariant variant) {
+        RegisteredBlockState block = items.blockOf(variant);
+        return block == null ? null : block.key();
     }
 
     /**
@@ -420,6 +472,70 @@ public final class Palette {
     public void applyTo(@NonNull StartGamePacket packet) {
         packet.getBlockProperties().addAll(blocks.blockProperties());
         packet.setBlockNetworkIdsHashed(blocks.networkIds() == BlockNetworkIds.HASHED);
+        addExperiments(packet.getExperiments());
+    }
+
+    /**
+     * Adds the experiments of {@link #experiments()} to a resource pack stack packet (the client reads the enabled
+     * experiments from there as well).
+     *
+     * @since 1.0.0
+     */
+    public void applyTo(@NonNull ResourcePackStackPacket packet) {
+        addExperiments(packet.getExperiments());
+    }
+
+    private void addExperiments(List<ExperimentData> experiments) {
+        for (String toggle : gating.enabled()) {
+            if (experiments.stream().noneMatch(existing -> existing.getName().equals(toggle))) {
+                experiments.add(new ExperimentData(toggle, true));
+            }
+        }
+    }
+
+    /**
+     * The experiment toggles this palette needs, because the Paletter enabled them ({@code vanilla(v -> v.experiments(...))})
+     * and this version has content behind them: {@link #applyTo(StartGamePacket)} sends them. Empty by default, the
+     * content behind a toggle is missing then (see {@link VanillaContent#experiments}).
+     *
+     * @return the toggle ids, sorted
+     * @since 1.0.0
+     */
+    public @NonNull List<String> experiments() {
+        return gating.enabled();
+    }
+
+    /**
+     * @return the enabled experiment toggle that makes an item present in this palette, or null if the item needs none.
+     *         (Definitions are shared between palettes, so the registered item does not know; ask the palette.)
+     * @since 1.0.0
+     */
+    public @Nullable String experimentOf(@NonNull BedrockItemType type) {
+        return gating.ofItem(type.identifier());
+    }
+
+    /**
+     * @return the enabled experiment toggle that makes a block present in this palette, or null if the block needs none
+     * @since 1.0.0
+     */
+    public @Nullable String experimentOf(@NonNull BedrockBlockType type) {
+        return gating.ofBlock(type.identifier());
+    }
+
+    /**
+     * @return the enabled experiment toggle that makes an item present in this palette, or null
+     * @since 1.0.0
+     */
+    public @Nullable String experimentOf(@NonNull RegisteredItem item) {
+        return gating.ofItem(item.getIdentifier());
+    }
+
+    /**
+     * @return the enabled experiment toggle that makes a block present in this palette, or null
+     * @since 1.0.0
+     */
+    public @Nullable String experimentOf(@NonNull RegisteredBlock block) {
+        return gating.ofBlock(block.identifier());
     }
 
     public @NonNull List<BlockPropertyData> blockProperties() {

@@ -81,41 +81,62 @@ val compileModuleInfo = tasks.register<JavaCompile>("compileModuleInfo") {
     }
 }
 
-// The binary compatibility baseline: api/baseline.version names the API version, api/paletter-<version>-api.jar holds
-// its exported classes. Until the first release it is generated from this branch (./gradlew :paletter:updateApiBaseline);
-// on every release it is replaced by the released API.
-val baselineVersion = file("api/baseline.version").readText().trim()
-val baselineJar = file("api/paletter-$baselineVersion-api.jar")
+// The API dump: api/paletter.api lists every public and protected type, field, constant and method of the exported packages
+// (without @Internal and internal.*), generated from the compiled classes by the tools module (apiDump source set). It is
+// committed, so a change of the API shows in review: `./gradlew :paletter:apiDump` regenerates it, `apiCheck` (part of
+// `check`) fails with the difference when it is stale. See API.md.
+evaluationDependsOn(":tools")
+val apiDumpFile = file("api/paletter.api")
+val apiDumpTool = project(":tools").extensions.getByType<SourceSetContainer>()["apiDump"].runtimeClasspath
 
-val updateApiBaseline = tasks.register<Jar>("updateApiBaseline") {
+fun apiDumpTask(name: String, mode: String, text: String) = tasks.register<JavaExec>(name) {
     group = "verification"
-    description = "Writes the current exported API as the compatibility baseline (api/paletter-<version>-api.jar)"
-    destinationDirectory.set(file("api"))
-    archiveFileName.set(baselineJar.name)
-    from(sourceSets.main.get().output.classesDirs) {
-        exportedPackages.forEach { include(it.replace('.', '/') + "/*.class") }
+    description = text
+    classpath = apiDumpTool
+    mainClass.set("org.geysermc.paletter.tools.apidump.Main")
+    val classes = sourceSets.main.get().output.classesDirs
+    dependsOn(tasks.classes)
+    inputs.files(classes)
+    inputs.file(moduleInfo)
+    args(mode, "--classes", classes.asPath, "--module-info", moduleInfo.absolutePath, "--file", apiDumpFile.absolutePath)
+    if (mode == "dump") {
+        outputs.file(apiDumpFile)
+    } else {
+        inputs.files(fileTree("api") { include("paletter.api") })
     }
-    isPreserveFileTimestamps = false
-    isReproducibleFileOrder = true
+}
+
+val apiDump = apiDumpTask("apiDump", "dump", "Writes the exported API as a text dump (api/paletter.api); commit it with the change")
+val apiCheck = apiDumpTask("apiCheck", "check", "Fails with a readable diff if api/paletter.api is not what the compiled classes give")
+
+// Binary compatibility against a RELEASED artifact, resolved from a Maven repository. Configured but skipped while no
+// release exists: api/released.version is absent or empty. After the first release, write its version there; the check then
+// compares the exported packages with the published jar (japicmp; @Internal and @Experimental API excluded).
+val releasedVersion = file("api/released.version").takeIf { it.exists() }?.readText()?.trim().orEmpty()
+val releasedApi = configurations.create("releasedApi") {
+    isCanBeConsumed = false
+    isTransitive = false
+}
+if (releasedVersion.isNotEmpty()) {
+    dependencies.add("releasedApi", "org.geysermc.paletter:paletter:$releasedVersion")
 }
 
 val apiCompat = tasks.register<JapicmpTask>("apiCompat") {
     group = "verification"
-    description = "Fails on binary incompatible changes of the exported API against api/baseline.version"
-    oldClasspath.from(baselineJar, configurations.runtimeClasspath)
-    oldArchives.from(baselineJar)
+    description = "Fails on binary incompatible changes of the exported API against the released artifact in api/released.version (skipped before the first release)"
+    enabled = releasedVersion.isNotEmpty()
+    oldClasspath.from(releasedApi, configurations.runtimeClasspath)
+    oldArchives.from(releasedApi)
     newClasspath.from(tasks.jar, configurations.runtimeClasspath)
     newArchives.from(tasks.jar)
     packageIncludes.set(exportedPackages)
-    // Not covered by the promise: @Internal (not API) and @Experimental (may change in a minor release)
     annotationExcludes.set(listOf("@org.geysermc.paletter.annotation.Internal", "@org.geysermc.paletter.annotation.Experimental"))
     onlyBinaryIncompatibleModified.set(true)
     failOnModification.set(true)
     ignoreMissingClasses.set(true)
     txtOutputFile.set(layout.buildDirectory.file("reports/japicmp/api-compat.txt"))
-    mustRunAfter(updateApiBaseline)
 }
 
 tasks.check {
-    dependsOn(compileModuleInfo, apiCompat)
+    dependsOn(compileModuleInfo, apiCheck, apiCompat)
 }

@@ -132,7 +132,8 @@ public final class BundledFiles {
 
     /**
      * Whether two versions have the same network properties: the component data of every item (in order) and the
-     * data driven blocks (as a set, by name: their order carries no meaning).
+     * data driven blocks, in order (the order BDS sends them in decides the order of the block properties and of the
+     * states in a hashed block palette).
      */
     public static boolean sameProperties(VanillaData a, VanillaData b) {
         if (a.items().size() != b.items().size() || a.dataDrivenBlocks().size() != b.dataDrivenBlocks().size()) {
@@ -143,6 +144,6 @@ public final class BundledFiles {
                 return false;
             }
         }
-        return new HashSet<>(a.dataDrivenBlocks()).equals(new HashSet<>(b.dataDrivenBlocks()));
+        return a.dataDrivenBlocks().equals(b.dataDrivenBlocks());
     }
 }

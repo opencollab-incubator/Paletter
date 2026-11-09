@@ -29,6 +29,7 @@ import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.creative.CreativeLayout;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
@@ -291,6 +292,37 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     public @Nullable RegisteredBlockState blockOf(@NonNull BedrockItemVariant variant) {
         ResolvedItem resolved = resolve(variant.toItemVariant());
         return resolved == null ? null : resolved.block();
+    }
+
+    /**
+     * What this version sends instead of a variant: its fallback, that is the replacement of a {@link ItemFallback} (also
+     * a forced one), or the default fallback ({@code minecraft:unknown}) for a variant the version lacks. A lookup in the
+     * canonical table, cheap enough to ask for every item at startup (unlike {@code Palette#explain}).
+     *
+     * @param variant a variant, written against the newest Bedrock version
+     * @return the variant that is sent in its place (the aux of the fallback's variant, else the aux of the replaced
+     *         item), or null if the variant is sent as itself, or nothing is sent for it at all (see
+     *         {@link #isFallback})
+     * @since 1.0.0
+     */
+    public @Nullable BedrockItemVariant fallbackOf(@NonNull BedrockItemVariant variant) {
+        int id = variant.canonicalIn(canonical);
+        ResolvedItem resolved = id != -1 ? item(id) : resolve(variant.toItemVariant());
+        if (resolved == null || !resolved.fallback()) {
+            return null;
+        }
+        return BedrockItemType.of(resolved.definition().getIdentifier()).variantOf(resolved.damage());
+    }
+
+    /**
+     * @return true if this version sends the variant as another item, see {@link #fallbackOf}; false if it is sent as
+     *         itself, and for a variant nothing is sent for
+     * @since 1.0.0
+     */
+    public boolean isFallback(@NonNull BedrockItemVariant variant) {
+        int id = variant.canonicalIn(canonical);
+        ResolvedItem resolved = id != -1 ? item(id) : resolve(variant.toItemVariant());
+        return resolved != null && resolved.fallback();
     }
 
     /**

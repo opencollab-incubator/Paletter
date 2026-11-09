@@ -72,6 +72,24 @@ public final class LevelDat {
         return toggles;
     }
 
+    /** Root key of the Education Edition switch of a world. */
+    public static final String EDUCATION = "educationFeaturesEnabled";
+
+    /** @return whether the world has Education Edition features switched on */
+    public static boolean education(Path file) throws IOException {
+        return read(Files.readAllBytes(file)).root().getBoolean(EDUCATION, false);
+    }
+
+    /** Switches Education Edition features of a world on or off; the rest of the file stays as it is. */
+    public static void setEducation(Path file, boolean enabled) throws IOException {
+        Files.write(file, education(Files.readAllBytes(file), enabled));
+    }
+
+    static byte[] education(byte[] bytes, boolean enabled) throws IOException {
+        Contents contents = read(bytes);
+        return write(new Contents(contents.storageVersion(), contents.root().toBuilder().putBoolean(EDUCATION, enabled).build()));
+    }
+
     /** Toggles switched on, without the bookkeeping keys. */
     public static List<String> enabled(Map<String, Boolean> experiments) {
         return experiments.entrySet().stream()

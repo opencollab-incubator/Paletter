@@ -226,7 +226,8 @@ class FallbackTest {
 
     @Test
     void theNewestVersionNeedsNoFallback() {
-        Palette latest = PALETTER.palette(PALETTER.latest().protocolVersion());
+        // With the experiments on: the newest version has content behind y_2026_drop_4
+        Palette latest = Palettes.palette(PALETTER.latest().protocolVersion());
         assertTrue(latest.blocks().missingCanonical().isEmpty());
         assertTrue(latest.items().missingCanonical().isEmpty());
         NbtMap unknown = BlockStates.of("minecraft:unknown");

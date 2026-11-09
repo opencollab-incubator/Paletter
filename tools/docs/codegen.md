@@ -109,7 +109,30 @@ Rules:
   exists under another constant name (a `names.json` change), or `names.json` `renamed` maps it to a new identifier, it
   becomes an alias of that constant; otherwise it resolves to `names.json` `fallbacks` or `minecraft:unknown`. Removed
   states and enum values stay deprecated as well. `deprecated` is set once, so later generations keep the version.
-- **New content** gets `@since` of the current Paletter version when it is newer than the class (1.0.0).
+- **New content** gets "Added in Paletter X." in its javadoc when the Paletter version is newer than the class (1.0.0).
+- **`@since` of a constant is a Bedrock version**: the first bundled release (`versions.txt`) that has the block or item
+  and does not offer it only through an experiment. Which content an experiment toggle adds in a release is read from the
+  BDS captures, `data/bds/<bds version>/experiments.json` (toggles with status `current`; `itemsAdded`,
+  `scriptItemsAdded`, `blocksAdded`, `dataDrivenBlocks`), assigned to the release of its protocol. Content only gated in
+  the first release that has it is `@since` the next release that does not gate it (26.40's poplar and wool slabs are
+  behind `y_2026_drop_3`, so they are `@since 26.50`); content that is gated everywhere is `@since` the first release
+  that has it. The javadoc says "Behind the experiment `x` in 26.40." for every gated release. The oldest bundled release
+  (26.40) cannot say whether something is older. The value is recorded as `bedrock` in the history and stays when a release
+  leaves the bundle; delete the `bedrock` entries to derive them again after a capture changed.
+- **Education Edition**: `data/bds/<bds version>/education.json`, written by `education-capture` (see below), lists the items
+  and blocks only a world with `educationFeaturesEnabled` has. Constants of them carry `@Education` and are created by
+  `VanillaTypes.educationItem` / `educationBlock`, so `BedrockItemType#isEducation()` / `BedrockBlockType#isEducation()`
+  answer at runtime. The history records `education: true`, which no later capture clears.
+
+### `education-capture`
+
+`./gradlew :tools:run --args="education-capture --version 1.26.63.1"` starts one world on that BDS (RakNet), once with
+`educationFeaturesEnabled` off and once on (a `level.dat` flag, read back to check BDS kept it), captures what BDS sends a
+client both times and writes the identifiers the education world adds to the item registry, the start game block
+properties and the creative inventory (and the blocks of those creative stacks) to `data/bds/<version>/education.json`.
+It fails if the two captures do not differ. The result is the same for 1.26.45.1, 1.26.52.3 and 1.26.63.1 (172 items, 164
+blocks: elements, chemistry items, hard glass, colored torches, ...). Limit: content that BDS offers to no creative
+inventory even with education on is not found.
 
 `ConstantsGoldenTest` runs the generator on a small synthetic bundle (bool, int and string states, a shared value set, a
 name collision settled by names, a lookup table block, a removed block, a rename, a removed item with a curated fallback,

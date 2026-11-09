@@ -34,18 +34,25 @@ public final class BedrockItemType {
     private final String identifier;
     private final @Nullable String fallback;
     private final boolean custom;
+    private final boolean education;
     private volatile @Nullable Linked linked;
 
     BedrockItemType(String identifier, String fallback) {
+        this(identifier, fallback, false);
+    }
+
+    BedrockItemType(String identifier, String fallback, boolean education) {
         this.identifier = Objects.requireNonNull(identifier);
         this.fallback = fallback;
         this.custom = false;
+        this.education = education;
     }
 
     private BedrockItemType(String identifier) {
         this.identifier = Objects.requireNonNull(identifier);
         this.fallback = null;
         this.custom = true;
+        this.education = false;
         BedrockItemVariant base = new BedrockItemVariant(this, 0, -1);
         this.linked = new Linked(this, true, base, List.of(base));
     }
@@ -132,6 +139,17 @@ public final class BedrockItemType {
 
     public boolean isCustom() {
         return custom;
+    }
+
+    /**
+     * Whether BDS only offers this item to worlds with Education Edition features (the same content the generated
+     * constant carries {@link org.geysermc.paletter.annotation.Education @Education} for). Decided from BDS captures when
+     * the constants were generated; always false for custom items and for keys made with {@link #of(String)}.
+     *
+     * @since 1.0.0
+     */
+    public boolean isEducation() {
+        return education;
     }
 
     /**

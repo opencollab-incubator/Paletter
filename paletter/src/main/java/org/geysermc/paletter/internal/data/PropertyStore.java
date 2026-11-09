@@ -36,6 +36,7 @@ import java.util.TreeMap;
  * versions: [string]               version names, oldest first
  * items: {identifier: {property: [{from: name, to: name, value: tag}]}}
  * blocks: {identifier: {property: [{from: name, to: name, value: tag}]}}
+ * block_order: {version: [identifier]}   optional: the order BDS sends the data driven blocks of a version in
  * </pre>
  * A property name is the {@link PropertyKind#prefix() kind prefix} and the name. Ranges are inclusive, in version order,
  * and an equal value in consecutive versions is one range. Item component data and the property compound of a data
@@ -49,7 +50,7 @@ import java.util.TreeMap;
 @Internal
 public final class PropertyStore {
     public static final int FORMAT = 1;
-    private static final PropertyStore EMPTY = new PropertyStore(List.of(), Map.of(), Map.of());
+    private static final PropertyStore EMPTY = new PropertyStore(List.of(), Map.of(), Map.of(), Map.of());
     /** The property of an item or block whose network data is an empty compound. */
     static final String PRESENT = "#present";
 
@@ -66,12 +67,15 @@ public final class PropertyStore {
     private final List<String> versions;
     private final Map<String, Map<String, List<Range>>> items;
     private final Map<String, Map<String, List<Range>>> blocks;
+    /** Version name to the data driven blocks of it in the order BDS sends them. Properties alone are sorted by identifier. */
+    private final Map<String, List<String>> blockOrder;
 
     private PropertyStore(List<String> versions, Map<String, Map<String, List<Range>>> items,
-                          Map<String, Map<String, List<Range>>> blocks) {
+                          Map<String, Map<String, List<Range>>> blocks, Map<String, List<String>> blockOrder) {
         this.versions = versions;
         this.items = items;
         this.blocks = blocks;
+        this.blockOrder = blockOrder;
     }
 
     public static @NonNull PropertyStore empty() {
@@ -102,6 +106,7 @@ public final class PropertyStore {
             for (BlockPropertyData block : data.dataDrivenBlocks()) {
                 builder.putCompound(Owner.BLOCK, block.getName(), data.version(), block.getProperties());
             }
+            builder.blockOrder(data.version(), data.dataDrivenBlocks().stream().map(BlockPropertyData::getName).toList());
         }
         return builder.build();
     }
@@ -115,6 +120,7 @@ public final class PropertyStore {
         private final Map<String, Integer> index = new HashMap<>();
         // owner -> identifier -> full name -> version index -> value
         private final Map<Owner, Map<String, Map<String, TreeMap<Integer, Object>>>> values = new EnumMap<>(Owner.class);
+        private final Map<String, List<String>> blockOrder = new TreeMap<>();
 
         /**
          * @param versions the versions the store covers; a property can only have values in these
@@ -176,8 +182,21 @@ public final class PropertyStore {
             });
         }
 
+        /**
+         * Records the order BDS sends the data driven blocks of a version in; the properties of the blocks are stored
+         * sorted, so this is what {@link PropertyStore#attach} puts them back in order with.
+         */
+        public @NonNull Builder blockOrder(@NonNull DataVersion version, @NonNull List<String> identifiers) {
+            if (!index.containsKey(version.name())) {
+                throw new IllegalArgumentException("Version " + version + " is not part of the store");
+            }
+            blockOrder.put(version.name(), List.copyOf(identifiers));
+            return this;
+        }
+
         public @NonNull PropertyStore build() {
-            return new PropertyStore(List.copyOf(names), merge(values.get(Owner.ITEM)), merge(values.get(Owner.BLOCK)));
+            return new PropertyStore(List.copyOf(names), merge(values.get(Owner.ITEM)), merge(values.get(Owner.BLOCK)),
+                Map.copyOf(blockOrder));
         }
 
         private static Map<String, Map<String, List<Range>>> merge(Map<String, Map<String, TreeMap<Integer, Object>>> owner) {
@@ -274,13 +293,18 @@ public final class PropertyStore {
             result = result.withItems(attached);
         }
         if (data.dataDrivenBlocks().isEmpty()) {
+            // The order BDS sends them in; blocks it does not list (put in by other producers) follow, sorted
+            List<String> order = new ArrayList<>(blockOrder.getOrDefault(data.version().name(), List.of()));
+            java.util.Set<String> listed = new java.util.HashSet<>(order);
+            blocks.keySet().stream().filter(identifier -> !listed.contains(identifier)).forEach(order::add);
             List<BlockPropertyData> attached = new ArrayList<>();
-            blocks.forEach((identifier, properties) -> {
-                NbtMap compound = assemble(properties, at);
+            for (String identifier : order) {
+                Map<String, List<Range>> properties = blocks.get(identifier);
+                NbtMap compound = properties == null ? null : assemble(properties, at);
                 if (compound != null) {
                     attached.add(new BlockPropertyData(identifier, compound));
                 }
-            });
+            }
             if (!attached.isEmpty()) {
                 result = result.withDataDrivenBlocks(attached);
             }
@@ -332,8 +356,13 @@ public final class PropertyStore {
         for (int i = 0; i < names.size(); i++) {
             index.put(names.get(i), i);
         }
+        Map<String, List<String>> blockOrder = new TreeMap<>();
+        NbtMap order = root.getCompound("block_order", NbtMap.EMPTY);
+        for (String version : order.keySet()) {
+            blockOrder.put(version, List.copyOf(order.getList(version, NbtType.STRING)));
+        }
         return new PropertyStore(names, readOwner(root.getCompound("items", NbtMap.EMPTY), index),
-            readOwner(root.getCompound("blocks", NbtMap.EMPTY), index));
+            readOwner(root.getCompound("blocks", NbtMap.EMPTY), index), Map.copyOf(blockOrder));
     }
 
     private static Map<String, Map<String, List<Range>>> readOwner(NbtMap owner, Map<String, Integer> index) throws IOException {
@@ -365,6 +394,11 @@ public final class PropertyStore {
             .putList("versions", NbtType.STRING, versions)
             .putCompound("items", writeOwner(items))
             .putCompound("blocks", writeOwner(blocks));
+        if (!blockOrder.isEmpty()) {
+            NbtMapBuilder order = NbtMap.builder();
+            new TreeMap<>(blockOrder).forEach((version, identifiers) -> order.putList(version, NbtType.STRING, identifiers));
+            root.putCompound("block_order", order.build());
+        }
         try (NBTOutputStream output = NbtUtils.createGZIPWriter(stream)) {
             output.writeTag(root.build());
         }

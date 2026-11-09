@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -42,6 +43,7 @@ public final class ConstantsGenerator {
     public static final String NAMES = "data/model/names.json";
     public static final String HISTORY = "data/model/constants-history.json";
     public static final String DATA = "paletter/src/main/resources/paletter";
+    public static final String BDS = "data/bds";
     public static final String PACKAGE_DIR = "paletter/src/generated/java/org/geysermc/paletter/vanilla";
     public static final String STATE_DIR = PACKAGE_DIR + "/state";
     static final String PACKAGE = "org.geysermc.paletter.vanilla";
@@ -70,6 +72,7 @@ public final class ConstantsGenerator {
 
     private final VanillaData release;
     private final VanillaData preview;
+    private final Sources sources;
     private final JsonObject names;
     private final JsonObject history;
     private final String version;
@@ -79,8 +82,10 @@ public final class ConstantsGenerator {
     private final Map<String, Integer> counts = new LinkedHashMap<>();
     private final JsonObject newHistory = new JsonObject();
 
-    private ConstantsGenerator(VanillaData release, VanillaData preview, JsonObject names, JsonObject history, String version) {
+    private ConstantsGenerator(VanillaData release, VanillaData preview, JsonObject names, JsonObject history, String version,
+                               Sources sources) {
         this.release = release;
+        this.sources = sources;
         this.preview = preview;
         this.names = names;
         this.history = history;
@@ -91,7 +96,8 @@ public final class ConstantsGenerator {
      * Generates from the files of a repository root.
      */
     public static Result generate(Path root) throws IOException {
-        return generate(root.resolve(DATA), readJson(root.resolve(NAMES)), readJson(root.resolve(HISTORY)), paletterVersion(root));
+        return generate(root.resolve(DATA), readJson(root.resolve(NAMES)), readJson(root.resolve(HISTORY)), paletterVersion(root),
+            Sources.read(root.resolve(DATA), root.resolve(BDS)));
     }
 
     /**
@@ -100,16 +106,30 @@ public final class ConstantsGenerator {
      * @param version the Paletter version new and deprecated constants are marked with, e.g. {@code 2.1.0}
      */
     public static Result generate(Path data, JsonObject names, JsonObject history, String version) throws IOException {
+        return generate(data, names, history, version, Sources.read(data, null));
+    }
+
+    /**
+     * @param sources where constants came from: the bundled releases and what BDS captured of them (experiment gating,
+     *                Education Edition), see {@link Sources}
+     */
+    public static Result generate(Path data, JsonObject names, JsonObject history, String version, Sources sources) throws IOException {
         List<Bundle> bundles = readIndex(data);
         Bundle release = bundles.stream().filter(b -> !b.preview()).reduce((a, b) -> b)
             .orElseThrow(() -> new IllegalStateException("No release version in " + data));
         Bundle preview = bundles.stream().filter(b -> b.preview() && b.protocol() > release.protocol()).reduce((a, b) -> b).orElse(null);
         return generate(read(data.resolve(release.name() + ".nbt")), preview == null ? null : read(data.resolve(preview.name() + ".nbt")),
-            names, history, version);
+            names, history, version, sources);
     }
 
+    /** Generates with only the newest release as the source of versions: every constant is {@code @since} that release. */
     public static Result generate(VanillaData release, VanillaData preview, JsonObject names, JsonObject history, String version) {
-        return new ConstantsGenerator(release, preview, names, history, version).run();
+        return generate(release, preview, names, history, version, Sources.of(release));
+    }
+
+    public static Result generate(VanillaData release, VanillaData preview, JsonObject names, JsonObject history, String version,
+                                  Sources sources) {
+        return new ConstantsGenerator(release, preview, names, history, version, sources).run();
     }
 
     public static JsonObject readJson(Path file) throws IOException {
@@ -249,8 +269,12 @@ public final class ConstantsGenerator {
      * @param replacement for a deprecated alias: the constant it points to
      * @param fallback for a removed one: what it resolves to
      * @param deprecated the version it was deprecated in, or null
+     * @param bedrock the bundled Bedrock release it first appears in without an experiment, or null (preview constants)
+     * @param education whether BDS only offers it with Education Edition features on
+     * @param gating the experiment toggles that gate it in bundled releases, e.g. {@code `y_2026_drop_3` in 26.40}, or null
      */
-    record Constant(String name, String identifier, String since, String deprecated, String replacement, String fallback) {
+    record Constant(String name, String identifier, String since, String deprecated, String replacement, String fallback,
+                    String bedrock, boolean education, String gating) {
     }
 
     private List<Constant> constants(String kind, List<String> identifiers, String className) {
@@ -283,7 +307,11 @@ public final class ConstantsGenerator {
             if (old == null) {
                 added.add(className + "." + entry.getKey() + " = " + entry.getValue());
             }
-            constants.put(entry.getKey(), new Constant(entry.getKey(), entry.getValue(), since, null, null, null));
+            // What the history recorded stays (a version leaving the bundle must not change it); else it is derived
+            String bedrock = old != null && old.has("bedrock") ? old.get("bedrock").getAsString() : sources.firstVersion(kind, entry.getValue());
+            boolean education = old != null && old.has("education") && old.get("education").getAsBoolean() || sources.isEducation(kind, entry.getValue());
+            constants.put(entry.getKey(), new Constant(entry.getKey(), entry.getValue(), since, null, null, null, bedrock, education,
+                sources.gating(kind, entry.getValue())));
         }
         // Constants the data no longer has under that name stay, deprecated
         for (Map.Entry<String, JsonElement> entry : new TreeMap<>(previous.asMap()).entrySet()) {
@@ -294,6 +322,8 @@ public final class ConstantsGenerator {
             JsonObject old = entry(entry, kind);
             String identifier = required(old, "identifier", kind + "." + name);
             String since = required(old, "since", kind + "." + name);
+            String bedrock = old.has("bedrock") ? old.get("bedrock").getAsString() : sources.firstVersion(kind, identifier);
+            boolean education = old.has("education") && old.get("education").getAsBoolean() || sources.isEducation(kind, identifier);
             String deprecatedSince = old.has("deprecated") ? old.get("deprecated").getAsString() : version;
             String target = nameOf.get(identifier);
             if (target == null && renamed.has(identifier)) {
@@ -308,11 +338,11 @@ public final class ConstantsGenerator {
             }
             Constant constant;
             if (target != null) {
-                constant = new Constant(name, identifier, since, deprecatedSince, target, null);
+                constant = new Constant(name, identifier, since, deprecatedSince, target, null, bedrock, education, sources.gating(kind, identifier));
             } else {
                 String fallback = fallbacks.has(identifier) ? fallbacks.get(identifier).getAsString()
                     : old.has("fallback") ? old.get("fallback").getAsString() : "minecraft:unknown";
-                constant = new Constant(name, identifier, since, deprecatedSince, null, fallback);
+                constant = new Constant(name, identifier, since, deprecatedSince, null, fallback, bedrock, education, sources.gating(kind, identifier));
             }
             if (!old.has("deprecated")) {
                 deprecated.add(className + "." + name + " (" + identifier + (target != null ? ", now " + target : ", removed; resolves to " + constant.fallback()) + ")");
@@ -331,6 +361,10 @@ public final class ConstantsGenerator {
             JsonObject entry = new JsonObject();
             entry.addProperty("identifier", constant.identifier());
             entry.addProperty("since", constant.since());
+            entry.addProperty("bedrock", constant.bedrock());
+            if (constant.education()) {
+                entry.addProperty("education", true);
+            }
             if (constant.deprecated() != null) {
                 entry.addProperty("deprecated", constant.deprecated());
                 if (constant.replacement() != null) {
@@ -353,7 +387,7 @@ public final class ConstantsGenerator {
             if (!CONSTANT.matcher(name).matches()) {
                 throw new IllegalStateException("Preview " + identifier + " gives the constant name " + name + "; add it to " + NAMES + " " + kind);
             }
-            if (constants.put(name, new Constant(name, identifier, version, null, null, null)) != null) {
+            if (constants.put(name, new Constant(name, identifier, version, null, null, null, null, false, null)) != null) {
                 throw new IllegalStateException("Duplicate preview constant " + name + "; give one a name in " + NAMES + " " + kind);
             }
         }
@@ -367,6 +401,200 @@ public final class ConstantsGenerator {
         String path = identifier.substring(colon + 1);
         String name = namespace.equals("minecraft") ? path : namespace + "_" + path;
         return name.replaceAll("[^A-Za-z0-9]+", "_").toUpperCase(java.util.Locale.ROOT);
+    }
+
+    // ---- Where constants came from ---------------------------------------------------------------------------------
+
+    /**
+     * What decides {@code @since} and {@code @Education} of a constant, besides the newest release itself.
+     * <ul>
+     *     <li>{@code releases}: every bundled release, oldest first. A constant is {@code @since} the first of them that
+     *     has the identifier and does not offer it only through an experiment;</li>
+     *     <li>{@code gatedItems} / {@code gatedBlocks}: per release, what the BDS captures of that release
+     *     ({@code data/bds/<bds version>/experiments.json}) show to need a current experiment toggle in that release.
+     *     Content that is only gated in the first release that has it is {@code @since} the next one that does not
+     *     gate it (or, if there is none, the first one that has it). A block is gated with its item (the block to item
+     *     relation of the release);</li>
+     *     <li>{@code educationItems} / {@code educationBlocks}: what BDS offers only to a world with Education Edition
+     *     features (captured by {@code education-capture}, {@code data/bds/<bds version>/education.json}).</li>
+     * </ul>
+     */
+    public static final class Sources {
+        private final List<VanillaData> releases;
+        private final Map<String, Map<String, String>> gatedItems;
+        private final Map<String, Map<String, String>> gatedBlocks;
+        private final Set<String> educationItems;
+        private final Set<String> educationBlocks;
+        private final Map<String, Set<String>> blockNames = new HashMap<>();
+        private final Map<String, Set<String>> itemNames = new HashMap<>();
+
+        /**
+         * @param gatedItems release name to item identifier to the current experiment toggle that adds it in that release
+         * @param gatedBlocks the same for blocks
+         */
+        public Sources(List<VanillaData> releases, Map<String, Map<String, String>> gatedItems, Map<String, Map<String, String>> gatedBlocks,
+                       Set<String> educationItems, Set<String> educationBlocks) {
+            this.releases = List.copyOf(releases);
+            this.gatedItems = gatedItems;
+            this.gatedBlocks = gatedBlocks;
+            this.educationItems = educationItems;
+            this.educationBlocks = educationBlocks;
+            for (VanillaData release : releases) {
+                Set<String> blocks = new HashSet<>();
+                release.blockStates().forEach(state -> blocks.add(state.getString("name")));
+                blockNames.put(release.version().name(), blocks);
+                Set<String> items = new HashSet<>();
+                release.items().forEach(item -> items.add(item.identifier()));
+                itemNames.put(release.version().name(), items);
+            }
+        }
+
+        /** @return every bundled release, oldest first */
+        public List<VanillaData> releases() {
+            return releases;
+        }
+
+        /** Only the given release: everything is {@code @since} it, nothing is gated, nothing is education. */
+        public static Sources of(VanillaData release) {
+            return new Sources(List.of(release), Map.of(), Map.of(), Set.of(), Set.of());
+        }
+
+        /**
+         * @param data the bundled data directory ({@code versions.txt} and the version files)
+         * @param bds the {@code data/bds} directory with the captures, or null for none
+         */
+        public static Sources read(Path data, Path bds) throws IOException {
+            List<VanillaData> releases = new ArrayList<>();
+            List<Bundle> bundles = new ArrayList<>();
+            for (Bundle bundle : readIndex(data)) {
+                if (!bundle.preview()) {
+                    bundles.add(bundle);
+                    releases.add(ConstantsGenerator.read(data.resolve(bundle.name() + ".nbt")));
+                }
+            }
+            Map<String, Map<String, String>> gatedItems = new TreeMap<>();
+            Map<String, Map<String, String>> gatedBlocks = new TreeMap<>();
+            Set<String> educationItems = new TreeSet<>();
+            Set<String> educationBlocks = new TreeSet<>();
+            if (bds != null && Files.isDirectory(bds)) {
+                List<Path> captures;
+                try (var stream = Files.list(bds)) {
+                    captures = stream.filter(Files::isDirectory).sorted().toList();
+                }
+                for (Path capture : captures) {
+                    Path experiments = capture.resolve("experiments.json");
+                    if (Files.exists(experiments)) {
+                        JsonObject json = readJson(experiments);
+                        String release = releaseOf(bundles, json.get("protocol").getAsInt());
+                        if (release != null) {
+                            for (Map.Entry<String, JsonElement> toggle : json.getAsJsonObject("toggles").entrySet()) {
+                                JsonObject value = toggle.getValue().getAsJsonObject();
+                                if (value.get("status").getAsString().equals("current") && value.has("content")) {
+                                    JsonObject content = value.getAsJsonObject("content");
+                                    for (String item : strings(content, "itemsAdded", "scriptItemsAdded")) {
+                                        gatedItems.computeIfAbsent(release, r -> new TreeMap<>()).putIfAbsent(item, toggle.getKey());
+                                    }
+                                    for (String block : strings(content, "blocksAdded", "dataDrivenBlocks")) {
+                                        gatedBlocks.computeIfAbsent(release, r -> new TreeMap<>()).putIfAbsent(block, toggle.getKey());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Path education = capture.resolve("education.json");
+                    if (Files.exists(education)) {
+                        JsonObject json = readJson(education);
+                        educationItems.addAll(strings(json, "items"));
+                        educationBlocks.addAll(strings(json, "blocks"));
+                    }
+                }
+            }
+            return new Sources(releases, gatedItems, gatedBlocks, educationItems, educationBlocks);
+        }
+
+        /** The bundled release a protocol belongs to: the newest whose first protocol is not above it. */
+        public static String releaseOf(List<Bundle> releases, int protocol) {
+            String name = null;
+            for (Bundle bundle : releases) {
+                if (bundle.protocol() <= protocol) {
+                    name = bundle.name();
+                }
+            }
+            return name;
+        }
+
+        private static List<String> strings(JsonObject object, String... keys) {
+            List<String> values = new ArrayList<>();
+            for (String key : keys) {
+                if (object.has(key)) {
+                    object.getAsJsonArray(key).forEach(element -> values.add(element.getAsString()));
+                }
+            }
+            return values;
+        }
+
+        /**
+         * @param kind {@code blocks} or {@code items}
+         * @return the name of the first release that has the identifier without an experiment, else the first one that
+         *         has it at all, else the oldest release
+         */
+        String firstVersion(String kind, String identifier) {
+            boolean blocks = kind.equals("blocks");
+            String first = null;
+            for (VanillaData release : releases) {
+                if (!has(release, blocks, identifier)) {
+                    continue;
+                }
+                if (first == null) {
+                    first = release.version().name();
+                }
+                if (toggle(release, blocks, identifier) == null) {
+                    return release.version().name();
+                }
+            }
+            return first != null ? first : releases.getFirst().version().name();
+        }
+
+        /**
+         * @return the experiment toggles that gate the identifier in bundled releases, as
+         *         {@code `toggle` in 26.40, 26.50} (a toggle per clause, separated by semicolons), or null if none does
+         */
+        String gating(String kind, String identifier) {
+            boolean blocks = kind.equals("blocks");
+            Map<String, List<String>> versions = new TreeMap<>();
+            for (VanillaData release : releases) {
+                String name = release.version().name();
+                String toggle = toggle(release, blocks, identifier);
+                if (toggle != null && has(release, blocks, identifier)) {
+                    versions.computeIfAbsent(toggle, t -> new ArrayList<>()).add(name);
+                }
+            }
+            if (versions.isEmpty()) {
+                return null;
+            }
+            List<String> clauses = new ArrayList<>();
+            versions.forEach((toggle, names) -> clauses.add("{@code " + toggle + "} in " + String.join(", ", names)));
+            return String.join("; ", clauses);
+        }
+
+        /** The toggle that gates the identifier in a release: for a block also the one its item is gated by. */
+        private String toggle(VanillaData release, boolean blocks, String identifier) {
+            String name = release.version().name();
+            if (!blocks) {
+                return gatedItems.getOrDefault(name, Map.of()).get(identifier);
+            }
+            String toggle = gatedBlocks.getOrDefault(name, Map.of()).get(identifier);
+            String item = release.blockItems().get(identifier);
+            return toggle != null || item == null ? toggle : gatedItems.getOrDefault(name, Map.of()).get(item);
+        }
+
+        boolean isEducation(String kind, String identifier) {
+            return (kind.equals("blocks") ? educationBlocks : educationItems).contains(identifier);
+        }
+
+        private boolean has(VanillaData release, boolean blocks, String identifier) {
+            return (blocks ? blockNames : itemNames).get(release.version().name()).contains(identifier);
+        }
     }
 
     // ---- States --------------------------------------------------------------------------------------------------

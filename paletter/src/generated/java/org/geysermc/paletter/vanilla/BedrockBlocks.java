@@ -2,7413 +2,10731 @@
 // data/model/constants-history.json. Do not edit; see tools/docs/codegen.md.
 package org.geysermc.paletter.vanilla;
 
+import org.geysermc.paletter.annotation.Education;
+
 /**
  * Every block type of Bedrock 26.60, the newest bundled release. The constants are resolved against
  * the newest data of {@link org.geysermc.paletter.Paletter#bundled()} on first use; referencing them loads nothing.
  * <p>
  * Constants are added when Bedrock adds blocks (binary compatible). Blocks Bedrock removes stay, deprecated, and
  * resolve to their fallback; renamed blocks keep their old constant, deprecated, as an alias of the new one.
+ * <p>
+ * The {@code @since} of a constant is the bundled Bedrock release it first appears in, without an experiment toggle
+ * (decided from the BDS captures in {@code data/bds}); {@code 26.40} is the oldest bundled release, so it may be older.
+ * {@link org.geysermc.paletter.annotation.Education @Education} marks content BDS only offers to worlds with Education
+ * Edition features, which {@code isEducation()} of the type answers at runtime.
  *
  * @since 1.0.0
  */
 public final class BedrockBlocks {
     /**
      * {@code minecraft:acacia_button}: {@link BedrockStates#BUTTON_PRESSED_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_BUTTON = VanillaTypes.block("minecraft:acacia_button");
 
     /**
      * {@code minecraft:acacia_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_DOOR = VanillaTypes.block("minecraft:acacia_door");
 
     /**
      * {@code minecraft:acacia_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_DOUBLE_SLAB = VanillaTypes.block("minecraft:acacia_double_slab");
 
     /**
      * {@code minecraft:acacia_fence}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_FENCE = VanillaTypes.block("minecraft:acacia_fence");
 
     /**
      * {@code minecraft:acacia_fence_gate}: {@link BedrockStates#IN_WALL_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_FENCE_GATE = VanillaTypes.block("minecraft:acacia_fence_gate");
 
     /**
      * {@code minecraft:acacia_hanging_sign}: {@link BedrockStates#ATTACHED_BIT}, {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#GROUND_SIGN_DIRECTION}, {@link BedrockStates#HANGING}; 384 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_HANGING_SIGN = VanillaTypes.block("minecraft:acacia_hanging_sign");
 
     /**
      * {@code minecraft:acacia_leaves}: {@link BedrockStates#PERSISTENT_BIT}, {@link BedrockStates#UPDATE_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_LEAVES = VanillaTypes.block("minecraft:acacia_leaves");
 
     /**
      * {@code minecraft:acacia_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_LOG = VanillaTypes.block("minecraft:acacia_log");
 
     /**
      * {@code minecraft:acacia_planks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_PLANKS = VanillaTypes.block("minecraft:acacia_planks");
 
     /**
      * {@code minecraft:acacia_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_PRESSURE_PLATE = VanillaTypes.block("minecraft:acacia_pressure_plate");
 
     /**
      * {@code minecraft:acacia_sapling}: {@link BedrockStates#AGE_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_SAPLING = VanillaTypes.block("minecraft:acacia_sapling");
 
     /**
      * {@code minecraft:acacia_shelf}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#POWERED_BIT}, {@link BedrockStates#POWERED_SHELF_TYPE}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_SHELF = VanillaTypes.block("minecraft:acacia_shelf");
 
     /**
      * {@code minecraft:acacia_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_SLAB = VanillaTypes.block("minecraft:acacia_slab");
 
     /**
      * {@code minecraft:acacia_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_STAIRS = VanillaTypes.block("minecraft:acacia_stairs");
 
     /**
      * {@code minecraft:acacia_standing_sign}: {@link BedrockStates#GROUND_SIGN_DIRECTION}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_STANDING_SIGN = VanillaTypes.block("minecraft:acacia_standing_sign");
 
     /**
      * {@code minecraft:acacia_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_TRAPDOOR = VanillaTypes.block("minecraft:acacia_trapdoor");
 
     /**
      * {@code minecraft:acacia_wall_sign}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_WALL_SIGN = VanillaTypes.block("minecraft:acacia_wall_sign");
 
     /**
      * {@code minecraft:acacia_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACACIA_WOOD = VanillaTypes.block("minecraft:acacia_wood");
 
     /**
      * {@code minecraft:activator_rail}: {@link BedrockStates#RAIL_DATA_BIT}, {@link BedrockStates#RAIL_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ACTIVATOR_RAIL = VanillaTypes.block("minecraft:activator_rail");
 
     /**
      * {@code minecraft:air}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType AIR = VanillaTypes.block("minecraft:air");
 
     /**
      * {@code minecraft:allium}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ALLIUM = VanillaTypes.block("minecraft:allium");
 
     /**
      * {@code minecraft:allow}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ALLOW = VanillaTypes.block("minecraft:allow");
 
     /**
      * {@code minecraft:amethyst_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType AMETHYST_BLOCK = VanillaTypes.block("minecraft:amethyst_block");
 
     /**
      * {@code minecraft:amethyst_cluster}: {@link BedrockStates#BLOCK_FACE}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType AMETHYST_CLUSTER = VanillaTypes.block("minecraft:amethyst_cluster");
 
     /**
      * {@code minecraft:ancient_debris}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ANCIENT_DEBRIS = VanillaTypes.block("minecraft:ancient_debris");
 
     /**
      * {@code minecraft:andesite}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ANDESITE = VanillaTypes.block("minecraft:andesite");
 
     /**
      * {@code minecraft:andesite_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ANDESITE_DOUBLE_SLAB = VanillaTypes.block("minecraft:andesite_double_slab");
 
     /**
      * {@code minecraft:andesite_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ANDESITE_SLAB = VanillaTypes.block("minecraft:andesite_slab");
 
     /**
      * {@code minecraft:andesite_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ANDESITE_STAIRS = VanillaTypes.block("minecraft:andesite_stairs");
 
     /**
      * {@code minecraft:andesite_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ANDESITE_WALL = VanillaTypes.block("minecraft:andesite_wall");
 
     /**
      * {@code minecraft:anvil}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ANVIL = VanillaTypes.block("minecraft:anvil");
 
     /**
      * {@code minecraft:azalea}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType AZALEA = VanillaTypes.block("minecraft:azalea");
 
     /**
      * {@code minecraft:azalea_leaves}: {@link BedrockStates#PERSISTENT_BIT}, {@link BedrockStates#UPDATE_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType AZALEA_LEAVES = VanillaTypes.block("minecraft:azalea_leaves");
 
     /**
      * {@code minecraft:azalea_leaves_flowered}: {@link BedrockStates#PERSISTENT_BIT}, {@link BedrockStates#UPDATE_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType AZALEA_LEAVES_FLOWERED = VanillaTypes.block("minecraft:azalea_leaves_flowered");
 
     /**
      * {@code minecraft:azure_bluet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType AZURE_BLUET = VanillaTypes.block("minecraft:azure_bluet");
 
     /**
      * {@code minecraft:bamboo}: {@link BedrockStates#AGE_BIT}, {@link BedrockStates#BAMBOO_LEAF_SIZE}, {@link BedrockStates#BAMBOO_STALK_THICKNESS}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO = VanillaTypes.block("minecraft:bamboo");
 
     /**
      * {@code minecraft:bamboo_block}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_BLOCK = VanillaTypes.block("minecraft:bamboo_block");
 
     /**
      * {@code minecraft:bamboo_button}: {@link BedrockStates#BUTTON_PRESSED_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_BUTTON = VanillaTypes.block("minecraft:bamboo_button");
 
     /**
      * {@code minecraft:bamboo_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_DOOR = VanillaTypes.block("minecraft:bamboo_door");
 
     /**
      * {@code minecraft:bamboo_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_DOUBLE_SLAB = VanillaTypes.block("minecraft:bamboo_double_slab");
 
     /**
      * {@code minecraft:bamboo_fence}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_FENCE = VanillaTypes.block("minecraft:bamboo_fence");
 
     /**
      * {@code minecraft:bamboo_fence_gate}: {@link BedrockStates#IN_WALL_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_FENCE_GATE = VanillaTypes.block("minecraft:bamboo_fence_gate");
 
     /**
      * {@code minecraft:bamboo_hanging_sign}: {@link BedrockStates#ATTACHED_BIT}, {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#GROUND_SIGN_DIRECTION}, {@link BedrockStates#HANGING}; 384 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_HANGING_SIGN = VanillaTypes.block("minecraft:bamboo_hanging_sign");
 
     /**
      * {@code minecraft:bamboo_mosaic}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_MOSAIC = VanillaTypes.block("minecraft:bamboo_mosaic");
 
     /**
      * {@code minecraft:bamboo_mosaic_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_MOSAIC_DOUBLE_SLAB = VanillaTypes.block("minecraft:bamboo_mosaic_double_slab");
 
     /**
      * {@code minecraft:bamboo_mosaic_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_MOSAIC_SLAB = VanillaTypes.block("minecraft:bamboo_mosaic_slab");
 
     /**
      * {@code minecraft:bamboo_mosaic_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_MOSAIC_STAIRS = VanillaTypes.block("minecraft:bamboo_mosaic_stairs");
 
     /**
      * {@code minecraft:bamboo_planks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_PLANKS = VanillaTypes.block("minecraft:bamboo_planks");
 
     /**
      * {@code minecraft:bamboo_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_PRESSURE_PLATE = VanillaTypes.block("minecraft:bamboo_pressure_plate");
 
     /**
      * {@code minecraft:bamboo_sapling}: {@link BedrockStates#AGE_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_SAPLING = VanillaTypes.block("minecraft:bamboo_sapling");
 
     /**
      * {@code minecraft:bamboo_shelf}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#POWERED_BIT}, {@link BedrockStates#POWERED_SHELF_TYPE}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_SHELF = VanillaTypes.block("minecraft:bamboo_shelf");
 
     /**
      * {@code minecraft:bamboo_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_SLAB = VanillaTypes.block("minecraft:bamboo_slab");
 
     /**
      * {@code minecraft:bamboo_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_STAIRS = VanillaTypes.block("minecraft:bamboo_stairs");
 
     /**
      * {@code minecraft:bamboo_standing_sign}: {@link BedrockStates#GROUND_SIGN_DIRECTION}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_STANDING_SIGN = VanillaTypes.block("minecraft:bamboo_standing_sign");
 
     /**
      * {@code minecraft:bamboo_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_TRAPDOOR = VanillaTypes.block("minecraft:bamboo_trapdoor");
 
     /**
      * {@code minecraft:bamboo_wall_sign}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BAMBOO_WALL_SIGN = VanillaTypes.block("minecraft:bamboo_wall_sign");
 
     /**
      * {@code minecraft:barrel}: {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#OPEN_BIT}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BARREL = VanillaTypes.block("minecraft:barrel");
 
     /**
      * {@code minecraft:barrier}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BARRIER = VanillaTypes.block("minecraft:barrier");
 
     /**
      * {@code minecraft:basalt}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BASALT = VanillaTypes.block("minecraft:basalt");
 
     /**
      * {@code minecraft:beacon}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BEACON = VanillaTypes.block("minecraft:beacon");
 
     /**
      * {@code minecraft:bed}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#HEAD_PIECE_BIT}, {@link BedrockStates#OCCUPIED_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BED = VanillaTypes.block("minecraft:bed");
 
     /**
      * {@code minecraft:bedrock}: {@link BedrockStates#INFINIBURN_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BEDROCK = VanillaTypes.block("minecraft:bedrock");
 
     /**
      * {@code minecraft:beehive}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#HONEY_LEVEL}; 24 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BEEHIVE = VanillaTypes.block("minecraft:beehive");
 
     /**
      * {@code minecraft:beetroot}: {@link BedrockStates#GROWTH}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BEETROOT = VanillaTypes.block("minecraft:beetroot");
 
     /**
      * {@code minecraft:bee_nest}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#HONEY_LEVEL}; 24 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BEE_NEST = VanillaTypes.block("minecraft:bee_nest");
 
     /**
      * {@code minecraft:bell}: {@link BedrockStates#ATTACHMENT}, {@link BedrockStates#DIRECTION}, {@link BedrockStates#TOGGLE_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BELL = VanillaTypes.block("minecraft:bell");
 
     /**
      * {@code minecraft:big_dripleaf}: {@link BedrockStates#BIG_DRIPLEAF_HEAD}, {@link BedrockStates#BIG_DRIPLEAF_TILT}, {@link BedrockStates#CARDINAL_DIRECTION}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIG_DRIPLEAF = VanillaTypes.block("minecraft:big_dripleaf");
 
     /**
      * {@code minecraft:birch_button}: {@link BedrockStates#BUTTON_PRESSED_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_BUTTON = VanillaTypes.block("minecraft:birch_button");
 
     /**
      * {@code minecraft:birch_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_DOOR = VanillaTypes.block("minecraft:birch_door");
 
     /**
      * {@code minecraft:birch_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_DOUBLE_SLAB = VanillaTypes.block("minecraft:birch_double_slab");
 
     /**
      * {@code minecraft:birch_fence}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_FENCE = VanillaTypes.block("minecraft:birch_fence");
 
     /**
      * {@code minecraft:birch_fence_gate}: {@link BedrockStates#IN_WALL_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_FENCE_GATE = VanillaTypes.block("minecraft:birch_fence_gate");
 
     /**
      * {@code minecraft:birch_hanging_sign}: {@link BedrockStates#ATTACHED_BIT}, {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#GROUND_SIGN_DIRECTION}, {@link BedrockStates#HANGING}; 384 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_HANGING_SIGN = VanillaTypes.block("minecraft:birch_hanging_sign");
 
     /**
      * {@code minecraft:birch_leaves}: {@link BedrockStates#PERSISTENT_BIT}, {@link BedrockStates#UPDATE_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_LEAVES = VanillaTypes.block("minecraft:birch_leaves");
 
     /**
      * {@code minecraft:birch_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_LOG = VanillaTypes.block("minecraft:birch_log");
 
     /**
      * {@code minecraft:birch_planks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_PLANKS = VanillaTypes.block("minecraft:birch_planks");
 
     /**
      * {@code minecraft:birch_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_PRESSURE_PLATE = VanillaTypes.block("minecraft:birch_pressure_plate");
 
     /**
      * {@code minecraft:birch_sapling}: {@link BedrockStates#AGE_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_SAPLING = VanillaTypes.block("minecraft:birch_sapling");
 
     /**
      * {@code minecraft:birch_shelf}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#POWERED_BIT}, {@link BedrockStates#POWERED_SHELF_TYPE}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_SHELF = VanillaTypes.block("minecraft:birch_shelf");
 
     /**
      * {@code minecraft:birch_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_SLAB = VanillaTypes.block("minecraft:birch_slab");
 
     /**
      * {@code minecraft:birch_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_STAIRS = VanillaTypes.block("minecraft:birch_stairs");
 
     /**
      * {@code minecraft:birch_standing_sign}: {@link BedrockStates#GROUND_SIGN_DIRECTION}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_STANDING_SIGN = VanillaTypes.block("minecraft:birch_standing_sign");
 
     /**
      * {@code minecraft:birch_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_TRAPDOOR = VanillaTypes.block("minecraft:birch_trapdoor");
 
     /**
      * {@code minecraft:birch_wall_sign}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_WALL_SIGN = VanillaTypes.block("minecraft:birch_wall_sign");
 
     /**
      * {@code minecraft:birch_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BIRCH_WOOD = VanillaTypes.block("minecraft:birch_wood");
 
     /**
      * {@code minecraft:blackstone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLACKSTONE = VanillaTypes.block("minecraft:blackstone");
 
     /**
      * {@code minecraft:blackstone_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLACKSTONE_DOUBLE_SLAB = VanillaTypes.block("minecraft:blackstone_double_slab");
 
     /**
      * {@code minecraft:blackstone_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLACKSTONE_SLAB = VanillaTypes.block("minecraft:blackstone_slab");
 
     /**
      * {@code minecraft:blackstone_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLACKSTONE_STAIRS = VanillaTypes.block("minecraft:blackstone_stairs");
 
     /**
      * {@code minecraft:blackstone_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLACKSTONE_WALL = VanillaTypes.block("minecraft:blackstone_wall");
 
     /**
      * {@code minecraft:black_candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLACK_CANDLE = VanillaTypes.block("minecraft:black_candle");
 
     /**
      * {@code minecraft:black_candle_cake}: {@link BedrockStates#LIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLACK_CANDLE_CAKE = VanillaTypes.block("minecraft:black_candle_cake");
 
     /**
      * {@code minecraft:black_carpet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLACK_CARPET = VanillaTypes.block("minecraft:black_carpet");
 
     /**
      * {@code minecraft:black_concrete}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLACK_CONCRETE = VanillaTypes.block("minecraft:black_concrete");
 
     /**
      * {@code minecraft:black_concrete_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BLACK_CONCRETE_DOUBLE_SLAB = VanillaTypes.block("minecraft:black_concrete_double_slab");
 
     /**
      * {@code minecraft:black_concrete_powder}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLACK_CONCRETE_POWDER = VanillaTypes.block("minecraft:black_concrete_powder");
 
     /**
      * {@code minecraft:black_concrete_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BLACK_CONCRETE_SLAB = VanillaTypes.block("minecraft:black_concrete_slab");
 
     /**
      * {@code minecraft:black_concrete_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BLACK_CONCRETE_STAIRS = VanillaTypes.block("minecraft:black_concrete_stairs");
 
     /**
      * {@code minecraft:black_glazed_terracotta}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLACK_GLAZED_TERRACOTTA = VanillaTypes.block("minecraft:black_glazed_terracotta");
 
     /**
      * {@code minecraft:black_shulker_box}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLACK_SHULKER_BOX = VanillaTypes.block("minecraft:black_shulker_box");
 
     /**
      * {@code minecraft:black_stained_glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLACK_STAINED_GLASS = VanillaTypes.block("minecraft:black_stained_glass");
 
     /**
      * {@code minecraft:black_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLACK_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:black_stained_glass_pane");
 
     /**
      * {@code minecraft:black_terracotta}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLACK_TERRACOTTA = VanillaTypes.block("minecraft:black_terracotta");
 
     /**
      * {@code minecraft:black_wool}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLACK_WOOL = VanillaTypes.block("minecraft:black_wool");
 
     /**
      * {@code minecraft:black_wool_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BLACK_WOOL_DOUBLE_SLAB = VanillaTypes.block("minecraft:black_wool_double_slab");
 
     /**
      * {@code minecraft:black_wool_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BLACK_WOOL_SLAB = VanillaTypes.block("minecraft:black_wool_slab");
 
     /**
      * {@code minecraft:black_wool_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BLACK_WOOL_STAIRS = VanillaTypes.block("minecraft:black_wool_stairs");
 
     /**
      * {@code minecraft:blast_furnace}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLAST_FURNACE = VanillaTypes.block("minecraft:blast_furnace");
 
     /**
      * {@code minecraft:blue_candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLUE_CANDLE = VanillaTypes.block("minecraft:blue_candle");
 
     /**
      * {@code minecraft:blue_candle_cake}: {@link BedrockStates#LIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLUE_CANDLE_CAKE = VanillaTypes.block("minecraft:blue_candle_cake");
 
     /**
      * {@code minecraft:blue_carpet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLUE_CARPET = VanillaTypes.block("minecraft:blue_carpet");
 
     /**
      * {@code minecraft:blue_concrete}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLUE_CONCRETE = VanillaTypes.block("minecraft:blue_concrete");
 
     /**
      * {@code minecraft:blue_concrete_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BLUE_CONCRETE_DOUBLE_SLAB = VanillaTypes.block("minecraft:blue_concrete_double_slab");
 
     /**
      * {@code minecraft:blue_concrete_powder}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLUE_CONCRETE_POWDER = VanillaTypes.block("minecraft:blue_concrete_powder");
 
     /**
      * {@code minecraft:blue_concrete_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BLUE_CONCRETE_SLAB = VanillaTypes.block("minecraft:blue_concrete_slab");
 
     /**
      * {@code minecraft:blue_concrete_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BLUE_CONCRETE_STAIRS = VanillaTypes.block("minecraft:blue_concrete_stairs");
 
     /**
      * {@code minecraft:blue_glazed_terracotta}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLUE_GLAZED_TERRACOTTA = VanillaTypes.block("minecraft:blue_glazed_terracotta");
 
     /**
      * {@code minecraft:blue_ice}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLUE_ICE = VanillaTypes.block("minecraft:blue_ice");
 
     /**
      * {@code minecraft:blue_orchid}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLUE_ORCHID = VanillaTypes.block("minecraft:blue_orchid");
 
     /**
      * {@code minecraft:blue_shulker_box}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLUE_SHULKER_BOX = VanillaTypes.block("minecraft:blue_shulker_box");
 
     /**
      * {@code minecraft:blue_stained_glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLUE_STAINED_GLASS = VanillaTypes.block("minecraft:blue_stained_glass");
 
     /**
      * {@code minecraft:blue_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLUE_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:blue_stained_glass_pane");
 
     /**
      * {@code minecraft:blue_terracotta}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLUE_TERRACOTTA = VanillaTypes.block("minecraft:blue_terracotta");
 
     /**
      * {@code minecraft:blue_wool}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BLUE_WOOL = VanillaTypes.block("minecraft:blue_wool");
 
     /**
      * {@code minecraft:blue_wool_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BLUE_WOOL_DOUBLE_SLAB = VanillaTypes.block("minecraft:blue_wool_double_slab");
 
     /**
      * {@code minecraft:blue_wool_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BLUE_WOOL_SLAB = VanillaTypes.block("minecraft:blue_wool_slab");
 
     /**
      * {@code minecraft:blue_wool_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BLUE_WOOL_STAIRS = VanillaTypes.block("minecraft:blue_wool_stairs");
 
     /**
      * {@code minecraft:bone_block}: {@link BedrockStates#DEPRECATED}, {@link BedrockStates#PILLAR_AXIS}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BONE_BLOCK = VanillaTypes.block("minecraft:bone_block");
 
     /**
      * {@code minecraft:bookshelf}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BOOKSHELF = VanillaTypes.block("minecraft:bookshelf");
 
     /**
      * {@code minecraft:border_block}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BORDER_BLOCK = VanillaTypes.block("minecraft:border_block");
 
     /**
      * {@code minecraft:brain_coral}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BRAIN_CORAL = VanillaTypes.block("minecraft:brain_coral");
 
     /**
      * {@code minecraft:brain_coral_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BRAIN_CORAL_BLOCK = VanillaTypes.block("minecraft:brain_coral_block");
 
     /**
      * {@code minecraft:brain_coral_fan}: {@link BedrockStates#CORAL_FAN_DIRECTION}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BRAIN_CORAL_FAN = VanillaTypes.block("minecraft:brain_coral_fan");
 
     /**
      * {@code minecraft:brain_coral_wall_fan}: {@link BedrockStates#CORAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BRAIN_CORAL_WALL_FAN = VanillaTypes.block("minecraft:brain_coral_wall_fan");
 
     /**
      * {@code minecraft:brewing_stand}: {@link BedrockStates#BREWING_STAND_SLOT_A_BIT}, {@link BedrockStates#BREWING_STAND_SLOT_B_BIT}, {@link BedrockStates#BREWING_STAND_SLOT_C_BIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BREWING_STAND = VanillaTypes.block("minecraft:brewing_stand");
 
     /**
      * {@code minecraft:brick_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BRICK_BLOCK = VanillaTypes.block("minecraft:brick_block");
 
     /**
      * {@code minecraft:brick_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BRICK_DOUBLE_SLAB = VanillaTypes.block("minecraft:brick_double_slab");
 
     /**
      * {@code minecraft:brick_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BRICK_SLAB = VanillaTypes.block("minecraft:brick_slab");
 
     /**
      * {@code minecraft:brick_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BRICK_STAIRS = VanillaTypes.block("minecraft:brick_stairs");
 
     /**
      * {@code minecraft:brick_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BRICK_WALL = VanillaTypes.block("minecraft:brick_wall");
 
     /**
      * {@code minecraft:brown_candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BROWN_CANDLE = VanillaTypes.block("minecraft:brown_candle");
 
     /**
      * {@code minecraft:brown_candle_cake}: {@link BedrockStates#LIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BROWN_CANDLE_CAKE = VanillaTypes.block("minecraft:brown_candle_cake");
 
     /**
      * {@code minecraft:brown_carpet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BROWN_CARPET = VanillaTypes.block("minecraft:brown_carpet");
 
     /**
      * {@code minecraft:brown_concrete}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BROWN_CONCRETE = VanillaTypes.block("minecraft:brown_concrete");
 
     /**
      * {@code minecraft:brown_concrete_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BROWN_CONCRETE_DOUBLE_SLAB = VanillaTypes.block("minecraft:brown_concrete_double_slab");
 
     /**
      * {@code minecraft:brown_concrete_powder}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BROWN_CONCRETE_POWDER = VanillaTypes.block("minecraft:brown_concrete_powder");
 
     /**
      * {@code minecraft:brown_concrete_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BROWN_CONCRETE_SLAB = VanillaTypes.block("minecraft:brown_concrete_slab");
 
     /**
      * {@code minecraft:brown_concrete_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BROWN_CONCRETE_STAIRS = VanillaTypes.block("minecraft:brown_concrete_stairs");
 
     /**
      * {@code minecraft:brown_glazed_terracotta}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BROWN_GLAZED_TERRACOTTA = VanillaTypes.block("minecraft:brown_glazed_terracotta");
 
     /**
      * {@code minecraft:brown_mushroom}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BROWN_MUSHROOM = VanillaTypes.block("minecraft:brown_mushroom");
 
     /**
      * {@code minecraft:brown_mushroom_block}: {@link BedrockStates#HUGE_MUSHROOM_BITS}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BROWN_MUSHROOM_BLOCK = VanillaTypes.block("minecraft:brown_mushroom_block");
 
     /**
      * {@code minecraft:brown_shulker_box}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BROWN_SHULKER_BOX = VanillaTypes.block("minecraft:brown_shulker_box");
 
     /**
      * {@code minecraft:brown_stained_glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BROWN_STAINED_GLASS = VanillaTypes.block("minecraft:brown_stained_glass");
 
     /**
      * {@code minecraft:brown_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BROWN_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:brown_stained_glass_pane");
 
     /**
      * {@code minecraft:brown_terracotta}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BROWN_TERRACOTTA = VanillaTypes.block("minecraft:brown_terracotta");
 
     /**
      * {@code minecraft:brown_wool}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BROWN_WOOL = VanillaTypes.block("minecraft:brown_wool");
 
     /**
      * {@code minecraft:brown_wool_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BROWN_WOOL_DOUBLE_SLAB = VanillaTypes.block("minecraft:brown_wool_double_slab");
 
     /**
      * {@code minecraft:brown_wool_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BROWN_WOOL_SLAB = VanillaTypes.block("minecraft:brown_wool_slab");
 
     /**
      * {@code minecraft:brown_wool_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType BROWN_WOOL_STAIRS = VanillaTypes.block("minecraft:brown_wool_stairs");
 
     /**
      * {@code minecraft:bubble_column}: {@link BedrockStates#DRAG_DOWN}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BUBBLE_COLUMN = VanillaTypes.block("minecraft:bubble_column");
 
     /**
      * {@code minecraft:bubble_coral}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BUBBLE_CORAL = VanillaTypes.block("minecraft:bubble_coral");
 
     /**
      * {@code minecraft:bubble_coral_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BUBBLE_CORAL_BLOCK = VanillaTypes.block("minecraft:bubble_coral_block");
 
     /**
      * {@code minecraft:bubble_coral_fan}: {@link BedrockStates#CORAL_FAN_DIRECTION}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BUBBLE_CORAL_FAN = VanillaTypes.block("minecraft:bubble_coral_fan");
 
     /**
      * {@code minecraft:bubble_coral_wall_fan}: {@link BedrockStates#CORAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BUBBLE_CORAL_WALL_FAN = VanillaTypes.block("minecraft:bubble_coral_wall_fan");
 
     /**
      * {@code minecraft:budding_amethyst}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BUDDING_AMETHYST = VanillaTypes.block("minecraft:budding_amethyst");
 
     /**
      * {@code minecraft:bush}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType BUSH = VanillaTypes.block("minecraft:bush");
 
     /**
      * {@code minecraft:cactus}: {@link BedrockStates#AGE}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CACTUS = VanillaTypes.block("minecraft:cactus");
 
     /**
      * {@code minecraft:cactus_flower}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CACTUS_FLOWER = VanillaTypes.block("minecraft:cactus_flower");
 
     /**
      * {@code minecraft:cake}: {@link BedrockStates#BITE_COUNTER}; 7 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CAKE = VanillaTypes.block("minecraft:cake");
 
     /**
      * {@code minecraft:calcite}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CALCITE = VanillaTypes.block("minecraft:calcite");
 
     /**
      * {@code minecraft:calibrated_sculk_sensor}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#SCULK_SENSOR_PHASE}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CALIBRATED_SCULK_SENSOR = VanillaTypes.block("minecraft:calibrated_sculk_sensor");
 
     /**
      * {@code minecraft:camera}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CAMERA = VanillaTypes.block("minecraft:camera");
 
     /**
      * {@code minecraft:campfire}: {@link BedrockStates#EXTINGUISHED}, {@link BedrockStates#CARDINAL_DIRECTION}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CAMPFIRE = VanillaTypes.block("minecraft:campfire");
 
     /**
      * {@code minecraft:candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CANDLE = VanillaTypes.block("minecraft:candle");
 
     /**
      * {@code minecraft:candle_cake}: {@link BedrockStates#LIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CANDLE_CAKE = VanillaTypes.block("minecraft:candle_cake");
 
     /**
      * {@code minecraft:carrots}: {@link BedrockStates#GROWTH}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CARROTS = VanillaTypes.block("minecraft:carrots");
 
     /**
      * {@code minecraft:cartography_table}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CARTOGRAPHY_TABLE = VanillaTypes.block("minecraft:cartography_table");
 
     /**
      * {@code minecraft:carved_pumpkin}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CARVED_PUMPKIN = VanillaTypes.block("minecraft:carved_pumpkin");
 
     /**
      * {@code minecraft:cauldron}: {@link BedrockStates#CAULDRON_LIQUID}, {@link BedrockStates#FILL_LEVEL}; 21 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CAULDRON = VanillaTypes.block("minecraft:cauldron");
 
     /**
      * {@code minecraft:cave_vines}: {@link BedrockStates#GROWING_PLANT_AGE}; 26 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CAVE_VINES = VanillaTypes.block("minecraft:cave_vines");
 
     /**
      * {@code minecraft:cave_vines_body_with_berries}: {@link BedrockStates#GROWING_PLANT_AGE}; 26 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CAVE_VINES_BODY_WITH_BERRIES = VanillaTypes.block("minecraft:cave_vines_body_with_berries");
 
     /**
      * {@code minecraft:cave_vines_head_with_berries}: {@link BedrockStates#GROWING_PLANT_AGE}; 26 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CAVE_VINES_HEAD_WITH_BERRIES = VanillaTypes.block("minecraft:cave_vines_head_with_berries");
 
     /**
      * {@code minecraft:chain_command_block}: {@link BedrockStates#CONDITIONAL_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHAIN_COMMAND_BLOCK = VanillaTypes.block("minecraft:chain_command_block");
 
     /**
      * {@code minecraft:chalkboard}: {@link BedrockStates#DIRECTION}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHALKBOARD = VanillaTypes.block("minecraft:chalkboard");
 
     /**
      * {@code minecraft:chemical_heat}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType CHEMICAL_HEAT = VanillaTypes.block("minecraft:chemical_heat");
+    @Education
+    public static final BedrockBlockType CHEMICAL_HEAT = VanillaTypes.educationBlock("minecraft:chemical_heat");
 
     /**
      * {@code minecraft:cherry_button}: {@link BedrockStates#BUTTON_PRESSED_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_BUTTON = VanillaTypes.block("minecraft:cherry_button");
 
     /**
      * {@code minecraft:cherry_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_DOOR = VanillaTypes.block("minecraft:cherry_door");
 
     /**
      * {@code minecraft:cherry_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_DOUBLE_SLAB = VanillaTypes.block("minecraft:cherry_double_slab");
 
     /**
      * {@code minecraft:cherry_fence}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_FENCE = VanillaTypes.block("minecraft:cherry_fence");
 
     /**
      * {@code minecraft:cherry_fence_gate}: {@link BedrockStates#IN_WALL_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_FENCE_GATE = VanillaTypes.block("minecraft:cherry_fence_gate");
 
     /**
      * {@code minecraft:cherry_hanging_sign}: {@link BedrockStates#ATTACHED_BIT}, {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#GROUND_SIGN_DIRECTION}, {@link BedrockStates#HANGING}; 384 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_HANGING_SIGN = VanillaTypes.block("minecraft:cherry_hanging_sign");
 
     /**
      * {@code minecraft:cherry_leaves}: {@link BedrockStates#PERSISTENT_BIT}, {@link BedrockStates#UPDATE_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_LEAVES = VanillaTypes.block("minecraft:cherry_leaves");
 
     /**
      * {@code minecraft:cherry_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_LOG = VanillaTypes.block("minecraft:cherry_log");
 
     /**
      * {@code minecraft:cherry_planks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_PLANKS = VanillaTypes.block("minecraft:cherry_planks");
 
     /**
      * {@code minecraft:cherry_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_PRESSURE_PLATE = VanillaTypes.block("minecraft:cherry_pressure_plate");
 
     /**
      * {@code minecraft:cherry_sapling}: {@link BedrockStates#AGE_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_SAPLING = VanillaTypes.block("minecraft:cherry_sapling");
 
     /**
      * {@code minecraft:cherry_shelf}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#POWERED_BIT}, {@link BedrockStates#POWERED_SHELF_TYPE}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_SHELF = VanillaTypes.block("minecraft:cherry_shelf");
 
     /**
      * {@code minecraft:cherry_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_SLAB = VanillaTypes.block("minecraft:cherry_slab");
 
     /**
      * {@code minecraft:cherry_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_STAIRS = VanillaTypes.block("minecraft:cherry_stairs");
 
     /**
      * {@code minecraft:cherry_standing_sign}: {@link BedrockStates#GROUND_SIGN_DIRECTION}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_STANDING_SIGN = VanillaTypes.block("minecraft:cherry_standing_sign");
 
     /**
      * {@code minecraft:cherry_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_TRAPDOOR = VanillaTypes.block("minecraft:cherry_trapdoor");
 
     /**
      * {@code minecraft:cherry_wall_sign}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_WALL_SIGN = VanillaTypes.block("minecraft:cherry_wall_sign");
 
     /**
      * {@code minecraft:cherry_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHERRY_WOOD = VanillaTypes.block("minecraft:cherry_wood");
 
     /**
      * {@code minecraft:chest}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHEST = VanillaTypes.block("minecraft:chest");
 
     /**
      * {@code minecraft:chipped_anvil}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHIPPED_ANVIL = VanillaTypes.block("minecraft:chipped_anvil");
 
     /**
      * {@code minecraft:chiseled_bookshelf}: {@link BedrockStates#BOOKS_STORED}, {@link BedrockStates#DIRECTION}; 256 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHISELED_BOOKSHELF = VanillaTypes.block("minecraft:chiseled_bookshelf");
 
     /**
      * {@code minecraft:chiseled_cinnabar}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHISELED_CINNABAR = VanillaTypes.block("minecraft:chiseled_cinnabar");
 
     /**
      * {@code minecraft:chiseled_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHISELED_COPPER = VanillaTypes.block("minecraft:chiseled_copper");
 
     /**
      * {@code minecraft:chiseled_deepslate}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHISELED_DEEPSLATE = VanillaTypes.block("minecraft:chiseled_deepslate");
 
     /**
      * {@code minecraft:chiseled_nether_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHISELED_NETHER_BRICKS = VanillaTypes.block("minecraft:chiseled_nether_bricks");
 
     /**
      * {@code minecraft:chiseled_polished_blackstone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHISELED_POLISHED_BLACKSTONE = VanillaTypes.block("minecraft:chiseled_polished_blackstone");
 
     /**
      * {@code minecraft:chiseled_quartz_block}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHISELED_QUARTZ_BLOCK = VanillaTypes.block("minecraft:chiseled_quartz_block");
 
     /**
      * {@code minecraft:chiseled_red_sandstone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHISELED_RED_SANDSTONE = VanillaTypes.block("minecraft:chiseled_red_sandstone");
 
     /**
      * {@code minecraft:chiseled_resin_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHISELED_RESIN_BRICKS = VanillaTypes.block("minecraft:chiseled_resin_bricks");
 
     /**
      * {@code minecraft:chiseled_sandstone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHISELED_SANDSTONE = VanillaTypes.block("minecraft:chiseled_sandstone");
 
     /**
      * {@code minecraft:chiseled_stone_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHISELED_STONE_BRICKS = VanillaTypes.block("minecraft:chiseled_stone_bricks");
 
     /**
      * {@code minecraft:chiseled_sulfur}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHISELED_SULFUR = VanillaTypes.block("minecraft:chiseled_sulfur");
 
     /**
      * {@code minecraft:chiseled_tuff}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHISELED_TUFF = VanillaTypes.block("minecraft:chiseled_tuff");
 
     /**
      * {@code minecraft:chiseled_tuff_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHISELED_TUFF_BRICKS = VanillaTypes.block("minecraft:chiseled_tuff_bricks");
 
     /**
      * {@code minecraft:chorus_flower}: {@link BedrockStates#AGE}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHORUS_FLOWER = VanillaTypes.block("minecraft:chorus_flower");
 
     /**
      * {@code minecraft:chorus_plant}: {@link BedrockStates#CONNECTION_DOWN}, {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_UP}, {@link BedrockStates#CONNECTION_WEST}; 64 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CHORUS_PLANT = VanillaTypes.block("minecraft:chorus_plant");
 
     /**
      * {@code minecraft:cinnabar}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CINNABAR = VanillaTypes.block("minecraft:cinnabar");
 
     /**
      * {@code minecraft:cinnabar_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CINNABAR_BRICKS = VanillaTypes.block("minecraft:cinnabar_bricks");
 
     /**
      * {@code minecraft:cinnabar_brick_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CINNABAR_BRICK_DOUBLE_SLAB = VanillaTypes.block("minecraft:cinnabar_brick_double_slab");
 
     /**
      * {@code minecraft:cinnabar_brick_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CINNABAR_BRICK_SLAB = VanillaTypes.block("minecraft:cinnabar_brick_slab");
 
     /**
      * {@code minecraft:cinnabar_brick_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CINNABAR_BRICK_STAIRS = VanillaTypes.block("minecraft:cinnabar_brick_stairs");
 
     /**
      * {@code minecraft:cinnabar_brick_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CINNABAR_BRICK_WALL = VanillaTypes.block("minecraft:cinnabar_brick_wall");
 
     /**
      * {@code minecraft:cinnabar_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CINNABAR_DOUBLE_SLAB = VanillaTypes.block("minecraft:cinnabar_double_slab");
 
     /**
      * {@code minecraft:cinnabar_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CINNABAR_SLAB = VanillaTypes.block("minecraft:cinnabar_slab");
 
     /**
      * {@code minecraft:cinnabar_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CINNABAR_STAIRS = VanillaTypes.block("minecraft:cinnabar_stairs");
 
     /**
      * {@code minecraft:cinnabar_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CINNABAR_WALL = VanillaTypes.block("minecraft:cinnabar_wall");
 
     /**
      * {@code minecraft:clay}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CLAY = VanillaTypes.block("minecraft:clay");
 
     /**
      * {@code minecraft:client_request_placeholder_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CLIENT_REQUEST_PLACEHOLDER_BLOCK = VanillaTypes.block("minecraft:client_request_placeholder_block");
 
     /**
      * {@code minecraft:closed_eyeblossom}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CLOSED_EYEBLOSSOM = VanillaTypes.block("minecraft:closed_eyeblossom");
 
     /**
      * {@code minecraft:coal_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COAL_BLOCK = VanillaTypes.block("minecraft:coal_block");
 
     /**
      * {@code minecraft:coal_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COAL_ORE = VanillaTypes.block("minecraft:coal_ore");
 
     /**
      * {@code minecraft:coarse_dirt}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COARSE_DIRT = VanillaTypes.block("minecraft:coarse_dirt");
 
     /**
      * {@code minecraft:cobbled_deepslate}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COBBLED_DEEPSLATE = VanillaTypes.block("minecraft:cobbled_deepslate");
 
     /**
      * {@code minecraft:cobbled_deepslate_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COBBLED_DEEPSLATE_DOUBLE_SLAB = VanillaTypes.block("minecraft:cobbled_deepslate_double_slab");
 
     /**
      * {@code minecraft:cobbled_deepslate_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COBBLED_DEEPSLATE_SLAB = VanillaTypes.block("minecraft:cobbled_deepslate_slab");
 
     /**
      * {@code minecraft:cobbled_deepslate_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COBBLED_DEEPSLATE_STAIRS = VanillaTypes.block("minecraft:cobbled_deepslate_stairs");
 
     /**
      * {@code minecraft:cobbled_deepslate_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COBBLED_DEEPSLATE_WALL = VanillaTypes.block("minecraft:cobbled_deepslate_wall");
 
     /**
      * {@code minecraft:cobblestone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COBBLESTONE = VanillaTypes.block("minecraft:cobblestone");
 
     /**
      * {@code minecraft:cobblestone_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COBBLESTONE_DOUBLE_SLAB = VanillaTypes.block("minecraft:cobblestone_double_slab");
 
     /**
      * {@code minecraft:cobblestone_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COBBLESTONE_SLAB = VanillaTypes.block("minecraft:cobblestone_slab");
 
     /**
      * {@code minecraft:cobblestone_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COBBLESTONE_WALL = VanillaTypes.block("minecraft:cobblestone_wall");
 
     /**
      * {@code minecraft:cocoa}: {@link BedrockStates#AGE}, {@link BedrockStates#DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COCOA = VanillaTypes.block("minecraft:cocoa");
 
     /**
      * {@code minecraft:colored_torch_blue}: {@link BedrockStates#TORCH_FACING_DIRECTION}; 6 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType COLORED_TORCH_BLUE = VanillaTypes.block("minecraft:colored_torch_blue");
+    @Education
+    public static final BedrockBlockType COLORED_TORCH_BLUE = VanillaTypes.educationBlock("minecraft:colored_torch_blue");
 
     /**
      * {@code minecraft:colored_torch_green}: {@link BedrockStates#TORCH_FACING_DIRECTION}; 6 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType COLORED_TORCH_GREEN = VanillaTypes.block("minecraft:colored_torch_green");
+    @Education
+    public static final BedrockBlockType COLORED_TORCH_GREEN = VanillaTypes.educationBlock("minecraft:colored_torch_green");
 
     /**
      * {@code minecraft:colored_torch_purple}: {@link BedrockStates#TORCH_FACING_DIRECTION}; 6 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType COLORED_TORCH_PURPLE = VanillaTypes.block("minecraft:colored_torch_purple");
+    @Education
+    public static final BedrockBlockType COLORED_TORCH_PURPLE = VanillaTypes.educationBlock("minecraft:colored_torch_purple");
 
     /**
      * {@code minecraft:colored_torch_red}: {@link BedrockStates#TORCH_FACING_DIRECTION}; 6 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType COLORED_TORCH_RED = VanillaTypes.block("minecraft:colored_torch_red");
+    @Education
+    public static final BedrockBlockType COLORED_TORCH_RED = VanillaTypes.educationBlock("minecraft:colored_torch_red");
 
     /**
      * {@code minecraft:command_block}: {@link BedrockStates#CONDITIONAL_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COMMAND_BLOCK = VanillaTypes.block("minecraft:command_block");
 
     /**
      * {@code minecraft:composter}: {@link BedrockStates#COMPOSTER_FILL_LEVEL}; 9 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COMPOSTER = VanillaTypes.block("minecraft:composter");
 
     /**
      * {@code minecraft:compound_creator}: {@link BedrockStates#DIRECTION}; 4 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType COMPOUND_CREATOR = VanillaTypes.block("minecraft:compound_creator");
+    @Education
+    public static final BedrockBlockType COMPOUND_CREATOR = VanillaTypes.educationBlock("minecraft:compound_creator");
 
     /**
      * {@code minecraft:conduit}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CONDUIT = VanillaTypes.block("minecraft:conduit");
 
     /**
      * {@code minecraft:copper_bars}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COPPER_BARS = VanillaTypes.block("minecraft:copper_bars");
 
     /**
      * {@code minecraft:copper_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COPPER_BLOCK = VanillaTypes.block("minecraft:copper_block");
 
     /**
      * {@code minecraft:copper_bulb}: {@link BedrockStates#LIT}, {@link BedrockStates#POWERED_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COPPER_BULB = VanillaTypes.block("minecraft:copper_bulb");
 
     /**
      * {@code minecraft:copper_chain}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COPPER_CHAIN = VanillaTypes.block("minecraft:copper_chain");
 
     /**
      * {@code minecraft:copper_chest}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COPPER_CHEST = VanillaTypes.block("minecraft:copper_chest");
 
     /**
      * {@code minecraft:copper_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COPPER_DOOR = VanillaTypes.block("minecraft:copper_door");
 
     /**
      * {@code minecraft:copper_golem_statue}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COPPER_GOLEM_STATUE = VanillaTypes.block("minecraft:copper_golem_statue");
 
     /**
      * {@code minecraft:copper_grate}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COPPER_GRATE = VanillaTypes.block("minecraft:copper_grate");
 
     /**
      * {@code minecraft:copper_lantern}: {@link BedrockStates#HANGING}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COPPER_LANTERN = VanillaTypes.block("minecraft:copper_lantern");
 
     /**
      * {@code minecraft:copper_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COPPER_ORE = VanillaTypes.block("minecraft:copper_ore");
 
     /**
      * {@code minecraft:copper_torch}: {@link BedrockStates#TORCH_FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COPPER_TORCH = VanillaTypes.block("minecraft:copper_torch");
 
     /**
      * {@code minecraft:copper_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType COPPER_TRAPDOOR = VanillaTypes.block("minecraft:copper_trapdoor");
 
     /**
      * {@code minecraft:cornflower}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CORNFLOWER = VanillaTypes.block("minecraft:cornflower");
 
     /**
      * {@code minecraft:cracked_deepslate_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRACKED_DEEPSLATE_BRICKS = VanillaTypes.block("minecraft:cracked_deepslate_bricks");
 
     /**
      * {@code minecraft:cracked_deepslate_tiles}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRACKED_DEEPSLATE_TILES = VanillaTypes.block("minecraft:cracked_deepslate_tiles");
 
     /**
      * {@code minecraft:cracked_nether_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRACKED_NETHER_BRICKS = VanillaTypes.block("minecraft:cracked_nether_bricks");
 
     /**
      * {@code minecraft:cracked_polished_blackstone_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRACKED_POLISHED_BLACKSTONE_BRICKS = VanillaTypes.block("minecraft:cracked_polished_blackstone_bricks");
 
     /**
      * {@code minecraft:cracked_stone_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRACKED_STONE_BRICKS = VanillaTypes.block("minecraft:cracked_stone_bricks");
 
     /**
      * {@code minecraft:crafter}: {@link BedrockStates#CRAFTING}, {@link BedrockStates#ORIENTATION}, {@link BedrockStates#TRIGGERED_BIT}; 48 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRAFTER = VanillaTypes.block("minecraft:crafter");
 
     /**
      * {@code minecraft:crafting_table}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRAFTING_TABLE = VanillaTypes.block("minecraft:crafting_table");
 
     /**
      * {@code minecraft:creaking_heart}: {@link BedrockStates#CREAKING_HEART_STATE}, {@link BedrockStates#NATURAL}, {@link BedrockStates#PILLAR_AXIS}; 18 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CREAKING_HEART = VanillaTypes.block("minecraft:creaking_heart");
 
     /**
      * {@code minecraft:creeper_head}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CREEPER_HEAD = VanillaTypes.block("minecraft:creeper_head");
 
     /**
      * {@code minecraft:crimson_button}: {@link BedrockStates#BUTTON_PRESSED_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_BUTTON = VanillaTypes.block("minecraft:crimson_button");
 
     /**
      * {@code minecraft:crimson_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_DOOR = VanillaTypes.block("minecraft:crimson_door");
 
     /**
      * {@code minecraft:crimson_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_DOUBLE_SLAB = VanillaTypes.block("minecraft:crimson_double_slab");
 
     /**
      * {@code minecraft:crimson_fence}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_FENCE = VanillaTypes.block("minecraft:crimson_fence");
 
     /**
      * {@code minecraft:crimson_fence_gate}: {@link BedrockStates#IN_WALL_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_FENCE_GATE = VanillaTypes.block("minecraft:crimson_fence_gate");
 
     /**
      * {@code minecraft:crimson_fungus}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_FUNGUS = VanillaTypes.block("minecraft:crimson_fungus");
 
     /**
      * {@code minecraft:crimson_hanging_sign}: {@link BedrockStates#ATTACHED_BIT}, {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#GROUND_SIGN_DIRECTION}, {@link BedrockStates#HANGING}; 384 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_HANGING_SIGN = VanillaTypes.block("minecraft:crimson_hanging_sign");
 
     /**
      * {@code minecraft:crimson_hyphae}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_HYPHAE = VanillaTypes.block("minecraft:crimson_hyphae");
 
     /**
      * {@code minecraft:crimson_nylium}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_NYLIUM = VanillaTypes.block("minecraft:crimson_nylium");
 
     /**
      * {@code minecraft:crimson_planks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_PLANKS = VanillaTypes.block("minecraft:crimson_planks");
 
     /**
      * {@code minecraft:crimson_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_PRESSURE_PLATE = VanillaTypes.block("minecraft:crimson_pressure_plate");
 
     /**
      * {@code minecraft:crimson_roots}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_ROOTS = VanillaTypes.block("minecraft:crimson_roots");
 
     /**
      * {@code minecraft:crimson_shelf}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#POWERED_BIT}, {@link BedrockStates#POWERED_SHELF_TYPE}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_SHELF = VanillaTypes.block("minecraft:crimson_shelf");
 
     /**
      * {@code minecraft:crimson_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_SLAB = VanillaTypes.block("minecraft:crimson_slab");
 
     /**
      * {@code minecraft:crimson_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_STAIRS = VanillaTypes.block("minecraft:crimson_stairs");
 
     /**
      * {@code minecraft:crimson_standing_sign}: {@link BedrockStates#GROUND_SIGN_DIRECTION}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_STANDING_SIGN = VanillaTypes.block("minecraft:crimson_standing_sign");
 
     /**
      * {@code minecraft:crimson_stem}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_STEM = VanillaTypes.block("minecraft:crimson_stem");
 
     /**
      * {@code minecraft:crimson_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_TRAPDOOR = VanillaTypes.block("minecraft:crimson_trapdoor");
 
     /**
      * {@code minecraft:crimson_wall_sign}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRIMSON_WALL_SIGN = VanillaTypes.block("minecraft:crimson_wall_sign");
 
     /**
      * {@code minecraft:crying_obsidian}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CRYING_OBSIDIAN = VanillaTypes.block("minecraft:crying_obsidian");
 
     /**
      * {@code minecraft:cut_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CUT_COPPER = VanillaTypes.block("minecraft:cut_copper");
 
     /**
      * {@code minecraft:cut_copper_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CUT_COPPER_SLAB = VanillaTypes.block("minecraft:cut_copper_slab");
 
     /**
      * {@code minecraft:cut_copper_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CUT_COPPER_STAIRS = VanillaTypes.block("minecraft:cut_copper_stairs");
 
     /**
      * {@code minecraft:cut_red_sandstone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CUT_RED_SANDSTONE = VanillaTypes.block("minecraft:cut_red_sandstone");
 
     /**
      * {@code minecraft:cut_red_sandstone_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CUT_RED_SANDSTONE_DOUBLE_SLAB = VanillaTypes.block("minecraft:cut_red_sandstone_double_slab");
 
     /**
      * {@code minecraft:cut_red_sandstone_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CUT_RED_SANDSTONE_SLAB = VanillaTypes.block("minecraft:cut_red_sandstone_slab");
 
     /**
      * {@code minecraft:cut_sandstone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CUT_SANDSTONE = VanillaTypes.block("minecraft:cut_sandstone");
 
     /**
      * {@code minecraft:cut_sandstone_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CUT_SANDSTONE_DOUBLE_SLAB = VanillaTypes.block("minecraft:cut_sandstone_double_slab");
 
     /**
      * {@code minecraft:cut_sandstone_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CUT_SANDSTONE_SLAB = VanillaTypes.block("minecraft:cut_sandstone_slab");
 
     /**
      * {@code minecraft:cyan_candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CYAN_CANDLE = VanillaTypes.block("minecraft:cyan_candle");
 
     /**
      * {@code minecraft:cyan_candle_cake}: {@link BedrockStates#LIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CYAN_CANDLE_CAKE = VanillaTypes.block("minecraft:cyan_candle_cake");
 
     /**
      * {@code minecraft:cyan_carpet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CYAN_CARPET = VanillaTypes.block("minecraft:cyan_carpet");
 
     /**
      * {@code minecraft:cyan_concrete}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CYAN_CONCRETE = VanillaTypes.block("minecraft:cyan_concrete");
 
     /**
      * {@code minecraft:cyan_concrete_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType CYAN_CONCRETE_DOUBLE_SLAB = VanillaTypes.block("minecraft:cyan_concrete_double_slab");
 
     /**
      * {@code minecraft:cyan_concrete_powder}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CYAN_CONCRETE_POWDER = VanillaTypes.block("minecraft:cyan_concrete_powder");
 
     /**
      * {@code minecraft:cyan_concrete_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType CYAN_CONCRETE_SLAB = VanillaTypes.block("minecraft:cyan_concrete_slab");
 
     /**
      * {@code minecraft:cyan_concrete_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType CYAN_CONCRETE_STAIRS = VanillaTypes.block("minecraft:cyan_concrete_stairs");
 
     /**
      * {@code minecraft:cyan_glazed_terracotta}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CYAN_GLAZED_TERRACOTTA = VanillaTypes.block("minecraft:cyan_glazed_terracotta");
 
     /**
      * {@code minecraft:cyan_shulker_box}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CYAN_SHULKER_BOX = VanillaTypes.block("minecraft:cyan_shulker_box");
 
     /**
      * {@code minecraft:cyan_stained_glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CYAN_STAINED_GLASS = VanillaTypes.block("minecraft:cyan_stained_glass");
 
     /**
      * {@code minecraft:cyan_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CYAN_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:cyan_stained_glass_pane");
 
     /**
      * {@code minecraft:cyan_terracotta}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CYAN_TERRACOTTA = VanillaTypes.block("minecraft:cyan_terracotta");
 
     /**
      * {@code minecraft:cyan_wool}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType CYAN_WOOL = VanillaTypes.block("minecraft:cyan_wool");
 
     /**
      * {@code minecraft:cyan_wool_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType CYAN_WOOL_DOUBLE_SLAB = VanillaTypes.block("minecraft:cyan_wool_double_slab");
 
     /**
      * {@code minecraft:cyan_wool_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType CYAN_WOOL_SLAB = VanillaTypes.block("minecraft:cyan_wool_slab");
 
     /**
      * {@code minecraft:cyan_wool_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType CYAN_WOOL_STAIRS = VanillaTypes.block("minecraft:cyan_wool_stairs");
 
     /**
      * {@code minecraft:damaged_anvil}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DAMAGED_ANVIL = VanillaTypes.block("minecraft:damaged_anvil");
 
     /**
      * {@code minecraft:dandelion}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DANDELION = VanillaTypes.block("minecraft:dandelion");
 
     /**
      * {@code minecraft:darkoak_standing_sign}: {@link BedrockStates#GROUND_SIGN_DIRECTION}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARKOAK_STANDING_SIGN = VanillaTypes.block("minecraft:darkoak_standing_sign");
 
     /**
      * {@code minecraft:darkoak_wall_sign}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARKOAK_WALL_SIGN = VanillaTypes.block("minecraft:darkoak_wall_sign");
 
     /**
      * {@code minecraft:dark_oak_button}: {@link BedrockStates#BUTTON_PRESSED_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_OAK_BUTTON = VanillaTypes.block("minecraft:dark_oak_button");
 
     /**
      * {@code minecraft:dark_oak_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_OAK_DOOR = VanillaTypes.block("minecraft:dark_oak_door");
 
     /**
      * {@code minecraft:dark_oak_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_OAK_DOUBLE_SLAB = VanillaTypes.block("minecraft:dark_oak_double_slab");
 
     /**
      * {@code minecraft:dark_oak_fence}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_OAK_FENCE = VanillaTypes.block("minecraft:dark_oak_fence");
 
     /**
      * {@code minecraft:dark_oak_fence_gate}: {@link BedrockStates#IN_WALL_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_OAK_FENCE_GATE = VanillaTypes.block("minecraft:dark_oak_fence_gate");
 
     /**
      * {@code minecraft:dark_oak_hanging_sign}: {@link BedrockStates#ATTACHED_BIT}, {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#GROUND_SIGN_DIRECTION}, {@link BedrockStates#HANGING}; 384 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_OAK_HANGING_SIGN = VanillaTypes.block("minecraft:dark_oak_hanging_sign");
 
     /**
      * {@code minecraft:dark_oak_leaves}: {@link BedrockStates#PERSISTENT_BIT}, {@link BedrockStates#UPDATE_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_OAK_LEAVES = VanillaTypes.block("minecraft:dark_oak_leaves");
 
     /**
      * {@code minecraft:dark_oak_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_OAK_LOG = VanillaTypes.block("minecraft:dark_oak_log");
 
     /**
      * {@code minecraft:dark_oak_planks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_OAK_PLANKS = VanillaTypes.block("minecraft:dark_oak_planks");
 
     /**
      * {@code minecraft:dark_oak_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_OAK_PRESSURE_PLATE = VanillaTypes.block("minecraft:dark_oak_pressure_plate");
 
     /**
      * {@code minecraft:dark_oak_sapling}: {@link BedrockStates#AGE_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_OAK_SAPLING = VanillaTypes.block("minecraft:dark_oak_sapling");
 
     /**
      * {@code minecraft:dark_oak_shelf}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#POWERED_BIT}, {@link BedrockStates#POWERED_SHELF_TYPE}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_OAK_SHELF = VanillaTypes.block("minecraft:dark_oak_shelf");
 
     /**
      * {@code minecraft:dark_oak_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_OAK_SLAB = VanillaTypes.block("minecraft:dark_oak_slab");
 
     /**
      * {@code minecraft:dark_oak_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_OAK_STAIRS = VanillaTypes.block("minecraft:dark_oak_stairs");
 
     /**
      * {@code minecraft:dark_oak_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_OAK_TRAPDOOR = VanillaTypes.block("minecraft:dark_oak_trapdoor");
 
     /**
      * {@code minecraft:dark_oak_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_OAK_WOOD = VanillaTypes.block("minecraft:dark_oak_wood");
 
     /**
      * {@code minecraft:dark_prismarine}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_PRISMARINE = VanillaTypes.block("minecraft:dark_prismarine");
 
     /**
      * {@code minecraft:dark_prismarine_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_PRISMARINE_DOUBLE_SLAB = VanillaTypes.block("minecraft:dark_prismarine_double_slab");
 
     /**
      * {@code minecraft:dark_prismarine_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_PRISMARINE_SLAB = VanillaTypes.block("minecraft:dark_prismarine_slab");
 
     /**
      * {@code minecraft:dark_prismarine_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DARK_PRISMARINE_STAIRS = VanillaTypes.block("minecraft:dark_prismarine_stairs");
 
     /**
      * {@code minecraft:daylight_detector}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DAYLIGHT_DETECTOR = VanillaTypes.block("minecraft:daylight_detector");
 
     /**
      * {@code minecraft:daylight_detector_inverted}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DAYLIGHT_DETECTOR_INVERTED = VanillaTypes.block("minecraft:daylight_detector_inverted");
 
     /**
      * {@code minecraft:deadbush}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEADBUSH = VanillaTypes.block("minecraft:deadbush");
 
     /**
      * {@code minecraft:dead_brain_coral}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_BRAIN_CORAL = VanillaTypes.block("minecraft:dead_brain_coral");
 
     /**
      * {@code minecraft:dead_brain_coral_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_BRAIN_CORAL_BLOCK = VanillaTypes.block("minecraft:dead_brain_coral_block");
 
     /**
      * {@code minecraft:dead_brain_coral_fan}: {@link BedrockStates#CORAL_FAN_DIRECTION}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_BRAIN_CORAL_FAN = VanillaTypes.block("minecraft:dead_brain_coral_fan");
 
     /**
      * {@code minecraft:dead_brain_coral_wall_fan}: {@link BedrockStates#CORAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_BRAIN_CORAL_WALL_FAN = VanillaTypes.block("minecraft:dead_brain_coral_wall_fan");
 
     /**
      * {@code minecraft:dead_bubble_coral}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_BUBBLE_CORAL = VanillaTypes.block("minecraft:dead_bubble_coral");
 
     /**
      * {@code minecraft:dead_bubble_coral_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_BUBBLE_CORAL_BLOCK = VanillaTypes.block("minecraft:dead_bubble_coral_block");
 
     /**
      * {@code minecraft:dead_bubble_coral_fan}: {@link BedrockStates#CORAL_FAN_DIRECTION}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_BUBBLE_CORAL_FAN = VanillaTypes.block("minecraft:dead_bubble_coral_fan");
 
     /**
      * {@code minecraft:dead_bubble_coral_wall_fan}: {@link BedrockStates#CORAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_BUBBLE_CORAL_WALL_FAN = VanillaTypes.block("minecraft:dead_bubble_coral_wall_fan");
 
     /**
      * {@code minecraft:dead_fire_coral}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_FIRE_CORAL = VanillaTypes.block("minecraft:dead_fire_coral");
 
     /**
      * {@code minecraft:dead_fire_coral_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_FIRE_CORAL_BLOCK = VanillaTypes.block("minecraft:dead_fire_coral_block");
 
     /**
      * {@code minecraft:dead_fire_coral_fan}: {@link BedrockStates#CORAL_FAN_DIRECTION}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_FIRE_CORAL_FAN = VanillaTypes.block("minecraft:dead_fire_coral_fan");
 
     /**
      * {@code minecraft:dead_fire_coral_wall_fan}: {@link BedrockStates#CORAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_FIRE_CORAL_WALL_FAN = VanillaTypes.block("minecraft:dead_fire_coral_wall_fan");
 
     /**
      * {@code minecraft:dead_horn_coral}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_HORN_CORAL = VanillaTypes.block("minecraft:dead_horn_coral");
 
     /**
      * {@code minecraft:dead_horn_coral_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_HORN_CORAL_BLOCK = VanillaTypes.block("minecraft:dead_horn_coral_block");
 
     /**
      * {@code minecraft:dead_horn_coral_fan}: {@link BedrockStates#CORAL_FAN_DIRECTION}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_HORN_CORAL_FAN = VanillaTypes.block("minecraft:dead_horn_coral_fan");
 
     /**
      * {@code minecraft:dead_horn_coral_wall_fan}: {@link BedrockStates#CORAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_HORN_CORAL_WALL_FAN = VanillaTypes.block("minecraft:dead_horn_coral_wall_fan");
 
     /**
      * {@code minecraft:dead_tube_coral}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_TUBE_CORAL = VanillaTypes.block("minecraft:dead_tube_coral");
 
     /**
      * {@code minecraft:dead_tube_coral_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_TUBE_CORAL_BLOCK = VanillaTypes.block("minecraft:dead_tube_coral_block");
 
     /**
      * {@code minecraft:dead_tube_coral_fan}: {@link BedrockStates#CORAL_FAN_DIRECTION}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_TUBE_CORAL_FAN = VanillaTypes.block("minecraft:dead_tube_coral_fan");
 
     /**
      * {@code minecraft:dead_tube_coral_wall_fan}: {@link BedrockStates#CORAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEAD_TUBE_CORAL_WALL_FAN = VanillaTypes.block("minecraft:dead_tube_coral_wall_fan");
 
     /**
      * {@code minecraft:decorated_pot}: {@link BedrockStates#DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DECORATED_POT = VanillaTypes.block("minecraft:decorated_pot");
 
     /**
      * {@code minecraft:deepslate}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE = VanillaTypes.block("minecraft:deepslate");
 
     /**
      * {@code minecraft:deepslate_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_BRICKS = VanillaTypes.block("minecraft:deepslate_bricks");
 
     /**
      * {@code minecraft:deepslate_brick_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_BRICK_DOUBLE_SLAB = VanillaTypes.block("minecraft:deepslate_brick_double_slab");
 
     /**
      * {@code minecraft:deepslate_brick_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_BRICK_SLAB = VanillaTypes.block("minecraft:deepslate_brick_slab");
 
     /**
      * {@code minecraft:deepslate_brick_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_BRICK_STAIRS = VanillaTypes.block("minecraft:deepslate_brick_stairs");
 
     /**
      * {@code minecraft:deepslate_brick_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_BRICK_WALL = VanillaTypes.block("minecraft:deepslate_brick_wall");
 
     /**
      * {@code minecraft:deepslate_coal_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_COAL_ORE = VanillaTypes.block("minecraft:deepslate_coal_ore");
 
     /**
      * {@code minecraft:deepslate_copper_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_COPPER_ORE = VanillaTypes.block("minecraft:deepslate_copper_ore");
 
     /**
      * {@code minecraft:deepslate_diamond_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_DIAMOND_ORE = VanillaTypes.block("minecraft:deepslate_diamond_ore");
 
     /**
      * {@code minecraft:deepslate_emerald_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_EMERALD_ORE = VanillaTypes.block("minecraft:deepslate_emerald_ore");
 
     /**
      * {@code minecraft:deepslate_gold_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_GOLD_ORE = VanillaTypes.block("minecraft:deepslate_gold_ore");
 
     /**
      * {@code minecraft:deepslate_iron_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_IRON_ORE = VanillaTypes.block("minecraft:deepslate_iron_ore");
 
     /**
      * {@code minecraft:deepslate_lapis_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_LAPIS_ORE = VanillaTypes.block("minecraft:deepslate_lapis_ore");
 
     /**
      * {@code minecraft:deepslate_redstone_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_REDSTONE_ORE = VanillaTypes.block("minecraft:deepslate_redstone_ore");
 
     /**
      * {@code minecraft:deepslate_tiles}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_TILES = VanillaTypes.block("minecraft:deepslate_tiles");
 
     /**
      * {@code minecraft:deepslate_tile_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_TILE_DOUBLE_SLAB = VanillaTypes.block("minecraft:deepslate_tile_double_slab");
 
     /**
      * {@code minecraft:deepslate_tile_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_TILE_SLAB = VanillaTypes.block("minecraft:deepslate_tile_slab");
 
     /**
      * {@code minecraft:deepslate_tile_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_TILE_STAIRS = VanillaTypes.block("minecraft:deepslate_tile_stairs");
 
     /**
      * {@code minecraft:deepslate_tile_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEEPSLATE_TILE_WALL = VanillaTypes.block("minecraft:deepslate_tile_wall");
 
     /**
      * {@code minecraft:deny}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DENY = VanillaTypes.block("minecraft:deny");
 
     /**
      * {@code minecraft:deprecated_anvil}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEPRECATED_ANVIL = VanillaTypes.block("minecraft:deprecated_anvil");
 
     /**
      * {@code minecraft:deprecated_purpur_block_1}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEPRECATED_PURPUR_BLOCK_1 = VanillaTypes.block("minecraft:deprecated_purpur_block_1");
 
     /**
      * {@code minecraft:deprecated_purpur_block_2}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DEPRECATED_PURPUR_BLOCK_2 = VanillaTypes.block("minecraft:deprecated_purpur_block_2");
 
     /**
      * {@code minecraft:detector_rail}: {@link BedrockStates#RAIL_DATA_BIT}, {@link BedrockStates#RAIL_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DETECTOR_RAIL = VanillaTypes.block("minecraft:detector_rail");
 
     /**
      * {@code minecraft:diamond_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DIAMOND_BLOCK = VanillaTypes.block("minecraft:diamond_block");
 
     /**
      * {@code minecraft:diamond_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DIAMOND_ORE = VanillaTypes.block("minecraft:diamond_ore");
 
     /**
      * {@code minecraft:diorite}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DIORITE = VanillaTypes.block("minecraft:diorite");
 
     /**
      * {@code minecraft:diorite_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DIORITE_DOUBLE_SLAB = VanillaTypes.block("minecraft:diorite_double_slab");
 
     /**
      * {@code minecraft:diorite_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DIORITE_SLAB = VanillaTypes.block("minecraft:diorite_slab");
 
     /**
      * {@code minecraft:diorite_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DIORITE_STAIRS = VanillaTypes.block("minecraft:diorite_stairs");
 
     /**
      * {@code minecraft:diorite_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DIORITE_WALL = VanillaTypes.block("minecraft:diorite_wall");
 
     /**
      * {@code minecraft:dirt}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DIRT = VanillaTypes.block("minecraft:dirt");
 
     /**
      * {@code minecraft:dirt_with_roots}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DIRT_WITH_ROOTS = VanillaTypes.block("minecraft:dirt_with_roots");
 
     /**
      * {@code minecraft:disc_press}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.60
      */
     public static final BedrockBlockType DISC_PRESS = VanillaTypes.block("minecraft:disc_press");
 
     /**
      * {@code minecraft:dispenser}: {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#TRIGGERED_BIT}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DISPENSER = VanillaTypes.block("minecraft:dispenser");
 
     /**
      * {@code minecraft:double_cut_copper_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DOUBLE_CUT_COPPER_SLAB = VanillaTypes.block("minecraft:double_cut_copper_slab");
 
     /**
      * {@code minecraft:dragon_egg}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DRAGON_EGG = VanillaTypes.block("minecraft:dragon_egg");
 
     /**
      * {@code minecraft:dragon_head}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DRAGON_HEAD = VanillaTypes.block("minecraft:dragon_head");
 
     /**
      * {@code minecraft:dried_ghast}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#REHYDRATION_LEVEL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DRIED_GHAST = VanillaTypes.block("minecraft:dried_ghast");
 
     /**
      * {@code minecraft:dried_kelp_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DRIED_KELP_BLOCK = VanillaTypes.block("minecraft:dried_kelp_block");
 
     /**
      * {@code minecraft:dripstone_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DRIPSTONE_BLOCK = VanillaTypes.block("minecraft:dripstone_block");
 
     /**
      * {@code minecraft:dropper}: {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#TRIGGERED_BIT}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType DROPPER = VanillaTypes.block("minecraft:dropper");
 
     /**
      * {@code minecraft:element_0}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_0 = VanillaTypes.block("minecraft:element_0");
+    @Education
+    public static final BedrockBlockType ELEMENT_0 = VanillaTypes.educationBlock("minecraft:element_0");
 
     /**
      * {@code minecraft:element_1}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_1 = VanillaTypes.block("minecraft:element_1");
+    @Education
+    public static final BedrockBlockType ELEMENT_1 = VanillaTypes.educationBlock("minecraft:element_1");
 
     /**
      * {@code minecraft:element_10}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_10 = VanillaTypes.block("minecraft:element_10");
+    @Education
+    public static final BedrockBlockType ELEMENT_10 = VanillaTypes.educationBlock("minecraft:element_10");
 
     /**
      * {@code minecraft:element_100}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_100 = VanillaTypes.block("minecraft:element_100");
+    @Education
+    public static final BedrockBlockType ELEMENT_100 = VanillaTypes.educationBlock("minecraft:element_100");
 
     /**
      * {@code minecraft:element_101}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_101 = VanillaTypes.block("minecraft:element_101");
+    @Education
+    public static final BedrockBlockType ELEMENT_101 = VanillaTypes.educationBlock("minecraft:element_101");
 
     /**
      * {@code minecraft:element_102}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_102 = VanillaTypes.block("minecraft:element_102");
+    @Education
+    public static final BedrockBlockType ELEMENT_102 = VanillaTypes.educationBlock("minecraft:element_102");
 
     /**
      * {@code minecraft:element_103}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_103 = VanillaTypes.block("minecraft:element_103");
+    @Education
+    public static final BedrockBlockType ELEMENT_103 = VanillaTypes.educationBlock("minecraft:element_103");
 
     /**
      * {@code minecraft:element_104}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_104 = VanillaTypes.block("minecraft:element_104");
+    @Education
+    public static final BedrockBlockType ELEMENT_104 = VanillaTypes.educationBlock("minecraft:element_104");
 
     /**
      * {@code minecraft:element_105}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_105 = VanillaTypes.block("minecraft:element_105");
+    @Education
+    public static final BedrockBlockType ELEMENT_105 = VanillaTypes.educationBlock("minecraft:element_105");
 
     /**
      * {@code minecraft:element_106}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_106 = VanillaTypes.block("minecraft:element_106");
+    @Education
+    public static final BedrockBlockType ELEMENT_106 = VanillaTypes.educationBlock("minecraft:element_106");
 
     /**
      * {@code minecraft:element_107}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_107 = VanillaTypes.block("minecraft:element_107");
+    @Education
+    public static final BedrockBlockType ELEMENT_107 = VanillaTypes.educationBlock("minecraft:element_107");
 
     /**
      * {@code minecraft:element_108}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_108 = VanillaTypes.block("minecraft:element_108");
+    @Education
+    public static final BedrockBlockType ELEMENT_108 = VanillaTypes.educationBlock("minecraft:element_108");
 
     /**
      * {@code minecraft:element_109}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_109 = VanillaTypes.block("minecraft:element_109");
+    @Education
+    public static final BedrockBlockType ELEMENT_109 = VanillaTypes.educationBlock("minecraft:element_109");
 
     /**
      * {@code minecraft:element_11}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_11 = VanillaTypes.block("minecraft:element_11");
+    @Education
+    public static final BedrockBlockType ELEMENT_11 = VanillaTypes.educationBlock("minecraft:element_11");
 
     /**
      * {@code minecraft:element_110}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_110 = VanillaTypes.block("minecraft:element_110");
+    @Education
+    public static final BedrockBlockType ELEMENT_110 = VanillaTypes.educationBlock("minecraft:element_110");
 
     /**
      * {@code minecraft:element_111}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_111 = VanillaTypes.block("minecraft:element_111");
+    @Education
+    public static final BedrockBlockType ELEMENT_111 = VanillaTypes.educationBlock("minecraft:element_111");
 
     /**
      * {@code minecraft:element_112}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_112 = VanillaTypes.block("minecraft:element_112");
+    @Education
+    public static final BedrockBlockType ELEMENT_112 = VanillaTypes.educationBlock("minecraft:element_112");
 
     /**
      * {@code minecraft:element_113}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_113 = VanillaTypes.block("minecraft:element_113");
+    @Education
+    public static final BedrockBlockType ELEMENT_113 = VanillaTypes.educationBlock("minecraft:element_113");
 
     /**
      * {@code minecraft:element_114}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_114 = VanillaTypes.block("minecraft:element_114");
+    @Education
+    public static final BedrockBlockType ELEMENT_114 = VanillaTypes.educationBlock("minecraft:element_114");
 
     /**
      * {@code minecraft:element_115}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_115 = VanillaTypes.block("minecraft:element_115");
+    @Education
+    public static final BedrockBlockType ELEMENT_115 = VanillaTypes.educationBlock("minecraft:element_115");
 
     /**
      * {@code minecraft:element_116}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_116 = VanillaTypes.block("minecraft:element_116");
+    @Education
+    public static final BedrockBlockType ELEMENT_116 = VanillaTypes.educationBlock("minecraft:element_116");
 
     /**
      * {@code minecraft:element_117}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_117 = VanillaTypes.block("minecraft:element_117");
+    @Education
+    public static final BedrockBlockType ELEMENT_117 = VanillaTypes.educationBlock("minecraft:element_117");
 
     /**
      * {@code minecraft:element_118}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_118 = VanillaTypes.block("minecraft:element_118");
+    @Education
+    public static final BedrockBlockType ELEMENT_118 = VanillaTypes.educationBlock("minecraft:element_118");
 
     /**
      * {@code minecraft:element_12}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_12 = VanillaTypes.block("minecraft:element_12");
+    @Education
+    public static final BedrockBlockType ELEMENT_12 = VanillaTypes.educationBlock("minecraft:element_12");
 
     /**
      * {@code minecraft:element_13}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_13 = VanillaTypes.block("minecraft:element_13");
+    @Education
+    public static final BedrockBlockType ELEMENT_13 = VanillaTypes.educationBlock("minecraft:element_13");
 
     /**
      * {@code minecraft:element_14}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_14 = VanillaTypes.block("minecraft:element_14");
+    @Education
+    public static final BedrockBlockType ELEMENT_14 = VanillaTypes.educationBlock("minecraft:element_14");
 
     /**
      * {@code minecraft:element_15}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_15 = VanillaTypes.block("minecraft:element_15");
+    @Education
+    public static final BedrockBlockType ELEMENT_15 = VanillaTypes.educationBlock("minecraft:element_15");
 
     /**
      * {@code minecraft:element_16}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_16 = VanillaTypes.block("minecraft:element_16");
+    @Education
+    public static final BedrockBlockType ELEMENT_16 = VanillaTypes.educationBlock("minecraft:element_16");
 
     /**
      * {@code minecraft:element_17}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_17 = VanillaTypes.block("minecraft:element_17");
+    @Education
+    public static final BedrockBlockType ELEMENT_17 = VanillaTypes.educationBlock("minecraft:element_17");
 
     /**
      * {@code minecraft:element_18}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_18 = VanillaTypes.block("minecraft:element_18");
+    @Education
+    public static final BedrockBlockType ELEMENT_18 = VanillaTypes.educationBlock("minecraft:element_18");
 
     /**
      * {@code minecraft:element_19}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_19 = VanillaTypes.block("minecraft:element_19");
+    @Education
+    public static final BedrockBlockType ELEMENT_19 = VanillaTypes.educationBlock("minecraft:element_19");
 
     /**
      * {@code minecraft:element_2}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_2 = VanillaTypes.block("minecraft:element_2");
+    @Education
+    public static final BedrockBlockType ELEMENT_2 = VanillaTypes.educationBlock("minecraft:element_2");
 
     /**
      * {@code minecraft:element_20}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_20 = VanillaTypes.block("minecraft:element_20");
+    @Education
+    public static final BedrockBlockType ELEMENT_20 = VanillaTypes.educationBlock("minecraft:element_20");
 
     /**
      * {@code minecraft:element_21}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_21 = VanillaTypes.block("minecraft:element_21");
+    @Education
+    public static final BedrockBlockType ELEMENT_21 = VanillaTypes.educationBlock("minecraft:element_21");
 
     /**
      * {@code minecraft:element_22}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_22 = VanillaTypes.block("minecraft:element_22");
+    @Education
+    public static final BedrockBlockType ELEMENT_22 = VanillaTypes.educationBlock("minecraft:element_22");
 
     /**
      * {@code minecraft:element_23}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_23 = VanillaTypes.block("minecraft:element_23");
+    @Education
+    public static final BedrockBlockType ELEMENT_23 = VanillaTypes.educationBlock("minecraft:element_23");
 
     /**
      * {@code minecraft:element_24}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_24 = VanillaTypes.block("minecraft:element_24");
+    @Education
+    public static final BedrockBlockType ELEMENT_24 = VanillaTypes.educationBlock("minecraft:element_24");
 
     /**
      * {@code minecraft:element_25}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_25 = VanillaTypes.block("minecraft:element_25");
+    @Education
+    public static final BedrockBlockType ELEMENT_25 = VanillaTypes.educationBlock("minecraft:element_25");
 
     /**
      * {@code minecraft:element_26}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_26 = VanillaTypes.block("minecraft:element_26");
+    @Education
+    public static final BedrockBlockType ELEMENT_26 = VanillaTypes.educationBlock("minecraft:element_26");
 
     /**
      * {@code minecraft:element_27}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_27 = VanillaTypes.block("minecraft:element_27");
+    @Education
+    public static final BedrockBlockType ELEMENT_27 = VanillaTypes.educationBlock("minecraft:element_27");
 
     /**
      * {@code minecraft:element_28}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_28 = VanillaTypes.block("minecraft:element_28");
+    @Education
+    public static final BedrockBlockType ELEMENT_28 = VanillaTypes.educationBlock("minecraft:element_28");
 
     /**
      * {@code minecraft:element_29}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_29 = VanillaTypes.block("minecraft:element_29");
+    @Education
+    public static final BedrockBlockType ELEMENT_29 = VanillaTypes.educationBlock("minecraft:element_29");
 
     /**
      * {@code minecraft:element_3}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_3 = VanillaTypes.block("minecraft:element_3");
+    @Education
+    public static final BedrockBlockType ELEMENT_3 = VanillaTypes.educationBlock("minecraft:element_3");
 
     /**
      * {@code minecraft:element_30}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_30 = VanillaTypes.block("minecraft:element_30");
+    @Education
+    public static final BedrockBlockType ELEMENT_30 = VanillaTypes.educationBlock("minecraft:element_30");
 
     /**
      * {@code minecraft:element_31}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_31 = VanillaTypes.block("minecraft:element_31");
+    @Education
+    public static final BedrockBlockType ELEMENT_31 = VanillaTypes.educationBlock("minecraft:element_31");
 
     /**
      * {@code minecraft:element_32}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_32 = VanillaTypes.block("minecraft:element_32");
+    @Education
+    public static final BedrockBlockType ELEMENT_32 = VanillaTypes.educationBlock("minecraft:element_32");
 
     /**
      * {@code minecraft:element_33}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_33 = VanillaTypes.block("minecraft:element_33");
+    @Education
+    public static final BedrockBlockType ELEMENT_33 = VanillaTypes.educationBlock("minecraft:element_33");
 
     /**
      * {@code minecraft:element_34}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_34 = VanillaTypes.block("minecraft:element_34");
+    @Education
+    public static final BedrockBlockType ELEMENT_34 = VanillaTypes.educationBlock("minecraft:element_34");
 
     /**
      * {@code minecraft:element_35}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_35 = VanillaTypes.block("minecraft:element_35");
+    @Education
+    public static final BedrockBlockType ELEMENT_35 = VanillaTypes.educationBlock("minecraft:element_35");
 
     /**
      * {@code minecraft:element_36}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_36 = VanillaTypes.block("minecraft:element_36");
+    @Education
+    public static final BedrockBlockType ELEMENT_36 = VanillaTypes.educationBlock("minecraft:element_36");
 
     /**
      * {@code minecraft:element_37}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_37 = VanillaTypes.block("minecraft:element_37");
+    @Education
+    public static final BedrockBlockType ELEMENT_37 = VanillaTypes.educationBlock("minecraft:element_37");
 
     /**
      * {@code minecraft:element_38}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_38 = VanillaTypes.block("minecraft:element_38");
+    @Education
+    public static final BedrockBlockType ELEMENT_38 = VanillaTypes.educationBlock("minecraft:element_38");
 
     /**
      * {@code minecraft:element_39}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_39 = VanillaTypes.block("minecraft:element_39");
+    @Education
+    public static final BedrockBlockType ELEMENT_39 = VanillaTypes.educationBlock("minecraft:element_39");
 
     /**
      * {@code minecraft:element_4}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_4 = VanillaTypes.block("minecraft:element_4");
+    @Education
+    public static final BedrockBlockType ELEMENT_4 = VanillaTypes.educationBlock("minecraft:element_4");
 
     /**
      * {@code minecraft:element_40}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_40 = VanillaTypes.block("minecraft:element_40");
+    @Education
+    public static final BedrockBlockType ELEMENT_40 = VanillaTypes.educationBlock("minecraft:element_40");
 
     /**
      * {@code minecraft:element_41}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_41 = VanillaTypes.block("minecraft:element_41");
+    @Education
+    public static final BedrockBlockType ELEMENT_41 = VanillaTypes.educationBlock("minecraft:element_41");
 
     /**
      * {@code minecraft:element_42}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_42 = VanillaTypes.block("minecraft:element_42");
+    @Education
+    public static final BedrockBlockType ELEMENT_42 = VanillaTypes.educationBlock("minecraft:element_42");
 
     /**
      * {@code minecraft:element_43}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_43 = VanillaTypes.block("minecraft:element_43");
+    @Education
+    public static final BedrockBlockType ELEMENT_43 = VanillaTypes.educationBlock("minecraft:element_43");
 
     /**
      * {@code minecraft:element_44}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_44 = VanillaTypes.block("minecraft:element_44");
+    @Education
+    public static final BedrockBlockType ELEMENT_44 = VanillaTypes.educationBlock("minecraft:element_44");
 
     /**
      * {@code minecraft:element_45}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_45 = VanillaTypes.block("minecraft:element_45");
+    @Education
+    public static final BedrockBlockType ELEMENT_45 = VanillaTypes.educationBlock("minecraft:element_45");
 
     /**
      * {@code minecraft:element_46}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_46 = VanillaTypes.block("minecraft:element_46");
+    @Education
+    public static final BedrockBlockType ELEMENT_46 = VanillaTypes.educationBlock("minecraft:element_46");
 
     /**
      * {@code minecraft:element_47}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_47 = VanillaTypes.block("minecraft:element_47");
+    @Education
+    public static final BedrockBlockType ELEMENT_47 = VanillaTypes.educationBlock("minecraft:element_47");
 
     /**
      * {@code minecraft:element_48}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_48 = VanillaTypes.block("minecraft:element_48");
+    @Education
+    public static final BedrockBlockType ELEMENT_48 = VanillaTypes.educationBlock("minecraft:element_48");
 
     /**
      * {@code minecraft:element_49}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_49 = VanillaTypes.block("minecraft:element_49");
+    @Education
+    public static final BedrockBlockType ELEMENT_49 = VanillaTypes.educationBlock("minecraft:element_49");
 
     /**
      * {@code minecraft:element_5}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_5 = VanillaTypes.block("minecraft:element_5");
+    @Education
+    public static final BedrockBlockType ELEMENT_5 = VanillaTypes.educationBlock("minecraft:element_5");
 
     /**
      * {@code minecraft:element_50}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_50 = VanillaTypes.block("minecraft:element_50");
+    @Education
+    public static final BedrockBlockType ELEMENT_50 = VanillaTypes.educationBlock("minecraft:element_50");
 
     /**
      * {@code minecraft:element_51}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_51 = VanillaTypes.block("minecraft:element_51");
+    @Education
+    public static final BedrockBlockType ELEMENT_51 = VanillaTypes.educationBlock("minecraft:element_51");
 
     /**
      * {@code minecraft:element_52}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_52 = VanillaTypes.block("minecraft:element_52");
+    @Education
+    public static final BedrockBlockType ELEMENT_52 = VanillaTypes.educationBlock("minecraft:element_52");
 
     /**
      * {@code minecraft:element_53}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_53 = VanillaTypes.block("minecraft:element_53");
+    @Education
+    public static final BedrockBlockType ELEMENT_53 = VanillaTypes.educationBlock("minecraft:element_53");
 
     /**
      * {@code minecraft:element_54}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_54 = VanillaTypes.block("minecraft:element_54");
+    @Education
+    public static final BedrockBlockType ELEMENT_54 = VanillaTypes.educationBlock("minecraft:element_54");
 
     /**
      * {@code minecraft:element_55}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_55 = VanillaTypes.block("minecraft:element_55");
+    @Education
+    public static final BedrockBlockType ELEMENT_55 = VanillaTypes.educationBlock("minecraft:element_55");
 
     /**
      * {@code minecraft:element_56}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_56 = VanillaTypes.block("minecraft:element_56");
+    @Education
+    public static final BedrockBlockType ELEMENT_56 = VanillaTypes.educationBlock("minecraft:element_56");
 
     /**
      * {@code minecraft:element_57}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_57 = VanillaTypes.block("minecraft:element_57");
+    @Education
+    public static final BedrockBlockType ELEMENT_57 = VanillaTypes.educationBlock("minecraft:element_57");
 
     /**
      * {@code minecraft:element_58}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_58 = VanillaTypes.block("minecraft:element_58");
+    @Education
+    public static final BedrockBlockType ELEMENT_58 = VanillaTypes.educationBlock("minecraft:element_58");
 
     /**
      * {@code minecraft:element_59}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_59 = VanillaTypes.block("minecraft:element_59");
+    @Education
+    public static final BedrockBlockType ELEMENT_59 = VanillaTypes.educationBlock("minecraft:element_59");
 
     /**
      * {@code minecraft:element_6}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_6 = VanillaTypes.block("minecraft:element_6");
+    @Education
+    public static final BedrockBlockType ELEMENT_6 = VanillaTypes.educationBlock("minecraft:element_6");
 
     /**
      * {@code minecraft:element_60}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_60 = VanillaTypes.block("minecraft:element_60");
+    @Education
+    public static final BedrockBlockType ELEMENT_60 = VanillaTypes.educationBlock("minecraft:element_60");
 
     /**
      * {@code minecraft:element_61}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_61 = VanillaTypes.block("minecraft:element_61");
+    @Education
+    public static final BedrockBlockType ELEMENT_61 = VanillaTypes.educationBlock("minecraft:element_61");
 
     /**
      * {@code minecraft:element_62}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_62 = VanillaTypes.block("minecraft:element_62");
+    @Education
+    public static final BedrockBlockType ELEMENT_62 = VanillaTypes.educationBlock("minecraft:element_62");
 
     /**
      * {@code minecraft:element_63}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_63 = VanillaTypes.block("minecraft:element_63");
+    @Education
+    public static final BedrockBlockType ELEMENT_63 = VanillaTypes.educationBlock("minecraft:element_63");
 
     /**
      * {@code minecraft:element_64}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_64 = VanillaTypes.block("minecraft:element_64");
+    @Education
+    public static final BedrockBlockType ELEMENT_64 = VanillaTypes.educationBlock("minecraft:element_64");
 
     /**
      * {@code minecraft:element_65}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_65 = VanillaTypes.block("minecraft:element_65");
+    @Education
+    public static final BedrockBlockType ELEMENT_65 = VanillaTypes.educationBlock("minecraft:element_65");
 
     /**
      * {@code minecraft:element_66}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_66 = VanillaTypes.block("minecraft:element_66");
+    @Education
+    public static final BedrockBlockType ELEMENT_66 = VanillaTypes.educationBlock("minecraft:element_66");
 
     /**
      * {@code minecraft:element_67}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_67 = VanillaTypes.block("minecraft:element_67");
+    @Education
+    public static final BedrockBlockType ELEMENT_67 = VanillaTypes.educationBlock("minecraft:element_67");
 
     /**
      * {@code minecraft:element_68}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_68 = VanillaTypes.block("minecraft:element_68");
+    @Education
+    public static final BedrockBlockType ELEMENT_68 = VanillaTypes.educationBlock("minecraft:element_68");
 
     /**
      * {@code minecraft:element_69}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_69 = VanillaTypes.block("minecraft:element_69");
+    @Education
+    public static final BedrockBlockType ELEMENT_69 = VanillaTypes.educationBlock("minecraft:element_69");
 
     /**
      * {@code minecraft:element_7}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_7 = VanillaTypes.block("minecraft:element_7");
+    @Education
+    public static final BedrockBlockType ELEMENT_7 = VanillaTypes.educationBlock("minecraft:element_7");
 
     /**
      * {@code minecraft:element_70}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_70 = VanillaTypes.block("minecraft:element_70");
+    @Education
+    public static final BedrockBlockType ELEMENT_70 = VanillaTypes.educationBlock("minecraft:element_70");
 
     /**
      * {@code minecraft:element_71}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_71 = VanillaTypes.block("minecraft:element_71");
+    @Education
+    public static final BedrockBlockType ELEMENT_71 = VanillaTypes.educationBlock("minecraft:element_71");
 
     /**
      * {@code minecraft:element_72}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_72 = VanillaTypes.block("minecraft:element_72");
+    @Education
+    public static final BedrockBlockType ELEMENT_72 = VanillaTypes.educationBlock("minecraft:element_72");
 
     /**
      * {@code minecraft:element_73}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_73 = VanillaTypes.block("minecraft:element_73");
+    @Education
+    public static final BedrockBlockType ELEMENT_73 = VanillaTypes.educationBlock("minecraft:element_73");
 
     /**
      * {@code minecraft:element_74}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_74 = VanillaTypes.block("minecraft:element_74");
+    @Education
+    public static final BedrockBlockType ELEMENT_74 = VanillaTypes.educationBlock("minecraft:element_74");
 
     /**
      * {@code minecraft:element_75}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_75 = VanillaTypes.block("minecraft:element_75");
+    @Education
+    public static final BedrockBlockType ELEMENT_75 = VanillaTypes.educationBlock("minecraft:element_75");
 
     /**
      * {@code minecraft:element_76}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_76 = VanillaTypes.block("minecraft:element_76");
+    @Education
+    public static final BedrockBlockType ELEMENT_76 = VanillaTypes.educationBlock("minecraft:element_76");
 
     /**
      * {@code minecraft:element_77}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_77 = VanillaTypes.block("minecraft:element_77");
+    @Education
+    public static final BedrockBlockType ELEMENT_77 = VanillaTypes.educationBlock("minecraft:element_77");
 
     /**
      * {@code minecraft:element_78}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_78 = VanillaTypes.block("minecraft:element_78");
+    @Education
+    public static final BedrockBlockType ELEMENT_78 = VanillaTypes.educationBlock("minecraft:element_78");
 
     /**
      * {@code minecraft:element_79}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_79 = VanillaTypes.block("minecraft:element_79");
+    @Education
+    public static final BedrockBlockType ELEMENT_79 = VanillaTypes.educationBlock("minecraft:element_79");
 
     /**
      * {@code minecraft:element_8}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_8 = VanillaTypes.block("minecraft:element_8");
+    @Education
+    public static final BedrockBlockType ELEMENT_8 = VanillaTypes.educationBlock("minecraft:element_8");
 
     /**
      * {@code minecraft:element_80}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_80 = VanillaTypes.block("minecraft:element_80");
+    @Education
+    public static final BedrockBlockType ELEMENT_80 = VanillaTypes.educationBlock("minecraft:element_80");
 
     /**
      * {@code minecraft:element_81}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_81 = VanillaTypes.block("minecraft:element_81");
+    @Education
+    public static final BedrockBlockType ELEMENT_81 = VanillaTypes.educationBlock("minecraft:element_81");
 
     /**
      * {@code minecraft:element_82}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_82 = VanillaTypes.block("minecraft:element_82");
+    @Education
+    public static final BedrockBlockType ELEMENT_82 = VanillaTypes.educationBlock("minecraft:element_82");
 
     /**
      * {@code minecraft:element_83}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_83 = VanillaTypes.block("minecraft:element_83");
+    @Education
+    public static final BedrockBlockType ELEMENT_83 = VanillaTypes.educationBlock("minecraft:element_83");
 
     /**
      * {@code minecraft:element_84}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_84 = VanillaTypes.block("minecraft:element_84");
+    @Education
+    public static final BedrockBlockType ELEMENT_84 = VanillaTypes.educationBlock("minecraft:element_84");
 
     /**
      * {@code minecraft:element_85}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_85 = VanillaTypes.block("minecraft:element_85");
+    @Education
+    public static final BedrockBlockType ELEMENT_85 = VanillaTypes.educationBlock("minecraft:element_85");
 
     /**
      * {@code minecraft:element_86}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_86 = VanillaTypes.block("minecraft:element_86");
+    @Education
+    public static final BedrockBlockType ELEMENT_86 = VanillaTypes.educationBlock("minecraft:element_86");
 
     /**
      * {@code minecraft:element_87}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_87 = VanillaTypes.block("minecraft:element_87");
+    @Education
+    public static final BedrockBlockType ELEMENT_87 = VanillaTypes.educationBlock("minecraft:element_87");
 
     /**
      * {@code minecraft:element_88}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_88 = VanillaTypes.block("minecraft:element_88");
+    @Education
+    public static final BedrockBlockType ELEMENT_88 = VanillaTypes.educationBlock("minecraft:element_88");
 
     /**
      * {@code minecraft:element_89}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_89 = VanillaTypes.block("minecraft:element_89");
+    @Education
+    public static final BedrockBlockType ELEMENT_89 = VanillaTypes.educationBlock("minecraft:element_89");
 
     /**
      * {@code minecraft:element_9}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_9 = VanillaTypes.block("minecraft:element_9");
+    @Education
+    public static final BedrockBlockType ELEMENT_9 = VanillaTypes.educationBlock("minecraft:element_9");
 
     /**
      * {@code minecraft:element_90}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_90 = VanillaTypes.block("minecraft:element_90");
+    @Education
+    public static final BedrockBlockType ELEMENT_90 = VanillaTypes.educationBlock("minecraft:element_90");
 
     /**
      * {@code minecraft:element_91}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_91 = VanillaTypes.block("minecraft:element_91");
+    @Education
+    public static final BedrockBlockType ELEMENT_91 = VanillaTypes.educationBlock("minecraft:element_91");
 
     /**
      * {@code minecraft:element_92}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_92 = VanillaTypes.block("minecraft:element_92");
+    @Education
+    public static final BedrockBlockType ELEMENT_92 = VanillaTypes.educationBlock("minecraft:element_92");
 
     /**
      * {@code minecraft:element_93}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_93 = VanillaTypes.block("minecraft:element_93");
+    @Education
+    public static final BedrockBlockType ELEMENT_93 = VanillaTypes.educationBlock("minecraft:element_93");
 
     /**
      * {@code minecraft:element_94}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_94 = VanillaTypes.block("minecraft:element_94");
+    @Education
+    public static final BedrockBlockType ELEMENT_94 = VanillaTypes.educationBlock("minecraft:element_94");
 
     /**
      * {@code minecraft:element_95}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_95 = VanillaTypes.block("minecraft:element_95");
+    @Education
+    public static final BedrockBlockType ELEMENT_95 = VanillaTypes.educationBlock("minecraft:element_95");
 
     /**
      * {@code minecraft:element_96}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_96 = VanillaTypes.block("minecraft:element_96");
+    @Education
+    public static final BedrockBlockType ELEMENT_96 = VanillaTypes.educationBlock("minecraft:element_96");
 
     /**
      * {@code minecraft:element_97}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_97 = VanillaTypes.block("minecraft:element_97");
+    @Education
+    public static final BedrockBlockType ELEMENT_97 = VanillaTypes.educationBlock("minecraft:element_97");
 
     /**
      * {@code minecraft:element_98}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_98 = VanillaTypes.block("minecraft:element_98");
+    @Education
+    public static final BedrockBlockType ELEMENT_98 = VanillaTypes.educationBlock("minecraft:element_98");
 
     /**
      * {@code minecraft:element_99}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_99 = VanillaTypes.block("minecraft:element_99");
+    @Education
+    public static final BedrockBlockType ELEMENT_99 = VanillaTypes.educationBlock("minecraft:element_99");
 
     /**
      * {@code minecraft:element_constructor}: {@link BedrockStates#DIRECTION}; 4 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType ELEMENT_CONSTRUCTOR = VanillaTypes.block("minecraft:element_constructor");
+    @Education
+    public static final BedrockBlockType ELEMENT_CONSTRUCTOR = VanillaTypes.educationBlock("minecraft:element_constructor");
 
     /**
      * {@code minecraft:emerald_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EMERALD_BLOCK = VanillaTypes.block("minecraft:emerald_block");
 
     /**
      * {@code minecraft:emerald_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EMERALD_ORE = VanillaTypes.block("minecraft:emerald_ore");
 
     /**
      * {@code minecraft:enchanting_table}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ENCHANTING_TABLE = VanillaTypes.block("minecraft:enchanting_table");
 
     /**
      * {@code minecraft:ender_chest}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ENDER_CHEST = VanillaTypes.block("minecraft:ender_chest");
 
     /**
      * {@code minecraft:end_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType END_BRICKS = VanillaTypes.block("minecraft:end_bricks");
 
     /**
      * {@code minecraft:end_brick_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType END_BRICK_STAIRS = VanillaTypes.block("minecraft:end_brick_stairs");
 
     /**
      * {@code minecraft:end_gateway}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType END_GATEWAY = VanillaTypes.block("minecraft:end_gateway");
 
     /**
      * {@code minecraft:end_portal}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType END_PORTAL = VanillaTypes.block("minecraft:end_portal");
 
     /**
      * {@code minecraft:end_portal_frame}: {@link BedrockStates#END_PORTAL_EYE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType END_PORTAL_FRAME = VanillaTypes.block("minecraft:end_portal_frame");
 
     /**
      * {@code minecraft:end_rod}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType END_ROD = VanillaTypes.block("minecraft:end_rod");
 
     /**
      * {@code minecraft:end_stone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType END_STONE = VanillaTypes.block("minecraft:end_stone");
 
     /**
      * {@code minecraft:end_stone_brick_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType END_STONE_BRICK_DOUBLE_SLAB = VanillaTypes.block("minecraft:end_stone_brick_double_slab");
 
     /**
      * {@code minecraft:end_stone_brick_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType END_STONE_BRICK_SLAB = VanillaTypes.block("minecraft:end_stone_brick_slab");
 
     /**
      * {@code minecraft:end_stone_brick_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType END_STONE_BRICK_WALL = VanillaTypes.block("minecraft:end_stone_brick_wall");
 
     /**
      * {@code minecraft:exposed_chiseled_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EXPOSED_CHISELED_COPPER = VanillaTypes.block("minecraft:exposed_chiseled_copper");
 
     /**
      * {@code minecraft:exposed_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EXPOSED_COPPER = VanillaTypes.block("minecraft:exposed_copper");
 
     /**
      * {@code minecraft:exposed_copper_bars}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EXPOSED_COPPER_BARS = VanillaTypes.block("minecraft:exposed_copper_bars");
 
     /**
      * {@code minecraft:exposed_copper_bulb}: {@link BedrockStates#LIT}, {@link BedrockStates#POWERED_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EXPOSED_COPPER_BULB = VanillaTypes.block("minecraft:exposed_copper_bulb");
 
     /**
      * {@code minecraft:exposed_copper_chain}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EXPOSED_COPPER_CHAIN = VanillaTypes.block("minecraft:exposed_copper_chain");
 
     /**
      * {@code minecraft:exposed_copper_chest}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EXPOSED_COPPER_CHEST = VanillaTypes.block("minecraft:exposed_copper_chest");
 
     /**
      * {@code minecraft:exposed_copper_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EXPOSED_COPPER_DOOR = VanillaTypes.block("minecraft:exposed_copper_door");
 
     /**
      * {@code minecraft:exposed_copper_golem_statue}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EXPOSED_COPPER_GOLEM_STATUE = VanillaTypes.block("minecraft:exposed_copper_golem_statue");
 
     /**
      * {@code minecraft:exposed_copper_grate}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EXPOSED_COPPER_GRATE = VanillaTypes.block("minecraft:exposed_copper_grate");
 
     /**
      * {@code minecraft:exposed_copper_lantern}: {@link BedrockStates#HANGING}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EXPOSED_COPPER_LANTERN = VanillaTypes.block("minecraft:exposed_copper_lantern");
 
     /**
      * {@code minecraft:exposed_copper_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EXPOSED_COPPER_TRAPDOOR = VanillaTypes.block("minecraft:exposed_copper_trapdoor");
 
     /**
      * {@code minecraft:exposed_cut_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EXPOSED_CUT_COPPER = VanillaTypes.block("minecraft:exposed_cut_copper");
 
     /**
      * {@code minecraft:exposed_cut_copper_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EXPOSED_CUT_COPPER_SLAB = VanillaTypes.block("minecraft:exposed_cut_copper_slab");
 
     /**
      * {@code minecraft:exposed_cut_copper_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EXPOSED_CUT_COPPER_STAIRS = VanillaTypes.block("minecraft:exposed_cut_copper_stairs");
 
     /**
      * {@code minecraft:exposed_double_cut_copper_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EXPOSED_DOUBLE_CUT_COPPER_SLAB = VanillaTypes.block("minecraft:exposed_double_cut_copper_slab");
 
     /**
      * {@code minecraft:exposed_lightning_rod}: {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#POWERED_BIT}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType EXPOSED_LIGHTNING_ROD = VanillaTypes.block("minecraft:exposed_lightning_rod");
 
     /**
      * {@code minecraft:farmland}: {@link BedrockStates#MOISTURIZED_AMOUNT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FARMLAND = VanillaTypes.block("minecraft:farmland");
 
     /**
      * {@code minecraft:fence_gate}: {@link BedrockStates#IN_WALL_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FENCE_GATE = VanillaTypes.block("minecraft:fence_gate");
 
     /**
      * {@code minecraft:fern}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FERN = VanillaTypes.block("minecraft:fern");
 
     /**
      * {@code minecraft:fire}: {@link BedrockStates#AGE}, {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_UP}, {@link BedrockStates#CONNECTION_WEST}; 512 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FIRE = VanillaTypes.block("minecraft:fire");
 
     /**
      * {@code minecraft:firefly_bush}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FIREFLY_BUSH = VanillaTypes.block("minecraft:firefly_bush");
 
     /**
      * {@code minecraft:fire_coral}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FIRE_CORAL = VanillaTypes.block("minecraft:fire_coral");
 
     /**
      * {@code minecraft:fire_coral_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FIRE_CORAL_BLOCK = VanillaTypes.block("minecraft:fire_coral_block");
 
     /**
      * {@code minecraft:fire_coral_fan}: {@link BedrockStates#CORAL_FAN_DIRECTION}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FIRE_CORAL_FAN = VanillaTypes.block("minecraft:fire_coral_fan");
 
     /**
      * {@code minecraft:fire_coral_wall_fan}: {@link BedrockStates#CORAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FIRE_CORAL_WALL_FAN = VanillaTypes.block("minecraft:fire_coral_wall_fan");
 
     /**
      * {@code minecraft:fletching_table}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FLETCHING_TABLE = VanillaTypes.block("minecraft:fletching_table");
 
     /**
      * {@code minecraft:flowering_azalea}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FLOWERING_AZALEA = VanillaTypes.block("minecraft:flowering_azalea");
 
     /**
      * {@code minecraft:flower_pot}: {@link BedrockStates#UPDATE_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FLOWER_POT = VanillaTypes.block("minecraft:flower_pot");
 
     /**
      * {@code minecraft:flowing_lava}: {@link BedrockStates#LIQUID_DEPTH}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FLOWING_LAVA = VanillaTypes.block("minecraft:flowing_lava");
 
     /**
      * {@code minecraft:flowing_water}: {@link BedrockStates#LIQUID_DEPTH}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FLOWING_WATER = VanillaTypes.block("minecraft:flowing_water");
 
     /**
      * {@code minecraft:frame}: {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#ITEM_FRAME_MAP_BIT}, {@link BedrockStates#ITEM_FRAME_PHOTO_BIT}; 24 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FRAME = VanillaTypes.block("minecraft:frame");
 
     /**
      * {@code minecraft:frog_spawn}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FROG_SPAWN = VanillaTypes.block("minecraft:frog_spawn");
 
     /**
      * {@code minecraft:frosted_ice}: {@link BedrockStates#AGE}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FROSTED_ICE = VanillaTypes.block("minecraft:frosted_ice");
 
     /**
      * {@code minecraft:furnace}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType FURNACE = VanillaTypes.block("minecraft:furnace");
 
     /**
      * {@code minecraft:gilded_blackstone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GILDED_BLACKSTONE = VanillaTypes.block("minecraft:gilded_blackstone");
 
     /**
      * {@code minecraft:glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GLASS = VanillaTypes.block("minecraft:glass");
 
     /**
      * {@code minecraft:glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GLASS_PANE = VanillaTypes.block("minecraft:glass_pane");
 
     /**
      * {@code minecraft:glowingobsidian}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GLOWINGOBSIDIAN = VanillaTypes.block("minecraft:glowingobsidian");
 
     /**
      * {@code minecraft:glowstone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GLOWSTONE = VanillaTypes.block("minecraft:glowstone");
 
     /**
      * {@code minecraft:glow_frame}: {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#ITEM_FRAME_MAP_BIT}, {@link BedrockStates#ITEM_FRAME_PHOTO_BIT}; 24 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GLOW_FRAME = VanillaTypes.block("minecraft:glow_frame");
 
     /**
      * {@code minecraft:glow_lichen}: {@link BedrockStates#MULTI_FACE_DIRECTION_BITS}; 64 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GLOW_LICHEN = VanillaTypes.block("minecraft:glow_lichen");
 
     /**
      * {@code minecraft:golden_dandelion}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GOLDEN_DANDELION = VanillaTypes.block("minecraft:golden_dandelion");
 
     /**
      * {@code minecraft:golden_rail}: {@link BedrockStates#RAIL_DATA_BIT}, {@link BedrockStates#RAIL_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GOLDEN_RAIL = VanillaTypes.block("minecraft:golden_rail");
 
     /**
      * {@code minecraft:gold_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GOLD_BLOCK = VanillaTypes.block("minecraft:gold_block");
 
     /**
      * {@code minecraft:gold_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GOLD_ORE = VanillaTypes.block("minecraft:gold_ore");
 
     /**
      * {@code minecraft:granite}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRANITE = VanillaTypes.block("minecraft:granite");
 
     /**
      * {@code minecraft:granite_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRANITE_DOUBLE_SLAB = VanillaTypes.block("minecraft:granite_double_slab");
 
     /**
      * {@code minecraft:granite_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRANITE_SLAB = VanillaTypes.block("minecraft:granite_slab");
 
     /**
      * {@code minecraft:granite_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRANITE_STAIRS = VanillaTypes.block("minecraft:granite_stairs");
 
     /**
      * {@code minecraft:granite_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRANITE_WALL = VanillaTypes.block("minecraft:granite_wall");
 
     /**
      * {@code minecraft:grass_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRASS_BLOCK = VanillaTypes.block("minecraft:grass_block");
 
     /**
      * {@code minecraft:grass_path}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRASS_PATH = VanillaTypes.block("minecraft:grass_path");
 
     /**
      * {@code minecraft:gravel}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRAVEL = VanillaTypes.block("minecraft:gravel");
 
     /**
      * {@code minecraft:gray_candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRAY_CANDLE = VanillaTypes.block("minecraft:gray_candle");
 
     /**
      * {@code minecraft:gray_candle_cake}: {@link BedrockStates#LIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRAY_CANDLE_CAKE = VanillaTypes.block("minecraft:gray_candle_cake");
 
     /**
      * {@code minecraft:gray_carpet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRAY_CARPET = VanillaTypes.block("minecraft:gray_carpet");
 
     /**
      * {@code minecraft:gray_concrete}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRAY_CONCRETE = VanillaTypes.block("minecraft:gray_concrete");
 
     /**
      * {@code minecraft:gray_concrete_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType GRAY_CONCRETE_DOUBLE_SLAB = VanillaTypes.block("minecraft:gray_concrete_double_slab");
 
     /**
      * {@code minecraft:gray_concrete_powder}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRAY_CONCRETE_POWDER = VanillaTypes.block("minecraft:gray_concrete_powder");
 
     /**
      * {@code minecraft:gray_concrete_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType GRAY_CONCRETE_SLAB = VanillaTypes.block("minecraft:gray_concrete_slab");
 
     /**
      * {@code minecraft:gray_concrete_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType GRAY_CONCRETE_STAIRS = VanillaTypes.block("minecraft:gray_concrete_stairs");
 
     /**
      * {@code minecraft:gray_glazed_terracotta}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRAY_GLAZED_TERRACOTTA = VanillaTypes.block("minecraft:gray_glazed_terracotta");
 
     /**
      * {@code minecraft:gray_shulker_box}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRAY_SHULKER_BOX = VanillaTypes.block("minecraft:gray_shulker_box");
 
     /**
      * {@code minecraft:gray_stained_glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRAY_STAINED_GLASS = VanillaTypes.block("minecraft:gray_stained_glass");
 
     /**
      * {@code minecraft:gray_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRAY_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:gray_stained_glass_pane");
 
     /**
      * {@code minecraft:gray_terracotta}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRAY_TERRACOTTA = VanillaTypes.block("minecraft:gray_terracotta");
 
     /**
      * {@code minecraft:gray_wool}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRAY_WOOL = VanillaTypes.block("minecraft:gray_wool");
 
     /**
      * {@code minecraft:gray_wool_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType GRAY_WOOL_DOUBLE_SLAB = VanillaTypes.block("minecraft:gray_wool_double_slab");
 
     /**
      * {@code minecraft:gray_wool_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType GRAY_WOOL_SLAB = VanillaTypes.block("minecraft:gray_wool_slab");
 
     /**
      * {@code minecraft:gray_wool_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType GRAY_WOOL_STAIRS = VanillaTypes.block("minecraft:gray_wool_stairs");
 
     /**
      * {@code minecraft:green_candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GREEN_CANDLE = VanillaTypes.block("minecraft:green_candle");
 
     /**
      * {@code minecraft:green_candle_cake}: {@link BedrockStates#LIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GREEN_CANDLE_CAKE = VanillaTypes.block("minecraft:green_candle_cake");
 
     /**
      * {@code minecraft:green_carpet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GREEN_CARPET = VanillaTypes.block("minecraft:green_carpet");
 
     /**
      * {@code minecraft:green_concrete}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GREEN_CONCRETE = VanillaTypes.block("minecraft:green_concrete");
 
     /**
      * {@code minecraft:green_concrete_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType GREEN_CONCRETE_DOUBLE_SLAB = VanillaTypes.block("minecraft:green_concrete_double_slab");
 
     /**
      * {@code minecraft:green_concrete_powder}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GREEN_CONCRETE_POWDER = VanillaTypes.block("minecraft:green_concrete_powder");
 
     /**
      * {@code minecraft:green_concrete_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType GREEN_CONCRETE_SLAB = VanillaTypes.block("minecraft:green_concrete_slab");
 
     /**
      * {@code minecraft:green_concrete_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType GREEN_CONCRETE_STAIRS = VanillaTypes.block("minecraft:green_concrete_stairs");
 
     /**
      * {@code minecraft:green_glazed_terracotta}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GREEN_GLAZED_TERRACOTTA = VanillaTypes.block("minecraft:green_glazed_terracotta");
 
     /**
      * {@code minecraft:green_shulker_box}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GREEN_SHULKER_BOX = VanillaTypes.block("minecraft:green_shulker_box");
 
     /**
      * {@code minecraft:green_stained_glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GREEN_STAINED_GLASS = VanillaTypes.block("minecraft:green_stained_glass");
 
     /**
      * {@code minecraft:green_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GREEN_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:green_stained_glass_pane");
 
     /**
      * {@code minecraft:green_terracotta}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GREEN_TERRACOTTA = VanillaTypes.block("minecraft:green_terracotta");
 
     /**
      * {@code minecraft:green_wool}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GREEN_WOOL = VanillaTypes.block("minecraft:green_wool");
 
     /**
      * {@code minecraft:green_wool_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType GREEN_WOOL_DOUBLE_SLAB = VanillaTypes.block("minecraft:green_wool_double_slab");
 
     /**
      * {@code minecraft:green_wool_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType GREEN_WOOL_SLAB = VanillaTypes.block("minecraft:green_wool_slab");
 
     /**
      * {@code minecraft:green_wool_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType GREEN_WOOL_STAIRS = VanillaTypes.block("minecraft:green_wool_stairs");
 
     /**
      * {@code minecraft:grindstone}: {@link BedrockStates#ATTACHMENT}, {@link BedrockStates#DIRECTION}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType GRINDSTONE = VanillaTypes.block("minecraft:grindstone");
 
     /**
      * {@code minecraft:hanging_roots}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType HANGING_ROOTS = VanillaTypes.block("minecraft:hanging_roots");
 
     /**
      * {@code minecraft:hardened_clay}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType HARDENED_CLAY = VanillaTypes.block("minecraft:hardened_clay");
 
     /**
      * {@code minecraft:hard_black_stained_glass}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_BLACK_STAINED_GLASS = VanillaTypes.block("minecraft:hard_black_stained_glass");
+    @Education
+    public static final BedrockBlockType HARD_BLACK_STAINED_GLASS = VanillaTypes.educationBlock("minecraft:hard_black_stained_glass");
 
     /**
      * {@code minecraft:hard_black_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_BLACK_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:hard_black_stained_glass_pane");
+    @Education
+    public static final BedrockBlockType HARD_BLACK_STAINED_GLASS_PANE = VanillaTypes.educationBlock("minecraft:hard_black_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_blue_stained_glass}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_BLUE_STAINED_GLASS = VanillaTypes.block("minecraft:hard_blue_stained_glass");
+    @Education
+    public static final BedrockBlockType HARD_BLUE_STAINED_GLASS = VanillaTypes.educationBlock("minecraft:hard_blue_stained_glass");
 
     /**
      * {@code minecraft:hard_blue_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_BLUE_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:hard_blue_stained_glass_pane");
+    @Education
+    public static final BedrockBlockType HARD_BLUE_STAINED_GLASS_PANE = VanillaTypes.educationBlock("minecraft:hard_blue_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_brown_stained_glass}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_BROWN_STAINED_GLASS = VanillaTypes.block("minecraft:hard_brown_stained_glass");
+    @Education
+    public static final BedrockBlockType HARD_BROWN_STAINED_GLASS = VanillaTypes.educationBlock("minecraft:hard_brown_stained_glass");
 
     /**
      * {@code minecraft:hard_brown_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_BROWN_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:hard_brown_stained_glass_pane");
+    @Education
+    public static final BedrockBlockType HARD_BROWN_STAINED_GLASS_PANE = VanillaTypes.educationBlock("minecraft:hard_brown_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_cyan_stained_glass}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_CYAN_STAINED_GLASS = VanillaTypes.block("minecraft:hard_cyan_stained_glass");
+    @Education
+    public static final BedrockBlockType HARD_CYAN_STAINED_GLASS = VanillaTypes.educationBlock("minecraft:hard_cyan_stained_glass");
 
     /**
      * {@code minecraft:hard_cyan_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_CYAN_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:hard_cyan_stained_glass_pane");
+    @Education
+    public static final BedrockBlockType HARD_CYAN_STAINED_GLASS_PANE = VanillaTypes.educationBlock("minecraft:hard_cyan_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_glass}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_GLASS = VanillaTypes.block("minecraft:hard_glass");
+    @Education
+    public static final BedrockBlockType HARD_GLASS = VanillaTypes.educationBlock("minecraft:hard_glass");
 
     /**
      * {@code minecraft:hard_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_GLASS_PANE = VanillaTypes.block("minecraft:hard_glass_pane");
+    @Education
+    public static final BedrockBlockType HARD_GLASS_PANE = VanillaTypes.educationBlock("minecraft:hard_glass_pane");
 
     /**
      * {@code minecraft:hard_gray_stained_glass}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_GRAY_STAINED_GLASS = VanillaTypes.block("minecraft:hard_gray_stained_glass");
+    @Education
+    public static final BedrockBlockType HARD_GRAY_STAINED_GLASS = VanillaTypes.educationBlock("minecraft:hard_gray_stained_glass");
 
     /**
      * {@code minecraft:hard_gray_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_GRAY_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:hard_gray_stained_glass_pane");
+    @Education
+    public static final BedrockBlockType HARD_GRAY_STAINED_GLASS_PANE = VanillaTypes.educationBlock("minecraft:hard_gray_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_green_stained_glass}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_GREEN_STAINED_GLASS = VanillaTypes.block("minecraft:hard_green_stained_glass");
+    @Education
+    public static final BedrockBlockType HARD_GREEN_STAINED_GLASS = VanillaTypes.educationBlock("minecraft:hard_green_stained_glass");
 
     /**
      * {@code minecraft:hard_green_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_GREEN_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:hard_green_stained_glass_pane");
+    @Education
+    public static final BedrockBlockType HARD_GREEN_STAINED_GLASS_PANE = VanillaTypes.educationBlock("minecraft:hard_green_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_light_blue_stained_glass}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_LIGHT_BLUE_STAINED_GLASS = VanillaTypes.block("minecraft:hard_light_blue_stained_glass");
+    @Education
+    public static final BedrockBlockType HARD_LIGHT_BLUE_STAINED_GLASS = VanillaTypes.educationBlock("minecraft:hard_light_blue_stained_glass");
 
     /**
      * {@code minecraft:hard_light_blue_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_LIGHT_BLUE_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:hard_light_blue_stained_glass_pane");
+    @Education
+    public static final BedrockBlockType HARD_LIGHT_BLUE_STAINED_GLASS_PANE = VanillaTypes.educationBlock("minecraft:hard_light_blue_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_light_gray_stained_glass}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_LIGHT_GRAY_STAINED_GLASS = VanillaTypes.block("minecraft:hard_light_gray_stained_glass");
+    @Education
+    public static final BedrockBlockType HARD_LIGHT_GRAY_STAINED_GLASS = VanillaTypes.educationBlock("minecraft:hard_light_gray_stained_glass");
 
     /**
      * {@code minecraft:hard_light_gray_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_LIGHT_GRAY_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:hard_light_gray_stained_glass_pane");
+    @Education
+    public static final BedrockBlockType HARD_LIGHT_GRAY_STAINED_GLASS_PANE = VanillaTypes.educationBlock("minecraft:hard_light_gray_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_lime_stained_glass}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_LIME_STAINED_GLASS = VanillaTypes.block("minecraft:hard_lime_stained_glass");
+    @Education
+    public static final BedrockBlockType HARD_LIME_STAINED_GLASS = VanillaTypes.educationBlock("minecraft:hard_lime_stained_glass");
 
     /**
      * {@code minecraft:hard_lime_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_LIME_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:hard_lime_stained_glass_pane");
+    @Education
+    public static final BedrockBlockType HARD_LIME_STAINED_GLASS_PANE = VanillaTypes.educationBlock("minecraft:hard_lime_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_magenta_stained_glass}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_MAGENTA_STAINED_GLASS = VanillaTypes.block("minecraft:hard_magenta_stained_glass");
+    @Education
+    public static final BedrockBlockType HARD_MAGENTA_STAINED_GLASS = VanillaTypes.educationBlock("minecraft:hard_magenta_stained_glass");
 
     /**
      * {@code minecraft:hard_magenta_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_MAGENTA_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:hard_magenta_stained_glass_pane");
+    @Education
+    public static final BedrockBlockType HARD_MAGENTA_STAINED_GLASS_PANE = VanillaTypes.educationBlock("minecraft:hard_magenta_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_orange_stained_glass}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_ORANGE_STAINED_GLASS = VanillaTypes.block("minecraft:hard_orange_stained_glass");
+    @Education
+    public static final BedrockBlockType HARD_ORANGE_STAINED_GLASS = VanillaTypes.educationBlock("minecraft:hard_orange_stained_glass");
 
     /**
      * {@code minecraft:hard_orange_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_ORANGE_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:hard_orange_stained_glass_pane");
+    @Education
+    public static final BedrockBlockType HARD_ORANGE_STAINED_GLASS_PANE = VanillaTypes.educationBlock("minecraft:hard_orange_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_pink_stained_glass}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_PINK_STAINED_GLASS = VanillaTypes.block("minecraft:hard_pink_stained_glass");
+    @Education
+    public static final BedrockBlockType HARD_PINK_STAINED_GLASS = VanillaTypes.educationBlock("minecraft:hard_pink_stained_glass");
 
     /**
      * {@code minecraft:hard_pink_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_PINK_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:hard_pink_stained_glass_pane");
+    @Education
+    public static final BedrockBlockType HARD_PINK_STAINED_GLASS_PANE = VanillaTypes.educationBlock("minecraft:hard_pink_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_purple_stained_glass}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_PURPLE_STAINED_GLASS = VanillaTypes.block("minecraft:hard_purple_stained_glass");
+    @Education
+    public static final BedrockBlockType HARD_PURPLE_STAINED_GLASS = VanillaTypes.educationBlock("minecraft:hard_purple_stained_glass");
 
     /**
      * {@code minecraft:hard_purple_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_PURPLE_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:hard_purple_stained_glass_pane");
+    @Education
+    public static final BedrockBlockType HARD_PURPLE_STAINED_GLASS_PANE = VanillaTypes.educationBlock("minecraft:hard_purple_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_red_stained_glass}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_RED_STAINED_GLASS = VanillaTypes.block("minecraft:hard_red_stained_glass");
+    @Education
+    public static final BedrockBlockType HARD_RED_STAINED_GLASS = VanillaTypes.educationBlock("minecraft:hard_red_stained_glass");
 
     /**
      * {@code minecraft:hard_red_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_RED_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:hard_red_stained_glass_pane");
+    @Education
+    public static final BedrockBlockType HARD_RED_STAINED_GLASS_PANE = VanillaTypes.educationBlock("minecraft:hard_red_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_white_stained_glass}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_WHITE_STAINED_GLASS = VanillaTypes.block("minecraft:hard_white_stained_glass");
+    @Education
+    public static final BedrockBlockType HARD_WHITE_STAINED_GLASS = VanillaTypes.educationBlock("minecraft:hard_white_stained_glass");
 
     /**
      * {@code minecraft:hard_white_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_WHITE_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:hard_white_stained_glass_pane");
+    @Education
+    public static final BedrockBlockType HARD_WHITE_STAINED_GLASS_PANE = VanillaTypes.educationBlock("minecraft:hard_white_stained_glass_pane");
 
     /**
      * {@code minecraft:hard_yellow_stained_glass}, 1 state.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_YELLOW_STAINED_GLASS = VanillaTypes.block("minecraft:hard_yellow_stained_glass");
+    @Education
+    public static final BedrockBlockType HARD_YELLOW_STAINED_GLASS = VanillaTypes.educationBlock("minecraft:hard_yellow_stained_glass");
 
     /**
      * {@code minecraft:hard_yellow_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType HARD_YELLOW_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:hard_yellow_stained_glass_pane");
+    @Education
+    public static final BedrockBlockType HARD_YELLOW_STAINED_GLASS_PANE = VanillaTypes.educationBlock("minecraft:hard_yellow_stained_glass_pane");
 
     /**
      * {@code minecraft:hay_block}: {@link BedrockStates#DEPRECATED}, {@link BedrockStates#PILLAR_AXIS}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType HAY_BLOCK = VanillaTypes.block("minecraft:hay_block");
 
     /**
      * {@code minecraft:heavy_core}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType HEAVY_CORE = VanillaTypes.block("minecraft:heavy_core");
 
     /**
      * {@code minecraft:heavy_weighted_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType HEAVY_WEIGHTED_PRESSURE_PLATE = VanillaTypes.block("minecraft:heavy_weighted_pressure_plate");
 
     /**
      * {@code minecraft:honeycomb_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType HONEYCOMB_BLOCK = VanillaTypes.block("minecraft:honeycomb_block");
 
     /**
      * {@code minecraft:honey_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType HONEY_BLOCK = VanillaTypes.block("minecraft:honey_block");
 
     /**
      * {@code minecraft:hopper}: {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#TOGGLE_BIT}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType HOPPER = VanillaTypes.block("minecraft:hopper");
 
     /**
      * {@code minecraft:horn_coral}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType HORN_CORAL = VanillaTypes.block("minecraft:horn_coral");
 
     /**
      * {@code minecraft:horn_coral_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType HORN_CORAL_BLOCK = VanillaTypes.block("minecraft:horn_coral_block");
 
     /**
      * {@code minecraft:horn_coral_fan}: {@link BedrockStates#CORAL_FAN_DIRECTION}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType HORN_CORAL_FAN = VanillaTypes.block("minecraft:horn_coral_fan");
 
     /**
      * {@code minecraft:horn_coral_wall_fan}: {@link BedrockStates#CORAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType HORN_CORAL_WALL_FAN = VanillaTypes.block("minecraft:horn_coral_wall_fan");
 
     /**
      * {@code minecraft:ice}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ICE = VanillaTypes.block("minecraft:ice");
 
     /**
      * {@code minecraft:ice_crystal}: {@link BedrockStates#BLOCK_FACE}; 6 states.
+     *
+     * @since 26.60
      */
     public static final BedrockBlockType ICE_CRYSTAL = VanillaTypes.block("minecraft:ice_crystal");
 
     /**
      * {@code minecraft:icicle}: {@link BedrockStates#ATTACHED_BIT}, {@link BedrockStates#DRIPSTONE_THICKNESS}, {@link BedrockStates#HANGING}; 20 states.
+     *
+     * @since 26.60
      */
     public static final BedrockBlockType ICICLE = VanillaTypes.block("minecraft:icicle");
 
     /**
      * {@code minecraft:infested_chiseled_stone_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType INFESTED_CHISELED_STONE_BRICKS = VanillaTypes.block("minecraft:infested_chiseled_stone_bricks");
 
     /**
      * {@code minecraft:infested_cobblestone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType INFESTED_COBBLESTONE = VanillaTypes.block("minecraft:infested_cobblestone");
 
     /**
      * {@code minecraft:infested_cracked_stone_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType INFESTED_CRACKED_STONE_BRICKS = VanillaTypes.block("minecraft:infested_cracked_stone_bricks");
 
     /**
      * {@code minecraft:infested_deepslate}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType INFESTED_DEEPSLATE = VanillaTypes.block("minecraft:infested_deepslate");
 
     /**
      * {@code minecraft:infested_mossy_stone_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType INFESTED_MOSSY_STONE_BRICKS = VanillaTypes.block("minecraft:infested_mossy_stone_bricks");
 
     /**
      * {@code minecraft:infested_stone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType INFESTED_STONE = VanillaTypes.block("minecraft:infested_stone");
 
     /**
      * {@code minecraft:infested_stone_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType INFESTED_STONE_BRICKS = VanillaTypes.block("minecraft:infested_stone_bricks");
 
     /**
      * {@code minecraft:info_update}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType INFO_UPDATE = VanillaTypes.block("minecraft:info_update");
 
     /**
      * {@code minecraft:info_update2}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType INFO_UPDATE2 = VanillaTypes.block("minecraft:info_update2");
 
     /**
      * {@code minecraft:invisible_bedrock}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType INVISIBLE_BEDROCK = VanillaTypes.block("minecraft:invisible_bedrock");
 
     /**
      * {@code minecraft:iron_bars}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType IRON_BARS = VanillaTypes.block("minecraft:iron_bars");
 
     /**
      * {@code minecraft:iron_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType IRON_BLOCK = VanillaTypes.block("minecraft:iron_block");
 
     /**
      * {@code minecraft:iron_chain}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType IRON_CHAIN = VanillaTypes.block("minecraft:iron_chain");
 
     /**
      * {@code minecraft:iron_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType IRON_DOOR = VanillaTypes.block("minecraft:iron_door");
 
     /**
      * {@code minecraft:iron_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType IRON_ORE = VanillaTypes.block("minecraft:iron_ore");
 
     /**
      * {@code minecraft:iron_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType IRON_TRAPDOOR = VanillaTypes.block("minecraft:iron_trapdoor");
 
     /**
      * {@code minecraft:jigsaw}: {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#ROTATION}; 24 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JIGSAW = VanillaTypes.block("minecraft:jigsaw");
 
     /**
      * {@code minecraft:jukebox}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUKEBOX = VanillaTypes.block("minecraft:jukebox");
 
     /**
      * {@code minecraft:jungle_button}: {@link BedrockStates#BUTTON_PRESSED_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_BUTTON = VanillaTypes.block("minecraft:jungle_button");
 
     /**
      * {@code minecraft:jungle_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_DOOR = VanillaTypes.block("minecraft:jungle_door");
 
     /**
      * {@code minecraft:jungle_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_DOUBLE_SLAB = VanillaTypes.block("minecraft:jungle_double_slab");
 
     /**
      * {@code minecraft:jungle_fence}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_FENCE = VanillaTypes.block("minecraft:jungle_fence");
 
     /**
      * {@code minecraft:jungle_fence_gate}: {@link BedrockStates#IN_WALL_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_FENCE_GATE = VanillaTypes.block("minecraft:jungle_fence_gate");
 
     /**
      * {@code minecraft:jungle_hanging_sign}: {@link BedrockStates#ATTACHED_BIT}, {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#GROUND_SIGN_DIRECTION}, {@link BedrockStates#HANGING}; 384 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_HANGING_SIGN = VanillaTypes.block("minecraft:jungle_hanging_sign");
 
     /**
      * {@code minecraft:jungle_leaves}: {@link BedrockStates#PERSISTENT_BIT}, {@link BedrockStates#UPDATE_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_LEAVES = VanillaTypes.block("minecraft:jungle_leaves");
 
     /**
      * {@code minecraft:jungle_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_LOG = VanillaTypes.block("minecraft:jungle_log");
 
     /**
      * {@code minecraft:jungle_planks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_PLANKS = VanillaTypes.block("minecraft:jungle_planks");
 
     /**
      * {@code minecraft:jungle_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_PRESSURE_PLATE = VanillaTypes.block("minecraft:jungle_pressure_plate");
 
     /**
      * {@code minecraft:jungle_sapling}: {@link BedrockStates#AGE_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_SAPLING = VanillaTypes.block("minecraft:jungle_sapling");
 
     /**
      * {@code minecraft:jungle_shelf}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#POWERED_BIT}, {@link BedrockStates#POWERED_SHELF_TYPE}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_SHELF = VanillaTypes.block("minecraft:jungle_shelf");
 
     /**
      * {@code minecraft:jungle_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_SLAB = VanillaTypes.block("minecraft:jungle_slab");
 
     /**
      * {@code minecraft:jungle_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_STAIRS = VanillaTypes.block("minecraft:jungle_stairs");
 
     /**
      * {@code minecraft:jungle_standing_sign}: {@link BedrockStates#GROUND_SIGN_DIRECTION}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_STANDING_SIGN = VanillaTypes.block("minecraft:jungle_standing_sign");
 
     /**
      * {@code minecraft:jungle_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_TRAPDOOR = VanillaTypes.block("minecraft:jungle_trapdoor");
 
     /**
      * {@code minecraft:jungle_wall_sign}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_WALL_SIGN = VanillaTypes.block("minecraft:jungle_wall_sign");
 
     /**
      * {@code minecraft:jungle_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType JUNGLE_WOOD = VanillaTypes.block("minecraft:jungle_wood");
 
     /**
      * {@code minecraft:kelp}: {@link BedrockStates#KELP_AGE}; 26 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType KELP = VanillaTypes.block("minecraft:kelp");
 
     /**
      * {@code minecraft:lab_table}: {@link BedrockStates#DIRECTION}; 4 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType LAB_TABLE = VanillaTypes.block("minecraft:lab_table");
+    @Education
+    public static final BedrockBlockType LAB_TABLE = VanillaTypes.educationBlock("minecraft:lab_table");
 
     /**
      * {@code minecraft:ladder}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LADDER = VanillaTypes.block("minecraft:ladder");
 
     /**
      * {@code minecraft:lantern}: {@link BedrockStates#HANGING}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LANTERN = VanillaTypes.block("minecraft:lantern");
 
     /**
      * {@code minecraft:lapis_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LAPIS_BLOCK = VanillaTypes.block("minecraft:lapis_block");
 
     /**
      * {@code minecraft:lapis_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LAPIS_ORE = VanillaTypes.block("minecraft:lapis_ore");
 
     /**
      * {@code minecraft:large_amethyst_bud}: {@link BedrockStates#BLOCK_FACE}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LARGE_AMETHYST_BUD = VanillaTypes.block("minecraft:large_amethyst_bud");
 
     /**
      * {@code minecraft:large_fern}: {@link BedrockStates#UPPER_BLOCK_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LARGE_FERN = VanillaTypes.block("minecraft:large_fern");
 
     /**
      * {@code minecraft:lava}: {@link BedrockStates#LIQUID_DEPTH}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LAVA = VanillaTypes.block("minecraft:lava");
 
     /**
      * {@code minecraft:leaf_litter}: {@link BedrockStates#GROWTH}, {@link BedrockStates#CARDINAL_DIRECTION}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LEAF_LITTER = VanillaTypes.block("minecraft:leaf_litter");
 
     /**
      * {@code minecraft:lectern}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#POWERED_BIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LECTERN = VanillaTypes.block("minecraft:lectern");
 
     /**
      * {@code minecraft:lever}: {@link BedrockStates#LEVER_DIRECTION}, {@link BedrockStates#OPEN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LEVER = VanillaTypes.block("minecraft:lever");
 
     /**
      * {@code minecraft:lightning_rod}: {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#POWERED_BIT}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHTNING_ROD = VanillaTypes.block("minecraft:lightning_rod");
 
     /**
      * {@code minecraft:light_block_0}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLOCK_0 = VanillaTypes.block("minecraft:light_block_0");
 
     /**
      * {@code minecraft:light_block_1}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLOCK_1 = VanillaTypes.block("minecraft:light_block_1");
 
     /**
      * {@code minecraft:light_block_10}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLOCK_10 = VanillaTypes.block("minecraft:light_block_10");
 
     /**
      * {@code minecraft:light_block_11}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLOCK_11 = VanillaTypes.block("minecraft:light_block_11");
 
     /**
      * {@code minecraft:light_block_12}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLOCK_12 = VanillaTypes.block("minecraft:light_block_12");
 
     /**
      * {@code minecraft:light_block_13}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLOCK_13 = VanillaTypes.block("minecraft:light_block_13");
 
     /**
      * {@code minecraft:light_block_14}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLOCK_14 = VanillaTypes.block("minecraft:light_block_14");
 
     /**
      * {@code minecraft:light_block_15}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLOCK_15 = VanillaTypes.block("minecraft:light_block_15");
 
     /**
      * {@code minecraft:light_block_2}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLOCK_2 = VanillaTypes.block("minecraft:light_block_2");
 
     /**
      * {@code minecraft:light_block_3}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLOCK_3 = VanillaTypes.block("minecraft:light_block_3");
 
     /**
      * {@code minecraft:light_block_4}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLOCK_4 = VanillaTypes.block("minecraft:light_block_4");
 
     /**
      * {@code minecraft:light_block_5}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLOCK_5 = VanillaTypes.block("minecraft:light_block_5");
 
     /**
      * {@code minecraft:light_block_6}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLOCK_6 = VanillaTypes.block("minecraft:light_block_6");
 
     /**
      * {@code minecraft:light_block_7}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLOCK_7 = VanillaTypes.block("minecraft:light_block_7");
 
     /**
      * {@code minecraft:light_block_8}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLOCK_8 = VanillaTypes.block("minecraft:light_block_8");
 
     /**
      * {@code minecraft:light_block_9}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLOCK_9 = VanillaTypes.block("minecraft:light_block_9");
 
     /**
      * {@code minecraft:light_blue_candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLUE_CANDLE = VanillaTypes.block("minecraft:light_blue_candle");
 
     /**
      * {@code minecraft:light_blue_candle_cake}: {@link BedrockStates#LIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLUE_CANDLE_CAKE = VanillaTypes.block("minecraft:light_blue_candle_cake");
 
     /**
      * {@code minecraft:light_blue_carpet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLUE_CARPET = VanillaTypes.block("minecraft:light_blue_carpet");
 
     /**
      * {@code minecraft:light_blue_concrete}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLUE_CONCRETE = VanillaTypes.block("minecraft:light_blue_concrete");
 
     /**
      * {@code minecraft:light_blue_concrete_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIGHT_BLUE_CONCRETE_DOUBLE_SLAB = VanillaTypes.block("minecraft:light_blue_concrete_double_slab");
 
     /**
      * {@code minecraft:light_blue_concrete_powder}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLUE_CONCRETE_POWDER = VanillaTypes.block("minecraft:light_blue_concrete_powder");
 
     /**
      * {@code minecraft:light_blue_concrete_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIGHT_BLUE_CONCRETE_SLAB = VanillaTypes.block("minecraft:light_blue_concrete_slab");
 
     /**
      * {@code minecraft:light_blue_concrete_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIGHT_BLUE_CONCRETE_STAIRS = VanillaTypes.block("minecraft:light_blue_concrete_stairs");
 
     /**
      * {@code minecraft:light_blue_glazed_terracotta}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLUE_GLAZED_TERRACOTTA = VanillaTypes.block("minecraft:light_blue_glazed_terracotta");
 
     /**
      * {@code minecraft:light_blue_shulker_box}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLUE_SHULKER_BOX = VanillaTypes.block("minecraft:light_blue_shulker_box");
 
     /**
      * {@code minecraft:light_blue_stained_glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLUE_STAINED_GLASS = VanillaTypes.block("minecraft:light_blue_stained_glass");
 
     /**
      * {@code minecraft:light_blue_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLUE_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:light_blue_stained_glass_pane");
 
     /**
      * {@code minecraft:light_blue_terracotta}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLUE_TERRACOTTA = VanillaTypes.block("minecraft:light_blue_terracotta");
 
     /**
      * {@code minecraft:light_blue_wool}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_BLUE_WOOL = VanillaTypes.block("minecraft:light_blue_wool");
 
     /**
      * {@code minecraft:light_blue_wool_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIGHT_BLUE_WOOL_DOUBLE_SLAB = VanillaTypes.block("minecraft:light_blue_wool_double_slab");
 
     /**
      * {@code minecraft:light_blue_wool_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIGHT_BLUE_WOOL_SLAB = VanillaTypes.block("minecraft:light_blue_wool_slab");
 
     /**
      * {@code minecraft:light_blue_wool_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIGHT_BLUE_WOOL_STAIRS = VanillaTypes.block("minecraft:light_blue_wool_stairs");
 
     /**
      * {@code minecraft:light_gray_candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_GRAY_CANDLE = VanillaTypes.block("minecraft:light_gray_candle");
 
     /**
      * {@code minecraft:light_gray_candle_cake}: {@link BedrockStates#LIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_GRAY_CANDLE_CAKE = VanillaTypes.block("minecraft:light_gray_candle_cake");
 
     /**
      * {@code minecraft:light_gray_carpet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_GRAY_CARPET = VanillaTypes.block("minecraft:light_gray_carpet");
 
     /**
      * {@code minecraft:light_gray_concrete}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_GRAY_CONCRETE = VanillaTypes.block("minecraft:light_gray_concrete");
 
     /**
      * {@code minecraft:light_gray_concrete_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIGHT_GRAY_CONCRETE_DOUBLE_SLAB = VanillaTypes.block("minecraft:light_gray_concrete_double_slab");
 
     /**
      * {@code minecraft:light_gray_concrete_powder}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_GRAY_CONCRETE_POWDER = VanillaTypes.block("minecraft:light_gray_concrete_powder");
 
     /**
      * {@code minecraft:light_gray_concrete_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIGHT_GRAY_CONCRETE_SLAB = VanillaTypes.block("minecraft:light_gray_concrete_slab");
 
     /**
      * {@code minecraft:light_gray_concrete_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIGHT_GRAY_CONCRETE_STAIRS = VanillaTypes.block("minecraft:light_gray_concrete_stairs");
 
     /**
      * {@code minecraft:light_gray_shulker_box}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_GRAY_SHULKER_BOX = VanillaTypes.block("minecraft:light_gray_shulker_box");
 
     /**
      * {@code minecraft:light_gray_stained_glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_GRAY_STAINED_GLASS = VanillaTypes.block("minecraft:light_gray_stained_glass");
 
     /**
      * {@code minecraft:light_gray_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_GRAY_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:light_gray_stained_glass_pane");
 
     /**
      * {@code minecraft:light_gray_terracotta}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_GRAY_TERRACOTTA = VanillaTypes.block("minecraft:light_gray_terracotta");
 
     /**
      * {@code minecraft:light_gray_wool}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_GRAY_WOOL = VanillaTypes.block("minecraft:light_gray_wool");
 
     /**
      * {@code minecraft:light_gray_wool_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIGHT_GRAY_WOOL_DOUBLE_SLAB = VanillaTypes.block("minecraft:light_gray_wool_double_slab");
 
     /**
      * {@code minecraft:light_gray_wool_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIGHT_GRAY_WOOL_SLAB = VanillaTypes.block("minecraft:light_gray_wool_slab");
 
     /**
      * {@code minecraft:light_gray_wool_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIGHT_GRAY_WOOL_STAIRS = VanillaTypes.block("minecraft:light_gray_wool_stairs");
 
     /**
      * {@code minecraft:light_weighted_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIGHT_WEIGHTED_PRESSURE_PLATE = VanillaTypes.block("minecraft:light_weighted_pressure_plate");
 
     /**
      * {@code minecraft:lilac}: {@link BedrockStates#UPPER_BLOCK_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LILAC = VanillaTypes.block("minecraft:lilac");
 
     /**
      * {@code minecraft:lily_of_the_valley}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LILY_OF_THE_VALLEY = VanillaTypes.block("minecraft:lily_of_the_valley");
 
     /**
      * {@code minecraft:lime_candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIME_CANDLE = VanillaTypes.block("minecraft:lime_candle");
 
     /**
      * {@code minecraft:lime_candle_cake}: {@link BedrockStates#LIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIME_CANDLE_CAKE = VanillaTypes.block("minecraft:lime_candle_cake");
 
     /**
      * {@code minecraft:lime_carpet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIME_CARPET = VanillaTypes.block("minecraft:lime_carpet");
 
     /**
      * {@code minecraft:lime_concrete}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIME_CONCRETE = VanillaTypes.block("minecraft:lime_concrete");
 
     /**
      * {@code minecraft:lime_concrete_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIME_CONCRETE_DOUBLE_SLAB = VanillaTypes.block("minecraft:lime_concrete_double_slab");
 
     /**
      * {@code minecraft:lime_concrete_powder}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIME_CONCRETE_POWDER = VanillaTypes.block("minecraft:lime_concrete_powder");
 
     /**
      * {@code minecraft:lime_concrete_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIME_CONCRETE_SLAB = VanillaTypes.block("minecraft:lime_concrete_slab");
 
     /**
      * {@code minecraft:lime_concrete_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIME_CONCRETE_STAIRS = VanillaTypes.block("minecraft:lime_concrete_stairs");
 
     /**
      * {@code minecraft:lime_glazed_terracotta}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIME_GLAZED_TERRACOTTA = VanillaTypes.block("minecraft:lime_glazed_terracotta");
 
     /**
      * {@code minecraft:lime_shulker_box}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIME_SHULKER_BOX = VanillaTypes.block("minecraft:lime_shulker_box");
 
     /**
      * {@code minecraft:lime_stained_glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIME_STAINED_GLASS = VanillaTypes.block("minecraft:lime_stained_glass");
 
     /**
      * {@code minecraft:lime_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIME_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:lime_stained_glass_pane");
 
     /**
      * {@code minecraft:lime_terracotta}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIME_TERRACOTTA = VanillaTypes.block("minecraft:lime_terracotta");
 
     /**
      * {@code minecraft:lime_wool}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIME_WOOL = VanillaTypes.block("minecraft:lime_wool");
 
     /**
      * {@code minecraft:lime_wool_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIME_WOOL_DOUBLE_SLAB = VanillaTypes.block("minecraft:lime_wool_double_slab");
 
     /**
      * {@code minecraft:lime_wool_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIME_WOOL_SLAB = VanillaTypes.block("minecraft:lime_wool_slab");
 
     /**
      * {@code minecraft:lime_wool_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType LIME_WOOL_STAIRS = VanillaTypes.block("minecraft:lime_wool_stairs");
 
     /**
      * {@code minecraft:lit_blast_furnace}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIT_BLAST_FURNACE = VanillaTypes.block("minecraft:lit_blast_furnace");
 
     /**
      * {@code minecraft:lit_deepslate_redstone_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIT_DEEPSLATE_REDSTONE_ORE = VanillaTypes.block("minecraft:lit_deepslate_redstone_ore");
 
     /**
      * {@code minecraft:lit_furnace}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIT_FURNACE = VanillaTypes.block("minecraft:lit_furnace");
 
     /**
      * {@code minecraft:lit_pumpkin}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIT_PUMPKIN = VanillaTypes.block("minecraft:lit_pumpkin");
 
     /**
      * {@code minecraft:lit_redstone_lamp}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIT_REDSTONE_LAMP = VanillaTypes.block("minecraft:lit_redstone_lamp");
 
     /**
      * {@code minecraft:lit_redstone_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIT_REDSTONE_ORE = VanillaTypes.block("minecraft:lit_redstone_ore");
 
     /**
      * {@code minecraft:lit_smoker}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LIT_SMOKER = VanillaTypes.block("minecraft:lit_smoker");
 
     /**
      * {@code minecraft:lodestone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LODESTONE = VanillaTypes.block("minecraft:lodestone");
 
     /**
      * {@code minecraft:loom}: {@link BedrockStates#DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType LOOM = VanillaTypes.block("minecraft:loom");
 
     /**
      * {@code minecraft:magenta_candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MAGENTA_CANDLE = VanillaTypes.block("minecraft:magenta_candle");
 
     /**
      * {@code minecraft:magenta_candle_cake}: {@link BedrockStates#LIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MAGENTA_CANDLE_CAKE = VanillaTypes.block("minecraft:magenta_candle_cake");
 
     /**
      * {@code minecraft:magenta_carpet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MAGENTA_CARPET = VanillaTypes.block("minecraft:magenta_carpet");
 
     /**
      * {@code minecraft:magenta_concrete}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MAGENTA_CONCRETE = VanillaTypes.block("minecraft:magenta_concrete");
 
     /**
      * {@code minecraft:magenta_concrete_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType MAGENTA_CONCRETE_DOUBLE_SLAB = VanillaTypes.block("minecraft:magenta_concrete_double_slab");
 
     /**
      * {@code minecraft:magenta_concrete_powder}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MAGENTA_CONCRETE_POWDER = VanillaTypes.block("minecraft:magenta_concrete_powder");
 
     /**
      * {@code minecraft:magenta_concrete_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType MAGENTA_CONCRETE_SLAB = VanillaTypes.block("minecraft:magenta_concrete_slab");
 
     /**
      * {@code minecraft:magenta_concrete_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType MAGENTA_CONCRETE_STAIRS = VanillaTypes.block("minecraft:magenta_concrete_stairs");
 
     /**
      * {@code minecraft:magenta_glazed_terracotta}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MAGENTA_GLAZED_TERRACOTTA = VanillaTypes.block("minecraft:magenta_glazed_terracotta");
 
     /**
      * {@code minecraft:magenta_shulker_box}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MAGENTA_SHULKER_BOX = VanillaTypes.block("minecraft:magenta_shulker_box");
 
     /**
      * {@code minecraft:magenta_stained_glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MAGENTA_STAINED_GLASS = VanillaTypes.block("minecraft:magenta_stained_glass");
 
     /**
      * {@code minecraft:magenta_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MAGENTA_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:magenta_stained_glass_pane");
 
     /**
      * {@code minecraft:magenta_terracotta}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MAGENTA_TERRACOTTA = VanillaTypes.block("minecraft:magenta_terracotta");
 
     /**
      * {@code minecraft:magenta_wool}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MAGENTA_WOOL = VanillaTypes.block("minecraft:magenta_wool");
 
     /**
      * {@code minecraft:magenta_wool_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType MAGENTA_WOOL_DOUBLE_SLAB = VanillaTypes.block("minecraft:magenta_wool_double_slab");
 
     /**
      * {@code minecraft:magenta_wool_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType MAGENTA_WOOL_SLAB = VanillaTypes.block("minecraft:magenta_wool_slab");
 
     /**
      * {@code minecraft:magenta_wool_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType MAGENTA_WOOL_STAIRS = VanillaTypes.block("minecraft:magenta_wool_stairs");
 
     /**
      * {@code minecraft:magma}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MAGMA = VanillaTypes.block("minecraft:magma");
 
     /**
      * {@code minecraft:mangrove_button}: {@link BedrockStates#BUTTON_PRESSED_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_BUTTON = VanillaTypes.block("minecraft:mangrove_button");
 
     /**
      * {@code minecraft:mangrove_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_DOOR = VanillaTypes.block("minecraft:mangrove_door");
 
     /**
      * {@code minecraft:mangrove_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_DOUBLE_SLAB = VanillaTypes.block("minecraft:mangrove_double_slab");
 
     /**
      * {@code minecraft:mangrove_fence}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_FENCE = VanillaTypes.block("minecraft:mangrove_fence");
 
     /**
      * {@code minecraft:mangrove_fence_gate}: {@link BedrockStates#IN_WALL_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_FENCE_GATE = VanillaTypes.block("minecraft:mangrove_fence_gate");
 
     /**
      * {@code minecraft:mangrove_hanging_sign}: {@link BedrockStates#ATTACHED_BIT}, {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#GROUND_SIGN_DIRECTION}, {@link BedrockStates#HANGING}; 384 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_HANGING_SIGN = VanillaTypes.block("minecraft:mangrove_hanging_sign");
 
     /**
      * {@code minecraft:mangrove_leaves}: {@link BedrockStates#PERSISTENT_BIT}, {@link BedrockStates#UPDATE_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_LEAVES = VanillaTypes.block("minecraft:mangrove_leaves");
 
     /**
      * {@code minecraft:mangrove_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_LOG = VanillaTypes.block("minecraft:mangrove_log");
 
     /**
      * {@code minecraft:mangrove_planks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_PLANKS = VanillaTypes.block("minecraft:mangrove_planks");
 
     /**
      * {@code minecraft:mangrove_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_PRESSURE_PLATE = VanillaTypes.block("minecraft:mangrove_pressure_plate");
 
     /**
      * {@code minecraft:mangrove_propagule}: {@link BedrockStates#HANGING}, {@link BedrockStates#PROPAGULE_STAGE}; 10 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_PROPAGULE = VanillaTypes.block("minecraft:mangrove_propagule");
 
     /**
      * {@code minecraft:mangrove_roots}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_ROOTS = VanillaTypes.block("minecraft:mangrove_roots");
 
     /**
      * {@code minecraft:mangrove_shelf}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#POWERED_BIT}, {@link BedrockStates#POWERED_SHELF_TYPE}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_SHELF = VanillaTypes.block("minecraft:mangrove_shelf");
 
     /**
      * {@code minecraft:mangrove_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_SLAB = VanillaTypes.block("minecraft:mangrove_slab");
 
     /**
      * {@code minecraft:mangrove_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_STAIRS = VanillaTypes.block("minecraft:mangrove_stairs");
 
     /**
      * {@code minecraft:mangrove_standing_sign}: {@link BedrockStates#GROUND_SIGN_DIRECTION}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_STANDING_SIGN = VanillaTypes.block("minecraft:mangrove_standing_sign");
 
     /**
      * {@code minecraft:mangrove_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_TRAPDOOR = VanillaTypes.block("minecraft:mangrove_trapdoor");
 
     /**
      * {@code minecraft:mangrove_wall_sign}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_WALL_SIGN = VanillaTypes.block("minecraft:mangrove_wall_sign");
 
     /**
      * {@code minecraft:mangrove_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MANGROVE_WOOD = VanillaTypes.block("minecraft:mangrove_wood");
 
     /**
      * {@code minecraft:material_reducer}: {@link BedrockStates#DIRECTION}; 4 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType MATERIAL_REDUCER = VanillaTypes.block("minecraft:material_reducer");
+    @Education
+    public static final BedrockBlockType MATERIAL_REDUCER = VanillaTypes.educationBlock("minecraft:material_reducer");
 
     /**
      * {@code minecraft:medium_amethyst_bud}: {@link BedrockStates#BLOCK_FACE}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MEDIUM_AMETHYST_BUD = VanillaTypes.block("minecraft:medium_amethyst_bud");
 
     /**
      * {@code minecraft:melon_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MELON_BLOCK = VanillaTypes.block("minecraft:melon_block");
 
     /**
      * {@code minecraft:melon_stem}: {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#GROWTH}; 48 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MELON_STEM = VanillaTypes.block("minecraft:melon_stem");
 
     /**
      * {@code minecraft:mob_spawner}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MOB_SPAWNER = VanillaTypes.block("minecraft:mob_spawner");
 
     /**
      * {@code minecraft:mossy_cobblestone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MOSSY_COBBLESTONE = VanillaTypes.block("minecraft:mossy_cobblestone");
 
     /**
      * {@code minecraft:mossy_cobblestone_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MOSSY_COBBLESTONE_DOUBLE_SLAB = VanillaTypes.block("minecraft:mossy_cobblestone_double_slab");
 
     /**
      * {@code minecraft:mossy_cobblestone_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MOSSY_COBBLESTONE_SLAB = VanillaTypes.block("minecraft:mossy_cobblestone_slab");
 
     /**
      * {@code minecraft:mossy_cobblestone_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MOSSY_COBBLESTONE_STAIRS = VanillaTypes.block("minecraft:mossy_cobblestone_stairs");
 
     /**
      * {@code minecraft:mossy_cobblestone_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MOSSY_COBBLESTONE_WALL = VanillaTypes.block("minecraft:mossy_cobblestone_wall");
 
     /**
      * {@code minecraft:mossy_stone_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MOSSY_STONE_BRICKS = VanillaTypes.block("minecraft:mossy_stone_bricks");
 
     /**
      * {@code minecraft:mossy_stone_brick_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MOSSY_STONE_BRICK_DOUBLE_SLAB = VanillaTypes.block("minecraft:mossy_stone_brick_double_slab");
 
     /**
      * {@code minecraft:mossy_stone_brick_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MOSSY_STONE_BRICK_SLAB = VanillaTypes.block("minecraft:mossy_stone_brick_slab");
 
     /**
      * {@code minecraft:mossy_stone_brick_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MOSSY_STONE_BRICK_STAIRS = VanillaTypes.block("minecraft:mossy_stone_brick_stairs");
 
     /**
      * {@code minecraft:mossy_stone_brick_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MOSSY_STONE_BRICK_WALL = VanillaTypes.block("minecraft:mossy_stone_brick_wall");
 
     /**
      * {@code minecraft:moss_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MOSS_BLOCK = VanillaTypes.block("minecraft:moss_block");
 
     /**
      * {@code minecraft:moss_carpet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MOSS_CARPET = VanillaTypes.block("minecraft:moss_carpet");
 
     /**
      * {@code minecraft:moving_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MOVING_BLOCK = VanillaTypes.block("minecraft:moving_block");
 
     /**
      * {@code minecraft:mud}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MUD = VanillaTypes.block("minecraft:mud");
 
     /**
      * {@code minecraft:muddy_mangrove_roots}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MUDDY_MANGROVE_ROOTS = VanillaTypes.block("minecraft:muddy_mangrove_roots");
 
     /**
      * {@code minecraft:mud_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MUD_BRICKS = VanillaTypes.block("minecraft:mud_bricks");
 
     /**
      * {@code minecraft:mud_brick_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MUD_BRICK_DOUBLE_SLAB = VanillaTypes.block("minecraft:mud_brick_double_slab");
 
     /**
      * {@code minecraft:mud_brick_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MUD_BRICK_SLAB = VanillaTypes.block("minecraft:mud_brick_slab");
 
     /**
      * {@code minecraft:mud_brick_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MUD_BRICK_STAIRS = VanillaTypes.block("minecraft:mud_brick_stairs");
 
     /**
      * {@code minecraft:mud_brick_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MUD_BRICK_WALL = VanillaTypes.block("minecraft:mud_brick_wall");
 
     /**
      * {@code minecraft:mushroom_stem}: {@link BedrockStates#HUGE_MUSHROOM_BITS}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MUSHROOM_STEM = VanillaTypes.block("minecraft:mushroom_stem");
 
     /**
      * {@code minecraft:mycelium}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType MYCELIUM = VanillaTypes.block("minecraft:mycelium");
 
     /**
      * {@code minecraft:netherite_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType NETHERITE_BLOCK = VanillaTypes.block("minecraft:netherite_block");
 
     /**
      * {@code minecraft:netherrack}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType NETHERRACK = VanillaTypes.block("minecraft:netherrack");
 
     /**
      * {@code minecraft:netherreactor}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType NETHERREACTOR = VanillaTypes.block("minecraft:netherreactor");
 
     /**
      * {@code minecraft:nether_brick}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType NETHER_BRICK = VanillaTypes.block("minecraft:nether_brick");
 
     /**
      * {@code minecraft:nether_brick_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType NETHER_BRICK_DOUBLE_SLAB = VanillaTypes.block("minecraft:nether_brick_double_slab");
 
     /**
      * {@code minecraft:nether_brick_fence}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType NETHER_BRICK_FENCE = VanillaTypes.block("minecraft:nether_brick_fence");
 
     /**
      * {@code minecraft:nether_brick_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType NETHER_BRICK_SLAB = VanillaTypes.block("minecraft:nether_brick_slab");
 
     /**
      * {@code minecraft:nether_brick_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType NETHER_BRICK_STAIRS = VanillaTypes.block("minecraft:nether_brick_stairs");
 
     /**
      * {@code minecraft:nether_brick_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType NETHER_BRICK_WALL = VanillaTypes.block("minecraft:nether_brick_wall");
 
     /**
      * {@code minecraft:nether_gold_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType NETHER_GOLD_ORE = VanillaTypes.block("minecraft:nether_gold_ore");
 
     /**
      * {@code minecraft:nether_sprouts}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType NETHER_SPROUTS = VanillaTypes.block("minecraft:nether_sprouts");
 
     /**
      * {@code minecraft:nether_wart}: {@link BedrockStates#AGE}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType NETHER_WART = VanillaTypes.block("minecraft:nether_wart");
 
     /**
      * {@code minecraft:nether_wart_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType NETHER_WART_BLOCK = VanillaTypes.block("minecraft:nether_wart_block");
 
     /**
      * {@code minecraft:normal_stone_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType NORMAL_STONE_DOUBLE_SLAB = VanillaTypes.block("minecraft:normal_stone_double_slab");
 
     /**
      * {@code minecraft:normal_stone_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType NORMAL_STONE_SLAB = VanillaTypes.block("minecraft:normal_stone_slab");
 
     /**
      * {@code minecraft:normal_stone_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType NORMAL_STONE_STAIRS = VanillaTypes.block("minecraft:normal_stone_stairs");
 
     /**
      * {@code minecraft:noteblock}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType NOTEBLOCK = VanillaTypes.block("minecraft:noteblock");
 
     /**
      * {@code minecraft:oak_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OAK_DOUBLE_SLAB = VanillaTypes.block("minecraft:oak_double_slab");
 
     /**
      * {@code minecraft:oak_fence}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OAK_FENCE = VanillaTypes.block("minecraft:oak_fence");
 
     /**
      * {@code minecraft:oak_hanging_sign}: {@link BedrockStates#ATTACHED_BIT}, {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#GROUND_SIGN_DIRECTION}, {@link BedrockStates#HANGING}; 384 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OAK_HANGING_SIGN = VanillaTypes.block("minecraft:oak_hanging_sign");
 
     /**
      * {@code minecraft:oak_leaves}: {@link BedrockStates#PERSISTENT_BIT}, {@link BedrockStates#UPDATE_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OAK_LEAVES = VanillaTypes.block("minecraft:oak_leaves");
 
     /**
      * {@code minecraft:oak_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OAK_LOG = VanillaTypes.block("minecraft:oak_log");
 
     /**
      * {@code minecraft:oak_planks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OAK_PLANKS = VanillaTypes.block("minecraft:oak_planks");
 
     /**
      * {@code minecraft:oak_sapling}: {@link BedrockStates#AGE_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OAK_SAPLING = VanillaTypes.block("minecraft:oak_sapling");
 
     /**
      * {@code minecraft:oak_shelf}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#POWERED_BIT}, {@link BedrockStates#POWERED_SHELF_TYPE}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OAK_SHELF = VanillaTypes.block("minecraft:oak_shelf");
 
     /**
      * {@code minecraft:oak_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OAK_SLAB = VanillaTypes.block("minecraft:oak_slab");
 
     /**
      * {@code minecraft:oak_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OAK_STAIRS = VanillaTypes.block("minecraft:oak_stairs");
 
     /**
      * {@code minecraft:oak_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OAK_WOOD = VanillaTypes.block("minecraft:oak_wood");
 
     /**
      * {@code minecraft:observer}: {@link BedrockStates#MINECRAFT_FACING_DIRECTION}, {@link BedrockStates#POWERED_BIT}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OBSERVER = VanillaTypes.block("minecraft:observer");
 
     /**
      * {@code minecraft:obsidian}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OBSIDIAN = VanillaTypes.block("minecraft:obsidian");
 
     /**
      * {@code minecraft:ochre_froglight}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OCHRE_FROGLIGHT = VanillaTypes.block("minecraft:ochre_froglight");
 
     /**
      * {@code minecraft:open_eyeblossom}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OPEN_EYEBLOSSOM = VanillaTypes.block("minecraft:open_eyeblossom");
 
     /**
      * {@code minecraft:orange_candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ORANGE_CANDLE = VanillaTypes.block("minecraft:orange_candle");
 
     /**
      * {@code minecraft:orange_candle_cake}: {@link BedrockStates#LIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ORANGE_CANDLE_CAKE = VanillaTypes.block("minecraft:orange_candle_cake");
 
     /**
      * {@code minecraft:orange_carpet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ORANGE_CARPET = VanillaTypes.block("minecraft:orange_carpet");
 
     /**
      * {@code minecraft:orange_concrete}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ORANGE_CONCRETE = VanillaTypes.block("minecraft:orange_concrete");
 
     /**
      * {@code minecraft:orange_concrete_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType ORANGE_CONCRETE_DOUBLE_SLAB = VanillaTypes.block("minecraft:orange_concrete_double_slab");
 
     /**
      * {@code minecraft:orange_concrete_powder}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ORANGE_CONCRETE_POWDER = VanillaTypes.block("minecraft:orange_concrete_powder");
 
     /**
      * {@code minecraft:orange_concrete_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType ORANGE_CONCRETE_SLAB = VanillaTypes.block("minecraft:orange_concrete_slab");
 
     /**
      * {@code minecraft:orange_concrete_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType ORANGE_CONCRETE_STAIRS = VanillaTypes.block("minecraft:orange_concrete_stairs");
 
     /**
      * {@code minecraft:orange_glazed_terracotta}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ORANGE_GLAZED_TERRACOTTA = VanillaTypes.block("minecraft:orange_glazed_terracotta");
 
     /**
      * {@code minecraft:orange_poplar_leaves}: {@link BedrockStates#PERSISTENT_BIT}, {@link BedrockStates#UPDATE_BIT}; 4 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType ORANGE_POPLAR_LEAVES = VanillaTypes.block("minecraft:orange_poplar_leaves");
 
     /**
      * {@code minecraft:orange_shulker_box}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ORANGE_SHULKER_BOX = VanillaTypes.block("minecraft:orange_shulker_box");
 
     /**
      * {@code minecraft:orange_stained_glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ORANGE_STAINED_GLASS = VanillaTypes.block("minecraft:orange_stained_glass");
 
     /**
      * {@code minecraft:orange_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ORANGE_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:orange_stained_glass_pane");
 
     /**
      * {@code minecraft:orange_terracotta}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ORANGE_TERRACOTTA = VanillaTypes.block("minecraft:orange_terracotta");
 
     /**
      * {@code minecraft:orange_tulip}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ORANGE_TULIP = VanillaTypes.block("minecraft:orange_tulip");
 
     /**
      * {@code minecraft:orange_wool}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ORANGE_WOOL = VanillaTypes.block("minecraft:orange_wool");
 
     /**
      * {@code minecraft:orange_wool_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType ORANGE_WOOL_DOUBLE_SLAB = VanillaTypes.block("minecraft:orange_wool_double_slab");
 
     /**
      * {@code minecraft:orange_wool_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType ORANGE_WOOL_SLAB = VanillaTypes.block("minecraft:orange_wool_slab");
 
     /**
      * {@code minecraft:orange_wool_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType ORANGE_WOOL_STAIRS = VanillaTypes.block("minecraft:orange_wool_stairs");
 
     /**
      * {@code minecraft:oxeye_daisy}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OXEYE_DAISY = VanillaTypes.block("minecraft:oxeye_daisy");
 
     /**
      * {@code minecraft:oxidized_chiseled_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OXIDIZED_CHISELED_COPPER = VanillaTypes.block("minecraft:oxidized_chiseled_copper");
 
     /**
      * {@code minecraft:oxidized_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OXIDIZED_COPPER = VanillaTypes.block("minecraft:oxidized_copper");
 
     /**
      * {@code minecraft:oxidized_copper_bars}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OXIDIZED_COPPER_BARS = VanillaTypes.block("minecraft:oxidized_copper_bars");
 
     /**
      * {@code minecraft:oxidized_copper_bulb}: {@link BedrockStates#LIT}, {@link BedrockStates#POWERED_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OXIDIZED_COPPER_BULB = VanillaTypes.block("minecraft:oxidized_copper_bulb");
 
     /**
      * {@code minecraft:oxidized_copper_chain}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OXIDIZED_COPPER_CHAIN = VanillaTypes.block("minecraft:oxidized_copper_chain");
 
     /**
      * {@code minecraft:oxidized_copper_chest}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OXIDIZED_COPPER_CHEST = VanillaTypes.block("minecraft:oxidized_copper_chest");
 
     /**
      * {@code minecraft:oxidized_copper_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OXIDIZED_COPPER_DOOR = VanillaTypes.block("minecraft:oxidized_copper_door");
 
     /**
      * {@code minecraft:oxidized_copper_golem_statue}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OXIDIZED_COPPER_GOLEM_STATUE = VanillaTypes.block("minecraft:oxidized_copper_golem_statue");
 
     /**
      * {@code minecraft:oxidized_copper_grate}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OXIDIZED_COPPER_GRATE = VanillaTypes.block("minecraft:oxidized_copper_grate");
 
     /**
      * {@code minecraft:oxidized_copper_lantern}: {@link BedrockStates#HANGING}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OXIDIZED_COPPER_LANTERN = VanillaTypes.block("minecraft:oxidized_copper_lantern");
 
     /**
      * {@code minecraft:oxidized_copper_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OXIDIZED_COPPER_TRAPDOOR = VanillaTypes.block("minecraft:oxidized_copper_trapdoor");
 
     /**
      * {@code minecraft:oxidized_cut_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OXIDIZED_CUT_COPPER = VanillaTypes.block("minecraft:oxidized_cut_copper");
 
     /**
      * {@code minecraft:oxidized_cut_copper_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OXIDIZED_CUT_COPPER_SLAB = VanillaTypes.block("minecraft:oxidized_cut_copper_slab");
 
     /**
      * {@code minecraft:oxidized_cut_copper_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OXIDIZED_CUT_COPPER_STAIRS = VanillaTypes.block("minecraft:oxidized_cut_copper_stairs");
 
     /**
      * {@code minecraft:oxidized_double_cut_copper_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OXIDIZED_DOUBLE_CUT_COPPER_SLAB = VanillaTypes.block("minecraft:oxidized_double_cut_copper_slab");
 
     /**
      * {@code minecraft:oxidized_lightning_rod}: {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#POWERED_BIT}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType OXIDIZED_LIGHTNING_ROD = VanillaTypes.block("minecraft:oxidized_lightning_rod");
 
     /**
      * {@code minecraft:packed_ice}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PACKED_ICE = VanillaTypes.block("minecraft:packed_ice");
 
     /**
      * {@code minecraft:packed_mud}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PACKED_MUD = VanillaTypes.block("minecraft:packed_mud");
 
     /**
      * {@code minecraft:pale_hanging_moss}: {@link BedrockStates#TIP}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_HANGING_MOSS = VanillaTypes.block("minecraft:pale_hanging_moss");
 
     /**
      * {@code minecraft:pale_moss_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_MOSS_BLOCK = VanillaTypes.block("minecraft:pale_moss_block");
 
     /**
      * {@code minecraft:pale_moss_carpet}: {@link BedrockStates#PALE_MOSS_CARPET_SIDE_EAST}, {@link BedrockStates#PALE_MOSS_CARPET_SIDE_NORTH}, {@link BedrockStates#PALE_MOSS_CARPET_SIDE_SOUTH}, {@link BedrockStates#PALE_MOSS_CARPET_SIDE_WEST}, {@link BedrockStates#UPPER_BLOCK_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_MOSS_CARPET = VanillaTypes.block("minecraft:pale_moss_carpet");
 
     /**
      * {@code minecraft:pale_oak_button}: {@link BedrockStates#BUTTON_PRESSED_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_BUTTON = VanillaTypes.block("minecraft:pale_oak_button");
 
     /**
      * {@code minecraft:pale_oak_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_DOOR = VanillaTypes.block("minecraft:pale_oak_door");
 
     /**
      * {@code minecraft:pale_oak_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_DOUBLE_SLAB = VanillaTypes.block("minecraft:pale_oak_double_slab");
 
     /**
      * {@code minecraft:pale_oak_fence}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_FENCE = VanillaTypes.block("minecraft:pale_oak_fence");
 
     /**
      * {@code minecraft:pale_oak_fence_gate}: {@link BedrockStates#IN_WALL_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_FENCE_GATE = VanillaTypes.block("minecraft:pale_oak_fence_gate");
 
     /**
      * {@code minecraft:pale_oak_hanging_sign}: {@link BedrockStates#ATTACHED_BIT}, {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#GROUND_SIGN_DIRECTION}, {@link BedrockStates#HANGING}; 384 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_HANGING_SIGN = VanillaTypes.block("minecraft:pale_oak_hanging_sign");
 
     /**
      * {@code minecraft:pale_oak_leaves}: {@link BedrockStates#PERSISTENT_BIT}, {@link BedrockStates#UPDATE_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_LEAVES = VanillaTypes.block("minecraft:pale_oak_leaves");
 
     /**
      * {@code minecraft:pale_oak_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_LOG = VanillaTypes.block("minecraft:pale_oak_log");
 
     /**
      * {@code minecraft:pale_oak_planks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_PLANKS = VanillaTypes.block("minecraft:pale_oak_planks");
 
     /**
      * {@code minecraft:pale_oak_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_PRESSURE_PLATE = VanillaTypes.block("minecraft:pale_oak_pressure_plate");
 
     /**
      * {@code minecraft:pale_oak_sapling}: {@link BedrockStates#AGE_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_SAPLING = VanillaTypes.block("minecraft:pale_oak_sapling");
 
     /**
      * {@code minecraft:pale_oak_shelf}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#POWERED_BIT}, {@link BedrockStates#POWERED_SHELF_TYPE}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_SHELF = VanillaTypes.block("minecraft:pale_oak_shelf");
 
     /**
      * {@code minecraft:pale_oak_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_SLAB = VanillaTypes.block("minecraft:pale_oak_slab");
 
     /**
      * {@code minecraft:pale_oak_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_STAIRS = VanillaTypes.block("minecraft:pale_oak_stairs");
 
     /**
      * {@code minecraft:pale_oak_standing_sign}: {@link BedrockStates#GROUND_SIGN_DIRECTION}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_STANDING_SIGN = VanillaTypes.block("minecraft:pale_oak_standing_sign");
 
     /**
      * {@code minecraft:pale_oak_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_TRAPDOOR = VanillaTypes.block("minecraft:pale_oak_trapdoor");
 
     /**
      * {@code minecraft:pale_oak_wall_sign}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_WALL_SIGN = VanillaTypes.block("minecraft:pale_oak_wall_sign");
 
     /**
      * {@code minecraft:pale_oak_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PALE_OAK_WOOD = VanillaTypes.block("minecraft:pale_oak_wood");
 
     /**
      * {@code minecraft:pearlescent_froglight}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PEARLESCENT_FROGLIGHT = VanillaTypes.block("minecraft:pearlescent_froglight");
 
     /**
      * {@code minecraft:peony}: {@link BedrockStates#UPPER_BLOCK_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PEONY = VanillaTypes.block("minecraft:peony");
 
     /**
      * {@code minecraft:petrified_oak_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PETRIFIED_OAK_DOUBLE_SLAB = VanillaTypes.block("minecraft:petrified_oak_double_slab");
 
     /**
      * {@code minecraft:petrified_oak_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PETRIFIED_OAK_SLAB = VanillaTypes.block("minecraft:petrified_oak_slab");
 
     /**
      * {@code minecraft:piglin_head}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PIGLIN_HEAD = VanillaTypes.block("minecraft:piglin_head");
 
     /**
      * {@code minecraft:pink_candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PINK_CANDLE = VanillaTypes.block("minecraft:pink_candle");
 
     /**
      * {@code minecraft:pink_candle_cake}: {@link BedrockStates#LIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PINK_CANDLE_CAKE = VanillaTypes.block("minecraft:pink_candle_cake");
 
     /**
      * {@code minecraft:pink_carpet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PINK_CARPET = VanillaTypes.block("minecraft:pink_carpet");
 
     /**
      * {@code minecraft:pink_concrete}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PINK_CONCRETE = VanillaTypes.block("minecraft:pink_concrete");
 
     /**
      * {@code minecraft:pink_concrete_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType PINK_CONCRETE_DOUBLE_SLAB = VanillaTypes.block("minecraft:pink_concrete_double_slab");
 
     /**
      * {@code minecraft:pink_concrete_powder}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PINK_CONCRETE_POWDER = VanillaTypes.block("minecraft:pink_concrete_powder");
 
     /**
      * {@code minecraft:pink_concrete_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType PINK_CONCRETE_SLAB = VanillaTypes.block("minecraft:pink_concrete_slab");
 
     /**
      * {@code minecraft:pink_concrete_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType PINK_CONCRETE_STAIRS = VanillaTypes.block("minecraft:pink_concrete_stairs");
 
     /**
      * {@code minecraft:pink_glazed_terracotta}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PINK_GLAZED_TERRACOTTA = VanillaTypes.block("minecraft:pink_glazed_terracotta");
 
     /**
      * {@code minecraft:pink_petals}: {@link BedrockStates#GROWTH}, {@link BedrockStates#CARDINAL_DIRECTION}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PINK_PETALS = VanillaTypes.block("minecraft:pink_petals");
 
     /**
      * {@code minecraft:pink_shulker_box}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PINK_SHULKER_BOX = VanillaTypes.block("minecraft:pink_shulker_box");
 
     /**
      * {@code minecraft:pink_stained_glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PINK_STAINED_GLASS = VanillaTypes.block("minecraft:pink_stained_glass");
 
     /**
      * {@code minecraft:pink_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PINK_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:pink_stained_glass_pane");
 
     /**
      * {@code minecraft:pink_terracotta}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PINK_TERRACOTTA = VanillaTypes.block("minecraft:pink_terracotta");
 
     /**
      * {@code minecraft:pink_tulip}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PINK_TULIP = VanillaTypes.block("minecraft:pink_tulip");
 
     /**
      * {@code minecraft:pink_wool}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PINK_WOOL = VanillaTypes.block("minecraft:pink_wool");
 
     /**
      * {@code minecraft:pink_wool_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType PINK_WOOL_DOUBLE_SLAB = VanillaTypes.block("minecraft:pink_wool_double_slab");
 
     /**
      * {@code minecraft:pink_wool_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType PINK_WOOL_SLAB = VanillaTypes.block("minecraft:pink_wool_slab");
 
     /**
      * {@code minecraft:pink_wool_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType PINK_WOOL_STAIRS = VanillaTypes.block("minecraft:pink_wool_stairs");
 
     /**
      * {@code minecraft:piston}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PISTON = VanillaTypes.block("minecraft:piston");
 
     /**
      * {@code minecraft:piston_arm_collision}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PISTON_ARM_COLLISION = VanillaTypes.block("minecraft:piston_arm_collision");
 
     /**
      * {@code minecraft:pitcher_crop}: {@link BedrockStates#GROWTH}, {@link BedrockStates#UPPER_BLOCK_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PITCHER_CROP = VanillaTypes.block("minecraft:pitcher_crop");
 
     /**
      * {@code minecraft:pitcher_plant}: {@link BedrockStates#UPPER_BLOCK_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PITCHER_PLANT = VanillaTypes.block("minecraft:pitcher_plant");
 
     /**
      * {@code minecraft:player_head}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PLAYER_HEAD = VanillaTypes.block("minecraft:player_head");
 
     /**
      * {@code minecraft:podzol}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PODZOL = VanillaTypes.block("minecraft:podzol");
 
     /**
      * {@code minecraft:pointed_dripstone}: {@link BedrockStates#DRIPSTONE_THICKNESS}, {@link BedrockStates#HANGING}; 10 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POINTED_DRIPSTONE = VanillaTypes.block("minecraft:pointed_dripstone");
 
     /**
      * {@code minecraft:polished_andesite}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_ANDESITE = VanillaTypes.block("minecraft:polished_andesite");
 
     /**
      * {@code minecraft:polished_andesite_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_ANDESITE_DOUBLE_SLAB = VanillaTypes.block("minecraft:polished_andesite_double_slab");
 
     /**
      * {@code minecraft:polished_andesite_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_ANDESITE_SLAB = VanillaTypes.block("minecraft:polished_andesite_slab");
 
     /**
      * {@code minecraft:polished_andesite_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_ANDESITE_STAIRS = VanillaTypes.block("minecraft:polished_andesite_stairs");
 
     /**
      * {@code minecraft:polished_basalt}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_BASALT = VanillaTypes.block("minecraft:polished_basalt");
 
     /**
      * {@code minecraft:polished_blackstone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_BLACKSTONE = VanillaTypes.block("minecraft:polished_blackstone");
 
     /**
      * {@code minecraft:polished_blackstone_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_BLACKSTONE_BRICKS = VanillaTypes.block("minecraft:polished_blackstone_bricks");
 
     /**
      * {@code minecraft:polished_blackstone_brick_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB = VanillaTypes.block("minecraft:polished_blackstone_brick_double_slab");
 
     /**
      * {@code minecraft:polished_blackstone_brick_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_BLACKSTONE_BRICK_SLAB = VanillaTypes.block("minecraft:polished_blackstone_brick_slab");
 
     /**
      * {@code minecraft:polished_blackstone_brick_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_BLACKSTONE_BRICK_STAIRS = VanillaTypes.block("minecraft:polished_blackstone_brick_stairs");
 
     /**
      * {@code minecraft:polished_blackstone_brick_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_BLACKSTONE_BRICK_WALL = VanillaTypes.block("minecraft:polished_blackstone_brick_wall");
 
     /**
      * {@code minecraft:polished_blackstone_button}: {@link BedrockStates#BUTTON_PRESSED_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_BLACKSTONE_BUTTON = VanillaTypes.block("minecraft:polished_blackstone_button");
 
     /**
      * {@code minecraft:polished_blackstone_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_BLACKSTONE_DOUBLE_SLAB = VanillaTypes.block("minecraft:polished_blackstone_double_slab");
 
     /**
      * {@code minecraft:polished_blackstone_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_BLACKSTONE_PRESSURE_PLATE = VanillaTypes.block("minecraft:polished_blackstone_pressure_plate");
 
     /**
      * {@code minecraft:polished_blackstone_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_BLACKSTONE_SLAB = VanillaTypes.block("minecraft:polished_blackstone_slab");
 
     /**
      * {@code minecraft:polished_blackstone_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_BLACKSTONE_STAIRS = VanillaTypes.block("minecraft:polished_blackstone_stairs");
 
     /**
      * {@code minecraft:polished_blackstone_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_BLACKSTONE_WALL = VanillaTypes.block("minecraft:polished_blackstone_wall");
 
     /**
      * {@code minecraft:polished_cinnabar}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_CINNABAR = VanillaTypes.block("minecraft:polished_cinnabar");
 
     /**
      * {@code minecraft:polished_cinnabar_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_CINNABAR_DOUBLE_SLAB = VanillaTypes.block("minecraft:polished_cinnabar_double_slab");
 
     /**
      * {@code minecraft:polished_cinnabar_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_CINNABAR_SLAB = VanillaTypes.block("minecraft:polished_cinnabar_slab");
 
     /**
      * {@code minecraft:polished_cinnabar_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_CINNABAR_STAIRS = VanillaTypes.block("minecraft:polished_cinnabar_stairs");
 
     /**
      * {@code minecraft:polished_cinnabar_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_CINNABAR_WALL = VanillaTypes.block("minecraft:polished_cinnabar_wall");
 
     /**
      * {@code minecraft:polished_deepslate}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_DEEPSLATE = VanillaTypes.block("minecraft:polished_deepslate");
 
     /**
      * {@code minecraft:polished_deepslate_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_DEEPSLATE_DOUBLE_SLAB = VanillaTypes.block("minecraft:polished_deepslate_double_slab");
 
     /**
      * {@code minecraft:polished_deepslate_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_DEEPSLATE_SLAB = VanillaTypes.block("minecraft:polished_deepslate_slab");
 
     /**
      * {@code minecraft:polished_deepslate_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_DEEPSLATE_STAIRS = VanillaTypes.block("minecraft:polished_deepslate_stairs");
 
     /**
      * {@code minecraft:polished_deepslate_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_DEEPSLATE_WALL = VanillaTypes.block("minecraft:polished_deepslate_wall");
 
     /**
      * {@code minecraft:polished_diorite}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_DIORITE = VanillaTypes.block("minecraft:polished_diorite");
 
     /**
      * {@code minecraft:polished_diorite_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_DIORITE_DOUBLE_SLAB = VanillaTypes.block("minecraft:polished_diorite_double_slab");
 
     /**
      * {@code minecraft:polished_diorite_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_DIORITE_SLAB = VanillaTypes.block("minecraft:polished_diorite_slab");
 
     /**
      * {@code minecraft:polished_diorite_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_DIORITE_STAIRS = VanillaTypes.block("minecraft:polished_diorite_stairs");
 
     /**
      * {@code minecraft:polished_granite}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_GRANITE = VanillaTypes.block("minecraft:polished_granite");
 
     /**
      * {@code minecraft:polished_granite_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_GRANITE_DOUBLE_SLAB = VanillaTypes.block("minecraft:polished_granite_double_slab");
 
     /**
      * {@code minecraft:polished_granite_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_GRANITE_SLAB = VanillaTypes.block("minecraft:polished_granite_slab");
 
     /**
      * {@code minecraft:polished_granite_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_GRANITE_STAIRS = VanillaTypes.block("minecraft:polished_granite_stairs");
 
     /**
      * {@code minecraft:polished_sulfur}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_SULFUR = VanillaTypes.block("minecraft:polished_sulfur");
 
     /**
      * {@code minecraft:polished_sulfur_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_SULFUR_DOUBLE_SLAB = VanillaTypes.block("minecraft:polished_sulfur_double_slab");
 
     /**
      * {@code minecraft:polished_sulfur_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_SULFUR_SLAB = VanillaTypes.block("minecraft:polished_sulfur_slab");
 
     /**
      * {@code minecraft:polished_sulfur_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_SULFUR_STAIRS = VanillaTypes.block("minecraft:polished_sulfur_stairs");
 
     /**
      * {@code minecraft:polished_sulfur_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_SULFUR_WALL = VanillaTypes.block("minecraft:polished_sulfur_wall");
 
     /**
      * {@code minecraft:polished_tuff}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_TUFF = VanillaTypes.block("minecraft:polished_tuff");
 
     /**
      * {@code minecraft:polished_tuff_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_TUFF_DOUBLE_SLAB = VanillaTypes.block("minecraft:polished_tuff_double_slab");
 
     /**
      * {@code minecraft:polished_tuff_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_TUFF_SLAB = VanillaTypes.block("minecraft:polished_tuff_slab");
 
     /**
      * {@code minecraft:polished_tuff_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_TUFF_STAIRS = VanillaTypes.block("minecraft:polished_tuff_stairs");
 
     /**
      * {@code minecraft:polished_tuff_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POLISHED_TUFF_WALL = VanillaTypes.block("minecraft:polished_tuff_wall");
 
     /**
      * {@code minecraft:poplar_button}: {@link BedrockStates#BUTTON_PRESSED_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_BUTTON = VanillaTypes.block("minecraft:poplar_button");
 
     /**
      * {@code minecraft:poplar_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_DOOR = VanillaTypes.block("minecraft:poplar_door");
 
     /**
      * {@code minecraft:poplar_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_DOUBLE_SLAB = VanillaTypes.block("minecraft:poplar_double_slab");
 
     /**
      * {@code minecraft:poplar_fence}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_FENCE = VanillaTypes.block("minecraft:poplar_fence");
 
     /**
      * {@code minecraft:poplar_fence_gate}: {@link BedrockStates#IN_WALL_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}; 16 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_FENCE_GATE = VanillaTypes.block("minecraft:poplar_fence_gate");
 
     /**
      * {@code minecraft:poplar_hanging_sign}: {@link BedrockStates#ATTACHED_BIT}, {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#GROUND_SIGN_DIRECTION}, {@link BedrockStates#HANGING}; 384 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_HANGING_SIGN = VanillaTypes.block("minecraft:poplar_hanging_sign");
 
     /**
      * {@code minecraft:poplar_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_LOG = VanillaTypes.block("minecraft:poplar_log");
 
     /**
      * {@code minecraft:poplar_planks}, 1 state.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_PLANKS = VanillaTypes.block("minecraft:poplar_planks");
 
     /**
      * {@code minecraft:poplar_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_PRESSURE_PLATE = VanillaTypes.block("minecraft:poplar_pressure_plate");
 
     /**
      * {@code minecraft:poplar_sapling}: {@link BedrockStates#AGE_BIT}; 2 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_SAPLING = VanillaTypes.block("minecraft:poplar_sapling");
 
     /**
      * {@code minecraft:poplar_shelf}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#POWERED_BIT}, {@link BedrockStates#POWERED_SHELF_TYPE}; 32 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_SHELF = VanillaTypes.block("minecraft:poplar_shelf");
 
     /**
      * {@code minecraft:poplar_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_SLAB = VanillaTypes.block("minecraft:poplar_slab");
 
     /**
      * {@code minecraft:poplar_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_STAIRS = VanillaTypes.block("minecraft:poplar_stairs");
 
     /**
      * {@code minecraft:poplar_standing_sign}: {@link BedrockStates#GROUND_SIGN_DIRECTION}; 16 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_STANDING_SIGN = VanillaTypes.block("minecraft:poplar_standing_sign");
 
     /**
      * {@code minecraft:poplar_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_TRAPDOOR = VanillaTypes.block("minecraft:poplar_trapdoor");
 
     /**
      * {@code minecraft:poplar_wall_sign}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_WALL_SIGN = VanillaTypes.block("minecraft:poplar_wall_sign");
 
     /**
      * {@code minecraft:poplar_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType POPLAR_WOOD = VanillaTypes.block("minecraft:poplar_wood");
 
     /**
      * {@code minecraft:poppy}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POPPY = VanillaTypes.block("minecraft:poppy");
 
     /**
      * {@code minecraft:portal}: {@link BedrockStates#PORTAL_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PORTAL = VanillaTypes.block("minecraft:portal");
 
     /**
      * {@code minecraft:potatoes}: {@link BedrockStates#GROWTH}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POTATOES = VanillaTypes.block("minecraft:potatoes");
 
     /**
      * {@code minecraft:potent_sulfur}: {@link BedrockStates#POTENT_SULFUR_STATE}; 5 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POTENT_SULFUR = VanillaTypes.block("minecraft:potent_sulfur");
 
     /**
      * {@code minecraft:powder_snow}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POWDER_SNOW = VanillaTypes.block("minecraft:powder_snow");
 
     /**
      * {@code minecraft:powered_comparator}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OUTPUT_LIT_BIT}, {@link BedrockStates#OUTPUT_SUBTRACT_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POWERED_COMPARATOR = VanillaTypes.block("minecraft:powered_comparator");
 
     /**
      * {@code minecraft:powered_repeater}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#REPEATER_DELAY}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType POWERED_REPEATER = VanillaTypes.block("minecraft:powered_repeater");
 
     /**
      * {@code minecraft:prismarine}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PRISMARINE = VanillaTypes.block("minecraft:prismarine");
 
     /**
      * {@code minecraft:prismarine_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PRISMARINE_BRICKS = VanillaTypes.block("minecraft:prismarine_bricks");
 
     /**
      * {@code minecraft:prismarine_bricks_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PRISMARINE_BRICKS_STAIRS = VanillaTypes.block("minecraft:prismarine_bricks_stairs");
 
     /**
      * {@code minecraft:prismarine_brick_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PRISMARINE_BRICK_DOUBLE_SLAB = VanillaTypes.block("minecraft:prismarine_brick_double_slab");
 
     /**
      * {@code minecraft:prismarine_brick_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PRISMARINE_BRICK_SLAB = VanillaTypes.block("minecraft:prismarine_brick_slab");
 
     /**
      * {@code minecraft:prismarine_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PRISMARINE_DOUBLE_SLAB = VanillaTypes.block("minecraft:prismarine_double_slab");
 
     /**
      * {@code minecraft:prismarine_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PRISMARINE_SLAB = VanillaTypes.block("minecraft:prismarine_slab");
 
     /**
      * {@code minecraft:prismarine_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PRISMARINE_STAIRS = VanillaTypes.block("minecraft:prismarine_stairs");
 
     /**
      * {@code minecraft:prismarine_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PRISMARINE_WALL = VanillaTypes.block("minecraft:prismarine_wall");
 
     /**
      * {@code minecraft:pumpkin}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PUMPKIN = VanillaTypes.block("minecraft:pumpkin");
 
     /**
      * {@code minecraft:pumpkin_stem}: {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#GROWTH}; 48 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PUMPKIN_STEM = VanillaTypes.block("minecraft:pumpkin_stem");
 
     /**
      * {@code minecraft:purple_candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PURPLE_CANDLE = VanillaTypes.block("minecraft:purple_candle");
 
     /**
      * {@code minecraft:purple_candle_cake}: {@link BedrockStates#LIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PURPLE_CANDLE_CAKE = VanillaTypes.block("minecraft:purple_candle_cake");
 
     /**
      * {@code minecraft:purple_carpet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PURPLE_CARPET = VanillaTypes.block("minecraft:purple_carpet");
 
     /**
      * {@code minecraft:purple_concrete}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PURPLE_CONCRETE = VanillaTypes.block("minecraft:purple_concrete");
 
     /**
      * {@code minecraft:purple_concrete_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType PURPLE_CONCRETE_DOUBLE_SLAB = VanillaTypes.block("minecraft:purple_concrete_double_slab");
 
     /**
      * {@code minecraft:purple_concrete_powder}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PURPLE_CONCRETE_POWDER = VanillaTypes.block("minecraft:purple_concrete_powder");
 
     /**
      * {@code minecraft:purple_concrete_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType PURPLE_CONCRETE_SLAB = VanillaTypes.block("minecraft:purple_concrete_slab");
 
     /**
      * {@code minecraft:purple_concrete_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType PURPLE_CONCRETE_STAIRS = VanillaTypes.block("minecraft:purple_concrete_stairs");
 
     /**
      * {@code minecraft:purple_glazed_terracotta}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PURPLE_GLAZED_TERRACOTTA = VanillaTypes.block("minecraft:purple_glazed_terracotta");
 
     /**
      * {@code minecraft:purple_shulker_box}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PURPLE_SHULKER_BOX = VanillaTypes.block("minecraft:purple_shulker_box");
 
     /**
      * {@code minecraft:purple_stained_glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PURPLE_STAINED_GLASS = VanillaTypes.block("minecraft:purple_stained_glass");
 
     /**
      * {@code minecraft:purple_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PURPLE_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:purple_stained_glass_pane");
 
     /**
      * {@code minecraft:purple_terracotta}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PURPLE_TERRACOTTA = VanillaTypes.block("minecraft:purple_terracotta");
 
     /**
      * {@code minecraft:purple_wool}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PURPLE_WOOL = VanillaTypes.block("minecraft:purple_wool");
 
     /**
      * {@code minecraft:purple_wool_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType PURPLE_WOOL_DOUBLE_SLAB = VanillaTypes.block("minecraft:purple_wool_double_slab");
 
     /**
      * {@code minecraft:purple_wool_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType PURPLE_WOOL_SLAB = VanillaTypes.block("minecraft:purple_wool_slab");
 
     /**
      * {@code minecraft:purple_wool_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType PURPLE_WOOL_STAIRS = VanillaTypes.block("minecraft:purple_wool_stairs");
 
     /**
      * {@code minecraft:purpur_block}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PURPUR_BLOCK = VanillaTypes.block("minecraft:purpur_block");
 
     /**
      * {@code minecraft:purpur_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PURPUR_DOUBLE_SLAB = VanillaTypes.block("minecraft:purpur_double_slab");
 
     /**
      * {@code minecraft:purpur_pillar}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PURPUR_PILLAR = VanillaTypes.block("minecraft:purpur_pillar");
 
     /**
      * {@code minecraft:purpur_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PURPUR_SLAB = VanillaTypes.block("minecraft:purpur_slab");
 
     /**
      * {@code minecraft:purpur_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType PURPUR_STAIRS = VanillaTypes.block("minecraft:purpur_stairs");
 
     /**
      * {@code minecraft:quartz_block}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType QUARTZ_BLOCK = VanillaTypes.block("minecraft:quartz_block");
 
     /**
      * {@code minecraft:quartz_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType QUARTZ_BRICKS = VanillaTypes.block("minecraft:quartz_bricks");
 
     /**
      * {@code minecraft:quartz_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType QUARTZ_DOUBLE_SLAB = VanillaTypes.block("minecraft:quartz_double_slab");
 
     /**
      * {@code minecraft:quartz_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType QUARTZ_ORE = VanillaTypes.block("minecraft:quartz_ore");
 
     /**
      * {@code minecraft:quartz_pillar}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType QUARTZ_PILLAR = VanillaTypes.block("minecraft:quartz_pillar");
 
     /**
      * {@code minecraft:quartz_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType QUARTZ_SLAB = VanillaTypes.block("minecraft:quartz_slab");
 
     /**
      * {@code minecraft:quartz_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType QUARTZ_STAIRS = VanillaTypes.block("minecraft:quartz_stairs");
 
     /**
      * {@code minecraft:rail}: {@link BedrockStates#RAIL_DIRECTION}; 10 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RAIL = VanillaTypes.block("minecraft:rail");
 
     /**
      * {@code minecraft:raw_copper_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RAW_COPPER_BLOCK = VanillaTypes.block("minecraft:raw_copper_block");
 
     /**
      * {@code minecraft:raw_gold_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RAW_GOLD_BLOCK = VanillaTypes.block("minecraft:raw_gold_block");
 
     /**
      * {@code minecraft:raw_iron_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RAW_IRON_BLOCK = VanillaTypes.block("minecraft:raw_iron_block");
 
     /**
      * {@code minecraft:redstone_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType REDSTONE_BLOCK = VanillaTypes.block("minecraft:redstone_block");
 
     /**
      * {@code minecraft:redstone_lamp}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType REDSTONE_LAMP = VanillaTypes.block("minecraft:redstone_lamp");
 
     /**
      * {@code minecraft:redstone_ore}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType REDSTONE_ORE = VanillaTypes.block("minecraft:redstone_ore");
 
     /**
      * {@code minecraft:redstone_torch}: {@link BedrockStates#TORCH_FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType REDSTONE_TORCH = VanillaTypes.block("minecraft:redstone_torch");
 
     /**
      * {@code minecraft:redstone_wire}: {@link BedrockStates#REDSTONE_EAST}, {@link BedrockStates#REDSTONE_NORTH}, {@link BedrockStates#REDSTONE_SIGNAL}, {@link BedrockStates#REDSTONE_SOUTH}, {@link BedrockStates#REDSTONE_WEST}; 1296 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType REDSTONE_WIRE = VanillaTypes.block("minecraft:redstone_wire");
 
     /**
      * {@code minecraft:red_candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_CANDLE = VanillaTypes.block("minecraft:red_candle");
 
     /**
      * {@code minecraft:red_candle_cake}: {@link BedrockStates#LIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_CANDLE_CAKE = VanillaTypes.block("minecraft:red_candle_cake");
 
     /**
      * {@code minecraft:red_carpet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_CARPET = VanillaTypes.block("minecraft:red_carpet");
 
     /**
      * {@code minecraft:red_concrete}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_CONCRETE = VanillaTypes.block("minecraft:red_concrete");
 
     /**
      * {@code minecraft:red_concrete_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType RED_CONCRETE_DOUBLE_SLAB = VanillaTypes.block("minecraft:red_concrete_double_slab");
 
     /**
      * {@code minecraft:red_concrete_powder}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_CONCRETE_POWDER = VanillaTypes.block("minecraft:red_concrete_powder");
 
     /**
      * {@code minecraft:red_concrete_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType RED_CONCRETE_SLAB = VanillaTypes.block("minecraft:red_concrete_slab");
 
     /**
      * {@code minecraft:red_concrete_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType RED_CONCRETE_STAIRS = VanillaTypes.block("minecraft:red_concrete_stairs");
 
     /**
      * {@code minecraft:red_glazed_terracotta}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_GLAZED_TERRACOTTA = VanillaTypes.block("minecraft:red_glazed_terracotta");
 
     /**
      * {@code minecraft:red_mushroom}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_MUSHROOM = VanillaTypes.block("minecraft:red_mushroom");
 
     /**
      * {@code minecraft:red_mushroom_block}: {@link BedrockStates#HUGE_MUSHROOM_BITS}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_MUSHROOM_BLOCK = VanillaTypes.block("minecraft:red_mushroom_block");
 
     /**
      * {@code minecraft:red_nether_brick}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_NETHER_BRICK = VanillaTypes.block("minecraft:red_nether_brick");
 
     /**
      * {@code minecraft:red_nether_brick_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_NETHER_BRICK_DOUBLE_SLAB = VanillaTypes.block("minecraft:red_nether_brick_double_slab");
 
     /**
      * {@code minecraft:red_nether_brick_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_NETHER_BRICK_SLAB = VanillaTypes.block("minecraft:red_nether_brick_slab");
 
     /**
      * {@code minecraft:red_nether_brick_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_NETHER_BRICK_STAIRS = VanillaTypes.block("minecraft:red_nether_brick_stairs");
 
     /**
      * {@code minecraft:red_nether_brick_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_NETHER_BRICK_WALL = VanillaTypes.block("minecraft:red_nether_brick_wall");
 
     /**
      * {@code minecraft:red_poplar_leaves}: {@link BedrockStates#PERSISTENT_BIT}, {@link BedrockStates#UPDATE_BIT}; 4 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType RED_POPLAR_LEAVES = VanillaTypes.block("minecraft:red_poplar_leaves");
 
     /**
      * {@code minecraft:red_sand}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_SAND = VanillaTypes.block("minecraft:red_sand");
 
     /**
      * {@code minecraft:red_sandstone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_SANDSTONE = VanillaTypes.block("minecraft:red_sandstone");
 
     /**
      * {@code minecraft:red_sandstone_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_SANDSTONE_DOUBLE_SLAB = VanillaTypes.block("minecraft:red_sandstone_double_slab");
 
     /**
      * {@code minecraft:red_sandstone_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_SANDSTONE_SLAB = VanillaTypes.block("minecraft:red_sandstone_slab");
 
     /**
      * {@code minecraft:red_sandstone_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_SANDSTONE_STAIRS = VanillaTypes.block("minecraft:red_sandstone_stairs");
 
     /**
      * {@code minecraft:red_sandstone_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_SANDSTONE_WALL = VanillaTypes.block("minecraft:red_sandstone_wall");
 
     /**
      * {@code minecraft:red_shrub}, 1 state.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType RED_SHRUB = VanillaTypes.block("minecraft:red_shrub");
 
     /**
      * {@code minecraft:red_shulker_box}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_SHULKER_BOX = VanillaTypes.block("minecraft:red_shulker_box");
 
     /**
      * {@code minecraft:red_stained_glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_STAINED_GLASS = VanillaTypes.block("minecraft:red_stained_glass");
 
     /**
      * {@code minecraft:red_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:red_stained_glass_pane");
 
     /**
      * {@code minecraft:red_terracotta}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_TERRACOTTA = VanillaTypes.block("minecraft:red_terracotta");
 
     /**
      * {@code minecraft:red_tulip}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_TULIP = VanillaTypes.block("minecraft:red_tulip");
 
     /**
      * {@code minecraft:red_wool}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RED_WOOL = VanillaTypes.block("minecraft:red_wool");
 
     /**
      * {@code minecraft:red_wool_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType RED_WOOL_DOUBLE_SLAB = VanillaTypes.block("minecraft:red_wool_double_slab");
 
     /**
      * {@code minecraft:red_wool_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType RED_WOOL_SLAB = VanillaTypes.block("minecraft:red_wool_slab");
 
     /**
      * {@code minecraft:red_wool_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType RED_WOOL_STAIRS = VanillaTypes.block("minecraft:red_wool_stairs");
 
     /**
      * {@code minecraft:reeds}: {@link BedrockStates#AGE}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType REEDS = VanillaTypes.block("minecraft:reeds");
 
     /**
      * {@code minecraft:reinforced_deepslate}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType REINFORCED_DEEPSLATE = VanillaTypes.block("minecraft:reinforced_deepslate");
 
     /**
      * {@code minecraft:repeating_command_block}: {@link BedrockStates#CONDITIONAL_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType REPEATING_COMMAND_BLOCK = VanillaTypes.block("minecraft:repeating_command_block");
 
     /**
      * {@code minecraft:reserved6}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RESERVED6 = VanillaTypes.block("minecraft:reserved6");
 
     /**
      * {@code minecraft:resin_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RESIN_BLOCK = VanillaTypes.block("minecraft:resin_block");
 
     /**
      * {@code minecraft:resin_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RESIN_BRICKS = VanillaTypes.block("minecraft:resin_bricks");
 
     /**
      * {@code minecraft:resin_brick_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RESIN_BRICK_DOUBLE_SLAB = VanillaTypes.block("minecraft:resin_brick_double_slab");
 
     /**
      * {@code minecraft:resin_brick_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RESIN_BRICK_SLAB = VanillaTypes.block("minecraft:resin_brick_slab");
 
     /**
      * {@code minecraft:resin_brick_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RESIN_BRICK_STAIRS = VanillaTypes.block("minecraft:resin_brick_stairs");
 
     /**
      * {@code minecraft:resin_brick_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RESIN_BRICK_WALL = VanillaTypes.block("minecraft:resin_brick_wall");
 
     /**
      * {@code minecraft:resin_clump}: {@link BedrockStates#MULTI_FACE_DIRECTION_BITS}; 64 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RESIN_CLUMP = VanillaTypes.block("minecraft:resin_clump");
 
     /**
      * {@code minecraft:respawn_anchor}: {@link BedrockStates#RESPAWN_ANCHOR_CHARGE}; 5 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType RESPAWN_ANCHOR = VanillaTypes.block("minecraft:respawn_anchor");
 
     /**
      * {@code minecraft:rose_bush}: {@link BedrockStates#UPPER_BLOCK_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ROSE_BUSH = VanillaTypes.block("minecraft:rose_bush");
 
     /**
      * {@code minecraft:sand}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SAND = VanillaTypes.block("minecraft:sand");
 
     /**
      * {@code minecraft:sandstone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SANDSTONE = VanillaTypes.block("minecraft:sandstone");
 
     /**
      * {@code minecraft:sandstone_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SANDSTONE_DOUBLE_SLAB = VanillaTypes.block("minecraft:sandstone_double_slab");
 
     /**
      * {@code minecraft:sandstone_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SANDSTONE_SLAB = VanillaTypes.block("minecraft:sandstone_slab");
 
     /**
      * {@code minecraft:sandstone_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SANDSTONE_STAIRS = VanillaTypes.block("minecraft:sandstone_stairs");
 
     /**
      * {@code minecraft:sandstone_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SANDSTONE_WALL = VanillaTypes.block("minecraft:sandstone_wall");
 
     /**
      * {@code minecraft:scaffolding}: {@link BedrockStates#STABILITY}, {@link BedrockStates#STABILITY_CHECK}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SCAFFOLDING = VanillaTypes.block("minecraft:scaffolding");
 
     /**
      * {@code minecraft:sculk}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SCULK = VanillaTypes.block("minecraft:sculk");
 
     /**
      * {@code minecraft:sculk_catalyst}: {@link BedrockStates#BLOOM}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SCULK_CATALYST = VanillaTypes.block("minecraft:sculk_catalyst");
 
     /**
      * {@code minecraft:sculk_sensor}: {@link BedrockStates#SCULK_SENSOR_PHASE}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SCULK_SENSOR = VanillaTypes.block("minecraft:sculk_sensor");
 
     /**
      * {@code minecraft:sculk_shrieker}: {@link BedrockStates#ACTIVE}, {@link BedrockStates#CAN_SUMMON}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SCULK_SHRIEKER = VanillaTypes.block("minecraft:sculk_shrieker");
 
     /**
      * {@code minecraft:sculk_vein}: {@link BedrockStates#MULTI_FACE_DIRECTION_BITS}; 64 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SCULK_VEIN = VanillaTypes.block("minecraft:sculk_vein");
 
     /**
      * {@code minecraft:seagrass}: {@link BedrockStates#SEA_GRASS_TYPE}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SEAGRASS = VanillaTypes.block("minecraft:seagrass");
 
     /**
      * {@code minecraft:sea_lantern}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SEA_LANTERN = VanillaTypes.block("minecraft:sea_lantern");
 
     /**
      * {@code minecraft:sea_pickle}: {@link BedrockStates#CLUSTER_COUNT}, {@link BedrockStates#DEAD_BIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SEA_PICKLE = VanillaTypes.block("minecraft:sea_pickle");
 
     /**
      * {@code minecraft:shelf_mushroom}: {@link BedrockStates#GROWTH}, {@link BedrockStates#CARDINAL_DIRECTION}; 8 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType SHELF_MUSHROOM = VanillaTypes.block("minecraft:shelf_mushroom");
 
     /**
      * {@code minecraft:short_dry_grass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SHORT_DRY_GRASS = VanillaTypes.block("minecraft:short_dry_grass");
 
     /**
      * {@code minecraft:short_grass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SHORT_GRASS = VanillaTypes.block("minecraft:short_grass");
 
     /**
      * {@code minecraft:shroomlight}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SHROOMLIGHT = VanillaTypes.block("minecraft:shroomlight");
 
     /**
      * {@code minecraft:silver_glazed_terracotta}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SILVER_GLAZED_TERRACOTTA = VanillaTypes.block("minecraft:silver_glazed_terracotta");
 
     /**
      * {@code minecraft:skeleton_skull}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SKELETON_SKULL = VanillaTypes.block("minecraft:skeleton_skull");
 
     /**
      * {@code minecraft:slime}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SLIME = VanillaTypes.block("minecraft:slime");
 
     /**
      * {@code minecraft:small_amethyst_bud}: {@link BedrockStates#BLOCK_FACE}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMALL_AMETHYST_BUD = VanillaTypes.block("minecraft:small_amethyst_bud");
 
     /**
      * {@code minecraft:small_dripleaf_block}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#UPPER_BLOCK_BIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMALL_DRIPLEAF_BLOCK = VanillaTypes.block("minecraft:small_dripleaf_block");
 
     /**
      * {@code minecraft:smithing_table}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMITHING_TABLE = VanillaTypes.block("minecraft:smithing_table");
 
     /**
      * {@code minecraft:smoker}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMOKER = VanillaTypes.block("minecraft:smoker");
 
     /**
      * {@code minecraft:smooth_basalt}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMOOTH_BASALT = VanillaTypes.block("minecraft:smooth_basalt");
 
     /**
      * {@code minecraft:smooth_quartz}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMOOTH_QUARTZ = VanillaTypes.block("minecraft:smooth_quartz");
 
     /**
      * {@code minecraft:smooth_quartz_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMOOTH_QUARTZ_DOUBLE_SLAB = VanillaTypes.block("minecraft:smooth_quartz_double_slab");
 
     /**
      * {@code minecraft:smooth_quartz_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMOOTH_QUARTZ_SLAB = VanillaTypes.block("minecraft:smooth_quartz_slab");
 
     /**
      * {@code minecraft:smooth_quartz_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMOOTH_QUARTZ_STAIRS = VanillaTypes.block("minecraft:smooth_quartz_stairs");
 
     /**
      * {@code minecraft:smooth_red_sandstone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMOOTH_RED_SANDSTONE = VanillaTypes.block("minecraft:smooth_red_sandstone");
 
     /**
      * {@code minecraft:smooth_red_sandstone_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMOOTH_RED_SANDSTONE_DOUBLE_SLAB = VanillaTypes.block("minecraft:smooth_red_sandstone_double_slab");
 
     /**
      * {@code minecraft:smooth_red_sandstone_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMOOTH_RED_SANDSTONE_SLAB = VanillaTypes.block("minecraft:smooth_red_sandstone_slab");
 
     /**
      * {@code minecraft:smooth_red_sandstone_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMOOTH_RED_SANDSTONE_STAIRS = VanillaTypes.block("minecraft:smooth_red_sandstone_stairs");
 
     /**
      * {@code minecraft:smooth_sandstone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMOOTH_SANDSTONE = VanillaTypes.block("minecraft:smooth_sandstone");
 
     /**
      * {@code minecraft:smooth_sandstone_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMOOTH_SANDSTONE_DOUBLE_SLAB = VanillaTypes.block("minecraft:smooth_sandstone_double_slab");
 
     /**
      * {@code minecraft:smooth_sandstone_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMOOTH_SANDSTONE_SLAB = VanillaTypes.block("minecraft:smooth_sandstone_slab");
 
     /**
      * {@code minecraft:smooth_sandstone_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMOOTH_SANDSTONE_STAIRS = VanillaTypes.block("minecraft:smooth_sandstone_stairs");
 
     /**
      * {@code minecraft:smooth_stone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMOOTH_STONE = VanillaTypes.block("minecraft:smooth_stone");
 
     /**
      * {@code minecraft:smooth_stone_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMOOTH_STONE_DOUBLE_SLAB = VanillaTypes.block("minecraft:smooth_stone_double_slab");
 
     /**
      * {@code minecraft:smooth_stone_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SMOOTH_STONE_SLAB = VanillaTypes.block("minecraft:smooth_stone_slab");
 
     /**
      * {@code minecraft:sniffer_egg}: {@link BedrockStates#CRACKED_STATE}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SNIFFER_EGG = VanillaTypes.block("minecraft:sniffer_egg");
 
     /**
      * {@code minecraft:snow}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SNOW = VanillaTypes.block("minecraft:snow");
 
     /**
      * {@code minecraft:snow_layer}: {@link BedrockStates#COVERED_BIT}, {@link BedrockStates#HEIGHT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SNOW_LAYER = VanillaTypes.block("minecraft:snow_layer");
 
     /**
      * {@code minecraft:soul_campfire}: {@link BedrockStates#EXTINGUISHED}, {@link BedrockStates#CARDINAL_DIRECTION}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SOUL_CAMPFIRE = VanillaTypes.block("minecraft:soul_campfire");
 
     /**
      * {@code minecraft:soul_fire}: {@link BedrockStates#AGE}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SOUL_FIRE = VanillaTypes.block("minecraft:soul_fire");
 
     /**
      * {@code minecraft:soul_lantern}: {@link BedrockStates#HANGING}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SOUL_LANTERN = VanillaTypes.block("minecraft:soul_lantern");
 
     /**
      * {@code minecraft:soul_sand}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SOUL_SAND = VanillaTypes.block("minecraft:soul_sand");
 
     /**
      * {@code minecraft:soul_soil}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SOUL_SOIL = VanillaTypes.block("minecraft:soul_soil");
 
     /**
      * {@code minecraft:soul_torch}: {@link BedrockStates#TORCH_FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SOUL_TORCH = VanillaTypes.block("minecraft:soul_torch");
 
     /**
      * {@code minecraft:sponge}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPONGE = VanillaTypes.block("minecraft:sponge");
 
     /**
      * {@code minecraft:spore_blossom}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPORE_BLOSSOM = VanillaTypes.block("minecraft:spore_blossom");
 
     /**
      * {@code minecraft:spruce_button}: {@link BedrockStates#BUTTON_PRESSED_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_BUTTON = VanillaTypes.block("minecraft:spruce_button");
 
     /**
      * {@code minecraft:spruce_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_DOOR = VanillaTypes.block("minecraft:spruce_door");
 
     /**
      * {@code minecraft:spruce_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_DOUBLE_SLAB = VanillaTypes.block("minecraft:spruce_double_slab");
 
     /**
      * {@code minecraft:spruce_fence}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_FENCE = VanillaTypes.block("minecraft:spruce_fence");
 
     /**
      * {@code minecraft:spruce_fence_gate}: {@link BedrockStates#IN_WALL_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_FENCE_GATE = VanillaTypes.block("minecraft:spruce_fence_gate");
 
     /**
      * {@code minecraft:spruce_hanging_sign}: {@link BedrockStates#ATTACHED_BIT}, {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#GROUND_SIGN_DIRECTION}, {@link BedrockStates#HANGING}; 384 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_HANGING_SIGN = VanillaTypes.block("minecraft:spruce_hanging_sign");
 
     /**
      * {@code minecraft:spruce_leaves}: {@link BedrockStates#PERSISTENT_BIT}, {@link BedrockStates#UPDATE_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_LEAVES = VanillaTypes.block("minecraft:spruce_leaves");
 
     /**
      * {@code minecraft:spruce_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_LOG = VanillaTypes.block("minecraft:spruce_log");
 
     /**
      * {@code minecraft:spruce_planks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_PLANKS = VanillaTypes.block("minecraft:spruce_planks");
 
     /**
      * {@code minecraft:spruce_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_PRESSURE_PLATE = VanillaTypes.block("minecraft:spruce_pressure_plate");
 
     /**
      * {@code minecraft:spruce_sapling}: {@link BedrockStates#AGE_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_SAPLING = VanillaTypes.block("minecraft:spruce_sapling");
 
     /**
      * {@code minecraft:spruce_shelf}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#POWERED_BIT}, {@link BedrockStates#POWERED_SHELF_TYPE}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_SHELF = VanillaTypes.block("minecraft:spruce_shelf");
 
     /**
      * {@code minecraft:spruce_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_SLAB = VanillaTypes.block("minecraft:spruce_slab");
 
     /**
      * {@code minecraft:spruce_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_STAIRS = VanillaTypes.block("minecraft:spruce_stairs");
 
     /**
      * {@code minecraft:spruce_standing_sign}: {@link BedrockStates#GROUND_SIGN_DIRECTION}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_STANDING_SIGN = VanillaTypes.block("minecraft:spruce_standing_sign");
 
     /**
      * {@code minecraft:spruce_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_TRAPDOOR = VanillaTypes.block("minecraft:spruce_trapdoor");
 
     /**
      * {@code minecraft:spruce_wall_sign}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_WALL_SIGN = VanillaTypes.block("minecraft:spruce_wall_sign");
 
     /**
      * {@code minecraft:spruce_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SPRUCE_WOOD = VanillaTypes.block("minecraft:spruce_wood");
 
     /**
      * {@code minecraft:standing_banner}: {@link BedrockStates#GROUND_SIGN_DIRECTION}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STANDING_BANNER = VanillaTypes.block("minecraft:standing_banner");
 
     /**
      * {@code minecraft:standing_sign}: {@link BedrockStates#GROUND_SIGN_DIRECTION}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STANDING_SIGN = VanillaTypes.block("minecraft:standing_sign");
 
     /**
      * {@code minecraft:sticky_piston}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STICKY_PISTON = VanillaTypes.block("minecraft:sticky_piston");
 
     /**
      * {@code minecraft:sticky_piston_arm_collision}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STICKY_PISTON_ARM_COLLISION = VanillaTypes.block("minecraft:sticky_piston_arm_collision");
 
     /**
      * {@code minecraft:stone}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STONE = VanillaTypes.block("minecraft:stone");
 
     /**
      * {@code minecraft:stonecutter}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STONECUTTER = VanillaTypes.block("minecraft:stonecutter");
 
     /**
      * {@code minecraft:stonecutter_block}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STONECUTTER_BLOCK = VanillaTypes.block("minecraft:stonecutter_block");
 
     /**
      * {@code minecraft:stone_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STONE_BRICKS = VanillaTypes.block("minecraft:stone_bricks");
 
     /**
      * {@code minecraft:stone_brick_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STONE_BRICK_DOUBLE_SLAB = VanillaTypes.block("minecraft:stone_brick_double_slab");
 
     /**
      * {@code minecraft:stone_brick_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STONE_BRICK_SLAB = VanillaTypes.block("minecraft:stone_brick_slab");
 
     /**
      * {@code minecraft:stone_brick_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STONE_BRICK_STAIRS = VanillaTypes.block("minecraft:stone_brick_stairs");
 
     /**
      * {@code minecraft:stone_brick_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STONE_BRICK_WALL = VanillaTypes.block("minecraft:stone_brick_wall");
 
     /**
      * {@code minecraft:stone_button}: {@link BedrockStates#BUTTON_PRESSED_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STONE_BUTTON = VanillaTypes.block("minecraft:stone_button");
 
     /**
      * {@code minecraft:stone_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STONE_PRESSURE_PLATE = VanillaTypes.block("minecraft:stone_pressure_plate");
 
     /**
      * {@code minecraft:stone_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STONE_STAIRS = VanillaTypes.block("minecraft:stone_stairs");
 
     /**
      * {@code minecraft:straw_bed}: {@link BedrockStates#HEAD_PIECE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OCCUPIED_BIT}; 16 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType STRAW_BED = VanillaTypes.block("minecraft:straw_bed");
 
     /**
      * {@code minecraft:stripped_acacia_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_ACACIA_LOG = VanillaTypes.block("minecraft:stripped_acacia_log");
 
     /**
      * {@code minecraft:stripped_acacia_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_ACACIA_WOOD = VanillaTypes.block("minecraft:stripped_acacia_wood");
 
     /**
      * {@code minecraft:stripped_bamboo_block}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_BAMBOO_BLOCK = VanillaTypes.block("minecraft:stripped_bamboo_block");
 
     /**
      * {@code minecraft:stripped_birch_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_BIRCH_LOG = VanillaTypes.block("minecraft:stripped_birch_log");
 
     /**
      * {@code minecraft:stripped_birch_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_BIRCH_WOOD = VanillaTypes.block("minecraft:stripped_birch_wood");
 
     /**
      * {@code minecraft:stripped_cherry_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_CHERRY_LOG = VanillaTypes.block("minecraft:stripped_cherry_log");
 
     /**
      * {@code minecraft:stripped_cherry_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_CHERRY_WOOD = VanillaTypes.block("minecraft:stripped_cherry_wood");
 
     /**
      * {@code minecraft:stripped_crimson_hyphae}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_CRIMSON_HYPHAE = VanillaTypes.block("minecraft:stripped_crimson_hyphae");
 
     /**
      * {@code minecraft:stripped_crimson_stem}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_CRIMSON_STEM = VanillaTypes.block("minecraft:stripped_crimson_stem");
 
     /**
      * {@code minecraft:stripped_dark_oak_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_DARK_OAK_LOG = VanillaTypes.block("minecraft:stripped_dark_oak_log");
 
     /**
      * {@code minecraft:stripped_dark_oak_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_DARK_OAK_WOOD = VanillaTypes.block("minecraft:stripped_dark_oak_wood");
 
     /**
      * {@code minecraft:stripped_jungle_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_JUNGLE_LOG = VanillaTypes.block("minecraft:stripped_jungle_log");
 
     /**
      * {@code minecraft:stripped_jungle_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_JUNGLE_WOOD = VanillaTypes.block("minecraft:stripped_jungle_wood");
 
     /**
      * {@code minecraft:stripped_mangrove_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_MANGROVE_LOG = VanillaTypes.block("minecraft:stripped_mangrove_log");
 
     /**
      * {@code minecraft:stripped_mangrove_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_MANGROVE_WOOD = VanillaTypes.block("minecraft:stripped_mangrove_wood");
 
     /**
      * {@code minecraft:stripped_oak_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_OAK_LOG = VanillaTypes.block("minecraft:stripped_oak_log");
 
     /**
      * {@code minecraft:stripped_oak_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_OAK_WOOD = VanillaTypes.block("minecraft:stripped_oak_wood");
 
     /**
      * {@code minecraft:stripped_pale_oak_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_PALE_OAK_LOG = VanillaTypes.block("minecraft:stripped_pale_oak_log");
 
     /**
      * {@code minecraft:stripped_pale_oak_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_PALE_OAK_WOOD = VanillaTypes.block("minecraft:stripped_pale_oak_wood");
 
     /**
      * {@code minecraft:stripped_poplar_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType STRIPPED_POPLAR_LOG = VanillaTypes.block("minecraft:stripped_poplar_log");
 
     /**
      * {@code minecraft:stripped_poplar_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType STRIPPED_POPLAR_WOOD = VanillaTypes.block("minecraft:stripped_poplar_wood");
 
     /**
      * {@code minecraft:stripped_spruce_log}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_SPRUCE_LOG = VanillaTypes.block("minecraft:stripped_spruce_log");
 
     /**
      * {@code minecraft:stripped_spruce_wood}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_SPRUCE_WOOD = VanillaTypes.block("minecraft:stripped_spruce_wood");
 
     /**
      * {@code minecraft:stripped_warped_hyphae}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_WARPED_HYPHAE = VanillaTypes.block("minecraft:stripped_warped_hyphae");
 
     /**
      * {@code minecraft:stripped_warped_stem}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRIPPED_WARPED_STEM = VanillaTypes.block("minecraft:stripped_warped_stem");
 
     /**
      * {@code minecraft:structure_block}: {@link BedrockStates#STRUCTURE_BLOCK_TYPE}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRUCTURE_BLOCK = VanillaTypes.block("minecraft:structure_block");
 
     /**
      * {@code minecraft:structure_void}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType STRUCTURE_VOID = VanillaTypes.block("minecraft:structure_void");
 
     /**
      * {@code minecraft:sulfur}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SULFUR = VanillaTypes.block("minecraft:sulfur");
 
     /**
      * {@code minecraft:sulfur_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SULFUR_BRICKS = VanillaTypes.block("minecraft:sulfur_bricks");
 
     /**
      * {@code minecraft:sulfur_brick_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SULFUR_BRICK_DOUBLE_SLAB = VanillaTypes.block("minecraft:sulfur_brick_double_slab");
 
     /**
      * {@code minecraft:sulfur_brick_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SULFUR_BRICK_SLAB = VanillaTypes.block("minecraft:sulfur_brick_slab");
 
     /**
      * {@code minecraft:sulfur_brick_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SULFUR_BRICK_STAIRS = VanillaTypes.block("minecraft:sulfur_brick_stairs");
 
     /**
      * {@code minecraft:sulfur_brick_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SULFUR_BRICK_WALL = VanillaTypes.block("minecraft:sulfur_brick_wall");
 
     /**
      * {@code minecraft:sulfur_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SULFUR_DOUBLE_SLAB = VanillaTypes.block("minecraft:sulfur_double_slab");
 
     /**
      * {@code minecraft:sulfur_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SULFUR_SLAB = VanillaTypes.block("minecraft:sulfur_slab");
 
     /**
      * {@code minecraft:sulfur_spike}: {@link BedrockStates#DRIPSTONE_THICKNESS}, {@link BedrockStates#HANGING}; 10 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SULFUR_SPIKE = VanillaTypes.block("minecraft:sulfur_spike");
 
     /**
      * {@code minecraft:sulfur_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SULFUR_STAIRS = VanillaTypes.block("minecraft:sulfur_stairs");
 
     /**
      * {@code minecraft:sulfur_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SULFUR_WALL = VanillaTypes.block("minecraft:sulfur_wall");
 
     /**
      * {@code minecraft:sunflower}: {@link BedrockStates#UPPER_BLOCK_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SUNFLOWER = VanillaTypes.block("minecraft:sunflower");
 
     /**
      * {@code minecraft:suspicious_gravel}: {@link BedrockStates#BRUSHED_PROGRESS}, {@link BedrockStates#HANGING}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SUSPICIOUS_GRAVEL = VanillaTypes.block("minecraft:suspicious_gravel");
 
     /**
      * {@code minecraft:suspicious_sand}: {@link BedrockStates#BRUSHED_PROGRESS}, {@link BedrockStates#HANGING}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SUSPICIOUS_SAND = VanillaTypes.block("minecraft:suspicious_sand");
 
     /**
      * {@code minecraft:sweet_berry_bush}: {@link BedrockStates#GROWTH}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType SWEET_BERRY_BUSH = VanillaTypes.block("minecraft:sweet_berry_bush");
 
     /**
      * {@code minecraft:tall_dry_grass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TALL_DRY_GRASS = VanillaTypes.block("minecraft:tall_dry_grass");
 
     /**
      * {@code minecraft:tall_grass}: {@link BedrockStates#UPPER_BLOCK_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TALL_GRASS = VanillaTypes.block("minecraft:tall_grass");
 
     /**
      * {@code minecraft:target}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TARGET = VanillaTypes.block("minecraft:target");
 
     /**
      * {@code minecraft:tinted_glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TINTED_GLASS = VanillaTypes.block("minecraft:tinted_glass");
 
     /**
      * {@code minecraft:tnt}: {@link BedrockStates#EXPLODE_BIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TNT = VanillaTypes.block("minecraft:tnt");
 
     /**
      * {@code minecraft:torch}: {@link BedrockStates#TORCH_FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TORCH = VanillaTypes.block("minecraft:torch");
 
     /**
      * {@code minecraft:torchflower}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TORCHFLOWER = VanillaTypes.block("minecraft:torchflower");
 
     /**
      * {@code minecraft:torchflower_crop}: {@link BedrockStates#GROWTH}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TORCHFLOWER_CROP = VanillaTypes.block("minecraft:torchflower_crop");
 
     /**
      * {@code minecraft:trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TRAPDOOR = VanillaTypes.block("minecraft:trapdoor");
 
     /**
      * {@code minecraft:trapped_chest}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TRAPPED_CHEST = VanillaTypes.block("minecraft:trapped_chest");
 
     /**
      * {@code minecraft:trial_spawner}: {@link BedrockStates#OMINOUS}, {@link BedrockStates#TRIAL_SPAWNER_STATE}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TRIAL_SPAWNER = VanillaTypes.block("minecraft:trial_spawner");
 
     /**
      * {@code minecraft:tripwire_hook}: {@link BedrockStates#ATTACHED_BIT}, {@link BedrockStates#DIRECTION}, {@link BedrockStates#POWERED_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TRIPWIRE_HOOK = VanillaTypes.block("minecraft:tripwire_hook");
 
     /**
      * {@code minecraft:trip_wire}: {@link BedrockStates#ATTACHED_BIT}, {@link BedrockStates#DISARMED_BIT}, {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}, {@link BedrockStates#POWERED_BIT}, {@link BedrockStates#SUSPENDED_BIT}; 256 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TRIP_WIRE = VanillaTypes.block("minecraft:trip_wire");
 
     /**
      * {@code minecraft:tube_coral}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TUBE_CORAL = VanillaTypes.block("minecraft:tube_coral");
 
     /**
      * {@code minecraft:tube_coral_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TUBE_CORAL_BLOCK = VanillaTypes.block("minecraft:tube_coral_block");
 
     /**
      * {@code minecraft:tube_coral_fan}: {@link BedrockStates#CORAL_FAN_DIRECTION}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TUBE_CORAL_FAN = VanillaTypes.block("minecraft:tube_coral_fan");
 
     /**
      * {@code minecraft:tube_coral_wall_fan}: {@link BedrockStates#CORAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TUBE_CORAL_WALL_FAN = VanillaTypes.block("minecraft:tube_coral_wall_fan");
 
     /**
      * {@code minecraft:tuff}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TUFF = VanillaTypes.block("minecraft:tuff");
 
     /**
      * {@code minecraft:tuff_bricks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TUFF_BRICKS = VanillaTypes.block("minecraft:tuff_bricks");
 
     /**
      * {@code minecraft:tuff_brick_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TUFF_BRICK_DOUBLE_SLAB = VanillaTypes.block("minecraft:tuff_brick_double_slab");
 
     /**
      * {@code minecraft:tuff_brick_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TUFF_BRICK_SLAB = VanillaTypes.block("minecraft:tuff_brick_slab");
 
     /**
      * {@code minecraft:tuff_brick_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TUFF_BRICK_STAIRS = VanillaTypes.block("minecraft:tuff_brick_stairs");
 
     /**
      * {@code minecraft:tuff_brick_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TUFF_BRICK_WALL = VanillaTypes.block("minecraft:tuff_brick_wall");
 
     /**
      * {@code minecraft:tuff_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TUFF_DOUBLE_SLAB = VanillaTypes.block("minecraft:tuff_double_slab");
 
     /**
      * {@code minecraft:tuff_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TUFF_SLAB = VanillaTypes.block("minecraft:tuff_slab");
 
     /**
      * {@code minecraft:tuff_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TUFF_STAIRS = VanillaTypes.block("minecraft:tuff_stairs");
 
     /**
      * {@code minecraft:tuff_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TUFF_WALL = VanillaTypes.block("minecraft:tuff_wall");
 
     /**
      * {@code minecraft:turtle_egg}: {@link BedrockStates#CRACKED_STATE}, {@link BedrockStates#TURTLE_EGG_COUNT}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TURTLE_EGG = VanillaTypes.block("minecraft:turtle_egg");
 
     /**
      * {@code minecraft:twisting_vines}: {@link BedrockStates#TWISTING_VINES_AGE}; 26 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType TWISTING_VINES = VanillaTypes.block("minecraft:twisting_vines");
 
     /**
      * {@code minecraft:underwater_tnt}: {@link BedrockStates#EXPLODE_BIT}; 2 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType UNDERWATER_TNT = VanillaTypes.block("minecraft:underwater_tnt");
+    @Education
+    public static final BedrockBlockType UNDERWATER_TNT = VanillaTypes.educationBlock("minecraft:underwater_tnt");
 
     /**
      * {@code minecraft:underwater_torch}: {@link BedrockStates#TORCH_FACING_DIRECTION}; 6 states.
+     * Education Edition content: BDS only offers it to worlds with Education Edition features.
+     *
+     * @since 26.40
      */
-    public static final BedrockBlockType UNDERWATER_TORCH = VanillaTypes.block("minecraft:underwater_torch");
+    @Education
+    public static final BedrockBlockType UNDERWATER_TORCH = VanillaTypes.educationBlock("minecraft:underwater_torch");
 
     /**
      * {@code minecraft:undyed_shulker_box}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType UNDYED_SHULKER_BOX = VanillaTypes.block("minecraft:undyed_shulker_box");
 
     /**
      * {@code minecraft:unknown}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType UNKNOWN = VanillaTypes.block("minecraft:unknown");
 
     /**
      * {@code minecraft:unlit_redstone_torch}: {@link BedrockStates#TORCH_FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType UNLIT_REDSTONE_TORCH = VanillaTypes.block("minecraft:unlit_redstone_torch");
 
     /**
      * {@code minecraft:unpowered_comparator}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OUTPUT_LIT_BIT}, {@link BedrockStates#OUTPUT_SUBTRACT_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType UNPOWERED_COMPARATOR = VanillaTypes.block("minecraft:unpowered_comparator");
 
     /**
      * {@code minecraft:unpowered_repeater}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#REPEATER_DELAY}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType UNPOWERED_REPEATER = VanillaTypes.block("minecraft:unpowered_repeater");
 
     /**
      * {@code minecraft:vault}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OMINOUS}, {@link BedrockStates#VAULT_STATE}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType VAULT = VanillaTypes.block("minecraft:vault");
 
     /**
      * {@code minecraft:verdant_froglight}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType VERDANT_FROGLIGHT = VanillaTypes.block("minecraft:verdant_froglight");
 
     /**
      * {@code minecraft:vine}: {@link BedrockStates#VINE_DIRECTION_BITS}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType VINE = VanillaTypes.block("minecraft:vine");
 
     /**
      * {@code minecraft:wall_banner}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WALL_BANNER = VanillaTypes.block("minecraft:wall_banner");
 
     /**
      * {@code minecraft:wall_sign}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WALL_SIGN = VanillaTypes.block("minecraft:wall_sign");
 
     /**
      * {@code minecraft:warped_button}: {@link BedrockStates#BUTTON_PRESSED_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_BUTTON = VanillaTypes.block("minecraft:warped_button");
 
     /**
      * {@code minecraft:warped_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_DOOR = VanillaTypes.block("minecraft:warped_door");
 
     /**
      * {@code minecraft:warped_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_DOUBLE_SLAB = VanillaTypes.block("minecraft:warped_double_slab");
 
     /**
      * {@code minecraft:warped_fence}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_FENCE = VanillaTypes.block("minecraft:warped_fence");
 
     /**
      * {@code minecraft:warped_fence_gate}: {@link BedrockStates#IN_WALL_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_FENCE_GATE = VanillaTypes.block("minecraft:warped_fence_gate");
 
     /**
      * {@code minecraft:warped_fungus}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_FUNGUS = VanillaTypes.block("minecraft:warped_fungus");
 
     /**
      * {@code minecraft:warped_hanging_sign}: {@link BedrockStates#ATTACHED_BIT}, {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#GROUND_SIGN_DIRECTION}, {@link BedrockStates#HANGING}; 384 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_HANGING_SIGN = VanillaTypes.block("minecraft:warped_hanging_sign");
 
     /**
      * {@code minecraft:warped_hyphae}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_HYPHAE = VanillaTypes.block("minecraft:warped_hyphae");
 
     /**
      * {@code minecraft:warped_nylium}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_NYLIUM = VanillaTypes.block("minecraft:warped_nylium");
 
     /**
      * {@code minecraft:warped_planks}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_PLANKS = VanillaTypes.block("minecraft:warped_planks");
 
     /**
      * {@code minecraft:warped_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_PRESSURE_PLATE = VanillaTypes.block("minecraft:warped_pressure_plate");
 
     /**
      * {@code minecraft:warped_roots}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_ROOTS = VanillaTypes.block("minecraft:warped_roots");
 
     /**
      * {@code minecraft:warped_shelf}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#POWERED_BIT}, {@link BedrockStates#POWERED_SHELF_TYPE}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_SHELF = VanillaTypes.block("minecraft:warped_shelf");
 
     /**
      * {@code minecraft:warped_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_SLAB = VanillaTypes.block("minecraft:warped_slab");
 
     /**
      * {@code minecraft:warped_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_STAIRS = VanillaTypes.block("minecraft:warped_stairs");
 
     /**
      * {@code minecraft:warped_standing_sign}: {@link BedrockStates#GROUND_SIGN_DIRECTION}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_STANDING_SIGN = VanillaTypes.block("minecraft:warped_standing_sign");
 
     /**
      * {@code minecraft:warped_stem}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_STEM = VanillaTypes.block("minecraft:warped_stem");
 
     /**
      * {@code minecraft:warped_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_TRAPDOOR = VanillaTypes.block("minecraft:warped_trapdoor");
 
     /**
      * {@code minecraft:warped_wall_sign}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_WALL_SIGN = VanillaTypes.block("minecraft:warped_wall_sign");
 
     /**
      * {@code minecraft:warped_wart_block}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WARPED_WART_BLOCK = VanillaTypes.block("minecraft:warped_wart_block");
 
     /**
      * {@code minecraft:water}: {@link BedrockStates#LIQUID_DEPTH}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WATER = VanillaTypes.block("minecraft:water");
 
     /**
      * {@code minecraft:waterlily}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WATERLILY = VanillaTypes.block("minecraft:waterlily");
 
     /**
      * {@code minecraft:waxed_chiseled_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_CHISELED_COPPER = VanillaTypes.block("minecraft:waxed_chiseled_copper");
 
     /**
      * {@code minecraft:waxed_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_COPPER = VanillaTypes.block("minecraft:waxed_copper");
 
     /**
      * {@code minecraft:waxed_copper_bars}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_COPPER_BARS = VanillaTypes.block("minecraft:waxed_copper_bars");
 
     /**
      * {@code minecraft:waxed_copper_bulb}: {@link BedrockStates#LIT}, {@link BedrockStates#POWERED_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_COPPER_BULB = VanillaTypes.block("minecraft:waxed_copper_bulb");
 
     /**
      * {@code minecraft:waxed_copper_chain}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_COPPER_CHAIN = VanillaTypes.block("minecraft:waxed_copper_chain");
 
     /**
      * {@code minecraft:waxed_copper_chest}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_COPPER_CHEST = VanillaTypes.block("minecraft:waxed_copper_chest");
 
     /**
      * {@code minecraft:waxed_copper_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_COPPER_DOOR = VanillaTypes.block("minecraft:waxed_copper_door");
 
     /**
      * {@code minecraft:waxed_copper_golem_statue}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_COPPER_GOLEM_STATUE = VanillaTypes.block("minecraft:waxed_copper_golem_statue");
 
     /**
      * {@code minecraft:waxed_copper_grate}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_COPPER_GRATE = VanillaTypes.block("minecraft:waxed_copper_grate");
 
     /**
      * {@code minecraft:waxed_copper_lantern}: {@link BedrockStates#HANGING}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_COPPER_LANTERN = VanillaTypes.block("minecraft:waxed_copper_lantern");
 
     /**
      * {@code minecraft:waxed_copper_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_COPPER_TRAPDOOR = VanillaTypes.block("minecraft:waxed_copper_trapdoor");
 
     /**
      * {@code minecraft:waxed_cut_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_CUT_COPPER = VanillaTypes.block("minecraft:waxed_cut_copper");
 
     /**
      * {@code minecraft:waxed_cut_copper_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_CUT_COPPER_SLAB = VanillaTypes.block("minecraft:waxed_cut_copper_slab");
 
     /**
      * {@code minecraft:waxed_cut_copper_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_CUT_COPPER_STAIRS = VanillaTypes.block("minecraft:waxed_cut_copper_stairs");
 
     /**
      * {@code minecraft:waxed_double_cut_copper_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_DOUBLE_CUT_COPPER_SLAB = VanillaTypes.block("minecraft:waxed_double_cut_copper_slab");
 
     /**
      * {@code minecraft:waxed_exposed_chiseled_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_EXPOSED_CHISELED_COPPER = VanillaTypes.block("minecraft:waxed_exposed_chiseled_copper");
 
     /**
      * {@code minecraft:waxed_exposed_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_EXPOSED_COPPER = VanillaTypes.block("minecraft:waxed_exposed_copper");
 
     /**
      * {@code minecraft:waxed_exposed_copper_bars}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_EXPOSED_COPPER_BARS = VanillaTypes.block("minecraft:waxed_exposed_copper_bars");
 
     /**
      * {@code minecraft:waxed_exposed_copper_bulb}: {@link BedrockStates#LIT}, {@link BedrockStates#POWERED_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_EXPOSED_COPPER_BULB = VanillaTypes.block("minecraft:waxed_exposed_copper_bulb");
 
     /**
      * {@code minecraft:waxed_exposed_copper_chain}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_EXPOSED_COPPER_CHAIN = VanillaTypes.block("minecraft:waxed_exposed_copper_chain");
 
     /**
      * {@code minecraft:waxed_exposed_copper_chest}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_EXPOSED_COPPER_CHEST = VanillaTypes.block("minecraft:waxed_exposed_copper_chest");
 
     /**
      * {@code minecraft:waxed_exposed_copper_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_EXPOSED_COPPER_DOOR = VanillaTypes.block("minecraft:waxed_exposed_copper_door");
 
     /**
      * {@code minecraft:waxed_exposed_copper_golem_statue}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_EXPOSED_COPPER_GOLEM_STATUE = VanillaTypes.block("minecraft:waxed_exposed_copper_golem_statue");
 
     /**
      * {@code minecraft:waxed_exposed_copper_grate}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_EXPOSED_COPPER_GRATE = VanillaTypes.block("minecraft:waxed_exposed_copper_grate");
 
     /**
      * {@code minecraft:waxed_exposed_copper_lantern}: {@link BedrockStates#HANGING}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_EXPOSED_COPPER_LANTERN = VanillaTypes.block("minecraft:waxed_exposed_copper_lantern");
 
     /**
      * {@code minecraft:waxed_exposed_copper_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_EXPOSED_COPPER_TRAPDOOR = VanillaTypes.block("minecraft:waxed_exposed_copper_trapdoor");
 
     /**
      * {@code minecraft:waxed_exposed_cut_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_EXPOSED_CUT_COPPER = VanillaTypes.block("minecraft:waxed_exposed_cut_copper");
 
     /**
      * {@code minecraft:waxed_exposed_cut_copper_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_EXPOSED_CUT_COPPER_SLAB = VanillaTypes.block("minecraft:waxed_exposed_cut_copper_slab");
 
     /**
      * {@code minecraft:waxed_exposed_cut_copper_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_EXPOSED_CUT_COPPER_STAIRS = VanillaTypes.block("minecraft:waxed_exposed_cut_copper_stairs");
 
     /**
      * {@code minecraft:waxed_exposed_double_cut_copper_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_EXPOSED_DOUBLE_CUT_COPPER_SLAB = VanillaTypes.block("minecraft:waxed_exposed_double_cut_copper_slab");
 
     /**
      * {@code minecraft:waxed_exposed_lightning_rod}: {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#POWERED_BIT}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_EXPOSED_LIGHTNING_ROD = VanillaTypes.block("minecraft:waxed_exposed_lightning_rod");
 
     /**
      * {@code minecraft:waxed_lightning_rod}: {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#POWERED_BIT}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_LIGHTNING_ROD = VanillaTypes.block("minecraft:waxed_lightning_rod");
 
     /**
      * {@code minecraft:waxed_oxidized_chiseled_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_OXIDIZED_CHISELED_COPPER = VanillaTypes.block("minecraft:waxed_oxidized_chiseled_copper");
 
     /**
      * {@code minecraft:waxed_oxidized_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_OXIDIZED_COPPER = VanillaTypes.block("minecraft:waxed_oxidized_copper");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_bars}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_OXIDIZED_COPPER_BARS = VanillaTypes.block("minecraft:waxed_oxidized_copper_bars");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_bulb}: {@link BedrockStates#LIT}, {@link BedrockStates#POWERED_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_OXIDIZED_COPPER_BULB = VanillaTypes.block("minecraft:waxed_oxidized_copper_bulb");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_chain}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_OXIDIZED_COPPER_CHAIN = VanillaTypes.block("minecraft:waxed_oxidized_copper_chain");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_chest}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_OXIDIZED_COPPER_CHEST = VanillaTypes.block("minecraft:waxed_oxidized_copper_chest");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_OXIDIZED_COPPER_DOOR = VanillaTypes.block("minecraft:waxed_oxidized_copper_door");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_golem_statue}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_OXIDIZED_COPPER_GOLEM_STATUE = VanillaTypes.block("minecraft:waxed_oxidized_copper_golem_statue");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_grate}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_OXIDIZED_COPPER_GRATE = VanillaTypes.block("minecraft:waxed_oxidized_copper_grate");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_lantern}: {@link BedrockStates#HANGING}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_OXIDIZED_COPPER_LANTERN = VanillaTypes.block("minecraft:waxed_oxidized_copper_lantern");
 
     /**
      * {@code minecraft:waxed_oxidized_copper_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_OXIDIZED_COPPER_TRAPDOOR = VanillaTypes.block("minecraft:waxed_oxidized_copper_trapdoor");
 
     /**
      * {@code minecraft:waxed_oxidized_cut_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_OXIDIZED_CUT_COPPER = VanillaTypes.block("minecraft:waxed_oxidized_cut_copper");
 
     /**
      * {@code minecraft:waxed_oxidized_cut_copper_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_OXIDIZED_CUT_COPPER_SLAB = VanillaTypes.block("minecraft:waxed_oxidized_cut_copper_slab");
 
     /**
      * {@code minecraft:waxed_oxidized_cut_copper_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_OXIDIZED_CUT_COPPER_STAIRS = VanillaTypes.block("minecraft:waxed_oxidized_cut_copper_stairs");
 
     /**
      * {@code minecraft:waxed_oxidized_double_cut_copper_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_OXIDIZED_DOUBLE_CUT_COPPER_SLAB = VanillaTypes.block("minecraft:waxed_oxidized_double_cut_copper_slab");
 
     /**
      * {@code minecraft:waxed_oxidized_lightning_rod}: {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#POWERED_BIT}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_OXIDIZED_LIGHTNING_ROD = VanillaTypes.block("minecraft:waxed_oxidized_lightning_rod");
 
     /**
      * {@code minecraft:waxed_weathered_chiseled_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_WEATHERED_CHISELED_COPPER = VanillaTypes.block("minecraft:waxed_weathered_chiseled_copper");
 
     /**
      * {@code minecraft:waxed_weathered_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_WEATHERED_COPPER = VanillaTypes.block("minecraft:waxed_weathered_copper");
 
     /**
      * {@code minecraft:waxed_weathered_copper_bars}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_WEATHERED_COPPER_BARS = VanillaTypes.block("minecraft:waxed_weathered_copper_bars");
 
     /**
      * {@code minecraft:waxed_weathered_copper_bulb}: {@link BedrockStates#LIT}, {@link BedrockStates#POWERED_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_WEATHERED_COPPER_BULB = VanillaTypes.block("minecraft:waxed_weathered_copper_bulb");
 
     /**
      * {@code minecraft:waxed_weathered_copper_chain}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_WEATHERED_COPPER_CHAIN = VanillaTypes.block("minecraft:waxed_weathered_copper_chain");
 
     /**
      * {@code minecraft:waxed_weathered_copper_chest}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_WEATHERED_COPPER_CHEST = VanillaTypes.block("minecraft:waxed_weathered_copper_chest");
 
     /**
      * {@code minecraft:waxed_weathered_copper_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_WEATHERED_COPPER_DOOR = VanillaTypes.block("minecraft:waxed_weathered_copper_door");
 
     /**
      * {@code minecraft:waxed_weathered_copper_golem_statue}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_WEATHERED_COPPER_GOLEM_STATUE = VanillaTypes.block("minecraft:waxed_weathered_copper_golem_statue");
 
     /**
      * {@code minecraft:waxed_weathered_copper_grate}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_WEATHERED_COPPER_GRATE = VanillaTypes.block("minecraft:waxed_weathered_copper_grate");
 
     /**
      * {@code minecraft:waxed_weathered_copper_lantern}: {@link BedrockStates#HANGING}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_WEATHERED_COPPER_LANTERN = VanillaTypes.block("minecraft:waxed_weathered_copper_lantern");
 
     /**
      * {@code minecraft:waxed_weathered_copper_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_WEATHERED_COPPER_TRAPDOOR = VanillaTypes.block("minecraft:waxed_weathered_copper_trapdoor");
 
     /**
      * {@code minecraft:waxed_weathered_cut_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_WEATHERED_CUT_COPPER = VanillaTypes.block("minecraft:waxed_weathered_cut_copper");
 
     /**
      * {@code minecraft:waxed_weathered_cut_copper_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_WEATHERED_CUT_COPPER_SLAB = VanillaTypes.block("minecraft:waxed_weathered_cut_copper_slab");
 
     /**
      * {@code minecraft:waxed_weathered_cut_copper_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_WEATHERED_CUT_COPPER_STAIRS = VanillaTypes.block("minecraft:waxed_weathered_cut_copper_stairs");
 
     /**
      * {@code minecraft:waxed_weathered_double_cut_copper_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_WEATHERED_DOUBLE_CUT_COPPER_SLAB = VanillaTypes.block("minecraft:waxed_weathered_double_cut_copper_slab");
 
     /**
      * {@code minecraft:waxed_weathered_lightning_rod}: {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#POWERED_BIT}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WAXED_WEATHERED_LIGHTNING_ROD = VanillaTypes.block("minecraft:waxed_weathered_lightning_rod");
 
     /**
      * {@code minecraft:weathered_chiseled_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEATHERED_CHISELED_COPPER = VanillaTypes.block("minecraft:weathered_chiseled_copper");
 
     /**
      * {@code minecraft:weathered_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEATHERED_COPPER = VanillaTypes.block("minecraft:weathered_copper");
 
     /**
      * {@code minecraft:weathered_copper_bars}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEATHERED_COPPER_BARS = VanillaTypes.block("minecraft:weathered_copper_bars");
 
     /**
      * {@code minecraft:weathered_copper_bulb}: {@link BedrockStates#LIT}, {@link BedrockStates#POWERED_BIT}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEATHERED_COPPER_BULB = VanillaTypes.block("minecraft:weathered_copper_bulb");
 
     /**
      * {@code minecraft:weathered_copper_chain}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEATHERED_COPPER_CHAIN = VanillaTypes.block("minecraft:weathered_copper_chain");
 
     /**
      * {@code minecraft:weathered_copper_chest}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEATHERED_COPPER_CHEST = VanillaTypes.block("minecraft:weathered_copper_chest");
 
     /**
      * {@code minecraft:weathered_copper_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEATHERED_COPPER_DOOR = VanillaTypes.block("minecraft:weathered_copper_door");
 
     /**
      * {@code minecraft:weathered_copper_golem_statue}: {@link BedrockStates#CARDINAL_DIRECTION}; 4 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEATHERED_COPPER_GOLEM_STATUE = VanillaTypes.block("minecraft:weathered_copper_golem_statue");
 
     /**
      * {@code minecraft:weathered_copper_grate}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEATHERED_COPPER_GRATE = VanillaTypes.block("minecraft:weathered_copper_grate");
 
     /**
      * {@code minecraft:weathered_copper_lantern}: {@link BedrockStates#HANGING}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEATHERED_COPPER_LANTERN = VanillaTypes.block("minecraft:weathered_copper_lantern");
 
     /**
      * {@code minecraft:weathered_copper_trapdoor}: {@link BedrockStates#DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPSIDE_DOWN_BIT}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEATHERED_COPPER_TRAPDOOR = VanillaTypes.block("minecraft:weathered_copper_trapdoor");
 
     /**
      * {@code minecraft:weathered_cut_copper}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEATHERED_CUT_COPPER = VanillaTypes.block("minecraft:weathered_cut_copper");
 
     /**
      * {@code minecraft:weathered_cut_copper_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEATHERED_CUT_COPPER_SLAB = VanillaTypes.block("minecraft:weathered_cut_copper_slab");
 
     /**
      * {@code minecraft:weathered_cut_copper_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEATHERED_CUT_COPPER_STAIRS = VanillaTypes.block("minecraft:weathered_cut_copper_stairs");
 
     /**
      * {@code minecraft:weathered_double_cut_copper_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEATHERED_DOUBLE_CUT_COPPER_SLAB = VanillaTypes.block("minecraft:weathered_double_cut_copper_slab");
 
     /**
      * {@code minecraft:weathered_lightning_rod}: {@link BedrockStates#FACING_DIRECTION}, {@link BedrockStates#POWERED_BIT}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEATHERED_LIGHTNING_ROD = VanillaTypes.block("minecraft:weathered_lightning_rod");
 
     /**
      * {@code minecraft:web}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEB = VanillaTypes.block("minecraft:web");
 
     /**
      * {@code minecraft:weeping_vines}: {@link BedrockStates#WEEPING_VINES_AGE}; 26 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WEEPING_VINES = VanillaTypes.block("minecraft:weeping_vines");
 
     /**
      * {@code minecraft:wet_sponge}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WET_SPONGE = VanillaTypes.block("minecraft:wet_sponge");
 
     /**
      * {@code minecraft:wheat}: {@link BedrockStates#GROWTH}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WHEAT = VanillaTypes.block("minecraft:wheat");
 
     /**
      * {@code minecraft:white_candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WHITE_CANDLE = VanillaTypes.block("minecraft:white_candle");
 
     /**
      * {@code minecraft:white_candle_cake}: {@link BedrockStates#LIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WHITE_CANDLE_CAKE = VanillaTypes.block("minecraft:white_candle_cake");
 
     /**
      * {@code minecraft:white_carpet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WHITE_CARPET = VanillaTypes.block("minecraft:white_carpet");
 
     /**
      * {@code minecraft:white_concrete}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WHITE_CONCRETE = VanillaTypes.block("minecraft:white_concrete");
 
     /**
      * {@code minecraft:white_concrete_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType WHITE_CONCRETE_DOUBLE_SLAB = VanillaTypes.block("minecraft:white_concrete_double_slab");
 
     /**
      * {@code minecraft:white_concrete_powder}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WHITE_CONCRETE_POWDER = VanillaTypes.block("minecraft:white_concrete_powder");
 
     /**
      * {@code minecraft:white_concrete_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType WHITE_CONCRETE_SLAB = VanillaTypes.block("minecraft:white_concrete_slab");
 
     /**
      * {@code minecraft:white_concrete_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType WHITE_CONCRETE_STAIRS = VanillaTypes.block("minecraft:white_concrete_stairs");
 
     /**
      * {@code minecraft:white_glazed_terracotta}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WHITE_GLAZED_TERRACOTTA = VanillaTypes.block("minecraft:white_glazed_terracotta");
 
     /**
      * {@code minecraft:white_shulker_box}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WHITE_SHULKER_BOX = VanillaTypes.block("minecraft:white_shulker_box");
 
     /**
      * {@code minecraft:white_stained_glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WHITE_STAINED_GLASS = VanillaTypes.block("minecraft:white_stained_glass");
 
     /**
      * {@code minecraft:white_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WHITE_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:white_stained_glass_pane");
 
     /**
      * {@code minecraft:white_terracotta}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WHITE_TERRACOTTA = VanillaTypes.block("minecraft:white_terracotta");
 
     /**
      * {@code minecraft:white_tulip}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WHITE_TULIP = VanillaTypes.block("minecraft:white_tulip");
 
     /**
      * {@code minecraft:white_wool}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WHITE_WOOL = VanillaTypes.block("minecraft:white_wool");
 
     /**
      * {@code minecraft:white_wool_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType WHITE_WOOL_DOUBLE_SLAB = VanillaTypes.block("minecraft:white_wool_double_slab");
 
     /**
      * {@code minecraft:white_wool_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType WHITE_WOOL_SLAB = VanillaTypes.block("minecraft:white_wool_slab");
 
     /**
      * {@code minecraft:white_wool_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType WHITE_WOOL_STAIRS = VanillaTypes.block("minecraft:white_wool_stairs");
 
     /**
      * {@code minecraft:wildflowers}: {@link BedrockStates#GROWTH}, {@link BedrockStates#CARDINAL_DIRECTION}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WILDFLOWERS = VanillaTypes.block("minecraft:wildflowers");
 
     /**
      * {@code minecraft:wither_rose}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WITHER_ROSE = VanillaTypes.block("minecraft:wither_rose");
 
     /**
      * {@code minecraft:wither_skeleton_skull}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WITHER_SKELETON_SKULL = VanillaTypes.block("minecraft:wither_skeleton_skull");
 
     /**
      * {@code minecraft:wooden_button}: {@link BedrockStates#BUTTON_PRESSED_BIT}, {@link BedrockStates#FACING_DIRECTION}; 12 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WOODEN_BUTTON = VanillaTypes.block("minecraft:wooden_button");
 
     /**
      * {@code minecraft:wooden_door}: {@link BedrockStates#DOOR_HINGE_BIT}, {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}, {@link BedrockStates#UPPER_BLOCK_BIT}; 32 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WOODEN_DOOR = VanillaTypes.block("minecraft:wooden_door");
 
     /**
      * {@code minecraft:wooden_pressure_plate}: {@link BedrockStates#REDSTONE_SIGNAL}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType WOODEN_PRESSURE_PLATE = VanillaTypes.block("minecraft:wooden_pressure_plate");
 
     /**
      * {@code minecraft:yellow_candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType YELLOW_CANDLE = VanillaTypes.block("minecraft:yellow_candle");
 
     /**
      * {@code minecraft:yellow_candle_cake}: {@link BedrockStates#LIT}; 2 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType YELLOW_CANDLE_CAKE = VanillaTypes.block("minecraft:yellow_candle_cake");
 
     /**
      * {@code minecraft:yellow_carpet}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType YELLOW_CARPET = VanillaTypes.block("minecraft:yellow_carpet");
 
     /**
      * {@code minecraft:yellow_concrete}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType YELLOW_CONCRETE = VanillaTypes.block("minecraft:yellow_concrete");
 
     /**
      * {@code minecraft:yellow_concrete_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType YELLOW_CONCRETE_DOUBLE_SLAB = VanillaTypes.block("minecraft:yellow_concrete_double_slab");
 
     /**
      * {@code minecraft:yellow_concrete_powder}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType YELLOW_CONCRETE_POWDER = VanillaTypes.block("minecraft:yellow_concrete_powder");
 
     /**
      * {@code minecraft:yellow_concrete_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType YELLOW_CONCRETE_SLAB = VanillaTypes.block("minecraft:yellow_concrete_slab");
 
     /**
      * {@code minecraft:yellow_concrete_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType YELLOW_CONCRETE_STAIRS = VanillaTypes.block("minecraft:yellow_concrete_stairs");
 
     /**
      * {@code minecraft:yellow_glazed_terracotta}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType YELLOW_GLAZED_TERRACOTTA = VanillaTypes.block("minecraft:yellow_glazed_terracotta");
 
     /**
      * {@code minecraft:yellow_poplar_leaves}: {@link BedrockStates#PERSISTENT_BIT}, {@link BedrockStates#UPDATE_BIT}; 4 states.
+     * Behind the experiment {@code y_2026_drop_3} in 26.40: without it the version does not have it.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType YELLOW_POPLAR_LEAVES = VanillaTypes.block("minecraft:yellow_poplar_leaves");
 
     /**
      * {@code minecraft:yellow_shulker_box}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType YELLOW_SHULKER_BOX = VanillaTypes.block("minecraft:yellow_shulker_box");
 
     /**
      * {@code minecraft:yellow_stained_glass}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType YELLOW_STAINED_GLASS = VanillaTypes.block("minecraft:yellow_stained_glass");
 
     /**
      * {@code minecraft:yellow_stained_glass_pane}: {@link BedrockStates#CONNECTION_EAST}, {@link BedrockStates#CONNECTION_NORTH}, {@link BedrockStates#CONNECTION_SOUTH}, {@link BedrockStates#CONNECTION_WEST}; 16 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType YELLOW_STAINED_GLASS_PANE = VanillaTypes.block("minecraft:yellow_stained_glass_pane");
 
     /**
      * {@code minecraft:yellow_terracotta}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType YELLOW_TERRACOTTA = VanillaTypes.block("minecraft:yellow_terracotta");
 
     /**
      * {@code minecraft:yellow_wool}, 1 state.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType YELLOW_WOOL = VanillaTypes.block("minecraft:yellow_wool");
 
     /**
      * {@code minecraft:yellow_wool_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType YELLOW_WOOL_DOUBLE_SLAB = VanillaTypes.block("minecraft:yellow_wool_double_slab");
 
     /**
      * {@code minecraft:yellow_wool_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType YELLOW_WOOL_SLAB = VanillaTypes.block("minecraft:yellow_wool_slab");
 
     /**
      * {@code minecraft:yellow_wool_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     *
+     * @since 26.50
      */
     public static final BedrockBlockType YELLOW_WOOL_STAIRS = VanillaTypes.block("minecraft:yellow_wool_stairs");
 
     /**
      * {@code minecraft:zombie_head}: {@link BedrockStates#FACING_DIRECTION}; 6 states.
+     *
+     * @since 26.40
      */
     public static final BedrockBlockType ZOMBIE_HEAD = VanillaTypes.block("minecraft:zombie_head");
 

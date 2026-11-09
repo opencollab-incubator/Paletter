@@ -70,14 +70,17 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     private final CanonicalBlocks canonical;
     private final Map<String, BlockFallback> fallbacks;
     private final @Nullable BlockFallback defaultFallback;
+    /** Blocks of the palette that count as missing: a disabled experiment gates them. */
+    private final Set<String> missing;
     private final BlockInterner interner;
     private final Map<NbtMap, BlockResolution> resolutions = new ConcurrentHashMap<>();
     private final @Nullable BlockRegistry parent;
     private volatile @Nullable CanonicalTable canonicalTable;
 
     private BlockRegistry(Table table, CanonicalBlocks canonical, Map<String, BlockFallback> fallbacks,
-                         @Nullable BlockFallback defaultFallback, BlockInterner interner, @Nullable BlockRegistry parent) {
+                         @Nullable BlockFallback defaultFallback, Set<String> missing, BlockInterner interner, @Nullable BlockRegistry parent) {
         this.parent = parent;
+        this.missing = missing;
         this.table = table;
         this.canonical = canonical;
         this.fallbacks = fallbacks;
@@ -95,7 +98,20 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     public static @NonNull BlockRegistry build(@NonNull VanillaData data, @NonNull BlockNetworkIds mode, @NonNull CanonicalBlocks canonical,
                                               @NonNull BlockInterner interner) {
         return new BlockRegistry(new Table(null, data, List.of(), Map.of(), List.of(), mode, interner), canonical, data.fallbacks().blocks(),
-            BlockFallback.UNKNOWN, interner, null);
+            BlockFallback.UNKNOWN, Set.of(), interner, null);
+    }
+
+    /**
+     * @param blocks blocks of this palette that count as missing although their states are in the palette (a disabled
+     *               experiment gates them): they resolve through their fallback like blocks the version lacks
+     * @return a palette sharing all states with this one, or this palette if nothing is missing
+     */
+    @Internal
+    public @NonNull BlockRegistry withMissing(@NonNull Set<String> blocks) {
+        if (blocks.isEmpty()) {
+            return this;
+        }
+        return new BlockRegistry(table, canonical, fallbacks, defaultFallback, Set.copyOf(blocks), interner, parent);
     }
 
     /**
@@ -108,7 +124,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         }
         Map<String, BlockFallback> merged = new HashMap<>(fallbacks);
         merged.putAll(extraFallbacks);
-        return new BlockRegistry(table, canonical, Map.copyOf(merged), defaultFallback, interner, parent);
+        return new BlockRegistry(table, canonical, Map.copyOf(merged), defaultFallback, missing, interner, parent);
     }
 
     /**
@@ -120,7 +136,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         if (java.util.Objects.equals(fallback, defaultFallback)) {
             return this;
         }
-        return new BlockRegistry(table, canonical, fallbacks, fallback, interner, parent);
+        return new BlockRegistry(table, canonical, fallbacks, fallback, missing, interner, parent);
     }
 
     /**
@@ -172,7 +188,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         // are positions, which the client re-sorts as a whole, so that table is rebuilt
         boolean patch = table.mode == BlockNetworkIds.HASHED;
         Table extended = new Table(patch ? table : null, data, all, Map.copyOf(origins), encoded, table.mode, interner);
-        return new BlockRegistry(extended, canonical.extend(key, additional), fallbacks, defaultFallback, interner, patch ? this : null);
+        return new BlockRegistry(extended, canonical.extend(key, additional), fallbacks, defaultFallback, missing, interner, patch ? this : null);
     }
 
     public @NonNull DataVersion version() {
@@ -396,7 +412,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     public @NonNull BlockResolution resolve(@NonNull NbtMap state) {
         NbtMap normalized = BlockStates.normalize(state);
         BlockFallback forced = fallbacks.get(BlockStates.name(normalized));
-        RegisteredBlockState exact = forced != null && forced.force() ? null : table.byState(normalized);
+        RegisteredBlockState exact = forced != null && forced.force() || !missing.isEmpty() && missing.contains(BlockStates.name(normalized))
+            ? null : table.byState(normalized);
         if (exact != null) {
             return new BlockResolution(normalized, exact, BlockResolution.Kind.EXACT);
         }
@@ -408,7 +425,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         BlockResolution.Kind kind = BlockResolution.Kind.ADAPTED;
         BedrockBlockState exactState = null;
         BlockFallback forced = fallbacks.get(name);
-        if (table.schema(name) == null || (forced != null && forced.force())) {
+        if (table.schema(name) == null || (forced != null && forced.force()) || missing.contains(name)) {
             BlockFallback fallback = forced;
             if (fallback == null || table.schema(fallback.target().identifier()) == null) {
                 return new BlockResolution(state, null, BlockResolution.Kind.MISSING);

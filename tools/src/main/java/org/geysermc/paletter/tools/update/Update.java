@@ -199,7 +199,8 @@ public final class Update {
         ConstantsGenerator.Result result;
         try {
             result = ConstantsGenerator.generate(staging.resources, ConstantsGenerator.readJson(root.resolve(ConstantsGenerator.NAMES)),
-                ConstantsGenerator.readJson(root.resolve(ConstantsGenerator.HISTORY)), ConstantsGenerator.paletterVersion(root));
+                ConstantsGenerator.readJson(root.resolve(ConstantsGenerator.HISTORY)), ConstantsGenerator.paletterVersion(root),
+                ConstantsGenerator.Sources.read(staging.resources, root.resolve(ConstantsGenerator.BDS)));
         } catch (IllegalStateException e) {
             // A name collision or a state that changed its kind needs a codegen/names.json entry
             report.todos.add("Vanilla constants: " + e.getMessage());

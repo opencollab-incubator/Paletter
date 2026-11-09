@@ -10,7 +10,15 @@ plugins {
 // runs without compiling paletter, whose generated sources it writes.
 val componentApi: SourceSet = sourceSets.create("componentApi")
 
+// The API dump (paletter/api/paletter.api) is generated from paletter's compiled classes; its own source set needs
+// neither paletter nor the rest of the tools, so :paletter:apiDump / apiCheck can run it. See API.md.
+val apiDump: SourceSet = sourceSets.create("apiDump")
+
 dependencies {
+    "apiDumpImplementation"(libs.asm.util)
+    testImplementation(apiDump.output)
+    testImplementation(libs.asm.util)
+
     "componentApiImplementation"(libs.gson)
     "componentApiImplementation"(libs.javapoet)
 

@@ -177,10 +177,17 @@ class PaletterBuilderTest {
 
     @Test
     void experimentsRemoveItemsOfToggles() {
-        // All enabled by default: nothing is removed
-        Palette all = Paletter.builder().data(experimental()).build().palette(OLDEST);
+        // None enabled by default: the content of every toggle is missing
+        Palette byDefault = Paletter.builder().data(experimental()).build().palette(OLDEST);
+        assertNull(byDefault.items().getDefinition("minecraft:apple"));
+        assertNull(byDefault.items().getDefinition("minecraft:golden_apple"));
+        assertEquals(List.of(), byDefault.experiments());
+
+        Palette all = Paletter.builder().data(experimental()).vanilla(vanilla -> vanilla.experiments("test_toggle", "other_toggle", "shared_toggle"))
+            .build().palette(OLDEST);
         assertNotNull(all.items().getDefinition("minecraft:apple"));
         assertNotNull(all.items().getDefinition("minecraft:golden_apple"));
+        assertEquals(List.of("other_toggle", "shared_toggle", "test_toggle"), all.experiments());
 
         Palette some = Paletter.builder().data(experimental()).vanilla(vanilla -> vanilla.experiments("test_toggle", "shared_toggle"))
             .build().palette(OLDEST);
