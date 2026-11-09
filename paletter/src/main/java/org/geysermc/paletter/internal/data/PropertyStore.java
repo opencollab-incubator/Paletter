@@ -390,6 +390,7 @@ public final class PropertyStore {
     /** Writes the store. Everything is sorted, so the same store always produces the same bytes. */
     public void write(@NonNull OutputStream stream) throws IOException {
         NbtMapBuilder root = NbtMap.builder()
+            .putString(PaletteDataCodec.GENERATED_KEY, PaletteDataCodec.GENERATED)
             .putInt("format", FORMAT)
             .putList("versions", NbtType.STRING, versions)
             .putCompound("items", writeOwner(items))
