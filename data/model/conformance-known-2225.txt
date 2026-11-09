@@ -1,4 +1,4 @@
-# Accepted BDS variants the generated API does not reproduce, with why. Written by
+# Accepted BDS variants (protocol 2225) the generated API does not reproduce, with why. Written by
 # ComponentConformanceTest (-PupdateGolden=true); a variant not listed must pass. Reasons are kept by hand.
 paletter:b_chest_obstruction_2 not-generated uses a block component minecraft:chest_obstruction, which is server only (not generated: no wire effect)
 paletter:b_chest_obstruction_3 not-generated uses a block component minecraft:chest_obstruction, which is server only (not generated: no wire effect)

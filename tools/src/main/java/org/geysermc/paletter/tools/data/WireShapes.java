@@ -63,7 +63,11 @@ public final class WireShapes {
 
     /** The data driven items and blocks of a bundled palette file. */
     public static WireShapes ofPalette(Path file) throws IOException {
-        VanillaData data = BundledFiles.read(file);
+        return ofData(BundledFiles.read(file));
+    }
+
+    /** The data driven items and blocks of a version's vanilla data. */
+    public static WireShapes ofData(VanillaData data) {
         WireShapes shapes = new WireShapes();
         for (VanillaItem item : data.items()) {
             if (item.componentBased() && item.componentData() != null) {
@@ -76,7 +80,7 @@ public final class WireShapes {
         return shapes;
     }
 
-    private void addItem(NbtMap componentData) {
+    public void addItem(NbtMap componentData) {
         NbtMap components = componentData.containsKey("components") ? componentData.getCompound("components") : componentData;
         components.forEach((name, value) -> {
             if (value instanceof NbtMap) {
@@ -88,7 +92,7 @@ public final class WireShapes {
         });
     }
 
-    private void addBlock(NbtMap properties) {
+    public void addBlock(NbtMap properties) {
         Map<String, Object> definition = new TreeMap<>(properties);
         definition.remove("components");
         definition.remove("permutations");
