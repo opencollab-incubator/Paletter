@@ -170,6 +170,47 @@ class PropertyStoreTest {
         assertEquals(other, store.attach(other));
     }
 
+    /** The order BDS sends the data driven blocks in (it decides the block property list and the hashed palette) survives the store. */
+    @Test
+    void dataDrivenBlocksKeepTheOrderOfEveryVersion() throws Exception {
+        NbtMap props = NbtMap.builder().putString("menu_category", "a").build();
+        BlockPropertyData z = new BlockPropertyData("test:z", props);
+        BlockPropertyData a = new BlockPropertyData("test:a", props);
+        BlockPropertyData m = new BlockPropertyData("test:m", props);
+        BlockPropertyData n = new BlockPropertyData("test:n", NbtMap.EMPTY);
+        PropertyStore store = roundTrip(PropertyStore.build(List.of(
+            data(V1, List.of(), List.of(z, a, m)),
+            data(V2, List.of(), List.of(m, n, z, a)),
+            data(V3, List.of(), List.of()))));
+        assertEquals(List.of(z, a, m), store.attach(data(V1, List.of(), List.of())).dataDrivenBlocks());
+        assertEquals(List.of(m, n, z, a), store.attach(data(V2, List.of(), List.of())).dataDrivenBlocks());
+        assertEquals(List.of(), store.attach(data(V3, List.of(), List.of())).dataDrivenBlocks());
+        // Whatever the order of the versions the builder is given, the same bytes
+        assertArrayEquals(bytes(store), bytes(roundTrip(PropertyStore.build(List.of(
+            data(V3, List.of(), List.of()), data(V2, List.of(), List.of(m, n, z, a)), data(V1, List.of(), List.of(z, a, m)))))));
+    }
+
+    /** A store without the order (written before it existed) puts the blocks together sorted by identifier. */
+    @Test
+    void aStoreWithoutAnOrderIsSorted() throws Exception {
+        PropertyStore.Builder builder = new PropertyStore.Builder(List.of(V1));
+        builder.put(PropertyStore.Owner.BLOCK, "test:z", PropertyKind.WIRE, "k", V1, 1);
+        builder.put(PropertyStore.Owner.BLOCK, "test:a", PropertyKind.WIRE, "k", V1, 1);
+        assertEquals(List.of("test:a", "test:z"), roundTrip(builder.build()).attach(data(V1, List.of(), List.of()))
+            .dataDrivenBlocks().stream().map(BlockPropertyData::getName).toList());
+    }
+
+    /** The committed data keeps the order of BDS: not sorted, and the same as the files before format 2 had. */
+    @Test
+    void committedDataDrivenBlocksAreInTheOrderBdsSends() throws Exception {
+        PaletteDataSource source = PaletteDataSource.bundled();
+        DataVersion newest = source.versions().stream().max(java.util.Comparator.naturalOrder()).orElseThrow();
+        List<String> names = source.load(newest).dataDrivenBlocks().stream().map(BlockPropertyData::getName).toList();
+        assertTrue(names.size() > 50);
+        assertTrue(!names.equals(names.stream().sorted().toList()), "the order of BDS, not the sorted one");
+        assertEquals("minecraft:light_gray_concrete_stairs", names.getFirst());
+    }
+
     @Test
     void behaviourPropertiesComeInThroughTheBuilder() throws Exception {
         PropertyStore.Builder builder = new PropertyStore.Builder(List.of(V2, V1));
