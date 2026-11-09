@@ -8,11 +8,15 @@ import org.geysermc.paletter.internal.data.VanillaData;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
- * Supplies vanilla data. The default implementation, {@link #bundled()}, reads the data shipped inside the library jar,
- * so no network access or external files are needed at runtime.
+ * Supplies vanilla data to a {@link org.geysermc.paletter.Paletter}. {@link #bundled()} reads the data shipped inside
+ * the library jar, so no network access or external files are needed at runtime; {@link #directory(Path)} reads the same
+ * format from a directory, e.g. data refreshed for a newer Bedrock version than the library bundles.
+ * <p>
+ * This is a closed set of sources: the loading contract is internal.
  *
  * @since 1.0.0
  */
@@ -51,6 +55,16 @@ public interface PaletteDataSource {
      * @return a source reading the data bundled in the library jar
      */
     static @NonNull PaletteDataSource bundled() {
-        return BundledDataSource.INSTANCE;
+        return FileDataSource.BUNDLED;
+    }
+
+    /**
+     * @param directory a directory in the bundled format: {@code versions.txt}, one {@code <name>.nbt} per version, and
+     *                  optionally {@code properties.nbt} and {@code renames.txt}. Read when first needed
+     * @return a source reading that directory
+     * @since 1.0.0
+     */
+    static @NonNull PaletteDataSource directory(@NonNull Path directory) {
+        return FileDataSource.directory(directory);
     }
 }

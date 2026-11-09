@@ -14,8 +14,12 @@ import org.geysermc.paletter.item.ItemFallback;
 import org.geysermc.paletter.internal.item.ItemVariant;
 import org.geysermc.paletter.vanilla.BedrockItems;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +59,31 @@ class PaletterBuilderTest {
             assertEquals(stacks(expected), stacks(actual), version.toString());
             assertEquals(expected.blocks().defaultFallback(), actual.blocks().defaultFallback());
             assertEquals(expected.items().defaultFallback(), actual.items().defaultFallback());
+        }
+    }
+
+    @Test
+    void aDirectoryInTheBundledFormatIsADataSource(@TempDir Path directory) throws IOException {
+        for (String file : List.of("versions.txt", "properties.nbt", "renames.txt")) {
+            copy(file, directory);
+        }
+        for (DataVersion version : PALETTER.versions()) {
+            copy(version.name() + ".nbt", directory);
+        }
+        PaletteDataSource source = PaletteDataSource.directory(directory);
+        assertEquals(PALETTER.versions(), source.versions());
+        Paletter paletter = Paletter.builder().data(source).build();
+        Palette expected = PALETTER.palette(PALETTER.latest().protocolVersion());
+        Palette actual = paletter.palette(PALETTER.latest().protocolVersion());
+        assertEquals(expected.blocks().size(), actual.blocks().size());
+        assertEquals(stacks(expected), stacks(actual));
+        assertThrows(java.io.UncheckedIOException.class,
+            () -> Paletter.builder().data(PaletteDataSource.directory(directory.resolve("missing"))).build().versions());
+    }
+
+    private static void copy(String file, Path directory) throws IOException {
+        try (InputStream stream = PaletterBuilderTest.class.getResourceAsStream("/paletter/" + file)) {
+            Files.copy(stream, directory.resolve(file));
         }
     }
 
