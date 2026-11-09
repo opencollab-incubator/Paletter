@@ -160,5 +160,5 @@ a report (see README, "Updating data"). Read the report, check the diff, run `./
 2. Apply it in the matching stage of `PaletteCompiler#extend` (blocks, items or creative) and in the stage's class.
 3. Record what it changed in `PaletteReport`; add a test next to `LayerTest` / `CustomContentTest` that compiles it against
    every bundled version.
-4. If it adds API, check `apiCompat` (additions pass; never update the baseline for them within a minor line) and note it in
+4. If it adds API, run `:paletter:apiDump` and commit `paletter/api/paletter.api` (additions only within a minor line) and note it in
    `API.md`.

@@ -145,43 +145,58 @@ component. Consumers decide what to log.
 
 `./gradlew build` (via `check`) runs:
 
+- **`:paletter:apiCheck`**: compares [`paletter/api/paletter.api`](paletter/api/paletter.api), the committed API dump, with
+  what the compiled classes give, and fails with the lines that differ. See "The API dump".
 - **`:paletter:apiCompat`**: [japicmp](https://github.com/siom79/japicmp) compares the exported packages of the current
-  jar with the baseline and fails on any binary incompatible change. `@Internal` and `@Experimental` API is excluded. The
-  report is `paletter/build/reports/japicmp/api-compat.txt`.
+  jar with the last released artifact (`@Internal` and `@Experimental` API excluded). Skipped while there is no release,
+  see "The release check".
 - **`:paletter:compileModuleInfo`**: compiles `module-info.java` against the main classes, so every exported package
   exists.
 - **`ApiBoundaryTest`**: fails if a public or protected signature of an exported type (supertypes, fields, methods,
   constructors, record components, type parameters) references a type of `org.geysermc.paletter.internal`, an
   `@Internal` type or a non-exported Paletter package; and if an exported type has no `@since` in its javadoc.
 
-### The baseline
+### The API dump
 
-[`paletter/api/baseline.version`](paletter/api/baseline.version) names the API version the current code must stay
-compatible with; `paletter/api/paletter-<version>-api.jar` holds the exported classes of that version. There is no
-release yet, so the baseline `1.0.0` was generated from the `stable-api` branch. Workflow:
+[`paletter/api/paletter.api`](paletter/api/paletter.api) is a sorted, plain-text listing of every public and protected
+class, field, constant, constructor and method of the exported packages, with generic signatures, `@Deprecated` and
+`@Experimental` marks, `permits` lists and constant values; `@Internal` members and classes and everything outside the
+exported packages are left out. It is generated from the compiled classes (ASM, `tools` module, `apiDump` source set) and
+never edited by hand:
 
-- **Release** `2.N.0`: after tagging, write the released API as the new baseline:
-  `./gradlew :paletter:updateApiBaseline`, after setting `baseline.version` to the released version (and deleting the old
-  baseline jar), and commit both.
-- **Intended break** (major release only, after the deprecation cycle): bump the major version, then update the baseline
-  the same way in the same change.
-- Never update the baseline to make `apiCompat` pass within a minor line.
+- `./gradlew :paletter:apiDump` rewrites it. Run it with any change of the API and commit the file with the change: the
+  diff of `paletter.api` is the review of the API change (a removed line is a break; an added line an addition).
+- `./gradlew :paletter:apiCheck`, part of `check`, fails with the added and removed lines when the committed file is stale,
+  so an API change cannot go unnoticed and the file never lags behind.
 
-The baseline was regenerated once since, when the vanilla constants were added (branch `constants`): `apiCompat`
-passed against the previous baseline first (no incompatible change, only additions: the `vanilla` packages, the
-constant overloads of `Palette`, `PaletteLayer.Builder`, `ItemMatcher`, `CreativePlacement`, `BlockDescriptor`,
-`PlacementFilter`, `Repairable.Entry`, `BlockFallback`, `ItemFallback`, `CustomBlock#type`, `CustomItem#type`,
-`CanonicalItems#extendsOrIs`, and the fallback defaults of the update pipeline), so the new baseline covers the
-new types too, including every generated constant: removing one now fails `apiCompat`.
+The dump is a review aid, not a promise by itself: within a minor line only additions are acceptable, removals follow the
+deprecation cycle above. The generator is tested on a small synthetic class set (`ApiDumpTest`, golden file in
+`tools/src/test/resources/api-dump-golden`).
 
-Additions since the baseline (`apiCompat` passes, baseline not regenerated): `Forwarding` (with `Kind`), `Paletter#forwardBlock` /
-`#forwardItem` / `#explainUnknown` / `#canonicalBlockOf` and their `Palette` counterparts, `Palette#blockOf`,
-`ItemRegistry#blockOf`, `CanonicalBlocks#forward`, `CanonicalItems#forward`, `VanillaData#blockItems` / `#withBlockItems` (an added
-record component; the previous constructors stay), and: `BedrockItemType#hasVariant` / `#variantOf`, and the
-debugging aids `Palette#explain` with `BlockExplanation` and `ItemExplanation` (both `@Experimental`: their shape may still grow), and the wire-only item components (`WireOnlyItemComponent`, `RenderOffsets`, `MiningSpeed`, `FrameCount`; `ItemComponent` gains the permitted sub-interface, so code that switches over it exhaustively needs a case for it; likewise `WireOnlyBlockComponent` with `OnPlayerPlacing` for `BlockComponent`).
+### The release check
+
+Compatibility with what was released is checked against the released artifact, resolved from a Maven repository, not
+against a file in the repository. `paletter/api/released.version` names the version (the file is absent or empty until the
+first release, and `:paletter:apiCompat` is skipped). After a release, write its version into the file: `apiCompat` then
+downloads `org.geysermc.paletter:paletter:<version>` (the repositories of the root build) and runs japicmp over the exported
+packages, failing on any binary incompatible change. Bump the file with each release; a major release that intends a break
+also bumps the major version.
 
 ### Pre-release changes
 
+(Until the API dump replaced it, a jar of the exported classes in the repository was the baseline; mentions of "the baseline"
+below are about that.)
+
+- **Queries Geyser needs** (additions): `Palette#isFallback(BedrockItemVariant)` / `#fallbackOf(BedrockItemVariant)` say, from the
+  canonical table and without `explain`, whether (and as which variant) a palette sends an item through a fallback;
+  `Palette#blockOf` documents that it works for every variant and `Palette#blockKeyOf(BedrockItemVariant)` gives the
+  version independent `BedrockBlockState` of it; `ItemRegistry#isFallback` / `#fallbackOf`. `BedrockItemType#isEducation()`,
+  `BedrockBlockType#isEducation()` and `@Education` mark Education Edition content (from BDS captures); the generated
+  constants carry `@since <bundled Bedrock release>`. `Palette#experiments()`, `#experimentOf(...)` and
+  `#applyTo(ResourcePackStackPacket)` belong to the experiment gating below.
+- **Experiment content is missing by default** (behaviour change, API unchanged): `VanillaContent#experiments` used to
+  default to every toggle enabled; the default is now none, so the content a version has only behind a toggle counts as
+  missing and plain fallbacks apply. See "Experiments".
 - **Model v2** (pre-release; the baseline was regenerated). Three concepts: keys (`BedrockItemType`, `BedrockItemVariant`
   = type + aux, `BedrockBlockType`, `BedrockBlockState`; vanilla constants or `X.of("namespace:id")`), registered content
   (`RegisteredItem`, `RegisteredBlock`, `RegisteredBlockState`: the key inside one palette) and stacks
