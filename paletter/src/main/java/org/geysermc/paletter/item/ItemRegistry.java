@@ -482,7 +482,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         }
         RegisteredBlockState block = resolved.block();
         if (stack.blockState() != null && !resolved.fallback() && block != null) {
-            RegisteredBlockState own = blocks.resolve(stack.blockState().toNbt()).block();
+            RegisteredBlockState own = ownBlock(stack.blockState());
             if (own != null) {
                 block = own;
             }
@@ -494,6 +494,23 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             .tag(stack.nbt())
             .blockDefinition(block)
             .build();
+    }
+
+    /**
+     * The block of a stack's own block state. A state of this palette's canonical blocks is an array lookup; anything
+     * else (and any palette that has canonical states without a block of their own, where the lookup would substitute the
+     * default fallback) is resolved from its NBT, which builds and hashes the state every time.
+     *
+     * @return the block, or null if the state resolves to none
+     */
+    private @Nullable RegisteredBlockState ownBlock(BedrockBlockState state) {
+        if (blocks.missingCanonical().isEmpty()) {
+            int canonicalId = state.canonicalIn(blocks.canonical());
+            if (canonicalId != -1) {
+                return blocks.block(canonicalId);
+            }
+        }
+        return blocks.resolve(state.toNbt()).block();
     }
 
     /**
