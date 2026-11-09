@@ -8,6 +8,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodecHelper;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
+import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
+import org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket;
@@ -40,6 +42,7 @@ import org.geysermc.paletter.vanilla.BedrockItemVariant;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +68,8 @@ import java.util.WeakHashMap;
  * @since 0.1.0
  */
 public final class Palette {
+    private static final String[] NO_STRINGS = new String[0];
+
     private final VanillaData data;
     private final List<PaletteLayer> layers;
     private final BlockRegistry blocks;
@@ -199,7 +204,9 @@ public final class Palette {
     /**
      * @return the block to send for a state; resolved for this version, air if nothing fits. A field read and an array
      *         load, it does not allocate
-     * @throws IllegalArgumentException if the state is not in this palette (a custom block of a layer it does not have)
+     * @throws IllegalArgumentException if the state is not in this palette (a custom block of a layer it does not have).
+     *         On a path that may see such states (a session palette showing another session's custom blocks), use
+     *         {@link #blockOrNull(BedrockBlockState)}: exceptions are expensive and the stack trace is built every time
      * @since 0.1.0
      */
     public @NonNull RegisteredBlockState block(@NonNull BedrockBlockState state) {
@@ -207,13 +214,39 @@ public final class Palette {
     }
 
     /**
+     * Like {@link #block(BedrockBlockState)}, but for a state that is not in this palette it returns null instead of
+     * throwing. Same cost otherwise.
+     *
+     * @return the block to send for a state, or null if the state is not in this palette
+     * @since 0.1.0
+     */
+    public @Nullable RegisteredBlockState blockOrNull(@NonNull BedrockBlockState state) {
+        int canonical = state.canonicalIn(blocks.canonical());
+        return canonical == -1 ? null : blocks.block(canonical);
+    }
+
+    /**
      * @return the runtime id to send for a state, in this palette's {@link #blockNetworkIds()} mode. A field read and an
      *         array load, it does not allocate
-     * @throws IllegalArgumentException if the state is not in this palette (a custom block of a layer it does not have)
+     * @throws IllegalArgumentException if the state is not in this palette (a custom block of a layer it does not have).
+     *         Use {@link #runtimeIdOrDefault(BedrockBlockState, int)} where that can happen at runtime
      * @since 0.1.0
      */
     public int runtimeId(@NonNull BedrockBlockState state) {
         return blocks.runtimeId(requireCanonical(state));
+    }
+
+    /**
+     * Like {@link #runtimeId(BedrockBlockState)}, but for a state that is not in this palette it returns a default
+     * instead of throwing. Same cost otherwise.
+     *
+     * @param defaultId what to return for a state that is not in this palette, e.g. the runtime id of air
+     * @return the runtime id to send for a state, or {@code defaultId}
+     * @since 0.1.0
+     */
+    public int runtimeIdOrDefault(@NonNull BedrockBlockState state, int defaultId) {
+        int canonical = state.canonicalIn(blocks.canonical());
+        return canonical == -1 ? defaultId : blocks.runtimeId(canonical);
     }
 
     private int requireCanonical(BedrockBlockState state) {
@@ -298,10 +331,12 @@ public final class Palette {
     /**
      * Encodes a stack for this palette's version: the item with the aux value, count and NBT, and the block the stack
      * places (its own block state if it has one and the item places blocks, else the item's default block). An item
-     * this version does not have is replaced according to the fallback policy.
+     * this version does not have, or this palette does not know at all (an identifier nobody registered), is
+     * replaced by the same stand-in: the item's fallback, else the default one of the {@link Fallbacks}
+     * ({@code minecraft:unknown} unless configured otherwise), whichever way the item is looked up.
      *
-     * @return the item data, or {@link ItemData#AIR} if there is no item at all (not in this version, no fallback, or not
-     *         in this palette)
+     * @return the item data, or {@link ItemData#AIR} only if there is neither a fallback for the item nor a default one
+     *         ({@link Fallbacks#NONE})
      * @since 0.1.0
      */
     public @NonNull ItemData encode(@NonNull BedrockItemStack stack) {
@@ -318,6 +353,66 @@ public final class Palette {
      */
     public @Nullable BedrockItemStack decode(@NonNull ItemData data) {
         return items.decode(data);
+    }
+
+    /**
+     * Whether two stacks are the same stack of items as far as this palette can tell: the same item definition, damage,
+     * count, NBT, {@code canPlace}, {@code canBreak}, blocking ticks and block. The net id is not part of it.
+     * <p>
+     * Definitions compare by identity, as in Cloudburst ({@code ItemData#equals}, which also ignores the block). A
+     * definition that is not this palette's own instance (another palette's, or Geyser's own) is first mapped to this
+     * palette's entry of the same identifier and runtime id, so a stack of a base palette matches the same stack of a
+     * palette extending it. A definition this palette does not have matches only itself. The same goes for block
+     * definitions. A missing NBT tag and an empty one are the same, so are missing and empty block lists.
+     * <p>
+     * Stacks that differ only in count, or only in NBT, never match.
+     *
+     * @return true if the stacks are the same
+     * @since 0.1.0
+     */
+    public boolean sameStack(@NonNull ItemData a, @NonNull ItemData b) {
+        if (a == b) {
+            return true;
+        }
+        return a.getCount() == b.getCount()
+            && a.getDamage() == b.getDamage()
+            && a.getBlockingTicks() == b.getBlockingTicks()
+            && sameTag(a.getTag(), b.getTag())
+            && sameList(a.getCanPlace(), b.getCanPlace())
+            && sameList(a.getCanBreak(), b.getCanBreak())
+            && ownItem(a.getDefinition()) == ownItem(b.getDefinition())
+            && ownBlock(a.getBlockDefinition()) == ownBlock(b.getBlockDefinition());
+    }
+
+    private static boolean sameTag(@Nullable NbtMap a, @Nullable NbtMap b) {
+        boolean emptyA = a == null || a.isEmpty();
+        boolean emptyB = b == null || b.isEmpty();
+        return emptyA || emptyB ? emptyA == emptyB : a.equals(b);
+    }
+
+    private static boolean sameList(String @Nullable [] a, String @Nullable [] b) {
+        return Arrays.equals(a == null ? NO_STRINGS : a, b == null ? NO_STRINGS : b);
+    }
+
+    /**
+     * @return this palette's entry for a definition (itself if it is one), else the definition
+     */
+    private ItemDefinition ownItem(ItemDefinition definition) {
+        if (items.isRegistered(definition)) {
+            return definition;
+        }
+        RegisteredItem own = items.getDefinition(definition.getRuntimeId());
+        return own != null && own.getIdentifier().equals(definition.getIdentifier()) ? own : definition;
+    }
+
+    private @Nullable BlockDefinition ownBlock(@Nullable BlockDefinition definition) {
+        if (definition == null || blocks.isRegistered(definition)) {
+            return definition;
+        }
+        RegisteredBlockState own = blocks.byRuntimeId(definition.getRuntimeId());
+        // A block of another palette says what it is; any other definition is trusted by its runtime id
+        return own != null && (!(definition instanceof RegisteredBlockState other) || other.identifier().equals(own.identifier()))
+            ? own : definition;
     }
 
     // ---- Debugging ----

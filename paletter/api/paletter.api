@@ -93,6 +93,7 @@ public final class org.geysermc.paletter.Palette {
     public org.geysermc.paletter.vanilla.BedrockBlockState blockKeyOf(org.geysermc.paletter.vanilla.BedrockItemVariant)
     public org.geysermc.paletter.block.BlockNetworkIds blockNetworkIds()
     public org.geysermc.paletter.block.RegisteredBlockState blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)
+    public org.geysermc.paletter.block.RegisteredBlockState blockOrNull(org.geysermc.paletter.vanilla.BedrockBlockState)
     public java.util.List<org.cloudburstmc.protocol.bedrock.data.BlockPropertyData> blockProperties()
     public org.geysermc.paletter.block.BlockRegistry blocks()
     public org.geysermc.paletter.creative.CreativeContent creative()
@@ -124,6 +125,8 @@ public final class org.geysermc.paletter.Palette {
     public java.util.List<org.geysermc.paletter.PaletteLayer> layers()
     public org.geysermc.paletter.PaletteReport report()
     public int runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState)
+    public int runtimeIdOrDefault(org.geysermc.paletter.vanilla.BedrockBlockState, int)
+    public boolean sameStack(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData, org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)
     public java.lang.String toString()
     public org.geysermc.paletter.data.DataVersion version()
 }
