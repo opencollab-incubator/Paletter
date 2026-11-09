@@ -50,10 +50,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
@@ -94,8 +92,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     private volatile @Nullable Map<String, List<String>> mergedTags;
     private final List<CustomItem> customItems;
     private final int nextRuntimeId;
-    private final Map<ItemVariant, Optional<ResolvedItem>> resolutions = new ConcurrentHashMap<>();
     private volatile @Nullable CanonicalTable canonicalTable;
+    private volatile @Nullable ResolvedItem defaultResolved;
 
     private ItemRegistry(Builder builder, Map<String, RegisteredBlockState> defaultBlocks, Set<String> multiStateBlockItems) {
         this.parent = builder.parent;
@@ -363,7 +361,29 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                 return table.items[canonicalId];
             }
         }
-        return resolutions.computeIfAbsent(variant, v -> Optional.ofNullable(resolveUncached(v))).orElse(null);
+        // Not cached: the variants that get here are not canonical, so the caller chose them and a cache would grow with the input
+        return resolveOrDefault(variant);
+    }
+
+    /**
+     * The same as the canonical table does for a variant that has no item or fallback of its own: the default fallback,
+     * so a variant that is not canonical (an identifier nobody registered) is sent as the same stand-in.
+     */
+    private @Nullable ResolvedItem resolveOrDefault(ItemVariant variant) {
+        ResolvedItem resolved = resolveUncached(variant);
+        return resolved != null ? resolved : defaultResolved();
+    }
+
+    private @Nullable ResolvedItem defaultResolved() {
+        ResolvedItem result = defaultResolved;
+        if (result == null && defaultFallback != null) {
+            RegisteredItem fallback = getDefinition(defaultFallback.target().identifier());
+            if (fallback != null) {
+                defaultResolved = result = new ResolvedItem(fallback, defaultFallback.variant() == null ? 0 : defaultFallback.variant().aux(),
+                    defaultBlockOf(fallback.getIdentifier()), true);
+            }
+        }
+        return result;
     }
 
     private @Nullable ResolvedItem resolveUncached(ItemVariant variant) {
@@ -451,7 +471,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * and the block the stack places: its own block state if it has one and the item places blocks here, else the item's
      * default block.
      *
-     * @return the item data, or {@link ItemData#AIR} if the item does not exist in this version and has no fallback
+     * @return the item data, or {@link ItemData#AIR} if the item does not exist in this version and neither it nor the
+     *         palette has a fallback
      */
     @Internal
     public @NonNull ItemData encode(@NonNull BedrockItemStack stack) {
@@ -477,7 +498,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
 
     /**
      * Identifies a stack the client sent, see {@link #match(ItemData)}. The block state is set only if the stack's
-     * block differs from the item's default block.
+     * block differs from the item's default block. If the item matched but not its damage value, the variant is the
+     * item's variant for the damage the client sent ({@link BedrockItemType#variantOf}), so the damage is not lost.
      *
      * @return the stack, or null for air or a stack that is no variant of the newest version
      */
@@ -496,7 +518,13 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                 state = blocks.canonical().handle(blockId);
             }
         }
-        return new BedrockItemStack(canonical.handle(canonicalId), Math.max(1, data.getCount()), data.getTag(), state);
+        BedrockItemVariant variant = canonical.handle(canonicalId);
+        if (data.getDamage() != item(canonicalId).damage()) {
+            // Only the item matched: its base variant stood in for a damage value the newest version has no variant
+            // for (a map id, a wear value, a number nobody listed). Keep the damage instead of losing it
+            variant = variant.type().variantOf(data.getDamage());
+        }
+        return new BedrockItemStack(variant, Math.max(1, data.getCount()), data.getTag(), state);
     }
 
     /**
@@ -554,10 +582,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             items[i] = resolveUncached(variant);
             if (items[i] == null) {
                 missing.add(variant);
-                RegisteredItem fallback = defaultFallback == null ? null : getDefinition(defaultFallback.target().identifier());
-                if (fallback != null) {
-                    items[i] = new ResolvedItem(fallback, defaultFallback.variant() == null ? 0 : defaultFallback.variant().aux(), defaultBlockOf(fallback.getIdentifier()), true);
-                }
+                items[i] = defaultResolved();
             }
             if (items[i] == null || items[i].fallback()) {
                 // What could change this entry if an item of that identifier were added

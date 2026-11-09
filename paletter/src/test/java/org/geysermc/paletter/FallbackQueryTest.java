@@ -1,5 +1,6 @@
 package org.geysermc.paletter;
 
+import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.item.ItemFallback;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
@@ -128,7 +129,9 @@ class FallbackQueryTest {
         Palette oldest = PALETTER.palette(OLDEST);
         assertFalse(oldest.isFallback(BedrockItems.STICK.variantOf(99)));
         BedrockItemVariant missing = missingInOldest().getFirst();
-        // The default fallback only serves the variants of the newest data; encode gives air for this one too
-        assertFalse(oldest.isFallback(missing.type().variantOf(99)));
+        // The default fallback serves every variant of a missing item, canonical or not, as encode does
+        BedrockItemVariant unlisted = missing.type().variantOf(99);
+        assertTrue(oldest.isFallback(unlisted));
+        assertEquals("minecraft:unknown", oldest.encode(BedrockItemStack.of(unlisted)).getDefinition().getIdentifier());
     }
 }

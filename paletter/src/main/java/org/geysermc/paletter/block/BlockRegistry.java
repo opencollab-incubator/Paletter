@@ -73,6 +73,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     /** Blocks of the palette that count as missing: a disabled experiment gates them. */
     private final Set<String> missing;
     private final BlockInterner interner;
+    /** Resolutions of canonical states only (bounded by the canonical ids); anything else a caller asks for is not kept. */
     private final Map<NbtMap, BlockResolution> resolutions = new ConcurrentHashMap<>();
     private final @Nullable BlockRegistry parent;
     private volatile @Nullable CanonicalTable canonicalTable;
@@ -406,7 +407,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      *     <li>state values are carried over where the (replacement) block has them; missing or invalid ones use the
      *     block's default state values.</li>
      * </ol>
-     * Results are cached. On hot paths, prefer canonical ids ({@link #block(int)}).
+     * Results for canonical states are cached; what is not a canonical state (an arbitrary caller input) is not. On hot paths, prefer canonical ids ({@link #block(int)}).
      */
     @Internal
     public @NonNull BlockResolution resolve(@NonNull NbtMap state) {
@@ -417,7 +418,15 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         if (exact != null) {
             return new BlockResolution(normalized, exact, BlockResolution.Kind.EXACT);
         }
-        return resolutions.computeIfAbsent(normalized, this::adapt);
+        BlockResolution cached = resolutions.get(normalized);
+        if (cached != null) {
+            return cached;
+        }
+        BlockResolution resolution = adapt(normalized);
+        if (canonical.index(normalized) != -1) {
+            resolutions.put(normalized, resolution);
+        }
+        return resolution;
     }
 
     private BlockResolution adapt(NbtMap state) {

@@ -67,8 +67,8 @@ class EncodeDecodeTest {
         ItemData data = palette.encode(stack);
         assertEquals("example:ruby", data.getDefinition().getIdentifier());
         assertEquals(stack, palette.decode(data));
-        // Not in this palette: nothing to send
-        assertEquals(ItemData.AIR, latest().encode(stack));
+        // Not in this palette: the default fallback, as for every other unknown item
+        assertEquals("minecraft:unknown", latest().encode(stack).getDefinition().getIdentifier());
     }
 
     @Test
