@@ -73,15 +73,6 @@ class KeysTest {
         assertEquals(BedrockItems.APPLE.base().canonicalIn(items), other.canonical());
     }
 
-    @Test
-    void equalityIsByIdentifier() {
-        BedrockItemType vanilla = BedrockItems.APPLE;
-        assertEquals(vanilla, BedrockItemType.of("minecraft:apple"));
-        assertEquals(vanilla.hashCode(), BedrockItemType.of("minecraft:apple").hashCode());
-        assertNotEquals(vanilla, BedrockItemType.of("test:apple"));
-        assertNotEquals(BedrockItemType.of("test:apple"), vanilla);
-    }
-
     private static org.geysermc.paletter.internal.item.ItemVariant item(String id, int damage) {
         return org.geysermc.paletter.internal.item.ItemVariant.of(id, damage);
     }

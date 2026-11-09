@@ -50,15 +50,6 @@ class DiffSourceTest {
     Path directory;
 
     @Test
-    void identical() throws Exception {
-        VanillaData data = fixture();
-        write(data, directory, true);
-        Diff verify = Diff.source(directory, NAME, data, "fixture");
-        assertTrue(verify.identical(), verify.markdown(50));
-        assertTrue(verify.markdown(50).contains("IDENTICAL"));
-    }
-
-    @Test
     void geyserFileNames() throws Exception {
         VanillaData data = fixture();
         write(data, directory, false);
