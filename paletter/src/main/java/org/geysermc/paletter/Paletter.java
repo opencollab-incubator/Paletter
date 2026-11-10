@@ -67,6 +67,7 @@ public final class Paletter {
     private final Map<Palette, Palette> newerThanData = new ConcurrentHashMap<>();
     private final Map<DataVersion, CanonicalBlocks> blocksByVersion = new ConcurrentHashMap<>();
     private final Map<DataVersion, CanonicalItems> itemsByVersion = new ConcurrentHashMap<>();
+    private final Map<DataVersion, Map<String, NbtMap>> firstStates = new ConcurrentHashMap<>();
     private final Map<NbtMap, NbtMap> interned = new HashMap<>();
     private final BlockInterner blockInterner = new BlockInterner();
     private volatile CanonicalBlocks canonicalBlocks;
@@ -274,10 +275,10 @@ public final class Paletter {
      */
     public @Nullable BedrockBlockType blockType(@NonNull String identifier, @NonNull Lookup lookup) {
         String name = identifier;
-        if (stateOf(vanillaData(versionOf(lookup)), identifier) == null) {
+        if (stateOf(versionOf(lookup), identifier) == null) {
             name = lookup.followRenames() ? source.renames().block(identifier) : null;
         }
-        NbtMap state = name == null ? null : stateOf(vanillaData(newest()), name);
+        NbtMap state = name == null ? null : stateOf(newest(), name);
         BedrockBlockState handle = state == null ? null : block(state);
         return handle == null ? null : handle.type();
     }
@@ -317,13 +318,17 @@ public final class Paletter {
             : itemsByVersion.computeIfAbsent(version, v -> CanonicalItems.of(vanillaData(v)));
     }
 
-    private static @Nullable NbtMap stateOf(VanillaData data, String identifier) {
-        for (NbtMap state : data.blockStates()) {
-            if (BlockStates.name(state).equals(identifier)) {
-                return state;
+    /**
+     * @return the first state of a block in a version's data, or null if the version lacks the block
+     */
+    private @Nullable NbtMap stateOf(DataVersion version, String identifier) {
+        return firstStates.computeIfAbsent(version, v -> {
+            Map<String, NbtMap> byName = new HashMap<>();
+            for (NbtMap state : vanillaData(v).blockStates()) {
+                byName.putIfAbsent(BlockStates.name(state), state);
             }
-        }
-        return null;
+            return byName;
+        }).get(identifier);
     }
 
     /**
