@@ -45,6 +45,8 @@ public final class CanonicalItems {
     private final Map<Object, CanonicalItems> extensions = new WeakHashMap<>();
     private final Renames renames;
     private final String version;
+    /** Of a root only: its vanilla ids and those of the one other root asked about last. */
+    private volatile @Nullable Translation translation;
 
     private CanonicalItems(@Nullable CanonicalItems parent, List<ItemVariant> variants, Renames renames, String version) {
         this.parent = parent;
@@ -194,6 +196,42 @@ public final class CanonicalItems {
             current = current.parent;
         }
         return -1;
+    }
+
+    /**
+     * Canonical ids belong to the instance: the newest version it knows defines them, so two instances may number the
+     * same variant differently. This translates between this lineage's vanilla ids and those of another lineage.
+     *
+     * @return for each vanilla canonical id of this lineage, the id of the same variant in the vanilla variants of
+     *         {@code reference}, or -1 if it has none. Computed once, an array lookup afterwards
+     */
+    @Internal
+    public int @NonNull [] vanillaIdsIn(@NonNull CanonicalItems reference) {
+        return translation(reference).to();
+    }
+
+    /**
+     * @return for each vanilla canonical id of {@code reference}, the id of the same variant in this lineage, or -1
+     */
+    @Internal
+    public int @NonNull [] vanillaIdsFrom(@NonNull CanonicalItems reference) {
+        return translation(reference).from();
+    }
+
+    private Translation translation(CanonicalItems reference) {
+        CanonicalItems root = this.root;
+        CanonicalItems other = reference.root;
+        Translation current = root.translation;
+        if (current == null || current.reference() != other) {
+            synchronized (root) {
+                current = root.translation;
+                if (current == null || current.reference() != other) {
+                    root.translation = current = Translation.of(other, root.variants.length, other.variants.length,
+                        id -> other.index.getInt(root.variants[id]));
+                }
+            }
+        }
+        return current;
     }
 
     /**

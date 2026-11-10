@@ -37,7 +37,7 @@ public final class BedrockBlockState {
      * Plumbing of {@link org.geysermc.paletter.Palette}: the handle of a canonical id.
      *
      * @return the state of a canonical id of any palette lineage, or null if there is no such id or the state is not
-     *         known to the constants (vanilla states of a source that is not the bundled one)
+     *         known to the constants (a vanilla state of a source that has states the bundled data lacks)
      */
     @Internal
     public static @Nullable BedrockBlockState fromCanonical(@NonNull CanonicalBlocks canonical, int id) {
@@ -45,12 +45,13 @@ public final class BedrockBlockState {
             return null;
         }
         VanillaIndex index = VanillaIndex.get();
-        if (id < canonical.vanillaSize() && canonical.extendsOrIs(index.blocks)) {
-            return index.state(id);
+        if (id < canonical.vanillaSize()) {
+            // The ids belong to the palette's own newest version, which is not necessarily the bundled one
+            return index.state(canonical.root() == index.blocks ? id : canonical.vanillaIdsIn(index.blocks)[id]);
         }
         CustomBlock block = canonical.customBlockAt(id);
         if (block == null) {
-            return index.state(index.blocks.index(canonical.state(id)));
+            return null;
         }
         int base = canonical.customBase(block.identifier(), block.stateCount());
         if (base == -1) {
@@ -133,15 +134,16 @@ public final class BedrockBlockState {
 
     /**
      * The canonical id of this state in a palette's canonical blocks: the precomputed vanilla id for vanilla states of
-     * palettes of {@link org.geysermc.paletter.Paletter#bundled()}, the custom block's id in that lineage, else a hash
-     * lookup.
+     * palettes of the bundled newest version, an array lookup in the palette's own table for the others, the custom
+     * block's id in that lineage, else a hash lookup.
      *
      * @return the canonical id, or -1 if the state is not in it
      */
     @Internal
     public int canonicalIn(@NonNull CanonicalBlocks canonical) {
         if (id >= 0) {
-            return canonical.root() == VanillaIndex.get().blocks ? id : canonical.index(toNbt());
+            CanonicalBlocks bundled = VanillaIndex.get().blocks;
+            return canonical.root() == bundled ? id : canonical.vanillaIdsFrom(bundled)[id];
         }
         int base = canonical.customBase(type().identifier(), layout.count);
         return base == -1 ? canonical.index(toNbt()) : base + combination;

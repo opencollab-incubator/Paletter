@@ -47,6 +47,8 @@ public final class CanonicalBlocks {
     private final String version;
     private final Map<NbtMap, String> defaultStates;
     private volatile @Nullable Map<String, Schema> schemas;
+    /** Of a root only: its vanilla ids and those of the one other root asked about last. */
+    private volatile @Nullable Translation translation;
 
     private CanonicalBlocks(@Nullable CanonicalBlocks parent, List<NbtMap> states, List<CustomBlock> blocks,
                             Renames renames, String version, Map<NbtMap, String> defaultStates) {
@@ -185,6 +187,42 @@ public final class CanonicalBlocks {
      */
     public @Nullable BedrockBlockState handle(int canonical) {
         return BedrockBlockState.fromCanonical(this, canonical);
+    }
+
+    /**
+     * Canonical ids belong to the instance: the newest version it knows defines them, so two instances may number the
+     * same state differently. This translates between this lineage's vanilla ids and those of another lineage.
+     *
+     * @return for each vanilla canonical id of this lineage, the id of the same state in the vanilla states of
+     *         {@code reference}, or -1 if it has none. Computed once, an array lookup afterwards
+     */
+    @Internal
+    public int @NonNull [] vanillaIdsIn(@NonNull CanonicalBlocks reference) {
+        return translation(reference).to();
+    }
+
+    /**
+     * @return for each vanilla canonical id of {@code reference}, the id of the same state in this lineage, or -1
+     */
+    @Internal
+    public int @NonNull [] vanillaIdsFrom(@NonNull CanonicalBlocks reference) {
+        return translation(reference).from();
+    }
+
+    private Translation translation(CanonicalBlocks reference) {
+        CanonicalBlocks root = this.root;
+        CanonicalBlocks other = reference.root;
+        Translation current = root.translation;
+        if (current == null || current.reference() != other) {
+            synchronized (root) {
+                current = root.translation;
+                if (current == null || current.reference() != other) {
+                    root.translation = current = Translation.of(other, root.states.length, other.states.length,
+                        id -> other.index.getInt(root.states[id]));
+                }
+            }
+        }
+        return current;
     }
 
     /**
