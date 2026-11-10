@@ -4,7 +4,11 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
+import org.geysermc.paletter.Lookup;
+import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.annotation.Internal;
+import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.vanilla.BedrockBlockType;
 
 import java.util.List;
 
@@ -29,6 +33,7 @@ public final class RegisteredBlockState implements BlockDefinition {
     /** Custom states belong to one block in every palette they are in; vanilla states are shared and not bound. */
     private volatile @Nullable CustomBlock customBlock;
     private int indexInBlock;
+    private volatile @Nullable BedrockBlockState key;
 
     @Internal
     public RegisteredBlockState(int runtimeId, NbtMap state, boolean custom) {
@@ -75,6 +80,27 @@ public final class RegisteredBlockState implements BlockDefinition {
      */
     public boolean isCustom() {
         return custom;
+    }
+
+    /**
+     * The key of this state as the newest bundled data and the layer of its block know it, without a palette: for a
+     * state of a palette built from other data, or of an older version, use {@link BlockRegistry#key}.
+     *
+     * @return the key, or null for a vanilla state that is not in the newest bundled data
+     */
+    public @Nullable BedrockBlockState key() {
+        BedrockBlockState key = this.key;
+        if (key == null) {
+            if (custom) {
+                CustomBlock block = customBlock;
+                List<BedrockBlockState> keys = block == null ? List.of() : BedrockBlockType.of(block).states();
+                key = indexInBlock < keys.size() ? keys.get(indexInBlock) : null;
+            } else {
+                key = Paletter.bundled().block(state, Lookup.STRICT);
+            }
+            this.key = key;
+        }
+        return key;
     }
 
     @Override
