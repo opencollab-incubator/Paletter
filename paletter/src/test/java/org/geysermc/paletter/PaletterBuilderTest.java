@@ -47,6 +47,12 @@ class PaletterBuilderTest {
     }
 
     @Test
+    void theServedVersionsAreComputedOnce() {
+        assertSame(PALETTER.versions(), PALETTER.versions());
+        assertSame(PALETTER.versions().getLast(), PALETTER.latest());
+    }
+
+    @Test
     void defaultsEqualTheBundledPalettes() {
         Paletter built = Paletter.builder().build();
         assertEquals(PALETTER.versions(), built.versions());

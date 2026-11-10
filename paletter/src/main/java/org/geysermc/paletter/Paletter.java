@@ -55,7 +55,7 @@ import java.util.function.Predicate;
  */
 public final class Paletter {
     private final PaletteDataSource source;
-    private final Predicate<DataVersion> versionFilter;
+    private final List<DataVersion> versions;
     private final Fallbacks fallbacks;
     private final VanillaContent vanillaContent;
     private final CreativeOrdering creativeOrdering;
@@ -74,7 +74,7 @@ public final class Paletter {
 
     private Paletter(Builder builder) {
         this.source = builder.source;
-        this.versionFilter = builder.versions;
+        this.versions = source.versions().stream().filter(builder.versions).toList();
         this.fallbacks = builder.fallbacks;
         this.vanillaContent = builder.vanillaContent.copy();
         this.creativeOrdering = builder.creativeOrdering;
@@ -102,11 +102,11 @@ public final class Paletter {
      * @return the data versions this instance serves (those the builder's predicate accepts), oldest first
      */
     public @NonNull List<DataVersion> versions() {
-        return source.versions().stream().filter(versionFilter).toList();
+        return versions;
     }
 
     public @NonNull DataVersion latest() {
-        return versions().getLast();
+        return versions.getLast();
     }
 
     /**
@@ -295,9 +295,12 @@ public final class Paletter {
     }
 
     private DataVersion versionOf(Lookup lookup) {
-        DataVersion version = lookup.version() == null ? latest() : lookup.version();
-        if (!versions().contains(version)) {
-            throw new IllegalArgumentException(version + " is not served by this Paletter, which has " + versions());
+        DataVersion version = lookup.version();
+        if (version == null) {
+            return latest();
+        }
+        if (!versions.contains(version)) {
+            throw new IllegalArgumentException(version + " is not served by this Paletter, which has " + versions);
         }
         return version;
     }
