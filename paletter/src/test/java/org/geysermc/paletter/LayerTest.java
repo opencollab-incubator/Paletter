@@ -316,4 +316,19 @@ class LayerTest {
         }
         throw new AssertionError(identifier + " is not in the creative inventory");
     }
+
+    @Test
+    void theItemsOfALayerAreTheCustomEntriesInOrder() {
+        CustomItem first = CustomItem.builder("order:first").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
+        CustomItem second = CustomItem.builder("order:second").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
+        PaletteLayer layer = PaletteLayer.builder("order").item(first).blockItem("order:block", CustomBlock.BlockItem.NONE, null).item(second).build();
+        assertEquals(List.of(first, second), layer.items());
+        assertEquals(3, layer.itemEntries().size());
+    }
+
+    @Test
+    void theBuilderRejectsNullContent() {
+        assertThrows(NullPointerException.class, () -> PaletteLayer.builder("null").item(null));
+        assertThrows(NullPointerException.class, () -> PaletteLayer.builder("null").block(null));
+    }
 }

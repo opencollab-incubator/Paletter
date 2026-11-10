@@ -42,8 +42,9 @@ import java.util.function.Consumer;
  */
 public final class PaletteLayer {
     private final String id;
-    private final List<CustomItem> items;
     private final List<ItemEntry> itemEntries;
+    /** The custom items among {@link #itemEntries}. */
+    private final List<CustomItem> items;
     private final List<CustomBlock> blocks;
     private final List<Override> overrides;
     private final List<BiConsumer<CreativeEditor, DataVersion>> creativeEdits;
@@ -52,8 +53,9 @@ public final class PaletteLayer {
 
     private PaletteLayer(Builder builder) {
         this.id = builder.id;
-        this.items = List.copyOf(builder.items);
         this.itemEntries = List.copyOf(builder.itemEntries);
+        this.items = itemEntries.stream().filter(ItemEntry.Custom.class::isInstance)
+            .map(entry -> ((ItemEntry.Custom) entry).item()).toList();
         this.blocks = List.copyOf(builder.blocks);
         this.overrides = List.copyOf(builder.overrides);
         this.creativeEdits = List.copyOf(builder.creativeEdits);
@@ -151,7 +153,6 @@ public final class PaletteLayer {
 
     public static final class Builder {
         private final String id;
-        private final List<CustomItem> items = new ArrayList<>();
         private final List<ItemEntry> itemEntries = new ArrayList<>();
         private final List<CustomBlock> blocks = new ArrayList<>();
         private final List<Override> overrides = new ArrayList<>();
@@ -164,8 +165,7 @@ public final class PaletteLayer {
         }
 
         public @NonNull Builder item(@NonNull CustomItem item) {
-            items.add(item);
-            itemEntries.add(new ItemEntry.Custom(item));
+            itemEntries.add(new ItemEntry.Custom(Objects.requireNonNull(item)));
             return this;
         }
 
@@ -182,7 +182,7 @@ public final class PaletteLayer {
         }
 
         public @NonNull Builder block(@NonNull CustomBlock block) {
-            blocks.add(block);
+            blocks.add(Objects.requireNonNull(block));
             return this;
         }
 
