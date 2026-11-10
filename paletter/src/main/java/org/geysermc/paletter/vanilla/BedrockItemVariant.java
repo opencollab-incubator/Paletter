@@ -33,8 +33,12 @@ public final class BedrockItemVariant {
     @Internal
     public static @NonNull BedrockItemVariant fromCanonical(@NonNull CanonicalItems canonical, int id) {
         VanillaIndex index = VanillaIndex.get();
-        if (id < canonical.vanillaSize() && canonical.root() == index.items) {
-            return index.itemsByCanonical[id];
+        if (id < canonical.vanillaSize()) {
+            // The ids belong to the palette's own newest version, which is not necessarily the bundled one
+            int bundled = canonical.root() == index.items ? id : canonical.vanillaIdsIn(index.items)[id];
+            if (bundled != -1) {
+                return index.itemsByCanonical[bundled];
+            }
         }
         ItemVariant variant = canonical.variant(id);
         BedrockItemType type = BedrockItemType.of(variant.identifier());
@@ -94,8 +98,9 @@ public final class BedrockItemVariant {
      */
     @Internal
     public int canonicalIn(@NonNull CanonicalItems canonical) {
-        if (id >= 0 && canonical.root() == VanillaIndex.get().items) {
-            return id;
+        if (id >= 0) {
+            CanonicalItems bundled = VanillaIndex.get().items;
+            return canonical.root() == bundled ? id : canonical.vanillaIdsFrom(bundled)[id];
         }
         return canonical.index(toItemVariant());
     }
