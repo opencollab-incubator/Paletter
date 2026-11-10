@@ -12,7 +12,7 @@ import java.util.zip.GZIPInputStream;
 
 /** Wire NBT flattened to leaves: {@code a.b[0].c -> (type, value)}; empty compounds and lists are leaves too. */
 public final class Wire {
-    record Leaf(String type, Object value) {
+    public record Leaf(String type, Object value) {
         boolean numeric() {
             return value instanceof Number;
         }
@@ -30,7 +30,7 @@ public final class Wire {
     private Wire() {
     }
 
-    static Map<String, Leaf> flatten(NbtMap root) {
+    public static Map<String, Leaf> flatten(NbtMap root) {
         Map<String, Leaf> leaves = new TreeMap<>();
         flatten("", root, leaves);
         return leaves;
