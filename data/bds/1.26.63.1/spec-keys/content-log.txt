@@ -1,0 +1,1020 @@
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_10.json |  -> components -> minecraft:block_entity -> container -> container: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_11.json |  -> components -> minecraft:block_entity -> container -> container: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_12.json |  -> components -> minecraft:block_entity -> container -> entity_storage: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_13.json |  -> components -> minecraft:block_entity -> container -> entity_storage: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_14.json |  -> components -> minecraft:block_entity -> container -> entity_storage: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_15.json |  -> components -> minecraft:block_entity -> container -> entity_storage: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_16.json |  -> components -> minecraft:block_entity -> container -> entity_storage: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_18.json |  -> components -> minecraft:block_entity -> entity_storage: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_19.json |  -> components -> minecraft:block_entity -> entity_storage: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_2.json |  -> components -> minecraft:block_entity -> carry_over_block_entity_data: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_20.json |  -> components -> minecraft:block_entity -> entity_storage: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_21.json |  -> components -> minecraft:block_entity -> entity_storage: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_3.json |  -> components -> minecraft:block_entity -> carry_over_block_entity_data: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_4.json |  -> components -> minecraft:block_entity -> carry_over_block_entity_data: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_5.json |  -> components -> minecraft:block_entity -> carry_over_block_entity_data: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_6.json |  -> components -> minecraft:block_entity -> carry_over_block_entity_data: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_7.json |  -> components -> minecraft:block_entity -> container -> container: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_8.json |  -> components -> minecraft:block_entity -> container -> container: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_9.json |  -> components -> minecraft:block_entity -> container -> container: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_1.json |  -> components -> minecraft:collision_box: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_1.json |  -> components -> minecraft:collision_box: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_10.json |  -> components -> minecraft:collision_box: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_10.json |  -> components -> minecraft:collision_box: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_11.json |  -> components -> minecraft:collision_box: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_11.json |  -> components -> minecraft:collision_box: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_2.json |  -> components -> minecraft:collision_box: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_2.json |  -> components -> minecraft:collision_box: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_3.json |  -> components -> minecraft:collision_box: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_3.json |  -> components -> minecraft:collision_box: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_4.json |  -> components -> minecraft:collision_box: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_4.json |  -> components -> minecraft:collision_box: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_5.json |  -> components -> minecraft:collision_box: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_5.json |  -> components -> minecraft:collision_box: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_6.json |  -> components -> minecraft:collision_box: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_6.json |  -> components -> minecraft:collision_box: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_7.json |  -> components -> minecraft:collision_box: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_7.json |  -> components -> minecraft:collision_box: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_8.json |  -> components -> minecraft:collision_box: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_8.json |  -> components -> minecraft:collision_box: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_9.json |  -> components -> minecraft:collision_box: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_9.json |  -> components -> minecraft:collision_box: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_crafting_table_10.json |  -> components -> minecraft:crafting_table -> custom_description: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_crafting_table_11.json |  -> components -> minecraft:crafting_table -> custom_description: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_crafting_table_12.json |  -> components -> minecraft:crafting_table -> grid_size: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_crafting_table_13.json |  -> components -> minecraft:crafting_table -> grid_size: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_crafting_table_14.json |  -> components -> minecraft:crafting_table -> grid_size: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_crafting_table_15.json |  -> components -> minecraft:crafting_table -> grid_size: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_crafting_table_16.json |  -> components -> minecraft:crafting_table -> grid_size: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_crafting_table_2.json |  -> components -> minecraft:crafting_table -> container: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_crafting_table_3.json |  -> components -> minecraft:crafting_table -> container: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_crafting_table_4.json |  -> components -> minecraft:crafting_table -> container: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_crafting_table_5.json |  -> components -> minecraft:crafting_table -> container: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_crafting_table_6.json |  -> components -> minecraft:crafting_table -> container: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_crafting_table_7.json |  -> components -> minecraft:crafting_table -> custom_description: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_crafting_table_8.json |  -> components -> minecraft:crafting_table -> custom_description: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_crafting_table_9.json |  -> components -> minecraft:crafting_table -> custom_description: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_1.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_1.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_1.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_10.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_10.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_10.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_11.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_11.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_11.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_2.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_2.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: invalid or missing 'key' member in key/value pair object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_2.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_3.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_3.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: invalid or missing 'key' member in key/value pair object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_3.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_4.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_4.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: invalid or missing 'key' member in key/value pair object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_4.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_5.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_5.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: invalid or missing 'key' member in key/value pair object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_5.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_6.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_6.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: invalid or missing 'key' member in key/value pair object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_6.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_7.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_7.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_7.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_8.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_8.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_8.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_9.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_9.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_9.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_10.json |  -> components -> minecraft:destruction_particles -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_11.json |  -> components -> minecraft:destruction_particles -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_12.json |  -> components -> minecraft:destruction_particles -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_13.json |  -> components -> minecraft:destruction_particles -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_14.json |  -> components -> minecraft:destruction_particles -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_15.json |  -> components -> minecraft:destruction_particles -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_16.json |  -> components -> minecraft:destruction_particles -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_17.json |  -> components -> minecraft:destruction_particles -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_18.json |  -> components -> minecraft:destruction_particles -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_19.json |  -> components -> minecraft:destruction_particles -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_2.json |  -> components -> minecraft:destruction_particles -> alpha_masked_tint: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_20.json |  -> components -> minecraft:destruction_particles -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_21.json |  -> components -> minecraft:destruction_particles -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_22.json |  -> components -> minecraft:destruction_particles -> render_method: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_23.json |  -> components -> minecraft:destruction_particles -> render_method: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_24.json |  -> components -> minecraft:destruction_particles -> render_method: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_25.json |  -> components -> minecraft:destruction_particles -> render_method: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_26.json |  -> components -> minecraft:destruction_particles -> render_method: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_3.json |  -> components -> minecraft:destruction_particles -> alpha_masked_tint: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_4.json |  -> components -> minecraft:destruction_particles -> alpha_masked_tint: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_5.json |  -> components -> minecraft:destruction_particles -> alpha_masked_tint: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_6.json |  -> components -> minecraft:destruction_particles -> alpha_masked_tint: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_7.json |  -> components -> minecraft:destruction_particles -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_8.json |  -> components -> minecraft:destruction_particles -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_9.json |  -> components -> minecraft:destruction_particles -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_10.json |  -> components -> minecraft:embedded_visual -> hasflower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_11.json |  -> components -> minecraft:embedded_visual -> hasflower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_2.json |  -> components -> minecraft:embedded_visual -> flower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_3.json |  -> components -> minecraft:embedded_visual -> flower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_4.json |  -> components -> minecraft:embedded_visual -> flower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_5.json |  -> components -> minecraft:embedded_visual -> flower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_6.json |  -> components -> minecraft:embedded_visual -> flower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_7.json |  -> components -> minecraft:embedded_visual -> hasflower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_8.json |  -> components -> minecraft:embedded_visual -> hasflower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_9.json |  -> components -> minecraft:embedded_visual -> hasflower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_10.json |  -> components -> minecraft:flammable -> flame_odds: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_10.json |  -> components -> minecraft:flammable: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_11.json |  -> components -> minecraft:flammable -> flame_odds: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_11.json |  -> components -> minecraft:flammable: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_2.json |  -> components -> minecraft:flammable -> burn_odds: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_2.json |  -> components -> minecraft:flammable: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_3.json |  -> components -> minecraft:flammable -> burn_odds: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_3.json |  -> components -> minecraft:flammable: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_4.json |  -> components -> minecraft:flammable -> burn_odds: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_4.json |  -> components -> minecraft:flammable: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_5.json |  -> components -> minecraft:flammable -> burn_odds: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_5.json |  -> components -> minecraft:flammable: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_6.json |  -> components -> minecraft:flammable -> burn_odds: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_6.json |  -> components -> minecraft:flammable: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_7.json |  -> components -> minecraft:flammable -> flame_odds: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_7.json |  -> components -> minecraft:flammable: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_8.json |  -> components -> minecraft:flammable -> flame_odds: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_8.json |  -> components -> minecraft:flammable: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_9.json |  -> components -> minecraft:flammable -> flame_odds: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_9.json |  -> components -> minecraft:flammable: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_11.json |  -> components -> minecraft:geometry -> n_way_visual_rotation -> x: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_11.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_12.json |  -> components -> minecraft:geometry -> n_way_visual_rotation -> x: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_12.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_13.json |  -> components -> minecraft:geometry -> n_way_visual_rotation -> y: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_13.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_14.json |  -> components -> minecraft:geometry -> n_way_visual_rotation -> y: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_14.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_15.json | 'minecraft:geometry' field 'n_way_visual_rotation.y' references unknown state 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_17.json |  -> components -> minecraft:geometry -> n_way_visual_rotation -> y: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_17.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_18.json |  -> components -> minecraft:geometry -> n_way_visual_rotation -> y: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_18.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_19.json |  -> components -> minecraft:geometry -> n_way_visual_rotation -> z: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_19.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_2.json |  -> components -> minecraft:geometry -> geometry: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_2.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_20.json |  -> components -> minecraft:geometry -> n_way_visual_rotation -> z: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_20.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_21.json | 'minecraft:geometry' field 'n_way_visual_rotation.z' references unknown state 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_23.json |  -> components -> minecraft:geometry -> n_way_visual_rotation -> z: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_23.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_24.json |  -> components -> minecraft:geometry -> n_way_visual_rotation -> z: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_24.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_25.json |  -> components -> minecraft:geometry -> random_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_25.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json |  -> components -> minecraft:geometry -> random_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_27.json |  -> components -> minecraft:geometry -> random_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_27.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_28.json |  -> components -> minecraft:geometry -> random_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_28.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_29.json |  -> components -> minecraft:geometry -> random_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_29.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_3.json |  -> components -> minecraft:geometry -> geometry: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_3.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_4.json |  -> components -> minecraft:geometry -> geometry: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_4.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_5.json |  -> components -> minecraft:geometry -> geometry: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_5.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_6.json |  -> components -> minecraft:geometry -> geometry: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_6.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_7.json |  -> components -> minecraft:geometry -> n_way_visual_rotation -> x: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_7.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_8.json |  -> components -> minecraft:geometry -> n_way_visual_rotation -> x: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_8.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_9.json | 'minecraft:geometry' field 'n_way_visual_rotation.x' references unknown state 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_10.json |  -> components -> minecraft:item_visual -> hasflower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_11.json |  -> components -> minecraft:item_visual -> hasflower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_2.json |  -> components -> minecraft:item_visual -> flower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_3.json |  -> components -> minecraft:item_visual -> flower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_4.json |  -> components -> minecraft:item_visual -> flower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_5.json |  -> components -> minecraft:item_visual -> flower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_6.json |  -> components -> minecraft:item_visual -> flower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_7.json |  -> components -> minecraft:item_visual -> hasflower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_8.json |  -> components -> minecraft:item_visual -> hasflower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_9.json |  -> components -> minecraft:item_visual -> hasflower_pottable: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_1.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_1.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_10.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_10.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_11.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_11.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_12.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_12.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_13.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_13.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_14.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_14.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_15.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_15.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_16.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_16.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_17.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_17.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_18.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_18.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_19.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_19.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_2.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_2.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_20.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_20.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_21.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_21.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_22.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_22.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_23.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_23.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_24.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_24.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_25.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_25.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_26.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_26.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_3.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_3.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_4.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_4.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_5.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_5.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_6.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_6.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_7.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_7.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_8.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_8.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_9.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_9.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_10.json |  -> components -> minecraft:material_instances -> * -> emissive: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_10.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_100.json |  -> components -> minecraft:material_instances -> south -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_100.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_101.json |  -> components -> minecraft:material_instances -> south -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_101.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_102.json |  -> components -> minecraft:material_instances -> south -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_102.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_103.json |  -> components -> minecraft:material_instances -> south -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_103.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_104.json |  -> components -> minecraft:material_instances -> south -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_104.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_105.json |  -> components -> minecraft:material_instances -> south -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_105.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_106.json |  -> components -> minecraft:material_instances -> south -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_106.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_107.json |  -> components -> minecraft:material_instances -> up: "alpha_masked_tint" requires a non-default "tint_method".
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_107.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_108.json |  -> components -> minecraft:material_instances -> up -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_108.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_109.json |  -> components -> minecraft:material_instances -> up -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_109.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_11.json |  -> components -> minecraft:material_instances -> * -> emissive: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_11.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_110.json |  -> components -> minecraft:material_instances -> up -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_110.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_111.json |  -> components -> minecraft:material_instances -> up -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_111.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_112.json |  -> components -> minecraft:material_instances -> up -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_112.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_113.json |  -> components -> minecraft:material_instances -> up -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_113.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_114.json |  -> components -> minecraft:material_instances -> up -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_114.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_115.json |  -> components -> minecraft:material_instances -> up -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_115.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_116.json |  -> components -> minecraft:material_instances -> up -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_116.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_117.json |  -> components -> minecraft:material_instances -> up -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_117.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_118.json |  -> components -> minecraft:material_instances -> up -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_118.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_119.json |  -> components -> minecraft:material_instances -> up -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_119.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_12.json |  -> components -> minecraft:material_instances -> * -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_12.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_120.json |  -> components -> minecraft:material_instances -> up -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_120.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_121.json |  -> components -> minecraft:material_instances -> up -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_121.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_122.json |  -> components -> minecraft:material_instances -> up -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_122.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_123.json |  -> components -> minecraft:material_instances -> up -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_123.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_124.json |  -> components -> minecraft:material_instances -> up -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_124.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_125.json |  -> components -> minecraft:material_instances -> up -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_125.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_126.json |  -> components -> minecraft:material_instances -> up -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_126.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_127.json |  -> components -> minecraft:material_instances -> west: "alpha_masked_tint" requires a non-default "tint_method".
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_127.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_128.json |  -> components -> minecraft:material_instances -> west -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_128.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_129.json |  -> components -> minecraft:material_instances -> west -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_129.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_13.json |  -> components -> minecraft:material_instances -> * -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_13.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_130.json |  -> components -> minecraft:material_instances -> west -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_130.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_131.json |  -> components -> minecraft:material_instances -> west -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_131.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_132.json |  -> components -> minecraft:material_instances -> west -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_132.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_133.json |  -> components -> minecraft:material_instances -> west -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_133.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_134.json |  -> components -> minecraft:material_instances -> west -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_134.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_135.json |  -> components -> minecraft:material_instances -> west -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_135.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_136.json |  -> components -> minecraft:material_instances -> west -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_136.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_137.json |  -> components -> minecraft:material_instances -> west -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_137.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_138.json |  -> components -> minecraft:material_instances -> west -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_138.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_139.json |  -> components -> minecraft:material_instances -> west -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_139.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_14.json |  -> components -> minecraft:material_instances -> * -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_14.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_140.json |  -> components -> minecraft:material_instances -> west -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_140.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_141.json |  -> components -> minecraft:material_instances -> west -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_141.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_142.json |  -> components -> minecraft:material_instances -> west -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_142.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_143.json |  -> components -> minecraft:material_instances -> west -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_143.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_144.json |  -> components -> minecraft:material_instances -> west -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_144.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_145.json |  -> components -> minecraft:material_instances -> west -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_145.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_146.json |  -> components -> minecraft:material_instances -> west -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_146.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_15.json |  -> components -> minecraft:material_instances -> * -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_15.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_16.json |  -> components -> minecraft:material_instances -> * -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_16.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_17.json |  -> components -> minecraft:material_instances -> * -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_17.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_18.json |  -> components -> minecraft:material_instances -> * -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_18.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_19.json |  -> components -> minecraft:material_instances -> * -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_19.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_20.json |  -> components -> minecraft:material_instances -> * -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_20.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_21.json |  -> components -> minecraft:material_instances -> * -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_21.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_22.json |  -> components -> minecraft:material_instances -> * -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_22.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_23.json |  -> components -> minecraft:material_instances -> * -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_23.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_24.json |  -> components -> minecraft:material_instances -> * -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_24.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_25.json |  -> components -> minecraft:material_instances -> * -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_25.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_26.json |  -> components -> minecraft:material_instances -> * -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_26.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_27.json |  -> components -> minecraft:material_instances -> down: "alpha_masked_tint" requires a non-default "tint_method".
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_27.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_28.json |  -> components -> minecraft:material_instances -> down -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_28.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_29.json |  -> components -> minecraft:material_instances -> down -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_29.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_3.json |  -> components -> minecraft:material_instances -> * -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_3.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_30.json |  -> components -> minecraft:material_instances -> down -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_30.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_31.json |  -> components -> minecraft:material_instances -> down -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_31.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_32.json |  -> components -> minecraft:material_instances -> down -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_32.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_33.json |  -> components -> minecraft:material_instances -> down -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_33.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_34.json |  -> components -> minecraft:material_instances -> down -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_34.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_35.json |  -> components -> minecraft:material_instances -> down -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_35.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_36.json |  -> components -> minecraft:material_instances -> down -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_36.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_37.json |  -> components -> minecraft:material_instances -> down -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_37.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_38.json |  -> components -> minecraft:material_instances -> down -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_38.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_39.json |  -> components -> minecraft:material_instances -> down -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_39.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_4.json |  -> components -> minecraft:material_instances -> * -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_4.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_40.json |  -> components -> minecraft:material_instances -> down -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_40.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_41.json |  -> components -> minecraft:material_instances -> down -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_41.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_42.json |  -> components -> minecraft:material_instances -> down -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_42.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_43.json |  -> components -> minecraft:material_instances -> down -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_43.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_44.json |  -> components -> minecraft:material_instances -> down -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_44.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_45.json |  -> components -> minecraft:material_instances -> down -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_45.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_46.json |  -> components -> minecraft:material_instances -> down -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_46.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_47.json |  -> components -> minecraft:material_instances -> east: "alpha_masked_tint" requires a non-default "tint_method".
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_47.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_48.json |  -> components -> minecraft:material_instances -> east -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_48.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_49.json |  -> components -> minecraft:material_instances -> east -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_49.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_5.json |  -> components -> minecraft:material_instances -> * -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_5.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_50.json |  -> components -> minecraft:material_instances -> east -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_50.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_51.json |  -> components -> minecraft:material_instances -> east -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_51.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_52.json |  -> components -> minecraft:material_instances -> east -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_52.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_53.json |  -> components -> minecraft:material_instances -> east -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_53.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_54.json |  -> components -> minecraft:material_instances -> east -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_54.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_55.json |  -> components -> minecraft:material_instances -> east -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_55.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_56.json |  -> components -> minecraft:material_instances -> east -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_56.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_57.json |  -> components -> minecraft:material_instances -> east -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_57.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_58.json |  -> components -> minecraft:material_instances -> east -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_58.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_59.json |  -> components -> minecraft:material_instances -> east -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_59.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_6.json |  -> components -> minecraft:material_instances -> * -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_6.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_60.json |  -> components -> minecraft:material_instances -> east -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_60.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_61.json |  -> components -> minecraft:material_instances -> east -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_61.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_62.json |  -> components -> minecraft:material_instances -> east -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_62.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_63.json |  -> components -> minecraft:material_instances -> east -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_63.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_64.json |  -> components -> minecraft:material_instances -> east -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_64.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_65.json |  -> components -> minecraft:material_instances -> east -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_65.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_66.json |  -> components -> minecraft:material_instances -> east -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_66.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_67.json |  -> components -> minecraft:material_instances -> north: "alpha_masked_tint" requires a non-default "tint_method".
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_67.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_68.json |  -> components -> minecraft:material_instances -> north -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_68.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_69.json |  -> components -> minecraft:material_instances -> north -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_69.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_7.json |  -> components -> minecraft:material_instances -> * -> emissive: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_7.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_70.json |  -> components -> minecraft:material_instances -> north -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_70.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_71.json |  -> components -> minecraft:material_instances -> north -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_71.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_72.json |  -> components -> minecraft:material_instances -> north -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_72.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_73.json |  -> components -> minecraft:material_instances -> north -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_73.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_74.json |  -> components -> minecraft:material_instances -> north -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_74.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_75.json |  -> components -> minecraft:material_instances -> north -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_75.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_76.json |  -> components -> minecraft:material_instances -> north -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_76.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_77.json |  -> components -> minecraft:material_instances -> north -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_77.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_78.json |  -> components -> minecraft:material_instances -> north -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_78.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_79.json |  -> components -> minecraft:material_instances -> north -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_79.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_8.json |  -> components -> minecraft:material_instances -> * -> emissive: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_8.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_80.json |  -> components -> minecraft:material_instances -> north -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_80.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_81.json |  -> components -> minecraft:material_instances -> north -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_81.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_82.json |  -> components -> minecraft:material_instances -> north -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_82.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_83.json |  -> components -> minecraft:material_instances -> north -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_83.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_84.json |  -> components -> minecraft:material_instances -> north -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_84.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_85.json |  -> components -> minecraft:material_instances -> north -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_85.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_86.json |  -> components -> minecraft:material_instances -> north -> opaque: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_86.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_87.json |  -> components -> minecraft:material_instances -> south: "alpha_masked_tint" requires a non-default "tint_method".
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_87.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_88.json |  -> components -> minecraft:material_instances -> south -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_88.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_89.json |  -> components -> minecraft:material_instances -> south -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_89.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_9.json |  -> components -> minecraft:material_instances -> * -> emissive: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_9.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_90.json |  -> components -> minecraft:material_instances -> south -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_90.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_91.json |  -> components -> minecraft:material_instances -> south -> alpha_masked_tint: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_91.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_92.json |  -> components -> minecraft:material_instances -> south -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_92.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_93.json |  -> components -> minecraft:material_instances -> south -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_93.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_94.json |  -> components -> minecraft:material_instances -> south -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_94.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_95.json |  -> components -> minecraft:material_instances -> south -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_95.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_96.json |  -> components -> minecraft:material_instances -> south -> grass_block: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_96.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_97.json |  -> components -> minecraft:material_instances -> south -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_97.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_98.json |  -> components -> minecraft:material_instances -> south -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_98.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_99.json |  -> components -> minecraft:material_instances -> south -> none: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_99.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_movable_10.json |  -> components -> minecraft:movable -> same: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_movable_11.json |  -> components -> minecraft:movable -> same: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_movable_12.json |  -> components -> minecraft:movable -> waves: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_movable_13.json |  -> components -> minecraft:movable -> waves: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_movable_14.json |  -> components -> minecraft:movable -> waves: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_movable_15.json |  -> components -> minecraft:movable -> waves: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_movable_16.json |  -> components -> minecraft:movable -> waves: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_movable_2.json |  -> components -> minecraft:movable -> push_pull: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_movable_3.json |  -> components -> minecraft:movable -> push_pull: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_movable_4.json |  -> components -> minecraft:movable -> push_pull: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_movable_5.json |  -> components -> minecraft:movable -> push_pull: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_movable_6.json |  -> components -> minecraft:movable -> push_pull: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_movable_7.json |  -> components -> minecraft:movable -> same: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_movable_8.json |  -> components -> minecraft:movable -> same: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_movable_9.json |  -> components -> minecraft:movable -> same: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_10.json |  -> components -> minecraft:random_offset -> steps: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_11.json |  -> components -> minecraft:random_offset -> steps: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_2.json |  -> components -> minecraft:random_offset -> range: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_3.json |  -> components -> minecraft:random_offset -> range: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_4.json |  -> components -> minecraft:random_offset -> range: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_5.json |  -> components -> minecraft:random_offset -> range: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_6.json |  -> components -> minecraft:random_offset -> range: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_7.json |  -> components -> minecraft:random_offset -> steps: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_8.json |  -> components -> minecraft:random_offset -> steps: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_9.json |  -> components -> minecraft:random_offset -> steps: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_consumer_2.json |  -> components -> minecraft:redstone_consumer -> propogates_power: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_consumer_3.json |  -> components -> minecraft:redstone_consumer -> propogates_power: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_consumer_4.json |  -> components -> minecraft:redstone_consumer -> propogates_power: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_consumer_5.json |  -> components -> minecraft:redstone_consumer -> propogates_power: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_consumer_6.json |  -> components -> minecraft:redstone_consumer -> propogates_power: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_connection_10.json |  -> description -> traits -> minecraft:connection -> y_rotation_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_connection_11.json |  -> description -> traits -> minecraft:connection -> y_rotation_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_connection_2.json |  -> description -> traits -> minecraft:connection -> blocks_to_corner_with: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_connection_3.json |  -> description -> traits -> minecraft:connection -> blocks_to_corner_with: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_connection_4.json |  -> description -> traits -> minecraft:connection -> blocks_to_corner_with: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_connection_5.json |  -> description -> traits -> minecraft:connection -> blocks_to_corner_with: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_connection_6.json |  -> description -> traits -> minecraft:connection -> blocks_to_corner_with: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_connection_7.json |  -> description -> traits -> minecraft:connection -> y_rotation_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_connection_8.json |  -> description -> traits -> minecraft:connection -> y_rotation_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_connection_9.json |  -> description -> traits -> minecraft:connection -> y_rotation_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_multi_block_10.json |  -> description -> traits -> minecraft:multi_block -> y_rotation_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_multi_block_11.json |  -> description -> traits -> minecraft:multi_block -> y_rotation_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_multi_block_2.json |  -> description -> traits -> minecraft:multi_block -> blocks_to_corner_with: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_multi_block_3.json |  -> description -> traits -> minecraft:multi_block -> blocks_to_corner_with: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_multi_block_4.json |  -> description -> traits -> minecraft:multi_block -> blocks_to_corner_with: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_multi_block_5.json |  -> description -> traits -> minecraft:multi_block -> blocks_to_corner_with: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_multi_block_6.json |  -> description -> traits -> minecraft:multi_block -> blocks_to_corner_with: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_multi_block_7.json |  -> description -> traits -> minecraft:multi_block -> y_rotation_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_multi_block_8.json |  -> description -> traits -> minecraft:multi_block -> y_rotation_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_multi_block_9.json |  -> description -> traits -> minecraft:multi_block -> y_rotation_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_position_10.json |  -> description -> traits -> minecraft:placement_position -> y_rotation_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_position_11.json |  -> description -> traits -> minecraft:placement_position -> y_rotation_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_position_2.json |  -> description -> traits -> minecraft:placement_position -> blocks_to_corner_with: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_position_3.json |  -> description -> traits -> minecraft:placement_position -> blocks_to_corner_with: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_position_4.json |  -> description -> traits -> minecraft:placement_position -> blocks_to_corner_with: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_position_5.json |  -> description -> traits -> minecraft:placement_position -> blocks_to_corner_with: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_position_6.json |  -> description -> traits -> minecraft:placement_position -> blocks_to_corner_with: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_position_7.json |  -> description -> traits -> minecraft:placement_position -> y_rotation_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_position_8.json |  -> description -> traits -> minecraft:placement_position -> y_rotation_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_position_9.json |  -> description -> traits -> minecraft:placement_position -> y_rotation_offset: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_10.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_11.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_12.json |  -> components -> minecraft:transformation -> uv_lock: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_13.json |  -> components -> minecraft:transformation -> uv_lock: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_14.json |  -> components -> minecraft:transformation -> uv_lock: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_15.json |  -> components -> minecraft:transformation -> uv_lock: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_16.json |  -> components -> minecraft:transformation -> uv_lock: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_2.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_3.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_4.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_5.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_6.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_7.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_8.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_9.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Item]  'paletter:block_placer_10': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0] -> replace_block_item: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:block_placer_10': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
+ERROR [Item]  'paletter:block_placer_11': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0] -> replace_block_item: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:block_placer_11': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
+ERROR [Item]  'paletter:block_placer_2': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0] -> aligned_placement: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:block_placer_2': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
+ERROR [Item]  'paletter:block_placer_3': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0] -> aligned_placement: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:block_placer_3': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
+ERROR [Item]  'paletter:block_placer_4': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0] -> aligned_placement: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:block_placer_4': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
+ERROR [Item]  'paletter:block_placer_5': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0] -> aligned_placement: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:block_placer_5': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
+ERROR [Item]  'paletter:block_placer_6': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0] -> aligned_placement: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:block_placer_6': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
+ERROR [Item]  'paletter:block_placer_7': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0] -> replace_block_item: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:block_placer_7': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
+ERROR [Item]  'paletter:block_placer_8': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0] -> replace_block_item: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:block_placer_8': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
+ERROR [Item]  'paletter:block_placer_9': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0] -> replace_block_item: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:block_placer_9': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
+ERROR [Item]  'paletter:chargeable_1': Failed to parse field ' -> components -> minecraft:chargeable: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:chargeable_2': Failed to parse field ' -> components -> minecraft:chargeable: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:chargeable_3': Failed to parse field ' -> components -> minecraft:chargeable: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:chargeable_4': Failed to parse field ' -> components -> minecraft:chargeable: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:chargeable_5': Failed to parse field ' -> components -> minecraft:chargeable: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:chargeable_6': Failed to parse field ' -> components -> minecraft:chargeable: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:damage_absorption_2': Failed to parse field ' -> components -> minecraft:damage_absorption -> max_durability: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:damage_absorption_3': Failed to parse field ' -> components -> minecraft:damage_absorption -> max_durability: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:damage_absorption_4': Failed to parse field ' -> components -> minecraft:damage_absorption -> max_durability: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:damage_absorption_5': Failed to parse field ' -> components -> minecraft:damage_absorption -> max_durability: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:damage_absorption_6': Failed to parse field ' -> components -> minecraft:damage_absorption -> max_durability: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:digger_10': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> on_dig: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:digger_11': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> on_dig: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:digger_12': Failed to parse field ' -> components -> minecraft:digger -> on_dig: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:digger_13': Failed to parse field ' -> components -> minecraft:digger -> on_dig: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:digger_14': Failed to parse field ' -> components -> minecraft:digger -> on_dig: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:digger_15': Failed to parse field ' -> components -> minecraft:digger -> on_dig: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:digger_16': Failed to parse field ' -> components -> minecraft:digger -> on_dig: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:digger_2': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> block -> on_dig: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:digger_2': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> block: invalid string'
+ERROR [Item]  'paletter:digger_3': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> block -> on_dig: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:digger_3': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> block: invalid string'
+ERROR [Item]  'paletter:digger_4': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> block -> on_dig: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:digger_4': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> block: invalid string'
+ERROR [Item]  'paletter:digger_5': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> block -> on_dig: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:digger_5': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> block: invalid string'
+ERROR [Item]  'paletter:digger_6': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> block -> on_dig: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:digger_6': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> block: invalid string'
+ERROR [Item]  'paletter:digger_7': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> on_dig: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:digger_8': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> on_dig: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:digger_9': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> on_dig: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:durability_sensor_10': Failed to parse field ' -> components -> minecraft:durability_sensor -> max_durability: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:durability_sensor_11': Failed to parse field ' -> components -> minecraft:durability_sensor -> max_durability: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:durability_sensor_2': Failed to parse field ' -> components -> minecraft:durability_sensor -> durability_threshold: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:durability_sensor_3': Failed to parse field ' -> components -> minecraft:durability_sensor -> durability_threshold: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:durability_sensor_4': Failed to parse field ' -> components -> minecraft:durability_sensor -> durability_threshold: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:durability_sensor_5': Failed to parse field ' -> components -> minecraft:durability_sensor -> durability_threshold: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:durability_sensor_6': Failed to parse field ' -> components -> minecraft:durability_sensor -> durability_threshold: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:durability_sensor_7': Failed to parse field ' -> components -> minecraft:durability_sensor -> max_durability: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:durability_sensor_8': Failed to parse field ' -> components -> minecraft:durability_sensor -> max_durability: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:durability_sensor_9': Failed to parse field ' -> components -> minecraft:durability_sensor -> max_durability: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:food_2': Failed to parse field ' -> components -> minecraft:food -> use_duration: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:food_3': Failed to parse field ' -> components -> minecraft:food -> use_duration: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:food_4': Failed to parse field ' -> components -> minecraft:food -> use_duration: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:food_5': Failed to parse field ' -> components -> minecraft:food -> use_duration: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:food_6': Failed to parse field ' -> components -> minecraft:food -> use_duration: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_10': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> damage_conditions -> dismount_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_11': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> damage_conditions -> dismount_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_12': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> damage_conditions -> knockback_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_13': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> damage_conditions -> knockback_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_14': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> damage_conditions -> knockback_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_15': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> damage_conditions -> knockback_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_16': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> damage_conditions -> knockback_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_17': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> dismount_conditions -> damage_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_18': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> dismount_conditions -> damage_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_19': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> dismount_conditions -> damage_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_2': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> damage_conditions -> damage_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_20': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> dismount_conditions -> damage_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_21': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> dismount_conditions -> damage_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_22': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> dismount_conditions -> dismount_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_23': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> dismount_conditions -> dismount_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_24': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> dismount_conditions -> dismount_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_25': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> dismount_conditions -> dismount_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_26': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> dismount_conditions -> dismount_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_27': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> dismount_conditions -> knockback_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_28': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> dismount_conditions -> knockback_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_29': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> dismount_conditions -> knockback_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_3': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> damage_conditions -> damage_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_30': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> dismount_conditions -> knockback_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_31': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> dismount_conditions -> knockback_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_32': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> kinetic_effect_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_33': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> kinetic_effect_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_34': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> kinetic_effect_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_35': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> kinetic_effect_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_36': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> kinetic_effect_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_37': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> knockback_conditions -> damage_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_38': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> knockback_conditions -> damage_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_39': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> knockback_conditions -> damage_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_4': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> damage_conditions -> damage_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_40': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> knockback_conditions -> damage_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_41': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> knockback_conditions -> damage_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_42': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> knockback_conditions -> dismount_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_43': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> knockback_conditions -> dismount_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_44': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> knockback_conditions -> dismount_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_45': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> knockback_conditions -> dismount_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_46': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> knockback_conditions -> dismount_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_47': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> knockback_conditions -> knockback_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_48': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> knockback_conditions -> knockback_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_49': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> knockback_conditions -> knockback_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_5': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> damage_conditions -> damage_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_50': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> knockback_conditions -> knockback_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_51': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> knockback_conditions -> knockback_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_52': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> max_duration: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_53': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> max_duration: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_54': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> max_duration: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_55': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> max_duration: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_56': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> max_duration: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_57': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> min_relative_speed: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_58': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> min_relative_speed: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_59': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> min_relative_speed: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_6': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> damage_conditions -> damage_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_60': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> min_relative_speed: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_61': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> min_relative_speed: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_62': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> min_speed: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_63': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> min_speed: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_64': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> min_speed: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_65': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> min_speed: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_66': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> min_speed: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_7': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> damage_conditions -> dismount_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_8': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> damage_conditions -> dismount_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:kinetic_weapon_9': Failed to parse field ' -> components -> minecraft:kinetic_weapon -> damage_conditions -> dismount_conditions: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:max_stack_size_2': Failed to parse field ' -> components -> minecraft:max_stack_size -> slot: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:max_stack_size_2': Failed to parse field ' -> components -> minecraft:max_stack_size: invalid numeric value'
+ERROR [Item]  'paletter:max_stack_size_3': Failed to parse field ' -> components -> minecraft:max_stack_size -> slot: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:max_stack_size_3': Failed to parse field ' -> components -> minecraft:max_stack_size: invalid numeric value'
+ERROR [Item]  'paletter:max_stack_size_4': Failed to parse field ' -> components -> minecraft:max_stack_size -> slot: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:max_stack_size_4': Failed to parse field ' -> components -> minecraft:max_stack_size: invalid numeric value'
+ERROR [Item]  'paletter:max_stack_size_5': Failed to parse field ' -> components -> minecraft:max_stack_size -> slot: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:max_stack_size_5': Failed to parse field ' -> components -> minecraft:max_stack_size: invalid numeric value'
+ERROR [Item]  'paletter:max_stack_size_6': Failed to parse field ' -> components -> minecraft:max_stack_size -> slot: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:max_stack_size_6': Failed to parse field ' -> components -> minecraft:max_stack_size: invalid numeric value'
+ERROR [Item]  'paletter:projectile_10': Failed to parse field ' -> components -> minecraft:projectile -> runtime_identifier: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:projectile_11': Failed to parse field ' -> components -> minecraft:projectile -> runtime_identifier: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:projectile_2': Failed to parse field ' -> components -> minecraft:projectile -> isolated_physics: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:projectile_3': Failed to parse field ' -> components -> minecraft:projectile -> isolated_physics: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:projectile_4': Failed to parse field ' -> components -> minecraft:projectile -> isolated_physics: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:projectile_5': Failed to parse field ' -> components -> minecraft:projectile -> isolated_physics: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:projectile_6': Failed to parse field ' -> components -> minecraft:projectile -> isolated_physics: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:projectile_7': Failed to parse field ' -> components -> minecraft:projectile -> runtime_identifier: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:projectile_8': Failed to parse field ' -> components -> minecraft:projectile -> runtime_identifier: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:projectile_9': Failed to parse field ' -> components -> minecraft:projectile -> runtime_identifier: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_1': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_10': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_11': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_12': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_13': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_14': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_15': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_16': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_17': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_18': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_19': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_2': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_20': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_21': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_22': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_23': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_24': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_25': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_26': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_27': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_28': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_29': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_3': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_30': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_31': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_4': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_5': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_6': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_7': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_8': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:render_offsets_9': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:repairable_10': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
+ERROR [Item]  'paletter:repairable_11': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
+ERROR [Item]  'paletter:repairable_2': Failed to parse field ' -> components -> minecraft:repairable -> on_repaired: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:repairable_3': Failed to parse field ' -> components -> minecraft:repairable -> on_repaired: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:repairable_4': Failed to parse field ' -> components -> minecraft:repairable -> on_repaired: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:repairable_5': Failed to parse field ' -> components -> minecraft:repairable -> on_repaired: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:repairable_6': Failed to parse field ' -> components -> minecraft:repairable -> on_repaired: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:repairable_7': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
+ERROR [Item]  'paletter:repairable_8': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
+ERROR [Item]  'paletter:repairable_9': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
+ERROR [Item]  'paletter:shooter_2': Failed to parse field ' -> components -> minecraft:shooter -> use_duration: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:shooter_3': Failed to parse field ' -> components -> minecraft:shooter -> use_duration: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:shooter_4': Failed to parse field ' -> components -> minecraft:shooter -> use_duration: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:shooter_5': Failed to parse field ' -> components -> minecraft:shooter -> use_duration: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:shooter_6': Failed to parse field ' -> components -> minecraft:shooter -> use_duration: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:storage_item_10': Failed to parse field ' -> components -> minecraft:storage_item -> max_weight_limit: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:storage_item_11': Failed to parse field ' -> components -> minecraft:storage_item -> max_weight_limit: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:storage_item_12': Failed to parse field ' -> components -> minecraft:storage_item -> weight_in_storage_item: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:storage_item_13': Failed to parse field ' -> components -> minecraft:storage_item -> weight_in_storage_item: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:storage_item_14': Failed to parse field ' -> components -> minecraft:storage_item -> weight_in_storage_item: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:storage_item_15': Failed to parse field ' -> components -> minecraft:storage_item -> weight_in_storage_item: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:storage_item_16': Failed to parse field ' -> components -> minecraft:storage_item -> weight_in_storage_item: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:storage_item_2': Failed to parse field ' -> components -> minecraft:storage_item -> disallowed_items: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:storage_item_3': Failed to parse field ' -> components -> minecraft:storage_item -> disallowed_items: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:storage_item_4': Failed to parse field ' -> components -> minecraft:storage_item -> disallowed_items: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:storage_item_5': Failed to parse field ' -> components -> minecraft:storage_item -> disallowed_items: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:storage_item_6': Failed to parse field ' -> components -> minecraft:storage_item -> disallowed_items: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:storage_item_7': Failed to parse field ' -> components -> minecraft:storage_item -> max_weight_limit: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:storage_item_8': Failed to parse field ' -> components -> minecraft:storage_item -> max_weight_limit: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:storage_item_9': Failed to parse field ' -> components -> minecraft:storage_item -> max_weight_limit: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  Error Parsing Item 'paletter:block_placer_10':
+ERROR [Item]  Error Parsing Item 'paletter:block_placer_11':
+ERROR [Item]  Error Parsing Item 'paletter:block_placer_2':
+ERROR [Item]  Error Parsing Item 'paletter:block_placer_3':
+ERROR [Item]  Error Parsing Item 'paletter:block_placer_4':
+ERROR [Item]  Error Parsing Item 'paletter:block_placer_5':
+ERROR [Item]  Error Parsing Item 'paletter:block_placer_6':
+ERROR [Item]  Error Parsing Item 'paletter:block_placer_7':
+ERROR [Item]  Error Parsing Item 'paletter:block_placer_8':
+ERROR [Item]  Error Parsing Item 'paletter:block_placer_9':
+ERROR [Item]  Error Parsing Item 'paletter:chargeable_1':
+ERROR [Item]  Error Parsing Item 'paletter:chargeable_2':
+ERROR [Item]  Error Parsing Item 'paletter:chargeable_3':
+ERROR [Item]  Error Parsing Item 'paletter:chargeable_4':
+ERROR [Item]  Error Parsing Item 'paletter:chargeable_5':
+ERROR [Item]  Error Parsing Item 'paletter:chargeable_6':
+ERROR [Item]  Error Parsing Item 'paletter:damage_absorption_2':
+ERROR [Item]  Error Parsing Item 'paletter:damage_absorption_3':
+ERROR [Item]  Error Parsing Item 'paletter:damage_absorption_4':
+ERROR [Item]  Error Parsing Item 'paletter:damage_absorption_5':
+ERROR [Item]  Error Parsing Item 'paletter:damage_absorption_6':
+ERROR [Item]  Error Parsing Item 'paletter:digger_10':
+ERROR [Item]  Error Parsing Item 'paletter:digger_11':
+ERROR [Item]  Error Parsing Item 'paletter:digger_12':
+ERROR [Item]  Error Parsing Item 'paletter:digger_13':
+ERROR [Item]  Error Parsing Item 'paletter:digger_14':
+ERROR [Item]  Error Parsing Item 'paletter:digger_15':
+ERROR [Item]  Error Parsing Item 'paletter:digger_16':
+ERROR [Item]  Error Parsing Item 'paletter:digger_2':
+ERROR [Item]  Error Parsing Item 'paletter:digger_3':
+ERROR [Item]  Error Parsing Item 'paletter:digger_4':
+ERROR [Item]  Error Parsing Item 'paletter:digger_5':
+ERROR [Item]  Error Parsing Item 'paletter:digger_6':
+ERROR [Item]  Error Parsing Item 'paletter:digger_7':
+ERROR [Item]  Error Parsing Item 'paletter:digger_8':
+ERROR [Item]  Error Parsing Item 'paletter:digger_9':
+ERROR [Item]  Error Parsing Item 'paletter:durability_sensor_10':
+ERROR [Item]  Error Parsing Item 'paletter:durability_sensor_11':
+ERROR [Item]  Error Parsing Item 'paletter:durability_sensor_2':
+ERROR [Item]  Error Parsing Item 'paletter:durability_sensor_3':
+ERROR [Item]  Error Parsing Item 'paletter:durability_sensor_4':
+ERROR [Item]  Error Parsing Item 'paletter:durability_sensor_5':
+ERROR [Item]  Error Parsing Item 'paletter:durability_sensor_6':
+ERROR [Item]  Error Parsing Item 'paletter:durability_sensor_7':
+ERROR [Item]  Error Parsing Item 'paletter:durability_sensor_8':
+ERROR [Item]  Error Parsing Item 'paletter:durability_sensor_9':
+ERROR [Item]  Error Parsing Item 'paletter:food_2':
+ERROR [Item]  Error Parsing Item 'paletter:food_3':
+ERROR [Item]  Error Parsing Item 'paletter:food_4':
+ERROR [Item]  Error Parsing Item 'paletter:food_5':
+ERROR [Item]  Error Parsing Item 'paletter:food_6':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_10':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_11':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_12':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_13':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_14':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_15':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_16':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_17':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_18':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_19':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_2':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_20':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_21':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_22':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_23':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_24':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_25':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_26':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_27':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_28':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_29':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_3':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_30':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_31':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_32':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_33':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_34':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_35':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_36':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_37':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_38':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_39':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_4':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_40':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_41':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_42':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_43':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_44':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_45':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_46':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_47':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_48':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_49':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_5':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_50':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_51':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_52':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_53':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_54':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_55':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_56':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_57':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_58':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_59':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_6':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_60':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_61':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_62':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_63':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_64':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_65':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_66':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_7':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_8':
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_9':
+ERROR [Item]  Error Parsing Item 'paletter:max_stack_size_2':
+ERROR [Item]  Error Parsing Item 'paletter:max_stack_size_3':
+ERROR [Item]  Error Parsing Item 'paletter:max_stack_size_4':
+ERROR [Item]  Error Parsing Item 'paletter:max_stack_size_5':
+ERROR [Item]  Error Parsing Item 'paletter:max_stack_size_6':
+ERROR [Item]  Error Parsing Item 'paletter:projectile_10':
+ERROR [Item]  Error Parsing Item 'paletter:projectile_11':
+ERROR [Item]  Error Parsing Item 'paletter:projectile_2':
+ERROR [Item]  Error Parsing Item 'paletter:projectile_3':
+ERROR [Item]  Error Parsing Item 'paletter:projectile_4':
+ERROR [Item]  Error Parsing Item 'paletter:projectile_5':
+ERROR [Item]  Error Parsing Item 'paletter:projectile_6':
+ERROR [Item]  Error Parsing Item 'paletter:projectile_7':
+ERROR [Item]  Error Parsing Item 'paletter:projectile_8':
+ERROR [Item]  Error Parsing Item 'paletter:projectile_9':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_1':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_10':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_11':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_12':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_13':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_14':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_15':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_16':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_17':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_18':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_19':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_2':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_20':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_21':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_22':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_23':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_24':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_25':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_26':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_27':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_28':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_29':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_3':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_30':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_31':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_4':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_5':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_6':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_7':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_8':
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_9':
+ERROR [Item]  Error Parsing Item 'paletter:repairable_10':
+ERROR [Item]  Error Parsing Item 'paletter:repairable_11':
+ERROR [Item]  Error Parsing Item 'paletter:repairable_2':
+ERROR [Item]  Error Parsing Item 'paletter:repairable_3':
+ERROR [Item]  Error Parsing Item 'paletter:repairable_4':
+ERROR [Item]  Error Parsing Item 'paletter:repairable_5':
+ERROR [Item]  Error Parsing Item 'paletter:repairable_6':
+ERROR [Item]  Error Parsing Item 'paletter:repairable_7':
+ERROR [Item]  Error Parsing Item 'paletter:repairable_8':
+ERROR [Item]  Error Parsing Item 'paletter:repairable_9':
+ERROR [Item]  Error Parsing Item 'paletter:shooter_2':
+ERROR [Item]  Error Parsing Item 'paletter:shooter_3':
+ERROR [Item]  Error Parsing Item 'paletter:shooter_4':
+ERROR [Item]  Error Parsing Item 'paletter:shooter_5':
+ERROR [Item]  Error Parsing Item 'paletter:shooter_6':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_10':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_11':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_12':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_13':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_14':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_15':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_16':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_2':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_3':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_4':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_5':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_6':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_7':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_8':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_9':
