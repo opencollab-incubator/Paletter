@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LookupTest {
     private static final Paletter PALETTER = Paletter.bundled();
@@ -55,6 +56,65 @@ class LookupTest {
         assertSame(PALETTER.block(changed), mapped);
         // Exact in its own version, then mapped to the newest equivalent
         assertSame(mapped, PALETTER.block(changed, Lookup.of(older)));
+    }
+
+    @Test
+    void theVersionStillGatesWhatTheNewestVersionHasAsIs() {
+        DataVersion oldest = PALETTER.versions().getFirst();
+        Set<NbtMap> old = new HashSet<>();
+        PALETTER.vanillaData(oldest).blockStates().forEach(state -> old.add(BlockStates.normalize(state)));
+        NbtMap added = PALETTER.vanillaData(PALETTER.latest()).blockStates().stream()
+            .filter(state -> !old.contains(BlockStates.normalize(state))).findFirst().orElseThrow();
+        Lookup lookup = Lookup.of(oldest);
+
+        assertNull(PALETTER.block(added, lookup));
+        assertNull(PALETTER.block(added, lookup.withRenames()));
+        assertNotNull(PALETTER.block(added, Lookup.STRICT.withRenames()));
+        // What the newest version only has under a new name still follows, whichever version gates
+        NbtMap renamed = PALETTER.vanillaData(oldest).blockStates().stream()
+            .filter(state -> PALETTER.block(state, Lookup.STRICT) == null && PALETTER.block(state) != null).findFirst().orElseThrow();
+        assertNotNull(PALETTER.block(renamed, lookup));
+        assertNotNull(PALETTER.block(renamed, Lookup.of(PALETTER.versions().get(1)).withRenames()));
+
+        Set<String> oldItems = new HashSet<>();
+        PALETTER.vanillaData(oldest).items().forEach(item -> oldItems.add(item.identifier()));
+        String addedItem = PALETTER.vanillaData(PALETTER.latest()).items().stream().map(item -> item.identifier())
+            .filter(identifier -> !oldItems.contains(identifier)).findFirst().orElseThrow();
+        assertNull(PALETTER.item(addedItem, 0, lookup.withRenames()));
+        assertNotNull(PALETTER.item(addedItem, 0, Lookup.STRICT.withRenames()));
+    }
+
+    @Test
+    void explanationsNameTheLookup() {
+        NbtMap stone = BedrockBlocks.STONE.defaultState().toNbt();
+        assertNull(PALETTER.explainUnknown(stone, Lookup.STRICT));
+        assertNull(PALETTER.explainUnknown("minecraft:apple", 0, Lookup.STRICT));
+
+        DataVersion oldest = PALETTER.versions().getFirst();
+        Set<NbtMap> old = new HashSet<>();
+        PALETTER.vanillaData(oldest).blockStates().forEach(state -> old.add(BlockStates.normalize(state)));
+        NbtMap added = PALETTER.vanillaData(PALETTER.latest()).blockStates().stream()
+            .filter(state -> !old.contains(BlockStates.normalize(state))).findFirst().orElseThrow();
+        // The newest version has it, the lookup refuses it: the message says which data it asked
+        assertNull(PALETTER.explainUnknown(added));
+        String refused = PALETTER.explainUnknown(added, Lookup.of(oldest));
+        assertNotNull(refused);
+        assertTrue(refused.contains(oldest.toString()), refused);
+        assertTrue(refused.contains(BlockStates.name(added)), refused);
+
+        // Nothing has an equivalent: the reason of the mapping is kept
+        NbtMap unknown = BlockStates.of("minecraft:paletter_test_unknown");
+        assertTrue(PALETTER.explainUnknown(unknown, Lookup.STRICT).contains(PALETTER.explainUnknown(unknown)));
+        assertTrue(PALETTER.explainUnknown("minecraft:paletter_test_unknown", 3, Lookup.STRICT)
+            .contains(PALETTER.explainUnknown("minecraft:paletter_test_unknown", 3)));
+    }
+
+    @Test
+    void versionsAreFoundByName() {
+        for (DataVersion version : PALETTER.versions()) {
+            assertSame(version, PALETTER.version(version.name()));
+        }
+        assertNull(PALETTER.version("0.0"));
     }
 
     @Test

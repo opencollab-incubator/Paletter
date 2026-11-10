@@ -124,6 +124,20 @@ public final class Paletter {
     }
 
     /**
+     * @param name a version name, e.g. {@code 26.60}
+     * @return the data version of that name this instance serves, or null
+     * @since 0.1.0
+     */
+    public @Nullable DataVersion version(@NonNull String name) {
+        for (DataVersion version : versions) {
+            if (version.name().equals(name)) {
+                return version;
+            }
+        }
+        return null;
+    }
+
+    /**
      * @return the data version for a protocol version: the newest one not newer than it
      * @throws IllegalArgumentException if the protocol version is older than all data
      */
@@ -246,7 +260,8 @@ public final class Paletter {
      * @since 0.1.0
      */
     public @Nullable BedrockBlockState block(@NonNull NbtMap state, @NonNull Lookup lookup) {
-        if (blocksOf(lookup).index(state) == -1 && !lookup.followRenames()) {
+        if (blocksOf(lookup).index(state) == -1 && (!lookup.followRenames()
+            || Canonicals.forwardBlock(canonicalBlocks(), state).kind() == Forwarding.Kind.EXACT)) {
             return null;
         }
         return block(state);
@@ -260,7 +275,9 @@ public final class Paletter {
      * @since 0.1.0
      */
     public @Nullable BedrockItemVariant item(@NonNull String identifier, int aux, @NonNull Lookup lookup) {
-        if (itemsOf(lookup).index(ItemVariant.of(identifier, aux)) == -1 && !lookup.followRenames()) {
+        ItemVariant variant = ItemVariant.of(identifier, aux);
+        if (itemsOf(lookup).index(variant) == -1 && (!lookup.followRenames()
+            || Canonicals.forwardItem(canonicalItems(), variant).kind() == Forwarding.Kind.EXACT)) {
             return null;
         }
         return item(identifier, aux);
@@ -365,6 +382,34 @@ public final class Paletter {
     public @Nullable String explainUnknown(@NonNull String identifier, int aux) {
         Forwarding forwarding = Canonicals.forwardItem(canonicalItems(), ItemVariant.of(identifier, aux));
         return forwarding.known() ? null : forwarding.detail();
+    }
+
+    /**
+     * @return why a block state has no handle under a lookup (see {@link #block(NbtMap, Lookup)}), or null if it has one
+     * @throws IllegalArgumentException if the version of the lookup is not served by this instance
+     * @since 0.1.0
+     */
+    public @Nullable String explainUnknown(@NonNull NbtMap state, @NonNull Lookup lookup) {
+        return block(state, lookup) != null ? null
+            : refused(BlockStates.name(state), lookup, explainUnknown(state));
+    }
+
+    /**
+     * @return why an item has no handle under a lookup (see {@link #item(String, int, Lookup)}), or null if it has one
+     * @throws IllegalArgumentException if the version of the lookup is not served by this instance
+     * @since 0.1.0
+     */
+    public @Nullable String explainUnknown(@NonNull String identifier, int aux, @NonNull Lookup lookup) {
+        return item(identifier, aux, lookup) != null ? null
+            : refused(identifier + "@" + aux, lookup, explainUnknown(identifier, aux));
+    }
+
+    /**
+     * @param unknown why the newest version has no equivalent, or null if it has one the lookup does not accept
+     */
+    private String refused(String content, Lookup lookup, @Nullable String unknown) {
+        return content + " is not accepted by the lookup (" + lookup + "): "
+            + (unknown != null ? unknown : "it is not in the data of " + versionOf(lookup));
     }
 
     /**

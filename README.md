@@ -97,7 +97,7 @@ palette; `paletter.properties(key, version)` without one. Overrides edit the com
 | `Paletter#block(NbtMap)`, `Paletter#item(identifier, aux)` | the key of a state or variant of **any** bundled version, or null (see below) |
 | `Palette#runtimeId(BedrockBlockState)` | runtime id (the state hash), a field read and an array load; throws for a state the palette lacks, `runtimeIdOrDefault(state, id)` does not |
 | `Palette#block(BedrockBlockState)` | `RegisteredBlockState`: exact, adapted, fallback, else air; throws for a state the palette lacks, `blockOrNull(state)` returns null |
-| `Palette#item(BedrockItemType\|BedrockItemVariant)` | `RegisteredItem`, or null if the version has neither the item nor a fallback |
+| `Palette#item(BedrockItemType\|BedrockItemVariant)` | `RegisteredItem` as this version registers it, or null if the version lacks the item; fallbacks are not applied (`resolve` and `encode` do) |
 | `Palette#resolve(BedrockItemVariant)` | `ResolvedItem` (definition, damage, block, fallback) as `encode` sends it, without building an `ItemData`: cached, no allocation; null if the version has neither the item nor a fallback |
 | `Palette#encode(BedrockItemStack)` | `ItemData` for the client, fallbacks applied: an item the version lacks and one nobody registered take the same stand-in (the default fallback, `minecraft:unknown`), air only without one |
 | `Palette#decode(ItemData)` | the `BedrockItemStack` a client sent, or null if unknown; the damage it carried is kept even where the item has no such variant |
@@ -106,10 +106,10 @@ palette; `paletter.properties(key, version)` without one. Overrides edit the com
 `Paletter#block` / `Paletter#item` accept content of any bundled version, not only the newest: a state or variant the
 newest version lacks is mapped forward (state keys added, removed or reset like an older palette adapts newer states,
 renamed identifiers via `renames.txt`), and one that no longer exists returns null with a reason (`explainUnknown`). A mapping
-made against 26.50 therefore keeps working when 26.60 becomes the newest version. To match strictly instead, pass a `Lookup`:
-`paletter.block(state, Lookup.STRICT)` (also `item(identifier, aux, lookup)`, `blockType` and `itemType`) accepts only content that exists
+made against 26.50 therefore keeps working when 26.60 becomes the newest version. To match strictly instead, pass a `Lookup` (the overloads without one are `Lookup.STRICT.withRenames()`):
+`paletter.block(state, Lookup.STRICT)` (also `item(identifier, aux, lookup)`, `blockType` and `itemType`; `explainUnknown(..., lookup)` says why a lookup refuses) accepts only content that exists
 as is in the newest version's data, `Lookup.of(version)` only content of that data version, and `.withRenames()` additionally what the
-newest version has under a new name; the handles and types returned are always those of the newest data. The key classes
+newest version has under a new name (never what the newest version has as is and `version` lacks: the version gates it); the handles and types returned are always those of the newest data. The key classes
 (`BedrockBlockType`, `BedrockItemType`, ...) have no such lookups of their own: whether content exists in some data is asked of `Paletter`. Content of a layer has keys of its own
 (`BedrockBlockType.of(customBlock)`, `customItem.type()`), valid in every palette that has the layer. Canonical ids, the dense
 ints of the newest version every table is built on, are plumbing in `internal`; canonical content a version lacks and that has

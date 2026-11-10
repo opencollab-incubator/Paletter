@@ -242,7 +242,9 @@ public final class org.geysermc.paletter.Paletter {
     public static org.geysermc.paletter.Paletter$Builder builder()
     public static org.geysermc.paletter.Paletter bundled()
     public java.lang.String explainUnknown(java.lang.String, int)
+    public java.lang.String explainUnknown(java.lang.String, int, org.geysermc.paletter.Lookup)
     public java.lang.String explainUnknown(org.cloudburstmc.nbt.NbtMap)
+    public java.lang.String explainUnknown(org.cloudburstmc.nbt.NbtMap, org.geysermc.paletter.Lookup)
     public org.geysermc.paletter.vanilla.BedrockItemVariant item(java.lang.String, int)
     public org.geysermc.paletter.vanilla.BedrockItemVariant item(java.lang.String, int, org.geysermc.paletter.Lookup)
     public org.geysermc.paletter.vanilla.BedrockItemType itemType(java.lang.String, org.geysermc.paletter.Lookup)
@@ -253,6 +255,7 @@ public final class org.geysermc.paletter.Paletter {
     public org.geysermc.paletter.property.Properties properties(org.geysermc.paletter.vanilla.BedrockItemType, org.geysermc.paletter.data.DataVersion)
     public org.geysermc.paletter.Palette vanilla(org.geysermc.paletter.data.DataVersion)
     public org.geysermc.paletter.data.DataVersion version(int)
+    public org.geysermc.paletter.data.DataVersion version(java.lang.String)
     public java.util.List<org.geysermc.paletter.data.DataVersion> versions()
     public org.geysermc.paletter.Paletter warmUp()
 }
