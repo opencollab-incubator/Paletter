@@ -613,6 +613,7 @@ public final class org.geysermc.paletter.block.RegisteredBlockState implements o
     public org.cloudburstmc.nbt.NbtMap getState()
     public java.lang.String identifier()
     public boolean isCustom()
+    public org.geysermc.paletter.vanilla.BedrockBlockState key()
     public org.cloudburstmc.nbt.NbtMap states()
     public java.lang.String toString()
 }
