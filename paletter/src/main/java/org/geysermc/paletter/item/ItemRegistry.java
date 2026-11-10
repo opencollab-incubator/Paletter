@@ -582,6 +582,23 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     /**
+     * @return true if the entries of the parent's table that name a block state resolve to the same here: with custom
+     * blocks added, a state that did not resolve before may do now. Entries without a state do not depend on the blocks
+     */
+    private boolean resolvesBlockStatesAsBefore(CanonicalTable base) {
+        if (blocks == parent.blocks) {
+            return true;
+        }
+        for (int i = 0; i < base.items.length; i++) {
+            ItemVariant variant = canonical.variant(i);
+            if (variant.blockState() != null && !Objects.equals(resolveOrDefault(variant), base.items[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * @param base the parent's table when its entries are still valid here: the entries below its size are reused,
      *             only the canonical ids added since are built
      */
@@ -952,7 +969,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             }
             boolean reuse = parent != null && canReuseTable(defaultBlocks);
             ItemRegistry built = new ItemRegistry(this, defaultBlocks, multiState);
-            if (reuse) {
+            if (reuse && built.resolvesBlockStatesAsBefore(parent.canonicalTable())) {
                 built.canonicalTable = built.buildCanonicalTable(parent.canonicalTable());
             }
             return built;
@@ -962,7 +979,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
          * @return true if the parent's canonical table is still right for its ids: nothing it resolves changed
          */
         private boolean canReuseTable(Map<String, RegisteredBlockState> changedBlocks) {
-            if (blocks != parent.blocks || !canonical.extendsOrIs(parent.canonical)
+            if (!blocks.extendsWithBlocks(parent.blocks) || !canonical.extendsOrIs(parent.canonical)
                 || !fallbacks.equals(parent.fallbacks) || !Objects.equals(defaultFallback, parent.defaultFallback)) {
                 return false;
             }

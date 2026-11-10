@@ -191,6 +191,16 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         return new BlockRegistry(extended, canonical.extend(key, additional), fallbacks, defaultFallback, missing, interner, this);
     }
 
+    /**
+     * @return true if this registry is the other one, or the other one with custom blocks added: every state of the other
+     * one is here as the same instance and resolves the same way, unless it names a block that was added
+     */
+    @Internal
+    public boolean extendsWithBlocks(@NonNull BlockRegistry other) {
+        return this == other || parent == other && fallbacks.equals(other.fallbacks)
+            && java.util.Objects.equals(defaultFallback, other.defaultFallback) && missing.equals(other.missing);
+    }
+
     public @NonNull DataVersion version() {
         return table.version;
     }

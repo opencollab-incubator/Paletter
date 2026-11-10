@@ -12,6 +12,7 @@ import org.geysermc.paletter.internal.Canonicals;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeContent;
 import org.geysermc.paletter.creative.CreativeEditor;
+import org.geysermc.paletter.creative.CreativeGroup;
 import org.geysermc.paletter.creative.CreativeLayout;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.creative.CreativeCategory;
@@ -28,15 +29,18 @@ import org.geysermc.paletter.item.ItemRegistry;
 import org.geysermc.paletter.internal.item.ItemVariant;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Compiles palettes: vanilla data first, then one layer at a time.
@@ -135,7 +139,6 @@ final class PaletteCompiler {
                 }
             }
 
-            CreativeEditor creative = parent.creativeLayout().edit();
             CreativeOrdering ordering = parent.ordering();
             // Placements in registration order (custom items and block items interleaved, then items of blocks)
             List<Placed> placed = new ArrayList<>();
@@ -172,34 +175,18 @@ final class PaletteCompiler {
                     placed.add(new Placed(block.identifier(), blockItemStack(block, blocks), placement));
                 }
             }
-            if (ordering == CreativeOrdering.APPEND) {
-                placed.forEach(entry -> entry.placement().apply(creative, entry.stack(), ordering));
-            } else {
-                // BDS adds block items while iterating its data driven block map, then items in registration order.
-                // Custom blocks enter the map by block id, which Paletter assigns by identifier, descending
-                Map<String, Placed> blockItems = new HashMap<>();
-                placed.stream().filter(entry -> entry.block() != null).forEach(entry -> blockItems.put(entry.block(), entry));
-                List<String> byBlockId = new ArrayList<>();
-                blocks.customBlocks().forEach(block -> byBlockId.add(block.identifier()));
-                byBlockId.sort(Comparator.reverseOrder());
-                for (String identifier : ordering.blockOrder(byBlockId,
-                    data.dataDrivenBlocks().stream().map(BlockPropertyData::getName).toList())) {
-                    Placed entry = blockItems.get(identifier);
-                    if (entry != null) {
-                        entry.placement().apply(creative, entry.stack(), ordering);
-                    }
-                }
-                placed.stream().filter(entry -> entry.block() == null)
-                    .forEach(entry -> entry.placement().apply(creative, entry.stack(), ordering));
-            }
-            for (BiConsumer<CreativeEditor, DataVersion> edit : layer.creativeEdits()) {
-                edit.accept(creative, data.version());
-            }
             layer.tags().forEach(items::tag);
 
-            CreativeLayout layout = creative.build();
+            // Without placements and edits the layout is the parent's, and so is what is compiled from it unless the layer
+            // registers an item or block the layout mentions
+            boolean sameLayout = placed.isEmpty() && layer.creativeEdits().isEmpty();
+            CreativeLayout layout = sameLayout ? parent.creativeLayout() : creativeLayout(parent, layer, blocks, placed);
             ItemRegistry itemPalette = items.build(layout, report);
-            CreativeContent content = CreativeContent.compile(layout, itemPalette, report);
+            Set<String> registers = new HashSet<>(registered);
+            layer.overrides().forEach(override -> registers.add(override.identifier()));
+            layer.blocks().forEach(block -> registers.add(block.identifier()));
+            CreativeContent content = sameLayout && !mentions(layout, registers)
+                ? parent.creative() : CreativeContent.compile(layout, itemPalette, report);
             prepareCanonical(blocks, parent.blocks(), itemPalette, parent.items(), report);
 
             List<PaletteLayer> layers = new ArrayList<>(parent.layers());
@@ -213,6 +200,45 @@ final class PaletteCompiler {
             throw new PaletteException("Unable to compile layer " + source + " for " + data.version() + ": "
                 + e.getClass().getSimpleName() + (e.getMessage() == null ? "" : ": " + e.getMessage()), e);
         }
+    }
+
+    /** The layout of the parent with the creative placements and edits of the layer applied. */
+    private static CreativeLayout creativeLayout(Palette parent, PaletteLayer layer, BlockRegistry blocks, List<Placed> placed) {
+        CreativeEditor creative = parent.creativeLayout().edit();
+        CreativeOrdering ordering = parent.ordering();
+        VanillaData data = parent.vanillaData();
+        if (ordering == CreativeOrdering.APPEND) {
+            placed.forEach(entry -> entry.placement().apply(creative, entry.stack(), ordering));
+        } else {
+            // BDS adds block items while iterating its data driven block map, then items in registration order.
+            // Custom blocks enter the map by block id, which Paletter assigns by identifier, descending
+            Map<String, Placed> blockItems = new HashMap<>();
+            placed.stream().filter(entry -> entry.block() != null).forEach(entry -> blockItems.put(entry.block(), entry));
+            List<String> byBlockId = new ArrayList<>();
+            blocks.customBlocks().forEach(block -> byBlockId.add(block.identifier()));
+            byBlockId.sort(Comparator.reverseOrder());
+            for (String identifier : ordering.blockOrder(byBlockId,
+                data.dataDrivenBlocks().stream().map(BlockPropertyData::getName).toList())) {
+                Placed entry = blockItems.get(identifier);
+                if (entry != null) {
+                    entry.placement().apply(creative, entry.stack(), ordering);
+                }
+            }
+            placed.stream().filter(entry -> entry.block() == null)
+                .forEach(entry -> entry.placement().apply(creative, entry.stack(), ordering));
+        }
+        for (BiConsumer<CreativeEditor, DataVersion> edit : layer.creativeEdits()) {
+            edit.accept(creative, data.version());
+        }
+        return creative.build();
+    }
+
+    /** @return true if a stack of the layout, or the icon of a group, is an item or a block state with one of these identifiers */
+    private static boolean mentions(CreativeLayout layout, Set<String> identifiers) {
+        Stream<BedrockItemStack> icons = Arrays.stream(CreativeCategory.values()).flatMap(category -> layout.nodes(category).stream())
+            .filter(CreativeGroup.class::isInstance).map(node -> ((CreativeGroup) node).icon()).filter(Objects::nonNull);
+        return Stream.concat(layout.stacks(), icons).anyMatch(stack -> identifiers.contains(stack.type().identifier())
+            || stack.blockState() != null && identifiers.contains(stack.blockState().type().identifier()));
     }
 
     private static BedrockItemStack blockItemStack(CustomBlock block, BlockRegistry blocks) {
