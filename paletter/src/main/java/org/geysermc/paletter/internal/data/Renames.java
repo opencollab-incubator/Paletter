@@ -90,6 +90,9 @@ public record Renames(@NonNull Map<String, String> blocks, @NonNull Map<String, 
 
     private static @Nullable String follow(Map<String, String> renames, String identifier) {
         String current = renames.get(identifier);
+        if (current == null || !renames.containsKey(current)) {
+            return current;
+        }
         Set<String> seen = new HashSet<>();
         seen.add(identifier);
         while (current != null && renames.containsKey(current) && seen.add(current)) {

@@ -7,6 +7,7 @@ import org.geysermc.paletter.internal.Forwarding;
 import org.geysermc.paletter.internal.data.Renames;
 import org.junit.jupiter.api.Test;
 
+import java.lang.management.ManagementFactory;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,6 +25,23 @@ class KeysTest {
     void ofReturnsTheConstants() {
         assertSame(BedrockItems.APPLE, BedrockItemType.of("minecraft:apple"));
         assertFalse(BedrockItemType.of("minecraft:apple").isCustom());
+    }
+
+    @Test
+    void ofAllocatesNothingForAKnownIdentifier() {
+        com.sun.management.ThreadMXBean threads = (com.sun.management.ThreadMXBean) ManagementFactory.getThreadMXBean();
+        long thread = Thread.currentThread().threadId();
+        BedrockItemType[] keep = new BedrockItemType[1];
+        for (int i = 0; i < 10_000; i++) {
+            keep[0] = BedrockItemType.of("minecraft:apple");
+        }
+        long before = threads.getThreadAllocatedBytes(thread);
+        for (int i = 0; i < 10_000; i++) {
+            keep[0] = BedrockItemType.of("minecraft:apple");
+        }
+        long allocated = threads.getThreadAllocatedBytes(thread) - before;
+        assertSame(BedrockItems.APPLE, keep[0]);
+        assertTrue(allocated < 10_000, allocated + " bytes for 10000 calls");
     }
 
     @Test
