@@ -32,9 +32,15 @@ public final class WireShapes {
     private static final String BLOCK_DEFINITION = "block:block_definition";
 
     private final Map<String, Map<String, String>> components = new TreeMap<>();
+    private final Map<String, Map<String, Set<String>>> values = new TreeMap<>();
 
     public Map<String, Map<String, String>> components() {
         return components;
+    }
+
+    /** Per component and path the distinct leaf values observed ({@code 5}, {@code opaque}; lists and compounds have none of their own). */
+    public Map<String, Map<String, Set<String>>> values() {
+        return values;
     }
 
     /** The captured add-on data in {@code directory}: {@code custom_block_properties.nbt} and {@code custom_item_registry.nbt}. */
@@ -116,6 +122,9 @@ public final class WireShapes {
     private void observe(String component, String path, Object value) {
         Map<String, String> paths = components.computeIfAbsent(component, k -> new TreeMap<>());
         paths.merge(path, typeOf(value), (a, b) -> a.equals(b) ? a : "any");
+        if (!(value instanceof NbtMap) && !(value instanceof List<?>)) {
+            values.computeIfAbsent(component, k -> new TreeMap<>()).computeIfAbsent(path, k -> new TreeSet<>()).add(leaf(value));
+        }
         if (value instanceof NbtMap map) {
             map.forEach((key, child) -> observe(component, path.isEmpty() ? key : path + "." + key, child));
         } else if (value instanceof List<?> list) {
@@ -123,6 +132,15 @@ public final class WireShapes {
                 observe(component, path + "[]", child);
             }
         }
+    }
+
+    private static String leaf(Object value) {
+        return switch (value) {
+            case byte[] a -> java.util.Arrays.toString(a);
+            case int[] a -> java.util.Arrays.toString(a);
+            case long[] a -> java.util.Arrays.toString(a);
+            default -> String.valueOf(value);
+        };
     }
 
     private static String typeOf(Object value) {
@@ -168,12 +186,42 @@ public final class WireShapes {
         return uncovered;
     }
 
-    /** The uncovered paths that are known and accepted: {@code wire-gaps.txt} of the model directory. */
-    public static Set<String> knownGaps(Path modelDirectory) throws IOException {
-        Set<String> gaps = new TreeSet<>();
+    /**
+     * A known gap: a wire path of the captures the model does not cover, with why, since which BDS build and what would close it.
+     *
+     * @param path        {@code component path}, as {@link #uncovered} lists it
+     * @param since       the BDS build of the capture it was found in
+     * @param closesWith  what would cover it
+     */
+    public record Gap(String path, String reason, String since, String closesWith) {
+    }
+
+    /**
+     * The uncovered paths that are known and accepted: {@code wire-gaps.txt} of the model directory, one gap per line,
+     * {@code <component> <path> | <reason> | since <build> | closes with <what>}.
+     *
+     * @throws IllegalArgumentException for a line without reason, build or closing condition
+     */
+    public static List<Gap> knownGaps(Path modelDirectory) throws IOException {
+        List<Gap> gaps = new ArrayList<>();
         Path file = modelDirectory.resolve("wire-gaps.txt");
-        if (Files.exists(file)) {
-            Files.readAllLines(file).stream().map(String::strip).filter(l -> !l.isEmpty() && !l.startsWith("#")).forEach(gaps::add);
+        if (!Files.exists(file)) {
+            return gaps;
+        }
+        List<String> lines = Files.readAllLines(file);
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i).strip();
+            if (line.isEmpty() || line.startsWith("#")) {
+                continue;
+            }
+            String[] parts = line.split("\\|", -1);
+            String where = "wire-gaps.txt line " + (i + 1) + ": ";
+            if (parts.length != 4 || parts[0].isBlank() || parts[1].isBlank() || !parts[2].strip().matches("since \\S+")
+                || !parts[3].strip().matches("closes with \\S.*")) {
+                throw new IllegalArgumentException(where + "expected '<component> <path> | <reason> | since <build> | closes with <what>', got: " + line);
+            }
+            gaps.add(new Gap(parts[0].strip(), parts[1].strip(), parts[2].strip().substring("since ".length()),
+                parts[3].strip().substring("closes with ".length())));
         }
         return gaps;
     }

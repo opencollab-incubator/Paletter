@@ -1028,18 +1028,23 @@ public final class Update {
         WireShapes captured = WireShapes.ofCapture(runs.customCapture);
 
         if (previous != null) {
-            report(Diff.shapes(WireShapes.ofCapture(previous).components(), captured.components()),
-                "add-on components vs " + previous.getParent().getFileName());
+            WireShapes earlier = WireShapes.ofCapture(previous);
+            report(Diff.shapes(earlier.components(), captured.components()), "add-on components vs " + previous.getParent().getFileName());
+            reportValues(Diff.values(earlier.values(), captured.values()), "add-on components vs " + previous.getParent().getFileName());
         }
         // Vanilla data driven items and blocks: the reference version against the capture
         if (runs.imported != null) {
-            report(Diff.shapes(WireShapes.ofPalette(resources.resolve(runs.referenceName + ".nbt")).components(),
-                WireShapes.ofPalette(runs.imported).components()), "vanilla components vs bundled " + runs.referenceName);
+            WireShapes reference = WireShapes.ofPalette(resources.resolve(runs.referenceName + ".nbt"));
+            WireShapes imported = WireShapes.ofPalette(runs.imported);
+            report(Diff.shapes(reference.components(), imported.components()), "vanilla components vs bundled " + runs.referenceName);
+            reportValues(Diff.values(reference.values(), imported.values()), "vanilla components vs bundled " + runs.referenceName);
         }
         // Coverage: everything captured must be something the component model can produce
         JsonObject mappings = JsonParser.parseString(Files.readString(root.resolve(Layout.MODEL + "/mappings.json"))).getAsJsonObject();
         List<String> uncovered = new ArrayList<>(captured.uncovered(mappings));
-        uncovered.removeAll(WireShapes.knownGaps(root.resolve(Layout.MODEL)));
+        List<WireShapes.Gap> gaps = WireShapes.knownGaps(root.resolve(Layout.MODEL));
+        reportGaps(gaps, new java.util.HashSet<>(uncovered));
+        uncovered.removeAll(gaps.stream().map(WireShapes.Gap::path).toList());
         report.check(uncovered.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Spec coverage",
             uncovered.isEmpty() ? "every captured component shape is in " + Layout.MODEL + "/mappings.json" : uncovered.size() + " shapes not in the mappings");
         uncovered.forEach(line -> report.wireChanges.add("not covered by " + Layout.MODEL + "/mappings.json: " + line));
@@ -1058,6 +1063,33 @@ public final class Update {
             report.check(Report.Status.INFO, "Component model", "new add-on capture staged; run the model checks (checkMappings, checkComponentApi) and review the diff");
         } else if (!same) {
             report.check(Report.Status.INFO, "Add-on capture", "preview capture not copied to " + root.relativize(bdsData) + " (pass --import-preview)");
+        }
+    }
+
+    /**
+     * The known gaps of {@code wire-gaps.txt} are gaps, not silence: those still uncovered are listed with why, since which build
+     * and what closes them; those the mappings cover now are stale and a DIFF.
+     */
+    private void reportGaps(List<WireShapes.Gap> gaps, java.util.Set<String> uncovered) {
+        List<String> open = new ArrayList<>();
+        List<String> stale = new ArrayList<>();
+        for (WireShapes.Gap gap : gaps) {
+            (uncovered.contains(gap.path()) ? open : stale).add(gap.path());
+        }
+        report.check(Report.Status.INFO, "Known wire gaps", open.size() + " captured wire paths the model does not cover, accepted in "
+            + Layout.MODEL + "/wire-gaps.txt (listed below)");
+        List<String> lines = new ArrayList<>();
+        for (WireShapes.Gap gap : gaps) {
+            if (open.contains(gap.path())) {
+                lines.add("- `" + gap.path() + "`: " + gap.reason() + " (since " + gap.since() + "; closes with " + gap.closesWith() + ")");
+            }
+        }
+        if (!lines.isEmpty()) {
+            report.section("Known wire gaps", lines);
+        }
+        if (!stale.isEmpty()) {
+            report.check(Report.Status.DIFF, "Stale wire gaps", stale.size() + " entries of " + Layout.MODEL
+                + "/wire-gaps.txt are covered by the mappings now: remove them: " + String.join(", ", stale.stream().map(p -> "`" + p + "`").toList()));
         }
     }
 
@@ -1117,11 +1149,27 @@ public final class Update {
             }
         }
         if (write) {
-            new MappingInference(root).run(false);
+            MappingInference inference = new MappingInference(root);
+            inference.run(false);
+            gateProblems(inference.problems());
             report.repoChanges.add("update `" + Layout.MODEL + "/mappings.json`, `coverage.md`, `bds-feedback.json` (inferred from the spec captures)");
             report.check(Report.Status.INFO, "Component model", "mappings inferred; run :tools:generateComponentApi and the conformance suite (:tools:test) for the new protocol");
         } else {
             report.check(Report.Status.INFO, "Component model", "mappings not inferred (verify only or preview not imported)");
+        }
+    }
+
+    /**
+     * What the inference gates found: findings (bits no field explains) and wire constants without an entry in
+     * {@code evidence.json}, evidence that no longer holds, literal constants of Transforms.java without marker. Each line says what and where.
+     */
+    private void gateProblems(List<String> problems) {
+        report.check(problems.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Mapping gates",
+            problems.isEmpty() ? "every finding and wire constant has its evidence (" + Layout.MODEL + "/evidence.json)"
+                : problems.size() + " findings or constants without evidence, or evidence that does not hold");
+        problems.forEach(problem -> report.todos.add("MAPPING GATE: " + problem));
+        if (!problems.isEmpty()) {
+            report.section("Mapping gates", problems.stream().map(p -> "- " + p.replace("`", "'")).toList());
         }
     }
 
@@ -1168,6 +1216,17 @@ public final class Update {
             return null;
         }
         return null;
+    }
+
+    /** A value that came or went in a component both sides send: the shape is the same, what BDS puts in it is not. */
+    private void reportValues(Diff diff, String what) {
+        List<String> changes = diff.lines(Diff.VALUE_CHANGES);
+        report.check(changes.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Component values",
+            what + ": " + (changes.isEmpty() ? "identical" : changes.size() + " paths with other values"));
+        if (!changes.isEmpty()) {
+            report.todos.add("VALUE CHANGE in " + what + ": review the component model and the hand transforms (see the report section)");
+            report.section("Component value changes: " + what, changes.stream().map(c -> "- `" + c.replace("`", "'") + "`").toList());
+        }
     }
 
     private void report(Diff diff, String what) {

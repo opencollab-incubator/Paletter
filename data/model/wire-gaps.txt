@@ -1,32 +1,33 @@
-# Wire paths of the committed add-on captures that the component model (mappings.json) does not cover yet: components the
-# creator docs do not describe or that BDS rejected in the spec add-on ("untestable"). The update pipeline reports
-# only paths that are neither mapped nor listed here; UpdateTest fails on entries that became covered.
-# Format: <component> <path> (the path is empty for the component itself)
-block:block_definition blockTags
-block:block_definition blockTags[]
-block:block_definition molangVersion
-block:block_definition vanilla_block_data
-block:block_definition vanilla_block_data.block_id
-block:block_definition vanilla_block_data.material
-block:minecraft:geometry
-block:minecraft:geometry bone_visibility
-block:minecraft:geometry bone_visibility.bone_a
-block:minecraft:geometry bone_visibility.bone_b
-block:minecraft:geometry culling
-block:minecraft:geometry culling_layer
-block:minecraft:geometry culling_shape
-block:minecraft:geometry identifier
-block:minecraft:geometry ignoreGeometryForIsSolid
-block:minecraft:geometry isV1Fullblock
-block:minecraft:geometry needsLegacyTopRotation
-block:minecraft:geometry useBlockTypeLightAbsorption
-block:minecraft:geometry uv_lock
-block:minecraft:geometry uv_lock[]
-block:minecraft:leashable
-block:minecraft:leashable offset
-block:minecraft:leashable offset[]
-block:minecraft:sound
-block:minecraft:sound sound
-item:item_properties creative_group
-item:item_properties frame_count
-item:item_properties mining_speed
+# Wire paths of the committed add-on captures that the component model (mappings.json) does not cover. Every entry says why,
+# since which BDS build, and what would close it. An entry without reason, build or closing condition is rejected. The update
+# pipeline lists the entries that are still uncovered as gaps of its report and reports those that became covered as stale;
+# UpdateTest fails on stale ones.
+# Format: <component> <path> | <reason> | since <BDS build> | closes with <what would cover it>   (the path is empty for the component itself)
+block:block_definition blockTags | block definition data around the components (blockTags, molangVersion, vanilla_block_data), not a component: BlockCompiler writes it, the model has no field for it and only the conformance suite (whole property data of every accepted block variant) checks it | since 1.26.63.1 | closes with a definition level section in the model with its own mappings and evidence
+block:block_definition blockTags[] | block definition data around the components (blockTags, molangVersion, vanilla_block_data), not a component: BlockCompiler writes it, the model has no field for it and only the conformance suite (whole property data of every accepted block variant) checks it | since 1.26.63.1 | closes with a definition level section in the model with its own mappings and evidence
+block:block_definition molangVersion | block definition data around the components (blockTags, molangVersion, vanilla_block_data), not a component: BlockCompiler writes it, the model has no field for it and only the conformance suite (whole property data of every accepted block variant) checks it | since 1.26.63.1 | closes with a definition level section in the model with its own mappings and evidence
+block:block_definition vanilla_block_data | block definition data around the components (blockTags, molangVersion, vanilla_block_data), not a component: BlockCompiler writes it, the model has no field for it and only the conformance suite (whole property data of every accepted block variant) checks it | since 1.26.63.1 | closes with a definition level section in the model with its own mappings and evidence
+block:block_definition vanilla_block_data.block_id | block definition data around the components (blockTags, molangVersion, vanilla_block_data), not a component: BlockCompiler writes it, the model has no field for it and only the conformance suite (whole property data of every accepted block variant) checks it | since 1.26.63.1 | closes with a definition level section in the model with its own mappings and evidence
+block:block_definition vanilla_block_data.material | block definition data around the components (blockTags, molangVersion, vanilla_block_data), not a component: BlockCompiler writes it, the model has no field for it and only the conformance suite (whole property data of every accepted block variant) checks it | since 1.26.63.1 | closes with a definition level section in the model with its own mappings and evidence
+block:minecraft:geometry | BDS rejects every geometry variant on its own (status untestable): a block needs both geometry and material_instances, so the inference saw no geometry variation; the wire shape is known only from the geometry that material_instances variants carry | since 1.26.63.1 | closes with a companion aware control in the spec capture (a control that carries material_instances), so geometry fields can be varied
+block:minecraft:geometry bone_visibility | BDS rejects every geometry variant on its own (status untestable): a block needs both geometry and material_instances, so the inference saw no geometry variation; the wire shape is known only from the geometry that material_instances variants carry | since 1.26.63.1 | closes with a companion aware control in the spec capture (a control that carries material_instances), so geometry fields can be varied
+block:minecraft:geometry bone_visibility.bone_a | BDS rejects every geometry variant on its own (status untestable): a block needs both geometry and material_instances, so the inference saw no geometry variation; the wire shape is known only from the geometry that material_instances variants carry | since 1.26.63.1 | closes with a companion aware control in the spec capture (a control that carries material_instances), so geometry fields can be varied
+block:minecraft:geometry bone_visibility.bone_b | BDS rejects every geometry variant on its own (status untestable): a block needs both geometry and material_instances, so the inference saw no geometry variation; the wire shape is known only from the geometry that material_instances variants carry | since 1.26.63.1 | closes with a companion aware control in the spec capture (a control that carries material_instances), so geometry fields can be varied
+block:minecraft:geometry culling | BDS rejects every geometry variant on its own (status untestable): a block needs both geometry and material_instances, so the inference saw no geometry variation; the wire shape is known only from the geometry that material_instances variants carry | since 1.26.63.1 | closes with a companion aware control in the spec capture (a control that carries material_instances), so geometry fields can be varied
+block:minecraft:geometry culling_layer | BDS rejects every geometry variant on its own (status untestable): a block needs both geometry and material_instances, so the inference saw no geometry variation; the wire shape is known only from the geometry that material_instances variants carry | since 1.26.63.1 | closes with a companion aware control in the spec capture (a control that carries material_instances), so geometry fields can be varied
+block:minecraft:geometry culling_shape | BDS rejects every geometry variant on its own (status untestable): a block needs both geometry and material_instances, so the inference saw no geometry variation; the wire shape is known only from the geometry that material_instances variants carry | since 1.26.63.1 | closes with a companion aware control in the spec capture (a control that carries material_instances), so geometry fields can be varied
+block:minecraft:geometry identifier | BDS rejects every geometry variant on its own (status untestable): a block needs both geometry and material_instances, so the inference saw no geometry variation; the wire shape is known only from the geometry that material_instances variants carry | since 1.26.63.1 | closes with a companion aware control in the spec capture (a control that carries material_instances), so geometry fields can be varied
+block:minecraft:geometry ignoreGeometryForIsSolid | BDS rejects every geometry variant on its own (status untestable): a block needs both geometry and material_instances, so the inference saw no geometry variation; the wire shape is known only from the geometry that material_instances variants carry | since 1.26.63.1 | closes with a companion aware control in the spec capture (a control that carries material_instances), so geometry fields can be varied
+block:minecraft:geometry isV1Fullblock | BDS rejects every geometry variant on its own (status untestable): a block needs both geometry and material_instances, so the inference saw no geometry variation; the wire shape is known only from the geometry that material_instances variants carry | since 1.26.63.1 | closes with a companion aware control in the spec capture (a control that carries material_instances), so geometry fields can be varied
+block:minecraft:geometry needsLegacyTopRotation | BDS rejects every geometry variant on its own (status untestable): a block needs both geometry and material_instances, so the inference saw no geometry variation; the wire shape is known only from the geometry that material_instances variants carry | since 1.26.63.1 | closes with a companion aware control in the spec capture (a control that carries material_instances), so geometry fields can be varied
+block:minecraft:geometry useBlockTypeLightAbsorption | BDS rejects every geometry variant on its own (status untestable): a block needs both geometry and material_instances, so the inference saw no geometry variation; the wire shape is known only from the geometry that material_instances variants carry | since 1.26.63.1 | closes with a companion aware control in the spec capture (a control that carries material_instances), so geometry fields can be varied
+block:minecraft:geometry uv_lock | BDS rejects every geometry variant on its own (status untestable): a block needs both geometry and material_instances, so the inference saw no geometry variation; the wire shape is known only from the geometry that material_instances variants carry | since 1.26.63.1 | closes with a companion aware control in the spec capture (a control that carries material_instances), so geometry fields can be varied
+block:minecraft:geometry uv_lock[] | BDS rejects every geometry variant on its own (status untestable): a block needs both geometry and material_instances, so the inference saw no geometry variation; the wire shape is known only from the geometry that material_instances variants carry | since 1.26.63.1 | closes with a companion aware control in the spec capture (a control that carries material_instances), so geometry fields can be varied
+block:minecraft:leashable | the capture add-on sends the component but the creator docs do not describe it, so components.json has no fields for it | since 1.26.63.1 | closes with the creator docs describing the component, or a fixtures.json entry that models it
+block:minecraft:leashable offset | the capture add-on sends the component but the creator docs do not describe it, so components.json has no fields for it | since 1.26.63.1 | closes with the creator docs describing the component, or a fixtures.json entry that models it
+block:minecraft:leashable offset[] | the capture add-on sends the component but the creator docs do not describe it, so components.json has no fields for it | since 1.26.63.1 | closes with the creator docs describing the component, or a fixtures.json entry that models it
+block:minecraft:sound | the capture add-on sends the component but the creator docs do not describe it, so components.json has no fields for it | since 1.26.63.1 | closes with the creator docs describing the component, or a fixtures.json entry that models it
+block:minecraft:sound sound | the capture add-on sends the component but the creator docs do not describe it, so components.json has no fields for it | since 1.26.63.1 | closes with the creator docs describing the component, or a fixtures.json entry that models it
+item:item_properties creative_group | item_properties entry BDS always sends that no add-on JSON field sets (wire only): written by ItemCompiler and WireOnlyWire, not mapped from a documented field | since 1.26.63.1 | closes with a documented JSON field for it in the creator docs, or a wire only entry in the model
+item:item_properties frame_count | item_properties entry BDS always sends that no add-on JSON field sets (wire only): written by ItemCompiler and WireOnlyWire, not mapped from a documented field | since 1.26.63.1 | closes with a documented JSON field for it in the creator docs, or a wire only entry in the model
+item:item_properties mining_speed | item_properties entry BDS always sends that no add-on JSON field sets (wire only): written by ItemCompiler and WireOnlyWire, not mapped from a documented field | since 1.26.63.1 | closes with a documented JSON field for it in the creator docs, or a wire only entry in the model

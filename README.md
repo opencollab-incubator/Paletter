@@ -580,7 +580,7 @@ download (about 100 MB, once per build). What it does, in `<cache>/runs/<platfor
    new protocol, everything against the newest bundled release; the add-on content log against
    `data/addons/capture/content-log.txt`; component wire shapes of the add-on capture (against the newest
    `data/bds/*/addon`) and of the vanilla data driven items and blocks (against the bundled version), plus
-   coverage by the wire paths of `data/model/mappings.json` (known gaps in `wire-gaps.txt`). An added, removed or retyped field, or a component that is no longer sent,
+   coverage by the wire paths of `data/model/mappings.json` (known gaps in `wire-gaps.txt` are reported with why, since which build and what closes them), and the values of those components (a changed value behind the same shape is reported like a changed shape). An added, removed or retyped field, or a component that is no longer sent,
    is a **WIRE FORMAT CHANGE** at the top of the report.
 7. **Write** (not with `--verify-only`): a new protocol is imported as a new bundled version (its palette starts from the
    newest release, with blocks whose Script API states changed and new blocks generated from the Script API, then

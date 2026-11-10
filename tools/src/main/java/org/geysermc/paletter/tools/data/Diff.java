@@ -51,6 +51,7 @@ public final class Diff {
     public static final int DEFAULT_MAX_LINES = 25;
     public static final String WIRE_CHANGES = "wire format changes";
     public static final String NEW_COMPONENTS = "new components";
+    public static final String VALUE_CHANGES = "component value changes";
     private static final int PRINT_LIMIT = 40;
 
     /** A section of the report: its differences, and information that does not count as one. */
@@ -267,6 +268,41 @@ public final class Diff {
         diff.put(WIRE_CHANGES, wireChanges);
         diff.put(NEW_COMPONENTS, newComponents);
         return diff;
+    }
+
+    /**
+     * The values of components and paths both sides send ({@link WireShapes#values}): a value that came or went with the same
+     * shape is a value change, which {@link #shapes} cannot see (an enum id, a unit, a default). Added and removed paths are shape
+     * changes and not repeated here.
+     *
+     * @param before component to (path to the distinct values)
+     */
+    public static Diff values(Map<String, Map<String, Set<String>>> before, Map<String, Map<String, Set<String>>> after) {
+        Diff diff = new Diff();
+        List<String> changes = new ArrayList<>();
+        for (String component : new TreeSet<>(before.keySet())) {
+            Map<String, Set<String>> y = after.get(component);
+            if (y == null) {
+                continue;
+            }
+            before.get(component).forEach((path, x) -> {
+                Set<String> now = y.get(path);
+                if (now == null || x.equals(now)) {
+                    return;
+                }
+                Set<String> added = difference(now, x);
+                Set<String> removed = difference(x, now);
+                changes.add(component + (path.isEmpty() ? "" : " " + path) + ": " + (added.isEmpty() ? "" : "new values " + limit(added))
+                    + (added.isEmpty() || removed.isEmpty() ? "" : "; ") + (removed.isEmpty() ? "" : "values gone " + limit(removed)));
+            });
+        }
+        diff.put(VALUE_CHANGES, changes);
+        return diff;
+    }
+
+    private static String limit(Set<String> values) {
+        List<String> list = values.stream().limit(6).map(Diff::shorten).toList();
+        return list + (values.size() > 6 ? " and " + (values.size() - 6) + " more" : "");
     }
 
     // ---------------------------------------------------------------------------------------------------------------
