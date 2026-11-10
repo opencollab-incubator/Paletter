@@ -323,10 +323,12 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     /**
      * @return the block this item is sent with by default, or null if it is not a block item; see {@link #blockOf}
      */
+    @Internal
     public @Nullable RegisteredBlockState defaultBlock(@NonNull ItemDefinition definition) {
         return defaultBlockOf(definition.getIdentifier());
     }
 
+    @Internal
     public boolean isBlockItem(@NonNull ItemDefinition definition) {
         return defaultBlockOf(definition.getIdentifier()) != null;
     }
@@ -335,6 +337,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * @return true if one item identifier places several different blocks, told apart only by the block state sent
      * with the item. Variants of such items should specify their block state
      */
+    @Internal
     public boolean isMultiStateBlockItem(@NonNull String identifier) {
         return multiStateBlockItems.contains(identifier);
     }
@@ -708,6 +711,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      *
      * @return the item data, or null if the item does not exist in this version
      */
+    @Internal
     public @Nullable ItemData toItemData(@NonNull BedrockItemStack stack) {
         ResolvedItem resolved = resolve(stack.variant().toItemVariant());
         if (resolved == null || resolved.fallback()) {

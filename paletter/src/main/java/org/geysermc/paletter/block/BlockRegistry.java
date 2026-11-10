@@ -426,6 +426,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @param state a block state as {@code {name, states}}
      * @return the definition of exactly this state, or null
      */
+    @Internal
     public @Nullable RegisteredBlockState exact(@NonNull NbtMap state) {
         return table.byState(BlockStates.normalize(state));
     }
@@ -495,6 +496,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * Resolves a list of states at once. States that cannot be resolved at all map to {@code missing}; everything that
      * was not exact is recorded in the report.
      */
+    @Internal
     public @NonNull RegisteredBlockState[] table(@NonNull List<NbtMap> states, @NonNull RegisteredBlockState missing, @NonNull PaletteReport report) {
         RegisteredBlockState[] result = new RegisteredBlockState[states.size()];
         Map<BlockResolution.Kind, Integer> counts = new LinkedHashMap<>();
@@ -597,6 +599,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     /**
      * @return true if this palette has exactly the states (and runtime ids) of the other one
      */
+    @Internal
     public boolean sharesStatesWith(@NonNull BlockRegistry other) {
         return table == other.table;
     }
@@ -623,6 +626,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     /**
      * FNV-1 64 bit hash (multiply, then xor: not FNV-1a) of a block identifier; the client orders its palette by it once custom blocks exist.
      */
+    @Internal
     public static long nameHash(@NonNull String identifier) {
         long hash = FNV1_64_OFFSET_BASIS;
         for (byte b : identifier.getBytes(StandardCharsets.UTF_8)) {
