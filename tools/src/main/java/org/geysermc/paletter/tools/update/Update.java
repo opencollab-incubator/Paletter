@@ -206,11 +206,11 @@ public final class Update {
     private void constants(Staging staging) throws IOException {
         ConstantsGenerator.Result result;
         try {
-            result = ConstantsGenerator.generate(staging.resources, ConstantsGenerator.readJson(root.resolve(ConstantsGenerator.NAMES)),
+            result = ConstantsGenerator.generate(staging.resources, ConstantsGenerator.names(root),
                 ConstantsGenerator.readJson(root.resolve(ConstantsGenerator.HISTORY)), ConstantsGenerator.paletterVersion(root),
                 ConstantsGenerator.Sources.read(staging.resources, root.resolve(ConstantsGenerator.BDS)));
         } catch (IllegalStateException e) {
-            // A name collision or a state that changed its kind needs a codegen/names.json entry
+            // A name collision or a state that changed its kind needs an entry in the name overrides of ConstantsGenerator
             report.todos.add("Vanilla constants: " + e.getMessage());
             report.check(Report.Status.FAIL, "Vanilla constants", e.getMessage());
             return;

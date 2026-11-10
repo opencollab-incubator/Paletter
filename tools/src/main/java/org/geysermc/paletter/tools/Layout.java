@@ -2,7 +2,7 @@ package org.geysermc.paletter.tools;
 
 /** Where the repository keeps its non-code inputs, relative to its root. See data/README.md. */
 public final class Layout {
-    /** The component model and the generators' inputs: components.json, mappings.json, names.json, ... */
+    /** The component model and the generators' inputs: components.json, mappings.json, ... */
     public static final String MODEL = "data/model";
     /** One directory per BDS version: captures, Script API dump, experiment record, report. */
     public static final String BDS = "data/bds";

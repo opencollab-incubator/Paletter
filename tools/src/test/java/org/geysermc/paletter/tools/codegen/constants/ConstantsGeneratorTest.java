@@ -6,6 +6,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.PaletteDataCodec;
+import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 import org.junit.jupiter.api.BeforeAll;
@@ -38,7 +39,7 @@ class ConstantsGeneratorTest {
     private static final String ITEMS = ConstantsGenerator.PACKAGE_DIR + "/BedrockItems.java";
     private static final String STATES = ConstantsGenerator.PACKAGE_DIR + "/BedrockStates.java";
     private static VanillaData release;
-    private static JsonObject names;
+    private static ConstantsGenerator.Names names;
 
     @BeforeAll
     static void load() throws IOException {
@@ -47,7 +48,7 @@ class ConstantsGeneratorTest {
         try (InputStream stream = Files.newInputStream(ROOT.resolve(ConstantsGenerator.DATA).resolve(name + ".nbt"))) {
             release = PaletteDataCodec.read(stream);
         }
-        names = ConstantsGenerator.readJson(ROOT.resolve(ConstantsGenerator.NAMES));
+        names = ConstantsGenerator.names(ROOT);
     }
 
     private static JsonObject history(ConstantsGenerator.Result result) {
@@ -121,8 +122,8 @@ class ConstantsGeneratorTest {
         assertTrue(again.getAsJsonObject("APPLE").get("education").getAsBoolean());
     }
 
-    private static JsonObject names() {
-        return new JsonObject();
+    private static ConstantsGenerator.Names names() {
+        return ConstantsGenerator.Names.of(Renames.NONE);
     }
 
     @Test
@@ -146,7 +147,9 @@ class ConstantsGeneratorTest {
         first.getAsJsonObject("blocks").add("OLD_STONE_NAME", entry("minecraft:stone"));
         first.getAsJsonObject("blocks").remove("STONE");
         first.getAsJsonObject("items").add("OLD_ITEM", entry("minecraft:old_item"));
-        first.getAsJsonObject("items").add("REMOVED_TO_STICK", entry("minecraft:removed_to_stick"));
+        JsonObject removedToStick = entry("minecraft:removed_to_stick");
+        removedToStick.addProperty("fallback", "minecraft:stick");
+        first.getAsJsonObject("items").add("REMOVED_TO_STICK", removedToStick);
         JsonObject state = new JsonObject();
         state.addProperty("name", "removed_state");
         state.addProperty("kind", "bool");
@@ -157,9 +160,8 @@ class ConstantsGeneratorTest {
         value.addProperty("since", "0.1.0");
         first.getAsJsonObject("enums").getAsJsonObject("CardinalDirection").getAsJsonObject("values").add("UPWARDS", value);
 
-        JsonObject names = this.names.deepCopy();
-        names.getAsJsonObject("renamed").getAsJsonObject("items").addProperty("minecraft:old_item", "minecraft:apple");
-        names.getAsJsonObject("fallbacks").getAsJsonObject("items").addProperty("minecraft:removed_to_stick", "minecraft:stick");
+        ConstantsGenerator.Names names = new ConstantsGenerator.Names(this.names.blocks(), this.names.items(), this.names.states(),
+            this.names.enums(), new Renames(Map.of(), Map.of("minecraft:old_item", "minecraft:apple")));
 
         ConstantsGenerator.Result second = ConstantsGenerator.generate(release, null, names, first, "2.1.0");
         String blocks = second.files().get(BLOCKS);
@@ -213,19 +215,19 @@ class ConstantsGeneratorTest {
         assertEquals("CardinalDirection", ConstantsGenerator.className("minecraft:cardinal_direction"));
         assertEquals("WallConnectionType", ConstantsGenerator.className("wall_connection_type_east"));
 
-        JsonObject clash = names.deepCopy();
-        clash.getAsJsonObject("blocks").addProperty("minecraft:dirt", "STONE");
+        ConstantsGenerator.Names clash = new ConstantsGenerator.Names(Map.of("minecraft:dirt", "STONE"), names.items(), names.states(),
+            names.enums(), names.renames());
         IllegalStateException e = assertThrows(IllegalStateException.class,
             () -> ConstantsGenerator.generate(release, null, clash, new JsonObject(), "0.1.0"));
         assertTrue(e.getMessage().contains("Duplicate constant BedrockBlocks.STONE"), e.getMessage());
 
-        JsonObject noOverride = names.deepCopy();
-        noOverride.getAsJsonObject("states").remove("minecraft:facing_direction");
+        ConstantsGenerator.Names noOverride = new ConstantsGenerator.Names(names.blocks(), names.items(), Map.of(), names.enums(),
+            names.renames());
         e = assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(release, null, noOverride, new JsonObject(), "0.1.0"));
         assertTrue(e.getMessage().contains("Duplicate constant BedrockStates.FACING_DIRECTION"), e.getMessage());
 
-        JsonObject invalid = names.deepCopy();
-        invalid.getAsJsonObject("items").addProperty("minecraft:apple", "1APPLE");
+        ConstantsGenerator.Names invalid = new ConstantsGenerator.Names(names.blocks(), Map.of("minecraft:apple", "1APPLE"), names.states(),
+            names.enums(), names.renames());
         assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(release, null, invalid, new JsonObject(), "0.1.0"));
     }
 

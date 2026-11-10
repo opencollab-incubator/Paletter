@@ -45,7 +45,7 @@ The Javadoc of the latest `main` is at https://opencollab-incubator.github.io/Pa
 |-------------|------------------------------------------------------------------------------------------------|
 | `paletter/` | The library (the only shipped module). Depends on Cloudburst `bedrock-codec` (its types are the public API) and fastutil. No JSON, no network. Hand-written sources are in `src/main/java`; everything generated (the component API in `item/component` and `block/component`, the vanilla constants and state enums) is in `src/generated/java`, same packages, never edited by hand. |
 | `tools/`    | All tooling, one module, never shipped, one command line (`./gradlew :tools:run --args="<command> ..."`, see [tools/README.md](tools/README.md)): the BDS update pipeline and data import (`tools.bds`, `tools.data`, `tools.update`), the headless Bedrock client that records what BDS sends (`tools.client`), the component model from Microsoft's creator docs and its wire inference (`tools.model`), and the generators of the component API and the constants (`tools.codegen`). |
-| `data/`     | Every non-code input: `model/` (the component model and the generators' inputs: `components.json`, `mappings.json`, `names.json`, ...), `bds/<bds version>/` (captures, Script API dump, experiment record; see [data/README.md](data/README.md)) and `addons/` (the add-on packs run on BDS: `capture`, `creative`, `dump`). |
+| `data/`     | Every non-code input: `model/` (the component model and the generators' inputs: `components.json`, `mappings.json`, ...), `bds/<bds version>/` (captures, Script API dump, experiment record; see [data/README.md](data/README.md)) and `addons/` (the add-on packs run on BDS: `capture`, `creative`, `dump`). |
 
 
 
@@ -286,8 +286,7 @@ States are created per block on first use and interned, so `with()` only indexes
 
 **Versions.** Constants describe the newest bundled release; for older clients the palette resolves them like any
 other key (adapted states, fallbacks). A constant whose content the data no longer has (Bedrock removed it) stays,
-`@Deprecated(forRemoval = true)`, and resolves to its fallback (`minecraft:unknown` unless `data/model/names.json` names
-another); `isAvailable()` is false. A renamed block or item keeps its old constant as a deprecated alias of the new one.
+`@Deprecated(forRemoval = true)`, and resolves to `minecraft:unknown`; `isAvailable()` is false. A renamed block or item keeps its old constant as a deprecated alias of the new one.
 Content only in a bundled preview goes to `BedrockPreviewBlocks` / `BedrockPreviewItems` (`@Experimental`, generated only
 while a preview is bundled); without `paletter.previews` those resolve to `minecraft:unknown` too.
 
@@ -589,7 +588,7 @@ download (about 100 MB, once per build). What it does, in `<cache>/runs/<platfor
    component types are regenerated; the Script API baseline and the content log are updated.
 8. **Constants**: the vanilla constants (`BedrockBlocks`, `BedrockStates`, `BedrockItems`, ...) are regenerated from the
    staged data with `data/model/constants-history.json`; the report lists the constants added and deprecated. A name
-   collision or a state that changes its kind fails this step until `data/model/names.json` settles it.
+   collision or a state that changes its kind fails this step until a name override in `ConstantsGenerator` settles it.
 
 The report lists checks with PASS/DIFF/FAIL, every difference, and a
 **TODO** list of what needs a decision.
@@ -750,8 +749,7 @@ Results (November 2026):
   vanilla ones, ...) is `unknown` now until the consumer defines it. 26.40's experiment marks come from the BDS 1.26.45.1
   capture (`experiment-marks`): its content behind `y_2026_drop_3` is missing by default, a plain fallback covers it.
 - `renames.txt` is empty: no identifier rename between the bundled versions is known yet, so `Paletter#block` /
-  `Paletter#item` only adapt states and report removed content; add a line `block|item <old> <new>` (and the
-  `renamed` entry of `names.json`), or `item <old>@<aux> <new>[@<aux>]` for a legacy variant that became its own item, when
+  `Paletter#item` only adapt states and report removed content; add a line `block|item <old> <new>`, or `item <old>@<aux> <new>[@<aux>]` for a legacy variant that became its own item, when
   Bedrock renames or splits one.
 - The component API covers every component BDS 1.26.63.1 sends to clients. Geyser-only wire data that is not an add-on
   component (custom `mining_speed`/`frame_count` item properties, the legacy `render_offsets`, `on_player_placing`) is
