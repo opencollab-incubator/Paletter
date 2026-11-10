@@ -180,9 +180,8 @@ final class BehaviourReport {
     private void customDefaults(StringBuilder out) {
         out.append("## Custom content: defaults\n\nBehaviour of custom blocks and items matches BDS: "
             + "`Provenance#userSet()` tells a component the user set from a BDS default. The default of a key (what BDS uses when "
-            + "the component is absent) comes from `").append(BehaviourImport.DEFAULTS_FILE)
-            .append("`, each entry with its BDS evidence; without an entry the value is absent and the provenance is "
-                + "`UNKNOWN_DEFAULT`. Adding a default is one entry in that file and a rerun of the import.\n\n");
+            + "the component is absent) is what the newest behaviour probe capture measured, with that capture as reference; a key "
+            + "it did not measure has no value and the provenance is `UNKNOWN_DEFAULT`.\n\n");
         if (customDefaults.isEmpty()) {
             out.append("Known defaults: none yet. Every default of a custom block or item is unknown.\n\n");
         } else {
