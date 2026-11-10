@@ -63,7 +63,11 @@ class ServedVersionsTest {
             for (int id = 0; id < canonical.size(); id++) {
                 BedrockBlockState handle = canonical.handle(id);
                 String where = paletter.latest() + " " + canonical.state(id);
-                assertNotNull(handle, where);
+                if (handle == null) {
+                    // A state of this version that the bundled newest does not have has no constant
+                    assertEquals(-1, canonical.vanillaIdsIn(BUNDLED.canonicalBlocks())[id], where);
+                    continue;
+                }
                 assertEquals(canonical.state(id), BlockStates.normalize(handle.toNbt()), where);
                 assertEquals(id, handle.canonicalIn(canonical), where);
                 assertEquals(palette.blocks().runtimeId(id), palette.runtimeId(handle), where);
