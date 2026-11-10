@@ -56,8 +56,6 @@ public final class BehaviourImport {
     /** Where the importer writes the generated files, for the generated-by headers and the metadata. */
     static final String COMMAND = "./gradlew :tools:run --args=\"behaviour import --cloudburst-data <checkout of https://github.com/CloudburstMC/Data> "
         + "--allay <checkout of https://github.com/AllayMC/Allay>\"";
-    /** The BDS defaults of custom content, written down with their evidence: an input of the importer. */
-    static final String DEFAULTS_FILE = "data/behaviour/custom-defaults.json";
 
     /** The BDS default of a key for custom content, captured by a source named in {@code source}. */
     record CustomDefault(BehaviourKey<?> key, Object value, Provenance.Source source, String reference) {
@@ -107,7 +105,7 @@ public final class BehaviourImport {
         BehaviourImport importer = new BehaviourImport(bundled(resources));
         importer.scriptApi(root.resolve("data/bds"));
         importer.probe(root.resolve("data/bds"));
-        importer.customDefaults(root, root.resolve(DEFAULTS_FILE));
+        importer.customDefaults(root.resolve("data/bds"));
         if (cloudburstData != null) {
             importer.cloudburstData(new GitHistory(cloudburstData));
         }
@@ -135,25 +133,31 @@ public final class BehaviourImport {
     }
 
     /**
-     * {@code data/behaviour/custom-defaults.json}: the values BDS uses for custom blocks and items that do not set the
-     * component, each with the BDS evidence it comes from. An entry is either
-     * {@code {"key": "block:friction", "value": 0.6, "source": "NATIVE", "reference": "what captured it"}}, or names the
-     * capture that measured it, {@code {"key": "block:friction", "source": "BDS_PROBE", "capture":
-     * "data/bds/1.26.63.1/behaviour-probe/capture.json"}}: the value is that capture's default of the key (a number, a
-     * boolean, a string, or a list of boxes of six coordinates for shapes). A missing file or list means no default is
-     * known. Values are never guessed: every entry names a direct BDS source and its evidence.
-     *
-     * @param root the repository root, which {@code capture} paths are relative to
+     * The defaults of custom blocks and items (what BDS uses when the component is absent): every default that the newest
+     * {@code data/bds/<bds>/behaviour-probe/capture.json} measured, that capture being the reference. The value is a number,
+     * a boolean, a string, or a list of boxes of six coordinates for shapes. A key the probe did not measure stays unknown.
      */
-    void customDefaults(Path root, Path file) throws IOException {
-        if (!Files.isRegularFile(file)) {
+    void customDefaults(Path bds) throws IOException {
+        if (!Files.isDirectory(bds)) {
             return;
         }
-        JsonObject json = JsonParser.parseString(Files.readString(file)).getAsJsonObject();
-        if (!json.has("defaults")) {
+        Path newest = null;
+        try (Stream<Path> dirs = Files.list(bds)) {
+            for (Path dir : dirs.sorted((a, b) -> compare(bdsOrder(a), bdsOrder(b))).toList()) {
+                if (Files.isRegularFile(dir.resolve(BehaviourProbe.DIRECTORY).resolve(BehaviourProbe.CAPTURE))) {
+                    newest = dir;
+                }
+            }
+        }
+        if (newest == null) {
             return;
         }
-        for (JsonElement element : json.getAsJsonArray("defaults")) {
+        Path file = newest.resolve(BehaviourProbe.DIRECTORY).resolve(BehaviourProbe.CAPTURE);
+        JsonObject measured = JsonParser.parseString(Files.readString(file)).getAsJsonObject();
+        JsonObject build = measured.getAsJsonObject("bds");
+        String reference = "data/bds/" + newest.getFileName() + "/" + BehaviourProbe.DIRECTORY + "/" + BehaviourProbe.CAPTURE
+            + " (BDS " + build.get("version").getAsString() + ", Build ID " + build.get("build").getAsString() + ")";
+        for (JsonElement element : measured.getAsJsonArray("defaults")) {
             JsonObject entry = element.getAsJsonObject();
             String name = entry.get("key").getAsString();
             BehaviourKey<?> key = name.startsWith("block:") ? BlockBehaviour.key(name.substring(6))
@@ -161,28 +165,7 @@ public final class BehaviourImport {
             if (key == null) {
                 throw new IOException(file + ": unknown key " + name);
             }
-            JsonElement value;
-            String reference;
-            if (entry.has("capture")) {
-                String capture = entry.get("capture").getAsString();
-                JsonObject measured = JsonParser.parseString(Files.readString(root.resolve(capture))).getAsJsonObject();
-                value = null;
-                for (JsonElement candidate : measured.getAsJsonArray("defaults")) {
-                    if (candidate.getAsJsonObject().get("key").getAsString().equals(name)) {
-                        value = candidate.getAsJsonObject().get("value");
-                    }
-                }
-                if (value == null) {
-                    throw new IOException(file + ": " + capture + " has no default of " + name);
-                }
-                JsonObject bds = measured.getAsJsonObject("bds");
-                reference = capture + " (BDS " + bds.get("version").getAsString() + ", Build ID " + bds.get("build").getAsString() + ")";
-            } else {
-                value = entry.get("value");
-                reference = entry.get("reference").getAsString();
-            }
-            customDefaults.add(new CustomDefault(key, typed(key, value, file), Provenance.Source.valueOf(entry.get("source").getAsString()),
-                reference));
+            customDefaults.add(new CustomDefault(key, typed(key, entry.get("value"), file), Provenance.Source.BDS_PROBE, reference));
         }
     }
 

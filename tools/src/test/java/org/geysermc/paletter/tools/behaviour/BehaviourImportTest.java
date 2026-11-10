@@ -177,30 +177,6 @@ class BehaviourImportTest {
         assertTrue(report.contains("0.7 (CLOUDBURST_DATA) / 0.5 (ALLAY_DATA@1.0)"), report);
     }
 
-    @Test
-    void customDefaultsComeFromTheirDataFileWithEvidence(@TempDir Path directory) throws IOException {
-        BehaviourImport importer = new BehaviourImport(bundled());
-        importer.customDefaults(directory, directory.resolve("missing.json"));
-        assertNull(importer.build().defaultOf(BlockBehaviour.FRICTION), "no file: unknown");
-
-        Path file = directory.resolve("defaults.json");
-        Files.writeString(file, """
-            {"defaults": [{"key": "block:friction", "value": 0.6, "source": "NATIVE", "reference": "LeviLamina capture"},
-                          {"key": "item:max_stack_size", "value": 64, "source": "SCRIPT_API", "reference": "probe"}]}
-            """);
-        importer.customDefaults(directory, file);
-        BehaviourStore store = importer.build();
-        assertEquals(0.6f, store.defaultOf(BlockBehaviour.FRICTION).value());
-        assertEquals(Provenance.Source.NATIVE, store.defaultOf(BlockBehaviour.FRICTION).source());
-        assertEquals(64, store.defaultOf(ItemBehaviour.MAX_STACK_SIZE).value());
-        assertNull(store.defaultOf(BlockBehaviour.DESTROY_TIME));
-
-        Files.writeString(file, "{\"defaults\": [{\"key\": \"block:friction\", \"value\": 0.6, \"source\": \"CLOUDBURST_DATA\", \"reference\": \"x\"}]}");
-        BehaviourImport third = new BehaviourImport(bundled());
-        third.customDefaults(directory, file);
-        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, third::build);
-    }
-
     private static NbtMap door(String name, String direction, boolean open, boolean hinge, boolean upper) {
         return NbtMap.builder().putString("name", name).putCompound("states", NbtMap.builder()
             .putString("minecraft:cardinal_direction", direction).putByte("open_bit", (byte) (open ? 1 : 0))
@@ -280,27 +256,23 @@ class BehaviourImportTest {
     }
 
     @Test
-    void customDefaultsCanNameTheCaptureThatMeasuredThem(@TempDir Path root) throws IOException {
-        probeDirectory(root.resolve("data/bds"));
-        Path file = root.resolve("defaults.json");
-        String capture = "data/bds/1.0.0.1/behaviour-probe/capture.json";
-        Files.writeString(file, "{\"defaults\": ["
-            + "{\"key\": \"block:friction\", \"source\": \"BDS_PROBE\", \"capture\": \"" + capture + "\"},"
-            + "{\"key\": \"block:light_dampening\", \"source\": \"BDS_PROBE\", \"capture\": \"" + capture + "\"},"
-            + "{\"key\": \"block:collision_shape\", \"source\": \"BDS_PROBE\", \"capture\": \"" + capture + "\"}]}");
+    void customDefaultsAreWhatTheNewestProbeCaptureMeasured(@TempDir Path bds) throws IOException {
+        BehaviourImport none = new BehaviourImport(bundled());
+        none.customDefaults(bds.resolve("missing"));
+        assertNull(none.build().defaultOf(BlockBehaviour.FRICTION), "no capture: unknown");
+
+        probeDirectory(bds);
         BehaviourImport importer = new BehaviourImport(bundled());
-        importer.customDefaults(root, file);
+        importer.customDefaults(bds);
         BehaviourStore store = importer.build();
         assertEquals(0.6f, store.defaultOf(BlockBehaviour.FRICTION).value());
         assertEquals(15, store.defaultOf(BlockBehaviour.LIGHT_DAMPENING).value());
         assertEquals(BlockShape.FULL_CUBE, store.defaultOf(BlockBehaviour.COLLISION_SHAPE).value());
         assertEquals(Provenance.Source.BDS_PROBE, store.defaultOf(BlockBehaviour.FRICTION).source());
-        assertEquals(capture + " (BDS 1.0.0.1, Build ID 42)", store.defaultOf(BlockBehaviour.FRICTION).reference());
+        assertEquals("data/bds/1.0.0.1/behaviour-probe/capture.json (BDS 1.0.0.1, Build ID 42)", store.defaultOf(BlockBehaviour.FRICTION).reference());
+        assertNull(store.defaultOf(BlockBehaviour.FLAME_ODDS), "not measured: unknown");
         BehaviourStore read = BehaviourStore.read(new java.io.ByteArrayInputStream(bytes(store)));
         assertEquals(BlockShape.FULL_CUBE, read.defaultOf(BlockBehaviour.COLLISION_SHAPE).value(), "shapes survive the file");
-
-        Files.writeString(file, "{\"defaults\": [{\"key\": \"block:flame_odds\", \"source\": \"BDS_PROBE\", \"capture\": \"" + capture + "\"}]}");
-        assertThrows(IOException.class, () -> new BehaviourImport(bundled()).customDefaults(root, file), "the capture has no such default");
     }
 
     private static byte[] bytes(BehaviourStore store) throws IOException {

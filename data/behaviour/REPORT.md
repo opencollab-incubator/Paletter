@@ -103,12 +103,12 @@ Values the source itself says it post-processed after reading BDS (`Provenance#p
 
 ## Custom content: defaults
 
-Behaviour of custom blocks and items matches BDS: `Provenance#userSet()` tells a component the user set from a BDS default. The default of a key (what BDS uses when the component is absent) comes from `data/behaviour/custom-defaults.json`, each entry with its BDS evidence; without an entry the value is absent and the provenance is `UNKNOWN_DEFAULT`. Adding a default is one entry in that file and a rerun of the import.
+Behaviour of custom blocks and items matches BDS: `Provenance#userSet()` tells a component the user set from a BDS default. The default of a key (what BDS uses when the component is absent) is what the newest behaviour probe capture measured, with that capture as reference; a key it did not measure has no value and the provenance is `UNKNOWN_DEFAULT`.
 
 - `block:friction` = 0.6 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
-- `block:explosion_resistance` = 0.0 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
 - `block:light_dampening` = 15 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
 - `block:light_emission` = 0 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
+- `block:explosion_resistance` = 0.0 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
 - `block:collision_shape` = [0.0, 0.0, 0.0, 1.0, 1.0, 1.0] (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
 - `block:burn_odds` = 0 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
 - `block:flame_odds` = 0 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))

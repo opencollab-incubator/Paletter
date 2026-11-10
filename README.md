@@ -448,8 +448,8 @@ p.userSet();          // custom content: the user's component (else a BDS defaul
   `LightEmission`, `LightDampening`, `CollisionBox`, `SelectionBox` (with `Transformation` y rotations), `MaxStackSize`,
   `Durability`, `Damage`, `UseModifiers`, `UseAnimation`. `Provenance#userSet()` (or `Behaviour#isUserSet`) tells a value
   the user set from one that is not; a key without the component gets the BDS default, if one is known, else no value and
-  `Provenance.Source.UNKNOWN_DEFAULT`. The defaults are data: an entry in `data/behaviour/custom-defaults.json` naming
-  the capture that measured it, then `behaviour import`. Measured by the probe on BDS 1.26.63.1: friction 0.6, explosion
+  `Provenance.Source.UNKNOWN_DEFAULT`. The defaults are what the newest `behaviour-probe` capture measured
+  (`behaviour import` takes them from it). Measured by the probe on BDS 1.26.63.1: friction 0.6, explosion
   resistance 0, light dampening 15, light emission 0, a full cube collision box, not flammable. Not known (no value): the
   selection box and the destroy time. The friction conversion (engine friction is 1 minus the component value) is
   measured too.
