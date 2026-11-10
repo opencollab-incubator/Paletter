@@ -231,7 +231,10 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         return index != -1 && table.byIndex(index) == definition ? index : -1;
     }
 
-    private int indexOfRuntimeId(int runtimeId) {
+    /**
+     * @return the dense position of the block state with this runtime id, see {@link #indexOf}, or -1 if there is none
+     */
+    public int indexOfRuntimeId(int runtimeId) {
         return table.indexOfRuntimeId(runtimeId);
     }
 
@@ -574,6 +577,20 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      */
     public boolean sharesStatesWith(@NonNull BlockRegistry other) {
         return table == other.table;
+    }
+
+    /**
+     * @return true if this palette has the states of the other one, in the same dense positions ({@link #indexOf}), and
+     * possibly more after them: it is the other palette or was built by adding custom blocks to it
+     */
+    @Internal
+    public boolean extendsStatesOf(@NonNull BlockRegistry other) {
+        for (Table t = table; t != null; t = t.parent) {
+            if (t == other.table) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

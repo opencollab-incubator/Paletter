@@ -79,7 +79,6 @@ class PropertiesTest {
         assertNotNull(item);
         assertTrue(item.properties().get(PropertyKind.COMPONENT, "minecraft:max_stack_size") != null);
         assertEquals(Properties.EMPTY, PALETTER.properties(BedrockItemType.of("server:ruby"), PALETTER.latest()));
-        assertTrue(item.properties().of(PropertyKind.BEHAVIOUR).isEmpty());
     }
 
     @Test

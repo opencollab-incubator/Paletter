@@ -11,9 +11,7 @@ public enum PropertyKind {
     /** One entry of the component compound an item or block sends over the network ({@code minecraft:max_stack_size}). */
     COMPONENT("component:"),
     /** Any other top level entry of the network data of an item or block ({@code menu_category}, {@code molangVersion}). */
-    WIRE("wire:"),
-    /** Behaviour the client does not receive (friction, destroy time), captured from the BDS Script API. Reserved. */
-    BEHAVIOUR("behaviour:");
+    WIRE("wire:");
 
     private final String prefix;
 

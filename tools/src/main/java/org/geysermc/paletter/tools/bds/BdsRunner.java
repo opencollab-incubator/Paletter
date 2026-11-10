@@ -1,5 +1,6 @@
 package org.geysermc.paletter.tools.bds;
 
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.geysermc.paletter.tools.client.LevelDat;
 
@@ -14,11 +15,13 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 /**
- * Runs the Paletter addon on a Bedrock Dedicated Server and captures its console output.
+ * Runs a Paletter addon (the dump addon, the behaviour probe) on a Bedrock Dedicated Server and captures its console
+ * output.
  * <ol>
  *     <li>optionally downloads the newest BDS for this OS from the official download links API;</li>
- *     <li>installs {@code bds-addon/} as a behavior pack on a fresh flat world;</li>
- *     <li>starts BDS headless, copies its output to the log file, waits for {@code PALETTER-DONE} and stops it.</li>
+ *     <li>installs the addon as a behavior pack on a fresh flat world;</li>
+ *     <li>starts BDS headless, copies its output to the log file, waits for the addon's {@code <marker>-DONE} (the dump
+ *     addon prints {@code PALETTER-DONE}) and stops it.</li>
  * </ol>
  * Downloading BDS means accepting the Minecraft EULA and privacy policy (https://minecraft.net/eula); BDS itself asks
  * for nothing else. Keep the server directory outside the repository.
@@ -26,13 +29,24 @@ import java.util.stream.Stream;
 public final class BdsRunner {
     static final int DUMP_PORT = 19232;
     public static final String WORLD = "paletter";
-    private static final String PACK_DIRECTORY = "paletter_dumper";
-    private static final String PACK_UUID = "6f1d3c5e-7a1b-4c2d-9e8f-0a1b2c3d4e5f";
 
     private final Path addon;
+    private final String marker;
+    private final String packDirectory;
 
+    /** The dump addon: it prints {@code PALETTER-DONE}. */
     public BdsRunner(Path addon) {
+        this(addon, "PALETTER", "paletter_dumper");
+    }
+
+    /**
+     * @param marker the addon prints {@code <marker>-DONE} when it is finished and {@code <marker>-FAILED} if it failed
+     * @param packDirectory the name of the pack's directory in the server's {@code behavior_packs}
+     */
+    public BdsRunner(Path addon, String marker, String packDirectory) {
         this.addon = addon;
+        this.marker = marker;
+        this.packDirectory = packDirectory;
     }
 
     /**
@@ -96,19 +110,19 @@ public final class BdsRunner {
         BdsServer.configure(server, properties);
     }
 
-    private static void dump(Path server, Path log, int timeoutSeconds, boolean echo) throws IOException, InterruptedException {
+    private void dump(Path server, Path log, int timeoutSeconds, boolean echo) throws IOException, InterruptedException {
         String result;
         try (BdsServer bds = new BdsServer(server, echo)) {
             bds.start(log);
-            result = bds.await(line -> line.contains("PALETTER-DONE") || line.contains("PALETTER-FAILED"), timeoutSeconds);
+            result = bds.await(line -> line.contains(marker + "-DONE") || line.contains(marker + "-FAILED"), timeoutSeconds);
         }
-        if (result == null || !result.contains("PALETTER-DONE")) {
-            throw new IOException("BDS exited without PALETTER-DONE (timeout " + timeoutSeconds + "s); see " + log);
+        if (result == null || !result.contains(marker + "-DONE")) {
+            throw new IOException("BDS exited without " + marker + "-DONE (timeout " + timeoutSeconds + "s); see " + log);
         }
     }
 
     private void installPack(Path server) throws IOException {
-        Path pack = server.resolve("behavior_packs").resolve(PACK_DIRECTORY);
+        Path pack = server.resolve("behavior_packs").resolve(packDirectory);
         deleteRecursively(pack);
         try (Stream<Path> files = Files.walk(addon)) {
             for (Path file : files.toList()) {
@@ -120,15 +134,16 @@ public final class BdsRunner {
                 }
             }
         }
-        String version = JsonParser.parseString(Files.readString(addon.resolve("manifest.json")))
-            .getAsJsonObject().getAsJsonObject("header").get("version").toString();
+        JsonObject header = JsonParser.parseString(Files.readString(addon.resolve("manifest.json"))).getAsJsonObject().getAsJsonObject("header");
+        String uuid = header.get("uuid").getAsString();
+        String version = header.get("version").toString();
 
         // A fresh world every time: nothing of a previous run (or a previous BDS version) leaks into the dump
         Path world = server.resolve("worlds").resolve(WORLD);
         deleteRecursively(world);
         Files.createDirectories(world);
         Files.writeString(world.resolve("world_behavior_packs.json"),
-            "[{\"pack_id\": \"" + PACK_UUID + "\", \"version\": " + version + "}]\n");
+            "[{\"pack_id\": \"" + uuid + "\", \"version\": " + version + "}]\n");
     }
 
     private static void deleteRecursively(Path path) throws IOException {

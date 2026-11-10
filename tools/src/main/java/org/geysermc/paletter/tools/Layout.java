@@ -11,6 +11,7 @@ public final class Layout {
     public static final String DUMP_ADDON = ADDONS + "/dump";
     public static final String CAPTURE_ADDON = ADDONS + "/capture";
     public static final String CREATIVE_ADDON = ADDONS + "/creative";
+    public static final String PROBE_ADDON = ADDONS + "/probe";
 
     private Layout() {
     }

@@ -3,6 +3,7 @@ package org.geysermc.paletter;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
+import org.geysermc.paletter.internal.behaviour.BehaviourStore;
 import org.geysermc.paletter.internal.block.BlockInterner;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.BlockRegistry;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 /**
  * Compiles palettes: vanilla data first, then one layer at a time.
@@ -45,7 +47,8 @@ final class PaletteCompiler {
     }
 
     static Palette vanilla(VanillaData loaded, CanonicalBlocks canonicalBlocks, CanonicalItems canonicalItems,
-                           BlockInterner interner, Fallbacks fallbacks, VanillaContent content, CreativeOrdering ordering) {
+                           BlockInterner interner, Fallbacks fallbacks, VanillaContent content, CreativeOrdering ordering,
+                           Supplier<BehaviourStore> behaviour) {
         VanillaContent.Applied applied = content.apply(loaded);
         VanillaData data = applied.data();
         PaletteReport report = new PaletteReport();
@@ -61,7 +64,7 @@ final class PaletteCompiler {
         ItemRegistry items = builder.build(layout, report);
         CreativeContent creative = CreativeContent.compile(layout, items, report);
         prepareCanonical(blocks, null, items, null, report);
-        Palette palette = new Palette(data, List.of(), blocks, items, layout, creative, report, ordering, applied.gating());
+        Palette palette = new Palette(data, List.of(), blocks, items, layout, creative, report, ordering, applied.gating(), behaviour, null);
         return palette;
     }
 
@@ -201,7 +204,8 @@ final class PaletteCompiler {
 
             List<PaletteLayer> layers = new ArrayList<>(parent.layers());
             layers.add(layer);
-            return new Palette(data, layers, blocks, itemPalette, layout, content, report, parent.ordering(), parent.gating());
+            return new Palette(data, layers, blocks, itemPalette, layout, content, report, parent.ordering(), parent.gating(),
+                parent.behaviourStore(), parent);
         } catch (PaletteException e) {
             throw new PaletteException("Unable to compile layer " + source + " for " + data.version() + ": " + e.getMessage(), e);
         } catch (RuntimeException e) {

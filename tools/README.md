@@ -9,6 +9,7 @@ All tooling in one module, never shipped. Packages under `org.geysermc.paletter.
 | `data`    | Importing palette dumps into the bundled format, `Diff` (the one diff engine), `Nbt` (the one NBT helper), `WireShapes`, version coverage checks |
 | `model`   | The component model: creator docs parser, the add-on generators (`model.addon`: the spec add-on and the fixed capture/creative add-ons), mapping inference (`model.infer`) |
 | `codegen` | The generators: the component API (`codegen.component`, its own `componentApi` source set) and the vanilla constants (`codegen.constants`) |
+| `behaviour` | The behaviour importer: dumps of CloudburstMC/Data and AllayMC/Allay (git history), Script API dumps and the behaviour probe's captures -> `behaviour.nbt` and `data/behaviour/REPORT.md`; `BehaviourProbe` runs the probe (`data/addons/probe`) and measures its console |
 | `update`  | The `update` pipeline and its report, the spec capture, experiment discovery and attribution |
 
 One command line, picocli (`Cli`): `./gradlew :tools:run --args="<command> ..."`; `--help` lists the commands, each takes
@@ -17,6 +18,8 @@ One command line, picocli (`Cli`): `./gradlew :tools:run --args="<command> ..."`
 | Command | Does |
 |---------|------|
 | `update --channel release\|preview [--verify-only] ...` | The whole BDS update pipeline (see the README, "Data") |
+| `behaviour import [--cloudburst-data <checkout>] [--allay <checkout>]` | Behaviour values of vanilla blocks and items; read `data/behaviour/REPORT.md` after it (disagreements, inherited versions, keys without a source) |
+| `behaviour-probe --bds <version> [--server <dir>] [--from-log <console>]` | Runs `data/addons/probe` on BDS and writes what it measured to `data/bds/<version>/behaviour-probe/` (`probe.log`, `capture.json`): the BDS defaults of custom blocks (friction, explosion resistance, light, collision, fire) and the collision boxes of every door in every state. Input of `behaviour import`. Downloading BDS means accepting the Minecraft EULA |
 | `import`, `bds-run`, `bds-compare`, `verify`, `check-data` | Importing and checking bundled data (`check-data` lists what older versions lack of the newest) |
 | `block-items`, `rewrite`, `data-diff` | Maintaining bundled data without a capture: add the block to item relation (from a stored dump, or derived from a newer version), rewrite files without fallbacks, diff two data files |
 | `spec-capture` | Runs the spec add-on on BDS, writes `data/bds/<version>/spec` |

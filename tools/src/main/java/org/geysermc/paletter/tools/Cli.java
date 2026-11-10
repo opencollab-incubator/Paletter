@@ -51,7 +51,7 @@ import java.util.concurrent.Callable;
     Cli.VerifyCommand.class, Cli.CheckData.class, Cli.BlockItemsCommand.class, Cli.RewriteCommand.class, Cli.DataRewriteCommand.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class, Cli.ExperimentMarksCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
-    Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class
+    Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class, Cli.BehaviourCommand.class, Cli.BehaviourProbeCommand.class
 })
 public final class Cli implements Runnable {
     /** The docs commit the committed model was generated from (MicrosoftDocs/minecraft-creator main, 2026-11-06). */
@@ -564,6 +564,55 @@ public final class Cli implements Runnable {
         @Override
         public Integer call() {
             org.geysermc.paletter.tools.data.Inspect.run(org.geysermc.paletter.Paletter.builder().build(), version, block, item, System.out);
+            return 0;
+        }
+    }
+
+    @Command(name = "behaviour", description = "Behaviour values of vanilla blocks and items (friction, shapes, max stack size, ...)",
+        subcommands = {BehaviourCommand.Import.class})
+    static final class BehaviourCommand implements Runnable {
+        @Override
+        public void run() {
+            CommandLine.usage(this, System.out);
+        }
+
+        @Command(name = "import", description = "Reads the git history of the dump sources and the Script API dumps of data/bds, "
+            + "writes resources/behaviour.nbt and data/behaviour/REPORT.md")
+        static final class Import extends Rooted implements Callable<Integer> {
+            @Option(names = "--cloudburst-data", description = "Checkout of https://github.com/CloudburstMC/Data") Path cloudburstData;
+            @Option(names = "--allay", description = "Checkout of https://github.com/AllayMC/Allay (git clone --filter=blob:none is enough)") Path allay;
+
+            @Override
+            public Integer call() throws Exception {
+                org.geysermc.paletter.tools.behaviour.BehaviourImport.run(root(), cloudburstData, allay);
+                return 0;
+            }
+        }
+    }
+
+    @Command(name = "behaviour-probe", description = "Runs data/addons/probe on BDS (--bds VERSION, extracted into the cache, or --server DIR) and "
+        + "writes what it measured to data/bds/<BDS version>/behaviour-probe/ (probe.log, capture.json; input of behaviour import). "
+        + "With --from-log it measures a console log of an earlier run instead of starting BDS. Downloading BDS means accepting the Minecraft EULA.")
+    static final class BehaviourProbeCommand extends Rooted implements Callable<Integer> {
+        @Option(names = "--bds", description = "BDS version, e.g. 1.26.63.1") String bds;
+        @Option(names = "--server", description = "An extracted BDS of that version, instead of the cache") Path server;
+        @Option(names = "--cache") Path cache;
+        @Option(names = "--port", defaultValue = "19290") int port;
+        @Option(names = "--timeout", defaultValue = "900") int timeout;
+        @Option(names = "--log", description = "Where the console of the run goes (default: <cache>/runs/behaviour-probe.log)") Path log;
+        @Option(names = "--from-log", description = "Measure this console log, do not start BDS") Path fromLog;
+
+        @Override
+        public Integer call() throws Exception {
+            Path console = fromLog;
+            if (console == null) {
+                if (bds == null) {
+                    throw new IllegalArgumentException("Missing --bds (or --from-log)");
+                }
+                console = log != null ? log : org.geysermc.paletter.tools.bds.BdsDistribution.defaultCache().resolve("runs").resolve("behaviour-probe-" + bds + ".log");
+                org.geysermc.paletter.tools.behaviour.BehaviourProbe.run(root(), bds, server, cache, port, timeout, console);
+            }
+            org.geysermc.paletter.tools.behaviour.BehaviourProbe.write(root(), console);
             return 0;
         }
     }

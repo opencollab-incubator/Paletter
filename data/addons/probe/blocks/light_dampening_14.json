@@ -1,0 +1,7 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {"identifier": "probe:light_dampening_14"},
+    "components": {"minecraft:light_dampening": 14}
+  }
+}

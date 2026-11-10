@@ -44,8 +44,8 @@ import java.util.TreeMap;
  * property, every other key a {@link PropertyKind#WIRE} property. An item or block whose compound is empty has the
  * property {@code #present} instead, so it still exists (and is not {@code null}) when the data is put together again.
  * <p>
- * Behaviour properties ({@link PropertyKind#BEHAVIOUR}) have no producer yet. The capture of the Script API puts them
- * in with {@link Builder#put}, next to what {@link #build(List)} derives from the network data.
+ * Behaviour the client does not receive (friction, destroy time, ...) is not stored here: see
+ * {@code org.geysermc.paletter.behaviour}.
  */
 @Internal
 public final class PropertyStore {

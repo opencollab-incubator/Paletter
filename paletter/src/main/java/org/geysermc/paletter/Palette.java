@@ -1,6 +1,8 @@
 package org.geysermc.paletter;
 
 import org.geysermc.paletter.annotation.Internal;
+import org.geysermc.paletter.behaviour.Behaviour;
+import org.geysermc.paletter.internal.behaviour.BehaviourStore;
 import org.geysermc.paletter.internal.Canonicals;
 import org.geysermc.paletter.internal.Forwarding;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -49,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.function.Supplier;
 
 /**
  * Everything a Bedrock client of one version needs to know about items and blocks: vanilla data plus a stack of
@@ -82,10 +85,16 @@ public final class Palette {
     private final CreativeOrdering ordering;
     private final VanillaContent.ExperimentGating gating;
     private final Map<PaletteLayer, WeakReference<Palette>> extensions = new WeakHashMap<>();
+    private final Supplier<BehaviourStore> behaviourStore;
+    private volatile Behaviour behaviour;
+    /** The palette this one extends, or is a copy of: its block states are a prefix of this one's. Null for vanilla palettes. */
+    private final @Nullable Palette parent;
 
     Palette(VanillaData data, List<PaletteLayer> layers, BlockRegistry blocks, ItemRegistry items,
             CreativeLayout creativeLayout, CreativeContent creative, PaletteReport report, CreativeOrdering ordering,
-            VanillaContent.ExperimentGating gating) {
+            VanillaContent.ExperimentGating gating, Supplier<BehaviourStore> behaviourStore, @Nullable Palette parent) {
+        this.parent = parent;
+        this.behaviourStore = behaviourStore;
         this.gating = gating;
         this.data = data;
         this.layers = List.copyOf(layers);
@@ -112,7 +121,29 @@ public final class Palette {
      * @return this palette with another report, sharing everything else
      */
     Palette withReport(PaletteReport report) {
-        return new Palette(data, layers, blocks, items, creativeLayout, creative, report, ordering, gating);
+        return new Palette(data, layers, blocks, items, creativeLayout, creative, report, ordering, gating, behaviourStore, this);
+    }
+
+    Supplier<BehaviourStore> behaviourStore() {
+        return behaviourStore;
+    }
+
+    /**
+     * @return the behaviour values (friction, destroy time, collision shapes, max stack size, ...) of the blocks and
+     * items of this palette: vanilla ones from the bundled captures of its version, custom ones from their components
+     * @since 0.1.0
+     */
+    public @NonNull Behaviour behaviour() {
+        Behaviour result = behaviour;
+        if (result == null) {
+            synchronized (this) {
+                result = behaviour;
+                if (result == null) {
+                    behaviour = result = Behaviour.of(this, behaviourStore.get(), parent == null ? null : parent.behaviour());
+                }
+            }
+        }
+        return result;
     }
 
     public @NonNull DataVersion version() {

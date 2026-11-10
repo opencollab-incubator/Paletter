@@ -1,5 +1,6 @@
 package org.geysermc.paletter.data;
 
+import org.geysermc.paletter.internal.behaviour.BehaviourStore;
 import org.geysermc.paletter.internal.data.Renames;
 
 import org.geysermc.paletter.internal.data.PropertyStore;
@@ -52,6 +53,15 @@ public interface PaletteDataSource {
     }
 
     /**
+     * @return the versioned behaviour values of vanilla blocks and items; the bundled source reads
+     * {@code behaviour.nbt}, the default has none
+     */
+    @org.geysermc.paletter.annotation.Internal
+    default @NonNull BehaviourStore behaviour() {
+        return BehaviourStore.empty();
+    }
+
+    /**
      * @return a source reading the data bundled in the library jar
      */
     static @NonNull PaletteDataSource bundled() {
@@ -60,7 +70,7 @@ public interface PaletteDataSource {
 
     /**
      * @param directory a directory in the bundled format: {@code versions.txt}, one {@code <name>.nbt} per version, and
-     *                  optionally {@code properties.nbt} and {@code renames.txt}. Read when first needed
+     *                  optionally {@code properties.nbt}, {@code behaviour.nbt} and {@code renames.txt}. Read when first needed
      * @return a source reading that directory
      * @since 0.1.0
      */

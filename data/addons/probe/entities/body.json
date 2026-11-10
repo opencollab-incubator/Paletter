@@ -1,0 +1,14 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:entity": {
+    "description": {"identifier": "probe:body", "is_spawnable": false, "is_summonable": true},
+    "components": {
+      "minecraft:physics": {},
+      "minecraft:collision_box": {"width": 0.5, "height": 0.5},
+      "minecraft:health": {"value": 100, "max": 100},
+      "minecraft:pushable": {"is_pushable": false, "is_pushable_by_piston": false},
+      "minecraft:damage_sensor": {"triggers": {"deals_damage": "no"}},
+      "minecraft:persistent": {}
+    }
+  }
+}

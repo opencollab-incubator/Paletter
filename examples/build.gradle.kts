@@ -5,6 +5,7 @@ plugins {
 // Runnable examples of the library; compiled by the build, never published.
 //   ./gradlew :examples:run                                                          BedrockServerExample
 //   ./gradlew :examples:run -PmainClass=org.geysermc.paletter.examples.TranslatorExample
+//   ./gradlew :examples:run -PmainClass=org.geysermc.paletter.examples.AnticheatExample
 dependencies {
     implementation(project(":paletter"))
     compileOnly(libs.checker.qual)
