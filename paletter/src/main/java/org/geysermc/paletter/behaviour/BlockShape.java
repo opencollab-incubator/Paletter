@@ -6,7 +6,8 @@ import java.util.List;
 
 /**
  * Boxes in block space ({@code 0} to {@code 1} on each axis; fences and walls reach {@code 1.5} in y), relative to the
- * block's minimum corner. Immutable; the bundled shapes are shared instances, so comparing them is cheap.
+ * block's minimum corner. Immutable, with value equality: compare shapes with {@code equals}. Behaviour data shares one
+ * instance per distinct bundled shape, but that is an optimisation and not something to rely on with {@code ==}.
  *
  * @param boxes the boxes, possibly none (no collision)
  * @since 0.1.0

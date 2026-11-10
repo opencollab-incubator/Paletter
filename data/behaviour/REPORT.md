@@ -101,7 +101,7 @@ Values the source itself says it post-processed after reading BDS (`Provenance#p
 - 26.60 block:collision_shape: composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured (704 states)
 - 26.60 block:outline_shape: shapeSource: door_state_correction (704 states)
 
-## Custom content: defaults and unverified conversions
+## Custom content: defaults
 
 Behaviour of custom blocks and items matches BDS: `Provenance#userSet()` tells a component the user set from a BDS default. The default of a key (what BDS uses when the component is absent) comes from `data/behaviour/custom-defaults.json`, each entry with its BDS evidence; without an entry the value is absent and the provenance is `UNKNOWN_DEFAULT`. Adding a default is one entry in that file and a rerun of the import.
 
@@ -113,7 +113,7 @@ Behaviour of custom blocks and items matches BDS: `Provenance#userSet()` tells a
 - `block:burn_odds` = 0 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
 - `block:flame_odds` = 0 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
 
-Unverified conversions (`Provenance#unverified()`): none. The friction of a custom block is 1 minus the `minecraft:friction` value, confirmed on BDS by the probe (`friction.components` of its capture).
+The friction of a custom block is 1 minus the `minecraft:friction` value, confirmed on BDS by the probe (`friction.components` of its capture).
 
 ## Disagreements
 

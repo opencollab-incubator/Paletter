@@ -47,7 +47,7 @@ class BehaviourStoreTest {
         BehaviourStore store = store();
         assertEquals(0.98f, store.block(BlockBehaviour.FRICTION, 2, V1).value());
         assertEquals(0.98f, store.block(BlockBehaviour.FRICTION, 2, V2).value());
-        assertEquals("1", store.block(BlockBehaviour.FRICTION, 2, V2).capture().version(), "V2 has no capture: inherited from V1");
+        assertEquals("1", store.block(BlockBehaviour.FRICTION, 2, V2).capture().version().name(), "V2 has no capture: inherited from V1");
         assertEquals(0.9f, store.block(BlockBehaviour.FRICTION, 2, V3).value());
         assertEquals(0.9f, store.block(BlockBehaviour.FRICTION, 2, NEWER).value(), "a newer unknown version inherits the newest");
         assertNull(store.block(BlockBehaviour.FRICTION, -7, V2), "added in V3");

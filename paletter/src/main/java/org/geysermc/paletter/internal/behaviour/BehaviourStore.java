@@ -81,9 +81,9 @@ public final class BehaviourStore {
      *              states of a block sit together and their values compress well)
      * @param blocks the same states, sorted, for lookups
      */
-    public record Capture(int index, @NonNull String version, int versionIndex, Provenance.@NonNull Source source,
+    public record Capture(int index, @NonNull DataVersion version, int versionIndex, Provenance.@NonNull Source source,
                           @NonNull String reference, int @NonNull [] order, int @NonNull [] blocks, @NonNull Set<String> items) {
-        Capture(int index, String version, int versionIndex, Provenance.Source source, String reference, int[] order, Set<String> items) {
+        Capture(int index, DataVersion version, int versionIndex, Provenance.Source source, String reference, int[] order, Set<String> items) {
             this(index, version, versionIndex, source, reference, order, Arrays.stream(order).sorted().toArray(), items);
         }
 
@@ -319,7 +319,7 @@ public final class BehaviourStore {
             Set<Integer> now = new java.util.LinkedHashSet<>(blocks);
             Set<Integer> then = before == null ? Set.of() : boxed(before.blocks());
             int[] added = now.stream().filter(id -> !then.contains(id)).mapToInt(Integer::intValue).toArray();
-            captures.add(new Capture(captures.size(), version.name(), index, source, reference, order(before, sortedDifference(then, now), added),
+            captures.add(new Capture(captures.size(), version, index, source, reference, order(before, sortedDifference(then, now), added),
                 Set.copyOf(items)));
             return captures.size() - 1;
         }
@@ -498,6 +498,7 @@ public final class BehaviourStore {
             throw new IOException("Unsupported Paletter behaviour format " + format + ", expected " + FORMAT);
         }
         List<String> versions = List.copyOf(root.getList("versions", NbtType.STRING));
+        int[] protocols = root.getIntArray("protocols");
         List<Capture> captures = new ArrayList<>();
         Map<String, Capture> previous = new HashMap<>();
         for (NbtMap entry : root.getList("captures", NbtType.COMPOUND)) {
@@ -509,8 +510,8 @@ public final class BehaviourStore {
             }
             items.removeAll(entry.getList("items_removed", NbtType.STRING));
             items.addAll(entry.getList("items_added", NbtType.STRING));
-            String version = entry.getString("version");
-            Capture capture = new Capture(captures.size(), version, versions.indexOf(version), source, entry.getString("reference"),
+            int versionIndex = versions.indexOf(entry.getString("version"));
+            Capture capture = new Capture(captures.size(), new DataVersion(versions.get(versionIndex), protocols[versionIndex]), versionIndex, source, entry.getString("reference"),
                 order(before, entry.getIntArray("blocks_removed"), entry.getIntArray("blocks_added")), Set.copyOf(items));
             captures.add(capture);
             previous.put(source.name(), capture);
@@ -577,7 +578,7 @@ public final class BehaviourStore {
                     Provenance.Source.valueOf(entry.getString("source")), entry.getString("reference")));
             }
         }
-        return new BehaviourStore(versions, root.getIntArray("protocols"), List.copyOf(captures), blocks, items,
+        return new BehaviourStore(versions, protocols, List.copyOf(captures), blocks, items,
             blockMarks, itemMarks, defaults, root.getCompound("metadata"));
     }
 
@@ -653,7 +654,7 @@ public final class BehaviourStore {
             Set<Integer> then = before == null ? Set.of() : boxed(before.blocks());
             Set<String> thenItems = before == null ? Set.of() : before.items();
             captureList.add(NbtMap.builder()
-                .putString("version", capture.version())
+                .putString("version", capture.version().name())
                 .putString("source", capture.source().name())
                 .putString("reference", capture.reference())
                 .putIntArray("blocks_added", Arrays.stream(capture.order()).filter(id -> !then.contains(id)).toArray())
