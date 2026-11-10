@@ -33,7 +33,7 @@ import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.item.ItemRegistry;
 import org.geysermc.paletter.internal.item.ItemVariant;
-import org.geysermc.paletter.internal.item.ResolvedItem;
+import org.geysermc.paletter.item.ResolvedItem;
 import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.item.RegisteredItem;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
@@ -333,6 +333,19 @@ public final class Palette {
     public @Nullable BedrockBlockState blockKeyOf(@NonNull BedrockItemVariant variant) {
         RegisteredBlockState block = items.blockOf(variant);
         return block == null ? null : block.key();
+    }
+
+    /**
+     * What this palette sends for an item variant, without building an {@link ItemData}: the item definition, damage
+     * and block of {@link #encode} (fallbacks applied), as one cached record. For the variants of the newest version it
+     * is a field read and an array load, it does not allocate. Use it to read the definition or damage of many items;
+     * a stack's own block state, count and NBT are not part of it.
+     *
+     * @return the resolution, or null if the item does not exist in this version and has no fallback
+     * @since 0.1.0
+     */
+    public @Nullable ResolvedItem resolve(@NonNull BedrockItemVariant variant) {
+        return items.resolve(variant);
     }
 
     /**

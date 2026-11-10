@@ -97,6 +97,7 @@ palette; `paletter.properties(key, version)` without one. Overrides edit the com
 | `Palette#runtimeId(BedrockBlockState)` | runtime id (the state hash), a field read and an array load; throws for a state the palette lacks, `runtimeIdOrDefault(state, id)` does not |
 | `Palette#block(BedrockBlockState)` | `RegisteredBlockState`: exact, adapted, fallback, else air; throws for a state the palette lacks, `blockOrNull(state)` returns null |
 | `Palette#item(BedrockItemType\|BedrockItemVariant)` | `RegisteredItem`, or null if the version has neither the item nor a fallback |
+| `Palette#resolve(BedrockItemVariant)` | `ResolvedItem` (definition, damage, block, fallback) as `encode` sends it, without building an `ItemData`: cached, no allocation; null if the version has neither the item nor a fallback |
 | `Palette#encode(BedrockItemStack)` | `ItemData` for the client, fallbacks applied: an item the version lacks and one nobody registered take the same stand-in (the default fallback, `minecraft:unknown`), air only without one |
 | `Palette#decode(ItemData)` | the `BedrockItemStack` a client sent, or null if unknown; the damage it carried is kept even where the item has no such variant |
 | `BlockRegistry#block(RegisteredBlockState)` | the `RegisteredBlock` of a state in this palette |

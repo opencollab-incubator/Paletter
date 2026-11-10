@@ -4,7 +4,6 @@ import org.geysermc.paletter.Origin;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.internal.item.ItemInterner;
 import org.geysermc.paletter.internal.item.ItemVariant;
-import org.geysermc.paletter.internal.item.ResolvedItem;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -288,7 +287,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * @since 0.1.0
      */
     public @Nullable RegisteredBlockState blockOf(@NonNull BedrockItemVariant variant) {
-        ResolvedItem resolved = resolve(variant.toItemVariant());
+        ResolvedItem resolved = resolve(variant);
         return resolved == null ? null : resolved.block();
     }
 
@@ -304,8 +303,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * @since 0.1.0
      */
     public @Nullable BedrockItemVariant fallbackOf(@NonNull BedrockItemVariant variant) {
-        int id = variant.canonicalIn(canonical);
-        ResolvedItem resolved = id != -1 ? item(id) : resolve(variant.toItemVariant());
+        ResolvedItem resolved = resolve(variant);
         if (resolved == null || !resolved.fallback()) {
             return null;
         }
@@ -318,8 +316,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * @since 0.1.0
      */
     public boolean isFallback(@NonNull BedrockItemVariant variant) {
-        int id = variant.canonicalIn(canonical);
-        ResolvedItem resolved = id != -1 ? item(id) : resolve(variant.toItemVariant());
+        ResolvedItem resolved = resolve(variant);
         return resolved != null && resolved.fallback();
     }
 
@@ -343,6 +340,20 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     // ---- Translation ----
+
+    /**
+     * What this version sends for a variant: its resolution, cached per canonical id. A field read and an array load
+     * for the variants of the newest version, it does not allocate; any other variant is resolved on every call.
+     *
+     * @param variant a variant, written against the newest Bedrock version
+     * @return the item, damage and block to send, and whether the item is a fallback; null if the item does not exist
+     *         here and has no fallback
+     * @since 0.1.0
+     */
+    public @Nullable ResolvedItem resolve(@NonNull BedrockItemVariant variant) {
+        int id = variant.canonicalIn(canonical);
+        return id != -1 ? item(id) : resolve(variant.toItemVariant());
+    }
 
     /**
      * Resolves a variant, written against the newest Bedrock version, for this palette's version.

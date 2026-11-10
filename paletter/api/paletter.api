@@ -137,6 +137,7 @@ public final class org.geysermc.paletter.Palette {
     public org.geysermc.paletter.item.ItemRegistry items()
     public java.util.List<org.geysermc.paletter.PaletteLayer> layers()
     public org.geysermc.paletter.PaletteReport report()
+    public org.geysermc.paletter.item.ResolvedItem resolve(org.geysermc.paletter.vanilla.BedrockItemVariant)
     public int runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState)
     public int runtimeIdOrDefault(org.geysermc.paletter.vanilla.BedrockBlockState, int)
     public boolean sameStack(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData, org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)
@@ -2511,6 +2512,7 @@ public final class org.geysermc.paletter.item.ItemRegistry implements org.cloudb
     public boolean isRegistered(org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition)
     public org.geysermc.paletter.item.RegisteredItem item(java.lang.String)
     public java.util.Collection<org.geysermc.paletter.item.RegisteredItem> items()
+    public org.geysermc.paletter.item.ResolvedItem resolve(org.geysermc.paletter.vanilla.BedrockItemVariant)
     public java.util.Map<java.lang.String, java.util.List<java.lang.String>> tags()
     public org.cloudburstmc.protocol.bedrock.data.inventory.ItemData toItemData(org.geysermc.paletter.item.BedrockItemStack)
     public org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket toPacket()
@@ -2531,6 +2533,18 @@ public final class org.geysermc.paletter.item.RegisteredItem implements org.clou
     public org.geysermc.paletter.Origin origin()
     public org.geysermc.paletter.property.Properties properties()
     public java.lang.String toString()
+}
+
+public record org.geysermc.paletter.item.ResolvedItem {
+    public <init>(org.geysermc.paletter.item.RegisteredItem, int, org.geysermc.paletter.block.RegisteredBlockState, boolean)
+    public org.geysermc.paletter.block.RegisteredBlockState block()
+    public int damage()
+    public org.geysermc.paletter.item.RegisteredItem definition()
+    public final boolean equals(java.lang.Object)
+    public boolean fallback()
+    public final int hashCode()
+    public org.cloudburstmc.protocol.bedrock.data.inventory.ItemData$Builder toItemData()
+    public final java.lang.String toString()
 }
 
 public record org.geysermc.paletter.item.component.AllowOffHand implements org.geysermc.paletter.item.component.ItemComponent {

@@ -1,6 +1,6 @@
 package org.geysermc.paletter;
 
-import org.geysermc.paletter.internal.item.ResolvedItem;
+import org.geysermc.paletter.item.ResolvedItem;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.BlockFallback;
 import org.geysermc.paletter.internal.block.BlockStates;

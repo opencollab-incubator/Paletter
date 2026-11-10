@@ -1,6 +1,6 @@
 package org.geysermc.paletter;
 
-import org.geysermc.paletter.internal.item.ResolvedItem;
+import org.geysermc.paletter.item.ResolvedItem;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.geysermc.paletter.block.RegisteredBlockState;

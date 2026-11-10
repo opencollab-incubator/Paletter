@@ -1,7 +1,7 @@
 package org.geysermc.paletter;
 
 import org.geysermc.paletter.item.BedrockItemStack;
-import org.geysermc.paletter.internal.item.ResolvedItem;
+import org.geysermc.paletter.item.ResolvedItem;
 import com.sun.management.ThreadMXBean;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.BlockProperty;
@@ -9,6 +9,8 @@ import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
+import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
+import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.internal.item.ItemVariant;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
@@ -118,5 +120,46 @@ class HandleTest {
         }
         long allocated = threads.getThreadAllocatedBytes(thread) - before;
         assertTrue(allocated < 4096, allocated + " bytes allocated by " + (20L * handles.length) + " lookups (checksum " + sum + ")");
+    }
+
+    @Test
+    void resolveGivesWhatEncodeSends() {
+        for (DataVersion version : PALETTER.versions()) {
+            Palette palette = PALETTER.vanilla(version);
+            for (BedrockItemVariant variant : List.of(BedrockItems.APPLE.base(), BedrockItems.POTION.variant(5), BedrockItems.OAK_PLANKS.base())) {
+                ResolvedItem resolved = palette.resolve(variant);
+                ItemData sent = palette.encode(BedrockItemStack.of(variant));
+                if (resolved == null) {
+                    assertSame(ItemData.AIR, sent, version.toString());
+                    continue;
+                }
+                assertSame(resolved.definition(), sent.getDefinition(), version.toString());
+                assertEquals(resolved.damage(), sent.getDamage(), version.toString());
+                assertSame(resolved.block(), sent.getBlockDefinition(), version.toString());
+                assertEquals(palette.isFallback(variant), resolved.fallback(), version.toString());
+            }
+        }
+    }
+
+    @Test
+    void resolveOfVanillaVariantsDoesNotAllocate() {
+        Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
+        BedrockItemVariant[] variants = palette.itemVariants().toArray(BedrockItemVariant[]::new);
+        long sum = 0;
+        for (int warmup = 0; warmup < 30; warmup++) {
+            for (BedrockItemVariant variant : variants) {
+                sum += palette.resolve(variant).damage();
+            }
+        }
+        ThreadMXBean threads = (ThreadMXBean) ManagementFactory.getThreadMXBean();
+        long thread = Thread.currentThread().threadId();
+        long before = threads.getThreadAllocatedBytes(thread);
+        for (int round = 0; round < 20; round++) {
+            for (BedrockItemVariant variant : variants) {
+                sum += palette.resolve(variant).damage();
+            }
+        }
+        long allocated = threads.getThreadAllocatedBytes(thread) - before;
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + (20L * variants.length) + " resolutions (checksum " + sum + ")");
     }
 }

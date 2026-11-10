@@ -1,7 +1,7 @@
 package org.geysermc.paletter.vanilla;
 
 import org.geysermc.paletter.item.BedrockItemStack;
-import org.geysermc.paletter.internal.item.ResolvedItem;
+import org.geysermc.paletter.item.ResolvedItem;
 import org.geysermc.paletter.Ids;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.Fallbacks;

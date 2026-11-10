@@ -1,13 +1,13 @@
-package org.geysermc.paletter.internal.item;
+package org.geysermc.paletter.item;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.geysermc.paletter.block.RegisteredBlockState;
-import org.geysermc.paletter.item.RegisteredItem;
 
 /**
- * An {@link ItemVariant} resolved against one palette: what to send to the client.
+ * An item variant resolved against one palette: what to send to the client, see
+ * {@link org.geysermc.paletter.Palette#resolve(org.geysermc.paletter.vanilla.BedrockItemVariant)}.
  *
  * @param definition the item definition
  * @param damage the damage value to send
