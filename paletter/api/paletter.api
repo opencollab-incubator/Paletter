@@ -306,8 +306,13 @@ public final class org.geysermc.paletter.behaviour.Behaviour {
     public <T> T get(org.geysermc.paletter.vanilla.BedrockItemType, org.geysermc.paletter.behaviour.BehaviourKey<T>)
     public boolean isUserSet(org.geysermc.paletter.block.RegisteredBlockState, org.geysermc.paletter.behaviour.BehaviourKey<?>)
     public boolean isUserSet(org.geysermc.paletter.item.RegisteredItem, org.geysermc.paletter.behaviour.BehaviourKey<?>)
+    public boolean isUserSet(org.geysermc.paletter.vanilla.BedrockBlockState, org.geysermc.paletter.behaviour.BehaviourKey<?>)
+    public boolean isUserSet(org.geysermc.paletter.vanilla.BedrockItemType, org.geysermc.paletter.behaviour.BehaviourKey<?>)
+    public <T> org.geysermc.paletter.behaviour.ItemTable<T> items(org.geysermc.paletter.behaviour.BehaviourKey<T>)
     public org.geysermc.paletter.behaviour.Provenance provenance(org.geysermc.paletter.block.RegisteredBlockState, org.geysermc.paletter.behaviour.BehaviourKey<?>)
     public org.geysermc.paletter.behaviour.Provenance provenance(org.geysermc.paletter.item.RegisteredItem, org.geysermc.paletter.behaviour.BehaviourKey<?>)
+    public org.geysermc.paletter.behaviour.Provenance provenance(org.geysermc.paletter.vanilla.BedrockBlockState, org.geysermc.paletter.behaviour.BehaviourKey<?>)
+    public org.geysermc.paletter.behaviour.Provenance provenance(org.geysermc.paletter.vanilla.BedrockItemType, org.geysermc.paletter.behaviour.BehaviourKey<?>)
 }
 
 public final class org.geysermc.paletter.behaviour.BehaviourKey<T> {
@@ -374,9 +379,15 @@ public record org.geysermc.paletter.behaviour.BlockShape$Box {
 }
 
 public final class org.geysermc.paletter.behaviour.BlockTable<T> {
+    public boolean booleanByRuntimeId(int, boolean)
     public T byRuntimeId(int)
+    public float floatByRuntimeId(int, float)
     public T get(int)
     public T get(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)
+    public boolean getBoolean(int, boolean)
+    public float getFloat(int, float)
+    public int getInt(int, int)
+    public int intByRuntimeId(int, int)
     public int size()
 }
 
@@ -395,12 +406,22 @@ public final class org.geysermc.paletter.behaviour.ItemBehaviour {
     public static java.util.List<org.geysermc.paletter.behaviour.BehaviourKey<?>> keys()
 }
 
+public final class org.geysermc.paletter.behaviour.ItemTable<T> {
+    public boolean booleanByRuntimeId(int, boolean)
+    public T byRuntimeId(int)
+    public float floatByRuntimeId(int, float)
+    public T get(org.geysermc.paletter.item.RegisteredItem)
+    public T get(org.geysermc.paletter.vanilla.BedrockItemType)
+    public int intByRuntimeId(int, int)
+    public int size()
+}
+
 public record org.geysermc.paletter.behaviour.Provenance {
-    public <init>(org.geysermc.paletter.behaviour.Provenance$Source, java.lang.String, java.lang.String, java.lang.String)
-    public <init>(org.geysermc.paletter.behaviour.Provenance$Source, java.lang.String, java.lang.String, java.lang.String, java.util.List<org.geysermc.paletter.behaviour.Provenance$Alternative>, java.lang.String, boolean)
+    public <init>(org.geysermc.paletter.behaviour.Provenance$Source, java.lang.String, org.geysermc.paletter.data.DataVersion, org.geysermc.paletter.data.DataVersion)
+    public <init>(org.geysermc.paletter.behaviour.Provenance$Source, java.lang.String, org.geysermc.paletter.data.DataVersion, org.geysermc.paletter.data.DataVersion, java.util.List<org.geysermc.paletter.behaviour.Provenance$Alternative>, java.lang.String)
     public java.util.List<org.geysermc.paletter.behaviour.Provenance$Alternative> alternatives()
     public boolean bdsDefault()
-    public java.lang.String captured()
+    public org.geysermc.paletter.data.DataVersion captured()
     public boolean disputed()
     public final boolean equals(java.lang.Object)
     public final int hashCode()
@@ -412,15 +433,14 @@ public record org.geysermc.paletter.behaviour.Provenance {
     public boolean thirdParty()
     public final java.lang.String toString()
     public boolean unknownDefault()
-    public static org.geysermc.paletter.behaviour.Provenance unknownDefault(java.lang.String)
-    public boolean unverified()
+    public static org.geysermc.paletter.behaviour.Provenance unknownDefault(org.geysermc.paletter.data.DataVersion)
     public boolean userSet()
-    public java.lang.String version()
+    public org.geysermc.paletter.data.DataVersion version()
 }
 
 public record org.geysermc.paletter.behaviour.Provenance$Alternative {
-    public <init>(org.geysermc.paletter.behaviour.Provenance$Source, java.lang.String, java.lang.String, java.lang.Object)
-    public java.lang.String captured()
+    public <init>(org.geysermc.paletter.behaviour.Provenance$Source, java.lang.String, org.geysermc.paletter.data.DataVersion, java.lang.Object)
+    public org.geysermc.paletter.data.DataVersion captured()
     public final boolean equals(java.lang.Object)
     public final int hashCode()
     public java.lang.String reference()

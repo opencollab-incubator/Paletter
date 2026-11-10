@@ -13,7 +13,6 @@ import org.geysermc.paletter.property.Properties;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -59,11 +58,6 @@ public final class WireRules {
         Map.entry(ItemBehaviour.USE_ANIMATION, List.of("minecraft:use_animation")),
         Map.entry(ItemBehaviour.MAX_DAMAGE, List.of("minecraft:durability"))
     );
-    /**
-     * Keys whose rule converts the component value into the engine's unit without a BDS capture that confirms the
-     * conversion. Add a key when a rule is written without one, remove it when a capture of a custom block / item confirms it.
-     */
-    private static final Set<BehaviourKey<?>> UNVERIFIED = Set.of();
 
     private WireRules() {
     }
@@ -74,13 +68,6 @@ public final class WireRules {
      */
     public static @NonNull List<String> components(@NonNull BehaviourKey<?> key) {
         return COMPONENTS.getOrDefault(key, List.of());
-    }
-
-    /**
-     * @return true if the rule's conversion of the component value is not confirmed by BDS evidence yet
-     */
-    public static boolean unverified(@NonNull BehaviourKey<?> key) {
-        return UNVERIFIED.contains(key);
     }
 
     /**

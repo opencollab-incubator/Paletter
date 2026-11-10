@@ -6,7 +6,6 @@ import org.geysermc.paletter.behaviour.BlockBehaviour;
 import org.geysermc.paletter.behaviour.BlockShape;
 import org.geysermc.paletter.behaviour.ItemBehaviour;
 import org.geysermc.paletter.internal.behaviour.BehaviourStore;
-import org.geysermc.paletter.internal.behaviour.WireRules;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,8 +105,8 @@ final class BehaviourReport {
                     BehaviourStore.Resolved resolved = key.owner() == BehaviourKey.Owner.BLOCK
                         ? store.block(key, (Integer) id, version.version()) : store.item(key, (String) id, version.version());
                     String label = resolved == null ? "none"
-                        : resolved.capture().version().equals(version.version().name()) ? resolved.capture().source().name()
-                        : "inherited from " + resolved.capture().version() + " " + resolved.capture().source();
+                        : resolved.capture().version().name().equals(version.version().name()) ? resolved.capture().source().name()
+                        : "inherited from " + resolved.capture().version().name() + " " + resolved.capture().source();
                     counts.merge(label, 1, Integer::sum);
                 }
                 out.append(' ');
@@ -139,7 +138,7 @@ final class BehaviourReport {
                     }
                     String name = state.getValue().getString("name").replace("minecraft:", "");
                     counts.computeIfAbsent(version.version().name() + " " + key, k -> new TreeMap<>()).merge(name, 1, Integer::sum);
-                    String alternative = resolved.disputes().getFirst().capture().source() + "@" + resolved.disputes().getFirst().capture().version();
+                    String alternative = resolved.disputes().getFirst().capture().source() + "@" + resolved.disputes().getFirst().capture().version().name();
                     examples.putIfAbsent(version.version().name() + " " + key, describe(state.getValue(), state.getKey()) + ": "
                         + format(resolved.value()) + " (" + resolved.capture().source() + ") / " + format(resolved.disputes().getFirst().value())
                         + " (" + alternative + ")");
@@ -179,7 +178,7 @@ final class BehaviourReport {
     }
 
     private void customDefaults(StringBuilder out) {
-        out.append("## Custom content: defaults and unverified conversions\n\nBehaviour of custom blocks and items matches BDS: "
+        out.append("## Custom content: defaults\n\nBehaviour of custom blocks and items matches BDS: "
             + "`Provenance#userSet()` tells a component the user set from a BDS default. The default of a key (what BDS uses when "
             + "the component is absent) comes from `").append(BehaviourImport.DEFAULTS_FILE)
             .append("`, each entry with its BDS evidence; without an entry the value is absent and the provenance is "
@@ -191,12 +190,8 @@ final class BehaviourReport {
                 .append(d.source()).append(": ").append(d.reference()).append(")\n"));
             out.append('\n');
         }
-        List<BehaviourKey<?>> unverified = new ArrayList<>(BlockBehaviour.keys());
-        unverified.addAll(ItemBehaviour.keys());
-        unverified.removeIf(key -> !WireRules.unverified(key));
-        out.append("Unverified conversions (`Provenance#unverified()`): ").append(unverified.isEmpty() ? "none" : unverified.toString())
-            .append(". The friction of a custom block is 1 minus the `minecraft:friction` value, confirmed on BDS by the probe "
-                + "(`friction.components` of its capture).\n\n");
+        out.append("The friction of a custom block is 1 minus the `minecraft:friction` value, confirmed on BDS by the probe "
+            + "(`friction.components` of its capture).\n\n");
     }
 
     private void disagreements(StringBuilder out) {

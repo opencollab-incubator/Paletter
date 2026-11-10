@@ -14,6 +14,7 @@ import org.geysermc.paletter.internal.behaviour.BehaviourStore;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.RegisteredItem;
 import org.geysermc.paletter.item.component.MaxStackSize;
+import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItems;
 import org.junit.jupiter.api.Test;
@@ -71,7 +72,7 @@ class BehaviourTest {
         Provenance item = palette.behaviour().provenance(sword, ItemBehaviour.ATTACK_DAMAGE);
         assertEquals(Provenance.Source.ALLAY_DATA, item.source());
         assertTrue(item.inherited());
-        assertEquals(LATEST.name(), item.version());
+        assertEquals(LATEST, item.version());
 
         Provenance stack = palette.behaviour().provenance(sword, ItemBehaviour.MAX_STACK_SIZE);
         assertEquals(Provenance.Source.SCRIPT_API, stack.source());
@@ -150,6 +151,8 @@ class BehaviourTest {
         assertFalse(palette.behaviour().provenance(sword, ItemBehaviour.MAX_STACK_SIZE).thirdParty(), "own Script API capture");
         assertTrue(palette.behaviour().provenance(sword, ItemBehaviour.ATTACK_DAMAGE).thirdParty());
         assertFalse(Provenance.Source.WIRE.thirdParty());
+        assertEquals(0, Provenance.Source.USER.ordinal(), "what the user set beats everything");
+        assertTrue(Provenance.Source.ALLAY_DATA.ordinal() < Provenance.Source.BDS_DEFAULT.ordinal());
         assertTrue(Provenance.Source.CLOUDBURST_DATA.ordinal() < Provenance.Source.ALLAY_DATA.ordinal(), "Data ranks above Allay");
         assertTrue(Provenance.Source.WIRE.ordinal() < Provenance.Source.CLOUDBURST_DATA.ordinal(), "BDS evidence ranks above third parties");
         assertFalse(Provenance.Source.BDS_PROBE.thirdParty());
@@ -260,7 +263,6 @@ class BehaviourTest {
         Provenance friction = behaviour.provenance(state, BlockBehaviour.FRICTION);
         assertTrue(friction.userSet());
         assertTrue(behaviour.isUserSet(state, BlockBehaviour.FRICTION));
-        assertFalse(friction.unverified(), "the 1 - value conversion is confirmed by the probe");
         assertEquals(0.9f, behaviour.get(state, BlockBehaviour.FRICTION), 1e-6f, "component 0.1: engine friction 1 - 0.1");
         assertFalse(friction.thirdParty());
 
@@ -274,13 +276,11 @@ class BehaviourTest {
 
         RegisteredItem registered = Objects.requireNonNull(palette.item(item.type()));
         assertTrue(behaviour.isUserSet(registered, ItemBehaviour.MAX_STACK_SIZE));
-        assertFalse(behaviour.provenance(registered, ItemBehaviour.MAX_STACK_SIZE).unverified());
         assertTrue(behaviour.provenance(registered, ItemBehaviour.ARMOR_VALUE).unknownDefault());
 
         // Vanilla values are never user-set
         RegisteredBlockState stone = palette.block(BedrockBlocks.STONE.defaultState());
         assertFalse(behaviour.isUserSet(stone, BlockBehaviour.FRICTION));
-        assertFalse(behaviour.provenance(stone, BlockBehaviour.FRICTION).unverified());
     }
 
     @Test
@@ -337,5 +337,118 @@ class BehaviourTest {
         Palette items = base.extend(PaletteLayer.builder("items").item(CustomItem.builder("test:i").build()).build());
         assertSame(baseTable.shared(), items.behaviour().blocks(BlockBehaviour.FRICTION).shared());
         assertEquals(baseSize, items.behaviour().blocks(BlockBehaviour.FRICTION).size());
+    }
+
+    /** A palette with every kind of content: vanilla, a custom block and item, and an override of a vanilla item. */
+    private static Palette mixed() {
+        CustomBlock block = CustomBlock.builder("test:block").component(Friction.of(0.1f)).build();
+        CustomItem item = CustomItem.builder("test:thing").component(MaxStackSize.of(16)).build();
+        return PALETTER.vanilla(LATEST).extend(PaletteLayer.builder("test").block(block).item(item)
+            .overrideItem(BedrockItems.APPLE, apple -> apple.dataDriven(MaxStackSize.of(3))).build());
+    }
+
+    @Test
+    void theTablesHoldTheValuesOfTheProvenancePath() {
+        for (Palette palette : List.of(PALETTER.vanilla(PALETTER.versions().getFirst()), PALETTER.vanilla(LATEST), mixed())) {
+            Behaviour behaviour = palette.behaviour();
+            for (BehaviourKey<?> key : BlockBehaviour.keys()) {
+                BlockTable<?> table = behaviour.blocks(key);
+                for (int i = 0; i < palette.blocks().size(); i += 7) {
+                    Behaviour.Value full = behaviour.resolve(palette.blocks().byIndex(i), key);
+                    assertEquals(full == null ? null : full.value(), table.get(i), palette.blocks().byIndex(i) + " " + key);
+                }
+            }
+            for (BehaviourKey<?> key : ItemBehaviour.keys()) {
+                ItemTable<?> table = behaviour.items(key);
+                for (RegisteredItem item : palette.items().definitions()) {
+                    Behaviour.Value full = behaviour.resolve(item, key);
+                    assertEquals(full == null ? null : full.value(), table.get(item), item + " " + key);
+                    assertEquals(table.get(item), behaviour.get(item, key));
+                }
+            }
+        }
+    }
+
+    @Test
+    void overriddenItemsAreUserSetForTheComponentsOfTheLayer() {
+        Palette palette = mixed();
+        Behaviour behaviour = palette.behaviour();
+        RegisteredItem apple = Objects.requireNonNull(palette.item(BedrockItems.APPLE));
+        assertEquals(3, behaviour.get(apple, ItemBehaviour.MAX_STACK_SIZE));
+        assertTrue(behaviour.isUserSet(BedrockItems.APPLE, ItemBehaviour.MAX_STACK_SIZE));
+        assertFalse(behaviour.isUserSet(BedrockItems.APPLE, ItemBehaviour.USE_DURATION));
+        assertFalse(behaviour.isUserSet(BedrockItems.ENDER_PEARL, ItemBehaviour.MAX_STACK_SIZE));
+    }
+
+    @Test
+    void keyTypedOverloadsMatchTheRegisteredOnes() {
+        Palette palette = mixed();
+        Behaviour behaviour = palette.behaviour();
+        BedrockBlockState ice = BedrockBlocks.ICE.defaultState();
+        assertEquals(behaviour.provenance(palette.block(ice), BlockBehaviour.FRICTION), behaviour.provenance(ice, BlockBehaviour.FRICTION));
+        assertFalse(behaviour.isUserSet(ice, BlockBehaviour.FRICTION));
+        RegisteredItem sword = Objects.requireNonNull(palette.item(BedrockItems.DIAMOND_SWORD));
+        assertEquals(behaviour.provenance(sword, ItemBehaviour.ATTACK_DAMAGE), behaviour.provenance(BedrockItems.DIAMOND_SWORD, ItemBehaviour.ATTACK_DAMAGE));
+    }
+
+    @Test
+    void itemTablesAreDenseAndOnlyKnowTheItemsOfThePalette() {
+        Palette palette = mixed();
+        Behaviour behaviour = palette.behaviour();
+        ItemTable<Integer> stacks = behaviour.items(ItemBehaviour.MAX_STACK_SIZE);
+        assertSame(stacks, behaviour.items(ItemBehaviour.MAX_STACK_SIZE));
+        assertEquals(palette.items().definitions().size(), stacks.size());
+        for (RegisteredItem item : palette.items().definitions()) {
+            assertEquals(stacks.get(item), stacks.byRuntimeId(item.getRuntimeId()), item.toString());
+        }
+        assertEquals(16, stacks.get(BedrockItems.ENDER_PEARL));
+        assertEquals(3, stacks.intByRuntimeId(Objects.requireNonNull(palette.item(BedrockItems.APPLE)).getRuntimeId(), -1));
+        assertEquals(-1, stacks.intByRuntimeId(Integer.MAX_VALUE, -1), "not an item of the palette");
+        assertNull(stacks.byRuntimeId(Integer.MAX_VALUE));
+        assertThrows(IllegalArgumentException.class, () -> behaviour.items(BlockBehaviour.FRICTION));
+        RegisteredItem foreign = Objects.requireNonNull(PALETTER.vanilla(PALETTER.versions().getFirst()).item(BedrockItems.APPLE));
+        assertNull(stacks.get(foreign), "an item of another palette is not an item of this table");
+    }
+
+    @Test
+    void primitiveAccessorsNeedNoUnboxing() {
+        Palette palette = mixed();
+        Behaviour behaviour = palette.behaviour();
+        int ice = palette.runtimeId(BedrockBlocks.ICE.defaultState());
+        int unknownState = 0x7eadbeef;
+
+        BlockTable<Float> friction = behaviour.blocks(BlockBehaviour.FRICTION);
+        assertEquals(0.98f, friction.floatByRuntimeId(ice, -1f));
+        assertEquals(0.98f, friction.getFloat(palette.blocks().indexOfRuntimeId(ice), -1f));
+        assertEquals(-1f, friction.floatByRuntimeId(unknownState, -1f), "no such state: the default, not a NullPointerException");
+        assertThrows(ClassCastException.class, () -> friction.getInt(0, 0));
+
+        BlockTable<Integer> light = behaviour.blocks(BlockBehaviour.LIGHT_EMISSION);
+        assertEquals(15, light.intByRuntimeId(palette.runtimeId(BedrockBlocks.LAVA.defaultState()), -1));
+        assertEquals(-1, light.intByRuntimeId(unknownState, -1));
+        assertEquals(light.get(palette.blocks().indexOfRuntimeId(ice)), light.getInt(palette.blocks().indexOfRuntimeId(ice), -1));
+
+        BlockTable<Boolean> solid = behaviour.blocks(BlockBehaviour.SOLID);
+        assertTrue(solid.booleanByRuntimeId(unknownState, true));
+        assertFalse(solid.booleanByRuntimeId(unknownState, false));
+        for (int i = 0; i < solid.size(); i += 11) {
+            Boolean boxed = solid.get(i);
+            assertEquals(boxed == null ? Boolean.TRUE : boxed, solid.getBoolean(i, true));
+        }
+    }
+
+    @Test
+    void aTableIsBuiltOnceWhenSeveralThreadsAskAtTheSameTime() throws Exception {
+        Behaviour behaviour = PALETTER.vanilla(LATEST).extend(PaletteLayer.builder("racing").build()).behaviour();
+        try (java.util.concurrent.ExecutorService pool = java.util.concurrent.Executors.newFixedThreadPool(8)) {
+            List<java.util.concurrent.Future<Object>> tables = new java.util.ArrayList<>();
+            for (int i = 0; i < 8; i++) {
+                boolean blocks = i % 2 == 0;
+                tables.add(pool.submit(() -> blocks ? behaviour.blocks(BlockBehaviour.COLLISION_SHAPE) : behaviour.items(ItemBehaviour.MAX_STACK_SIZE)));
+            }
+            for (int i = 2; i < 8; i++) {
+                assertSame(tables.get(i % 2).get(), tables.get(i).get());
+            }
+        }
     }
 }

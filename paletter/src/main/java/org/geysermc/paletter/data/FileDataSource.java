@@ -118,15 +118,21 @@ final class FileDataSource implements PaletteDataSource {
 
     @Override
     public @NonNull BehaviourStore behaviour() {
-        BehaviourStore behaviour = this.behaviour;
-        if (behaviour == null) {
-            try (InputStream stream = opener.open("behaviour.nbt")) {
-                this.behaviour = behaviour = stream == null ? BehaviourStore.empty() : BehaviourStore.read(stream);
-            } catch (IOException e) {
-                throw new UncheckedIOException("Unable to read the Paletter behaviour data in " + origin, e);
+        BehaviourStore result = behaviour;
+        if (result == null) {
+            // Parsed once: behaviour.nbt is large, and Paletters of several threads may ask at the same time
+            synchronized (this) {
+                result = behaviour;
+                if (result == null) {
+                    try (InputStream stream = opener.open("behaviour.nbt")) {
+                        behaviour = result = stream == null ? BehaviourStore.empty() : BehaviourStore.read(stream);
+                    } catch (IOException e) {
+                        throw new UncheckedIOException("Unable to read the Paletter behaviour data in " + origin, e);
+                    }
+                }
             }
         }
-        return behaviour;
+        return result;
     }
 
     @Override

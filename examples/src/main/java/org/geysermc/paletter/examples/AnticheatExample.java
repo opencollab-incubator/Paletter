@@ -32,7 +32,7 @@ public final class AnticheatExample {
     /** A tiny world: position -> runtime id (state hash), what chunk packets carry. */
     private final Map<List<Integer>, Integer> world = new HashMap<>();
     private final int air;
-    /** Built once per palette (client version) and key; lookups are array loads. */
+    /** Built once per palette (client version) and key; lookups are array loads, the primitive ones allocate nothing. */
     private final BlockTable<Float> friction;
     private final BlockTable<BlockShape> collision;
     private final BlockTable<Boolean> climbable;
@@ -51,8 +51,7 @@ public final class AnticheatExample {
 
     /** The friction of the block under the feet (blocks nothing says anything about count as the usual 0.6). */
     float frictionUnder(double x, double y, double z) {
-        Float value = friction.byRuntimeId(blockAt((int) Math.floor(x), (int) Math.floor(y - 0.5), (int) Math.floor(z)));
-        return value == null ? 0.6f : value;
+        return friction.floatByRuntimeId(blockAt((int) Math.floor(x), (int) Math.floor(y - 0.5), (int) Math.floor(z)), 0.6f);
     }
 
     /** The collision boxes of the blocks in a 3x3x3 cube around a position, in world coordinates. */
@@ -79,6 +78,11 @@ public final class AnticheatExample {
         return climbable.byRuntimeId(blockAt(x, y, z));
     }
 
+    /** The primitive accessor: no null to handle, the caller's own rule is the {@code orElse}. */
+    boolean climbableOr(int x, int y, int z, boolean ownRule) {
+        return climbable.booleanByRuntimeId(blockAt(x, y, z), ownRule);
+    }
+
     public static void main(String[] args) {
         // A server's custom block: its friction component is read with the same key
         CustomBlock slippery = CustomBlock.builder("example:slippery").component(Friction.of(0.02f)).build();
@@ -96,7 +100,7 @@ public final class AnticheatExample {
         for (float[] box : check.collisionsAround(0, 64, 0)) {
             System.out.println("collision box " + java.util.Arrays.toString(box));
         }
-        System.out.println("ladder climbable: " + check.climbable(1, 64, 1));
+        System.out.println("ladder climbable: " + check.climbable(1, 64, 1) + ", or by our own rule: " + check.climbableOr(1, 64, 1, true));
 
         // Where a value comes from, and whether this version inherits it from an older capture
         Behaviour behaviour = palette.behaviour();
@@ -108,8 +112,7 @@ public final class AnticheatExample {
 
         // A custom block: was the value set by the server, or is it a BDS default (measured on BDS), or not known (no value)?
         RegisteredBlockState custom = palette.blocks().block("example:slippery").defaultState();
-        System.out.println("custom friction set by the user: " + behaviour.isUserSet(custom, BlockBehaviour.FRICTION)
-            + ", conversion unverified: " + behaviour.provenance(custom, BlockBehaviour.FRICTION).unverified());
+        System.out.println("custom friction set by the user: " + behaviour.isUserSet(custom, BlockBehaviour.FRICTION));
         System.out.println("custom explosion resistance: " + behaviour.get(custom, BlockBehaviour.EXPLOSION_RESISTANCE) + " ("
             + behaviour.provenance(custom, BlockBehaviour.EXPLOSION_RESISTANCE).source() + ", BDS default: "
             + behaviour.provenance(custom, BlockBehaviour.EXPLOSION_RESISTANCE).bdsDefault() + ")");

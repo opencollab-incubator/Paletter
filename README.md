@@ -409,8 +409,10 @@ Float friction = behaviour.get(BedrockBlocks.ICE.defaultState(), BlockBehaviour.
 BlockShape stairs = behaviour.get(state, BlockBehaviour.COLLISION_SHAPE);                            // several boxes
 Integer eating = behaviour.get(BedrockItems.APPLE, ItemBehaviour.USE_DURATION);                     // 32 ticks
 
-BlockTable<Float> frictions = behaviour.blocks(BlockBehaviour.FRICTION);   // dense, once per palette
-float f = frictions.byRuntimeId(runtimeIdUnderTheFeet);                    // an array load per lookup
+BlockTable<Float> frictions = behaviour.blocks(BlockBehaviour.FRICTION);   // dense, built on first use, once per palette
+float f = frictions.floatByRuntimeId(runtimeIdUnderTheFeet, 0.6f);         // an array load: no boxing, no null, 0.6 where nothing says
+ItemTable<Integer> stacks = behaviour.items(ItemBehaviour.MAX_STACK_SIZE); // the same for items
+int stack = stacks.intByRuntimeId(item.getRuntimeId(), 64);
 
 Provenance p = behaviour.provenance(registeredState, BlockBehaviour.FRICTION);
 // CLOUDBURST_DATA CloudburstMC/Data@0021592..., captured 26.60; p.inherited() when the version has no capture
@@ -451,9 +453,10 @@ p.userSet();          // custom content: the user's component (else a BDS defaul
   the capture that measured it, then `behaviour import`. Measured by the probe on BDS 1.26.63.1: friction 0.6, explosion
   resistance 0, light dampening 15, light emission 0, a full cube collision box, not flammable. Not known (no value): the
   selection box and the destroy time. The friction conversion (engine friction is 1 minus the component value) is
-  measured too, so `Provenance#unverified()` is false.
-- **Session palettes** (`palette.extend(layer)`) share the parent palette's dense `BlockTable` values (the same array);
-  only the block states the layers added have values of their own.
+  measured too.
+- **Session palettes** (`palette.extend(layer)`) share the parent palette's dense `BlockTable` values (the same arrays);
+  only the block states the layers added have values of their own. Tables hold numbers and booleans in primitive arrays:
+  read them with `getFloat`/`getInt`/`getBoolean` and the `...ByRuntimeId` accessors; `get` boxes.
 - Shapes are those of a state alone: shapes that depend on neighbours or the position (scaffolding, plant offsets)
   are the caller's.
 - `behaviour.nbt` and `data/behaviour/REPORT.md` are generated (`./gradlew :tools:run --args="behaviour import

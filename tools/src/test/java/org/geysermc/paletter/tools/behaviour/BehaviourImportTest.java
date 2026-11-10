@@ -85,7 +85,7 @@ class BehaviourImportTest {
         BehaviourStore store = importer.build();
         assertEquals(0.7f, store.block(BlockBehaviour.FRICTION, 1, V1).value(), "the fix, from the stronger source");
         assertEquals(0.98f, store.block(BlockBehaviour.FRICTION, 1, V3).value(), "V3 inherits V2");
-        assertEquals("2.0", store.block(BlockBehaviour.FRICTION, 1, V3).capture().version());
+        assertEquals("2.0", store.block(BlockBehaviour.FRICTION, 1, V3).capture().version().name());
         assertNull(store.block(BlockBehaviour.FRICTION, 101, V1));
         assertEquals(7, store.item(ItemBehaviour.ATTACK_DAMAGE, "minecraft:sword", V3).value());
 
@@ -139,7 +139,7 @@ class BehaviourImportTest {
         BehaviourStore store = disputeScenario().build();
         BehaviourStore.Resolved carried = store.block(BlockBehaviour.FRICTION, 1, V2);
         assertEquals(1, carried.disputes().size(), "V2 only has Data, but its value is the one Allay disputed in V1");
-        assertEquals("1.0", carried.disputes().getFirst().capture().version());
+        assertEquals("1.0", carried.disputes().getFirst().capture().version().name());
         assertTrue(store.block(BlockBehaviour.FRICTION, 3, V2).disputes().isEmpty());
     }
 

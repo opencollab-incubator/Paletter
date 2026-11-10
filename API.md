@@ -69,6 +69,43 @@ between versions:
 - Lookups that take caller input do not cache it, and an unregistered item is sent as the configured default fallback, never as
   air by one path and `minecraft:unknown` by another.
 
+## Behaviour
+
+`palette.behaviour()` answers what BDS knows about blocks and items but never sends clients: friction, destroy time,
+collision shapes, light, max stack size, attack damage. [README](README.md#behaviour) has the walkthrough; this is the
+contract.
+
+- **Keys** are the typed constants of `BlockBehaviour` and `ItemBehaviour` (`BehaviourKey<T>`, `T` one of `Float`,
+  `Integer`, `Boolean`, `String`, `BlockShape`). A key is a block key or an item key; asking with the wrong kind throws
+  `IllegalArgumentException`. A null value means no source says: that is data, not an error. New keys arrive in minor
+  releases.
+- **Lookups.** `Behaviour#get` takes a registered state or item, or a `BedrockBlockState` / `BedrockItemType` resolved in the
+  palette; a state or item that is not of the palette has no value. `get` boxes. Hot paths hold the table of a key
+  (`blocks(key)`, `items(key)`, built on the first ask and kept, one per palette) and read it through the primitive
+  accessors (`getFloat`, `getInt`, `getBoolean`, `floatByRuntimeId`, ...), which take an `orElse` instead of returning null
+  and allocate nothing. A primitive accessor of the wrong value type throws `ClassCastException`. `BlockShape` has value
+  equality (`equals`); shared instances are an optimisation, never an identity guarantee.
+- **Provenance.** `Behaviour#provenance` (and `isUserSet`) say where a value comes from: the `Source`, what exactly was read,
+  the data version it was captured for and the one asked for (`inherited()` if they differ: no capture of the asked version,
+  the newest older one is used). `Provenance.Source` is declared strongest first, and that is the order Behaviour picks in:
+  a component the user set on custom content (or an override of a vanilla item), then Paletter's own captures of BDS
+  (native, Script API, probe) of exactly the asked version, then what BDS sends clients (`WIRE`), then the newest capture
+  covering the state, a third-party dump (CloudburstMC/Data before Allay) or an older version's capture. Direct BDS evidence
+  always beats a third-party dump.
+- **Disputes.** Where third-party dumps disagree and no BDS evidence settles it, the stronger source's value is returned,
+  `disputed()` is true and `alternatives()` has the other values: nothing is picked silently. `postProcessing()` says if the
+  source itself corrected a value.
+- **Custom content.** Custom blocks, custom items and overridden items are read from the components the palette sends,
+  converted to engine units (`minecraft:friction` 0.4 is friction 0.6). `userSet()` is true for a component the user set;
+  without one the value is what Paletter sends anyway, else the BDS default of the key (`bdsDefault()`), else absent with
+  `unknownDefault()`.
+- **Session palettes** (`palette.extend(layer)`) share the vanilla part of the tables of the palette they extend; only the
+  states a layer added have values of their own.
+- **Generation.** Vanilla values are data: `behaviour.nbt`, written by `behaviour import` (tools) from BDS captures under
+  `data/bds` and third-party dumps read from their git history, with `data/behaviour/REPORT.md` listing which source decides
+  each key in each version, the disputes and the known BDS defaults. The generator, the sources and their licences are
+  recorded in the file; the same sources give the same bytes. The file format and `BehaviourStore` are internal.
+
 ## Experiments
 
 Content a Bedrock version has only behind an experiment toggle is missing by default (items unregistered, block states
