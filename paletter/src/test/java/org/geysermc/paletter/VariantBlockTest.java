@@ -31,7 +31,7 @@ class VariantBlockTest {
             BedrockItemVariant stone = BedrockItems.STONE.base();
             RegisteredBlockState block = palette.blockOf(stone);
             assertNotNull(block, version.toString());
-            assertSame(PALETTER.blockOf(stone), block.key(), version.toString());
+            assertSame(PALETTER.blockOf(stone), palette.blocks().key(block), version.toString());
         }
     }
 
@@ -45,7 +45,7 @@ class VariantBlockTest {
         assertEquals(palette.blockOf(BedrockItems.OAK_PLANKS.base()), block);
         // The extra variant has a handle in the palette, and so a key
         assertNotNull(palette.item(extra.type().identifier(), 7));
-        assertNotNull(block.key());
+        assertNotNull(palette.blocks().key(block));
     }
 
     @Test
@@ -66,7 +66,7 @@ class VariantBlockTest {
         RegisteredBlockState block = palette.blockOf(item);
         assertNotNull(block);
         assertEquals("variant:lamp", block.identifier());
-        BedrockBlockState key = block.key();
+        BedrockBlockState key = palette.blocks().key(block);
         assertNotNull(key);
         assertEquals("variant:lamp", key.type().identifier());
         assertEquals(block.getRuntimeId(), palette.runtimeId(key));
@@ -86,7 +86,7 @@ class VariantBlockTest {
         RegisteredBlockState block = palette.blockOf(missing);
         assertNotNull(block);
         assertEquals(palette.blockOf(palette.fallbackOf(missing)), block);
-        assertEquals(BedrockBlocks.UNKNOWN, block.key().type());
+        assertEquals(BedrockBlocks.UNKNOWN, palette.blocks().key(block).type());
     }
 
     @Test

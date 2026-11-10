@@ -58,8 +58,8 @@ class RegisteredBlockTest {
         for (RegisteredBlockState state : wheat.states()) {
             assertSame(wheat, blocks.block(state));
             assertTrue(wheat.components(state).isEmpty());
-            assertNotNull(state.key());
-            assertEquals(state.getState(), state.key().toNbt());
+            assertNotNull(blocks.key(state));
+            assertEquals(state.getState(), blocks.key(state).toNbt());
         }
         assertEquals(wheat.identifier(), wheat.key().identifier());
     }
@@ -110,8 +110,8 @@ class RegisteredBlockTest {
             for (RegisteredBlockState state : block.states()) {
                 assertSame(block, blocks.block(state));
                 assertTrue(state.isCustom());
-                assertNotNull(state.key());
-                assertEquals(state.getState(), state.key().toNbt());
+                assertNotNull(blocks.key(state));
+                assertEquals(state.getState(), blocks.key(state).toNbt());
                 boolean lit = state.states().getByte("example:lit") == 1 && state.states().getString("example:color").equals("green");
                 assertEquals(lit, block.components(state).stream().anyMatch(LightEmission.class::isInstance), state.toString());
                 assertTrue(block.components(state).stream().anyMatch(Geometry.class::isInstance));

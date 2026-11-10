@@ -287,7 +287,7 @@ public final class Palette {
      * The block an item variant is sent with in this palette's version, in its default state: Paletter alone decides it,
      * see {@link ItemRegistry#blockOf}. A stack may carry a block state of its own, see {@link #encode}. Works for every
      * variant: known, registered with {@code PaletteLayer.Builder#variant}, of a custom block item, or one Paletter has never
-     * heard of (the block of its item). {@link RegisteredBlockState#key()} is the block as a key.
+     * heard of (the block of its item). {@link #blockKeyOf} is the block as a key.
      *
      * @return the block, or null if the item is not a block item (or does not exist in this version and has no fallback)
      * @since 0.1.0
@@ -326,13 +326,13 @@ public final class Palette {
      * fallback's block in an old version, the custom block of a layer. {@link #runtimeId(BedrockBlockState)} gives its
      * runtime id here.
      *
-     * @return the block's key, or null if the item is not a block item here (or the state has no key: a vanilla state
-     *         that is not in the newest bundled data)
+     * @return the block's key, or null if the item is not a block item here (or no state of the newest data
+     *         resolves to the block, see {@link BlockRegistry#key})
      * @since 0.1.0
      */
     public @Nullable BedrockBlockState blockKeyOf(@NonNull BedrockItemVariant variant) {
         RegisteredBlockState block = items.blockOf(variant);
-        return block == null ? null : block.key();
+        return block == null ? null : blocks.key(block);
     }
 
     /**
