@@ -221,6 +221,11 @@
           "reference": "control (the base was rejected)"
         }
       },
+      "transforms": {
+        "container": {
+          "unverified": "BDS rejected all 14 variants that set it: container: this member was found in the input, but is not present in the Schema"
+        }
+      },
       "protocols": [
         1001,
         2168
@@ -333,6 +338,11 @@
             "unknownToBds": true,
             "status": "rejected",
             "reference": "control (the base was rejected)"
+          }
+        },
+        "transforms": {
+          "container": {
+            "unverified": "BDS rejected all 14 variants that set it: slot_count: missing required field; title: this member was found in the input, but is not present in the Schema; show_ui_on_interaction: this member was found in the input, but is not present in the Schema"
           }
         },
         "protocols": [
@@ -453,6 +463,14 @@
             "accepted": 2,
             "rejected": 0,
             "status": "dropped"
+          }
+        },
+        "transforms": {
+          "container": {
+            "verified": {
+              "build": "1.26.63.1",
+              "variants": 7
+            }
           }
         },
         "protocols": [
@@ -1179,6 +1197,14 @@
           "reference": "control (the base was rejected)"
         }
       },
+      "transforms": {
+        "[]": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 6
+          }
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -1588,6 +1614,14 @@
             "reference": "control (the base was rejected)"
           }
         },
+        "transforms": {
+          "[]": {
+            "verified": {
+              "build": "1.26.63.1",
+              "variants": 6
+            }
+          }
+        },
         "protocols": [
           2225
         ]
@@ -1632,6 +1666,11 @@
             "enabled_directions: expected an array"
           ],
           "status": "rejected"
+        }
+      },
+      "transforms": {
+        "enabled_directions": {
+          "unverified": "BDS rejected all 4 variants that set it: enabled_directions: expected an array"
         }
       },
       "protocols": [
@@ -2002,6 +2041,20 @@
           ],
           "status": "rejected",
           "reference": "control (the base was rejected)"
+        }
+      },
+      "transforms": {
+        "": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 6
+          },
+          "rejectedFields": [
+            "base_time_to_destroy",
+            "item_specific_speeds[].destroy_speed",
+            "item_specific_speeds[].item[].tags",
+            "seconds_to_destroy"
+          ]
         }
       },
       "protocols": [
@@ -2375,6 +2428,17 @@
           "reference": "control (the base was rejected)"
         }
       },
+      "transforms": {
+        "material_instances": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 2
+          }
+        },
+        "geometry": {
+          "unverified": "BDS rejected all 26 variants that set it: geometry: expected an object; geometry: invalid string; identifier: missing required field"
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -2625,6 +2689,17 @@
             "reference": "control (the base was rejected)"
           }
         },
+        "transforms": {
+          "material_instances": {
+            "verified": {
+              "build": "1.26.63.1",
+              "variants": 2
+            }
+          },
+          "geometry": {
+            "unverified": "BDS rejected all 26 variants that set it: geometry: expected an object; geometry: invalid string; identifier: missing required field"
+          }
+        },
         "protocols": [
           2225
         ]
@@ -2863,6 +2938,14 @@
       },
       "status": "untestable",
       "note": "the control (companions only) and the base were rejected: components: Block needs both a \"geometry\" and \"material_instances\" component.",
+      "transforms": {
+        "": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 2
+          }
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -3136,6 +3219,14 @@
         "minecraft:item_visual.materialInstancesDescription.materials.*.render_method": "opaque (string)",
         "minecraft:item_visual.materialInstancesDescription.materials.*.texture": "paletter_tex (string)",
         "minecraft:item_visual.materialInstancesDescription.materials.*.tint_method": "none (string)"
+      },
+      "transforms": {
+        "material_instances": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 1
+          }
+        }
       },
       "protocols": [
         1001,
@@ -3472,6 +3563,14 @@
           "minecraft:item_visual.materialInstancesDescription.materials.*.texture": "paletter_tex (string)",
           "minecraft:item_visual.materialInstancesDescription.materials.*.tint_method": "none (string)"
         },
+        "transforms": {
+          "material_instances": {
+            "verified": {
+              "build": "1.26.63.1",
+              "variants": 1
+            }
+          }
+        },
         "protocols": [
           2225
         ]
@@ -3757,6 +3856,11 @@
         "minecraft:liquid_detection.detectionRules[].liquidType": "water (string)",
         "minecraft:liquid_detection.detectionRules[].stopsLiquidFromDirection": "0 (byte)"
       },
+      "transforms": {
+        "detection_rules[].stops_liquid_flowing_from_direction": {
+          "unverified": "BDS rejected all 1 variants that set it: stops_liquid_flowing_from_direction: expected an array"
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -3988,7 +4092,10 @@
                 "type:boolean->byte",
                 "enum->int"
               ],
-              "wire": "minecraft:material_instances.materials.*.packed_bools"
+              "wire": "minecraft:material_instances.materials.*.packed_bools",
+              "residualBits": [
+                2
+              ]
             }
           ],
           "whenAbsent": {
@@ -4014,7 +4121,10 @@
                 "type:boolean->byte",
                 "enum->int"
               ],
-              "wire": "minecraft:material_instances.materials.*.packed_bools"
+              "wire": "minecraft:material_instances.materials.*.packed_bools",
+              "residualBits": [
+                2
+              ]
             }
           ],
           "whenAbsent": {
@@ -4230,7 +4340,10 @@
                 "type:boolean->byte",
                 "enum->int"
               ],
-              "wire": "minecraft:material_instances.materials.down.packed_bools"
+              "wire": "minecraft:material_instances.materials.down.packed_bools",
+              "residualBits": [
+                2
+              ]
             }
           ],
           "whenAbsent": {
@@ -4433,7 +4546,10 @@
                 "type:boolean->byte",
                 "enum->int"
               ],
-              "wire": "minecraft:material_instances.materials.east.packed_bools"
+              "wire": "minecraft:material_instances.materials.east.packed_bools",
+              "residualBits": [
+                2
+              ]
             }
           ],
           "whenAbsent": {
@@ -4636,7 +4752,10 @@
                 "type:boolean->byte",
                 "enum->int"
               ],
-              "wire": "minecraft:material_instances.materials.north.packed_bools"
+              "wire": "minecraft:material_instances.materials.north.packed_bools",
+              "residualBits": [
+                2
+              ]
             }
           ],
           "whenAbsent": {
@@ -4839,7 +4958,10 @@
                 "type:boolean->byte",
                 "enum->int"
               ],
-              "wire": "minecraft:material_instances.materials.south.packed_bools"
+              "wire": "minecraft:material_instances.materials.south.packed_bools",
+              "residualBits": [
+                2
+              ]
             }
           ],
           "whenAbsent": {
@@ -5042,7 +5164,10 @@
                 "type:boolean->byte",
                 "enum->int"
               ],
-              "wire": "minecraft:material_instances.materials.up.packed_bools"
+              "wire": "minecraft:material_instances.materials.up.packed_bools",
+              "residualBits": [
+                2
+              ]
             }
           ],
           "whenAbsent": {
@@ -5245,7 +5370,10 @@
                 "type:boolean->byte",
                 "enum->int"
               ],
-              "wire": "minecraft:material_instances.materials.west.packed_bools"
+              "wire": "minecraft:material_instances.materials.west.packed_bools",
+              "residualBits": [
+                2
+              ]
             }
           ],
           "whenAbsent": {
@@ -5304,6 +5432,54 @@
           ],
           "status": "rejected",
           "reference": "control (the base was rejected)"
+        }
+      },
+      "findings": [
+        {
+          "id": "residual-bits block:minecraft:material_instances packed_bools",
+          "bits": [
+            2
+          ],
+          "wires": [
+            "minecraft:material_instances.materials.*.packed_bools",
+            "minecraft:material_instances.materials.down.packed_bools",
+            "minecraft:material_instances.materials.east.packed_bools",
+            "minecraft:material_instances.materials.north.packed_bools",
+            "minecraft:material_instances.materials.south.packed_bools",
+            "minecraft:material_instances.materials.up.packed_bools",
+            "minecraft:material_instances.materials.west.packed_bools"
+          ],
+          "fields": [
+            "*.face_dimming",
+            "*.isotropic",
+            "down.isotropic",
+            "east.isotropic",
+            "north.isotropic",
+            "south.isotropic",
+            "up.isotropic",
+            "west.isotropic"
+          ],
+          "values": [
+            "4",
+            "5",
+            "7"
+          ]
+        }
+      ],
+      "transforms": {
+        "": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 178
+          },
+          "rejectedFields": [
+            "down.tint_method",
+            "east.tint_method",
+            "north.tint_method",
+            "south.tint_method",
+            "up.tint_method",
+            "west.tint_method"
+          ]
         }
       },
       "protocols": [
@@ -5615,6 +5791,17 @@
             "minecraft:placement_filter.conditions[].block_filter[].tags": "omitted",
             "minecraft:placement_filter.conditions[].block_filter[].tags_version": "omitted"
           }
+        }
+      },
+      "transforms": {
+        "conditions[].block_filter[].states": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 3
+          }
+        },
+        "conditions[].allowed_faces": {
+          "unverified": "BDS rejected all 1 variants that set it: allowed_faces: expected an array"
         }
       },
       "protocols": [
@@ -6276,6 +6463,11 @@
         "minecraft:redstone_producer.allowPowerDown": "1 (byte)",
         "minecraft:redstone_producer.allowPowerUp": "0 (byte)"
       },
+      "transforms": {
+        "connected_faces": {
+          "unverified": "BDS rejected all 6 variants that set it: connected_faces: expected an array"
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -6400,6 +6592,17 @@
           "whenAbsent": {
             "minecraft:selection_box.size[]": "16.0 (float)"
           }
+        }
+      },
+      "transforms": {
+        "": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 6
+          },
+          "rejectedFields": [
+            "origin"
+          ]
         }
       },
       "protocols": [
@@ -6975,6 +7178,14 @@
       "constants": {
         "minecraft:transformation.hasJsonVersionBeforeValidation": "0 (byte)"
       },
+      "transforms": {
+        "rotation": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 6
+          }
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -7118,6 +7329,14 @@
               ]
             }
           ]
+        }
+      },
+      "transforms": {
+        "[].components": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 2
+          }
         }
       },
       "protocols": [
@@ -7547,6 +7766,14 @@
         "traits[].blocks_to_corner_with": "[] (list<void>)",
         "traits[].enabled_states.sixteen_way_rotation": "0 (byte)",
         "traits[].name": "minecraft:placement_direction (string)"
+      },
+      "transforms": {
+        "enabled_states": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 4
+          }
+        }
       },
       "protocols": [
         1001,
@@ -8126,6 +8353,20 @@
         "minecraft:block_placer.replaceBlockItem": "0 (byte)",
         "minecraft:publisher_on_use_on.autoSucceedOnClient": "0 (byte)"
       },
+      "transforms": {
+        "block": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 4
+          }
+        },
+        "use_on[].states": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 3
+          }
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -8425,6 +8666,20 @@
           "minecraft:block_placer.canUseBlockAsIcon": "1 (byte)",
           "minecraft:block_placer.replaceBlockItem": "0 (byte)",
           "minecraft:publisher_on_use_on.autoSucceedOnClient": "0 (byte)"
+        },
+        "transforms": {
+          "block": {
+            "verified": {
+              "build": "1.26.63.1",
+              "variants": 4
+            }
+          },
+          "use_on[].states": {
+            "verified": {
+              "build": "1.26.63.1",
+              "variants": 3
+            }
+          }
         },
         "protocols": [
           2225
@@ -9267,6 +9522,14 @@
           }
         }
       },
+      "transforms": {
+        "destroy_speeds[].block.states": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 3
+          }
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -9510,6 +9773,14 @@
           ],
           "whenAbsent": {
             "minecraft:dyeable.default_color[]": "255 (int)"
+          }
+        }
+      },
+      "transforms": {
+        "default_color": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 4
           }
         }
       },
@@ -10096,6 +10367,20 @@
       "constants": {
         "minecraft:publisher_on_use_on.autoSucceedOnClient": "0 (byte)"
       },
+      "transforms": {
+        "use_on[].states": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 3
+          }
+        },
+        "dispense_on[].states": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 3
+          }
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -10256,6 +10541,14 @@
           ],
           "unknownToBds": true,
           "status": "rejected"
+        }
+      },
+      "transforms": {
+        "using_converts_to": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 3
+          }
         }
       },
       "protocols": [
@@ -10551,6 +10844,14 @@
           ]
         }
       },
+      "transforms": {
+        "value": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 2
+          }
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -10606,6 +10907,17 @@
           ],
           "unknownToBds": true,
           "status": "rejected"
+        }
+      },
+      "transforms": {
+        "": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 4
+          },
+          "rejectedFields": [
+            "texture"
+          ]
         }
       },
       "protocols": [
@@ -12006,6 +12318,14 @@
           ]
         }
       },
+      "transforms": {
+        "repair_items": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 14
+          }
+        }
+      },
       "protocols": [
         1001
       ],
@@ -12200,6 +12520,14 @@
               "minecraft:repairable.repair_items": "[] (list<void>)",
               "minecraft:repairable.repair_items[].items[].name": "omitted",
               "minecraft:repairable.repair_items[].repair_amount": "omitted"
+            }
+          }
+        },
+        "transforms": {
+          "repair_items": {
+            "verified": {
+              "build": "1.26.45.1",
+              "variants": 14
             }
           }
         },
@@ -12657,6 +12985,14 @@
           ],
           "whenAbsent": {
             "minecraft:shooter.scale_power_by_draw_duration": "0 (byte)"
+          }
+        }
+      },
+      "transforms": {
+        "ammunition[].item": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 5
           }
         }
       },
@@ -13396,6 +13732,14 @@
           "whenAbsent": {
             "item_properties.use_animation": "0 (int)",
             "minecraft:use_animation.value": "none (string)"
+          }
+        }
+      },
+      "transforms": {
+        "value": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 1
           }
         }
       },

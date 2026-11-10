@@ -19,12 +19,20 @@ public final class Coverage {
     private final Model model;
     private final Fixtures fixtures;
     private final JsonObject transforms;
+    private final Evidence evidence;
     private final Map<String, JsonObject> results = new LinkedHashMap<>();
+    private final Map<String, String> findings = new TreeMap<>();
 
-    Coverage(Model model, Fixtures fixtures, JsonObject transforms) {
+    Coverage(Model model, Fixtures fixtures, JsonObject transforms, Evidence evidence) {
         this.model = model;
         this.fixtures = fixtures;
         this.transforms = transforms;
+        this.evidence = evidence;
+    }
+
+    /** The findings of the inference, id -> description. */
+    void findings(Map<String, String> findings) {
+        this.findings.putAll(findings);
     }
 
     void add(Component component, JsonObject result) {
@@ -89,6 +97,7 @@ public final class Coverage {
                 .append(", ").append(capture.variants().size()).append(" variants (").append(accepted).append(" accepted, ")
                 .append(capture.variants().size() - accepted).append(" rejected)\n");
         }
+        findingsSection(md);
         md.append("\n## Components\n\n| | count |\n|---|---|\n");
         componentCounts().forEach((k, v) -> md.append("| ").append(k).append(" | ").append(v).append(" |\n"));
         md.append("\n`sent`: the component changes the wire; `server-only`: accepted, nothing on the wire; `rejected`: BDS rejects every "
@@ -177,6 +186,8 @@ public final class Coverage {
         if (n == 0) {
             md.append("None.\n");
         }
+        unprovenConstants(md);
+        unverifiedTransforms(md);
         // Docs vs BDS
         md.append("\n## Docs vs BDS\n\nFields BDS reports as \"not present in the Schema\" (docs describe them, BDS ").append(fixtures.formatVersion)
             .append(" does not take them):\n\n");
@@ -245,6 +256,83 @@ public final class Coverage {
             captures.getLast().unattributed().stream().distinct().limit(20).forEach(l -> md.append("- `").append(l.replace("`", "'")).append("`\n"));
         }
         return md.toString();
+    }
+
+    /** What the inference could not explain: bits that are set whatever the JSON says. Unexplained ones are marked loudly. */
+    private void findingsSection(StringBuilder md) {
+        md.append("\n## Findings\n\n");
+        if (findings.isEmpty()) {
+            md.append("None.\n");
+            return;
+        }
+        md.append("What the captures show but no field explains (every finding needs an entry in `evidence.json`):\n\n");
+        findings.forEach((id, description) -> {
+            Evidence.Entry entry = evidence.finding(id);
+            String status = entry == null ? "NO EVIDENCE ENTRY" : entry.unexplained() ? "UNEXPLAINED" : "explained";
+            md.append("- **").append(status).append("** `").append(id).append("`: ").append(description);
+            if (entry != null && entry.unexplained()) {
+                md.append(". ").append(sentence(entry.reason())).append(" Would be explained by: ").append(entry.wouldExplain());
+            } else if (entry != null) {
+                md.append(". ").append(entry.explanation()).append(" (").append(entry.capture()).append(": ")
+                    .append(String.join(", ", entry.variants())).append(")");
+            }
+            md.append('\n');
+        });
+    }
+
+    /** Wire constants (of the mappings and of Transforms.java) that nothing has proven. */
+    private void unprovenConstants(StringBuilder md) {
+        md.append("\n## Unproven constants\n\n");
+        List<Evidence.Entry> unexplained = List.copyOf(evidence.unexplainedConstants());
+        if (unexplained.isEmpty()) {
+            md.append("None.\n");
+            return;
+        }
+        md.append("Constants the model writes whatever the JSON says, for which `evidence.json` records that no capture proves them:\n\n");
+        for (Evidence.Entry entry : unexplained) {
+            md.append("- `").append(entry.key()).append("`: ").append(sentence(entry.reason())).append(" Would be proven by: ")
+                .append(entry.wouldExplain()).append('\n');
+        }
+    }
+
+    /** The hand transforms BDS has not borne out: no accepted variant sets what they compile. */
+    private void unverifiedTransforms(StringBuilder md) {
+        md.append("\n## Hand transforms not verified by BDS\n\n");
+        List<String> lines = new ArrayList<>();
+        int verified = 0;
+        int transformCount = 0;
+        for (String key : transforms.keySet()) {
+            if (key.startsWith("_")) {
+                continue;
+            }
+            transformCount++;
+            JsonObject proof = null;
+            for (Map.Entry<String, JsonObject> r : results.entrySet()) {
+                if (key.startsWith(r.getKey() + ":") && r.getValue().has("transforms")) {
+                    proof = r.getValue().getAsJsonObject("transforms").getAsJsonObject(key.substring(r.getKey().length() + 1));
+                }
+            }
+            if (proof != null && proof.has("verified")) {
+                verified++;
+                if (proof.has("rejectedFields")) {
+                    lines.add("- `" + key + "` (`" + transforms.getAsJsonObject(key).get("transform").getAsString() + "`): verified for the other fields, but BDS rejected every variant of "
+                        + String.join(", ", proof.getAsJsonArray("rejectedFields").asList().stream().map(f -> "`" + f.getAsString() + "`").toList()));
+                }
+            } else {
+                lines.add("- `" + key + "` (`" + transforms.getAsJsonObject(key).get("transform").getAsString() + "`): "
+                    + (proof == null ? "no variant of the component was captured" : proof.get("unverified").getAsString()));
+            }
+        }
+        md.append(verified).append(" of ").append(transformCount).append(" transforms have accepted variants that set what they compile "
+            + "(`verified: {build, variants}` in `mappings.json`; the conformance suite reproduces those variants). Not verified:\n\n");
+        lines.forEach(line -> md.append(line).append('\n'));
+        if (lines.isEmpty()) {
+            md.append("None.\n");
+        }
+    }
+
+    private static String sentence(String text) {
+        return text.endsWith(".") ? text : text + ".";
     }
 
     private static String key(String version) {

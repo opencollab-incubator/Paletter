@@ -4,7 +4,7 @@ Every non-code input of the repository.
 
 | Path | What |
 |------|------|
-| `model/` | The component model and the generators' inputs: `components.json` (creator docs), `mappings.json`, `coverage.md`, `bds-feedback.json`, `transforms.json`, `fixtures.json`, `api.json`, `wire-gaps.txt`, `ATTRIBUTION.md`; `names.json` and `constants-history.json` (vanilla constants) |
+| `model/` | The component model and the generators' inputs: `components.json` (creator docs), `mappings.json`, `coverage.md`, `bds-feedback.json`, `transforms.json`, `evidence.json`, `fixtures.json`, `api.json`, `wire-gaps.txt`, `ATTRIBUTION.md`; `names.json` and `constants-history.json` (vanilla constants) |
 | `bds/<bds version>/` | What one BDS build gave: `addon/` (capture of the capture add-on), `vanilla/`, `creative-*/` (captures of the creative probes), `spec/` (capture of the spec add-on, input of `infer`), `dump.json.gz` (Script API dump, the baseline of `update`), `experiments.json`, `behaviour-probe/` (what `behaviour-probe` measured: `probe.log`, the console it was measured from, and `capture.json`) |
 | `bds/CAPTURED.md` | Index of the captures that keep the console they were measured from (written by the tool that made them) |
 | `bds/WIRE-NOTES.md`, `bds/CREATIVE-ORDER.md` | What BDS sends, and how it orders custom content in the creative inventory |
@@ -16,5 +16,5 @@ command that writes the file. Generated: `addons/capture` and `addons/creative` 
 their `content-log.txt` is captured from BDS), `model/components.json`, `model/mappings.json`, `model/coverage.md`,
 `model/bds-feedback.json`, `model/constants-history.json`, `paletter/api/paletter.api`, the bundled data of
 `paletter/src/main/resources/paletter` (`*.nbt`, `versions.txt`) and `paletter/src/generated`. Hand-written inputs, never
-marked: `api.json`, `fixtures.json`, `transforms.json`, `names.json`, `wire-gaps.txt`, `renames.txt`. Captured from BDS (see
+marked: `api.json`, `fixtures.json`, `transforms.json`, `evidence.json`, `names.json`, `wire-gaps.txt`, `renames.txt`. Captured from BDS (see
 [bds/CAPTURED.md](bds/CAPTURED.md)): everything under `bds/<build>/`. `GeneratedMarkersTest` checks all of this.

@@ -16,7 +16,9 @@ paletter nor its sources, so it can regenerate them when they do not compile. Ja
 | `fixtures.json` | hand | `errata` (what the docs omit), `probeOnly` and `skip`, `replacedBy` (a replacement no data says, with its evidence) |
 | `bds-feedback.json` | generated from BDS's content log | required fields and ranges BDS enforces (they win over the docs), fields BDS does not know |
 | `mappings.json` | inferred from BDS captures | per component and protocol window: status, value form and field rules, `whenAbsent`, `constants` |
-| `transforms.json` | hand | fields or whole components (path `""`) compiled by a named hand transform, with why |
+| `transforms.json` | hand | fields or whole components (path `""`) compiled by a named hand transform, with why; whether BDS bore it out is derived (`verified` / `unverified` in `mappings.json`, listed in `coverage.md`) |
+| `evidence.json` | hand | what proves each wire constant and explains each finding of the inference (see Gates) |
+| `wire-gaps.txt` | hand | captured wire paths the model does not cover: `<component> <path> \| <reason> \| since <build> \| closes with <what>` |
 | `api.json` | hand | Java shaping only: names, union resolution, value forms, descriptors, `keyedExtras`, open enums, `since` |
 
 Output: a record per component in `item.component` / `block.component` (nested records, enums, builder, `of(...)`
@@ -64,6 +66,25 @@ Rules:
   leave the component out with a warning.
 - **Hand transforms per protocol**: a `transforms.json` entry may list `windows` (`{"until": 2225, "transform": "a"},
   {"since": 2225, "transform": "b"}`, gap free, ending with the entry's own transform).
+
+## Gates
+
+The inference (`inferMappings`; `checkMappings` and `UpdateTest` run it too) fails, saying what to add and where, when:
+
+- **Unknown bits**: a boolean or enum `table` rule onto an integer leaf has bits that every value sets and that no field of the leaf explains
+  (`material_instances` `packed_bools` is 4, 5 or 7: bit 2 is in all of them). The rule gets `residualBits`, the component a `findings` entry in
+  `mappings.json`, and `coverage.md` lists it under Findings. Every finding needs an entry in `evidence.json` `findings`: `explained`
+  (capture, variants, explanation) or `unexplained` (reason, and the capture that would explain it). An unexplained finding stays
+  listed, prominently, until a capture explains it.
+- **Unproven constants**: every `constants` entry of `mappings.json` (key `<component> <wire path>`) and every literal wire constant of
+  `Transforms.java` needs an entry in `evidence.json` `constants`: `captured` (capture and variants BDS sent it in, checked against the
+  capture; `leaf` and `value` to check a transform literal) or `unexplained` (listed under Unproven constants in `coverage.md`). A literal of
+  `Transforms.java` is marked `// wire-constant: <id>` on its line (or alone on the line above) and keyed `Transforms <id>`; the scanner
+  flags casts of numbers, `static final` declarations, ternaries and `put`s of literals, float literals and `switch` arms that yield a
+  string, so a constant in another form must be written in one of those. A captured entry without `variants` but with `leaf` and `value`
+  gets the candidates of its capture in the failure message. Entries nothing refers to any more are problems too.
+- **Hand transforms**: `mappings.json` records per transform `verified: {build, variants}` (accepted variants that set what it compiles; the
+  conformance suite reproduces them) or `unverified: <why>`; `coverage.md` lists the unverified ones.
 
 Generation fails, naming component and field, on an unknown transform, two mappings for one protocol, name collisions,
 two fields deciding one wire leaf, an object without documented fields, an ambiguous union, or a rule at the wrong list

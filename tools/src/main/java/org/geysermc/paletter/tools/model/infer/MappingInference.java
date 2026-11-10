@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -79,8 +80,51 @@ public final class MappingInference {
                    Map<String, List<String>> log, List<String> unattributed, Feedback feedback) {
     }
 
-    /** @return false (in check mode) if a committed output differs */
+    /** The generated texts, and what the gates found wrong with them. */
+    private record Output(String mappings, String coverage, String feedback, Coverage coverageModel, List<String> problems) {
+    }
+
+    private List<String> problems = List.of();
+
+    /** What the last {@link #run} or {@link #gates} found wrong: findings and constants without evidence, evidence that does not hold. */
+    public List<String> problems() {
+        return problems;
+    }
+
+    /** Infers in memory, writes nothing. @return the problems of the gates (empty when every finding and constant has its evidence) */
+    public List<String> gates() throws IOException {
+        problems = compute().problems();
+        return problems;
+    }
+
+    /**
+     * @param check compare with the committed outputs instead of writing them
+     * @return false if a committed output differs (check mode) or a gate found a problem ({@link #problems()}); the outputs are
+     *         written either way outside check mode
+     */
     public boolean run(boolean check) throws IOException {
+        Output output = compute();
+        problems = output.problems();
+        String mappingsText = output.mappings();
+        String coverageText = output.coverage();
+        String feedbackText = output.feedback();
+        problems.forEach(p -> System.err.println("GATE: " + p));
+        if (check) {
+            boolean same = mappingsText.equals(read(modelDir.resolve("mappings.json")))
+                && feedbackText.equals(read(modelDir.resolve("bds-feedback.json")))
+                && coverageText.equals(read(modelDir.resolve("coverage.md")));
+            System.out.println(same ? "data/model/mappings.json and coverage.md are up to date"
+                : "data/model/mappings.json or coverage.md is stale: run ./gradlew :tools:inferMappings");
+            return same && problems.isEmpty();
+        }
+        Files.writeString(modelDir.resolve("mappings.json"), mappingsText, StandardCharsets.UTF_8);
+        Files.writeString(modelDir.resolve("coverage.md"), coverageText, StandardCharsets.UTF_8);
+        Files.writeString(modelDir.resolve("bds-feedback.json"), feedbackText, StandardCharsets.UTF_8);
+        System.out.println(output.coverageModel().summary());
+        return problems.isEmpty();
+    }
+
+    private Output compute() throws IOException {
         model = Model.read(modelDir.resolve("components.json"));
         fixtures = Fixtures.read(modelDir);
         model = fixtures.apply(model);
@@ -115,13 +159,18 @@ public final class MappingInference {
         mappings.add("captures", sources);
         mappings.addProperty("formatVersion", fixtures.formatVersion);
         JsonObject components = new JsonObject();
-        Coverage coverage = new Coverage(model, fixtures, transforms);
+        Evidence evidence = Evidence.read(modelDir);
+        Coverage coverage = new Coverage(model, fixtures, transforms, evidence);
+        Map<String, String> findings = new TreeMap<>();
         for (Component component : model.components()) {
             List<JsonObject> results = new ArrayList<>();
             List<Integer> resultProtocols = new ArrayList<>();
             for (Capture capture : captures) {
                 JsonObject result = analyze(capture, component);
                 if (result != null) {
+                    if (result.has("findings")) {
+                        result.getAsJsonArray("findings").forEach(f -> findings.putIfAbsent(f.getAsJsonObject().get("id").getAsString(), describe(f.getAsJsonObject())));
+                    }
                     results.add(result);
                     resultProtocols.add(dataProtocol(capture.protocol()));
                 }
@@ -134,22 +183,29 @@ public final class MappingInference {
             coverage.add(component, newest(merged));
         }
         mappings.add("components", components);
-        String mappingsText = Model.GSON.toJson(mappings) + "\n";
-        String coverageText = coverage.markdown(captures);
-        String feedbackText = Model.GSON.toJson(feedback.json()) + "\n";
-        if (check) {
-            boolean same = mappingsText.equals(read(modelDir.resolve("mappings.json")))
-                && feedbackText.equals(read(modelDir.resolve("bds-feedback.json")))
-                && coverageText.equals(read(modelDir.resolve("coverage.md")));
-            System.out.println(same ? "data/model/mappings.json and coverage.md are up to date"
-                : "data/model/mappings.json or coverage.md is stale: run ./gradlew :tools:inferMappings");
-            return same;
-        }
-        Files.writeString(modelDir.resolve("mappings.json"), mappingsText, StandardCharsets.UTF_8);
-        Files.writeString(modelDir.resolve("coverage.md"), coverageText, StandardCharsets.UTF_8);
-        Files.writeString(modelDir.resolve("bds-feedback.json"), feedbackText, StandardCharsets.UTF_8);
-        System.out.println(coverage.summary());
-        return true;
+        Map<String, String> constants = new TreeMap<>();
+        components.entrySet().forEach(c -> windows(c.getValue().getAsJsonObject()).forEach(window -> {
+            if (window.has("constants")) {
+                window.getAsJsonObject("constants").entrySet().forEach(k -> constants.put(c.getKey() + " " + k.getKey(), k.getValue().getAsString()));
+            }
+        }));
+        Map<String, Capture> byPath = new LinkedHashMap<>();
+        captures.forEach(c -> byPath.put("data/bds/" + c.bdsVersion() + "/spec", c));
+        coverage.findings(findings);
+        List<String> problems = evidence.problems(root, findings, constants, captures.isEmpty() ? null : captures.getLast(), byPath);
+        return new Output(Model.GSON.toJson(mappings) + "\n", coverage.markdown(captures), Model.GSON.toJson(feedback.json()) + "\n", coverage, problems);
+    }
+
+    /** A component's first window and the windows after it ({@code protocol<N>}). */
+    private static List<JsonObject> windows(JsonObject merged) {
+        List<JsonObject> windows = new ArrayList<>(List.of(merged));
+        merged.entrySet().stream().filter(e -> e.getKey().matches("protocol\\d+")).forEach(e -> windows.add(e.getValue().getAsJsonObject()));
+        return windows;
+    }
+
+    private static String describe(JsonObject finding) {
+        return "bits " + finding.get("bits") + " are set in every value (" + finding.get("values") + ") of " + finding.getAsJsonArray("fields").size()
+            + " fields that pack into one leaf, and no field explains them";
     }
 
     private static Set<String> keysOf(Map<String, Leaf> wire) {
@@ -360,6 +416,7 @@ public final class MappingInference {
                 result.addProperty("status", "untestable");
                 result.addProperty("note", "the control (companions only) and the base were rejected: "
                     + firstErrors(control == null ? List.of() : control.log()));
+                transformEvidence(capture, component, result, observations, controlVariant);
                 return result;
             }
             // A companion that needs this component back (geometry <-> material_instances): the base is the control
@@ -458,7 +515,175 @@ public final class MappingInference {
         if (!constants.isEmpty()) {
             result.add("constants", constants);
         }
+        JsonArray findings = findings(component.id(), result);
+        if (!findings.isEmpty()) {
+            result.add("findings", findings);
+        }
+        transformEvidence(capture, component, result, observations, controlVariant);
         return result;
+    }
+
+    /**
+     * Whether BDS bore out each hand transform of the component ({@code transforms.json} keys {@code <component>:<path>}):
+     * {@code verified: {build, variants}} when variants that set the path (the whole component for an empty path) were accepted,
+     * {@code unverified: <why>} when none was; a verified whole component transform also lists the fields BDS rejected in every variant ({@code rejectedFields}). {@code transforms} of the result maps the path to one of the two. The conformance
+     * suite reproduces every accepted variant, so accepted variants are what a transform has been checked against.
+     */
+    private void transformEvidence(Capture capture, Component component, JsonObject result, List<Obs> observations, Obs control) {
+        JsonObject evidence = new JsonObject();
+        for (String key : transforms.keySet()) {
+            if (!key.startsWith(component.id() + ":")) {
+                continue;
+            }
+            String path = key.substring(component.id().length() + 1);
+            List<Obs> setting = observations.stream().filter(o -> o != control && settingPath(o.variant(), path)).toList();
+            long accepted = setting.stream().filter(Obs::accepted).count();
+            JsonObject entry = new JsonObject();
+            if (accepted > 0) {
+                JsonObject verified = new JsonObject();
+                verified.addProperty("build", capture.bdsVersion());
+                verified.addProperty("variants", accepted);
+                entry.add("verified", verified);
+                JsonArray rejected = rejectedFields(result);
+                if (path.isEmpty() && !rejected.isEmpty()) {
+                    entry.add("rejectedFields", rejected);
+                }
+            } else {
+                entry.addProperty("unverified", setting.isEmpty() ? "no variant of the capture sets it"
+                    : "BDS rejected all " + setting.size() + " variants that set it: "
+                    + firstErrors(setting.stream().flatMap(o -> o.log().stream()).toList()));
+            }
+            evidence.add(path, entry);
+        }
+        if (!evidence.isEmpty()) {
+            result.add("transforms", evidence);
+        }
+    }
+
+    /** The fields of the result that BDS rejected in every variant that sets them: what a whole component transform compiles without proof. */
+    private static JsonArray rejectedFields(JsonObject result) {
+        JsonArray rejected = new JsonArray();
+        if (result.has("fields")) {
+            result.getAsJsonObject("fields").entrySet().stream().filter(e -> e.getValue().getAsJsonObject().get("status").getAsString().equals("rejected"))
+                .forEach(e -> rejected.add(e.getKey()));
+        }
+        return rejected;
+    }
+
+    /** Whether the variant sets the path: any value variant for the whole component, else a field variant at or below the path. */
+    private static boolean settingPath(Variant v, String path) {
+        if (path.isEmpty()) {
+            return List.of("base", "form", "field").contains(v.role());
+        }
+        return v.role().equals("field") && (v.path().equals(path) || v.path().startsWith(path + ".") || v.path().startsWith(path + "[]")
+            || v.path().startsWith(path + "{}"));
+    }
+
+    /**
+     * Bits every value of a boolean or enum table sets that no field explains. A field explains the bits its own table varies;
+     * several fields that pack into one leaf ({@code face_dimming} and {@code isotropic} into {@code packed_bools}, whichever face) explain the
+     * union (leaves are told apart by name). What remains is set whatever the JSON says: a bit whose meaning the capture never varied. The rules get
+     * {@code residualBits}, and the component one finding per leaf name in {@code findings}.
+     */
+    static JsonArray findings(String componentId, JsonObject result) {
+        Map<String, List<JsonObject>> byWire = new TreeMap<>();
+        Map<JsonObject, String> owner = new java.util.IdentityHashMap<>();
+        for (String group : List.of("forms", "fields")) {
+            if (!result.has(group)) {
+                continue;
+            }
+            for (Map.Entry<String, JsonElement> e : result.getAsJsonObject(group).entrySet()) {
+                JsonObject field = e.getValue().getAsJsonObject();
+                if (!field.has("rules")) {
+                    continue;
+                }
+                for (JsonElement r : field.getAsJsonArray("rules")) {
+                    JsonObject rule = r.getAsJsonObject();
+                    if (integralTable(rule) != null) {
+                        byWire.computeIfAbsent(leafName(rule.get("wire").getAsString()), k -> new ArrayList<>()).add(rule);
+                        owner.put(rule, e.getKey().isEmpty() ? "(value)" : e.getKey());
+                    }
+                }
+            }
+        }
+        Map<String, JsonObject> findings = new TreeMap<>();
+        for (Map.Entry<String, List<JsonObject>> wire : byWire.entrySet()) {
+            long explained = 0;
+            for (JsonObject rule : wire.getValue()) {
+                long[] values = integralTable(rule);
+                for (long v : values) {
+                    explained |= v ^ values[0];
+                }
+            }
+            for (JsonObject rule : wire.getValue()) {
+                long[] values = integralTable(rule);
+                long common = values[0];
+                for (long v : values) {
+                    common &= v;
+                }
+                long residual = common & ~explained;
+                if (residual == 0) {
+                    continue;
+                }
+                JsonArray bits = new JsonArray();
+                for (int bit = 0; bit < 63; bit++) {
+                    if ((residual >> bit & 1) != 0) {
+                        bits.add(bit);
+                    }
+                }
+                rule.add("residualBits", bits);
+                JsonObject finding = findings.computeIfAbsent("residual-bits " + componentId + " " + wire.getKey(), id -> {
+                    JsonObject f = new JsonObject();
+                    f.addProperty("id", id);
+                    f.add("bits", new JsonArray());
+                    f.add("wires", new JsonArray());
+                    f.add("fields", new JsonArray());
+                    f.add("values", new JsonArray());
+                    return f;
+                });
+                union(finding.getAsJsonArray("bits"), bits);
+                union(finding.getAsJsonArray("wires"), new JsonPrimitive(rule.get("wire").getAsString()));
+                union(finding.getAsJsonArray("fields"), new JsonPrimitive(owner.get(rule)));
+                for (long v : values) {
+                    union(finding.getAsJsonArray("values"), new JsonPrimitive(String.valueOf(v)));
+                }
+            }
+        }
+        JsonArray out = new JsonArray();
+        findings.values().forEach(f -> {
+            sorted(f.getAsJsonArray("values"), Comparator.comparingLong(e -> Long.parseLong(e.getAsString())));
+            out.add(f);
+        });
+        return out;
+    }
+
+    /** The last segment of a wire path: the leaf the bits sit in, whichever map key (face) the path goes through. */
+    private static String leafName(String wire) {
+        return wire.substring(wire.lastIndexOf('.') + 1);
+    }
+
+    /** The values of a table rule onto an integral leaf, when every one is a non negative integer; else null. */
+    private static long[] integralTable(JsonObject rule) {
+        if (!rule.get("kind").getAsString().equals("table") || !rule.has("nbt")
+            || !List.of("byte", "short", "int", "long").contains(rule.get("nbt").getAsString())) {
+            return null;
+        }
+        List<String> values = rule.getAsJsonObject("table").entrySet().stream().map(e -> e.getValue().getAsString()).toList();
+        return values.stream().allMatch(v -> v.matches("\\d{1,18}")) ? values.stream().mapToLong(Long::parseLong).toArray() : null;
+    }
+
+    private static void union(JsonArray into, JsonElement element) {
+        List<JsonElement> add = element.isJsonArray() ? element.getAsJsonArray().asList() : List.of(element);
+        add.stream().filter(e -> !into.contains(e)).forEach(into::add);
+    }
+
+    private static void sorted(JsonArray array, Comparator<JsonElement> order) {
+        List<JsonElement> copy = new ArrayList<>(array.asList());
+        copy.sort(order);
+        while (!array.isEmpty()) {
+            array.remove(array.size() - 1);
+        }
+        copy.forEach(array::add);
     }
 
     /**
@@ -669,16 +894,7 @@ public final class MappingInference {
                 : rules.isEmpty() ? "unresolved" : "partial";
         }
         // A transform of the field, of an object or list containing it, or of the whole component covers it
-        String transformKey = component.id() + ":" + path;
-        for (String p = path; !transforms.has(transformKey); ) {
-            int cut = Math.max(p.lastIndexOf('.'), p.lastIndexOf("[]"));
-            if (cut < 0) {
-                transformKey = transforms.has(component.id() + ":") ? component.id() + ":" : transformKey;
-                break;
-            }
-            p = p.substring(0, cut);
-            transformKey = transforms.has(component.id() + ":" + p) ? component.id() + ":" + p : transformKey;
-        }
+        String transformKey = transformKey(component, path);
         if ((status.equals("unresolved") || status.equals("partial")) && transforms.has(transformKey)) {
             out.add("transform", transforms.get(transformKey));
             status = "hand-rule";
@@ -701,6 +917,21 @@ public final class MappingInference {
             }
         }
         return out;
+    }
+
+    /** The key in transforms.json that covers the path: the path itself, the nearest object or list containing it, or the whole component. */
+    private String transformKey(Component component, String path) {
+        String transformKey = component.id() + ":" + path;
+        for (String p = path; !transforms.has(transformKey); ) {
+            int cut = Math.max(p.lastIndexOf('.'), p.lastIndexOf("[]"));
+            if (cut < 0) {
+                transformKey = transforms.has(component.id() + ":") ? component.id() + ":" : transformKey;
+                break;
+            }
+            p = p.substring(0, cut);
+            transformKey = transforms.has(component.id() + ":" + p) ? component.id() + ":" + p : transformKey;
+        }
+        return transformKey;
     }
 
     record Pair(JsonElement json, Map<String, Leaf> wire, String label) {

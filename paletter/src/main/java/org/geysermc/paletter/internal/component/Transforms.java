@@ -46,12 +46,12 @@ import java.util.Map;
  */
 public final class Transforms {
     /** Bit of {@code packed_bools} BDS sets in every material it sends; meaning unknown. */
-    static final int ALWAYS_SET_BIT = 1 << 2;
-    static final int FACE_DIMMING_BIT = 1;
-    static final int ISOTROPIC_BIT = 1 << 1;
-    private static final String DEFAULT_CULLING_LAYER = "minecraft:culling_layer.undefined";
+    static final int ALWAYS_SET_BIT = 1 << 2; // wire-constant: always_set_bit
+    static final int FACE_DIMMING_BIT = 1; // wire-constant: face_dimming_bit
+    static final int ISOTROPIC_BIT = 1 << 1; // wire-constant: isotropic_bit
+    private static final String DEFAULT_CULLING_LAYER = "minecraft:culling_layer.undefined"; // wire-constant: culling_layer_default
     /** The documented default of {@code culling_shape}; BDS sends an empty string when it is omitted. */
-    private static final String DEFAULT_CULLING_SHAPE = "minecraft:empty";
+    private static final String DEFAULT_CULLING_SHAPE = "minecraft:empty"; // wire-constant: culling_shape_default
 
     private Transforms() {
     }
@@ -69,17 +69,17 @@ public final class Transforms {
         if (c.enabled() != null) {
             return;
         }
-        out.put("minecraft:collision_box.enabled", (byte) 1);
+        out.put("minecraft:collision_box.enabled", (byte) 1); // wire-constant: collision_box_enabled
         out.list("minecraft:collision_box.boxes");
         for (CollisionBox.Entry box : c.boxes()) {
             CollisionBox.Vec3 origin = box.origin() == null ? new CollisionBox.Vec3(-8, 0, -8) : box.origin();
             CollisionBox.Vec3 size = box.size() == null ? new CollisionBox.Vec3(16, 16, 16) : box.size();
             WireNode b = out.element("minecraft:collision_box.boxes");
-            float x1 = 8f - origin.x() - size.x();
-            float x2 = 8f - origin.x();
+            float x1 = 8f - origin.x() - size.x(); // wire-constant: collision_box_center
+            float x2 = 8f - origin.x(); // wire-constant: collision_box_center
             float y1 = origin.y();
             float y2 = origin.y() + size.y();
-            float z1 = 8f + origin.z();
+            float z1 = 8f + origin.z(); // wire-constant: collision_box_center
             float z2 = z1 + size.z();
             b.put("minX", Math.min(x1, x2)).put("maxX", Math.max(x1, x2));
             b.put("minY", Math.min(y1, y2)).put("maxY", Math.max(y1, y2));
@@ -95,17 +95,17 @@ public final class Transforms {
         if (c.enabled() != null) {
             return;
         }
-        out.put("minecraft:collision_box.enabled", (byte) 1);
+        out.put("minecraft:collision_box.enabled", (byte) 1); // wire-constant: collision_box_enabled
         out.list("minecraft:collision_box.boxes");
         for (CollisionBox.Entry box : c.boxes()) {
             CollisionBox.Vec3 origin = box.origin() == null ? new CollisionBox.Vec3(-8, 0, -8) : box.origin();
             CollisionBox.Vec3 size = box.size() == null ? new CollisionBox.Vec3(16, 16, 16) : box.size();
             WireNode b = out.element("minecraft:collision_box.boxes");
-            float x1 = 8f + origin.x();
+            float x1 = 8f + origin.x(); // wire-constant: collision_box_center
             float x2 = x1 + size.x();
             float y1 = origin.y();
             float y2 = origin.y() + size.y();
-            float z1 = 8f + origin.z();
+            float z1 = 8f + origin.z(); // wire-constant: collision_box_center
             float z2 = z1 + size.z();
             b.put("minX", Math.min(x1, x2)).put("maxX", Math.max(x1, x2));
             b.put("minY", Math.min(y1, y2)).put("maxY", Math.max(y1, y2));
@@ -186,21 +186,21 @@ public final class Transforms {
         NbtMapBuilder visibility = NbtMap.builder();
         if (bones != null) {
             bones.forEach((bone, expression) -> visibility.putString(bone, switch (expression) {
-                case "true" -> "1.000000";
-                case "false" -> "0.000000";
+                case "true" -> "1.000000"; // wire-constant: bone_visibility_booleans
+                case "false" -> "0.000000"; // wire-constant: bone_visibility_booleans
                 default -> expression;
             }));
         }
         NbtMapBuilder geometry = NbtMap.builder()
             .putCompound("bone_visibility", visibility.build())
-            .putString("culling", culling == null ? "" : culling)
+            .putString("culling", culling == null ? "" : culling) // wire-constant: culling_default
             .putString("culling_layer", cullingLayer == null ? DEFAULT_CULLING_LAYER : cullingLayer)
-            .putString("culling_shape", cullingShape == null || cullingShape.equals(DEFAULT_CULLING_SHAPE) ? "" : cullingShape)
+            .putString("culling_shape", cullingShape == null || cullingShape.equals(DEFAULT_CULLING_SHAPE) ? "" : cullingShape) // wire-constant: culling_shape_default
             .putString("identifier", identifier)
-            .putByte("ignoreGeometryForIsSolid", (byte) 0)
-            .putByte("isV1Fullblock", (byte) 0)
-            .putByte("needsLegacyTopRotation", (byte) 0)
-            .putByte("useBlockTypeLightAbsorption", (byte) 0)
+            .putByte("ignoreGeometryForIsSolid", (byte) 0) // wire-constant: geometry_flags
+            .putByte("isV1Fullblock", (byte) 0) // wire-constant: geometry_flags
+            .putByte("needsLegacyTopRotation", (byte) 0) // wire-constant: geometry_flags
+            .putByte("useBlockTypeLightAbsorption", (byte) 0) // wire-constant: geometry_flags
             .putByte("uv_lock", Wire.bool(Boolean.TRUE.equals(uvLock)));
         if (uvLockBones != null) {
             // BDS 1.26.63.1: the bones as a list of strings instead of the byte
@@ -233,13 +233,13 @@ public final class Transforms {
     public static void materialInstancesInline(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull EmbeddedVisual c) {
         NbtMapBuilder faces = NbtMap.builder();
         faces(c.materialInstances()).forEach((face, instance) -> faces.putCompound(face, NbtMap.builder()
-            .putString("texture", instance.texture() == null ? "" : instance.texture())
-            .putString("render_method", instance.renderMethod() == null ? "opaque" : instance.renderMethod().value())
-            .putString("tint_method", instance.tintMethod() == null ? "none" : instance.tintMethod())
-            .putFloat("ambient_occlusion", instance.ambientOcclusion() == null ? 1f : instance.ambientOcclusion())
+            .putString("texture", instance.texture() == null ? "" : instance.texture()) // wire-constant: texture_default
+            .putString("render_method", instance.renderMethod() == null ? "opaque" : instance.renderMethod().value()) // wire-constant: render_method_default
+            .putString("tint_method", instance.tintMethod() == null ? "none" : instance.tintMethod()) // wire-constant: tint_method_default
+            .putFloat("ambient_occlusion", instance.ambientOcclusion() == null ? 1f : instance.ambientOcclusion()) // wire-constant: ambient_occlusion_default
             .putByte("face_dimming", Wire.bool(instance.faceDimming() == null || instance.faceDimming()))
             .putByte("isotropic", Wire.bool(instance.isotropic()))
-            .putByte("alpha_masked_tint", (byte) 0)
+            .putByte("alpha_masked_tint", (byte) 0) // wire-constant: alpha_masked_tint
             .build()));
         out.put("minecraft:embedded_visual.material_instances", faces.build());
         // (an empty material_instances object is sent empty)
@@ -253,11 +253,11 @@ public final class Transforms {
             int packed = ALWAYS_SET_BIT | (instance.faceDimming() == null || instance.faceDimming() ? FACE_DIMMING_BIT : 0)
                 | (instance.isotropic() ? ISOTROPIC_BIT : 0);
             materials.putCompound(face, NbtMap.builder()
-                .putFloat("ambient_occlusion", instance.ambientOcclusion() == null ? 1f : instance.ambientOcclusion())
+                .putFloat("ambient_occlusion", instance.ambientOcclusion() == null ? 1f : instance.ambientOcclusion()) // wire-constant: ambient_occlusion_default
                 .putByte("packed_bools", (byte) packed)
-                .putString("render_method", instance.renderMethod() == null ? "opaque" : instance.renderMethod().value())
-                .putString("texture", instance.texture() == null ? "" : instance.texture())
-                .putString("tint_method", instance.tintMethod() == null ? "none" : instance.tintMethod())
+                .putString("render_method", instance.renderMethod() == null ? "opaque" : instance.renderMethod().value()) // wire-constant: render_method_default
+                .putString("texture", instance.texture() == null ? "" : instance.texture()) // wire-constant: texture_default
+                .putString("tint_method", instance.tintMethod() == null ? "none" : instance.tintMethod()) // wire-constant: tint_method_default
                 .build());
         });
         return NbtMap.builder().putCompound("mappings", mappings.build()).putCompound("materials", materials.build()).build();
@@ -316,9 +316,9 @@ public final class Transforms {
     /** Item components send block descriptors as the full {name, states, tags} triple, "" for what is not set. */
     private static void descriptor(WireContext ctx, WireNode out, String prefix, @Nullable String name, Map<String, Object> states,
                                    @Nullable String tags) {
-        out.put(prefix + "name", name == null ? "" : name);
+        out.put(prefix + "name", name == null ? "" : name); // wire-constant: descriptor_name_default
         out.put(prefix + "states", states(ctx, name, states));
-        out.put(prefix + "tags", tags == null ? "" : tags);
+        out.put(prefix + "tags", tags == null ? "" : tags); // wire-constant: descriptor_tags_default
     }
 
     /**
@@ -334,7 +334,7 @@ public final class Transforms {
             WireNode entry = out.element("states");
             entry.put("state", state);
             // int 2 observed (BDS 1.26.63.1); string 1 and boolean 0 by the same order, unverified
-            entry.put("type", value instanceof Integer ? 2 : value instanceof Byte ? 0 : 1);
+            entry.put("type", value instanceof Integer ? 2 : value instanceof Byte ? 0 : 1); // wire-constant: descriptor_state_type
             entry.put("value", value);
         });
     }
@@ -372,7 +372,7 @@ public final class Transforms {
         boolean vanilla = block.indexOf(':') < 0 || block.startsWith("minecraft:");
         if (vanilla && ctx.registry().blockStates(block) == null) {
             ctx.drop(BlockPlacer.NAME, "block " + block + " is not a block of this version (sent as an empty name, like BDS)");
-            out.put("minecraft:block_placer.block", "");
+            out.put("minecraft:block_placer.block", ""); // wire-constant: block_placer_unknown_block
             return;
         }
         out.put("minecraft:block_placer.block", block);
@@ -443,7 +443,7 @@ public final class Transforms {
                 e.element("items").put("tags", entry.itemsTags());
             }
             if (entry.repairAmountExpression() != null && molangCompound) {
-                e.child("repair_amount").put("expression", entry.repairAmountExpression()).put("version", (short) 0);
+                e.child("repair_amount").put("expression", entry.repairAmountExpression()).put("version", (short) 0); // wire-constant: repair_amount_molang_version
             } else if (entry.repairAmountExpression() != null) {
                 e.put("repair_amount", entry.repairAmountExpression());
             } else if (entry.repairAmount() != null) {
@@ -454,7 +454,7 @@ public final class Transforms {
 
     // ---- formatting_code ---------------------------------------------------------------------------------------------
 
-    private static final Map<String, Character> FORMATTING = new LinkedHashMap<>();
+    private static final Map<String, Character> FORMATTING = new LinkedHashMap<>(); // wire-constant: hover_text_color_codes
 
     static {
         String[] names = {"black", "dark_blue", "dark_green", "dark_aqua", "dark_red", "dark_purple", "gold", "gray", "dark_gray",
@@ -472,7 +472,7 @@ public final class Transforms {
      * gets its formatting code ({@code red} -> {@code §c}); unknown names only in the component.
      */
     public static void formattingCode(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull HoverTextColor c) {
-        out.put("minecraft:hover_text_color.value", c.value() == null ? "" : c.value());
+        out.put("minecraft:hover_text_color.value", c.value() == null ? "" : c.value()); // wire-constant: hover_text_color_default
         if (c.value() == null) {
             return;
         }
@@ -489,9 +489,9 @@ public final class Transforms {
      */
     public static void quarterTurns(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Transformation c) {
         Transformation.Vec3 r = c.rotation();
-        out.put("minecraft:transformation.RX", quarterTurns(r == null ? 0 : r.x()));
-        out.put("minecraft:transformation.RY", quarterTurns(r == null ? 0 : r.y()));
-        out.put("minecraft:transformation.RZ", quarterTurns(r == null ? 0 : r.z()));
+        out.put("minecraft:transformation.RX", quarterTurns(r == null ? 0 : r.x())); // wire-constant: quarter_turn_default
+        out.put("minecraft:transformation.RY", quarterTurns(r == null ? 0 : r.y())); // wire-constant: quarter_turn_default
+        out.put("minecraft:transformation.RZ", quarterTurns(r == null ? 0 : r.z())); // wire-constant: quarter_turn_default
     }
 
     static int quarterTurns(float degrees) {
@@ -500,7 +500,7 @@ public final class Transforms {
 
     // ---- face_bits / face_list ---------------------------------------------------------------------------------------
 
-    private static final List<String> FACES = List.of("down", "up", "north", "south", "west", "east");
+    private static final List<String> FACES = List.of("down", "up", "north", "south", "west", "east"); // wire-constant: face_bit_order
 
     static byte faceBits(List<String> faces) {
         int bits = 0;
@@ -544,7 +544,7 @@ public final class Transforms {
         for (PlacementDirection.EnabledStates state : PlacementDirection.EnabledStates.values()) {
             out.put("enabled_states." + state.value().replaceFirst("^minecraft:", ""), Wire.bool(c.enabledStates().contains(state)));
         }
-        out.put("enabled_states.sixteen_way_rotation", (byte) 0);
+        out.put("enabled_states.sixteen_way_rotation", (byte) 0); // wire-constant: sixteen_way_rotation
     }
 
     // ---- icon_textures -----------------------------------------------------------------------------------------------
@@ -592,7 +592,7 @@ public final class Transforms {
      * as BDS does for {@code "item": []}).
      */
     public static void destructibleByMining(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull DestructibleByMining c) {
-        float value = Boolean.FALSE.equals(c.enabled()) ? -1f : Boolean.TRUE.equals(c.enabled()) ? 0f : c.secondsToDestroy();
+        float value = Boolean.FALSE.equals(c.enabled()) ? -1f : Boolean.TRUE.equals(c.enabled()) ? 0f : c.secondsToDestroy(); // wire-constant: destructible_by_mining_values
         out.put("minecraft:destructible_by_mining.value", value);
         if (c.itemSpecificSpeeds() != null && !c.itemSpecificSpeeds().isEmpty()) {
             out.list("minecraft:destructible_by_mining.item_specific_speeds");
@@ -602,7 +602,7 @@ public final class Transforms {
                 }
                 WireNode e = out.element("minecraft:destructible_by_mining.item_specific_speeds");
                 e.put("destroy_speed", speed.destroySpeed());
-                e.put("item", NbtMap.builder().putString("Name", Wire.namespaced(speed.item())).putShort("Aux", (short) 32767).build());
+                e.put("item", NbtMap.builder().putString("Name", Wire.namespaced(speed.item())).putShort("Aux", (short) 32767).build()); // wire-constant: destructible_item_aux
             }
         }
     }
@@ -657,7 +657,7 @@ public final class Transforms {
 
     // ---- use_animation_id --------------------------------------------------------------------------------------------
 
-    private static final Map<String, Integer> USE_ANIMATIONS = Map.of("none", 0, "eat", 1, "drink", 2, "block", 3, "bow", 4,
+    private static final Map<String, Integer> USE_ANIMATIONS = Map.of("none", 0, "eat", 1, "drink", 2, "block", 3, "bow", 4, // wire-constant: use_animation_ids
         "camera", 5, "spear", 6, "crossbow", 9, "spyglass", 10, "brush", 12);
 
     /**
@@ -665,7 +665,7 @@ public final class Transforms {
      * (eat 1 and spear 6 captured from BDS 1.26.63.1, the others as vanilla items send them); unknown names are 0.
      */
     public static void useAnimationId(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull UseAnimation c) {
-        String value = c.value() == null ? "none" : c.value();
+        String value = c.value() == null ? "none" : c.value(); // wire-constant: use_animation_default
         out.put("minecraft:use_animation.value", value);
         out.put("item_properties.use_animation", USE_ANIMATIONS.getOrDefault(value, 0));
     }

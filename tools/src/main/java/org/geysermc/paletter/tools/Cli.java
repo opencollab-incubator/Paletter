@@ -512,8 +512,7 @@ public final class Cli implements Runnable {
     static final class Infer extends Rooted implements Callable<Integer> {
         @Override
         public Integer call() throws Exception {
-            new MappingInference(root()).run(false);
-            return 0;
+            return new MappingInference(root()).run(false) ? 0 : 1;
         }
     }
 
