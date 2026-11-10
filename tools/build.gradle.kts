@@ -75,7 +75,7 @@ fun cliTask(name: String, group: String, description: String, vararg args: Strin
     }
 
 // Vanilla constants (org.geysermc.paletter.vanilla.BedrockBlocks, BedrockStates, BedrockItems, the state enums):
-// from the newest bundled release, names.json and constants-history.json (committed, updated).
+// from the newest bundled release, renames.txt and constants-history.json (committed, updated).
 cliTask("generateConstants", "codegen", "Regenerates the vanilla constants classes from the bundled data", "constants", "generate")
 val checkConstants = cliTask("checkConstants", "verification",
     "Fails if regenerating the vanilla constants from the committed data, names and history yields a diff", "constants", "check", check = true)

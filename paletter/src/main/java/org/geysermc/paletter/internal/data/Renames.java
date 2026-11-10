@@ -14,8 +14,7 @@ import java.util.Set;
  * Identifiers Bedrock renamed, old to new, so content of an older version can be mapped forward to the newest one.
  * Bundled as {@code renames.txt}: lines {@code block <old> <new>} or {@code item <old> <new>}, {@code #} comments.
  * A line {@code item <old>@<aux> <new>[@<aux>]} splits a legacy variant off into a type of its own.
- * The same renames are listed in {@code data/model/names.json} ({@code renamed}), which keeps the old constants as
- * deprecated aliases.
+ * The constants generator reads the same file to keep the old constants as deprecated aliases.
  *
  * @since 0.1.0
  */

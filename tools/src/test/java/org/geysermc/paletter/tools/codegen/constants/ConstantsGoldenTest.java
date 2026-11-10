@@ -11,6 +11,7 @@ import org.geysermc.paletter.internal.creative.RawNode;
 import org.geysermc.paletter.internal.creative.RawStack;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.PaletteDataCodec;
+import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.internal.data.VersionFallbacks;
@@ -41,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * The constants generator on a small synthetic bundle, compared byte for byte with the committed expected sources in
  * {@code src/test/resources/constants-golden}. The fixture has bool, int (range and list) and string states, a value set
- * shared by two states, a name collision settled by names.json, a block that needs a lookup table, a removed block, a
+ * shared by two states, a name collision settled by a name override, a block that needs a lookup table, a removed block, a
  * renamed block, a removed item with a curated fallback, and a preview-only block and item.
  * <p>
  * After an intended change of the output: {@code ./gradlew :tools:test -PupdateGolden=true}, then review the diff.
@@ -73,7 +74,7 @@ class ConstantsGoldenTest {
             }
         }
         blocks.add(door);
-        // Two states with the same values: one shared enum, named in names.json
+        // Two states with the same values: one shared enum, named by an override
         List<NbtMap> wall = new ArrayList<>();
         for (String east : List.of("none", "short", "tall")) {
             for (String west : List.of("none", "short", "tall")) {
@@ -142,17 +143,15 @@ class ConstantsGoldenTest {
         Files.writeString(dir.resolve("versions.txt"), index);
     }
 
-    private static JsonObject names() {
-        return JsonParser.parseString("""
-            {
-              "blocks": {"minecraft:test.block": "TEST_DOT_BLOCK"},
-              "items": {},
-              "states": {"minecraft:facing": "MINECRAFT_FACING"},
-              "enums": {"wall_east": "WallSide"},
-              "renamed": {"blocks": {"minecraft:old_door": "minecraft:test_door"}, "items": {}},
-              "fallbacks": {"blocks": {}, "items": {"minecraft:old_stick": "minecraft:apple"}}
-            }
-            """).getAsJsonObject();
+    private static ConstantsGenerator.Names names() {
+        return names(Map.of("minecraft:test.block", "TEST_DOT_BLOCK"), Map.of(), Map.of("minecraft:facing", "MINECRAFT_FACING"),
+            Map.of("wall_east", "WallSide"));
+    }
+
+    private static ConstantsGenerator.Names names(Map<String, String> blocks, Map<String, String> items, Map<String, String> states,
+                                                  Map<String, String> enums) {
+        return new ConstantsGenerator.Names(blocks, items, states, enums,
+            new Renames(Map.of("minecraft:old_door", "minecraft:test_door"), Map.of()));
     }
 
     private static JsonObject entry(String identifier) {
@@ -166,14 +165,14 @@ class ConstantsGoldenTest {
      * Two generations: 0.1.0 from a release without the lamp (plus history entries of content that is gone since), then
      * 2.1.0 from the full release and a preview.
      *
-     * @param shuffle reorders the blocks of the palette, the items and the keys of names.json and the history
+     * @param shuffle reorders the blocks of the palette, the items and the keys of the history
      */
     private static ConstantsGenerator.Result generate(Path temp, UnaryOperator<List<List<NbtMap>>> shuffleBlocks,
                                                       UnaryOperator<JsonObject> shuffleJson, UnaryOperator<List<VanillaItem>> shuffleItems)
         throws IOException {
         Path first = temp.resolve("first");
         write(first, List.of(data("1.0", 100, shuffleBlocks.apply(releaseBlocks(false)), shuffleItems.apply(releaseItems(false)))), List.of(false));
-        JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(first, shuffleJson.apply(names()), new JsonObject(), "0.1.0")
+        JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(first, names(), new JsonObject(), "0.1.0")
             .files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
         // A history from before the Bedrock versions were recorded: they are derived from the releases and captures again
         for (String section : List.of("blocks", "items")) {
@@ -181,7 +180,9 @@ class ConstantsGoldenTest {
         }
         history.getAsJsonObject("blocks").add("REMOVED_BLOCK", entry("minecraft:removed_block"));
         history.getAsJsonObject("blocks").add("OLD_DOOR", entry("minecraft:old_door"));
-        history.getAsJsonObject("items").add("OLD_STICK", entry("minecraft:old_stick"));
+        JsonObject oldStick = entry("minecraft:old_stick");
+        oldStick.addProperty("fallback", "minecraft:apple");
+        history.getAsJsonObject("items").add("OLD_STICK", oldStick);
 
         Path second = temp.resolve("second");
         List<List<NbtMap>> previewBlocks = new ArrayList<>(releaseBlocks(true));
@@ -193,7 +194,7 @@ class ConstantsGoldenTest {
             data("1.0", 100, releaseBlocks(false), releaseItems(false)),
             data("1.1", 110, shuffleBlocks.apply(releaseBlocks(true)), shuffleItems.apply(releaseItems(true))),
             data("1.2", 120, shuffleBlocks.apply(previewBlocks), shuffleItems.apply(previewItems))), List.of(false, false, true));
-        return ConstantsGenerator.generate(second, shuffleJson.apply(names()), shuffleJson.apply(history), "2.1.0",
+        return ConstantsGenerator.generate(second, names(), shuffleJson.apply(history), "2.1.0",
             ConstantsGenerator.Sources.read(second, captures(temp.resolve("bds"))));
     }
 
@@ -319,7 +320,7 @@ class ConstantsGoldenTest {
 
     // ---- Failures ------------------------------------------------------------------------------------------------
 
-    private static String failure(Path temp, List<List<NbtMap>> blocks, JsonObject names, JsonObject history) throws IOException {
+    private static String failure(Path temp, List<List<NbtMap>> blocks, ConstantsGenerator.Names names, JsonObject history) throws IOException {
         write(temp, List.of(data("9.9", 999, blocks, releaseItems(false))), List.of(false));
         return assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(temp, names, history, "0.1.0")).getMessage();
     }
@@ -357,30 +358,23 @@ class ConstantsGoldenTest {
 
     @Test
     void invalidNamesFailClearly(@TempDir Path temp) throws IOException {
-        JsonObject noOverride = names();
-        noOverride.getAsJsonObject("blocks").remove("minecraft:test.block");
+        ConstantsGenerator.Names noOverride = names(Map.of(), Map.of(), Map.of("minecraft:facing", "MINECRAFT_FACING"), Map.of("wall_east", "WallSide"));
         assertEquals("Duplicate constant BedrockBlocks.TEST_BLOCK for minecraft:test.block and minecraft:test_block; give one a name in "
-            + "data/model/names.json blocks", failure(temp.resolve("a"), releaseBlocks(false), noOverride, new JsonObject()));
+            + "the name overrides of ConstantsGenerator (blocks)", failure(temp.resolve("a"), releaseBlocks(false), noOverride, new JsonObject()));
 
-        JsonObject noState = names();
-        noState.getAsJsonObject("states").remove("minecraft:facing");
-        assertEquals("Duplicate constant BedrockStates.FACING for facing and minecraft:facing; give one a name in data/model/names.json states",
-            failure(temp.resolve("b"), releaseBlocks(false), noState, new JsonObject()));
+        ConstantsGenerator.Names noState = names(Map.of("minecraft:test.block", "TEST_DOT_BLOCK"), Map.of(), Map.of(), Map.of("wall_east", "WallSide"));
+        assertEquals("Duplicate constant BedrockStates.FACING for facing and minecraft:facing; give one a name in "
+            + "the name overrides of ConstantsGenerator (states)", failure(temp.resolve("b"), releaseBlocks(false), noState, new JsonObject()));
 
-        JsonObject digit = names();
-        digit.getAsJsonObject("items").addProperty("minecraft:apple", "1APPLE");
-        assertEquals("minecraft:apple gives the constant name 1APPLE, which is not a Java constant; add it to data/model/names.json items",
-            failure(temp.resolve("c"), releaseBlocks(false), digit, new JsonObject()));
+        ConstantsGenerator.Names digit = names(Map.of("minecraft:test.block", "TEST_DOT_BLOCK"), Map.of("minecraft:apple", "1APPLE"),
+            Map.of("minecraft:facing", "MINECRAFT_FACING"), Map.of("wall_east", "WallSide"));
+        assertEquals("minecraft:apple gives the constant name 1APPLE, which is not a Java constant; add it to "
+            + "the name overrides of ConstantsGenerator (items)", failure(temp.resolve("c"), releaseBlocks(false), digit, new JsonObject()));
 
-        JsonObject enumName = names();
-        enumName.getAsJsonObject("enums").addProperty("wall_east", "wall side");
-        assertEquals("Enum name wall side of [wall_east, wall_west] is no Java class name; set one in data/model/names.json enums",
-            failure(temp.resolve("d"), releaseBlocks(false), enumName, new JsonObject()));
-
-        JsonObject notAnObject = names();
-        notAnObject.addProperty("blocks", "oops");
-        assertEquals("\"blocks\" in data/model/names.json or data/model/constants-history.json is not an object",
-            failure(temp.resolve("e"), releaseBlocks(false), notAnObject, new JsonObject()));
+        ConstantsGenerator.Names enumName = names(Map.of("minecraft:test.block", "TEST_DOT_BLOCK"), Map.of(),
+            Map.of("minecraft:facing", "MINECRAFT_FACING"), Map.of("wall_east", "wall side"));
+        assertEquals("Enum name wall side of [wall_east, wall_west] is no Java class name; set one in "
+            + "the name overrides of ConstantsGenerator (enums)", failure(temp.resolve("d"), releaseBlocks(false), enumName, new JsonObject()));
     }
 
     @Test
@@ -400,7 +394,7 @@ class ConstantsGoldenTest {
                 return history;
             }));
         assertEquals("BedrockStates.OPEN_BIT (open_bit) changed from int to BOOL, which would change the type of the constant; give the state "
-            + "a new name in data/model/names.json states", historyFailure(temp.resolve("c"), history -> {
+            + "a new name in the name overrides of ConstantsGenerator (states)", historyFailure(temp.resolve("c"), history -> {
                 history.getAsJsonObject("states").getAsJsonObject("OPEN_BIT").addProperty("kind", "int");
                 return history;
             }));

@@ -53,10 +53,10 @@ between versions:
 
 - Constants are `static final` objects, never compile time constants: consumers hold handles, not ids.
 - Additions arrive in minor releases, or in patch releases that bundle a new Bedrock version.
-- Removals go through the deprecation cycle: the constant stays, deprecated, and resolves to its fallback
-  (`minecraft:unknown` unless `data/model/names.json` names another); a rename keeps the old constant as an alias.
+- Removals go through the deprecation cycle: the constant stays, deprecated, and resolves to `minecraft:unknown`;
+  a rename keeps the old constant as an alias.
   `data/model/constants-history.json` records every constant ever generated, so regeneration cannot drop one.
-- A state constant never changes its type; generation fails until the state gets a new name in `names.json`.
+- A state constant never changes its type; generation fails until the state gets a new name in the overrides of `ConstantsGenerator`.
 - `BedrockPreviewBlocks` and `BedrockPreviewItems` (content of a bundled preview only) are `@Experimental`.
 
 ## Identity and equality

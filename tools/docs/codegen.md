@@ -131,13 +131,14 @@ the enums in `vanilla.state` and, while a preview is bundled, `BedrockPreviewBlo
 `tools.codegen.constants`; `update` runs the same code on the data it stages.
 
 Inputs: the newest bundled release in `versions.txt` (and a newer preview, whose extra content goes to the preview
-classes); `names.json` (names that differ from the default, what removed content becomes);
+classes); `paletter/.../renames.txt` (the renamed identifiers; names that differ from the default are listed in
+`ConstantsGenerator`);
 `constants-history.json` (every constant generated so far with `since`, and once deprecated `deprecated` plus
 `replacement` or `fallback`; written by every generation, commit it with the classes).
 
 - **Names**: UPPER_SNAKE of the identifier path (`minecraft:item.bed` -> `ITEM_BED`; other namespaces keep theirs as a
   prefix), of the state name for states, enum values from their string. Enums are named after the PascalCase of their
-  first state without a trailing direction. Duplicates and non-identifiers fail; `names.json` settles them.
+  first state without a trailing direction. Duplicates and non-identifiers fail; the name overrides in `ConstantsGenerator` settle them.
 - **Types**: byte states with values 0/1 are `BoolState`, integer states `IntState`, string states `EnumState` of an enum
   shared by every state with the same value set. A state keeps its enum (new values are appended); a state that changes
   its kind fails generation.
@@ -145,7 +146,7 @@ classes); `names.json` (names that differ from the default, what removed content
   cartesian product of its values and that each state's offset is `sum(value index * stride)`. Other blocks get a
   lookup table at runtime; the generator prints them and writes the reason into the javadoc.
 - **Removed content** stays as a deprecated constant: an alias if its identifier exists under another constant or
-  `names.json` `renamed` maps it, otherwise it resolves to `names.json` `fallbacks` or `minecraft:unknown`. `deprecated`
+  `renames.txt` maps it, otherwise it resolves to the `fallback` of its history entry or `minecraft:unknown`. `deprecated`
   is set once.
 - **`@since` is a Bedrock version**: the first bundled release that has the content and does not offer it only through
   an experiment (toggles and their content come from `data/bds/<version>/experiments.json`). Content gated in the first
