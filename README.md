@@ -57,7 +57,8 @@ generated constants (see [Vanilla constants](#vanilla-constants)), custom ones a
 `BedrockBlockType.of(customBlock)`; same classes. A key needs no existence in any version, and renames and splits of
 identifiers Bedrock made (`renames.txt`) map to the same or a new key. Vanilla keys are identity singletons; a custom
 key of an identifier Paletter does not know is a plain value, equal by identifier but not interned (nothing accumulates for
-the JVM lifetime), so compare keys with `equals`. *Registered* is a key inside one palette:
+the JVM lifetime), so compare keys with `equals`. The type of a custom block is also equal by its states:
+`BedrockBlockType.of(block)` equals the type of another block with the same identifier and states, and the type of the bare identifier only if the block has none. *Registered* is a key inside one palette:
 `RegisteredItem`, and `RegisteredBlock` (the block) with its `RegisteredBlockState`s (runtime id, components, origin).
 They implement Cloudburst's `ItemDefinition` / `BlockDefinition` and are compared by identity (as Cloudburst does); there is one
 instance per entry per palette, and they differ per version. `Palette#sameStack(ItemData, ItemData)` compares whole stacks

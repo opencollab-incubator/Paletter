@@ -30,6 +30,7 @@ import java.util.WeakHashMap;
  * @since 0.1.0
  */
 public final class BedrockBlockType {
+    /** Weak in the block: a type must never reference its block, see {@link BlockTypeLayout#custom}. */
     private static final Map<CustomBlock, BedrockBlockType> CUSTOM = new WeakHashMap<>();
 
     private final String identifier;
@@ -70,7 +71,8 @@ public final class BedrockBlockType {
     }
 
     /**
-     * @return the type of a custom block. Equal blocks have the same type
+     * @return the type of a custom block. Equal blocks have the same type; a type equals another of the same identifier
+     *         and states, so also the type of the identifier alone if the block has no states
      */
     public static @NonNull BedrockBlockType of(@NonNull CustomBlock block) {
         synchronized (CUSTOM) {
@@ -262,7 +264,7 @@ public final class BedrockBlockType {
         if (this == o) {
             return true;
         }
-        // Vanilla types are singletons; custom types are equal if their blocks have the same identifier and states
+        // Vanilla types are singletons; custom types are equal if they have the same identifier and states
         return o instanceof BedrockBlockType other && custom && other.custom && identifier.equals(other.identifier)
             && Arrays.equals(layout().properties, other.layout().properties)
             && Arrays.deepEquals(layout().values, other.layout().values);

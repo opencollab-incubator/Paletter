@@ -3,6 +3,8 @@ package org.geysermc.paletter.vanilla;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.Paletter;
+import org.geysermc.paletter.block.BlockProperty;
+import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.item.BedrockItemStack;
 import org.junit.jupiter.api.Test;
 
@@ -93,6 +95,42 @@ class CustomKeysLeakTest {
         assertEquals(null, item.get(), "nothing holds an unknown item type");
         assertEquals(null, block.get(), "nothing holds an unknown block type");
         assertEquals(null, variant.get(), "nothing holds an unknown variant");
+    }
+
+    @Test
+    void aCustomBlockTypeDoesNotKeepItsBlockAlive() {
+        List<WeakReference<CustomBlock>> blocks = new ArrayList<>();
+        BedrockBlockType type = typeOfTemporaryBlock(blocks);
+        WeakReference<CustomBlock> block = blocks.getFirst();
+        for (int i = 0; i < 100 && block.get() != null; i++) {
+            System.gc();
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        assertEquals(null, block.get(), "the type references the block it is the weak map value of");
+        assertEquals(2, type.defaultState().type().states().size());
+    }
+
+    private static BedrockBlockType typeOfTemporaryBlock(List<WeakReference<CustomBlock>> reference) {
+        CustomBlock block = CustomBlock.builder("gc:custom").property(BlockProperty.bool("gc:lit")).build();
+        reference.add(new WeakReference<>(block));
+        BedrockBlockType type = BedrockBlockType.of(block);
+        type.states();
+        return type;
+    }
+
+    @Test
+    void customBlockTypesAreEqualByIdentifierAndStates() {
+        CustomBlock lit = CustomBlock.builder("eq:custom").property(BlockProperty.bool("eq:lit")).build();
+        CustomBlock same = CustomBlock.builder("eq:custom").property(BlockProperty.bool("eq:lit")).build();
+        CustomBlock other = CustomBlock.builder("eq:custom").property(BlockProperty.bool("eq:open")).build();
+        assertSame(BedrockBlockType.of(lit), BedrockBlockType.of(same));
+        assertTrue(!BedrockBlockType.of(lit).equals(BedrockBlockType.of(other)));
+        assertTrue(!BedrockBlockType.of(lit).equals(BedrockBlockType.of("eq:custom")));
+        assertEquals(BedrockBlockType.of("eq:custom"), BedrockBlockType.of(CustomBlock.builder("eq:custom").build()));
     }
 
     @Test

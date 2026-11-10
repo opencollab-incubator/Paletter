@@ -58,6 +58,11 @@ final class BlockTypeLayout {
         return new BlockTypeLayout(owner, properties, values, base, source, defaultOffset);
     }
 
+    /**
+     * The layout of a custom block's type. {@link BedrockBlockType#of(CustomBlock)} keeps the type in a weak map keyed by
+     * the block, so the layout must copy what it needs and never reference the block (or anything of it): a value that
+     * references its key would keep the block, and every layer holding it, alive for the life of the JVM.
+     */
     static BlockTypeLayout custom(BedrockBlockType owner, CustomBlock block) {
         List<BlockProperty<?>> declared = block.stateProperties();
         BedrockState<?>[] properties = new BedrockState<?>[declared.size()];

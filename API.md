@@ -63,6 +63,7 @@ between versions:
 
 - Vanilla keys (the constants) are identity singletons. A key of an identifier Paletter does not know is a value: equal by
   identifier, not interned, never held by Paletter. Compare keys with `equals`; never rely on `==` for a custom key.
+  The type of a custom block (`BedrockBlockType.of(CustomBlock)`) is interned per block value, held weakly, and also equal by its states.
 - `RegisteredItem`, `RegisteredBlockState` are compared by identity, like Cloudburst definitions: one instance per entry per
   palette, shared by every palette extending it that does not change the entry.
 - Lookups that take caller input do not cache it, and an unregistered item is sent as the configured default fallback, never as
