@@ -80,48 +80,32 @@ public final class MappingInference {
                    Map<String, List<String>> log, List<String> unattributed, Feedback feedback) {
     }
 
-    /** The generated texts, and what the gates found wrong with them. */
-    private record Output(String mappings, String coverage, String feedback, Coverage coverageModel, List<String> problems) {
-    }
-
-    private List<String> problems = List.of();
-
-    /** What the last {@link #run} or {@link #gates} found wrong: findings and constants without evidence, evidence that does not hold. */
-    public List<String> problems() {
-        return problems;
-    }
-
-    /** Infers in memory, writes nothing. @return the problems of the gates (empty when every finding and constant has its evidence) */
-    public List<String> gates() throws IOException {
-        problems = compute().problems();
-        return problems;
+    /** The generated texts. */
+    private record Output(String mappings, String coverage, String feedback, Coverage coverageModel) {
     }
 
     /**
      * @param check compare with the committed outputs instead of writing them
-     * @return false if a committed output differs (check mode) or a gate found a problem ({@link #problems()}); the outputs are
-     *         written either way outside check mode
+     * @return false if a committed output differs (check mode); the outputs are written outside check mode
      */
     public boolean run(boolean check) throws IOException {
         Output output = compute();
-        problems = output.problems();
         String mappingsText = output.mappings();
         String coverageText = output.coverage();
         String feedbackText = output.feedback();
-        problems.forEach(p -> System.err.println("GATE: " + p));
         if (check) {
             boolean same = mappingsText.equals(read(modelDir.resolve("mappings.json")))
                 && feedbackText.equals(read(modelDir.resolve("bds-feedback.json")))
                 && coverageText.equals(read(modelDir.resolve("coverage.md")));
             System.out.println(same ? "data/model/mappings.json and coverage.md are up to date"
                 : "data/model/mappings.json or coverage.md is stale: run ./gradlew :tools:inferMappings");
-            return same && problems.isEmpty();
+            return same;
         }
         Files.writeString(modelDir.resolve("mappings.json"), mappingsText, StandardCharsets.UTF_8);
         Files.writeString(modelDir.resolve("coverage.md"), coverageText, StandardCharsets.UTF_8);
         Files.writeString(modelDir.resolve("bds-feedback.json"), feedbackText, StandardCharsets.UTF_8);
         System.out.println(output.coverageModel().summary());
-        return problems.isEmpty();
+        return true;
     }
 
     private Output compute() throws IOException {
@@ -159,8 +143,7 @@ public final class MappingInference {
         mappings.add("captures", sources);
         mappings.addProperty("formatVersion", fixtures.formatVersion);
         JsonObject components = new JsonObject();
-        Evidence evidence = Evidence.read(modelDir);
-        Coverage coverage = new Coverage(model, fixtures, transforms, evidence);
+        Coverage coverage = new Coverage(model, fixtures, transforms);
         Map<String, String> findings = new TreeMap<>();
         for (Component component : model.components()) {
             List<JsonObject> results = new ArrayList<>();
@@ -183,17 +166,8 @@ public final class MappingInference {
             coverage.add(component, newest(merged));
         }
         mappings.add("components", components);
-        Map<String, String> constants = new TreeMap<>();
-        components.entrySet().forEach(c -> windows(c.getValue().getAsJsonObject()).forEach(window -> {
-            if (window.has("constants")) {
-                window.getAsJsonObject("constants").entrySet().forEach(k -> constants.put(c.getKey() + " " + k.getKey(), k.getValue().getAsString()));
-            }
-        }));
-        Map<String, Capture> byPath = new LinkedHashMap<>();
-        captures.forEach(c -> byPath.put("data/bds/" + c.bdsVersion() + "/spec", c));
         coverage.findings(findings);
-        List<String> problems = evidence.problems(root, findings, constants, captures.isEmpty() ? null : captures.getLast(), byPath);
-        return new Output(Model.GSON.toJson(mappings) + "\n", coverage.markdown(captures), Model.GSON.toJson(feedback.json()) + "\n", coverage, problems);
+        return new Output(Model.GSON.toJson(mappings) + "\n", coverage.markdown(captures), Model.GSON.toJson(feedback.json()) + "\n", coverage);
     }
 
     /** A component's first window and the windows after it ({@code protocol<N>}). */

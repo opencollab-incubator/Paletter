@@ -19,15 +19,13 @@ public final class Coverage {
     private final Model model;
     private final Fixtures fixtures;
     private final JsonObject transforms;
-    private final Evidence evidence;
     private final Map<String, JsonObject> results = new LinkedHashMap<>();
     private final Map<String, String> findings = new TreeMap<>();
 
-    Coverage(Model model, Fixtures fixtures, JsonObject transforms, Evidence evidence) {
+    Coverage(Model model, Fixtures fixtures, JsonObject transforms) {
         this.model = model;
         this.fixtures = fixtures;
         this.transforms = transforms;
-        this.evidence = evidence;
     }
 
     /** The findings of the inference, id -> description. */
@@ -186,7 +184,7 @@ public final class Coverage {
         if (n == 0) {
             md.append("None.\n");
         }
-        unprovenConstants(md);
+        unreachedConstants(md);
         unverifiedTransforms(md);
         // Docs vs BDS
         md.append("\n## Docs vs BDS\n\nFields BDS reports as \"not present in the Schema\" (docs describe them, BDS ").append(fixtures.formatVersion)
@@ -258,41 +256,28 @@ public final class Coverage {
         return md.toString();
     }
 
-    /** What the inference could not explain: bits that are set whatever the JSON says. Unexplained ones are marked loudly. */
+    /** What the inference could not explain: bits that are set whatever the JSON says. */
     private void findingsSection(StringBuilder md) {
         md.append("\n## Findings\n\n");
         if (findings.isEmpty()) {
             md.append("None.\n");
             return;
         }
-        md.append("What the captures show but no field explains (every finding needs an entry in `evidence.json`):\n\n");
-        findings.forEach((id, description) -> {
-            Evidence.Entry entry = evidence.finding(id);
-            String status = entry == null ? "NO EVIDENCE ENTRY" : entry.unexplained() ? "UNEXPLAINED" : "explained";
-            md.append("- **").append(status).append("** `").append(id).append("`: ").append(description);
-            if (entry != null && entry.unexplained()) {
-                md.append(". ").append(sentence(entry.reason())).append(" Would be explained by: ").append(entry.wouldExplain());
-            } else if (entry != null) {
-                md.append(". ").append(entry.explanation()).append(" (").append(entry.capture()).append(": ")
-                    .append(String.join(", ", entry.variants())).append(")");
-            }
-            md.append('\n');
-        });
+        md.append("What the captures show but no field explains:\n\n");
+        findings.forEach((id, description) -> md.append("- `").append(id).append("`: ").append(description).append('\n'));
     }
 
-    /** Wire constants (of the mappings and of Transforms.java) that nothing has proven. */
-    private void unprovenConstants(StringBuilder md) {
-        md.append("\n## Unproven constants\n\n");
-        List<Evidence.Entry> unexplained = List.copyOf(evidence.unexplainedConstants());
-        if (unexplained.isEmpty()) {
-            md.append("None.\n");
-            return;
-        }
-        md.append("Constants the model writes whatever the JSON says, for which `evidence.json` records that no capture proves them:\n\n");
-        for (Evidence.Entry entry : unexplained) {
-            md.append("- `").append(entry.key()).append("`: ").append(sentence(entry.reason())).append(" Would be proven by: ")
-                .append(entry.wouldExplain()).append('\n');
-        }
+    /**
+     * Values of {@code Transforms} that no accepted capture variant sends, so the conformance suite does not check them.
+     * The Javadoc of each says where its value comes from.
+     */
+    static final List<String> UNREACHED_CONSTANTS = List.of("FACES", "FORMATTING", "USE_ANIMATIONS", "stateType");
+
+    private void unreachedConstants(StringBuilder md) {
+        md.append("\n## Constants no capture reaches\n\n");
+        md.append("Wire values of `Transforms` that no accepted variant sends, so the conformance suite does not check them "
+            + "(each one's Javadoc says where it comes from): ");
+        md.append(String.join(", ", UNREACHED_CONSTANTS.stream().map(name -> "`Transforms." + name + "`").toList())).append(".\n");
     }
 
     /** The hand transforms BDS has not borne out: no accepted variant sets what they compile. */

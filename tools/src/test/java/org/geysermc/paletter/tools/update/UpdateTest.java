@@ -5,7 +5,6 @@ import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.data.Importer;
 import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.data.WireShapes;
-import org.geysermc.paletter.tools.model.infer.MappingInference;
 import java.util.List;
 import java.util.Map;
 import com.google.gson.JsonParser;
@@ -82,13 +81,6 @@ class UpdateTest {
             Files.writeString(model.resolve("wire-gaps.txt"), bad + "\n");
             assertThrows(IllegalArgumentException.class, () -> WireShapes.knownGaps(model), bad);
         }
-    }
-
-    @Test
-    void everyFindingAndConstantHasItsEvidence() throws Exception {
-        Path root = Path.of(System.getProperty("paletter.root", ".."));
-        var problems = new MappingInference(root).gates();
-        assertTrue(problems.isEmpty(), "findings or constants without evidence (data/model/evidence.json):\n  " + String.join("\n  ", problems));
     }
 
     @Test

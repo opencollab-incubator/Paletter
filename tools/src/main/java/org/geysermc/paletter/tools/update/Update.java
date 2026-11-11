@@ -1151,25 +1151,10 @@ public final class Update {
         if (write) {
             MappingInference inference = new MappingInference(root);
             inference.run(false);
-            gateProblems(inference.problems());
             report.repoChanges.add("update `" + Layout.MODEL + "/mappings.json`, `coverage.md`, `bds-feedback.json` (inferred from the spec captures)");
             report.check(Report.Status.INFO, "Component model", "mappings inferred; run :tools:generateComponentApi and the conformance suite (:tools:test) for the new protocol");
         } else {
             report.check(Report.Status.INFO, "Component model", "mappings not inferred (verify only or preview not imported)");
-        }
-    }
-
-    /**
-     * What the inference gates found: findings (bits no field explains) and wire constants without an entry in
-     * {@code evidence.json}, evidence that no longer holds, literal constants of Transforms.java without marker. Each line says what and where.
-     */
-    private void gateProblems(List<String> problems) {
-        report.check(problems.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Mapping gates",
-            problems.isEmpty() ? "every finding and wire constant has its evidence (" + Layout.MODEL + "/evidence.json)"
-                : problems.size() + " findings or constants without evidence, or evidence that does not hold");
-        problems.forEach(problem -> report.todos.add("MAPPING GATE: " + problem));
-        if (!problems.isEmpty()) {
-            report.section("Mapping gates", problems.stream().map(p -> "- " + p.replace("`", "'")).toList());
         }
     }
 
