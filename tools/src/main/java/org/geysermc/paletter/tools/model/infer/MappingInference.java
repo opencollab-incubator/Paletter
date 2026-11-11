@@ -1009,9 +1009,14 @@ public final class MappingInference {
         } else if (set.stream().allMatch(p -> p.json.isJsonObject())) {
             rule = object(set, wire);
         } else {
-            // Mixed forms (shorthand and object): fit each JSON type separately; take the scalar part if it fits
+            // Mixed forms (shorthand and object, or a vector as a list and as an object): fit each JSON type separately;
+            // take the scalar part if it fits, else the list part
             List<Pair> primitive = set.stream().filter(p -> p.json.isJsonPrimitive()).toList();
+            List<Pair> lists = set.stream().filter(p -> p.json.isJsonArray()).toList();
             rule = primitive.isEmpty() ? null : scalar(primitive, p -> p.json, wire);
+            if (rule == null && !lists.isEmpty()) {
+                rule = array(lists, wire);
+            }
         }
         if (rule == null) {
             return null;
@@ -1200,6 +1205,7 @@ public final class MappingInference {
                 candidates.add(k);
             }
         }
+        JsonObject best = null;
         for (int k : candidates) {
             final int at = k;
             List<Pair> having = set.stream().filter(p -> p.json.getAsJsonArray().size() > at).toList();
@@ -1216,8 +1222,13 @@ public final class MappingInference {
             }
             if (rule != null && !rule.get("kind").getAsString().equals("constant")) {
                 rule.addProperty("element", k);
-                return rule;
+                if (best == null || offset(rule) < offset(best)) {
+                    best = rule;
+                }
             }
+        }
+        if (best != null) {
+            return best;
         }
         // list length (an empty marker or a count)
         if (set.stream().allMatch(p -> p.wire.get(wire) != null && p.wire.get(wire).numeric()
@@ -1232,6 +1243,15 @@ public final class MappingInference {
             return rule;
         }
         return null;
+    }
+
+    /**
+     * How far a list element rule is from passing the value through: 0 for identity and for a pure scale. Two observations
+     * of a vector fit a line on every element ({@code [90, 180, 270]} and {@code [180, 270, 0]} put RY on element 0 with
+     * offset 1 as well as on element 1 with offset 0), so the element whose rule needs no offset explains the leaf.
+     */
+    private static double offset(JsonObject rule) {
+        return rule.has("offset") ? Math.abs(rule.get("offset").getAsDouble()) : 0;
     }
 
     /** map entry: the JSON key appears in the leaf path and its value maps; or presence of an (empty) object. */

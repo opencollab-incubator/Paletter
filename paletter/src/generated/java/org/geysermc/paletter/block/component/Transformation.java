@@ -14,7 +14,6 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * Add-on JSON: {@code "minecraft:transformation"}.
  *
  * @param rotation The block's rotation in increments of 90 degrees Add-on JSON {@code rotation}. Default: <code>[0,0,0]</code>.
- *        Compiled by the hand transform {@code quarter_turns}.
  * @param rotationPivot The point to apply rotation around. This item requires a format version of at least 1.21.0. Add-on JSON {@code
  *        rotation_pivot}. Default: <code>[0,0,0]</code>.
  * @param scale The block's scale Add-on JSON {@code scale}. Default: <code>[1,1,1]</code>.

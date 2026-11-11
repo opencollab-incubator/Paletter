@@ -57,9 +57,9 @@ field but nothing on the wire follows it (server only); `rejected`: every varian
 | count | 1 |
 | cross-field | 3 |
 | empty-list | 19 |
-| identity | 216 |
-| linear | 9 |
-| structure | 40 |
+| identity | 229 |
+| linear | 12 |
+| structure | 24 |
 | table | 20 |
 
 | tag | rules |
@@ -67,17 +67,17 @@ field but nothing on the wire follows it (server only); `rejected`: every varian
 | assumed-by-name | 2 |
 | depends-on-other-fields | 3 |
 | enum->int | 19 |
-| explained-by-child-fields | 40 |
+| explained-by-child-fields | 24 |
 | flattened | 15 |
 | injected-default | 162 |
 | item_properties | 13 |
-| list-element | 15 |
-| nested | 91 |
+| list-element | 31 |
+| nested | 92 |
 | outside-component:* | 3 |
 | presence | 14 |
-| renamed | 81 |
+| renamed | 96 |
 | type:* | 107 |
-| unit-conversion | 9 |
+| unit-conversion | 12 |
 | value-map | 1 |
 
 ## Per component
@@ -211,7 +211,7 @@ Wire values of `Transforms` that no accepted variant sends, so the conformance s
 
 ## Hand transforms not verified by BDS
 
-25 of 29 transforms have accepted variants that set what they compile (`verified: {build, variants}` in `mappings.json`; the conformance suite reproduces those variants). Not verified:
+24 of 28 transforms have accepted variants that set what they compile (`verified: {build, variants}` in `mappings.json`; the conformance suite reproduces those variants). Not verified:
 
 - `block:minecraft:material_instances:` (`material_instances`): verified for the other fields, but BDS rejected every variant of `down.tint_method`, `east.tint_method`, `north.tint_method`, `south.tint_method`, `up.tint_method`, `west.tint_method`
 - `block:minecraft:placement_filter:conditions[].allowed_faces` (`face_bits`): BDS rejected all 1 variants that set it: allowed_faces: expected an array

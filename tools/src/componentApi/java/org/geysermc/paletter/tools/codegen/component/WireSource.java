@@ -525,7 +525,12 @@ final class WireSource {
             case "linear" -> {
                 double scale = r.get("scale").getAsDouble();
                 double offset = r.get("offset").getAsDouble();
-                CodeBlock number = CodeBlock.of("($L * $L + $L)", decimal(scale), numeric(t, expr), decimal(offset));
+                // A scale of 1/n (degrees / 90 -> quarter turns) divides by n: the rounded scale times a multiple of n would
+                // fall just short of the integer an integral leaf truncates to
+                double divisor = 1 / scale;
+                CodeBlock number = Math.abs(scale) < 1 && Math.abs(divisor - Math.rint(divisor)) < 1e-3
+                    ? CodeBlock.of("($L / $L + $L)", numeric(t, expr), decimal(Math.rint(divisor)), decimal(offset))
+                    : CodeBlock.of("($L * $L + $L)", decimal(scale), numeric(t, expr), decimal(offset));
                 put(node, rel, fromNumber(nbt, number, f));
             }
             case "table" -> {

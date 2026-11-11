@@ -20,7 +20,6 @@ import org.geysermc.paletter.block.component.PlacementDirection;
 import org.geysermc.paletter.block.component.PlacementFilter;
 import org.geysermc.paletter.block.component.RedstoneProducer;
 import org.geysermc.paletter.block.component.SelectionBox;
-import org.geysermc.paletter.block.component.Transformation;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.item.component.BlockPlacer;
 import org.geysermc.paletter.item.component.Digger;
@@ -297,14 +296,7 @@ class TransformsTest {
     }
 
     @Test
-    void quarterTurnsFacesAndFlags() {
-        WireNode t = new WireNode();
-        Transforms.quarterTurns(ctx, t, Transformation.builder().rotation(90, 180, -90).build());
-        NbtMap r = compound(t, "minecraft:transformation");
-        assertEquals(1, r.getInt("RX"));
-        assertEquals(2, r.getInt("RY"));
-        assertEquals(3, r.getInt("RZ"));
-
+    void facesAndFlags() {
         WireNode filter = new WireNode();
         Transforms.faceBits(ctx, filter, PlacementFilter.Conditions.builder().allowedFaces("up", "east").build());
         assertEquals((byte) 34, filter.build().getByte("allowed_faces"));

@@ -22,7 +22,6 @@ import org.geysermc.paletter.block.component.PlacementDirection;
 import org.geysermc.paletter.block.component.PlacementFilter;
 import org.geysermc.paletter.block.component.RedstoneProducer;
 import org.geysermc.paletter.block.component.SelectionBox;
-import org.geysermc.paletter.block.component.Transformation;
 import org.geysermc.paletter.item.component.BlockPlacer;
 import org.geysermc.paletter.item.component.Digger;
 import org.geysermc.paletter.item.component.Dyeable;
@@ -528,22 +527,6 @@ public final class Transforms {
         if (code != null) {
             out.put("item_properties.hover_text_color", "§" + code);
         }
-    }
-
-    // ---- quarter_turns -----------------------------------------------------------------------------------------------
-
-    /**
-     * {@code minecraft:transformation} rotation: degrees to quarter turns per axis ({@code RX}, {@code RY}, {@code RZ}).
-     */
-    public static void quarterTurns(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Transformation c) {
-        Transformation.Vec3 r = c.rotation();
-        out.put("minecraft:transformation.RX", quarterTurns(r == null ? 0 : r.x()));
-        out.put("minecraft:transformation.RY", quarterTurns(r == null ? 0 : r.y()));
-        out.put("minecraft:transformation.RZ", quarterTurns(r == null ? 0 : r.z()));
-    }
-
-    static int quarterTurns(float degrees) {
-        return (int) (((degrees % 360) + 360) % 360) / 90;
     }
 
     // ---- face_bits / face_list ---------------------------------------------------------------------------------------

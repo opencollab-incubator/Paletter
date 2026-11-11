@@ -249,6 +249,16 @@ class ComponentGeneratorTest {
     // ---- Links and annotations -----------------------------------------------------------------------------------
 
     @Test
+    void aScaleOfOneOverNDivides() {
+        // degrees -> quarter turns: 90 * 0.011111 would truncate to 0 in an int leaf, 90 / 90.0 does not
+        Inputs in = inputs();
+        in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:widget").getAsJsonObject("fields").getAsJsonObject("speed")
+            .getAsJsonArray("rules").get(0).getAsJsonObject().addProperty("scale", 0.011111);
+        String source = ComponentGenerator.generate(in).get("org/geysermc/paletter/internal/component/ItemWire.java");
+        assertTrue(source.contains(" / 90.0 + 0.0)"), source);
+    }
+
+    @Test
     void learnLinksFollowTheDocsPaths() {
         assertEquals("https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_render_offsets?view=minecraft-bedrock-stable",
             Docs.learnUrl("creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_render_offsets.md"));

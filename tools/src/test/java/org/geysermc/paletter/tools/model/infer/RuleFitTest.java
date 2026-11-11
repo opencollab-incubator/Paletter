@@ -112,6 +112,19 @@ class RuleFitTest {
     }
 
     @Test
+    void twoVectorsPickTheElementWithoutOffset() {
+        // the accepted rotation variants of the capture: two points fit a line on every element; RY is element 1
+        List<Pair> pairs = new ArrayList<>();
+        for (int[] v : new int[][]{{90, 180, 270}, {180, 270, 0}}) {
+            pairs.add(new Pair(JsonParser.parseString("[" + v[0] + "," + v[1] + "," + v[2] + "]"), Map.of(W, new Leaf("int", v[1] / 90)), ""));
+        }
+        JsonObject rule = MappingInference.array(pairs, W);
+        assertEquals("linear", rule.get("kind").getAsString());
+        assertEquals(1, rule.get("element").getAsInt());
+        assertEquals(0.0, rule.get("offset").getAsDouble());
+    }
+
+    @Test
     void mapEntry() {
         List<Pair> pairs = new ArrayList<>();
         pairs.add(new Pair(JsonParser.parseString("{\"bone_a\": 3}"), Map.of("x.bone_a", new Leaf("int", 3)), ""));

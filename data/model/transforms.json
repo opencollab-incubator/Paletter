@@ -72,10 +72,6 @@
     "windows": [{"until": 2225, "transform": "embedded_geometry_before_rotation"}, {"since": 2225, "transform": "embedded_geometry"}],
     "why": "The same geometry description as minecraft:geometry, inline. BDS rejected every embedded_visual variant of the capture, so this shape is the documented one with the wire keys of minecraft:geometry (unverified)."
   },
-  "block:minecraft:transformation:rotation": {
-    "transform": "quarter_turns",
-    "why": "Rotation is sent as RX/RY/RZ in quarter turns (degrees / 90). Only multiples of 90 are accepted, and the variant values 90/180/270 vary all three axes at once, so per-axis rules could not be fitted."
-  },
   "block:minecraft:placement_filter:conditions[].allowed_faces": {
     "transform": "face_bits",
     "why": "A list of faces becomes a byte bit set (down 1, up 2, north 4, south 8, west 16, east 32; 63 for the default all). Every list variant was rejected by BDS, so no bitset rule could be fitted; the encoding is the one liquid_detection and vanilla data show."

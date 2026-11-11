@@ -9025,23 +9025,41 @@
           "status": "inferred",
           "rules": [
             {
-              "kind": "structure",
+              "kind": "linear",
+              "scale": 0.011111,
+              "offset": 0.0,
+              "element": 0,
+              "nbt": "int",
               "tags": [
-                "explained-by-child-fields"
+                "renamed",
+                "unit-conversion",
+                "list-element"
               ],
               "wire": "minecraft:transformation.RX"
             },
             {
-              "kind": "structure",
+              "kind": "linear",
+              "scale": 0.011111,
+              "offset": 0.0,
+              "element": 1,
+              "nbt": "int",
               "tags": [
-                "explained-by-child-fields"
+                "renamed",
+                "unit-conversion",
+                "list-element"
               ],
               "wire": "minecraft:transformation.RY"
             },
             {
-              "kind": "structure",
+              "kind": "linear",
+              "scale": 0.011111,
+              "offset": 0.0,
+              "element": 2,
+              "nbt": "int",
               "tags": [
-                "explained-by-child-fields"
+                "renamed",
+                "unit-conversion",
+                "list-element"
               ],
               "wire": "minecraft:transformation.RZ"
             }
@@ -9103,23 +9121,32 @@
           "status": "inferred",
           "rules": [
             {
-              "kind": "structure",
+              "kind": "identity",
+              "element": 0,
+              "nbt": "float",
               "tags": [
-                "explained-by-child-fields"
+                "renamed",
+                "list-element"
               ],
               "wire": "minecraft:transformation.RXP"
             },
             {
-              "kind": "structure",
+              "kind": "identity",
+              "element": 1,
+              "nbt": "float",
               "tags": [
-                "explained-by-child-fields"
+                "renamed",
+                "list-element"
               ],
               "wire": "minecraft:transformation.RYP"
             },
             {
-              "kind": "structure",
+              "kind": "identity",
+              "element": 2,
+              "nbt": "float",
               "tags": [
-                "explained-by-child-fields"
+                "renamed",
+                "list-element"
               ],
               "wire": "minecraft:transformation.RZP"
             }
@@ -9204,23 +9231,32 @@
           "status": "inferred",
           "rules": [
             {
-              "kind": "structure",
+              "kind": "identity",
+              "element": 0,
+              "nbt": "float",
               "tags": [
-                "explained-by-child-fields"
+                "renamed",
+                "list-element"
               ],
               "wire": "minecraft:transformation.SX"
             },
             {
-              "kind": "structure",
+              "kind": "identity",
+              "element": 1,
+              "nbt": "float",
               "tags": [
-                "explained-by-child-fields"
+                "renamed",
+                "list-element"
               ],
               "wire": "minecraft:transformation.SY"
             },
             {
-              "kind": "structure",
+              "kind": "identity",
+              "element": 2,
+              "nbt": "float",
               "tags": [
-                "explained-by-child-fields"
+                "renamed",
+                "list-element"
               ],
               "wire": "minecraft:transformation.SZ"
             }
@@ -9297,23 +9333,32 @@
           "status": "inferred",
           "rules": [
             {
-              "kind": "structure",
+              "kind": "identity",
+              "element": 0,
+              "nbt": "float",
               "tags": [
-                "explained-by-child-fields"
+                "renamed",
+                "list-element"
               ],
               "wire": "minecraft:transformation.SXP"
             },
             {
-              "kind": "structure",
+              "kind": "identity",
+              "element": 1,
+              "nbt": "float",
               "tags": [
-                "explained-by-child-fields"
+                "renamed",
+                "list-element"
               ],
               "wire": "minecraft:transformation.SYP"
             },
             {
-              "kind": "structure",
+              "kind": "identity",
+              "element": 2,
+              "nbt": "float",
               "tags": [
-                "explained-by-child-fields"
+                "renamed",
+                "list-element"
               ],
               "wire": "minecraft:transformation.SZP"
             }
@@ -9398,23 +9443,32 @@
           "status": "inferred",
           "rules": [
             {
-              "kind": "structure",
+              "kind": "identity",
+              "element": 0,
+              "nbt": "float",
               "tags": [
-                "explained-by-child-fields"
+                "renamed",
+                "list-element"
               ],
               "wire": "minecraft:transformation.TX"
             },
             {
-              "kind": "structure",
+              "kind": "identity",
+              "element": 1,
+              "nbt": "float",
               "tags": [
-                "explained-by-child-fields"
+                "renamed",
+                "list-element"
               ],
               "wire": "minecraft:transformation.TY"
             },
             {
-              "kind": "structure",
+              "kind": "identity",
+              "element": 2,
+              "nbt": "float",
               "tags": [
-                "explained-by-child-fields"
+                "renamed",
+                "list-element"
               ],
               "wire": "minecraft:transformation.TZ"
             }
@@ -9488,14 +9542,6 @@
       },
       "constants": {
         "minecraft:transformation.hasJsonVersionBeforeValidation": "0 (byte)"
-      },
-      "transforms": {
-        "rotation": {
-          "verified": {
-            "build": "1.26.36.1",
-            "variants": 6
-          }
-        }
       },
       "protocols": [
         1001,
@@ -9727,9 +9773,12 @@
           "status": "inferred",
           "rules": [
             {
-              "kind": "structure",
+              "kind": "identity",
+              "element": 0,
+              "nbt": "byte",
               "tags": [
-                "explained-by-child-fields"
+                "nested",
+                "list-element"
               ],
               "wire": "properties[].enum[]"
             }
