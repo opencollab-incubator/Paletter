@@ -140,14 +140,8 @@ public final class Transforms {
     }
 
     private static void geometry(WireContext ctx, WireNode out, Geometry c, boolean withRotation) {
-        List<String> uvLockBones = c.uvLockBones();
-        // the documented maximum; BDS 1.26.63.1 rejects the whole block above it, counting duplicates (not a wire value)
-        if (uvLockBones != null && uvLockBones.size() > 64) {
-            ctx.drop(Geometry.NAME, "uv_lock lists " + uvLockBones.size() + " bones, BDS rejects the block above 64");
-            uvLockBones = null;
-        }
         NbtMapBuilder geometry = geometry(c.identifier(), c.boneVisibility(), c.culling(), c.cullingLayer(), c.cullingShape(),
-            c.uvLock(), uvLockBones).toBuilder();
+            c.uvLock(), c.uvLockBones()).toBuilder();
         Geometry.NWayVisualRotation rotation = c.nWayVisualRotation();
         if (rotation != null && withRotation) {
             geometry.putCompound("n_way_visual_rotation", rotation(rotation.x(), rotation.y(), rotation.z()));

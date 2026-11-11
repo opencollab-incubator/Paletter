@@ -25,6 +25,7 @@ import org.geysermc.paletter.item.component.Tags;
 import org.geysermc.paletter.item.component.UseModifiers;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -177,6 +178,17 @@ class CustomContentTest {
         assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:overflow")
             .property(BlockProperty.range("example:a", 0, 4095)).property(BlockProperty.range("example:b", 0, 4095))
             .property(BlockProperty.range("example:c", 0, 4095)).build());
+    }
+
+    @Test
+    void moreThan64UvLockBonesRejectTheBlock() {
+        // BDS 1.26.63.1 accepts 64 bones and rejects the block above, counting duplicates
+        Geometry accepted = Geometry.builder().identifier("geometry.lamp").uvLockBones(Collections.nCopies(64, "lid")).build();
+        CustomBlock.builder("example:lamp").component(accepted).build();
+        Geometry rejected = Geometry.builder().identifier("geometry.lamp").uvLockBones(Collections.nCopies(65, "lid")).build();
+        assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp").component(rejected).build());
+        assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp")
+            .property(BlockProperty.bool("example:lit")).permutation("q.block_state('example:lit')", rejected).build());
     }
 
     @Test

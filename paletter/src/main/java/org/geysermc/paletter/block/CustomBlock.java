@@ -8,6 +8,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.geysermc.paletter.block.component.BlockComponent;
 import org.geysermc.paletter.block.component.BlockTrait;
+import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.block.component.MenuCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.internal.component.TraitStates;
@@ -69,6 +70,10 @@ public record CustomBlock(
         defaultStates = Map.copyOf(defaultStates);
         tags = List.copyOf(tags);
         checkUnique(identifier, components);
+        checkUvLock(identifier, components);
+        for (Permutation permutation : permutations) {
+            checkUvLock(identifier, permutation.components());
+        }
         List<BlockProperty<?>> stateProperties = stateProperties(properties, traits);
         long combinations = 1;
         for (BlockProperty<?> property : stateProperties) {
@@ -88,6 +93,8 @@ public record CustomBlock(
 
     /** The most state combinations a block may have, like vanilla blocks. */
     private static final int MAX_STATES = 1 << 24;
+    /** The most {@code uv_lock} bones; BDS 1.26.63.1 rejects the whole block above it, counting duplicates. */
+    private static final int MAX_UV_LOCK_BONES = 64;
 
     private static List<BlockProperty<?>> stateProperties(List<BlockProperty<?>> properties, List<BlockTrait> traits) {
         if (traits.isEmpty()) {
@@ -96,6 +103,15 @@ public record CustomBlock(
         List<BlockProperty<?>> all = new ArrayList<>(properties);
         all.addAll(TraitStates.of(traits));
         return all;
+    }
+
+    private static void checkUvLock(String identifier, List<BlockComponent> components) {
+        for (BlockComponent component : components) {
+            if (component instanceof Geometry geometry && geometry.uvLockBones() != null && geometry.uvLockBones().size() > MAX_UV_LOCK_BONES) {
+                throw new IllegalArgumentException(identifier + "'s minecraft:geometry lists " + geometry.uvLockBones().size()
+                    + " uv_lock bones, more than the " + MAX_UV_LOCK_BONES + " BDS allows");
+            }
+        }
     }
 
     private static void checkUnique(String identifier, List<BlockComponent> components) {
