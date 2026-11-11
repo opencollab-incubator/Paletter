@@ -49,15 +49,27 @@ import java.util.Map;
  * transform); overloads per owner type.
  */
 public final class Transforms {
-    /**
-     * Bit of {@code packed_bools} BDS sets in every material of an add-on with a {@code format_version} of 1.21.110 or
-     * newer (clear below: the format sweep of BDS 1.26.63.1); the wiki's format history lists texture variation for
-     * 1.21.110. Paletter writes the current format, so it is always set.
-     */
-    static final int ALWAYS_SET_BIT = 1 << 2;
+    // The bits of a material instance's packed_bools, in the order of Mojang's BlockMaterialInstancePackedBools
+    // (names from LeviLamina's headers; BDS 1.26.63.1 reads and writes the low five bits).
+
+    /** {@code mFaceDimming}: JSON {@code face_dimming}, set by default. */
     static final int FACE_DIMMING_BIT = 1;
-    static final int ISOTROPIC_BIT = 1 << 1;
+    /** {@code mRandomizeUVRotation}: JSON {@code isotropic}. */
+    static final int RANDOMIZE_UV_ROTATION_BIT = 1 << 1;
+    /**
+     * {@code mSupportsTextureVariations}. BDS sets it on every material instance of a block whose JSON
+     * {@code format_version} is 1.21.110 or newer, and clears it below. The BDS 1.26.63.1 binary does this in
+     * {@code handleVersionBasedInitialization} of {@code BlockMaterialInstancesDescription}, {@code BlockItemVisualDescription}
+     * and {@code BlockEmbeddedVisualDescription}, by comparing the format version with a static 1.21.110. The captures of
+     * BDS 1.26.36.1 to 1.26.63.1 agree, and there the bit does not depend on the texture, the render method or the face.
+     * Paletter models current-format blocks, so it is always set.
+     */
+    static final int SUPPORTS_TEXTURE_VARIATIONS_BIT = 1 << 2;
+    /** {@code mAlphaMaskedTint}: JSON {@code alpha_masked_tint}. */
     static final int ALPHA_MASKED_TINT_BIT = 1 << 3;
+    /** {@code mDithering}: BDS never sends it (it rejects or ignores JSON {@code dithering}), so Paletter does not either. */
+    static final int DITHERING_BIT = 1 << 4;
+
     private static final String DEFAULT_CULLING_LAYER = "minecraft:culling_layer.undefined";
     /** The documented default of {@code culling_shape}; BDS sends an empty string when it is omitted. */
     private static final String DEFAULT_CULLING_SHAPE = "minecraft:empty";
@@ -257,7 +269,8 @@ public final class Transforms {
 
     /**
      * {@code minecraft:material_instances}: face aliases to {@code mappings}, faces to {@code materials}, face dimming
-     * isotropic and alpha_masked_tint packed into {@code packed_bools} (bits 0, 1 and 3, bit 2 always set), defaults as BDS
+     * isotropic and alpha_masked_tint packed into {@code packed_bools} (bits 0, 1 and 3; bit 2,
+     * {@link #SUPPORTS_TEXTURE_VARIATIONS_BIT}, always set), defaults as BDS
      * sends them.
      */
     public static void materialInstances(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull MaterialInstances c) {
@@ -295,8 +308,8 @@ public final class Transforms {
         aliases(c).forEach((face, target) -> mappings.putCompound(face, NbtMap.builder().putString("value", target).build()));
         NbtMapBuilder materials = NbtMap.builder();
         faces(c).forEach((face, instance) -> {
-            int packed = ALWAYS_SET_BIT | (instance.faceDimming() == null || instance.faceDimming() ? FACE_DIMMING_BIT : 0)
-                | (instance.isotropic() ? ISOTROPIC_BIT : 0) | (Boolean.TRUE.equals(instance.alphaMaskedTint()) ? ALPHA_MASKED_TINT_BIT : 0);
+            int packed = SUPPORTS_TEXTURE_VARIATIONS_BIT | (instance.faceDimming() == null || instance.faceDimming() ? FACE_DIMMING_BIT : 0)
+                | (instance.isotropic() ? RANDOMIZE_UV_ROTATION_BIT : 0) | (Boolean.TRUE.equals(instance.alphaMaskedTint()) ? ALPHA_MASKED_TINT_BIT : 0);
             materials.putCompound(face, NbtMap.builder()
                 .putFloat("ambient_occlusion", instance.ambientOcclusion() == null ? 1f : instance.ambientOcclusion())
                 .putByte("packed_bools", (byte) packed)
