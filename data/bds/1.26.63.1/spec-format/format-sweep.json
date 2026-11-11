@@ -1903,6 +1903,29 @@
           }
         }
       },
+      "down.alpha_masked_tint": {
+        "reference": "1.26.60",
+        "formats": {
+          "1.21.110": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.120": {
+            "accepted": true,
+            "differs": {
+              "components.minecraft:geometry.identifier": {
+                "reference": "minecraft:geometry.full_block (string)",
+                "value": "minecraft:geometry.full_block_v1 (string)"
+              },
+              "components.minecraft:geometry.isV1Fullblock": {
+                "reference": "0 (byte)",
+                "value": "1 (byte)",
+                "differingBits": "1"
+              }
+            }
+          }
+        }
+      },
       "down.ambient_occlusion": {
         "reference": "1.26.60",
         "formats": {
@@ -2364,6 +2387,29 @@
           "1.21.120": {
             "accepted": false,
             "error": "Block definition parsing failed"
+          }
+        }
+      },
+      "east.alpha_masked_tint": {
+        "reference": "1.26.60",
+        "formats": {
+          "1.21.110": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.120": {
+            "accepted": true,
+            "differs": {
+              "components.minecraft:geometry.identifier": {
+                "reference": "minecraft:geometry.full_block (string)",
+                "value": "minecraft:geometry.full_block_v1 (string)"
+              },
+              "components.minecraft:geometry.isV1Fullblock": {
+                "reference": "0 (byte)",
+                "value": "1 (byte)",
+                "differingBits": "1"
+              }
+            }
           }
         }
       },
@@ -2831,6 +2877,29 @@
           }
         }
       },
+      "north.alpha_masked_tint": {
+        "reference": "1.26.60",
+        "formats": {
+          "1.21.110": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.120": {
+            "accepted": true,
+            "differs": {
+              "components.minecraft:geometry.identifier": {
+                "reference": "minecraft:geometry.full_block (string)",
+                "value": "minecraft:geometry.full_block_v1 (string)"
+              },
+              "components.minecraft:geometry.isV1Fullblock": {
+                "reference": "0 (byte)",
+                "value": "1 (byte)",
+                "differingBits": "1"
+              }
+            }
+          }
+        }
+      },
       "north.ambient_occlusion": {
         "reference": "1.26.60",
         "formats": {
@@ -3292,6 +3361,29 @@
           "1.21.120": {
             "accepted": false,
             "error": "Block definition parsing failed"
+          }
+        }
+      },
+      "south.alpha_masked_tint": {
+        "reference": "1.26.60",
+        "formats": {
+          "1.21.110": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.120": {
+            "accepted": true,
+            "differs": {
+              "components.minecraft:geometry.identifier": {
+                "reference": "minecraft:geometry.full_block (string)",
+                "value": "minecraft:geometry.full_block_v1 (string)"
+              },
+              "components.minecraft:geometry.isV1Fullblock": {
+                "reference": "0 (byte)",
+                "value": "1 (byte)",
+                "differingBits": "1"
+              }
+            }
           }
         }
       },
@@ -3759,6 +3851,29 @@
           }
         }
       },
+      "up.alpha_masked_tint": {
+        "reference": "1.26.60",
+        "formats": {
+          "1.21.110": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.120": {
+            "accepted": true,
+            "differs": {
+              "components.minecraft:geometry.identifier": {
+                "reference": "minecraft:geometry.full_block (string)",
+                "value": "minecraft:geometry.full_block_v1 (string)"
+              },
+              "components.minecraft:geometry.isV1Fullblock": {
+                "reference": "0 (byte)",
+                "value": "1 (byte)",
+                "differingBits": "1"
+              }
+            }
+          }
+        }
+      },
       "up.ambient_occlusion": {
         "reference": "1.26.60",
         "formats": {
@@ -4220,6 +4335,29 @@
           "1.21.120": {
             "accepted": false,
             "error": "Block definition parsing failed"
+          }
+        }
+      },
+      "west.alpha_masked_tint": {
+        "reference": "1.26.60",
+        "formats": {
+          "1.21.110": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.120": {
+            "accepted": true,
+            "differs": {
+              "components.minecraft:geometry.identifier": {
+                "reference": "minecraft:geometry.full_block (string)",
+                "value": "minecraft:geometry.full_block_v1 (string)"
+              },
+              "components.minecraft:geometry.isV1Fullblock": {
+                "reference": "0 (byte)",
+                "value": "1 (byte)",
+                "differingBits": "1"
+              }
+            }
           }
         }
       },

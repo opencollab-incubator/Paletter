@@ -248,43 +248,82 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * The name of a block state that drives visual-only rotation of this block. The name of a block state that
+     * drives visual-only rotation of this block. The renderer reads the current value of the named state at runtime
+     * and rotates the geometry accordingly without changing collision or interaction. Supported states are
+     * <code>minecraft:cardinal_direction</code>, <code>minecraft:sixteen_way_rotation</code>, and any custom integer
+     * state. This item requires a format version of at least 1.26.30.
+     *
+     * @param x (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code x}. Optional
+     *        (null: not set).
+     * @param y (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code y}. Optional
+     *        (null: not set).
+     * @param z (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code z}. Optional
+     *        (null: not set).
      */
-    public enum NWayVisualRotation {
+    public record NWayVisualRotation(@Nullable String x, @Nullable String y, @Nullable String z) {
         /**
-         * {@code minecraft:cardinal_direction}
+         * @return a builder with the defaults applied
          */
-        CARDINAL_DIRECTION("minecraft:cardinal_direction"),
-
-        /**
-         * {@code minecraft:sixteen_way_rotation}
-         */
-        SIXTEEN_WAY_ROTATION("minecraft:sixteen_way_rotation");
-
-        private final String value;
-
-        NWayVisualRotation(String value) {
-            this.value = value;
+        public static @NonNull Builder builder() {
+            return new Builder();
         }
 
         /**
-         * @return the value in add-on JSON
+         * @return a builder with this value's fields
          */
-        public @NonNull String value() {
-            return value;
+        public @NonNull Builder toBuilder() {
+            Builder builder = new Builder();
+            builder.x = x;
+            builder.y = y;
+            builder.z = z;
+            return builder;
         }
 
         /**
-         * @return the constant of an add-on JSON value
-         * @throws IllegalArgumentException if the value is not documented
+         * Builds {@link NWayVisualRotation}: defaults applied, required fields and ranges checked by {@link #build()}.
          */
-        public static @NonNull NWayVisualRotation fromValue(@NonNull String value) {
-            for (NWayVisualRotation constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
+        public static final class Builder {
+            private @Nullable String x;
+
+            private @Nullable String y;
+
+            private @Nullable String z;
+
+            private Builder() {
             }
-            throw new IllegalArgumentException("Not a NWayVisualRotation: " + value);
+
+            /**
+             * Sets {@code x}.
+             */
+            public @NonNull Builder x(@Nullable String x) {
+                this.x = x;
+                return this;
+            }
+
+            /**
+             * Sets {@code y}.
+             */
+            public @NonNull Builder y(@Nullable String y) {
+                this.y = y;
+                return this;
+            }
+
+            /**
+             * Sets {@code z}.
+             */
+            public @NonNull Builder z(@Nullable String z) {
+                this.z = z;
+                return this;
+            }
+
+            /**
+             * @throws IllegalStateException if a required field is not set
+             * @throws IllegalArgumentException if a value is out of range
+             */
+            public @NonNull NWayVisualRotation build() {
+                return new NWayVisualRotation(x, y, z);
+            }
         }
     }
 }

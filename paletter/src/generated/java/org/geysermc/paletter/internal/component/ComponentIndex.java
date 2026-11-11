@@ -140,7 +140,7 @@ public final class ComponentIndex {
         STANDALONE.put("block:description", MenuCategory.class);
         keys(MenuCategory.class, "category", "category", "group", "group", "is_hidden_in_commands", "hiddenInCommands");
         BLOCK.put("minecraft:block_entity", BlockEntity.class);
-        keys(BlockEntity.class, "container", "container", "dynamic_properties", "dynamicProperties");
+        keys(BlockEntity.class, "container", "container", "dynamic_properties", "dynamicProperties", "entity_storage", "entityStorage");
         keys(BlockEntity.Container.class, "slot_count", "slotCount", "title", "title");
         BLOCK.put("minecraft:block_light_absorption", BlockLightAbsorption.class);
         keys(BlockLightAbsorption.class);
@@ -198,6 +198,7 @@ public final class ComponentIndex {
         FORMS.put(Friction.class, Map.of("number", "value"));
         BLOCK.put("minecraft:geometry", Geometry.class);
         keys(Geometry.class, "bone_visibility", "boneVisibility", "culling", "culling", "culling_layer", "cullingLayer", "culling_shape", "cullingShape", "identifier", "identifier", "n_way_visual_rotation", "nWayVisualRotation", "uv_lock", "uvLock");
+        keys(Geometry.NWayVisualRotation.class, "x", "x", "y", "y", "z", "z");
         BLOCK.put("minecraft:instrument_sound", InstrumentSound.class);
         keys(InstrumentSound.class, "down", "down", "up", "up");
         BLOCK.put("minecraft:item_visual", ItemVisual.class);
@@ -220,7 +221,7 @@ public final class ComponentIndex {
         keys(MapColor.class, "color", "color", "tint_method", "tintMethod");
         BLOCK.put("minecraft:material_instances", MaterialInstances.class);
         keys(MaterialInstances.class, "*", "all", "down", "down", "east", "east", "north", "north", "south", "south", "up", "up", "west", "west");
-        keys(MaterialInstances.Instance.class, "ambient_occlusion", "ambientOcclusion", "face_dimming", "faceDimming", "isotropic", "isotropic", "render_method", "renderMethod", "texture", "texture", "tint_method", "tintMethod");
+        keys(MaterialInstances.Instance.class, "ambient_occlusion", "ambientOcclusion", "face_dimming", "faceDimming", "isotropic", "isotropic", "render_method", "renderMethod", "texture", "texture", "tint_method", "tintMethod", "alpha_masked_tint", "alphaMaskedTint");
         BLOCK.put("minecraft:movable", Movable.class);
         keys(Movable.class, "movement_type", "movementType", "sticky", "sticky");
         BLOCK.put("minecraft:placement_filter", PlacementFilter.class);

@@ -3763,6 +3763,177 @@
     "file": "blocks/b_material_instances_39.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
+    "path": "down.alpha_masked_tint",
+    "label": "format 1.21.110 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.110"
+  },
+  {
+    "identifier": "paletter:b_material_instances_40",
+    "kind": "block",
+    "file": "blocks/b_material_instances_40.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "down.alpha_masked_tint",
+    "label": "format 1.21.120 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.120"
+  },
+  {
+    "identifier": "paletter:b_material_instances_41",
+    "kind": "block",
+    "file": "blocks/b_material_instances_41.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "down.alpha_masked_tint",
+    "label": "format 1.26.60 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.26.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_42",
+    "kind": "block",
+    "file": "blocks/b_material_instances_42.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
     "path": "down.ambient_occlusion",
     "label": "format 1.21.50 integer",
     "value": 1.5,
@@ -3813,9 +3984,9 @@
     "format": "1.21.50"
   },
   {
-    "identifier": "paletter:b_material_instances_40",
+    "identifier": "paletter:b_material_instances_43",
     "kind": "block",
-    "file": "blocks/b_material_instances_40.json",
+    "file": "blocks/b_material_instances_43.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.ambient_occlusion",
@@ -3868,9 +4039,9 @@
     "format": "1.21.60"
   },
   {
-    "identifier": "paletter:b_material_instances_41",
+    "identifier": "paletter:b_material_instances_44",
     "kind": "block",
-    "file": "blocks/b_material_instances_41.json",
+    "file": "blocks/b_material_instances_44.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.ambient_occlusion",
@@ -3923,9 +4094,9 @@
     "format": "1.26.10"
   },
   {
-    "identifier": "paletter:b_material_instances_42",
+    "identifier": "paletter:b_material_instances_45",
     "kind": "block",
-    "file": "blocks/b_material_instances_42.json",
+    "file": "blocks/b_material_instances_45.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.ambient_occlusion",
@@ -3978,9 +4149,9 @@
     "format": "1.26.20"
   },
   {
-    "identifier": "paletter:b_material_instances_43",
+    "identifier": "paletter:b_material_instances_46",
     "kind": "block",
-    "file": "blocks/b_material_instances_43.json",
+    "file": "blocks/b_material_instances_46.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.ambient_occlusion",
@@ -4033,9 +4204,9 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_44",
+    "identifier": "paletter:b_material_instances_47",
     "kind": "block",
-    "file": "blocks/b_material_instances_44.json",
+    "file": "blocks/b_material_instances_47.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.isotropic",
@@ -4089,9 +4260,9 @@
     "format": "1.21.60"
   },
   {
-    "identifier": "paletter:b_material_instances_45",
+    "identifier": "paletter:b_material_instances_48",
     "kind": "block",
-    "file": "blocks/b_material_instances_45.json",
+    "file": "blocks/b_material_instances_48.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.isotropic",
@@ -4145,9 +4316,9 @@
     "format": "1.21.70"
   },
   {
-    "identifier": "paletter:b_material_instances_46",
+    "identifier": "paletter:b_material_instances_49",
     "kind": "block",
-    "file": "blocks/b_material_instances_46.json",
+    "file": "blocks/b_material_instances_49.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.isotropic",
@@ -4201,9 +4372,9 @@
     "format": "1.21.80"
   },
   {
-    "identifier": "paletter:b_material_instances_47",
+    "identifier": "paletter:b_material_instances_50",
     "kind": "block",
-    "file": "blocks/b_material_instances_47.json",
+    "file": "blocks/b_material_instances_50.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.isotropic",
@@ -4257,9 +4428,9 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_48",
+    "identifier": "paletter:b_material_instances_51",
     "kind": "block",
-    "file": "blocks/b_material_instances_48.json",
+    "file": "blocks/b_material_instances_51.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.render_method",
@@ -4312,9 +4483,9 @@
     "format": "1.21.110"
   },
   {
-    "identifier": "paletter:b_material_instances_49",
+    "identifier": "paletter:b_material_instances_52",
     "kind": "block",
-    "file": "blocks/b_material_instances_49.json",
+    "file": "blocks/b_material_instances_52.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.render_method",
@@ -4367,9 +4538,9 @@
     "format": "1.21.120"
   },
   {
-    "identifier": "paletter:b_material_instances_50",
+    "identifier": "paletter:b_material_instances_53",
     "kind": "block",
-    "file": "blocks/b_material_instances_50.json",
+    "file": "blocks/b_material_instances_53.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.render_method",
@@ -4422,9 +4593,9 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_51",
+    "identifier": "paletter:b_material_instances_54",
     "kind": "block",
-    "file": "blocks/b_material_instances_51.json",
+    "file": "blocks/b_material_instances_54.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.texture",
@@ -4477,9 +4648,9 @@
     "format": "1.20.50"
   },
   {
-    "identifier": "paletter:b_material_instances_52",
+    "identifier": "paletter:b_material_instances_55",
     "kind": "block",
-    "file": "blocks/b_material_instances_52.json",
+    "file": "blocks/b_material_instances_55.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.texture",
@@ -4532,9 +4703,9 @@
     "format": "1.20.60"
   },
   {
-    "identifier": "paletter:b_material_instances_53",
+    "identifier": "paletter:b_material_instances_56",
     "kind": "block",
-    "file": "blocks/b_material_instances_53.json",
+    "file": "blocks/b_material_instances_56.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.texture",
@@ -4587,9 +4758,9 @@
     "format": "1.21.100"
   },
   {
-    "identifier": "paletter:b_material_instances_54",
+    "identifier": "paletter:b_material_instances_57",
     "kind": "block",
-    "file": "blocks/b_material_instances_54.json",
+    "file": "blocks/b_material_instances_57.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.texture",
@@ -4642,9 +4813,9 @@
     "format": "1.21.110"
   },
   {
-    "identifier": "paletter:b_material_instances_55",
+    "identifier": "paletter:b_material_instances_58",
     "kind": "block",
-    "file": "blocks/b_material_instances_55.json",
+    "file": "blocks/b_material_instances_58.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.texture",
@@ -4697,9 +4868,9 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_56",
+    "identifier": "paletter:b_material_instances_59",
     "kind": "block",
-    "file": "blocks/b_material_instances_56.json",
+    "file": "blocks/b_material_instances_59.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.tint_method",
@@ -4753,9 +4924,9 @@
     "format": "1.21.70"
   },
   {
-    "identifier": "paletter:b_material_instances_57",
+    "identifier": "paletter:b_material_instances_60",
     "kind": "block",
-    "file": "blocks/b_material_instances_57.json",
+    "file": "blocks/b_material_instances_60.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.tint_method",
@@ -4809,9 +4980,9 @@
     "format": "1.21.80"
   },
   {
-    "identifier": "paletter:b_material_instances_58",
+    "identifier": "paletter:b_material_instances_61",
     "kind": "block",
-    "file": "blocks/b_material_instances_58.json",
+    "file": "blocks/b_material_instances_61.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.tint_method",
@@ -4865,9 +5036,9 @@
     "format": "1.21.110"
   },
   {
-    "identifier": "paletter:b_material_instances_59",
+    "identifier": "paletter:b_material_instances_62",
     "kind": "block",
-    "file": "blocks/b_material_instances_59.json",
+    "file": "blocks/b_material_instances_62.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.tint_method",
@@ -4921,9 +5092,9 @@
     "format": "1.21.120"
   },
   {
-    "identifier": "paletter:b_material_instances_60",
+    "identifier": "paletter:b_material_instances_63",
     "kind": "block",
-    "file": "blocks/b_material_instances_60.json",
+    "file": "blocks/b_material_instances_63.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "down.tint_method",
@@ -4977,9 +5148,180 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_61",
+    "identifier": "paletter:b_material_instances_64",
     "kind": "block",
-    "file": "blocks/b_material_instances_61.json",
+    "file": "blocks/b_material_instances_64.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "east.alpha_masked_tint",
+    "label": "format 1.21.110 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.110"
+  },
+  {
+    "identifier": "paletter:b_material_instances_65",
+    "kind": "block",
+    "file": "blocks/b_material_instances_65.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "east.alpha_masked_tint",
+    "label": "format 1.21.120 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.120"
+  },
+  {
+    "identifier": "paletter:b_material_instances_66",
+    "kind": "block",
+    "file": "blocks/b_material_instances_66.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "east.alpha_masked_tint",
+    "label": "format 1.26.60 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.26.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_67",
+    "kind": "block",
+    "file": "blocks/b_material_instances_67.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "east.ambient_occlusion",
@@ -5032,9 +5374,9 @@
     "format": "1.21.50"
   },
   {
-    "identifier": "paletter:b_material_instances_62",
+    "identifier": "paletter:b_material_instances_68",
     "kind": "block",
-    "file": "blocks/b_material_instances_62.json",
+    "file": "blocks/b_material_instances_68.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "east.ambient_occlusion",
@@ -5087,9 +5429,9 @@
     "format": "1.21.60"
   },
   {
-    "identifier": "paletter:b_material_instances_63",
+    "identifier": "paletter:b_material_instances_69",
     "kind": "block",
-    "file": "blocks/b_material_instances_63.json",
+    "file": "blocks/b_material_instances_69.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "east.ambient_occlusion",
@@ -5142,9 +5484,9 @@
     "format": "1.26.10"
   },
   {
-    "identifier": "paletter:b_material_instances_64",
+    "identifier": "paletter:b_material_instances_70",
     "kind": "block",
-    "file": "blocks/b_material_instances_64.json",
+    "file": "blocks/b_material_instances_70.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "east.ambient_occlusion",
@@ -5197,9 +5539,9 @@
     "format": "1.26.20"
   },
   {
-    "identifier": "paletter:b_material_instances_65",
+    "identifier": "paletter:b_material_instances_71",
     "kind": "block",
-    "file": "blocks/b_material_instances_65.json",
+    "file": "blocks/b_material_instances_71.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "east.ambient_occlusion",
@@ -5252,9 +5594,9 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_66",
+    "identifier": "paletter:b_material_instances_72",
     "kind": "block",
-    "file": "blocks/b_material_instances_66.json",
+    "file": "blocks/b_material_instances_72.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "east.isotropic",
@@ -5308,9 +5650,9 @@
     "format": "1.21.60"
   },
   {
-    "identifier": "paletter:b_material_instances_67",
+    "identifier": "paletter:b_material_instances_73",
     "kind": "block",
-    "file": "blocks/b_material_instances_67.json",
+    "file": "blocks/b_material_instances_73.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "east.isotropic",
@@ -5364,9 +5706,9 @@
     "format": "1.21.70"
   },
   {
-    "identifier": "paletter:b_material_instances_68",
+    "identifier": "paletter:b_material_instances_74",
     "kind": "block",
-    "file": "blocks/b_material_instances_68.json",
+    "file": "blocks/b_material_instances_74.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "east.isotropic",
@@ -5420,9 +5762,9 @@
     "format": "1.21.80"
   },
   {
-    "identifier": "paletter:b_material_instances_69",
+    "identifier": "paletter:b_material_instances_75",
     "kind": "block",
-    "file": "blocks/b_material_instances_69.json",
+    "file": "blocks/b_material_instances_75.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "east.isotropic",
@@ -5476,344 +5818,14 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_70",
-    "kind": "block",
-    "file": "blocks/b_material_instances_70.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "east.render_method",
-    "label": "format 1.21.110 string",
-    "value": "opaque",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.110"
-  },
-  {
-    "identifier": "paletter:b_material_instances_71",
-    "kind": "block",
-    "file": "blocks/b_material_instances_71.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "east.render_method",
-    "label": "format 1.21.120 string",
-    "value": "opaque",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.120"
-  },
-  {
-    "identifier": "paletter:b_material_instances_72",
-    "kind": "block",
-    "file": "blocks/b_material_instances_72.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "east.render_method",
-    "label": "format 1.26.60 string",
-    "value": "opaque",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.26.60"
-  },
-  {
-    "identifier": "paletter:b_material_instances_73",
-    "kind": "block",
-    "file": "blocks/b_material_instances_73.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "east.texture",
-    "label": "format 1.20.50 string",
-    "value": "paletter_tex",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.20.50"
-  },
-  {
-    "identifier": "paletter:b_material_instances_74",
-    "kind": "block",
-    "file": "blocks/b_material_instances_74.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "east.texture",
-    "label": "format 1.20.60 string",
-    "value": "paletter_tex",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.20.60"
-  },
-  {
-    "identifier": "paletter:b_material_instances_75",
-    "kind": "block",
-    "file": "blocks/b_material_instances_75.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "east.texture",
-    "label": "format 1.21.100 string",
-    "value": "paletter_tex",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.100"
-  },
-  {
     "identifier": "paletter:b_material_instances_76",
     "kind": "block",
     "file": "blocks/b_material_instances_76.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
-    "path": "east.texture",
+    "path": "east.render_method",
     "label": "format 1.21.110 string",
-    "value": "paletter_tex",
+    "value": "opaque",
     "json": {
       "*": {
         "ambient_occlusion": 1.5,
@@ -5866,6 +5878,336 @@
     "file": "blocks/b_material_instances_77.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
+    "path": "east.render_method",
+    "label": "format 1.21.120 string",
+    "value": "opaque",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.120"
+  },
+  {
+    "identifier": "paletter:b_material_instances_78",
+    "kind": "block",
+    "file": "blocks/b_material_instances_78.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "east.render_method",
+    "label": "format 1.26.60 string",
+    "value": "opaque",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.26.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_79",
+    "kind": "block",
+    "file": "blocks/b_material_instances_79.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "east.texture",
+    "label": "format 1.20.50 string",
+    "value": "paletter_tex",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.20.50"
+  },
+  {
+    "identifier": "paletter:b_material_instances_80",
+    "kind": "block",
+    "file": "blocks/b_material_instances_80.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "east.texture",
+    "label": "format 1.20.60 string",
+    "value": "paletter_tex",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.20.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_81",
+    "kind": "block",
+    "file": "blocks/b_material_instances_81.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "east.texture",
+    "label": "format 1.21.100 string",
+    "value": "paletter_tex",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.100"
+  },
+  {
+    "identifier": "paletter:b_material_instances_82",
+    "kind": "block",
+    "file": "blocks/b_material_instances_82.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "east.texture",
+    "label": "format 1.21.110 string",
+    "value": "paletter_tex",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.110"
+  },
+  {
+    "identifier": "paletter:b_material_instances_83",
+    "kind": "block",
+    "file": "blocks/b_material_instances_83.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
     "path": "east.texture",
     "label": "format 1.26.60 string",
     "value": "paletter_tex",
@@ -5916,9 +6258,9 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_78",
+    "identifier": "paletter:b_material_instances_84",
     "kind": "block",
-    "file": "blocks/b_material_instances_78.json",
+    "file": "blocks/b_material_instances_84.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "east.tint_method",
@@ -5972,9 +6314,9 @@
     "format": "1.21.70"
   },
   {
-    "identifier": "paletter:b_material_instances_79",
+    "identifier": "paletter:b_material_instances_85",
     "kind": "block",
-    "file": "blocks/b_material_instances_79.json",
+    "file": "blocks/b_material_instances_85.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "east.tint_method",
@@ -6028,9 +6370,9 @@
     "format": "1.21.80"
   },
   {
-    "identifier": "paletter:b_material_instances_80",
+    "identifier": "paletter:b_material_instances_86",
     "kind": "block",
-    "file": "blocks/b_material_instances_80.json",
+    "file": "blocks/b_material_instances_86.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "east.tint_method",
@@ -6084,9 +6426,9 @@
     "format": "1.21.110"
   },
   {
-    "identifier": "paletter:b_material_instances_81",
+    "identifier": "paletter:b_material_instances_87",
     "kind": "block",
-    "file": "blocks/b_material_instances_81.json",
+    "file": "blocks/b_material_instances_87.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "east.tint_method",
@@ -6140,9 +6482,9 @@
     "format": "1.21.120"
   },
   {
-    "identifier": "paletter:b_material_instances_82",
+    "identifier": "paletter:b_material_instances_88",
     "kind": "block",
-    "file": "blocks/b_material_instances_82.json",
+    "file": "blocks/b_material_instances_88.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "east.tint_method",
@@ -6196,344 +6538,13 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_83",
-    "kind": "block",
-    "file": "blocks/b_material_instances_83.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "north.ambient_occlusion",
-    "label": "format 1.21.50 integer",
-    "value": 1.5,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.50"
-  },
-  {
-    "identifier": "paletter:b_material_instances_84",
-    "kind": "block",
-    "file": "blocks/b_material_instances_84.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "north.ambient_occlusion",
-    "label": "format 1.21.60 integer",
-    "value": 1.5,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.60"
-  },
-  {
-    "identifier": "paletter:b_material_instances_85",
-    "kind": "block",
-    "file": "blocks/b_material_instances_85.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "north.ambient_occlusion",
-    "label": "format 1.26.10 integer",
-    "value": 1.5,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.26.10"
-  },
-  {
-    "identifier": "paletter:b_material_instances_86",
-    "kind": "block",
-    "file": "blocks/b_material_instances_86.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "north.ambient_occlusion",
-    "label": "format 1.26.20 integer",
-    "value": 1.5,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.26.20"
-  },
-  {
-    "identifier": "paletter:b_material_instances_87",
-    "kind": "block",
-    "file": "blocks/b_material_instances_87.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "north.ambient_occlusion",
-    "label": "format 1.26.60 integer",
-    "value": 1.5,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.26.60"
-  },
-  {
-    "identifier": "paletter:b_material_instances_88",
-    "kind": "block",
-    "file": "blocks/b_material_instances_88.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "north.isotropic",
-    "label": "format 1.21.60 boolean",
-    "value": true,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "isotropic": true
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.60"
-  },
-  {
     "identifier": "paletter:b_material_instances_89",
     "kind": "block",
     "file": "blocks/b_material_instances_89.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
-    "path": "north.isotropic",
-    "label": "format 1.21.70 boolean",
+    "path": "north.alpha_masked_tint",
+    "label": "format 1.21.110 boolean",
     "value": true,
     "json": {
       "*": {
@@ -6559,7 +6570,8 @@
         "face_dimming": true,
         "render_method": "opaque",
         "texture": "paletter_tex",
-        "isotropic": true
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
       },
       "south": {
         "ambient_occlusion": 1.5,
@@ -6580,7 +6592,7 @@
         "texture": "paletter_tex"
       }
     },
-    "format": "1.21.70"
+    "format": "1.21.110"
   },
   {
     "identifier": "paletter:b_material_instances_90",
@@ -6588,8 +6600,8 @@
     "file": "blocks/b_material_instances_90.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
-    "path": "north.isotropic",
-    "label": "format 1.21.80 boolean",
+    "path": "north.alpha_masked_tint",
+    "label": "format 1.21.120 boolean",
     "value": true,
     "json": {
       "*": {
@@ -6615,7 +6627,8 @@
         "face_dimming": true,
         "render_method": "opaque",
         "texture": "paletter_tex",
-        "isotropic": true
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
       },
       "south": {
         "ambient_occlusion": 1.5,
@@ -6636,7 +6649,7 @@
         "texture": "paletter_tex"
       }
     },
-    "format": "1.21.80"
+    "format": "1.21.120"
   },
   {
     "identifier": "paletter:b_material_instances_91",
@@ -6644,7 +6657,7 @@
     "file": "blocks/b_material_instances_91.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
-    "path": "north.isotropic",
+    "path": "north.alpha_masked_tint",
     "label": "format 1.26.60 boolean",
     "value": true,
     "json": {
@@ -6671,7 +6684,8 @@
         "face_dimming": true,
         "render_method": "opaque",
         "texture": "paletter_tex",
-        "isotropic": true
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
       },
       "south": {
         "ambient_occlusion": 1.5,
@@ -6700,6 +6714,505 @@
     "file": "blocks/b_material_instances_92.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
+    "path": "north.ambient_occlusion",
+    "label": "format 1.21.50 integer",
+    "value": 1.5,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.50"
+  },
+  {
+    "identifier": "paletter:b_material_instances_93",
+    "kind": "block",
+    "file": "blocks/b_material_instances_93.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "north.ambient_occlusion",
+    "label": "format 1.21.60 integer",
+    "value": 1.5,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_94",
+    "kind": "block",
+    "file": "blocks/b_material_instances_94.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "north.ambient_occlusion",
+    "label": "format 1.26.10 integer",
+    "value": 1.5,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.26.10"
+  },
+  {
+    "identifier": "paletter:b_material_instances_95",
+    "kind": "block",
+    "file": "blocks/b_material_instances_95.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "north.ambient_occlusion",
+    "label": "format 1.26.20 integer",
+    "value": 1.5,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.26.20"
+  },
+  {
+    "identifier": "paletter:b_material_instances_96",
+    "kind": "block",
+    "file": "blocks/b_material_instances_96.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "north.ambient_occlusion",
+    "label": "format 1.26.60 integer",
+    "value": 1.5,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.26.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_97",
+    "kind": "block",
+    "file": "blocks/b_material_instances_97.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "north.isotropic",
+    "label": "format 1.21.60 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "isotropic": true
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_98",
+    "kind": "block",
+    "file": "blocks/b_material_instances_98.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "north.isotropic",
+    "label": "format 1.21.70 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "isotropic": true
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.70"
+  },
+  {
+    "identifier": "paletter:b_material_instances_99",
+    "kind": "block",
+    "file": "blocks/b_material_instances_99.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "north.isotropic",
+    "label": "format 1.21.80 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "isotropic": true
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.80"
+  },
+  {
+    "identifier": "paletter:b_material_instances_100",
+    "kind": "block",
+    "file": "blocks/b_material_instances_100.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "north.isotropic",
+    "label": "format 1.26.60 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "isotropic": true
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.26.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_101",
+    "kind": "block",
+    "file": "blocks/b_material_instances_101.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
     "path": "north.render_method",
     "label": "format 1.21.110 string",
     "value": "opaque",
@@ -6750,9 +7263,9 @@
     "format": "1.21.110"
   },
   {
-    "identifier": "paletter:b_material_instances_93",
+    "identifier": "paletter:b_material_instances_102",
     "kind": "block",
-    "file": "blocks/b_material_instances_93.json",
+    "file": "blocks/b_material_instances_102.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "north.render_method",
@@ -6805,9 +7318,9 @@
     "format": "1.21.120"
   },
   {
-    "identifier": "paletter:b_material_instances_94",
+    "identifier": "paletter:b_material_instances_103",
     "kind": "block",
-    "file": "blocks/b_material_instances_94.json",
+    "file": "blocks/b_material_instances_103.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "north.render_method",
@@ -6860,9 +7373,9 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_95",
+    "identifier": "paletter:b_material_instances_104",
     "kind": "block",
-    "file": "blocks/b_material_instances_95.json",
+    "file": "blocks/b_material_instances_104.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "north.texture",
@@ -6915,9 +7428,9 @@
     "format": "1.20.50"
   },
   {
-    "identifier": "paletter:b_material_instances_96",
+    "identifier": "paletter:b_material_instances_105",
     "kind": "block",
-    "file": "blocks/b_material_instances_96.json",
+    "file": "blocks/b_material_instances_105.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "north.texture",
@@ -6970,9 +7483,9 @@
     "format": "1.20.60"
   },
   {
-    "identifier": "paletter:b_material_instances_97",
+    "identifier": "paletter:b_material_instances_106",
     "kind": "block",
-    "file": "blocks/b_material_instances_97.json",
+    "file": "blocks/b_material_instances_106.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "north.texture",
@@ -7025,9 +7538,9 @@
     "format": "1.21.100"
   },
   {
-    "identifier": "paletter:b_material_instances_98",
+    "identifier": "paletter:b_material_instances_107",
     "kind": "block",
-    "file": "blocks/b_material_instances_98.json",
+    "file": "blocks/b_material_instances_107.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "north.texture",
@@ -7080,9 +7593,9 @@
     "format": "1.21.110"
   },
   {
-    "identifier": "paletter:b_material_instances_99",
+    "identifier": "paletter:b_material_instances_108",
     "kind": "block",
-    "file": "blocks/b_material_instances_99.json",
+    "file": "blocks/b_material_instances_108.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "north.texture",
@@ -7135,9 +7648,9 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_100",
+    "identifier": "paletter:b_material_instances_109",
     "kind": "block",
-    "file": "blocks/b_material_instances_100.json",
+    "file": "blocks/b_material_instances_109.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "north.tint_method",
@@ -7191,9 +7704,9 @@
     "format": "1.21.70"
   },
   {
-    "identifier": "paletter:b_material_instances_101",
+    "identifier": "paletter:b_material_instances_110",
     "kind": "block",
-    "file": "blocks/b_material_instances_101.json",
+    "file": "blocks/b_material_instances_110.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "north.tint_method",
@@ -7247,9 +7760,9 @@
     "format": "1.21.80"
   },
   {
-    "identifier": "paletter:b_material_instances_102",
+    "identifier": "paletter:b_material_instances_111",
     "kind": "block",
-    "file": "blocks/b_material_instances_102.json",
+    "file": "blocks/b_material_instances_111.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "north.tint_method",
@@ -7303,9 +7816,9 @@
     "format": "1.21.110"
   },
   {
-    "identifier": "paletter:b_material_instances_103",
+    "identifier": "paletter:b_material_instances_112",
     "kind": "block",
-    "file": "blocks/b_material_instances_103.json",
+    "file": "blocks/b_material_instances_112.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "north.tint_method",
@@ -7359,9 +7872,9 @@
     "format": "1.21.120"
   },
   {
-    "identifier": "paletter:b_material_instances_104",
+    "identifier": "paletter:b_material_instances_113",
     "kind": "block",
-    "file": "blocks/b_material_instances_104.json",
+    "file": "blocks/b_material_instances_113.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "north.tint_method",
@@ -7415,9 +7928,180 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_105",
+    "identifier": "paletter:b_material_instances_114",
     "kind": "block",
-    "file": "blocks/b_material_instances_105.json",
+    "file": "blocks/b_material_instances_114.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "south.alpha_masked_tint",
+    "label": "format 1.21.110 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.110"
+  },
+  {
+    "identifier": "paletter:b_material_instances_115",
+    "kind": "block",
+    "file": "blocks/b_material_instances_115.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "south.alpha_masked_tint",
+    "label": "format 1.21.120 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.120"
+  },
+  {
+    "identifier": "paletter:b_material_instances_116",
+    "kind": "block",
+    "file": "blocks/b_material_instances_116.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "south.alpha_masked_tint",
+    "label": "format 1.26.60 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.26.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_117",
+    "kind": "block",
+    "file": "blocks/b_material_instances_117.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "south.ambient_occlusion",
@@ -7470,9 +8154,9 @@
     "format": "1.21.50"
   },
   {
-    "identifier": "paletter:b_material_instances_106",
+    "identifier": "paletter:b_material_instances_118",
     "kind": "block",
-    "file": "blocks/b_material_instances_106.json",
+    "file": "blocks/b_material_instances_118.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "south.ambient_occlusion",
@@ -7525,9 +8209,9 @@
     "format": "1.21.60"
   },
   {
-    "identifier": "paletter:b_material_instances_107",
+    "identifier": "paletter:b_material_instances_119",
     "kind": "block",
-    "file": "blocks/b_material_instances_107.json",
+    "file": "blocks/b_material_instances_119.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "south.ambient_occlusion",
@@ -7580,9 +8264,9 @@
     "format": "1.26.10"
   },
   {
-    "identifier": "paletter:b_material_instances_108",
+    "identifier": "paletter:b_material_instances_120",
     "kind": "block",
-    "file": "blocks/b_material_instances_108.json",
+    "file": "blocks/b_material_instances_120.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "south.ambient_occlusion",
@@ -7635,678 +8319,14 @@
     "format": "1.26.20"
   },
   {
-    "identifier": "paletter:b_material_instances_109",
-    "kind": "block",
-    "file": "blocks/b_material_instances_109.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "south.ambient_occlusion",
-    "label": "format 1.26.60 integer",
-    "value": 1.5,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.26.60"
-  },
-  {
-    "identifier": "paletter:b_material_instances_110",
-    "kind": "block",
-    "file": "blocks/b_material_instances_110.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "south.isotropic",
-    "label": "format 1.21.60 boolean",
-    "value": true,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "isotropic": true
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.60"
-  },
-  {
-    "identifier": "paletter:b_material_instances_111",
-    "kind": "block",
-    "file": "blocks/b_material_instances_111.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "south.isotropic",
-    "label": "format 1.21.70 boolean",
-    "value": true,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "isotropic": true
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.70"
-  },
-  {
-    "identifier": "paletter:b_material_instances_112",
-    "kind": "block",
-    "file": "blocks/b_material_instances_112.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "south.isotropic",
-    "label": "format 1.21.80 boolean",
-    "value": true,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "isotropic": true
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.80"
-  },
-  {
-    "identifier": "paletter:b_material_instances_113",
-    "kind": "block",
-    "file": "blocks/b_material_instances_113.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "south.isotropic",
-    "label": "format 1.26.60 boolean",
-    "value": true,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "isotropic": true
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.26.60"
-  },
-  {
-    "identifier": "paletter:b_material_instances_114",
-    "kind": "block",
-    "file": "blocks/b_material_instances_114.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "south.render_method",
-    "label": "format 1.21.110 string",
-    "value": "opaque",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.110"
-  },
-  {
-    "identifier": "paletter:b_material_instances_115",
-    "kind": "block",
-    "file": "blocks/b_material_instances_115.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "south.render_method",
-    "label": "format 1.21.120 string",
-    "value": "opaque",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.120"
-  },
-  {
-    "identifier": "paletter:b_material_instances_116",
-    "kind": "block",
-    "file": "blocks/b_material_instances_116.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "south.render_method",
-    "label": "format 1.26.60 string",
-    "value": "opaque",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.26.60"
-  },
-  {
-    "identifier": "paletter:b_material_instances_117",
-    "kind": "block",
-    "file": "blocks/b_material_instances_117.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "south.texture",
-    "label": "format 1.20.50 string",
-    "value": "paletter_tex",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.20.50"
-  },
-  {
-    "identifier": "paletter:b_material_instances_118",
-    "kind": "block",
-    "file": "blocks/b_material_instances_118.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "south.texture",
-    "label": "format 1.20.60 string",
-    "value": "paletter_tex",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.20.60"
-  },
-  {
-    "identifier": "paletter:b_material_instances_119",
-    "kind": "block",
-    "file": "blocks/b_material_instances_119.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "south.texture",
-    "label": "format 1.21.100 string",
-    "value": "paletter_tex",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.100"
-  },
-  {
-    "identifier": "paletter:b_material_instances_120",
-    "kind": "block",
-    "file": "blocks/b_material_instances_120.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "south.texture",
-    "label": "format 1.21.110 string",
-    "value": "paletter_tex",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.110"
-  },
-  {
     "identifier": "paletter:b_material_instances_121",
     "kind": "block",
     "file": "blocks/b_material_instances_121.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
-    "path": "south.texture",
-    "label": "format 1.26.60 string",
-    "value": "paletter_tex",
+    "path": "south.ambient_occlusion",
+    "label": "format 1.26.60 integer",
+    "value": 1.5,
     "json": {
       "*": {
         "ambient_occlusion": 1.5,
@@ -8359,6 +8379,670 @@
     "file": "blocks/b_material_instances_122.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
+    "path": "south.isotropic",
+    "label": "format 1.21.60 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "isotropic": true
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_123",
+    "kind": "block",
+    "file": "blocks/b_material_instances_123.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "south.isotropic",
+    "label": "format 1.21.70 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "isotropic": true
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.70"
+  },
+  {
+    "identifier": "paletter:b_material_instances_124",
+    "kind": "block",
+    "file": "blocks/b_material_instances_124.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "south.isotropic",
+    "label": "format 1.21.80 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "isotropic": true
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.80"
+  },
+  {
+    "identifier": "paletter:b_material_instances_125",
+    "kind": "block",
+    "file": "blocks/b_material_instances_125.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "south.isotropic",
+    "label": "format 1.26.60 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "isotropic": true
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.26.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_126",
+    "kind": "block",
+    "file": "blocks/b_material_instances_126.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "south.render_method",
+    "label": "format 1.21.110 string",
+    "value": "opaque",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.110"
+  },
+  {
+    "identifier": "paletter:b_material_instances_127",
+    "kind": "block",
+    "file": "blocks/b_material_instances_127.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "south.render_method",
+    "label": "format 1.21.120 string",
+    "value": "opaque",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.120"
+  },
+  {
+    "identifier": "paletter:b_material_instances_128",
+    "kind": "block",
+    "file": "blocks/b_material_instances_128.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "south.render_method",
+    "label": "format 1.26.60 string",
+    "value": "opaque",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.26.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_129",
+    "kind": "block",
+    "file": "blocks/b_material_instances_129.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "south.texture",
+    "label": "format 1.20.50 string",
+    "value": "paletter_tex",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.20.50"
+  },
+  {
+    "identifier": "paletter:b_material_instances_130",
+    "kind": "block",
+    "file": "blocks/b_material_instances_130.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "south.texture",
+    "label": "format 1.20.60 string",
+    "value": "paletter_tex",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.20.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_131",
+    "kind": "block",
+    "file": "blocks/b_material_instances_131.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "south.texture",
+    "label": "format 1.21.100 string",
+    "value": "paletter_tex",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.100"
+  },
+  {
+    "identifier": "paletter:b_material_instances_132",
+    "kind": "block",
+    "file": "blocks/b_material_instances_132.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "south.texture",
+    "label": "format 1.21.110 string",
+    "value": "paletter_tex",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.110"
+  },
+  {
+    "identifier": "paletter:b_material_instances_133",
+    "kind": "block",
+    "file": "blocks/b_material_instances_133.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "south.texture",
+    "label": "format 1.26.60 string",
+    "value": "paletter_tex",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.26.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_134",
+    "kind": "block",
+    "file": "blocks/b_material_instances_134.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
     "path": "south.tint_method",
     "label": "format 1.21.70 boolean",
     "value": true,
@@ -8410,9 +9094,9 @@
     "format": "1.21.70"
   },
   {
-    "identifier": "paletter:b_material_instances_123",
+    "identifier": "paletter:b_material_instances_135",
     "kind": "block",
-    "file": "blocks/b_material_instances_123.json",
+    "file": "blocks/b_material_instances_135.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "south.tint_method",
@@ -8466,9 +9150,9 @@
     "format": "1.21.80"
   },
   {
-    "identifier": "paletter:b_material_instances_124",
+    "identifier": "paletter:b_material_instances_136",
     "kind": "block",
-    "file": "blocks/b_material_instances_124.json",
+    "file": "blocks/b_material_instances_136.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "south.tint_method",
@@ -8522,9 +9206,9 @@
     "format": "1.21.110"
   },
   {
-    "identifier": "paletter:b_material_instances_125",
+    "identifier": "paletter:b_material_instances_137",
     "kind": "block",
-    "file": "blocks/b_material_instances_125.json",
+    "file": "blocks/b_material_instances_137.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "south.tint_method",
@@ -8578,9 +9262,9 @@
     "format": "1.21.120"
   },
   {
-    "identifier": "paletter:b_material_instances_126",
+    "identifier": "paletter:b_material_instances_138",
     "kind": "block",
-    "file": "blocks/b_material_instances_126.json",
+    "file": "blocks/b_material_instances_138.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "south.tint_method",
@@ -8634,9 +9318,180 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_127",
+    "identifier": "paletter:b_material_instances_139",
     "kind": "block",
-    "file": "blocks/b_material_instances_127.json",
+    "file": "blocks/b_material_instances_139.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "up.alpha_masked_tint",
+    "label": "format 1.21.110 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.110"
+  },
+  {
+    "identifier": "paletter:b_material_instances_140",
+    "kind": "block",
+    "file": "blocks/b_material_instances_140.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "up.alpha_masked_tint",
+    "label": "format 1.21.120 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.120"
+  },
+  {
+    "identifier": "paletter:b_material_instances_141",
+    "kind": "block",
+    "file": "blocks/b_material_instances_141.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "up.alpha_masked_tint",
+    "label": "format 1.26.60 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.26.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_142",
+    "kind": "block",
+    "file": "blocks/b_material_instances_142.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "up.ambient_occlusion",
@@ -8689,9 +9544,9 @@
     "format": "1.21.50"
   },
   {
-    "identifier": "paletter:b_material_instances_128",
+    "identifier": "paletter:b_material_instances_143",
     "kind": "block",
-    "file": "blocks/b_material_instances_128.json",
+    "file": "blocks/b_material_instances_143.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "up.ambient_occlusion",
@@ -8744,9 +9599,9 @@
     "format": "1.21.60"
   },
   {
-    "identifier": "paletter:b_material_instances_129",
+    "identifier": "paletter:b_material_instances_144",
     "kind": "block",
-    "file": "blocks/b_material_instances_129.json",
+    "file": "blocks/b_material_instances_144.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "up.ambient_occlusion",
@@ -8799,9 +9654,9 @@
     "format": "1.26.10"
   },
   {
-    "identifier": "paletter:b_material_instances_130",
+    "identifier": "paletter:b_material_instances_145",
     "kind": "block",
-    "file": "blocks/b_material_instances_130.json",
+    "file": "blocks/b_material_instances_145.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "up.ambient_occlusion",
@@ -8854,9 +9709,9 @@
     "format": "1.26.20"
   },
   {
-    "identifier": "paletter:b_material_instances_131",
+    "identifier": "paletter:b_material_instances_146",
     "kind": "block",
-    "file": "blocks/b_material_instances_131.json",
+    "file": "blocks/b_material_instances_146.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "up.ambient_occlusion",
@@ -8909,9 +9764,9 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_132",
+    "identifier": "paletter:b_material_instances_147",
     "kind": "block",
-    "file": "blocks/b_material_instances_132.json",
+    "file": "blocks/b_material_instances_147.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "up.isotropic",
@@ -8965,9 +9820,9 @@
     "format": "1.21.60"
   },
   {
-    "identifier": "paletter:b_material_instances_133",
+    "identifier": "paletter:b_material_instances_148",
     "kind": "block",
-    "file": "blocks/b_material_instances_133.json",
+    "file": "blocks/b_material_instances_148.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "up.isotropic",
@@ -9021,9 +9876,9 @@
     "format": "1.21.70"
   },
   {
-    "identifier": "paletter:b_material_instances_134",
+    "identifier": "paletter:b_material_instances_149",
     "kind": "block",
-    "file": "blocks/b_material_instances_134.json",
+    "file": "blocks/b_material_instances_149.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "up.isotropic",
@@ -9077,9 +9932,9 @@
     "format": "1.21.80"
   },
   {
-    "identifier": "paletter:b_material_instances_135",
+    "identifier": "paletter:b_material_instances_150",
     "kind": "block",
-    "file": "blocks/b_material_instances_135.json",
+    "file": "blocks/b_material_instances_150.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "up.isotropic",
@@ -9133,9 +9988,9 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_136",
+    "identifier": "paletter:b_material_instances_151",
     "kind": "block",
-    "file": "blocks/b_material_instances_136.json",
+    "file": "blocks/b_material_instances_151.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "up.render_method",
@@ -9188,9 +10043,9 @@
     "format": "1.21.110"
   },
   {
-    "identifier": "paletter:b_material_instances_137",
+    "identifier": "paletter:b_material_instances_152",
     "kind": "block",
-    "file": "blocks/b_material_instances_137.json",
+    "file": "blocks/b_material_instances_152.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "up.render_method",
@@ -9243,844 +10098,14 @@
     "format": "1.21.120"
   },
   {
-    "identifier": "paletter:b_material_instances_138",
-    "kind": "block",
-    "file": "blocks/b_material_instances_138.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "up.render_method",
-    "label": "format 1.26.60 string",
-    "value": "opaque",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.26.60"
-  },
-  {
-    "identifier": "paletter:b_material_instances_139",
-    "kind": "block",
-    "file": "blocks/b_material_instances_139.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "up.texture",
-    "label": "format 1.20.50 string",
-    "value": "paletter_tex",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.20.50"
-  },
-  {
-    "identifier": "paletter:b_material_instances_140",
-    "kind": "block",
-    "file": "blocks/b_material_instances_140.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "up.texture",
-    "label": "format 1.20.60 string",
-    "value": "paletter_tex",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.20.60"
-  },
-  {
-    "identifier": "paletter:b_material_instances_141",
-    "kind": "block",
-    "file": "blocks/b_material_instances_141.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "up.texture",
-    "label": "format 1.21.100 string",
-    "value": "paletter_tex",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.100"
-  },
-  {
-    "identifier": "paletter:b_material_instances_142",
-    "kind": "block",
-    "file": "blocks/b_material_instances_142.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "up.texture",
-    "label": "format 1.21.110 string",
-    "value": "paletter_tex",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.110"
-  },
-  {
-    "identifier": "paletter:b_material_instances_143",
-    "kind": "block",
-    "file": "blocks/b_material_instances_143.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "up.texture",
-    "label": "format 1.26.60 string",
-    "value": "paletter_tex",
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.26.60"
-  },
-  {
-    "identifier": "paletter:b_material_instances_144",
-    "kind": "block",
-    "file": "blocks/b_material_instances_144.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "up.tint_method",
-    "label": "format 1.21.70 boolean",
-    "value": true,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "tint_method": true
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.70"
-  },
-  {
-    "identifier": "paletter:b_material_instances_145",
-    "kind": "block",
-    "file": "blocks/b_material_instances_145.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "up.tint_method",
-    "label": "format 1.21.80 boolean",
-    "value": true,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "tint_method": true
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.80"
-  },
-  {
-    "identifier": "paletter:b_material_instances_146",
-    "kind": "block",
-    "file": "blocks/b_material_instances_146.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "up.tint_method",
-    "label": "format 1.21.110 boolean",
-    "value": true,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "tint_method": true
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.110"
-  },
-  {
-    "identifier": "paletter:b_material_instances_147",
-    "kind": "block",
-    "file": "blocks/b_material_instances_147.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "up.tint_method",
-    "label": "format 1.21.120 boolean",
-    "value": true,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "tint_method": true
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.120"
-  },
-  {
-    "identifier": "paletter:b_material_instances_148",
-    "kind": "block",
-    "file": "blocks/b_material_instances_148.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "up.tint_method",
-    "label": "format 1.26.60 boolean",
-    "value": true,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "tint_method": true
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.26.60"
-  },
-  {
-    "identifier": "paletter:b_material_instances_149",
-    "kind": "block",
-    "file": "blocks/b_material_instances_149.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "west.ambient_occlusion",
-    "label": "format 1.21.50 integer",
-    "value": 1.5,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.50"
-  },
-  {
-    "identifier": "paletter:b_material_instances_150",
-    "kind": "block",
-    "file": "blocks/b_material_instances_150.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "west.ambient_occlusion",
-    "label": "format 1.21.60 integer",
-    "value": 1.5,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.21.60"
-  },
-  {
-    "identifier": "paletter:b_material_instances_151",
-    "kind": "block",
-    "file": "blocks/b_material_instances_151.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "west.ambient_occlusion",
-    "label": "format 1.26.10 integer",
-    "value": 1.5,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.26.10"
-  },
-  {
-    "identifier": "paletter:b_material_instances_152",
-    "kind": "block",
-    "file": "blocks/b_material_instances_152.json",
-    "component": "block:minecraft:material_instances",
-    "role": "format",
-    "path": "west.ambient_occlusion",
-    "label": "format 1.26.20 integer",
-    "value": 1.5,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    },
-    "format": "1.26.20"
-  },
-  {
     "identifier": "paletter:b_material_instances_153",
     "kind": "block",
     "file": "blocks/b_material_instances_153.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
-    "path": "west.ambient_occlusion",
-    "label": "format 1.26.60 integer",
-    "value": 1.5,
+    "path": "up.render_method",
+    "label": "format 1.26.60 string",
+    "value": "opaque",
     "json": {
       "*": {
         "ambient_occlusion": 1.5,
@@ -10133,6 +10158,1007 @@
     "file": "blocks/b_material_instances_154.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
+    "path": "up.texture",
+    "label": "format 1.20.50 string",
+    "value": "paletter_tex",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.20.50"
+  },
+  {
+    "identifier": "paletter:b_material_instances_155",
+    "kind": "block",
+    "file": "blocks/b_material_instances_155.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "up.texture",
+    "label": "format 1.20.60 string",
+    "value": "paletter_tex",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.20.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_156",
+    "kind": "block",
+    "file": "blocks/b_material_instances_156.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "up.texture",
+    "label": "format 1.21.100 string",
+    "value": "paletter_tex",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.100"
+  },
+  {
+    "identifier": "paletter:b_material_instances_157",
+    "kind": "block",
+    "file": "blocks/b_material_instances_157.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "up.texture",
+    "label": "format 1.21.110 string",
+    "value": "paletter_tex",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.110"
+  },
+  {
+    "identifier": "paletter:b_material_instances_158",
+    "kind": "block",
+    "file": "blocks/b_material_instances_158.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "up.texture",
+    "label": "format 1.26.60 string",
+    "value": "paletter_tex",
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.26.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_159",
+    "kind": "block",
+    "file": "blocks/b_material_instances_159.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "up.tint_method",
+    "label": "format 1.21.70 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "tint_method": true
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.70"
+  },
+  {
+    "identifier": "paletter:b_material_instances_160",
+    "kind": "block",
+    "file": "blocks/b_material_instances_160.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "up.tint_method",
+    "label": "format 1.21.80 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "tint_method": true
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.80"
+  },
+  {
+    "identifier": "paletter:b_material_instances_161",
+    "kind": "block",
+    "file": "blocks/b_material_instances_161.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "up.tint_method",
+    "label": "format 1.21.110 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "tint_method": true
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.110"
+  },
+  {
+    "identifier": "paletter:b_material_instances_162",
+    "kind": "block",
+    "file": "blocks/b_material_instances_162.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "up.tint_method",
+    "label": "format 1.21.120 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "tint_method": true
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.120"
+  },
+  {
+    "identifier": "paletter:b_material_instances_163",
+    "kind": "block",
+    "file": "blocks/b_material_instances_163.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "up.tint_method",
+    "label": "format 1.26.60 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "tint_method": true
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.26.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_164",
+    "kind": "block",
+    "file": "blocks/b_material_instances_164.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "west.alpha_masked_tint",
+    "label": "format 1.21.110 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
+      }
+    },
+    "format": "1.21.110"
+  },
+  {
+    "identifier": "paletter:b_material_instances_165",
+    "kind": "block",
+    "file": "blocks/b_material_instances_165.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "west.alpha_masked_tint",
+    "label": "format 1.21.120 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
+      }
+    },
+    "format": "1.21.120"
+  },
+  {
+    "identifier": "paletter:b_material_instances_166",
+    "kind": "block",
+    "file": "blocks/b_material_instances_166.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "west.alpha_masked_tint",
+    "label": "format 1.26.60 boolean",
+    "value": true,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex",
+        "alpha_masked_tint": true,
+        "tint_method": "default_foliage"
+      }
+    },
+    "format": "1.26.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_167",
+    "kind": "block",
+    "file": "blocks/b_material_instances_167.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "west.ambient_occlusion",
+    "label": "format 1.21.50 integer",
+    "value": 1.5,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.50"
+  },
+  {
+    "identifier": "paletter:b_material_instances_168",
+    "kind": "block",
+    "file": "blocks/b_material_instances_168.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "west.ambient_occlusion",
+    "label": "format 1.21.60 integer",
+    "value": 1.5,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.21.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_169",
+    "kind": "block",
+    "file": "blocks/b_material_instances_169.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "west.ambient_occlusion",
+    "label": "format 1.26.10 integer",
+    "value": 1.5,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.26.10"
+  },
+  {
+    "identifier": "paletter:b_material_instances_170",
+    "kind": "block",
+    "file": "blocks/b_material_instances_170.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "west.ambient_occlusion",
+    "label": "format 1.26.20 integer",
+    "value": 1.5,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.26.20"
+  },
+  {
+    "identifier": "paletter:b_material_instances_171",
+    "kind": "block",
+    "file": "blocks/b_material_instances_171.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
+    "path": "west.ambient_occlusion",
+    "label": "format 1.26.60 integer",
+    "value": 1.5,
+    "json": {
+      "*": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "down": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "east": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "north": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "south": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "up": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      },
+      "west": {
+        "ambient_occlusion": 1.5,
+        "face_dimming": true,
+        "render_method": "opaque",
+        "texture": "paletter_tex"
+      }
+    },
+    "format": "1.26.60"
+  },
+  {
+    "identifier": "paletter:b_material_instances_172",
+    "kind": "block",
+    "file": "blocks/b_material_instances_172.json",
+    "component": "block:minecraft:material_instances",
+    "role": "format",
     "path": "west.isotropic",
     "label": "format 1.21.60 boolean",
     "value": true,
@@ -10184,9 +11210,9 @@
     "format": "1.21.60"
   },
   {
-    "identifier": "paletter:b_material_instances_155",
+    "identifier": "paletter:b_material_instances_173",
     "kind": "block",
-    "file": "blocks/b_material_instances_155.json",
+    "file": "blocks/b_material_instances_173.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "west.isotropic",
@@ -10240,9 +11266,9 @@
     "format": "1.21.70"
   },
   {
-    "identifier": "paletter:b_material_instances_156",
+    "identifier": "paletter:b_material_instances_174",
     "kind": "block",
-    "file": "blocks/b_material_instances_156.json",
+    "file": "blocks/b_material_instances_174.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "west.isotropic",
@@ -10296,9 +11322,9 @@
     "format": "1.21.80"
   },
   {
-    "identifier": "paletter:b_material_instances_157",
+    "identifier": "paletter:b_material_instances_175",
     "kind": "block",
-    "file": "blocks/b_material_instances_157.json",
+    "file": "blocks/b_material_instances_175.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "west.isotropic",
@@ -10352,9 +11378,9 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_158",
+    "identifier": "paletter:b_material_instances_176",
     "kind": "block",
-    "file": "blocks/b_material_instances_158.json",
+    "file": "blocks/b_material_instances_176.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "west.render_method",
@@ -10407,9 +11433,9 @@
     "format": "1.21.110"
   },
   {
-    "identifier": "paletter:b_material_instances_159",
+    "identifier": "paletter:b_material_instances_177",
     "kind": "block",
-    "file": "blocks/b_material_instances_159.json",
+    "file": "blocks/b_material_instances_177.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "west.render_method",
@@ -10462,9 +11488,9 @@
     "format": "1.21.120"
   },
   {
-    "identifier": "paletter:b_material_instances_160",
+    "identifier": "paletter:b_material_instances_178",
     "kind": "block",
-    "file": "blocks/b_material_instances_160.json",
+    "file": "blocks/b_material_instances_178.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "west.render_method",
@@ -10517,9 +11543,9 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_161",
+    "identifier": "paletter:b_material_instances_179",
     "kind": "block",
-    "file": "blocks/b_material_instances_161.json",
+    "file": "blocks/b_material_instances_179.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "west.texture",
@@ -10572,9 +11598,9 @@
     "format": "1.20.50"
   },
   {
-    "identifier": "paletter:b_material_instances_162",
+    "identifier": "paletter:b_material_instances_180",
     "kind": "block",
-    "file": "blocks/b_material_instances_162.json",
+    "file": "blocks/b_material_instances_180.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "west.texture",
@@ -10627,9 +11653,9 @@
     "format": "1.20.60"
   },
   {
-    "identifier": "paletter:b_material_instances_163",
+    "identifier": "paletter:b_material_instances_181",
     "kind": "block",
-    "file": "blocks/b_material_instances_163.json",
+    "file": "blocks/b_material_instances_181.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "west.texture",
@@ -10682,9 +11708,9 @@
     "format": "1.21.100"
   },
   {
-    "identifier": "paletter:b_material_instances_164",
+    "identifier": "paletter:b_material_instances_182",
     "kind": "block",
-    "file": "blocks/b_material_instances_164.json",
+    "file": "blocks/b_material_instances_182.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "west.texture",
@@ -10737,9 +11763,9 @@
     "format": "1.21.110"
   },
   {
-    "identifier": "paletter:b_material_instances_165",
+    "identifier": "paletter:b_material_instances_183",
     "kind": "block",
-    "file": "blocks/b_material_instances_165.json",
+    "file": "blocks/b_material_instances_183.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "west.texture",
@@ -10792,9 +11818,9 @@
     "format": "1.26.60"
   },
   {
-    "identifier": "paletter:b_material_instances_166",
+    "identifier": "paletter:b_material_instances_184",
     "kind": "block",
-    "file": "blocks/b_material_instances_166.json",
+    "file": "blocks/b_material_instances_184.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "west.tint_method",
@@ -10848,9 +11874,9 @@
     "format": "1.21.70"
   },
   {
-    "identifier": "paletter:b_material_instances_167",
+    "identifier": "paletter:b_material_instances_185",
     "kind": "block",
-    "file": "blocks/b_material_instances_167.json",
+    "file": "blocks/b_material_instances_185.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "west.tint_method",
@@ -10904,9 +11930,9 @@
     "format": "1.21.80"
   },
   {
-    "identifier": "paletter:b_material_instances_168",
+    "identifier": "paletter:b_material_instances_186",
     "kind": "block",
-    "file": "blocks/b_material_instances_168.json",
+    "file": "blocks/b_material_instances_186.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "west.tint_method",
@@ -10960,9 +11986,9 @@
     "format": "1.21.110"
   },
   {
-    "identifier": "paletter:b_material_instances_169",
+    "identifier": "paletter:b_material_instances_187",
     "kind": "block",
-    "file": "blocks/b_material_instances_169.json",
+    "file": "blocks/b_material_instances_187.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "west.tint_method",
@@ -11016,9 +12042,9 @@
     "format": "1.21.120"
   },
   {
-    "identifier": "paletter:b_material_instances_170",
+    "identifier": "paletter:b_material_instances_188",
     "kind": "block",
-    "file": "blocks/b_material_instances_170.json",
+    "file": "blocks/b_material_instances_188.json",
     "component": "block:minecraft:material_instances",
     "role": "format",
     "path": "west.tint_method",

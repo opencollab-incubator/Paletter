@@ -5,29 +5,29 @@
       "capture": "data/bds/1.26.36.1/spec",
       "bdsVersion": "1.26.36.1",
       "protocol": 1001,
-      "variants": 2001,
-      "accepted": 1559
+      "variants": 2030,
+      "accepted": 1603
     },
     {
       "capture": "data/bds/1.26.45.1/spec",
       "bdsVersion": "1.26.45.1",
       "protocol": 2169,
-      "variants": 2001,
-      "accepted": 1582
+      "variants": 2030,
+      "accepted": 1626
     },
     {
       "capture": "data/bds/1.26.52.3/spec",
       "bdsVersion": "1.26.52.3",
       "protocol": 2193,
-      "variants": 2001,
-      "accepted": 1583
+      "variants": 2030,
+      "accepted": 1626
     },
     {
       "capture": "data/bds/1.26.63.1/spec",
       "bdsVersion": "1.26.63.1",
       "protocol": 2225,
-      "variants": 2006,
-      "accepted": 1644
+      "variants": 2030,
+      "accepted": 1662
     }
   ],
   "formatVersion": "1.26.60",
@@ -135,25 +135,28 @@
     },
     "block:minecraft:block_entity": {
       "variants": {
-        "accepted": 1,
-        "rejected": 19
+        "accepted": 0,
+        "rejected": 23
       },
       "wire": [],
-      "status": "server-only",
-      "baseRejected": "container: this member was found in the input, but is not present in the Schema",
+      "note": "container: this member was found in the input, but is not present in the Schema; entity_storage: this member was found in the input, but is not present in the Schema",
+      "status": "rejected",
+      "baseRejected": "container: this member was found in the input, but is not present in the Schema; entity_storage: this member was found in the input, but is not present in the Schema",
       "fields": {
         "container": {
-          "accepted": 1,
-          "rejected": 2,
+          "accepted": 0,
+          "rejected": 3,
           "rejectedValues": [
+            "omitted",
             "object:{}",
             "object:minimal"
           ],
           "bdsErrors": [
+            "entity_storage: this member was found in the input, but is not present in the Schema",
             "container: this member was found in the input, but is not present in the Schema"
           ],
           "unknownToBds": true,
-          "status": "no-evidence",
+          "status": "rejected",
           "reference": "control (the base was rejected)"
         },
         "container.show_ui_on_interaction": {
@@ -164,7 +167,8 @@
             "boolean:false"
           ],
           "bdsErrors": [
-            "container: this member was found in the input, but is not present in the Schema"
+            "container: this member was found in the input, but is not present in the Schema",
+            "entity_storage: this member was found in the input, but is not present in the Schema"
           ],
           "unknownToBds": true,
           "status": "rejected",
@@ -185,7 +189,8 @@
             "integer:55"
           ],
           "bdsErrors": [
-            "container: this member was found in the input, but is not present in the Schema"
+            "container: this member was found in the input, but is not present in the Schema",
+            "entity_storage: this member was found in the input, but is not present in the Schema"
           ],
           "unknownToBds": true,
           "status": "rejected",
@@ -200,7 +205,8 @@
             "string:paletter_b"
           ],
           "bdsErrors": [
-            "container: this member was found in the input, but is not present in the Schema"
+            "container: this member was found in the input, but is not present in the Schema",
+            "entity_storage: this member was found in the input, but is not present in the Schema"
           ],
           "unknownToBds": true,
           "status": "rejected",
@@ -214,137 +220,40 @@
             "boolean:false"
           ],
           "bdsErrors": [
-            "container: this member was found in the input, but is not present in the Schema"
+            "container: this member was found in the input, but is not present in the Schema",
+            "entity_storage: this member was found in the input, but is not present in the Schema"
           ],
           "unknownToBds": true,
           "status": "rejected",
           "reference": "control (the base was rejected)"
         },
         "entity_storage": {
-          "status": "not-generated"
+          "accepted": 0,
+          "rejected": 3,
+          "rejectedValues": [
+            "omitted",
+            "boolean:true",
+            "boolean:false"
+          ],
+          "bdsErrors": [
+            "container: this member was found in the input, but is not present in the Schema",
+            "entity_storage: this member was found in the input, but is not present in the Schema"
+          ],
+          "unknownToBds": true,
+          "status": "rejected",
+          "reference": "control (the base was rejected)"
+        }
+      },
+      "transforms": {
+        "container": {
+          "unverified": "BDS rejected all 14 variants that set it: container: this member was found in the input, but is not present in the Schema; entity_storage: this member was found in the input, but is not present in the Schema"
         }
       },
       "protocols": [
         1001,
-        2168
+        2168,
+        2193
       ],
-      "protocol2193": {
-        "variants": {
-          "accepted": 2,
-          "rejected": 18
-        },
-        "wire": [
-          "minecraft:container"
-        ],
-        "status": "sent",
-        "baseRejected": "title: this member was found in the input, but is not present in the Schema",
-        "fields": {
-          "container": {
-            "accepted": 1,
-            "rejected": 2,
-            "rejectedValues": [
-              "object:{}",
-              "object:minimal"
-            ],
-            "bdsErrors": [
-              "slot_count: missing required field",
-              "title: this member was found in the input, but is not present in the Schema"
-            ],
-            "unknownToBds": true,
-            "status": "no-evidence",
-            "reference": "control (the base was rejected)"
-          },
-          "container.show_ui_on_interaction": {
-            "accepted": 0,
-            "rejected": 2,
-            "rejectedValues": [
-              "boolean:true",
-              "boolean:false"
-            ],
-            "bdsErrors": [
-              "show_ui_on_interaction: this member was found in the input, but is not present in the Schema",
-              "title: this member was found in the input, but is not present in the Schema"
-            ],
-            "unknownToBds": true,
-            "status": "rejected",
-            "reference": "control (the base was rejected)"
-          },
-          "container.slot_count": {
-            "accepted": 0,
-            "rejected": 9,
-            "rejectedValues": [
-              "omitted",
-              "integer:0",
-              "integer:1",
-              "integer:2",
-              "integer:7",
-              "integer:100",
-              "integer:-1",
-              "integer:54",
-              "integer:55"
-            ],
-            "bdsErrors": [
-              "slot_count: missing required field",
-              "slot_count: the input is outside of the accepted range [1, 54]",
-              "title: this member was found in the input, but is not present in the Schema",
-              "slot_count: invalid numeric value"
-            ],
-            "bdsRange": [
-              1,
-              54
-            ],
-            "unknownToBds": true,
-            "status": "rejected",
-            "reference": "control (the base was rejected)"
-          },
-          "container.title": {
-            "accepted": 1,
-            "rejected": 2,
-            "rejectedValues": [
-              "string:Paletter Container",
-              "string:paletter_b"
-            ],
-            "bdsErrors": [
-              "title: this member was found in the input, but is not present in the Schema"
-            ],
-            "unknownToBds": true,
-            "status": "dropped",
-            "rules": [
-              {
-                "kind": "cross-field",
-                "tags": [
-                  "depends-on-other-fields"
-                ],
-                "wire": "minecraft:container.slot_count"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:container.slot_count": "1 (byte)"
-            },
-            "reference": "control (the base was rejected)"
-          },
-          "dynamic_properties": {
-            "accepted": 0,
-            "rejected": 2,
-            "rejectedValues": [
-              "boolean:true",
-              "boolean:false"
-            ],
-            "bdsErrors": [
-              "title: this member was found in the input, but is not present in the Schema"
-            ],
-            "unknownToBds": true,
-            "status": "rejected",
-            "reference": "control (the base was rejected)"
-          },
-          "entity_storage": {
-            "status": "not-generated"
-          }
-        },
-        "protocols": [
-          2193
-        ]
-      },
       "protocol2225": {
         "variants": {
           "accepted": 15,
@@ -464,6 +373,14 @@
             "accepted": 3,
             "rejected": 0,
             "status": "dropped"
+          }
+        },
+        "transforms": {
+          "container": {
+            "verified": {
+              "build": "1.26.63.1",
+              "variants": 7
+            }
           }
         },
         "protocols": [
@@ -1190,6 +1107,14 @@
           "reference": "control (the base was rejected)"
         }
       },
+      "transforms": {
+        "[]": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 6
+          }
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -1599,6 +1524,14 @@
             "reference": "control (the base was rejected)"
           }
         },
+        "transforms": {
+          "[]": {
+            "verified": {
+              "build": "1.26.63.1",
+              "variants": 6
+            }
+          }
+        },
         "protocols": [
           2225
         ]
@@ -1643,6 +1576,11 @@
             "enabled_directions: expected an array"
           ],
           "status": "rejected"
+        }
+      },
+      "transforms": {
+        "enabled_directions": {
+          "unverified": "BDS rejected all 4 variants that set it: enabled_directions: expected an array"
         }
       },
       "protocols": [
@@ -2015,6 +1953,20 @@
           "reference": "control (the base was rejected)"
         }
       },
+      "transforms": {
+        "": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 6
+          },
+          "rejectedFields": [
+            "base_time_to_destroy",
+            "item_specific_speeds[].destroy_speed",
+            "item_specific_speeds[].item[].tags",
+            "seconds_to_destroy"
+          ]
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -2145,168 +2097,141 @@
     },
     "block:minecraft:embedded_visual": {
       "variants": {
-        "accepted": 2,
-        "rejected": 39
+        "accepted": 29,
+        "rejected": 13
       },
       "wire": [
         "minecraft:embedded_visual"
       ],
       "status": "sent",
-      "baseRejected": "material_instances[0]: expected a key/value object",
       "fields": {
         "geometry": {
-          "accepted": 0,
-          "rejected": 6,
+          "accepted": 1,
+          "rejected": 5,
           "rejectedValues": [
             "omitted",
+            "object:{}",
             "array<object>:[]",
             "array<object>:[1]",
-            "array<object>:[2]",
-            "object:{}",
-            "object:minimal"
+            "array<object>:[2]"
           ],
           "bdsErrors": [
             "geometry: missing required field",
-            "material_instances[0]: expected a key/value object",
-            "geometry: expected an object",
-            "geometry: invalid string"
+            "identifier: missing required field",
+            "geometry: invalid string",
+            "geometry: expected an object"
           ],
-          "status": "rejected",
-          "reference": "control (the base was rejected)"
+          "status": "no-evidence"
         },
         "geometry.bone_visibility": {
-          "accepted": 0,
-          "rejected": 4,
+          "accepted": 2,
+          "rejected": 2,
           "rejectedValues": [
-            "object:{}",
-            "map<boolean>:{}",
             "map<boolean>:{1}",
             "map<boolean>:{2}"
           ],
           "bdsErrors": [
-            "material_instances[0]: expected a key/value object",
             "bone_a: expected an object",
             "bone_a: invalid numeric value",
-            "bone_a: invalid string"
+            "bone_a: invalid string",
+            "geometry: invalid string"
           ],
-          "status": "rejected",
-          "reference": "control (the base was rejected)"
+          "status": "dropped"
         },
         "geometry.culling": {
-          "accepted": 0,
-          "rejected": 3,
-          "rejectedValues": [
-            "omitted",
-            "string:paletter:culling",
-            "string:paletter_b"
+          "accepted": 3,
+          "rejected": 0,
+          "status": "inferred",
+          "rules": [
+            {
+              "kind": "identity",
+              "nbt": "string",
+              "tags": [],
+              "wire": "minecraft:embedded_visual.geometry.culling"
+            }
           ],
-          "bdsErrors": [
-            "material_instances[0]: expected a key/value object"
-          ],
-          "status": "rejected",
-          "reference": "control (the base was rejected)"
+          "whenAbsent": {
+            "minecraft:embedded_visual.geometry.culling": " (string)"
+          }
         },
         "geometry.culling_layer": {
-          "accepted": 0,
-          "rejected": 3,
-          "rejectedValues": [
-            "omitted",
-            "string:minecraft:culling_layer.undefined",
-            "string:minecraft:culling_layer.leaves"
+          "accepted": 3,
+          "rejected": 0,
+          "status": "inferred",
+          "rules": [
+            {
+              "kind": "identity",
+              "nbt": "string",
+              "tags": [],
+              "wire": "minecraft:embedded_visual.geometry.culling_layer"
+            }
           ],
-          "bdsErrors": [
-            "material_instances[0]: expected a key/value object"
-          ],
-          "status": "rejected",
-          "reference": "control (the base was rejected)"
+          "whenAbsent": {
+            "minecraft:embedded_visual.geometry.culling_layer": "minecraft:culling_layer.undefined (string)"
+          }
         },
         "geometry.culling_shape": {
-          "accepted": 0,
-          "rejected": 3,
-          "rejectedValues": [
-            "omitted",
-            "string:paletter_a",
-            "string:paletter_b"
+          "accepted": 3,
+          "rejected": 0,
+          "status": "inferred",
+          "rules": [
+            {
+              "kind": "identity",
+              "nbt": "string",
+              "tags": [],
+              "wire": "minecraft:embedded_visual.geometry.culling_shape"
+            }
           ],
-          "bdsErrors": [
-            "material_instances[0]: expected a key/value object"
-          ],
-          "status": "rejected",
-          "reference": "control (the base was rejected)"
+          "whenAbsent": {
+            "minecraft:embedded_visual.geometry.culling_shape": " (string)"
+          }
         },
         "geometry.identifier": {
-          "accepted": 0,
-          "rejected": 3,
+          "accepted": 2,
+          "rejected": 1,
           "rejectedValues": [
-            "omitted",
-            "string:minecraft:geometry.full_block",
-            "string:minecraft:geometry.cross"
+            "omitted"
           ],
           "bdsErrors": [
             "identifier: missing required field",
-            "geometry: invalid string",
-            "material_instances[0]: expected a key/value object"
+            "geometry: invalid string"
           ],
-          "status": "rejected",
-          "reference": "control (the base was rejected)"
+          "status": "inferred",
+          "rules": [
+            {
+              "kind": "identity",
+              "nbt": "string",
+              "tags": [],
+              "wire": "minecraft:embedded_visual.geometry.identifier"
+            }
+          ]
         },
         "geometry.n_way_visual_rotation": {
-          "accepted": 0,
-          "rejected": 3,
+          "accepted": 2,
+          "rejected": 1,
           "rejectedValues": [
-            "omitted",
-            "object:{}",
-            "object:minimal"
+            "object:{}"
           ],
           "bdsErrors": [
-            "material_instances[0]: expected a key/value object",
             "geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
             "geometry: invalid string"
           ],
-          "status": "rejected",
-          "reference": "control (the base was rejected)"
+          "status": "dropped"
         },
         "geometry.n_way_visual_rotation.x": {
-          "accepted": 0,
-          "rejected": 3,
-          "rejectedValues": [
-            "omitted",
-            "string:paletter_a",
-            "string:paletter_b"
-          ],
-          "bdsErrors": [
-            "material_instances[0]: expected a key/value object"
-          ],
-          "status": "rejected",
-          "reference": "control (the base was rejected)"
+          "accepted": 3,
+          "rejected": 0,
+          "status": "dropped"
         },
         "geometry.n_way_visual_rotation.y": {
-          "accepted": 0,
-          "rejected": 3,
-          "rejectedValues": [
-            "omitted",
-            "string:paletter_a",
-            "string:paletter_b"
-          ],
-          "bdsErrors": [
-            "material_instances[0]: expected a key/value object"
-          ],
-          "status": "rejected",
-          "reference": "control (the base was rejected)"
+          "accepted": 3,
+          "rejected": 0,
+          "status": "dropped"
         },
         "geometry.n_way_visual_rotation.z": {
-          "accepted": 0,
-          "rejected": 3,
-          "rejectedValues": [
-            "omitted",
-            "string:paletter_a",
-            "string:paletter_b"
-          ],
-          "bdsErrors": [
-            "material_instances[0]: expected a key/value object"
-          ],
-          "status": "rejected",
-          "reference": "control (the base was rejected)"
+          "accepted": 3,
+          "rejected": 0,
+          "status": "dropped"
         },
         "geometry.uv_lock": {
           "accepted": 0,
@@ -2319,11 +2244,10 @@
             "uv_lock: invalid numeric value",
             "geometry: invalid string"
           ],
-          "status": "rejected",
-          "reference": "control (the base was rejected)"
+          "status": "rejected"
         },
         "material_instances": {
-          "accepted": 2,
+          "accepted": 3,
           "rejected": 3,
           "rejectedValues": [
             "omitted",
@@ -2339,51 +2263,71 @@
             "why": "The value is a whole minecraft:material_instances object, sent inline with per-face {texture, render_method, tint_method, ambient_occlusion, face_dimming, isotropic, alpha_masked_tint}. Setting it also fills in the sibling geometry description's defaults (bone_visibility, culling, ...), so per-field correlation cannot separate the two. Reuse the material_instances field rules per face."
           },
           "status": "hand-rule",
-          "whenAbsent": {
-            "minecraft:embedded_visual.geometry.bone_visibility": "omitted",
-            "minecraft:embedded_visual.geometry.culling": "omitted",
-            "minecraft:embedded_visual.geometry.culling_layer": "omitted",
-            "minecraft:embedded_visual.geometry.culling_shape": "omitted",
-            "minecraft:embedded_visual.geometry.identifier": "omitted",
-            "minecraft:embedded_visual.geometry.uv_lock": "omitted",
-            "minecraft:embedded_visual.material_instances": "omitted"
-          },
           "unexplained": [
             {
-              "wire": "minecraft:embedded_visual.geometry.bone_visibility",
+              "wire": "minecraft:embedded_visual.material_instances",
               "samples": [
-                "<absent> -> -",
-                "[] -> {} (compound)",
-                "{} -> {} (compound)"
+                "{\"*\":{\"texture\":\"paletter_tex\"}} -> -",
+                "{} -> {} (compound)",
+                "{\"*\":{\"texture\":\"paletter_tex\"}} -> -",
+                "[] -> {} (compound)"
               ]
             },
             {
-              "wire": "minecraft:embedded_visual.geometry.culling",
+              "wire": "minecraft:embedded_visual.material_instances.*.alpha_masked_tint",
               "samples": [
-                "<absent> -> -",
-                "[] -> paletter:culling (string)",
-                "{} -> paletter:culling (string)"
+                "{\"*\":{\"texture\":\"paletter_tex\"}} -> 0 (byte)",
+                "{} -> -",
+                "{\"*\":{\"texture\":\"paletter_tex\"}} -> 0 (byte)",
+                "[] -> -"
               ]
             },
             {
-              "wire": "minecraft:embedded_visual.geometry.culling_layer",
+              "wire": "minecraft:embedded_visual.material_instances.*.ambient_occlusion",
               "samples": [
-                "<absent> -> -",
-                "[] -> minecraft:culling_layer.undefined (string)",
-                "{} -> minecraft:culling_layer.undefined (string)"
+                "{\"*\":{\"texture\":\"paletter_tex\"}} -> 1.0 (float)",
+                "{} -> -",
+                "{\"*\":{\"texture\":\"paletter_tex\"}} -> 1.0 (float)",
+                "[] -> -"
               ]
             },
             {
-              "wire": "minecraft:embedded_visual.geometry.culling_shape",
+              "wire": "minecraft:embedded_visual.material_instances.*.face_dimming",
               "samples": [
-                "<absent> -> -",
-                "[] -> paletter_a (string)",
-                "{} -> paletter_a (string)"
+                "{\"*\":{\"texture\":\"paletter_tex\"}} -> 1 (byte)",
+                "{} -> -",
+                "{\"*\":{\"texture\":\"paletter_tex\"}} -> 1 (byte)",
+                "[] -> -"
               ]
             }
           ],
-          "unexplainedMore": 3,
-          "reference": "control (the base was rejected)"
+          "unexplainedMore": 4
+        }
+      },
+      "constants": {
+        "minecraft:embedded_visual.geometry.bone_visibility": "{} (compound)",
+        "minecraft:embedded_visual.geometry.uv_lock": "0 (byte)",
+        "minecraft:embedded_visual.material_instances": "{} (compound)",
+        "minecraft:embedded_visual.material_instances.*.alpha_masked_tint": "0 (byte)",
+        "minecraft:embedded_visual.material_instances.*.ambient_occlusion": "1.0 (float)",
+        "minecraft:embedded_visual.material_instances.*.face_dimming": "1 (byte)",
+        "minecraft:embedded_visual.material_instances.*.isotropic": "0 (byte)",
+        "minecraft:embedded_visual.material_instances.*.render_method": "opaque (string)",
+        "minecraft:embedded_visual.material_instances.*.texture": "paletter_tex (string)",
+        "minecraft:embedded_visual.material_instances.*.tint_method": "none (string)"
+      },
+      "transforms": {
+        "material_instances": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 3
+          }
+        },
+        "geometry": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 18
+          }
         }
       },
       "protocols": [
@@ -2677,6 +2621,20 @@
           "minecraft:embedded_visual.material_instances.*.texture": "paletter_tex (string)",
           "minecraft:embedded_visual.material_instances.*.tint_method": "none (string)"
         },
+        "transforms": {
+          "material_instances": {
+            "verified": {
+              "build": "1.26.63.1",
+              "variants": 3
+            }
+          },
+          "geometry": {
+            "verified": {
+              "build": "1.26.63.1",
+              "variants": 18
+            }
+          }
+        },
         "protocols": [
           2225
         ]
@@ -2910,11 +2868,292 @@
     },
     "block:minecraft:geometry": {
       "variants": {
-        "accepted": 2,
-        "rejected": 26
+        "accepted": 4,
+        "rejected": 35
       },
-      "status": "untestable",
-      "note": "the control (companions only) and the base were rejected: components: Block needs both a \"geometry\" and \"material_instances\" component.",
+      "wire": [
+        "minecraft:geometry"
+      ],
+      "status": "sent",
+      "baseRejected": "bone_a: expected an object; bone_a: invalid numeric value; bone_a: invalid string",
+      "forms": {
+        "string": {
+          "accepted": 2,
+          "rejected": 0,
+          "status": "inferred",
+          "rules": [
+            {
+              "kind": "identity",
+              "nbt": "string",
+              "tags": [],
+              "wire": "minecraft:geometry.identifier"
+            }
+          ]
+        }
+      },
+      "fields": {
+        "bone_visibility": {
+          "accepted": 2,
+          "rejected": 2,
+          "rejectedValues": [
+            "map<boolean>:{1}",
+            "map<boolean>:{2}"
+          ],
+          "bdsErrors": [
+            "bone_a: expected an object",
+            "bone_a: invalid numeric value",
+            "bone_a: invalid string",
+            "minecraft:geometry: invalid string"
+          ],
+          "transform": {
+            "transform": "geometry",
+            "windows": [
+              {
+                "until": 2225,
+                "transform": "geometry_before_rotation"
+              },
+              {
+                "since": 2225,
+                "transform": "geometry"
+              }
+            ],
+            "why": "One geometry compound shared with item_visual and embedded_visual: bone_visibility values become Molang strings (true -> 1.000000), unset fields are sent as BDS sends them (culling \"\", culling_layer undefined) and four flags are always 0: {ignoreGeometryForIsSolid, isV1Fullblock, needsLegacyTopRotation, useBlockTypeLightAbsorption}. From protocol 2225 n_way_visual_rotation is sent with every axis, \"\" for an axis not set."
+          },
+          "status": "hand-rule",
+          "rules": [
+            {
+              "kind": "constant",
+              "value": "paletter:culling",
+              "nbt": "string",
+              "tags": [
+                "injected-default"
+              ],
+              "wire": "minecraft:geometry.culling"
+            },
+            {
+              "kind": "constant",
+              "value": "geometry.paletter_cube",
+              "nbt": "string",
+              "tags": [
+                "injected-default"
+              ],
+              "wire": "minecraft:geometry.identifier"
+            },
+            {
+              "kind": "constant",
+              "value": "bone_a",
+              "nbt": "string",
+              "tags": [
+                "injected-default"
+              ],
+              "wire": "minecraft:geometry.uv_lock[]"
+            }
+          ],
+          "whenAbsent": {
+            "minecraft:geometry.culling": " (string)",
+            "minecraft:geometry.identifier": "minecraft:geometry.full_block (string)",
+            "minecraft:geometry.uv_lock": "0 (byte)",
+            "minecraft:geometry.uv_lock[]": "bone_a (string)"
+          },
+          "unexplained": [
+            {
+              "wire": "minecraft:geometry.uv_lock",
+              "samples": [
+                "<absent> -> 0 (byte)",
+                "<absent> -> -",
+                "{} -> -"
+              ]
+            }
+          ],
+          "reference": "control (the base was rejected)"
+        },
+        "culling": {
+          "accepted": 0,
+          "rejected": 3,
+          "rejectedValues": [
+            "omitted",
+            "string:paletter:culling",
+            "string:paletter_b"
+          ],
+          "bdsErrors": [
+            "bone_a: expected an object",
+            "bone_a: invalid numeric value",
+            "bone_a: invalid string",
+            "minecraft:geometry: invalid string"
+          ],
+          "status": "rejected",
+          "reference": "control (the base was rejected)"
+        },
+        "culling_layer": {
+          "accepted": 0,
+          "rejected": 2,
+          "rejectedValues": [
+            "string:minecraft:culling_layer.undefined",
+            "string:minecraft:culling_layer.leaves"
+          ],
+          "bdsErrors": [
+            "bone_a: expected an object",
+            "bone_a: invalid numeric value",
+            "bone_a: invalid string",
+            "minecraft:geometry: invalid string"
+          ],
+          "status": "rejected",
+          "reference": "control (the base was rejected)"
+        },
+        "culling_shape": {
+          "accepted": 0,
+          "rejected": 2,
+          "rejectedValues": [
+            "string:paletter_a",
+            "string:paletter_b"
+          ],
+          "bdsErrors": [
+            "bone_a: expected an object",
+            "bone_a: invalid numeric value",
+            "bone_a: invalid string",
+            "minecraft:geometry: invalid string"
+          ],
+          "status": "rejected",
+          "reference": "control (the base was rejected)"
+        },
+        "identifier": {
+          "accepted": 0,
+          "rejected": 3,
+          "rejectedValues": [
+            "omitted",
+            "string:geometry.paletter_cube",
+            "string:minecraft:geometry.full_block"
+          ],
+          "bdsErrors": [
+            "bone_a: expected an object",
+            "bone_a: invalid numeric value",
+            "bone_a: invalid string",
+            "identifier: missing required field"
+          ],
+          "status": "rejected",
+          "reference": "control (the base was rejected)"
+        },
+        "n_way_visual_rotation": {
+          "accepted": 0,
+          "rejected": 5,
+          "rejectedValues": [
+            "omitted",
+            "object:{}",
+            "object:minimal",
+            "string:minecraft:cardinal_direction",
+            "string:minecraft:sixteen_way_rotation"
+          ],
+          "bdsErrors": [
+            "bone_a: expected an object",
+            "bone_a: invalid numeric value",
+            "bone_a: invalid string",
+            "minecraft:geometry: invalid string"
+          ],
+          "status": "rejected",
+          "reference": "control (the base was rejected)"
+        },
+        "uv_lock": {
+          "accepted": 0,
+          "rejected": 8,
+          "rejectedValues": [
+            "omitted",
+            "string:bone_a",
+            "string:paletter_b",
+            "boolean:true",
+            "boolean:false",
+            "array<string>:[]",
+            "array<string>:[1]",
+            "array<string>:[2]"
+          ],
+          "bdsErrors": [
+            "bone_a: expected an object",
+            "bone_a: invalid numeric value",
+            "bone_a: invalid string",
+            "minecraft:geometry: invalid string"
+          ],
+          "status": "rejected",
+          "reference": "control (the base was rejected)"
+        },
+        "n_way_visual_rotation.x": {
+          "accepted": 0,
+          "rejected": 3,
+          "rejectedValues": [
+            "omitted",
+            "string:minecraft:cardinal_direction",
+            "string:paletter_b"
+          ],
+          "bdsErrors": [
+            "bone_a: expected an object",
+            "bone_a: invalid numeric value",
+            "bone_a: invalid string",
+            "minecraft:geometry: invalid string"
+          ],
+          "status": "rejected",
+          "reference": "control (the base was rejected)"
+        },
+        "n_way_visual_rotation.y": {
+          "accepted": 0,
+          "rejected": 3,
+          "rejectedValues": [
+            "omitted",
+            "string:minecraft:cardinal_direction",
+            "string:paletter_b"
+          ],
+          "bdsErrors": [
+            "bone_a: expected an object",
+            "bone_a: invalid numeric value",
+            "bone_a: invalid string",
+            "minecraft:geometry: invalid string"
+          ],
+          "status": "rejected",
+          "reference": "control (the base was rejected)"
+        },
+        "n_way_visual_rotation.z": {
+          "accepted": 0,
+          "rejected": 3,
+          "rejectedValues": [
+            "omitted",
+            "string:minecraft:cardinal_direction",
+            "string:paletter_b"
+          ],
+          "bdsErrors": [
+            "bone_a: expected an object",
+            "bone_a: invalid numeric value",
+            "bone_a: invalid string",
+            "minecraft:geometry: invalid string"
+          ],
+          "status": "rejected",
+          "reference": "control (the base was rejected)"
+        }
+      },
+      "constants": {
+        "minecraft:geometry.bone_visibility": "{} (compound)",
+        "minecraft:geometry.culling_layer": "minecraft:culling_layer.undefined (string)",
+        "minecraft:geometry.culling_shape": " (string)",
+        "minecraft:geometry.ignoreGeometryForIsSolid": "0 (byte)",
+        "minecraft:geometry.isV1Fullblock": "0 (byte)",
+        "minecraft:geometry.needsLegacyTopRotation": "0 (byte)",
+        "minecraft:geometry.useBlockTypeLightAbsorption": "0 (byte)"
+      },
+      "transforms": {
+        "": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 3
+          },
+          "rejectedFields": [
+            "culling",
+            "culling_layer",
+            "culling_shape",
+            "identifier",
+            "n_way_visual_rotation",
+            "uv_lock",
+            "n_way_visual_rotation.x",
+            "n_way_visual_rotation.y",
+            "n_way_visual_rotation.z"
+          ]
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -2953,14 +3192,14 @@
               "windows": [
                 {
                   "until": 2225,
-                  "transform": "geometry_before_uv_lock_list"
+                  "transform": "geometry_before_rotation"
                 },
                 {
                   "since": 2225,
                   "transform": "geometry"
                 }
               ],
-              "why": "BDS rejected every variant's companions (status untestable), so no rule was inferred. The wire shape is known from every material_instances variant, which carries a geometry: {identifier, bone_visibility, culling, culling_layer, culling_shape, uv_lock, ignoreGeometryForIsSolid, isV1Fullblock, needsLegacyTopRotation, useBlockTypeLightAbsorption}; item_visual sends the same shape as geometryDescription."
+              "why": "One geometry compound shared with item_visual and embedded_visual: bone_visibility values become Molang strings (true -> 1.000000), unset fields are sent as BDS sends them (culling \"\", culling_layer undefined) and four flags are always 0: {ignoreGeometryForIsSolid, isV1Fullblock, needsLegacyTopRotation, useBlockTypeLightAbsorption}. From protocol 2225 n_way_visual_rotation is sent with every axis, \"\" for an axis not set."
             },
             "status": "hand-rule",
             "rules": [
@@ -3221,6 +3460,14 @@
           "minecraft:geometry.isV1Fullblock": "0 (byte)",
           "minecraft:geometry.needsLegacyTopRotation": "0 (byte)",
           "minecraft:geometry.useBlockTypeLightAbsorption": "0 (byte)"
+        },
+        "transforms": {
+          "": {
+            "verified": {
+              "build": "1.26.63.1",
+              "variants": 22
+            }
+          }
         },
         "protocols": [
           2225
@@ -3493,6 +3740,14 @@
         "minecraft:item_visual.materialInstancesDescription.materials.*.render_method": "opaque (string)",
         "minecraft:item_visual.materialInstancesDescription.materials.*.texture": "paletter_tex (string)",
         "minecraft:item_visual.materialInstancesDescription.materials.*.tint_method": "none (string)"
+      },
+      "transforms": {
+        "material_instances": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 1
+          }
+        }
       },
       "protocols": [
         1001,
@@ -3829,6 +4084,14 @@
           "minecraft:item_visual.materialInstancesDescription.materials.*.texture": "paletter_tex (string)",
           "minecraft:item_visual.materialInstancesDescription.materials.*.tint_method": "none (string)"
         },
+        "transforms": {
+          "material_instances": {
+            "verified": {
+              "build": "1.26.63.1",
+              "variants": 1
+            }
+          }
+        },
         "protocols": [
           2225
         ]
@@ -4114,6 +4377,11 @@
         "minecraft:liquid_detection.detectionRules[].liquidType": "water (string)",
         "minecraft:liquid_detection.detectionRules[].stopsLiquidFromDirection": "0 (byte)"
       },
+      "transforms": {
+        "detection_rules[].stops_liquid_flowing_from_direction": {
+          "unverified": "BDS rejected all 1 variants that set it: stops_liquid_flowing_from_direction: expected an array"
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -4199,10 +4467,9 @@
     },
     "block:minecraft:material_instances": {
       "variants": {
-        "accepted": 213,
+        "accepted": 227,
         "rejected": 42
       },
-      "note": "control rejected (components: Block needs both a \"geometry\" and \"material_instances\" component.); fields compared with the base only",
       "wire": [
         "minecraft:material_instances"
       ],
@@ -4285,8 +4552,7 @@
             "minecraft:material_instances.materials.*.render_method": "omitted",
             "minecraft:material_instances.materials.*.texture": "omitted",
             "minecraft:material_instances.materials.*.tint_method": "omitted"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "*.ambient_occlusion": {
           "accepted": 6,
@@ -4317,8 +4583,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.*.ambient_occlusion": "1.0 (float)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "*.face_dimming": {
           "accepted": 4,
@@ -4345,13 +4610,15 @@
                 "type:boolean->byte",
                 "enum->int"
               ],
-              "wire": "minecraft:material_instances.materials.*.packed_bools"
+              "wire": "minecraft:material_instances.materials.*.packed_bools",
+              "residualBits": [
+                2
+              ]
             }
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.*.packed_bools": "5 (byte)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "*.isotropic": {
           "accepted": 2,
@@ -4371,13 +4638,15 @@
                 "type:boolean->byte",
                 "enum->int"
               ],
-              "wire": "minecraft:material_instances.materials.*.packed_bools"
+              "wire": "minecraft:material_instances.materials.*.packed_bools",
+              "residualBits": [
+                2
+              ]
             }
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.*.packed_bools": "5 (byte)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "*.render_method": {
           "accepted": 9,
@@ -4395,8 +4664,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.*.render_method": "opaque (string)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "*.texture": {
           "accepted": 5,
@@ -4414,8 +4682,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.*.texture": " (string)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "*.tint_method": {
           "accepted": 7,
@@ -4441,8 +4708,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.*.tint_method": "none (string)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "down": {
           "accepted": 5,
@@ -4521,8 +4787,7 @@
             "minecraft:material_instances.materials.down.render_method": "omitted",
             "minecraft:material_instances.materials.down.texture": "omitted",
             "minecraft:material_instances.materials.down.tint_method": "omitted"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "down.ambient_occlusion": {
           "accepted": 6,
@@ -4553,8 +4818,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.down.ambient_occlusion": "1.0 (float)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "down.face_dimming": {
           "accepted": 2,
@@ -4566,8 +4830,7 @@
             "face_dimming: invalid numeric value",
             "down: invalid string"
           ],
-          "status": "dropped",
-          "reference": "control (the base was rejected)"
+          "status": "dropped"
         },
         "down.isotropic": {
           "accepted": 2,
@@ -4587,13 +4850,15 @@
                 "type:boolean->byte",
                 "enum->int"
               ],
-              "wire": "minecraft:material_instances.materials.down.packed_bools"
+              "wire": "minecraft:material_instances.materials.down.packed_bools",
+              "residualBits": [
+                2
+              ]
             }
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.down.packed_bools": "5 (byte)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "down.render_method": {
           "accepted": 9,
@@ -4611,8 +4876,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.down.render_method": "opaque (string)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "down.texture": {
           "accepted": 5,
@@ -4630,8 +4894,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.down.texture": " (string)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "down.tint_method": {
           "accepted": 0,
@@ -4644,8 +4907,7 @@
             "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
             "down: invalid string"
           ],
-          "status": "rejected",
-          "reference": "control (the base was rejected)"
+          "status": "rejected"
         },
         "east": {
           "accepted": 5,
@@ -4724,8 +4986,7 @@
             "minecraft:material_instances.materials.east.render_method": "omitted",
             "minecraft:material_instances.materials.east.texture": "omitted",
             "minecraft:material_instances.materials.east.tint_method": "omitted"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "east.ambient_occlusion": {
           "accepted": 6,
@@ -4756,8 +5017,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.east.ambient_occlusion": "1.0 (float)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "east.face_dimming": {
           "accepted": 2,
@@ -4769,8 +5029,7 @@
             "face_dimming: invalid numeric value",
             "east: invalid string"
           ],
-          "status": "dropped",
-          "reference": "control (the base was rejected)"
+          "status": "dropped"
         },
         "east.isotropic": {
           "accepted": 2,
@@ -4790,13 +5049,15 @@
                 "type:boolean->byte",
                 "enum->int"
               ],
-              "wire": "minecraft:material_instances.materials.east.packed_bools"
+              "wire": "minecraft:material_instances.materials.east.packed_bools",
+              "residualBits": [
+                2
+              ]
             }
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.east.packed_bools": "5 (byte)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "east.render_method": {
           "accepted": 9,
@@ -4814,8 +5075,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.east.render_method": "opaque (string)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "east.texture": {
           "accepted": 5,
@@ -4833,8 +5093,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.east.texture": " (string)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "east.tint_method": {
           "accepted": 0,
@@ -4847,8 +5106,7 @@
             "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
             "east: invalid string"
           ],
-          "status": "rejected",
-          "reference": "control (the base was rejected)"
+          "status": "rejected"
         },
         "north": {
           "accepted": 5,
@@ -4927,8 +5185,7 @@
             "minecraft:material_instances.materials.north.render_method": "omitted",
             "minecraft:material_instances.materials.north.texture": "omitted",
             "minecraft:material_instances.materials.north.tint_method": "omitted"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "north.ambient_occlusion": {
           "accepted": 6,
@@ -4959,8 +5216,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.north.ambient_occlusion": "1.0 (float)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "north.face_dimming": {
           "accepted": 2,
@@ -4972,8 +5228,7 @@
             "face_dimming: invalid numeric value",
             "north: invalid string"
           ],
-          "status": "dropped",
-          "reference": "control (the base was rejected)"
+          "status": "dropped"
         },
         "north.isotropic": {
           "accepted": 2,
@@ -4993,13 +5248,15 @@
                 "type:boolean->byte",
                 "enum->int"
               ],
-              "wire": "minecraft:material_instances.materials.north.packed_bools"
+              "wire": "minecraft:material_instances.materials.north.packed_bools",
+              "residualBits": [
+                2
+              ]
             }
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.north.packed_bools": "5 (byte)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "north.render_method": {
           "accepted": 9,
@@ -5017,8 +5274,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.north.render_method": "opaque (string)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "north.texture": {
           "accepted": 5,
@@ -5036,8 +5292,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.north.texture": " (string)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "north.tint_method": {
           "accepted": 0,
@@ -5050,8 +5305,7 @@
             "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
             "north: invalid string"
           ],
-          "status": "rejected",
-          "reference": "control (the base was rejected)"
+          "status": "rejected"
         },
         "south": {
           "accepted": 5,
@@ -5130,8 +5384,7 @@
             "minecraft:material_instances.materials.south.render_method": "omitted",
             "minecraft:material_instances.materials.south.texture": "omitted",
             "minecraft:material_instances.materials.south.tint_method": "omitted"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "south.ambient_occlusion": {
           "accepted": 6,
@@ -5162,8 +5415,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.south.ambient_occlusion": "1.0 (float)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "south.face_dimming": {
           "accepted": 2,
@@ -5175,8 +5427,7 @@
             "face_dimming: invalid numeric value",
             "south: invalid string"
           ],
-          "status": "dropped",
-          "reference": "control (the base was rejected)"
+          "status": "dropped"
         },
         "south.isotropic": {
           "accepted": 2,
@@ -5196,13 +5447,15 @@
                 "type:boolean->byte",
                 "enum->int"
               ],
-              "wire": "minecraft:material_instances.materials.south.packed_bools"
+              "wire": "minecraft:material_instances.materials.south.packed_bools",
+              "residualBits": [
+                2
+              ]
             }
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.south.packed_bools": "5 (byte)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "south.render_method": {
           "accepted": 9,
@@ -5220,8 +5473,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.south.render_method": "opaque (string)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "south.texture": {
           "accepted": 5,
@@ -5239,8 +5491,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.south.texture": " (string)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "south.tint_method": {
           "accepted": 0,
@@ -5253,8 +5504,7 @@
             "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
             "south: invalid string"
           ],
-          "status": "rejected",
-          "reference": "control (the base was rejected)"
+          "status": "rejected"
         },
         "up": {
           "accepted": 5,
@@ -5333,8 +5583,7 @@
             "minecraft:material_instances.materials.up.render_method": "omitted",
             "minecraft:material_instances.materials.up.texture": "omitted",
             "minecraft:material_instances.materials.up.tint_method": "omitted"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "up.ambient_occlusion": {
           "accepted": 6,
@@ -5365,8 +5614,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.up.ambient_occlusion": "1.0 (float)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "up.face_dimming": {
           "accepted": 2,
@@ -5378,8 +5626,7 @@
             "face_dimming: invalid numeric value",
             "up: invalid string"
           ],
-          "status": "dropped",
-          "reference": "control (the base was rejected)"
+          "status": "dropped"
         },
         "up.isotropic": {
           "accepted": 2,
@@ -5399,13 +5646,15 @@
                 "type:boolean->byte",
                 "enum->int"
               ],
-              "wire": "minecraft:material_instances.materials.up.packed_bools"
+              "wire": "minecraft:material_instances.materials.up.packed_bools",
+              "residualBits": [
+                2
+              ]
             }
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.up.packed_bools": "5 (byte)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "up.render_method": {
           "accepted": 9,
@@ -5423,8 +5672,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.up.render_method": "opaque (string)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "up.texture": {
           "accepted": 5,
@@ -5442,8 +5690,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.up.texture": " (string)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "up.tint_method": {
           "accepted": 0,
@@ -5456,8 +5703,7 @@
             "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
             "up: invalid string"
           ],
-          "status": "rejected",
-          "reference": "control (the base was rejected)"
+          "status": "rejected"
         },
         "west": {
           "accepted": 5,
@@ -5536,8 +5782,7 @@
             "minecraft:material_instances.materials.west.render_method": "omitted",
             "minecraft:material_instances.materials.west.texture": "omitted",
             "minecraft:material_instances.materials.west.tint_method": "omitted"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "west.ambient_occlusion": {
           "accepted": 6,
@@ -5568,8 +5813,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.west.ambient_occlusion": "1.0 (float)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "west.face_dimming": {
           "accepted": 2,
@@ -5581,8 +5825,7 @@
             "face_dimming: invalid numeric value",
             "west: invalid string"
           ],
-          "status": "dropped",
-          "reference": "control (the base was rejected)"
+          "status": "dropped"
         },
         "west.isotropic": {
           "accepted": 2,
@@ -5602,13 +5845,15 @@
                 "type:boolean->byte",
                 "enum->int"
               ],
-              "wire": "minecraft:material_instances.materials.west.packed_bools"
+              "wire": "minecraft:material_instances.materials.west.packed_bools",
+              "residualBits": [
+                2
+              ]
             }
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.west.packed_bools": "5 (byte)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "west.render_method": {
           "accepted": 9,
@@ -5626,8 +5871,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.west.render_method": "opaque (string)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "west.texture": {
           "accepted": 5,
@@ -5645,8 +5889,7 @@
           ],
           "whenAbsent": {
             "minecraft:material_instances.materials.west.texture": " (string)"
-          },
-          "reference": "control (the base was rejected)"
+          }
         },
         "west.tint_method": {
           "accepted": 0,
@@ -5659,1467 +5902,337 @@
             "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
             "west: invalid string"
           ],
-          "status": "rejected",
-          "reference": "control (the base was rejected)"
+          "status": "rejected"
         },
         "*.alpha_masked_tint": {
-          "status": "not-generated"
+          "accepted": 2,
+          "rejected": 0,
+          "status": "inferred",
+          "rules": [
+            {
+              "kind": "table",
+              "table": {
+                "false": "5",
+                "true": "13"
+              },
+              "nbt": "byte",
+              "tags": [
+                "renamed",
+                "nested",
+                "type:boolean->byte",
+                "enum->int"
+              ],
+              "wire": "minecraft:material_instances.materials.*.packed_bools",
+              "residualBits": [
+                2
+              ]
+            },
+            {
+              "kind": "constant",
+              "value": "default_foliage",
+              "nbt": "string",
+              "tags": [
+                "injected-default"
+              ],
+              "wire": "minecraft:material_instances.materials.*.tint_method"
+            }
+          ],
+          "whenAbsent": {
+            "minecraft:material_instances.materials.*.packed_bools": "5 (byte)",
+            "minecraft:material_instances.materials.*.tint_method": "none (string)"
+          }
+        },
+        "down.alpha_masked_tint": {
+          "accepted": 2,
+          "rejected": 0,
+          "status": "inferred",
+          "rules": [
+            {
+              "kind": "table",
+              "table": {
+                "false": "5",
+                "true": "13"
+              },
+              "nbt": "byte",
+              "tags": [
+                "renamed",
+                "nested",
+                "type:boolean->byte",
+                "enum->int"
+              ],
+              "wire": "minecraft:material_instances.materials.down.packed_bools",
+              "residualBits": [
+                2
+              ]
+            },
+            {
+              "kind": "constant",
+              "value": "default_foliage",
+              "nbt": "string",
+              "tags": [
+                "injected-default"
+              ],
+              "wire": "minecraft:material_instances.materials.down.tint_method"
+            }
+          ],
+          "whenAbsent": {
+            "minecraft:material_instances.materials.down.packed_bools": "5 (byte)",
+            "minecraft:material_instances.materials.down.tint_method": "none (string)"
+          }
+        },
+        "east.alpha_masked_tint": {
+          "accepted": 2,
+          "rejected": 0,
+          "status": "inferred",
+          "rules": [
+            {
+              "kind": "table",
+              "table": {
+                "false": "5",
+                "true": "13"
+              },
+              "nbt": "byte",
+              "tags": [
+                "renamed",
+                "nested",
+                "type:boolean->byte",
+                "enum->int"
+              ],
+              "wire": "minecraft:material_instances.materials.east.packed_bools",
+              "residualBits": [
+                2
+              ]
+            },
+            {
+              "kind": "constant",
+              "value": "default_foliage",
+              "nbt": "string",
+              "tags": [
+                "injected-default"
+              ],
+              "wire": "minecraft:material_instances.materials.east.tint_method"
+            }
+          ],
+          "whenAbsent": {
+            "minecraft:material_instances.materials.east.packed_bools": "5 (byte)",
+            "minecraft:material_instances.materials.east.tint_method": "none (string)"
+          }
+        },
+        "north.alpha_masked_tint": {
+          "accepted": 2,
+          "rejected": 0,
+          "status": "inferred",
+          "rules": [
+            {
+              "kind": "table",
+              "table": {
+                "false": "5",
+                "true": "13"
+              },
+              "nbt": "byte",
+              "tags": [
+                "renamed",
+                "nested",
+                "type:boolean->byte",
+                "enum->int"
+              ],
+              "wire": "minecraft:material_instances.materials.north.packed_bools",
+              "residualBits": [
+                2
+              ]
+            },
+            {
+              "kind": "constant",
+              "value": "default_foliage",
+              "nbt": "string",
+              "tags": [
+                "injected-default"
+              ],
+              "wire": "minecraft:material_instances.materials.north.tint_method"
+            }
+          ],
+          "whenAbsent": {
+            "minecraft:material_instances.materials.north.packed_bools": "5 (byte)",
+            "minecraft:material_instances.materials.north.tint_method": "none (string)"
+          }
+        },
+        "south.alpha_masked_tint": {
+          "accepted": 2,
+          "rejected": 0,
+          "status": "inferred",
+          "rules": [
+            {
+              "kind": "table",
+              "table": {
+                "false": "5",
+                "true": "13"
+              },
+              "nbt": "byte",
+              "tags": [
+                "renamed",
+                "nested",
+                "type:boolean->byte",
+                "enum->int"
+              ],
+              "wire": "minecraft:material_instances.materials.south.packed_bools",
+              "residualBits": [
+                2
+              ]
+            },
+            {
+              "kind": "constant",
+              "value": "default_foliage",
+              "nbt": "string",
+              "tags": [
+                "injected-default"
+              ],
+              "wire": "minecraft:material_instances.materials.south.tint_method"
+            }
+          ],
+          "whenAbsent": {
+            "minecraft:material_instances.materials.south.packed_bools": "5 (byte)",
+            "minecraft:material_instances.materials.south.tint_method": "none (string)"
+          }
+        },
+        "up.alpha_masked_tint": {
+          "accepted": 2,
+          "rejected": 0,
+          "status": "inferred",
+          "rules": [
+            {
+              "kind": "table",
+              "table": {
+                "false": "5",
+                "true": "13"
+              },
+              "nbt": "byte",
+              "tags": [
+                "renamed",
+                "nested",
+                "type:boolean->byte",
+                "enum->int"
+              ],
+              "wire": "minecraft:material_instances.materials.up.packed_bools",
+              "residualBits": [
+                2
+              ]
+            },
+            {
+              "kind": "constant",
+              "value": "default_foliage",
+              "nbt": "string",
+              "tags": [
+                "injected-default"
+              ],
+              "wire": "minecraft:material_instances.materials.up.tint_method"
+            }
+          ],
+          "whenAbsent": {
+            "minecraft:material_instances.materials.up.packed_bools": "5 (byte)",
+            "minecraft:material_instances.materials.up.tint_method": "none (string)"
+          }
+        },
+        "west.alpha_masked_tint": {
+          "accepted": 2,
+          "rejected": 0,
+          "status": "inferred",
+          "rules": [
+            {
+              "kind": "table",
+              "table": {
+                "false": "5",
+                "true": "13"
+              },
+              "nbt": "byte",
+              "tags": [
+                "renamed",
+                "nested",
+                "type:boolean->byte",
+                "enum->int"
+              ],
+              "wire": "minecraft:material_instances.materials.west.packed_bools",
+              "residualBits": [
+                2
+              ]
+            },
+            {
+              "kind": "constant",
+              "value": "default_foliage",
+              "nbt": "string",
+              "tags": [
+                "injected-default"
+              ],
+              "wire": "minecraft:material_instances.materials.west.tint_method"
+            }
+          ],
+          "whenAbsent": {
+            "minecraft:material_instances.materials.west.packed_bools": "5 (byte)",
+            "minecraft:material_instances.materials.west.tint_method": "none (string)"
+          }
+        }
+      },
+      "findings": [
+        {
+          "id": "residual-bits block:minecraft:material_instances packed_bools",
+          "bits": [
+            2
+          ],
+          "wires": [
+            "minecraft:material_instances.materials.*.packed_bools",
+            "minecraft:material_instances.materials.down.packed_bools",
+            "minecraft:material_instances.materials.east.packed_bools",
+            "minecraft:material_instances.materials.north.packed_bools",
+            "minecraft:material_instances.materials.south.packed_bools",
+            "minecraft:material_instances.materials.up.packed_bools",
+            "minecraft:material_instances.materials.west.packed_bools"
+          ],
+          "fields": [
+            "*.face_dimming",
+            "*.isotropic",
+            "down.isotropic",
+            "east.isotropic",
+            "north.isotropic",
+            "south.isotropic",
+            "up.isotropic",
+            "west.isotropic",
+            "*.alpha_masked_tint",
+            "down.alpha_masked_tint",
+            "east.alpha_masked_tint",
+            "north.alpha_masked_tint",
+            "south.alpha_masked_tint",
+            "up.alpha_masked_tint",
+            "west.alpha_masked_tint"
+          ],
+          "values": [
+            "4",
+            "5",
+            "7",
+            "13"
+          ]
+        }
+      ],
+      "transforms": {
+        "": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 192
+          },
+          "rejectedFields": [
+            "down.tint_method",
+            "east.tint_method",
+            "north.tint_method",
+            "south.tint_method",
+            "up.tint_method",
+            "west.tint_method"
+          ]
         }
       },
       "protocols": [
         1001,
         2168,
-        2193
-      ],
-      "protocol2225": {
-        "variants": {
-          "accepted": 209,
-          "rejected": 36
-        },
-        "wire": [
-          "minecraft:material_instances"
-        ],
-        "status": "sent",
-        "fields": {
-          "*": {
-            "accepted": 5,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "compound",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.mappings"
-              },
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "renamed",
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.mappings.*.value"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "float",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.*.ambient_occlusion"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "byte",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.*.packed_bools"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.*.render_method"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.*.texture"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.*.tint_method"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.mappings": "{} (compound)",
-              "minecraft:material_instances.mappings.*.value": "omitted",
-              "minecraft:material_instances.materials.*.ambient_occlusion": "omitted",
-              "minecraft:material_instances.materials.*.packed_bools": "omitted",
-              "minecraft:material_instances.materials.*.render_method": "omitted",
-              "minecraft:material_instances.materials.*.texture": "omitted",
-              "minecraft:material_instances.materials.*.tint_method": "omitted"
-            }
-          },
-          "*.ambient_occlusion": {
-            "accepted": 6,
-            "rejected": 3,
-            "rejectedValues": [
-              "number:30",
-              "number:-1",
-              "number:11"
-            ],
-            "bdsErrors": [
-              "ambient_occlusion: the input is outside of the accepted range [0, 10]",
-              "*: invalid string"
-            ],
-            "bdsRange": [
-              0,
-              10
-            ],
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "float",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.*.ambient_occlusion"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.*.ambient_occlusion": "1.0 (float)"
-            }
-          },
-          "*.face_dimming": {
-            "accepted": 4,
-            "rejected": 1,
-            "rejectedValues": [
-              "string:paletter_b"
-            ],
-            "bdsErrors": [
-              "face_dimming: invalid numeric value",
-              "*: invalid string"
-            ],
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "table",
-                "table": {
-                  "false": "4",
-                  "true": "5"
-                },
-                "nbt": "byte",
-                "tags": [
-                  "renamed",
-                  "nested",
-                  "type:boolean->byte",
-                  "enum->int"
-                ],
-                "wire": "minecraft:material_instances.materials.*.packed_bools"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.*.packed_bools": "5 (byte)"
-            }
-          },
-          "*.isotropic": {
-            "accepted": 2,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
-                "nbt": "byte",
-                "tags": [
-                  "renamed",
-                  "nested",
-                  "type:boolean->byte",
-                  "enum->int"
-                ],
-                "wire": "minecraft:material_instances.materials.*.packed_bools"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.*.packed_bools": "5 (byte)"
-            }
-          },
-          "*.render_method": {
-            "accepted": 9,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.*.render_method"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.*.render_method": "opaque (string)"
-            }
-          },
-          "*.texture": {
-            "accepted": 5,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.*.texture"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.*.texture": " (string)"
-            }
-          },
-          "*.tint_method": {
-            "accepted": 7,
-            "rejected": 2,
-            "rejectedValues": [
-              "boolean:true",
-              "boolean:false"
-            ],
-            "bdsErrors": [
-              "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-              "*: invalid string"
-            ],
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.*.tint_method"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.*.tint_method": "none (string)"
-            }
-          },
-          "down": {
-            "accepted": 5,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "compound",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.mappings"
-              },
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "renamed",
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.mappings.down.value"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "float",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.down.ambient_occlusion"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "byte",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.down.packed_bools"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.down.render_method"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.down.texture"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.down.tint_method"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.mappings": "{} (compound)",
-              "minecraft:material_instances.mappings.down.value": "omitted",
-              "minecraft:material_instances.materials.down.ambient_occlusion": "omitted",
-              "minecraft:material_instances.materials.down.packed_bools": "omitted",
-              "minecraft:material_instances.materials.down.render_method": "omitted",
-              "minecraft:material_instances.materials.down.texture": "omitted",
-              "minecraft:material_instances.materials.down.tint_method": "omitted"
-            }
-          },
-          "down.ambient_occlusion": {
-            "accepted": 5,
-            "rejected": 2,
-            "rejectedValues": [
-              "number:30",
-              "number:-1"
-            ],
-            "bdsErrors": [
-              "ambient_occlusion: the input is outside of the accepted range [0, 10]",
-              "down: invalid string"
-            ],
-            "bdsRange": [
-              0,
-              10
-            ],
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "float",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.down.ambient_occlusion"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.down.ambient_occlusion": "1.0 (float)"
-            }
-          },
-          "down.face_dimming": {
-            "accepted": 2,
-            "rejected": 1,
-            "rejectedValues": [
-              "string:paletter_b"
-            ],
-            "bdsErrors": [
-              "face_dimming: invalid numeric value",
-              "down: invalid string"
-            ],
-            "status": "dropped"
-          },
-          "down.isotropic": {
-            "accepted": 2,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
-                "nbt": "byte",
-                "tags": [
-                  "renamed",
-                  "nested",
-                  "type:boolean->byte",
-                  "enum->int"
-                ],
-                "wire": "minecraft:material_instances.materials.down.packed_bools"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.down.packed_bools": "5 (byte)"
-            }
-          },
-          "down.render_method": {
-            "accepted": 9,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.down.render_method"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.down.render_method": "opaque (string)"
-            }
-          },
-          "down.texture": {
-            "accepted": 5,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.down.texture"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.down.texture": " (string)"
-            }
-          },
-          "down.tint_method": {
-            "accepted": 0,
-            "rejected": 2,
-            "rejectedValues": [
-              "boolean:true",
-              "boolean:false"
-            ],
-            "bdsErrors": [
-              "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-              "down: invalid string"
-            ],
-            "status": "rejected"
-          },
-          "east": {
-            "accepted": 5,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "compound",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.mappings"
-              },
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "renamed",
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.mappings.east.value"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "float",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.east.ambient_occlusion"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "byte",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.east.packed_bools"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.east.render_method"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.east.texture"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.east.tint_method"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.mappings": "{} (compound)",
-              "minecraft:material_instances.mappings.east.value": "omitted",
-              "minecraft:material_instances.materials.east.ambient_occlusion": "omitted",
-              "minecraft:material_instances.materials.east.packed_bools": "omitted",
-              "minecraft:material_instances.materials.east.render_method": "omitted",
-              "minecraft:material_instances.materials.east.texture": "omitted",
-              "minecraft:material_instances.materials.east.tint_method": "omitted"
-            }
-          },
-          "east.ambient_occlusion": {
-            "accepted": 5,
-            "rejected": 2,
-            "rejectedValues": [
-              "number:30",
-              "number:-1"
-            ],
-            "bdsErrors": [
-              "ambient_occlusion: the input is outside of the accepted range [0, 10]",
-              "east: invalid string"
-            ],
-            "bdsRange": [
-              0,
-              10
-            ],
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "float",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.east.ambient_occlusion"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.east.ambient_occlusion": "1.0 (float)"
-            }
-          },
-          "east.face_dimming": {
-            "accepted": 2,
-            "rejected": 1,
-            "rejectedValues": [
-              "string:paletter_b"
-            ],
-            "bdsErrors": [
-              "face_dimming: invalid numeric value",
-              "east: invalid string"
-            ],
-            "status": "dropped"
-          },
-          "east.isotropic": {
-            "accepted": 2,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
-                "nbt": "byte",
-                "tags": [
-                  "renamed",
-                  "nested",
-                  "type:boolean->byte",
-                  "enum->int"
-                ],
-                "wire": "minecraft:material_instances.materials.east.packed_bools"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.east.packed_bools": "5 (byte)"
-            }
-          },
-          "east.render_method": {
-            "accepted": 9,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.east.render_method"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.east.render_method": "opaque (string)"
-            }
-          },
-          "east.texture": {
-            "accepted": 5,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.east.texture"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.east.texture": " (string)"
-            }
-          },
-          "east.tint_method": {
-            "accepted": 0,
-            "rejected": 2,
-            "rejectedValues": [
-              "boolean:true",
-              "boolean:false"
-            ],
-            "bdsErrors": [
-              "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-              "east: invalid string"
-            ],
-            "status": "rejected"
-          },
-          "north": {
-            "accepted": 5,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "compound",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.mappings"
-              },
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "renamed",
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.mappings.north.value"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "float",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.north.ambient_occlusion"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "byte",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.north.packed_bools"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.north.render_method"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.north.texture"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.north.tint_method"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.mappings": "{} (compound)",
-              "minecraft:material_instances.mappings.north.value": "omitted",
-              "minecraft:material_instances.materials.north.ambient_occlusion": "omitted",
-              "minecraft:material_instances.materials.north.packed_bools": "omitted",
-              "minecraft:material_instances.materials.north.render_method": "omitted",
-              "minecraft:material_instances.materials.north.texture": "omitted",
-              "minecraft:material_instances.materials.north.tint_method": "omitted"
-            }
-          },
-          "north.ambient_occlusion": {
-            "accepted": 5,
-            "rejected": 2,
-            "rejectedValues": [
-              "number:30",
-              "number:-1"
-            ],
-            "bdsErrors": [
-              "ambient_occlusion: the input is outside of the accepted range [0, 10]",
-              "north: invalid string"
-            ],
-            "bdsRange": [
-              0,
-              10
-            ],
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "float",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.north.ambient_occlusion"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.north.ambient_occlusion": "1.0 (float)"
-            }
-          },
-          "north.face_dimming": {
-            "accepted": 2,
-            "rejected": 1,
-            "rejectedValues": [
-              "string:paletter_b"
-            ],
-            "bdsErrors": [
-              "face_dimming: invalid numeric value",
-              "north: invalid string"
-            ],
-            "status": "dropped"
-          },
-          "north.isotropic": {
-            "accepted": 2,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
-                "nbt": "byte",
-                "tags": [
-                  "renamed",
-                  "nested",
-                  "type:boolean->byte",
-                  "enum->int"
-                ],
-                "wire": "minecraft:material_instances.materials.north.packed_bools"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.north.packed_bools": "5 (byte)"
-            }
-          },
-          "north.render_method": {
-            "accepted": 9,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.north.render_method"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.north.render_method": "opaque (string)"
-            }
-          },
-          "north.texture": {
-            "accepted": 5,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.north.texture"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.north.texture": " (string)"
-            }
-          },
-          "north.tint_method": {
-            "accepted": 0,
-            "rejected": 2,
-            "rejectedValues": [
-              "boolean:true",
-              "boolean:false"
-            ],
-            "bdsErrors": [
-              "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-              "north: invalid string"
-            ],
-            "status": "rejected"
-          },
-          "south": {
-            "accepted": 5,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "compound",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.mappings"
-              },
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "renamed",
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.mappings.south.value"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "float",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.south.ambient_occlusion"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "byte",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.south.packed_bools"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.south.render_method"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.south.texture"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.south.tint_method"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.mappings": "{} (compound)",
-              "minecraft:material_instances.mappings.south.value": "omitted",
-              "minecraft:material_instances.materials.south.ambient_occlusion": "omitted",
-              "minecraft:material_instances.materials.south.packed_bools": "omitted",
-              "minecraft:material_instances.materials.south.render_method": "omitted",
-              "minecraft:material_instances.materials.south.texture": "omitted",
-              "minecraft:material_instances.materials.south.tint_method": "omitted"
-            }
-          },
-          "south.ambient_occlusion": {
-            "accepted": 5,
-            "rejected": 2,
-            "rejectedValues": [
-              "number:30",
-              "number:-1"
-            ],
-            "bdsErrors": [
-              "ambient_occlusion: the input is outside of the accepted range [0, 10]",
-              "south: invalid string"
-            ],
-            "bdsRange": [
-              0,
-              10
-            ],
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "float",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.south.ambient_occlusion"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.south.ambient_occlusion": "1.0 (float)"
-            }
-          },
-          "south.face_dimming": {
-            "accepted": 2,
-            "rejected": 1,
-            "rejectedValues": [
-              "string:paletter_b"
-            ],
-            "bdsErrors": [
-              "face_dimming: invalid numeric value",
-              "south: invalid string"
-            ],
-            "status": "dropped"
-          },
-          "south.isotropic": {
-            "accepted": 2,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
-                "nbt": "byte",
-                "tags": [
-                  "renamed",
-                  "nested",
-                  "type:boolean->byte",
-                  "enum->int"
-                ],
-                "wire": "minecraft:material_instances.materials.south.packed_bools"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.south.packed_bools": "5 (byte)"
-            }
-          },
-          "south.render_method": {
-            "accepted": 9,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.south.render_method"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.south.render_method": "opaque (string)"
-            }
-          },
-          "south.texture": {
-            "accepted": 5,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.south.texture"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.south.texture": " (string)"
-            }
-          },
-          "south.tint_method": {
-            "accepted": 0,
-            "rejected": 2,
-            "rejectedValues": [
-              "boolean:true",
-              "boolean:false"
-            ],
-            "bdsErrors": [
-              "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-              "south: invalid string"
-            ],
-            "status": "rejected"
-          },
-          "up": {
-            "accepted": 5,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "compound",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.mappings"
-              },
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "renamed",
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.mappings.up.value"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "float",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.up.ambient_occlusion"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "byte",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.up.packed_bools"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.up.render_method"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.up.texture"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.up.tint_method"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.mappings": "{} (compound)",
-              "minecraft:material_instances.mappings.up.value": "omitted",
-              "minecraft:material_instances.materials.up.ambient_occlusion": "omitted",
-              "minecraft:material_instances.materials.up.packed_bools": "omitted",
-              "minecraft:material_instances.materials.up.render_method": "omitted",
-              "minecraft:material_instances.materials.up.texture": "omitted",
-              "minecraft:material_instances.materials.up.tint_method": "omitted"
-            }
-          },
-          "up.ambient_occlusion": {
-            "accepted": 5,
-            "rejected": 2,
-            "rejectedValues": [
-              "number:30",
-              "number:-1"
-            ],
-            "bdsErrors": [
-              "ambient_occlusion: the input is outside of the accepted range [0, 10]",
-              "up: invalid string"
-            ],
-            "bdsRange": [
-              0,
-              10
-            ],
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "float",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.up.ambient_occlusion"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.up.ambient_occlusion": "1.0 (float)"
-            }
-          },
-          "up.face_dimming": {
-            "accepted": 2,
-            "rejected": 1,
-            "rejectedValues": [
-              "string:paletter_b"
-            ],
-            "bdsErrors": [
-              "face_dimming: invalid numeric value",
-              "up: invalid string"
-            ],
-            "status": "dropped"
-          },
-          "up.isotropic": {
-            "accepted": 2,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
-                "nbt": "byte",
-                "tags": [
-                  "renamed",
-                  "nested",
-                  "type:boolean->byte",
-                  "enum->int"
-                ],
-                "wire": "minecraft:material_instances.materials.up.packed_bools"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.up.packed_bools": "5 (byte)"
-            }
-          },
-          "up.render_method": {
-            "accepted": 9,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.up.render_method"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.up.render_method": "opaque (string)"
-            }
-          },
-          "up.texture": {
-            "accepted": 5,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.up.texture"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.up.texture": " (string)"
-            }
-          },
-          "up.tint_method": {
-            "accepted": 0,
-            "rejected": 2,
-            "rejectedValues": [
-              "boolean:true",
-              "boolean:false"
-            ],
-            "bdsErrors": [
-              "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-              "up: invalid string"
-            ],
-            "status": "rejected"
-          },
-          "west": {
-            "accepted": 5,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "compound",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.mappings"
-              },
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "renamed",
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.mappings.west.value"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "float",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.west.ambient_occlusion"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "byte",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.west.packed_bools"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.west.render_method"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.west.texture"
-              },
-              {
-                "kind": "constant",
-                "value": "<not sent>",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.west.tint_method"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.mappings": "{} (compound)",
-              "minecraft:material_instances.mappings.west.value": "omitted",
-              "minecraft:material_instances.materials.west.ambient_occlusion": "omitted",
-              "minecraft:material_instances.materials.west.packed_bools": "omitted",
-              "minecraft:material_instances.materials.west.render_method": "omitted",
-              "minecraft:material_instances.materials.west.texture": "omitted",
-              "minecraft:material_instances.materials.west.tint_method": "omitted"
-            }
-          },
-          "west.ambient_occlusion": {
-            "accepted": 5,
-            "rejected": 2,
-            "rejectedValues": [
-              "number:30",
-              "number:-1"
-            ],
-            "bdsErrors": [
-              "ambient_occlusion: the input is outside of the accepted range [0, 10]",
-              "west: invalid string"
-            ],
-            "bdsRange": [
-              0,
-              10
-            ],
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "float",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.west.ambient_occlusion"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.west.ambient_occlusion": "1.0 (float)"
-            }
-          },
-          "west.face_dimming": {
-            "accepted": 2,
-            "rejected": 1,
-            "rejectedValues": [
-              "string:paletter_b"
-            ],
-            "bdsErrors": [
-              "face_dimming: invalid numeric value",
-              "west: invalid string"
-            ],
-            "status": "dropped"
-          },
-          "west.isotropic": {
-            "accepted": 2,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
-                "nbt": "byte",
-                "tags": [
-                  "renamed",
-                  "nested",
-                  "type:boolean->byte",
-                  "enum->int"
-                ],
-                "wire": "minecraft:material_instances.materials.west.packed_bools"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.west.packed_bools": "5 (byte)"
-            }
-          },
-          "west.render_method": {
-            "accepted": 9,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.west.render_method"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.west.render_method": "opaque (string)"
-            }
-          },
-          "west.texture": {
-            "accepted": 5,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "identity",
-                "nbt": "string",
-                "tags": [
-                  "nested"
-                ],
-                "wire": "minecraft:material_instances.materials.west.texture"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.west.texture": " (string)"
-            }
-          },
-          "west.tint_method": {
-            "accepted": 0,
-            "rejected": 2,
-            "rejectedValues": [
-              "boolean:true",
-              "boolean:false"
-            ],
-            "bdsErrors": [
-              "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-              "west: invalid string"
-            ],
-            "status": "rejected"
-          },
-          "*.alpha_masked_tint": {
-            "accepted": 2,
-            "rejected": 0,
-            "status": "inferred",
-            "rules": [
-              {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "13"
-                },
-                "nbt": "byte",
-                "tags": [
-                  "renamed",
-                  "nested",
-                  "type:boolean->byte",
-                  "enum->int"
-                ],
-                "wire": "minecraft:material_instances.materials.*.packed_bools"
-              },
-              {
-                "kind": "constant",
-                "value": "default_foliage",
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:material_instances.materials.*.tint_method"
-              }
-            ],
-            "whenAbsent": {
-              "minecraft:material_instances.materials.*.packed_bools": "5 (byte)",
-              "minecraft:material_instances.materials.*.tint_method": "none (string)"
-            }
-          }
-        },
-        "protocols": [
-          2225
-        ]
-      }
+        2193,
+        2225
+      ]
     },
     "block:minecraft:movable": {
       "variants": {
@@ -7423,6 +6536,17 @@
             "minecraft:placement_filter.conditions[].block_filter[].tags": "omitted",
             "minecraft:placement_filter.conditions[].block_filter[].tags_version": "omitted"
           }
+        }
+      },
+      "transforms": {
+        "conditions[].block_filter[].states": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 3
+          }
+        },
+        "conditions[].allowed_faces": {
+          "unverified": "BDS rejected all 1 variants that set it: allowed_faces: expected an array"
         }
       },
       "protocols": [
@@ -8084,6 +7208,11 @@
         "minecraft:redstone_producer.allowPowerDown": "1 (byte)",
         "minecraft:redstone_producer.allowPowerUp": "0 (byte)"
       },
+      "transforms": {
+        "connected_faces": {
+          "unverified": "BDS rejected all 6 variants that set it: connected_faces: expected an array"
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -8208,6 +7337,17 @@
           "whenAbsent": {
             "minecraft:selection_box.size[]": "16.0 (float)"
           }
+        }
+      },
+      "transforms": {
+        "": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 6
+          },
+          "rejectedFields": [
+            "origin"
+          ]
         }
       },
       "protocols": [
@@ -8783,6 +7923,14 @@
       "constants": {
         "minecraft:transformation.hasJsonVersionBeforeValidation": "0 (byte)"
       },
+      "transforms": {
+        "rotation": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 6
+          }
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -8928,6 +8076,14 @@
           ]
         }
       },
+      "transforms": {
+        "[].components": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 2
+          }
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -8989,18 +8145,18 @@
           "accepted": 9,
           "rejected": 6,
           "rejectedValues": [
+            "object:{}",
             "array<boolean>:[]",
             "array<boolean>:[true]",
             "array<integer>:[]",
             "array<integer>:[0.5,0.25,2]",
-            "array<string>:[]",
-            "object:{}"
+            "array<string>:[]"
           ],
           "bdsErrors": [
+            "values: missing required field",
+            "<id>: expected an array",
             "<id>: expected an object",
-            "<id>: expected array with at least 1 elements",
-            "<id>: expected array with at least 2 elements",
-            "<id>[0]: invalid numeric value"
+            "<id>: expected array with at least 1 elements"
           ],
           "status": "inferred",
           "rules": [
@@ -9355,6 +8511,14 @@
         "traits[].blocks_to_corner_with": "[] (list<void>)",
         "traits[].enabled_states.sixteen_way_rotation": "0 (byte)",
         "traits[].name": "minecraft:placement_direction (string)"
+      },
+      "transforms": {
+        "enabled_states": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 4
+          }
+        }
       },
       "protocols": [
         1001,
@@ -9934,6 +9098,20 @@
         "minecraft:block_placer.replaceBlockItem": "0 (byte)",
         "minecraft:publisher_on_use_on.autoSucceedOnClient": "0 (byte)"
       },
+      "transforms": {
+        "block": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 4
+          }
+        },
+        "use_on[].states": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 3
+          }
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -10233,6 +9411,20 @@
           "minecraft:block_placer.canUseBlockAsIcon": "1 (byte)",
           "minecraft:block_placer.replaceBlockItem": "0 (byte)",
           "minecraft:publisher_on_use_on.autoSucceedOnClient": "0 (byte)"
+        },
+        "transforms": {
+          "block": {
+            "verified": {
+              "build": "1.26.63.1",
+              "variants": 4
+            }
+          },
+          "use_on[].states": {
+            "verified": {
+              "build": "1.26.63.1",
+              "variants": 3
+            }
+          }
         },
         "protocols": [
           2225
@@ -11075,6 +10267,14 @@
           }
         }
       },
+      "transforms": {
+        "destroy_speeds[].block.states": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 3
+          }
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -11318,6 +10518,14 @@
           ],
           "whenAbsent": {
             "minecraft:dyeable.default_color[]": "255 (int)"
+          }
+        }
+      },
+      "transforms": {
+        "default_color": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 4
           }
         }
       },
@@ -11904,6 +11112,20 @@
       "constants": {
         "minecraft:publisher_on_use_on.autoSucceedOnClient": "0 (byte)"
       },
+      "transforms": {
+        "use_on[].states": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 3
+          }
+        },
+        "dispense_on[].states": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 3
+          }
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -12064,6 +11286,14 @@
           ],
           "unknownToBds": true,
           "status": "rejected"
+        }
+      },
+      "transforms": {
+        "using_converts_to": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 3
+          }
         }
       },
       "protocols": [
@@ -12359,6 +11589,14 @@
           ]
         }
       },
+      "transforms": {
+        "value": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 2
+          }
+        }
+      },
       "protocols": [
         1001,
         2168,
@@ -12414,6 +11652,17 @@
           ],
           "unknownToBds": true,
           "status": "rejected"
+        }
+      },
+      "transforms": {
+        "": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 4
+          },
+          "rejectedFields": [
+            "texture"
+          ]
         }
       },
       "protocols": [
@@ -13814,6 +13063,14 @@
           ]
         }
       },
+      "transforms": {
+        "repair_items": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 14
+          }
+        }
+      },
       "protocols": [
         1001
       ],
@@ -14008,6 +13265,14 @@
               "minecraft:repairable.repair_items": "[] (list<void>)",
               "minecraft:repairable.repair_items[].items[].name": "omitted",
               "minecraft:repairable.repair_items[].repair_amount": "omitted"
+            }
+          }
+        },
+        "transforms": {
+          "repair_items": {
+            "verified": {
+              "build": "1.26.45.1",
+              "variants": 14
             }
           }
         },
@@ -14465,6 +13730,14 @@
           ],
           "whenAbsent": {
             "minecraft:shooter.scale_power_by_draw_duration": "0 (byte)"
+          }
+        }
+      },
+      "transforms": {
+        "ammunition[].item": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 5
           }
         }
       },
@@ -15204,6 +14477,14 @@
           "whenAbsent": {
             "item_properties.use_animation": "0 (int)",
             "minecraft:use_animation.value": "none (string)"
+          }
+        }
+      },
+      "transforms": {
+        "value": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 1
           }
         }
       },

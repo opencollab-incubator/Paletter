@@ -128,6 +128,84 @@
             "bds-strings",
             "wiki.bedrock.dev blocks/block-format-history.md"
           ]
+        },
+        "down.alpha_masked_tint": {
+          "types": [
+            "boolean"
+          ],
+          "examples": [
+            true
+          ],
+          "minFormatVersion": "1.21.120",
+          "candidateFrom": [
+            "bds-strings",
+            "wiki.bedrock.dev blocks/block-format-history.md"
+          ]
+        },
+        "east.alpha_masked_tint": {
+          "types": [
+            "boolean"
+          ],
+          "examples": [
+            true
+          ],
+          "minFormatVersion": "1.21.120",
+          "candidateFrom": [
+            "bds-strings",
+            "wiki.bedrock.dev blocks/block-format-history.md"
+          ]
+        },
+        "north.alpha_masked_tint": {
+          "types": [
+            "boolean"
+          ],
+          "examples": [
+            true
+          ],
+          "minFormatVersion": "1.21.120",
+          "candidateFrom": [
+            "bds-strings",
+            "wiki.bedrock.dev blocks/block-format-history.md"
+          ]
+        },
+        "south.alpha_masked_tint": {
+          "types": [
+            "boolean"
+          ],
+          "examples": [
+            true
+          ],
+          "minFormatVersion": "1.21.120",
+          "candidateFrom": [
+            "bds-strings",
+            "wiki.bedrock.dev blocks/block-format-history.md"
+          ]
+        },
+        "up.alpha_masked_tint": {
+          "types": [
+            "boolean"
+          ],
+          "examples": [
+            true
+          ],
+          "minFormatVersion": "1.21.120",
+          "candidateFrom": [
+            "bds-strings",
+            "wiki.bedrock.dev blocks/block-format-history.md"
+          ]
+        },
+        "west.alpha_masked_tint": {
+          "types": [
+            "boolean"
+          ],
+          "examples": [
+            true
+          ],
+          "minFormatVersion": "1.21.120",
+          "candidateFrom": [
+            "bds-strings",
+            "wiki.bedrock.dev blocks/block-format-history.md"
+          ]
         }
       },
       "unknown": [
@@ -135,33 +213,31 @@
         "*.grass_block",
         "*.none",
         "*.opaque",
+        "down.emissive",
         "down.grass_block",
         "down.none",
         "down.opaque",
+        "east.emissive",
         "east.grass_block",
         "east.none",
         "east.opaque",
+        "north.emissive",
         "north.grass_block",
         "north.none",
         "north.opaque",
+        "south.emissive",
         "south.grass_block",
         "south.none",
         "south.opaque",
+        "up.emissive",
         "up.grass_block",
         "up.none",
         "up.opaque",
+        "west.emissive",
         "west.grass_block",
         "west.none",
         "west.opaque"
-      ],
-      "known": {
-        "down.alpha_masked_tint": " -> components -> minecraft:material_instances -> down: \"alpha_masked_tint\" requires a non-default \"tint_method\".",
-        "east.alpha_masked_tint": " -> components -> minecraft:material_instances -> east: \"alpha_masked_tint\" requires a non-default \"tint_method\".",
-        "north.alpha_masked_tint": " -> components -> minecraft:material_instances -> north: \"alpha_masked_tint\" requires a non-default \"tint_method\".",
-        "south.alpha_masked_tint": " -> components -> minecraft:material_instances -> south: \"alpha_masked_tint\" requires a non-default \"tint_method\".",
-        "up.alpha_masked_tint": " -> components -> minecraft:material_instances -> up: \"alpha_masked_tint\" requires a non-default \"tint_method\".",
-        "west.alpha_masked_tint": " -> components -> minecraft:material_instances -> west: \"alpha_masked_tint\" requires a non-default \"tint_method\"."
-      }
+      ]
     },
     "block:minecraft:movable": {
       "accepted": {},
@@ -191,7 +267,15 @@
       ],
       "known": {
         "rotation.rotation_pivot": " -> components -> minecraft:transformation -> rotation: Expected [x, y, z].",
-        "rotation.scale_pivot": " -> components -> minecraft:transformation -> rotation: Expected [x, y, z]."
+        "rotation.scale_pivot": " -> components -> minecraft:transformation -> rotation: Expected [x, y, z].",
+        "rotation_pivot.rotation_pivot": " -> components -> minecraft:transformation -> rotation_pivot: Expected [x, y, z].",
+        "rotation_pivot.scale_pivot": " -> components -> minecraft:transformation -> rotation_pivot: Expected [x, y, z].",
+        "scale.rotation_pivot": " -> components -> minecraft:transformation -> scale: Expected [x, y, z].",
+        "scale.scale_pivot": " -> components -> minecraft:transformation -> scale: Expected [x, y, z].",
+        "scale_pivot.rotation_pivot": " -> components -> minecraft:transformation -> scale_pivot: Expected [x, y, z].",
+        "scale_pivot.scale_pivot": " -> components -> minecraft:transformation -> scale_pivot: Expected [x, y, z].",
+        "translation.rotation_pivot": " -> components -> minecraft:transformation -> translation: Expected [x, y, z].",
+        "translation.scale_pivot": " -> components -> minecraft:transformation -> translation: Expected [x, y, z]."
       }
     },
     "block:trait:minecraft:connection": {
@@ -300,7 +384,8 @@
     "item:minecraft:repairable": {
       "accepted": {},
       "unknown": [
-        "on_repaired"
+        "on_repaired",
+        "repair_items[].on_repaired"
       ],
       "known": {
         "repair_items.on_repaired": "ERROR [Item]  '': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'"

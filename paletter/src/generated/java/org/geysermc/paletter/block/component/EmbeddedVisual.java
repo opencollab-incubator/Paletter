@@ -19,14 +19,14 @@ import org.geysermc.paletter.internal.component.Check;
  * @param geometry The "minecraft:geometry" component that will be used when rendered inside of another block. Add-on JSON {@code
  *        geometry}. Required. Compiled by the hand transform {@code embedded_geometry}.
  * @param materialInstances The "minecraft:material_instances" component that will be used when rendered inside of another block. Value
- *        must have at most 64 items. Add-on JSON {@code material_instances}. Optional (null: not set). Compiled by the
- *        hand transform {@code material_instances_inline}.
+ *        must have at most 64 items. Add-on JSON {@code material_instances}. Required. Compiled by the hand transform
+ *        {@code material_instances_inline}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_embedded_visual?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:embedded_visual</a>
  * @since 0.1.0
  */
 @BedrockFormat("1.21.120")
 public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
-        @Nullable MaterialInstances materialInstances) implements BlockComponent {
+        @NonNull MaterialInstances materialInstances) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -34,6 +34,7 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
 
     public EmbeddedVisual {
         Objects.requireNonNull(geometry, "EmbeddedVisual.geometry");
+        Objects.requireNonNull(materialInstances, "EmbeddedVisual.materialInstances");
     }
 
     @Override
@@ -80,7 +81,7 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
         /**
          * Sets {@code material_instances}.
          */
-        public @NonNull Builder materialInstances(@Nullable MaterialInstances materialInstances) {
+        public @NonNull Builder materialInstances(@NonNull MaterialInstances materialInstances) {
             this.materialInstances = materialInstances;
             return this;
         }
@@ -92,6 +93,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
         public @NonNull EmbeddedVisual build() {
             if (geometry == null) {
                 throw new IllegalStateException("EmbeddedVisual.geometry is required");
+            }
+            if (materialInstances == null) {
+                throw new IllegalStateException("EmbeddedVisual.materialInstances is required");
             }
             return new EmbeddedVisual(geometry, materialInstances);
         }

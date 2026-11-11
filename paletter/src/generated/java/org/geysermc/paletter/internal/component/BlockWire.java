@@ -116,19 +116,22 @@ public final class BlockWire {
 
     private static void blockEntity(BlockEntity c, WireContext ctx, WireNode out) {
         int protocol = ctx.protocol();
-        if (protocol < 2193) {
-            blockEntityUntil2193(c, ctx, out);
-        } else if (protocol >= 2193) {
-            blockEntityFrom2193(c, ctx, out);
+        if (protocol < 2225) {
+            blockEntityUntil2225(c, ctx, out);
+        } else if (protocol >= 2225) {
+            blockEntityFrom2225(c, ctx, out);
         }
     }
 
-    private static void blockEntityUntil2193(BlockEntity c, WireContext ctx, WireNode out) {
-        ctx.drop(BlockEntity.NAME, "is not sent to clients (BDS: server-only)");
+    private static void blockEntityUntil2225(BlockEntity c, WireContext ctx, WireNode out) {
+        ctx.drop(BlockEntity.NAME, "is not sent to clients (BDS: rejected)");
     }
 
-    private static void blockEntityFrom2193(BlockEntity c, WireContext ctx, WireNode out) {
+    private static void blockEntityFrom2225(BlockEntity c, WireContext ctx, WireNode out) {
         boolean v0 = c.dynamicProperties();
+        Boolean v1 = c.entityStorage();
+        if (v1 != null) {
+        }
         int transformProtocol = ctx.protocol();
         if (transformProtocol < 2225) {
             Transforms.blockEntityContainerSlotsOnly(ctx, out, c);
@@ -224,6 +227,16 @@ public final class BlockWire {
     }
 
     private static void embeddedVisual(EmbeddedVisual c, WireContext ctx, WireNode out) {
+        out.put("minecraft:embedded_visual.geometry.bone_visibility", NbtMap.EMPTY);
+        out.put("minecraft:embedded_visual.geometry.uv_lock", (byte) 0);
+        out.put("minecraft:embedded_visual.material_instances", NbtMap.EMPTY);
+        out.put("minecraft:embedded_visual.material_instances.*.alpha_masked_tint", (byte) 0);
+        out.put("minecraft:embedded_visual.material_instances.*.ambient_occlusion", 1.0f);
+        out.put("minecraft:embedded_visual.material_instances.*.face_dimming", (byte) 1);
+        out.put("minecraft:embedded_visual.material_instances.*.isotropic", (byte) 0);
+        out.put("minecraft:embedded_visual.material_instances.*.render_method", "opaque");
+        out.put("minecraft:embedded_visual.material_instances.*.texture", "paletter_tex");
+        out.put("minecraft:embedded_visual.material_instances.*.tint_method", "none");
         int transformProtocol = ctx.protocol();
         if (transformProtocol < 2225) {
             Transforms.embeddedGeometryBeforeRotation(ctx, out, c);
@@ -255,9 +268,38 @@ public final class BlockWire {
     }
 
     private static void geometry(Geometry c, WireContext ctx, WireNode out) {
+        int protocol = ctx.protocol();
+        if (protocol < 2225) {
+            geometryUntil2225(c, ctx, out);
+        } else if (protocol >= 2225) {
+            geometryFrom2225(c, ctx, out);
+        }
+    }
+
+    private static void geometryUntil2225(Geometry c, WireContext ctx, WireNode out) {
+        out.put("minecraft:geometry.bone_visibility", NbtMap.EMPTY);
+        out.put("minecraft:geometry.culling_layer", "minecraft:culling_layer.undefined");
+        out.put("minecraft:geometry.culling_shape", "");
+        out.put("minecraft:geometry.ignoreGeometryForIsSolid", (byte) 0);
+        out.put("minecraft:geometry.isV1Fullblock", (byte) 0);
+        out.put("minecraft:geometry.needsLegacyTopRotation", (byte) 0);
+        out.put("minecraft:geometry.useBlockTypeLightAbsorption", (byte) 0);
         int transformProtocol = ctx.protocol();
         if (transformProtocol < 2225) {
-            Transforms.geometryBeforeUvLockList(ctx, out, c);
+            Transforms.geometryBeforeRotation(ctx, out, c);
+        } else {
+            Transforms.geometry(ctx, out, c);
+        }
+    }
+
+    private static void geometryFrom2225(Geometry c, WireContext ctx, WireNode out) {
+        out.put("minecraft:geometry.ignoreGeometryForIsSolid", (byte) 0);
+        out.put("minecraft:geometry.isV1Fullblock", (byte) 0);
+        out.put("minecraft:geometry.needsLegacyTopRotation", (byte) 0);
+        out.put("minecraft:geometry.useBlockTypeLightAbsorption", (byte) 0);
+        int transformProtocol = ctx.protocol();
+        if (transformProtocol < 2225) {
+            Transforms.geometryBeforeRotation(ctx, out, c);
         } else {
             Transforms.geometry(ctx, out, c);
         }

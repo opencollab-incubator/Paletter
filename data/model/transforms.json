@@ -55,8 +55,8 @@
   },
   "block:minecraft:geometry:": {
     "transform": "geometry",
-    "windows": [{"until": 2225, "transform": "geometry_before_uv_lock_list"}, {"since": 2225, "transform": "geometry"}],
-    "why": "BDS rejected every variant's companions (status untestable), so no rule was inferred. The wire shape is known from every material_instances variant, which carries a geometry: {identifier, bone_visibility, culling, culling_layer, culling_shape, uv_lock, ignoreGeometryForIsSolid, isV1Fullblock, needsLegacyTopRotation, useBlockTypeLightAbsorption}; item_visual sends the same shape as geometryDescription."
+    "windows": [{"until": 2225, "transform": "geometry_before_rotation"}, {"since": 2225, "transform": "geometry"}],
+    "why": "One geometry compound shared with item_visual and embedded_visual: bone_visibility values become Molang strings (true -> 1.000000), unset fields are sent as BDS sends them (culling \"\", culling_layer undefined) and four flags are always 0: {ignoreGeometryForIsSolid, isV1Fullblock, needsLegacyTopRotation, useBlockTypeLightAbsorption}. From protocol 2225 n_way_visual_rotation is sent with every axis, \"\" for an axis not set."
   },
   "block:minecraft:material_instances:": {
     "transform": "material_instances",
