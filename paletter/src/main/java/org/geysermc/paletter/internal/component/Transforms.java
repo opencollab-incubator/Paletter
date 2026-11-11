@@ -6,6 +6,7 @@ import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
+import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.BlockComponent;
 import org.geysermc.paletter.block.component.BlockEntity;
@@ -33,7 +34,6 @@ import org.geysermc.paletter.item.component.Repairable;
 import org.geysermc.paletter.item.component.Shooter;
 import org.geysermc.paletter.item.component.UseAnimation;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -233,24 +233,8 @@ public final class Transforms {
      */
     static @NonNull List<String> bdsBoneOrder(@NonNull List<String> bones) {
         List<String> ordered = new ArrayList<>(new LinkedHashSet<>(bones));
-        ordered.sort((a, b) -> Long.compareUnsigned(hashedString(a), hashedString(b)));
+        ordered.sort((a, b) -> Long.compareUnsigned(BlockRegistry.nameHash(a), BlockRegistry.nameHash(b)));
         return ordered;
-    }
-
-    /**
-     * The hash of BDS's {@code HashedString}: FNV-1 64 bit (multiply, then xor) over the UTF-8 bytes, 0 for the empty
-     * string. Not {@code BlockRegistry.nameHash}, which hashes the empty string to the offset basis and sign-extends bytes.
-     */
-    private static long hashedString(String string) {
-        byte[] bytes = string.getBytes(StandardCharsets.UTF_8);
-        if (bytes.length == 0) {
-            return 0;
-        }
-        long hash = 0xcbf29ce484222325L;
-        for (byte b : bytes) {
-            hash = hash * 0x100000001b3L ^ (b & 0xff);
-        }
-        return hash;
     }
 
     // ---- material_instances ----------------------------------------------------------------------------------------

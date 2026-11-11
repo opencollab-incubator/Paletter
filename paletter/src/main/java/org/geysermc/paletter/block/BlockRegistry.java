@@ -624,14 +624,19 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
-     * FNV-1 64 bit hash (multiply, then xor: not FNV-1a) of a block identifier; the client orders its palette by it once custom blocks exist.
+     * The hash of BDS's {@code HashedString}: FNV-1 64 bit (multiply, then xor: not FNV-1a) over the zero-extended UTF-8
+     * bytes, 0 for the empty string. BDS sends it as a block's {@code name_hash}, and the client orders its palette by it
+     * once custom blocks exist.
      */
     @Internal
     public static long nameHash(@NonNull String identifier) {
+        byte[] bytes = identifier.getBytes(StandardCharsets.UTF_8);
+        if (bytes.length == 0) {
+            return 0;
+        }
         long hash = FNV1_64_OFFSET_BASIS;
-        for (byte b : identifier.getBytes(StandardCharsets.UTF_8)) {
-            hash *= FNV1_64_PRIME;
-            hash ^= b;
+        for (byte b : bytes) {
+            hash = hash * FNV1_64_PRIME ^ (b & 0xff);
         }
         return hash;
     }
