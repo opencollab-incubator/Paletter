@@ -316,10 +316,6 @@ public final class Coverage {
         }
     }
 
-    private static String sentence(String text) {
-        return text.endsWith(".") ? text : text + ".";
-    }
-
     private static String key(String version) {
         StringBuilder key = new StringBuilder();
         for (String part : version.split("\\.")) {

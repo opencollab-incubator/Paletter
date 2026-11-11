@@ -188,13 +188,6 @@ public final class MappingInference {
         return new Output(Model.GSON.toJson(mappings) + "\n", coverage.markdown(captures), Model.GSON.toJson(feedback.json()) + "\n", coverage);
     }
 
-    /** A component's first window and the windows after it ({@code protocol<N>}). */
-    private static List<JsonObject> windows(JsonObject merged) {
-        List<JsonObject> windows = new ArrayList<>(List.of(merged));
-        merged.entrySet().stream().filter(e -> e.getKey().matches("protocol\\d+")).forEach(e -> windows.add(e.getValue().getAsJsonObject()));
-        return windows;
-    }
-
     private static final String UNEXPLAINED = "UNEXPLAINED";
 
     /**
