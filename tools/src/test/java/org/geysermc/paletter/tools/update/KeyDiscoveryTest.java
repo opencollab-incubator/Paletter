@@ -30,7 +30,10 @@ class KeyDiscoveryTest {
              {"path": "*", "types": [{"type": "object"}], "required": false, "enumValues": [], "examples": [], "doc": ""},
              {"path": "*.texture", "types": [{"type": "string"}], "required": false, "enumValues": [], "examples": [], "doc": ""},
              {"path": "*.tint_method", "types": [{"type": "string"}], "required": false, "enumValues": [], "examples": [], "doc": ""}
-           ]}
+           ]},
+          {"id": "block:minecraft:plain", "kind": "block", "category": "component", "name": "minecraft:plain", "status": "active",
+           "doc": "", "page": "", "experiments": [], "notes": [], "forms": [{"type": "object"}],
+           "fields": [{"path": "size", "types": [{"type": "number"}], "required": false, "enumValues": [], "examples": [], "doc": ""}]}
         ]}""";
     static final String FIXTURES = """
         {"formatVersion": "1.26.60", "filler": {}, "errata": [], "requires": {}, "samples": {"block:minecraft:mat:*.texture": "t"},
@@ -65,7 +68,7 @@ class KeyDiscoveryTest {
         Path binary = root.resolve("bedrock_server");
         String texts = "'alpha_masked_tint' requires a non-default 'tint_method'.\0"
             + "'alpha_masked_tint' is only supported at format_version 1.21.120 or higher.\0"
-            + "'minecraft:mat' cannot use 'isotropic' member with 'format_version' < 1.21.70\0"
+            + "'minecraft:plain' cannot use 'rounded' member with 'format_version' < 1.21.70\0"
             + "a text without the quoted names of a field\0noise_without_space\0";
         Files.write(binary, texts.getBytes(StandardCharsets.ISO_8859_1));
         AddonGenerator generator = generator(root);
@@ -74,12 +77,14 @@ class KeyDiscoveryTest {
 
         assertTrue(evidence.candidates.containsKey(new KeyDiscovery.Candidate("block:minecraft:mat", "*", "alpha_masked_tint")),
             "named next to tint_method, so a member of the object that has it");
-        assertTrue(evidence.candidates.containsKey(new KeyDiscovery.Candidate("block:minecraft:mat", "", "isotropic")),
+        assertTrue(evidence.candidates.containsKey(new KeyDiscovery.Candidate("block:minecraft:plain", "", "rounded")),
             "named next to the component, so a member of its root");
+        assertFalse(evidence.candidates.keySet().stream().anyMatch(c -> c.component().equals("block:minecraft:mat") && c.level().isEmpty()),
+            "every key of a map is accepted, asking for one says nothing");
         assertFalse(evidence.candidates.containsKey(new KeyDiscovery.Candidate("block:minecraft:mat", "*", "tint_method")), "known fields are not asked");
         assertEquals("1.21.120", evidence.bdsVersions.get("alpha_masked_tint").last());
-        assertEquals("1.21.70", evidence.bdsVersions.get("isotropic").last());
-        assertEquals("1.21.70", evidence.bdsVersions.get("minecraft:mat").last());
+        assertEquals("1.21.70", evidence.bdsVersions.get("rounded").last());
+        assertEquals("1.21.70", evidence.bdsVersions.get("minecraft:plain").last());
     }
 
     @Test

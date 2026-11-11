@@ -91,7 +91,7 @@ class ProbeGeneratorTest {
         Component geo = generator(model(root, feedback, null)).model().component("block:minecraft:geo");
 
         assertEquals("object", geo.field("rotation").types().getFirst().type(), "'expected an object' where the docs say string");
-        assertEquals("string", geo.field("rotation").types().get(1).type(), "the docs type stays, it is only not first");
+        assertEquals("string", geo.field("rotation").types().get(1).type(), "the docs type stays, so the next capture asks BDS again");
         assertEquals("object", geo.field("items").types().getFirst().type(), "the list of the docs is the form BDS does not take");
         assertEquals("array", geo.field("items").types().get(1).type());
         assertEquals(2, geo.field("identifier").types().size(), "an object type is added where there was none");

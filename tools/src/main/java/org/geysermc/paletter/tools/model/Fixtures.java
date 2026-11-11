@@ -3,7 +3,7 @@ package org.geysermc.paletter.tools.model;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.geysermc.paletter.tools.model.Model;
+import org.geysermc.paletter.tools.codegen.component.BdsErrata;
 import org.geysermc.paletter.tools.model.Model.Component;
 import org.geysermc.paletter.tools.model.Model.Field;
 import org.geysermc.paletter.tools.model.Model.JType;
@@ -74,10 +74,18 @@ public final class Fixtures {
         return groups;
     }
 
-    /** Sibling values a field needs when it is set ("blocks_to_corner_with" needs corner_and_cardinal_direction). */
+    /**
+     * Sibling values a field needs when it is set ("blocks_to_corner_with" needs corner_and_cardinal_direction); by
+     * {@code <component>:<path>}, then by the field's name (the same key of every face of material_instances).
+     */
     public JsonObject together(String component, String path) {
         JsonObject together = json.has("together") ? json.getAsJsonObject("together") : new JsonObject();
-        return together.has(component + ":" + path) ? together.getAsJsonObject(component + ":" + path) : new JsonObject();
+        for (String key : List.of(component + ":" + path, component + ":" + path.substring(path.lastIndexOf('.') + 1))) {
+            if (together.has(key)) {
+                return together.getAsJsonObject(key);
+            }
+        }
+        return new JsonObject();
     }
 
     public List<JsonObject> errata() {
@@ -140,8 +148,7 @@ public final class Fixtures {
 
     /**
      * The model with the errata applied: types, forms and fields are only ever added. First the hand written errata, then
-     * what BDS said: the types its content log demands ({@link #typesFromFeedback}) and the keys the probe found it
-     * accepts ({@link #keysFromProbe}).
+     * what BDS said ({@link BdsErrata}: the types its content log demands, the keys the probe found it accepts).
      */
     public Model apply(Model model) {
         Map<String, Component> components = new LinkedHashMap<>();
@@ -183,91 +190,10 @@ public final class Fixtures {
             components.put(id, new Component(c.id(), c.kind(), c.category(), c.name(), c.status(), c.doc(), c.page(), c.minFormatVersion(),
                 c.experiments(), forms, fields, c.notes()));
         }
-        typesFromFeedback(components);
-        keysFromProbe(components);
-        return new Model(model.source(), model.commit(), model.license(), model.lists(), new ArrayList<>(components.values()), model.formatNotes());
-    }
-
-    /**
-     * Errata generated from the type errors of BDS's content log (the {@code object} facts of {@code bds-feedback.json}):
-     * <ul>
-     *     <li>"expected an object" at a field the docs give no object type (a string in the docs'
-     *     {@code n_way_visual_rotation}): the object type is added, and it comes first, as BDS wants it;</li>
-     *     <li>"expected a key/value object" at an element of a list ({@code material_instances[0]}) of a field that has an
-     *     object type besides the list: the list is the form BDS does not take, the object comes first.</li>
-     * </ul>
-     */
-    private void typesFromFeedback(Map<String, Component> components) {
-        for (Map.Entry<String, JsonElement> entry : feedback.entrySet()) {
-            Component c = components.get(entry.getKey());
-            if (c == null || !entry.getValue().isJsonObject()) {
-                continue;
-            }
-            for (String path : entry.getValue().getAsJsonObject().keySet()) {
-                if (!fact(c.id(), path, "object")) {
-                    continue;
-                }
-                boolean element = path.endsWith("[]");
-                Field field = c.field(element ? path.substring(0, path.length() - 2) : path);
-                if (field == null || (element && !field.has("object"))) {
-                    continue;
-                }
-                List<JType> types = new ArrayList<>(field.types());
-                if (!field.has("object") && !field.has("map")) {
-                    types.add(JType.of("object"));
-                }
-                JType object = types.stream().filter(t -> t.type().equals("object") || t.type().equals("map")).findFirst().orElseThrow();
-                if (types.indexOf(object) == 0 && types.size() == field.types().size()) {
-                    continue;
-                }
-                types.remove(object);
-                types.add(0, object);
-                replaceField(components, new Field(field.path(), types, field.defaultValue(), field.required(), field.enumValues(),
-                    field.range(), field.minFormatVersion(), field.examples(), field.doc()), c.id());
-            }
-        }
-    }
-
-    /**
-     * The keys the key probe ({@code spec-capture --probe-keys}) found BDS accepts, as fields of their component: the
-     * types BDS accepted, the values it accepted as examples (the samples of the next capture), and the format version
-     * BDS names for the key, with the BDS build in the doc text.
-     */
-    private void keysFromProbe(Map<String, Component> components) {
-        if (!keys.has("components")) {
-            return;
-        }
-        String source = "bds-schema " + keys.get("bdsVersion").getAsString();
-        for (Map.Entry<String, JsonElement> entry : keys.getAsJsonObject("components").entrySet()) {
-            Component c = components.get(entry.getKey());
-            if (c == null) {
-                throw new IllegalStateException(KEYS_FILE + " names the unknown component " + entry.getKey());
-            }
-            for (Map.Entry<String, JsonElement> key : entry.getValue().getAsJsonObject().getAsJsonObject("accepted").entrySet()) {
-                if (components.get(c.id()).field(key.getKey()) != null) {
-                    continue;
-                }
-                JsonObject found = key.getValue().getAsJsonObject();
-                List<JType> types = new ArrayList<>();
-                found.getAsJsonArray("types").forEach(t -> types.add(parseType(t.getAsString())));
-                List<JsonElement> examples = found.has("examples") ? found.getAsJsonArray("examples").asList() : List.of();
-                String since = found.has("minFormatVersion") ? found.get("minFormatVersion").getAsString() : null;
-                List<Field> fields = new ArrayList<>(components.get(c.id()).fields());
-                fields.add(new Field(key.getKey(), types, null, false, List.of(), null, since, examples, "(" + source
-                    + ") BDS accepts this key; the creator docs do not list it." + (since == null ? "" : " BDS names the format version " + since + " for it.")));
-                Component current = components.get(c.id());
-                components.put(c.id(), new Component(current.id(), current.kind(), current.category(), current.name(), current.status(), current.doc(),
-                    current.page(), current.minFormatVersion(), current.experiments(), current.forms(), fields, current.notes()));
-            }
-        }
-    }
-
-    private static void replaceField(Map<String, Component> components, Field field, String id) {
-        Component c = components.get(id);
-        List<Field> fields = new ArrayList<>(c.fields());
-        fields.set(fields.indexOf(c.field(field.path())), field);
-        components.put(id, new Component(c.id(), c.kind(), c.category(), c.name(), c.status(), c.doc(), c.page(), c.minFormatVersion(),
-            c.experiments(), c.forms(), fields, c.notes()));
+        Model errata = new Model(model.source(), model.commit(), model.license(), model.lists(), new ArrayList<>(components.values()), model.formatNotes());
+        JsonObject json = Model.GSON.toJsonTree(errata).getAsJsonObject();
+        BdsErrata.apply(json, feedback, keys, false);
+        return Model.GSON.fromJson(json, Model.class);
     }
 
     /** {@code integer}, {@code array<object>}, {@code map<string>}, ... */

@@ -32,7 +32,8 @@ field (run until `bds-feedback.json` stops changing).
 BDS wins over the docs, and what it says is read back from its own output, never typed in:
 
 - **Types.** The content log's type errors become errata when the model is read (`Fixtures.apply`): "expected an object"
-  at a field the docs type as a string (`geometry.n_way_visual_rotation`) adds the object type and puts it first;
+  at a field the docs type as a string (`geometry.n_way_visual_rotation`) adds the object type and puts it first (the
+  add-on keeps the docs type, so every capture asks again; the API offers only the object);
   "expected a key/value object" at an element of a list (`embedded_visual.material_instances[0]`) of a field that also
   has an object type says the list is the form BDS does not take. "must define at least one ..." (`nonEmpty`) keeps a
   member whose members the model does not know out of the bases. All of it is in `bds-feedback.json`, rewritten by `infer`.

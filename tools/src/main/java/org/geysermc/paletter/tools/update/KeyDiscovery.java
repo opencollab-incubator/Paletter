@@ -103,9 +103,9 @@ final class KeyDiscovery {
         return evidence;
     }
 
-    /** The object levels of a component: its root and every object field, one per distinct set of members. */
+    /** The object levels of a component: its root and every object field that has members. */
     static List<String> levels(Component c) {
-        Map<Set<String>, String> byMembers = new LinkedHashMap<>();
+        Set<String> levels = new LinkedHashSet<>();
         List<String> candidates = new ArrayList<>();
         candidates.add("");
         for (Field field : c.fields()) {
@@ -117,13 +117,11 @@ final class KeyDiscovery {
             }
         }
         for (String level : candidates) {
-            Set<String> members = new TreeSet<>();
-            c.fields().stream().filter(f -> AddonGenerator.parentOf(f.path()).equals(level)).forEach(f -> members.add(f.name()));
-            if (level.isEmpty() || !members.isEmpty()) {
-                byMembers.putIfAbsent(members, level);
+            if (level.isEmpty() || c.fields().stream().anyMatch(f -> AddonGenerator.parentOf(f.path()).equals(level))) {
+                levels.add(level);
             }
         }
-        return List.copyOf(byMembers.values());
+        return List.copyOf(levels);
     }
 
     /** Whether the object at a level has free keys: the model lists a {@code *} or {@code {}} member, or types it a map. */
