@@ -17,7 +17,6 @@ paletter nor its sources, so it can regenerate them when they do not compile. Ja
 | `bds-feedback.json` | generated from BDS's content log | required fields and ranges BDS enforces (they win over the docs), fields BDS does not know |
 | `mappings.json` | inferred from BDS captures | per component and protocol window: status, value form and field rules, `whenAbsent`, `constants` |
 | `transforms.json` | hand | fields or whole components (path `""`) compiled by a named hand transform, with why; whether BDS bore it out is derived (`verified` / `unverified` in `mappings.json`, listed in `coverage.md`) |
-| `wire-gaps.txt` | hand | captured wire paths the model does not cover: `<component> <path> \| <reason> \| since <build> \| closes with <what>` |
 | `api.json` | hand | Java shaping only: names, union resolution, value forms, descriptors, `keyedExtras`, open enums, `since` |
 
 Output: a record per component in `item.component` / `block.component` (nested records, enums, builder, `of(...)`

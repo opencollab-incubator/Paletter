@@ -9,6 +9,7 @@ import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.geysermc.paletter.internal.data.PaletteDataCodec;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
+import org.geysermc.paletter.tools.model.Model;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -186,44 +187,53 @@ public final class WireShapes {
         return uncovered;
     }
 
-    /**
-     * A known gap: a wire path of the captures the model does not cover, with why, since which BDS build and what would close it.
-     *
-     * @param path        {@code component path}, as {@link #uncovered} lists it
-     * @param since       the BDS build of the capture it was found in
-     * @param closesWith  what would cover it
-     */
-    public record Gap(String path, String reason, String since, String closesWith) {
-    }
+    /** What {@link #classify} calls an uncovered path no rule explains: the report lists these for a human to look at. */
+    public static final String UNCLASSIFIED = "unclassified";
 
     /**
-     * The uncovered paths that are known and accepted: {@code wire-gaps.txt} of the model directory, one gap per line,
-     * {@code <component> <path> | <reason> | since <build> | closes with <what>}.
+     * Sorts the uncovered paths ({@link #uncovered}) by why the model does not cover them. The reasons:
+     * <ul>
+     *   <li>the block definition data around the components ({@code blockTags}, {@code molangVersion},
+     *       {@code vanilla_block_data}): BlockCompiler writes it and the conformance suite checks it;</li>
+     *   <li>a component the mappings call {@code untestable}: BDS rejected its companions, so nothing was inferred;</li>
+     *   <li>a component without documented fields: the creator docs do not describe it, so the model has nothing to map;</li>
+     *   <li>an {@code item_properties} entry: BDS sends it for every item, no add-on JSON field sets it, ItemCompiler and
+     *       WireOnlyWire write it.</li>
+     * </ul>
+     * Anything else is {@link #UNCLASSIFIED}.
      *
-     * @throws IllegalArgumentException for a line without reason, build or closing condition
+     * @return reason -> paths, in the order above, only reasons with paths
      */
-    public static List<Gap> knownGaps(Path modelDirectory) throws IOException {
-        List<Gap> gaps = new ArrayList<>();
-        Path file = modelDirectory.resolve("wire-gaps.txt");
-        if (!Files.exists(file)) {
-            return gaps;
-        }
-        List<String> lines = Files.readAllLines(file);
-        for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i).strip();
-            if (line.isEmpty() || line.startsWith("#")) {
-                continue;
+    public static Map<String, List<String>> classify(List<String> uncovered, JsonObject mappings, Model model) {
+        Set<String> documented = new TreeSet<>();
+        model.components().stream().filter(c -> !c.fields().isEmpty()).forEach(c -> documented.add(c.id()));
+        JsonObject components = mappings.getAsJsonObject("components");
+        Map<String, List<String>> out = new java.util.LinkedHashMap<>();
+        for (String path : uncovered) {
+            String component = path.contains(" ") ? path.substring(0, path.indexOf(' ')) : path;
+            String reason;
+            if (component.equals(BLOCK_DEFINITION)) {
+                reason = "block definition data around the components: written by BlockCompiler, checked by the conformance suite";
+            } else if (components.has(component) && untestable(components.getAsJsonObject(component))) {
+                reason = "the component is untestable: BDS rejected its companions, so nothing was inferred";
+            } else if (component.equals("item:item_properties")) {
+                reason = "item_properties entry BDS sends for every item and no add-on JSON field sets: written by ItemCompiler and WireOnlyWire";
+            } else if (!documented.contains(component)) {
+                reason = "the creator docs do not describe the component, so the model has no fields for it";
+            } else {
+                reason = UNCLASSIFIED;
             }
-            String[] parts = line.split("\\|", -1);
-            String where = "wire-gaps.txt line " + (i + 1) + ": ";
-            if (parts.length != 4 || parts[0].isBlank() || parts[1].isBlank() || !parts[2].strip().matches("since \\S+")
-                || !parts[3].strip().matches("closes with \\S.*")) {
-                throw new IllegalArgumentException(where + "expected '<component> <path> | <reason> | since <build> | closes with <what>', got: " + line);
-            }
-            gaps.add(new Gap(parts[0].strip(), parts[1].strip(), parts[2].strip().substring("since ".length()),
-                parts[3].strip().substring("closes with ".length())));
+            out.computeIfAbsent(reason, k -> new ArrayList<>()).add(path);
         }
-        return gaps;
+        return out;
+    }
+
+    /** Whether a window of the component's mappings is {@code untestable}. */
+    private static boolean untestable(JsonObject mapping) {
+        if (mapping.has("status") && mapping.get("status").getAsString().equals("untestable")) {
+            return true;
+        }
+        return mapping.entrySet().stream().anyMatch(e -> e.getKey().matches("protocol\\d+") && untestable(e.getValue().getAsJsonObject()));
     }
 
     private static boolean covered(String path, Set<String> wire) {

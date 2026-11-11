@@ -15,6 +15,8 @@ import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.data.WireShapes;
 import org.geysermc.paletter.tools.Layout;
+import org.geysermc.paletter.tools.model.Fixtures;
+import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 import org.geysermc.paletter.tools.model.addon.FixedAddons;
 import org.geysermc.paletter.tools.model.infer.Coverage;
@@ -1040,14 +1042,11 @@ public final class Update {
             reportValues(Diff.values(reference.values(), imported.values()), "vanilla components vs bundled " + runs.referenceName);
         }
         // Coverage: everything captured must be something the component model can produce
-        JsonObject mappings = JsonParser.parseString(Files.readString(root.resolve(Layout.MODEL + "/mappings.json"))).getAsJsonObject();
-        List<String> uncovered = new ArrayList<>(captured.uncovered(mappings));
-        List<WireShapes.Gap> gaps = WireShapes.knownGaps(root.resolve(Layout.MODEL));
-        reportGaps(gaps, new java.util.HashSet<>(uncovered));
-        uncovered.removeAll(gaps.stream().map(WireShapes.Gap::path).toList());
-        report.check(uncovered.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Spec coverage",
-            uncovered.isEmpty() ? "every captured component shape is in " + Layout.MODEL + "/mappings.json" : uncovered.size() + " shapes not in the mappings");
-        uncovered.forEach(line -> report.wireChanges.add("not covered by " + Layout.MODEL + "/mappings.json: " + line));
+        Path model = root.resolve(Layout.MODEL);
+        JsonObject mappings = JsonParser.parseString(Files.readString(model.resolve("mappings.json"))).getAsJsonObject();
+        Model components = Fixtures.read(model).apply(Model.read(model.resolve("components.json")));
+        Map<String, List<String>> uncovered = WireShapes.classify(captured.uncovered(mappings), mappings, components);
+        reportUncovered(uncovered);
 
         boolean same = Files.isDirectory(target);
         for (String file : files) {
@@ -1067,29 +1066,25 @@ public final class Update {
     }
 
     /**
-     * The known gaps of {@code wire-gaps.txt} are gaps, not silence: those still uncovered are listed with why, since which build
-     * and what closes them; those the mappings cover now are stale and a DIFF.
+     * The captured wire paths the mappings do not cover, by reason ({@link WireShapes#classify}). An unclassified path is a
+     * wire change and a TODO: the model or the classification has to learn it.
      */
-    private void reportGaps(List<WireShapes.Gap> gaps, java.util.Set<String> uncovered) {
-        List<String> open = new ArrayList<>();
-        List<String> stale = new ArrayList<>();
-        for (WireShapes.Gap gap : gaps) {
-            (uncovered.contains(gap.path()) ? open : stale).add(gap.path());
-        }
-        report.check(Report.Status.INFO, "Known wire gaps", open.size() + " captured wire paths the model does not cover, accepted in "
-            + Layout.MODEL + "/wire-gaps.txt (listed below)");
+    private void reportUncovered(Map<String, List<String>> uncovered) {
+        List<String> unclassified = uncovered.getOrDefault(WireShapes.UNCLASSIFIED, List.of());
+        report.check(unclassified.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Spec coverage", unclassified.isEmpty()
+            ? "every captured wire path is in " + Layout.MODEL + "/mappings.json or has a known reason (listed below)"
+            : unclassified.size() + " captured wire paths are not in the mappings and have no known reason");
+        unclassified.forEach(path -> {
+            report.wireChanges.add("not covered by " + Layout.MODEL + "/mappings.json: " + path);
+            report.todos.add("UNEXPLAINED wire path " + path + ": not in " + Layout.MODEL + "/mappings.json and no reason of WireShapes.classify fits");
+        });
         List<String> lines = new ArrayList<>();
-        for (WireShapes.Gap gap : gaps) {
-            if (open.contains(gap.path())) {
-                lines.add("- `" + gap.path() + "`: " + gap.reason() + " (since " + gap.since() + "; closes with " + gap.closesWith() + ")");
-            }
-        }
+        uncovered.forEach((reason, paths) -> {
+            lines.add("- " + reason + ":");
+            paths.forEach(path -> lines.add("  - `" + path + "`"));
+        });
         if (!lines.isEmpty()) {
-            report.section("Known wire gaps", lines);
-        }
-        if (!stale.isEmpty()) {
-            report.check(Report.Status.DIFF, "Stale wire gaps", stale.size() + " entries of " + Layout.MODEL
-                + "/wire-gaps.txt are covered by the mappings now: remove them: " + String.join(", ", stale.stream().map(p -> "`" + p + "`").toList()));
+            report.section("Wire paths the model does not cover", lines);
         }
     }
 
