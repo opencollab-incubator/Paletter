@@ -1024,7 +1024,7 @@ public final class Update {
 
     /** Component wire shapes: the new add-on and vanilla captures against the committed ones. */
     private void shapes(BdsDistribution distribution, Runs runs) throws Exception {
-        Path previous = latestAddonCapture();
+        Path previous = latestAddonCapture(bdsData);
         Path target = bdsData.resolve(distribution.version()).resolve("addon");
         List<String> files = List.of("custom_block_properties.nbt", "custom_item_registry.nbt");
         WireShapes captured = WireShapes.ofCapture(runs.customCapture);
@@ -1146,6 +1146,10 @@ public final class Update {
         if (write) {
             MappingInference inference = new MappingInference(root);
             inference.run(false);
+            List<String> bits = inference.unexplainedBits();
+            report.check(bits.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Residual bits", bits.isEmpty()
+                ? "every bit the captures set is explained by a field or the format sweep" : bits.size() + " leaves have bits nothing explains");
+            bits.forEach(finding -> report.todos.add("UNEXPLAINED bits " + finding));
             report.repoChanges.add("update `" + Layout.MODEL + "/mappings.json`, `coverage.md`, `bds-feedback.json` (inferred from the spec captures)");
             report.check(Report.Status.INFO, "Component model", "mappings inferred; run :tools:generateComponentApi and the conformance suite (:tools:test) for the new protocol");
         } else {
@@ -1573,7 +1577,7 @@ public final class Update {
     }
 
     /** The newest committed add-on capture directory ({@code <bdsData>/<version>/addon}), null if there is none. */
-    private Path latestAddonCapture() throws IOException {
+    public static Path latestAddonCapture(Path bdsData) throws IOException {
         if (!Files.isDirectory(bdsData)) {
             return null;
         }

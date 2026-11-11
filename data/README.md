@@ -18,6 +18,8 @@ their `content-log.txt` is captured from BDS), `model/components.json`, `model/m
 marked: `api.json`, `fixtures.json`, `transforms.json`, `renames.txt`. Captured from BDS: everything under
 `bds/<build>/`, by the tool in the table below. `GeneratedMarkersTest` checks all of this.
 
+Unexplained captures fail `update` and CI but not `./gradlew build`: `./gradlew :tools:run --args="check-mappings --strict"` fails on residual bits no field or format sweep explains and on captured wire paths that are neither in `mappings.json` nor classified by `WireShapes.classify`, and prints what and where.
+
 ## Captured from BDS
 
 Everything under `bds/<build>/` was captured from the Bedrock Dedicated Server build named by the directory (for example

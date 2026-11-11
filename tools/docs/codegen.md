@@ -71,7 +71,9 @@ The inference (`inferMappings`; `checkMappings` runs it too) reports:
 
 - **Unknown bits**: a boolean or enum `table` rule onto an integer leaf has bits that every value sets and that no field of the leaf explains
   (`material_instances` `packed_bools` is 4, 5 or 7: bit 2 is in all of them). The rule gets `residualBits`, the component a `findings` entry in
-  `mappings.json`, and `coverage.md` lists it under Findings.
+  `mappings.json`, and `coverage.md` lists it under Findings. Bits that the format sweeps (`data/bds/*/spec-format`) see change with
+  the `format_version` are explained (Paletter writes the current format); any other is UNEXPLAINED and fails `check-mappings --strict`
+  and `update`, until the hand transform names it.
 - **Constants**: a constant the model writes is proven by the conformance suite, which reproduces every accepted variant. Values
   of `Transforms.java` that no accepted variant sends are listed in `Coverage.UNREACHED_CONSTANTS` (shown in `coverage.md`), and
   each one's Javadoc says where its value comes from.

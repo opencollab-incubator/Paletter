@@ -80,6 +80,16 @@ public final class MappingInference {
                    Map<String, List<String>> log, List<String> unattributed, Feedback feedback) {
     }
 
+    private final List<String> unexplainedBits = new ArrayList<>();
+
+    /**
+     * The findings of the last {@link #run} whose bits no format sweep explains: bits every value sets and nothing explains.
+     * A human has to name them in the hand transform. {@code check-mappings --strict} and {@code update} fail on them.
+     */
+    public List<String> unexplainedBits() {
+        return unexplainedBits;
+    }
+
     /** The generated texts. */
     private record Output(String mappings, String coverage, String feedback, Coverage coverageModel) {
     }
@@ -145,6 +155,8 @@ public final class MappingInference {
         JsonObject components = new JsonObject();
         Coverage coverage = new Coverage(model, fixtures, transforms);
         Map<String, String> findings = new TreeMap<>();
+        Map<String, Long> formatBits = formatDependentBits();
+        unexplainedBits.clear();
         for (Component component : model.components()) {
             List<JsonObject> results = new ArrayList<>();
             List<Integer> resultProtocols = new ArrayList<>();
@@ -152,7 +164,8 @@ public final class MappingInference {
                 JsonObject result = analyze(capture, component);
                 if (result != null) {
                     if (result.has("findings")) {
-                        result.getAsJsonArray("findings").forEach(f -> findings.putIfAbsent(f.getAsJsonObject().get("id").getAsString(), describe(f.getAsJsonObject())));
+                        result.getAsJsonArray("findings").forEach(f -> findings.putIfAbsent(f.getAsJsonObject().get("id").getAsString(),
+                            describe(f.getAsJsonObject(), formatBits.getOrDefault(component.id() + " " + leafOfFinding(f.getAsJsonObject()), 0L))));
                     }
                     results.add(result);
                     resultProtocols.add(dataProtocol(capture.protocol()));
@@ -167,6 +180,11 @@ public final class MappingInference {
         }
         mappings.add("components", components);
         coverage.findings(findings);
+        findings.forEach((id, description) -> {
+            if (description.contains(UNEXPLAINED)) {
+                unexplainedBits.add(id + ": " + description);
+            }
+        });
         return new Output(Model.GSON.toJson(mappings) + "\n", coverage.markdown(captures), Model.GSON.toJson(feedback.json()) + "\n", coverage);
     }
 
@@ -177,9 +195,66 @@ public final class MappingInference {
         return windows;
     }
 
-    private static String describe(JsonObject finding) {
-        return "bits " + finding.get("bits") + " are set in every value (" + finding.get("values") + ") of " + finding.getAsJsonArray("fields").size()
+    private static final String UNEXPLAINED = "UNEXPLAINED";
+
+    /**
+     * What a finding says, and whether the format sweep explains its bits: a bit BDS sets or clears by the add-on's
+     * {@code format_version} is explained, as Paletter writes the current format.
+     *
+     * @param formatBits the bits of the finding's leaf that the format sweep saw change with the format version
+     */
+    private static String describe(JsonObject finding, long formatBits) {
+        long bits = 0;
+        for (JsonElement bit : finding.getAsJsonArray("bits")) {
+            bits |= 1L << bit.getAsInt();
+        }
+        String what = "bits " + finding.get("bits") + " are set in every value (" + finding.get("values") + ") of " + finding.getAsJsonArray("fields").size()
             + " fields that pack into one leaf, and no field explains them";
+        return what + ((bits & ~formatBits) == 0
+            ? ". Explained: BDS sets them by the add-on's format_version (format sweeps, data/bds/*/spec-format/format-sweep.json), and Paletter writes the current format."
+            : ". " + UNEXPLAINED + ": the format sweep does not change bits " + Long.toBinaryString(bits & ~formatBits) + " (binary); name them in the hand transform.");
+    }
+
+    /** The leaf name of a finding: the last word of its id ({@code residual-bits <component> <leaf>}). */
+    private static String leafOfFinding(JsonObject finding) {
+        String id = finding.get("id").getAsString();
+        return id.substring(id.lastIndexOf(' ') + 1);
+    }
+
+    /**
+     * {@code <component> <leaf name>} -> the bits that differ between format versions in the format sweeps of every build
+     * ({@code data/bds/<build>/spec-format/format-sweep.json}, field {@code differingBits}, binary).
+     */
+    private Map<String, Long> formatDependentBits() throws IOException {
+        Map<String, Long> out = new TreeMap<>();
+        Path dir = root.resolve(org.geysermc.paletter.tools.Layout.BDS);
+        if (!Files.isDirectory(dir)) {
+            return out;
+        }
+        List<Path> sweeps;
+        try (Stream<Path> builds = Files.list(dir)) {
+            sweeps = builds.map(b -> b.resolve("spec-format/format-sweep.json")).filter(Files::exists).toList();
+        }
+        for (Path sweep : sweeps) {
+            JsonObject components = JsonParser.parseString(Files.readString(sweep)).getAsJsonObject().getAsJsonObject("components");
+            components.entrySet().forEach(component -> component.getValue().getAsJsonObject().entrySet().forEach(key -> {
+                JsonObject formats = key.getValue().getAsJsonObject().getAsJsonObject("formats");
+                formats.entrySet().forEach(format -> {
+                    JsonObject differs = format.getValue().getAsJsonObject().getAsJsonObject("differs");
+                    if (differs == null) {
+                        return;
+                    }
+                    differs.entrySet().forEach(leaf -> {
+                        JsonObject change = leaf.getValue().getAsJsonObject();
+                        if (change.has("differingBits")) {
+                            String name = leaf.getKey().substring(leaf.getKey().lastIndexOf('.') + 1);
+                            out.merge(component.getKey() + " " + name, Long.parseLong(change.get("differingBits").getAsString(), 2), (a, b) -> a | b);
+                        }
+                    });
+                });
+            }));
+        }
+        return out;
     }
 
     private static Set<String> keysOf(Map<String, Leaf> wire) {
