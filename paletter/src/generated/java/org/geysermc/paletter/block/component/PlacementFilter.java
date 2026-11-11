@@ -100,7 +100,7 @@ public record PlacementFilter(
      *
      * @param name Add-on JSON {@code name}. Optional (null: not set).
      * @param states Add-on JSON {@code states}. Default: <code>&#123;&#125;</code>. Compiled by the hand transform {@code
-     *        block_descriptor_states}.
+     *        Transforms.blockDescriptorStates}.
      * @param tags Add-on JSON {@code tags}. Optional (null: not set).
      */
     public record BlockFilter(@Nullable String name, @NonNull Map<String, Object> states,
@@ -201,7 +201,7 @@ public record PlacementFilter(
      *
      * @param allowedFaces List of any of the following strings describing which face(s) this block can be placed on Add-on JSON {@code
      *        allowed_faces}. Default: <code>["down","up","north","south","west","east"]</code>. Compiled by the hand
-     *        transform {@code face_bits}.
+     *        transform {@code Transforms.faceBits}.
      * @param blockFilter List of blocks that this block can be placed against in the "allowed_faces" direction. List of blocks that
      *        this block can be placed against in the "allowed_faces" direction. Each block in this list can either be
      *        specified as a String (block name) or as a BlockDescriptor. Value must have at most 64 items. Add-on JSON

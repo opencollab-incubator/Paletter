@@ -15,7 +15,8 @@ command that writes the file. Generated: `addons/capture` and `addons/creative` 
 their `content-log.txt` is captured from BDS), `model/components.json`, `model/mappings.json`, `model/coverage.md`,
 `model/bds-feedback.json`, `model/constants-history.json`, `paletter/api/paletter.api`, the bundled data of
 `paletter/src/main/resources/paletter` (`*.nbt`, `versions.txt`) and `paletter/src/generated`. Hand-written inputs, never
-marked: `api.json`, `fixtures.json`, `transforms.json`, `renames.txt`. Captured from BDS: everything under
+marked: `api.json`, `fixtures.json`, `renames.txt` (the hand transforms are Java: `Transforms` and the tools'
+`HandTransforms`). Captured from BDS: everything under
 `bds/<build>/`, by the tool in the table below. `GeneratedMarkersTest` checks all of this.
 
 Unexplained captures fail `update` and CI but not `./gradlew build`: `./gradlew :tools:run --args="check-mappings --strict"` fails on residual bits no field or format sweep explains and on captured wire paths that are neither in `mappings.json` nor classified by `WireShapes.classify`, and prints what and where.

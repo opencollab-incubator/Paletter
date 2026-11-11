@@ -16,14 +16,16 @@ paletter nor its sources, so it can regenerate them when they do not compile. Ja
 | `fixtures.json` | hand | `errata` (what the docs omit), `probeOnly` and `skip`, `replacedBy` (a replacement no data says, with its evidence) |
 | `bds-feedback.json` | generated from BDS's content log | required fields and ranges BDS enforces (they win over the docs), fields BDS does not know |
 | `mappings.json` | inferred from BDS captures | per component and protocol window: status, value form and field rules, `whenAbsent`, `constants` |
-| `transforms.json` | hand | fields or whole components (path `""`) compiled by a named hand transform, with why; whether BDS bore it out is derived (`verified` / `unverified` in `mappings.json`, listed in `coverage.md`) |
+| `HandTransforms.java` | hand | fields or whole components (path `""`) compiled by a hand transform, as a Java table next to the generator; whether BDS bore it out is derived (`verified` / `unverified` in `mappings.json`, listed in `coverage.md`) |
 | `api.json` | hand | Java shaping only: names, union resolution, value forms, descriptors, `keyedExtras`, open enums, `since` |
 
 Output: a record per component in `item.component` / `block.component` (nested records, enums, builder, `of(...)`
 factories, vanilla-constant overloads), the sealed `ItemComponent` / `BlockComponent` / `BlockTrait`, and the encoders
 `ItemWire`, `BlockWire`, `TraitWire`, `ComponentIndex` in `internal.component`. The compile core (`ItemCompiler`,
-`BlockCompiler`, `TraitStates`, `WireNode`, ...) and `Transforms` are hand-written; the transform names in
-`transforms.json` are `Transforms`' public static methods, which the generator reads from its source.
+`BlockCompiler`, `TraitStates`, `WireNode`, ...) and `Transforms` are hand-written. `HandTransforms` maps each hand
+transformed field to a public static method of `Transforms`, whose Javadoc says why no inferred rule explains it and what
+evidence backs it; a method the table names and `Transforms` lacks fails the compile of the generated encoders
+(`HandTransformsTest` checks the table on its own).
 
 Every component of the docs is generated, including those BDS never sends (server only in every protocol, or rejected;
 for add-on parsing): their encoders write nothing. Omitted, and listed in the interfaces' javadoc with the reason, are
@@ -62,8 +64,9 @@ Rules:
   `protocol<N>` and is compared with the window before it. The oldest window also holds below its capture, the newest
   above (INFO entry, `ComponentIndex.NEWEST_CAPTURED_PROTOCOL`). A window whose status is not `sent` makes the encoder
   leave the component out with a warning.
-- **Hand transforms per protocol**: a `transforms.json` entry may list `windows` (`{"until": 2225, "transform": "a"},
-  {"since": 2225, "transform": "b"}`, gap free, ending with the entry's own transform).
+- **Hand transforms per protocol**: a hand transform checks `ctx.protocol()` itself, against the generated
+  `ComponentIndex.BDS_<build>` constant (the first protocol of that capture's window, from `windowProtocol` in
+  `mappings.json`).
 
 ## Gates
 
@@ -80,13 +83,13 @@ The inference (`inferMappings`; `checkMappings` runs it too) reports:
 - **Hand transforms**: `mappings.json` records per transform `verified: {build, variants}` (accepted variants that set what it compiles; the
   conformance suite reproduces them) or `unverified: <why>`; `coverage.md` lists the unverified ones.
 
-Generation fails, naming component and field, on an unknown transform, two mappings for one protocol, name collisions,
+Generation fails, naming component and field, on two mappings for one protocol, name collisions,
 two fields deciding one wire leaf, an object without documented fields, an ambiguous union, or a rule at the wrong list
 depth.
 
 When a new BDS version changes the wire, `update` runs `spec-capture` and the inference and lists every differing leaf
 (`SpecDiff`) as a wire change. A different mapping lands as a new window; then regenerate, review (a changed hand
-transform needs a window). `ComponentConformanceTest` runs for the new capture too and has no list of exceptions: every
+transform needs a protocol check). `ComponentConformanceTest` runs for the new capture too and has no list of exceptions: every
 variant BDS accepted must come out identical, so a form the new build accepts that the API cannot express is fixed in the
 model (see "Forms BDS accepts that the docs do not model"), never waived.
 
@@ -108,7 +111,7 @@ data driven:
 - **An object that is one entry of the component's list** (`forms` `{"object": {"listElementOf": "boxes"}}`): a `of(Entry)`
   factory and the index entry `"object" -> "boxes[]"`. The javadoc says since which BDS the form is rejected
   (`collision_box` takes `{origin, size}` before 26.60; `{}` is one default box).
-- **Hand transforms with windows** for what differs per build (the `block_entity` container: BDS 1.26.52.3 knows
+- **Hand transforms with protocol checks** for what differs per build (the `block_entity` container: BDS 1.26.52.3 knows
   `slot_count` only; `ammunition[].item`: a descriptor BDS sends as `{name}` or `{}`).
 
 Add-on JSON spellings that mean one API call are mapped by the conformance binder (`ApiBinder`), which reads them from the

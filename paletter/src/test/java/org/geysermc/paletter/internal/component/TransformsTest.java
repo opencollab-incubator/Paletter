@@ -43,8 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Every named transform of {@code codegen/model/transforms.json}, on its own. Expected values are the wire forms BDS
- * 1.26.63.1 sends (see each entry's {@code why}); the conformance suite in codegen checks them against the capture too.
+ * Every hand transform, on its own. Expected values are the wire forms BDS sends (see each method's Javadoc); the
+ * conformance suite in the tools checks them against the captures too.
  */
 class TransformsTest {
     private static final Paletter PALETTER = Paletter.bundled();
@@ -52,6 +52,14 @@ class TransformsTest {
 
     private final PaletteReport report = new PaletteReport();
     private final WireContext ctx = WireContext.of(DATA, report, "test").subject("test:thing");
+    /** The data version of the capture of BDS 1.26.52.3 (26.50), before the shapes that changed in 1.26.63.1. */
+    private final WireContext ctx26_50 = at(ComponentIndex.BDS_1_26_52_3);
+    /** The data version of the capture of BDS 1.26.36.1 (26.30). */
+    private final WireContext ctx26_30 = at(ComponentIndex.BDS_1_26_36_1);
+
+    private WireContext at(int protocol) {
+        return WireContext.of(PALETTER.vanillaData(PALETTER.version(protocol)), report, "test").subject("test:thing");
+    }
 
     private static NbtMap compound(WireNode node, String path) {
         return node.build().getCompound(path);
@@ -82,7 +90,7 @@ class TransformsTest {
     void collisionBoxesBefore26_60AreNotMirrored() {
         WireNode out = new WireNode();
         CollisionBox box = CollisionBox.builder().boxes(CollisionBox.Entry.builder().origin(1, 2, 3).size(1, 2, 3).build()).build();
-        Transforms.collisionBoxesUnmirrored(ctx, out, box);
+        Transforms.collisionBoxes(ctx26_50, out, box);
         NbtMap wire = compound(out, "minecraft:collision_box");
         assertEquals((byte) 1, wire.getByte("enabled"));
         NbtMap b = wire.getList("boxes", NbtType.COMPOUND).getFirst();
@@ -93,7 +101,7 @@ class TransformsTest {
         assertEquals(14f - 3f, b.getFloat("minZ"));
         assertEquals(14f, b.getFloat("maxZ"));
         WireNode untouched = new WireNode();
-        Transforms.collisionBoxesUnmirrored(ctx, untouched, CollisionBox.builder().enabled(false).build());
+        Transforms.collisionBoxes(ctx26_50, untouched, CollisionBox.builder().enabled(false).build());
         assertTrue(untouched.isEmpty());
     }
 
@@ -105,7 +113,7 @@ class TransformsTest {
         Transforms.itemDescriptorList(ctx, now, repairable);
         assertEquals("q.max_durability * 0.25", now.build().getCompound("minecraft:repairable").getList("repair_items", NbtType.COMPOUND).getFirst().getString("repair_amount"));
         WireNode before = new WireNode();
-        Transforms.itemDescriptorListMolangCompound(ctx, before, repairable);
+        Transforms.itemDescriptorList(ctx26_30, before, repairable);
         NbtMap amount = before.build().getCompound("minecraft:repairable").getList("repair_items", NbtType.COMPOUND).getFirst().getCompound("repair_amount");
         assertEquals("q.max_durability * 0.25", amount.getString("expression"));
         assertEquals((short) 0, amount.getShort("version"));
@@ -122,7 +130,7 @@ class TransformsTest {
         NbtMap rotation = compound(now, "minecraft:embedded_visual").getCompound("geometry").getCompound("n_way_visual_rotation");
         assertEquals(Map.of("x", "a", "y", "", "z", ""), rotation, "an axis that is not set is sent empty");
         WireNode before = new WireNode();
-        Transforms.embeddedGeometryBeforeRotation(ctx, before, visual);
+        Transforms.embeddedGeometry(ctx26_50, before, visual);
         assertFalse(compound(before, "minecraft:embedded_visual").getCompound("geometry").containsKey("n_way_visual_rotation"));
     }
 
@@ -394,7 +402,7 @@ class TransformsTest {
         assertEquals(Map.of("x", "", "y", "minecraft:cardinal_direction", "z", ""), rotation);
 
         WireNode before = new WireNode();
-        Transforms.geometryBeforeRotation(ctx, before, geometry);
+        Transforms.geometry(ctx26_50, before, geometry);
         assertFalse(compound(before, "minecraft:geometry").containsKey("n_way_visual_rotation"));
     }
 
@@ -426,19 +434,15 @@ class TransformsTest {
         assertEquals("Box", container.getString("title"));
 
         WireNode before = new WireNode();
-        Transforms.blockEntityContainerSlotsOnly(ctx, before, titled);
+        Transforms.blockEntityContainer(ctx26_50, before, titled);
         assertEquals((byte) 9, compound(before, "minecraft:container").getByte("slot_count"));
         assertFalse(compound(before, "minecraft:container").containsKey("title"));
         assertEquals(1, report.warnings().size());
 
         // No container, nothing sent (the slot count default belongs to the container)
-        for (boolean slotsOnly : new boolean[]{false, true}) {
+        for (WireContext context : List.of(ctx, ctx26_50)) {
             WireNode none = new WireNode();
-            if (slotsOnly) {
-                Transforms.blockEntityContainerSlotsOnly(ctx, none, BlockEntity.builder().build());
-            } else {
-                Transforms.blockEntityContainer(ctx, none, BlockEntity.builder().build());
-            }
+            Transforms.blockEntityContainer(context, none, BlockEntity.builder().build());
             assertTrue(none.isEmpty());
         }
     }

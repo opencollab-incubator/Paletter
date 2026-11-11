@@ -68,7 +68,7 @@ Paletter bundles no fallbacks: what an older version lacks is `minecraft:unknown
 | `paletter/src/main/java` | Hand-written library; `internal/component/Transforms.java` holds the hand transforms the encoders call |
 | `paletter/src/main/resources/paletter` | Generated data (`tools` import), except `renames.txt` |
 | `tools/src/main/java` | Hand-written tooling, including the generators |
-| `data/model/transforms.json`, `api.json`, `fixtures.json`, `data/addons/dump` | Hand-written inputs |
+| `data/model/api.json`, `fixtures.json`, `data/addons/dump` | Hand-written inputs |
 | `data/addons/capture`, `data/addons/creative`, `data/model/mappings.json`, `coverage.md` | Generated, never edit |
 
 Wire-only components (fields with no add-on JSON source) are hand-written records under `WireOnlyItemComponent` /
@@ -87,8 +87,8 @@ data, regenerates the constants and prints a report (README, "Updating data"). C
 2. Capture: `addon --kind spec`, `spec-capture`, `infer` ([tools/docs/model.md](tools/docs/model.md)).
 3. Regenerate with `./gradlew :tools:generateComponentApi` (and `:tools:test -PupdateGolden=true` if generator output
    changed, then review).
-4. Only if the mappings cannot describe the wire shape: a public static method in `Transforms`, named in
-   `transforms.json` with the reason ([tools/docs/codegen.md](tools/docs/codegen.md)).
+4. Only if the mappings cannot describe the wire shape: a public static method in `Transforms` with the reason and
+   evidence in its Javadoc, named for the field in the tools' `HandTransforms` ([tools/docs/codegen.md](tools/docs/codegen.md)).
 
 **Add a layer feature**: add the data to `PaletteLayer` (builder method, accessor, javadoc, `@since`; a policy goes to
 `Paletter.Builder` instead); apply it in the matching stage of `PaletteCompiler#extend`; record changes in

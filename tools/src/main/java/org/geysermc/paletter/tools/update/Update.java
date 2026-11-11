@@ -30,6 +30,7 @@ import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.tools.client.Capture;
 import org.geysermc.paletter.tools.client.CapturedData;
 import org.geysermc.paletter.tools.client.LevelDat;
+import org.geysermc.paletter.tools.codegen.component.HandTransforms;
 import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.ExperimentContent;
@@ -1128,7 +1129,7 @@ public final class Update {
             List<String> lines = new ArrayList<>();
             byComponent.forEach((component, list) -> {
                 long values = list.stream().filter(SpecDiff.Change::valueChange).count();
-                String how = transformOf(component) != null ? "its hand transform `" + transformOf(component) + "` needs a protocol window (transforms.json)"
+                String how = transformOf(component) != null ? "its hand transform `Transforms." + transformOf(component) + "` needs a protocol check"
                     : "the inferred mapping gets a protocol window (regenerate with :tools:inferMappings and :tools:generateComponentApi)";
                 report.wireChanges.add("spec capture vs " + against + ": " + component + ": " + list.size() + " leaves differ (" + values
                     + " with another value); " + how);
@@ -1187,19 +1188,10 @@ public final class Update {
         return best;
     }
 
-    /** The hand transform of a component, if {@code transforms.json} names one (component level or for a field). */
-    private String transformOf(String component) {
-        try {
-            JsonObject transforms = JsonParser.parseString(Files.readString(root.resolve(Layout.MODEL + "/transforms.json"))).getAsJsonObject();
-            for (String key : transforms.keySet()) {
-                if (key.startsWith(component + ":")) {
-                    return transforms.getAsJsonObject(key).get("transform").getAsString();
-                }
-            }
-        } catch (IOException e) {
-            return null;
-        }
-        return null;
+    /** The hand transform of a component, if {@link HandTransforms} names one (component level or for a field). */
+    private static String transformOf(String component) {
+        return HandTransforms.BY_PATH.entrySet().stream().filter(e -> e.getKey().startsWith(component + ":")).map(Map.Entry::getValue)
+            .findFirst().orElse(null);
     }
 
     /** A value that came or went in a component both sides send: the shape is the same, what BDS puts in it is not. */

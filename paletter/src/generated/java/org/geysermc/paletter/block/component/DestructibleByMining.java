@@ -16,7 +16,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  * component is omitted, the block will take the default number of seconds to destroy.
  * <p>
  * Add-on JSON: {@code "minecraft:destructible_by_mining"}.
- * Compiled by the hand transform {@code destructible_by_mining} (see {@code data/model/transforms.json}).
+ * Compiled by the hand transform {@code Transforms.destructibleByMining}.
  *
  * @param baseTimeToDestroy Sets the number of server simulation ticks it takes to mine the block with base equipment. Greater numbers
  *        result in greater mining times. A negative number means the block can't be mined. Add-on JSON {@code

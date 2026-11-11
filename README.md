@@ -351,8 +351,8 @@ components BDS rejects (legacy and removed ones).
 
 Paletter compiles the components when a palette is compiled, for that palette's protocol, with encoders generated from
 the component model in `data/model`: `components.json` (the creator docs), `mappings.json` (per field, how BDS turns
-the JSON into wire NBT, inferred from captures of a generated add-on, per protocol window), `transforms.json` (named hand
-transforms for what no inferred rule explains, e.g. collision box min/max or the packed material flags) and `api.json`
+the JSON into wire NBT, inferred from captures of a generated add-on, per protocol window), the hand transforms of
+`Transforms` for what no inferred rule explains (e.g. collision box min/max or the packed material flags) and `api.json`
 (Java naming). A field a palette's protocol window does not send is left out with a warning in `Palette#report()`;
 compilation never fails because of a Bedrock version. Everything BDS sends in two places is written in both (the stack
 size as a component and an item property, tags as `item_tags` and `minecraft:tags`, the use animation as a name and an

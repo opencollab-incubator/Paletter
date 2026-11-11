@@ -19,7 +19,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * Bedrock requires the experiments Holiday Creator Features, Upcoming Creator Features for it (in some format versions).
  *
  * @param boxes The entries of the component (add-on JSON: the component's value is this list). Default: <code>[]</code>.
- *        Compiled by the hand transform {@code collision_boxes}.
+ *        Compiled by the hand transform {@code Transforms.collisionBoxes}.
  * @param enabled The boolean form of the component (add-on JSON &#123;&#64;code "minecraft:collision_box":
  *        &lt;boolean&gt;&#125;). Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_collision_box?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:collision_box</a>

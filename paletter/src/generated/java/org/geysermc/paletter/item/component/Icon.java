@@ -13,7 +13,7 @@ import org.geysermc.paletter.internal.component.Check;
  * Determines the icon to represent the item in the UI and elsewhere.
  * <p>
  * Add-on JSON: {@code "minecraft:icon"}.
- * Compiled by the hand transform {@code icon_textures} (see {@code data/model/transforms.json}).
+ * Compiled by the hand transform {@code Transforms.iconTextures}.
  *
  * @param textures This map contains the different textures that can be used for the item's icon. This map contains the different
  *        textures that can be used for the item's icon. Default will contain the actual icon texture. Armor trim

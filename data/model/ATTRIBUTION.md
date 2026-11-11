@@ -18,4 +18,4 @@ format version notes in `coverage.md` and in generated sources) is derived from 
 Mojang's `bedrock-samples` JSON schemas are not used as an input (all rights reserved).
 
 Everything else here (`mappings.json`, `bds-feedback.json`, `captures/`) is generated from Bedrock Dedicated Server
-runs of the generated add-on; `fixtures.json` and `transforms.json` are written by hand.
+runs of the generated add-on; `fixtures.json` is written by hand.

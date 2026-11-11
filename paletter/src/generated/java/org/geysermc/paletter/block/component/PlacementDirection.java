@@ -18,7 +18,7 @@ import org.geysermc.paletter.internal.component.Check;
  *
  * @param enabledStates Which states to enable. Must specify at least one. Valid values are <code>minecraft:cardinal_direction</code>,
  *        <code>minecraft:corner_and_cardinal_direction</code>, and <code>minecraft:facing_direction</code>. Add-on JSON
- *        {@code enabled_states}. Required. Compiled by the hand transform {@code enabled_state_flags}.
+ *        {@code enabled_states}. Required. Compiled by the hand transform {@code Transforms.enabledStateFlags}.
  * @param yRotationOffset The y rotation offset to apply to the block. Must be [0.0, 90.0, 180.0, 270.0]. Default is 0, meaning if the
  *        player is facing north, the "minecraft:cardinal_direction" and/or minecraft:facing_direction state will be
  *        north. Add-on JSON {@code y_rotation_offset}. Optional (null: not set). Range [0, 360] (BDS 1.26.63.1).

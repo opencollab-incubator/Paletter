@@ -44,21 +44,12 @@ final class ApiModel {
         return components.stream().filter(c -> c.id.equals(id)).findFirst().orElse(null);
     }
 
-    /** Hand transforms that differ per protocol, by the name transforms.json gives them: who runs for which protocols. */
-    final Map<String, List<TransformWindow>> transformWindows = new LinkedHashMap<>();
+    /** The first protocol of the window of every capture, by BDS version, oldest first (the bounds hand transforms check). */
+    final Map<String, Integer> windowProtocols = new LinkedHashMap<>();
     /** The oldest and the newest protocol a spec capture exists for (the window shapes are observed in between). */
     int oldestCaptured = Integer.MIN_VALUE;
     int newestCaptured = Integer.MAX_VALUE;
 
-    /**
-     * A protocol window of a hand transform.
-     *
-     * @param since first protocol of the window, or {@link Integer#MIN_VALUE}
-     * @param until first protocol after the window, or {@link Integer#MAX_VALUE}
-     * @param transform the {@code Transforms} method that encodes it (snake_case)
-     */
-    record TransformWindow(int since, int until, String transform) {
-    }
 
     static final class Comp {
         String id;
@@ -75,7 +66,7 @@ final class ApiModel {
         final List<Shorthand> shorthands = new ArrayList<>();
         /** Object value forms that are one entry of a list field (api.json forms {@code listElementOf}): JSON type -> list field. */
         final Map<String, String> elementForms = new LinkedHashMap<>();
-        /** Component level transform (transforms.json path ""), or null. */
+        /** Component level transform (the {@code Transforms} method of {@link HandTransforms} path ""), or null. */
         String transform;
         final List<Window> windows = new ArrayList<>();
         /** The window in which BDS accepts the component but sends nothing to clients, or null. */

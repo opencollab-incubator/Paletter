@@ -39,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class ComponentGeneratorTest {
     private static final Path GOLDEN = Path.of("src/test/resources/component-golden");
-    private static final Set<String> TRANSFORMS = Set.of("test_map");
 
     // ---- Fixture -------------------------------------------------------------------------------------------------
 
@@ -175,16 +174,14 @@ class ComponentGeneratorTest {
     static Inputs inputs() {
         return new Inputs(components(), json("{\"errata\": [], \"replacedBy\": {\"item:test:ancient\": {\"by\": [\"item:test:widget\"], \"evidence\": \"hand evidence\"}}}"),
             json("{\"item:test:widget\": {\"count\": [\"range 1 64\"]}}"), mappings(),
-            json("{\"item:test:widget:colors\": {\"transform\": \"test_map\", \"why\": \"a map\"}, "
-                + "\"item:test:widget:stripes\": {\"transform\": \"test_map\", \"why\": \"hand written\"}, "
-                + "\"block:test:slab:[]\": {\"transform\": \"test_map\", \"why\": \"hand written\"}}"),
+            Map.of("item:test:widget:colors", "testMap", "item:test:widget:stripes", "testMap", "block:test:slab:[]", "testMap"),
             json("{\"since\": \"0.1.0\", \"keyedExtras\": {\"item:test:widget\": "
                 + "{\"from\": \"nested\", \"field\": \"moreNested\", \"doc\": \"Nested things under any other key.\"}}, "
                 + "\"openEnums\": [\"item:test:widget:rarity\"], \"optional\": [\"item:test:widget:reach\"], "
                 + "\"descriptors\": {\"item:test:widget:fuel\": \"item\"}, "
                 + "\"unions\": {\"item:test:widget:stripes\": {\"use\": \"boolean\", \"alternative\": {\"array<string>\": \"names\"}}}, "
                 + "\"rootLists\": {\"block:test:slab\": \"parts\"}, "
-                + "\"forms\": {\"block:test:slab\": {\"object\": {\"listElementOf\": \"parts\"}}}}"), TRANSFORMS, "9.0.0");
+                + "\"forms\": {\"block:test:slab\": {\"object\": {\"listElementOf\": \"parts\"}}}}"), "9.0.0");
     }
 
     // ---- Golden files --------------------------------------------------------------------------------------------
@@ -418,7 +415,7 @@ class ComponentGeneratorTest {
             shuffled.forEach(reordered::add);
             in.components().add("components", reordered);
             Inputs shuffledInputs = new Inputs(in.components(), in.fixtures(), shuffleKeys(in.feedback(), random),
-                shuffleKeys(in.mappings(), random), shuffleKeys(in.transforms(), random), shuffleKeys(in.api(), random), in.knownTransforms(), in.since());
+                shuffleKeys(in.mappings(), random), in.transforms(), shuffleKeys(in.api(), random), in.since());
             assertEquals(first, ComponentGenerator.generate(shuffledInputs), "seed " + seed);
         }
     }
@@ -445,12 +442,6 @@ class ComponentGeneratorTest {
     }
 
     @Test
-    void anUnknownTransformFails() {
-        fails("transforms.json: item:test:widget:colors names the transform 'nope', which the runtime does not implement",
-            in -> in.transforms().getAsJsonObject("item:test:widget:colors").addProperty("transform", "nope"));
-    }
-
-    @Test
     void conflictingWindowsFail() {
         fails("conflicting windows: item:test:gadget has two mappings for protocol 100",
             in -> in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:gadget")
@@ -469,7 +460,7 @@ class ComponentGeneratorTest {
 
     @Test
     void twoFieldsDecidingOneLeafFail() {
-        fails("conflicting rules: item:test:widget [count, label] all decide the wire leaf test:widget.count; name a transform for one of them in transforms.json",
+        fails("conflicting rules: item:test:widget [count, label] all decide the wire leaf test:widget.count; name a transform for one of them in HandTransforms",
             in -> in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:widget").getAsJsonObject("fields")
                 .getAsJsonObject("label").getAsJsonArray("rules").get(0).getAsJsonObject().addProperty("wire", "test:widget.count"));
     }
@@ -487,7 +478,7 @@ class ComponentGeneratorTest {
             fields.asList().removeIf(f -> f.getAsJsonObject().get("path").getAsString().equals("shape.id"));
             in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:widget").getAsJsonObject("fields").remove("shape");
         });
-        fails("list depth mismatch: item:test:widget label writes test:widget.list[].label from the component; name a transform for it in transforms.json",
+        fails("list depth mismatch: item:test:widget label writes test:widget.list[].label from the component; name a transform for it in HandTransforms",
             in -> in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:widget").getAsJsonObject("fields")
                 .getAsJsonObject("label").getAsJsonArray("rules").get(0).getAsJsonObject().addProperty("wire", "test:widget.list[].label"));
     }

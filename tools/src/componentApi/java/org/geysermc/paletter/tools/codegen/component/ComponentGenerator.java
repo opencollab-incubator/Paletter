@@ -18,7 +18,6 @@ import org.geysermc.paletter.tools.codegen.component.ApiModel.Scalar;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.ScalarKind;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Shorthand;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.States;
-import org.geysermc.paletter.tools.codegen.component.ApiModel.TransformWindow;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Type;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Vec3;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Window;
@@ -48,7 +47,7 @@ import java.util.regex.Pattern;
  *     ranges, docs text, format versions, experiments, status), plus the {@code errata} of {@code fixtures.json};</li>
  *     <li>{@code bds-feedback.json}: required fields and ranges BDS enforces, fields BDS does not know;</li>
  *     <li>{@code mappings.json}: per component and protocol window, what reaches the wire and how (inferred from BDS);</li>
- *     <li>{@code transforms.json}: fields no inferred rule explains, by named hand transform;</li>
+ *     <li>{@link HandTransforms}: fields no inferred rule explains, by hand transform;</li>
  *     <li>{@code api.json}: Java naming and shaping decisions (names, unions, descriptors, exclusions).</li>
  * </ul>
  * The output is one immutable record per component (nested records and enums for its object and enum types, builders
@@ -65,11 +64,11 @@ public final class ComponentGenerator {
     }
 
     /**
-     * @param transforms names of the transforms the runtime implements ({@code Transforms} methods, snake_case)
+     * @param transforms the hand transforms ({@link HandTransforms#BY_PATH}): {@code <component>:<path>} -> {@code Transforms} method
      * @param since the Paletter version for {@code @since}
      */
-    public record Inputs(JsonObject components, JsonObject fixtures, JsonObject feedback, JsonObject mappings, JsonObject transforms,
-                         JsonObject api, Set<String> knownTransforms, String since) {
+    public record Inputs(JsonObject components, JsonObject fixtures, JsonObject feedback, JsonObject mappings, Map<String, String> transforms,
+                         JsonObject api, String since) {
     }
 
     public static final String API_FILE = "api.json";
@@ -90,12 +89,12 @@ public final class ComponentGenerator {
         this.in = in;
     }
 
-    public static Inputs read(Path modelDir, Set<String> knownTransforms, String since) throws IOException {
+    public static Inputs read(Path modelDir, String since) throws IOException {
         JsonObject components = json(modelDir.resolve("components.json"));
         JsonObject feedback = json(modelDir.resolve("bds-feedback.json"));
         BdsErrata.apply(components, feedback, json(modelDir.resolve("bds-keys.json")), true);
         return new Inputs(components, json(modelDir.resolve("fixtures.json")), feedback, json(modelDir.resolve("mappings.json")),
-            json(modelDir.resolve("transforms.json")), json(modelDir.resolve(API_FILE)), knownTransforms, since);
+            HandTransforms.BY_PATH, json(modelDir.resolve(API_FILE)), since);
     }
 
     private static JsonObject json(Path file) throws IOException {
@@ -148,22 +147,6 @@ public final class ComponentGenerator {
         if (in.api().has("exclude")) {
             in.api().getAsJsonArray("exclude").forEach(e -> excluded.add(e.getAsString()));
         }
-        for (String key : in.transforms().keySet()) {
-            if (key.startsWith("_")) {
-                continue;
-            }
-            String name = in.transforms().getAsJsonObject(key).get("transform").getAsString();
-            if (!in.knownTransforms().contains(name)) {
-                throw new GenerationException("transforms.json: " + key + " names the transform '" + name + "', which the runtime does not implement");
-            }
-            if (in.transforms().getAsJsonObject(key).has("windows")) {
-                List<TransformWindow> windows = transformWindows(key, name, in.transforms().getAsJsonObject(key).getAsJsonArray("windows"));
-                List<TransformWindow> other = model.transformWindows.put(name, windows);
-                if (other != null && !other.equals(windows)) {
-                    throw new GenerationException("transforms.json: the transform '" + name + "' has different windows in two entries");
-                }
-            }
-        }
         if (in.mappings().has("captures") && !in.mappings().getAsJsonArray("captures").isEmpty()) {
             List<Integer> captured = in.mappings().getAsJsonArray("captures").asList().stream()
                 .filter(e -> e.getAsJsonObject().has("protocol")).map(e -> e.getAsJsonObject().get("protocol").getAsInt()).sorted().toList();
@@ -175,6 +158,9 @@ public final class ComponentGenerator {
                 JsonObject capture = e.getAsJsonObject();
                 if (capture.has("protocol") && capture.has("bdsVersion")) {
                     model.captureVersions.put(capture.get("protocol").getAsInt(), capture.get("bdsVersion").getAsString());
+                }
+                if (capture.has("windowProtocol") && capture.has("bdsVersion")) {
+                    model.windowProtocols.put(capture.get("bdsVersion").getAsString(), capture.get("windowProtocol").getAsInt());
                 }
             });
         }
@@ -226,7 +212,6 @@ public final class ComponentGenerator {
             }
             model.components.add(component(doc, mapping, standalone));
         }
-        checkWindowNames(in.knownTransforms());
         Map<String, String> names = new TreeMap<>();
         for (Comp c : model.components) {
             if (JAVA_LANG.contains(c.className)) {
@@ -499,46 +484,6 @@ public final class ComponentGenerator {
     }
 
     // ---- Windows -----------------------------------------------------------------------------------------------------
-
-    /**
-     * The windows of a hand transform ({@code transforms.json}: {@code "windows": [{"until": 2225, "transform": "a"},
-     * {"since": 2225, "transform": "b"}]}): they must cover every protocol once, in order, name transforms the runtime
-     * implements, and end with the entry's own transform (the one for the newest protocols).
-     */
-    static List<TransformWindow> transformWindows(String key, String transform, JsonArray array) {
-        List<TransformWindow> windows = new ArrayList<>();
-        for (JsonElement e : array) {
-            JsonObject w = e.getAsJsonObject();
-            windows.add(new TransformWindow(w.has("since") ? w.get("since").getAsInt() : Integer.MIN_VALUE,
-                w.has("until") ? w.get("until").getAsInt() : Integer.MAX_VALUE, w.get("transform").getAsString()));
-        }
-        if (windows.size() < 2) {
-            throw new GenerationException("transforms.json: " + key + " lists " + windows.size() + " windows; a window list needs at least two");
-        }
-        if (windows.getFirst().since() != Integer.MIN_VALUE || windows.getLast().until() != Integer.MAX_VALUE) {
-            throw new GenerationException("transforms.json: the windows of " + key + " must start without 'since' and end without 'until'");
-        }
-        for (int i = 0; i + 1 < windows.size(); i++) {
-            if (windows.get(i).until() != windows.get(i + 1).since() || windows.get(i).since() >= windows.get(i).until()) {
-                throw new GenerationException("transforms.json: the windows of " + key + " leave a gap, overlap or are empty at "
-                    + windows.get(i) + " / " + windows.get(i + 1));
-            }
-        }
-        if (!windows.getLast().transform().equals(transform)) {
-            throw new GenerationException("transforms.json: the last window of " + key + " must be the entry's transform '" + transform + "'");
-        }
-        return List.copyOf(windows);
-    }
-
-    /** Names the runtime must implement: checked by the caller against {@code knownTransforms}. */
-    private void checkWindowNames(Set<String> known) {
-        model.transformWindows.forEach((name, windows) -> windows.forEach(w -> {
-            if (!known.contains(w.transform())) {
-                throw new GenerationException("transforms.json: a window of '" + name + "' names the transform '" + w.transform()
-                    + "', which the runtime does not implement");
-            }
-        }));
-    }
 
     /** @return the window in which BDS only accepts the component, or null; one is all the annotation can state */
     private static Window serverOnly(Comp c) {
@@ -1217,7 +1162,7 @@ public final class ComponentGenerator {
             for (Map.Entry<String, List<String>> e : owners.entrySet()) {
                 if (new LinkedHashSet<>(e.getValue()).size() > 1) {
                     throw new GenerationException("conflicting rules: " + c.id + " " + e.getValue() + " all decide the wire leaf "
-                        + e.getKey() + "; name a transform for one of them in transforms.json");
+                        + e.getKey() + "; name a transform for one of them in HandTransforms");
                 }
             }
         }
@@ -1433,11 +1378,7 @@ public final class ComponentGenerator {
     }
 
     private String transform(String id, String path) {
-        String key = id + ":" + path;
-        if (!in.transforms().has(key)) {
-            return null;
-        }
-        return in.transforms().getAsJsonObject(key).get("transform").getAsString();
+        return in.transforms().get(id + ":" + path);
     }
 
     // ---- Names ---------------------------------------------------------------------------------------------------------

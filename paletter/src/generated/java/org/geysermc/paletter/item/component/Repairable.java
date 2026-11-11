@@ -20,7 +20,8 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  *
  * @param repairItems List of repair item entries. Each entry needs to define a list of strings for <code>items</code> that can be
  *        used for the repair and an optional <code>repair_amount</code> for how much durability is gained. Add-on JSON
- *        {@code repair_items}. Default: <code>[]</code>. Compiled by the hand transform {@code item_descriptor_list}.
+ *        {@code repair_items}. Default: <code>[]</code>. Compiled by the hand transform {@code
+ *        Transforms.itemDescriptorList}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_repairable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:repairable</a>
  * @since 0.1.0
  */

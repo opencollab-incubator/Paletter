@@ -14,7 +14,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * selectable by the player's cursor. If this component is omitted, default values are used.
  * <p>
  * Add-on JSON: {@code "minecraft:selection_box"}.
- * Compiled by the hand transform {@code selection_box} (see {@code data/model/transforms.json}).
+ * Compiled by the hand transform {@code Transforms.selectionBox}.
  *
  * @param origin Minimal position of the bounds of the selection box. "origin" is specified as [x, y, z] and must be in the
  *        range (-8, 0, -8) to (8, 16, 8), inclusive. Add-on JSON {@code origin}. Default: <code>[-8,0,-8]</code>.

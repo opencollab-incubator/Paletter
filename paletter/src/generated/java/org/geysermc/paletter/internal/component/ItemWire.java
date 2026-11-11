@@ -520,12 +520,7 @@ public final class ItemWire {
     }
 
     private static void repairable(Repairable c, WireContext ctx, WireNode out) {
-        int transformProtocol = ctx.protocol();
-        if (transformProtocol < 2168) {
-            Transforms.itemDescriptorListMolangCompound(ctx, out, c);
-        } else {
-            Transforms.itemDescriptorList(ctx, out, c);
-        }
+        Transforms.itemDescriptorList(ctx, out, c);
     }
 
     private static void seed(Seed c, WireContext ctx, WireNode out) {

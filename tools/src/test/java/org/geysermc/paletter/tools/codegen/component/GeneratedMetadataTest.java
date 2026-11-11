@@ -26,7 +26,7 @@ class GeneratedMetadataTest {
     private static final Path ROOT = Path.of(System.getProperty("paletter.root", ".."));
 
     private static ApiModel model() throws IOException {
-        return ComponentGenerator.model(ComponentGenerator.read(ROOT.resolve("data/model"), Main.knownTransforms(ROOT), "0.1.0"));
+        return ComponentGenerator.model(ComponentGenerator.read(ROOT.resolve("data/model"), "0.1.0"));
     }
 
     @Test
@@ -86,7 +86,7 @@ class GeneratedMetadataTest {
     @Test
     void everyComponentPageHasALearnPage() throws IOException {
         ApiModel model = model();
-        JsonObject components = ComponentGenerator.read(ROOT.resolve("data/model"), Main.knownTransforms(ROOT), "0.1.0").components();
+        JsonObject components = ComponentGenerator.read(ROOT.resolve("data/model"), "0.1.0").components();
         components.getAsJsonArray("components").forEach(e -> {
             JsonObject c = e.getAsJsonObject();
             if (c.get("category").getAsString().equals("component") || c.get("category").getAsString().equals("trait")) {
@@ -99,7 +99,7 @@ class GeneratedMetadataTest {
 
     @Test
     void theHandWrittenRenderOffsetsLinksItsLearnPage() throws IOException {
-        JsonObject components = ComponentGenerator.read(ROOT.resolve("data/model"), Main.knownTransforms(ROOT), "0.1.0").components();
+        JsonObject components = ComponentGenerator.read(ROOT.resolve("data/model"), "0.1.0").components();
         String page = components.getAsJsonArray("components").asList().stream().map(e -> e.getAsJsonObject())
             .filter(c -> c.get("id").getAsString().equals("item:minecraft:render_offsets")).findFirst().orElseThrow().get("page").getAsString();
         String source = Files.readString(ROOT.resolve("paletter/src/main/java/org/geysermc/paletter/item/component/RenderOffsets.java"),

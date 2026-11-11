@@ -16,7 +16,7 @@ import org.geysermc.paletter.internal.component.Check;
  * 1.26.45.1), so those palettes leave it out and add a report warning. Sent from protocol 2193 (BDS 1.26.52.3).
  *
  * @param container Adds a container to this block. Add-on JSON {@code container}. Optional (null: not set). Compiled by the hand
- *        transform {@code block_entity_container}.
+ *        transform {@code Transforms.blockEntityContainer}.
  * @param dynamicProperties Dynamic-properties can store and retrieve variables on a block via scripting, more at
  *        https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/blockdynamicpropertiescomponent.
  *        Add-on JSON {@code dynamic_properties}. Default: <code>false</code>.

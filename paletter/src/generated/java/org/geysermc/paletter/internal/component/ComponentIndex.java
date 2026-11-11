@@ -136,6 +136,30 @@ public final class ComponentIndex {
      */
     public static final int NEWEST_CAPTURED_PROTOCOL = 2225;
 
+    /**
+     * The first protocol of the window of the spec capture of BDS 1.26.36.1 ({@code data/bds/1.26.36.1/spec}): what the hand
+     * transforms compare {@code WireContext.protocol()} with where that build changed the wire.
+     */
+    public static final int BDS_1_26_36_1 = 1001;
+
+    /**
+     * The first protocol of the window of the spec capture of BDS 1.26.45.1 ({@code data/bds/1.26.45.1/spec}): what the hand
+     * transforms compare {@code WireContext.protocol()} with where that build changed the wire.
+     */
+    public static final int BDS_1_26_45_1 = 2168;
+
+    /**
+     * The first protocol of the window of the spec capture of BDS 1.26.52.3 ({@code data/bds/1.26.52.3/spec}): what the hand
+     * transforms compare {@code WireContext.protocol()} with where that build changed the wire.
+     */
+    public static final int BDS_1_26_52_3 = 2193;
+
+    /**
+     * The first protocol of the window of the spec capture of BDS 1.26.63.1 ({@code data/bds/1.26.63.1/spec}): what the hand
+     * transforms compare {@code WireContext.protocol()} with where that build changed the wire.
+     */
+    public static final int BDS_1_26_63_1 = 2225;
+
     static {
         STANDALONE.put("block:description", MenuCategory.class);
         keys(MenuCategory.class, "category", "category", "group", "group", "is_hidden_in_commands", "hiddenInCommands");

@@ -23,7 +23,7 @@ import org.geysermc.paletter.vanilla.BedrockBlockType;
  *        <code>format_version</code> 1.26.0 onward. This item requires a format version of at least 1.26.10. Add-on
  *        JSON {@code aligned_placement}. Default: <code>false</code>.
  * @param block Defines the block that will be placed. Add-on JSON {@code block}. Required. Compiled by the hand transform
- *        {@code block_name}.
+ *        {@code Transforms.blockName}.
  * @param replaceBlockItem If true, the item will be registered as the item for this block. If true, the item will be registered as the
  *        item for this block. This item will be returned by default when the block is broken/picked. Note: the
  *        identifier for this item must match the block's identifier for this field to be valid. Defaults to false.
@@ -149,7 +149,7 @@ public record BlockPlacer(@BedrockFormat("1.26.10") boolean alignedPlacement, @N
      *
      * @param name Add-on JSON {@code name}. Optional (null: not set).
      * @param states Add-on JSON {@code states}. Default: <code>&#123;&#125;</code>. Compiled by the hand transform {@code
-     *        block_descriptor_states}.
+     *        Transforms.blockDescriptorStates}.
      * @param tags Add-on JSON {@code tags}. Optional (null: not set).
      */
     public record UseOn(@Nullable String name, @NonNull Map<String, Object> states,

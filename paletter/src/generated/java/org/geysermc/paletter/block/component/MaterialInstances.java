@@ -15,7 +15,7 @@ import org.geysermc.paletter.internal.component.Check;
  * defined instance. Limited to 64 instances.
  * <p>
  * Add-on JSON: {@code "minecraft:material_instances"}.
- * Compiled by the hand transform {@code material_instances} (see {@code data/model/transforms.json}).
+ * Compiled by the hand transform {@code Transforms.materialInstances}.
  *
  * @param all Add-on JSON {@code *}. Optional (null: not set).
  * @param allAlias The string form of &#123;&#64;code *&#125; (alias); excludes &#123;&#64;link #all()&#125;. Add-on JSON {@code

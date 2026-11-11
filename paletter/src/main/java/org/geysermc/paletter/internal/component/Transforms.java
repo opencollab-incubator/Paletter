@@ -41,11 +41,15 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * The hand transforms named in {@code codegen/model/transforms.json}: what no inferred rule explains (each entry there
- * says why). Method names are the camelCase of the transform names; the generator checks every name in transforms.json
- * against the public static methods here. The generated encoders call {@code Transforms.name(ctx, node, owner)} with the
- * node the owner writes to and the record that holds the transformed field (the component itself for a component level
- * transform); overloads per owner type.
+ * The hand transforms: the fields no rule inferred from the BDS captures explains. The code generator's table
+ * ({@code HandTransforms} in the tools) names the field each method encodes; the generated encoders call
+ * {@code Transforms.name(ctx, node, owner)} with the node the owner writes to and the record that holds the field (the
+ * component itself for a whole component transform), so a name the table gives and this class lacks does not compile.
+ * Overloads per owner type.
+ * <p>
+ * Each method's Javadoc says why no inferred rule explains its field and what evidence its output rests on. Where BDS
+ * builds differ, the method compares {@link WireContext#protocol()} with the generated {@link ComponentIndex} constant
+ * of the first capture that shows the newer shape.
  */
 public final class Transforms {
     // The bits of a material instance's packed_bools, in the order of Mojang's BlockMaterialInstancePackedBools
@@ -79,49 +83,26 @@ public final class Transforms {
     // ---- collision_boxes -------------------------------------------------------------------------------------------
 
     /**
-     * {@code minecraft:collision_box} as a list of boxes: {@code enabled} and per box min/max in 0..16 block space. BDS
-     * from protocol 2225 (26.60; captures of 1.26.63.1) mirrors x: {@code minX = 8 - origin.x - size.x},
-     * {@code maxX = 8 - origin.x}; y is {@code origin.y} to {@code origin.y + size.y}, z {@code 8 + origin.z} to that
-     * plus {@code size.z}. Earlier protocols: {@link #collisionBoxesUnmirrored}. The boolean form is written by the
-     * generated rules.
+     * {@code minecraft:collision_box} as a list of boxes: {@code enabled} and per box min/max in 0..16 block space; the
+     * boolean form is written by the generated rules. Each min/max leaf depends on both {@code origin} and {@code size}
+     * (and BDS orders min and max per axis), so fitting one field at a time gives conflicting linear rules on every leaf.
+     * <p>
+     * y is {@code origin.y} to {@code origin.y + size.y}, z {@code 8 + origin.z} to that plus {@code size.z}. x runs like z
+     * in the captures of BDS 1.26.36.1 to 1.26.52.3; from 1.26.63.1 BDS mirrors it: {@code minX = 8 - origin.x - size.x},
+     * {@code maxX = 8 - origin.x}.
      */
     public static void collisionBoxes(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull CollisionBox c) {
         if (c.enabled() != null) {
             return;
         }
+        boolean mirrorX = ctx.protocol() >= ComponentIndex.BDS_1_26_63_1;
         out.put("minecraft:collision_box.enabled", (byte) 1);
         out.list("minecraft:collision_box.boxes");
         for (CollisionBox.Entry box : c.boxes()) {
             CollisionBox.Vec3 origin = box.origin() == null ? new CollisionBox.Vec3(-8, 0, -8) : box.origin();
             CollisionBox.Vec3 size = box.size() == null ? new CollisionBox.Vec3(16, 16, 16) : box.size();
             WireNode b = out.element("minecraft:collision_box.boxes");
-            float x1 = 8f - origin.x() - size.x();
-            float x2 = 8f - origin.x();
-            float y1 = origin.y();
-            float y2 = origin.y() + size.y();
-            float z1 = 8f + origin.z();
-            float z2 = z1 + size.z();
-            b.put("minX", Math.min(x1, x2)).put("maxX", Math.max(x1, x2));
-            b.put("minY", Math.min(y1, y2)).put("maxY", Math.max(y1, y2));
-            b.put("minZ", Math.min(z1, z2)).put("maxZ", Math.max(z1, z2));
-        }
-    }
-
-    /**
-     * {@code minecraft:collision_box} of the protocols before 2225 (26.40, 26.50; captures of 1.26.45.1 and 1.26.52.3):
-     * x is not mirrored, it runs like z: {@code minX = 8 + origin.x}, {@code maxX = minX + size.x}.
-     */
-    public static void collisionBoxesUnmirrored(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull CollisionBox c) {
-        if (c.enabled() != null) {
-            return;
-        }
-        out.put("minecraft:collision_box.enabled", (byte) 1);
-        out.list("minecraft:collision_box.boxes");
-        for (CollisionBox.Entry box : c.boxes()) {
-            CollisionBox.Vec3 origin = box.origin() == null ? new CollisionBox.Vec3(-8, 0, -8) : box.origin();
-            CollisionBox.Vec3 size = box.size() == null ? new CollisionBox.Vec3(16, 16, 16) : box.size();
-            WireNode b = out.element("minecraft:collision_box.boxes");
-            float x1 = 8f + origin.x();
+            float x1 = mirrorX ? 8f - origin.x() - size.x() : 8f + origin.x();
             float x2 = x1 + size.x();
             float y1 = origin.y();
             float y2 = origin.y() + size.y();
@@ -137,46 +118,30 @@ public final class Transforms {
 
     /**
      * {@code minecraft:geometry}, in the shape every BDS 1.26.63.1 capture shows: the description fields plus four flags
-     * BDS always sends as 0, and {@code n_way_visual_rotation} when set (protocol 2225 and later). Bone visibility is a
-     * Molang expression, kept as a string like BDS does; the constants {@code true}/{@code false} become
-     * {@code "1.000000"}/{@code "0.000000"}. Before: {@link #geometryBeforeRotation}.
+     * BDS always sends as 0 ({@code ignoreGeometryForIsSolid}, {@code isV1Fullblock}, {@code needsLegacyTopRotation},
+     * {@code useBlockTypeLightAbsorption}), unset fields as BDS sends them ({@code culling} "", {@code culling_layer}
+     * undefined). Bone visibility is a Molang expression, kept as a string like BDS does; the constants
+     * {@code true}/{@code false} become {@code "1.000000"}/{@code "0.000000"}, which no rule over the JSON value fits.
+     * <p>
+     * BDS sends {@code n_way_visual_rotation} from 1.26.63.1 on, every axis, "" for an axis not set. The captures of
+     * BDS 1.26.36.1 to 1.26.52.3 rejected the base of the component, so their shape is this one without it.
      */
     public static void geometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Geometry c) {
-        geometry(ctx, out, c, true);
-    }
-
-    /** {@code minecraft:geometry} before protocol 2225: the same without {@code n_way_visual_rotation}. */
-    public static void geometryBeforeRotation(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Geometry c) {
-        geometry(ctx, out, c, false);
-    }
-
-    private static void geometry(WireContext ctx, WireNode out, Geometry c, boolean withRotation) {
         NbtMapBuilder geometry = geometry(c.identifier(), c.boneVisibility(), c.culling(), c.cullingLayer(), c.cullingShape(),
             c.uvLock(), c.uvLockBones()).toBuilder();
         Geometry.NWayVisualRotation rotation = c.nWayVisualRotation();
-        if (rotation != null && withRotation) {
+        if (rotation != null && ctx.protocol() >= ComponentIndex.BDS_1_26_63_1) {
             geometry.putCompound("n_way_visual_rotation", rotation(rotation.x(), rotation.y(), rotation.z()));
         }
         out.put("minecraft:geometry", geometry.build());
     }
 
     /**
-     * The geometry of {@code minecraft:embedded_visual}: the shape of {@code minecraft:geometry} without its four flags,
-     * with {@code n_way_visual_rotation} when set (protocol 2225 and later; BDS 1.26.63.1). Before: {@link #embeddedGeometryBeforeRotation}.
+     * The geometry of {@code minecraft:embedded_visual}: the shape of {@link #geometry} without its four flags, inline,
+     * with {@code n_way_visual_rotation} from BDS 1.26.63.1 on. Unverified: BDS rejected every {@code embedded_visual}
+     * variant of the captures, so this is the documented shape with the wire keys of {@code minecraft:geometry}.
      */
     public static void embeddedGeometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull EmbeddedVisual c) {
-        embeddedGeometry(out, c, true);
-    }
-
-    /**
-     * The geometry of {@code minecraft:embedded_visual} before protocol 2225 (26.40, 26.50: BDS 1.26.45.1 and 1.26.52.3):
-     * the same without {@code n_way_visual_rotation}, which those builds do not send.
-     */
-    public static void embeddedGeometryBeforeRotation(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull EmbeddedVisual c) {
-        embeddedGeometry(out, c, false);
-    }
-
-    private static void embeddedGeometry(WireNode out, EmbeddedVisual c, boolean withRotation) {
         EmbeddedVisual.Geometry g = c.geometry();
         NbtMapBuilder geometry = geometry(g.identifier(), g.boneVisibility(), g.culling(), g.cullingLayer(), g.cullingShape(), g.uvLock(), null)
             .toBuilder();
@@ -184,7 +149,7 @@ public final class Transforms {
             geometry.remove(flag);
         }
         EmbeddedVisual.NWayVisualRotation rotation = g.nWayVisualRotation();
-        if (rotation != null && withRotation) {
+        if (rotation != null && ctx.protocol() >= ComponentIndex.BDS_1_26_63_1) {
             geometry.putCompound("n_way_visual_rotation", rotation(rotation.x(), rotation.y(), rotation.z()));
         }
         out.put("minecraft:embedded_visual.geometry", geometry.build());
@@ -245,25 +210,28 @@ public final class Transforms {
     // ---- material_instances ----------------------------------------------------------------------------------------
 
     /**
-     * {@code minecraft:material_instances}: face aliases to {@code mappings}, faces to {@code materials}, face dimming
+     * {@code minecraft:material_instances}: face aliases to {@code mappings}, faces to {@code materials}, face dimming,
      * isotropic and alpha_masked_tint packed into {@code packed_bools} (bits 0, 1 and 3; bit 2,
-     * {@link #SUPPORTS_TEXTURE_VARIATIONS_BIT}, always set), defaults as BDS
-     * sends them.
+     * {@link #SUPPORTS_TEXTURE_VARIATIONS_BIT}, always set), defaults as BDS sends them. The flags share one byte, so each
+     * field's value table only fits with the others at their default, and the faces and aliases of one JSON object split
+     * into two compounds: the rules inferred per field describe neither.
      */
     public static void materialInstances(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull MaterialInstances c) {
         out.put("minecraft:material_instances", materials(c));
     }
 
     /**
-     * {@code minecraft:item_visual}'s material instances, in the {@code minecraft:material_instances} shape.
+     * {@code minecraft:item_visual}'s material instances, sent as {@code materialInstancesDescription} in the
+     * {@code minecraft:material_instances} shape (see {@link #materialInstances}).
      */
     public static void materialInstancesPacked(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull ItemVisual c) {
         out.put("minecraft:item_visual.materialInstancesDescription", materials(c.materialInstances()));
     }
 
     /**
-     * {@code minecraft:embedded_visual}'s material instances: inline per face, flags as bytes (unverified: BDS rejected
-     * every variant).
+     * {@code minecraft:embedded_visual}'s material instances: a whole {@code minecraft:material_instances} object, inline
+     * per face with its flags as bytes. Setting it also fills in the sibling geometry's defaults, so correlating one field
+     * at a time cannot separate the two. Unverified: BDS rejected every {@code embedded_visual} variant of the captures.
      */
     public static void materialInstancesInline(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull EmbeddedVisual c) {
         NbtMapBuilder faces = NbtMap.builder();
@@ -333,8 +301,11 @@ public final class Transforms {
     // ---- block_descriptor_states -------------------------------------------------------------------------------------
 
     /**
-     * The {@code states} of a block descriptor: a compound of state values, typed like the named block's states in the
-     * palette's registry (booleans as bytes). The registry decides the type, not the JSON value.
+     * The {@code states} of a block descriptor ({@code block_placer.use_on}, {@code entity_placer.use_on} and
+     * {@code dispense_on}, {@code digger.destroy_speeds[].block}, {@code placement_filter} block filters): a compound of
+     * state values, typed like the named block's states in the palette's registry (booleans as bytes; {@code pillar_axis}
+     * "y" becomes 0). The registry decides the type and BDS drops a descriptor whose block lacks a state, so no rule over
+     * the JSON value fits, and the capture's sample state names drop the whole entry.
      */
     public static void blockDescriptorStates(@NonNull WireContext ctx, @NonNull WireNode out, BlockPlacer.UseOn d) {
         descriptor(ctx, out, "", d.name(), d.states(), d.tags());
@@ -403,9 +374,11 @@ public final class Transforms {
     // ---- block_name ----------------------------------------------------------------------------------------------------
 
     /**
-     * {@code block_placer.block}: the block's name, or an empty string for a vanilla block this version does not have (as
-     * BDS sends it: {@code minecraft:icicle} is {@code ""} in 26.40 and 26.50). A name of another namespace is a custom block,
-     * which may be registered after the item, so it is sent as it is.
+     * {@code block_placer.block}: the block's name, or an empty string for a vanilla block this version does not have.
+     * BDS resolves the name against its block registry: the captures of 1.26.45.1 and 1.26.52.3 send
+     * {@code minecraft:ice_crystal} and {@code minecraft:icicle} as {@code ""}, that of 1.26.63.1 as named, so the leaf
+     * depends on the version's blocks, not on the JSON value. A name of another namespace is a custom block, which may be
+     * registered after the item, so it is sent as it is.
      */
     public static void blockName(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull BlockPlacer c) {
         String block = c.block();
@@ -424,7 +397,8 @@ public final class Transforms {
     // ---- item descriptors --------------------------------------------------------------------------------------------
 
     /**
-     * {@code using_converts_to}: {@code {name}} for an item the registry knows, {@code {}} otherwise (as BDS sends it).
+     * {@code using_converts_to}: {@code {name}} for an item the registry knows, {@code {}} otherwise, as BDS sends it. The
+     * output depends on whether the item exists, which no rule over the JSON value captures.
      */
     public static void itemDescriptorName(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Food c) {
         String item = c.usingConvertsTo();
@@ -437,8 +411,10 @@ public final class Transforms {
     }
 
     /**
-     * {@code ammunition[].item}: {@code {name}} for an item the registry knows, {@code {}} for any other descriptor (as BDS
-     * sends {@code "item": {}} and objects without a {@code name}); an entry without item is sent with the empty descriptor too.
+     * {@code ammunition[].item}: an item descriptor like {@link #itemDescriptorName}: {@code {name}} for an item the
+     * registry knows, {@code {}} for any other descriptor (the captures send {@code "item": {}} and objects without a
+     * {@code name} as {@code {}}, where the inferred identity of {@code item.name} would leave the compound out); an entry
+     * without item is sent with the empty descriptor too.
      */
     public static void ammunitionItemDescriptor(@NonNull WireContext ctx, @NonNull WireNode out, Shooter.@NonNull Ammunition c) {
         String item = c.item();
@@ -451,23 +427,13 @@ public final class Transforms {
     }
 
     /**
-     * {@code repair_items}: items as {@code [{name}]} (or one {@code {tags}} Molang query), unknown items dropped, an entry without known items dropped with its
-     * repair amount; the amount a float, or a Molang string (from protocol 2168, 26.40; before:
-     * {@link #itemDescriptorListMolangCompound}).
+     * {@code repair_items}: items as {@code [{name}]} (names as written, not namespaced; or one {@code {tags}} Molang
+     * query), an entry without known items dropped with its repair amount. The repair amount is a float for a number and
+     * Molang for a string: the two JSON types land on the same leaf with different NBT types, which no single rule fits.
+     * BDS 1.26.36.1 sends the Molang as a compound {@code {expression, version: 0s}}, 1.26.45.1 and later as a string.
      */
     public static void itemDescriptorList(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Repairable c) {
-        itemDescriptorList(ctx, out, c, false);
-    }
-
-    /**
-     * {@code repair_items} before protocol 2168 (26.30; BDS 1.26.36.1): a Molang repair amount is a compound
-     * {@code {expression, version: 0s}}, not a string.
-     */
-    public static void itemDescriptorListMolangCompound(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Repairable c) {
-        itemDescriptorList(ctx, out, c, true);
-    }
-
-    private static void itemDescriptorList(WireContext ctx, WireNode out, Repairable c, boolean molangCompound) {
+        boolean molangCompound = ctx.protocol() < ComponentIndex.BDS_1_26_45_1;
         out.list("minecraft:repairable.repair_items");
         for (Repairable.RepairItems entry : c.repairItems()) {
             List<String> items = entry.items() == null ? List.of() : entry.items();
@@ -516,7 +482,9 @@ public final class Transforms {
 
     /**
      * {@code minecraft:hover_text_color}: the component keeps the color name, {@code item_properties.hover_text_color}
-     * gets its formatting code ({@code red} -> {@code §c}); unknown names only in the component.
+     * gets its formatting code ({@code red} -> {@code §c}); unknown names only in the component, and with no value BDS
+     * sends the component with an empty value. The docs give no enum for the field, so the captured names make no table
+     * that covers the others: the codes are Bedrock's text color table ({@link #FORMATTING}).
      */
     public static void formattingCode(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull HoverTextColor c) {
         out.put("minecraft:hover_text_color.value", c.value() == null ? "" : c.value());
@@ -549,7 +517,9 @@ public final class Transforms {
     }
 
     /**
-     * Faces as a bit set: down 1, up 2, north 4, south 8, west 16, east 32.
+     * Faces as a bit set: down 1, up 2, north 4, south 8, west 16, east 32 ({@code placement_filter} allowed_faces, 63 for
+     * the default all; {@code liquid_detection} stopsLiquidFromDirection). BDS rejected every list variant of the
+     * captures, so no bitset rule could be fitted; the encoding is the one vanilla data shows.
      */
     public static void faceBits(@NonNull WireContext ctx, @NonNull WireNode out, PlacementFilter.Conditions c) {
         out.put("allowed_faces", faceBits(c.allowedFaces()));
@@ -560,7 +530,9 @@ public final class Transforms {
     }
 
     /**
-     * A list of face or direction names, as named.
+     * A list of face or direction names, as named: {@code redstone_producer} connected_faces (all six by default) and
+     * {@code connection_rule} enabled_directions (south, north, east, west by default). BDS rejected every varied list of
+     * the captures, so only the defaults were observed, and their per index leaves make no rule.
      */
     public static void faceList(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull RedstoneProducer c) {
         out.put("minecraft:redstone_producer.connected_faces", Wire.strings(c.connectedFaces().stream().map(f -> f.value()).toList()));
@@ -573,7 +545,9 @@ public final class Transforms {
     // ---- enabled_state_flags -----------------------------------------------------------------------------------------
 
     /**
-     * {@code minecraft:placement_direction} enabled_states: one byte per state the trait can enable.
+     * {@code minecraft:placement_direction} enabled_states: one byte per state the trait can enable, 1 if listed, and
+     * {@code sixteen_way_rotation} 0. The captures accept no list of {@code corner_and_cardinal_direction} alone (their
+     * base sets {@code y_rotation_offset}, which needs another state), so neither a bit set nor a value table fits.
      */
     public static void enabledStateFlags(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull PlacementDirection c) {
         for (PlacementDirection.EnabledStates state : PlacementDirection.EnabledStates.values()) {
@@ -585,7 +559,9 @@ public final class Transforms {
     // ---- icon_textures -----------------------------------------------------------------------------------------------
 
     /**
-     * {@code minecraft:icon}: only {@code item_properties.minecraft:icon {textures}}; the string form is the default texture.
+     * {@code minecraft:icon}: only {@code item_properties.minecraft:icon} as {@code {textures: {default: <texture>}}}; the
+     * string form is the default texture. The captures vary the textures map only as {@code {}}, and the documented
+     * {@code texture} field is unknown to BDS, so only the string form has an inferred rule.
      */
     public static void iconTextures(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Icon c) {
         NbtMapBuilder textures = NbtMap.builder();
@@ -601,7 +577,8 @@ public final class Transforms {
     // ---- rgb_color ---------------------------------------------------------------------------------------------------
 
     /**
-     * {@code minecraft:dyeable} default_color: hex or [r, g, b] to a list of three ints; white by default.
+     * {@code minecraft:dyeable} default_color: hex or [r, g, b] to a list of three ints; white by default. The inference
+     * dropped the field: the varied values of the captures all came out white or were rejected.
      */
     public static void rgbColor(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Dyeable c) {
         List<Integer> rgb = List.of(255, 255, 255);
@@ -622,9 +599,10 @@ public final class Transforms {
     // ---- destructible_by_mining --------------------------------------------------------------------------------------
 
     /**
-     * {@code minecraft:destructible_by_mining}: {@code value} is seconds_to_destroy, -1 for the false form; item specific
-     * speeds in the legacy item descriptor shape, only when the list is not empty (a list of entries without item is sent empty,
-     * as BDS does for {@code "item": []}).
+     * {@code minecraft:destructible_by_mining}: {@code value} is seconds_to_destroy (0 by default, -1 for the false form);
+     * item specific speeds in the legacy {@code {Name, Aux}} item descriptor shape, only when the list is not empty (a list
+     * of entries without item is sent empty, as BDS does for {@code "item": []}). The captures rejected the base, and
+     * fitting one field at a time gave conflicting count and table rules for {@code value}.
      */
     public static void destructibleByMining(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull DestructibleByMining c) {
         float value = Boolean.FALSE.equals(c.enabled()) ? -1f : Boolean.TRUE.equals(c.enabled()) ? 0f : c.secondsToDestroy();
@@ -646,8 +624,11 @@ public final class Transforms {
     // ---- block_entity_container ---------------------------------------------------------------------------------------
 
     /**
-     * {@code minecraft:block_entity} container from protocol 2225 (26.60; BDS 1.26.63.1): {@code container.slot_count} as a byte
-     * and the optional {@code container.title}; without a container nothing is sent.
+     * {@code minecraft:block_entity} container: {@code container.slot_count} as a byte and, from BDS 1.26.63.1 on, the
+     * optional {@code container.title}; without a container nothing is sent. BDS 1.26.52.3 knows only {@code slot_count}
+     * and rejects {@code title}, so a title is dropped with a report entry there: its capture rejected every variant that
+     * kept the base's title, and the one it accepted made the inference attribute {@code slot_count} to the omission of
+     * the title. (BDS 1.26.36.1 and 1.26.45.1 do not know the container: the component is server only there.)
      */
     public static void blockEntityContainer(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull BlockEntity c) {
         BlockEntity.Container container = c.container();
@@ -655,32 +636,22 @@ public final class Transforms {
             return;
         }
         out.put("minecraft:container.slot_count", Wire.toByte(container.slotCount()));
-        if (container.title() != null) {
-            out.put("minecraft:container.title", container.title());
-        }
-    }
-
-    /**
-     * {@code minecraft:block_entity} container before protocol 2225 (BDS 1.26.52.3, protocol 2193): the schema has
-     * {@code slot_count} only and rejects {@code title}, so a title is dropped with a report entry; without a container nothing
-     * is sent. (BDS 1.26.36.1 and 1.26.45.1 do not know the container at all: the component is server only there.)
-     */
-    public static void blockEntityContainerSlotsOnly(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull BlockEntity c) {
-        BlockEntity.Container container = c.container();
-        if (container == null) {
+        if (container.title() == null) {
             return;
         }
-        out.put("minecraft:container.slot_count", Wire.toByte(container.slotCount()));
-        if (container.title() != null) {
-            ctx.drop(BlockEntity.NAME, "container.title is not known to BDS before protocol 2225 (26.60)");
+        if (ctx.protocol() >= ComponentIndex.BDS_1_26_63_1) {
+            out.put("minecraft:container.title", container.title());
+        } else {
+            ctx.drop(BlockEntity.NAME, "container.title is not known to BDS before 1.26.63.1 (26.60)");
         }
     }
 
     // ---- selection_box -----------------------------------------------------------------------------------------------
 
     /**
-     * {@code minecraft:selection_box}: {@code enabled} and the box as origin/size in JSON units; the false form keeps the
-     * full cube.
+     * {@code minecraft:selection_box}: {@code enabled} and the box as origin/size in JSON units, always all three; the
+     * false form keeps the full cube. BDS validates the box against the block bounds and rejected every origin variant of
+     * the captures, so {@code origin} has no inferred rule.
      */
     public static void selectionBox(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull SelectionBox c) {
         SelectionBox.Vec3 origin = c.origin() == null ? new SelectionBox.Vec3(-8, 0, -8) : c.origin();
@@ -701,7 +672,8 @@ public final class Transforms {
 
     /**
      * {@code minecraft:use_animation}: the component keeps the name, {@code item_properties.use_animation} numbers it
-     * (eat 1 and spear 6 captured from BDS 1.26.63.1, the others as vanilla items send them); unknown names are 0.
+     * (eat 1 and spear 6 captured from BDS 1.26.63.1, the others as vanilla items send them); unknown names are 0. The
+     * docs give no enum for the value, so the inference saw only the two samples and fitted a constant.
      */
     public static void useAnimationId(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull UseAnimation c) {
         String value = c.value() == null ? "none" : c.value();
@@ -713,7 +685,7 @@ public final class Transforms {
 
     /**
      * One entry of {@code permutations}: its components compiled with each component's own rules; a permutation without
-     * components is not sent at all (its condition with it).
+     * components is not sent at all, which takes its condition leaf with it.
      *
      * @param out the block property data
      */

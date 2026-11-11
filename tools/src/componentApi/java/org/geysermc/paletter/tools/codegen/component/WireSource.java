@@ -43,8 +43,8 @@ import java.util.TreeSet;
  * Semantics of a window's mapping, per object level: the component's {@code constants} first; then every field in docs
  * order. A set field writes its value rules (identity, linear, table, affix, bitset, count) and the constants its presence
  * switches on (only for leaves no field owns: the others follow their owner); an unset field writes its {@code whenAbsent}
- * leaves (its own and its children's, never another field's). A field named in {@code transforms.json} calls the hand
- * transform of that name instead, with the record that holds it, after the generic fields of that record.
+ * leaves (its own and its children's, never another field's). A field named in {@link HandTransforms} calls its hand
+ * transform instead, with the record that holds it, after the generic fields of that record.
  */
 final class WireSource {
     static final String PKG = "org.geysermc.paletter.internal.component";
@@ -211,36 +211,9 @@ final class WireSource {
         fields(c.root, "c", "out", "");
     }
 
-    /**
-     * A call of a hand transform; one that has protocol windows in transforms.json dispatches on the protocol, like the
-     * inferred windows of a component do.
-     */
+    /** A call of a hand transform; it checks the protocol itself where BDS builds differ. */
     private void transformCall(String transform, String node, String value) {
-        List<ApiModel.TransformWindow> windows = model.transformWindows.get(transform);
-        if (windows == null) {
-            b.addStatement("$T.$N(ctx, $N, $N)", TRANSFORMS, ComponentGenerator.camel(transform), node, value);
-            return;
-        }
-        b.addStatement("int transformProtocol = ctx.protocol()");
-        for (int i = 0; i < windows.size(); i++) {
-            ApiModel.TransformWindow w = windows.get(i);
-            List<String> conditions = new ArrayList<>();
-            if (w.since() != Integer.MIN_VALUE) {
-                conditions.add("transformProtocol >= " + w.since());
-            }
-            if (w.until() != Integer.MAX_VALUE) {
-                conditions.add("transformProtocol < " + w.until());
-            }
-            if (i == 0) {
-                b.beginControlFlow("if ($L)", String.join(" && ", conditions));
-            } else if (i + 1 < windows.size()) {
-                b.nextControlFlow("else if ($L)", String.join(" && ", conditions));
-            } else {
-                b.nextControlFlow("else");
-            }
-            b.addStatement("$T.$N(ctx, $N, $N)", TRANSFORMS, ComponentGenerator.camel(w.transform()), node, value);
-        }
-        b.endControlFlow();
+        b.addStatement("$T.$N(ctx, $N, $N)", TRANSFORMS, transform, node, value);
     }
 
     private void collectOwned(ObjType o) {
@@ -613,7 +586,7 @@ final class WireSource {
     private void checkPlaceable(Field f, String wire, String prefix) {
         if (!placeable(wire, prefix)) {
             throw new GenerationException("list depth mismatch: " + c.id + " " + f.path + " writes " + wire + " from "
-                + (prefix.isEmpty() ? "the component" : prefix) + "; name a transform for it in transforms.json");
+                + (prefix.isEmpty() ? "the component" : prefix) + "; name a transform for it in HandTransforms");
         }
     }
 
@@ -881,6 +854,11 @@ final class WireSource {
         type.addField(FieldSpec.builder(int.class, "NEWEST_CAPTURED_PROTOCOL", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
             .addJavadoc("The newest protocol a spec capture of BDS exists for: a palette of a newer protocol is encoded with the shape observed here.\n")
             .initializer("$L", model.newestCaptured == Integer.MAX_VALUE ? "Integer.MAX_VALUE" : String.valueOf(model.newestCaptured)).build());
+        model.windowProtocols.forEach((bds, protocol) -> type.addField(FieldSpec.builder(int.class, "BDS_" + bds.replace('.', '_'),
+                Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+            .addJavadoc("The first protocol of the window of the spec capture of BDS $L ({@code data/bds/$L/spec}): what the hand\n"
+                + "transforms compare {@code WireContext.protocol()} with where that build changed the wire.\n", bds, bds)
+            .initializer("$L", protocol).build()));
         type.addMethod(MethodSpec.methodBuilder("keys").addModifiers(Modifier.PRIVATE, Modifier.STATIC)
             .addParameter(ParameterizedTypeName.get(ClassName.get(Class.class), com.palantir.javapoet.WildcardTypeName.subtypeOf(Object.class)), "type")
             .addParameter(com.palantir.javapoet.ArrayTypeName.of(ApiSource.STRING), "keys").varargs()

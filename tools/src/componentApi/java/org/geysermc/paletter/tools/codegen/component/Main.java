@@ -7,8 +7,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -18,7 +16,6 @@ import java.util.stream.Stream;
  * committed sources differ (and lists the files).
  */
 public final class Main {
-    static final String TRANSFORMS_SOURCE = "paletter/src/main/java/org/geysermc/paletter/internal/component/Transforms.java";
     /** Directories whose generated files this generator owns (a file with the generator header that it no longer writes is deleted). */
     static final List<String> OWNED = List.of("org/geysermc/paletter/item/component", "org/geysermc/paletter/block/component",
         "org/geysermc/paletter/internal/component");
@@ -47,7 +44,7 @@ public final class Main {
     /** @return the number of files that differ (written unless {@code check}) */
     static int run(Path root, Path sources, boolean check) throws IOException {
         Path model = root.resolve("data/model");
-        ComponentGenerator.Inputs inputs = ComponentGenerator.read(model, knownTransforms(root), version(root));
+        ComponentGenerator.Inputs inputs = ComponentGenerator.read(model, version(root));
         Map<String, String> files = ComponentGenerator.generate(inputs);
         int changed = 0;
         for (Map.Entry<String, String> file : files.entrySet()) {
@@ -81,17 +78,6 @@ public final class Main {
             }
         }
         return changed;
-    }
-
-    /** Transform names (snake_case) the runtime implements: the public static methods of {@code Transforms}, read from its source. */
-    static Set<String> knownTransforms(Path root) throws IOException {
-        Path source = root.resolve(TRANSFORMS_SOURCE);
-        Set<String> names = new TreeSet<>();
-        Matcher m = Pattern.compile("public static void ([a-zA-Z0-9]+)\\(").matcher(Files.readString(source, StandardCharsets.UTF_8));
-        while (m.find()) {
-            names.add(m.group(1).replaceAll("([a-z0-9])([A-Z])", "$1_$2").toLowerCase(java.util.Locale.ROOT));
-        }
-        return names;
     }
 
     static String version(Path root) throws IOException {

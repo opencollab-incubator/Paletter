@@ -13,7 +13,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * Add-on JSON: {@code "minecraft:hover_text_color"}.
  *
  * @param value The color of the item hover text. Add-on JSON {@code value}. Optional (null: not set). Compiled by the hand
- *        transform {@code formatting_code}.
+ *        transform {@code Transforms.formattingCode}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_hover_text_color?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:hover_text_color</a>
  * @since 0.1.0
  */

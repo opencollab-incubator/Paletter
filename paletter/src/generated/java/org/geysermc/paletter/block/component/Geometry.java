@@ -17,7 +17,7 @@ import org.geysermc.paletter.internal.component.Check;
  * identifiers: "minecraft:geometry.full_block" or "minecraft:geometry.cross".
  * <p>
  * Add-on JSON: {@code "minecraft:geometry"}.
- * Compiled by the hand transform {@code geometry} (see {@code data/model/transforms.json}).
+ * Compiled by the hand transform {@code Transforms.geometry}.
  *
  * @param boneVisibility An optional list of true/false values that define the visibility of individual bones in the geometry file. An
  *        optional list of true/false values that define the visibility of individual bones in the geometry file. In

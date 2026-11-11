@@ -23,7 +23,8 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  *        <code>0.6000000238418579</code>. Range [0, inf) (BDS 1.26.63.1).
  * @param usingConvertsTo When used, converts to the item specified by the string in this field. Default does not convert item. Add-on
  *        JSON {@code using_converts_to}. Optional (null: not set). The docs give the default {}, which is not a value
- *        of this type; unset, BDS's behaviour applies. Compiled by the hand transform {@code item_descriptor_name}.
+ *        of this type; unset, BDS's behaviour applies. Compiled by the hand transform {@code
+ *        Transforms.itemDescriptorName}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_food?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:food</a>
  * @since 0.1.0
  */

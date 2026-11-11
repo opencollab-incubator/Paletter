@@ -244,7 +244,7 @@ final class ApiSource {
                     .append(String.join(", ", c.experiments.stream().map(Docs::escape).toList())).append(" for it (in some format versions).\n");
             }
             if (c.transform != null) {
-                doc.append("Compiled by the hand transform {@code ").append(c.transform).append("} (see {@code data/model/transforms.json}).\n");
+                doc.append("Compiled by the hand transform {@code Transforms.").append(c.transform).append("}.\n");
             }
         }
         doc.append('\n');
@@ -392,7 +392,7 @@ final class ApiSource {
                 .append("; BDS takes other strings too.");
         }
         if (f.transform != null) {
-            s.append(" Compiled by the hand transform {@code ").append(f.transform).append("}.");
+            s.append(" Compiled by the hand transform {@code Transforms.").append(f.transform).append("}.");
         }
         return s.toString();
     }

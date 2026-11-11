@@ -134,7 +134,7 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
      * the item, whether to search the offhand, inventory, and whether to use in creative mode.
      *
      * @param item Ammunition item description identifier. Add-on JSON {@code item}. Optional (null: not set). Compiled by the
-     *        hand transform {@code ammunition_item_descriptor}.
+     *        hand transform {@code Transforms.ammunitionItemDescriptor}.
      * @param searchInventory Can search inventory? Default is set to false. Add-on JSON {@code search_inventory}. Default:
      *        <code>false</code>.
      * @param useInCreative Can use in creative mode? Default is set to false. Add-on JSON {@code use_in_creative}. Default:

@@ -12,7 +12,7 @@ docs  --DocsParser--> data/model/components.json   every component and field, as
       --AddonGenerator--> spec add-on (~1900 items/blocks, one per varied field value) + variants.json
 BDS   --spec-capture--> data/bds/<version>/spec/
       --MappingInference--> data/model/mappings.json (JSON -> wire rule per field, per protocol window),
-                            coverage.md, bds-feedback.json   (+ transforms.json, hand: what no rule explains)
+                            coverage.md, bds-feedback.json   (+ HandTransforms, hand: what no rule explains)
 ```
 
 ```
@@ -111,8 +111,8 @@ explained by the first rule that fits all observations:
 | `constant`, `empty-list` | a leaf the field's presence switches on |
 
 `whenAbsent` gives the leaf when the field is omitted. A field no leaf follows is `dropped` (server only); one whose
-every variant is rejected is `rejected`. Leaves no rule explains make a field `partial`/`unresolved`; those need a named
-transform in `transforms.json`.
+every variant is rejected is `rejected`. Leaves no rule explains make a field `partial`/`unresolved`; those need a hand
+transform: a method of `Transforms` named in `HandTransforms` (tools/docs/codegen.md).
 
 One capture per bundled protocol (`data/bds/<version>/spec`). Its add-on asks for the format version of its build, and
 the capture keeps its own `variants.json`. A capture whose wire relevant part equals the previous window's joins it

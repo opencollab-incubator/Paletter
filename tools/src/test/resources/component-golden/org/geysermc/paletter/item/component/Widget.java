@@ -27,15 +27,15 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  * @param tags Tags. Add-on JSON {@code tags}. Default: <code>[]</code>.
  * @param entries Entries. Add-on JSON {@code entries}. Optional (null: not set).
  * @param colors Colors by part. Add-on JSON {@code colors}. Optional (null: not set). Compiled by the hand transform {@code
- *        test_map}.
+ *        Transforms.testMap}.
  * @param shape A shape or its id. Add-on JSON {@code shape}. Optional (null: not set).
  * @param offset Add-on JSON {@code offset}. Default: <code>[0,1,0]</code>.
  * @param rarity How rare. Add-on JSON {@code rarity}. Optional (null: not set). Documented values: {@code common}, {@code
  *        rare}; BDS takes other strings too.
  * @param stripes Stripes on or off, or the striped parts. Add-on JSON {@code stripes}. Optional (null: not set). Compiled by
- *        the hand transform {@code test_map}.
+ *        the hand transform {@code Transforms.testMap}.
  * @param stripesNames The list of strings form of &#123;&#64;code stripes&#125; (names); excludes &#123;&#64;link #stripes()&#125;.
- *        Add-on JSON {@code stripes}. Compiled by the hand transform {@code test_map}.
+ *        Add-on JSON {@code stripes}. Compiled by the hand transform {@code Transforms.testMap}.
  * @param fuel The item it burns. Add-on JSON {@code fuel}. Optional (null: not set).
  * @param reach The docs require it; BDS takes it omitted. Add-on JSON {@code reach}. Default: <code>3</code>.
  * @param moreNested Nested things under any other key. Add-on JSON {@code nested}. Default: <code>&#123;&#125;</code>.

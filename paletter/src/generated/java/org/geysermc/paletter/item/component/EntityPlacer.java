@@ -131,7 +131,7 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
      *
      * @param name Add-on JSON {@code name}. Optional (null: not set).
      * @param states Add-on JSON {@code states}. Default: <code>&#123;&#125;</code>. Compiled by the hand transform {@code
-     *        block_descriptor_states}.
+     *        Transforms.blockDescriptorStates}.
      * @param tags Add-on JSON {@code tags}. Optional (null: not set).
      */
     public record UseOn(@Nullable String name, @NonNull Map<String, Object> states,

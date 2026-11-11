@@ -135,12 +135,7 @@ public final class BlockWire {
         if (v1 != null) {
             ctx.drop(BlockEntity.NAME, "entity_storage has no known wire mapping");
         }
-        int transformProtocol = ctx.protocol();
-        if (transformProtocol < 2225) {
-            Transforms.blockEntityContainerSlotsOnly(ctx, out, c);
-        } else {
-            Transforms.blockEntityContainer(ctx, out, c);
-        }
+        Transforms.blockEntityContainer(ctx, out, c);
     }
 
     private static void blockEntityFrom2225(BlockEntity c, WireContext ctx, WireNode out) {
@@ -148,12 +143,7 @@ public final class BlockWire {
         Boolean v1 = c.entityStorage();
         if (v1 != null) {
         }
-        int transformProtocol = ctx.protocol();
-        if (transformProtocol < 2225) {
-            Transforms.blockEntityContainerSlotsOnly(ctx, out, c);
-        } else {
-            Transforms.blockEntityContainer(ctx, out, c);
-        }
+        Transforms.blockEntityContainer(ctx, out, c);
     }
 
     private static void blockLightAbsorption(BlockLightAbsorption c, WireContext ctx,
@@ -183,12 +173,7 @@ public final class BlockWire {
             out.put("minecraft:collision_box.boxes", Wire.EMPTY_LIST);
             out.put("minecraft:collision_box.enabled", Wire.bool(v0));
         }
-        int transformProtocol = ctx.protocol();
-        if (transformProtocol < 2225) {
-            Transforms.collisionBoxesUnmirrored(ctx, out, c);
-        } else {
-            Transforms.collisionBoxes(ctx, out, c);
-        }
+        Transforms.collisionBoxes(ctx, out, c);
     }
 
     private static void connectionRule(ConnectionRule c, WireContext ctx, WireNode out) {
@@ -253,12 +238,7 @@ public final class BlockWire {
         out.put("minecraft:embedded_visual.material_instances.*.render_method", "opaque");
         out.put("minecraft:embedded_visual.material_instances.*.texture", "paletter_tex");
         out.put("minecraft:embedded_visual.material_instances.*.tint_method", "none");
-        int transformProtocol = ctx.protocol();
-        if (transformProtocol < 2225) {
-            Transforms.embeddedGeometryBeforeRotation(ctx, out, c);
-        } else {
-            Transforms.embeddedGeometry(ctx, out, c);
-        }
+        Transforms.embeddedGeometry(ctx, out, c);
         Transforms.materialInstancesInline(ctx, out, c);
     }
 
@@ -300,12 +280,7 @@ public final class BlockWire {
         out.put("minecraft:geometry.isV1Fullblock", (byte) 0);
         out.put("minecraft:geometry.needsLegacyTopRotation", (byte) 0);
         out.put("minecraft:geometry.useBlockTypeLightAbsorption", (byte) 0);
-        int transformProtocol = ctx.protocol();
-        if (transformProtocol < 2225) {
-            Transforms.geometryBeforeRotation(ctx, out, c);
-        } else {
-            Transforms.geometry(ctx, out, c);
-        }
+        Transforms.geometry(ctx, out, c);
     }
 
     private static void geometryFrom2225(Geometry c, WireContext ctx, WireNode out) {
@@ -313,12 +288,7 @@ public final class BlockWire {
         out.put("minecraft:geometry.isV1Fullblock", (byte) 0);
         out.put("minecraft:geometry.needsLegacyTopRotation", (byte) 0);
         out.put("minecraft:geometry.useBlockTypeLightAbsorption", (byte) 0);
-        int transformProtocol = ctx.protocol();
-        if (transformProtocol < 2225) {
-            Transforms.geometryBeforeRotation(ctx, out, c);
-        } else {
-            Transforms.geometry(ctx, out, c);
-        }
+        Transforms.geometry(ctx, out, c);
     }
 
     private static void instrumentSound(InstrumentSound c, WireContext ctx, WireNode out) {
