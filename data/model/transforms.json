@@ -6,7 +6,7 @@
   },
   "block:minecraft:item_visual:material_instances": {
     "transform": "material_instances_packed",
-    "why": "Sent as materialInstancesDescription in the minecraft:material_instances wire shape: face aliases go to 'mappings', faces to 'materials', and face_dimming/isotropic are packed into 'packed_bools' (bit 0 face_dimming, bit 1 isotropic, bit 2 always set). The bit packing combines two JSON fields into one leaf, which single-field variation cannot fit."
+    "why": "Sent as materialInstancesDescription in the minecraft:material_instances wire shape: face aliases go to 'mappings', faces to 'materials', and face_dimming/isotropic are packed into 'packed_bools' (bit 0 face_dimming, bit 1 isotropic, bit 2 supports texture variations, always set for the current format). The bit packing combines two JSON fields into one leaf, which single-field variation cannot fit."
   },
   "block:minecraft:placement_filter:conditions[].block_filter[].states": {
     "transform": "block_descriptor_states",
@@ -60,7 +60,7 @@
   },
   "block:minecraft:material_instances:": {
     "transform": "material_instances",
-    "why": "face_dimming and isotropic are packed into one byte (packed_bools: bit 0 face_dimming, bit 1 isotropic, bit 2 always set), so each field's table only fits with the other at its default; face aliases go to mappings, faces to materials. Inference cannot combine two fields into one leaf."
+    "why": "face_dimming and isotropic are packed into one byte (packed_bools: bit 0 face_dimming, bit 1 isotropic, bit 2 supports texture variations, always set for the current format), so each field's table only fits with the other at its default; face aliases go to mappings, faces to materials. Inference cannot combine two fields into one leaf."
   },
   "item:minecraft:repairable:repair_items": {
     "transform": "item_descriptor_list",

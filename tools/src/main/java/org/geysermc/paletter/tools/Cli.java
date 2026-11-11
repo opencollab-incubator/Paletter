@@ -1,5 +1,7 @@
 package org.geysermc.paletter.tools;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
 import org.geysermc.paletter.internal.data.PaletteDataCodec;
 import org.geysermc.paletter.internal.data.VanillaData;
@@ -14,6 +16,7 @@ import org.geysermc.paletter.tools.data.BundledFiles;
 import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.data.Checker;
 import org.geysermc.paletter.tools.data.Importer;
+import org.geysermc.paletter.tools.data.WireShapes;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
@@ -35,6 +38,7 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -526,9 +530,27 @@ public final class Cli implements Runnable {
 
     @Command(name = "check-mappings", description = "infer, but fail if the committed outputs differ")
     static final class CheckMappings extends Rooted implements Callable<Integer> {
+        @Option(names = "--strict", description = "also fail on residual bits and captured wire paths nothing explains (CI and update)")
+        boolean strict;
+
         @Override
         public Integer call() throws Exception {
-            return new MappingInference(root()).run(true) ? 0 : 1;
+            MappingInference inference = new MappingInference(root());
+            boolean ok = inference.run(true);
+            if (!strict) {
+                return ok ? 0 : 1;
+            }
+            List<String> unexplained = new ArrayList<>(inference.unexplainedBits());
+            Path model = root().resolve(Layout.MODEL);
+            JsonObject mappings = JsonParser.parseString(Files.readString(model.resolve("mappings.json"))).getAsJsonObject();
+            Model components = Fixtures.read(model).apply(Model.read(model.resolve("components.json")));
+            Path capture = Update.latestAddonCapture(root().resolve(Layout.BDS));
+            Map<String, List<String>> uncovered = WireShapes.classify(WireShapes.ofCapture(capture).uncovered(mappings), mappings, components);
+            uncovered.forEach((reason, paths) -> System.out.println(reason + ":\n  " + String.join("\n  ", paths)));
+            uncovered.getOrDefault(WireShapes.UNCLASSIFIED, List.of()).forEach(path -> unexplained.add("wire path " + path + " of "
+                + root().relativize(capture) + " is not in mappings.json and no reason of WireShapes.classify fits"));
+            unexplained.forEach(line -> System.err.println("UNEXPLAINED: " + line));
+            return ok && unexplained.isEmpty() ? 0 : 1;
         }
     }
 

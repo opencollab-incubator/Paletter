@@ -5,7 +5,7 @@ import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.data.Importer;
 import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.data.WireShapes;
-import org.geysermc.paletter.tools.model.infer.MappingInference;
+import org.geysermc.paletter.tools.model.Model;
 import java.util.List;
 import java.util.Map;
 import com.google.gson.JsonParser;
@@ -16,7 +16,6 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UpdateTest {
@@ -57,38 +56,15 @@ class UpdateTest {
     }
 
     @Test
-    void committedCapturesAreCoveredByTheMappings() throws Exception {
+    void uncoveredWirePathsAreClassified() throws Exception {
         Path root = Path.of(System.getProperty("paletter.root", ".."));
         var mappings = JsonParser.parseString(Files.readString(root.resolve("data/model/mappings.json"))).getAsJsonObject();
-        var shapes = WireShapes.ofCapture(root.resolve("data/bds/1.26.63.1/addon"));
-        assertFalse(shapes.components().isEmpty());
-        List<String> uncovered = shapes.uncovered(mappings);
-        var gaps = WireShapes.knownGaps(root.resolve("data/model")).stream().map(WireShapes.Gap::path).toList();
-        assertTrue(gaps.containsAll(uncovered), "not covered and not a known gap: " + uncovered.stream().filter(u -> !gaps.contains(u)).toList());
-        assertTrue(uncovered.containsAll(gaps), "known gaps that are covered now: " + gaps.stream().filter(g -> !uncovered.contains(g)).toList());
-        var invented = new WireShapes();
-        assertTrue(invented.uncovered(mappings).isEmpty());
-    }
-
-    @Test
-    void aWireGapNeedsReasonBuildAndClosingCondition() throws Exception {
-        Path model = Files.createTempDirectory("paletter-gaps");
-        Files.writeString(model.resolve("wire-gaps.txt"), "# c\nitem:minecraft:a x | why | since 1.26.63.1 | closes with a capture\n");
-        var gap = WireShapes.knownGaps(model).getFirst();
-        assertEquals(new WireShapes.Gap("item:minecraft:a x", "why", "1.26.63.1", "a capture"), gap);
-        for (String bad : List.of("item:minecraft:a x", "item:minecraft:a x | | since 1.26.63.1 | closes with y",
-            "item:minecraft:a x | why | 1.26.63.1 | closes with y", "item:minecraft:a x | why | since 1.26.63.1 | y",
-            "item:minecraft:a x | why | since 1.26.63.1 | closes with y | z")) {
-            Files.writeString(model.resolve("wire-gaps.txt"), bad + "\n");
-            assertThrows(IllegalArgumentException.class, () -> WireShapes.knownGaps(model), bad);
-        }
-    }
-
-    @Test
-    void everyFindingAndConstantHasItsEvidence() throws Exception {
-        Path root = Path.of(System.getProperty("paletter.root", ".."));
-        var problems = new MappingInference(root).gates();
-        assertTrue(problems.isEmpty(), "findings or constants without evidence (data/model/evidence.json):\n  " + String.join("\n  ", problems));
+        var model = Model.read(root.resolve("data/model/components.json"));
+        var classified = WireShapes.classify(List.of("block:block_definition blockTags", "item:item_properties mining_speed",
+            "block:minecraft:not_in_the_docs offset", "item:minecraft:food unknown_key"), mappings, model);
+        assertEquals(4, classified.size(), classified.toString());
+        assertEquals(List.of("item:minecraft:food unknown_key"), classified.get(WireShapes.UNCLASSIFIED));
+        assertTrue(new WireShapes().uncovered(mappings).isEmpty());
     }
 
     @Test

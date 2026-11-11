@@ -3744,7 +3744,7 @@
           ],
           "transform": {
             "transform": "material_instances_packed",
-            "why": "Sent as materialInstancesDescription in the minecraft:material_instances wire shape: face aliases go to 'mappings', faces to 'materials', and face_dimming/isotropic are packed into 'packed_bools' (bit 0 face_dimming, bit 1 isotropic, bit 2 always set). The bit packing combines two JSON fields into one leaf, which single-field variation cannot fit."
+            "why": "Sent as materialInstancesDescription in the minecraft:material_instances wire shape: face aliases go to 'mappings', faces to 'materials', and face_dimming/isotropic are packed into 'packed_bools' (bit 0 face_dimming, bit 1 isotropic, bit 2 supports texture variations, always set for the current format). The bit packing combines two JSON fields into one leaf, which single-field variation cannot fit."
           },
           "status": "hand-rule",
           "unexplained": [
@@ -4087,7 +4087,7 @@
             ],
             "transform": {
               "transform": "material_instances_packed",
-              "why": "Sent as materialInstancesDescription in the minecraft:material_instances wire shape: face aliases go to 'mappings', faces to 'materials', and face_dimming/isotropic are packed into 'packed_bools' (bit 0 face_dimming, bit 1 isotropic, bit 2 always set). The bit packing combines two JSON fields into one leaf, which single-field variation cannot fit."
+              "why": "Sent as materialInstancesDescription in the minecraft:material_instances wire shape: face aliases go to 'mappings', faces to 'materials', and face_dimming/isotropic are packed into 'packed_bools' (bit 0 face_dimming, bit 1 isotropic, bit 2 supports texture variations, always set for the current format). The bit packing combines two JSON fields into one leaf, which single-field variation cannot fit."
             },
             "status": "hand-rule",
             "unexplained": [

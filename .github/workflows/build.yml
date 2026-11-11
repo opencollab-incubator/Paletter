@@ -19,5 +19,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       # build includes :codegen:checkComponents (generated component types up to date) and all tests
       - run: ./gradlew build
+      - name: Every captured bit and wire path is explained
+        run: ./gradlew :tools:run --args="check-mappings --strict"
       - name: Fallback coverage of the bundled versions
         run: ./gradlew :tools:run --args="check-data"
