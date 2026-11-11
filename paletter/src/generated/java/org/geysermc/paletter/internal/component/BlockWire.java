@@ -116,15 +116,31 @@ public final class BlockWire {
 
     private static void blockEntity(BlockEntity c, WireContext ctx, WireNode out) {
         int protocol = ctx.protocol();
-        if (protocol < 2225) {
-            blockEntityUntil2225(c, ctx, out);
+        if (protocol < 2193) {
+            blockEntityUntil2193(c, ctx, out);
+        } else if (protocol >= 2193 && protocol < 2225) {
+            blockEntityFrom2193Until2225(c, ctx, out);
         } else if (protocol >= 2225) {
             blockEntityFrom2225(c, ctx, out);
         }
     }
 
-    private static void blockEntityUntil2225(BlockEntity c, WireContext ctx, WireNode out) {
-        ctx.drop(BlockEntity.NAME, "is not sent to clients (BDS: rejected)");
+    private static void blockEntityUntil2193(BlockEntity c, WireContext ctx, WireNode out) {
+        ctx.drop(BlockEntity.NAME, "is not sent to clients (BDS: server-only)");
+    }
+
+    private static void blockEntityFrom2193Until2225(BlockEntity c, WireContext ctx, WireNode out) {
+        boolean v0 = c.dynamicProperties();
+        Boolean v1 = c.entityStorage();
+        if (v1 != null) {
+            ctx.drop(BlockEntity.NAME, "entity_storage has no known wire mapping");
+        }
+        int transformProtocol = ctx.protocol();
+        if (transformProtocol < 2225) {
+            Transforms.blockEntityContainerSlotsOnly(ctx, out, c);
+        } else {
+            Transforms.blockEntityContainer(ctx, out, c);
+        }
     }
 
     private static void blockEntityFrom2225(BlockEntity c, WireContext ctx, WireNode out) {

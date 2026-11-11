@@ -1,48 +1,23 @@
 ERROR [Blocks] The bits to store state paletter:s are out of range. This state may not be applied properly.
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_10.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_10.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_11.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_11.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_12.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_12.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_13.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_13.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_14.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_14.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_15.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_15.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_16.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_16.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_17.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_17.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_18.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_18.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_19.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_19.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_2.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_2.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_20.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_20.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_21.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_21.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_22.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_23.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_23.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_24.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_24.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_3.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_4.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_4.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_5.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_5.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_6.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_6.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_7.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_7.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_8.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_8.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_9.json |  -> components -> minecraft:block_entity -> container: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_9.json |  -> components -> minecraft:block_entity -> entity_storage: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_2.json |  -> components -> minecraft:block_light_absorption: this component was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_3.json |  -> components -> minecraft:block_light_absorption: this component was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_4.json |  -> components -> minecraft:block_light_absorption: this component was found in the input, but is not present in the Schema
@@ -377,50 +352,6 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geome
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_29.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_29.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_29.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_30.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_30.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_30.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_30.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_31.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_31.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_31.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_31.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_32.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_32.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_32.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_32.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_33.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_33.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_33.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_33.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_34.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_34.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_34.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_34.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_35.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_35.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_35.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_35.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_36.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_36.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_36.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_36.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_37.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_37.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_37.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_37.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_38.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_38.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_38.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_38.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_39.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_39.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_39.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_39.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_40.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_40.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_40.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_40.json |  -> components -> minecraft:geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_7.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_7.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_7.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string

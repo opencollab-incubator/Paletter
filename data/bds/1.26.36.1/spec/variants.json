@@ -260,8 +260,7 @@
       "container": {
         "slot_count": 1,
         "title": "Paletter Container"
-      },
-      "entity_storage": true
+      }
     }
   },
   {
@@ -272,9 +271,7 @@
     "role": "omit",
     "path": "container",
     "label": "omitted",
-    "json": {
-      "entity_storage": true
-    }
+    "json": {}
   },
   {
     "identifier": "paletter:b_block_entity_4",
@@ -286,8 +283,7 @@
     "label": "object:{}",
     "value": {},
     "json": {
-      "container": {},
-      "entity_storage": true
+      "container": {}
     }
   },
   {
@@ -306,8 +302,7 @@
       "container": {
         "slot_count": 1,
         "title": "Paletter Container"
-      },
-      "entity_storage": true
+      }
     }
   },
   {
@@ -324,8 +319,7 @@
         "slot_count": 1,
         "title": "Paletter Container",
         "show_ui_on_interaction": true
-      },
-      "entity_storage": true
+      }
     }
   },
   {
@@ -342,8 +336,7 @@
         "slot_count": 1,
         "title": "Paletter Container",
         "show_ui_on_interaction": false
-      },
-      "entity_storage": true
+      }
     }
   },
   {
@@ -357,8 +350,7 @@
     "json": {
       "container": {
         "title": "Paletter Container"
-      },
-      "entity_storage": true
+      }
     }
   },
   {
@@ -374,8 +366,7 @@
       "container": {
         "slot_count": 0,
         "title": "Paletter Container"
-      },
-      "entity_storage": true
+      }
     }
   },
   {
@@ -391,8 +382,7 @@
       "container": {
         "slot_count": 1,
         "title": "Paletter Container"
-      },
-      "entity_storage": true
+      }
     }
   },
   {
@@ -408,8 +398,7 @@
       "container": {
         "slot_count": 2,
         "title": "Paletter Container"
-      },
-      "entity_storage": true
+      }
     }
   },
   {
@@ -425,8 +414,7 @@
       "container": {
         "slot_count": 7,
         "title": "Paletter Container"
-      },
-      "entity_storage": true
+      }
     }
   },
   {
@@ -442,8 +430,7 @@
       "container": {
         "slot_count": 100,
         "title": "Paletter Container"
-      },
-      "entity_storage": true
+      }
     }
   },
   {
@@ -459,8 +446,7 @@
       "container": {
         "slot_count": -1,
         "title": "Paletter Container"
-      },
-      "entity_storage": true
+      }
     }
   },
   {
@@ -476,8 +462,7 @@
       "container": {
         "slot_count": 54,
         "title": "Paletter Container"
-      },
-      "entity_storage": true
+      }
     }
   },
   {
@@ -493,8 +478,7 @@
       "container": {
         "slot_count": 55,
         "title": "Paletter Container"
-      },
-      "entity_storage": true
+      }
     }
   },
   {
@@ -508,8 +492,7 @@
     "json": {
       "container": {
         "slot_count": 1
-      },
-      "entity_storage": true
+      }
     }
   },
   {
@@ -525,8 +508,7 @@
       "container": {
         "slot_count": 1,
         "title": "Paletter Container"
-      },
-      "entity_storage": true
+      }
     }
   },
   {
@@ -542,8 +524,7 @@
       "container": {
         "slot_count": 1,
         "title": "paletter_b"
-      },
-      "entity_storage": true
+      }
     }
   },
   {
@@ -560,7 +541,6 @@
         "slot_count": 1,
         "title": "Paletter Container"
       },
-      "entity_storage": true,
       "dynamic_properties": true
     }
   },
@@ -578,57 +558,7 @@
         "slot_count": 1,
         "title": "Paletter Container"
       },
-      "entity_storage": true,
       "dynamic_properties": false
-    }
-  },
-  {
-    "identifier": "paletter:b_block_entity_22",
-    "kind": "block",
-    "file": "blocks/b_block_entity_22.json",
-    "component": "block:minecraft:block_entity",
-    "role": "omit",
-    "path": "entity_storage",
-    "label": "omitted",
-    "json": {
-      "container": {
-        "slot_count": 1,
-        "title": "Paletter Container"
-      }
-    }
-  },
-  {
-    "identifier": "paletter:b_block_entity_23",
-    "kind": "block",
-    "file": "blocks/b_block_entity_23.json",
-    "component": "block:minecraft:block_entity",
-    "role": "field",
-    "path": "entity_storage",
-    "label": "boolean:true",
-    "value": true,
-    "json": {
-      "container": {
-        "slot_count": 1,
-        "title": "Paletter Container"
-      },
-      "entity_storage": true
-    }
-  },
-  {
-    "identifier": "paletter:b_block_entity_24",
-    "kind": "block",
-    "file": "blocks/b_block_entity_24.json",
-    "component": "block:minecraft:block_entity",
-    "role": "field",
-    "path": "entity_storage",
-    "label": "boolean:false",
-    "value": false,
-    "json": {
-      "container": {
-        "slot_count": 1,
-        "title": "Paletter Container"
-      },
-      "entity_storage": false
     }
   },
   {
@@ -5230,11 +5160,6 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": [
         "bone_a"
       ]
@@ -5273,11 +5198,6 @@
     "json": {
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": [
         "bone_a"
       ]
@@ -5296,11 +5216,6 @@
       "bone_visibility": {},
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": [
         "bone_a"
       ]
@@ -5323,11 +5238,6 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": [
         "bone_a"
       ]
@@ -5352,11 +5262,6 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": [
         "bone_a"
       ]
@@ -5375,11 +5280,6 @@
         "bone_a": true
       },
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": [
         "bone_a"
       ]
@@ -5400,11 +5300,6 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": [
         "bone_a"
       ]
@@ -5425,11 +5320,6 @@
       },
       "culling": "paletter_b",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": [
         "bone_a"
       ]
@@ -5450,11 +5340,6 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": [
         "bone_a"
       ],
@@ -5476,11 +5361,6 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": [
         "bone_a"
       ],
@@ -5502,11 +5382,6 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": [
         "bone_a"
       ],
@@ -5528,11 +5403,6 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": [
         "bone_a"
       ],
@@ -5552,11 +5422,6 @@
         "bone_a": true
       },
       "culling": "paletter:culling",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": [
         "bone_a"
       ]
@@ -5577,11 +5442,6 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": [
         "bone_a"
       ]
@@ -5602,11 +5462,6 @@
       },
       "culling": "paletter:culling",
       "identifier": "minecraft:geometry.full_block",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": [
         "bone_a"
       ]
@@ -5616,25 +5471,6 @@
     "identifier": "paletter:b_geometry_19",
     "kind": "block",
     "file": "blocks/b_geometry_19.json",
-    "component": "block:minecraft:geometry",
-    "role": "omit",
-    "path": "n_way_visual_rotation",
-    "label": "omitted",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_20",
-    "kind": "block",
-    "file": "blocks/b_geometry_20.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation",
@@ -5646,45 +5482,16 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {},
       "uv_lock": [
         "bone_a"
-      ]
+      ],
+      "n_way_visual_rotation": {}
     }
   },
   {
-    "identifier": "paletter:b_geometry_21",
+    "identifier": "paletter:b_geometry_20",
     "kind": "block",
-    "file": "blocks/b_geometry_21.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "n_way_visual_rotation",
-    "label": "object:minimal",
-    "value": {
-      "x": "minecraft:cardinal_direction",
-      "y": "minecraft:cardinal_direction",
-      "z": "minecraft:cardinal_direction"
-    },
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_22",
-    "kind": "block",
-    "file": "blocks/b_geometry_22.json",
+    "file": "blocks/b_geometry_20.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation",
@@ -5696,16 +5503,16 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": "minecraft:cardinal_direction",
       "uv_lock": [
         "bone_a"
-      ]
+      ],
+      "n_way_visual_rotation": "minecraft:cardinal_direction"
     }
   },
   {
-    "identifier": "paletter:b_geometry_23",
+    "identifier": "paletter:b_geometry_21",
     "kind": "block",
-    "file": "blocks/b_geometry_23.json",
+    "file": "blocks/b_geometry_21.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation",
@@ -5717,16 +5524,16 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": "minecraft:sixteen_way_rotation",
       "uv_lock": [
         "bone_a"
-      ]
+      ],
+      "n_way_visual_rotation": "minecraft:sixteen_way_rotation"
     }
   },
   {
-    "identifier": "paletter:b_geometry_24",
+    "identifier": "paletter:b_geometry_22",
     "kind": "block",
-    "file": "blocks/b_geometry_24.json",
+    "file": "blocks/b_geometry_22.json",
     "component": "block:minecraft:geometry",
     "role": "omit",
     "path": "uv_lock",
@@ -5736,18 +5543,13 @@
         "bone_a": true
       },
       "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      }
+      "identifier": "geometry.paletter_cube"
     }
   },
   {
-    "identifier": "paletter:b_geometry_25",
+    "identifier": "paletter:b_geometry_23",
     "kind": "block",
-    "file": "blocks/b_geometry_25.json",
+    "file": "blocks/b_geometry_23.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -5759,18 +5561,13 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": "bone_a"
     }
   },
   {
-    "identifier": "paletter:b_geometry_26",
+    "identifier": "paletter:b_geometry_24",
     "kind": "block",
-    "file": "blocks/b_geometry_26.json",
+    "file": "blocks/b_geometry_24.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -5782,18 +5579,13 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": "paletter_b"
     }
   },
   {
-    "identifier": "paletter:b_geometry_27",
+    "identifier": "paletter:b_geometry_25",
     "kind": "block",
-    "file": "blocks/b_geometry_27.json",
+    "file": "blocks/b_geometry_25.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -5805,18 +5597,13 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": true
     }
   },
   {
-    "identifier": "paletter:b_geometry_28",
+    "identifier": "paletter:b_geometry_26",
     "kind": "block",
-    "file": "blocks/b_geometry_28.json",
+    "file": "blocks/b_geometry_26.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -5828,18 +5615,13 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": false
     }
   },
   {
-    "identifier": "paletter:b_geometry_29",
+    "identifier": "paletter:b_geometry_27",
     "kind": "block",
-    "file": "blocks/b_geometry_29.json",
+    "file": "blocks/b_geometry_27.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -5851,18 +5633,13 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": []
     }
   },
   {
-    "identifier": "paletter:b_geometry_30",
+    "identifier": "paletter:b_geometry_28",
     "kind": "block",
-    "file": "blocks/b_geometry_30.json",
+    "file": "blocks/b_geometry_28.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -5876,20 +5653,15 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": [
         "bone_a"
       ]
     }
   },
   {
-    "identifier": "paletter:b_geometry_31",
+    "identifier": "paletter:b_geometry_29",
     "kind": "block",
-    "file": "blocks/b_geometry_31.json",
+    "file": "blocks/b_geometry_29.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -5904,233 +5676,9 @@
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
       "uv_lock": [
         "bone_a",
         "paletter_b"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_32",
-    "kind": "block",
-    "file": "blocks/b_geometry_32.json",
-    "component": "block:minecraft:geometry",
-    "role": "omit",
-    "path": "n_way_visual_rotation.x",
-    "label": "omitted",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_33",
-    "kind": "block",
-    "file": "blocks/b_geometry_33.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "n_way_visual_rotation.x",
-    "label": "string:minecraft:cardinal_direction",
-    "value": "minecraft:cardinal_direction",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_34",
-    "kind": "block",
-    "file": "blocks/b_geometry_34.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "n_way_visual_rotation.x",
-    "label": "string:paletter_b",
-    "value": "paletter_b",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "paletter_b",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_35",
-    "kind": "block",
-    "file": "blocks/b_geometry_35.json",
-    "component": "block:minecraft:geometry",
-    "role": "omit",
-    "path": "n_way_visual_rotation.y",
-    "label": "omitted",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_36",
-    "kind": "block",
-    "file": "blocks/b_geometry_36.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "n_way_visual_rotation.y",
-    "label": "string:minecraft:cardinal_direction",
-    "value": "minecraft:cardinal_direction",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_37",
-    "kind": "block",
-    "file": "blocks/b_geometry_37.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "n_way_visual_rotation.y",
-    "label": "string:paletter_b",
-    "value": "paletter_b",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "paletter_b",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_38",
-    "kind": "block",
-    "file": "blocks/b_geometry_38.json",
-    "component": "block:minecraft:geometry",
-    "role": "omit",
-    "path": "n_way_visual_rotation.z",
-    "label": "omitted",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_39",
-    "kind": "block",
-    "file": "blocks/b_geometry_39.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "n_way_visual_rotation.z",
-    "label": "string:minecraft:cardinal_direction",
-    "value": "minecraft:cardinal_direction",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_40",
-    "kind": "block",
-    "file": "blocks/b_geometry_40.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "n_way_visual_rotation.z",
-    "label": "string:paletter_b",
-    "value": "paletter_b",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "paletter_b"
-      },
-      "uv_lock": [
-        "bone_a"
       ]
     }
   },
@@ -21941,790 +21489,6 @@
         "render_method": "opaque",
         "texture": "paletter_tex",
         "tint_method": false
-      }
-    }
-  },
-  {
-    "identifier": "paletter:b_material_instances_257",
-    "kind": "block",
-    "file": "blocks/b_material_instances_257.json",
-    "component": "block:minecraft:material_instances",
-    "role": "field",
-    "path": "*.alpha_masked_tint",
-    "label": "boolean:true",
-    "value": true,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "alpha_masked_tint": true,
-        "tint_method": "default_foliage"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    }
-  },
-  {
-    "identifier": "paletter:b_material_instances_258",
-    "kind": "block",
-    "file": "blocks/b_material_instances_258.json",
-    "component": "block:minecraft:material_instances",
-    "role": "field",
-    "path": "*.alpha_masked_tint",
-    "label": "boolean:false",
-    "value": false,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "alpha_masked_tint": false,
-        "tint_method": "default_foliage"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    }
-  },
-  {
-    "identifier": "paletter:b_material_instances_259",
-    "kind": "block",
-    "file": "blocks/b_material_instances_259.json",
-    "component": "block:minecraft:material_instances",
-    "role": "field",
-    "path": "down.alpha_masked_tint",
-    "label": "boolean:true",
-    "value": true,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "alpha_masked_tint": true,
-        "tint_method": "default_foliage"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    }
-  },
-  {
-    "identifier": "paletter:b_material_instances_260",
-    "kind": "block",
-    "file": "blocks/b_material_instances_260.json",
-    "component": "block:minecraft:material_instances",
-    "role": "field",
-    "path": "down.alpha_masked_tint",
-    "label": "boolean:false",
-    "value": false,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "alpha_masked_tint": false,
-        "tint_method": "default_foliage"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    }
-  },
-  {
-    "identifier": "paletter:b_material_instances_261",
-    "kind": "block",
-    "file": "blocks/b_material_instances_261.json",
-    "component": "block:minecraft:material_instances",
-    "role": "field",
-    "path": "east.alpha_masked_tint",
-    "label": "boolean:true",
-    "value": true,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "alpha_masked_tint": true,
-        "tint_method": "default_foliage"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    }
-  },
-  {
-    "identifier": "paletter:b_material_instances_262",
-    "kind": "block",
-    "file": "blocks/b_material_instances_262.json",
-    "component": "block:minecraft:material_instances",
-    "role": "field",
-    "path": "east.alpha_masked_tint",
-    "label": "boolean:false",
-    "value": false,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "alpha_masked_tint": false,
-        "tint_method": "default_foliage"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    }
-  },
-  {
-    "identifier": "paletter:b_material_instances_263",
-    "kind": "block",
-    "file": "blocks/b_material_instances_263.json",
-    "component": "block:minecraft:material_instances",
-    "role": "field",
-    "path": "north.alpha_masked_tint",
-    "label": "boolean:true",
-    "value": true,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "alpha_masked_tint": true,
-        "tint_method": "default_foliage"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    }
-  },
-  {
-    "identifier": "paletter:b_material_instances_264",
-    "kind": "block",
-    "file": "blocks/b_material_instances_264.json",
-    "component": "block:minecraft:material_instances",
-    "role": "field",
-    "path": "north.alpha_masked_tint",
-    "label": "boolean:false",
-    "value": false,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "alpha_masked_tint": false,
-        "tint_method": "default_foliage"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    }
-  },
-  {
-    "identifier": "paletter:b_material_instances_265",
-    "kind": "block",
-    "file": "blocks/b_material_instances_265.json",
-    "component": "block:minecraft:material_instances",
-    "role": "field",
-    "path": "south.alpha_masked_tint",
-    "label": "boolean:true",
-    "value": true,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "alpha_masked_tint": true,
-        "tint_method": "default_foliage"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    }
-  },
-  {
-    "identifier": "paletter:b_material_instances_266",
-    "kind": "block",
-    "file": "blocks/b_material_instances_266.json",
-    "component": "block:minecraft:material_instances",
-    "role": "field",
-    "path": "south.alpha_masked_tint",
-    "label": "boolean:false",
-    "value": false,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "alpha_masked_tint": false,
-        "tint_method": "default_foliage"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    }
-  },
-  {
-    "identifier": "paletter:b_material_instances_267",
-    "kind": "block",
-    "file": "blocks/b_material_instances_267.json",
-    "component": "block:minecraft:material_instances",
-    "role": "field",
-    "path": "up.alpha_masked_tint",
-    "label": "boolean:true",
-    "value": true,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "alpha_masked_tint": true,
-        "tint_method": "default_foliage"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    }
-  },
-  {
-    "identifier": "paletter:b_material_instances_268",
-    "kind": "block",
-    "file": "blocks/b_material_instances_268.json",
-    "component": "block:minecraft:material_instances",
-    "role": "field",
-    "path": "up.alpha_masked_tint",
-    "label": "boolean:false",
-    "value": false,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "alpha_masked_tint": false,
-        "tint_method": "default_foliage"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      }
-    }
-  },
-  {
-    "identifier": "paletter:b_material_instances_269",
-    "kind": "block",
-    "file": "blocks/b_material_instances_269.json",
-    "component": "block:minecraft:material_instances",
-    "role": "field",
-    "path": "west.alpha_masked_tint",
-    "label": "boolean:true",
-    "value": true,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "alpha_masked_tint": true,
-        "tint_method": "default_foliage"
-      }
-    }
-  },
-  {
-    "identifier": "paletter:b_material_instances_270",
-    "kind": "block",
-    "file": "blocks/b_material_instances_270.json",
-    "component": "block:minecraft:material_instances",
-    "role": "field",
-    "path": "west.alpha_masked_tint",
-    "label": "boolean:false",
-    "value": false,
-    "json": {
-      "*": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "down": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "east": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "north": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "south": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "up": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex"
-      },
-      "west": {
-        "ambient_occlusion": 1.5,
-        "face_dimming": true,
-        "render_method": "opaque",
-        "texture": "paletter_tex",
-        "alpha_masked_tint": false,
-        "tint_method": "default_foliage"
       }
     }
   },
