@@ -115,6 +115,19 @@ class ProbeGeneratorTest {
     }
 
     @Test
+    void probedKeysOnlyReachTheBuildTheProbeRanOn(@TempDir Path root) throws IOException {
+        Path model = model(root, null, """
+            {"bdsVersion": "9.9.9.9", "components": {"block:minecraft:mat": {"accepted": {"emissive": {"types": ["boolean"]}}}}}""");
+        Model docs = Model.read(model.resolve("components.json"));
+
+        Component probed = new AddonGenerator(docs, Fixtures.read(model).forBuild("9.9.9.9"), "1.26.60").model().component("block:minecraft:mat");
+        Component older = new AddonGenerator(docs, Fixtures.read(model).forBuild("9.9.8.1"), "1.26.60").model().component("block:minecraft:mat");
+
+        assertNotNull(probed.field("emissive"), "the build the probe ran on accepted the key");
+        assertNull(older.field("emissive"), "another build was not asked: its add-on does not use the key");
+    }
+
+    @Test
     void theFormatSweepDropsWhatNeedsANewerFormat(@TempDir Path root) throws IOException {
         AddonGenerator generator = AddonGenerator.empty(Model.read(model(root, null, null).resolve("components.json")),
             Fixtures.read(root.resolve("model")), "1.26.60");

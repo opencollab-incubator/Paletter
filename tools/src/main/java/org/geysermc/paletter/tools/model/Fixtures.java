@@ -48,6 +48,15 @@ public final class Fixtures {
             optional(model.resolve("bds-feedback.json")), optional(model.resolve(KEYS_FILE)));
     }
 
+    /**
+     * The fixtures for an add-on run on one BDS build: the probed keys only if the probe ran on that build. A key a newer
+     * build accepts can be one an older build refuses, and a refused key in a base makes BDS reject every variant.
+     */
+    public Fixtures forBuild(String bdsVersion) {
+        boolean probedThere = keys.has("bdsVersion") && keys.get("bdsVersion").getAsString().equals(bdsVersion);
+        return probedThere ? this : new Fixtures(json, feedback, new JsonObject());
+    }
+
     private static JsonObject optional(Path file) throws IOException {
         return Files.exists(file) ? JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject() : new JsonObject();
     }

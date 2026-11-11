@@ -73,7 +73,7 @@ public final class SpecCapture {
         Path server = distribution.extract(cache, !options.containsKey("keep-server"));
         try {
             Path modelDir = root.resolve("data/model");
-            Fixtures fixtures = Fixtures.read(modelDir);
+            Fixtures fixtures = Fixtures.read(modelDir).forBuild(distribution.version());
             // The add-on asks for no newer format than the build is: older builds refuse packs of a newer engine version
             String formatVersion = AddonGenerator.formatVersionFor(fixtures.formatVersion, distribution.version());
             Model docs = Model.read(modelDir.resolve("components.json"));

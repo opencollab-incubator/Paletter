@@ -62,7 +62,9 @@ BDS answers per key: blocks log "not present in the Schema" for a key it does no
 key of the wrong type (`known`, with the error), nothing for a key and type it takes (`accepted`, with the types). Items log
 nothing for members they ignore, so an item key is `accepted` only when it changes the wire against the base (else `inert`).
 `bds-keys.json` holds the answers of the newest probed build; `Fixtures.apply` adds each accepted key as a field (doc text
-`(bds-schema <build>) ...`, the format version from BDS's texts), so the next normal `spec-capture` varies it. A key that
+`(bds-schema <build>) ...`, the format version from BDS's texts), so the next normal `spec-capture` of that build varies
+it. The add-on of any other build leaves the probed keys out (`Fixtures.forBuild`): an older build may refuse a key, and
+a refused key in a base makes BDS reject every variant of the component. A key that
 needs another key beside it (`alpha_masked_tint` needs a `tint_method` and `render_method: opaque`) goes in `fixtures.json`
 `together`, with BDS's own text as the reason. Keys a build already answered are not asked again.
 
