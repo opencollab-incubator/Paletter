@@ -33,6 +33,8 @@ import org.geysermc.paletter.item.component.Repairable;
 import org.geysermc.paletter.item.component.Shooter;
 import org.geysermc.paletter.item.component.UseAnimation;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -129,17 +131,23 @@ public final class Transforms {
      * {@code "1.000000"}/{@code "0.000000"}. Before: {@link #geometryBeforeRotation}.
      */
     public static void geometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Geometry c) {
-        geometry(out, c, true);
+        geometry(ctx, out, c, true);
     }
 
     /** {@code minecraft:geometry} before protocol 2225: the same without {@code n_way_visual_rotation}. */
     public static void geometryBeforeRotation(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Geometry c) {
-        geometry(out, c, false);
+        geometry(ctx, out, c, false);
     }
 
-    private static void geometry(WireNode out, Geometry c, boolean withRotation) {
+    private static void geometry(WireContext ctx, WireNode out, Geometry c, boolean withRotation) {
+        List<String> uvLockBones = c.uvLockBones();
+        // the documented maximum; BDS 1.26.63.1 rejects the whole block above it, counting duplicates (not a wire value)
+        if (uvLockBones != null && uvLockBones.size() > 64) {
+            ctx.drop(Geometry.NAME, "uv_lock lists " + uvLockBones.size() + " bones, BDS rejects the block above 64");
+            uvLockBones = null;
+        }
         NbtMapBuilder geometry = geometry(c.identifier(), c.boneVisibility(), c.culling(), c.cullingLayer(), c.cullingShape(),
-            c.uvLock(), c.uvLockBones()).toBuilder();
+            c.uvLock(), uvLockBones).toBuilder();
         Geometry.NWayVisualRotation rotation = c.nWayVisualRotation();
         if (rotation != null && withRotation) {
             geometry.putCompound("n_way_visual_rotation", rotation(rotation.x(), rotation.y(), rotation.z()));
@@ -211,12 +219,38 @@ public final class Transforms {
             .putByte("useBlockTypeLightAbsorption", (byte) 0) // wire-constant: geometry_flags
             .putByte("uv_lock", Wire.bool(Boolean.TRUE.equals(uvLock)));
         if (uvLockBones != null) {
-            // BDS 1.26.63.1: the bones as a list of strings instead of the byte, each once; an empty list has no element type.
-            // BDS keeps them in a hash set: its order is the same for any order of the JSON, Paletter keeps the JSON order.
-            List<String> locked = List.copyOf(new LinkedHashSet<>(uvLockBones));
+            // BDS 1.26.36.1 to 1.26.63.1: the bones as a list of strings instead of the byte; an empty list has no element type
+            List<String> locked = bdsBoneOrder(uvLockBones);
             geometry.put("uv_lock", locked.isEmpty() ? Wire.emptyList() : new NbtList<>(NbtType.STRING, locked));
         }
         return geometry.build();
+    }
+
+    /**
+     * The {@code uv_lock} bones in the order BDS sends them. BDS keeps them in a {@code std::set<HashedString>}, so each
+     * bone is sent once, ascending by the unsigned 64 bit hash of its name (captures of BDS 1.26.36.1 to 1.26.63.1).
+     * Bones with equal hashes keep their order; BDS's order for them is not known.
+     */
+    static @NonNull List<String> bdsBoneOrder(@NonNull List<String> bones) {
+        List<String> ordered = new ArrayList<>(new LinkedHashSet<>(bones));
+        ordered.sort((a, b) -> Long.compareUnsigned(hashedString(a), hashedString(b)));
+        return ordered;
+    }
+
+    /**
+     * The hash of BDS's {@code HashedString}: FNV-1 64 bit (multiply, then xor) over the UTF-8 bytes, 0 for the empty
+     * string. Not {@code BlockRegistry.nameHash}, which hashes the empty string to the offset basis and sign-extends bytes.
+     */
+    private static long hashedString(String string) {
+        byte[] bytes = string.getBytes(StandardCharsets.UTF_8);
+        if (bytes.length == 0) {
+            return 0;
+        }
+        long hash = 0xcbf29ce484222325L;
+        for (byte b : bytes) {
+            hash = hash * 0x100000001b3L ^ (b & 0xff);
+        }
+        return hash;
     }
 
     // ---- material_instances ----------------------------------------------------------------------------------------

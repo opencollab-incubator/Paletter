@@ -36,6 +36,7 @@ import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItems;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -372,12 +373,36 @@ class TransformsTest {
     void uvLockAsAListOfBonesNamesEachBoneOnce() {
         WireNode out = new WireNode();
         Transforms.geometry(ctx, out, Geometry.builder().identifier("geometry.lamp").uvLockBones("lid", "base", "lid").build());
-        assertEquals(List.of("lid", "base"), compound(out, "minecraft:geometry").getList("uv_lock", NbtType.STRING));
+        assertEquals(List.of("base", "lid"), compound(out, "minecraft:geometry").getList("uv_lock", NbtType.STRING));
 
         WireNode empty = new WireNode();
         Transforms.geometry(ctx, empty, Geometry.builder().identifier("geometry.lamp").uvLockBones(List.of()).build());
         assertEquals(Wire.EMPTY_LIST, compound(empty, "minecraft:geometry").get("uv_lock"), "BDS sends [] without element type");
         assertTrue(report.entries().isEmpty());
+    }
+
+    @Test
+    void uvLockBonesAreInBdsOrder() {
+        // the JSON list, then the list BDS 1.26.63.1 sent for it
+        assertEquals(List.of("c", "b", "a"), Transforms.bdsBoneOrder(List.of("a", "b", "c")));
+        assertEquals(List.of("alpha", "beta", "zeta", "mid"), Transforms.bdsBoneOrder(List.of("zeta", "alpha", "mid", "beta")));
+        assertEquals(List.of("bone_a"), Transforms.bdsBoneOrder(List.of("bone_a", "bone_a")));
+        assertEquals(List.of("", "up", "body", "pivot", "root", "0", "Top", "lid"),
+            Transforms.bdsBoneOrder(List.of("lid", "pivot", "root", "up", "body", "0", "", "Top")));
+        assertEquals(List.of("ÿ", "é", "ñandú", "🦴", "bone_ä", "~", "z", "e", "骨"),
+            Transforms.bdsBoneOrder(List.of("é", "e", "ñandú", "骨", "🦴", "z", "ÿ", "~", "bone_ä")));
+    }
+
+    @Test
+    void moreThan64UvLockBonesAreLeftOutWithAReport() {
+        List<String> bones = new ArrayList<>();
+        for (int i = 0; i < 65; i++) {
+            bones.add("bone_" + i);
+        }
+        WireNode out = new WireNode();
+        Transforms.geometry(ctx, out, Geometry.builder().identifier("geometry.lamp").uvLockBones(bones).build());
+        assertEquals((byte) 0, compound(out, "minecraft:geometry").getByte("uv_lock"));
+        assertEquals(1, report.warnings().size());
     }
 
     @Test
