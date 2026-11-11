@@ -640,10 +640,11 @@ public sealed interface org.geysermc.paletter.block.component.BlockComponent per
 
 public record org.geysermc.paletter.block.component.BlockEntity implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:block_entity"
-    public <init>(org.geysermc.paletter.block.component.BlockEntity$Container, boolean)
+    public <init>(org.geysermc.paletter.block.component.BlockEntity$Container, boolean, java.lang.Boolean)
     public static org.geysermc.paletter.block.component.BlockEntity$Builder builder()
     public org.geysermc.paletter.block.component.BlockEntity$Container container()
     public boolean dynamicProperties()
+    public java.lang.Boolean entityStorage()
     public final boolean equals(java.lang.Object)
     public final int hashCode()
     public java.lang.String name()
@@ -655,6 +656,7 @@ public static final class org.geysermc.paletter.block.component.BlockEntity$Buil
     public org.geysermc.paletter.block.component.BlockEntity build()
     public org.geysermc.paletter.block.component.BlockEntity$Builder container(org.geysermc.paletter.block.component.BlockEntity$Container)
     public org.geysermc.paletter.block.component.BlockEntity$Builder dynamicProperties(boolean)
+    public org.geysermc.paletter.block.component.BlockEntity$Builder entityStorage(java.lang.Boolean)
 }
 
 public record org.geysermc.paletter.block.component.BlockEntity$Container {
@@ -1236,13 +1238,23 @@ public static final class org.geysermc.paletter.block.component.Geometry$Builder
     public org.geysermc.paletter.block.component.Geometry$Builder uvLockBones(java.lang.String...)
 }
 
-public enum org.geysermc.paletter.block.component.Geometry$NWayVisualRotation {
-    public static final org.geysermc.paletter.block.component.Geometry$NWayVisualRotation CARDINAL_DIRECTION
-    public static final org.geysermc.paletter.block.component.Geometry$NWayVisualRotation SIXTEEN_WAY_ROTATION
-    public static org.geysermc.paletter.block.component.Geometry$NWayVisualRotation fromValue(java.lang.String)
-    public java.lang.String value()
-    public static org.geysermc.paletter.block.component.Geometry$NWayVisualRotation valueOf(java.lang.String)
-    public static org.geysermc.paletter.block.component.Geometry$NWayVisualRotation[] values()
+public record org.geysermc.paletter.block.component.Geometry$NWayVisualRotation {
+    public <init>(java.lang.String, java.lang.String, java.lang.String)
+    public static org.geysermc.paletter.block.component.Geometry$NWayVisualRotation$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public org.geysermc.paletter.block.component.Geometry$NWayVisualRotation$Builder toBuilder()
+    public final java.lang.String toString()
+    public java.lang.String x()
+    public java.lang.String y()
+    public java.lang.String z()
+}
+
+public static final class org.geysermc.paletter.block.component.Geometry$NWayVisualRotation$Builder {
+    public org.geysermc.paletter.block.component.Geometry$NWayVisualRotation build()
+    public org.geysermc.paletter.block.component.Geometry$NWayVisualRotation$Builder x(java.lang.String)
+    public org.geysermc.paletter.block.component.Geometry$NWayVisualRotation$Builder y(java.lang.String)
+    public org.geysermc.paletter.block.component.Geometry$NWayVisualRotation$Builder z(java.lang.String)
 }
 
 @Experimental public record org.geysermc.paletter.block.component.InstrumentSound implements org.geysermc.paletter.block.component.BlockComponent {
@@ -1581,7 +1593,8 @@ public static final class org.geysermc.paletter.block.component.MaterialInstance
 }
 
 public record org.geysermc.paletter.block.component.MaterialInstances$Instance {
-    public <init>(java.lang.Float, java.lang.Boolean, boolean, org.geysermc.paletter.block.component.MaterialInstances$RenderMethod, java.lang.String, java.lang.String)
+    public <init>(java.lang.Float, java.lang.Boolean, boolean, org.geysermc.paletter.block.component.MaterialInstances$RenderMethod, java.lang.String, java.lang.String, java.lang.Boolean)
+    public java.lang.Boolean alphaMaskedTint()
     public java.lang.Float ambientOcclusion()
     public static org.geysermc.paletter.block.component.MaterialInstances$Instance$Builder builder()
     public final boolean equals(java.lang.Object)
@@ -1596,6 +1609,7 @@ public record org.geysermc.paletter.block.component.MaterialInstances$Instance {
 }
 
 public static final class org.geysermc.paletter.block.component.MaterialInstances$Instance$Builder {
+    public org.geysermc.paletter.block.component.MaterialInstances$Instance$Builder alphaMaskedTint(java.lang.Boolean)
     public org.geysermc.paletter.block.component.MaterialInstances$Instance$Builder ambientOcclusion(java.lang.Float)
     public org.geysermc.paletter.block.component.MaterialInstances$Instance build()
     public org.geysermc.paletter.block.component.MaterialInstances$Instance$Builder faceDimming(java.lang.Boolean)

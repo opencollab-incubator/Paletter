@@ -76,6 +76,9 @@
     "geometry.identifier": [
       "required"
     ],
+    "geometry.n_way_visual_rotation": [
+      "nonEmpty"
+    ],
     "geometry.uv_lock": [
       "array"
     ],
@@ -111,6 +114,7 @@
       "required"
     ],
     "n_way_visual_rotation": [
+      "nonEmpty",
       "object"
     ],
     "uv_lock": [
@@ -128,6 +132,9 @@
     ],
     "geometry.identifier": [
       "required"
+    ],
+    "geometry.n_way_visual_rotation": [
+      "nonEmpty"
     ],
     "geometry.uv_lock": [
       "array"

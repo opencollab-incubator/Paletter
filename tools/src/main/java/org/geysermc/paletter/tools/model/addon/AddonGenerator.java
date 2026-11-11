@@ -52,14 +52,18 @@ public final class AddonGenerator {
 
     /**
      * @param identifier the item or block identifier
-     * @param role       {@code control} (companions only), {@code base}, {@code form} (a whole value of another JSON
-     *                   type), {@code field} (one field changed), {@code omit} (one base field removed)
+     * @param role       {@code control} (companions only, or the minimal accepted pair for companions that need each other),
+     *                   {@code base}, {@code form} (a whole value of another JSON type), {@code field} (one field changed),
+     *                   {@code omit} (one base field removed), {@code probe} (one key the model does not know added,
+     *                   see {@link #probe}), {@code format} (the base or one field at another format version, see
+     *                   {@link #atFormat})
      * @param path       the field path ("" for the whole value)
      * @param value      the JSON value at the path (null for control and omit)
-     * @param component  the component JSON value as written (null for the control)
+     * @param component  the component JSON value as written (null for a control without the component)
+     * @param format     the {@code format_version} of the file when it is not the generator's (the format sweep), else null
      */
     public record Variant(String identifier, String kind, String file, String componentId, String role, String path, String label,
-                          JsonElement value, JsonElement component, JsonObject definition) {
+                          JsonElement value, JsonElement component, JsonObject definition, String format) {
     }
 
     public AddonGenerator(Model model, Fixtures fixtures) {
@@ -72,10 +76,29 @@ public final class AddonGenerator {
      *                      build passes {@link #formatVersionFor}
      */
     public AddonGenerator(Model model, Fixtures fixtures, String formatVersion) {
+        this(model, fixtures, formatVersion, true);
+    }
+
+    private AddonGenerator(Model model, Fixtures fixtures, String formatVersion, boolean standard) {
         this.model = fixtures.apply(model);
         this.fixtures = fixtures;
         this.formatVersion = formatVersion;
-        generate();
+        if (standard) {
+            generate();
+        }
+    }
+
+    /**
+     * A generator without the standard variants, for the probes of {@code spec-capture}: the caller adds the variants it
+     * wants with {@link #probe} and {@link #atFormat}.
+     */
+    public static AddonGenerator empty(Model model, Fixtures fixtures, String formatVersion) {
+        return new AddonGenerator(model, fixtures, formatVersion, false);
+    }
+
+    /** The model the variants are generated from: the docs with the errata, the types and the keys BDS gave applied. */
+    public Model model() {
+        return model;
     }
 
     /**
@@ -120,7 +143,7 @@ public final class AddonGenerator {
             if (fixtures.skip(c.id(), null) != null) {
                 continue;
             }
-            variant(c, "control", "", "control", null, null);
+            variant(c, "control", "", "control", null, control(c));
             JsonElement base = base(c);
             variant(c, "base", "", "base", null, base);
             // Whole value forms (shorthands, alternative representations)
@@ -170,12 +193,33 @@ public final class AddonGenerator {
     }
 
     private void variant(Component c, String role, String path, String label, JsonElement value, JsonElement json) {
+        variant(c, role, path, label, value, json, null);
+    }
+
+    private Variant variant(Component c, String role, String path, String label, JsonElement value, JsonElement json, String format) {
         String shortName = c.id().replaceFirst("^(item|block):", "").replace("minecraft:", "").replace("trait:", "trait_").replace(':', '_');
         int n = counters.merge(c.id(), 1, Integer::sum);
         String identifier = NAMESPACE + ":" + (c.kind().equals("block") ? "b_" : "") + shortName + "_" + n;
-        JsonObject definition = definition(c, identifier, json);
+        JsonObject definition = definition(c, identifier, json, format == null ? formatVersion : format);
         String file = (c.kind().equals("block") ? "blocks/" : "items/") + identifier.substring(NAMESPACE.length() + 1) + ".json";
-        variants.add(new Variant(identifier, c.kind(), file, c.id(), role, path, label, value, json, definition));
+        Variant variant = new Variant(identifier, c.kind(), file, c.id(), role, path, label, value, json, definition, format);
+        variants.add(variant);
+        return variant;
+    }
+
+    /**
+     * The control of a component whose companions need it back ({@code geometry} and {@code material_instances}: BDS
+     * refuses a block with only one of them): the component as its companion's {@code requires} entry has it, so the
+     * control is the minimal accepted pair. Null for every other component (the companions alone are the control).
+     */
+    private JsonElement control(Component c) {
+        for (String companion : fixtures.requires(c.id()).keySet()) {
+            JsonObject back = fixtures.requires(c.kind() + ":" + companion);
+            if (back.has(c.name())) {
+                return back.get(c.name()).deepCopy();
+            }
+        }
+        return null;
     }
 
     /**
@@ -186,13 +230,104 @@ public final class AddonGenerator {
      * @param json the component's JSON of the variant ({@code null} for a control without the component)
      */
     public JsonObject definitionOf(String componentId, String identifier, JsonElement json) {
-        Component c = model.components().stream().filter(x -> x.id().equals(componentId)).findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("no component " + componentId));
-        return definition(c, identifier, json);
+        return definition(component(componentId), identifier, json, formatVersion);
+    }
+
+    /** Adds the base of a component, which the probes of its keys are compared with. */
+    public Variant probeBase(String componentId) {
+        Component c = component(componentId);
+        JsonElement base = base(c);
+        return variant(c, "base", "", "base", null, base, null);
+    }
+
+    /**
+     * Adds a variant of the base with one key the model does not know (a candidate of the key probe) set to a trivial
+     * value.
+     *
+     * @param path the path of the key ({@code level.key})
+     * @return the variant, or null if the base cannot hold a value there
+     */
+    public Variant probe(String componentId, String path, JsonElement value) {
+        Component c = component(componentId);
+        JsonElement json = with(c, base(c), path, value);
+        return json == null ? null : variant(c, "probe", path, "key:" + kind(value), value, json, null);
+    }
+
+    /**
+     * The trivial values a key is probed with, one per JSON type (a boolean, an integer, a string that names nothing,
+     * and the first enum value of the object that holds the key, an empty object and an empty list).
+     */
+    public List<JsonElement> trivialValues(String componentId, String path) {
+        List<JsonElement> values = new ArrayList<>(List.of(new JsonPrimitive(true), new JsonPrimitive(1), new JsonPrimitive("paletter_a")));
+        Field parent = component(componentId).field(parentOf(path));
+        if (parent != null && !parent.enumValues().isEmpty() && parent.enumValues().get(0).isJsonPrimitive()) {
+            values.add(parent.enumValues().get(0));
+        }
+        values.add(new JsonObject());
+        values.add(new JsonArray());
+        return values;
+    }
+
+    /** {@code boolean}, {@code integer}, {@code string}, {@code object}, {@code array}: the JSON type of a probe value. */
+    public static String kind(JsonElement value) {
+        if (value.isJsonObject()) {
+            return "object";
+        }
+        if (value.isJsonArray()) {
+            return "array";
+        }
+        JsonPrimitive primitive = value.getAsJsonPrimitive();
+        return primitive.isBoolean() ? "boolean" : primitive.isNumber() ? "integer" : "string";
+    }
+
+    /**
+     * The base of a component in a file of another format version (the format sweep), with the fields the docs or BDS
+     * say need a newer format removed, and one field set when {@code path} is not empty (to {@code value}, or to the
+     * sample of the field when that is null).
+     *
+     * @return the variant, or null if the component itself needs a newer format or the field cannot be set
+     */
+    public Variant atFormat(String componentId, String format, String path, JsonElement value) {
+        Component c = component(componentId);
+        if (c.minFormatVersion() != null && compare(c.minFormatVersion(), format) > 0) {
+            return null;
+        }
+        JsonElement json = base(c);
+        for (Field field : c.fields()) {
+            if (field.minFormatVersion() != null && compare(field.minFormatVersion(), format) > 0 && !field.path().equals(path)) {
+                remove(json, field.path());
+            }
+        }
+        if (!path.isEmpty()) {
+            Field field = c.field(path);
+            value = value != null || field == null ? value : sample(c, path, primaryType(c, field), field);
+            json = value == null ? null : with(c, json, path, value);
+            if (json == null) {
+                return null;
+            }
+        }
+        return variant(c, "format", path, "format " + format + (path.isEmpty() ? "" : " " + kind(value)), path.isEmpty() ? null : value, json, format);
+    }
+
+    /** Compares two format versions ({@code 1.21.120} against {@code 1.26.0}) by their numbers. */
+    public static int compare(String a, String b) {
+        int[] x = parse(a);
+        int[] y = parse(b);
+        for (int i = 0; i < 3; i++) {
+            if (x[i] != y[i]) {
+                return Integer.compare(x[i], y[i]);
+            }
+        }
+        return 0;
+    }
+
+    private Component component(String id) {
+        return model.components().stream().filter(x -> x.id().equals(id)).findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("no component " + id));
     }
 
     /** The whole item or block file of a variant. */
-    private JsonObject definition(Component c, String identifier, JsonElement json) {
+    private JsonObject definition(Component c, String identifier, JsonElement json, String format) {
         JsonObject description = new JsonObject();
         description.addProperty("identifier", identifier);
         JsonObject menu = new JsonObject();
@@ -223,7 +358,7 @@ public final class AddonGenerator {
             if (c.category().equals("permutations") && permutations == null) {
                 JsonObject body = body(c, description, components);
                 body.add("permutations", json);
-                return wrap(c, body);
+                return wrap(c, body, format);
             }
         }
         if (c.kind().equals("item") && components.isEmpty()) {
@@ -233,7 +368,7 @@ public final class AddonGenerator {
         if (permutations != null) {
             body.add("permutations", permutations);
         }
-        return wrap(c, body);
+        return wrap(c, body, format);
     }
 
     private static JsonObject body(Component c, JsonObject description, JsonObject components) {
@@ -243,9 +378,9 @@ public final class AddonGenerator {
         return body;
     }
 
-    private JsonObject wrap(Component c, JsonObject body) {
+    private static JsonObject wrap(Component c, JsonObject body, String format) {
         JsonObject file = new JsonObject();
-        file.addProperty("format_version", formatVersion);
+        file.addProperty("format_version", format);
         file.add("minecraft:" + c.kind(), body);
         return file;
     }
@@ -295,6 +430,9 @@ public final class AddonGenerator {
             }
             if (fixtures.fact(c.id(), field.path(), "unknown")) {
                 continue; // BDS: "not present in the Schema"
+            }
+            if (fixtures.fact(c.id(), field.path(), "nonEmpty") && c.fields().stream().noneMatch(f -> parentOf(f.path()).equals(field.path()))) {
+                continue; // BDS: "must define at least one ..." and the model knows no member to define
             }
             boolean required = field.required() || fixtures.fact(c.id(), field.path(), "required");
             if (field.defaultValue() != null && !required) {
@@ -869,6 +1007,9 @@ public final class AddonGenerator {
             entry.addProperty("label", v.label());
             entry.add("value", v.value() == null ? JsonNull.INSTANCE : v.value());
             entry.add("json", v.component() == null ? JsonNull.INSTANCE : v.component());
+            if (v.format() != null) {
+                entry.addProperty("format", v.format());
+            }
             array.add(entry);
         }
         return array;

@@ -22,7 +22,7 @@ One command line, picocli (`Cli`): `./gradlew :tools:run --args="<command> ..."`
 | `behaviour-probe --bds <version> [--server <dir>] [--from-log <console>]` | Runs `data/addons/probe` on BDS and writes what it measured to `data/bds/<version>/behaviour-probe/` (`probe.log`, `capture.json`): the BDS defaults of custom blocks (friction, explosion resistance, light, collision, fire) and the collision boxes of every door in every state. Input of `behaviour import`. Downloading BDS means accepting the Minecraft EULA |
 | `import`, `bds-run`, `bds-compare`, `verify`, `check-data` | Importing and checking bundled data (`check-data` lists what older versions lack of the newest) |
 | `block-items`, `rewrite`, `data-diff` | Maintaining bundled data without a capture: add the block to item relation (from a stored dump, or derived from a newer version), rewrite files without fallbacks, diff two data files |
-| `spec-capture` | Runs the spec add-on on BDS, writes `data/bds/<version>/spec` |
+| `spec-capture` | Runs the spec add-on on BDS, writes `data/bds/<version>/spec`; `--probe-keys` asks BDS about keys the docs omit (`spec-keys`, `data/model/bds-keys.json`), `--format-sweep` varies the add-on's `format_version` (`spec-format`), see [model.md](docs/model.md) |
 | `creative-probe` | Runs a creative add-on on BDS and records the creative order |
 | `education-capture` | Starts a world on BDS with Education Edition features off and on and writes what only the education world has to `data/bds/<version>/education.json` (input of the constants generator, [docs/codegen.md](docs/codegen.md)) |
 | `capture`, `compare`, `experiments` | The capture client: record a server, diff it with a bundled version, switch experiments in a `level.dat` |

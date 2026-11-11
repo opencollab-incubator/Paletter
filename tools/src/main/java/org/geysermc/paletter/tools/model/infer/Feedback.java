@@ -58,7 +58,12 @@ public final class Feedback {
         String path = String.join(".", parts).replaceAll("\\[\\d+]", "[]").replace(".[]", "[]").replace(".{}", "{}");
         String fact = null;
         Matcher range;
-        if (message.contains("not present in the Schema")) {
+        Matcher nonEmpty = Pattern.compile("^'([a-z0-9_]+)' must define at least one").matcher(message);
+        if (nonEmpty.find()) {
+            // "'n_way_visual_rotation' must define at least one axis": reported on the object that holds the member
+            path = path.isEmpty() ? nonEmpty.group(1) : path + "." + nonEmpty.group(1);
+            fact = "nonEmpty";
+        } else if (message.contains("not present in the Schema")) {
             fact = "unknown";
         } else if (message.contains("missing required field")) {
             fact = "required";

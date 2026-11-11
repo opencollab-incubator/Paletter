@@ -36,6 +36,7 @@ import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItems;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -120,7 +121,8 @@ class TransformsTest {
             .materialInstances(MaterialInstances.builder().build()).build();
         WireNode now = new WireNode();
         Transforms.embeddedGeometry(ctx, now, visual);
-        assertEquals("a", compound(now, "minecraft:embedded_visual").getCompound("geometry").getCompound("n_way_visual_rotation").getString("x"));
+        NbtMap rotation = compound(now, "minecraft:embedded_visual").getCompound("geometry").getCompound("n_way_visual_rotation");
+        assertEquals(Map.of("x", "a", "y", "", "z", ""), rotation, "an axis that is not set is sent empty");
         WireNode before = new WireNode();
         Transforms.embeddedGeometryBeforeRotation(ctx, before, visual);
         assertFalse(compound(before, "minecraft:embedded_visual").getCompound("geometry").containsKey("n_way_visual_rotation"));
@@ -165,6 +167,7 @@ class TransformsTest {
         NbtMap e = compound(embedded, "minecraft:embedded_visual").getCompound("geometry");
         assertEquals("minecraft:geometry.cross", e.getString("identifier"));
         assertFalse(e.containsKey("isV1Fullblock"));
+        assertEquals("", e.getString("culling"), "an unset culling is sent empty, like minecraft:geometry's");
     }
 
     @Test
@@ -367,22 +370,53 @@ class TransformsTest {
     }
 
     @Test
-    void uvLockAsAListOfBonesIsSentFrom26_60AndDroppedBefore() {
-        Geometry geometry = Geometry.builder().identifier("geometry.lamp").uvLockBones("lid", "base").build();
+    void uvLockAsAListOfBonesNamesEachBoneOnce() {
+        WireNode out = new WireNode();
+        Transforms.geometry(ctx, out, Geometry.builder().identifier("geometry.lamp").uvLockBones("lid", "base", "lid").build());
+        assertEquals(List.of("base", "lid"), compound(out, "minecraft:geometry").getList("uv_lock", NbtType.STRING));
+
+        WireNode empty = new WireNode();
+        Transforms.geometry(ctx, empty, Geometry.builder().identifier("geometry.lamp").uvLockBones(List.of()).build());
+        assertEquals(Wire.EMPTY_LIST, compound(empty, "minecraft:geometry").get("uv_lock"), "BDS sends [] without element type");
+        assertTrue(report.entries().isEmpty());
+    }
+
+    @Test
+    void uvLockBonesAreInBdsOrder() {
+        // the JSON list, then the list BDS 1.26.63.1 sent for it
+        assertEquals(List.of("c", "b", "a"), Transforms.bdsBoneOrder(List.of("a", "b", "c")));
+        assertEquals(List.of("alpha", "beta", "zeta", "mid"), Transforms.bdsBoneOrder(List.of("zeta", "alpha", "mid", "beta")));
+        assertEquals(List.of("bone_a"), Transforms.bdsBoneOrder(List.of("bone_a", "bone_a")));
+        assertEquals(List.of("", "up", "body", "pivot", "root", "0", "Top", "lid"),
+            Transforms.bdsBoneOrder(List.of("lid", "pivot", "root", "up", "body", "0", "", "Top")));
+        assertEquals(List.of("ÿ", "é", "ñandú", "🦴", "bone_ä", "~", "z", "e", "骨"),
+            Transforms.bdsBoneOrder(List.of("é", "e", "ñandú", "骨", "🦴", "z", "ÿ", "~", "bone_ä")));
+    }
+
+    @Test
+    void moreThan64UvLockBonesAreLeftOutWithAReport() {
+        List<String> bones = new ArrayList<>();
+        for (int i = 0; i < 65; i++) {
+            bones.add("bone_" + i);
+        }
+        WireNode out = new WireNode();
+        Transforms.geometry(ctx, out, Geometry.builder().identifier("geometry.lamp").uvLockBones(bones).build());
+        assertEquals((byte) 0, compound(out, "minecraft:geometry").getByte("uv_lock"));
+        assertEquals(1, report.warnings().size());
+    }
+
+    @Test
+    void geometryRotationSendsEveryAxisFrom26_60() {
+        Geometry geometry = Geometry.builder().identifier("geometry.lamp")
+            .nWayVisualRotation(Geometry.NWayVisualRotation.builder().y("minecraft:cardinal_direction").build()).build();
         WireNode now = new WireNode();
         Transforms.geometry(ctx, now, geometry);
-        assertEquals(List.of("lid", "base"), compound(now, "minecraft:geometry").getList("uv_lock", NbtType.STRING));
-        assertTrue(report.entries().isEmpty());
+        NbtMap rotation = compound(now, "minecraft:geometry").getCompound("n_way_visual_rotation");
+        assertEquals(Map.of("x", "", "y", "minecraft:cardinal_direction", "z", ""), rotation);
 
         WireNode before = new WireNode();
-        Transforms.geometryBeforeUvLockList(ctx, before, geometry);
-        assertEquals((byte) 0, compound(before, "minecraft:geometry").getByte("uv_lock"), "the boolean false stays");
-        assertEquals(1, report.warnings().size());
-
-        WireNode flag = new WireNode();
-        Transforms.geometryBeforeUvLockList(ctx, flag, Geometry.builder().identifier("geometry.lamp").uvLock(true).build());
-        assertEquals((byte) 1, compound(flag, "minecraft:geometry").getByte("uv_lock"));
-        assertEquals(1, report.warnings().size(), "the boolean form is fine before 26.60");
+        Transforms.geometryBeforeRotation(ctx, before, geometry);
+        assertFalse(compound(before, "minecraft:geometry").containsKey("n_way_visual_rotation"));
     }
 
     @Test

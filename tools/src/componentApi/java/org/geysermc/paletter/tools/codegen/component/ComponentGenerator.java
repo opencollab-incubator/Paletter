@@ -91,9 +91,11 @@ public final class ComponentGenerator {
     }
 
     public static Inputs read(Path modelDir, Set<String> knownTransforms, String since) throws IOException {
-        return new Inputs(json(modelDir.resolve("components.json")), json(modelDir.resolve("fixtures.json")),
-            json(modelDir.resolve("bds-feedback.json")), json(modelDir.resolve("mappings.json")), json(modelDir.resolve("transforms.json")),
-            json(modelDir.resolve(API_FILE)), knownTransforms, since);
+        JsonObject components = json(modelDir.resolve("components.json"));
+        JsonObject feedback = json(modelDir.resolve("bds-feedback.json"));
+        BdsErrata.apply(components, feedback, json(modelDir.resolve("bds-keys.json")), true);
+        return new Inputs(components, json(modelDir.resolve("fixtures.json")), feedback, json(modelDir.resolve("mappings.json")),
+            json(modelDir.resolve("transforms.json")), json(modelDir.resolve(API_FILE)), knownTransforms, since);
     }
 
     private static JsonObject json(Path file) throws IOException {
@@ -668,7 +670,7 @@ public final class ComponentGenerator {
             String key = c.id + ":" + f.path;
             String fieldPath = f.path;
             boolean unknown = feedback.has(fieldPath) && feedback.getAsJsonArray(fieldPath).asList().stream().anyMatch(x -> x.getAsString().equals("unknown"));
-            if (drop.contains(key) || skip.has(key) || excluded.contains(key) || unknown
+            if ((drop.contains(key) && !takenByBds(c, f.path)) || skip.has(key) || excluded.contains(key) || unknown
                 || removed.stream().anyMatch(r -> fieldPath.startsWith(r + ".") || fieldPath.startsWith(r + "[") || fieldPath.startsWith(r + "{"))) {
                 removed.add(f.path);
                 continue;
@@ -683,6 +685,13 @@ public final class ComponentGenerator {
             out.add(f);
         }
         return out;
+    }
+
+    /** Whether the newest capture shows BDS taking a field: a probe only field it accepts is part of the API all the same. */
+    private static boolean takenByBds(Comp c, String path) {
+        Window w = c.latest();
+        JsonObject m = w == null ? null : w.field(path);
+        return m != null && !m.get("status").getAsString().equals("rejected");
     }
 
     private String standalonePrefix(String id) {
@@ -727,7 +736,7 @@ public final class ComponentGenerator {
         return usable;
     }
 
-    private static JsonObject parseType(String text) {
+    static JsonObject parseType(String text) {
         JsonObject t = new JsonObject();
         Matcher m = Pattern.compile("(array|map)<(.+)>").matcher(text);
         if (m.matches()) {

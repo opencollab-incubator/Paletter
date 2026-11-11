@@ -110,8 +110,7 @@ data driven:
   answers `common` for every unknown `rarity`); undocumented samples that disagree stay cases and the rest is dropped
   with a report warning.
 - **A union alternative that is a list** (`unions` `{"array<string>": "bones"}`): `uv_lock` is a boolean or a list of
-  bone names (BDS 1.26.63.1), a second field excluding the first, written by the hand transform (which has windows: older
-  builds reject the list).
+  bone names (every captured BDS), a second field excluding the first, written by the hand transform.
 - **An object that is one entry of the component's list** (`forms` `{"object": {"listElementOf": "boxes"}}`): a `of(Entry)`
   factory and the index entry `"object" -> "boxes[]"`. The javadoc says since which BDS the form is rejected
   (`collision_box` takes `{origin, size}` before 26.60; `{}` is one default box).

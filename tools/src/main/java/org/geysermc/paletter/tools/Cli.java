@@ -258,6 +258,11 @@ public final class Cli implements Runnable {
         @Option(names = "--cache") String cache;
         @Option(names = "--port") String port;
         @Option(names = "--timeout") String timeout;
+        @Option(names = "--probe-keys", description = "Ask BDS about keys the docs do not list (from the BDS binary, wiki.bedrock.dev and vanilla packs) "
+            + "instead of the spec; writes data/bds/VERSION/spec-keys and data/model/bds-keys.json") boolean probeKeys;
+        @Option(names = "--format-sweep", description = "Capture the components at the format versions around their Versioned boundaries "
+            + "instead of the spec; writes data/bds/VERSION/spec-format with format-sweep.json") boolean formatSweep;
+        @Option(names = "--vanilla-pack", description = "A pack with vanilla block and item files, a source of keys for --probe-keys") String vanillaPack;
 
         @Override
         public Integer call() throws Exception {
@@ -266,6 +271,9 @@ public final class Cli implements Runnable {
             put(options, "version", version);
             put(options, "out", out);
             flag(options, "keep-server", keepServer);
+            flag(options, "probe-keys", probeKeys);
+            flag(options, "format-sweep", formatSweep);
+            put(options, "vanilla-pack", vanillaPack);
             put(options, "cache", cache);
             put(options, "port", port);
             put(options, "timeout", timeout);

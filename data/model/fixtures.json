@@ -1,5 +1,5 @@
 {
-  "_comment": "Hand-written inputs of the capture add-on generator. Not a source of shapes: errata only ADD types/fields the docs omit or get wrong (the docs-literal form is generated too, so BDS confirms each erratum); samples are values that must name existing content; requires are companions BDS needs (from its content log).",
+  "_comment": "Hand-written inputs of the capture add-on generator. Not a source of shapes: errata only ADD types/fields the docs omit or get wrong (the docs-literal form is generated too, so BDS confirms each erratum); samples are values that must name existing content; requires are companions BDS needs (from its content log); together is what a key needs next to it, by path or by name (material_instances alpha_masked_tint, on every face: BDS's own texts say \"'alpha_masked_tint' requires a non-default 'tint_method'\" and \"requires 'render_method' to be 'opaque'\", bedrock_server 1.26.63.1).",
   "formatVersion": "1.26.60",
   "filler": {"minecraft:max_stack_size": 64},
   "errata": [
@@ -20,11 +20,12 @@
     {"component": "block:minecraft:item_visual", "path": "geometry", "types": ["string"], "why": "Same shorthand as minecraft:geometry."},
     {"component": "block:trait:minecraft:placement_direction", "path": "blocks_to_corner_with[].tags", "types": ["string"], "why": "Docs: 'A list of block descriptors'; the example uses {tags}."}
   ],
-  "probeOnly": ["block:permutations:[].component", "block:minecraft:collision_box:origin", "block:minecraft:collision_box:size"],
+  "probeOnly": ["block:permutations:[].component", "block:minecraft:collision_box:origin", "block:minecraft:collision_box:size", "block:minecraft:material_instances:*.alpha_masked_tint", "block:minecraft:material_instances:down.alpha_masked_tint", "block:minecraft:material_instances:east.alpha_masked_tint", "block:minecraft:material_instances:north.alpha_masked_tint", "block:minecraft:material_instances:south.alpha_masked_tint", "block:minecraft:material_instances:up.alpha_masked_tint", "block:minecraft:material_instances:west.alpha_masked_tint"],
   "exclusive": [["name", "tags"]],
   "together": {
     "block:trait:minecraft:placement_direction:blocks_to_corner_with": {"enabled_states": ["minecraft:corner_and_cardinal_direction"]},
-    "block:trait:minecraft:placement_direction:blocks_to_corner_with[].tags": {"enabled_states": ["minecraft:corner_and_cardinal_direction"]}
+    "block:trait:minecraft:placement_direction:blocks_to_corner_with[].tags": {"enabled_states": ["minecraft:corner_and_cardinal_direction"]},
+    "block:minecraft:material_instances:alpha_masked_tint": {"tint_method": "default_foliage", "render_method": "opaque"}
   },
   "requires": {
     "item:minecraft:food": {"minecraft:use_modifiers": {"use_duration": 1.6}},
@@ -53,6 +54,7 @@
     "item:minecraft:tags:tags": ["paletter:tag_a"],
     "block:minecraft:geometry:identifier": "geometry.paletter_cube",
     "block:minecraft:geometry:culling": "paletter:culling",
+    "block:minecraft:embedded_visual:material_instances": {"*": {"texture": "paletter_tex"}},
     "block:minecraft:embedded_visual:geometry": "minecraft:geometry.full_block",
     "block:minecraft:item_visual:geometry": "minecraft:geometry.full_block",
     "block:minecraft:embedded_visual:geometry.identifier": "minecraft:geometry.full_block",

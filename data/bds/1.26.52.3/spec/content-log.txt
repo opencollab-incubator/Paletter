@@ -219,7 +219,6 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destr
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_9.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_9.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_8.json |  -> components -> minecraft:destruction_particles -> particle_count: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_10.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_11.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_11.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_11.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid string
@@ -228,51 +227,25 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embed
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_12.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_12.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_12.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_13.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_14.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_15.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_16.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_17.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_18.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_19.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_2.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_20.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_21.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_22.json |  -> components -> minecraft:embedded_visual -> geometry -> identifier: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_22.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_23.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_24.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_25.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_26.json |  -> components -> minecraft:embedded_visual -> geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_26.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_27.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_28.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_29.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_3.json |  -> components -> minecraft:embedded_visual -> geometry: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_3.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_30.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_31.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_32.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_33.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_34.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_35.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_36.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_37.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: expected an array
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_37.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_37.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_38.json |  -> components -> minecraft:embedded_visual -> material_instances: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_4.json |  -> components -> minecraft:embedded_visual -> geometry: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_4.json |  -> components -> minecraft:embedded_visual -> geometry -> identifier: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_4.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_40.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_41.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_5.json |  -> components -> minecraft:embedded_visual -> geometry: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_5.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_42.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_43.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_6.json |  -> components -> minecraft:embedded_visual -> geometry: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_6.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_7.json |  -> components -> minecraft:embedded_visual -> geometry -> identifier: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_7.json |  -> components -> minecraft:embedded_visual -> geometry: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_7.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_8.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_9.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_8.json |  -> components -> minecraft:embedded_visual -> geometry: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_8.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_entity_fall_on_10.json |  -> components -> minecraft:entity_fall_on -> minimum_fall_distance: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_entity_fall_on_11.json |  -> components -> minecraft:entity_fall_on -> minimum_fall_distance: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_entity_fall_on_12.json |  -> components -> minecraft:entity_fall_on -> minimum_fall_distance: this member was found in the input, but is not present in the Schema
@@ -295,7 +268,6 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_frict
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_friction_6.json |  -> components -> minecraft:friction: the input is outside of the accepted range [0, 0.900000]
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_friction_7.json |  -> components -> minecraft:friction: the input is outside of the accepted range [0, 0.900000]
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_friction_8.json |  -> components -> minecraft:friction: the input is outside of the accepted range [0, 0.900000]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_1.json |  -> components: Block needs both a "geometry" and "material_instances" component.
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_10.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_10.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_10.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
@@ -381,10 +353,6 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geome
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_29.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_29.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_29.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_5.json |  -> components -> minecraft:geometry -> n_way_visual_rotation: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_5.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_6.json |  -> components -> minecraft:geometry -> n_way_visual_rotation: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_6.json |  -> components -> minecraft:geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_7.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_7.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_7.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
@@ -448,7 +416,6 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_c
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_7.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_8.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_b'
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_8.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_1.json |  -> components: Block needs both a "geometry" and "material_instances" component.
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_115.json |  -> components -> minecraft:material_instances -> east -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_115.json |  -> components -> minecraft:material_instances -> east: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_116.json |  -> components -> minecraft:material_instances -> east -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
@@ -630,29 +597,29 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_selec
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_selection_box_7.json |  -> components -> minecraft:selection_box: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_selection_box_8.json |  -> components -> minecraft:selection_box -> origin: Expected [x, y, z].
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_selection_box_8.json |  -> components -> minecraft:selection_box: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_15.json |  -> description -> states -> paletter:s: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_15.json |  -> description -> states -> paletter:s: too many input elements, expected no more than 2
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_15.json |  -> description -> states -> paletter:s[0]: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_15.json |  -> description -> states -> paletter:s[0]: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_16.json |  -> description -> states -> paletter:s: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_16.json |  -> description -> states -> paletter:s: expected array with at least 1 elements
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_16.json |  -> description -> states -> paletter:s: expected array with at least 2 elements
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_19.json |  -> description -> states -> paletter:s -> values: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_19.json |  -> description -> states -> paletter:s: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_11.json |  -> description -> states -> paletter:s: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_11.json |  -> description -> states -> paletter:s: expected array with at least 1 elements
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_11.json |  -> description -> states -> paletter:s: expected array with at least 2 elements
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_17.json |  -> description -> states -> paletter:s: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_17.json |  -> description -> states -> paletter:s: too many input elements, expected no more than 2
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_17.json |  -> description -> states -> paletter:s[0]: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_17.json |  -> description -> states -> paletter:s[0]: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_18.json |  -> description -> states -> paletter:s: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_18.json |  -> description -> states -> paletter:s: expected array with at least 1 elements
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_18.json |  -> description -> states -> paletter:s: expected array with at least 2 elements
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_4.json |  -> description -> states -> paletter:s: expected an array
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_4.json |  -> description -> states -> paletter:s: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_5.json |  -> description -> states -> paletter:s: expected an array
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_5.json |  -> description -> states -> paletter:s: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_6.json |  -> description -> states -> paletter:s: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_6.json |  -> description -> states -> paletter:s: expected array with at least 1 elements
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_6.json |  -> description -> states -> paletter:s: expected array with at least 2 elements
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_7.json |  -> description -> states -> paletter:s: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_7.json |  -> description -> states -> paletter:s: expected array with at least 2 elements
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_7.json |  -> description -> states -> paletter:s[0]: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_7.json |  -> description -> states -> paletter:s[0]: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_6.json |  -> description -> states -> paletter:s -> values: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_6.json |  -> description -> states -> paletter:s: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_8.json |  -> description -> states -> paletter:s: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_8.json |  -> description -> states -> paletter:s: expected array with at least 1 elements
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_8.json |  -> description -> states -> paletter:s: expected array with at least 2 elements
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_9.json |  -> description -> states -> paletter:s: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_9.json |  -> description -> states -> paletter:s: expected array with at least 1 elements
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_9.json |  -> description -> states -> paletter:s: expected array with at least 2 elements
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_9.json |  -> description -> states -> paletter:s[0]: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_9.json |  -> description -> states -> paletter:s[0]: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_support_3.json |  -> components -> minecraft:support -> shape: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_tick_10.json |  -> components -> minecraft:tick -> interval_range: wrong number of elements in fixed size container, expected exactly 2
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_tick_3.json |  -> components -> minecraft:tick -> interval_range: missing required field

@@ -2,21 +2,33 @@
   "_comment": "Hand written. What proves each wire constant and what explains each finding of the mapping inference; checked by `./gradlew :tools:checkMappings` and UpdateTest against the spec captures (see tools/docs/codegen.md, 'Evidence').",
   "findings": {
     "residual-bits block:minecraft:material_instances packed_bools": {
-      "status": "unexplained",
-      "reason": "bit 2 of packed_bools is set in every material BDS sent (values 4, 5, 7); face_dimming is bit 0 and isotropic bit 1, no field moves bit 2. Unverified hypothesis (wiki.bedrock.dev block format history, not BDS): bit 2 is texture variation / alpha_masked_tint support, switched on by the format version",
-      "wouldExplain": "the planned format_version sweep of the spec capture (the same add-on generated at several format versions, run on BDS) and an alpha_masked_tint probe (a variant with a non-none tint_method and format_version >= 1.21.120)"
+      "status": "explained",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_material_instances_257"
+      ],
+      "explanation": "Bit 3 (8) is alpha_masked_tint: packed_bools is 13 instead of 5 in the variants listed, and BDS's own texts name the key (\"'alpha_masked_tint' requires a non-default 'tint_method'\"). Bit 2 (4) is set for an add-on format_version of 1.21.110 and newer and clear below it: data/bds/1.26.63.1/spec-format/format-sweep.json, material_instances (base), packed_bools 1 at 1.21.100 and older and 5 at 1.21.110 and 1.21.120 (3 with isotropic at 1.21.70 and 1.21.80, the format sweep of the same BDS). The wiki's format history lists texture variation as Versioned in 1.21.110; BDS 1.26.63.1 has no text for it, so the bit's name is the wiki's and its boundary is BDS's. Paletter writes the current format, so the bit is always set."
     }
   },
   "constants": {
     "Transforms always_set_bit": {
-      "status": "unexplained",
-      "reason": "meaning of bit 2 of packed_bools unknown (see the finding for material_instances packed_bools)",
-      "wouldExplain": "the planned format_version sweep of the spec capture (the same add-on generated at several format versions, run on BDS)"
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_material_instances_20",
+        "paletter:b_material_instances_21"
+      ]
     },
     "Transforms alpha_masked_tint": {
-      "status": "unexplained",
-      "reason": "embedded_visual's alpha_masked_tint flag was never seen on the wire: BDS rejected every embedded_visual variant that carries material_instances",
-      "wouldExplain": "an accepted embedded_visual variant with material_instances (a companion aware control) and the alpha_masked_tint probe"
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "leaf": "minecraft:embedded_visual.material_instances.*.alpha_masked_tint",
+      "value": "0 (byte)",
+      "variants": [
+        "paletter:b_embedded_visual_2",
+        "paletter:b_embedded_visual_5",
+        "paletter:b_embedded_visual_9"
+      ]
     },
     "Transforms descriptor_state_type": {
       "status": "unexplained",
@@ -39,9 +51,15 @@
       "wouldExplain": "one use_animation variant per animation name"
     },
     "Transforms geometry_flags": {
-      "status": "unexplained",
-      "reason": "captured at one format_version per build only; the flag's name ties it to the JSON/format version, so another format_version may send another value",
-      "wouldExplain": "the planned format_version sweep of the spec capture (the same add-on generated at several format versions, run on BDS)"
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "leaf": "minecraft:geometry.isV1Fullblock",
+      "value": "0 (byte)",
+      "variants": [
+        "paletter:b_flower_pottable_1",
+        "paletter:b_flower_pottable_2",
+        "paletter:b_geometry_1"
+      ]
     },
     "Transforms collision_box_enabled": {
       "status": "captured",
@@ -72,6 +90,15 @@
         "paletter:b_flower_pottable_1",
         "paletter:b_flower_pottable_2",
         "paletter:b_geometry_3"
+      ]
+    },
+    "Transforms rotation_axis_default": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "leaf": "minecraft:geometry.n_way_visual_rotation.x",
+      "value": " (string)",
+      "variants": [
+        "paletter:b_geometry_32"
       ]
     },
     "Transforms culling_layer_default": {
@@ -264,6 +291,13 @@
         "paletter:b_collision_box_21"
       ]
     },
+    "Transforms alpha_masked_tint_bit": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_material_instances_257"
+      ]
+    },
     "block:description menu_category.group": {
       "status": "captured",
       "capture": "data/bds/1.26.63.1/spec",
@@ -291,10 +325,162 @@
         "paletter:b_crafting_table_5"
       ]
     },
+    "block:minecraft:embedded_visual minecraft:embedded_visual.geometry.bone_visibility": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_embedded_visual_2",
+        "paletter:b_embedded_visual_5",
+        "paletter:b_embedded_visual_9"
+      ]
+    },
+    "block:minecraft:embedded_visual minecraft:embedded_visual.geometry.uv_lock": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_embedded_visual_2",
+        "paletter:b_embedded_visual_5",
+        "paletter:b_embedded_visual_9"
+      ]
+    },
+    "block:minecraft:embedded_visual minecraft:embedded_visual.material_instances": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_embedded_visual_39",
+        "paletter:b_embedded_visual_41"
+      ]
+    },
+    "block:minecraft:embedded_visual minecraft:embedded_visual.material_instances.*.alpha_masked_tint": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_embedded_visual_2",
+        "paletter:b_embedded_visual_5",
+        "paletter:b_embedded_visual_9"
+      ]
+    },
+    "block:minecraft:embedded_visual minecraft:embedded_visual.material_instances.*.ambient_occlusion": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_embedded_visual_2",
+        "paletter:b_embedded_visual_5",
+        "paletter:b_embedded_visual_9"
+      ]
+    },
+    "block:minecraft:embedded_visual minecraft:embedded_visual.material_instances.*.face_dimming": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_embedded_visual_2",
+        "paletter:b_embedded_visual_5",
+        "paletter:b_embedded_visual_9"
+      ]
+    },
+    "block:minecraft:embedded_visual minecraft:embedded_visual.material_instances.*.isotropic": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_embedded_visual_2",
+        "paletter:b_embedded_visual_5",
+        "paletter:b_embedded_visual_9"
+      ]
+    },
+    "block:minecraft:embedded_visual minecraft:embedded_visual.material_instances.*.render_method": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_embedded_visual_2",
+        "paletter:b_embedded_visual_5",
+        "paletter:b_embedded_visual_9"
+      ]
+    },
+    "block:minecraft:embedded_visual minecraft:embedded_visual.material_instances.*.texture": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_embedded_visual_2",
+        "paletter:b_embedded_visual_5",
+        "paletter:b_embedded_visual_9"
+      ]
+    },
+    "block:minecraft:embedded_visual minecraft:embedded_visual.material_instances.*.tint_method": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_embedded_visual_2",
+        "paletter:b_embedded_visual_5",
+        "paletter:b_embedded_visual_9"
+      ]
+    },
     "block:minecraft:flower_pottable minecraft:flower_pottable.usePreR26U2FlowerPotOffset": {
       "status": "unexplained",
       "reason": "captured at one format_version per build only; the flag's name ties it to the JSON/format version, so another format_version may send another value",
       "wouldExplain": "the planned format_version sweep of the spec capture (the same add-on generated at several format versions, run on BDS)"
+    },
+    "block:minecraft:geometry minecraft:geometry.bone_visibility": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_flower_pottable_1",
+        "paletter:b_flower_pottable_2",
+        "paletter:b_geometry_1"
+      ]
+    },
+    "block:minecraft:geometry minecraft:geometry.culling_layer": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_flower_pottable_1",
+        "paletter:b_flower_pottable_2",
+        "paletter:b_geometry_1"
+      ]
+    },
+    "block:minecraft:geometry minecraft:geometry.culling_shape": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_flower_pottable_1",
+        "paletter:b_flower_pottable_2",
+        "paletter:b_geometry_1"
+      ]
+    },
+    "block:minecraft:geometry minecraft:geometry.ignoreGeometryForIsSolid": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_flower_pottable_1",
+        "paletter:b_flower_pottable_2",
+        "paletter:b_geometry_1"
+      ]
+    },
+    "block:minecraft:geometry minecraft:geometry.isV1Fullblock": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_flower_pottable_1",
+        "paletter:b_flower_pottable_2",
+        "paletter:b_geometry_1"
+      ]
+    },
+    "block:minecraft:geometry minecraft:geometry.needsLegacyTopRotation": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_flower_pottable_1",
+        "paletter:b_flower_pottable_2",
+        "paletter:b_geometry_1"
+      ]
+    },
+    "block:minecraft:geometry minecraft:geometry.useBlockTypeLightAbsorption": {
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_flower_pottable_1",
+        "paletter:b_flower_pottable_2",
+        "paletter:b_geometry_1"
+      ]
     },
     "block:minecraft:item_visual minecraft:item_visual.geometryDescription.bone_visibility": {
       "status": "captured",
@@ -306,24 +492,40 @@
       ]
     },
     "block:minecraft:item_visual minecraft:item_visual.geometryDescription.ignoreGeometryForIsSolid": {
-      "status": "unexplained",
-      "reason": "captured at one format_version per build only; the flag's name ties it to the JSON/format version, so another format_version may send another value",
-      "wouldExplain": "the planned format_version sweep of the spec capture (the same add-on generated at several format versions, run on BDS)"
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_item_visual_2",
+        "paletter:b_item_visual_4",
+        "paletter:b_item_visual_5"
+      ]
     },
     "block:minecraft:item_visual minecraft:item_visual.geometryDescription.isV1Fullblock": {
-      "status": "unexplained",
-      "reason": "captured at one format_version per build only; the flag's name ties it to the JSON/format version, so another format_version may send another value",
-      "wouldExplain": "the planned format_version sweep of the spec capture (the same add-on generated at several format versions, run on BDS)"
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_item_visual_2",
+        "paletter:b_item_visual_4",
+        "paletter:b_item_visual_5"
+      ]
     },
     "block:minecraft:item_visual minecraft:item_visual.geometryDescription.needsLegacyTopRotation": {
-      "status": "unexplained",
-      "reason": "captured at one format_version per build only; the flag's name ties it to the JSON/format version, so another format_version may send another value",
-      "wouldExplain": "the planned format_version sweep of the spec capture (the same add-on generated at several format versions, run on BDS)"
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_item_visual_2",
+        "paletter:b_item_visual_4",
+        "paletter:b_item_visual_5"
+      ]
     },
     "block:minecraft:item_visual minecraft:item_visual.geometryDescription.useBlockTypeLightAbsorption": {
-      "status": "unexplained",
-      "reason": "captured at one format_version per build only; the flag's name ties it to the JSON/format version, so another format_version may send another value",
-      "wouldExplain": "the planned format_version sweep of the spec capture (the same add-on generated at several format versions, run on BDS)"
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_item_visual_2",
+        "paletter:b_item_visual_4",
+        "paletter:b_item_visual_5"
+      ]
     },
     "block:minecraft:item_visual minecraft:item_visual.geometryDescription.uv_lock": {
       "status": "captured",
@@ -360,9 +562,13 @@
       ]
     },
     "block:minecraft:item_visual minecraft:item_visual.materialInstancesDescription.materials.*.packed_bools": {
-      "status": "unexplained",
-      "reason": "the value 5 contains bit 2 of packed_bools, which no field explains (see the finding for material_instances packed_bools)",
-      "wouldExplain": "the planned format_version sweep of the spec capture (the same add-on generated at several format versions, run on BDS)"
+      "status": "captured",
+      "capture": "data/bds/1.26.63.1/spec",
+      "variants": [
+        "paletter:b_item_visual_2",
+        "paletter:b_item_visual_4",
+        "paletter:b_item_visual_5"
+      ]
     },
     "block:minecraft:item_visual minecraft:item_visual.materialInstancesDescription.materials.*.render_method": {
       "status": "captured",

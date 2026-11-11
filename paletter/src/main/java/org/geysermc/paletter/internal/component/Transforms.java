@@ -2,6 +2,7 @@ package org.geysermc.paletter.internal.component;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
@@ -32,7 +33,10 @@ import org.geysermc.paletter.item.component.Repairable;
 import org.geysermc.paletter.item.component.Shooter;
 import org.geysermc.paletter.item.component.UseAnimation;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -45,10 +49,15 @@ import java.util.Map;
  * transform); overloads per owner type.
  */
 public final class Transforms {
-    /** Bit of {@code packed_bools} BDS sets in every material it sends; meaning unknown. */
+    /**
+     * Bit of {@code packed_bools} BDS sets in every material of an add-on with a {@code format_version} of 1.21.110 or
+     * newer (clear below: the format sweep of BDS 1.26.63.1); the wiki's format history lists texture variation for
+     * 1.21.110. Paletter writes the current format, so it is always set.
+     */
     static final int ALWAYS_SET_BIT = 1 << 2; // wire-constant: always_set_bit
     static final int FACE_DIMMING_BIT = 1; // wire-constant: face_dimming_bit
     static final int ISOTROPIC_BIT = 1 << 1; // wire-constant: isotropic_bit
+    static final int ALPHA_MASKED_TINT_BIT = 1 << 3; // wire-constant: alpha_masked_tint_bit
     private static final String DEFAULT_CULLING_LAYER = "minecraft:culling_layer.undefined"; // wire-constant: culling_layer_default
     /** The documented default of {@code culling_shape}; BDS sends an empty string when it is omitted. */
     private static final String DEFAULT_CULLING_SHAPE = "minecraft:empty"; // wire-constant: culling_shape_default
@@ -117,24 +126,33 @@ public final class Transforms {
 
     /**
      * {@code minecraft:geometry}, in the shape every BDS 1.26.63.1 capture shows: the description fields plus four flags
-     * BDS always sends as 0. Bone visibility is a Molang expression, kept as a string like BDS does; the constants {@code true}/{@code false} become
-     * {@code "1.000000"}/{@code "0.000000"}.
+     * BDS always sends as 0, and {@code n_way_visual_rotation} when set (protocol 2225 and later). Bone visibility is a
+     * Molang expression, kept as a string like BDS does; the constants {@code true}/{@code false} become
+     * {@code "1.000000"}/{@code "0.000000"}. Before: {@link #geometryBeforeRotation}.
      */
     public static void geometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Geometry c) {
-        out.put("minecraft:geometry", geometry(c.identifier(), c.boneVisibility(), c.culling(), c.cullingLayer(), c.cullingShape(),
-            c.uvLock(), c.uvLockBones()));
+        geometry(ctx, out, c, true);
     }
 
-    /**
-     * {@code minecraft:geometry} before protocol 2225 (26.60): BDS 1.26.36.1, 1.26.45.1 and 1.26.52.3 reject {@code uv_lock} as a list of
-     * bones (only BDS 1.26.63.1 accepts it), so a list is dropped with a report entry and the boolean {@code false} is sent.
-     */
-    public static void geometryBeforeUvLockList(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Geometry c) {
-        if (c.uvLockBones() != null) {
-            ctx.drop(Geometry.NAME, "uv_lock as a list of bones is only accepted by BDS from protocol 2225 (26.60)");
+    /** {@code minecraft:geometry} before protocol 2225: the same without {@code n_way_visual_rotation}. */
+    public static void geometryBeforeRotation(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Geometry c) {
+        geometry(ctx, out, c, false);
+    }
+
+    private static void geometry(WireContext ctx, WireNode out, Geometry c, boolean withRotation) {
+        List<String> uvLockBones = c.uvLockBones();
+        // the documented maximum; BDS 1.26.63.1 rejects the whole block above it, counting duplicates (not a wire value)
+        if (uvLockBones != null && uvLockBones.size() > 64) {
+            ctx.drop(Geometry.NAME, "uv_lock lists " + uvLockBones.size() + " bones, BDS rejects the block above 64");
+            uvLockBones = null;
         }
-        out.put("minecraft:geometry", geometry(c.identifier(), c.boneVisibility(), c.culling(), c.cullingLayer(), c.cullingShape(),
-            c.uvLock(), null));
+        NbtMapBuilder geometry = geometry(c.identifier(), c.boneVisibility(), c.culling(), c.cullingLayer(), c.cullingShape(),
+            c.uvLock(), uvLockBones).toBuilder();
+        Geometry.NWayVisualRotation rotation = c.nWayVisualRotation();
+        if (rotation != null && withRotation) {
+            geometry.putCompound("n_way_visual_rotation", rotation(rotation.x(), rotation.y(), rotation.z()));
+        }
+        out.put("minecraft:geometry", geometry.build());
     }
 
     /**
@@ -160,24 +178,20 @@ public final class Transforms {
         for (String flag : List.of("ignoreGeometryForIsSolid", "isV1Fullblock", "needsLegacyTopRotation", "useBlockTypeLightAbsorption")) {
             geometry.remove(flag);
         }
-        if (g.culling() == null) {
-            geometry.remove("culling");
-        }
         EmbeddedVisual.NWayVisualRotation rotation = g.nWayVisualRotation();
         if (rotation != null && withRotation) {
-            NbtMapBuilder r = NbtMap.builder();
-            if (rotation.x() != null) {
-                r.putString("x", rotation.x());
-            }
-            if (rotation.y() != null) {
-                r.putString("y", rotation.y());
-            }
-            if (rotation.z() != null) {
-                r.putString("z", rotation.z());
-            }
-            geometry.putCompound("n_way_visual_rotation", r.build());
+            geometry.putCompound("n_way_visual_rotation", rotation(rotation.x(), rotation.y(), rotation.z()));
         }
         out.put("minecraft:embedded_visual.geometry", geometry.build());
+    }
+
+    /** {@code n_way_visual_rotation}: every axis, an empty string for an axis that is not set. */
+    private static NbtMap rotation(@Nullable String x, @Nullable String y, @Nullable String z) {
+        return NbtMap.builder()
+            .putString("x", x == null ? "" : x) // wire-constant: rotation_axis_default
+            .putString("y", y == null ? "" : y) // wire-constant: rotation_axis_default
+            .putString("z", z == null ? "" : z) // wire-constant: rotation_axis_default
+            .build();
     }
 
     static @NonNull NbtMap geometry(String identifier, @Nullable Map<String, String> bones, @Nullable String culling,
@@ -197,23 +211,54 @@ public final class Transforms {
             .putString("culling_layer", cullingLayer == null ? DEFAULT_CULLING_LAYER : cullingLayer)
             .putString("culling_shape", cullingShape == null || cullingShape.equals(DEFAULT_CULLING_SHAPE) ? "" : cullingShape) // wire-constant: culling_shape_default
             .putString("identifier", identifier)
+            // 1 for ignoreGeometryForIsSolid below format_version 1.21.90 and for isV1Fullblock of the full block geometry up to
+            // 1.21.120 (the format sweep of BDS 1.26.63.1); 0 for the current format Paletter writes
             .putByte("ignoreGeometryForIsSolid", (byte) 0) // wire-constant: geometry_flags
             .putByte("isV1Fullblock", (byte) 0) // wire-constant: geometry_flags
             .putByte("needsLegacyTopRotation", (byte) 0) // wire-constant: geometry_flags
             .putByte("useBlockTypeLightAbsorption", (byte) 0) // wire-constant: geometry_flags
             .putByte("uv_lock", Wire.bool(Boolean.TRUE.equals(uvLock)));
         if (uvLockBones != null) {
-            // BDS 1.26.63.1: the bones as a list of strings instead of the byte
-            geometry.putList("uv_lock", NbtType.STRING, uvLockBones);
+            // BDS 1.26.36.1 to 1.26.63.1: the bones as a list of strings instead of the byte; an empty list has no element type
+            List<String> locked = bdsBoneOrder(uvLockBones);
+            geometry.put("uv_lock", locked.isEmpty() ? Wire.emptyList() : new NbtList<>(NbtType.STRING, locked));
         }
         return geometry.build();
+    }
+
+    /**
+     * The {@code uv_lock} bones in the order BDS sends them. BDS keeps them in a {@code std::set<HashedString>}, so each
+     * bone is sent once, ascending by the unsigned 64 bit hash of its name (captures of BDS 1.26.36.1 to 1.26.63.1).
+     * Bones with equal hashes keep their order; BDS's order for them is not known.
+     */
+    static @NonNull List<String> bdsBoneOrder(@NonNull List<String> bones) {
+        List<String> ordered = new ArrayList<>(new LinkedHashSet<>(bones));
+        ordered.sort((a, b) -> Long.compareUnsigned(hashedString(a), hashedString(b)));
+        return ordered;
+    }
+
+    /**
+     * The hash of BDS's {@code HashedString}: FNV-1 64 bit (multiply, then xor) over the UTF-8 bytes, 0 for the empty
+     * string. Not {@code BlockRegistry.nameHash}, which hashes the empty string to the offset basis and sign-extends bytes.
+     */
+    private static long hashedString(String string) {
+        byte[] bytes = string.getBytes(StandardCharsets.UTF_8);
+        if (bytes.length == 0) {
+            return 0;
+        }
+        long hash = 0xcbf29ce484222325L;
+        for (byte b : bytes) {
+            hash = hash * 0x100000001b3L ^ (b & 0xff);
+        }
+        return hash;
     }
 
     // ---- material_instances ----------------------------------------------------------------------------------------
 
     /**
      * {@code minecraft:material_instances}: face aliases to {@code mappings}, faces to {@code materials}, face dimming
-     * and isotropic packed into {@code packed_bools} (bit 0, bit 1, bit 2 always set), defaults as BDS sends them.
+     * isotropic and alpha_masked_tint packed into {@code packed_bools} (bits 0, 1 and 3, bit 2 always set), defaults as BDS
+     * sends them.
      */
     public static void materialInstances(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull MaterialInstances c) {
         out.put("minecraft:material_instances", materials(c));
@@ -251,7 +296,7 @@ public final class Transforms {
         NbtMapBuilder materials = NbtMap.builder();
         faces(c).forEach((face, instance) -> {
             int packed = ALWAYS_SET_BIT | (instance.faceDimming() == null || instance.faceDimming() ? FACE_DIMMING_BIT : 0)
-                | (instance.isotropic() ? ISOTROPIC_BIT : 0);
+                | (instance.isotropic() ? ISOTROPIC_BIT : 0) | (Boolean.TRUE.equals(instance.alphaMaskedTint()) ? ALPHA_MASKED_TINT_BIT : 0);
             materials.putCompound(face, NbtMap.builder()
                 .putFloat("ambient_occlusion", instance.ambientOcclusion() == null ? 1f : instance.ambientOcclusion()) // wire-constant: ambient_occlusion_default
                 .putByte("packed_bools", (byte) packed)

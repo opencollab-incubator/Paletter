@@ -20,14 +20,16 @@ import org.geysermc.paletter.internal.component.Check;
  * @param dynamicProperties Dynamic-properties can store and retrieve variables on a block via scripting, more at
  *        https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/blockdynamicpropertiescomponent.
  *        Add-on JSON {@code dynamic_properties}. Default: <code>false</code>.
+ * @param entityStorage (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code
+ *        entity_storage}. Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_block_entity?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:block_entity</a>
  * @since 0.1.0
  */
 @ServerOnly(
         until = 2193
 )
-public record BlockEntity(BlockEntity. @Nullable Container container,
-        boolean dynamicProperties) implements BlockComponent {
+public record BlockEntity(BlockEntity. @Nullable Container container, boolean dynamicProperties,
+        @Nullable Boolean entityStorage) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -52,6 +54,7 @@ public record BlockEntity(BlockEntity. @Nullable Container container,
         Builder builder = new Builder();
         builder.container = container;
         builder.dynamicProperties = dynamicProperties;
+        builder.entityStorage = entityStorage;
         return builder;
     }
 
@@ -62,6 +65,8 @@ public record BlockEntity(BlockEntity. @Nullable Container container,
         private @Nullable Container container;
 
         private @Nullable Boolean dynamicProperties = false;
+
+        private @Nullable Boolean entityStorage;
 
         private Builder() {
         }
@@ -83,11 +88,19 @@ public record BlockEntity(BlockEntity. @Nullable Container container,
         }
 
         /**
+         * Sets {@code entity_storage}.
+         */
+        public @NonNull Builder entityStorage(@Nullable Boolean entityStorage) {
+            this.entityStorage = entityStorage;
+            return this;
+        }
+
+        /**
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
         public @NonNull BlockEntity build() {
-            return new BlockEntity(container, dynamicProperties);
+            return new BlockEntity(container, dynamicProperties, entityStorage);
         }
     }
 

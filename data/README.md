@@ -34,4 +34,6 @@ this section is their marker; the JSON captures also name their build in `bdsVer
 | `addon/` | `capture` against BDS with the generated pack `addons/capture` |
 | `creative-probe/`, `creative-probe-file-order/`, `creative-large/` | `creative-probe` / `capture` with the generated packs `addons/creative` and `addon --kind creative-large` |
 | `spec/` | `spec-capture` (the spec add-on generated from `model`, run on BDS); input of `infer` |
+| `spec-keys/` | `spec-capture --probe-keys` (variants with keys the docs do not list; its result is `model/bds-keys.json`; not read by `infer`) |
+| `spec-format/` | `spec-capture --format-sweep` (components at the format versions around their boundaries; `format-sweep.json` is the report; not read by `infer`) |
 | `behaviour-probe/` | `behaviour-probe` (the probe add-on `addons/probe`: friction, explosion resistance, light, collision and fire of custom blocks and the collision of doors, measured by experiment; `probe.log` is the console it was measured from); input of `behaviour import` |

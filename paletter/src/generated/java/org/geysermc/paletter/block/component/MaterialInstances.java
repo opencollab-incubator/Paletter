@@ -359,10 +359,13 @@ public record MaterialInstances(MaterialInstances. @Nullable Instance all,
      *        "none", "default_foliage", "birch_foliage", "evergreen_foliage", "dry_foliage", "grass" and "water" This item
      *        requires a format version of at least 1.21.80. Add-on JSON {@code tint_method}. Optional (null: not set). The
      *        docs give the default false, which is not a value of this type; unset, BDS's behaviour applies.
+     * @param alphaMaskedTint (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. BDS names the format version
+     *        1.21.120 for it. Add-on JSON {@code alpha_masked_tint}. Optional (null: not set).
      */
     public record Instance(@Nullable Float ambientOcclusion, @Nullable Boolean faceDimming,
             @BedrockFormat("1.21.80") boolean isotropic, @Nullable RenderMethod renderMethod,
-            @Nullable String texture, @BedrockFormat("1.21.80") @Nullable String tintMethod) {
+            @Nullable String texture, @BedrockFormat("1.21.80") @Nullable String tintMethod,
+            @BedrockFormat("1.21.120") @Nullable Boolean alphaMaskedTint) {
         public Instance {
             if (ambientOcclusion != null) {
                 Check.range("MaterialInstances.Instance.ambientOcclusion", ambientOcclusion, 0.0, 10.0);
@@ -387,6 +390,7 @@ public record MaterialInstances(MaterialInstances. @Nullable Instance all,
             builder.renderMethod = renderMethod;
             builder.texture = texture;
             builder.tintMethod = tintMethod;
+            builder.alphaMaskedTint = alphaMaskedTint;
             return builder;
         }
 
@@ -405,6 +409,8 @@ public record MaterialInstances(MaterialInstances. @Nullable Instance all,
             private @Nullable String texture;
 
             private @Nullable String tintMethod;
+
+            private @Nullable Boolean alphaMaskedTint;
 
             private Builder() {
             }
@@ -458,11 +464,19 @@ public record MaterialInstances(MaterialInstances. @Nullable Instance all,
             }
 
             /**
+             * Sets {@code alpha_masked_tint}.
+             */
+            public @NonNull Builder alphaMaskedTint(@Nullable Boolean alphaMaskedTint) {
+                this.alphaMaskedTint = alphaMaskedTint;
+                return this;
+            }
+
+            /**
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
             public @NonNull Instance build() {
-                return new Instance(ambientOcclusion, faceDimming, isotropic, renderMethod, texture, tintMethod);
+                return new Instance(ambientOcclusion, faceDimming, isotropic, renderMethod, texture, tintMethod, alphaMaskedTint);
             }
         }
     }
