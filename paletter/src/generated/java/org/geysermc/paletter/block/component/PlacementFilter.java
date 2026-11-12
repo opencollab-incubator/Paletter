@@ -200,8 +200,7 @@ public record PlacementFilter(
      * List of conditions where the block can be placed/survive Value must have at most 64 items.
      *
      * @param allowedFaces List of any of the following strings describing which face(s) this block can be placed on Add-on JSON {@code
-     *        allowed_faces}. Default: <code>["down","up","north","south","west","east"]</code>. Compiled by the hand
-     *        transform {@code Transforms.faceBits}.
+     *        allowed_faces}. Default: <code>["down","up","north","south","west","east"]</code>.
      * @param blockFilter List of blocks that this block can be placed against in the "allowed_faces" direction. List of blocks that
      *        this block can be placed against in the "allowed_faces" direction. Each block in this list can either be
      *        specified as a String (block name) or as a BlockDescriptor. Value must have at most 64 items. Add-on JSON

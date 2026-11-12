@@ -37,6 +37,14 @@ public final class Check {
         throw new IllegalArgumentException(field + " must be one of [" + list + "], was " + format(value, ""));
     }
 
+    /** A value BDS takes only in whole steps (degrees in quarter turns): a multiple of {@code step}. */
+    public static void multipleOf(@NonNull String field, double value, double step) {
+        double steps = value / step;
+        if (steps != Math.rint(steps)) {
+            throw new IllegalArgumentException(field + " must be a multiple of " + format(step, "") + ", was " + format(value, ""));
+        }
+    }
+
     private static String format(@Nullable Double d, String absent) {
         if (d == null) {
             return absent;

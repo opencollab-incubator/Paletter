@@ -954,8 +954,7 @@ public static final class org.geysermc.paletter.block.component.DestructibleByEx
 
 public record org.geysermc.paletter.block.component.DestructibleByMining implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:destructible_by_mining"
-    public <init>(float, java.util.List<org.geysermc.paletter.block.component.DestructibleByMining$ItemSpecificSpeeds>, float, java.lang.Boolean)
-    public float baseTimeToDestroy()
+    public <init>(java.util.List<org.geysermc.paletter.block.component.DestructibleByMining$ItemSpecificSpeeds>, float, java.lang.Boolean)
     public static org.geysermc.paletter.block.component.DestructibleByMining$Builder builder()
     public java.lang.Boolean enabled()
     public final boolean equals(java.lang.Object)
@@ -969,7 +968,6 @@ public record org.geysermc.paletter.block.component.DestructibleByMining impleme
 }
 
 public static final class org.geysermc.paletter.block.component.DestructibleByMining$Builder {
-    public org.geysermc.paletter.block.component.DestructibleByMining$Builder baseTimeToDestroy(float)
     public org.geysermc.paletter.block.component.DestructibleByMining build()
     public org.geysermc.paletter.block.component.DestructibleByMining$Builder enabled(java.lang.Boolean)
     public org.geysermc.paletter.block.component.DestructibleByMining$Builder itemSpecificSpeeds(java.util.List<org.geysermc.paletter.block.component.DestructibleByMining$ItemSpecificSpeeds>)

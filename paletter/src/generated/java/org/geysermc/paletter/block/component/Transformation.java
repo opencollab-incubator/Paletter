@@ -7,6 +7,7 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.BedrockFormat;
+import org.geysermc.paletter.internal.component.Check;
 
 /**
  * The block's translation, rotation and scale with respect to the center of its world position.
@@ -14,6 +15,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * Add-on JSON: {@code "minecraft:transformation"}.
  *
  * @param rotation The block's rotation in increments of 90 degrees Add-on JSON {@code rotation}. Default: <code>[0,0,0]</code>.
+ *        Multiples of 90 only (BDS refuses the others).
  * @param rotationPivot The point to apply rotation around. This item requires a format version of at least 1.21.0. Add-on JSON {@code
  *        rotation_pivot}. Default: <code>[0,0,0]</code>.
  * @param scale The block's scale Add-on JSON {@code scale}. Default: <code>[1,1,1]</code>.
@@ -36,6 +38,9 @@ public record Transformation(Transformation. @NonNull Vec3 rotation,
 
     public Transformation {
         Objects.requireNonNull(rotation, "Transformation.rotation");
+        Check.multipleOf("Transformation.rotation", rotation.x(), 90.0);
+        Check.multipleOf("Transformation.rotation", rotation.y(), 90.0);
+        Check.multipleOf("Transformation.rotation", rotation.z(), 90.0);
         Objects.requireNonNull(rotationPivot, "Transformation.rotationPivot");
         Objects.requireNonNull(scale, "Transformation.scale");
         Objects.requireNonNull(scalePivot, "Transformation.scalePivot");

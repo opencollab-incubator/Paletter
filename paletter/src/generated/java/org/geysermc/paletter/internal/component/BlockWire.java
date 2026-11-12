@@ -130,20 +130,43 @@ public final class BlockWire {
     }
 
     private static void blockEntityFrom2193Until2225(BlockEntity c, WireContext ctx, WireNode out) {
-        boolean v0 = c.dynamicProperties();
-        Boolean v1 = c.entityStorage();
-        if (v1 != null) {
+        BlockEntity.Container v0 = c.container();
+        if (v0 != null) {
+            int v1 = v0.slotCount();
+            out.put("minecraft:container.slot_count", Wire.toByte(v1));
+            String v2 = v0.title();
+            if (v2 != null) {
+                ctx.drop(BlockEntity.NAME, "container.title has no known wire mapping");
+            }
+        } else {
+            out.remove("minecraft:container.slot_count");
+        }
+        boolean v3 = c.dynamicProperties();
+        Boolean v4 = c.entityStorage();
+        if (v4 != null) {
             ctx.drop(BlockEntity.NAME, "entity_storage has no known wire mapping");
         }
-        Transforms.blockEntityContainer(ctx, out, c);
     }
 
     private static void blockEntityFrom2225(BlockEntity c, WireContext ctx, WireNode out) {
-        boolean v0 = c.dynamicProperties();
-        Boolean v1 = c.entityStorage();
-        if (v1 != null) {
+        BlockEntity.Container v0 = c.container();
+        if (v0 != null) {
+            int v1 = v0.slotCount();
+            out.put("minecraft:container.slot_count", Wire.toByte(v1));
+            String v2 = v0.title();
+            if (v2 != null) {
+                out.put("minecraft:container.title", v2);
+            } else {
+                out.remove("minecraft:container.title");
+            }
+        } else {
+            out.remove("minecraft:container.slot_count");
+            out.remove("minecraft:container.title");
         }
-        Transforms.blockEntityContainer(ctx, out, c);
+        boolean v3 = c.dynamicProperties();
+        Boolean v4 = c.entityStorage();
+        if (v4 != null) {
+        }
     }
 
     private static void blockLightAbsorption(BlockLightAbsorption c, WireContext ctx,
@@ -179,7 +202,8 @@ public final class BlockWire {
     private static void connectionRule(ConnectionRule c, WireContext ctx, WireNode out) {
         ConnectionRule.AcceptsConnectionsFrom v0 = c.acceptsConnectionsFrom();
         out.put("minecraft:connection_rule.accepts_connections_from", v0.value());
-        Transforms.faceList(ctx, out, c);
+        List<ConnectionRule.EnabledDirections> v1 = c.enabledDirections();
+        out.put("minecraft:connection_rule.enabled_directions", Wire.strings(v1.stream().map(x -> x.value()).toList()));
     }
 
     private static void craftingTable(CraftingTable c, WireContext ctx, WireNode out) {
@@ -230,14 +254,6 @@ public final class BlockWire {
     private static void embeddedVisual(EmbeddedVisual c, WireContext ctx, WireNode out) {
         out.put("minecraft:embedded_visual.geometry.bone_visibility", NbtMap.EMPTY);
         out.put("minecraft:embedded_visual.geometry.uv_lock", (byte) 0);
-        out.put("minecraft:embedded_visual.material_instances", NbtMap.EMPTY);
-        out.put("minecraft:embedded_visual.material_instances.*.alpha_masked_tint", (byte) 0);
-        out.put("minecraft:embedded_visual.material_instances.*.ambient_occlusion", 1.0f);
-        out.put("minecraft:embedded_visual.material_instances.*.face_dimming", (byte) 1);
-        out.put("minecraft:embedded_visual.material_instances.*.isotropic", (byte) 0);
-        out.put("minecraft:embedded_visual.material_instances.*.render_method", "opaque");
-        out.put("minecraft:embedded_visual.material_instances.*.texture", "paletter_tex");
-        out.put("minecraft:embedded_visual.material_instances.*.tint_method", "none");
         Transforms.embeddedGeometry(ctx, out, c);
         Transforms.materialInstancesInline(ctx, out, c);
     }
@@ -274,8 +290,6 @@ public final class BlockWire {
 
     private static void geometryUntil2225(Geometry c, WireContext ctx, WireNode out) {
         out.put("minecraft:geometry.bone_visibility", NbtMap.EMPTY);
-        out.put("minecraft:geometry.culling_layer", "minecraft:culling_layer.undefined");
-        out.put("minecraft:geometry.culling_shape", "");
         out.put("minecraft:geometry.ignoreGeometryForIsSolid", (byte) 0);
         out.put("minecraft:geometry.isV1Fullblock", (byte) 0);
         out.put("minecraft:geometry.needsLegacyTopRotation", (byte) 0);
@@ -312,12 +326,6 @@ public final class BlockWire {
         out.put("minecraft:item_visual.geometryDescription.useBlockTypeLightAbsorption", (byte) 0);
         out.put("minecraft:item_visual.geometryDescription.uv_lock", (byte) 0);
         out.put("minecraft:item_visual.materialInstancesDescription.mappings", NbtMap.EMPTY);
-        out.put("minecraft:item_visual.materialInstancesDescription.materials", NbtMap.EMPTY);
-        out.put("minecraft:item_visual.materialInstancesDescription.materials.*.ambient_occlusion", 1.0f);
-        out.put("minecraft:item_visual.materialInstancesDescription.materials.*.packed_bools", (byte) 5);
-        out.put("minecraft:item_visual.materialInstancesDescription.materials.*.render_method", "opaque");
-        out.put("minecraft:item_visual.materialInstancesDescription.materials.*.texture", "paletter_tex");
-        out.put("minecraft:item_visual.materialInstancesDescription.materials.*.tint_method", "none");
         ItemVisual.Geometry v0 = c.geometry();
         Map<String, String> v1 = v0.boneVisibility();
         String v2 = v0.culling();
@@ -339,7 +347,11 @@ public final class BlockWire {
             out.put("minecraft:item_visual.geometryDescription.culling_shape", "");
         }
         String v5 = v0.identifier();
-        out.put("minecraft:item_visual.geometryDescription.identifier", v5);
+        if (v5 != null) {
+            out.put("minecraft:item_visual.geometryDescription.identifier", v5);
+        } else {
+            out.put("minecraft:item_visual.geometryDescription.identifier", "minecraft:geometry.full_block");
+        }
         ItemVisual.NWayVisualRotation v6 = v0.nWayVisualRotation();
         if (v6 != null) {
             String v7 = v6.x();
@@ -364,12 +376,6 @@ public final class BlockWire {
         out.put("minecraft:item_visual.geometryDescription.useBlockTypeLightAbsorption", (byte) 0);
         out.put("minecraft:item_visual.geometryDescription.uv_lock", (byte) 0);
         out.put("minecraft:item_visual.materialInstancesDescription.mappings", NbtMap.EMPTY);
-        out.put("minecraft:item_visual.materialInstancesDescription.materials", NbtMap.EMPTY);
-        out.put("minecraft:item_visual.materialInstancesDescription.materials.*.ambient_occlusion", 1.0f);
-        out.put("minecraft:item_visual.materialInstancesDescription.materials.*.packed_bools", (byte) 5);
-        out.put("minecraft:item_visual.materialInstancesDescription.materials.*.render_method", "opaque");
-        out.put("minecraft:item_visual.materialInstancesDescription.materials.*.texture", "paletter_tex");
-        out.put("minecraft:item_visual.materialInstancesDescription.materials.*.tint_method", "none");
         ItemVisual.Geometry v0 = c.geometry();
         Map<String, String> v1 = v0.boneVisibility();
         String v2 = v0.culling();
@@ -391,26 +397,30 @@ public final class BlockWire {
             out.put("minecraft:item_visual.geometryDescription.culling_shape", "");
         }
         String v5 = v0.identifier();
-        out.put("minecraft:item_visual.geometryDescription.identifier", v5);
+        if (v5 != null) {
+            out.put("minecraft:item_visual.geometryDescription.identifier", v5);
+        } else {
+            out.put("minecraft:item_visual.geometryDescription.identifier", "minecraft:geometry.full_block");
+        }
         ItemVisual.NWayVisualRotation v6 = v0.nWayVisualRotation();
         if (v6 != null) {
             String v7 = v6.x();
             if (v7 != null) {
                 out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.x", v7);
             } else {
-                out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.x", "");
+                out.remove("minecraft:item_visual.geometryDescription.n_way_visual_rotation.x");
             }
             String v8 = v6.y();
             if (v8 != null) {
                 out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.y", v8);
             } else {
-                out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.y", "");
+                out.remove("minecraft:item_visual.geometryDescription.n_way_visual_rotation.y");
             }
             String v9 = v6.z();
             if (v9 != null) {
                 out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.z", v9);
             } else {
-                out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.z", "");
+                out.remove("minecraft:item_visual.geometryDescription.n_way_visual_rotation.z");
             }
         } else {
             out.remove("minecraft:item_visual.geometryDescription.n_way_visual_rotation.x");
@@ -437,15 +447,27 @@ public final class BlockWire {
         for (LiquidDetection.DetectionRules e1 : v0) {
             WireNode n2 = out.element("minecraft:liquid_detection.detectionRules");
             n2.put("liquidType", "water");
-            n2.put("stopsLiquidFromDirection", (byte) 0);
             boolean v3 = e1.canContainLiquid();
             n2.put("canContainLiquid", Wire.bool(v3));
             LiquidDetection.LiquidType v4 = e1.liquidType();
             LiquidDetection.OnLiquidTouches v5 = e1.onLiquidTouches();
             n2.put("onLiquidTouches", v5.value());
-            boolean v6 = e1.useLiquidClipping();
-            n2.put("use_liquid_clipping", Wire.bool(v6));
-            Transforms.faceBits(ctx, n2, e1);
+            List<String> v6 = e1.stopsLiquidFlowingFromDirection();
+            int bits7 = 0;
+            for (String x8 : v6) {
+                bits7 |= switch (String.valueOf(x8)) {
+                            case "down" -> 1;
+                            case "east" -> 32;
+                            case "north" -> 4;
+                            case "south" -> 8;
+                            case "up" -> 2;
+                            case "west" -> 16;
+                            default -> 0;
+                        };
+            }
+            n2.put("stopsLiquidFromDirection", Wire.toByte(bits7));
+            boolean v9 = e1.useLiquidClipping();
+            n2.put("use_liquid_clipping", Wire.bool(v9));
         }
     }
 
@@ -470,27 +492,41 @@ public final class BlockWire {
         out.list("minecraft:placement_filter.conditions");
         for (PlacementFilter.Conditions e1 : v0) {
             WireNode n2 = out.element("minecraft:placement_filter.conditions");
-            List<PlacementFilter.BlockFilter> v3 = e1.blockFilter();
-            n2.list("block_filter");
-            for (PlacementFilter.BlockFilter e4 : v3) {
-                WireNode n5 = n2.element("block_filter");
-                String v6 = e4.name();
-                if (v6 != null) {
-                    n5.put("name", v6);
-                } else {
-                    n5.remove("name");
-                }
-                String v7 = e4.tags();
-                if (v7 != null) {
-                    n5.put("tags", v7);
-                    n5.put("tags_version", 13);
-                } else {
-                    n5.remove("tags");
-                    n5.remove("tags_version");
-                }
-                Transforms.blockDescriptorStates(ctx, n5, e4);
+            List<String> v3 = e1.allowedFaces();
+            int bits4 = 0;
+            for (String x5 : v3) {
+                bits4 |= switch (String.valueOf(x5)) {
+                            case "down" -> 1;
+                            case "east" -> 32;
+                            case "north" -> 4;
+                            case "south" -> 8;
+                            case "up" -> 2;
+                            case "west" -> 16;
+                            default -> 0;
+                        };
             }
-            Transforms.faceBits(ctx, n2, e1);
+            n2.put("allowed_faces", Wire.toByte(bits4));
+            n2.put("block_filter", Wire.EMPTY_LIST);
+            List<PlacementFilter.BlockFilter> v6 = e1.blockFilter();
+            n2.list("block_filter");
+            for (PlacementFilter.BlockFilter e7 : v6) {
+                WireNode n8 = n2.element("block_filter");
+                String v9 = e7.name();
+                if (v9 != null) {
+                    n8.put("name", v9);
+                } else {
+                    n8.remove("name");
+                }
+                String v10 = e7.tags();
+                if (v10 != null) {
+                    n8.put("tags", v10);
+                    n8.put("tags_version", 13);
+                } else {
+                    n8.remove("tags");
+                    n8.remove("tags_version");
+                }
+                Transforms.blockDescriptorStates(ctx, n8, e7);
+            }
         }
     }
 
@@ -546,21 +582,22 @@ public final class BlockWire {
     private static void redstoneProducer(RedstoneProducer c, WireContext ctx, WireNode out) {
         out.put("minecraft:redstone_producer.allowPowerDown", (byte) 1);
         out.put("minecraft:redstone_producer.allowPowerUp", (byte) 0);
-        int v0 = c.power();
-        out.put("minecraft:redstone_producer.power", Wire.toByte(v0));
-        RedstoneProducer.StronglyPoweredFace v1 = c.stronglyPoweredFace();
-        if (v1 != null) {
-            out.put("minecraft:redstone_producer.strongly_powered_face", v1.value());
+        List<RedstoneProducer.ConnectedFaces> v0 = c.connectedFaces();
+        out.put("minecraft:redstone_producer.connected_faces", Wire.strings(List.of("down", "up", "north", "south", "west", "east").stream().filter(v0.stream().map(x -> x.value()).toList()::contains).toList()));
+        int v1 = c.power();
+        out.put("minecraft:redstone_producer.power", Wire.toByte(v1));
+        RedstoneProducer.StronglyPoweredFace v2 = c.stronglyPoweredFace();
+        if (v2 != null) {
+            out.put("minecraft:redstone_producer.strongly_powered_face", v2.value());
         } else {
             out.remove("minecraft:redstone_producer.strongly_powered_face");
         }
-        Boolean v2 = c.transformRelative();
-        if (v2 != null) {
-            out.put("minecraft:redstone_producer.transform_relative", Wire.bool(v2));
+        Boolean v3 = c.transformRelative();
+        if (v3 != null) {
+            out.put("minecraft:redstone_producer.transform_relative", Wire.bool(v3));
         } else {
             out.put("minecraft:redstone_producer.transform_relative", (byte) 1);
         }
-        Transforms.faceList(ctx, out, c);
     }
 
     private static void replaceable(Replaceable c, WireContext ctx, WireNode out) {
@@ -596,9 +633,9 @@ public final class BlockWire {
     private static void transformation(Transformation c, WireContext ctx, WireNode out) {
         out.put("minecraft:transformation.hasJsonVersionBeforeValidation", (byte) 0);
         Transformation.Vec3 v0 = c.rotation();
-        out.put("minecraft:transformation.RX", Wire.toInt(((double) v0.x() / 90.0 + 0.0)));
-        out.put("minecraft:transformation.RY", Wire.toInt(((double) v0.y() / 90.0 + 0.0)));
-        out.put("minecraft:transformation.RZ", Wire.toInt(((double) v0.z() / 90.0 + 0.0)));
+        out.put("minecraft:transformation.RX", Wire.toInt(Math.floorMod(Math.round(((double) v0.x() / 90.0 + 0.0)), 4L)));
+        out.put("minecraft:transformation.RY", Wire.toInt(Math.floorMod(Math.round(((double) v0.y() / 90.0 + 0.0)), 4L)));
+        out.put("minecraft:transformation.RZ", Wire.toInt(Math.floorMod(Math.round(((double) v0.z() / 90.0 + 0.0)), 4L)));
         Transformation.Vec3 v1 = c.rotationPivot();
         out.put("minecraft:transformation.RXP", Wire.toFloat(v1.x()));
         out.put("minecraft:transformation.RYP", Wire.toFloat(v1.y()));

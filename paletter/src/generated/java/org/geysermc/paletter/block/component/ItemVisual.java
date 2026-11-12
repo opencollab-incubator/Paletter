@@ -216,7 +216,7 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
      *        geometry to use to render this block. This identifier must either match an existing geometry identifier in any
      *        of the loaded resource packs or be one of the currently supported Vanilla identifiers:
      *        "minecraft:geometry.full_block" or "minecraft:geometry.cross". Value must have at most 256 items. Add-on JSON
-     *        {@code identifier}. Required.
+     *        {@code identifier}. Optional (null: not set).
      * @param nWayVisualRotation Optional object that maps x/y/z axes to block state names that drive visual-only geometry rotation. Add-on
      *        JSON {@code n_way_visual_rotation}. Optional (null: not set).
      * @param uvLock A field that is either a Boolean or an array of strings, max size 64 strings. A field that is either a Boolean
@@ -226,11 +226,10 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
      */
     public record Geometry(@NonNull Map<String, String> boneVisibility, @Nullable String culling,
             @Nullable String cullingLayer, @Nullable String cullingShape,
-            @NonNull String identifier, @Nullable NWayVisualRotation nWayVisualRotation,
+            @Nullable String identifier, @Nullable NWayVisualRotation nWayVisualRotation,
             boolean uvLock) {
         public Geometry {
             boneVisibility = Check.copy(boneVisibility, "ItemVisual.Geometry.boneVisibility");
-            Objects.requireNonNull(identifier, "ItemVisual.Geometry.identifier");
         }
 
         /**
@@ -320,7 +319,7 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
             /**
              * Sets {@code identifier}.
              */
-            public @NonNull Builder identifier(@NonNull String identifier) {
+            public @NonNull Builder identifier(@Nullable String identifier) {
                 this.identifier = identifier;
                 return this;
             }
@@ -347,9 +346,6 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
              * @throws IllegalArgumentException if a value is out of range
              */
             public @NonNull Geometry build() {
-                if (identifier == null) {
-                    throw new IllegalStateException("ItemVisual.Geometry.identifier is required");
-                }
                 return new Geometry(boneVisibility, culling, cullingLayer, cullingShape, identifier, nWayVisualRotation, uvLock);
             }
         }

@@ -22,7 +22,7 @@ import org.geysermc.paletter.annotation.Experimental;
  *        <code>"all"</code>.
  * @param enabledDirections The cardinal directions that connection is enabled for. Note that if "none" is specified for
  *        "accepts_connections_from", this field will not be used. Add-on JSON {@code enabled_directions}. Default:
- *        <code>["south","north","east","west"]</code>. Compiled by the hand transform {@code Transforms.faceList}.
+ *        <code>["south","north","east","west"]</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_connection_rule?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:connection_rule</a>
  * @since 0.1.0
  */

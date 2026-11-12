@@ -88,8 +88,8 @@ public final class ItemCompiler {
                 properties.put("creative_group", namespaced(menu.group()));
             }
             if (menu.hiddenInCommands() != null) {
-                // 2 is "not set", the default
-                properties.put("hidden_in_commands", (byte) (menu.hiddenInCommands() ? 1 : 0));
+                // 1 hidden; BDS sends false as 2, like an unset value (mappings.json: item:description is_hidden_in_commands)
+                properties.put("hidden_in_commands", (byte) (menu.hiddenInCommands() ? 1 : 2));
             }
         } else if (creative != null) {
             properties.put("creative_category", creative.category().itemPropertyId());

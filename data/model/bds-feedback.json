@@ -57,6 +57,12 @@
     ]
   },
   "block:minecraft:destructible_by_mining": {
+    "base_time_to_destroy": [
+      "unknown"
+    ],
+    "item_specific_speeds[].destroy_speed": [
+      "required"
+    ],
     "item_specific_speeds[].item": [
       "required"
     ],
@@ -244,8 +250,7 @@
   },
   "block:minecraft:precipitation_interactions": {
     "precipitation_behavior": [
-      "required",
-      "values 'none', 'obstruct_rain', 'obstruct_rain_accumulate_snow', ... (1 others)"
+      "required"
     ]
   },
   "block:minecraft:random_offset": {
@@ -340,10 +345,7 @@
   },
   "block:trait:minecraft:placement_direction": {
     "": [
-      "constraint \"y_rotation_offset\" can only be used when \"minecraft:cardinal_direction\", \"minecraft:facing_direction\", and/or \"minecraft:sixteen_way_rotation\" are enabled in \"enabled_states\"."
-    ],
-    "blocks_to_corner_with[].enabled_states": [
-      "unknown"
+      "constraint \"blocks_to_corner_with\" can only be used when \"minecraft:corner_and_cardinal_direction\" is enabled in \"enabled_states\"."
     ],
     "enabled_states": [
       "minItems 1",

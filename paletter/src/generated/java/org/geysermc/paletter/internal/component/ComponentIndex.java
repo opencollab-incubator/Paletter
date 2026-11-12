@@ -194,7 +194,7 @@ public final class ComponentIndex {
         keys(DestructibleByExplosion.class, "explosion_resistance", "explosionResistance");
         FORMS.put(DestructibleByExplosion.class, Map.of("boolean", "enabled"));
         BLOCK.put("minecraft:destructible_by_mining", DestructibleByMining.class);
-        keys(DestructibleByMining.class, "base_time_to_destroy", "baseTimeToDestroy", "item_specific_speeds", "itemSpecificSpeeds", "seconds_to_destroy", "secondsToDestroy");
+        keys(DestructibleByMining.class, "item_specific_speeds", "itemSpecificSpeeds", "seconds_to_destroy", "secondsToDestroy");
         keys(DestructibleByMining.ItemSpecificSpeeds.class, "destroy_speed", "destroySpeed", "item", "item");
         FORMS.put(DestructibleByMining.class, Map.of("boolean", "enabled"));
         DESCRIPTORS.put(DestructibleByMining.ItemSpecificSpeeds.class, Map.of("item", "item"));

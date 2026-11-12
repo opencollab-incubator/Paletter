@@ -107,7 +107,6 @@ public record LiquidDetection(
      *        set for the <code>on_liquid_touches</code> field. Can be a list of the following directions: "up", "down",
      *        "north", "south", "east", "west". The default is an empty list; this means that liquid can flow out of all
      *        directions by default. Add-on JSON {@code stops_liquid_flowing_from_direction}. Default: <code>[]</code>.
-     *        Compiled by the hand transform {@code Transforms.faceBits}.
      * @param useLiquidClipping If true, the block uses its collision box to visually clip the liquid (reducing the visible water volume to
      *        match the block's shape). Whether this block uses the encompassing collider to visually clip the liquid. The
      *        encompassing collider is the smallest single AABB that contains all of the block's colliders. A liquid's base

@@ -18,9 +18,6 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  * Add-on JSON: {@code "minecraft:destructible_by_mining"}.
  * Compiled by the hand transform {@code Transforms.destructibleByMining}.
  *
- * @param baseTimeToDestroy Sets the number of server simulation ticks it takes to mine the block with base equipment. Greater numbers
- *        result in greater mining times. A negative number means the block can't be mined. Add-on JSON {@code
- *        base_time_to_destroy}. Default: <code>0</code>.
  * @param itemSpecificSpeeds Optional array of objects to describe item specific block destroy speeds, each object contains an 'item'
  *        ItemDescriptor and a 'destroy_speed' float. Optional array of objects to describe item specific block destroy
  *        speeds, each object contains an 'item' ItemDescriptor and a 'destroy_speed' float. This array currently
@@ -35,7 +32,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  * @since 0.1.0
  */
 @BedrockFormat("1.21.50")
-public record DestructibleByMining(float baseTimeToDestroy,
+public record DestructibleByMining(
         @Nullable List<DestructibleByMining.ItemSpecificSpeeds> itemSpecificSpeeds,
         float secondsToDestroy, @Nullable Boolean enabled) implements BlockComponent {
     /**
@@ -74,7 +71,6 @@ public record DestructibleByMining(float baseTimeToDestroy,
      */
     public @NonNull Builder toBuilder() {
         Builder builder = new Builder();
-        builder.baseTimeToDestroy = baseTimeToDestroy;
         builder.itemSpecificSpeeds = itemSpecificSpeeds;
         builder.secondsToDestroy = secondsToDestroy;
         builder.enabled = enabled;
@@ -85,8 +81,6 @@ public record DestructibleByMining(float baseTimeToDestroy,
      * Builds {@link DestructibleByMining}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable Float baseTimeToDestroy = 0.0f;
-
         private @Nullable List<ItemSpecificSpeeds> itemSpecificSpeeds;
 
         private @Nullable Float secondsToDestroy = 0.0f;
@@ -94,14 +88,6 @@ public record DestructibleByMining(float baseTimeToDestroy,
         private @Nullable Boolean enabled;
 
         private Builder() {
-        }
-
-        /**
-         * Sets {@code base_time_to_destroy}.
-         */
-        public @NonNull Builder baseTimeToDestroy(float baseTimeToDestroy) {
-            this.baseTimeToDestroy = baseTimeToDestroy;
-            return this;
         }
 
         /**
@@ -142,7 +128,7 @@ public record DestructibleByMining(float baseTimeToDestroy,
          * @throws IllegalArgumentException if a value is out of range
          */
         public @NonNull DestructibleByMining build() {
-            return new DestructibleByMining(baseTimeToDestroy, itemSpecificSpeeds, secondsToDestroy, enabled);
+            return new DestructibleByMining(itemSpecificSpeeds, secondsToDestroy, enabled);
         }
     }
 

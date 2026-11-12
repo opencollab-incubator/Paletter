@@ -571,14 +571,20 @@ public final class ItemWire {
     }
 
     private static void storageItem(StorageItem c, WireContext ctx, WireNode out) {
-        out.put("minecraft:storage_item.allowed_items", Wire.EMPTY_LIST);
-        out.put("minecraft:storage_item.banned_items", Wire.EMPTY_LIST);
         boolean v0 = c.allowNestedStorageItems();
         out.put("minecraft:storage_item.allow_nested_storage_items", Wire.bool(v0));
         List<String> v1 = c.allowedItems();
-        List<String> v2 = c.bannedItems();
-        int v3 = c.maxSlots();
-        out.put("minecraft:storage_item.max_slots", Wire.toInt(v3));
+        out.list("minecraft:storage_item.allowed_items");
+        for (String x2 : v1) {
+            out.element("minecraft:storage_item.allowed_items").put("name", x2);
+        }
+        List<String> v3 = c.bannedItems();
+        out.list("minecraft:storage_item.banned_items");
+        for (String x4 : v3) {
+            out.element("minecraft:storage_item.banned_items").put("name", x4);
+        }
+        int v5 = c.maxSlots();
+        out.put("minecraft:storage_item.max_slots", Wire.toInt(v5));
     }
 
     private static void storageWeightLimit(StorageWeightLimit c, WireContext ctx, WireNode out) {

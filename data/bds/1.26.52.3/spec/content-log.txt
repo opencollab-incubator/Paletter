@@ -1,22 +1,13 @@
 ERROR [Blocks] The bits to store state paletter:s are out of range. This state may not be applied properly.
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_10.json |  -> components -> minecraft:block_entity -> container -> title: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_11.json |  -> components -> minecraft:block_entity -> container -> title: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_12.json |  -> components -> minecraft:block_entity -> container -> title: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_13.json |  -> components -> minecraft:block_entity -> container -> slot_count: the input is outside of the accepted range [1, 54]
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_14.json |  -> components -> minecraft:block_entity -> container -> slot_count: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_15.json |  -> components -> minecraft:block_entity -> container -> title: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_16.json |  -> components -> minecraft:block_entity -> container -> slot_count: the input is outside of the accepted range [1, 54]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_17.json |  -> components -> minecraft:block_entity -> container -> title: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_18.json |  -> components -> minecraft:block_entity -> container -> title: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_19.json |  -> components -> minecraft:block_entity -> container -> title: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_2.json |  -> components -> minecraft:block_entity -> container -> title: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_20.json |  -> components -> minecraft:block_entity -> container -> title: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_21.json |  -> components -> minecraft:block_entity -> container -> title: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_4.json |  -> components -> minecraft:block_entity -> container -> slot_count: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_5.json |  -> components -> minecraft:block_entity -> container -> title: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_6.json |  -> components -> minecraft:block_entity -> container -> show_ui_on_interaction: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_6.json |  -> components -> minecraft:block_entity -> container -> title: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_7.json |  -> components -> minecraft:block_entity -> container -> show_ui_on_interaction: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_7.json |  -> components -> minecraft:block_entity -> container -> title: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_8.json |  -> components -> minecraft:block_entity -> container -> slot_count: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_entity_9.json |  -> components -> minecraft:block_entity -> container -> slot_count: the input is outside of the accepted range [1, 54]
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_2.json |  -> components -> minecraft:block_light_absorption: this component was found in the input, but is not present in the Schema
@@ -91,25 +82,13 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_colli
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_6.json |  -> components -> minecraft:collision_box: expected an array
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_6.json |  -> components -> minecraft:collision_box: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_6.json |  -> components -> minecraft:collision_box: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_connection_rule_6.json |  -> components -> minecraft:connection_rule -> enabled_directions: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_connection_rule_7.json |  -> components -> minecraft:connection_rule -> enabled_directions: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_connection_rule_8.json |  -> components -> minecraft:connection_rule -> enabled_directions: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_connection_rule_9.json |  -> components -> minecraft:connection_rule -> enabled_directions: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_connection_rule_13.json |  -> components -> minecraft:connection_rule -> enabled_directions: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_connection_rule_14.json |  -> components -> minecraft:connection_rule -> enabled_directions: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_connection_rule_15.json |  -> components -> minecraft:connection_rule -> enabled_directions: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_connection_rule_16.json |  -> components -> minecraft:connection_rule -> enabled_directions: expected an array
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_crafting_table_3.json |  -> components -> minecraft:crafting_table -> crafting_tags: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_description_10.json |  -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_description_11.json |  -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_description_13.json |  -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_description_14.json |  -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_description_15.json |  -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_description_16.json |  -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_description_2.json |  -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_description_4.json |  -> description -> menu_category -> category: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_description_5.json |  -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_description_6.json |  -> description -> menu_category -> category: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_description_6.json |  -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_description_7.json |  -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_description_8.json |  -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_description_9.json |  -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_2.json |  -> components -> minecraft:destroy_time: this component was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_3.json |  -> components -> minecraft:destroy_time: this component was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_4.json |  -> components -> minecraft:destroy_time: this component was found in the input, but is not present in the Schema
@@ -117,39 +96,10 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destr
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_explosion_11.json |  -> components -> minecraft:destructible_by_explosion: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_explosion_5.json |  -> components -> minecraft:destructible_by_explosion -> explosion_resistance: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_explosion_5.json |  -> components -> minecraft:destructible_by_explosion: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_10.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_10.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_10.json |  -> components -> minecraft:destructible_by_mining -> base_time_to_destroy: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_10.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_13.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_13.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_13.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_14.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_14.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_14.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_15.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_15.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_15.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> destroy_speed: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_15.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_16.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_16.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_16.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_17.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_17.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_17.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_18.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_18.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_18.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_19.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_19.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_19.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_2.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_2.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_2.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_20.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_20.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_20.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_21.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_21.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_21.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_22.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_22.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_24.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
@@ -184,39 +134,20 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destr
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_35.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_36.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_36.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_36.json |  -> components -> minecraft:destructible_by_mining -> seconds_to_destroy: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_36.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_37.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_37.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_37.json |  -> components -> minecraft:destructible_by_mining -> seconds_to_destroy: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_37.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_38.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_38.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_38.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_39.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_39.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_39.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_40.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_40.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_40.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_41.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_41.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_41.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_42.json |  -> components -> minecraft:destructible_by_mining -> seconds_to_destroy: the input must be a number >= 0
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_42.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_5.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_5.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_43.json |  -> components -> minecraft:destructible_by_mining -> seconds_to_destroy: the input must be a number >= 0
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_43.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_5.json |  -> components -> minecraft:destructible_by_mining -> base_time_to_destroy: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_5.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_6.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_6.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_6.json |  -> components -> minecraft:destructible_by_mining -> base_time_to_destroy: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_6.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_7.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_7.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_7.json |  -> components -> minecraft:destructible_by_mining -> base_time_to_destroy: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_7.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_8.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_8.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_8.json |  -> components -> minecraft:destructible_by_mining -> base_time_to_destroy: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_8.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_9.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_9.json |  -> components -> minecraft:destructible_by_mining -> item_specific_speeds[0] -> item[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_9.json |  -> components -> minecraft:destructible_by_mining -> base_time_to_destroy: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_9.json |  -> components -> minecraft:destructible_by_mining: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_8.json |  -> components -> minecraft:destruction_particles -> particle_count: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_11.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: expected an object
@@ -268,91 +199,20 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_frict
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_friction_6.json |  -> components -> minecraft:friction: the input is outside of the accepted range [0, 0.900000]
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_friction_7.json |  -> components -> minecraft:friction: the input is outside of the accepted range [0, 0.900000]
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_friction_8.json |  -> components -> minecraft:friction: the input is outside of the accepted range [0, 0.900000]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_10.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_10.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_10.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_10.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_11.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_11.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_11.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_11.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_12.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_12.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_12.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_12.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_13.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_13.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_13.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_13.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_14.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_14.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_14.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_14.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_15.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_15.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_15.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_15.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_16.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_16.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_16.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_16.json |  -> components -> minecraft:geometry -> identifier: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_16.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_17.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_17.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_17.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_17.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_18.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_18.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_18.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_18.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_19.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_19.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_19.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_19.json |  -> components -> minecraft:geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_19.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_2.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_2.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_2.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_2.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_20.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_20.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_20.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_20.json |  -> components -> minecraft:geometry -> n_way_visual_rotation: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_20.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_21.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_21.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_21.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_21.json |  -> components -> minecraft:geometry -> n_way_visual_rotation: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_21.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_22.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_22.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_22.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_22.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_23.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_23.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_23.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_23.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_23.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_23.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_24.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_24.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_24.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_24.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_24.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_24.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_25.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_25.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_25.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_25.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_27.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_27.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_27.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_27.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_28.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_28.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_28.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_28.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_29.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_29.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_29.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_29.json |  -> components -> minecraft:geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_7.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_7.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_7.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
@@ -361,10 +221,6 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geome
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_8.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_8.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_8.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_9.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_9.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_9.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_9.json |  -> components -> minecraft:geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_instrument_sound_2.json |  -> components -> minecraft:instrument_sound: expected object with at least 1 elements
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_10.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_10.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
@@ -374,48 +230,47 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_11.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_11.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_11.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_21.json |  -> components -> minecraft:item_visual -> geometry -> identifier: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_21.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_25.json |  -> components -> minecraft:item_visual -> geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_25.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_20.json |  -> components -> minecraft:item_visual -> geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_20.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_28.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_28.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_28.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_29.json |  -> components -> minecraft:item_visual -> material_instances: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_3.json |  -> components -> minecraft:item_visual -> geometry: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_36.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_36.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_36.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_37.json |  -> components -> minecraft:item_visual -> material_instances: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_6.json |  -> components -> minecraft:item_visual -> geometry -> identifier: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_6.json |  -> components -> minecraft:item_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_light_dampening_7.json |  -> components -> minecraft:light_dampening: the input must be a number <= 15
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_light_dampening_8.json |  -> components -> minecraft:light_dampening: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_light_emission_7.json |  -> components -> minecraft:light_emission: the input must be a number <= 15
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_light_emission_8.json |  -> components -> minecraft:light_emission: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_16.json |  -> components -> minecraft:liquid_detection -> detection_rules[0] -> stops_liquid_flowing_from_direction: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_19.json |  -> components -> minecraft:liquid_detection -> liquid_type: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_20.json |  -> components -> minecraft:liquid_detection -> liquid_type: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_21.json |  -> components -> minecraft:liquid_detection -> on_liquid_touches: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_22.json |  -> components -> minecraft:liquid_detection -> stops_liquid_flowing_from_direction: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_23.json |  -> components -> minecraft:liquid_detection -> stops_liquid_flowing_from_direction: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_24.json |  -> components -> minecraft:liquid_detection -> stops_liquid_flowing_from_direction: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_25.json |  -> components -> minecraft:liquid_detection -> use_liquid_clipping: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_26.json |  -> components -> minecraft:liquid_detection -> use_liquid_clipping: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_25.json |  -> components -> minecraft:liquid_detection -> detection_rules[0] -> stops_liquid_flowing_from_direction: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_28.json |  -> components -> minecraft:liquid_detection -> liquid_type: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_29.json |  -> components -> minecraft:liquid_detection -> liquid_type: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_3.json |  -> components -> minecraft:liquid_detection -> can_contain_liquid: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_30.json |  -> components -> minecraft:liquid_detection -> on_liquid_touches: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_31.json |  -> components -> minecraft:liquid_detection -> stops_liquid_flowing_from_direction: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_32.json |  -> components -> minecraft:liquid_detection -> stops_liquid_flowing_from_direction: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_33.json |  -> components -> minecraft:liquid_detection -> stops_liquid_flowing_from_direction: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_34.json |  -> components -> minecraft:liquid_detection -> stops_liquid_flowing_from_direction: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_35.json |  -> components -> minecraft:liquid_detection -> stops_liquid_flowing_from_direction: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_36.json |  -> components -> minecraft:liquid_detection -> stops_liquid_flowing_from_direction: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_37.json |  -> components -> minecraft:liquid_detection -> stops_liquid_flowing_from_direction: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_38.json |  -> components -> minecraft:liquid_detection -> stops_liquid_flowing_from_direction: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_39.json |  -> components -> minecraft:liquid_detection -> stops_liquid_flowing_from_direction: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_4.json |  -> components -> minecraft:liquid_detection -> can_contain_liquid: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_40.json |  -> components -> minecraft:liquid_detection -> use_liquid_clipping: this member was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_41.json |  -> components -> minecraft:liquid_detection -> use_liquid_clipping: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_5.json |  -> components -> minecraft:liquid_detection -> detection_rules: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_6.json |  -> components -> minecraft:liquid_detection -> detection_rules: expected array with at least 1 elements
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_8.json |  -> components -> minecraft:liquid_detection -> detection_rules: too many input elements, expected no more than 1
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_2.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_2.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_3.json |  -> components -> minecraft:map_color -> color: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_3.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_3.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_4.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_4.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_5.json |  -> components -> minecraft:map_color -> color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_5.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_7.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_6.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_a'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_6.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_7.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_b'
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_7.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_8.json |  -> components -> minecraft:map_color -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_b'
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_map_color_8.json |  -> components -> minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_115.json |  -> components -> minecraft:material_instances -> east -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_115.json |  -> components -> minecraft:material_instances -> east: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_116.json |  -> components -> minecraft:material_instances -> east -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
@@ -505,21 +360,20 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_permu
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_permutations_11.json |  -> permutations[0] -> components: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_permutations_6.json |  -> permutations[0] -> condition: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_permutations_9.json |  -> permutations[0] -> component: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_10.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_11.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_12.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_18.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter[0] -> states: one or more block states are not valid Vanilla states; block filter entries cannot use custom block states.
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_18.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter[0]: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_19.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter[0] -> states: one or more block states are not valid Vanilla states; block filter entries cannot use custom block states.
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_19.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter[0]: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_20.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter[0] -> states: one or more block states are not valid Vanilla states; block filter entries cannot use custom block states.
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_20.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter[0]: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_21.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter[0] -> states: one or more block states are not valid Vanilla states; block filter entries cannot use custom block states.
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_21.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter[0]: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_6.json |  -> components -> minecraft:placement_filter -> conditions[0] -> allowed_faces: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_precipitation_interactions_2.json |  -> components -> minecraft:precipitation_interactions -> precipitation_behavior: This value is bound to 'Precipitation Behavior' and expects one of the following strings: 'none', 'obstruct_rain', 'obstruct_rain_accumulate_snow', ... (1 others). Found: 'accumulate snow'
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_precipitation_interactions_3.json |  -> components -> minecraft:precipitation_interactions -> precipitation_behavior: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_precipitation_interactions_7.json |  -> components: Blocks with precipitation interactions "snowlogging" must have collision box disabled
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_15.json |  -> components -> minecraft:placement_filter -> conditions[0] -> allowed_faces: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_19.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_20.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_21.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_27.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter[0] -> states: one or more block states are not valid Vanilla states; block filter entries cannot use custom block states.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_27.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter[0]: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_28.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter[0] -> states: one or more block states are not valid Vanilla states; block filter entries cannot use custom block states.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_28.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter[0]: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_29.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter[0] -> states: one or more block states are not valid Vanilla states; block filter entries cannot use custom block states.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_29.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter[0]: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_30.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter[0] -> states: one or more block states are not valid Vanilla states; block filter entries cannot use custom block states.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_30.json |  -> components -> minecraft:placement_filter -> conditions[0] -> block_filter[0]: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_precipitation_interactions_2.json |  -> components -> minecraft:precipitation_interactions -> precipitation_behavior: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_precipitation_interactions_6.json |  -> components: Blocks with precipitation interactions "snowlogging" must have collision box disabled
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_10.json |  -> components -> minecraft:queued_ticking: member "minecraft:queued_ticking" is deprecated
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_2.json |  -> components -> minecraft:queued_ticking: member "minecraft:queued_ticking" is deprecated
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_3.json |  -> components -> minecraft:queued_ticking: member "minecraft:queued_ticking" is deprecated
@@ -577,24 +431,18 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_rando
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_consumer_10.json |  -> components -> minecraft:redstone_consumer -> min_power: the input must be a number <= 15
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_consumer_7.json |  -> components -> minecraft:redstone_consumer -> min_power: the input must be a number <= 15
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_consumer_8.json |  -> components -> minecraft:redstone_consumer -> min_power: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_14.json |  -> components -> minecraft:redstone_producer -> power: the input must be a number <= 15
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_15.json |  -> components -> minecraft:redstone_producer -> power: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_17.json |  -> components -> minecraft:redstone_producer -> power: the input must be a number <= 15
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_3.json |  -> components -> minecraft:redstone_producer -> connected_faces: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_4.json |  -> components -> minecraft:redstone_producer -> connected_faces: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_5.json |  -> components -> minecraft:redstone_producer -> connected_faces: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_6.json |  -> components -> minecraft:redstone_producer -> connected_faces: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_7.json |  -> components -> minecraft:redstone_producer -> connected_faces: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_8.json |  -> components -> minecraft:redstone_producer -> connected_faces: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_9.json |  -> components -> minecraft:redstone_producer -> power: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_12.json |  -> components -> minecraft:redstone_producer -> connected_faces: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_13.json |  -> components -> minecraft:redstone_producer -> connected_faces: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_14.json |  -> components -> minecraft:redstone_producer -> connected_faces: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_15.json |  -> components -> minecraft:redstone_producer -> connected_faces: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_16.json |  -> components -> minecraft:redstone_producer -> connected_faces: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_17.json |  -> components -> minecraft:redstone_producer -> connected_faces: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_18.json |  -> components -> minecraft:redstone_producer -> power: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_23.json |  -> components -> minecraft:redstone_producer -> power: the input must be a number <= 15
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_24.json |  -> components -> minecraft:redstone_producer -> power: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_redstone_producer_26.json |  -> components -> minecraft:redstone_producer -> power: the input must be a number <= 15
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_selection_box_10.json |  -> components -> minecraft:selection_box: Invalid box size"origin" + "size", must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,16,8)
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_selection_box_10.json |  -> components -> minecraft:selection_box: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_selection_box_5.json |  -> components -> minecraft:selection_box: Invalid box size"origin" + "size", must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,16,8)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_selection_box_5.json |  -> components -> minecraft:selection_box: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_selection_box_6.json |  -> components -> minecraft:selection_box: Invalid box size"origin" + "size", must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,16,8)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_selection_box_6.json |  -> components -> minecraft:selection_box: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_selection_box_7.json |  -> components -> minecraft:selection_box: Invalid box size"origin" + "size", must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,16,8)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_selection_box_7.json |  -> components -> minecraft:selection_box: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_selection_box_8.json |  -> components -> minecraft:selection_box -> origin: Expected [x, y, z].
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_selection_box_8.json |  -> components -> minecraft:selection_box: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_11.json |  -> description -> states -> paletter:s: expected an object
@@ -604,9 +452,9 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_state
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_17.json |  -> description -> states -> paletter:s: too many input elements, expected no more than 2
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_17.json |  -> description -> states -> paletter:s[0]: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_17.json |  -> description -> states -> paletter:s[0]: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_18.json |  -> description -> states -> paletter:s: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_18.json |  -> description -> states -> paletter:s: expected array with at least 1 elements
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_18.json |  -> description -> states -> paletter:s: expected array with at least 2 elements
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_20.json |  -> description -> states -> paletter:s: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_20.json |  -> description -> states -> paletter:s: expected array with at least 1 elements
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_20.json |  -> description -> states -> paletter:s: expected array with at least 2 elements
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_4.json |  -> description -> states -> paletter:s: expected an array
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_4.json |  -> description -> states -> paletter:s: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_5.json |  -> description -> states -> paletter:s: expected an array
@@ -622,6 +470,8 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_state
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_states_9.json |  -> description -> states -> paletter:s[0]: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_support_3.json |  -> components -> minecraft:support -> shape: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_tick_10.json |  -> components -> minecraft:tick -> interval_range: wrong number of elements in fixed size container, expected exactly 2
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_tick_11.json |  -> components -> minecraft:tick -> interval_range: wrong number of elements in fixed size container, expected exactly 2
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_tick_12.json |  -> components -> minecraft:tick -> interval_range: wrong number of elements in fixed size container, expected exactly 2
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_tick_3.json |  -> components -> minecraft:tick -> interval_range: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_tick_4.json |  -> components -> minecraft:tick -> interval_range: wrong number of elements in fixed size container, expected exactly 2
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_tick_5.json |  -> components -> minecraft:tick -> interval_range: wrong number of elements in fixed size container, expected exactly 2
@@ -635,28 +485,21 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_multi_block_9.json |  -> description -> traits -> minecraft:multi_block -> direction: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_direction_15.json |  -> description -> traits -> minecraft:placement_direction -> y_rotation_offset: the input is outside of the accepted range [0, 360]
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_direction_17.json |  -> description -> traits -> minecraft:placement_direction -> y_rotation_offset: the input is outside of the accepted range [0, 360]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_direction_19.json |  -> description -> traits -> minecraft:placement_direction: "y_rotation_offset" can only be used when "minecraft:cardinal_direction", "minecraft:facing_direction", and/or "minecraft:sixteen_way_rotation" are enabled in "enabled_states".
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_direction_20.json |  -> description -> traits -> minecraft:placement_direction -> blocks_to_corner_with[0] -> enabled_states: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_direction_20.json |  -> description -> traits -> minecraft:placement_direction -> blocks_to_corner_with[0]: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_direction_21.json |  -> description -> traits -> minecraft:placement_direction -> blocks_to_corner_with[0] -> enabled_states: this member was found in the input, but is not present in the Schema
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_direction_21.json |  -> description -> traits -> minecraft:placement_direction -> blocks_to_corner_with[0]: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_direction_20.json |  -> description -> traits -> minecraft:placement_direction: "blocks_to_corner_with" can only be used when "minecraft:corner_and_cardinal_direction" is enabled in "enabled_states".
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_direction_21.json |  -> description -> traits -> minecraft:placement_direction: "blocks_to_corner_with" can only be used when "minecraft:corner_and_cardinal_direction" is enabled in "enabled_states".
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_direction_3.json |  -> description -> traits -> minecraft:placement_direction -> enabled_states: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_direction_4.json |  -> description -> traits -> minecraft:placement_direction -> enabled_states: expected array with at least 1 elements
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_direction_6.json |  -> description -> traits -> minecraft:placement_direction: "y_rotation_offset" can only be used when "minecraft:cardinal_direction", "minecraft:facing_direction", and/or "minecraft:sixteen_way_rotation" are enabled in "enabled_states".
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_position_3.json |  -> description -> traits -> minecraft:placement_position -> enabled_states: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trait_placement_position_4.json |  -> description -> traits -> minecraft:placement_position -> enabled_states: expected array with at least 1 elements
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_101.json |  -> components -> minecraft:transformation -> translation: Expected [x, y, z].
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_102.json |  -> components -> minecraft:transformation -> translation: Expected [x, y, z].
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_103.json |  -> components -> minecraft:transformation -> translation: Expected [x, y, z].
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_12.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_13.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_11.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_14.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_15.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_153.json |  -> components -> minecraft:transformation -> translation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_154.json |  -> components -> minecraft:transformation -> translation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_155.json |  -> components -> minecraft:transformation -> translation: Expected [x, y, z].
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_16.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_17.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_18.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_19.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_20.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_21.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_22.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_24.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_25.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
@@ -664,12 +507,19 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trans
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_27.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_28.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_3.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_32.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_34.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_35.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_36.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_37.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_38.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_4.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_42.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_5.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_52.json |  -> components -> minecraft:transformation -> scale: Expected [x, y, z].
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_53.json |  -> components -> minecraft:transformation -> scale: Expected [x, y, z].
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_54.json |  -> components -> minecraft:transformation -> scale: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_78.json |  -> components -> minecraft:transformation -> scale: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_79.json |  -> components -> minecraft:transformation -> scale: Expected [x, y, z].
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_8.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_80.json |  -> components -> minecraft:transformation -> scale: Expected [x, y, z].
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_9.json |  -> components -> minecraft:transformation -> rotation: Expected [x, y, z].
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_2.json |  -> components -> minecraft:unit_cube: member "minecraft:unit_cube" is deprecated
 ERROR [Components] MaterialInstances can't mix and match opaque and transparent materials.
@@ -714,7 +564,6 @@ ERROR [Item]  'paletter:damage_8': Failed to parse field ' -> components -> mine
 ERROR [Item]  'paletter:damage_8': Failed to parse field ' -> components -> minecraft:damage: the input is outside of the accepted range [0, 32767]'
 ERROR [Item]  'paletter:damage_absorption_3': Failed to parse field ' -> components -> minecraft:damage_absorption -> absorbable_causes: missing required field'
 ERROR [Item]  'paletter:damage_absorption_4': Failed to parse field ' -> components -> minecraft:damage_absorption -> absorbable_causes: expected array with at least 1 elements'
-ERROR [Item]  'paletter:description_10': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
 ERROR [Item]  'paletter:description_12': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
 ERROR [Item]  'paletter:description_13': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
 ERROR [Item]  'paletter:description_14': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
@@ -723,7 +572,6 @@ ERROR [Item]  'paletter:description_16': Failed to parse field ' -> description 
 ERROR [Item]  'paletter:description_17': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
 ERROR [Item]  'paletter:description_18': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
 ERROR [Item]  'paletter:description_19': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
-ERROR [Item]  'paletter:description_2': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
 ERROR [Item]  'paletter:description_20': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
 ERROR [Item]  'paletter:description_21': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
 ERROR [Item]  'paletter:description_22': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
@@ -732,14 +580,6 @@ ERROR [Item]  'paletter:description_24': Failed to parse field ' -> description 
 ERROR [Item]  'paletter:description_25': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
 ERROR [Item]  'paletter:description_26': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
 ERROR [Item]  'paletter:description_27': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
-ERROR [Item]  'paletter:description_28': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
-ERROR [Item]  'paletter:description_29': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
-ERROR [Item]  'paletter:description_30': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
-ERROR [Item]  'paletter:description_5': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
-ERROR [Item]  'paletter:description_6': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
-ERROR [Item]  'paletter:description_7': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
-ERROR [Item]  'paletter:description_8': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
-ERROR [Item]  'paletter:description_9': Failed to parse field ' -> description -> menu_category -> group: string must be prefixed with a namespace (eg. namespace:value)'
 ERROR [Item]  'paletter:digger_10': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> block: Block name is missing in block descriptor'
 ERROR [Item]  'paletter:digger_10': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> block: invalid string'
 ERROR [Item]  'paletter:digger_17': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> block -> states: one or more block states are not valid Vanilla states; block filter entries cannot use custom block states.'
@@ -768,7 +608,6 @@ ERROR [Item]  'paletter:durability_sensor_32': Failed to parse field ' -> compon
 ERROR [Item]  'paletter:durability_sensor_33': Failed to parse field ' -> components -> minecraft:durability_sensor -> sound_event: this member was found in the input, but is not present in the Schema'
 ERROR [Item]  'paletter:durability_sensor_4': Failed to parse field ' -> components -> minecraft:durability_sensor -> durability_thresholds: expected array with at least 1 elements'
 ERROR [Item]  'paletter:dyeable_11': Failed to parse field ' -> components -> minecraft:dyeable -> default_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).'
-ERROR [Item]  'paletter:dyeable_4': Failed to parse field ' -> components -> minecraft:dyeable -> default_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).'
 ERROR [Item]  'paletter:dyeable_5': Failed to parse field ' -> components -> minecraft:dyeable -> default_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).'
 ERROR [Item]  'paletter:dyeable_6': Failed to parse field ' -> components -> minecraft:dyeable -> default_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).'
 ERROR [Item]  'paletter:dyeable_7': Failed to parse field ' -> components -> minecraft:dyeable -> default_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).'
@@ -814,10 +653,10 @@ ERROR [Item]  'paletter:fuel_8': Failed to parse field ' -> components -> minecr
 ERROR [Item]  'paletter:fuel_8': Failed to parse field ' -> components -> minecraft:fuel: the input must be a number >= 0.050000'
 ERROR [Item]  'paletter:icon_10': Failed to parse field ' -> components -> minecraft:icon -> texture: this member was found in the input, but is not present in the Schema'
 ERROR [Item]  'paletter:icon_10': Failed to parse field ' -> components -> minecraft:icon: invalid string'
-ERROR [Item]  'paletter:icon_7': Failed to parse field ' -> components -> minecraft:icon -> texture: this member was found in the input, but is not present in the Schema'
-ERROR [Item]  'paletter:icon_7': Failed to parse field ' -> components -> minecraft:icon: invalid string'
-ERROR [Item]  'paletter:icon_8': Failed to parse field ' -> components -> minecraft:icon -> texture: this member was found in the input, but is not present in the Schema'
-ERROR [Item]  'paletter:icon_8': Failed to parse field ' -> components -> minecraft:icon: invalid string'
+ERROR [Item]  'paletter:icon_11': Failed to parse field ' -> components -> minecraft:icon -> texture: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:icon_11': Failed to parse field ' -> components -> minecraft:icon: invalid string'
+ERROR [Item]  'paletter:icon_12': Failed to parse field ' -> components -> minecraft:icon -> texture: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:icon_12': Failed to parse field ' -> components -> minecraft:icon: invalid string'
 ERROR [Item]  'paletter:icon_9': Failed to parse field ' -> components -> minecraft:icon -> texture: this member was found in the input, but is not present in the Schema'
 ERROR [Item]  'paletter:icon_9': Failed to parse field ' -> components -> minecraft:icon: invalid string'
 ERROR [Item]  'paletter:interact_button_2': Failed to parse field ' -> components -> minecraft:interact_button: invalid numeric value'
@@ -885,16 +724,16 @@ ERROR [Item]  'paletter:seed_6': Failed to parse field ' -> components -> minecr
 ERROR [Item]  'paletter:seed_7': Failed to parse field ' -> components -> minecraft:seed: this component was found in the input, but is not present in the Schema'
 ERROR [Item]  'paletter:seed_8': Failed to parse field ' -> components -> minecraft:seed: this component was found in the input, but is not present in the Schema'
 ERROR [Item]  'paletter:seed_9': Failed to parse field ' -> components -> minecraft:seed: this component was found in the input, but is not present in the Schema'
-ERROR [Item]  'paletter:storage_item_10': Failed to parse field ' -> components -> minecraft:storage_item -> banned_items: expected an array'
-ERROR [Item]  'paletter:storage_item_11': Failed to parse field ' -> components -> minecraft:storage_item -> banned_items: expected an array'
-ERROR [Item]  'paletter:storage_item_12': Failed to parse field ' -> components -> minecraft:storage_item -> banned_items: expected an array'
-ERROR [Item]  'paletter:storage_item_13': Failed to parse field ' -> components -> minecraft:storage_item -> banned_items: expected an array'
-ERROR [Item]  'paletter:storage_item_14': Failed to parse field ' -> components -> minecraft:storage_item -> banned_items: expected an array'
-ERROR [Item]  'paletter:storage_item_20': Failed to parse field ' -> components -> minecraft:storage_item -> max_slots: the input must be a number <= 64'
-ERROR [Item]  'paletter:storage_item_22': Failed to parse field ' -> components -> minecraft:storage_item -> max_slots: the input must be a number <= 64'
-ERROR [Item]  'paletter:storage_item_5': Failed to parse field ' -> components -> minecraft:storage_item -> allowed_items: expected an array'
-ERROR [Item]  'paletter:storage_item_6': Failed to parse field ' -> components -> minecraft:storage_item -> allowed_items: expected an array'
-ERROR [Item]  'paletter:storage_item_7': Failed to parse field ' -> components -> minecraft:storage_item -> allowed_items: expected an array'
+ERROR [Item]  'paletter:storage_item_10': Failed to parse field ' -> components -> minecraft:storage_item -> allowed_items: expected an array'
+ERROR [Item]  'paletter:storage_item_11': Failed to parse field ' -> components -> minecraft:storage_item -> allowed_items: expected an array'
+ERROR [Item]  'paletter:storage_item_12': Failed to parse field ' -> components -> minecraft:storage_item -> allowed_items: expected an array'
+ERROR [Item]  'paletter:storage_item_16': Failed to parse field ' -> components -> minecraft:storage_item -> banned_items: expected an array'
+ERROR [Item]  'paletter:storage_item_17': Failed to parse field ' -> components -> minecraft:storage_item -> banned_items: expected an array'
+ERROR [Item]  'paletter:storage_item_18': Failed to parse field ' -> components -> minecraft:storage_item -> banned_items: expected an array'
+ERROR [Item]  'paletter:storage_item_19': Failed to parse field ' -> components -> minecraft:storage_item -> banned_items: expected an array'
+ERROR [Item]  'paletter:storage_item_20': Failed to parse field ' -> components -> minecraft:storage_item -> banned_items: expected an array'
+ERROR [Item]  'paletter:storage_item_26': Failed to parse field ' -> components -> minecraft:storage_item -> max_slots: the input must be a number <= 64'
+ERROR [Item]  'paletter:storage_item_28': Failed to parse field ' -> components -> minecraft:storage_item -> max_slots: the input must be a number <= 64'
 ERROR [Item]  'paletter:storage_item_8': Failed to parse field ' -> components -> minecraft:storage_item -> allowed_items: expected an array'
 ERROR [Item]  'paletter:storage_item_9': Failed to parse field ' -> components -> minecraft:storage_item -> allowed_items: expected an array'
 ERROR [Item]  'paletter:storage_weight_limit_10': Failed to parse field ' -> components -> minecraft:storage_weight_limit -> max_weight_limit: the input must be a number <= 64'
@@ -973,7 +812,6 @@ ERROR [Item]  Error Parsing Item 'paletter:damage_17':
 ERROR [Item]  Error Parsing Item 'paletter:damage_8':
 ERROR [Item]  Error Parsing Item 'paletter:damage_absorption_3':
 ERROR [Item]  Error Parsing Item 'paletter:damage_absorption_4':
-ERROR [Item]  Error Parsing Item 'paletter:description_10':
 ERROR [Item]  Error Parsing Item 'paletter:description_12':
 ERROR [Item]  Error Parsing Item 'paletter:description_13':
 ERROR [Item]  Error Parsing Item 'paletter:description_14':
@@ -982,7 +820,6 @@ ERROR [Item]  Error Parsing Item 'paletter:description_16':
 ERROR [Item]  Error Parsing Item 'paletter:description_17':
 ERROR [Item]  Error Parsing Item 'paletter:description_18':
 ERROR [Item]  Error Parsing Item 'paletter:description_19':
-ERROR [Item]  Error Parsing Item 'paletter:description_2':
 ERROR [Item]  Error Parsing Item 'paletter:description_20':
 ERROR [Item]  Error Parsing Item 'paletter:description_21':
 ERROR [Item]  Error Parsing Item 'paletter:description_22':
@@ -991,14 +828,6 @@ ERROR [Item]  Error Parsing Item 'paletter:description_24':
 ERROR [Item]  Error Parsing Item 'paletter:description_25':
 ERROR [Item]  Error Parsing Item 'paletter:description_26':
 ERROR [Item]  Error Parsing Item 'paletter:description_27':
-ERROR [Item]  Error Parsing Item 'paletter:description_28':
-ERROR [Item]  Error Parsing Item 'paletter:description_29':
-ERROR [Item]  Error Parsing Item 'paletter:description_30':
-ERROR [Item]  Error Parsing Item 'paletter:description_5':
-ERROR [Item]  Error Parsing Item 'paletter:description_6':
-ERROR [Item]  Error Parsing Item 'paletter:description_7':
-ERROR [Item]  Error Parsing Item 'paletter:description_8':
-ERROR [Item]  Error Parsing Item 'paletter:description_9':
 ERROR [Item]  Error Parsing Item 'paletter:digger_10':
 ERROR [Item]  Error Parsing Item 'paletter:digger_17':
 ERROR [Item]  Error Parsing Item 'paletter:digger_18':
@@ -1021,7 +850,6 @@ ERROR [Item]  Error Parsing Item 'paletter:durability_sensor_32':
 ERROR [Item]  Error Parsing Item 'paletter:durability_sensor_33':
 ERROR [Item]  Error Parsing Item 'paletter:durability_sensor_4':
 ERROR [Item]  Error Parsing Item 'paletter:dyeable_11':
-ERROR [Item]  Error Parsing Item 'paletter:dyeable_4':
 ERROR [Item]  Error Parsing Item 'paletter:dyeable_5':
 ERROR [Item]  Error Parsing Item 'paletter:dyeable_6':
 ERROR [Item]  Error Parsing Item 'paletter:dyeable_7':
@@ -1053,8 +881,8 @@ ERROR [Item]  Error Parsing Item 'paletter:fuel_17':
 ERROR [Item]  Error Parsing Item 'paletter:fuel_3':
 ERROR [Item]  Error Parsing Item 'paletter:fuel_8':
 ERROR [Item]  Error Parsing Item 'paletter:icon_10':
-ERROR [Item]  Error Parsing Item 'paletter:icon_7':
-ERROR [Item]  Error Parsing Item 'paletter:icon_8':
+ERROR [Item]  Error Parsing Item 'paletter:icon_11':
+ERROR [Item]  Error Parsing Item 'paletter:icon_12':
 ERROR [Item]  Error Parsing Item 'paletter:icon_9':
 ERROR [Item]  Error Parsing Item 'paletter:interact_button_2':
 ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_102':
@@ -1116,13 +944,13 @@ ERROR [Item]  Error Parsing Item 'paletter:seed_9':
 ERROR [Item]  Error Parsing Item 'paletter:storage_item_10':
 ERROR [Item]  Error Parsing Item 'paletter:storage_item_11':
 ERROR [Item]  Error Parsing Item 'paletter:storage_item_12':
-ERROR [Item]  Error Parsing Item 'paletter:storage_item_13':
-ERROR [Item]  Error Parsing Item 'paletter:storage_item_14':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_16':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_17':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_18':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_19':
 ERROR [Item]  Error Parsing Item 'paletter:storage_item_20':
-ERROR [Item]  Error Parsing Item 'paletter:storage_item_22':
-ERROR [Item]  Error Parsing Item 'paletter:storage_item_5':
-ERROR [Item]  Error Parsing Item 'paletter:storage_item_6':
-ERROR [Item]  Error Parsing Item 'paletter:storage_item_7':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_26':
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_28':
 ERROR [Item]  Error Parsing Item 'paletter:storage_item_8':
 ERROR [Item]  Error Parsing Item 'paletter:storage_item_9':
 ERROR [Item]  Error Parsing Item 'paletter:storage_weight_limit_10':
@@ -1173,6 +1001,8 @@ ERROR [Molang] paletter_a | Error: unknown token: paletter_a
 ERROR [Molang] paletter_a | unrecognized token: paletter_a
 ERROR [Molang] paletter_b | Error: unknown token: paletter_b
 ERROR [Molang] paletter_b | unrecognized token: paletter_b
+ERROR [VoxelShape] Voxel shape with name "paletter_a" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.
+ERROR [VoxelShape] Voxel shape with name "paletter_b" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.
 WARN [Components] All MaterialInstances must use the same render_method for a given block. This may create rendering issues otherwise.
 WARN [Item] "minecraft:block_placer": Item identifier paletter:block_placer_10 does not match the block identifier minecraft:dirt. Cannot replace the block item.
 WARN [Json] upgrade items/seed_10.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"

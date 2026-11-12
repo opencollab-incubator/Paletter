@@ -91,19 +91,49 @@ public final class TraitWire {
         out.put("blocks_to_corner_with", Wire.EMPTY_LIST);
         out.put("enabled_states.sixteen_way_rotation", (byte) 0);
         out.put("name", "minecraft:placement_direction");
-        Float v0 = c.yRotationOffset();
-        if (v0 != null) {
-            out.put("y_rotation_offset", Wire.toFloat(v0));
+        List<PlacementDirection.EnabledStates> v0 = c.enabledStates();
+        int bits1 = 0;
+        for (PlacementDirection.EnabledStates x2 : v0) {
+            bits1 |= switch (x2.value()) {
+                        case "minecraft:cardinal_direction" -> 1;
+                        case "minecraft:corner_and_cardinal_direction" -> 0;
+                        case "minecraft:facing_direction" -> 0;
+                        default -> 0;
+                    };
+        }
+        out.put("enabled_states.cardinal_direction", Wire.toByte(bits1));
+        int bits3 = 0;
+        for (PlacementDirection.EnabledStates x4 : v0) {
+            bits3 |= switch (x4.value()) {
+                        case "minecraft:cardinal_direction" -> 0;
+                        case "minecraft:corner_and_cardinal_direction" -> 1;
+                        case "minecraft:facing_direction" -> 0;
+                        default -> 0;
+                    };
+        }
+        out.put("enabled_states.corner_and_cardinal_direction", Wire.toByte(bits3));
+        int bits5 = 0;
+        for (PlacementDirection.EnabledStates x6 : v0) {
+            bits5 |= switch (x6.value()) {
+                        case "minecraft:cardinal_direction" -> 0;
+                        case "minecraft:corner_and_cardinal_direction" -> 0;
+                        case "minecraft:facing_direction" -> 1;
+                        default -> 0;
+                    };
+        }
+        out.put("enabled_states.facing_direction", Wire.toByte(bits5));
+        Float v7 = c.yRotationOffset();
+        if (v7 != null) {
+            out.put("y_rotation_offset", Wire.toFloat(v7));
         } else {
             out.put("y_rotation_offset", 0.0f);
         }
-        List<PlacementDirection.BlocksToCornerWith> v1 = c.blocksToCornerWith();
-        if (v1 != null) {
-            if (!v1.isEmpty()) {
+        List<PlacementDirection.BlocksToCornerWith> v8 = c.blocksToCornerWith();
+        if (v8 != null) {
+            if (!v8.isEmpty()) {
                 ctx.drop(PlacementDirection.NAME, "blocks_to_corner_with has no known wire mapping");
             }
         }
-        Transforms.enabledStateFlags(ctx, out, c);
     }
 
     private static void placementPosition(PlacementPosition c, WireContext ctx, WireNode out) {
