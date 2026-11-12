@@ -6,19 +6,14 @@ import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.paletter.PaletteReport;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.CustomBlock;
-import org.geysermc.paletter.block.component.BlockEntity;
 import org.geysermc.paletter.block.component.CollisionBox;
-import org.geysermc.paletter.block.component.ConnectionRule;
 import org.geysermc.paletter.block.component.DestructibleByMining;
 import org.geysermc.paletter.block.component.EmbeddedVisual;
 import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.block.component.ItemVisual;
 import org.geysermc.paletter.block.component.LightEmission;
-import org.geysermc.paletter.block.component.LiquidDetection;
 import org.geysermc.paletter.block.component.MaterialInstances;
-import org.geysermc.paletter.block.component.PlacementDirection;
 import org.geysermc.paletter.block.component.PlacementFilter;
-import org.geysermc.paletter.block.component.RedstoneProducer;
 import org.geysermc.paletter.block.component.SelectionBox;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.item.component.BlockPlacer;
@@ -304,31 +299,6 @@ class TransformsTest {
     }
 
     @Test
-    void facesAndFlags() {
-        WireNode filter = new WireNode();
-        Transforms.faceBits(ctx, filter, PlacementFilter.Conditions.builder().allowedFaces("up", "east").build());
-        assertEquals((byte) 34, filter.build().getByte("allowed_faces"));
-        WireNode liquid = new WireNode();
-        Transforms.faceBits(ctx, liquid, LiquidDetection.DetectionRules.builder().stopsLiquidFlowingFromDirection("up", "north").build());
-        assertEquals((byte) 6, liquid.build().getByte("stopsLiquidFromDirection"));
-
-        WireNode producer = new WireNode();
-        Transforms.faceList(ctx, producer, RedstoneProducer.builder().power(15).build());
-        assertEquals(List.of("down", "up", "north", "south", "west", "east"),
-            compound(producer, "minecraft:redstone_producer").getList("connected_faces", NbtType.STRING));
-        WireNode rule = new WireNode();
-        Transforms.faceList(ctx, rule, ConnectionRule.builder().build());
-        assertEquals(4, compound(rule, "minecraft:connection_rule").getList("enabled_directions", NbtType.STRING).size());
-
-        WireNode trait = new WireNode();
-        Transforms.enabledStateFlags(ctx, trait, PlacementDirection.builder().enabledStates(PlacementDirection.EnabledStates.FACING_DIRECTION).build());
-        NbtMap flags = trait.build().getCompound("enabled_states");
-        assertEquals((byte) 1, flags.getByte("facing_direction"));
-        assertEquals((byte) 0, flags.getByte("cardinal_direction"));
-        assertEquals((byte) 0, flags.getByte("sixteen_way_rotation"));
-    }
-
-    @Test
     void iconColorDestructionSelectionAndAnimation() {
         WireNode icon = new WireNode();
         Transforms.iconTextures(ctx, icon, Icon.of("ruby"));
@@ -422,29 +392,6 @@ class TransformsTest {
         List<NbtMap> speeds = compound(named, "minecraft:destructible_by_mining").getList("item_specific_speeds", NbtType.COMPOUND);
         assertEquals(1, speeds.size());
         assertEquals("minecraft:stick", speeds.getFirst().getCompound("item").getString("Name"));
-    }
-
-    @Test
-    void theBlockEntityContainerHasATitleOnlyFrom26_60() {
-        BlockEntity titled = BlockEntity.builder().container(BlockEntity.Container.builder().slotCount(9).title("Box").build()).build();
-        WireNode now = new WireNode();
-        Transforms.blockEntityContainer(ctx, now, titled);
-        NbtMap container = compound(now, "minecraft:container");
-        assertEquals((byte) 9, container.getByte("slot_count"));
-        assertEquals("Box", container.getString("title"));
-
-        WireNode before = new WireNode();
-        Transforms.blockEntityContainer(ctx26_50, before, titled);
-        assertEquals((byte) 9, compound(before, "minecraft:container").getByte("slot_count"));
-        assertFalse(compound(before, "minecraft:container").containsKey("title"));
-        assertEquals(1, report.warnings().size());
-
-        // No container, nothing sent (the slot count default belongs to the container)
-        for (WireContext context : List.of(ctx, ctx26_50)) {
-            WireNode none = new WireNode();
-            Transforms.blockEntityContainer(context, none, BlockEntity.builder().build());
-            assertTrue(none.isEmpty());
-        }
     }
 
     @Test

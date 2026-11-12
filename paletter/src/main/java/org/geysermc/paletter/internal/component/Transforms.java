@@ -9,18 +9,13 @@ import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.BlockComponent;
-import org.geysermc.paletter.block.component.BlockEntity;
 import org.geysermc.paletter.block.component.CollisionBox;
-import org.geysermc.paletter.block.component.ConnectionRule;
 import org.geysermc.paletter.block.component.DestructibleByMining;
 import org.geysermc.paletter.block.component.EmbeddedVisual;
 import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.block.component.ItemVisual;
-import org.geysermc.paletter.block.component.LiquidDetection;
 import org.geysermc.paletter.block.component.MaterialInstances;
-import org.geysermc.paletter.block.component.PlacementDirection;
 import org.geysermc.paletter.block.component.PlacementFilter;
-import org.geysermc.paletter.block.component.RedstoneProducer;
 import org.geysermc.paletter.block.component.SelectionBox;
 import org.geysermc.paletter.item.component.BlockPlacer;
 import org.geysermc.paletter.item.component.Digger;
@@ -497,65 +492,6 @@ public final class Transforms {
         }
     }
 
-    // ---- face_bits / face_list ---------------------------------------------------------------------------------------
-
-    /**
-     * The face order of a face bit set (down 1 ... east 32), from vanilla data ({@code liquid_detection}). BDS rejects
-     * every add-on face list, so no capture and no conformance check has it.
-     */
-    private static final List<String> FACES = List.of("down", "up", "north", "south", "west", "east");
-
-    static byte faceBits(List<String> faces) {
-        int bits = 0;
-        for (String face : faces) {
-            int index = FACES.indexOf(face);
-            if (index >= 0) {
-                bits |= 1 << index;
-            }
-        }
-        return (byte) bits;
-    }
-
-    /**
-     * Faces as a bit set: down 1, up 2, north 4, south 8, west 16, east 32 ({@code placement_filter} allowed_faces, 63 for
-     * the default all; {@code liquid_detection} stopsLiquidFromDirection). BDS rejected every list variant of the
-     * captures, so no bitset rule could be fitted; the encoding is the one vanilla data shows.
-     */
-    public static void faceBits(@NonNull WireContext ctx, @NonNull WireNode out, PlacementFilter.Conditions c) {
-        out.put("allowed_faces", faceBits(c.allowedFaces()));
-    }
-
-    public static void faceBits(@NonNull WireContext ctx, @NonNull WireNode out, LiquidDetection.DetectionRules c) {
-        out.put("stopsLiquidFromDirection", faceBits(c.stopsLiquidFlowingFromDirection()));
-    }
-
-    /**
-     * A list of face or direction names, as named: {@code redstone_producer} connected_faces (all six by default) and
-     * {@code connection_rule} enabled_directions (south, north, east, west by default). BDS rejected every varied list of
-     * the captures, so only the defaults were observed, and their per index leaves make no rule.
-     */
-    public static void faceList(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull RedstoneProducer c) {
-        out.put("minecraft:redstone_producer.connected_faces", Wire.strings(c.connectedFaces().stream().map(f -> f.value()).toList()));
-    }
-
-    public static void faceList(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull ConnectionRule c) {
-        out.put("minecraft:connection_rule.enabled_directions", Wire.strings(c.enabledDirections().stream().map(f -> f.value()).toList()));
-    }
-
-    // ---- enabled_state_flags -----------------------------------------------------------------------------------------
-
-    /**
-     * {@code minecraft:placement_direction} enabled_states: one byte per state the trait can enable, 1 if listed, and
-     * {@code sixteen_way_rotation} 0. The captures accept no list of {@code corner_and_cardinal_direction} alone (their
-     * base sets {@code y_rotation_offset}, which needs another state), so neither a bit set nor a value table fits.
-     */
-    public static void enabledStateFlags(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull PlacementDirection c) {
-        for (PlacementDirection.EnabledStates state : PlacementDirection.EnabledStates.values()) {
-            out.put("enabled_states." + state.value().replaceFirst("^minecraft:", ""), Wire.bool(c.enabledStates().contains(state)));
-        }
-        out.put("enabled_states.sixteen_way_rotation", (byte) 0);
-    }
-
     // ---- icon_textures -----------------------------------------------------------------------------------------------
 
     /**
@@ -620,31 +556,6 @@ public final class Transforms {
         }
     }
 
-
-    // ---- block_entity_container ---------------------------------------------------------------------------------------
-
-    /**
-     * {@code minecraft:block_entity} container: {@code container.slot_count} as a byte and, from BDS 1.26.63.1 on, the
-     * optional {@code container.title}; without a container nothing is sent. BDS 1.26.52.3 knows only {@code slot_count}
-     * and rejects {@code title}, so a title is dropped with a report entry there: its capture rejected every variant that
-     * kept the base's title, and the one it accepted made the inference attribute {@code slot_count} to the omission of
-     * the title. (BDS 1.26.36.1 and 1.26.45.1 do not know the container: the component is server only there.)
-     */
-    public static void blockEntityContainer(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull BlockEntity c) {
-        BlockEntity.Container container = c.container();
-        if (container == null) {
-            return;
-        }
-        out.put("minecraft:container.slot_count", Wire.toByte(container.slotCount()));
-        if (container.title() == null) {
-            return;
-        }
-        if (ctx.protocol() >= ComponentIndex.BDS_1_26_63_1) {
-            out.put("minecraft:container.title", container.title());
-        } else {
-            ctx.drop(BlockEntity.NAME, "container.title is not known to BDS before 1.26.63.1 (26.60)");
-        }
-    }
 
     // ---- selection_box -----------------------------------------------------------------------------------------------
 
