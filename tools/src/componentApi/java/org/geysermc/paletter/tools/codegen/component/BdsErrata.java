@@ -3,6 +3,7 @@ package org.geysermc.paletter.tools.codegen.component;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,10 @@ import java.util.List;
  *     puts it first; "expected a key/value object" at an element of a list ({@code material_instances[0]}) of a field that
  *     also has an object type says the list is the form BDS does not take, so the object comes first. The add-on keeps
  *     the docs' types, so every capture asks BDS again (and the fact stays in the feedback); the API offers only the
- *     object where the docs had none.</li>
+ *     object where the docs had none. "expected an array" (the {@code array} facts) at a field the docs give no list
+ *     type ({@code connected_faces}, a string; {@code allowed_faces}, an object) adds a list and puts it first: of the
+ *     field's scalar type, else of the type of its documented default list's elements, else (an empty default list) of
+ *     any type.</li>
  *     <li><b>Keys from the key probe</b> ({@code bds-keys.json}): each key BDS accepted becomes a field with the types it
  *     accepted, the values it accepted as examples and the format version its own texts name, and the BDS build in its doc
  *     text.</li>
@@ -45,6 +49,9 @@ public final class BdsErrata {
 
     private static void types(JsonObject component, JsonObject facts, boolean api) {
         for (String path : facts.keySet()) {
+            if (facts.getAsJsonArray(path).asList().stream().anyMatch(f -> f.getAsString().equals("array"))) {
+                list(field(component, path));
+            }
             boolean object = facts.getAsJsonArray(path).asList().stream().anyMatch(f -> f.getAsString().equals("object"));
             boolean element = path.endsWith("[]");
             JsonObject field = object ? field(component, element ? path.substring(0, path.length() - 2) : path) : null;
@@ -70,6 +77,32 @@ public final class BdsErrata {
             types.forEach(ordered::add);
             field.add("types", ordered);
         }
+    }
+
+    /** Adds a list type in front of a field that has none (BDS: "expected an array"). */
+    private static void list(JsonObject field) {
+        if (field == null) {
+            return;
+        }
+        List<JsonElement> types = new ArrayList<>(field.getAsJsonArray("types").asList());
+        if (types.stream().anyMatch(t -> List.of("array", "vec3").contains(t.getAsJsonObject().get("type").getAsString()))) {
+            return;
+        }
+        String element = types.stream().map(t -> t.getAsJsonObject().get("type").getAsString())
+            .filter(t -> List.of("string", "number", "integer", "boolean").contains(t)).findFirst().orElse(null);
+        JsonElement defaults = field.get("defaultValue");
+        if (element == null && defaults != null && defaults.isJsonArray() && !defaults.getAsJsonArray().isEmpty()
+            && defaults.getAsJsonArray().get(0).isJsonPrimitive()) {
+            JsonPrimitive first = defaults.getAsJsonArray().get(0).getAsJsonPrimitive();
+            element = first.isString() ? "string" : first.isBoolean() ? "boolean" : "number";
+        }
+        if (element == null && !(defaults != null && defaults.isJsonArray())) {
+            return; // nothing says the field is a list of anything (uv_lock: false or a list of bones)
+        }
+        types.add(0, ComponentGenerator.parseType("array<" + (element == null ? "any" : element) + ">"));
+        JsonArray ordered = new JsonArray();
+        types.forEach(ordered::add);
+        field.add("types", ordered);
     }
 
     private static boolean isObject(JsonObject type) {

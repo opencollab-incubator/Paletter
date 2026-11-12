@@ -271,7 +271,7 @@ public final class Coverage {
      * Values of {@code Transforms} that no accepted capture variant sends, so the conformance suite does not check them.
      * The Javadoc of each says where its value comes from.
      */
-    static final List<String> UNREACHED_CONSTANTS = List.of("FACES", "FORMATTING", "USE_ANIMATIONS", "stateType");
+    static final List<String> UNREACHED_CONSTANTS = List.of("FORMATTING", "USE_ANIMATIONS", "stateType");
 
     private void unreachedConstants(StringBuilder md) {
         md.append("\n## Constants no capture reaches\n\n");

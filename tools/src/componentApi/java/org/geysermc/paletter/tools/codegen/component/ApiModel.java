@@ -230,6 +230,8 @@ final class ApiModel {
         Double max;
         String rangeSource;
         List<Double> allowed;
+        /** The step BDS takes the values in (an inferred rule's {@code multipleOf}: it refused the others); null if none. */
+        Double multipleOf;
         String doc = "";
         String minFormat;
         boolean deprecated;

@@ -56,9 +56,11 @@ Rules:
 
 - **Defaults** are the documented ones unless BDS sends something else for an omitted field; that field stays unset and
   the encoder writes BDS's value.
-- **Required** fields and **ranges** (BDS's win over the docs) are checked by `build()` and the record constructor.
-- **Encoders** follow each window's rules (`WireSource`): constants, then per field its value rule (identity, linear,
-  table, affix, bitset, count) and the constants its presence switches on; unset fields write their `whenAbsent` leaves.
+- **Required** fields and **ranges** (BDS's win over the docs) are checked by `build()` and the record constructor, and so
+  are the steps of a rule's `multipleOf` (`transformation` rotation: multiples of 90, the others BDS refuses).
+- **Encoders** follow each window's rules (`WireSource`): constants, then per field its value rule (identity, linear
+  with its `modulo`, table, affix, bitset, count, ordered-set; a map's entries under their keys) and the constants its
+  presence switches on; unset fields write their `whenAbsent` leaves.
   Hand transforms run after the generic fields. A field with no rule in a window is dropped with a report warning.
 - **Protocol windows**: each mapping holds for the protocols listed in `protocols`; a different mapping starts
   `protocol<N>` and is compared with the window before it. The oldest window also holds below its capture, the newest
@@ -111,8 +113,10 @@ data driven:
 - **An object that is one entry of the component's list** (`forms` `{"object": {"listElementOf": "boxes"}}`): a `of(Entry)`
   factory and the index entry `"object" -> "boxes[]"`. The javadoc says since which BDS the form is rejected
   (`collision_box` takes `{origin, size}` before 26.60; `{}` is one default box).
-- **Hand transforms with protocol checks** for what differs per build (the `block_entity` container: BDS 1.26.52.3 knows
-  `slot_count` only; `ammunition[].item`: a descriptor BDS sends as `{name}` or `{}`).
+- **Protocol windows** for what differs per build: a field one build rejects has no rule in its window and the encoder
+  drops it there with a report warning (the `block_entity` container `title`, which BDS 1.26.52.3 does not know).
+- **Hand transforms with protocol checks** where no rule explains a difference (`ammunition[].item`: a descriptor BDS
+  sends as `{name}` or `{}`).
 
 Add-on JSON spellings that mean one API call are mapped by the conformance binder (`ApiBinder`), which reads them from the
 generated `ComponentIndex` and is itself checked by the comparison with BDS: an object form of a list (`FORMS`), a

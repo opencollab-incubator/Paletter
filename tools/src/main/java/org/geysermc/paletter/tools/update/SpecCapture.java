@@ -6,6 +6,7 @@ import org.geysermc.paletter.tools.bds.BdsServer;
 import org.geysermc.paletter.tools.data.Importer;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.geysermc.paletter.tools.client.Capture;
 import org.geysermc.paletter.internal.data.PaletteDataCodec;
@@ -13,6 +14,7 @@ import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 import org.geysermc.paletter.tools.model.Model;
+import org.geysermc.paletter.tools.model.infer.Feedback;
 import org.geysermc.paletter.tools.model.infer.Wire;
 import org.geysermc.paletter.tools.model.infer.Wire.Leaf;
 import org.cloudburstmc.nbt.NbtMap;
@@ -47,6 +49,8 @@ import java.util.stream.Stream;
  */
 public final class SpecCapture {
     private static final String WORLD = "paletter_spec";
+    /** At most this many captures per build: the first, and the ones of the variants it shrunk. */
+    private static final int SHRINK_ROUNDS = 4;
 
     private final Path root;
     private final Map<String, String> options;
@@ -98,62 +102,38 @@ public final class SpecCapture {
                 generator = new AddonGenerator(docs, fixtures, formatVersion);
             }
             Path addon = work.resolve("addon");
-            generator.write(addon);
-
-            Map<String, String> properties = new LinkedHashMap<>();
-            properties.put("level-type", "FLAT");
-            properties.put("level-seed", "0");
-            properties.put("gamemode", "creative");
-            properties.put("server-port", String.valueOf(port));
-            properties.put("server-portv6", String.valueOf(port + 1));
-            properties.put("transport", "raknet");
-            properties.put("enable-lan-visibility", "true");
-            properties.put("online-mode", "false");
-            properties.put("allow-list", "false");
-            properties.put("view-distance", "4");
-            properties.put("content-log-console-output-enabled", "true");
-            properties.put("content-log-level", "warning");
-            properties.put("level-name", WORLD);
-            properties.put("block-network-ids-are-hashes", "true");
-            freshWorld(server, addon);
-            BdsServer.configure(server, properties);
-            try (BdsServer bds = new BdsServer(server, false)) {
-                bds.start(work.resolve("bds-create.log"));
-                bds.awaitStarted(timeout);
+            // A variant the build rejects for a member it does not vary says nothing (a rejected base: no variant of its
+            // component does): shrink it and capture again
+            Map<String, AddonGenerator.Shrunk> shrunk = new LinkedHashMap<>();
+            Run run;
+            for (int round = 1; ; round++) {
+                generator.write(addon);
+                try {
+                    run = captureRun(server, addon, work, port, timeout, distribution.version());
+                } catch (IOException e) {
+                    if (!String.valueOf(e.getMessage()).startsWith("BDS did not start")) {
+                        throw e;
+                    }
+                    // BDS now and then hangs while it starts: once more, on the same add-on
+                    System.out.println(e.getMessage().lines().findFirst().orElse("") + "; starting it again");
+                    run = captureRun(server, addon, work, port, timeout, distribution.version());
+                }
+                if (evidence != null || round == SHRINK_ROUNDS) {
+                    break;
+                }
+                Map<String, AddonGenerator.Shrunk> more = shrink(generator.variants(), leaves(work.resolve("custom")),
+                    logByVariant(run.contentLog()), shrunk);
+                if (more.isEmpty()) {
+                    break;
+                }
+                more.values().forEach(x -> System.out.println("BDS " + distribution.version() + " rejected " + x.componentId() + " "
+                    + x.role() + " " + x.label() + "; capturing again without " + String.join(", ", x.dropped())));
+                shrunk.putAll(more);
+                generator = new AddonGenerator(docs, fixtures, formatVersion, shrunk);
             }
-            List<String> experiments = options.containsKey("experiments")
-                ? Arrays.asList(options.get("experiments").split(",")) : Update.DEFAULT_EXPERIMENTS;
-            Capture.enableExperiments(server.resolve("worlds").resolve(WORLD).resolve("level.dat"), experiments);
-
-            InetSocketAddress address = new InetSocketAddress("127.0.0.1", port);
-            List<String> contentLog;
-            Capture.Summary summary;
-            int protocol;
-            try (BdsServer bds = new BdsServer(server, false)) {
-                bds.start(work.resolve("bds-capture.log"));
-                bds.awaitStarted(timeout);
-                contentLog = attribute(bds.lines(line -> line.matches(".*(ERROR|WARN)\\] \\[.*") && !line.contains("TRANSPORT"))
-                    .stream().map(line -> line.replaceFirst("^\\[[^]]*(ERROR|WARN)\\] ", "$1 ")).toList());
-                String[] pong = null;
-                for (int attempt = 0; attempt < 10 && (pong == null || pong.length <= 3); attempt++) {
-                    Thread.sleep(1000); // the pong carries the protocol once LAN discovery is up
-                    pong = Capture.ping(address, 2000);
-                }
-                boolean raknet = pong != null && bds.sawLine(line -> line.contains("IPv4 supported, port: " + port));
-                String[] netherNet = raknet ? null : Capture.netherNetPing(address, 10);
-                if (raknet && pong.length > 3) {
-                    protocol = Integer.parseInt(pong[2]);
-                } else if (netherNet != null && !netherNet[0].equals("0")) {
-                    protocol = Integer.parseInt(netherNet[0]);
-                } else {
-                    protocol = Integer.parseInt(options.getOrDefault("protocol", "0"));
-                }
-                if (protocol == 0) {
-                    throw new IOException("No protocol from the server status; pass --protocol");
-                }
-                summary = Capture.capture(address, protocol, reference(protocol), distribution.version(), work.resolve("capture"),
-                    work.resolve("custom"), 120, !raknet);
-            }
+            List<String> contentLog = run.contentLog();
+            Capture.Summary summary = run.summary();
+            int protocol = run.protocol();
             Files.createDirectories(out);
             for (String file : List.of("custom_item_registry.nbt", "custom_block_properties.nbt")) {
                 Files.copy(work.resolve("custom").resolve(file), out.resolve(file), StandardCopyOption.REPLACE_EXISTING);
@@ -194,6 +174,148 @@ public final class SpecCapture {
                 }
             }
         }
+    }
+
+    /** What one BDS run of an add-on gave: its content log, the capture and the protocol it spoke. */
+    private record Run(List<String> contentLog, Capture.Summary summary, int protocol) {
+    }
+
+    /** Installs the add-on on a fresh world, starts BDS with the experiments on and captures what it sends a client. */
+    private Run captureRun(Path server, Path addon, Path work, int port, int timeout, String version) throws Exception {
+        Map<String, String> properties = new LinkedHashMap<>();
+        properties.put("level-type", "FLAT");
+        properties.put("level-seed", "0");
+        properties.put("gamemode", "creative");
+        properties.put("server-port", String.valueOf(port));
+        properties.put("server-portv6", String.valueOf(port + 1));
+        properties.put("transport", "raknet");
+        properties.put("enable-lan-visibility", "true");
+        properties.put("online-mode", "false");
+        properties.put("allow-list", "false");
+        properties.put("view-distance", "4");
+        properties.put("content-log-console-output-enabled", "true");
+        properties.put("content-log-level", "warning");
+        properties.put("level-name", WORLD);
+        properties.put("block-network-ids-are-hashes", "true");
+        freshWorld(server, addon);
+        BdsServer.configure(server, properties);
+        try (BdsServer bds = new BdsServer(server, false)) {
+            bds.start(work.resolve("bds-create.log"));
+            bds.awaitStarted(timeout);
+        }
+        List<String> experiments = options.containsKey("experiments")
+            ? Arrays.asList(options.get("experiments").split(",")) : Update.DEFAULT_EXPERIMENTS;
+        Capture.enableExperiments(server.resolve("worlds").resolve(WORLD).resolve("level.dat"), experiments);
+
+        InetSocketAddress address = new InetSocketAddress("127.0.0.1", port);
+        try (BdsServer bds = new BdsServer(server, false)) {
+            bds.start(work.resolve("bds-capture.log"));
+            bds.awaitStarted(timeout);
+            List<String> contentLog = attribute(bds.lines(line -> line.matches(".*(ERROR|WARN)\\] \\[.*") && !line.contains("TRANSPORT"))
+                .stream().map(line -> line.replaceFirst("^\\[[^]]*(ERROR|WARN)\\] ", "$1 ")).toList());
+            String[] pong = null;
+            for (int attempt = 0; attempt < 10 && (pong == null || pong.length <= 3); attempt++) {
+                Thread.sleep(1000); // the pong carries the protocol once LAN discovery is up
+                pong = Capture.ping(address, 2000);
+            }
+            boolean raknet = pong != null && bds.sawLine(line -> line.contains("IPv4 supported, port: " + port));
+            String[] netherNet = raknet ? null : Capture.netherNetPing(address, 10);
+            int protocol;
+            if (raknet && pong.length > 3) {
+                protocol = Integer.parseInt(pong[2]);
+            } else if (netherNet != null && !netherNet[0].equals("0")) {
+                protocol = Integer.parseInt(netherNet[0]);
+            } else {
+                protocol = Integer.parseInt(options.getOrDefault("protocol", "0"));
+            }
+            if (protocol == 0) {
+                throw new IOException("No protocol from the server status; pass --protocol");
+            }
+            Capture.Summary summary = Capture.capture(address, protocol, reference(protocol), version, work.resolve("capture"),
+                work.resolve("custom"), 120, !raknet);
+            return new Run(contentLog, summary, protocol);
+        }
+    }
+
+    /**
+     * The variants this capture's build rejected because of a member they do not vary, shrunk: the members the content log
+     * names are removed (by path, or quoted first in a message about the whole component: an unknown key, a wrong type, a
+     * value out of range, a key that needs another one). A base whose log names none of its members becomes the omit variant (the
+     * base without one field) that the build accepted and that keeps the most of it. Field variants are shrunk only where
+     * the base was accepted, and never lose the field they vary. A variant whose log names nothing it can lose stays as
+     * it is.
+     *
+     * @param before the shrinks of the earlier rounds, which the dropped paths add to
+     * @return the new shrinks, by {@link AddonGenerator.Shrunk#key}
+     */
+    static Map<String, AddonGenerator.Shrunk> shrink(List<AddonGenerator.Variant> variants, Map<String, Map<String, Leaf>> leaves,
+                                                     Map<String, List<String>> log, Map<String, AddonGenerator.Shrunk> before) {
+        java.util.Set<String> rejectedBases = new java.util.HashSet<>();
+        variants.stream().filter(v -> v.role().equals("base") && !accepted(v, leaves, log)).forEach(v -> rejectedBases.add(v.componentId()));
+        Map<String, AddonGenerator.Shrunk> shrunk = new LinkedHashMap<>();
+        for (AddonGenerator.Variant v : variants) {
+            boolean field = v.role().equals("field");
+            if (!(field || v.role().equals("base") || v.role().equals("control")) || v.component() == null || v.component().isJsonNull()
+                || accepted(v, leaves, log) || (field && rejectedBases.contains(v.componentId()))) {
+                continue;
+            }
+            JsonElement json = v.component().deepCopy();
+            List<String> dropped = new ArrayList<>();
+            for (String line : log.getOrDefault(v.identifier(), List.of())) {
+                Feedback.Located at = line.startsWith("ERROR") ? Feedback.locate(v.kind(), line) : null;
+                if (at == null || !at.component().equals(v.componentId())) {
+                    continue;
+                }
+                List<String> named = new ArrayList<>();
+                if (!at.path().isEmpty()) {
+                    named.add(at.path());
+                } else {
+                    // a message about the whole component names the member it is about first
+                    java.util.regex.Matcher quoted = java.util.regex.Pattern.compile("^[\"']([a-z_]+)[\"']").matcher(at.message());
+                    if (quoted.find()) {
+                        named.add(quoted.group(1));
+                    }
+                }
+                for (String path : named) {
+                    if (!dropped.contains(path) && !(field && related(path, v.path())) && AddonGenerator.remove(json, path)) {
+                        dropped.add(path);
+                    }
+                }
+            }
+            if (dropped.isEmpty() && v.role().equals("base")) {
+                AddonGenerator.Variant omit = variants.stream().filter(o -> o.componentId().equals(v.componentId()) && o.role().equals("omit")
+                    && accepted(o, leaves, log)).max(java.util.Comparator.comparingInt(o -> o.component().toString().length())).orElse(null);
+                if (omit == null) {
+                    continue;
+                }
+                json = omit.component().deepCopy();
+                dropped.add(omit.path());
+            }
+            if (dropped.isEmpty()) {
+                continue;
+            }
+            String label = AddonGenerator.Shrunk.generatedLabel(v.label());
+            AddonGenerator.Shrunk earlier = before.get(AddonGenerator.Shrunk.key(v.role(), v.componentId(), v.path(), label));
+            if (earlier != null) {
+                dropped.addAll(0, earlier.dropped());
+            }
+            AddonGenerator.Shrunk s = new AddonGenerator.Shrunk(v.role(), v.componentId(), v.path(), label, json, List.copyOf(dropped));
+            shrunk.put(s.key(), s);
+        }
+        return shrunk;
+    }
+
+    /** Whether one path is the other or contains it ({@code a} and {@code a.b}, {@code a[]}). */
+    private static boolean related(String a, String b) {
+        String x = a.length() <= b.length() ? a : b;
+        String y = a.length() <= b.length() ? b : a;
+        return y.equals(x) || y.startsWith(x + ".") || y.startsWith(x + "[]") || y.startsWith(x + "{}");
+    }
+
+    /** A variant is accepted when BDS sent it and logged no error for it (items that fail to parse are still sent). */
+    static boolean accepted(AddonGenerator.Variant v, Map<String, Map<String, Leaf>> leaves, Map<String, List<String>> log) {
+        return leaves.containsKey(v.kind() + " " + v.identifier())
+            && log.getOrDefault(v.identifier(), List.of()).stream().noneMatch(line -> line.startsWith("ERROR"));
     }
 
     /**

@@ -100,6 +100,9 @@ class DocsParserTest {
         assertEquals(4, DocsParser.valuesFrom("Must be [0.0, 90.0, 180.0, 270.0]. Default is 0").size());
         assertEquals(List.of(new JsonPrimitive("minecraft:multi_block_part")),
             DocsParser.valuesFrom("The only valid (and required) value is `minecraft:multi_block_part`."));
+        assertEquals(List.of(new JsonPrimitive("up"), new JsonPrimitive("down"), new JsonPrimitive("west")),
+            DocsParser.valuesFrom("Can be a list of the following directions: \"up\", \"down\", \"west\". The default is an empty list."));
+        assertEquals(List.of(), DocsParser.valuesFrom("List of any of the following strings describing which face(s) this block can be placed on"));
     }
 
     @Test

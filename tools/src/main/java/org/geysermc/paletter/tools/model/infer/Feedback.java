@@ -22,10 +22,21 @@ public final class Feedback {
 
     private final Map<String, Map<String, TreeSet<String>>> facts = new TreeMap<>();
 
-    void add(String kind, String line) {
+    /**
+     * Where a content log line points: the component (as the model names it), the field path below it ({@code a.b},
+     * {@code a[]}, {@code {}}) and BDS's message.
+     */
+    public record Located(String component, String path, String message) {
+    }
+
+    /**
+     * @param kind {@code item} or {@code block}
+     * @return where the line points, or null if it names no path ({@code Error Parsing Item 'x':})
+     */
+    public static Located locate(String kind, String line) {
         Matcher m = PATH.matcher(line);
         if (!m.find()) {
-            return;
+            return null;
         }
         String section = m.group(1);
         String rest = m.group(2) == null ? "" : m.group(2);
@@ -37,7 +48,7 @@ public final class Feedback {
         String component;
         if (section.equals("components")) {
             if (parts.isEmpty()) {
-                return;
+                return null;
             }
             component = kind + ":" + parts.remove(0).replaceAll("\\[\\d+]", "");
         } else if (section.startsWith("permutations")) {
@@ -56,6 +67,17 @@ public final class Feedback {
             component = kind + ":description";
         }
         String path = String.join(".", parts).replaceAll("\\[\\d+]", "[]").replace(".[]", "[]").replace(".{}", "{}");
+        return new Located(component, path, message);
+    }
+
+    void add(String kind, String line) {
+        Located located = locate(kind, line);
+        if (located == null) {
+            return;
+        }
+        String component = located.component();
+        String path = located.path();
+        String message = located.message();
         String fact = null;
         Matcher range;
         Matcher nonEmpty = Pattern.compile("^'([a-z0-9_]+)' must define at least one").matcher(message);

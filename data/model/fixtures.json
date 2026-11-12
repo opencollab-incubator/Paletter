@@ -1,5 +1,5 @@
 {
-  "_comment": "Hand-written inputs of the capture add-on generator. Not a source of shapes: errata only ADD types/fields the docs omit or get wrong (the docs-literal form is generated too, so BDS confirms each erratum); samples are values that must name existing content; requires are companions BDS needs (from its content log); together is what a key needs next to it, by path or by name (material_instances alpha_masked_tint, on every face: BDS's own texts say \"'alpha_masked_tint' requires a non-default 'tint_method'\" and \"requires 'render_method' to be 'opaque'\", bedrock_server 1.26.63.1).",
+  "_comment": "Hand-written inputs of the capture add-on generator. Not a source of shapes: errata only ADD types/fields the docs omit or get wrong (the docs-literal form is generated too, so BDS confirms each erratum); samples are values that must name existing content; requires are companions BDS needs (from its content log); together is what a key needs next to it, by path or by name (material_instances alpha_masked_tint, on every face: BDS's own texts say \"'alpha_masked_tint' requires a non-default 'tint_method'\" and \"requires 'render_method' to be 'opaque'\", bedrock_server 1.26.63.1); a selection_box origin gets a size that keeps the box inside the block (BDS: \"Invalid box size \"origin\" + \"size\", must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,16,8)\").",
   "formatVersion": "1.26.60",
   "filler": {"minecraft:max_stack_size": 64},
   "errata": [
@@ -25,7 +25,8 @@
   "together": {
     "block:trait:minecraft:placement_direction:blocks_to_corner_with": {"enabled_states": ["minecraft:corner_and_cardinal_direction"]},
     "block:trait:minecraft:placement_direction:blocks_to_corner_with[].tags": {"enabled_states": ["minecraft:corner_and_cardinal_direction"]},
-    "block:minecraft:material_instances:alpha_masked_tint": {"tint_method": "default_foliage", "render_method": "opaque"}
+    "block:minecraft:material_instances:alpha_masked_tint": {"tint_method": "default_foliage", "render_method": "opaque"},
+    "block:minecraft:selection_box:origin": {"size": [1, 1, 1]}
   },
   "requires": {
     "item:minecraft:food": {"minecraft:use_modifiers": {"use_duration": 1.6}},
@@ -50,7 +51,7 @@
     "item:minecraft:entity_placer:dispense_on[]": {"name": "minecraft:stone"},
     "item:minecraft:digger:destroy_speeds[].block": {"name": "minecraft:dirt"},
     "block:minecraft:placement_filter:conditions[].block_filter[]": {"name": "minecraft:dirt"},
-    "block:minecraft:destructible_by_mining:item_specific_speeds[].item": {"name": "minecraft:iron_pickaxe"},
+    "block:minecraft:destructible_by_mining:item_specific_speeds[].item": "minecraft:iron_pickaxe",
     "item:minecraft:tags:tags": ["paletter:tag_a"],
     "block:minecraft:geometry:identifier": "geometry.paletter_cube",
     "block:minecraft:geometry:culling": "paletter:culling",
@@ -89,6 +90,7 @@
     "block": "minecraft:dirt",
     "name": "minecraft:stone",
     "tags": "query.any_tag('stone')",
+    "group": "minecraft:itemGroup.name.planks",
     "entity": "minecraft:pig",
     "projectile_entity": "minecraft:snowball",
     "item": "minecraft:stick",
@@ -114,7 +116,7 @@
     "value": "paletter_value"
   },
   "alternatives": {
-    "_comment": "A second valid value for reference fields, so free-string variants do not name missing content.",
+    "_comment": "A second valid value for reference fields (and colours), so free-string variants do not name missing content.",
     "block": "minecraft:stone",
     "name": "minecraft:dirt",
     "entity": "minecraft:cow",
@@ -122,10 +124,12 @@
     "item": "minecraft:diamond",
     "using_converts_to": "minecraft:glass_bottle",
     "texture": "paletter_tex_alt",
+    "item:minecraft:dyeable:default_color": "#3366cc",
     "geometry": "geometry.paletter_cube",
     "identifier": "geometry.paletter_cube",
     "crop_result": "minecraft:carrots",
-    "tags": "query.any_tag('wood')"
+    "tags": "query.any_tag('wood')",
+    "group": "minecraft:itemGroup.name.anvil"
   },
   "mapKeys": {
     "_comment": "Key used for a map value ({} in a path), by '<component>:<path>' then field name.",

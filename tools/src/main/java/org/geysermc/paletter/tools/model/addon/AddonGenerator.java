@@ -11,6 +11,7 @@ import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.Model.Component;
 import org.geysermc.paletter.tools.model.Model.Field;
 import org.geysermc.paletter.tools.model.Model.JType;
+import org.geysermc.paletter.tools.model.docs.DocsParser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -49,6 +50,7 @@ public final class AddonGenerator {
     private final String formatVersion;
     private final List<Variant> variants = new ArrayList<>();
     private final Map<String, Integer> counters = new LinkedHashMap<>();
+    private final Map<String, Shrunk> shrunk;
 
     /**
      * @param identifier the item or block identifier
@@ -76,15 +78,74 @@ public final class AddonGenerator {
      *                      build passes {@link #formatVersionFor}
      */
     public AddonGenerator(Model model, Fixtures fixtures, String formatVersion) {
-        this(model, fixtures, formatVersion, true);
+        this(model, fixtures, formatVersion, Map.of());
     }
 
-    private AddonGenerator(Model model, Fixtures fixtures, String formatVersion, boolean standard) {
+    /**
+     * @param shrunk the variants one BDS build rejected, shrunk until it accepted them (by {@link Shrunk#key}): they
+     *               replace the generated ones, and the other variants of a component with a shrunk base are built on it
+     */
+    public AddonGenerator(Model model, Fixtures fixtures, String formatVersion, Map<String, Shrunk> shrunk) {
+        this(model, fixtures, formatVersion, shrunk, true);
+    }
+
+    private AddonGenerator(Model model, Fixtures fixtures, String formatVersion, Map<String, Shrunk> shrunk, boolean standard) {
         this.model = fixtures.apply(model);
         this.fixtures = fixtures;
         this.formatVersion = formatVersion;
+        this.shrunk = Map.copyOf(shrunk);
         if (standard) {
             generate();
+        }
+    }
+
+    /**
+     * A variant one BDS build rejected because of a member it does not vary: a base or control with the members the
+     * content log named (or the one field whose omission the build accepted) removed, or a field variant with the base
+     * members the log named removed. {@code spec-capture} finds them ({@code SpecCapture.shrink}); the variant keeps its
+     * identifier, and the capture's {@code variants.json} its JSON and the label {@code <label> without a.b, c}.
+     *
+     * @param role    {@code base}, {@code control} or {@code field}
+     * @param path    the varied field ({@code ""} for a base or control)
+     * @param label   the label of the variant as generated
+     * @param json    the component's JSON BDS is given instead
+     * @param dropped the paths removed from the generated one
+     */
+    public record Shrunk(String role, String componentId, String path, String label, JsonElement json, List<String> dropped) {
+        private static final String WITHOUT = " without ";
+
+        public String key() {
+            return key(role, componentId, path, label);
+        }
+
+        public static String key(String role, String componentId, String path, String label) {
+            return role + " " + componentId + " " + path + " " + label;
+        }
+
+        /** The label a variant was generated with ({@code base} for {@code base without title}). */
+        public static String generatedLabel(String label) {
+            int at = label.indexOf(WITHOUT);
+            return at < 0 ? label : label.substring(0, at);
+        }
+
+        String shrunkLabel() {
+            return label + WITHOUT + String.join(", ", dropped);
+        }
+
+        /** The shrunk variants of a capture, from its {@code variants.json}. */
+        public static Map<String, Shrunk> of(JsonArray manifest) {
+            Map<String, Shrunk> shrunk = new LinkedHashMap<>();
+            for (JsonElement e : manifest) {
+                JsonObject v = e.getAsJsonObject();
+                String label = v.get("label").getAsString();
+                int at = label.indexOf(WITHOUT);
+                if (at >= 0) {
+                    Shrunk s = new Shrunk(v.get("role").getAsString(), v.get("component").getAsString(), v.get("path").getAsString(),
+                        label.substring(0, at), v.get("json"), List.of(label.substring(at + WITHOUT.length()).split(", ")));
+                    shrunk.put(s.key(), s);
+                }
+            }
+            return shrunk;
         }
     }
 
@@ -93,7 +154,7 @@ public final class AddonGenerator {
      * wants with {@link #probe} and {@link #atFormat}.
      */
     public static AddonGenerator empty(Model model, Fixtures fixtures, String formatVersion) {
-        return new AddonGenerator(model, fixtures, formatVersion, false);
+        return new AddonGenerator(model, fixtures, formatVersion, Map.of(), false);
     }
 
     /** The model the variants are generated from: the docs with the errata, the types and the keys BDS gave applied. */
@@ -144,7 +205,8 @@ public final class AddonGenerator {
                 continue;
             }
             variant(c, "control", "", "control", null, control(c));
-            JsonElement base = base(c);
+            Shrunk shrunkBase = shrunk.get(Shrunk.key("base", c.id(), "", "base"));
+            JsonElement base = shrunkBase != null ? shrunkBase.json().deepCopy() : base(c);
             variant(c, "base", "", "base", null, base);
             // Whole value forms (shorthands, alternative representations)
             for (JType form : c.forms()) {
@@ -197,6 +259,11 @@ public final class AddonGenerator {
     }
 
     private Variant variant(Component c, String role, String path, String label, JsonElement value, JsonElement json, String format) {
+        Shrunk shrunk = this.shrunk.get(Shrunk.key(role, c.id(), path, label));
+        if (shrunk != null) {
+            label = shrunk.shrunkLabel();
+            json = shrunk.json().deepCopy();
+        }
         String shortName = c.id().replaceFirst("^(item|block):", "").replace("minecraft:", "").replace("trait:", "trait_").replace(':', '_');
         int n = counters.merge(c.id(), 1, Integer::sum);
         String identifier = NAMESPACE + ":" + (c.kind().equals("block") ? "b_" : "") + shortName + "_" + n;
@@ -445,7 +512,10 @@ public final class AddonGenerator {
             if (field.has("any") && field.types().size() == 1 && fixtures.sample(c.id(), field.path(), field.name()) == null) {
                 continue;
             }
-            JsonElement value = sample(c, field.path(), primaryType(c, field), field);
+            // a sample given for the path names its own type (an item as a string where the docs list objects first)
+            JsonElement given = fixtures.sample(c.id(), field.path(), null);
+            JsonElement value = given != null && field.types().stream().anyMatch(t -> matches(t, given)) ? given.deepCopy()
+                : sample(c, field.path(), primaryType(c, field), field);
             if (value != null) {
                 object.add(field.name(), value);
             }
@@ -558,6 +628,19 @@ public final class AddonGenerator {
         };
     }
 
+    /** Whether the field is a member of the object form of a vector (a field that is also a list of numbers). */
+    private static boolean vectorMember(Component c, String path) {
+        Field parent = path.contains(".") ? c.field(parentOf(path)) : null;
+        return parent != null && parent.types().stream().anyMatch(t -> t.type().equals("vec3") || (t.type().equals("array")
+            && t.items() != null && List.of("number", "integer").contains(t.items().type())));
+    }
+
+    /** Whether the model has fields below this path. */
+    private static boolean container(Component c, String path) {
+        return c.fields().stream().anyMatch(f -> !f.path().equals(path) && (f.path().startsWith(path + ".")
+            || f.path().startsWith(path + "[]") || f.path().startsWith(path + "{}")));
+    }
+
     /** A field carrying only the enum values (for list elements). */
     private static Field enumField(Field field) {
         return field == null ? null : new Field(field.path() + "[]", List.of(), null, false, field.enumValues(), null, null, List.of(), "");
@@ -585,6 +668,12 @@ public final class AddonGenerator {
                 if (enums.isEmpty()) {
                     for (double d : integer ? new double[]{0, 1, 2, 7, 100, -1} : new double[]{0, 0.5, 1, 2.25, 30, -1}) {
                         numbers.add(d);
+                    }
+                    if (vectorMember(c, path)) {
+                        // a member of a vector's object form takes what its list form takes (below)
+                        for (double d : new double[]{90, -90, 450, 45}) {
+                            numbers.add(d);
+                        }
                     }
                 }
                 if (field != null && field.range() != null) {
@@ -630,6 +719,10 @@ public final class AddonGenerator {
             }
             case "array" -> {
                 JType items = type.items() == null ? JType.of("any") : type.items();
+                List<JsonElement> listed = enums.isEmpty() ? documentedElements(field) : enums;
+                if (items.type().equals("any") && !listed.isEmpty()) {
+                    items = JType.of("string");
+                }
                 values.add(new Labeled("[]", new JsonArray()));
                 switch (items.type()) {
                     case "object" -> {
@@ -648,21 +741,24 @@ public final class AddonGenerator {
                         values.add(new Labeled("[180,270,0]", array(180, 270, 0)));
                         values.add(new Labeled("[1,2,3]", array(1, 2, 3)));
                         values.add(new Labeled("[0.5,0.25,2]", arrayOf(number(0.5), number(0.25), number(2))));
+                        // below zero and past a full turn (an angle: wrapped, kept or refused), and a half step of 90
+                        values.add(new Labeled("[-90,450,720]", array(-90, 450, 720)));
+                        values.add(new Labeled("[45,135,-45]", array(45, 135, -45)));
                     }
                     case "boolean" -> {
                         values.add(new Labeled("[true]", arrayOf(new JsonPrimitive(true))));
                         values.add(new Labeled("[false,true]", arrayOf(new JsonPrimitive(false), new JsonPrimitive(true))));
                     }
                     case "string" -> {
-                        if (!enums.isEmpty()) {
-                            for (JsonElement e : enums.stream().limit(12).toList()) {
+                        if (!listed.isEmpty()) {
+                            for (JsonElement e : listed.stream().limit(12).toList()) {
                                 values.add(new Labeled("[" + e.getAsString() + "]", arrayOf(e)));
                             }
-                            if (enums.size() > 1) {
-                                values.add(new Labeled("[" + enums.get(0).getAsString() + "," + enums.get(1).getAsString() + "]",
-                                    arrayOf(enums.get(0), enums.get(1))));
+                            if (listed.size() > 1) {
+                                values.add(new Labeled("[" + listed.get(0).getAsString() + "," + listed.get(1).getAsString() + "]",
+                                    arrayOf(listed.get(0), listed.get(1))));
                                 JsonArray all = new JsonArray();
-                                enums.forEach(all::add);
+                                listed.forEach(all::add);
                                 values.add(new Labeled("[all]", all));
                             }
                         } else {
@@ -702,6 +798,17 @@ public final class AddonGenerator {
                         values.add(new Labeled("minimal", minimal));
                     }
                 }
+                JsonObject example = field == null || container(c, path) ? null : field.examples().stream()
+                    .filter(e -> e.isJsonObject() && !e.getAsJsonObject().isEmpty()).map(JsonElement::getAsJsonObject).findFirst().orElse(null);
+                if (example != null) {
+                    // an object whose members the docs do not list: filled as the docs' example fills it, and with a
+                    // second entry under another key (a map: does the key reach the wire?)
+                    values.add(new Labeled("{1}", example.deepCopy()));
+                    JsonObject two = example.deepCopy();
+                    Map.Entry<String, JsonElement> first = example.entrySet().iterator().next();
+                    two.add(first.getKey() + "_2", first.getValue().deepCopy());
+                    values.add(new Labeled("{2}", two));
+                }
             }
             default -> {
                 if (exact != null) {
@@ -710,6 +817,22 @@ public final class AddonGenerator {
             }
         }
         return values;
+    }
+
+    /**
+     * The strings a list field without enum values documents for its elements: those of its default list, else those its
+     * docs text lists ("Can be a list of the following directions: "up", ...").
+     */
+    private static List<JsonElement> documentedElements(Field field) {
+        if (field == null) {
+            return List.of();
+        }
+        JsonElement defaults = field.defaultValue();
+        if (defaults != null && defaults.isJsonArray() && !defaults.getAsJsonArray().isEmpty()
+            && defaults.getAsJsonArray().asList().stream().allMatch(e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isString())) {
+            return defaults.getAsJsonArray().asList();
+        }
+        return DocsParser.valuesIn(field.doc()).stream().filter(e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isString()).toList();
     }
 
     /** The field with the numeric range BDS enforces (content log) when the docs state none. */
@@ -824,7 +947,7 @@ public final class AddonGenerator {
         return tokens;
     }
 
-    static JsonElement get(JsonElement root, String path) {
+    public static JsonElement get(JsonElement root, String path) {
         JsonElement current = root;
         for (String token : tokens(path)) {
             if (current == null) {
@@ -842,7 +965,7 @@ public final class AddonGenerator {
         return current;
     }
 
-    static boolean remove(JsonElement root, String path) {
+    public static boolean remove(JsonElement root, String path) {
         List<String> tokens = tokens(path);
         JsonElement parent = get(root, String.join(".", tokens.subList(0, tokens.size() - 1)).replace(".[]", "[]").replace(".{}", "{}"));
         String last = tokens.get(tokens.size() - 1);

@@ -552,13 +552,16 @@ public final class DocsParser {
 
     private static final Pattern VALUE_LIST = Pattern.compile(
         "(?i)(?:valid (?:\\(and required\\) )?values? (?:for this property )?(?:is|are)|options (?:are|include)|supported [a-z ]+? are|must be(?= \\[)|"
-            + "allowed [a-z ]+? are\\s*:?|one of)\\s*:?\\s*(.*?)(?:\\. |\\.$|$)");
+            + "allowed [a-z ]+? are\\s*:?|one of|list of (?:any of )?the following [a-z]+)\\s*:?\\s*(.*?)(?:\\. |\\.$|$)");
 
     public static List<JsonElement> valuesIn(String text) {
         return valuesFrom(text);
     }
 
-    /** "Valid values are `a`, `b`", "Options are "a", "b"", "Must be [0.0, 90.0]": the listed values. */
+    /**
+     * "Valid values are `a`, `b`", "Options are "a", "b"", "Must be [0.0, 90.0]", "Can be a list of the following
+     * directions: "up", ...": the listed values.
+     */
     static List<JsonElement> valuesFrom(String text) {
         List<JsonElement> values = new ArrayList<>();
         Matcher list = VALUE_LIST.matcher(text);

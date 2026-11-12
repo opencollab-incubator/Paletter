@@ -16,6 +16,7 @@ import org.geysermc.paletter.tools.codegen.component.ApiModel.EnumRef;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Field;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Kind;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.ListOf;
+import org.geysermc.paletter.tools.codegen.component.ApiModel.MapOf;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.ObjRef;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.ObjType;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Scalar;
@@ -469,6 +470,46 @@ final class WireSource {
             put(node, relative(listWire, prefix), listValue(l.element(), nbt, var));
             return;
         }
+        // A list of scalars sent as a list of objects that hold each value under one key ({name})
+        int element = wire.lastIndexOf("[].");
+        if (t instanceof ListOf l && !(l.element() instanceof ObjRef) && kind.equals("identity") && element > 0
+            && !wire.substring(element + 3).contains("[]") && !wire.substring(element + 3).contains(".")) {
+            String listWire = wire.substring(0, element);
+            checkPlaceable(f, listWire, prefix);
+            String x = "x" + (vars++);
+            b.addStatement("$N.list($S)", node, relative(listWire, prefix));
+            b.beginControlFlow("for ($T $N : $N)", ApiSource.typeName(c, l.element(), true), x, var);
+            b.addStatement("$N.element($S).put($S, $L)", node, relative(listWire, prefix), wire.substring(element + 3),
+                convert(l.element(), CodeBlock.of("$N", x), nbt, f));
+            b.endControlFlow();
+            return;
+        }
+        // A list sent as the set of its values in BDS's own order
+        if (t instanceof ListOf l && !(l.element() instanceof ObjRef) && wire.endsWith("[]") && kind.equals("ordered-set")) {
+            String listWire = wire.substring(0, wire.length() - 2);
+            checkPlaceable(f, listWire, prefix);
+            CodeBlock order = CodeBlock.join(r.getAsJsonArray("order").asList().stream().map(v -> CodeBlock.of("$S", v.getAsString())).toList(), ", ");
+            CodeBlock values = l.element() instanceof EnumRef ? CodeBlock.of("$N.stream().map(x -> x.value()).toList()", var) : CodeBlock.of("$N", var);
+            put(node, relative(listWire, prefix), CodeBlock.of("$T.strings($T.of($L).stream().filter($L::contains).toList())", WIRE, ApiSource.LIST,
+                order, values));
+            return;
+        }
+        // A map whose keys reach the wire (wire ends with {}): one leaf per entry
+        if (t instanceof MapOf m && wire.endsWith("{}") && kind.equals("identity")) {
+            String mapWire = wire.substring(0, wire.length() - 2);
+            checkPlaceable(f, mapWire, prefix);
+            if (rules(f).stream().anyMatch(x -> x.get("kind").getAsString().equals("empty-map") && strip(x.get("wire").getAsString()).equals(mapWire))) {
+                b.beginControlFlow("if ($N.isEmpty())", var);
+                put(node, relative(mapWire, prefix), CodeBlock.of("$T.EMPTY", NBT_MAP));
+                b.endControlFlow();
+            }
+            String e = "x" + (vars++);
+            b.beginControlFlow("for ($T<$T, $T> $N : $N.entrySet())", Map.Entry.class, String.class, ApiSource.typeName(c, m.value(), true), e, var);
+            b.addStatement("$N.put($S + $N.getKey(), $L)", node, relative(mapWire, prefix) + ".", e,
+                convert(m.value(), CodeBlock.of("$N.getValue()", e), nbt, f));
+            b.endControlFlow();
+            return;
+        }
         if (t instanceof Vec3 && wire.endsWith("[]") && kind.equals("identity")) {
             String listWire = wire.substring(0, wire.length() - 2);
             checkPlaceable(f, listWire, prefix);
@@ -504,6 +545,10 @@ final class WireSource {
                 CodeBlock number = Math.abs(scale) < 1 && Math.abs(divisor - Math.rint(divisor)) < 1e-3
                     ? CodeBlock.of("($L / $L + $L)", numeric(t, expr), decimal(Math.rint(divisor)), decimal(offset))
                     : CodeBlock.of("($L * $L + $L)", decimal(scale), numeric(t, expr), decimal(offset));
+                if (r.has("modulo")) {
+                    // wrapped into [0, modulo): BDS sends -90 degrees as 3 quarter turns
+                    number = CodeBlock.of("$T.floorMod($T.round($L), $LL)", Math.class, Math.class, number, r.get("modulo").getAsLong());
+                }
                 put(node, rel, fromNumber(nbt, number, f));
             }
             case "table" -> {

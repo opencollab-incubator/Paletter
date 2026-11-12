@@ -1,5 +1,6 @@
 package org.geysermc.paletter.tools.codegen.component;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
@@ -97,12 +98,12 @@ class ComponentConformanceTest {
         JsonObject meta = JsonParser.parseString(Files.readString(capture.resolve("capture.json"))).getAsJsonObject();
         int protocol = meta.get("protocol").getAsInt();
 
-        JsonObject[] recorded = JsonParser.parseString(Files.readString(capture.resolve("variants.json"), StandardCharsets.UTF_8))
-            .getAsJsonArray().asList().stream().map(JsonElement::getAsJsonObject).toArray(JsonObject[]::new);
-        // The definitions of the variants as that capture's add-on had them (its format version). For the newest capture
-        // they are also checked against what the generator makes of today's model.
+        JsonArray manifest = JsonParser.parseString(Files.readString(capture.resolve("variants.json"), StandardCharsets.UTF_8)).getAsJsonArray();
+        JsonObject[] recorded = manifest.asList().stream().map(JsonElement::getAsJsonObject).toArray(JsonObject[]::new);
+        // The definitions of the variants as that capture's add-on had them (its format version and the bases it shrunk).
+        // For the newest capture they are also checked against what the generator makes of today's model.
         AddonGenerator generator = new AddonGenerator(Model.read(MODEL.resolve("components.json")), Fixtures.read(MODEL),
-            meta.get("formatVersion").getAsString());
+            meta.get("formatVersion").getAsString(), AddonGenerator.Shrunk.of(manifest));
         if (newest) {
             assertEquals(recorded.length, generator.variants().size(), "the add-on generator no longer produces the captured variants");
             for (int i = 0; i < recorded.length; i++) {

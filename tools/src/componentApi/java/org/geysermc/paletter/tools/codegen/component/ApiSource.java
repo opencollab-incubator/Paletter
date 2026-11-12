@@ -387,6 +387,9 @@ final class ApiSource {
         if (f.allowed != null) {
             s.append(" One of ").append(f.allowed.stream().map(Docs::number).toList()).append('.');
         }
+        if (f.multipleOf != null) {
+            s.append(" Multiples of ").append(Docs.number(f.multipleOf)).append(" only (BDS refuses the others).");
+        }
         if (f.documentedValues != null && f.documentedValues.size() <= 10 && !f.documentedValues.stream().allMatch(f.doc::contains)) {
             s.append(" Documented values: ").append(String.join(", ", f.documentedValues.stream().map(v -> "{@code " + Docs.escape(v) + "}").toList()))
                 .append("; BDS takes other strings too.");
@@ -476,6 +479,20 @@ final class ApiSource {
                     body.beginControlFlow("if ($N != null)", f.java);
                 }
                 body.addStatement("$T.range($S, $N, $L, $L)", CHECK, name, f.java, bound(f.min), bound(f.max));
+                if (nullable) {
+                    body.endControlFlow();
+                }
+            }
+            if (f.multipleOf != null) {
+                if (nullable) {
+                    body.beginControlFlow("if ($N != null)", f.java);
+                }
+                List<CodeBlock> values = f.type instanceof Vec3
+                    ? List.of(CodeBlock.of("$N.x()", f.java), CodeBlock.of("$N.y()", f.java), CodeBlock.of("$N.z()", f.java))
+                    : List.of(CodeBlock.of("$N", f.java));
+                for (CodeBlock value : values) {
+                    body.addStatement("$T.multipleOf($S, $L, $L)", CHECK, name, value, bound(f.multipleOf));
+                }
                 if (nullable) {
                     body.endControlFlow();
                 }

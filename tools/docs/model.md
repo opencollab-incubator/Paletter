@@ -94,6 +94,22 @@ that BDS reported as required, set to a sample), every whole value form, and per
 booleans, numbers around the ranges and the default, every enum value, lists of 0/1/2 elements, empty and filled maps
 and objects). Each variant is its own item (`paletter:<component>_<n>`) or block (`paletter:b_<component>_<n>`).
 
+Where the docs give no values, the generator takes them from the docs' own data, never invents them: a list without
+enum values gets the elements of its documented default list (`allowed_faces`) or the values its text lists ("Can be a
+list of the following directions: ..."); an object whose members the docs do not list is filled as the docs' example
+fills it, plus a second entry under another key (`icon` `textures`). Number lists also get `[-90, 450, 720]` and
+`[45, 135, -45]`, and the members of a vector's object form 90, -90, 450 and 45 (an angle below zero, past a full turn,
+and half a step).
+
+**Shrinking.** A variant BDS rejects for a member it does not vary says nothing about the field it varies; a rejected
+base makes every variant of its component worthless. `spec-capture` therefore captures again (up to four rounds per
+build) with what the build rejected shrunk (`SpecCapture.shrink`): the members its content log names are removed (by path,
+or the member a message about the whole component quotes first: `"y_rotation_offset" can only be used when ...`); a base
+whose log names none becomes the accepted omit variant that keeps the most of it. Field variants are shrunk only where the
+base was accepted, and never lose the field they vary. A shrunk variant keeps its identifier; `variants.json` keeps its JSON
+and the label `<label> without <paths>`, from which the generator rebuilds the capture's add-on (`AddonGenerator.Shrunk.of`).
+Each build gets its own shrinks: BDS 1.26.52.3 takes the `block_entity` container without the `title` 1.26.63.1 knows.
+
 ## The inference
 
 A variant is accepted when BDS sent it and logged no error. The control shows what a component adds to the wire
@@ -103,12 +119,16 @@ explained by the first rule that fits all observations:
 | kind | meaning |
 |---|---|
 | `identity` | the leaf is the JSON value (possibly renamed, moved into `item_properties`, another NBT type) |
-| `linear` | scale * value + offset (unit conversions) |
+| `linear` | scale * value + offset (unit conversions); with `modulo` m the result wraps into [0, m) (an angle in quarter turns: -90 -> 3, 450 -> 1), with `multipleOf` n BDS took only multiples of n and refused the others (the API refuses them too) |
 | `table` | a value table, for booleans and enums |
 | `affix` | free strings with a constant prefix/suffix |
 | `bitset` | a list of enum values -> an int of bits |
+| `ordered-set` | a list of strings -> the set of its values in BDS's own `order` (`connected_faces`) |
 | `element` | list element k -> the leaf |
-| `constant`, `empty-list` | a leaf the field's presence switches on |
+| `constant`, `empty-list`, `empty-map` | a leaf the field's presence switches on (an empty list, an empty map as an empty compound) |
+
+A map entry whose key ends its leaf (`mapEntry`) is one rule for every key (wire `...textures{}`) once two keys showed it;
+a single key keeps its own leaf.
 
 `whenAbsent` gives the leaf when the field is omitted. A field no leaf follows is `dropped` (server only); one whose
 every variant is rejected is `rejected`. Leaves no rule explains make a field `partial`/`unresolved`; those need a hand

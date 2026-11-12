@@ -80,7 +80,7 @@ public final class ComponentGenerator {
     private static final Set<String> JAVA_LANG = Set.of("Record", "Throwable", "Object", "String", "Class", "Enum", "Exception", "Error",
         "Integer", "Long", "Short", "Byte", "Float", "Double", "Boolean", "Character", "Number", "Void", "Math", "System", "Thread",
         "Runtime", "Process", "Module", "Package", "Iterable", "Comparable", "Override", "Deprecated");
-    static final Set<String> VALUE_KINDS = Set.of("identity", "linear", "table", "affix", "bitset", "count");
+    static final Set<String> VALUE_KINDS = Set.of("identity", "linear", "table", "affix", "bitset", "count", "ordered-set");
 
     private final Inputs in;
     private final ApiModel model = new ApiModel();
@@ -781,6 +781,13 @@ public final class ComponentGenerator {
         }
         if (f.type instanceof Scalar s && s.kind() == ScalarKind.INT && !d.enumValues.isEmpty()) {
             f.allowed = d.enumValues.stream().map(JsonElement::getAsDouble).toList();
+        }
+        if (observed != null && observed.has("rules")) {
+            for (JsonElement rule : observed.getAsJsonArray("rules")) {
+                if (rule.getAsJsonObject().has("multipleOf")) {
+                    f.multipleOf = rule.getAsJsonObject().get("multipleOf").getAsDouble();
+                }
+            }
         }
         if (f.min != null && f.max != null && !(f.type instanceof Scalar s && (s.kind() == ScalarKind.INT || s.kind() == ScalarKind.FLOAT))) {
             f.min = null;
