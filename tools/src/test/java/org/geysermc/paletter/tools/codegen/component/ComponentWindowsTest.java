@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Protocol windows of the generated encoders on the synthetic model: a window in which BDS does not send the component
  * leaves it out with a report entry, a window list may repeat a mapping (A, B, A), neighbouring windows that encode the
- * same are one, and the protocols the captures cover are in the index.
+ * same are one, the protocols the captures cover are in the index, and the envelope is written per window.
  */
 class ComponentWindowsTest {
     private static final String WIDGET_SIMPLE = "{\"status\": \"sent\", \"wire\": [\"test:gadget\"], "
@@ -172,5 +172,63 @@ class ComponentWindowsTest {
         assertTrue(index.contains("int NEWEST_CAPTURED_PROTOCOL = 200;"), index);
         // the window of each capture, for the protocol checks of the hand transforms
         assertTrue(index.contains("int BDS_1_150 = 149;"), index);
+    }
+
+    @Test
+    void theEnvelopeIsWrittenPerWindowNewestFirst() {
+        Inputs base = ComponentGeneratorTest.inputs();
+        JsonObject mappings = ComponentGeneratorTest.mappings();
+        mappings.add("envelope", ComponentGeneratorTest.json("""
+            {"item": [{"protocols": [100], "leaves": {"item_properties.size": "1 (int)"}},
+                      {"protocols": [150, 200], "leaves": {"item_properties.size": "2 (int)", "item_tags": "[] (list<void>)"}}],
+             "block": []}"""));
+        Inputs in = new Inputs(base.components(), base.fixtures(), base.feedback(), mappings, base.transforms(), base.api(), base.since());
+        Map<String, String> files = ComponentGenerator.generate(in);
+        String item = files.get("org/geysermc/paletter/internal/component/ItemWire.java");
+        assertTrue(item.contains("""
+                public static void envelope(@NonNull WireContext ctx, @NonNull WireNode out) {
+                    int protocol = ctx.protocol();
+                    if (protocol >= 150) {
+                        out.put("item_properties.size", 2);
+                        out.put("item_tags", Wire.EMPTY_LIST);
+                    } else {
+                        out.put("item_properties.size", 1);
+                    }
+                }
+            """), item);
+        String block = files.get("org/geysermc/paletter/internal/component/BlockWire.java");
+        assertTrue(block.contains("public static void envelope(@NonNull WireContext ctx, @NonNull WireNode out) {\n    }"), block);
+    }
+
+    @Test
+    void aStandaloneTypeGetsAPublicEncoderThatWritesTheAbsentValuesForNull() {
+        Inputs base = ComponentGeneratorTest.inputs();
+        JsonObject components = ComponentGeneratorTest.components();
+        components.getAsJsonArray("components").add(ComponentGeneratorTest.json("""
+            {"id": "item:description", "kind": "item", "category": "description", "name": "description", "status": "active",
+             "doc": "The description.", "page": "", "experiments": [], "forms": [{"type": "object"}], "notes": [],
+             "fields": [{"path": "menu", "types": [{"type": "object"}], "required": false, "enumValues": [], "examples": [], "doc": ""},
+                        {"path": "menu.tab", "types": [{"type": "string"}], "required": false, "enumValues": ["blocks", "none"],
+                         "examples": [], "doc": ""}]}"""));
+        JsonObject mappings = ComponentGeneratorTest.mappings();
+        mappings.getAsJsonObject("components").add("item:description", ComponentGeneratorTest.json("""
+            {"status": "sent", "wire": ["props.tab"], "protocols": [100], "fields": {
+              "menu": {"status": "inferred", "rules": [], "whenAbsent": {"props.tab": "9 (int)"}},
+              "menu.tab": {"status": "inferred", "rules": [{"kind": "table", "table": {"blocks": "1", "none": "9"}, "nbt": "int", "tags": [],
+                           "wire": "props.tab"}], "whenAbsent": {"props.tab": "9 (int)"}}}}"""));
+        JsonObject api = base.api().deepCopy();
+        api.add("standalone", ComponentGeneratorTest.json("{\"item:description\": \"Menu\"}"));
+        api.add("standalonePaths", ComponentGeneratorTest.json("{\"item:description\": \"menu\"}"));
+        Inputs in = new Inputs(components, base.fixtures(), base.feedback(), mappings, base.transforms(), api, base.since());
+        String item = itemWire(in);
+        assertTrue(item.contains("""
+                public static void menu(@Nullable Menu c, @NonNull WireContext ctx, @NonNull WireNode out) {
+                    if (c == null) {
+                        out.put("props.tab", 9);
+                        return;
+                    }
+            """), item);
+        assertTrue(item.contains("case \"blocks\" -> out.put(\"props.tab\", 1);"), item);
+        assertTrue(item.contains("default -> ctx.drop(\"menu\", "), item);
     }
 }

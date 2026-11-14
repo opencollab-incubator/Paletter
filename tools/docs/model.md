@@ -134,6 +134,11 @@ a single key keeps its own leaf.
 every variant is rejected is `rejected`. Leaves no rule explains make a field `partial`/`unresolved`; those need a hand
 transform: a method of `Transforms` named in `HandTransforms` (tools/docs/codegen.md).
 
+The `envelope` is what BDS sends around the components of every custom item and block, per kind and protocol window: the
+leaves every accepted control sends alike, once the leaves its companions and its description explain are left out of
+its vote (a `minecraft:wearable` companion sets the stack size to 1). For items that is the `item_properties` defaults
+and `item_tags`, for blocks `molangVersion` and `vanilla_block_data.material`.
+
 One capture per bundled protocol (`data/bds/<version>/spec`). Its add-on asks for the format version of its build, and
 the capture keeps its own `variants.json`. A capture whose wire relevant part equals the previous window's joins it
 (`protocols`); a different one is kept beside it as `protocol<N>`. `bds-feedback.json` is read from the newest capture

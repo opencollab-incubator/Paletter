@@ -35,6 +35,50 @@
     }
   ],
   "formatVersion": "1.26.60",
+  "envelope": {
+    "item": [
+      {
+        "protocols": [
+          1001,
+          2168,
+          2193,
+          2225
+        ],
+        "leaves": {
+          "item_properties.allow_off_hand": "0 (byte)",
+          "item_properties.can_destroy_in_creative": "1 (byte)",
+          "item_properties.damage": "0 (int)",
+          "item_properties.enchantable_slot": "none (string)",
+          "item_properties.enchantable_value": "0 (int)",
+          "item_properties.foil": "0 (byte)",
+          "item_properties.frame_count": "1 (int)",
+          "item_properties.hand_equipped": "0 (byte)",
+          "item_properties.liquid_clipped": "0 (byte)",
+          "item_properties.max_stack_size": "64 (int)",
+          "item_properties.mining_speed": "1.0 (float)",
+          "item_properties.should_despawn": "1 (byte)",
+          "item_properties.stacked_by_data": "0 (byte)",
+          "item_properties.use_animation": "0 (int)",
+          "item_properties.use_duration": "0 (int)",
+          "item_tags": "[] (list<void>)"
+        }
+      }
+    ],
+    "block": [
+      {
+        "protocols": [
+          1001,
+          2168,
+          2193,
+          2225
+        ],
+        "leaves": {
+          "molangVersion": "13 (int)",
+          "vanilla_block_data.material": "dirt (string)"
+        }
+      }
+    ]
+  },
   "components": {
     "block:description": {
       "variants": {

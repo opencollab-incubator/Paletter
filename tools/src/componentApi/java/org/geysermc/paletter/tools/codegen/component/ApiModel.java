@@ -37,6 +37,11 @@ final class ApiModel {
     final Map<String, String> lists = new LinkedHashMap<>();
     /** The replacement of deprecated or rejected components, by component id (generated or not). */
     final Map<String, Replacements.Replacement> replacements = new LinkedHashMap<>();
+    /**
+     * What BDS sends around the components of every custom item and block ({@code envelope} of {@code mappings.json}), by
+     * kind ({@code item}, {@code block}): protocol windows, oldest first, each {@code {protocols, leaves}}.
+     */
+    final Map<String, com.google.gson.JsonArray> envelope = new LinkedHashMap<>();
     /** Protocol and BDS version of every capture, oldest first (the bounds of the windows are protocols). */
     final java.util.TreeMap<Integer, String> captureVersions = new java.util.TreeMap<>();
     /** @return the generated component with an id, or null */
@@ -94,6 +99,8 @@ final class ApiModel {
         boolean usesVec3;
         /** Not a component: a value type of the definition core (e.g. the menu category of the description). */
         boolean standalone;
+        /** The object path of a standalone type in the definition ({@code menu_category}), null for a component. */
+        String standalonePath;
         /** Scalar forms while building: JSON type -> api.json declaration (null: automatic). */
         final Map<String, JsonObject> pendingForms = new LinkedHashMap<>();
         final List<String> autoShorthandForms = new ArrayList<>();

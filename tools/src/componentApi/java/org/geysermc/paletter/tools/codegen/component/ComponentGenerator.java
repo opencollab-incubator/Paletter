@@ -164,6 +164,9 @@ public final class ComponentGenerator {
                 }
             });
         }
+        if (in.mappings().has("envelope")) {
+            in.mappings().getAsJsonObject("envelope").entrySet().forEach(e -> model.envelope.put(e.getKey(), e.getValue().getAsJsonArray()));
+        }
         if (in.components().has("lists")) {
             in.components().getAsJsonObject("lists").entrySet().forEach(e -> model.lists.put(e.getKey(), e.getValue().getAsString()));
         }
@@ -267,6 +270,7 @@ public final class ComponentGenerator {
         c.replacement = model.replacements.get(c.id);
         c.transform = transform(c.id, "");
         c.standalone = standalone != null;
+        c.standalonePath = standalone == null ? null : standalonePrefix(c.id);
 
         // Fields after errata, BDS feedback and exclusions
         List<DocField> fields = docFields(c, doc, standalone);
@@ -740,7 +744,8 @@ public final class ComponentGenerator {
         javaName(f.java, c.id + " " + d.path);
         f.doc = d.doc;
         f.minFormat = d.minFormat;
-        f.mappingKey = d.path;
+        // A standalone type's fields are below its object in the definition's mappings (menu_category.category)
+        f.mappingKey = c.standalone ? c.standalonePath + "." + d.path : d.path;
         f.transform = transform(c.id, d.path);
         f.descriptor = apiString("descriptors", c.id + ":" + d.path);
         f.type = type(c, d, fields);

@@ -7,21 +7,14 @@ import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.BlockComponent;
 import org.geysermc.paletter.block.component.BlockTrait;
-import org.geysermc.paletter.block.component.MenuCategory;
 
 /**
- * Compiles a custom block to the block property data of one protocol, in the shape BDS 1.26.63.1 sends:
- * {@code {components, menu_category, molangVersion, vanilla_block_data, properties, traits, permutations, blockTags}}.
- * <p>
- * The envelope around the components is one window: the same in every spec capture (protocols 1001 to 2225), which
- * {@code EnvelopeCapturesTest} checks; a capture that differs fails it and needs a window here.
+ * Compiles a custom block to the block property data of one protocol, in the shape BDS sends:
+ * {@code {components, menu_category, molangVersion, vanilla_block_data, properties, traits, permutations, blockTags}}:
+ * what BDS sends for every custom block ({@link BlockWire#envelope}), the description's menu category
+ * ({@link BlockWire#menuCategory}), the components through their generated encoders, the states and permutations.
  */
 public final class BlockCompiler {
-    /** The Molang version BDS 1.26.63 sends, as do the vanilla data driven blocks of 26.50 and 26.60. */
-    static final int MOLANG_VERSION = 13;
-    /** The {@code vanilla_block_data.material} BDS sends for every custom block. */
-    static final String CUSTOM_BLOCK_MATERIAL = "dirt";
-
     private BlockCompiler() {
     }
 
@@ -38,14 +31,9 @@ public final class BlockCompiler {
         if (!components.isEmpty()) {
             out.put("components", components.build());
         }
-        MenuCategory menu = block.menuCategory();
-        out.put("menu_category", NbtMap.builder()
-            .putString("category", menu == null ? MenuCategory.Category.NONE.value() : menu.category().value())
-            .putString("group", menu == null || menu.group() == null ? "" : menu.group())
-            .putByte("is_hidden_in_commands", Wire.bool(menu != null && menu.hiddenInCommands()))
-            .build());
-        out.put("molangVersion", MOLANG_VERSION);
-        out.put("vanilla_block_data", NbtMap.builder().putInt("block_id", blockId).putString("material", CUSTOM_BLOCK_MATERIAL).build());
+        BlockWire.envelope(ctx, out);
+        BlockWire.menuCategory(block.menuCategory(), ctx, out);
+        out.put("vanilla_block_data.block_id", blockId);
         if (!block.properties().isEmpty()) {
             out.list("properties");
             for (BlockProperty<?> property : block.properties()) {

@@ -164,8 +164,8 @@ public final class WireShapes {
     }
 
     /**
-     * Observed wire paths that the component model cannot produce: not a wire path of {@code mappings.json}, not below
-     * one and not above one. Paths are checked as {@code component.path} (items and blocks share the namespace of the
+     * Observed wire paths that the component model cannot produce: not a wire path or envelope leaf of
+     * {@code mappings.json}, not below one and not above one. Paths are checked as {@code component.path} (items and blocks share the namespace of the
      * mappings; the block definition's own fields are top level).
      *
      * @return {@code component path} lines, empty when everything is covered
@@ -173,6 +173,11 @@ public final class WireShapes {
     public List<String> uncovered(JsonObject mappings) {
         Set<String> wire = new TreeSet<>();
         collectWire(mappings, wire);
+        // What the generated envelope writes around the components of every item and block
+        if (mappings.has("envelope")) {
+            mappings.getAsJsonObject("envelope").entrySet().forEach(kind -> kind.getValue().getAsJsonArray()
+                .forEach(window -> wire.addAll(window.getAsJsonObject().getAsJsonObject("leaves").keySet())));
+        }
         List<String> uncovered = new ArrayList<>();
         components.forEach((component, paths) -> {
             String name = component.substring(component.indexOf(':') + 1);
@@ -193,8 +198,8 @@ public final class WireShapes {
     /**
      * Sorts the uncovered paths ({@link #uncovered}) by why the model does not cover them. The reasons:
      * <ul>
-     *   <li>the block definition data around the components ({@code blockTags}, {@code molangVersion},
-     *       {@code vanilla_block_data}): BlockCompiler writes it and the conformance suite checks it;</li>
+     *   <li>the block definition data around the components that is not in the envelope ({@code blockTags},
+     *       {@code vanilla_block_data.block_id}, states): BlockCompiler writes it and the conformance suite checks it;</li>
      *   <li>a component the mappings call {@code untestable}: BDS rejected its companions, so nothing was inferred;</li>
      *   <li>a component without documented fields: the creator docs do not describe it, so the model has nothing to map;</li>
      *   <li>an {@code item_properties} entry: BDS sends it for every item, no add-on JSON field sets it, ItemCompiler and

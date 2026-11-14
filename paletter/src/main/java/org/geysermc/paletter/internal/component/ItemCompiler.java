@@ -10,11 +10,9 @@ import org.geysermc.paletter.item.component.MenuCategory;
 import java.util.List;
 
 /**
- * Compiles a custom item to the item component data of one protocol: the item properties BDS sends for every custom
- * item, the description's menu category, then each component through its generated encoder.
- * <p>
- * The item properties are one window: the same keys and values in every spec capture (protocols 1001 to 2225), which
- * {@code EnvelopeCapturesTest} checks; a capture that differs fails it and needs a window here.
+ * Compiles a custom item to the item component data of one protocol: what BDS sends for every custom item
+ * ({@link ItemWire#envelope}), the description's menu category ({@link ItemWire#menuCategory}), then each component
+ * through its generated encoder.
  */
 public final class ItemCompiler {
     private ItemCompiler() {
@@ -27,30 +25,11 @@ public final class ItemCompiler {
     public static @NonNull NbtMap componentData(@NonNull String identifier, int runtimeId, @NonNull List<ItemComponent> components,
                                                 @Nullable MenuCategory menu, @Nullable CreativePlacement creative,
                                                 @NonNull WireContext ctx) {
+        WireContext subject = ctx.subject(identifier);
         WireNode out = new WireNode();
-        // What BDS 1.26.63.1 sends in item_properties for every custom item (data/bds/WIRE-NOTES.md, Common item shape)
-        WireNode p = out.child("item_properties");
-        p.put("allow_off_hand", (byte) 0);
-        p.put("can_destroy_in_creative", (byte) 1);
-        p.put("creative_category", 4);
-        p.put("creative_group", "");
-        p.put("damage", 0);
-        p.put("enchantable_slot", "none");
-        p.put("enchantable_value", 0);
-        p.put("foil", (byte) 0);
-        p.put("frame_count", 1);
-        p.put("hand_equipped", (byte) 0);
-        p.put("hidden_in_commands", (byte) 2);
-        p.put("liquid_clipped", (byte) 0);
-        p.put("max_stack_size", 64);
-        p.put("mining_speed", 1f);
-        p.put("should_despawn", (byte) 1);
-        p.put("stacked_by_data", (byte) 0);
-        p.put("use_animation", 0);
-        p.put("use_duration", 0);
-        out.put("item_tags", Wire.EMPTY_LIST);
-        menu(p, menu, creative);
-        write(out, components, ctx.subject(identifier));
+        ItemWire.envelope(subject, out);
+        ItemWire.menuCategory(menu(menu, creative), subject, out);
+        write(out, components, subject);
         return NbtMap.builder()
             .putString("name", identifier)
             .putInt("id", runtimeId)
@@ -76,41 +55,20 @@ public final class ItemCompiler {
         }
     }
 
-    private static void menu(WireNode properties, @Nullable MenuCategory menu, @Nullable CreativePlacement creative) {
-        if (menu == null && creative == null) {
-            // BDS 1.26.63.1: an item without menu_category (or with an empty one) is in no category
-            properties.put("creative_category", 5);
-        }
+    /** The description's menu category: {@code menu}, else the creative placement's category and group, else none (null). */
+    private static @Nullable MenuCategory menu(@Nullable MenuCategory menu, @Nullable CreativePlacement creative) {
         if (menu != null) {
-            // BDS 1.26.63.1: a menu_category without a category puts the item in none
-            properties.put("creative_category", menu.category() == null ? 5 : categoryId(menu.category()));
-            if (menu.group() != null) {
-                properties.put("creative_group", namespaced(menu.group()));
-            }
-            if (menu.hiddenInCommands() != null) {
-                // 1 hidden; BDS sends false as 2, like an unset value (mappings.json: item:description is_hidden_in_commands)
-                properties.put("hidden_in_commands", (byte) (menu.hiddenInCommands() ? 1 : 2));
-            }
-        } else if (creative != null) {
-            properties.put("creative_category", creative.category().itemPropertyId());
-            if (creative.group() != null) {
-                properties.put("creative_group", namespaced(creative.group()));
-            }
+            return menu.group() == null ? menu : menu.toBuilder().group(namespaced(menu.group())).build();
         }
+        if (creative != null) {
+            return MenuCategory.builder().category(MenuCategory.Category.fromValue(creative.category().bedrockName()))
+                .group(creative.group() == null ? null : namespaced(creative.group())).build();
+        }
+        return null;
     }
 
     /** Like BDS: the group as add-on JSON names it, always namespaced (vanilla groups are minecraft:). */
     private static String namespaced(String group) {
         return group.indexOf(':') < 0 ? "minecraft:" + group : group;
-    }
-
-    static int categoryId(MenuCategory.Category category) {
-        return switch (category) {
-            case CONSTRUCTION -> 1;
-            case NATURE -> 2;
-            case EQUIPMENT -> 3;
-            case ITEMS -> 4;
-            case NONE -> 5;
-        };
     }
 }

@@ -78,8 +78,12 @@ public final class MappingInference {
         }
     }
 
+    /**
+     * @param definitions {@code <kind> <identifier>} -> what BDS sent for it, flattened: the item's {@code components}, the
+     *                    block's property data as sent (components not lifted, {@code block_id} left out)
+     */
     record Capture(String name, String bdsVersion, int protocol, List<Variant> variants, Map<String, Map<String, Leaf>> wire,
-                   Map<String, List<String>> log, List<String> unattributed, Feedback feedback) {
+                   Map<String, List<String>> log, List<String> unattributed, Feedback feedback, Map<String, Map<String, Leaf>> definitions) {
     }
 
     private final List<String> unexplainedBits = new ArrayList<>();
@@ -158,12 +162,17 @@ public final class MappingInference {
         Map<String, String> findings = new TreeMap<>();
         Map<String, Long> formatBits = formatDependentBits();
         unexplainedBits.clear();
+        // Per capture: component id -> its result there
+        List<Map<String, JsonObject>> resultsByCapture = new ArrayList<>();
+        captures.forEach(capture -> resultsByCapture.add(new TreeMap<>()));
         for (Component component : model.components()) {
             List<JsonObject> results = new ArrayList<>();
             List<Integer> resultProtocols = new ArrayList<>();
-            for (Capture capture : captures) {
+            for (int i = 0; i < captures.size(); i++) {
+                Capture capture = captures.get(i);
                 JsonObject result = analyze(capture, component);
                 if (result != null) {
+                    resultsByCapture.get(i).put(component.id(), result);
                     if (result.has("findings")) {
                         result.getAsJsonArray("findings").forEach(f -> findings.putIfAbsent(f.getAsJsonObject().get("id").getAsString(),
                             describe(f.getAsJsonObject(), formatBits.getOrDefault(component.id() + " " + leafOfFinding(f.getAsJsonObject()), 0L))));
@@ -179,6 +188,7 @@ public final class MappingInference {
             components.add(component.id(), merged);
             coverage.add(component, newest(merged));
         }
+        mappings.add("envelope", envelopeWindows(captures, resultsByCapture));
         mappings.add("components", components);
         coverage.findings(findings);
         findings.forEach((id, description) -> {
@@ -379,17 +389,20 @@ public final class MappingInference {
         JsonParser.parseString(Files.readString(dir.resolve("variants.json"), StandardCharsets.UTF_8)).getAsJsonArray()
             .forEach(e -> variants.add(Variant.of(e.getAsJsonObject())));
         Map<String, Map<String, Leaf>> wire = new LinkedHashMap<>();
+        Map<String, Map<String, Leaf>> definitions = new LinkedHashMap<>();
         NbtMap items = Nbt.read(dir.resolve("custom_item_registry.nbt"));
         for (NbtMap item : items.getList("items", org.cloudburstmc.nbt.NbtType.COMPOUND)) {
             NbtMap data = item.getCompound("data");
             if (item.getBoolean("componentBased") || !data.isEmpty()) {
                 wire.put("item " + item.getString("name"), Wire.flatten(data.getCompound("components")));
+                definitions.put("item " + item.getString("name"), wire.get("item " + item.getString("name")));
             }
         }
         NbtMap blocks = Nbt.read(dir.resolve("custom_block_properties.nbt"));
         for (NbtMap block : blocks.getList("blocks", org.cloudburstmc.nbt.NbtType.COMPOUND)) {
             Map<String, Leaf> flat = Wire.flatten(block.getCompound("properties"));
             flat.remove("vanilla_block_data.block_id");
+            definitions.put("block " + block.getString("name"), flat);
             // Block components sit under "components"; lifted to the top level like item components
             Map<String, Leaf> leaves = new TreeMap<>();
             flat.forEach((key, leaf) -> leaves.put(key.startsWith("components.") ? key.substring("components.".length()) : key, leaf));
@@ -428,7 +441,134 @@ public final class MappingInference {
             }
         }
         return new Capture(dir.getFileName().toString(), meta.get("bdsVersion").getAsString(), meta.get("protocol").getAsInt(),
-            variants, byVariant, log, unattributed, feedback);
+            variants, byVariant, log, unattributed, feedback, definitions);
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Envelope
+
+    /**
+     * What BDS sends around the components of every custom item and block, per kind as protocol windows (oldest first; a
+     * capture whose envelope equals the previous window's joins it): {@code {item: [{protocols, leaves}], block: [...]}},
+     * leaves as {@code path: "value (type)"}. Item paths are relative to the {@code components} compound, block paths to
+     * the block property data.
+     * <p>
+     * The envelope of a capture is what every accepted control variant of the kind sends alike, once the leaves its
+     * companions (fixtures {@code requires}, the item filler) and its description explain are taken out: the rules of the
+     * companion and of the description write those (a {@code minecraft:wearable} companion sets
+     * {@code item_properties.max_stack_size} to 1). What is left is written whatever the definition says:
+     * {@code item_properties} defaults, {@code item_tags}, {@code molangVersion}, {@code vanilla_block_data.material}.
+     *
+     * @param results per capture: component id -> its result in that capture
+     */
+    private JsonObject envelopeWindows(List<Capture> captures, List<Map<String, JsonObject>> results) {
+        JsonObject out = new JsonObject();
+        for (String kind : List.of("item", "block")) {
+            JsonArray windows = new JsonArray();
+            JsonObject current = null;
+            for (int i = 0; i < captures.size(); i++) {
+                JsonObject leaves = new JsonObject();
+                envelope(captures.get(i), kind, results.get(i)).forEach((path, leaf) -> leaves.addProperty(path, leaf.toString()));
+                if (current == null || !current.get("leaves").equals(leaves)) {
+                    current = new JsonObject();
+                    current.add("protocols", new JsonArray());
+                    current.add("leaves", leaves);
+                    windows.add(current);
+                }
+                current.getAsJsonArray("protocols").add(dataProtocol(captures.get(i).protocol()));
+            }
+            out.add(kind, windows);
+        }
+        return out;
+    }
+
+    /**
+     * The envelope of one capture and kind (see {@link #envelopeWindows}): a leaf is in it when every control that does
+     * not explain it sends it with the same value, and at least one such control exists.
+     */
+    private Map<String, Leaf> envelope(Capture capture, String kind, Map<String, JsonObject> results) {
+        Set<String> description = targets(results.get(kind + ":description"));
+        List<Map<String, Leaf>> sent = new ArrayList<>();
+        List<Set<String>> explainedBy = new ArrayList<>();
+        for (Variant v : capture.variants()) {
+            Map<String, Leaf> leaves = capture.definitions().get(kind + " " + v.identifier());
+            if (!v.kind().equals(kind) || !v.role().equals("control") || leaves == null
+                || capture.log().getOrDefault(v.identifier(), List.of()).stream().anyMatch(line -> line.startsWith("ERROR"))) {
+                continue;
+            }
+            Set<String> explained = new TreeSet<>(description);
+            for (String companion : companions(v)) {
+                explained.addAll(targets(results.get(kind + ":" + companion)));
+            }
+            sent.add(leaves);
+            explainedBy.add(explained);
+        }
+        return shared(sent, explainedBy);
+    }
+
+    /**
+     * The leaves every control that does not explain them sends alike.
+     *
+     * @param sent        per control its leaves (block components under {@code components.})
+     * @param explainedBy per control the wire paths its companions and description explain
+     */
+    static Map<String, Leaf> shared(List<Map<String, Leaf>> sent, List<Set<String>> explainedBy) {
+        Map<String, Leaf> envelope = new TreeMap<>();
+        Set<String> paths = new TreeSet<>();
+        sent.forEach(leaves -> paths.addAll(leaves.keySet()));
+        for (String path : paths) {
+            // Block components sit under "components" in the data; the rules name them without it
+            String generic = Wire.generic(path.startsWith("components.") ? path.substring("components.".length()) : path);
+            Leaf value = null;
+            boolean same = true;
+            for (int i = 0; i < sent.size() && same; i++) {
+                if (explained(generic, explainedBy.get(i))) {
+                    continue;
+                }
+                Leaf leaf = sent.get(i).get(path);
+                same = leaf != null && (value == null || value.equals(leaf));
+                value = leaf;
+            }
+            if (same && value != null) {
+                envelope.put(path, value);
+            }
+        }
+        return envelope;
+    }
+
+    /** The companion components of a control, as the add-on generator writes them: fixtures {@code requires}, else the item filler. */
+    private Set<String> companions(Variant control) {
+        Set<String> companions = new TreeSet<>(fixtures.requires(control.component()).keySet());
+        if (control.kind().equals("item") && companions.isEmpty() && control.json() == null) {
+            companions.addAll(fixtures.filler.keySet());
+        }
+        return companions;
+    }
+
+    /** The wire leaves the rules of a result write: rule targets, absent values and constants of its forms and fields. */
+    private static Set<String> targets(JsonObject result) {
+        Set<String> targets = new TreeSet<>();
+        if (result == null) {
+            return targets;
+        }
+        if (result.has("constants")) {
+            targets.addAll(result.getAsJsonObject("constants").keySet());
+        }
+        for (String group : List.of("forms", "fields")) {
+            if (!result.has(group)) {
+                continue;
+            }
+            for (Map.Entry<String, JsonElement> e : result.getAsJsonObject(group).entrySet()) {
+                JsonObject field = e.getValue().getAsJsonObject();
+                if (field.has("rules")) {
+                    field.getAsJsonArray("rules").forEach(r -> targets.add(r.getAsJsonObject().get("wire").getAsString()));
+                }
+                if (field.has("whenAbsent")) {
+                    targets.addAll(field.getAsJsonObject("whenAbsent").keySet());
+                }
+            }
+        }
+        return targets;
     }
 
     // ---------------------------------------------------------------------------------------------------------------

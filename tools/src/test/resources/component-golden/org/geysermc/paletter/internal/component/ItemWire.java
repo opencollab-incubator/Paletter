@@ -167,4 +167,12 @@ public final class ItemWire {
         Map<String, Widget.NestedThing> v19 = c.moreNested();
         Transforms.testMap(ctx, out, c);
     }
+
+    /**
+     * Writes what BDS sends for every custom item, relative to its components compound,
+     * whatever the definition says ({@code envelope} of {@code data/model/mappings.json}: what every control variant of
+     * the spec captures sends alike). The description and the components write over it.
+     */
+    public static void envelope(@NonNull WireContext ctx, @NonNull WireNode out) {
+    }
 }

@@ -15,13 +15,14 @@ paletter nor its sources, so it can regenerate them when they do not compile. Ja
 | `components.json` | generated from the creator docs | components, fields, types, defaults, enums, ranges, docs text, format versions, experiments |
 | `fixtures.json` | hand | `errata` (what the docs omit), `probeOnly` and `skip`, `replacedBy` (a replacement no data says, with its evidence) |
 | `bds-feedback.json` | generated from BDS's content log | required fields and ranges BDS enforces (they win over the docs), fields BDS does not know |
-| `mappings.json` | inferred from BDS captures | per component and protocol window: status, value form and field rules, `whenAbsent`, `constants` |
+| `mappings.json` | inferred from BDS captures | per component and protocol window: status, value form and field rules, `whenAbsent`, `constants`; per kind the `envelope` |
 | `HandTransforms.java` | hand | fields or whole components (path `""`) compiled by a hand transform, as a Java table next to the generator; whether BDS bore it out is derived (`verified` / `unverified` in `mappings.json`, listed in `coverage.md`) |
 | `api.json` | hand | Java shaping only: names, union resolution, value forms, descriptors, `keyedExtras`, open enums, `since` |
 
 Output: a record per component in `item.component` / `block.component` (nested records, enums, builder, `of(...)`
 factories, vanilla-constant overloads), the sealed `ItemComponent` / `BlockComponent` / `BlockTrait`, and the encoders
-`ItemWire`, `BlockWire`, `TraitWire`, `ComponentIndex` in `internal.component`. The compile core (`ItemCompiler`,
+`ItemWire`, `BlockWire`, `TraitWire`, `ComponentIndex` in `internal.component`; `ItemWire` and `BlockWire` also write
+the `envelope` and the description's menu category. The compile core (`ItemCompiler`,
 `BlockCompiler`, `TraitStates`, `WireNode`, ...) and `Transforms` are hand-written. `HandTransforms` maps each hand
 transformed field to a public static method of `Transforms`, whose Javadoc says why no inferred rule explains it and what
 evidence backs it; a method the table names and `Transforms` lacks fails the compile of the generated encoders

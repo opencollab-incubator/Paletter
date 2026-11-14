@@ -5,6 +5,7 @@ package org.geysermc.paletter.internal.component;
 
 import java.util.List;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.item.component.AllowOffHand;
 import org.geysermc.paletter.item.component.BlockPlacer;
 import org.geysermc.paletter.item.component.BundleInteraction;
@@ -32,6 +33,7 @@ import org.geysermc.paletter.item.component.ItemComponent;
 import org.geysermc.paletter.item.component.KineticWeapon;
 import org.geysermc.paletter.item.component.LiquidClipped;
 import org.geysermc.paletter.item.component.MaxStackSize;
+import org.geysermc.paletter.item.component.MenuCategory;
 import org.geysermc.paletter.item.component.MusicRecord;
 import org.geysermc.paletter.item.component.PiercingWeapon;
 import org.geysermc.paletter.item.component.Projectile;
@@ -706,5 +708,71 @@ public final class ItemWire {
             default -> ctx.drop(Wearable.NAME, "slot = " + v2.value() + " has no known wire value");
         }
         out.put("minecraft:wearable.slot", v2.value());
+    }
+
+    /**
+     * Writes the {@link MenuCategory} of a definition, or for null what BDS sends for a definition without one.
+     */
+    public static void menuCategory(@Nullable MenuCategory c, @NonNull WireContext ctx,
+            @NonNull WireNode out) {
+        if (c == null) {
+            out.put("item_properties.creative_category", 5);
+            out.put("item_properties.creative_group", "");
+            out.put("item_properties.hidden_in_commands", (byte) 2);
+            return;
+        }
+        MenuCategory.Category v0 = c.category();
+        if (v0 != null) {
+            switch (v0.value()) {
+                case "construction" -> out.put("item_properties.creative_category", 1);
+                case "equipment" -> out.put("item_properties.creative_category", 3);
+                case "items" -> out.put("item_properties.creative_category", 4);
+                case "nature" -> out.put("item_properties.creative_category", 2);
+                case "none" -> out.put("item_properties.creative_category", 5);
+                default -> ctx.drop("menu_category", "category = " + v0.value() + " has no known wire value");
+            }
+        } else {
+            out.put("item_properties.creative_category", 5);
+        }
+        String v1 = c.group();
+        if (v1 != null) {
+            out.put("item_properties.creative_group", v1);
+        } else {
+            out.put("item_properties.creative_group", "");
+        }
+        Boolean v2 = c.hiddenInCommands();
+        if (v2 != null) {
+            switch (String.valueOf(v2)) {
+                case "false" -> out.put("item_properties.hidden_in_commands", (byte) 2);
+                case "true" -> out.put("item_properties.hidden_in_commands", (byte) 1);
+                default -> ctx.drop("menu_category", "is_hidden_in_commands = " + String.valueOf(v2) + " has no known wire value");
+            }
+        } else {
+            out.put("item_properties.hidden_in_commands", (byte) 2);
+        }
+    }
+
+    /**
+     * Writes what BDS sends for every custom item, relative to its components compound,
+     * whatever the definition says ({@code envelope} of {@code data/model/mappings.json}: what every control variant of
+     * the spec captures sends alike). The description and the components write over it.
+     */
+    public static void envelope(@NonNull WireContext ctx, @NonNull WireNode out) {
+        out.put("item_properties.allow_off_hand", (byte) 0);
+        out.put("item_properties.can_destroy_in_creative", (byte) 1);
+        out.put("item_properties.damage", 0);
+        out.put("item_properties.enchantable_slot", "none");
+        out.put("item_properties.enchantable_value", 0);
+        out.put("item_properties.foil", (byte) 0);
+        out.put("item_properties.frame_count", 1);
+        out.put("item_properties.hand_equipped", (byte) 0);
+        out.put("item_properties.liquid_clipped", (byte) 0);
+        out.put("item_properties.max_stack_size", 64);
+        out.put("item_properties.mining_speed", 1.0f);
+        out.put("item_properties.should_despawn", (byte) 1);
+        out.put("item_properties.stacked_by_data", (byte) 0);
+        out.put("item_properties.use_animation", 0);
+        out.put("item_properties.use_duration", 0);
+        out.put("item_tags", Wire.EMPTY_LIST);
     }
 }

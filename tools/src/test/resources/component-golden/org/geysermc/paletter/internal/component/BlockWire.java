@@ -58,4 +58,12 @@ public final class BlockWire {
     private static void slab(Slab c, WireContext ctx, WireNode out) {
         Transforms.testMap(ctx, out, c);
     }
+
+    /**
+     * Writes what BDS sends for every custom block, relative to its block property data,
+     * whatever the definition says ({@code envelope} of {@code data/model/mappings.json}: what every control variant of
+     * the spec captures sends alike). The description and the components write over it.
+     */
+    public static void envelope(@NonNull WireContext ctx, @NonNull WireNode out) {
+    }
 }

@@ -1,5 +1,6 @@
 package org.geysermc.paletter.tools.codegen.component;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -34,6 +35,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -64,6 +66,8 @@ final class WireSource {
     private Window window;
 
     private final ApiModel model;
+    /** Whether the encoder is called from outside (a standalone type of the definition core, e.g. the menu category). */
+    private boolean exposed;
 
     private WireSource(Comp c, ApiModel model) {
         this.c = c;
@@ -113,7 +117,54 @@ final class WireSource {
         for (Comp c : members) {
             new WireSource(c, model).component(type);
         }
+        for (Comp c : model.components.stream().filter(c -> c.kind == kind && c.standalone).toList()) {
+            WireSource source = new WireSource(c, model);
+            source.exposed = true;
+            source.component(type);
+        }
+        if (kind == Kind.ITEM || kind == Kind.BLOCK) {
+            type.addMethod(envelope(kind, model));
+        }
         return type.build();
+    }
+
+    /**
+     * {@code envelope(ctx, out)}: the leaves of the kind's {@code envelope} in {@code mappings.json}, per protocol window
+     * (the oldest window also holds for older protocols, like the windows of a component).
+     */
+    private static MethodSpec envelope(Kind kind, ApiModel model) {
+        JsonArray windows = model.envelope.getOrDefault(kind == Kind.ITEM ? "item" : "block", new JsonArray());
+        CodeBlock.Builder body = CodeBlock.builder();
+        if (windows.size() > 1) {
+            body.addStatement("int protocol = ctx.protocol()");
+        }
+        // Newest window first: each holds from its first protocol on
+        for (int i = windows.size() - 1; i >= 0; i--) {
+            JsonObject window = windows.get(i).getAsJsonObject();
+            if (windows.size() > 1) {
+                int since = window.getAsJsonArray("protocols").get(0).getAsInt();
+                if (i == windows.size() - 1) {
+                    body.beginControlFlow("if (protocol >= $L)", since);
+                } else if (i > 0) {
+                    body.nextControlFlow("else if (protocol >= $L)", since);
+                } else {
+                    body.nextControlFlow("else");
+                }
+            }
+            for (Map.Entry<String, JsonElement> leaf : window.getAsJsonObject("leaves").entrySet()) {
+                body.addStatement("out.put($S, $L)", leaf.getKey(), literal(leaf.getValue().getAsString()));
+            }
+        }
+        if (windows.size() > 1) {
+            body.endControlFlow();
+        }
+        return MethodSpec.methodBuilder("envelope").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+            .addJavadoc("Writes what BDS sends for every custom " + (kind == Kind.ITEM ? "item, relative to its components compound"
+                : "block, relative to its block property data") + ",\nwhatever the definition says ({@code envelope} of "
+                + "{@code data/model/mappings.json}: what every control variant of\nthe spec captures sends alike). The description "
+                + "and the components write over it.\n")
+            .addParameter(ApiSource.nonNull(WIRE_CONTEXT), "ctx").addParameter(ApiSource.nonNull(WIRE_NODE), "out")
+            .addCode(body.build()).build();
     }
 
     static String method(Comp c) {
@@ -123,6 +174,12 @@ final class WireSource {
     // ---- One component -------------------------------------------------------------------------------------------------
 
     private MethodSpec.Builder encoder(String name) {
+        if (exposed && name.equals(method(c))) {
+            return MethodSpec.methodBuilder(name).addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addJavadoc("Writes the {@link $T} of a definition, or for null what BDS sends for a definition without one.\n", ApiSource.className(c))
+                .addParameter(ApiSource.nullable(ApiSource.className(c)), "c").addParameter(ApiSource.nonNull(WIRE_CONTEXT), "ctx")
+                .addParameter(ApiSource.nonNull(WIRE_NODE), "out");
+        }
         return MethodSpec.methodBuilder(name).addModifiers(Modifier.PRIVATE, Modifier.STATIC)
             .addParameter(ApiSource.className(c), "c").addParameter(WIRE_CONTEXT, "ctx").addParameter(WIRE_NODE, "out");
     }
@@ -188,9 +245,12 @@ final class WireSource {
             if (c.serverOnly != null && !c.serverOnly.bounded()) {
                 b.add("// server only: BDS sends nothing to clients\n");
             } else {
-                b.addStatement("ctx.drop($T.NAME, $S)", ApiSource.className(c), "is not sent to clients (BDS: " + w.status() + ")");
+                b.addStatement("ctx.drop($L, $S)", name(), "is not sent to clients (BDS: " + w.status() + ")");
             }
             return;
+        }
+        if (exposed && w != null) {
+            absentObject(w);
         }
         if (w != null) {
             collectOwned(c.root);
@@ -206,10 +266,46 @@ final class WireSource {
             return;
         }
         if (w == null) {
-            b.addStatement("ctx.drop($T.NAME, $S)", ApiSource.className(c), "has no known wire mapping");
+            b.addStatement("ctx.drop($L, $S)", name(), "has no known wire mapping");
             return;
         }
         fields(c.root, "c", "out", "");
+    }
+
+    /**
+     * For a standalone type: without it ({@code c} null) the definition gets what BDS sent when its object was left out,
+     * the absent values of the object and of each of its fields.
+     */
+    private void absentObject(Window w) {
+        Map<String, String> absent = new TreeMap<>();
+        JsonObject fields = w.mapping().has("fields") ? w.mapping().getAsJsonObject("fields") : new JsonObject();
+        for (Map.Entry<String, JsonElement> e : fields.entrySet()) {
+            JsonObject field = e.getValue().getAsJsonObject();
+            if ((e.getKey().equals(c.standalonePath) || e.getKey().startsWith(c.standalonePath + ".")) && field.has("whenAbsent")) {
+                field.getAsJsonObject("whenAbsent").entrySet().forEach(a -> {
+                    String before = absent.putIfAbsent(a.getKey(), a.getValue().getAsString());
+                    if (before != null && !before.equals(a.getValue().getAsString())) {
+                        throw new GenerationException(c.id + ": " + a.getKey() + " is " + before + " and " + a.getValue().getAsString()
+                            + " without " + c.standalonePath);
+                    }
+                });
+            }
+        }
+        b.beginControlFlow("if (c == null)");
+        absent.forEach((path, value) -> {
+            if (value.equals("omitted")) {
+                b.addStatement("out.remove($S)", path);
+            } else {
+                put("out", path, literal(value));
+            }
+        });
+        b.addStatement("return");
+        b.endControlFlow();
+    }
+
+    /** What a report entry names: the component's {@code NAME}, or a standalone type's object ({@code menu_category}). */
+    private CodeBlock name() {
+        return c.standalone ? CodeBlock.of("$S", c.standalonePath) : CodeBlock.of("$T.NAME", ApiSource.className(c));
     }
 
     /** A call of a hand transform; it checks the protocol itself where BDS builds differ. */
@@ -403,7 +499,7 @@ final class WireSource {
         if (emptyCheck != null) {
             b.beginControlFlow("if (!$L)", emptyCheck);
         }
-        b.addStatement("ctx.drop($T.NAME, $S)", ApiSource.className(c), json + " has no known wire mapping");
+        b.addStatement("ctx.drop($L, $S)", name(), json + " has no known wire mapping");
         if (emptyCheck != null) {
             b.endControlFlow();
         }
@@ -566,7 +662,7 @@ final class WireSource {
                 if (fallback != null) {
                     putCase(node, rel, "default", null, fallback, nbt);
                 } else {
-                    b.addStatement("default -> ctx.drop($T.NAME, $S + $L + $S)", ApiSource.className(c), f.path + " = ", key, " has no known wire value");
+                    b.addStatement("default -> ctx.drop($L, $S + $L + $S)", name(), f.path + " = ", key, " has no known wire value");
                 }
                 b.endControlFlow();
             }

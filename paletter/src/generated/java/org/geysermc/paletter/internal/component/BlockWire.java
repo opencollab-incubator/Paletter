@@ -6,6 +6,7 @@ package org.geysermc.paletter.internal.component;
 import java.util.List;
 import java.util.Map;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.component.BlockComponent;
 import org.geysermc.paletter.block.component.BlockEntity;
@@ -37,6 +38,7 @@ import org.geysermc.paletter.block.component.LiquidDetection;
 import org.geysermc.paletter.block.component.Loot;
 import org.geysermc.paletter.block.component.MapColor;
 import org.geysermc.paletter.block.component.MaterialInstances;
+import org.geysermc.paletter.block.component.MenuCategory;
 import org.geysermc.paletter.block.component.Movable;
 import org.geysermc.paletter.block.component.PlacementFilter;
 import org.geysermc.paletter.block.component.PrecipitationInteractions;
@@ -656,5 +658,38 @@ public final class BlockWire {
 
     private static void unitCube(UnitCube c, WireContext ctx, WireNode out) {
         ctx.drop(UnitCube.NAME, "is not sent to clients (BDS: rejected)");
+    }
+
+    /**
+     * Writes the {@link MenuCategory} of a definition, or for null what BDS sends for a definition without one.
+     */
+    public static void menuCategory(@Nullable MenuCategory c, @NonNull WireContext ctx,
+            @NonNull WireNode out) {
+        if (c == null) {
+            out.put("menu_category.category", "none");
+            out.put("menu_category.group", "");
+            out.put("menu_category.is_hidden_in_commands", (byte) 0);
+            return;
+        }
+        MenuCategory.Category v0 = c.category();
+        out.put("menu_category.category", v0.value());
+        String v1 = c.group();
+        if (v1 != null) {
+            out.put("menu_category.group", v1);
+        } else {
+            out.put("menu_category.group", "");
+        }
+        boolean v2 = c.hiddenInCommands();
+        out.put("menu_category.is_hidden_in_commands", Wire.bool(v2));
+    }
+
+    /**
+     * Writes what BDS sends for every custom block, relative to its block property data,
+     * whatever the definition says ({@code envelope} of {@code data/model/mappings.json}: what every control variant of
+     * the spec captures sends alike). The description and the components write over it.
+     */
+    public static void envelope(@NonNull WireContext ctx, @NonNull WireNode out) {
+        out.put("molangVersion", 13);
+        out.put("vanilla_block_data.material", "dirt");
     }
 }
