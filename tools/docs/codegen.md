@@ -15,13 +15,13 @@ paletter nor its sources, so it can regenerate them when they do not compile. Ja
 | `components.json` | generated from the creator docs | components, fields, types, defaults, enums, ranges, docs text, format versions, experiments |
 | `fixtures.json` | hand | `errata` (what the docs omit), `probeOnly` and `skip`, `replacedBy` (a replacement no data says, with its evidence) |
 | `bds-feedback.json` | generated from BDS's content log | required fields and ranges BDS enforces (they win over the docs), fields BDS does not know |
-| `mappings.json` | inferred from BDS captures | per component and protocol window: status, value form and field rules, `whenAbsent`, `constants`; per kind the `envelope` |
+| `mappings.json` | inferred from BDS captures | per component and protocol window: status, value form and field rules, `whenAbsent`, `constants`; per kind the `envelope`; per capture how BDS numbers custom blocks; `traitStates` |
 | `HandTransforms.java` | hand | fields or whole components (path `""`) compiled by a hand transform, as a Java table next to the generator; whether BDS bore it out is derived (`verified` / `unverified` in `mappings.json`, listed in `coverage.md`) |
 | `api.json` | hand | Java shaping only: names, union resolution, value forms, descriptors, `keyedExtras`, open enums, `since` |
 
 Output: a record per component in `item.component` / `block.component` (nested records, enums, builder, `of(...)`
 factories, vanilla-constant overloads), the sealed `ItemComponent` / `BlockComponent` / `BlockTrait`, and the encoders
-`ItemWire`, `BlockWire`, `TraitWire`, `ComponentIndex` in `internal.component`; `ItemWire` and `BlockWire` also write
+`ItemWire`, `BlockWire`, `TraitWire`, `ComponentIndex` and `TraitStateTable` in `internal.component`; `ItemWire` and `BlockWire` also write
 the `envelope` and the description's menu category. The compile core (`ItemCompiler`,
 `BlockCompiler`, `TraitStates`, `WireNode`, ...) and `Transforms` are hand-written. `HandTransforms` maps each hand
 transformed field to a public static method of `Transforms`, whose Javadoc says why no inferred rule explains it and what
@@ -70,6 +70,16 @@ Rules:
 - **Hand transforms per protocol**: a hand transform checks `ctx.protocol()` itself, against the generated
   `ComponentIndex.BDS_<build>` constant (the first protocol of that capture's window, from `windowProtocol` in
   `mappings.json`).
+- **Capture constants**: `ComponentIndex.CUSTOM_BLOCK_ID_START` (the first custom `block_id`) and
+  `BLOCK_ITEM_ID_PLUS_BLOCK_ID` (a block item's runtime id is it minus the `block_id`), from `firstCustomBlockId` and
+  `blockItemIdPlusBlockId` of every capture in `mappings.json`; generation fails if captures differ.
+- **Trait states** (`TraitStateTable`, from `mappings.json` `traitStates`): the states a trait adds per `enabled_states`
+  value. The client adds them, so no capture's wire shows them: the names come from the docs' "adds state" notes (a
+  value adds the state of its name; the one value naming no state adds the states no value names), the values from the
+  vanilla state of the same name (`constants-history.json`, which must match the docs' values), and the default (first
+  value) is checked against the hashes BDS sent for the default states of the capture add-on's trait blocks
+  (`data/bds/<build>/addon/creative_items.json.gz`); a differing hash fails the inference. Each case says whether its
+  state is verified.
 
 ## Gates
 

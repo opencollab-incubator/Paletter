@@ -117,8 +117,17 @@ class ComponentGeneratorTest {
 
     static JsonObject mappings() {
         return json("""
-            {"captures": [{"capture": "data/bds/8.8.8/spec", "bdsVersion": "8.8.8", "protocol": 100},
-                         {"capture": "data/bds/9.9.9/spec", "bdsVersion": "9.9.9", "protocol": 200}], "components": {
+            {"captures": [{"capture": "data/bds/8.8.8/spec", "bdsVersion": "8.8.8", "protocol": 100, "windowProtocol": 100,
+                           "firstCustomBlockId": 10000, "blockItemIdPlusBlockId": 255},
+                         {"capture": "data/bds/9.9.9/spec", "bdsVersion": "9.9.9", "protocol": 200, "windowProtocol": 200,
+                           "firstCustomBlockId": 10000, "blockItemIdPlusBlockId": 255}],
+             "traitStates": {"test:turn": {
+               "test:facing": [{"name": "test:facing", "type": "string", "values": ["south", "north"],
+                                "valuesFrom": "the vanilla state test:facing", "default": "verified (name and default): a hash"}],
+               "test:links": [{"name": "test:link_a", "type": "bool", "values": [0, 1], "valuesFrom": "the vanilla state test:link_a",
+                               "default": "unverified: no hash"},
+                              {"name": "test:part", "type": "int", "values": [0, 1, 2], "valuesFrom": "the docs", "default": "unverified: no hash"}]}},
+             "components": {
               "item:test:widget": {"status": "sent", "wire": ["test:widget"], "constants": {"test:widget.version": "2 (int)"},
                 "fields": {
                   "count": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "int", "tags": [], "wire": "test:widget.count"}],
@@ -285,6 +294,12 @@ class ComponentGeneratorTest {
         fails("block:test:glow is server only in 2 protocol windows; @ServerOnly states one range",
             in -> in.mappings().getAsJsonObject("components").getAsJsonObject("block:test:glow")
                 .add("protocol300", json("{\"status\": \"server-only\", \"fields\": {}}")));
+    }
+
+    @Test
+    void capturesThatNumberCustomBlocksDifferentlyFail() {
+        fails("the spec captures differ in firstCustomBlockId ([10000, 20000]): the code using it needs a protocol window",
+            in -> in.mappings().getAsJsonArray("captures").get(1).getAsJsonObject().addProperty("firstCustomBlockId", 20000));
     }
 
     @Test

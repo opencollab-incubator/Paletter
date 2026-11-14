@@ -79,6 +79,9 @@ final class WireSource {
             files.put(PKG.replace('.', '/') + "/" + wireClass(kind) + ".java", ApiSource.file(PKG, kindClass(kind, model)));
         }
         files.put(PKG.replace('.', '/') + "/ComponentIndex.java", ApiSource.file(PKG, index(model)));
+        if (!model.traitStates.isEmpty()) {
+            files.put(PKG.replace('.', '/') + "/TraitStateTable.java", ApiSource.file(PKG, TraitStateSource.table(model)));
+        }
     }
 
     static String wireClass(Kind kind) {
@@ -1000,6 +1003,19 @@ final class WireSource {
             .addJavadoc("The first protocol of the window of the spec capture of BDS $L ({@code data/bds/$L/spec}): what the hand\n"
                 + "transforms compare {@code WireContext.protocol()} with where that build changed the wire.\n", bds, bds)
             .initializer("$L", protocol).build()));
+        String captures = String.join(", ", model.windowProtocols.keySet());
+        if (model.firstCustomBlockId != null) {
+            type.addField(FieldSpec.builder(int.class, "CUSTOM_BLOCK_ID_START", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                .addJavadoc("The {@code vanilla_block_data.block_id} of the first custom block: BDS numbers custom blocks from here, in\n"
+                    + "every spec capture ($L).\n", captures)
+                .initializer("$L", model.firstCustomBlockId).build());
+        }
+        if (model.blockItemIdPlusBlockId != null) {
+            type.addField(FieldSpec.builder(int.class, "BLOCK_ITEM_ID_PLUS_BLOCK_ID", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                .addJavadoc("The item of a custom block has the runtime id {@code BLOCK_ITEM_ID_PLUS_BLOCK_ID - block_id} in every spec\n"
+                    + "capture ($L).\n", captures)
+                .initializer("$L", model.blockItemIdPlusBlockId).build());
+        }
         type.addMethod(MethodSpec.methodBuilder("keys").addModifiers(Modifier.PRIVATE, Modifier.STATIC)
             .addParameter(ParameterizedTypeName.get(ClassName.get(Class.class), com.palantir.javapoet.WildcardTypeName.subtypeOf(Object.class)), "type")
             .addParameter(com.palantir.javapoet.ArrayTypeName.of(ApiSource.STRING), "keys").varargs()

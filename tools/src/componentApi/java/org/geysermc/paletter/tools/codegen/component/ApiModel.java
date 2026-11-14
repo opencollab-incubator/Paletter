@@ -54,6 +54,15 @@ final class ApiModel {
     /** The oldest and the newest protocol a spec capture exists for (the window shapes are observed in between). */
     int oldestCaptured = Integer.MIN_VALUE;
     int newestCaptured = Integer.MAX_VALUE;
+    /**
+     * How BDS numbers custom blocks, the same in every spec capture ({@code mappings.json} captures): the first
+     * {@code vanilla_block_data.block_id}, and the constant a block item's runtime id and its block id add up to. Null
+     * without captures.
+     */
+    Integer firstCustomBlockId;
+    Integer blockItemIdPlusBlockId;
+    /** {@code mappings.json} {@code traitStates}: trait -> enabled_states value -> the states it adds. */
+    JsonObject traitStates = new JsonObject();
 
 
     static final class Comp {

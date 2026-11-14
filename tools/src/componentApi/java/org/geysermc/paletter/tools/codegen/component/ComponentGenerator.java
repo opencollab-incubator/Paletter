@@ -163,6 +163,11 @@ public final class ComponentGenerator {
                     model.windowProtocols.put(capture.get("bdsVersion").getAsString(), capture.get("windowProtocol").getAsInt());
                 }
             });
+            model.firstCustomBlockId = sameInEveryCapture("firstCustomBlockId");
+            model.blockItemIdPlusBlockId = sameInEveryCapture("blockItemIdPlusBlockId");
+        }
+        if (in.mappings().has("traitStates")) {
+            model.traitStates = in.mappings().getAsJsonObject("traitStates");
         }
         if (in.mappings().has("envelope")) {
             in.mappings().getAsJsonObject("envelope").entrySet().forEach(e -> model.envelope.put(e.getKey(), e.getValue().getAsJsonArray()));
@@ -227,6 +232,23 @@ public final class ComponentGenerator {
                 throw new GenerationException("name collision: " + other + " and " + c.id + " are both " + key + "; set one in api.json classes");
             }
         }
+    }
+
+    /**
+     * @return the value of a key of every capture of {@code mappings.json}, or null if no capture has it
+     * @throws GenerationException if captures differ: the hand code that uses it would need a protocol window
+     */
+    private Integer sameInEveryCapture(String key) {
+        Set<Integer> values = new TreeSet<>();
+        in.mappings().getAsJsonArray("captures").forEach(e -> {
+            if (e.getAsJsonObject().has(key)) {
+                values.add(e.getAsJsonObject().get(key).getAsInt());
+            }
+        });
+        if (values.size() > 1) {
+            throw new GenerationException("the spec captures differ in " + key + " (" + values + "): the code using it needs a protocol window");
+        }
+        return values.isEmpty() ? null : values.iterator().next();
     }
 
     /** The capture directory of the newest BDS, e.g. data/bds/1.26.63.1/spec (where the BDS messages of the model come from), or null. */

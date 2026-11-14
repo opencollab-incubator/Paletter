@@ -160,6 +160,18 @@ public final class ComponentIndex {
      */
     public static final int BDS_1_26_63_1 = 2225;
 
+    /**
+     * The {@code vanilla_block_data.block_id} of the first custom block: BDS numbers custom blocks from here, in
+     * every spec capture (1.26.36.1, 1.26.45.1, 1.26.52.3, 1.26.63.1).
+     */
+    public static final int CUSTOM_BLOCK_ID_START = 10000;
+
+    /**
+     * The item of a custom block has the runtime id {@code BLOCK_ITEM_ID_PLUS_BLOCK_ID - block_id} in every spec
+     * capture (1.26.36.1, 1.26.45.1, 1.26.52.3, 1.26.63.1).
+     */
+    public static final int BLOCK_ITEM_ID_PLUS_BLOCK_ID = 255;
+
     static {
         STANDALONE.put("block:description", MenuCategory.class);
         keys(MenuCategory.class, "category", "category", "group", "group", "is_hidden_in_commands", "hiddenInCommands");
