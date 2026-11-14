@@ -6,6 +6,7 @@ import org.geysermc.paletter.behaviour.BlockBehaviour;
 import org.geysermc.paletter.behaviour.BlockShape;
 import org.geysermc.paletter.behaviour.ItemBehaviour;
 import org.geysermc.paletter.internal.behaviour.BehaviourStore;
+import org.geysermc.paletter.internal.behaviour.WireRules;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,11 +24,6 @@ import java.util.function.Function;
  */
 final class BehaviourReport {
     private static final int EXAMPLES = 3;
-    /** Keys no dump has: what serves them instead. */
-    private static final Map<BehaviourKey<?>, String> NOT_DUMPED = Map.of(
-        BlockBehaviour.CLIMBABLE, "no source: needs a native capture of BDS (LeviLamina), run by hand",
-        ItemBehaviour.USE_DURATION, "read at runtime from the component data (WIRE) of component based items; native items (bow, trident, potion) need the native capture",
-        ItemBehaviour.USE_ANIMATION, "read at runtime from the component data (WIRE) of component based items; native items need the native capture");
 
     private final List<BehaviourImport.Bundled> bundled;
     private final List<BehaviourImport.Capture> captures;
@@ -96,8 +92,10 @@ final class BehaviourReport {
         out.append("\n|---|").append("---|".repeat(bundled.size())).append('\n');
         List<BehaviourKey<?>> keys = new ArrayList<>(BlockBehaviour.keys());
         keys.addAll(ItemBehaviour.keys());
+        List<BehaviourKey<?>> notDumped = new ArrayList<>();
         for (BehaviourKey<?> key : keys) {
             out.append("| `").append(key).append("` |");
+            boolean dumped = false;
             for (BehaviourImport.Bundled version : bundled) {
                 Map<String, Integer> counts = new TreeMap<>();
                 Collection<?> ids = key.owner() == BehaviourKey.Owner.BLOCK ? version.states().keySet() : version.items();
@@ -108,17 +106,30 @@ final class BehaviourReport {
                         : resolved.capture().version().name().equals(version.version().name()) ? resolved.capture().source().name()
                         : "inherited from " + resolved.capture().version().name() + " " + resolved.capture().source();
                     counts.merge(label, 1, Integer::sum);
+                    dumped |= resolved != null;
                 }
                 out.append(' ');
                 counts.forEach((label, count) -> out.append(label).append(' ').append(count).append("<br>"));
                 out.append(" |");
             }
             out.append('\n');
+            if (!dumped) {
+                notDumped.add(key);
+            }
         }
         out.append("\nKeys no dump has:\n\n");
-        NOT_DUMPED.entrySet().stream().sorted(Map.Entry.comparingByKey(java.util.Comparator.comparing(Object::toString)))
-            .forEach(e -> out.append("- `").append(e.getKey()).append("`: ").append(e.getValue()).append('\n'));
+        notDumped.stream().sorted(java.util.Comparator.comparing(Object::toString))
+            .forEach(key -> out.append("- `").append(key).append("`: ").append(insteadOfADump(key)).append('\n'));
         out.append('\n');
+    }
+
+    /** What serves a key no dump has: the component data if a wire rule reads the key, else nothing yet. */
+    private static String insteadOfADump(BehaviourKey<?> key) {
+        if (WireRules.components(key).isEmpty()) {
+            return "no source: needs a native capture of BDS (LeviLamina), run by hand";
+        }
+        String kind = key.owner() == BehaviourKey.Owner.BLOCK ? "blocks" : "items";
+        return "read at runtime from the component data (WIRE) of component based " + kind + "; native " + kind + " need the native capture";
     }
 
     private void disputes(StringBuilder out) {

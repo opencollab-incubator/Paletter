@@ -1,10 +1,13 @@
 package org.geysermc.paletter.tools.codegen.component;
 
+import com.google.gson.JsonParser;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -12,13 +15,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
- * {@code generate --root DIR} writes the component API from {@code data/model}; {@code check --root DIR} fails if the
- * committed sources differ (and lists the files).
+ * {@code generate --root DIR} writes the component API from {@code data/model}, and the behaviour keys from
+ * {@link BehaviourKeys}, {@code mappings.json} and the newest behaviour probe capture ({@link BehaviourSource});
+ * {@code check --root DIR} fails if the committed sources differ (and lists the files).
  */
 public final class Main {
     /** Directories whose generated files this generator owns (a file with the generator header that it no longer writes is deleted). */
     static final List<String> OWNED = List.of("org/geysermc/paletter/item/component", "org/geysermc/paletter/block/component",
-        "org/geysermc/paletter/internal/component");
+        "org/geysermc/paletter/internal/component", "org/geysermc/paletter/behaviour", "org/geysermc/paletter/internal/behaviour");
 
     private Main() {
     }
@@ -46,6 +50,10 @@ public final class Main {
         Path model = root.resolve("data/model");
         ComponentGenerator.Inputs inputs = ComponentGenerator.read(model, version(root));
         Map<String, String> files = ComponentGenerator.generate(inputs);
+        Path probe = newestProbe(root);
+        files.putAll(BehaviourSource.generate(BehaviourKeys.KEYS, inputs.mappings(), probe == null ? null
+            : JsonParser.parseString(Files.readString(probe, StandardCharsets.UTF_8)).getAsJsonObject(),
+            probe == null ? "" : "data/bds/" + probe.getParent().getParent().getFileName() + "/behaviour-probe/capture.json"));
         int changed = 0;
         for (Map.Entry<String, String> file : files.entrySet()) {
             Path path = sources.resolve(file.getKey());
@@ -78,6 +86,32 @@ public final class Main {
             }
         }
         return changed;
+    }
+
+    /** @return the {@code behaviour-probe/capture.json} of the newest BDS build under {@code data/bds}, or null if none has one */
+    static Path newestProbe(Path root) throws IOException {
+        Path bds = root.resolve("data/bds");
+        if (!Files.isDirectory(bds)) {
+            return null;
+        }
+        try (Stream<Path> builds = Files.list(bds)) {
+            return builds.map(build -> build.resolve("behaviour-probe/capture.json")).filter(Files::isRegularFile)
+                .max(Comparator.comparing(capture -> capture.getParent().getParent().getFileName().toString(), Main::compareVersions))
+                .orElse(null);
+        }
+    }
+
+    /** Compares dotted versions number by number ({@code 1.26.63.1} after {@code 1.26.9.0}). */
+    static int compareVersions(String a, String b) {
+        String[] x = a.split("\\.");
+        String[] y = b.split("\\.");
+        for (int i = 0; i < Math.max(x.length, y.length); i++) {
+            int c = Integer.compare(i < x.length ? Integer.parseInt(x[i]) : 0, i < y.length ? Integer.parseInt(y[i]) : 0);
+            if (c != 0) {
+                return c;
+            }
+        }
+        return 0;
     }
 
     static String version(Path root) throws IOException {

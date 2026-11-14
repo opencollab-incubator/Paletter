@@ -64,7 +64,7 @@ Paletter bundles no fallbacks: what an older version lacks is `minecraft:unknown
 
 | Where | Kind |
 |---|---|
-| `paletter/src/generated/java` | Generated, never edited: component API, encoders, `ComponentIndex`, vanilla constants. `build` fails if stale (`checkComponentApi`, `checkConstants`) |
+| `paletter/src/generated/java` | Generated, never edited: component API, encoders, `ComponentIndex`, behaviour keys and their `WireRules`, vanilla constants. `build` fails if stale (`checkComponentApi`, `checkConstants`) |
 | `paletter/src/main/java` | Hand-written library; `internal/component/Transforms.java` holds the hand transforms the encoders call |
 | `paletter/src/main/resources/paletter` | Generated data (`tools` import), except `renames.txt` |
 | `tools/src/main/java` | Hand-written tooling, including the generators |
