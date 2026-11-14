@@ -13558,14 +13558,6 @@
           "status": "rejected"
         }
       },
-      "transforms": {
-        "using_converts_to": {
-          "verified": {
-            "build": "1.26.36.1",
-            "variants": 3
-          }
-        }
-      },
       "protocols": [
         1001,
         2168,

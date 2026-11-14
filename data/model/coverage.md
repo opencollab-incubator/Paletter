@@ -209,7 +209,7 @@ Wire values of `Transforms` that no accepted variant sends, so the conformance s
 
 ## Hand transforms not verified by BDS
 
-22 of 22 transforms have accepted variants that set what they compile (`verified: {build, variants}` in `mappings.json`; the conformance suite reproduces those variants). Not verified:
+21 of 21 transforms have accepted variants that set what they compile (`verified: {build, variants}` in `mappings.json`; the conformance suite reproduces those variants). Not verified:
 
 - `block:minecraft:destructible_by_mining:` (`destructibleByMining`): verified for the other fields, but BDS rejected every variant of `base_time_to_destroy`, `item_specific_speeds[].item[].tags`
 - `block:minecraft:material_instances:` (`materialInstances`): verified for the other fields, but BDS rejected every variant of `down.tint_method`, `east.tint_method`, `north.tint_method`, `south.tint_method`, `up.tint_method`, `west.tint_method`

@@ -6,6 +6,7 @@ package org.geysermc.paletter.internal.component;
 import java.util.List;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.item.component.AllowOffHand;
 import org.geysermc.paletter.item.component.BlockPlacer;
 import org.geysermc.paletter.item.component.BundleInteraction;
@@ -328,7 +329,13 @@ public final class ItemWire {
         out.put("minecraft:food.nutrition", Wire.toInt(v1));
         float v2 = c.saturationModifier();
         out.put("minecraft:food.saturation_modifier", Wire.toFloat(v2));
-        Transforms.itemDescriptorName(ctx, out, c);
+        String v3 = c.usingConvertsTo();
+        if (v3 != null) {
+            out.put("minecraft:food.using_converts_to.name", v3);
+        } else {
+            out.put("minecraft:food.using_converts_to", NbtMap.EMPTY);
+            out.remove("minecraft:food.using_converts_to.name");
+        }
     }
 
     private static void fuel(Fuel c, WireContext ctx, WireNode out) {

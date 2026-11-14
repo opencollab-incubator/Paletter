@@ -37,7 +37,6 @@ public final class HandTransforms {
         entry("item:minecraft:dyeable:default_color", "rgbColor"),
         entry("item:minecraft:entity_placer:dispense_on[].states", "blockDescriptorStates"),
         entry("item:minecraft:entity_placer:use_on[].states", "blockDescriptorStates"),
-        entry("item:minecraft:food:using_converts_to", "itemDescriptorName"),
         entry("item:minecraft:hover_text_color:value", "formattingCode"),
         entry("item:minecraft:icon:", "iconTextures"),
         entry("item:minecraft:repairable:repair_items", "itemDescriptorList"),
