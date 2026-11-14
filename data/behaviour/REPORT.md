@@ -6,13 +6,13 @@
 
 ## Ranking
 
-Values come from BDS directly wherever possible; third-party dumps rank below and are marked (`Provenance#thirdParty()`). Strongest first:
+Values come from BDS directly wherever possible; third-party dumps rank below and are marked (`explain` says "third party"). Strongest first:
 
 1. Paletter's own captures of BDS: native capture (`NATIVE`, none yet), Script API dumps (`SCRIPT_API`), experiments on BDS (`BDS_PROBE`: `behaviour-probe`, the collision of doors) and what BDS sends clients (`WIRE`, ranked at runtime from the component data of the palette).
 2. `CLOUDBURST_DATA`: CloudburstMC/Data (Apache-2.0), a native BDS dump. Third party. It post-processes some values (see Post-processed values).
 3. `ALLAY_DATA`: AllayMC/Allay `data/` (MIT), the raw Endstone DevTools dump of BDS. Third party. Used only for what CloudburstMC/Data does not have (items: attack damage, armour, toughness, enchant value, furnace fuel and XP; CloudburstMC/Data has no item behaviour file in any commit of its history), and as the other opinion for disputes.
 
-Where sources disagree and no BDS evidence settles it, the value of the stronger one is used and marked disputed (`Provenance#disputed()`, the other values in `Provenance#alternatives()`).
+Where sources disagree and no BDS evidence settles it, the value of the stronger one is used and marked disputed (`explain` lists the other values).
 
 ## Captures
 
@@ -75,7 +75,7 @@ Keys no dump has:
 
 ## Disputed values
 
-Stored values a second third-party source disagrees on, with no direct BDS capture of the key in the version (a data driven block's wire data settles it at runtime and wins; the cross-check test shows no disagreement there). `Provenance#disputed()` is true for these; the other source's value is an alternative. A dispute is carried to the versions where the source's value is unchanged and nothing else could be checked (the alternative then names the version it was seen in).
+Stored values a second third-party source disagrees on, with no direct BDS capture of the key in the version (a data driven block's wire data settles it at runtime and wins; the cross-check test shows no disagreement there). `explain` lists the other source's value for these. A dispute is carried to the versions where the source's value is unchanged and nothing else could be checked (the alternative then names the version it was seen in).
 
 | Version and key | States | Blocks | Example (used / alternative) |
 |---|---|---|---|
@@ -90,7 +90,7 @@ Stored values a second third-party source disagrees on, with no direct BDS captu
 
 ## Post-processed values
 
-Values the source itself says it post-processed after reading BDS (`Provenance#postProcessing()`), e.g. CloudburstMC/Data's `shapeSource: door_state_correction`.
+Values the source itself says it post-processed after reading BDS (`explain` says so), e.g. CloudburstMC/Data's `shapeSource: door_state_correction`.
 
 - 26.30 block:collision_shape: shapeSource: door_state_correction (carried from 26.50: the value is the same) (672 states)
 - 26.30 block:outline_shape: shapeSource: door_state_correction (carried from 26.50: the value is the same) (672 states)
@@ -103,7 +103,7 @@ Values the source itself says it post-processed after reading BDS (`Provenance#p
 
 ## Custom content: defaults
 
-Behaviour of custom blocks and items matches BDS: `Provenance#userSet()` tells a component the user set from a BDS default. The default of a key (what BDS uses when the component is absent) is what the newest behaviour probe capture measured, with that capture as reference; a key it did not measure has no value and the provenance is `UNKNOWN_DEFAULT`.
+Behaviour of custom blocks and items matches BDS: `explain` tells a component the user set (`USER`) from a BDS default. The default of a key (what BDS uses when the component is absent) is what the newest behaviour probe capture measured, with that capture as reference; a key it did not measure has no value (`UNKNOWN_DEFAULT`: `get` throws, `getOrElse` gives the fallback).
 
 - `block:friction` = 0.6 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
 - `block:light_dampening` = 15 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))

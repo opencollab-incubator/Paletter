@@ -62,7 +62,7 @@ final class BehaviourReport {
 
     private void ranking(StringBuilder out) {
         out.append("## Ranking\n\nValues come from BDS directly wherever possible; third-party dumps rank below and are marked "
-            + "(`Provenance#thirdParty()`). Strongest first:\n\n"
+            + "(`explain` says \"third party\"). Strongest first:\n\n"
             + "1. Paletter's own captures of BDS: native capture (`NATIVE`, none yet), Script API dumps (`SCRIPT_API`), experiments on BDS "
             + "(`BDS_PROBE`: `behaviour-probe`, the collision of doors) and what BDS sends clients (`WIRE`, ranked at runtime from the "
             + "component data of the palette).\n"
@@ -72,7 +72,7 @@ final class BehaviourReport {
             + "CloudburstMC/Data does not have (items: attack damage, armour, toughness, enchant value, furnace fuel and XP; "
             + "CloudburstMC/Data has no item behaviour file in any commit of its history), and as the other opinion for disputes.\n\n"
             + "Where sources disagree and no BDS evidence settles it, the value of the stronger one is used and marked disputed "
-            + "(`Provenance#disputed()`, the other values in `Provenance#alternatives()`).\n\n");
+            + "(`explain` lists the other values).\n\n");
     }
 
     private void sources(StringBuilder out) {
@@ -135,7 +135,7 @@ final class BehaviourReport {
     private void disputes(StringBuilder out) {
         out.append("## Disputed values\n\nStored values a second third-party source disagrees on, with no direct BDS capture of the key "
             + "in the version (a data driven block's wire data settles it at runtime and wins; the cross-check test shows no "
-            + "disagreement there). `Provenance#disputed()` is true for these; the other source's value is an alternative. "
+            + "disagreement there). `explain` lists the other source's value for these. "
             + "A dispute is carried to the versions where the source's value is unchanged and nothing else could be checked "
             + "(the alternative then names the version it was seen in).\n\n");
         Map<String, Map<String, Integer>> counts = new TreeMap<>();
@@ -169,7 +169,7 @@ final class BehaviourReport {
 
     private void postProcessed(StringBuilder out) {
         out.append("## Post-processed values\n\nValues the source itself says it post-processed after reading BDS "
-            + "(`Provenance#postProcessing()`), e.g. CloudburstMC/Data's `shapeSource: door_state_correction`.\n\n");
+            + "(`explain` says so), e.g. CloudburstMC/Data's `shapeSource: door_state_correction`.\n\n");
         Map<String, Integer> counts = new TreeMap<>();
         for (BehaviourImport.Bundled version : bundled) {
             for (BehaviourKey<?> key : BlockBehaviour.keys()) {
@@ -190,9 +190,9 @@ final class BehaviourReport {
 
     private void customDefaults(StringBuilder out) {
         out.append("## Custom content: defaults\n\nBehaviour of custom blocks and items matches BDS: "
-            + "`Provenance#userSet()` tells a component the user set from a BDS default. The default of a key (what BDS uses when "
+            + "`explain` tells a component the user set (`USER`) from a BDS default. The default of a key (what BDS uses when "
             + "the component is absent) is what the newest behaviour probe capture measured, with that capture as reference; a key "
-            + "it did not measure has no value and the provenance is `UNKNOWN_DEFAULT`.\n\n");
+            + "it did not measure has no value (`UNKNOWN_DEFAULT`: `get` throws, `getOrElse` gives the fallback).\n\n");
         if (customDefaults.isEmpty()) {
             out.append("Known defaults: none yet. Every default of a custom block or item is unknown.\n\n");
         } else {
