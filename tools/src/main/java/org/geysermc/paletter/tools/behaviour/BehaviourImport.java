@@ -11,7 +11,7 @@ import org.geysermc.paletter.behaviour.BehaviourKey;
 import org.geysermc.paletter.behaviour.BlockBehaviour;
 import org.geysermc.paletter.behaviour.BlockShape;
 import org.geysermc.paletter.behaviour.ItemBehaviour;
-import org.geysermc.paletter.behaviour.Provenance;
+import org.geysermc.paletter.internal.behaviour.Provenance;
 import org.geysermc.paletter.block.BlockHashes;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataSource;

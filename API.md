@@ -71,40 +71,39 @@ between versions:
 
 ## Behaviour
 
-`palette.behaviour()` answers what BDS knows about blocks and items but never sends clients: friction, destroy time,
-collision shapes, light, max stack size, attack damage. [README](README.md#behaviour) has the walkthrough; this is the
-contract.
+`palette.blockBehaviour(...)` and `palette.itemBehaviour(...)` answer what BDS knows about blocks and items but never
+sends clients: friction, destroy time, collision shapes, light, max stack size, attack damage. [README](README.md#behaviour)
+has the walkthrough; this is the contract.
 
-- **Keys** are the typed constants of `BlockBehaviour` and `ItemBehaviour` (`BehaviourKey<T>`, `T` one of `Float`,
-  `Integer`, `Boolean`, `String`, `BlockShape`). A key is a block key or an item key; asking with the wrong kind throws
-  `IllegalArgumentException`. A null value means no source says: that is data, not an error. New keys arrive in minor
-  releases.
-- **Lookups.** `Behaviour#get` takes a registered state or item, or a `BedrockBlockState` / `BedrockItemType` resolved in the
-  palette; a state or item that is not of the palette has no value. `get` boxes. Hot paths hold the table of a key
-  (`blocks(key)`, `items(key)`, built on the first ask and kept, one per palette) and read it through the primitive
-  accessors (`getFloat`, `getInt`, `getBoolean`, `floatByRuntimeId`, ...), which take an `orElse` instead of returning null
-  and allocate nothing. A primitive accessor of the wrong value type throws `ClassCastException`. `BlockShape` has value
-  equality (`equals`); shared instances are an optimisation, never an identity guarantee.
-- **Provenance.** `Behaviour#provenance` (and `isUserSet`) say where a value comes from: the `Source`, what exactly was read,
-  the data version it was captured for and the one asked for (`inherited()` if they differ: no capture of the asked version,
-  the newest older one is used). `Provenance.Source` is declared strongest first, and that is the order Behaviour picks in:
-  a component the user set on custom content (or an override of a vanilla item), then Paletter's own captures of BDS
-  (native, Script API, probe) of exactly the asked version, then what BDS sends clients (`WIRE`), then the newest capture
-  covering the state, a third-party dump (CloudburstMC/Data before Allay) or an older version's capture. Direct BDS evidence
-  always beats a third-party dump.
-- **Disputes.** Where third-party dumps disagree and no BDS evidence settles it, the stronger source's value is returned,
-  `disputed()` is true and `alternatives()` has the other values: nothing is picked silently. `postProcessing()` says if the
-  source itself corrected a value.
+- **Keys** are the typed constants of `BlockBehaviour` and `ItemBehaviour`: `FloatKey`, `IntKey`, `BooleanKey` and
+  `ObjectKey<T>` (`String`, `BlockShape`). A key is a block key or an item key; asking with the wrong kind throws
+  `IllegalArgumentException`. New keys arrive in minor releases.
+- **Lookups.** `blockBehaviour` takes a runtime id of the palette (hashed or sequential, as the palette sends it), a
+  `BedrockBlockState` or a `BedrockBlockType` (its default state); `itemBehaviour` a `BedrockItemType`. Something that is
+  not in the palette throws `IllegalArgumentException`. They return a handle (`BlockValues`, `ItemValues`) made once per
+  state or item and palette: its `get` of a number or boolean key returns the primitive, unboxed, and reads an array. A
+  palette that extends another one returns the other one's handle for a state they share. Vanilla states are shared
+  between versions, their values are not: values belong to the palette, not to the state.
+- **`get` and `getOrElse`.** `get` returns the value: the user's component, else the vanilla value, else BDS's default
+  for custom content. Where no value is known (a key with no source yet, a custom block without the component whose BDS
+  default is not captured), `get` throws `IllegalStateException` saying why, and `getOrElse(key, fallback)` returns the
+  fallback; it never throws for a missing value. `BlockShape` has value equality (`equals`); shared instances are an
+  optimisation, never an identity guarantee.
+- **`explain(key)`** returns one line for debugging: the value, the source and its exact reference, the version it was
+  captured for, and whether it is user-set, inherited from an older capture, post-processed by its source or disputed
+  (with the other values). The text is not a format to parse.
+- **Where values come from**, strongest first: a component the user set on custom content (or an override of a vanilla
+  item), then Paletter's own captures of BDS (native, Script API, probe) of exactly the asked version, then what BDS sends
+  clients, then the newest capture covering the state, a third-party dump (CloudburstMC/Data before Allay) or an older
+  version's capture. Direct BDS evidence always beats a third-party dump. Where third-party dumps disagree and no BDS
+  evidence settles it, the stronger source's value is returned and `explain` lists the others: nothing is picked silently.
 - **Custom content.** Custom blocks, custom items and overridden items are read from the components the palette sends,
-  converted to engine units (`minecraft:friction` 0.4 is friction 0.6). `userSet()` is true for a component the user set;
-  without one the value is what Paletter sends anyway, else the BDS default of the key (`bdsDefault()`), else absent with
-  `unknownDefault()`.
-- **Session palettes** (`palette.extend(layer)`) share the vanilla part of the tables of the palette they extend; only the
-  states a layer added have values of their own.
+  converted to engine units (`minecraft:friction` 0.4 is friction 0.6).
 - **Generation.** Vanilla values are data: `behaviour.nbt`, written by `behaviour import` (tools) from BDS captures under
   `data/bds` and third-party dumps read from their git history, with `data/behaviour/REPORT.md` listing which source decides
   each key in each version, the disputes and the known BDS defaults. The generator, the sources and their licences are
-  recorded in the file; the same sources give the same bytes. The file format and `BehaviourStore` are internal.
+  recorded in the file; the same sources give the same bytes. The file format, `BehaviourStore` and the provenance records
+  are internal.
 
 ## Experiments
 

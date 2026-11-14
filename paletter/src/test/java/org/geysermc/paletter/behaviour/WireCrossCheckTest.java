@@ -5,6 +5,7 @@ import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.RegisteredBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.data.DataVersion;
+import org.geysermc.paletter.internal.behaviour.Behaviour;
 import org.geysermc.paletter.internal.behaviour.WireRules;
 import org.geysermc.paletter.item.RegisteredItem;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,10 @@ class WireCrossCheckTest {
     /** {@code version key identifier}: differences that are understood. Empty means the rules match every dump value. */
     private static final Set<String> KNOWN = Set.of();
 
+    private static Object value(Behaviour.Value value) {
+        return value == null ? null : value.value();
+    }
+
     @Test
     void wireRulesAgreeWithTheDumps() {
         Set<String> differences = new TreeSet<>();
@@ -40,7 +45,7 @@ class WireCrossCheckTest {
                 for (RegisteredBlockState state : block.states()) {
                     for (BehaviourKey<?> key : BlockBehaviour.keys()) {
                         Object wire = WireRules.value(key, block.properties(state));
-                        Object dump = behaviour.get(state, key);
+                        Object dump = value(behaviour.resolve(state, key));
                         if (wire != null && dump != null) {
                             compared++;
                             if (!Objects.equals(wire, dump)) {
@@ -53,7 +58,7 @@ class WireCrossCheckTest {
             for (RegisteredItem item : palette.items().items()) {
                 for (BehaviourKey<?> key : ItemBehaviour.keys()) {
                     Object wire = WireRules.value(key, item.properties());
-                    Object dump = behaviour.get(item, key);
+                    Object dump = value(behaviour.resolve(item, key));
                     if (wire != null && dump != null) {
                         compared++;
                         if (!Objects.equals(wire, dump)) {

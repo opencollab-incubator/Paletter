@@ -1,7 +1,9 @@
 package org.geysermc.paletter;
 
 import org.geysermc.paletter.annotation.Internal;
-import org.geysermc.paletter.behaviour.Behaviour;
+import org.geysermc.paletter.behaviour.BlockValues;
+import org.geysermc.paletter.behaviour.ItemValues;
+import org.geysermc.paletter.internal.behaviour.Behaviour;
 import org.geysermc.paletter.internal.behaviour.BehaviourStore;
 import org.geysermc.paletter.internal.Canonicals;
 import org.geysermc.paletter.internal.Forwarding;
@@ -129,10 +131,9 @@ public final class Palette {
     }
 
     /**
-     * @return the behaviour values (friction, destroy time, collision shapes, max stack size, ...) of the blocks and
-     * items of this palette: vanilla ones from the bundled captures of its version, custom ones from their components
-     * @since 0.1.0
+     * @return the behaviour values of this palette, behind {@link #blockBehaviour} and {@link #itemBehaviour}
      */
+    @Internal
     public @NonNull Behaviour behaviour() {
         Behaviour result = behaviour;
         if (result == null) {
@@ -144,6 +145,59 @@ public final class Palette {
             }
         }
         return result;
+    }
+
+    /**
+     * The behaviour values (friction, destroy time, collision shape, light, ...) of a block state in this palette:
+     * {@code palette.blockBehaviour(runtimeId).get(BlockBehaviour.FRICTION)}. Vanilla values come from the bundled
+     * captures of the palette's version, custom ones from their components. The handle is made once per state and kept:
+     * after the first call this is a lookup of the runtime id and an array read.
+     *
+     * @param runtimeId the runtime id of a state of this palette, as it sends it: the hash, or the sequential id of a
+     *                  palette that numbers them
+     * @throws IllegalArgumentException if the palette has no state with this runtime id
+     * @since 0.1.0
+     */
+    public @NonNull BlockValues blockBehaviour(int runtimeId) {
+        int index = blocks.indexOfRuntimeId(runtimeId);
+        if (index == -1) {
+            throw new IllegalArgumentException("no block state with runtime id " + runtimeId + " in " + this);
+        }
+        return behaviour().block(index);
+    }
+
+    /**
+     * @return the behaviour values of the state this palette sends for a state, see {@link #block(BedrockBlockState)}
+     * @throws IllegalArgumentException if the state is not in this palette
+     * @since 0.1.0
+     */
+    public @NonNull BlockValues blockBehaviour(@NonNull BedrockBlockState state) {
+        return blockBehaviour(block(state).getRuntimeId());
+    }
+
+    /**
+     * @return the behaviour values of the default state of a block, see {@link #blockBehaviour(BedrockBlockState)}
+     * @throws IllegalArgumentException if the block is not in this palette
+     * @since 0.1.0
+     */
+    public @NonNull BlockValues blockBehaviour(@NonNull BedrockBlockType type) {
+        return blockBehaviour(type.defaultState());
+    }
+
+    /**
+     * The behaviour values (max stack size, durability, attack damage, ...) of an item in this palette:
+     * {@code palette.itemBehaviour(BedrockItems.APPLE).get(ItemBehaviour.MAX_STACK_SIZE)}. Made once per item and kept.
+     *
+     * @throws IllegalArgumentException if this palette has no such item, see {@link #item(BedrockItemType)}
+     * @since 0.1.0
+     */
+    public @NonNull ItemValues itemBehaviour(@NonNull BedrockItemType type) {
+        RegisteredItem item = item(type);
+        ItemValues values = item == null ? null : behaviour().item(item);
+        if (values == null) {
+            throw new IllegalArgumentException(type + " is not an item of " + this);
+        }
+        return values;
     }
 
     public @NonNull DataVersion version() {

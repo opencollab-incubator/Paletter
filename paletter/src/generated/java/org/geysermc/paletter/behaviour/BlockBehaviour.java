@@ -7,9 +7,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * The behaviour keys of block states. Values are per state and per data version; where they come from is in
- * {@link Behaviour#provenance}. Units are those of Bedrock Dedicated Server's engine, not of add-on components (custom
- * blocks are converted, see {@link Behaviour}).
+ * The behaviour keys of block states, read with {@code palette.blockBehaviour(state).get(key)} ({@link BlockValues}).
+ * Values are per state and per data version; {@link BlockValues#explain} says where one comes from. Units are those of
+ * Bedrock Dedicated Server's engine, not of add-on components: custom blocks are converted (the component
+ * {@code minecraft:friction} 0.4 is a friction of 0.6).
  *
  * @since 0.1.0
  */
@@ -93,7 +94,7 @@ public final class BlockBehaviour {
     public static final FloatKey THICKNESS = new FloatKey("thickness", BehaviourKey.Owner.BLOCK, 16);
 
     /**
-     * Whether entities climb the block. No bundled source yet (needs the native capture): always null.
+     * Whether entities climb the block. No bundled source yet (needs the native capture): {@code get} throws, {@code getOrElse} gives the fallback.
      */
     public static final BooleanKey CLIMBABLE = new BooleanKey("climbable", BehaviourKey.Owner.BLOCK, 17);
 

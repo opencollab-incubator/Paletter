@@ -403,59 +403,54 @@ What BDS knows about blocks and items but never sends (friction, destroy time, c
 attack damage, ...), per state and per version, for servers and anticheats that need the same values as vanilla:
 
 ```java
-Behaviour behaviour = palette.behaviour();                       // or paletter.vanilla(version).behaviour()
-Float friction = behaviour.get(BedrockBlocks.ICE.defaultState(), BlockBehaviour.FRICTION);          // 0.98
-BlockShape stairs = behaviour.get(state, BlockBehaviour.COLLISION_SHAPE);                            // several boxes
-Integer eating = behaviour.get(BedrockItems.APPLE, ItemBehaviour.USE_DURATION);                     // 32 ticks
+float friction = palette.blockBehaviour(runtimeId).get(BlockBehaviour.FRICTION);      // the runtime id the palette sends
+float ice = palette.blockBehaviour(BedrockBlocks.BLUE_ICE).get(BlockBehaviour.FRICTION); // 0.989, the default state
+BlockShape stairs = palette.blockBehaviour(state).get(BlockBehaviour.COLLISION_SHAPE);  // several boxes
+boolean climbable = palette.blockBehaviour(state).getOrElse(BlockBehaviour.CLIMBABLE, false); // no source yet
+int eating = palette.itemBehaviour(BedrockItems.APPLE).get(ItemBehaviour.USE_DURATION);  // 32 ticks
 
-BlockTable<Float> frictions = behaviour.blocks(BlockBehaviour.FRICTION);   // dense, built on first use, once per palette
-float f = frictions.floatByRuntimeId(runtimeIdUnderTheFeet, 0.6f);         // an array load: no boxing, no null, 0.6 where nothing says
-ItemTable<Integer> stacks = behaviour.items(ItemBehaviour.MAX_STACK_SIZE); // the same for items
-int stack = stacks.intByRuntimeId(item.getRuntimeId(), 64);
-
-Provenance p = behaviour.provenance(registeredState, BlockBehaviour.FRICTION);
-// CLOUDBURST_DATA CloudburstMC/Data@0021592..., captured 26.60; p.inherited() when the version has no capture
-p.thirdParty();       // from a third-party dump of BDS, not Paletter's own capture
-p.disputed();         // sources disagree and no BDS evidence settles it: p.alternatives() has the other values
-p.userSet();          // custom content: the user's component (else a BDS default, or UNKNOWN_DEFAULT)
+palette.blockBehaviour(BedrockBlocks.BLUE_ICE).explain(BlockBehaviour.FRICTION);
+// "0.989 from CloudburstMC/Data@0021592 (CLOUDBURST_DATA, third party), 26.60"
 ```
 
-- **Keys** are `BlockBehaviour` and `ItemBehaviour` constants, typed (`Float`, `Integer`, `Boolean`, `String`,
-  `BlockShape`). A null value means no source says (e.g. `CLIMBABLE` until the native capture exists).
-- **Where values come from** (the ranking, strongest first): values come from BDS directly wherever possible, then from
-  third-party dumps of BDS, which are marked as such and never guessed or hand-written.
+- **Keys** are the `BlockBehaviour` and `ItemBehaviour` constants. Number and boolean keys return primitives, without
+  boxing; the others return a `String` or a `BlockShape`.
+- **`get` or `getOrElse`**: `get` returns the value and throws if none is known (a key with no source yet, like
+  `CLIMBABLE`, or a custom block's default that was never measured). `getOrElse` returns your fallback instead.
+- **Fast**: `blockBehaviour(...)` returns a handle made once per state and palette; `get` on it reads an array. Keep the
+  handle, or look it up again: both are cheap and neither allocates.
+- **Per palette, per version**: the same block state can have other values in another version (a newer capture), so
+  values come from the palette, not from the state. A session palette (`palette.extend(layer)`) shares the handles of the
+  palette it extends; only the blocks its layers add have handles of their own.
+- **`explain`** says where a value comes from, for debugging: the source and commit, the version it was captured for,
+  and whether it was set by the user, inherited from an older version, corrected by its source or disputed.
+- **Where values come from**, strongest first. Values come from BDS directly wherever possible, then from third-party
+  dumps of BDS, which are marked as such and never guessed or hand-written.
   1. Paletter's own captures of BDS: a native capture (LeviLamina, run by hand, none yet), the Script API dumps in
-     `data/bds` (max stack size, durability), experiments on BDS (`behaviour-probe`, `Source.BDS_PROBE`: the collision of
-     every door state, and the defaults of custom blocks) and what BDS sends clients (the component data of data driven
-     blocks and component based items), which wins over a third-party value at runtime.
+     `data/bds` (max stack size, durability), experiments on BDS (`behaviour-probe`: the collision of every door state,
+     and the defaults of custom blocks) and what BDS sends clients (the component data of data driven blocks and
+     component based items), which wins over a third-party value.
   2. [CloudburstMC/Data](https://github.com/CloudburstMC/Data) (Apache-2.0): a native BDS dump of every block state. It
-     post-processes some values (`shapeSource: door_state_correction` on doors); `Provenance#postProcessing()` says so.
+     corrects some values itself (`door_state_correction` on doors); `explain` says so.
   3. [AllayMC/Allay](https://github.com/AllayMC/Allay) `data/` (MIT), the raw Endstone DevTools dump of BDS. Used only
      for what CloudburstMC/Data does not have: item attack damage, armour, toughness, enchant value and furnace fuel
      (Data has no item behaviour file in any commit), and as the second opinion for disputes.
 
   `behaviour import` reads their git history and identifies each commit's version by its block state hashes. A value is
   stored once and holds until a later capture changes it; a version without a capture of its own inherits it, which
-  `Provenance#inherited()` and [data/behaviour/REPORT.md](data/behaviour/REPORT.md) show.
+  `explain` and [data/behaviour/REPORT.md](data/behaviour/REPORT.md) show.
 - **Disputes**: where the third-party sources disagree and no BDS evidence settles it (door outlines and, before 26.60,
   door collision: Allay 0.1825 thick, Data 0.1875; plant model offsets), the stronger source's value is returned and
-  `Provenance#disputed()` is true, with the other values in `Provenance#alternatives()`. The report lists every dispute;
-  nothing is picked silently. The probe measured the collision of every door in every state on BDS 1.26.63.1 (26.60): the
-  panel is 0.1825 thick, at the positions the door's state says (`Provenance#postProcessing()` says which axes were
-  measured), so 26.60 door collision is not disputed.
+  `explain` lists the other values. The report lists every dispute; nothing is picked silently. The probe measured the
+  collision of every door in every state on BDS 1.26.63.1 (26.60): the panel is 0.1825 thick, at the positions the door's
+  state says, so 26.60 door collision is not disputed.
 - **Custom blocks and items** answer the same keys from their components, read from the data the palette sends with the
   rules that also read vanilla data driven blocks (checked against the dumps): `Friction`, `DestructibleByMining`,
   `LightEmission`, `LightDampening`, `CollisionBox`, `SelectionBox` (with `Transformation` y rotations), `MaxStackSize`,
-  `Durability`, `Damage`, `UseModifiers`, `UseAnimation`. `Provenance#userSet()` (or `Behaviour#isUserSet`) tells a value
-  the user set from one that is not; a key without the component gets the BDS default, if one is known, else no value and
-  `Provenance.Source.UNKNOWN_DEFAULT`. The defaults are what the newest `behaviour-probe` capture measured
-  (`behaviour import` takes them from it). Measured by the probe on BDS 1.26.63.1: friction 0.6, explosion
-  resistance 0, light dampening 15, light emission 0, a full cube collision box, not flammable. Not known (no value): the
-  selection box and the destroy time. The friction conversion (engine friction is 1 minus the component value) is
-  measured too.
-- **Session palettes** (`palette.extend(layer)`) share the parent palette's dense `BlockTable` values (the same arrays);
-  only the block states the layers added have values of their own. Tables hold numbers and booleans in primitive arrays:
-  read them with `getFloat`/`getInt`/`getBoolean` and the `...ByRuntimeId` accessors; `get` boxes.
+  `Durability`, `Damage`, `UseModifiers`, `UseAnimation`. A key without the component gets the BDS default, measured by
+  `behaviour-probe` on BDS 1.26.63.1: friction 0.6, explosion resistance 0, light dampening 15, light emission 0, a full
+  cube collision box, not flammable. Not known (`get` throws): the selection box and the destroy time. The friction
+  conversion (engine friction is 1 minus the component value) is measured too.
 - Shapes are those of a state alone: shapes that depend on neighbours or the position (scaffolding, plant offsets)
   are the caller's.
 - `behaviour.nbt` and `data/behaviour/REPORT.md` are generated (`./gradlew :tools:run --args="behaviour import

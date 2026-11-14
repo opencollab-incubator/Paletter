@@ -59,10 +59,13 @@ public final class BehaviourKeys {
     }
 
     static final String BLOCK_DOC = """
-        The behaviour keys of block states. Values are per state and per data version; where they come from is in
-        {@link Behaviour#provenance}. Units are those of Bedrock Dedicated Server's engine, not of add-on components (custom
-        blocks are converted, see {@link Behaviour}).""";
-    static final String ITEM_DOC = "The behaviour keys of item types. Values are per item type (not per aux value) and per data version.";
+        The behaviour keys of block states, read with {@code palette.blockBehaviour(state).get(key)} ({@link BlockValues}).
+        Values are per state and per data version; {@link BlockValues#explain} says where one comes from. Units are those of
+        Bedrock Dedicated Server's engine, not of add-on components: custom blocks are converted (the component
+        {@code minecraft:friction} 0.4 is a friction of 0.6).""";
+    static final String ITEM_DOC = """
+        The behaviour keys of item types, read with {@code palette.itemBehaviour(type).get(key)} ({@link ItemValues}). Values
+        are per item type (not per aux value) and per data version.""";
 
     /** Every key, in the order of {@code keys()}. */
     public static final List<Key> KEYS = List.of(
@@ -87,7 +90,7 @@ public final class BehaviourKeys {
         block("burn_odds", "Integer", "Chance modifier of burning away.", null),
         block("translucency", "Float", "", null),
         block("thickness", "Float", "", null),
-        block("climbable", "Boolean", "Whether entities climb the block. No bundled source yet (needs the native capture): always null.", null),
+        block("climbable", "Boolean", "Whether entities climb the block. No bundled source yet (needs the native capture): {@code get} throws, {@code getOrElse} gives the fallback.", null),
 
         item("max_stack_size", "Integer", "", new Leaf("minecraft:max_stack_size", "value", "item_properties.max_stack_size")),
         item("max_damage", "Integer", "Durability; 0 for items that take no damage.",

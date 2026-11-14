@@ -101,9 +101,11 @@ public final class org.geysermc.paletter.Palette {
     public void applyTo(org.cloudburstmc.protocol.bedrock.codec.BedrockCodecHelper)
     public void applyTo(org.cloudburstmc.protocol.bedrock.packet.ResourcePackStackPacket)
     public void applyTo(org.cloudburstmc.protocol.bedrock.packet.StartGamePacket)
-    public org.geysermc.paletter.behaviour.Behaviour behaviour()
     public org.geysermc.paletter.vanilla.BedrockBlockState block(org.cloudburstmc.nbt.NbtMap)
     public org.geysermc.paletter.block.RegisteredBlockState block(org.geysermc.paletter.vanilla.BedrockBlockState)
+    public org.geysermc.paletter.behaviour.BlockValues blockBehaviour(int)
+    public org.geysermc.paletter.behaviour.BlockValues blockBehaviour(org.geysermc.paletter.vanilla.BedrockBlockState)
+    public org.geysermc.paletter.behaviour.BlockValues blockBehaviour(org.geysermc.paletter.vanilla.BedrockBlockType)
     public org.geysermc.paletter.vanilla.BedrockBlockState blockKeyOf(org.geysermc.paletter.vanilla.BedrockItemVariant)
     public org.geysermc.paletter.block.RegisteredBlockState blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)
     public org.geysermc.paletter.block.RegisteredBlockState blockOrNull(org.geysermc.paletter.vanilla.BedrockBlockState)
@@ -132,6 +134,7 @@ public final class org.geysermc.paletter.Palette {
     public org.geysermc.paletter.vanilla.BedrockItemVariant item(java.lang.String, int)
     public org.geysermc.paletter.item.RegisteredItem item(org.geysermc.paletter.vanilla.BedrockItemType)
     public org.geysermc.paletter.item.RegisteredItem item(org.geysermc.paletter.vanilla.BedrockItemVariant)
+    public org.geysermc.paletter.behaviour.ItemValues itemBehaviour(org.geysermc.paletter.vanilla.BedrockItemType)
     public org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket itemComponentPacket()
     public java.util.List<org.geysermc.paletter.vanilla.BedrockItemVariant> itemVariants()
     public org.geysermc.paletter.item.ItemRegistry items()
@@ -298,25 +301,9 @@ public @interface org.geysermc.paletter.annotation.ServerOnly {
     public abstract int until()
 }
 
-public final class org.geysermc.paletter.behaviour.Behaviour {
-    public <T> org.geysermc.paletter.behaviour.BlockTable<T> blocks(org.geysermc.paletter.behaviour.BehaviourKey<T>)
-    public <T> T get(org.geysermc.paletter.block.RegisteredBlockState, org.geysermc.paletter.behaviour.BehaviourKey<T>)
-    public <T> T get(org.geysermc.paletter.item.RegisteredItem, org.geysermc.paletter.behaviour.BehaviourKey<T>)
-    public <T> T get(org.geysermc.paletter.vanilla.BedrockBlockState, org.geysermc.paletter.behaviour.BehaviourKey<T>)
-    public <T> T get(org.geysermc.paletter.vanilla.BedrockItemType, org.geysermc.paletter.behaviour.BehaviourKey<T>)
-    public boolean isUserSet(org.geysermc.paletter.block.RegisteredBlockState, org.geysermc.paletter.behaviour.BehaviourKey<?>)
-    public boolean isUserSet(org.geysermc.paletter.item.RegisteredItem, org.geysermc.paletter.behaviour.BehaviourKey<?>)
-    public boolean isUserSet(org.geysermc.paletter.vanilla.BedrockBlockState, org.geysermc.paletter.behaviour.BehaviourKey<?>)
-    public boolean isUserSet(org.geysermc.paletter.vanilla.BedrockItemType, org.geysermc.paletter.behaviour.BehaviourKey<?>)
-    public <T> org.geysermc.paletter.behaviour.ItemTable<T> items(org.geysermc.paletter.behaviour.BehaviourKey<T>)
-    public org.geysermc.paletter.behaviour.Provenance provenance(org.geysermc.paletter.block.RegisteredBlockState, org.geysermc.paletter.behaviour.BehaviourKey<?>)
-    public org.geysermc.paletter.behaviour.Provenance provenance(org.geysermc.paletter.item.RegisteredItem, org.geysermc.paletter.behaviour.BehaviourKey<?>)
-    public org.geysermc.paletter.behaviour.Provenance provenance(org.geysermc.paletter.vanilla.BedrockBlockState, org.geysermc.paletter.behaviour.BehaviourKey<?>)
-    public org.geysermc.paletter.behaviour.Provenance provenance(org.geysermc.paletter.vanilla.BedrockItemType, org.geysermc.paletter.behaviour.BehaviourKey<?>)
-}
-
-public final class org.geysermc.paletter.behaviour.BehaviourKey<T> {
+public sealed abstract class org.geysermc.paletter.behaviour.BehaviourKey<T> permits org.geysermc.paletter.behaviour.BooleanKey, org.geysermc.paletter.behaviour.FloatKey, org.geysermc.paletter.behaviour.IntKey, org.geysermc.paletter.behaviour.ObjectKey {
     public java.lang.String name()
+    public int ordinal()
     public org.geysermc.paletter.behaviour.BehaviourKey$Owner owner()
     public java.lang.String toString()
     public java.lang.Class<T> type()
@@ -330,24 +317,24 @@ public enum org.geysermc.paletter.behaviour.BehaviourKey$Owner {
 }
 
 public final class org.geysermc.paletter.behaviour.BlockBehaviour {
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Integer> BURN_ODDS
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Boolean> CAN_CONTAIN_LIQUID
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Boolean> CLIMBABLE
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<org.geysermc.paletter.behaviour.BlockShape> COLLISION_SHAPE
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Float> DESTROY_TIME
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Float> EXPLOSION_RESISTANCE
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Integer> FLAME_ODDS
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Float> FRICTION
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Integer> LIGHT_DAMPENING
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Integer> LIGHT_EMISSION
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.String> LIQUID_REACTION
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Integer> MAP_COLOR
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<org.geysermc.paletter.behaviour.BlockShape> OUTLINE_SHAPE
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Boolean> REQUIRES_CORRECT_TOOL
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Boolean> SOLID
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Float> THICKNESS
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.String> TINT_METHOD
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Float> TRANSLUCENCY
+    public static final org.geysermc.paletter.behaviour.IntKey BURN_ODDS
+    public static final org.geysermc.paletter.behaviour.BooleanKey CAN_CONTAIN_LIQUID
+    public static final org.geysermc.paletter.behaviour.BooleanKey CLIMBABLE
+    public static final org.geysermc.paletter.behaviour.ObjectKey<org.geysermc.paletter.behaviour.BlockShape> COLLISION_SHAPE
+    public static final org.geysermc.paletter.behaviour.FloatKey DESTROY_TIME
+    public static final org.geysermc.paletter.behaviour.FloatKey EXPLOSION_RESISTANCE
+    public static final org.geysermc.paletter.behaviour.IntKey FLAME_ODDS
+    public static final org.geysermc.paletter.behaviour.FloatKey FRICTION
+    public static final org.geysermc.paletter.behaviour.IntKey LIGHT_DAMPENING
+    public static final org.geysermc.paletter.behaviour.IntKey LIGHT_EMISSION
+    public static final org.geysermc.paletter.behaviour.ObjectKey<java.lang.String> LIQUID_REACTION
+    public static final org.geysermc.paletter.behaviour.IntKey MAP_COLOR
+    public static final org.geysermc.paletter.behaviour.ObjectKey<org.geysermc.paletter.behaviour.BlockShape> OUTLINE_SHAPE
+    public static final org.geysermc.paletter.behaviour.BooleanKey REQUIRES_CORRECT_TOOL
+    public static final org.geysermc.paletter.behaviour.BooleanKey SOLID
+    public static final org.geysermc.paletter.behaviour.FloatKey THICKNESS
+    public static final org.geysermc.paletter.behaviour.ObjectKey<java.lang.String> TINT_METHOD
+    public static final org.geysermc.paletter.behaviour.FloatKey TRANSLUCENCY
     public static org.geysermc.paletter.behaviour.BehaviourKey<?> key(java.lang.String)
     public static java.util.List<org.geysermc.paletter.behaviour.BehaviourKey<?>> keys()
 }
@@ -378,90 +365,59 @@ public record org.geysermc.paletter.behaviour.BlockShape$Box {
     public final java.lang.String toString()
 }
 
-public final class org.geysermc.paletter.behaviour.BlockTable<T> {
-    public boolean booleanByRuntimeId(int, boolean)
-    public T byRuntimeId(int)
-    public float floatByRuntimeId(int, float)
-    public T get(int)
-    public T get(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)
-    public boolean getBoolean(int, boolean)
-    public float getFloat(int, float)
-    public int getInt(int, int)
-    public int intByRuntimeId(int, int)
-    public int size()
+public final class org.geysermc.paletter.behaviour.BlockValues {
+    public java.lang.String explain(org.geysermc.paletter.behaviour.BehaviourKey<?>)
+    public boolean get(org.geysermc.paletter.behaviour.BooleanKey)
+    public float get(org.geysermc.paletter.behaviour.FloatKey)
+    public int get(org.geysermc.paletter.behaviour.IntKey)
+    public <T> T get(org.geysermc.paletter.behaviour.ObjectKey<T>)
+    public boolean getOrElse(org.geysermc.paletter.behaviour.BooleanKey, boolean)
+    public float getOrElse(org.geysermc.paletter.behaviour.FloatKey, float)
+    public int getOrElse(org.geysermc.paletter.behaviour.IntKey, int)
+    public <T> T getOrElse(org.geysermc.paletter.behaviour.ObjectKey<T>, T)
+    public org.geysermc.paletter.block.RegisteredBlockState state()
+    public java.lang.String toString()
+}
+
+public final class org.geysermc.paletter.behaviour.BooleanKey extends org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Boolean> {
+}
+
+public final class org.geysermc.paletter.behaviour.FloatKey extends org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Float> {
+}
+
+public final class org.geysermc.paletter.behaviour.IntKey extends org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Integer> {
 }
 
 public final class org.geysermc.paletter.behaviour.ItemBehaviour {
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Integer> ARMOR_VALUE
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Integer> ATTACK_DAMAGE
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Integer> ENCHANT_VALUE
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Integer> FURNACE_BURN_DURATION
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Float> FURNACE_XP_MULTIPLIER
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Integer> MAX_DAMAGE
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Integer> MAX_STACK_SIZE
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Integer> TOUGHNESS
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Integer> USE_ANIMATION
-    public static final org.geysermc.paletter.behaviour.BehaviourKey<java.lang.Integer> USE_DURATION
+    public static final org.geysermc.paletter.behaviour.IntKey ARMOR_VALUE
+    public static final org.geysermc.paletter.behaviour.IntKey ATTACK_DAMAGE
+    public static final org.geysermc.paletter.behaviour.IntKey ENCHANT_VALUE
+    public static final org.geysermc.paletter.behaviour.IntKey FURNACE_BURN_DURATION
+    public static final org.geysermc.paletter.behaviour.FloatKey FURNACE_XP_MULTIPLIER
+    public static final org.geysermc.paletter.behaviour.IntKey MAX_DAMAGE
+    public static final org.geysermc.paletter.behaviour.IntKey MAX_STACK_SIZE
+    public static final org.geysermc.paletter.behaviour.IntKey TOUGHNESS
+    public static final org.geysermc.paletter.behaviour.IntKey USE_ANIMATION
+    public static final org.geysermc.paletter.behaviour.IntKey USE_DURATION
     public static org.geysermc.paletter.behaviour.BehaviourKey<?> key(java.lang.String)
     public static java.util.List<org.geysermc.paletter.behaviour.BehaviourKey<?>> keys()
 }
 
-public final class org.geysermc.paletter.behaviour.ItemTable<T> {
-    public boolean booleanByRuntimeId(int, boolean)
-    public T byRuntimeId(int)
-    public float floatByRuntimeId(int, float)
-    public T get(org.geysermc.paletter.item.RegisteredItem)
-    public T get(org.geysermc.paletter.vanilla.BedrockItemType)
-    public int intByRuntimeId(int, int)
-    public int size()
+public final class org.geysermc.paletter.behaviour.ItemValues {
+    public java.lang.String explain(org.geysermc.paletter.behaviour.BehaviourKey<?>)
+    public boolean get(org.geysermc.paletter.behaviour.BooleanKey)
+    public float get(org.geysermc.paletter.behaviour.FloatKey)
+    public int get(org.geysermc.paletter.behaviour.IntKey)
+    public <T> T get(org.geysermc.paletter.behaviour.ObjectKey<T>)
+    public boolean getOrElse(org.geysermc.paletter.behaviour.BooleanKey, boolean)
+    public float getOrElse(org.geysermc.paletter.behaviour.FloatKey, float)
+    public int getOrElse(org.geysermc.paletter.behaviour.IntKey, int)
+    public <T> T getOrElse(org.geysermc.paletter.behaviour.ObjectKey<T>, T)
+    public org.geysermc.paletter.item.RegisteredItem item()
+    public java.lang.String toString()
 }
 
-public record org.geysermc.paletter.behaviour.Provenance {
-    public <init>(org.geysermc.paletter.behaviour.Provenance$Source, java.lang.String, org.geysermc.paletter.data.DataVersion, org.geysermc.paletter.data.DataVersion)
-    public <init>(org.geysermc.paletter.behaviour.Provenance$Source, java.lang.String, org.geysermc.paletter.data.DataVersion, org.geysermc.paletter.data.DataVersion, java.util.List<org.geysermc.paletter.behaviour.Provenance$Alternative>, java.lang.String)
-    public java.util.List<org.geysermc.paletter.behaviour.Provenance$Alternative> alternatives()
-    public boolean bdsDefault()
-    public org.geysermc.paletter.data.DataVersion captured()
-    public boolean disputed()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public boolean inherited()
-    public boolean postProcessed()
-    public java.lang.String postProcessing()
-    public java.lang.String reference()
-    public org.geysermc.paletter.behaviour.Provenance$Source source()
-    public boolean thirdParty()
-    public final java.lang.String toString()
-    public boolean unknownDefault()
-    public static org.geysermc.paletter.behaviour.Provenance unknownDefault(org.geysermc.paletter.data.DataVersion)
-    public boolean userSet()
-    public org.geysermc.paletter.data.DataVersion version()
-}
-
-public record org.geysermc.paletter.behaviour.Provenance$Alternative {
-    public <init>(org.geysermc.paletter.behaviour.Provenance$Source, java.lang.String, org.geysermc.paletter.data.DataVersion, java.lang.Object)
-    public org.geysermc.paletter.data.DataVersion captured()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public java.lang.String reference()
-    public org.geysermc.paletter.behaviour.Provenance$Source source()
-    public final java.lang.String toString()
-    public java.lang.Object value()
-}
-
-public enum org.geysermc.paletter.behaviour.Provenance$Source {
-    public static final org.geysermc.paletter.behaviour.Provenance$Source ALLAY_DATA
-    public static final org.geysermc.paletter.behaviour.Provenance$Source BDS_DEFAULT
-    public static final org.geysermc.paletter.behaviour.Provenance$Source BDS_PROBE
-    public static final org.geysermc.paletter.behaviour.Provenance$Source CLOUDBURST_DATA
-    public static final org.geysermc.paletter.behaviour.Provenance$Source NATIVE
-    public static final org.geysermc.paletter.behaviour.Provenance$Source SCRIPT_API
-    public static final org.geysermc.paletter.behaviour.Provenance$Source UNKNOWN_DEFAULT
-    public static final org.geysermc.paletter.behaviour.Provenance$Source USER
-    public static final org.geysermc.paletter.behaviour.Provenance$Source WIRE
-    public boolean thirdParty()
-    public static org.geysermc.paletter.behaviour.Provenance$Source valueOf(java.lang.String)
-    public static org.geysermc.paletter.behaviour.Provenance$Source[] values()
+public final class org.geysermc.paletter.behaviour.ObjectKey<T> extends org.geysermc.paletter.behaviour.BehaviourKey<T> {
 }
 
 public record org.geysermc.paletter.block.BlockFallback {

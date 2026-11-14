@@ -7,7 +7,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * The behaviour keys of item types. Values are per item type (not per aux value) and per data version.
+ * The behaviour keys of item types, read with {@code palette.itemBehaviour(type).get(key)} ({@link ItemValues}). Values
+ * are per item type (not per aux value) and per data version.
  *
  * @since 0.1.0
  */

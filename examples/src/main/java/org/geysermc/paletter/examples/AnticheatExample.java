@@ -4,16 +4,12 @@ import org.cloudburstmc.protocol.bedrock.codec.v2225.Bedrock_v2225;
 import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
-import org.geysermc.paletter.behaviour.Behaviour;
 import org.geysermc.paletter.behaviour.BlockBehaviour;
 import org.geysermc.paletter.behaviour.BlockShape;
-import org.geysermc.paletter.behaviour.BlockTable;
+import org.geysermc.paletter.behaviour.BlockValues;
 import org.geysermc.paletter.behaviour.ItemBehaviour;
-import org.geysermc.paletter.behaviour.Provenance;
 import org.geysermc.paletter.block.CustomBlock;
-import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.block.component.Friction;
-import org.geysermc.paletter.item.RegisteredItem;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItems;
 
@@ -32,16 +28,11 @@ public final class AnticheatExample {
     /** A tiny world: position -> runtime id (state hash), what chunk packets carry. */
     private final Map<List<Integer>, Integer> world = new HashMap<>();
     private final int air;
-    /** Built once per palette (client version) and key; lookups are array loads, the primitive ones allocate nothing. */
-    private final BlockTable<Float> friction;
-    private final BlockTable<BlockShape> collision;
-    private final BlockTable<Boolean> climbable;
+    /** The palette of the player's client version: its behaviour handles are made once per state, lookups are array reads. */
+    private final Palette palette;
 
     AnticheatExample(Palette palette) {
-        Behaviour behaviour = palette.behaviour();
-        this.friction = behaviour.blocks(BlockBehaviour.FRICTION);
-        this.collision = behaviour.blocks(BlockBehaviour.COLLISION_SHAPE);
-        this.climbable = behaviour.blocks(BlockBehaviour.CLIMBABLE);
+        this.palette = palette;
         this.air = palette.runtimeId(BedrockBlocks.AIR.defaultState());
     }
 
@@ -49,9 +40,9 @@ public final class AnticheatExample {
         return world.getOrDefault(List.of(x, y, z), air);
     }
 
-    /** The friction of the block under the feet (blocks nothing says anything about count as the usual 0.6). */
+    /** The friction of the block under the feet: a float, not boxed. */
     float frictionUnder(double x, double y, double z) {
-        return friction.floatByRuntimeId(blockAt((int) Math.floor(x), (int) Math.floor(y - 0.5), (int) Math.floor(z)), 0.6f);
+        return palette.blockBehaviour(blockAt((int) Math.floor(x), (int) Math.floor(y - 0.5), (int) Math.floor(z))).get(BlockBehaviour.FRICTION);
     }
 
     /** The collision boxes of the blocks in a 3x3x3 cube around a position, in world coordinates. */
@@ -60,10 +51,7 @@ public final class AnticheatExample {
         for (int x = px - 1; x <= px + 1; x++) {
             for (int y = py - 1; y <= py + 1; y++) {
                 for (int z = pz - 1; z <= pz + 1; z++) {
-                    BlockShape shape = collision.byRuntimeId(blockAt(x, y, z));
-                    if (shape == null) {
-                        continue;
-                    }
+                    BlockShape shape = palette.blockBehaviour(blockAt(x, y, z)).get(BlockBehaviour.COLLISION_SHAPE);
                     for (BlockShape.Box box : shape.boxes()) {
                         boxes.add(new float[] {x + box.minX(), y + box.minY(), z + box.minZ(), x + box.maxX(), y + box.maxY(), z + box.maxZ()});
                     }
@@ -73,14 +61,9 @@ public final class AnticheatExample {
         return boxes;
     }
 
-    /** Null while no source has the key (it needs the native capture): the caller keeps its own rule until then. */
-    Boolean climbable(int x, int y, int z) {
-        return climbable.byRuntimeId(blockAt(x, y, z));
-    }
-
-    /** The primitive accessor: no null to handle, the caller's own rule is the {@code orElse}. */
-    boolean climbableOr(int x, int y, int z, boolean ownRule) {
-        return climbable.booleanByRuntimeId(blockAt(x, y, z), ownRule);
+    /** No source has climbing yet (it needs the native capture): the caller's own rule is the fallback until then. */
+    boolean climbable(int x, int y, int z, boolean ownRule) {
+        return palette.blockBehaviour(blockAt(x, y, z)).getOrElse(BlockBehaviour.CLIMBABLE, ownRule);
     }
 
     public static void main(String[] args) {
@@ -100,30 +83,22 @@ public final class AnticheatExample {
         for (float[] box : check.collisionsAround(0, 64, 0)) {
             System.out.println("collision box " + java.util.Arrays.toString(box));
         }
-        System.out.println("ladder climbable: " + check.climbable(1, 64, 1) + ", or by our own rule: " + check.climbableOr(1, 64, 1, true));
+        System.out.println("ladder climbable by our own rule: " + check.climbable(1, 64, 1, true));
 
-        // Where a value comes from, and whether this version inherits it from an older capture
-        Behaviour behaviour = palette.behaviour();
-        RegisteredBlockState ice = palette.block(BedrockBlocks.BLUE_ICE.defaultState());
-        Provenance provenance = behaviour.provenance(ice, BlockBehaviour.FRICTION);
-        System.out.println("blue ice friction from " + provenance.source() + " " + provenance.reference()
-            + (provenance.inherited() ? " (inherited from " + provenance.captured() + ")" : ""));
-        System.out.println("  third-party dump: " + provenance.thirdParty() + ", disputed: " + provenance.disputed());
+        // Where a value comes from: the source, its version, whether it is inherited, third party or disputed
+        System.out.println("blue ice friction: " + palette.blockBehaviour(BedrockBlocks.BLUE_ICE).explain(BlockBehaviour.FRICTION));
 
-        // A custom block: was the value set by the server, or is it a BDS default (measured on BDS), or not known (no value)?
-        RegisteredBlockState custom = palette.blocks().block("example:slippery").defaultState();
-        System.out.println("custom friction set by the user: " + behaviour.isUserSet(custom, BlockBehaviour.FRICTION));
-        System.out.println("custom explosion resistance: " + behaviour.get(custom, BlockBehaviour.EXPLOSION_RESISTANCE) + " ("
-            + behaviour.provenance(custom, BlockBehaviour.EXPLOSION_RESISTANCE).source() + ", BDS default: "
-            + behaviour.provenance(custom, BlockBehaviour.EXPLOSION_RESISTANCE).bdsDefault() + ")");
-        System.out.println("custom destroy time: " + behaviour.get(custom, BlockBehaviour.DESTROY_TIME) + " ("
-            + behaviour.provenance(custom, BlockBehaviour.DESTROY_TIME).source() + ")");
+        // A custom block: set by the server, a BDS default (measured on BDS), or not known
+        BlockValues custom = palette.blockBehaviour(palette.blocks().block("example:slippery").defaultState().getRuntimeId());
+        System.out.println("custom friction: " + custom.explain(BlockBehaviour.FRICTION));
+        System.out.println("custom explosion resistance: " + custom.explain(BlockBehaviour.EXPLOSION_RESISTANCE));
+        System.out.println("custom destroy time: " + custom.getOrElse(BlockBehaviour.DESTROY_TIME, -2f) + ", "
+            + custom.explain(BlockBehaviour.DESTROY_TIME));
 
         // Items: how long eating takes, the stack size, the damage of a weapon
-        RegisteredItem apple = palette.item(BedrockItems.APPLE);
-        System.out.println("apple use duration: " + behaviour.get(apple, ItemBehaviour.USE_DURATION) + " ticks, from "
-            + behaviour.provenance(apple, ItemBehaviour.USE_DURATION).source());
-        System.out.println("ender pearl stack: " + behaviour.get(BedrockItems.ENDER_PEARL, ItemBehaviour.MAX_STACK_SIZE));
-        System.out.println("diamond sword attack damage: " + behaviour.get(BedrockItems.DIAMOND_SWORD, ItemBehaviour.ATTACK_DAMAGE));
+        System.out.println("apple use duration: " + palette.itemBehaviour(BedrockItems.APPLE).get(ItemBehaviour.USE_DURATION) + " ticks");
+        System.out.println("ender pearl stack: " + palette.itemBehaviour(BedrockItems.ENDER_PEARL).get(ItemBehaviour.MAX_STACK_SIZE));
+        System.out.println("diamond sword attack damage: "
+            + palette.itemBehaviour(BedrockItems.DIAMOND_SWORD).explain(ItemBehaviour.ATTACK_DAMAGE));
     }
 }
