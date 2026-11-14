@@ -228,6 +228,7 @@ public final class MappingInference {
             }
             components.add(component.id(), merged);
             coverage.add(component, newest(merged));
+            steps(component.id(), newest(merged));
         }
         mappings.add("envelope", envelopeWindows(captures, resultsByCapture));
         mappings.add("components", components);
@@ -384,6 +385,28 @@ public final class MappingInference {
             }
         }
         return newest;
+    }
+
+    /**
+     * Feeds the whole steps of a component's newest rules back to the generator ({@link Feedback#step}): a linear rule onto
+     * an integer leaf whose input step ({@code 1 / scale}) is a whole number of at least 2.
+     */
+    private void steps(String componentId, JsonObject newest) {
+        if (!newest.has("fields")) {
+            return;
+        }
+        for (Map.Entry<String, JsonElement> field : newest.getAsJsonObject("fields").entrySet()) {
+            JsonObject result = field.getValue().getAsJsonObject();
+            for (JsonElement r : result.has("rules") ? result.getAsJsonArray("rules") : new JsonArray()) {
+                JsonObject rule = r.getAsJsonObject();
+                if (rule.get("kind").getAsString().equals("linear") && rule.has("nbt") && rule.get("nbt").getAsString().equals("int")) {
+                    double step = Math.abs(1 / rule.get("scale").getAsDouble());
+                    if (step >= 2 && Math.abs(step - Math.rint(step)) < 1e-3) {
+                        feedback.step(componentId, field.getKey(), Math.round(step));
+                    }
+                }
+            }
+        }
     }
 
     /**

@@ -34,10 +34,11 @@ import java.util.zip.Deflater;
 /**
  * Generates the spec capture add-on from the component model: per component a control (companions only), a base
  * (every field without a documented default set to a sample, so the definition is valid), and per field and per
- * documented form a set of variants that change only that field: omitted, true/false, numbers around the documented
- * range and default, every enum value, lists of length 0/1/2 (and every enum value alone, for bit sets), maps and
- * objects empty and filled. Each variant is its own item or block, listed in {@code variants.json} so the mapping
- * inference can tell which JSON value produced which wire NBT.
+ * documented form a set of variants that change only that field. The values come from one generator per JSON type
+ * ({@link #values}), which asks for the edge cases likeliest to change between builds: limits and one past them, invalid
+ * enum values, wrong lengths and element types, empty strings, lists and maps. Limits come only from the data (the docs'
+ * ranges and {@code bds-feedback.json}); without one only safe values are generated. Each variant is its own item or
+ * block, listed in {@code variants.json} so the mapping inference can tell which JSON value produced which wire NBT.
  */
 public final class AddonGenerator {
     public static final String NAMESPACE = "paletter";
@@ -584,7 +585,8 @@ public final class AddonGenerator {
         if (byName != null && (matches(type, byName) || type.type().equals("any"))) {
             return byName.deepCopy();
         }
-        List<JsonElement> enums = field == null ? List.of() : field.enumValues();
+        List<JsonElement> enums = field == null ? List.of() : field.enumValues().isEmpty() && type.type().equals("string")
+            ? bdsStrings(c, path) : field.enumValues();
         return switch (type.type()) {
             case "boolean" -> new JsonPrimitive(true);
             case "integer" -> new JsonPrimitive(clamp(field, 1));
@@ -646,175 +648,406 @@ public final class AddonGenerator {
         return field == null ? null : new Field(field.path() + "[]", List.of(), null, false, field.enumValues(), null, null, List.of(), "");
     }
 
-    /** The values a field (or the whole value, path "") takes in its variants, for one JSON type. */
+    /**
+     * At most this many values per field and JSON type. Each generator lists first the values likeliest to change between
+     * builds (limits and one past them, invalid values), then the typical ones.
+     */
+    static final int MAX_VALUES = 32;
+
+    /** An identifier nothing defines. */
+    static final String UNKNOWN_IDENTIFIER = "minecraft:paletter_unknown";
+
+    /**
+     * The values a field (or the whole value, path "") takes in its variants, for one JSON type: one generator per type,
+     * driven by the type and the limits the data gives (the docs' ranges and enum values, {@code bds-feedback.json}). With
+     * no known limit only safe values are generated; the next capture's feedback gives the limit, and the next generation
+     * its boundary and one past it.
+     */
     private List<Labeled> values(Component c, String path, JType type, Field field) {
         field = withFeedback(c, field);
+        List<Labeled> values = switch (type.type()) {
+            case "boolean" -> List.of(new Labeled("true", new JsonPrimitive(true)), new Labeled("false", new JsonPrimitive(false)));
+            case "integer", "number" -> numbers(c, path, field, type.type().equals("integer"));
+            case "string" -> strings(c, path, type, field);
+            case "vec3" -> vectors(c, path, field);
+            case "array" -> lists(c, path, type, field);
+            case "map" -> maps(c, path, type, field);
+            case "object" -> objects(c, path, field);
+            default -> sampleOnly(c, path);
+        };
+        // one variant per value and per label (a value generated twice keeps its first label)
+        Map<String, Labeled> distinct = new LinkedHashMap<>();
+        Set<String> labels = new java.util.HashSet<>();
+        values.stream().filter(v -> labels.add(v.label)).forEach(v -> distinct.putIfAbsent(v.value.toString(), v));
+        return distinct.values().stream().limit(MAX_VALUES).toList();
+    }
+
+    private List<Labeled> sampleOnly(Component c, String path) {
+        JsonElement exact = fixtures.sample(c.id(), path, null);
+        return exact == null ? List.of() : List.of(new Labeled("sample", exact));
+    }
+
+    /**
+     * Numbers: the limits and one past each, the enum values and one the enum does not list, the default, off-step values
+     * where the inference found a step, a non-integer for an integer field, then zero, a negative and a few typical values
+     * (for a member of a vector's object form also what its list form takes).
+     */
+    private List<Labeled> numbers(Component c, String path, Field field, boolean integer) {
+        Set<Double> numbers = new LinkedHashSet<>();
+        Model.Range range = field == null ? null : field.range();
+        if (range != null && range.min() != null) {
+            numbers.add(range.min());
+            numbers.add(range.min() - 1);
+        }
+        if (range != null && range.max() != null) {
+            numbers.add(range.max());
+            numbers.add(range.max() + 1);
+        }
+        List<Double> listed = field == null ? List.of() : field.enumValues().stream()
+            .filter(e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isNumber()).map(JsonElement::getAsDouble).toList();
+        numbers.addAll(listed);
+        if (!listed.isEmpty()) {
+            numbers.add(listed.stream().mapToDouble(d -> d).max().orElseThrow() + 1);
+        }
+        if (field != null && field.defaultValue() != null && field.defaultValue().isJsonPrimitive()
+            && field.defaultValue().getAsJsonPrimitive().isNumber()) {
+            numbers.add(field.defaultValue().getAsDouble());
+        }
+        Double step = factNumber(c, path, "step");
+        if (step != null) {
+            numbers.add(step / 2);
+            numbers.add(step * 1.5);
+        }
+        if (field == null || field.enumValues().isEmpty()) {
+            for (double d : integer ? new double[]{0, 1, 2, 7, 100, -1} : new double[]{0, 0.5, 1, 2.25, 30, -1}) {
+                numbers.add(d);
+            }
+            if (vectorMember(c, path)) {
+                for (double d : new double[]{90, -90, 450, 45}) {
+                    numbers.add(d);
+                }
+            }
+        }
+        List<Labeled> values = new ArrayList<>();
+        for (double d : numbers) {
+            values.add(new Labeled(d == Math.rint(d) ? String.valueOf((long) d) : String.valueOf(d), integer ? new JsonPrimitive((long) d) : number(d)));
+        }
+        if (integer) {
+            double fraction = (range != null && range.min() != null ? range.min() : 1) + 0.5;
+            values.add(new Labeled(String.valueOf(fraction), new JsonPrimitive(fraction)));
+        }
+        return values;
+    }
+
+    /**
+     * Strings: every enum value and one it does not list; without an enum the sample, the docs' examples, a second valid
+     * value, the empty string, and for an identifier sample the sample with its namespace toggled (bare vs namespaced) and
+     * an identifier nothing defines. A Molang field (its docs say so) also gets a constant beside the expression.
+     */
+    private List<Labeled> strings(Component c, String path, JType type, Field field) {
+        List<JsonElement> strings = new ArrayList<>();
+        JsonElement exact = fixtures.sample(c.id(), path, null);
+        if (exact != null && exact.isJsonPrimitive()) {
+            strings.add(exact);
+        }
+        List<JsonElement> enums = field == null || field.enumValues().isEmpty() ? bdsStrings(c, path) : field.enumValues();
+        if (!enums.isEmpty()) {
+            strings.add(new JsonPrimitive(NAMESPACE + "_invalid"));
+            strings.addAll(enums);
+        } else {
+            if (field != null) {
+                field.examples().stream().filter(e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isString()).limit(2).forEach(strings::add);
+            }
+            JsonElement sample = sample(c, path, type, field);
+            if (sample != null && sample.isJsonPrimitive()) {
+                strings.add(sample);
+            }
+            // a second valid value for references (blocks, items, entities, textures), else a free string
+            JsonElement alternative = fixtures.alternative(c.id(), path, field == null ? null : field.name());
+            strings.add(alternative != null ? alternative : new JsonPrimitive("paletter_b"));
+            strings.add(new JsonPrimitive(""));
+            if (sample != null && sample.isJsonPrimitive() && sample.getAsString().matches("[a-z0-9_./]+(:[a-z0-9_./]+)?")) {
+                // an identifier: bare vs namespaced, and one of the vanilla namespace nothing defines (Paletter knows the
+                // vanilla identifiers of each version, not those another pack defines)
+                String text = sample.getAsString();
+                strings.add(new JsonPrimitive(text.contains(":") ? text.substring(text.indexOf(':') + 1) : "minecraft:" + text));
+                strings.add(new JsonPrimitive(UNKNOWN_IDENTIFIER));
+            }
+            if (field != null && field.doc().contains("Molang")) {
+                strings.add(new JsonPrimitive("1"));
+                strings.add(new JsonPrimitive("0"));
+            }
+        }
+        return new LinkedHashSet<>(strings).stream().map(s -> new Labeled(s.getAsString(), s)).toList();
+    }
+
+    /**
+     * The strings BDS listed for a field the docs give no values for ({@code values 'never', 'always'}; a long list BDS
+     * cuts short, {@code 'none', 'eat', 'drink', ... (7 others)}, gives the ones it names).
+     */
+    private List<JsonElement> bdsStrings(Component c, String path) {
+        List<JsonElement> strings = new ArrayList<>();
+        fixtures.facts(c.id(), path).stream().filter(f -> f.startsWith("values ")).findFirst().ifPresent(f -> {
+            java.util.regex.Matcher quoted = java.util.regex.Pattern.compile("'([^']*)'").matcher(f);
+            while (quoted.find()) {
+                strings.add(new JsonPrimitive(quoted.group(1)));
+            }
+        });
+        return strings;
+    }
+
+    /**
+     * Vectors: the element limits the data gives (the docs' range of the field, or a {@code box} fact of BDS that bounds the
+     * sum of this member and its partner) at each extreme and one past it per element, a wrong length, then typical
+     * values.
+     */
+    private List<Labeled> vectors(Component c, String path, Field field) {
+        List<Labeled> values = new ArrayList<>();
+        double[][] limits = vectorLimits(c, path, field);
+        if (limits != null) {
+            for (double[] corner : limits) {
+                values.add(vector(corner));
+                for (int i = 0; i < 3; i++) {
+                    double[] past = corner.clone();
+                    past[i] += corner == limits[0] ? -1 : 1;
+                    values.add(vector(past));
+                }
+            }
+        }
+        values.add(new Labeled("1,2", array(1, 2)));
+        values.add(new Labeled("1,2,3,4", array(1, 2, 3, 4)));
+        values.add(new Labeled("1,2,3", array(1, 2, 3)));
+        values.add(new Labeled("-4,5.5,0", arrayOf(number(-4), number(5.5), number(0))));
+        values.add(new Labeled("0,0,0", array(0, 0, 0)));
+        values.add(new Labeled("16,16,16", array(16, 16, 16)));
+        return values;
+    }
+
+    private static Labeled vector(double[] v) {
+        return new Labeled(label(v[0]) + "," + label(v[1]) + "," + label(v[2]), array(v));
+    }
+
+    private static String label(double d) {
+        return d == Math.rint(d) ? String.valueOf((long) d) : String.valueOf(d);
+    }
+
+    /**
+     * The lowest and highest value of a vector field per element, or null when no data gives them: the docs' range of the
+     * field, or BDS's limit of the sum of two members ({@code box origin size -8,0,-8 8,24,8} on the component: "origin" +
+     * "size" must be inside Vec3(-8,0,-8) and Vec3(8,24,8)), less the partner's value in the base.
+     */
+    private double[][] vectorLimits(Component c, String path, Field field) {
+        if (field != null && field.range() != null && field.range().min() != null && field.range().max() != null) {
+            double lo = field.range().min();
+            double hi = field.range().max();
+            return new double[][]{{lo, lo, lo}, {hi, hi, hi}};
+        }
+        String name = path.substring(Math.max(path.lastIndexOf('.'), path.lastIndexOf(']')) + 1);
+        for (String scope = path; ; scope = parentOf(scope)) {
+            for (String fact : fixtures.facts(c.id(), parentOf(scope))) {
+                String[] parts = fact.split(" ");
+                if (parts[0].equals("box") && (parts[1].equals(name) || parts[2].equals(name))) {
+                    String partnerPath = parentOf(path).isEmpty() ? (parts[1].equals(name) ? parts[2] : parts[1])
+                        : parentOf(path) + (parentOf(path).endsWith("]") ? "" : ".") + (parts[1].equals(name) ? parts[2] : parts[1]);
+                    JsonElement partner = get(base(c), partnerPath);
+                    double[] lo = vec(parts[3]);
+                    double[] hi = vec(parts[4]);
+                    for (int i = 0; i < 3; i++) {
+                        double p = partner != null && partner.isJsonArray() && partner.getAsJsonArray().size() == 3
+                            ? partner.getAsJsonArray().get(i).getAsDouble() : 0;
+                        lo[i] -= p;
+                        hi[i] -= p;
+                    }
+                    return new double[][]{lo, hi};
+                }
+            }
+            if (scope.isEmpty()) {
+                return null;
+            }
+        }
+    }
+
+    private static double[] vec(String commaSeparated) {
+        return java.util.Arrays.stream(commaSeparated.split(",")).mapToDouble(Double::parseDouble).toArray();
+    }
+
+    /** The number of a BDS fact {@code <name> n} of a field ({@code step 90}), or null. */
+    private Double factNumber(Component c, String path, String name) {
+        return fixtures.facts(c.id(), path).stream().filter(f -> f.startsWith(name + " "))
+            .map(f -> Double.parseDouble(f.substring(name.length() + 1))).findFirst().orElse(null);
+    }
+
+    /**
+     * Lists: empty, one entry, two, duplicates, the length limits BDS gave and one past them ({@code maxItems},
+     * {@code items}: exactly n), an element of the wrong type, then per element type: every combination of a small enum
+     * (else each value alone, two and all), numbers below zero, past a full turn and off a step.
+     */
+    private List<Labeled> lists(Component c, String path, JType type, Field field) {
         List<Labeled> values = new ArrayList<>();
         List<JsonElement> enums = field == null ? List.of() : field.enumValues();
         JsonElement exact = fixtures.sample(c.id(), path, null);
-        switch (type.type()) {
-            case "boolean" -> {
-                values.add(new Labeled("true", new JsonPrimitive(true)));
-                values.add(new Labeled("false", new JsonPrimitive(false)));
-            }
-            case "integer", "number" -> {
-                boolean integer = type.type().equals("integer");
-                Set<Double> numbers = new LinkedHashSet<>();
-                enums.stream().filter(e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isNumber()).forEach(e -> numbers.add(e.getAsDouble()));
-                if (field != null && field.defaultValue() != null && field.defaultValue().isJsonPrimitive()
-                    && field.defaultValue().getAsJsonPrimitive().isNumber()) {
-                    numbers.add(field.defaultValue().getAsDouble());
-                }
-                if (enums.isEmpty()) {
-                    for (double d : integer ? new double[]{0, 1, 2, 7, 100, -1} : new double[]{0, 0.5, 1, 2.25, 30, -1}) {
-                        numbers.add(d);
-                    }
-                    if (vectorMember(c, path)) {
-                        // a member of a vector's object form takes what its list form takes (below)
-                        for (double d : new double[]{90, -90, 450, 45}) {
-                            numbers.add(d);
-                        }
-                    }
-                }
-                if (field != null && field.range() != null) {
-                    if (field.range().min() != null) {
-                        numbers.add(field.range().min());
-                        numbers.add(field.range().min() - 1);
-                    }
-                    if (field.range().max() != null) {
-                        numbers.add(field.range().max());
-                        numbers.add(field.range().max() + 1);
-                    }
-                }
-                for (double d : numbers) {
-                    String label = (d == Math.rint(d) ? String.valueOf((long) d) : String.valueOf(d));
-                    values.add(new Labeled(label, integer || d == Math.rint(d) && integer ? new JsonPrimitive((long) d) : number(d)));
-                }
-            }
+        JType items = type.items() == null ? JType.of("any") : type.items();
+        List<JsonElement> listed = enums.isEmpty() ? documentedElements(field) : enums;
+        if (items.type().equals("any") && !listed.isEmpty()) {
+            items = JType.of("string");
+        }
+        values.add(new Labeled("[]", new JsonArray()));
+        JsonElement first = switch (items.type()) {
+            case "object" -> minimal(c, path + "[]");
+            case "number", "integer" -> new JsonPrimitive(3);
+            case "boolean" -> new JsonPrimitive(true);
             case "string" -> {
-                List<JsonElement> strings = new ArrayList<>();
-                if (exact != null && exact.isJsonPrimitive()) {
-                    strings.add(exact);
+                if (!listed.isEmpty()) {
+                    yield listed.get(0);
                 }
-                strings.addAll(enums.stream().limit(16).toList());
-                if (enums.isEmpty()) {
-                    if (field != null) {
-                        field.examples().stream().filter(e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isString()).limit(2).forEach(strings::add);
-                    }
-                    JsonElement sample = sample(c, path, type, field);
-                    if (sample != null && sample.isJsonPrimitive()) {
-                        strings.add(sample);
-                    }
-                    // a second valid value for references (blocks, items, entities, textures), else a free string
-                    JsonElement alternative = fixtures.alternative(c.id(), path, field == null ? null : field.name());
-                    strings.add(alternative != null ? alternative : new JsonPrimitive("paletter_b"));
-                }
-                new LinkedHashSet<>(strings).forEach(s -> values.add(new Labeled(s.getAsString(), s)));
+                JsonElement sample = sample(c, path, type, field);
+                yield sample != null && sample.isJsonArray() && !sample.getAsJsonArray().isEmpty() ? sample.getAsJsonArray().get(0)
+                    : new JsonPrimitive("paletter_a");
             }
-            case "vec3" -> {
-                values.add(new Labeled("1,2,3", array(1, 2, 3)));
-                values.add(new Labeled("-4,5.5,0", arrayOf(number(-4), number(5.5), number(0))));
-                values.add(new Labeled("0,0,0", array(0, 0, 0)));
-                values.add(new Labeled("16,16,16", array(16, 16, 16)));
+            default -> null;
+        };
+        if (first == null) {
+            if (exact != null) {
+                values.add(new Labeled("sample", exact));
             }
-            case "array" -> {
-                JType items = type.items() == null ? JType.of("any") : type.items();
-                List<JsonElement> listed = enums.isEmpty() ? documentedElements(field) : enums;
-                if (items.type().equals("any") && !listed.isEmpty()) {
-                    items = JType.of("string");
-                }
-                values.add(new Labeled("[]", new JsonArray()));
-                switch (items.type()) {
-                    case "object" -> {
-                        JsonArray one = new JsonArray();
-                        one.add(minimal(c, path + "[]"));
-                        values.add(new Labeled("[1]", one));
-                        JsonArray two = new JsonArray();
-                        two.add(minimal(c, path + "[]"));
-                        two.add(minimal(c, path + "[]"));
-                        values.add(new Labeled("[2]", two));
-                    }
-                    case "number", "integer" -> {
-                        values.add(new Labeled("[3]", array(3)));
-                        values.add(new Labeled("[3,7]", array(3, 7)));
-                        values.add(new Labeled("[90,180,270]", array(90, 180, 270)));
-                        values.add(new Labeled("[180,270,0]", array(180, 270, 0)));
-                        values.add(new Labeled("[1,2,3]", array(1, 2, 3)));
-                        values.add(new Labeled("[0.5,0.25,2]", arrayOf(number(0.5), number(0.25), number(2))));
-                        // below zero and past a full turn (an angle: wrapped, kept or refused), and a half step of 90
-                        values.add(new Labeled("[-90,450,720]", array(-90, 450, 720)));
-                        values.add(new Labeled("[45,135,-45]", array(45, 135, -45)));
-                    }
-                    case "boolean" -> {
-                        values.add(new Labeled("[true]", arrayOf(new JsonPrimitive(true))));
-                        values.add(new Labeled("[false,true]", arrayOf(new JsonPrimitive(false), new JsonPrimitive(true))));
-                    }
-                    case "string" -> {
-                        if (!listed.isEmpty()) {
-                            for (JsonElement e : listed.stream().limit(12).toList()) {
-                                values.add(new Labeled("[" + e.getAsString() + "]", arrayOf(e)));
-                            }
-                            if (listed.size() > 1) {
-                                values.add(new Labeled("[" + listed.get(0).getAsString() + "," + listed.get(1).getAsString() + "]",
-                                    arrayOf(listed.get(0), listed.get(1))));
-                                JsonArray all = new JsonArray();
-                                listed.forEach(all::add);
-                                values.add(new Labeled("[all]", all));
-                            }
-                        } else {
-                            JsonElement sample = sample(c, path, type, field);
-                            JsonElement first = sample != null && sample.isJsonArray() && !sample.getAsJsonArray().isEmpty()
-                                ? sample.getAsJsonArray().get(0) : new JsonPrimitive("paletter_a");
-                            values.add(new Labeled("[1]", arrayOf(first)));
-                            values.add(new Labeled("[2]", arrayOf(first, new JsonPrimitive("paletter_b"))));
-                        }
-                    }
-                    default -> {
-                        if (exact != null) {
-                            values.add(new Labeled("sample", exact));
-                        }
-                    }
-                }
+            return values;
+        }
+        Double maxItems = factNumber(c, path, "maxItems");
+        Double exactly = factNumber(c, path, "items");
+        for (Double n : java.util.Arrays.asList(maxItems, maxItems == null ? null : maxItems + 1,
+            exactly == null ? null : exactly - 1, exactly == null ? null : exactly + 1)) {
+            if (n != null && n > 2) {
+                values.add(new Labeled("[" + n.intValue() + "x]", copies(first, n.intValue())));
             }
-            case "map" -> {
-                JType items = type.items() == null ? JType.of("string") : type.items();
-                String key = fixtures.mapKey(c.id(), path + "{}", field == null ? null : field.name());
-                values.add(new Labeled("{}", new JsonObject()));
-                JsonElement element = items.type().equals("object") ? minimal(c, path + "{}") : sample(c, path + "{}", items, field);
-                if (element != null) {
-                    JsonObject one = new JsonObject();
-                    one.add(key, element);
-                    values.add(new Labeled("{1}", one));
-                    JsonObject two = one.deepCopy();
-                    two.add(key + "_2", items.type().equals("boolean") ? new JsonPrimitive(false) : element.deepCopy());
-                    values.add(new Labeled("{2}", two));
-                }
-            }
+        }
+        // Not for lists of objects: a number in one crashes BDS 1.26.63.1 while it loads the blocks (b_destructible_by_mining
+        // item_specific_speeds[].item [1], b_embedded_visual material_instances [1]), so no variant of the pack is captured
+        if (!items.type().equals("object")) {
+            values.add(new Labeled("[wrong type]", arrayOf(items.type().equals("string") ? new JsonPrimitive(1) : new JsonPrimitive("paletter_a"))));
+        }
+        switch (items.type()) {
             case "object" -> {
-                values.add(new Labeled("{}", new JsonObject()));
-                if (!path.isEmpty() || !objectBase(c)) {
-                    JsonObject minimal = minimal(c, path);
-                    if (!minimal.isEmpty()) {
-                        values.add(new Labeled("minimal", minimal));
-                    }
+                values.add(new Labeled("[1]", copies(first, 1)));
+                values.add(new Labeled("[2]", copies(first, 2)));
+            }
+            case "number", "integer" -> {
+                values.add(new Labeled("[3]", array(3)));
+                values.add(new Labeled("[3,7]", array(3, 7)));
+                values.add(new Labeled("[90,180,270]", array(90, 180, 270)));
+                values.add(new Labeled("[180,270,0]", array(180, 270, 0)));
+                values.add(new Labeled("[1,2,3]", array(1, 2, 3)));
+                values.add(new Labeled("[0.5,0.25,2]", arrayOf(number(0.5), number(0.25), number(2))));
+                // below zero and past a full turn (an angle: wrapped, kept or refused), and a half step of 90
+                values.add(new Labeled("[-90,450,720]", array(-90, 450, 720)));
+                values.add(new Labeled("[45,135,-45]", array(45, 135, -45)));
+                Double step = factNumber(c, path, "step");
+                if (step != null) {
+                    values.add(new Labeled("[" + label(step / 2) + "," + label(step) + "," + label(step * 1.5) + "]", array(step / 2, step, step * 1.5)));
                 }
-                JsonObject example = field == null || container(c, path) ? null : field.examples().stream()
-                    .filter(e -> e.isJsonObject() && !e.getAsJsonObject().isEmpty()).map(JsonElement::getAsJsonObject).findFirst().orElse(null);
-                if (example != null) {
-                    // an object whose members the docs do not list: filled as the docs' example fills it, and with a
-                    // second entry under another key (a map: does the key reach the wire?)
-                    values.add(new Labeled("{1}", example.deepCopy()));
-                    JsonObject two = example.deepCopy();
-                    Map.Entry<String, JsonElement> first = example.entrySet().iterator().next();
-                    two.add(first.getKey() + "_2", first.getValue().deepCopy());
-                    values.add(new Labeled("{2}", two));
-                }
+            }
+            case "boolean" -> {
+                values.add(new Labeled("[true]", arrayOf(new JsonPrimitive(true))));
+                values.add(new Labeled("[false,true]", arrayOf(new JsonPrimitive(false), new JsonPrimitive(true))));
             }
             default -> {
-                if (exact != null) {
-                    values.add(new Labeled("sample", exact));
+                if (listed.size() > 1 && listed.size() <= COMBINED_ENUM) {
+                    values.addAll(combinations(listed));
+                } else if (!listed.isEmpty()) {
+                    for (JsonElement e : listed.stream().limit(12).toList()) {
+                        values.add(new Labeled("[" + e.getAsString() + "]", arrayOf(e)));
+                    }
+                    if (listed.size() > 1) {
+                        values.add(new Labeled("[" + listed.get(0).getAsString() + "," + listed.get(1).getAsString() + "]",
+                            arrayOf(listed.get(0), listed.get(1))));
+                        JsonArray all = new JsonArray();
+                        listed.forEach(all::add);
+                        values.add(new Labeled("[all]", all));
+                    }
+                } else {
+                    values.add(new Labeled("[1]", arrayOf(first)));
+                    values.add(new Labeled("[2]", arrayOf(first, new JsonPrimitive("paletter_b"))));
                 }
             }
+        }
+        values.add(new Labeled("[2x]", copies(first, 2)));
+        return values;
+    }
+
+    /** Enum lists with at most this many values get every combination of them (trait {@code enabled_states}). */
+    static final int COMBINED_ENUM = 4;
+
+    /** Every non-empty combination of the values in their order; the one with all of them is labelled {@code [all]}. */
+    private static List<Labeled> combinations(List<JsonElement> listed) {
+        List<Labeled> values = new ArrayList<>();
+        for (int size = 1; size <= listed.size(); size++) {
+            for (int mask = 1; mask < 1 << listed.size(); mask++) {
+                if (Integer.bitCount(mask) != size) {
+                    continue;
+                }
+                JsonArray subset = new JsonArray();
+                List<String> names = new ArrayList<>();
+                for (int i = 0; i < listed.size(); i++) {
+                    if ((mask & 1 << i) != 0) {
+                        subset.add(listed.get(i).deepCopy());
+                        names.add(listed.get(i).getAsString());
+                    }
+                }
+                values.add(new Labeled(size == listed.size() ? "[all]" : "[" + String.join(",", names) + "]", subset));
+            }
+        }
+        return values;
+    }
+
+    private static JsonArray copies(JsonElement element, int n) {
+        JsonArray array = new JsonArray();
+        for (int i = 0; i < n; i++) {
+            array.add(element.deepCopy());
+        }
+        return array;
+    }
+
+    /** Maps: empty, one entry, two, and an entry under a key nothing defines. */
+    private List<Labeled> maps(Component c, String path, JType type, Field field) {
+        List<Labeled> values = new ArrayList<>();
+        JType items = type.items() == null ? JType.of("string") : type.items();
+        String key = fixtures.mapKey(c.id(), path + "{}", field == null ? null : field.name());
+        values.add(new Labeled("{}", new JsonObject()));
+        JsonElement element = items.type().equals("object") ? minimal(c, path + "{}") : sample(c, path + "{}", items, field);
+        if (element != null) {
+            JsonObject one = new JsonObject();
+            one.add(key, element);
+            values.add(new Labeled("{1}", one));
+            JsonObject two = one.deepCopy();
+            two.add(key + "_2", items.type().equals("boolean") ? new JsonPrimitive(false) : element.deepCopy());
+            values.add(new Labeled("{2}", two));
+            JsonObject unknown = new JsonObject();
+            unknown.add(NAMESPACE + "_unknown", element.deepCopy());
+            values.add(new Labeled("{unknown key}", unknown));
+        }
+        return values;
+    }
+
+    /**
+     * Objects: empty, the minimal one, and for an object whose members the docs do not list the docs' example and the
+     * example with a second entry under another key (a map: does the key reach the wire?).
+     */
+    private List<Labeled> objects(Component c, String path, Field field) {
+        List<Labeled> values = new ArrayList<>();
+        values.add(new Labeled("{}", new JsonObject()));
+        if (!path.isEmpty() || !objectBase(c)) {
+            JsonObject minimal = minimal(c, path);
+            if (!minimal.isEmpty()) {
+                values.add(new Labeled("minimal", minimal));
+            }
+        }
+        JsonObject example = field == null || container(c, path) ? null : field.examples().stream()
+            .filter(e -> e.isJsonObject() && !e.getAsJsonObject().isEmpty()).map(JsonElement::getAsJsonObject).findFirst().orElse(null);
+        if (example != null) {
+            values.add(new Labeled("{1}", example.deepCopy()));
+            JsonObject two = example.deepCopy();
+            Map.Entry<String, JsonElement> first = example.entrySet().iterator().next();
+            two.add(first.getKey() + "_2", first.getValue().deepCopy());
+            values.add(new Labeled("{2}", two));
         }
         return values;
     }
