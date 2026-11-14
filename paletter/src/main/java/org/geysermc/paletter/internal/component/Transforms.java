@@ -21,7 +21,6 @@ import org.geysermc.paletter.item.component.BlockPlacer;
 import org.geysermc.paletter.item.component.Digger;
 import org.geysermc.paletter.item.component.Dyeable;
 import org.geysermc.paletter.item.component.EntityPlacer;
-import org.geysermc.paletter.item.component.Food;
 import org.geysermc.paletter.item.component.HoverTextColor;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.Repairable;
@@ -392,21 +391,7 @@ public final class Transforms {
     // ---- item descriptors --------------------------------------------------------------------------------------------
 
     /**
-     * {@code using_converts_to}: {@code {name}} for an item the registry knows, {@code {}} otherwise, as BDS sends it. The
-     * output depends on whether the item exists, which no rule over the JSON value captures.
-     */
-    public static void itemDescriptorName(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Food c) {
-        String item = c.usingConvertsTo();
-        NbtMap descriptor = item != null && ctx.registry().itemExists(item)
-            ? NbtMap.builder().putString("name", Wire.namespaced(item)).build() : NbtMap.EMPTY;
-        if (item != null && descriptor.isEmpty()) {
-            ctx.drop(Food.NAME, "using_converts_to " + item + " is not an item");
-        }
-        out.put("minecraft:food.using_converts_to", descriptor);
-    }
-
-    /**
-     * {@code ammunition[].item}: an item descriptor like {@link #itemDescriptorName}: {@code {name}} for an item the
+     * {@code ammunition[].item}: an item descriptor: {@code {name}} for an item the
      * registry knows, {@code {}} for any other descriptor (the captures send {@code "item": {}} and objects without a
      * {@code name} as {@code {}}, where the inferred identity of {@code item.name} would leave the compound out); an entry
      * without item is sent with the empty descriptor too.

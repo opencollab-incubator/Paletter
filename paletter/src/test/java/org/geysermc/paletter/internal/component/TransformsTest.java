@@ -20,14 +20,12 @@ import org.geysermc.paletter.item.component.BlockPlacer;
 import org.geysermc.paletter.item.component.Digger;
 import org.geysermc.paletter.item.component.Dyeable;
 import org.geysermc.paletter.item.component.EntityPlacer;
-import org.geysermc.paletter.item.component.Food;
 import org.geysermc.paletter.item.component.HoverTextColor;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.Repairable;
 import org.geysermc.paletter.item.component.Shooter;
 import org.geysermc.paletter.item.component.UseAnimation;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
-import org.geysermc.paletter.vanilla.BedrockItems;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -252,14 +250,6 @@ class TransformsTest {
 
     @Test
     void itemDescriptors() {
-        WireNode food = new WireNode();
-        Transforms.itemDescriptorName(ctx, food, Food.builder().usingConvertsTo(BedrockItems.BOWL).build());
-        assertEquals("minecraft:bowl", compound(food, "minecraft:food").getCompound("using_converts_to").getString("name"));
-        WireNode unknown = new WireNode();
-        Transforms.itemDescriptorName(ctx, unknown, Food.builder().usingConvertsTo("test:nothing").build());
-        assertEquals(NbtMap.EMPTY, compound(unknown, "minecraft:food").getCompound("using_converts_to"));
-        assertEquals(1, report.warnings().size());
-
         WireNode repair = new WireNode();
         Transforms.itemDescriptorList(ctx, repair, Repairable.builder().repairItems(
             Repairable.RepairItems.builder().items("minecraft:stick").repairAmount(1.5f).build(),
