@@ -72,7 +72,8 @@ vanilla_block_data: {block_id: 10000+, material: "dirt"}, properties?, traits?, 
 
 ### Traits
 
-The client adds trait states; they are verified by hash and taken from vanilla states of the same name otherwise.
+The client adds trait states. The generated `TraitStateTable` (from `data/model/mappings.json` `traitStates`) has them:
+values of the vanilla state of the same name, defaults verified by hash where a capture has one.
 
 | Trait | States added (first = default) |
 |---|---|

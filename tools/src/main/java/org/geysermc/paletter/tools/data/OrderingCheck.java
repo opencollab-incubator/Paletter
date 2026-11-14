@@ -7,6 +7,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.block.BlockStates;
+import org.geysermc.paletter.internal.component.ComponentIndex;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -24,9 +25,10 @@ import java.util.Map;
  *     index in the palette sorted by the FNV-1 64 hash of the block name ({@link BlockRegistry#nameHash}, unsigned;
  *     stable, so the states of a block keep their order). Checked by capturing the same world once hashed and once
  *     sequential: every creative stack's state (resolved through its hash) must sit at the sequential id BDS sent;</li>
- *     <li><b>custom block ids</b>: {@code vanilla_block_data.block_id} of custom blocks is 10000, 10001, ... in
+ *     <li><b>custom block ids</b>: {@code vanilla_block_data.block_id} of custom blocks is 10000, 10001, ... ({@link BlockRegistry#CUSTOM_BLOCK_ID_START}) in
  *     <i>descending</i> identifier order (BDS uses descending <i>file name</i> order; the capture add-on names each file
- *     after its block, data/bds/CREATIVE-ORDER.md), and a custom block's item has runtime id {@code 255 - block_id}.</li>
+ *     after its block, data/bds/CREATIVE-ORDER.md), and a custom block's item has runtime id {@code 255 - block_id}
+ *     ({@link ComponentIndex#BLOCK_ITEM_ID_PLUS_BLOCK_ID}). Both constants are inferred from the spec captures.</li>
  * </ul>
  */
 public final class OrderingCheck {
@@ -167,14 +169,14 @@ public final class OrderingCheck {
                 continue;
             }
             withItem++;
-            if (id != 255 - Integer.parseInt(entry[1])) {
+            if (id != ComponentIndex.BLOCK_ITEM_ID_PLUS_BLOCK_ID - Integer.parseInt(entry[1])) {
                 wrongItems.add(entry[0] + ": item id " + id + ", block_id " + entry[1]);
             }
         }
         if (wrongItems.isEmpty()) {
-            passes.add(label + ": " + withItem + " custom block items have runtime id 255 - block_id");
+            passes.add(label + ": " + withItem + " custom block items have runtime id " + ComponentIndex.BLOCK_ITEM_ID_PLUS_BLOCK_ID + " - block_id");
         } else {
-            failures.add(label + ": custom block item ids are not 255 - block_id: " + String.join("; ", wrongItems.subList(0, Math.min(5, wrongItems.size()))));
+            failures.add(label + ": custom block item ids are not " + ComponentIndex.BLOCK_ITEM_ID_PLUS_BLOCK_ID + " - block_id: " + String.join("; ", wrongItems.subList(0, Math.min(5, wrongItems.size()))));
         }
     }
 

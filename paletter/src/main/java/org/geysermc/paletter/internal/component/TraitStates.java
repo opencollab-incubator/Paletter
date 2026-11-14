@@ -13,13 +13,10 @@ import java.util.List;
 
 /**
  * The block states traits add. The client derives them from the trait (they are not in the block's {@code properties}
- * on the wire), so every palette has to enumerate them the same way: the first value is the default. Values verified
- * against BDS 1.26.63.1 block hashes ({@code data/bds/WIRE-NOTES.md}, Traits).
+ * on the wire), so every palette has to enumerate them the same way: the first value is the default. The states of each
+ * {@code enabled_states} value come from the generated {@link TraitStateTable}, which says per state what backs it.
  */
 public final class TraitStates {
-    private static final String[] CARDINAL = {"south", "west", "north", "east"};
-    private static final String[] FACING = {"down", "up", "north", "south", "west", "east"};
-
     private TraitStates() {
     }
 
@@ -27,35 +24,27 @@ public final class TraitStates {
         List<BlockProperty<?>> states = new ArrayList<>();
         for (BlockTrait trait : traits) {
             switch (trait) {
-                case PlacementDirection direction -> {
-                    for (PlacementDirection.EnabledStates state : direction.enabledStates()) {
-                        switch (state) {
-                            case CARDINAL_DIRECTION -> states.add(BlockProperty.strings(state.value(), CARDINAL));
-                            case FACING_DIRECTION -> states.add(BlockProperty.strings(state.value(), FACING));
-                            // Values not verified: the vanilla values of minecraft:corner, with the cardinal directions
-                            case CORNER_AND_CARDINAL_DIRECTION -> states.add(BlockProperty.strings("minecraft:corner",
-                                "none", "inner_left", "inner_right", "outer_left", "outer_right"));
-                        }
+                case PlacementDirection t -> t.enabledStates().forEach(s -> states.addAll(TraitStateTable.of(PlacementDirection.NAME, s.value())));
+                case PlacementPosition t -> t.enabledStates().forEach(s -> states.addAll(TraitStateTable.of(PlacementPosition.NAME, s.value())));
+                case Connection t -> t.enabledStates().forEach(s -> states.addAll(TraitStateTable.of(Connection.NAME, s.value())));
+                case MultiBlock t -> t.enabledStates().forEach(s -> {
+                    for (BlockProperty<?> state : TraitStateTable.of(MultiBlock.NAME, s.value())) {
+                        states.add(firstParts(state, t.parts()));
                     }
-                }
-                case PlacementPosition position -> {
-                    for (PlacementPosition.EnabledStates state : position.enabledStates()) {
-                        switch (state) {
-                            case BLOCK_FACE -> states.add(BlockProperty.strings(state.value(), FACING));
-                            case VERTICAL_HALF -> states.add(BlockProperty.strings(state.value(), "bottom", "top"));
-                        }
-                    }
-                }
-                case Connection connection -> {
-                    if (!connection.enabledStates().isEmpty()) {
-                        for (String side : List.of("north", "east", "south", "west")) {
-                            states.add(BlockProperty.bool("minecraft:connection_" + side));
-                        }
-                    }
-                }
-                case MultiBlock multiBlock -> states.add(BlockProperty.range("minecraft:multi_block_part", 0, multiBlock.parts() - 1));
+                });
             }
         }
         return states;
+    }
+
+    /**
+     * A multi block has one {@code multi_block_part} value per part: the trait's {@code parts} decides how many of the
+     * documented values exist. Hand-written: no data says it, it follows from the docs' meaning of {@code parts}, and only
+     * the default (part 0 of 2) is verified by a captured hash.
+     */
+    @SuppressWarnings("unchecked")
+    private static BlockProperty<?> firstParts(BlockProperty<?> state, int parts) {
+        List<Integer> values = ((List<Integer>) state.values()).subList(0, parts);
+        return BlockProperty.ints(state.name(), values.toArray(Integer[]::new));
     }
 }

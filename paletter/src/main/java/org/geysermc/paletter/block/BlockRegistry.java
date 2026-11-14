@@ -21,6 +21,7 @@ import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.component.BlockCompiler;
+import org.geysermc.paletter.internal.component.ComponentIndex;
 import org.geysermc.paletter.internal.component.WireContext;
 
 import java.nio.charset.StandardCharsets;
@@ -53,9 +54,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> {
     /**
-     * Numeric ids of custom blocks start here, to stay clear of vanilla block ids.
+     * Numeric ids of custom blocks start here, to stay clear of vanilla block ids: where BDS starts them in every spec capture.
      */
-    public static final int CUSTOM_BLOCK_ID_START = 10000;
+    public static final int CUSTOM_BLOCK_ID_START = ComponentIndex.CUSTOM_BLOCK_ID_START;
 
     private static final long FNV1_64_OFFSET_BASIS = 0xcbf29ce484222325L;
     private static final long FNV1_64_PRIME = 1099511628211L;
