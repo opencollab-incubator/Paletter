@@ -80,10 +80,11 @@ has the walkthrough; this is the contract.
   `IllegalArgumentException`. New keys arrive in minor releases.
 - **Lookups.** `blockBehaviour` takes a runtime id of the palette (hashed or sequential, as the palette sends it), a
   `BedrockBlockState` or a `BedrockBlockType` (its default state); `itemBehaviour` a `BedrockItemType`. Something that is
-  not in the palette throws `IllegalArgumentException`. They return a handle (`BlockValues`, `ItemValues`) made once per
-  state or item and palette: its `get` of a number or boolean key returns the primitive, unboxed, and reads an array. A
-  palette that extends another one returns the other one's handle for a state they share. Vanilla states are shared
-  between versions, their values are not: values belong to the palette, not to the state.
+  not in the palette throws `IllegalArgumentException`. They return a handle (`BlockValues`, `ItemValues`): the palette's
+  values and a position in them. Its `get` of a number or boolean key returns the primitive, unboxed, and reads an array;
+  neither the lookup nor the handle allocates once inlined. Handles have value equality, not identity. A palette that
+  extends another one shares the other one's values for the states they share. Vanilla states are shared between
+  versions, their values are not: values belong to the palette, not to the state.
 - **`get` and `getOrElse`.** `get` returns the value: the user's component, else the vanilla value, else BDS's default
   for custom content. Where no value is known (a key with no source yet, a custom block without the component whose BDS
   default is not captured), `get` throws `IllegalStateException` saying why, and `getOrElse(key, fallback)` returns the

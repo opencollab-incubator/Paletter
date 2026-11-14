@@ -25,7 +25,7 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -82,14 +82,14 @@ class BehaviourTest {
     }
 
     @Test
-    void everyWayToNameAStateGivesTheSameHandle() {
+    void everyWayToNameAStateGivesAnEqualHandle() {
         Palette palette = latest();
         BlockValues byType = palette.blockBehaviour(BedrockBlocks.ICE);
-        assertSame(byType, palette.blockBehaviour(BedrockBlocks.ICE.defaultState()));
-        assertSame(byType, palette.blockBehaviour(palette.runtimeId(BedrockBlocks.ICE.defaultState())));
+        assertEquals(byType, palette.blockBehaviour(BedrockBlocks.ICE.defaultState()));
+        assertEquals(byType, palette.blockBehaviour(palette.runtimeId(BedrockBlocks.ICE.defaultState())));
         assertSame(palette.block(BedrockBlocks.ICE.defaultState()), byType.state());
         assertThrows(IllegalArgumentException.class, () -> palette.blockBehaviour(0x7eadbeef), "no such runtime id");
-        assertSame(palette.itemBehaviour(BedrockItems.APPLE), palette.itemBehaviour(BedrockItems.APPLE));
+        assertEquals(palette.itemBehaviour(BedrockItems.APPLE), palette.itemBehaviour(BedrockItems.APPLE));
     }
 
     @Test
@@ -290,7 +290,7 @@ class BehaviourTest {
         Palette oldest = PALETTER.vanilla(PALETTER.versions().getFirst());
         RegisteredBlockState door = newest.blocks().states("minecraft:iron_door").getFirst();
         assertSame(door, oldest.blockBehaviour(door.getRuntimeId()).state());
-        assertNotSame(newest.blockBehaviour(door.getRuntimeId()), oldest.blockBehaviour(door.getRuntimeId()));
+        assertNotEquals(newest.blockBehaviour(door.getRuntimeId()), oldest.blockBehaviour(door.getRuntimeId()));
         assertFalse(newest.blockBehaviour(door.getRuntimeId()).get(BlockBehaviour.COLLISION_SHAPE)
             .equals(oldest.blockBehaviour(door.getRuntimeId()).get(BlockBehaviour.COLLISION_SHAPE)), "measured in the newest version only");
     }
@@ -374,13 +374,13 @@ class BehaviourTest {
     }
 
     @Test
-    void sessionPalettesShareTheVanillaHandles() {
+    void sessionPalettesShareTheVanillaValues() {
         Palette base = latest();
         BlockValues stone = base.blockBehaviour(BedrockBlocks.STONE);
         CustomBlock block = CustomBlock.builder("test:block").component(Friction.of(0.1f)).build();
         Palette session = base.extend(PaletteLayer.builder("session").block(block).build());
 
-        assertSame(stone, session.blockBehaviour(BedrockBlocks.STONE), "a shared state has the parent palette's handle");
+        assertEquals(stone, session.blockBehaviour(BedrockBlocks.STONE), "a shared state has the values of the parent palette");
         int custom = session.blocks().block("test:block").defaultState().getRuntimeId();
         assertEquals(0.9f, session.blockBehaviour(custom).get(BlockBehaviour.FRICTION), 1e-6f);
         assertThrows(IllegalArgumentException.class, () -> base.blockBehaviour(custom), "not a state of the parent");
@@ -388,13 +388,13 @@ class BehaviourTest {
         // Another layer on top of the session still shares them, and the first session's block
         CustomBlock other = CustomBlock.builder("test:other").component(Friction.of(0.2f)).build();
         Palette second = session.extend(PaletteLayer.builder("second").block(other).build());
-        assertSame(stone, second.blockBehaviour(BedrockBlocks.STONE));
-        assertSame(session.blockBehaviour(custom), second.blockBehaviour(custom));
+        assertEquals(stone, second.blockBehaviour(BedrockBlocks.STONE));
+        assertEquals(session.blockBehaviour(custom), second.blockBehaviour(custom));
         assertEquals(0.8f, second.blockBehaviour(second.blocks().block("test:other").defaultState().getRuntimeId()).get(BlockBehaviour.FRICTION), 1e-6f);
 
-        // A layer without blocks adds no states: every handle is the parent's
+        // A layer without blocks adds no states: every value is the parent's
         Palette items = base.extend(PaletteLayer.builder("items").item(CustomItem.builder("test:i").build()).build());
-        assertSame(stone, items.blockBehaviour(BedrockBlocks.STONE));
+        assertEquals(stone, items.blockBehaviour(BedrockBlocks.STONE));
     }
 
     /** A palette with every kind of content: vanilla, a custom block and item, and an override of a vanilla item. */

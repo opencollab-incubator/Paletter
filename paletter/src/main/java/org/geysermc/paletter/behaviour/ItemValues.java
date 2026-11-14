@@ -9,8 +9,8 @@ import org.geysermc.paletter.internal.behaviour.Column;
 
 /**
  * The behaviour values of one item type in one palette: {@code palette.itemBehaviour(BedrockItems.APPLE)}. Values are per
- * item type, not per aux value. Made once per item and palette and kept, so a lookup is an array read: it neither
- * allocates nor boxes.
+ * item type, not per aux value. A handle is the palette's values and the position of the item in them: {@code get} reads
+ * an array and neither allocates nor boxes. Handles are equal for the same item in the same palette.
  * <p>
  * {@code get} returns the value: what the user's component sets (on a custom item or an override of a vanilla one), else
  * the vanilla value, else BDS's default for custom content. It throws {@link IllegalStateException} where no value is
@@ -23,23 +23,21 @@ import org.geysermc.paletter.internal.behaviour.Column;
 public final class ItemValues {
     private final Behaviour behaviour;
     private final int index;
-    private final RegisteredItem item;
 
     /**
      * Plumbing of {@link Palette#itemBehaviour}: public for it, not part of the API.
      */
     @Internal
-    public ItemValues(@NonNull Behaviour behaviour, int index, @NonNull RegisteredItem item) {
+    public ItemValues(@NonNull Behaviour behaviour, int index) {
         this.behaviour = behaviour;
         this.index = index;
-        this.item = item;
     }
 
     /**
      * @return the item these values are of
      */
     public @NonNull RegisteredItem item() {
-        return item;
+        return behaviour.itemAt(index);
     }
 
     /**
@@ -48,7 +46,7 @@ public final class ItemValues {
     public float get(@NonNull FloatKey key) {
         Column column = behaviour.itemColumn(key);
         if (!column.known(index)) {
-            throw behaviour.missing(item, key);
+            throw behaviour.missing(item(), key);
         }
         return column.getFloat(index);
     }
@@ -59,7 +57,7 @@ public final class ItemValues {
     public int get(@NonNull IntKey key) {
         Column column = behaviour.itemColumn(key);
         if (!column.known(index)) {
-            throw behaviour.missing(item, key);
+            throw behaviour.missing(item(), key);
         }
         return column.getInt(index);
     }
@@ -70,7 +68,7 @@ public final class ItemValues {
     public boolean get(@NonNull BooleanKey key) {
         Column column = behaviour.itemColumn(key);
         if (!column.known(index)) {
-            throw behaviour.missing(item, key);
+            throw behaviour.missing(item(), key);
         }
         return column.getBoolean(index);
     }
@@ -82,7 +80,7 @@ public final class ItemValues {
     public <T> @NonNull T get(@NonNull ObjectKey<T> key) {
         Object value = behaviour.itemColumn(key).get(index);
         if (value == null) {
-            throw behaviour.missing(item, key);
+            throw behaviour.missing(item(), key);
         }
         return (T) value;
     }
@@ -127,11 +125,24 @@ public final class ItemValues {
      * text on each call.
      */
     public @NonNull String explain(@NonNull BehaviourKey<?> key) {
-        return behaviour.explain(item, key);
+        return behaviour.explain(item(), key);
+    }
+
+    /**
+     * @return true for the handle of the same item in the same palette (or in the palette that palette extends)
+     */
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof ItemValues other && other.behaviour == behaviour && other.index == index;
+    }
+
+    @Override
+    public int hashCode() {
+        return System.identityHashCode(behaviour) * 31 + index;
     }
 
     @Override
     public String toString() {
-        return "ItemValues{" + item + "}";
+        return "ItemValues{" + item() + "}";
     }
 }

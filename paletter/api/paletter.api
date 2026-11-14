@@ -366,6 +366,7 @@ public record org.geysermc.paletter.behaviour.BlockShape$Box {
 }
 
 public final class org.geysermc.paletter.behaviour.BlockValues {
+    public boolean equals(java.lang.Object)
     public java.lang.String explain(org.geysermc.paletter.behaviour.BehaviourKey<?>)
     public boolean get(org.geysermc.paletter.behaviour.BooleanKey)
     public float get(org.geysermc.paletter.behaviour.FloatKey)
@@ -375,6 +376,7 @@ public final class org.geysermc.paletter.behaviour.BlockValues {
     public float getOrElse(org.geysermc.paletter.behaviour.FloatKey, float)
     public int getOrElse(org.geysermc.paletter.behaviour.IntKey, int)
     public <T> T getOrElse(org.geysermc.paletter.behaviour.ObjectKey<T>, T)
+    public int hashCode()
     public org.geysermc.paletter.block.RegisteredBlockState state()
     public java.lang.String toString()
 }
@@ -404,6 +406,7 @@ public final class org.geysermc.paletter.behaviour.ItemBehaviour {
 }
 
 public final class org.geysermc.paletter.behaviour.ItemValues {
+    public boolean equals(java.lang.Object)
     public java.lang.String explain(org.geysermc.paletter.behaviour.BehaviourKey<?>)
     public boolean get(org.geysermc.paletter.behaviour.BooleanKey)
     public float get(org.geysermc.paletter.behaviour.FloatKey)
@@ -413,6 +416,7 @@ public final class org.geysermc.paletter.behaviour.ItemValues {
     public float getOrElse(org.geysermc.paletter.behaviour.FloatKey, float)
     public int getOrElse(org.geysermc.paletter.behaviour.IntKey, int)
     public <T> T getOrElse(org.geysermc.paletter.behaviour.ObjectKey<T>, T)
+    public int hashCode()
     public org.geysermc.paletter.item.RegisteredItem item()
     public java.lang.String toString()
 }

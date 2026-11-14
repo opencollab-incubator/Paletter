@@ -8,9 +8,10 @@ import org.geysermc.paletter.internal.behaviour.Behaviour;
 import org.geysermc.paletter.internal.behaviour.Column;
 
 /**
- * The behaviour values of one block state in one palette: {@code palette.blockBehaviour(runtimeId)}. Made once per
- * state and palette and kept, so a lookup is an array read: it neither allocates nor boxes. A palette that extends
- * another one gives the other palette's handle for a state the two share.
+ * The behaviour values of one block state in one palette: {@code palette.blockBehaviour(runtimeId)}. A handle is the
+ * palette's values and the position of the state in them: {@code get} reads an array and neither allocates nor boxes.
+ * Call {@code palette.blockBehaviour(...).get(key)} on the hot path as it is; inlined, the handle costs nothing. Handles
+ * are equal for the same state in the same palette; compare them with {@code equals}, not {@code ==}.
  * <p>
  * {@code get} returns the value: what the user's component sets, else the vanilla value, else BDS's default for custom
  * content. It throws {@link IllegalStateException} where no value is known: a key no source has yet
@@ -23,23 +24,21 @@ import org.geysermc.paletter.internal.behaviour.Column;
 public final class BlockValues {
     private final Behaviour behaviour;
     private final int index;
-    private final RegisteredBlockState state;
 
     /**
      * Plumbing of {@link Palette#blockBehaviour}: public for it, not part of the API.
      */
     @Internal
-    public BlockValues(@NonNull Behaviour behaviour, int index, @NonNull RegisteredBlockState state) {
+    public BlockValues(@NonNull Behaviour behaviour, int index) {
         this.behaviour = behaviour;
         this.index = index;
-        this.state = state;
     }
 
     /**
      * @return the state these values are of
      */
     public @NonNull RegisteredBlockState state() {
-        return state;
+        return behaviour.stateAt(index);
     }
 
     /**
@@ -48,7 +47,7 @@ public final class BlockValues {
     public float get(@NonNull FloatKey key) {
         Column column = behaviour.blockColumn(key);
         if (!column.known(index)) {
-            throw behaviour.missing(state, key);
+            throw behaviour.missing(state(), key);
         }
         return column.getFloat(index);
     }
@@ -59,7 +58,7 @@ public final class BlockValues {
     public int get(@NonNull IntKey key) {
         Column column = behaviour.blockColumn(key);
         if (!column.known(index)) {
-            throw behaviour.missing(state, key);
+            throw behaviour.missing(state(), key);
         }
         return column.getInt(index);
     }
@@ -70,7 +69,7 @@ public final class BlockValues {
     public boolean get(@NonNull BooleanKey key) {
         Column column = behaviour.blockColumn(key);
         if (!column.known(index)) {
-            throw behaviour.missing(state, key);
+            throw behaviour.missing(state(), key);
         }
         return column.getBoolean(index);
     }
@@ -82,7 +81,7 @@ public final class BlockValues {
     public <T> @NonNull T get(@NonNull ObjectKey<T> key) {
         Object value = behaviour.blockColumn(key).get(index);
         if (value == null) {
-            throw behaviour.missing(state, key);
+            throw behaviour.missing(state(), key);
         }
         return (T) value;
     }
@@ -127,11 +126,24 @@ public final class BlockValues {
      * text on each call.
      */
     public @NonNull String explain(@NonNull BehaviourKey<?> key) {
-        return behaviour.explain(state, key);
+        return behaviour.explain(state(), key);
+    }
+
+    /**
+     * @return true for the handle of the same state in the same palette (or in the palette that palette extends)
+     */
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof BlockValues other && other.behaviour == behaviour && other.index == index;
+    }
+
+    @Override
+    public int hashCode() {
+        return System.identityHashCode(behaviour) * 31 + index;
     }
 
     @Override
     public String toString() {
-        return "BlockValues{" + state + "}";
+        return "BlockValues{" + state() + "}";
     }
 }

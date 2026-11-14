@@ -417,11 +417,11 @@ palette.blockBehaviour(BedrockBlocks.BLUE_ICE).explain(BlockBehaviour.FRICTION);
   boxing; the others return a `String` or a `BlockShape`.
 - **`get` or `getOrElse`**: `get` returns the value and throws if none is known (a key with no source yet, like
   `CLIMBABLE`, or a custom block's default that was never measured). `getOrElse` returns your fallback instead.
-- **Fast**: `blockBehaviour(...)` returns a handle made once per state and palette; `get` on it reads an array. Keep the
-  handle, or look it up again: both are cheap and neither allocates.
+- **Fast**: `palette.blockBehaviour(runtimeId).get(key)` looks the runtime id up and reads an array: no allocation, no
+  boxing, about as fast as a lookup in an int map.
 - **Per palette, per version**: the same block state can have other values in another version (a newer capture), so
-  values come from the palette, not from the state. A session palette (`palette.extend(layer)`) shares the handles of the
-  palette it extends; only the blocks its layers add have handles of their own.
+  values come from the palette, not from the state. A session palette (`palette.extend(layer)`) shares the values of the
+  palette it extends; only the blocks its layers add have values of their own.
 - **`explain`** says where a value comes from, for debugging: the source and commit, the version it was captured for,
   and whether it was set by the user, inherited from an older version, corrected by its source or disputed.
 - **Where values come from**, strongest first. Values come from BDS directly wherever possible, then from third-party

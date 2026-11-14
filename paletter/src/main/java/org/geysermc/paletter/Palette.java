@@ -150,8 +150,8 @@ public final class Palette {
     /**
      * The behaviour values (friction, destroy time, collision shape, light, ...) of a block state in this palette:
      * {@code palette.blockBehaviour(runtimeId).get(BlockBehaviour.FRICTION)}. Vanilla values come from the bundled
-     * captures of the palette's version, custom ones from their components. The handle is made once per state and kept:
-     * after the first call this is a lookup of the runtime id and an array read.
+     * captures of the palette's version, custom ones from their components. A lookup of the runtime id and an array
+     * read; it does not allocate.
      *
      * @param runtimeId the runtime id of a state of this palette, as it sends it: the hash, or the sequential id of a
      *                  palette that numbers them
@@ -186,7 +186,7 @@ public final class Palette {
 
     /**
      * The behaviour values (max stack size, durability, attack damage, ...) of an item in this palette:
-     * {@code palette.itemBehaviour(BedrockItems.APPLE).get(ItemBehaviour.MAX_STACK_SIZE)}. Made once per item and kept.
+     * {@code palette.itemBehaviour(BedrockItems.APPLE).get(ItemBehaviour.MAX_STACK_SIZE)}.
      *
      * @throws IllegalArgumentException if this palette has no such item, see {@link #item(BedrockItemType)}
      * @since 0.1.0

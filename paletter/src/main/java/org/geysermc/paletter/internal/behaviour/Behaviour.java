@@ -36,10 +36,9 @@ import java.util.Objects;
  * component gets BDS's default for the key, if it is known; else there is no value ({@link Provenance#unknownDefault()}).
  * <p>
  * Values are kept in dense columns, one per key ({@link BehaviourKey#ordinal()}), built the first time a key is asked
- * for. The handles ({@link BlockValues}, {@link ItemValues}) are made once per state or item and read the columns by
- * position. A palette that extends another one ({@link Palette#extend}) has the other one's states first: their handles
- * and columns are the other palette's (their values are the same), and only the states the layers added have columns
- * and handles here. A {@link Provenance} is only built by {@link #provenance} and {@link #explain}.
+ * for. The handles ({@link BlockValues}, {@link ItemValues}) are a behaviour and a position in its columns. A palette
+ * that extends another one ({@link Palette#extend}) has the other one's states first: their handles and columns are the
+ * other palette's (their values are the same), and only the states the layers added have columns here. A {@link Provenance} is only built by {@link #provenance} and {@link #explain}.
  */
 @Internal
 public final class Behaviour {
@@ -53,14 +52,12 @@ public final class Behaviour {
     private final int base;
     /** The columns of the own states by key ordinal, null until built; written under the lock, read without it. */
     private final @Nullable Column[] blockColumns = new Column[KEYS];
-    private final @Nullable BlockValues[] blockValues;
     /** The items, in the order of their columns: {@link org.geysermc.paletter.item.ItemRegistry#definitions()}. */
     private final List<RegisteredItem> items;
     /** {@code positions[runtimeId - minRuntimeId]} is the position of an item, or -1. */
     private final int minRuntimeId;
     private final int[] positions;
     private final @Nullable Column[] itemColumns = new Column[KEYS];
-    private final @Nullable ItemValues[] itemValues;
 
     private Behaviour(Palette palette, BehaviourStore store, @Nullable Behaviour parent) {
         this.palette = palette;
@@ -69,7 +66,6 @@ public final class Behaviour {
         boolean extending = parent != null && registry.extendsStatesOf(parent.palette.blocks());
         this.parent = extending ? parent : null;
         this.base = extending ? parent.palette.blocks().size() : 0;
-        this.blockValues = new BlockValues[registry.size() - base];
         this.items = palette.items().definitions();
         this.minRuntimeId = items.stream().mapToInt(RegisteredItem::getRuntimeId).min().orElse(0);
         int max = items.stream().mapToInt(RegisteredItem::getRuntimeId).max().orElse(-1);
@@ -78,7 +74,6 @@ public final class Behaviour {
         for (int i = 0; i < items.size(); i++) {
             positions[items.get(i).getRuntimeId() - minRuntimeId] = i;
         }
-        this.itemValues = new ItemValues[items.size()];
     }
 
     /**
@@ -91,37 +86,39 @@ public final class Behaviour {
     // ---- Handles and columns ----
 
     /**
+     * A handle is two fields, made on each call: inlined into the caller, the JIT keeps them in registers and allocates
+     * nothing (a cached handle would cost a memory load more per lookup).
+     *
      * @param index a dense index of the palette's {@link BlockRegistry}, see {@link BlockRegistry#indexOf}
-     * @return the handle of the state there, made once
-     * @throws IndexOutOfBoundsException if there is no such index
+     * @return the handle of the state there: of the palette this one extends for a state they share
      */
     public @NonNull BlockValues block(int index) {
-        if (index < base) {
-            return parent.block(index);
-        }
-        int own = index - base;
-        BlockValues values = blockValues[own];
-        if (values == null) {
-            // A race makes two equal handles, of which one is kept: their fields are final
-            blockValues[own] = values = new BlockValues(this, own, palette.blocks().byIndex(index));
-        }
-        return values;
+        return index < base ? parent.block(index) : new BlockValues(this, index - base);
     }
 
     /**
-     * @return the handle of an item of the palette, made once; null if the item is not of the palette
+     * @param index the index of a {@link BlockValues} of this behaviour
+     * @return its state
+     */
+    public @NonNull RegisteredBlockState stateAt(int index) {
+        return palette.blocks().byIndex(base + index);
+    }
+
+    /**
+     * @return the handle of an item of the palette, see {@link #block(int)}; null if the item is not of the palette
      */
     public @Nullable ItemValues item(@NonNull RegisteredItem item) {
         int at = item.getRuntimeId() - minRuntimeId;
         int position = at < 0 || at >= positions.length ? -1 : positions[at];
-        if (position < 0 || items.get(position) != item) {
-            return null;
-        }
-        ItemValues values = itemValues[position];
-        if (values == null) {
-            itemValues[position] = values = new ItemValues(this, position, item);
-        }
-        return values;
+        return position < 0 || items.get(position) != item ? null : new ItemValues(this, position);
+    }
+
+    /**
+     * @param index the index of an {@link ItemValues} of this behaviour
+     * @return its item
+     */
+    public @NonNull RegisteredItem itemAt(int index) {
+        return items.get(index);
     }
 
     /**
