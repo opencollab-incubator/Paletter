@@ -1094,8 +1094,7 @@ public final class MappingInference {
             status = distinctValues ? "dropped" : "no-evidence";
         } else {
             Map<String, JsonObject> byGeneric = new LinkedHashMap<>();
-            JsonObject set = orderedSet(observations, varying);
-            if (set != null) {
+            for (JsonObject set : orderedSet(observations, varying)) {
                 // the list leaves are explained as a whole: drop them from the leaf by leaf fit
                 String list = set.get("wire").getAsString();
                 varying.removeIf(w -> w.matches(Pattern.quote(list.substring(0, list.length() - 2)) + "\\[\\d+]"));
@@ -1233,7 +1232,8 @@ public final class MappingInference {
         boolean scalars = set.stream().allMatch(p -> p.json.isJsonPrimitive());
         JsonObject rule = null;
         Field field = component.field(path);
-        boolean enumerated = field != null && !field.enumValues().isEmpty();
+        // an enum of the docs, or one BDS lists in its content log ("expects one of the following strings")
+        boolean enumerated = field != null && !field.enumValues().isEmpty() || feedback.has(component.id(), path, "values");
         if (scalars) {
             rule = scalar(set, p -> p.json, wire);
             if (rule != null && rule.get("kind").getAsString().equals("table") && !tableAllowed(set, enumerated)) {
@@ -1482,16 +1482,19 @@ public final class MappingInference {
     }
 
     /**
-     * A list of strings BDS sends as the set of its values in an order of its own ({@code connected_faces ["north",
-     * "east", "up"]} -> {@code ["up", "north", "east"]}): every observed list leaf holds the distinct values of the JSON
-     * list, sorted by one order; the order is the one of the observation that holds every value seen. Only when the
-     * order differs from the JSON's somewhere (else element identity explains it). Null if it does not fit.
+     * Lists of strings BDS sends as the set of their values: in an order of its own ({@code connected_faces ["north",
+     * "east", "up"]} -> {@code ["up", "north", "east"]}; the rule's {@code order} is the one of the observation that holds
+     * every value seen), or in the JSON's order without the duplicates ({@code tags ["a", "a"]} -> {@code item_tags ["a"]};
+     * no {@code order}). Every observed list leaf must hold the distinct values of the JSON list in that order, and the
+     * order must differ from the JSON's somewhere or a duplicate must be dropped (else element identity explains it).
+     *
+     * @return one rule per list leaf of {@code varying} that fits
      */
-    static JsonObject orderedSet(List<Pair> observations, Set<String> varying) {
+    static List<JsonObject> orderedSet(List<Pair> observations, Set<String> varying) {
         List<Pair> set = observations.stream().filter(p -> p.json != null && p.json.isJsonArray()).toList();
         if (set.isEmpty() || set.stream().anyMatch(p -> p.json.getAsJsonArray().asList().stream()
             .anyMatch(e -> !e.isJsonPrimitive() || !e.getAsJsonPrimitive().isString()))) {
-            return null;
+            return List.of();
         }
         Set<String> lists = new TreeSet<>();
         for (String wire : varying) {
@@ -1500,10 +1503,17 @@ public final class MappingInference {
                 lists.add(m.group(1));
             }
         }
-        if (lists.size() != 1) {
-            return null;
+        List<JsonObject> rules = new ArrayList<>();
+        for (String list : lists) {
+            JsonObject rule = orderedSet(set, list);
+            if (rule != null) {
+                rules.add(rule);
+            }
         }
-        String list = lists.iterator().next();
+        return rules;
+    }
+
+    private static JsonObject orderedSet(List<Pair> set, String list) {
         Function<Pair, List<Object>> sent = p -> {
             List<Object> out = new ArrayList<>();
             for (int k = 0; p.wire.get(list + "[" + k + "]") != null; k++) {
@@ -1511,29 +1521,37 @@ public final class MappingInference {
             }
             return out;
         };
+        Function<Pair, List<String>> distinct = p -> p.json.getAsJsonArray().asList().stream().map(JsonElement::getAsString).distinct().toList();
+        if (set.stream().allMatch(p -> distinct.apply(p).equals(sent.apply(p)))) {
+            // the JSON's order: a set only if BDS dropped a duplicate
+            if (set.stream().noneMatch(p -> p.json.getAsJsonArray().size() != distinct.apply(p).size())) {
+                return null;
+            }
+            return orderedSetRule(list, null);
+        }
         Set<String> all = new TreeSet<>();
         set.forEach(p -> p.json.getAsJsonArray().forEach(e -> all.add(e.getAsString())));
         List<Object> order = set.stream().map(sent).filter(l -> l.size() == all.size() && all.containsAll(l)).findFirst().orElse(null);
         if (order == null || all.size() < 2) {
             return null;
         }
-        boolean reordered = false;
         for (Pair p : set) {
-            List<String> json = p.json.getAsJsonArray().asList().stream().map(JsonElement::getAsString).distinct().toList();
-            List<Object> expected = order.stream().filter(json::contains).toList();
-            if (!expected.equals(sent.apply(p))) {
+            List<String> json = distinct.apply(p);
+            if (!order.stream().filter(json::contains).toList().equals(sent.apply(p))) {
                 return null;
             }
-            reordered |= !expected.equals(json);
         }
-        if (!reordered) {
-            return null;
-        }
+        return orderedSetRule(list, order);
+    }
+
+    private static JsonObject orderedSetRule(String list, List<Object> order) {
         JsonObject rule = new JsonObject();
         rule.addProperty("kind", "ordered-set");
-        JsonArray values = new JsonArray();
-        order.forEach(v -> values.add(String.valueOf(v)));
-        rule.add("order", values);
+        if (order != null) {
+            JsonArray values = new JsonArray();
+            order.forEach(v -> values.add(String.valueOf(v)));
+            rule.add("order", values);
+        }
         rule.addProperty("nbt", "string");
         rule.add("tags", new JsonArray());
         rule.addProperty("wire", Wire.generic(list + "[0]"));

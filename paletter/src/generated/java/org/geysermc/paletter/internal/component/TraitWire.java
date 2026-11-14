@@ -40,7 +40,6 @@ public final class TraitWire {
         out.put("type", 0);
         out.put("update_flags", 3);
         List<Connection.EnabledStates> v0 = c.enabledStates();
-        ctx.drop(Connection.NAME, "enabled_states has no known wire mapping");
     }
 
     private static void multiBlock(MultiBlock c, WireContext ctx, WireNode out) {
@@ -56,7 +55,6 @@ public final class TraitWire {
         out.put("enabled_states.multi_block", (byte) 1);
         out.put("name", "minecraft:multi_block");
         List<MultiBlock.EnabledStates> v0 = c.enabledStates();
-        ctx.drop(MultiBlock.NAME, "enabled_states has no known wire mapping");
         int v1 = c.parts();
         out.put("part_count", Wire.toByte(v1));
         MultiBlock.Direction v2 = c.direction();
@@ -72,7 +70,6 @@ public final class TraitWire {
         out.put("name", "minecraft:multi_block");
         out.put("place_behavior", (byte) 0);
         List<MultiBlock.EnabledStates> v0 = c.enabledStates();
-        ctx.drop(MultiBlock.NAME, "enabled_states has no known wire mapping");
         int v1 = c.parts();
         out.put("part_count", Wire.toByte(v1));
         MultiBlock.Direction v2 = c.direction();

@@ -24,7 +24,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param enabledStates Which states to enable. The only valid (and required) value is <code>minecraft:multi_block_part</code>. Add-on
  *        JSON {@code enabled_states}. Required.
  * @param parts Optional property to define number of block parts. Valid values are <code>2, 3, 4</code>. Add-on JSON {@code
- *        parts}. Default: <code>2</code>. One of [2, 3, 4].
+ *        parts}. Default: <code>2</code>. Range [2, 4] (BDS 1.26.63.1). One of [2, 3, 4].
  * @param direction Required property to define direction to place the block parts. Valid values are <code>"up", "down", "north",
  *        "south", "west", "east"</code>. Add-on JSON {@code direction}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/traits/multi_block?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:multi_block</a>
@@ -41,6 +41,7 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
 
     public MultiBlock {
         enabledStates = List.copyOf(Objects.requireNonNull(enabledStates, "MultiBlock.enabledStates"));
+        Check.range("MultiBlock.parts", parts, 2.0, 4.0);
         Check.oneOf("MultiBlock.parts", parts, 2, 3, 4);
         Objects.requireNonNull(direction, "MultiBlock.direction");
     }

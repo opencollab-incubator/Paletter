@@ -23,31 +23,33 @@ public final class TraitStateTable {
      */
     public static List<BlockProperty<?>> of(String trait, String value) {
         return switch (trait + " " + value) {
-            // minecraft:connection_north: values from the vanilla state minecraft:connection_north; verified (name and default): BDS 1.26.63.1 sent hash 3371306093 for the default state of paletter:connection_trait_block
-            // minecraft:connection_east: values from the vanilla state minecraft:connection_east; verified (name and default): BDS 1.26.63.1 sent hash 3371306093 for the default state of paletter:connection_trait_block
-            // minecraft:connection_south: values from the vanilla state minecraft:connection_south; verified (name and default): BDS 1.26.63.1 sent hash 3371306093 for the default state of paletter:connection_trait_block
-            // minecraft:connection_west: values from the vanilla state minecraft:connection_west; verified (name and default): BDS 1.26.63.1 sent hash 3371306093 for the default state of paletter:connection_trait_block
+            // minecraft:connection_north: values from the vanilla state minecraft:connection_north; verified (name and default): BDS 1.26.36.1 sent hash 1337243528 for the default state of paletter:b_trait_connection_7 (enabled_states ["minecraft:cardinal_connections","minecraft:cardinal_connections"])
+            // minecraft:connection_east: values from the vanilla state minecraft:connection_east; verified (name and default): BDS 1.26.36.1 sent hash 1337243528 for the default state of paletter:b_trait_connection_7 (enabled_states ["minecraft:cardinal_connections","minecraft:cardinal_connections"])
+            // minecraft:connection_south: values from the vanilla state minecraft:connection_south; verified (name and default): BDS 1.26.36.1 sent hash 1337243528 for the default state of paletter:b_trait_connection_7 (enabled_states ["minecraft:cardinal_connections","minecraft:cardinal_connections"])
+            // minecraft:connection_west: values from the vanilla state minecraft:connection_west; verified (name and default): BDS 1.26.36.1 sent hash 1337243528 for the default state of paletter:b_trait_connection_7 (enabled_states ["minecraft:cardinal_connections","minecraft:cardinal_connections"])
             case "minecraft:connection minecraft:cardinal_connections" -> List.of(
                     BlockProperty.bools("minecraft:connection_north", false, true),
                     BlockProperty.bools("minecraft:connection_east", false, true),
                     BlockProperty.bools("minecraft:connection_south", false, true),
                     BlockProperty.bools("minecraft:connection_west", false, true));
-            // minecraft:multi_block_part: values from the docs (no vanilla block has the state); verified (name and default): BDS 1.26.63.1 sent hash 428099933 for the default state of paletter:multi_block
+            // minecraft:multi_block_part: values from the docs (no vanilla block has the state); verified (name and default): BDS 1.26.36.1 sent hash 655612139 for the default state of paletter:b_trait_multi_block_7 (enabled_states ["minecraft:multi_block_part","minecraft:multi_block_part"])
             case "minecraft:multi_block minecraft:multi_block_part" -> List.of(
                     BlockProperty.ints("minecraft:multi_block_part", 0, 1, 2, 3));
-            // minecraft:cardinal_direction: values from the vanilla state minecraft:cardinal_direction (CardinalDirection); verified (name and default): BDS 1.26.63.1 sent hash 3387770614 for the default state of paletter:states_block
+            // minecraft:cardinal_direction: values from the vanilla state minecraft:cardinal_direction (CardinalDirection); verified (name and default): BDS 1.26.36.1 sent hash 3632260284 for the default state of paletter:b_trait_placement_direction_2 (enabled_states ["minecraft:cardinal_direction"])
             case "minecraft:placement_direction minecraft:cardinal_direction" -> List.of(
                     BlockProperty.strings("minecraft:cardinal_direction", "south", "west", "north", "east"));
-            // minecraft:corner: values from the vanilla state minecraft:corner (Corner); unverified: no capture holds the hash of a default state with it
+            // minecraft:corner: values from the vanilla state minecraft:corner (Corner); verified (name and default): BDS 1.26.36.1 sent hash 3681099873 for the default state of paletter:b_trait_placement_direction_9 (enabled_states ["minecraft:cardinal_direction","minecraft:corner_and_cardinal_direction"])
+            // minecraft:cardinal_direction: values from the vanilla state minecraft:cardinal_direction (CardinalDirection); verified (name and default): BDS 1.26.36.1 sent hash 3632260284 for the default state of paletter:b_trait_placement_direction_2 (enabled_states ["minecraft:cardinal_direction"])
             case "minecraft:placement_direction minecraft:corner_and_cardinal_direction" -> List.of(
-                    BlockProperty.strings("minecraft:corner", "none", "inner_left", "inner_right", "outer_left", "outer_right"));
-            // minecraft:facing_direction: values from the vanilla state minecraft:facing_direction (Direction); unverified: no capture holds the hash of a default state with it
+                    BlockProperty.strings("minecraft:corner", "none", "inner_left", "inner_right", "outer_left", "outer_right"),
+                    BlockProperty.strings("minecraft:cardinal_direction", "south", "west", "north", "east"));
+            // minecraft:facing_direction: values from the vanilla state minecraft:facing_direction (Direction); verified (name and default): BDS 1.26.36.1 sent hash 2490069912 for the default state of paletter:b_trait_placement_direction_8 (enabled_states ["minecraft:facing_direction"])
             case "minecraft:placement_direction minecraft:facing_direction" -> List.of(
                     BlockProperty.strings("minecraft:facing_direction", "down", "up", "north", "south", "west", "east"));
-            // minecraft:block_face: values from the vanilla state minecraft:block_face (Direction); verified (name and default): BDS 1.26.63.1 sent hash 3387770614 for the default state of paletter:states_block
+            // minecraft:block_face: values from the vanilla state minecraft:block_face (Direction); verified (name and default): BDS 1.26.36.1 sent hash 2157981570 for the default state of paletter:b_trait_placement_position_6 (enabled_states ["minecraft:block_face"])
             case "minecraft:placement_position minecraft:block_face" -> List.of(
                     BlockProperty.strings("minecraft:block_face", "down", "up", "north", "south", "west", "east"));
-            // minecraft:vertical_half: values from the vanilla state minecraft:vertical_half (VerticalHalf); verified (name and default): BDS 1.26.63.1 sent hash 3387770614 for the default state of paletter:states_block
+            // minecraft:vertical_half: values from the vanilla state minecraft:vertical_half (VerticalHalf); verified (name and default): BDS 1.26.36.1 sent hash 2948113812 for the default state of paletter:b_trait_placement_position_7 (enabled_states ["minecraft:vertical_half"])
             case "minecraft:placement_position minecraft:vertical_half" -> List.of(
                     BlockProperty.strings("minecraft:vertical_half", "bottom", "top"));
             default -> throw new IllegalArgumentException(trait + " has no enabled state " + value);

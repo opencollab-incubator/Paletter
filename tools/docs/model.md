@@ -144,7 +144,7 @@ explained by the first rule that fits all observations:
 | `table` | a value table, for booleans and enums |
 | `affix` | free strings with a constant prefix/suffix |
 | `bitset` | a list of enum values -> an int of bits |
-| `ordered-set` | a list of strings -> the set of its values in BDS's own `order` (`connected_faces`) |
+| `ordered-set` | a list of strings -> the set of its values in BDS's own `order` (`connected_faces`), or without `order` in the JSON's order with the duplicates dropped (`item_tags`) |
 | `element` | list element k -> the leaf |
 | `constant`, `empty-list`, `empty-map` | a leaf the field's presence switches on (an empty list, an empty map as an empty compound) |
 

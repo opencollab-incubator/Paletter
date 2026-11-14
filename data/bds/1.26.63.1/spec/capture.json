@@ -5,6 +5,8 @@
   "formatVersion": "1.26.60",
   "nativeCodec": true,
   "codecProtocol": 2225,
+  "resolvedHashes": 4252,
+  "unresolvedHashes": 0,
   "experiments": [
     "upcoming_creator_features\u003dtrue",
     "gametest\u003dtrue",
