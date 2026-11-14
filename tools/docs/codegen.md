@@ -70,6 +70,25 @@ Rules:
   `ComponentIndex.BDS_<build>` constant (the first protocol of that capture's window, from `windowProtocol` in
   `mappings.json`).
 
+## Behaviour keys
+
+The same task (`generateComponentApi` / `checkComponentApi`) writes the behaviour keys: `behaviour.BlockBehaviour`,
+`behaviour.ItemBehaviour` (the public constants) and `internal.behaviour.WireRules` (reads a key from the component data of
+a block state or item). Code: `BehaviourSource`; input: the hand-kept table `BehaviourKeys` beside it (name, type, Javadoc
+and, for a key custom content sets, the add-on component, its field and the wire leaf), `mappings.json` and the newest
+`data/bds/<build>/behaviour-probe/capture.json`.
+
+- **Scalar keys** are read from their wire leaf by the rule `mappings.json` has from the field onto that leaf, the same in
+  every protocol window (`WireRules` has no protocol). A field with no rule onto the leaf fails generation, so a renamed
+  or moved leaf is caught here instead of reading null at runtime.
+- **The value read**: a leaf in `item_properties` is BDS's own item property (`use_duration` in ticks) and is read as sent;
+  any other leaf carries the add-on value and the rule is read backwards (`identity`; `linear`: (wire - offset) / scale;
+  other kinds fail). Where the probe measured engine values against component values (`<key>.components`, today
+  `friction`), the linear relation fitted to them converts to engine units (friction: 1 - value); a relation that does
+  not fit every pair within 0.002 fails generation.
+- **Shapes** have no inferred box rule to read backwards: the table names a method of the hand-written
+  `internal.behaviour.ShapeRules` (pixels to blocks, `minecraft:transformation`).
+
 ## Gates
 
 The inference (`inferMappings`; `checkMappings` runs it too) reports:
