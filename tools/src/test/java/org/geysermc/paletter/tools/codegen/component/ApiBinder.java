@@ -41,7 +41,7 @@ import java.util.Map;
  * {@code "true"} and {@code "false"}.</li>
  * </ul>
  */
-final class ApiBinder {
+public final class ApiBinder {
     static final class Unbindable extends RuntimeException {
         Unbindable(String message) {
             super(message);
@@ -69,7 +69,7 @@ final class ApiBinder {
         return builder.build();
     }
 
-    static CustomBlock block(JsonObject file) {
+    public static CustomBlock block(JsonObject file) {
         JsonObject block = file.getAsJsonObject("minecraft:block");
         JsonObject description = block.getAsJsonObject("description");
         CustomBlock.Builder builder = CustomBlock.builder(description.get("identifier").getAsString());

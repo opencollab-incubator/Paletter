@@ -7,6 +7,7 @@ import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.PaletteDataCodec;
 import org.geysermc.paletter.internal.behaviour.BehaviourStore;
 import org.geysermc.paletter.internal.data.PropertyStore;
+import org.geysermc.paletter.internal.shape.VoxelShapeStore;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -29,7 +30,8 @@ import java.util.List;
  * {@code paletter.previews} is {@code true}), and each version is stored in {@code <name>.nbt}
  * (written by the generator, see {@link PaletteDataCodec}). Item components and data driven blocks are stored once with
  * their version ranges in {@code properties.nbt} (see {@link PropertyStore}), behaviour values in
- * {@code behaviour.nbt} (see {@link BehaviourStore}); {@code renames.txt} is optional.
+ * {@code behaviour.nbt} (see {@link BehaviourStore}), the vanilla voxel shapes in {@code voxel_shapes.nbt} (see
+ * {@link VoxelShapeStore}); {@code renames.txt} is optional.
  * The files are either {@code /paletter/} on the classpath of the library ({@link PaletteDataSource#bundled()}) or a
  * directory ({@link PaletteDataSource#directory(Path)}).
  */
@@ -44,6 +46,7 @@ final class FileDataSource implements PaletteDataSource {
     private volatile List<DataVersion> versions;
     private volatile PropertyStore properties;
     private volatile BehaviourStore behaviour;
+    private volatile VoxelShapeStore voxelShapes;
 
     private FileDataSource(Opener opener, String origin) {
         this.opener = opener;
@@ -114,6 +117,24 @@ final class FileDataSource implements PaletteDataSource {
             }
         }
         return properties;
+    }
+
+    @Override
+    public @NonNull VoxelShapeStore voxelShapes() {
+        VoxelShapeStore result = voxelShapes;
+        if (result == null) {
+            synchronized (this) {
+                result = voxelShapes;
+                if (result == null) {
+                    try (InputStream stream = opener.open("voxel_shapes.nbt")) {
+                        voxelShapes = result = stream == null ? VoxelShapeStore.empty() : VoxelShapeStore.read(stream);
+                    } catch (IOException e) {
+                        throw new UncheckedIOException("Unable to read the Paletter voxel shapes in " + origin, e);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     @Override

@@ -18,6 +18,9 @@ import org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket;
 import org.cloudburstmc.protocol.bedrock.data.ExperimentData;
 import org.cloudburstmc.protocol.bedrock.packet.ResourcePackStackPacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
+import org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket;
+import org.geysermc.paletter.block.VoxelShapes;
+import org.geysermc.paletter.internal.shape.VoxelShapeStore;
 import org.geysermc.paletter.block.BlockHashes;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.block.BlockResolution;
@@ -61,6 +64,7 @@ import java.util.function.Supplier;
  * <pre>{@code
  * palette.applyTo(session.getCodecHelper());     // item and block definitions for the codec
  * palette.applyTo(startGamePacket);              // block properties and the block network id mode
+ * session.sendPacket(palette.voxelShapesPacket());   // before start game
  * session.sendPacket(palette.itemComponentPacket());
  * session.sendPacket(palette.creativeContentPacket());
  * }</pre>
@@ -86,15 +90,17 @@ public final class Palette {
     private final VanillaContent.ExperimentGating gating;
     private final Map<PaletteLayer, WeakReference<Palette>> extensions = new WeakHashMap<>();
     private final Supplier<BehaviourStore> behaviourStore;
+    private final Shapes shapes;
     private volatile Behaviour behaviour;
     /** The palette this one extends, or is a copy of: its block states are a prefix of this one's. Null for vanilla palettes. */
     private final @Nullable Palette parent;
 
     Palette(VanillaData data, List<PaletteLayer> layers, BlockRegistry blocks, ItemRegistry items,
             CreativeLayout creativeLayout, CreativeContent creative, PaletteReport report, CreativeOrdering ordering,
-            VanillaContent.ExperimentGating gating, Supplier<BehaviourStore> behaviourStore, @Nullable Palette parent) {
+            VanillaContent.ExperimentGating gating, Supplier<BehaviourStore> behaviourStore, Shapes shapes, @Nullable Palette parent) {
         this.parent = parent;
         this.behaviourStore = behaviourStore;
+        this.shapes = shapes;
         this.gating = gating;
         this.data = data;
         this.layers = List.copyOf(layers);
@@ -121,7 +127,20 @@ public final class Palette {
      * @return this palette with another report, sharing everything else
      */
     Palette withReport(PaletteReport report) {
-        return new Palette(data, layers, blocks, items, creativeLayout, creative, report, ordering, gating, behaviourStore, this);
+        return new Palette(data, layers, blocks, items, creativeLayout, creative, report, ordering, gating, behaviourStore, shapes, this);
+    }
+
+    /**
+     * The voxel shapes of a palette and what they were compiled from.
+     *
+     * @param vanilla the vanilla shapes of the palette's version, or null if no capture of it is bundled
+     * @param compiled the shapes of the palette, or null if {@code vanilla} is
+     */
+    record Shapes(@Nullable List<VoxelShapeStore.Entry> vanilla, @Nullable VoxelShapes compiled) {
+    }
+
+    Shapes shapes() {
+        return shapes;
     }
 
     Supplier<BehaviourStore> behaviourStore() {
@@ -688,6 +707,25 @@ public final class Palette {
 
     public @NonNull List<BlockPropertyData> blockProperties() {
         return blocks.blockProperties();
+    }
+
+    /**
+     * @return the voxel shapes of this palette (the shapes Bedrock culls block faces with): the vanilla ones BDS of this
+     * version sends, plus the ones the layers define and what Bedrock derives from them for custom blocks. Null if no
+     * capture of this version is bundled
+     * @since 0.1.0
+     */
+    public @Nullable VoxelShapes voxelShapes() {
+        return shapes.compiled();
+    }
+
+    /**
+     * @return the voxel shapes packet to send before start game (protocol 924 and later), identical to the one BDS
+     * sends for the same content; null if no capture of this version is bundled
+     * @since 0.1.0
+     */
+    public @Nullable VoxelShapesPacket voxelShapesPacket() {
+        return shapes.compiled() == null ? null : shapes.compiled().toPacket();
     }
 
     public @NonNull ItemComponentPacket itemComponentPacket() {

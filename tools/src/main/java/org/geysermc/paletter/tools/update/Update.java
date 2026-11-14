@@ -19,6 +19,8 @@ import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 import org.geysermc.paletter.tools.model.addon.FixedAddons;
+import org.geysermc.paletter.tools.shape.ShapeImport;
+import org.geysermc.paletter.tools.shape.ShapeProbe;
 import org.geysermc.paletter.tools.model.infer.Coverage;
 import org.geysermc.paletter.tools.model.infer.MappingInference;
 import org.geysermc.paletter.tools.model.infer.SpecDiff;
@@ -171,6 +173,13 @@ public final class Update {
 
             // 2. Network captures (vanilla and add-on, hashed and sequential block ids)
             captures(server, work, dump, runs);
+
+            // 3. Voxel shapes: the packet of the vanilla world, of the probe add-on and of the anchors
+            if (runs.vanilla != null && !runs.netherNet) {
+                voxelShapes(distribution, server, work, runs);
+            } else {
+                report.check(Report.Status.SKIP, "Voxel shapes", "no RakNet capture of this build");
+            }
         } finally {
             if (!keepServer) {
                 try {
@@ -181,7 +190,7 @@ public final class Update {
             }
         }
 
-        // 3. Compare and update
+        // 4. Compare and update
         scriptApi(distribution, dump, runs);
         Staging staging = new Staging(work.resolve("staging"));
         if (runs.vanilla != null) {
@@ -200,6 +209,42 @@ public final class Update {
         }
         constants(staging);
         staging.apply();
+        if (runs.voxelShapesWritten) {
+            // After the data of the version is in place: the import reads the block names of the bundled versions
+            ShapeImport.run(root);
+        }
+    }
+
+    /**
+     * Captures the voxel shapes ({@link ShapeProbe}): into {@code data/bds/<build>/voxel-shapes} when this run writes, else
+     * into the work directory, and says whether they are the committed ones.
+     */
+    private void voxelShapes(BdsDistribution distribution, Path server, Path work, Runs runs) {
+        Path committed = bdsData.resolve(distribution.version()).resolve(ShapeProbe.DIRECTORY);
+        Path captured = work.resolve(ShapeProbe.DIRECTORY);
+        try {
+            ShapeProbe.capture(captured, root, distribution.version(), server, work.resolve("voxel-shapes-run"), runs.reference, port, timeout);
+            List<String> differing = new ArrayList<>();
+            try (Stream<Path> files = Files.list(captured)) {
+                for (Path file : files.sorted().toList()) {
+                    Path other = committed.resolve(file.getFileName());
+                    if (!Files.exists(other) || !Arrays.equals(Files.readAllBytes(file), Files.readAllBytes(other))) {
+                        differing.add(file.getFileName().toString());
+                    }
+                }
+            }
+            report.check(differing.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Voxel shapes",
+                differing.isEmpty() ? "`" + root.relativize(committed) + "` has the same captures"
+                    : "`" + root.relativize(committed) + "` is missing or differs: " + String.join(", ", differing));
+            if (!differing.isEmpty() && (!preview || importPreview)) {
+                for (String file : differing) {
+                    stageCopy(committed.resolve(file), captured.resolve(file), "voxel shape capture " + file);
+                }
+                runs.voxelShapesWritten = !verifyOnly;
+            }
+        } catch (Exception e) {
+            report.fail("Voxel shapes", e);
+        }
     }
 
     /**
@@ -257,6 +302,8 @@ public final class Update {
         List<String> addonContentLog;
         /** The bundled version this run's network data belongs to (null without a capture). */
         String bundledName;
+        /** Whether this run replaced the voxel shape captures of its build: the bundled voxel shapes follow. */
+        boolean voxelShapesWritten;
         final ExperimentRun experiments = new ExperimentRun();
     }
 

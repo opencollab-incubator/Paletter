@@ -10,6 +10,7 @@ All tooling in one module, never shipped. Packages under `org.geysermc.paletter.
 | `model`   | The component model: creator docs parser, the add-on generators (`model.addon`: the spec add-on and the fixed capture/creative add-ons), mapping inference (`model.infer`) |
 | `codegen` | The generators: the component API (`codegen.component`, its own `componentApi` source set) and the vanilla constants (`codegen.constants`) |
 | `behaviour` | The behaviour importer: dumps of CloudburstMC/Data and AllayMC/Allay (git history), Script API dumps and the behaviour probe's captures -> `behaviour.nbt` and `data/behaviour/REPORT.md`; `BehaviourProbe` runs the probe (`data/addons/probe`) and measures its console |
+| `shape`   | Voxel shapes: the probe add-on and the anchors (`ShapeAddon`), BDS's own shape files (`ShapeFiles`), the capture (`ShapeProbe`) and the import into `voxel_shapes.nbt` (`ShapeImport`) |
 | `update`  | The `update` pipeline and its report, the spec capture, experiment discovery and attribution |
 
 One command line, picocli (`Cli`): `./gradlew :tools:run --args="<command> ..."`; `--help` lists the commands, each takes
@@ -25,6 +26,7 @@ One command line, picocli (`Cli`): `./gradlew :tools:run --args="<command> ..."`
 | `spec-capture` | Runs the spec add-on on BDS, writes `data/bds/<version>/spec`; `--probe-keys` asks BDS about keys the docs omit (`spec-keys`, `data/model/bds-keys.json`), `--format-sweep` varies the add-on's `format_version` (`spec-format`), see [model.md](docs/model.md) |
 | `creative-probe` | Runs a creative add-on on BDS and records the creative order |
 | `education-capture` | Starts a world on BDS with Education Edition features off and on and writes what only the education world has to `data/bds/<version>/education.json` (input of the constants generator, [docs/codegen.md](docs/codegen.md)) |
+| `voxel-shapes capture --version <v>`, `voxel-shapes import`, `voxel-shapes check` | Runs BDS without packs, with the experiment `voxel_shapes`, with the probe add-on and with the anchors and writes the voxel shapes packets to `data/bds/<v>/voxel-shapes` (also part of `update`); the captures to the bundled `voxel_shapes.nbt`; whether that file is up to date. See [../data/bds/WIRE-NOTES.md](../data/bds/WIRE-NOTES.md), "Voxel shapes" |
 | `capture`, `compare`, `experiments` | The capture client: record a server, diff it with a bundled version, switch experiments in a `level.dat` |
 | `docs`, `addon [--kind spec\|capture\|creative\|creative-large]`, `infer`, `check-mappings` | The component model ([docs/model.md](docs/model.md)) and the add-on packs |
 | `inspect --version <v\|all> --block '<id[states]>' \| --item '<id[:damage]>'` | Prints `Palette#explain` of a block state or item variant for one or all bundled versions: canonical, runtime and hashed id, how it resolves (exact, adapted, fallback, default), the block sent with an item, the creative location |

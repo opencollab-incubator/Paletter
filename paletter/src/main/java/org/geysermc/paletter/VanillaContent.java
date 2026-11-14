@@ -68,6 +68,11 @@ public final class VanillaContent {
         return this;
     }
 
+    /** @return whether the consumer asked for an experiment toggle */
+    boolean requests(String toggle) {
+        return experiments.contains(toggle);
+    }
+
     /**
      * @param data the data of a version
      * @return the data without the removed items and the content of disabled experiments, and what that did
@@ -170,6 +175,13 @@ public final class VanillaContent {
 
         @Nullable String ofBlock(String identifier) {
             return blocks.get(identifier);
+        }
+
+        /** This gating with one more enabled toggle, one that gates no item or block (the voxel shapes of 26.30). */
+        ExperimentGating withEnabled(String toggle) {
+            List<String> all = new ArrayList<>(enabled);
+            all.add(toggle);
+            return new ExperimentGating(all.stream().sorted().distinct().toList(), items, blocks, missingBlocks, notes);
         }
     }
 }

@@ -55,7 +55,8 @@ import java.util.concurrent.Callable;
     Cli.VerifyCommand.class, Cli.CheckData.class, Cli.BlockItemsCommand.class, Cli.RewriteCommand.class, Cli.DataRewriteCommand.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class, Cli.ExperimentMarksCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
-    Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class, Cli.BehaviourCommand.class, Cli.BehaviourProbeCommand.class
+    Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class, Cli.BehaviourCommand.class, Cli.BehaviourProbeCommand.class,
+    Cli.VoxelShapesCommand.class
 })
 public final class Cli implements Runnable {
     /** The docs commit the committed model was generated from (MicrosoftDocs/minecraft-creator main, 2026-11-06). */
@@ -376,6 +377,58 @@ public final class Cli implements Runnable {
             put(options, "timeout", timeout);
             EducationProbe.run(root(), options);
             return 0;
+        }
+    }
+
+    @Command(name = "voxel-shapes", description = "Bedrock's voxel shapes: capture what a BDS build says about them",
+        subcommands = {VoxelShapesCommand.CaptureShapes.class, VoxelShapesCommand.ImportShapes.class, VoxelShapesCommand.CheckShapes.class})
+    static final class VoxelShapesCommand implements Runnable {
+        @Override
+        public void run() {
+            CommandLine.usage(this, System.out);
+        }
+
+        @Command(name = "capture", description = "Runs BDS without packs, with the voxel shape experiment and with the probe add-on (shapes with "
+            + "varied boxes) and writes the voxel shapes packet of each, with the boxes that went in, to data/bds/VERSION/voxel-shapes.")
+        static final class CaptureShapes extends Rooted implements Callable<Integer> {
+            @Option(names = "--version") String version;
+            @Option(names = "--cache") String cache;
+            @Option(names = "--port") String port;
+            @Option(names = "--timeout") String timeout;
+            @Option(names = "--keep-server") boolean keepServer;
+
+            @Override
+            public Integer call() throws Exception {
+                Map<String, String> options = new HashMap<>();
+                put(options, "version", version);
+                put(options, "cache", cache);
+                put(options, "port", port);
+                put(options, "timeout", timeout);
+                flag(options, "keep-server", keepServer);
+                org.geysermc.paletter.tools.shape.ShapeProbe.run(root(), options);
+                return 0;
+            }
+        }
+
+        @Command(name = "import", description = "The captures of data/bds/*/voxel-shapes -> the bundled voxel_shapes.nbt")
+        static final class ImportShapes extends Rooted implements Callable<Integer> {
+            @Override
+            public Integer call() throws Exception {
+                org.geysermc.paletter.tools.shape.ShapeImport.run(root());
+                return 0;
+            }
+        }
+
+        @Command(name = "check", description = "import, but fail if the bundled voxel_shapes.nbt differs")
+        static final class CheckShapes extends Rooted implements Callable<Integer> {
+            @Override
+            public Integer call() throws Exception {
+                if (!org.geysermc.paletter.tools.shape.ShapeImport.check(root())) {
+                    System.err.println("voxel_shapes.nbt is not what the captures of data/bds/*/voxel-shapes give; run `voxel-shapes import`");
+                    return 1;
+                }
+                return 0;
+            }
         }
     }
 
