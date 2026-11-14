@@ -166,7 +166,7 @@ public final class org.geysermc.paletter.PaletteLayer {
     public java.util.List<org.geysermc.paletter.PaletteLayer$Override> overrides()
     public java.util.Map<java.lang.String, java.util.List<java.lang.String>> tags()
     public java.lang.String toString()
-    public java.util.Map<java.lang.String, org.geysermc.paletter.behaviour.BlockShape> voxelShapes()
+    public java.util.Map<java.lang.String, org.geysermc.paletter.block.VoxelShape> voxelShapes()
 }
 
 public static final class org.geysermc.paletter.PaletteLayer$Builder {
@@ -180,7 +180,7 @@ public static final class org.geysermc.paletter.PaletteLayer$Builder {
     public org.geysermc.paletter.PaletteLayer$Builder overrideItem(org.geysermc.paletter.vanilla.BedrockItemType, java.util.function.Consumer<org.geysermc.paletter.item.ItemOverride>)
     public org.geysermc.paletter.PaletteLayer$Builder tag(java.lang.String, java.lang.String...)
     public org.geysermc.paletter.PaletteLayer$Builder variant(org.geysermc.paletter.vanilla.BedrockItemVariant)
-    public org.geysermc.paletter.PaletteLayer$Builder voxelShape(java.lang.String, org.geysermc.paletter.behaviour.BlockShape)
+    public org.geysermc.paletter.PaletteLayer$Builder voxelShape(java.lang.String, org.geysermc.paletter.block.VoxelShape)
 }
 
 public sealed interface org.geysermc.paletter.PaletteLayer$ItemEntry permits org.geysermc.paletter.PaletteLayer$ItemEntry$Custom, org.geysermc.paletter.PaletteLayer$ItemEntry$OfBlock {
@@ -597,8 +597,26 @@ public final class org.geysermc.paletter.block.RegisteredBlockState implements o
     public java.lang.String toString()
 }
 
+public final class org.geysermc.paletter.block.VoxelShape {
+    public static final org.geysermc.paletter.block.VoxelShape EMPTY
+    public java.util.List<org.geysermc.paletter.behaviour.BlockShape$Box> boxes()
+    public boolean cell(int, int, int)
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public boolean isEmpty()
+    public static org.geysermc.paletter.block.VoxelShape ofBoxes(java.lang.String, org.geysermc.paletter.behaviour.BlockShape)
+    public static org.geysermc.paletter.block.VoxelShape ofBoxes(java.lang.String, float...)
+    public java.lang.String toString()
+    public float[] xCoordinates()
+    public int xSize()
+    public float[] yCoordinates()
+    public int ySize()
+    public float[] zCoordinates()
+    public int zSize()
+}
+
 public final class org.geysermc.paletter.block.VoxelShapes {
-    public org.geysermc.paletter.behaviour.BlockShape get(java.lang.String)
+    public org.geysermc.paletter.block.VoxelShape get(java.lang.String)
     public java.util.Set<java.lang.String> names()
     public int size()
     public org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket toPacket()

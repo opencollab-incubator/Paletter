@@ -8,6 +8,7 @@ import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.behaviour.BlockShape;
+import org.geysermc.paletter.block.VoxelShape;
 import org.geysermc.paletter.internal.shape.VoxelGrid;
 import org.geysermc.paletter.internal.shape.VoxelShapeStore;
 import org.geysermc.paletter.tools.client.VoxelShapeCapture;
@@ -194,7 +195,8 @@ class VoxelShapeConformanceTest {
                     boxes[i] = coordinates.get(i);
                 }
                 try {
-                    layer.voxelShape(shape.getAsJsonObject("description").get("identifier").getAsString(), BlockShape.of(boxes));
+                    String identifier = shape.getAsJsonObject("description").get("identifier").getAsString();
+                    layer.voxelShape(identifier, VoxelShape.ofBoxes(identifier, boxes));
                 } catch (IllegalArgumentException e) {
                     refused.add(path);
                 }

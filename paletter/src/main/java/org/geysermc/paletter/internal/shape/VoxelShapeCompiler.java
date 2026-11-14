@@ -2,11 +2,11 @@ package org.geysermc.paletter.internal.shape;
 
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.PaletteReport;
-import org.geysermc.paletter.behaviour.BlockShape;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
+import org.geysermc.paletter.block.VoxelShape;
 import org.geysermc.paletter.block.VoxelShapes;
 import org.geysermc.paletter.property.Properties;
 
@@ -48,7 +48,7 @@ public final class VoxelShapeCompiler {
      * @param custom the custom shapes by identifier, in the order they were registered
      * @param blocks the blocks of the palette; its custom blocks name shapes in {@code minecraft:geometry}
      */
-    public static VoxelShapes compile(List<VoxelShapeStore.Entry> vanilla, Map<String, BlockShape> custom, BlockRegistry blocks,
+    public static VoxelShapes compile(List<VoxelShapeStore.Entry> vanilla, Map<String, VoxelShape> custom, BlockRegistry blocks,
                                       PaletteReport report) {
         VoxelShapeCompiler compiler = new VoxelShapeCompiler();
         List<VoxelShapeStore.Entry> made = new ArrayList<>();
@@ -63,7 +63,7 @@ public final class VoxelShapeCompiler {
             if (compiler.names.containsKey(identifier)) {
                 report.error(SOURCE, "The voxel shape " + identifier + " is defined twice; the first definition is used");
             } else {
-                compiler.names.put(identifier, compiler.add(VoxelGrid.of(shape)));
+                compiler.names.put(identifier, compiler.add(shape.grid()));
             }
         });
 

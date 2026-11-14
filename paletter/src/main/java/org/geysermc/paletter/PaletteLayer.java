@@ -2,11 +2,11 @@ package org.geysermc.paletter;
 
 import org.geysermc.paletter.annotation.Internal;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.geysermc.paletter.behaviour.BlockShape;
 import org.geysermc.paletter.internal.shape.VoxelShapeRules;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.block.CustomBlock;
+import org.geysermc.paletter.block.VoxelShape;
 import org.geysermc.paletter.creative.CreativeEditor;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.vanilla.BedrockItemType;
@@ -53,7 +53,7 @@ public final class PaletteLayer {
     private final List<BiConsumer<CreativeEditor, DataVersion>> creativeEdits;
     private final Map<String, List<String>> tags;
     private final List<ItemVariant> variants;
-    private final Map<String, BlockShape> voxelShapes;
+    private final Map<String, VoxelShape> voxelShapes;
 
     private PaletteLayer(Builder builder) {
         this.id = builder.id;
@@ -123,7 +123,7 @@ public final class PaletteLayer {
      * @return the voxel shapes this layer defines, by identifier, in the order they were registered
      * @since 0.1.0
      */
-    public @NonNull Map<String, BlockShape> voxelShapes() {
+    public @NonNull Map<String, VoxelShape> voxelShapes() {
         return voxelShapes;
     }
 
@@ -172,7 +172,7 @@ public final class PaletteLayer {
         private final List<BiConsumer<CreativeEditor, DataVersion>> creativeEdits = new ArrayList<>();
         private final Map<String, List<String>> tags = new LinkedHashMap<>();
         private final List<ItemVariant> variants = new ArrayList<>();
-        private final Map<String, BlockShape> voxelShapes = new LinkedHashMap<>();
+        private final Map<String, VoxelShape> voxelShapes = new LinkedHashMap<>();
 
         private Builder(String id) {
             this.id = Objects.requireNonNull(id);
@@ -271,20 +271,20 @@ public final class PaletteLayer {
         /**
          * Defines a voxel shape, as a file in the {@code shapes} directory of a behavior pack does: the shape Bedrock
          * culls the faces of neighbouring blocks with, for the custom blocks that name it as the {@code culling_shape} of
-         * their {@code minecraft:geometry}. It says nothing about collision or selection. The palette sends it with
+         * their {@code minecraft:geometry}. A voxel shape is a culling shape, not a collision or selection shape (those are
+         * {@code BlockShape}s), and the Script API does not expose it. The palette sends it with
          * {@link Palette#voxelShapesPacket()}.
          * <p>
          * Shapes get their ids in the order they are registered (BDS: in the order of their file names), which a client
-         * does not see. What BDS refuses fails here with its reason: a shape without boxes, a box without volume or
-         * beyond 14 pixels around the block, a shape wider than 30 pixels or outside the block, the {@code minecraft}
-         * namespace.
+         * does not see. BDS refuses the {@code minecraft} namespace, which fails here with its reason; the checks of the
+         * shape itself are those of {@link VoxelShape#ofBoxes(String, float...)}.
          *
          * @param identifier the name blocks use, e.g. {@code my:half_pipe}
-         * @param shape the boxes, in blocks ({@code 0} to {@code 1} is the block; a pixel is {@code 1 / 16f})
+         * @param shape the shape
          * @since 0.1.0
          */
-        public @NonNull Builder voxelShape(@NonNull String identifier, @NonNull BlockShape shape) {
-            VoxelShapeRules.check(identifier, shape);
+        public @NonNull Builder voxelShape(@NonNull String identifier, @NonNull VoxelShape shape) {
+            VoxelShapeRules.checkIdentifier(identifier);
             if (voxelShapes.putIfAbsent(identifier, shape) != null) {
                 throw new IllegalArgumentException("The voxel shape " + identifier + " is defined twice");
             }

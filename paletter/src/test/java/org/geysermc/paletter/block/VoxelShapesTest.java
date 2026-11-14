@@ -14,7 +14,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -26,9 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * ({@code VoxelShapeConformanceTest}); this is about what a consumer sees.
  */
 class VoxelShapesTest {
-    private static final BlockShape SLAB = BlockShape.of(0, 0, 0, 1, 0.5f, 1);
+    private static final VoxelShape SLAB = VoxelShape.ofBoxes("example:slab", 0, 0, 0, 1, 0.5f, 1);
     /** A post on a plate: its faces are new shapes. */
-    private static final BlockShape POST = BlockShape.of(0, 0, 0, 1, 2 / 16f, 1, 6 / 16f, 2 / 16f, 7 / 16f, 9 / 16f, 1, 10 / 16f);
+    private static final VoxelShape POST = VoxelShape.ofBoxes("example:post", 0, 0, 0, 1, 2 / 16f, 1, 6 / 16f, 2 / 16f, 7 / 16f, 9 / 16f, 1, 10 / 16f);
 
     private static CustomBlock block(String identifier, String cullingShape, Transformation transformation) {
         CustomBlock.Builder block = CustomBlock.builder(identifier)
@@ -46,8 +48,8 @@ class VoxelShapesTest {
         for (DataVersion version : paletter.versions()) {
             VoxelShapes shapes = paletter.vanilla(version).voxelShapes();
             assertNotNull(shapes, version.toString());
-            assertEquals(BlockShape.EMPTY, shapes.get("minecraft:empty"), version.toString());
-            assertEquals(BlockShape.FULL_CUBE, shapes.get("minecraft:unit_cube"), version.toString());
+            assertEquals(VoxelShape.EMPTY, shapes.get("minecraft:empty"), version.toString());
+            assertEquals(VoxelShape.ofBoxes("example:cube", 0, 0, 0, 1, 1, 1), shapes.get("minecraft:unit_cube"), version.toString());
             assertNull(shapes.get("example:none"));
             VoxelShapesPacket packet = paletter.vanilla(version).voxelShapesPacket();
             assertEquals(shapes.size(), packet.getShapes().size());
@@ -55,7 +57,7 @@ class VoxelShapesTest {
             assertEquals(0, packet.getCustomShapeCount(), version.toString());
         }
         // Since 26.40 BDS has its vanilla shapes without an experiment
-        assertEquals(BlockShape.of(0, 0, 0, 1, 10 / 16f, 1), paletter.palette(2225).voxelShapes().get("minecraft:box_16x10x16"));
+        assertEquals(VoxelShape.ofBoxes("example:box", 0, 0, 0, 1, 10 / 16f, 1), paletter.palette(2225).voxelShapes().get("minecraft:box_16x10x16"));
     }
 
     @Test
@@ -95,7 +97,7 @@ class VoxelShapesTest {
 
     @Test
     void aTurnedBlockGetsATurnedShape() {
-        BlockShape corner = BlockShape.of(0, 0, 0, 3 / 16f, 5 / 16f, 7 / 16f);
+        VoxelShape corner = VoxelShape.ofBoxes("example:corner", 0, 0, 0, 3 / 16f, 5 / 16f, 7 / 16f);
         PaletteLayer layer = PaletteLayer.builder("turned")
             .voxelShape("example:corner", corner)
             .block(block("example:turned", "example:corner", Transformation.builder().rotation(0, 90, 0).build()))
@@ -119,15 +121,39 @@ class VoxelShapesTest {
     void whatBdsRefusesIsRefused() {
         PaletteLayer.Builder layer = PaletteLayer.builder("refused");
         assertThrows(IllegalArgumentException.class, () -> layer.voxelShape("minecraft:mine", SLAB));
-        assertThrows(IllegalArgumentException.class, () -> layer.voxelShape("example:none", BlockShape.EMPTY));
-        assertThrows(IllegalArgumentException.class, () -> layer.voxelShape("example:flat", BlockShape.of(0, 0, 0, 1, 0, 1)));
-        assertThrows(IllegalArgumentException.class, () -> layer.voxelShape("example:inverted", BlockShape.of(1, 1, 1, 0, 0, 0)));
-        assertThrows(IllegalArgumentException.class, () -> layer.voxelShape("example:too_far", BlockShape.of(0, 0, 0, 1, 31 / 16f, 1)));
-        assertThrows(IllegalArgumentException.class, () -> layer.voxelShape("example:outside", BlockShape.of(0, 1, 0, 1, 30 / 16f, 1)));
-        assertThrows(IllegalArgumentException.class, () -> layer.voxelShape("example:wide", BlockShape.of(-14 / 16f, 0, 0, 18 / 16f, 1, 1)));
-        layer.voxelShape("example:beyond", BlockShape.of(-14 / 16f, 0, 0, 1, 1, 1));
+        assertThrows(IllegalArgumentException.class, () -> VoxelShape.ofBoxes("minecraft:mine", 0, 0, 0, 1, 1, 1));
+        assertThrows(IllegalArgumentException.class, () -> VoxelShape.ofBoxes("example:none"));
+        assertThrows(IllegalArgumentException.class, () -> VoxelShape.ofBoxes("example:flat", 0, 0, 0, 1, 0, 1));
+        assertThrows(IllegalArgumentException.class, () -> VoxelShape.ofBoxes("example:inverted", 1, 1, 1, 0, 0, 0));
+        assertThrows(IllegalArgumentException.class, () -> VoxelShape.ofBoxes("example:too_far", 0, 0, 0, 1, 31 / 16f, 1));
+        assertThrows(IllegalArgumentException.class, () -> VoxelShape.ofBoxes("example:outside", 0, 1, 0, 1, 30 / 16f, 1));
+        assertThrows(IllegalArgumentException.class, () -> VoxelShape.ofBoxes("example:wide", -14 / 16f, 0, 0, 18 / 16f, 1, 1));
+        layer.voxelShape("example:beyond", VoxelShape.ofBoxes("example:beyond", -14 / 16f, 0, 0, 1, 1, 1));
         assertThrows(IllegalArgumentException.class, () -> layer.voxelShape("example:beyond", SLAB));
         assertEquals(List.of("example:beyond"), List.copyOf(layer.build().voxelShapes().keySet()));
+    }
+
+    @Test
+    void theShapeIsItsGrid() {
+        // An L: the lower slab and one upper half; minimal, so three planes on x and y and two on z
+        VoxelShape shape = VoxelShape.ofBoxes("example:l", 0, 0, 0, 1, 0.5f, 1, 0, 0.5f, 0, 0.5f, 1, 1);
+        assertArrayEquals(new float[] {0, 0.5f, 1}, shape.xCoordinates());
+        assertArrayEquals(new float[] {0, 0.5f, 1}, shape.yCoordinates());
+        assertArrayEquals(new float[] {0, 1}, shape.zCoordinates());
+        assertEquals(2, shape.xSize());
+        assertEquals(2, shape.ySize());
+        assertEquals(1, shape.zSize());
+        assertTrue(shape.cell(0, 0, 0) && shape.cell(1, 0, 0) && shape.cell(0, 1, 0));
+        assertFalse(shape.cell(1, 1, 0));
+        assertThrows(IndexOutOfBoundsException.class, () -> shape.cell(2, 0, 0));
+        assertEquals(3, shape.boxes().size());
+        assertEquals(shape, VoxelShape.ofBoxes("example:other", BlockShape.of(0, 0, 0, 1, 0.5f, 1, 0, 0.5f, 0, 0.5f, 1, 1)));
+        assertEquals(shape.hashCode(), VoxelShape.ofBoxes("example:other", 0, 0, 0, 1, 0.5f, 1, 0, 0.5f, 0, 0.5f, 1, 1).hashCode());
+        // The caller cannot change the shape
+        shape.xCoordinates()[1] = 7;
+        assertEquals(0.5f, shape.xCoordinates()[1]);
+        assertTrue(VoxelShape.EMPTY.isEmpty());
+        assertArrayEquals(new float[] {0}, VoxelShape.EMPTY.xCoordinates());
     }
 
     @Test

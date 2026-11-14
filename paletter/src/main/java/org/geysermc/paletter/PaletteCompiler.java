@@ -4,7 +4,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.geysermc.paletter.internal.behaviour.BehaviourStore;
-import org.geysermc.paletter.behaviour.BlockShape;
 import org.geysermc.paletter.internal.shape.VoxelShapeCompiler;
 import org.geysermc.paletter.internal.shape.VoxelShapeStore;
 import org.geysermc.paletter.internal.block.BlockInterner;
@@ -13,6 +12,7 @@ import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.internal.Canonicals;
 import org.geysermc.paletter.block.CustomBlock;
+import org.geysermc.paletter.block.VoxelShape;
 import org.geysermc.paletter.creative.CreativeContent;
 import org.geysermc.paletter.creative.CreativeEditor;
 import org.geysermc.paletter.creative.CreativeGroup;
@@ -203,7 +203,7 @@ final class PaletteCompiler {
             // The voxel shapes are the parent's unless the layer defines shapes or blocks (which may name shapes)
             Palette.Shapes shapes = parent.shapes();
             if (shapes.vanilla() != null && (!layer.voxelShapes().isEmpty() || !layer.blocks().isEmpty())) {
-                Map<String, BlockShape> custom = new LinkedHashMap<>();
+                Map<String, VoxelShape> custom = new LinkedHashMap<>();
                 for (PaletteLayer each : layers) {
                     each.voxelShapes().forEach((identifier, shape) -> {
                         if (custom.putIfAbsent(identifier, shape) != null) {

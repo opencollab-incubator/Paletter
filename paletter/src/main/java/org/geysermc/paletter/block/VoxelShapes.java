@@ -5,7 +5,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.protocol.bedrock.data.SerializableVoxelShape;
 import org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket;
 import org.geysermc.paletter.annotation.Internal;
-import org.geysermc.paletter.behaviour.BlockShape;
 import org.geysermc.paletter.internal.shape.VoxelGrid;
 
 import java.util.ArrayList;
@@ -22,7 +21,8 @@ import java.util.Set;
  * and what Bedrock derives from them for the custom blocks that name them as the {@code culling_shape} of their
  * {@code minecraft:geometry}.
  * <p>
- * These are not collision or selection shapes: see {@code BlockBehaviour#COLLISION_SHAPE} for those.
+ * These are culling shapes, not collision or selection shapes ({@code BlockBehaviour#COLLISION_SHAPE} is a
+ * {@code BlockShape}); the Script API does not expose them.
  *
  * @since 0.1.0
  */
@@ -52,11 +52,11 @@ public final class VoxelShapes {
     }
 
     /**
-     * @return the shape with this name as boxes (one per cell of its grid), or null if there is none
+     * @return the shape with this name, or null if there is none
      */
-    public @Nullable BlockShape get(@NonNull String name) {
+    public @Nullable VoxelShape get(@NonNull String name) {
         Integer id = names.get(name);
-        return id == null ? null : shapes.get(id).toShape();
+        return id == null ? null : new VoxelShape(shapes.get(id));
     }
 
     /**

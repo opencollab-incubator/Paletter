@@ -1,9 +1,5 @@
 package org.geysermc.paletter.internal.shape;
 
-import org.geysermc.paletter.behaviour.BlockShape;
-
-import java.util.List;
-
 /**
  * What BDS refuses in a voxel shape file, with its own words (content log of the probe add-on of
  * {@code voxel-shapes capture}, data/bds/&lt;build&gt;/voxel-shapes/content-log.txt; the limit on the extent is a text
@@ -19,22 +15,28 @@ public final class VoxelShapeRules {
     private VoxelShapeRules() {
     }
 
-    /** @throws IllegalArgumentException if BDS would not load the shape */
-    public static void check(String identifier, BlockShape shape) {
+    /** @throws IllegalArgumentException if BDS would not accept the name of a custom shape */
+    public static void checkIdentifier(String identifier) {
         if (identifier.startsWith("minecraft:")) {
             throw new IllegalArgumentException("The `minecraft` namespace is not valid for custom voxel shape: `" + identifier + "`");
         }
-        List<BlockShape.Box> boxes = shape.boxes();
-        if (boxes.isEmpty()) {
+    }
+
+    /**
+     * @param boxes six floats per box, in blocks
+     * @throws IllegalArgumentException if BDS would not load the shape
+     */
+    public static void check(String identifier, float[] boxes) {
+        checkIdentifier(identifier);
+        if (boxes.length == 0) {
             throw new IllegalArgumentException("Voxel shape " + identifier + ": shape -> boxes: expected array with at least 1 elements");
         }
         boolean inBlock = false;
         float[] min = {Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE};
         float[] max = {-Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE};
-        for (int i = 0; i < boxes.size(); i++) {
-            BlockShape.Box box = boxes.get(i);
-            float[] from = {box.minX(), box.minY(), box.minZ()};
-            float[] to = {box.maxX(), box.maxY(), box.maxZ()};
+        for (int i = 0; i < boxes.length / 6; i++) {
+            float[] from = {boxes[6 * i], boxes[6 * i + 1], boxes[6 * i + 2]};
+            float[] to = {boxes[6 * i + 3], boxes[6 * i + 4], boxes[6 * i + 5]};
             boolean overlaps = true;
             for (int axis = 0; axis < 3; axis++) {
                 if (!(from[axis] < to[axis])) {
