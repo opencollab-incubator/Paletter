@@ -36,6 +36,7 @@ import org.cloudburstmc.protocol.bedrock.packet.ResourcePackStackPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ResourcePacksInfoPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ServerToClientHandshakePacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
+import org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket;
 import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import org.cloudburstmc.protocol.common.PacketSignal;
 
@@ -63,6 +64,8 @@ public final class CaptureClient {
         public AvailableEntityIdentifiersPacket entityIdentifiers;
         public BiomeDefinitionListPacket biomes;
         public CraftingDataPacket crafting;
+        /** The voxel shape registry (protocol 924 and later); BDS sends it before start game. */
+        public VoxelShapesPacket voxelShapes;
         public ResourcePacksInfoPacket packsInfo;
         public ResourcePackStackPacket packStack;
         public final Map<String, Integer> packetCounts = new TreeMap<>();
@@ -307,6 +310,12 @@ public final class CaptureClient {
         @Override
         public PacketSignal handle(CraftingDataPacket packet) {
             result.crafting = packet;
+            return PacketSignal.HANDLED;
+        }
+
+        @Override
+        public PacketSignal handle(VoxelShapesPacket packet) {
+            result.voxelShapes = packet;
             return PacketSignal.HANDLED;
         }
 

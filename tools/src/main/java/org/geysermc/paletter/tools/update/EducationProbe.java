@@ -188,7 +188,8 @@ public final class EducationProbe {
         return result;
     }
 
-    private static VanillaData reference(Path root, String name, int protocol) throws IOException {
+    /** The bundled version {@code name}, or the one with the newest protocol not above {@code protocol}. */
+    public static VanillaData reference(Path root, String name, int protocol) throws IOException {
         Path data = root.resolve(ConstantsGenerator.DATA);
         if (name == null) {
             ConstantsGenerator.Bundle best = null;
