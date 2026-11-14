@@ -50,7 +50,6 @@ public record BdsDump(
     Map<String, Item> items,
     List<String> errors
 ) {
-    private static final Pattern CHUNK = Pattern.compile("PALETTER (\\d+)/(\\d+) (.*)$");
     private static final Pattern VERSION = Pattern.compile("INFO\\] Version: (\\S+)");
 
     /**
@@ -84,6 +83,16 @@ public record BdsDump(
      * @return the BDS version and the JSON
      */
     public static String[] json(Path log) throws IOException {
+        return json(log, "PALETTER");
+    }
+
+    /**
+     * Reassembles the JSON an add-on printed as {@code <marker> <index>/<total> <slice>} lines.
+     *
+     * @return the BDS version and the JSON
+     */
+    public static String[] json(Path log, String marker) throws IOException {
+        Pattern chunk = Pattern.compile(Pattern.quote(marker) + " (\\d+)/(\\d+) (.*)$");
         Map<Integer, String> chunks = new TreeMap<>();
         int total = -1;
         String version = "unknown";
@@ -93,7 +102,7 @@ public record BdsDump(
                 version = versionMatcher.group(1);
                 continue;
             }
-            Matcher matcher = CHUNK.matcher(line);
+            Matcher matcher = chunk.matcher(line);
             if (!matcher.find()) {
                 continue;
             }
@@ -107,7 +116,7 @@ public record BdsDump(
             chunks.put(index, matcher.group(3));
         }
         if (total < 0 || chunks.size() != total) {
-            throw new IOException("Incomplete Paletter dump in " + log + ": got " + chunks.size() + " of " + total
+            throw new IOException("Incomplete " + marker + " dump in " + log + ": got " + chunks.size() + " of " + total
                 + " chunks. Did the addon finish? Check the log for script errors");
         }
         return new String[]{version, String.join("", chunks.values())};
