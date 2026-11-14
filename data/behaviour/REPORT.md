@@ -71,7 +71,7 @@ Keys no dump has:
 
 - `block:climbable`: no source: needs a native capture of BDS (LeviLamina), run by hand
 - `item:use_animation`: read at runtime from the component data (WIRE) of component based items; native items need the native capture
-- `item:use_duration`: read at runtime from the component data (WIRE) of component based items; native items (bow, trident, potion) need the native capture
+- `item:use_duration`: read at runtime from the component data (WIRE) of component based items; native items need the native capture
 
 ## Disputed values
 
