@@ -42,17 +42,19 @@ jobs:
       matrix:
         channel: [release, preview]
     env:
-      PALETTER_BDS_CACHE: ${{ github.workspace }}/../bds-cache
       CHANNEL: ${{ matrix.channel }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      # Outside the checkout, as an absolute path: upload-artifact rejects '..' in paths
+      - name: Set the BDS cache directory
+        run: echo "PALETTER_BDS_CACHE=$RUNNER_TEMP/bds-cache" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 21
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       - name: Cache BDS downloads
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ${{ env.PALETTER_BDS_CACHE }}/zips
           key: bds-zips-${{ matrix.channel }}-${{ github.run_id }}
@@ -74,7 +76,7 @@ jobs:
 
       - name: Upload report and logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: bds-data-${{ matrix.channel }}
           path: |
@@ -121,7 +123,7 @@ jobs:
 
       - name: Open or update the pull request (release only)
         if: steps.verify.outputs.exit != '0' && matrix.channel == 'release'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.BDS_DATA_TOKEN || github.token }}
           branch: bds-data/release
