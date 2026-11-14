@@ -45,6 +45,13 @@ class TraitStateTableTest {
     }
 
     @Test
+    void aValueNamingStatesByPartsAddsThem() {
+        Map<String, List<TraitStateTable.State>> states = TraitStateTable.statesOf(trait(List.of("test:facing", "test:link_a_and_facing"),
+            "adds state test:facing: String north, south", "adds state test:link_a: Boolean true/false"), HISTORY);
+        assertEquals(List.of("test:link_a", "test:facing"), states.get("test:link_a_and_facing").stream().map(TraitStateTable.State::name).toList());
+    }
+
+    @Test
     void twoValuesNamingNoStateFail() {
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> TraitStateTable.statesOf(
             trait(List.of("test:a", "test:b"), "adds state test:facing: String north, south"), HISTORY));
@@ -66,9 +73,15 @@ class TraitStateTableTest {
             .get(0).getAsJsonObject();
         assertEquals("south", cardinal.getAsJsonArray("values").get(0).getAsString());
         assertTrue(cardinal.get("default").getAsString().startsWith("verified"), cardinal.toString());
-        JsonObject corner = table.getAsJsonObject("minecraft:placement_direction").getAsJsonArray("minecraft:corner_and_cardinal_direction")
+        // corner_and_cardinal_direction adds both states it names: BDS's hash of the default state says so
+        com.google.gson.JsonArray corner = table.getAsJsonObject("minecraft:placement_direction")
+            .getAsJsonArray("minecraft:corner_and_cardinal_direction");
+        assertEquals(List.of("minecraft:corner", "minecraft:cardinal_direction"),
+            corner.asList().stream().map(e -> e.getAsJsonObject().get("name").getAsString()).toList());
+        corner.forEach(e -> assertTrue(e.getAsJsonObject().get("default").getAsString().startsWith("verified"), e.toString()));
+        JsonObject facing = table.getAsJsonObject("minecraft:placement_direction").getAsJsonArray("minecraft:facing_direction")
             .get(0).getAsJsonObject();
-        assertTrue(corner.get("default").getAsString().startsWith("unverified"), corner.toString());
+        assertTrue(facing.get("default").getAsString().startsWith("verified"), facing.toString());
         assertEquals(4, table.getAsJsonObject("minecraft:connection").getAsJsonArray("minecraft:cardinal_connections").size());
     }
 }

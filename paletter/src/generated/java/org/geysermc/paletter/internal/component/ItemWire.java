@@ -635,7 +635,7 @@ public final class ItemWire {
 
     private static void tags(Tags c, WireContext ctx, WireNode out) {
         List<String> v0 = c.tags();
-        out.put("item_tags", Wire.strings(v0));
+        out.put("item_tags", Wire.strings(v0.stream().distinct().toList()));
         out.put("minecraft:tags.tags", Wire.strings(v0));
     }
 

@@ -587,8 +587,12 @@ final class WireSource {
         if (t instanceof ListOf l && !(l.element() instanceof ObjRef) && wire.endsWith("[]") && kind.equals("ordered-set")) {
             String listWire = wire.substring(0, wire.length() - 2);
             checkPlaceable(f, listWire, prefix);
-            CodeBlock order = CodeBlock.join(r.getAsJsonArray("order").asList().stream().map(v -> CodeBlock.of("$S", v.getAsString())).toList(), ", ");
             CodeBlock values = l.element() instanceof EnumRef ? CodeBlock.of("$N.stream().map(x -> x.value()).toList()", var) : CodeBlock.of("$N", var);
+            if (!r.has("order")) { // the JSON's order without duplicates
+                put(node, relative(listWire, prefix), CodeBlock.of("$T.strings($L.stream().distinct().toList())", WIRE, values));
+                return;
+            }
+            CodeBlock order = CodeBlock.join(r.getAsJsonArray("order").asList().stream().map(v -> CodeBlock.of("$S", v.getAsString())).toList(), ", ");
             put(node, relative(listWire, prefix), CodeBlock.of("$T.strings($T.of($L).stream().filter($L::contains).toList())", WIRE, ApiSource.LIST,
                 order, values));
             return;

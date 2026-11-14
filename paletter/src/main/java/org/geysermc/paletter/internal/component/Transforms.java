@@ -368,7 +368,8 @@ public final class Transforms {
     // ---- block_name ----------------------------------------------------------------------------------------------------
 
     /**
-     * {@code block_placer.block}: the block's name, or an empty string for a vanilla block this version does not have.
+     * {@code block_placer.block}: the block's name (a name without namespace gets {@code minecraft:}, as BDS 1.26.x sends
+     * {@code "dirt"}), or an empty string for a vanilla block this version does not have.
      * BDS resolves the name against its block registry: the captures of 1.26.45.1 and 1.26.52.3 send
      * {@code minecraft:ice_crystal} and {@code minecraft:icicle} as {@code ""}, that of 1.26.63.1 as named, so the leaf
      * depends on the version's blocks, not on the JSON value. A name of another namespace is a custom block, which may be
@@ -385,7 +386,7 @@ public final class Transforms {
             out.put("minecraft:block_placer.block", "");
             return;
         }
-        out.put("minecraft:block_placer.block", block);
+        out.put("minecraft:block_placer.block", vanilla ? Wire.namespaced(block) : block);
     }
 
     // ---- item descriptors --------------------------------------------------------------------------------------------
@@ -410,7 +411,8 @@ public final class Transforms {
      * {@code repair_items}: items as {@code [{name}]} (names as written, not namespaced; or one {@code {tags}} Molang
      * query), an entry without known items dropped with its repair amount. The repair amount is a float for a number and
      * Molang for a string: the two JSON types land on the same leaf with different NBT types, which no single rule fits.
-     * BDS 1.26.36.1 sends the Molang as a compound {@code {expression, version: 0s}}, 1.26.45.1 and later as a string.
+     * BDS 1.26.36.1 sends the Molang as a compound {@code {expression, version: 0s}} ({@code -1s} for an empty expression),
+     * 1.26.45.1 and later as a string.
      */
     public static void itemDescriptorList(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Repairable c) {
         boolean molangCompound = ctx.protocol() < ComponentIndex.BDS_1_26_45_1;
@@ -432,7 +434,9 @@ public final class Transforms {
                 e.element("items").put("tags", entry.itemsTags());
             }
             if (entry.repairAmountExpression() != null && molangCompound) {
-                e.child("repair_amount").put("expression", entry.repairAmountExpression()).put("version", (short) 0);
+                // version -1 for an empty expression (BDS 1.26.36.1: repair_amount "")
+                e.child("repair_amount").put("expression", entry.repairAmountExpression())
+                    .put("version", (short) (entry.repairAmountExpression().isEmpty() ? -1 : 0));
             } else if (entry.repairAmountExpression() != null) {
                 e.put("repair_amount", entry.repairAmountExpression());
             } else if (entry.repairAmount() != null) {
@@ -531,8 +535,10 @@ public final class Transforms {
         if (c.itemSpecificSpeeds() != null && !c.itemSpecificSpeeds().isEmpty()) {
             out.list("minecraft:destructible_by_mining.item_specific_speeds");
             for (DestructibleByMining.ItemSpecificSpeeds speed : c.itemSpecificSpeeds()) {
-                if (speed.item() == null) {
-                    continue; // BDS keeps the list but drops an entry that names no item ("item": [] in add-on JSON)
+                if (speed.item() == null || Wire.namespaced(speed.item()).startsWith("minecraft:") && !ctx.registry().itemExists(speed.item())) {
+                    // BDS keeps the list but drops an entry that names no item ("item": [] in add-on JSON) or a vanilla item
+                    // it does not have ("", "minecraft:paletter_unknown"); a custom item may be registered later
+                    continue;
                 }
                 WireNode e = out.element("minecraft:destructible_by_mining.item_specific_speeds");
                 e.put("destroy_speed", speed.destroySpeed());
@@ -541,6 +547,14 @@ public final class Transforms {
         }
     }
 
+
+    /**
+     * A permutation's Molang condition as BDS sends it: a number constant in the six decimals BDS writes it with
+     * ({@code "1"} -> {@code "1.000000"}, BDS 1.26.36.1 to 1.26.63.1), anything else as written.
+     */
+    static String condition(String condition) {
+        return condition.matches("-?\\d+(\\.\\d+)?") ? String.format(java.util.Locale.ROOT, "%.6f", Double.parseDouble(condition)) : condition;
+    }
 
     // ---- selection_box -----------------------------------------------------------------------------------------------
 
@@ -581,7 +595,8 @@ public final class Transforms {
 
     /**
      * One entry of {@code permutations}: its components compiled with each component's own rules; a permutation without
-     * components is not sent at all, which takes its condition leaf with it.
+     * components is not sent at all, which takes its condition leaf with it. The condition is sent as BDS sends it
+     * ({@link #condition}: a number constant with six decimals).
      *
      * @param out the block property data
      */
@@ -595,6 +610,6 @@ public final class Transforms {
         }
         WireNode entry = out.element("permutations");
         entry.put("components", components.build());
-        entry.put("condition", p.condition());
+        entry.put("condition", condition(p.condition()));
     }
 }

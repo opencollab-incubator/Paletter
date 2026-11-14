@@ -6,11 +6,11 @@ import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.BlockHashes;
 import org.geysermc.paletter.block.CustomBlock;
-import org.geysermc.paletter.block.component.Connection;
 import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.block.component.LightEmission;
 import org.geysermc.paletter.block.component.MaterialInstances;
 import org.geysermc.paletter.block.component.PlacementDirection;
+import org.geysermc.paletter.block.component.UnitCube;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
@@ -206,9 +206,10 @@ class CustomContentTest {
 
     @Test
     void laterLayersDoNotRepeatOrReattributeEarlierBlockWarnings() {
-        // A connection trait has no wire mapping: compiling it warns
+        // A component BDS rejects is not sent: compiling it warns
+        @SuppressWarnings("deprecation")
         CustomBlock fence = CustomBlock.builder("example:fence")
-            .trait(Connection.builder().enabledStates(Connection.EnabledStates.CARDINAL_CONNECTIONS).build())
+            .component(UnitCube.builder().build())
             .build();
         Palette first = Paletter.builder().layer(PaletteLayer.builder("first").block(fence).build()).build()
             .palette(PALETTER.latest().protocolVersion());

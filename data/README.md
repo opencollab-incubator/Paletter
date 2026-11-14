@@ -36,7 +36,7 @@ this section is their marker; the JSON captures also name their build in `bdsVer
 | `vanilla/` | `capture` (the headless client against vanilla BDS; `compare-*.txt` is the output of `compare`) |
 | `addon/` | `capture` against BDS with the generated pack `addons/capture` |
 | `creative-probe/`, `creative-probe-file-order/`, `creative-large/` | `creative-probe` / `capture` with the generated packs `addons/creative` and `addon --kind creative-large` |
-| `spec/` | `spec-capture` (the spec add-on generated from `model`, run on BDS, and run again with the variants that build rejected shrunk: their `variants.json` label says `without ...`); input of `infer` |
+| `spec/` | `spec-capture` (the spec add-on generated from `model`, run on BDS, and run again with the variants that build rejected shrunk: their `variants.json` label says `without ...`; `custom_creative_items.json.gz` is the creative inventory BDS sent, with the hash of each block's default state); input of `infer` |
 | `spec-keys/` | `spec-capture --probe-keys` (variants with keys the docs do not list; its result is `model/bds-keys.json`; not read by `infer`) |
 | `spec-format/` | `spec-capture --format-sweep` (components at the format versions around their boundaries; `format-sweep.json` is the report; not read by `infer`) |
 | `voxel-shapes/` | `voxel-shapes capture`: the `VoxelShapesPacket` of a vanilla world (`vanilla.json`, and `experiment.json` where the experiment `voxel_shapes` changes it), of the probe add-on (`addon-variants.json` the files it had, `addon.json`, `content-log.txt`) and of the anchors (`anchors.json.gz`), and the shape files of BDS's packs (`vanilla-shapes.json`); input of `voxel-shapes import` (`voxel_shapes.nbt`) and of `VoxelShapeConformanceTest` |

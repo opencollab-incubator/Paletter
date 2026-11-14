@@ -9,7 +9,9 @@ import org.geysermc.paletter.block.component.PlacementDirection;
 import org.geysermc.paletter.block.component.PlacementPosition;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The block states traits add. The client derives them from the trait (they are not in the block's {@code properties}
@@ -34,6 +36,9 @@ public final class TraitStates {
                 });
             }
         }
+        // a state two values add (minecraft:cardinal_direction and minecraft:corner_and_cardinal_direction) is one state
+        Set<String> names = new HashSet<>();
+        states.removeIf(state -> !names.add(state.name()));
         return states;
     }
 

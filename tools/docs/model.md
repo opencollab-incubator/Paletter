@@ -90,9 +90,30 @@ category, docs status, description, minimum format version, experiments, value f
 
 Per component: a **control** (only the companions it needs; for companions that need each other, `geometry` and
 `material_instances`, the minimal accepted pair), a **base** (every field without a documented default, or
-that BDS reported as required, set to a sample), every whole value form, and per field one variant per value (omitted,
-booleans, numbers around the ranges and the default, every enum value, lists of 0/1/2 elements, empty and filled maps
-and objects). Each variant is its own item (`paletter:<component>_<n>`) or block (`paletter:b_<component>_<n>`).
+that BDS reported as required, set to a sample), every whole value form, and per field one variant per value. Each
+variant is its own item (`paletter:<component>_<n>`) or block (`paletter:b_<component>_<n>`).
+
+The values come from one generator per JSON type (`AddonGenerator.values`), so a new or changed field gets its edge
+cases from its type alone. Each lists first what is likeliest to change between builds, and at most 32 values are kept
+per field and type:
+
+| type | values |
+|---|---|
+| number | the limits and one past each, every enum value and one more, the default, half and one and a half steps (a `step`), a non-integer for an integer field, then 0, -1 and a few typical values |
+| string | every enum value and `paletter_invalid`; else the sample, the docs' examples, a second valid value, `""`, and for an identifier sample the sample with its namespace toggled and `minecraft:paletter_unknown` (a vanilla identifier nothing defines: Paletter knows the vanilla identifiers of each version, not those of other packs); Molang fields (the docs say so) also `1` and `0` |
+| boolean | true and false (the base or the omit variant is the field left out) |
+| vector | per element the lower and upper limit and one past each, the wrong lengths `[1,2]` and `[1,2,3,4]`, then typical values |
+| list | `[]`, the length limits and one past (`[3x]`: three copies), an element of the wrong type (not in a list of objects: a number there crashes BDS 1.26.63.1), one and two entries, every combination of an enum of at most four values (trait `enabled_states`), duplicates (`[2x]`) |
+| map | `{}`, one entry, two, and an entry under a key nothing defines |
+| object | `{}`, the minimal object, the docs' example and a second entry |
+| forms | every documented form gets the values of its type |
+
+Limits come only from data: the docs' ranges and enum values, and `bds-feedback.json`, which `infer` writes from BDS's
+content log (`range`, `min`, `max`, `minItems`, `maxItems`, `items` for an exact length, `box a b lo hi` for "a" + "b"
+inside two corners, `values` for the strings an enum takes) and from its rules (`step n`: a linear rule onto an integer
+with a whole step). Without a known limit only safe values are generated; the next capture's content log names the limit,
+and the generation after it asks for its boundary and one past it, so `spec-capture` and `infer` are repeated until
+`bds-feedback.json` stops changing.
 
 Where the docs give no values, the generator takes them from the docs' own data, never invents them: a list without
 enum values gets the elements of its documented default list (`allowed_faces`) or the values its text lists ("Can be a
@@ -123,7 +144,7 @@ explained by the first rule that fits all observations:
 | `table` | a value table, for booleans and enums |
 | `affix` | free strings with a constant prefix/suffix |
 | `bitset` | a list of enum values -> an int of bits |
-| `ordered-set` | a list of strings -> the set of its values in BDS's own `order` (`connected_faces`) |
+| `ordered-set` | a list of strings -> the set of its values in BDS's own `order` (`connected_faces`), or without `order` in the JSON's order with the duplicates dropped (`item_tags`) |
 | `element` | list element k -> the leaf |
 | `constant`, `empty-list`, `empty-map` | a leaf the field's presence switches on (an empty list, an empty map as an empty compound) |
 

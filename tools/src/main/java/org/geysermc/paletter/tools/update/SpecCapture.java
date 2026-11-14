@@ -49,6 +49,8 @@ import java.util.stream.Stream;
  */
 public final class SpecCapture {
     private static final String WORLD = "paletter_spec";
+    /** The custom creative inventory BDS sent in a capture ({@code id}, {@code block_runtime_id}: the hash of the default state). */
+    public static final String CREATIVE_ITEMS = "custom_creative_items.json.gz";
     /** At most this many captures per build: the first, and the ones of the variants it shrunk. */
     private static final int SHRINK_ROUNDS = 4;
 
@@ -138,6 +140,12 @@ public final class SpecCapture {
             for (String file : List.of("custom_item_registry.nbt", "custom_block_properties.nbt")) {
                 Files.copy(work.resolve("custom").resolve(file), out.resolve(file), StandardCopyOption.REPLACE_EXISTING);
             }
+            // The creative inventory of the variants: per block the hash BDS sent for its default state (what verifies the
+            // trait states, TraitStateTable in infer)
+            try (InputStream in = Files.newInputStream(work.resolve("custom").resolve("custom_creative_items.json"));
+                 java.io.OutputStream gz = new java.util.zip.GZIPOutputStream(Files.newOutputStream(out.resolve(CREATIVE_ITEMS)))) {
+                in.transferTo(gz);
+            }
             Files.writeString(out.resolve("content-log.txt"), String.join("\n", contentLog) + "\n", StandardCharsets.UTF_8);
             Files.writeString(out.resolve("variants.json"), Model.GSON.toJson(generator.manifest()) + "\n", StandardCharsets.UTF_8);
             JsonObject metadata = new JsonObject();
@@ -147,6 +155,9 @@ public final class SpecCapture {
             metadata.addProperty("formatVersion", formatVersion);
             metadata.addProperty("nativeCodec", summary.nativeCodec());
             metadata.addProperty("codecProtocol", summary.codecProtocol());
+            // creative block hashes that the client's palette (traits from the generated TraitStateTable) did and did not match
+            metadata.addProperty("resolvedHashes", summary.resolvedHashes());
+            metadata.addProperty("unresolvedHashes", summary.unresolvedHashes());
             JsonArray echoed = new JsonArray();
             summary.experiments().forEach(echoed::add);
             metadata.add("experiments", echoed);

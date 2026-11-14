@@ -30,6 +30,7 @@ public final class HandTransforms {
         entry("block:minecraft:placement_filter:conditions[].block_filter[].states", "blockDescriptorStates"),
         entry("block:minecraft:selection_box:", "selectionBox"),
         entry("block:permutations:[].components", "permutationComponents"),
+        entry("block:permutations:[].condition", "permutationComponents"),
         // items
         entry("item:minecraft:block_placer:block", "blockName"),
         entry("item:minecraft:block_placer:use_on[].states", "blockDescriptorStates"),

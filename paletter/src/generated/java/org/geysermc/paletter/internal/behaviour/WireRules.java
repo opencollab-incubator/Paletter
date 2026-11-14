@@ -115,7 +115,7 @@ public final class WireRules {
             return intOf(properties.component("item_properties"), "use_duration");
         }
         if (key == ItemBehaviour.USE_ANIMATION) {
-            // minecraft:use_animation value -> item_properties.use_animation (constant): the engine's item property, read as sent
+            // minecraft:use_animation value -> item_properties.use_animation (table): the engine's item property, read as sent
             return intOf(properties.component("item_properties"), "use_animation");
         }
         return null;
