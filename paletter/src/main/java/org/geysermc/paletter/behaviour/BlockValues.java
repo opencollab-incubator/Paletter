@@ -14,10 +14,9 @@ import org.geysermc.paletter.internal.behaviour.Column;
  * are equal for the same state in the same palette; compare them with {@code equals}, not {@code ==}.
  * <p>
  * {@code get} returns the value: what the user's component sets, else the vanilla value, else BDS's default for custom
- * content. It throws {@link IllegalStateException} where no value is known: a key no source has yet
- * ({@link BlockBehaviour#CLIMBABLE}), or a custom block that does not set a key whose BDS default is not captured
- * ({@link BlockBehaviour#DESTROY_TIME}, {@link BlockBehaviour#OUTLINE_SHAPE}). {@code getOrElse} returns its fallback
- * there instead. Both throw {@link IllegalArgumentException} for an {@link ItemBehaviour} key.
+ * content. It throws {@link IllegalStateException} where no value is known: a custom block that does not set
+ * a key whose BDS default is not captured ({@link BlockBehaviour#DESTROY_TIME}, {@link BlockBehaviour#OUTLINE_SHAPE}).
+ * {@code getOrElse} returns its fallback there instead. Both throw {@link IllegalArgumentException} for an {@link ItemBehaviour} key.
  *
  * @since 0.1.0
  */

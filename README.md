@@ -406,7 +406,6 @@ attack damage, ...), per state and per version, for servers and anticheats that 
 float friction = palette.blockBehaviour(runtimeId).get(BlockBehaviour.FRICTION);      // the runtime id the palette sends
 float ice = palette.blockBehaviour(BedrockBlocks.BLUE_ICE).get(BlockBehaviour.FRICTION); // 0.989, the default state
 BlockShape stairs = palette.blockBehaviour(state).get(BlockBehaviour.COLLISION_SHAPE);  // several boxes
-boolean climbable = palette.blockBehaviour(state).getOrElse(BlockBehaviour.CLIMBABLE, false); // no source yet
 int eating = palette.itemBehaviour(BedrockItems.APPLE).get(ItemBehaviour.USE_DURATION);  // 32 ticks
 
 palette.blockBehaviour(BedrockBlocks.BLUE_ICE).explain(BlockBehaviour.FRICTION);
@@ -415,8 +414,8 @@ palette.blockBehaviour(BedrockBlocks.BLUE_ICE).explain(BlockBehaviour.FRICTION);
 
 - **Keys** are the `BlockBehaviour` and `ItemBehaviour` constants. Number and boolean keys return primitives, without
   boxing; the others return a `String` or a `BlockShape`.
-- **`get` or `getOrElse`**: `get` returns the value and throws if none is known (a key with no source yet, like
-  `CLIMBABLE`, or a custom block's default that was never measured). `getOrElse` returns your fallback instead.
+- **`get` or `getOrElse`**: `get` returns the value and throws if none is known (a custom block's default that was
+  never measured). `getOrElse` returns your fallback instead.
 - **Fast**: `palette.blockBehaviour(runtimeId).get(key)` looks the runtime id up and reads an array: no allocation, no
   boxing, about as fast as a lookup in an int map.
 - **Per palette, per version**: the same block state can have other values in another version (a newer capture), so

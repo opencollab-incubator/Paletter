@@ -90,7 +90,6 @@ public final class BehaviourKeys {
         block("burn_odds", "Integer", "Chance modifier of burning away.", null),
         block("translucency", "Float", "", null),
         block("thickness", "Float", "", null),
-        block("climbable", "Boolean", "Whether entities climb the block. No bundled source yet (needs the native capture): {@code get} throws, {@code getOrElse} gives the fallback.", null),
 
         item("max_stack_size", "Integer", "", new Leaf("minecraft:max_stack_size", "value", "item_properties.max_stack_size")),
         item("max_damage", "Integer", "Durability; 0 for items that take no damage.",

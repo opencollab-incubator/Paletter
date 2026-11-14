@@ -16,32 +16,32 @@ public final class ItemBehaviour {
     /**
      * Custom items set it with {@code minecraft:max_stack_size}.
      */
-    public static final IntKey MAX_STACK_SIZE = new IntKey("max_stack_size", BehaviourKey.Owner.ITEM, 18);
+    public static final IntKey MAX_STACK_SIZE = new IntKey("max_stack_size", BehaviourKey.Owner.ITEM, 17);
 
     /**
      * Durability; 0 for items that take no damage.
      * <p>
      * Custom items set it with {@code minecraft:durability}.
      */
-    public static final IntKey MAX_DAMAGE = new IntKey("max_damage", BehaviourKey.Owner.ITEM, 19);
+    public static final IntKey MAX_DAMAGE = new IntKey("max_damage", BehaviourKey.Owner.ITEM, 18);
 
     /**
      * Custom items set it with {@code minecraft:damage}.
      */
-    public static final IntKey ATTACK_DAMAGE = new IntKey("attack_damage", BehaviourKey.Owner.ITEM, 20);
+    public static final IntKey ATTACK_DAMAGE = new IntKey("attack_damage", BehaviourKey.Owner.ITEM, 19);
 
-    public static final IntKey ARMOR_VALUE = new IntKey("armor_value", BehaviourKey.Owner.ITEM, 21);
+    public static final IntKey ARMOR_VALUE = new IntKey("armor_value", BehaviourKey.Owner.ITEM, 20);
 
-    public static final IntKey TOUGHNESS = new IntKey("toughness", BehaviourKey.Owner.ITEM, 22);
+    public static final IntKey TOUGHNESS = new IntKey("toughness", BehaviourKey.Owner.ITEM, 21);
 
-    public static final IntKey ENCHANT_VALUE = new IntKey("enchant_value", BehaviourKey.Owner.ITEM, 23);
+    public static final IntKey ENCHANT_VALUE = new IntKey("enchant_value", BehaviourKey.Owner.ITEM, 22);
 
     /**
      * Ticks the item burns in a furnace; 0 if it is no fuel.
      */
-    public static final IntKey FURNACE_BURN_DURATION = new IntKey("furnace_burn_duration", BehaviourKey.Owner.ITEM, 24);
+    public static final IntKey FURNACE_BURN_DURATION = new IntKey("furnace_burn_duration", BehaviourKey.Owner.ITEM, 23);
 
-    public static final FloatKey FURNACE_XP_MULTIPLIER = new FloatKey("furnace_xp_multiplier", BehaviourKey.Owner.ITEM, 25);
+    public static final FloatKey FURNACE_XP_MULTIPLIER = new FloatKey("furnace_xp_multiplier", BehaviourKey.Owner.ITEM, 24);
 
     /**
      * Ticks of using the item (eating, drinking, ...). Known for component based items (from what BDS sends); null for
@@ -49,14 +49,14 @@ public final class ItemBehaviour {
      * <p>
      * Custom items set it with {@code minecraft:use_modifiers}.
      */
-    public static final IntKey USE_DURATION = new IntKey("use_duration", BehaviourKey.Owner.ITEM, 26);
+    public static final IntKey USE_DURATION = new IntKey("use_duration", BehaviourKey.Owner.ITEM, 25);
 
     /**
      * The use animation id BDS sends ({@code item_properties.use_animation}: 1 eat, 2 drink, 6 spear, ...).
      * <p>
      * Custom items set it with {@code minecraft:use_animation}.
      */
-    public static final IntKey USE_ANIMATION = new IntKey("use_animation", BehaviourKey.Owner.ITEM, 27);
+    public static final IntKey USE_ANIMATION = new IntKey("use_animation", BehaviourKey.Owner.ITEM, 26);
 
     private static final List<BehaviourKey<?>> KEYS = List.of(MAX_STACK_SIZE, MAX_DAMAGE,
             ATTACK_DAMAGE, ARMOR_VALUE, TOUGHNESS, ENCHANT_VALUE, FURNACE_BURN_DURATION,

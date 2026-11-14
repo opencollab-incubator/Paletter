@@ -55,7 +55,6 @@ Per key and version: who decides the values of the version's block states / item
 | `block:burn_odds` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
 | `block:translucency` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
 | `block:thickness` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
-| `block:climbable` | none 16913<br> | none 17499<br> | none 22091<br> | none 23960<br> |
 | `item:max_stack_size` | ALLAY_DATA 415<br>SCRIPT_API 1518<br> | SCRIPT_API 1518<br>inherited from 26.30 ALLAY_DATA 415<br>none 43<br> | ALLAY_DATA 453<br>SCRIPT_API 1623<br> | SCRIPT_API 1623<br>inherited from 26.50 ALLAY_DATA 453<br>none 4<br> |
 | `item:max_damage` | ALLAY_DATA 415<br>SCRIPT_API 1518<br> | SCRIPT_API 1518<br>inherited from 26.30 ALLAY_DATA 415<br>none 43<br> | ALLAY_DATA 453<br>SCRIPT_API 1623<br> | SCRIPT_API 1623<br>inherited from 26.50 ALLAY_DATA 453<br>none 4<br> |
 | `item:attack_damage` | ALLAY_DATA 1933<br> | inherited from 26.30 ALLAY_DATA 1933<br>none 43<br> | ALLAY_DATA 2076<br> | inherited from 26.50 ALLAY_DATA 2076<br>none 4<br> |
@@ -69,7 +68,6 @@ Per key and version: who decides the values of the version's block states / item
 
 Keys no dump has:
 
-- `block:climbable`: no source: needs a native capture of BDS (LeviLamina), run by hand
 - `item:use_animation`: read at runtime from the component data (WIRE) of component based items; native items need the native capture
 - `item:use_duration`: read at runtime from the component data (WIRE) of component based items; native items need the native capture
 

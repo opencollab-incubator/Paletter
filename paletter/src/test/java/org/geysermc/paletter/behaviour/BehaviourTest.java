@@ -131,8 +131,10 @@ class BehaviourTest {
         String door = PALETTER.vanilla(PALETTER.versions().getFirst()).blockBehaviour(BedrockBlocks.IRON_DOOR).explain(BlockBehaviour.COLLISION_SHAPE);
         assertTrue(door.contains("; post-processed: ") && door.contains("; disputed: ") && door.contains("(ALLAY_DATA)"), door);
 
-        String climbable = palette.blockBehaviour(BedrockBlocks.LADDER).explain(BlockBehaviour.CLIMBABLE);
-        assertTrue(climbable.startsWith("no value: no source has block:climbable"), climbable);
+        CustomBlock plain = CustomBlock.builder("test:plain").build();
+        Palette custom = palette.extend(PaletteLayer.builder("test").block(plain).build());
+        String destroy = custom.blockBehaviour(custom.blocks().block("test:plain").defaultState().getRuntimeId()).explain(BlockBehaviour.DESTROY_TIME);
+        assertTrue(destroy.startsWith("no value: "), destroy);
     }
 
     @Test
@@ -183,11 +185,13 @@ class BehaviourTest {
         assertThrows(IllegalArgumentException.class, () -> latest().itemBehaviour(BedrockItems.APPLE).get(BlockBehaviour.FRICTION));
         assertSame(BlockBehaviour.FRICTION, BlockBehaviour.key("friction"));
         assertEquals(null, BlockBehaviour.key("max_stack_size"));
-        BlockValues ladder = latest().blockBehaviour(BedrockBlocks.LADDER);
-        IllegalStateException missing = assertThrows(IllegalStateException.class, () -> ladder.get(BlockBehaviour.CLIMBABLE), "no source yet");
-        assertTrue(missing.getMessage().contains("block:climbable") && missing.getMessage().contains("no source"), missing.getMessage());
-        assertTrue(ladder.getOrElse(BlockBehaviour.CLIMBABLE, true));
-        assertFalse(ladder.getOrElse(BlockBehaviour.CLIMBABLE, false));
+        // A custom block that sets nothing has no value for a key whose BDS default was never captured
+        Palette custom = latest().extend(PaletteLayer.builder("test").block(CustomBlock.builder("test:plain").build()).build());
+        BlockValues plain = custom.blockBehaviour(custom.blocks().block("test:plain").defaultState().getRuntimeId());
+        IllegalStateException missing = assertThrows(IllegalStateException.class, () -> plain.get(BlockBehaviour.DESTROY_TIME), "no default captured");
+        assertTrue(missing.getMessage().contains("block:destroy_time") && missing.getMessage().contains("has no value"), missing.getMessage());
+        assertEquals(2f, plain.getOrElse(BlockBehaviour.DESTROY_TIME, 2f));
+        assertEquals(3f, plain.getOrElse(BlockBehaviour.DESTROY_TIME, 3f));
     }
 
     @Test

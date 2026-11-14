@@ -61,11 +61,6 @@ public final class AnticheatExample {
         return boxes;
     }
 
-    /** No source has climbing yet (it needs the native capture): the caller's own rule is the fallback until then. */
-    boolean climbable(int x, int y, int z, boolean ownRule) {
-        return palette.blockBehaviour(blockAt(x, y, z)).getOrElse(BlockBehaviour.CLIMBABLE, ownRule);
-    }
-
     public static void main(String[] args) {
         // A server's custom block: its friction component is read with the same key
         CustomBlock slippery = CustomBlock.builder("example:slippery").component(Friction.of(0.02f)).build();
@@ -76,14 +71,12 @@ public final class AnticheatExample {
         check.world.put(List.of(0, 63, 0), palette.runtimeId(BedrockBlocks.BLUE_ICE.defaultState()));
         check.world.put(List.of(1, 63, 0), palette.blocks().block("example:slippery").defaultState().getRuntimeId());
         check.world.put(List.of(0, 64, 1), palette.runtimeId(BedrockBlocks.OAK_STAIRS.defaultState()));
-        check.world.put(List.of(1, 64, 1), palette.runtimeId(BedrockBlocks.LADDER.defaultState()));
 
         System.out.println("friction on blue ice: " + check.frictionUnder(0.5, 64, 0.5));
         System.out.println("friction on the custom block: " + check.frictionUnder(1.5, 64, 0.5));
         for (float[] box : check.collisionsAround(0, 64, 0)) {
             System.out.println("collision box " + java.util.Arrays.toString(box));
         }
-        System.out.println("ladder climbable by our own rule: " + check.climbable(1, 64, 1, true));
 
         // Where a value comes from: the source, its version, whether it is inherited, third party or disputed
         System.out.println("blue ice friction: " + palette.blockBehaviour(BedrockBlocks.BLUE_ICE).explain(BlockBehaviour.FRICTION));

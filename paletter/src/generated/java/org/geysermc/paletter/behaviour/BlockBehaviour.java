@@ -93,15 +93,10 @@ public final class BlockBehaviour {
 
     public static final FloatKey THICKNESS = new FloatKey("thickness", BehaviourKey.Owner.BLOCK, 16);
 
-    /**
-     * Whether entities climb the block. No bundled source yet (needs the native capture): {@code get} throws, {@code getOrElse} gives the fallback.
-     */
-    public static final BooleanKey CLIMBABLE = new BooleanKey("climbable", BehaviourKey.Owner.BLOCK, 17);
-
     private static final List<BehaviourKey<?>> KEYS = List.of(DESTROY_TIME, EXPLOSION_RESISTANCE,
             FRICTION, SOLID, COLLISION_SHAPE, OUTLINE_SHAPE, LIGHT_EMISSION, LIGHT_DAMPENING,
             CAN_CONTAIN_LIQUID, LIQUID_REACTION, REQUIRES_CORRECT_TOOL, MAP_COLOR, TINT_METHOD,
-            FLAME_ODDS, BURN_ODDS, TRANSLUCENCY, THICKNESS, CLIMBABLE);
+            FLAME_ODDS, BURN_ODDS, TRANSLUCENCY, THICKNESS);
 
     private BlockBehaviour() {
     }

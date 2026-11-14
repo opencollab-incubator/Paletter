@@ -319,7 +319,6 @@ public enum org.geysermc.paletter.behaviour.BehaviourKey$Owner {
 public final class org.geysermc.paletter.behaviour.BlockBehaviour {
     public static final org.geysermc.paletter.behaviour.IntKey BURN_ODDS
     public static final org.geysermc.paletter.behaviour.BooleanKey CAN_CONTAIN_LIQUID
-    public static final org.geysermc.paletter.behaviour.BooleanKey CLIMBABLE
     public static final org.geysermc.paletter.behaviour.ObjectKey<org.geysermc.paletter.behaviour.BlockShape> COLLISION_SHAPE
     public static final org.geysermc.paletter.behaviour.FloatKey DESTROY_TIME
     public static final org.geysermc.paletter.behaviour.FloatKey EXPLOSION_RESISTANCE

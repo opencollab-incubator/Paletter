@@ -95,9 +95,7 @@ class BehaviourImportTest {
         assertTrue(report.contains("b1[] (1): 0.5 / 0.7"), report);
         assertTrue(report.contains("inherited from 2.0 CLOUDBURST_DATA 101"), report);
         assertTrue(report.contains("inherited from 1.0 ALLAY_DATA 1"), report);
-        assertTrue(report.contains("`block:climbable` | none 100"), report);
         // keys no dump has, and what serves them instead: the component data if a wire rule reads the key
-        assertTrue(report.contains("- `block:climbable`: no source: needs a native capture"), report);
         assertTrue(report.contains("- `block:light_emission`: read at runtime from the component data (WIRE) of component based blocks"), report);
         assertTrue(report.contains("- `item:use_duration`: read at runtime from the component data (WIRE) of component based items"), report);
         assertFalse(report.contains("- `block:friction`:"), report);
