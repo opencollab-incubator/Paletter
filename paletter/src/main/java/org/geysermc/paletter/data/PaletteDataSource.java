@@ -1,6 +1,7 @@
 package org.geysermc.paletter.data;
 
 import org.geysermc.paletter.internal.behaviour.BehaviourStore;
+import org.geysermc.paletter.internal.shape.VoxelShapeStore;
 import org.geysermc.paletter.internal.data.Renames;
 
 import org.geysermc.paletter.internal.data.PropertyStore;
@@ -62,6 +63,15 @@ public interface PaletteDataSource {
     }
 
     /**
+     * @return the vanilla voxel shapes of the versions; the bundled source reads {@code voxel_shapes.nbt}, the default
+     * has none
+     */
+    @org.geysermc.paletter.annotation.Internal
+    default @NonNull VoxelShapeStore voxelShapes() {
+        return VoxelShapeStore.empty();
+    }
+
+    /**
      * @return a source reading the data bundled in the library jar
      */
     static @NonNull PaletteDataSource bundled() {
@@ -70,7 +80,7 @@ public interface PaletteDataSource {
 
     /**
      * @param directory a directory in the bundled format: {@code versions.txt}, one {@code <name>.nbt} per version, and
-     *                  optionally {@code properties.nbt}, {@code behaviour.nbt} and {@code renames.txt}. Read when first needed
+     *                  optionally {@code properties.nbt}, {@code behaviour.nbt}, {@code voxel_shapes.nbt} and {@code renames.txt}. Read when first needed
      * @return a source reading that directory
      * @since 0.1.0
      */

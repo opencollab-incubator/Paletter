@@ -146,6 +146,8 @@ public final class org.geysermc.paletter.Palette {
     public boolean sameStack(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData, org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)
     public java.lang.String toString()
     public org.geysermc.paletter.data.DataVersion version()
+    public org.geysermc.paletter.block.VoxelShapes voxelShapes()
+    public org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket voxelShapesPacket()
 }
 
 public class org.geysermc.paletter.PaletteException extends java.lang.RuntimeException {
@@ -164,6 +166,7 @@ public final class org.geysermc.paletter.PaletteLayer {
     public java.util.List<org.geysermc.paletter.PaletteLayer$Override> overrides()
     public java.util.Map<java.lang.String, java.util.List<java.lang.String>> tags()
     public java.lang.String toString()
+    public java.util.Map<java.lang.String, org.geysermc.paletter.behaviour.BlockShape> voxelShapes()
 }
 
 public static final class org.geysermc.paletter.PaletteLayer$Builder {
@@ -177,6 +180,7 @@ public static final class org.geysermc.paletter.PaletteLayer$Builder {
     public org.geysermc.paletter.PaletteLayer$Builder overrideItem(org.geysermc.paletter.vanilla.BedrockItemType, java.util.function.Consumer<org.geysermc.paletter.item.ItemOverride>)
     public org.geysermc.paletter.PaletteLayer$Builder tag(java.lang.String, java.lang.String...)
     public org.geysermc.paletter.PaletteLayer$Builder variant(org.geysermc.paletter.vanilla.BedrockItemVariant)
+    public org.geysermc.paletter.PaletteLayer$Builder voxelShape(java.lang.String, org.geysermc.paletter.behaviour.BlockShape)
 }
 
 public sealed interface org.geysermc.paletter.PaletteLayer$ItemEntry permits org.geysermc.paletter.PaletteLayer$ItemEntry$Custom, org.geysermc.paletter.PaletteLayer$ItemEntry$OfBlock {
@@ -590,6 +594,14 @@ public final class org.geysermc.paletter.block.RegisteredBlockState implements o
     public boolean isCustom()
     public org.geysermc.paletter.vanilla.BedrockBlockState key()
     public org.cloudburstmc.nbt.NbtMap states()
+    public java.lang.String toString()
+}
+
+public final class org.geysermc.paletter.block.VoxelShapes {
+    public org.geysermc.paletter.behaviour.BlockShape get(java.lang.String)
+    public java.util.Set<java.lang.String> names()
+    public int size()
+    public org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket toPacket()
     public java.lang.String toString()
 }
 

@@ -4,6 +4,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.geysermc.paletter.internal.behaviour.BehaviourStore;
+import org.geysermc.paletter.behaviour.BlockShape;
+import org.geysermc.paletter.internal.shape.VoxelShapeCompiler;
+import org.geysermc.paletter.internal.shape.VoxelShapeStore;
 import org.geysermc.paletter.internal.block.BlockInterner;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.BlockRegistry;
@@ -35,6 +38,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -52,7 +56,7 @@ final class PaletteCompiler {
 
     static Palette vanilla(VanillaData loaded, CanonicalBlocks canonicalBlocks, CanonicalItems canonicalItems,
                            BlockInterner interner, Fallbacks fallbacks, VanillaContent content, CreativeOrdering ordering,
-                           Supplier<BehaviourStore> behaviour) {
+                           Supplier<BehaviourStore> behaviour, VoxelShapeStore shapeStore) {
         VanillaContent.Applied applied = content.apply(loaded);
         VanillaData data = applied.data();
         PaletteReport report = new PaletteReport();
@@ -68,8 +72,13 @@ final class PaletteCompiler {
         ItemRegistry items = builder.build(layout, report);
         CreativeContent creative = CreativeContent.compile(layout, items, report);
         prepareCanonical(blocks, null, items, null, report);
-        Palette palette = new Palette(data, List.of(), blocks, items, layout, creative, report, ordering, applied.gating(), behaviour, null);
-        return palette;
+        // The experiment changes the vanilla voxel shapes of some versions: those palettes need the toggle
+        boolean shapeExperiment = content.requests(VoxelShapeStore.EXPERIMENT) && shapeStore.experimentMatters(data.version());
+        List<VoxelShapeStore.Entry> vanillaShapes = shapeStore.shapes(data.version(), shapeExperiment);
+        Palette.Shapes shapes = new Palette.Shapes(vanillaShapes,
+            vanillaShapes == null ? null : VoxelShapeCompiler.compile(vanillaShapes, Map.of(), blocks, report));
+        VanillaContent.ExperimentGating gating = shapeExperiment ? applied.gating().withEnabled(VoxelShapeStore.EXPERIMENT) : applied.gating();
+        return new Palette(data, List.of(), blocks, items, layout, creative, report, ordering, gating, behaviour, shapes, null);
     }
 
     /**
@@ -191,8 +200,21 @@ final class PaletteCompiler {
 
             List<PaletteLayer> layers = new ArrayList<>(parent.layers());
             layers.add(layer);
+            // The voxel shapes are the parent's unless the layer defines shapes or blocks (which may name shapes)
+            Palette.Shapes shapes = parent.shapes();
+            if (shapes.vanilla() != null && (!layer.voxelShapes().isEmpty() || !layer.blocks().isEmpty())) {
+                Map<String, BlockShape> custom = new LinkedHashMap<>();
+                for (PaletteLayer each : layers) {
+                    each.voxelShapes().forEach((identifier, shape) -> {
+                        if (custom.putIfAbsent(identifier, shape) != null) {
+                            report.error(source, "The voxel shape " + identifier + " is defined by an earlier layer; that definition is used");
+                        }
+                    });
+                }
+                shapes = new Palette.Shapes(shapes.vanilla(), VoxelShapeCompiler.compile(shapes.vanilla(), custom, blocks, report));
+            }
             return new Palette(data, layers, blocks, itemPalette, layout, content, report, parent.ordering(), parent.gating(),
-                parent.behaviourStore(), parent);
+                parent.behaviourStore(), shapes, parent);
         } catch (PaletteException e) {
             throw new PaletteException("Unable to compile layer " + source + " for " + data.version() + ": " + e.getMessage(), e);
         } catch (RuntimeException e) {

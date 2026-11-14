@@ -107,6 +107,9 @@ public final class CaptureWriter {
         if (result.entityIdentifiers != null) {
             Nbt.writeGzip(directory.resolve("raw_entity_identifiers.nbt"), result.entityIdentifiers.getIdentifiers());
         }
+        if (result.voxelShapes != null) {
+            VoxelShapeCapture.write(directory.resolve(VoxelShapeCapture.FILE), result.voxelShapes, bdsVersion);
+        }
         Files.writeString(directory.resolve("capture.json"), GSON.toJson(summary()));
 
         if (customDirectory != null) {

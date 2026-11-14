@@ -88,6 +88,40 @@ Block components `unit_cube`, `breathability`, `queued_ticking`, `random_ticking
 `on_placed`, `on_player_destroyed`, `on_player_placing`, `on_step_off`, `on_step_on` (replaced by script custom
 components) and `tag:<name>`, at format 1.26.60 and 1.19.40; no wire shape exists for them.
 
+## Voxel shapes
+
+`VoxelShapesPacket` (id 337, protocol 924 and later, sent before start game): every voxel shape the server knows, a
+name to id map and, since 944, the number of shapes beyond vanilla. Captured per build by `voxel-shapes capture`
+(`data/bds/<build>/voxel-shapes`), reproduced by `Palette#voxelShapesPacket` and checked by `VoxelShapeConformanceTest`
+against every capture.
+
+- **What they are.** Culling shapes: the faces a block hides of its neighbours. Blocks name them in the start game block
+  properties, `minecraft:geometry.culling_shape` (per permutation, so per state). Vanilla blocks name none on the wire;
+  their shapes are picked in BDS's code. Nothing ties them to collision, selection or movement (the string form of
+  `collision_box`, "using a voxel shape" in the docs, is refused by every captured build). Collision stays
+  `minecraft:collision_box`.
+- **Shape format.** A grid: per axis the sorted coordinates in blocks, the cells between them filled or not, cell
+  `(x * ySize + y) * zSize + z` is bit `i % 8` of byte `i / 8`. The grid is minimal (merged boxes, no plane that separates
+  nothing). The empty shape has the coordinate 0 on every axis and no cells. The 218 shape files of 1.26.63.1 re-encode
+  to the bytes BDS sends.
+- **Registry order.** `minecraft:empty` (0), `minecraft:unit_cube` (1); the vanilla shape files in name order; custom
+  shape files in the order the file system lists them (NTFS: by upper case name); then BDS walks all blocks in name hash
+  order (`BlockRegistry#nameHash`), each state in order, and registers without a name the state's culling shape with its
+  `minecraft:transformation` applied, then the shapes of its six faces (down, up, north, south, west, east: the cells that
+  reach the face from inside, drawn through the block). Equal shapes share one id. A block that names no culling shape, or
+  uses `minecraft:geometry.full_block` ("cannot have a custom culling shape"), adds nothing. Which vanilla block makes which
+  unnamed shape is measured with anchors: a custom block whose name hashes just before each vanilla block.
+- **Name order.** The iteration order of MSVC's `std::unordered_map<HashedString, ...>` (FNV-1 64, 8 buckets growing x8
+  below 512 then x2, a new key in front of its bucket): `VoxelShapeCompiler#hashMapOrder`.
+- **Transformation** (in floats, in this order): scale `(v - c) * s + c` with `c = 0.5 + pivot` on every axis if any
+  factor is not 1; the quarter turns x, then y, then z as one change of axes (`1 - v` for a mirrored axis, around a pivot
+  `±(v - c) + c'`); translation `v + t`.
+- **Limits** (content log): at least one box, `min < max`, boxes within (-14, -14, -14) to (30, 30, 30) pixels, at least one
+  box overlapping the block, no `minecraft` namespace; an unknown name falls back to `minecraft:empty`.
+- **Builds.** 1.26.36.1 (26.30) sends only `minecraft:empty` and `minecraft:unit_cube` unless the world has the experiment
+  `voxel_shapes`; from 1.26.45.1 on the vanilla shapes are always sent and the experiment changes nothing. 1.26.45.1,
+  1.26.52.3 and 1.26.63.1 send the same vanilla registry.
+
 ## Content log findings
 
 - Blocks need both `geometry` and `material_instances`, or neither; `flower_pottable` and `item_visual` need both.

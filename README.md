@@ -456,6 +456,32 @@ palette.blockBehaviour(BedrockBlocks.BLUE_ICE).explain(BlockBehaviour.FRICTION);
   --cloudburst-data <clone> --allay <clone>"`): both say so, and the file records the command, the sources with their
   commits and licences, and the ranking. The same sources give the same bytes.
 
+## Voxel shapes
+
+The shapes Bedrock culls the faces of neighbouring blocks with (`VoxelShapesPacket`, sent before start game). A palette
+has the vanilla shapes BDS of its version sends, and layers add custom ones that custom blocks name in
+`minecraft:geometry`:
+
+```java
+PaletteLayer layer = PaletteLayer.builder("content")
+    .voxelShape("example:post", BlockShape.of(0, 0, 0, 1, 2 / 16f, 1,  6 / 16f, 2 / 16f, 7 / 16f, 9 / 16f, 1, 10 / 16f))
+    .block(CustomBlock.builder("example:post")
+        .component(Geometry.builder().identifier("geometry.post").cullingShape("example:post").build())
+        .component(MaterialInstances.builder().all(MaterialInstances.Instance.builder().texture("post").build()).build())
+        .build())
+    .build();
+
+session.sendPacket(palette.voxelShapesPacket());            // before start game; the packet BDS sends for the same content
+BlockShape anvil = palette.voxelShapes().get("minecraft:anvil");
+```
+
+The packet is the one BDS sends, byte for byte, for every captured build: the shapes Bedrock derives for blocks (their
+faces, transformed shapes) are derived the same way, with the same ids, and the names come in BDS's order
+(`data/bds/WIRE-NOTES.md`, "Voxel shapes"). They are culling shapes only: collision and selection are
+`BlockBehaviour.COLLISION_SHAPE` and `OUTLINE_SHAPE`. In 26.30 the vanilla shapes are behind the experiment
+`voxel_shapes` (`vanilla(v -> v.experiments("voxel_shapes"))`). `voxel_shapes.nbt` is generated from the captures by
+`voxel-shapes import`.
+
 ## Data
 
 Bundled data lives in `paletter/src/main/resources/paletter/`: `versions.txt` and one gzipped NBT file per version

@@ -29,6 +29,8 @@ public final class BundledFiles {
     public static final String STORE = "properties.nbt";
     /** The behaviour values, written by {@code behaviour import}, not a version file. */
     public static final String BEHAVIOUR = "behaviour.nbt";
+    /** The vanilla voxel shapes, written by {@code voxel-shapes import}, not a version file. */
+    public static final String VOXEL_SHAPES = "voxel_shapes.nbt";
 
     private BundledFiles() {
     }
@@ -69,7 +71,8 @@ public final class BundledFiles {
     private static List<Path> versionFiles(Path directory) throws IOException {
         try (Stream<Path> files = Files.list(directory)) {
             return files.filter(f -> f.getFileName().toString().endsWith(".nbt")
-                && !f.getFileName().toString().equals(STORE) && !f.getFileName().toString().equals(BEHAVIOUR))
+                && !f.getFileName().toString().equals(STORE) && !f.getFileName().toString().equals(BEHAVIOUR)
+                && !f.getFileName().toString().equals(VOXEL_SHAPES))
                 .sorted().toList();
         }
     }

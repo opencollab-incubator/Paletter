@@ -1,0 +1,13 @@
+{
+  "_generated": "Captured from BDS by `capture` (:tools:run, also part of `update`); do not edit by hand",
+  "bdsVersion": "1.26.36.1",
+  "customShapeCount": 0,
+  "shapes": [
+    {"xSize":0,"ySize":0,"zSize":0,"storage":[],"xCoordinates":[0.0],"yCoordinates":[0.0],"zCoordinates":[0.0]},
+    {"xSize":1,"ySize":1,"zSize":1,"storage":[1],"xCoordinates":[0.0,1.0],"yCoordinates":[0.0,1.0],"zCoordinates":[0.0,1.0]}
+  ],
+  "names": {
+    "minecraft:empty": 0,
+    "minecraft:unit_cube": 1
+  }
+}

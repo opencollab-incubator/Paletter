@@ -1,0 +1,12 @@
+ERROR [VoxelShape] Voxel shape with name "paletter:beyond_only" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.
+ERROR [VoxelShape] Voxel shape with name "paletter:flat" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.
+ERROR [VoxelShape] Voxel shape with name "paletter:inverted" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.
+ERROR [VoxelShape] Voxel shape with name "paletter:none" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.
+ERROR [VoxelShape] Voxel shape with name "paletter:too_far" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.
+ERROR [VoxelShape] shapes/beyond_only.json | Voxel shape 'paletter:beyond_only' has no boxes that overlap the base block (0-16 pixels on all axes).
+ERROR [VoxelShape] shapes/flat.json | Box at index 0 is invalid for voxel shape `paletter:flat`
+ERROR [VoxelShape] shapes/inverted.json | Box at index 0 is invalid for voxel shape `paletter:inverted`
+ERROR [VoxelShape] shapes/none.json |  -> shape -> boxes: expected array with at least 1 elements
+ERROR [VoxelShape] shapes/none.json | Failed to load voxel shape file shapes/none.json
+ERROR [VoxelShape] shapes/too_far.json | Box at index 0 in voxel shape 'paletter:too_far' is outside the allowed bounds of (-14, -14, -14) to (30, 30, 30).
+WARN [Components] BlockGeometryComponent: A full block geometry cannot have a custom culling shape. Culling shape "paletter:full_block" will be ignored and the unit cube shape will be used instead.

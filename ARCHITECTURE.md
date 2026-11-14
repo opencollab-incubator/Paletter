@@ -26,6 +26,9 @@ as it is and adds an `ERROR` to the report of the palette `extend` returns.
 1. **blocks**: vanilla states, custom blocks (`internal.component.BlockCompiler`), block fallbacks, network ids, canonical table.
 2. **items**: vanilla definitions, custom items (`ItemCompiler`), overrides, item fallbacks, block items (from the bundled
    block to item relation), tags, canonical table.
+   The voxel shapes (`internal.shape.VoxelShapeCompiler`) follow the blocks: vanilla ones from `voxel_shapes.nbt`, the
+   layers' shapes, then what Bedrock derives for the custom blocks in name hash order; shared with the parent when a
+   layer adds neither shapes nor blocks.
 3. **creative**: layout (vanilla order, then placements and edits), packet content.
 4. **output**: the `Palette`, its packets and `PaletteReport` (what was adapted, replaced or dropped).
 
@@ -66,7 +69,7 @@ Paletter bundles no fallbacks: what an older version lacks is `minecraft:unknown
 |---|---|
 | `paletter/src/generated/java` | Generated, never edited: component API, encoders, `ComponentIndex`, behaviour keys and their `WireRules`, vanilla constants. `build` fails if stale (`checkComponentApi`, `checkConstants`) |
 | `paletter/src/main/java` | Hand-written library; `internal/component/Transforms.java` holds the hand transforms the encoders call |
-| `paletter/src/main/resources/paletter` | Generated data (`tools` import), except `renames.txt` |
+| `paletter/src/main/resources/paletter` | Generated data (`tools` import, `voxel-shapes import`), except `renames.txt` |
 | `tools/src/main/java` | Hand-written tooling, including the generators |
 | `data/model/api.json`, `fixtures.json`, `data/addons/dump` | Hand-written inputs |
 | `data/addons/capture`, `data/addons/creative`, `data/model/mappings.json`, `coverage.md` | Generated, never edit |
