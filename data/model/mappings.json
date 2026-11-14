@@ -7,7 +7,9 @@
       "protocol": 1001,
       "windowProtocol": 1001,
       "variants": 2110,
-      "accepted": 1740
+      "accepted": 1740,
+      "firstCustomBlockId": 10000,
+      "blockItemIdPlusBlockId": 255
     },
     {
       "capture": "data/bds/1.26.45.1/spec",
@@ -15,7 +17,9 @@
       "protocol": 2169,
       "windowProtocol": 2168,
       "variants": 2110,
-      "accepted": 1763
+      "accepted": 1763,
+      "firstCustomBlockId": 10000,
+      "blockItemIdPlusBlockId": 255
     },
     {
       "capture": "data/bds/1.26.52.3/spec",
@@ -23,7 +27,9 @@
       "protocol": 2193,
       "windowProtocol": 2193,
       "variants": 2112,
-      "accepted": 1768
+      "accepted": 1768,
+      "firstCustomBlockId": 10000,
+      "blockItemIdPlusBlockId": 255
     },
     {
       "capture": "data/bds/1.26.63.1/spec",
@@ -31,10 +37,151 @@
       "protocol": 2225,
       "windowProtocol": 2225,
       "variants": 2141,
-      "accepted": 1794
+      "accepted": 1794,
+      "firstCustomBlockId": 10000,
+      "blockItemIdPlusBlockId": 255
     }
   ],
   "formatVersion": "1.26.60",
+  "traitStates": {
+    "minecraft:connection": {
+      "minecraft:cardinal_connections": [
+        {
+          "name": "minecraft:connection_north",
+          "type": "bool",
+          "values": [
+            0,
+            1
+          ],
+          "valuesFrom": "the vanilla state minecraft:connection_north",
+          "default": "verified (name and default): BDS 1.26.63.1 sent hash 3371306093 for the default state of paletter:connection_trait_block"
+        },
+        {
+          "name": "minecraft:connection_east",
+          "type": "bool",
+          "values": [
+            0,
+            1
+          ],
+          "valuesFrom": "the vanilla state minecraft:connection_east",
+          "default": "verified (name and default): BDS 1.26.63.1 sent hash 3371306093 for the default state of paletter:connection_trait_block"
+        },
+        {
+          "name": "minecraft:connection_south",
+          "type": "bool",
+          "values": [
+            0,
+            1
+          ],
+          "valuesFrom": "the vanilla state minecraft:connection_south",
+          "default": "verified (name and default): BDS 1.26.63.1 sent hash 3371306093 for the default state of paletter:connection_trait_block"
+        },
+        {
+          "name": "minecraft:connection_west",
+          "type": "bool",
+          "values": [
+            0,
+            1
+          ],
+          "valuesFrom": "the vanilla state minecraft:connection_west",
+          "default": "verified (name and default): BDS 1.26.63.1 sent hash 3371306093 for the default state of paletter:connection_trait_block"
+        }
+      ]
+    },
+    "minecraft:multi_block": {
+      "minecraft:multi_block_part": [
+        {
+          "name": "minecraft:multi_block_part",
+          "type": "int",
+          "values": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "valuesFrom": "the docs (no vanilla block has the state)",
+          "default": "verified (name and default): BDS 1.26.63.1 sent hash 428099933 for the default state of paletter:multi_block"
+        }
+      ]
+    },
+    "minecraft:placement_direction": {
+      "minecraft:cardinal_direction": [
+        {
+          "name": "minecraft:cardinal_direction",
+          "type": "string",
+          "values": [
+            "south",
+            "west",
+            "north",
+            "east"
+          ],
+          "valuesFrom": "the vanilla state minecraft:cardinal_direction (CardinalDirection)",
+          "default": "verified (name and default): BDS 1.26.63.1 sent hash 3387770614 for the default state of paletter:states_block"
+        }
+      ],
+      "minecraft:facing_direction": [
+        {
+          "name": "minecraft:facing_direction",
+          "type": "string",
+          "values": [
+            "down",
+            "up",
+            "north",
+            "south",
+            "west",
+            "east"
+          ],
+          "valuesFrom": "the vanilla state minecraft:facing_direction (Direction)",
+          "default": "unverified: no capture holds the hash of a default state with it"
+        }
+      ],
+      "minecraft:corner_and_cardinal_direction": [
+        {
+          "name": "minecraft:corner",
+          "type": "string",
+          "values": [
+            "none",
+            "inner_left",
+            "inner_right",
+            "outer_left",
+            "outer_right"
+          ],
+          "valuesFrom": "the vanilla state minecraft:corner (Corner)",
+          "default": "unverified: no capture holds the hash of a default state with it"
+        }
+      ]
+    },
+    "minecraft:placement_position": {
+      "minecraft:block_face": [
+        {
+          "name": "minecraft:block_face",
+          "type": "string",
+          "values": [
+            "down",
+            "up",
+            "north",
+            "south",
+            "west",
+            "east"
+          ],
+          "valuesFrom": "the vanilla state minecraft:block_face (Direction)",
+          "default": "verified (name and default): BDS 1.26.63.1 sent hash 3387770614 for the default state of paletter:states_block"
+        }
+      ],
+      "minecraft:vertical_half": [
+        {
+          "name": "minecraft:vertical_half",
+          "type": "string",
+          "values": [
+            "bottom",
+            "top"
+          ],
+          "valuesFrom": "the vanilla state minecraft:vertical_half (VerticalHalf)",
+          "default": "verified (name and default): BDS 1.26.63.1 sent hash 3387770614 for the default state of paletter:states_block"
+        }
+      ]
+    }
+  },
   "envelope": {
     "item": [
       {

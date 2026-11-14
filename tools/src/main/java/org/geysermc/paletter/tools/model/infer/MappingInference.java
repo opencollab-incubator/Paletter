@@ -83,7 +83,40 @@ public final class MappingInference {
      *                    block's property data as sent (components not lifted, {@code block_id} left out)
      */
     record Capture(String name, String bdsVersion, int protocol, List<Variant> variants, Map<String, Map<String, Leaf>> wire,
-                   Map<String, List<String>> log, List<String> unattributed, Feedback feedback, Map<String, Map<String, Leaf>> definitions) {
+                   Map<String, List<String>> log, List<String> unattributed, Feedback feedback, Map<String, Map<String, Leaf>> definitions,
+                   CustomBlockIds customBlockIds) {
+    }
+
+    /**
+     * How BDS numbers custom blocks in a capture: {@code vanilla_block_data.block_id} counts up from {@code first}, and the
+     * item of a custom block has the runtime id {@code itemIdPlusBlockId - block_id}.
+     */
+    record CustomBlockIds(int first, int itemIdPlusBlockId) {
+        /** @return the numbering, or null for a capture without custom blocks */
+        static CustomBlockIds of(String capture, List<NbtMap> blocks, List<NbtMap> items) {
+            Map<String, Integer> blockIds = new TreeMap<>();
+            for (NbtMap block : blocks) {
+                blockIds.put(block.getString("name"), block.getCompound("properties").getCompound("vanilla_block_data").getInt("block_id"));
+            }
+            if (blockIds.isEmpty()) {
+                return null;
+            }
+            int first = blockIds.values().stream().mapToInt(Integer::intValue).min().orElseThrow();
+            if (!new TreeSet<>(blockIds.values()).equals(new TreeSet<>(Stream.iterate(first, i -> i + 1).limit(blockIds.size()).toList()))) {
+                throw new IllegalStateException(capture + ": the custom block ids are not " + first + ".." + (first + blockIds.size() - 1));
+            }
+            Set<Integer> sums = new TreeSet<>();
+            for (NbtMap item : items) {
+                Integer blockId = blockIds.get(item.getString("name"));
+                if (blockId != null) {
+                    sums.add(((Number) item.get("id")).intValue() + blockId);
+                }
+            }
+            if (sums.size() != 1) {
+                throw new IllegalStateException(capture + ": block item id + block_id is not one constant but " + sums);
+            }
+            return new CustomBlockIds(first, sums.iterator().next());
+        }
     }
 
     private final List<String> unexplainedBits = new ArrayList<>();
@@ -153,10 +186,18 @@ public final class MappingInference {
             source.addProperty("windowProtocol", dataProtocol(capture.protocol()));
             source.addProperty("variants", capture.variants().size());
             source.addProperty("accepted", capture.variants().stream().filter(v -> capture.wire().containsKey(v.identifier())).count());
+            if (capture.customBlockIds() != null) {
+                source.addProperty("firstCustomBlockId", capture.customBlockIds().first());
+                source.addProperty("blockItemIdPlusBlockId", capture.customBlockIds().itemIdPlusBlockId());
+            }
             sources.add(source);
         }
         mappings.add("captures", sources);
         mappings.addProperty("formatVersion", fixtures.formatVersion);
+        JsonObject traitStates = TraitStateTable.infer(root, model);
+        if (!traitStates.isEmpty()) {
+            mappings.add("traitStates", traitStates);
+        }
         JsonObject components = new JsonObject();
         Coverage coverage = new Coverage(model, fixtures, transforms);
         Map<String, String> findings = new TreeMap<>();
@@ -440,8 +481,10 @@ public final class MappingInference {
                 log.computeIfAbsent(id, k -> new ArrayList<>()).add(line);
             }
         }
+        CustomBlockIds customBlockIds = CustomBlockIds.of(dir.toString(), blocks.getList("blocks", org.cloudburstmc.nbt.NbtType.COMPOUND),
+            items.getList("items", org.cloudburstmc.nbt.NbtType.COMPOUND));
         return new Capture(dir.getFileName().toString(), meta.get("bdsVersion").getAsString(), meta.get("protocol").getAsInt(),
-            variants, byVariant, log, unattributed, feedback, definitions);
+            variants, byVariant, log, unattributed, feedback, definitions, customBlockIds);
     }
 
     // ---------------------------------------------------------------------------------------------------------------
