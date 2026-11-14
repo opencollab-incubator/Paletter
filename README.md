@@ -464,7 +464,7 @@ has the vanilla shapes BDS of its version sends, and layers add custom ones that
 
 ```java
 PaletteLayer layer = PaletteLayer.builder("content")
-    .voxelShape("example:post", BlockShape.of(0, 0, 0, 1, 2 / 16f, 1,  6 / 16f, 2 / 16f, 7 / 16f, 9 / 16f, 1, 10 / 16f))
+    .voxelShape("example:post", VoxelShape.ofBoxes("example:post", 0, 0, 0, 1, 2 / 16f, 1,  6 / 16f, 2 / 16f, 7 / 16f, 9 / 16f, 1, 10 / 16f))
     .block(CustomBlock.builder("example:post")
         .component(Geometry.builder().identifier("geometry.post").cullingShape("example:post").build())
         .component(MaterialInstances.builder().all(MaterialInstances.Instance.builder().texture("post").build()).build())
@@ -472,13 +472,14 @@ PaletteLayer layer = PaletteLayer.builder("content")
     .build();
 
 session.sendPacket(palette.voxelShapesPacket());            // before start game; the packet BDS sends for the same content
-BlockShape anvil = palette.voxelShapes().get("minecraft:anvil");
+VoxelShape anvil = palette.voxelShapes().get("minecraft:anvil");   // grid: xCoordinates(), cell(x, y, z), boxes()
 ```
 
 The packet is the one BDS sends, byte for byte, for every captured build: the shapes Bedrock derives for blocks (their
 faces, transformed shapes) are derived the same way, with the same ids, and the names come in BDS's order
-(`data/bds/WIRE-NOTES.md`, "Voxel shapes"). They are culling shapes only: collision and selection are
-`BlockBehaviour.COLLISION_SHAPE` and `OUTLINE_SHAPE`. In 26.30 the vanilla shapes are behind the experiment
+(`data/bds/WIRE-NOTES.md`, "Voxel shapes"). A `VoxelShape` is a culling shape only, not a `BlockShape`: collision and selection are
+`BlockBehaviour.COLLISION_SHAPE` and `OUTLINE_SHAPE`, and the Script API does not expose voxel shapes. `VoxelShape.ofBoxes`
+refuses what BDS refuses, with its messages. In 26.30 the vanilla shapes are behind the experiment
 `voxel_shapes` (`vanilla(v -> v.experiments("voxel_shapes"))`). `voxel_shapes.nbt` is generated from the captures by
 `voxel-shapes import`.
 
