@@ -99,6 +99,7 @@ public final class BehaviourProbe {
         capture.add("defaults", defaults);
         capture.add("friction", friction);
         capture.add("doors", doors(log));
+        capture.add("climbing", climbing(log, defaults));
         return capture;
     }
 
@@ -490,4 +491,69 @@ public final class BehaviourProbe {
         return result;
     }
 
+
+    // ---- climbing ----
+
+    /** Blocks that must climb in every state, and blocks that must climb in none: the check that the probe measures climbing. */
+    static final List<String> CLIMBING = List.of("minecraft:ladder", "minecraft:vine");
+    static final List<String> NOT_CLIMBING = List.of("minecraft:stone", "minecraft:air");
+
+    /**
+     * Every state of every block type, with a body that can climb ({@code minecraft:can_climb}) at its feet: the states where
+     * {@code Entity.isClimbing} was true. The controls (ladder and vine in every state, stone and air in none) must hold, or
+     * the measurement says nothing.
+     */
+    static JsonObject climbing(ProbeLog log, JsonArray defaults) {
+        Map<String, JsonObject> blocks = new TreeMap<>(byBlock(log.of("climb")));
+        if (blocks.isEmpty()) {
+            throw new IllegalStateException("No climb observations in the probe log");
+        }
+        for (String control : CLIMBING) {
+            JsonObject block = blocks.get(control);
+            if (block == null || block.getAsJsonArray("climbing").size() != block.get("states").getAsInt()) {
+                throw new IllegalStateException("Climbing control failed: " + control + " should climb in every state: " + block);
+            }
+        }
+        for (String control : NOT_CLIMBING) {
+            JsonObject block = blocks.get(control);
+            if (block == null || !block.getAsJsonArray("climbing").isEmpty()) {
+                throw new IllegalStateException("Climbing control failed: " + control + " should climb in no state: " + block);
+            }
+        }
+        JsonObject plain = blocks.get("probe:plain");
+        if (plain == null || !plain.getAsJsonArray("climbing").isEmpty()) {
+            throw new IllegalStateException("probe:plain should not be climbable (no add-on component sets it): " + plain);
+        }
+        addDefault(defaults, "block:climbable", new com.google.gson.JsonPrimitive(false), "A body that can climb, at the feet of a custom "
+            + "block that sets no component: Entity.isClimbing was false, as in stone and air (and true in a ladder and a vine). No add-on "
+            + "component sets it.");
+
+        JsonObject result = new JsonObject();
+        result.addProperty("method", "Every state of every block type in its own cell (barriers around it), a body with minecraft:can_climb, "
+            + "no wall climbing and no gravity at its feet; Entity.isClimbing after 3 ticks. Controls: " + CLIMBING + " climb in every state, "
+            + NOT_CLIMBING + " in none");
+        JsonArray probed = new JsonArray();
+        JsonObject climbing = new JsonObject();
+        JsonObject lost = new JsonObject();
+        int states = 0;
+        for (Map.Entry<String, JsonObject> block : blocks.entrySet()) {
+            probed.add(block.getKey());
+            states += block.getValue().get("states").getAsInt();
+            if (block.getValue().has("lost") && !block.getValue().getAsJsonArray("lost").isEmpty()) {
+                lost.add(block.getKey(), block.getValue().getAsJsonArray("lost"));
+            }
+            if (!block.getValue().getAsJsonArray("climbing").isEmpty()) {
+                JsonObject entry = new JsonObject();
+                entry.add("states", block.getValue().get("states"));
+                entry.add("climbing", block.getValue().getAsJsonArray("climbing"));
+                climbing.add(block.getKey(), entry);
+            }
+        }
+        result.addProperty("states", states);
+        result.add("probed", probed);
+        result.add("climbing", climbing);
+        // states after which the body was gone (a block removed it): not measured
+        result.add("lost", lost);
+        return result;
+    }
 }
