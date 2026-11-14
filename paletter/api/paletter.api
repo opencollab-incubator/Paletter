@@ -2223,7 +2223,6 @@ public enum org.geysermc.paletter.creative.CreativeCategory {
     public java.lang.String bedrockName()
     public static org.geysermc.paletter.creative.CreativeCategory fromBedrockName(java.lang.String)
     public static org.geysermc.paletter.creative.CreativeCategory fromProtocol(org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemCategory)
-    public int itemPropertyId()
     public org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemCategory protocol()
     public static org.geysermc.paletter.creative.CreativeCategory valueOf(java.lang.String)
     public static org.geysermc.paletter.creative.CreativeCategory[] values()

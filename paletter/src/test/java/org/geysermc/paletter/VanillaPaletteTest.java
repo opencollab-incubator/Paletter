@@ -174,8 +174,6 @@ class VanillaPaletteTest {
         // Using ordinal() of a 0-based category enum to index it is an easy, silent off by one
         assertEquals(CreativeItemCategory.CONSTRUCTION, CreativeCategory.CONSTRUCTION.protocol());
         assertEquals(CreativeItemCategory.ITEMS, CreativeCategory.ITEMS.protocol());
-        assertEquals(1, CreativeCategory.CONSTRUCTION.itemPropertyId());
-        assertEquals(4, CreativeCategory.ITEMS.itemPropertyId());
         for (CreativeCategory category : CreativeCategory.values()) {
             assertEquals(category, CreativeCategory.fromProtocol(category.protocol()));
             assertEquals(category, CreativeCategory.fromBedrockName(category.bedrockName()));

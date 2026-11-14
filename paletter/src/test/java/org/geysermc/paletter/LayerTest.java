@@ -81,7 +81,8 @@ class LayerTest {
         assertEquals("geysermc:furnace_minecart", data.getString("name"));
         assertEquals(furnace.getRuntimeId(), data.getInt("id"));
         NbtMap properties = data.getCompound("components").getCompound("item_properties");
-        assertEquals(CreativeCategory.ITEMS.itemPropertyId(), properties.getInt("creative_category"));
+        // items (data/model/mappings.json, item:description menu_category.category)
+        assertEquals(4, properties.getInt("creative_category"));
         assertEquals("minecraft:itemGroup.name.minecart", properties.getString("creative_group"));
 
         // Directly after the hopper minecart, inside the minecart group

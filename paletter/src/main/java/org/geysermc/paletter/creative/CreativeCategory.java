@@ -8,18 +8,18 @@ import java.util.Locale;
 /**
  * The four tabs of the creative inventory, in the order the client expects them.
  * <p>
- * Bedrock refers to a category in three different ways, which is easy to mix up: the protocol enum
- * ({@link CreativeItemCategory}, whose ordinal is offset by {@code ALL}), the numeric id used in the
- * {@code creative_category} item property, and the name used in a block's {@code menu_category}.
- * This enum is the only place that knows all three.
+ * Bedrock refers to a category in different ways, which is easy to mix up: the protocol enum
+ * ({@link CreativeItemCategory}, whose ordinal is offset by {@code ALL}) and the name used in add-on JSON and a block's
+ * {@code menu_category}. The numeric id of the {@code creative_category} item property is the generated encoder's,
+ * inferred from the spec captures.
  *
  * @since 0.1.0
  */
 public enum CreativeCategory {
-    CONSTRUCTION("construction", 1, CreativeItemCategory.CONSTRUCTION),
-    NATURE("nature", 2, CreativeItemCategory.NATURE),
-    EQUIPMENT("equipment", 3, CreativeItemCategory.EQUIPMENT),
-    ITEMS("items", 4, CreativeItemCategory.ITEMS);
+    CONSTRUCTION("construction", CreativeItemCategory.CONSTRUCTION),
+    NATURE("nature", CreativeItemCategory.NATURE),
+    EQUIPMENT("equipment", CreativeItemCategory.EQUIPMENT),
+    ITEMS("items", CreativeItemCategory.ITEMS);
 
     /**
      * Name to use in {@code menu_category} for blocks that are not in the creative inventory.
@@ -29,12 +29,10 @@ public enum CreativeCategory {
     private static final CreativeCategory[] VALUES = values();
 
     private final String bedrockName;
-    private final int itemPropertyId;
     private final CreativeItemCategory protocol;
 
-    CreativeCategory(String bedrockName, int itemPropertyId, CreativeItemCategory protocol) {
+    CreativeCategory(String bedrockName, CreativeItemCategory protocol) {
         this.bedrockName = bedrockName;
-        this.itemPropertyId = itemPropertyId;
         this.protocol = protocol;
     }
 
@@ -43,13 +41,6 @@ public enum CreativeCategory {
      */
     public @NonNull String bedrockName() {
         return bedrockName;
-    }
-
-    /**
-     * @return the value of the {@code creative_category} item property of data driven items
-     */
-    public int itemPropertyId() {
-        return itemPropertyId;
     }
 
     /**
