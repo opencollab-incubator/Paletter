@@ -1,5 +1,7 @@
 package org.geysermc.paletter.tools.client;
 
+import org.geysermc.paletter.block.BlockProperty;
+import org.geysermc.paletter.internal.component.TraitStateTable;
 import org.geysermc.paletter.tools.data.Nbt;
 import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
@@ -56,63 +58,46 @@ public final class BlockHashes {
     }
 
     /**
-     * The wire sends traits, not the states they add; the client adds those. Verified against BDS hashes for the
-     * default state of each (first value listed here); the other values follow the vanilla blocks with the same state.
+     * The wire sends traits, not the states they add; the client adds those. The states of each {@code enabled_states}
+     * value come from the generated {@link TraitStateTable} (the table Paletter's palettes use, checked against the hashes
+     * BDS sent); only reading the value from the wire is done here: a flag per value
+     * ({@code enabled_states.cardinal_direction: 1b}), the {@code multi_block} flag, or the bit set of
+     * {@code minecraft:connection}.
      */
     static List<NbtMap> traitProperties(NbtMap blockProperties) {
         List<NbtMap> out = new ArrayList<>();
         for (NbtMap trait : blockProperties.getList("traits", NbtType.COMPOUND, List.of())) {
-            // enabled_states is a compound of flags, except for minecraft:connection, where it is an int bit set
-            NbtMap enabled = trait.get("enabled_states") instanceof NbtMap map ? map : NbtMap.EMPTY;
-            switch (trait.getString("name")) {
-                case "minecraft:placement_direction" -> {
-                    if (enabled.getBoolean("cardinal_direction")) {
-                        out.add(property("minecraft:cardinal_direction", "south", "west", "north", "east"));
+            String name = trait.getString("name");
+            List<String> values = new ArrayList<>();
+            if (trait.get("enabled_states") instanceof NbtMap flags) {
+                flags.forEach((flag, on) -> {
+                    if (((Number) on).intValue() != 0) {
+                        values.add(name.equals("minecraft:multi_block") ? "minecraft:multi_block_part" : "minecraft:" + flag);
                     }
-                    if (enabled.getBoolean("facing_direction")) {
-                        out.add(property("minecraft:facing_direction", "down", "up", "south", "west", "north", "east"));
+                });
+            } else if (trait.get("enabled_states") instanceof Number bits && (bits.intValue() & 1) != 0) { // minecraft:connection
+                values.add("minecraft:cardinal_connections");
+            }
+            for (String value : values) {
+                for (BlockProperty<?> state : TraitStateTable.of(name, value)) {
+                    if (out.stream().anyMatch(p -> p.getString("name").equals(state.name()))) {
+                        continue; // added by another value too (cardinal_direction and corner_and_cardinal_direction)
                     }
-                    if (enabled.getBoolean("corner_and_cardinal_direction")) {
-                        out.add(property("minecraft:corner_and_cardinal_direction", "south", "west", "north", "east",
-                            "south_west", "north_west", "north_east", "south_east"));
+                    List<?> stateValues = state.values();
+                    if (trait.containsKey("part_count")) { // one minecraft:multi_block_part value per part
+                        stateValues = stateValues.subList(0, ((Number) trait.get("part_count")).intValue());
                     }
-                }
-                case "minecraft:placement_position" -> {
-                    if (enabled.getBoolean("block_face")) {
-                        out.add(property("minecraft:block_face", "down", "up", "north", "south", "west", "east"));
-                    }
-                    if (enabled.getBoolean("vertical_half")) {
-                        out.add(property("minecraft:vertical_half", "bottom", "top"));
-                    }
-                }
-                case "minecraft:multi_block" -> {
-                    if (enabled.getBoolean("multi_block")) {
-                        int parts = ((Number) trait.get("part_count")).intValue();
-                        List<Integer> values = new ArrayList<>();
-                        for (int i = 0; i < parts; i++) {
-                            values.add(i);
-                        }
-                        out.add(NbtMap.builder().putString("name", "minecraft:multi_block_part")
-                            .putList("enum", NbtType.INT, values).build());
-                    }
-                }
-                case "minecraft:connection" -> {
-                    if ((((Number) trait.get("enabled_states")).intValue() & 1) != 0) { // cardinal_connections
-                        for (String direction : List.of("north", "east", "south", "west")) {
-                            out.add(NbtMap.builder().putString("name", "minecraft:connection_" + direction)
-                                .putList("enum", NbtType.BYTE, (byte) 0, (byte) 1).build());
-                        }
-                    }
-                }
-                default -> {
+                    out.add(property(state.name(), stateValues));
                 }
             }
         }
         return out;
     }
 
-    private static NbtMap property(String name, String... values) {
-        return NbtMap.builder().putString("name", name).putList("enum", NbtType.STRING, values).build();
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static NbtMap property(String name, List<?> values) {
+        NbtType type = values.getFirst() instanceof Byte ? NbtType.BYTE : values.getFirst() instanceof Integer ? NbtType.INT : NbtType.STRING;
+        return NbtMap.builder().putString("name", name).putList("enum", type, (List) values).build();
     }
 
     private static void expand(String name, List<NbtMap> properties, int index, Map<String, Object> current, List<NbtMap> out) {

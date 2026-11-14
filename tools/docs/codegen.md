@@ -77,9 +77,10 @@ Rules:
   value. The client adds them, so no capture's wire shows them: the names come from the docs' "adds state" notes (a
   value adds the state of its name; the one value naming no state adds the states no value names), the values from the
   vanilla state of the same name (`constants-history.json`, which must match the docs' values), and the default (first
-  value) is checked against the hashes BDS sent for the default states of the capture add-on's trait blocks
-  (`data/bds/<build>/addon/creative_items.json.gz`); a differing hash fails the inference. Each case says whether its
-  state is verified.
+  value) is checked against the hashes BDS sent in the creative inventory of the spec capture
+  (`data/bds/<build>/spec/custom_creative_items.json.gz`), which has a block for every combination of every trait's
+  `enabled_states`; a differing hash fails the inference. Each case says whether its state is verified. Only the
+  default is: BDS sends no hash of another state.
 
 ## Behaviour keys
 

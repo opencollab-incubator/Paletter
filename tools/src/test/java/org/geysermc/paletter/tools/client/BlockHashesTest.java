@@ -1,20 +1,31 @@
 package org.geysermc.paletter.tools.client;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.geysermc.paletter.tools.data.Nbt;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
+import org.geysermc.paletter.tools.update.SpecCapture;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** Hashes BDS 1.26.63 sent in the creative inventory (block-network-ids-are-hashes=true). */
 class BlockHashesTest {
+    private static final Path SPEC = Path.of("../data/bds/1.26.63.1/spec");
 
     @Test
     void vanillaStates() {
@@ -23,24 +34,33 @@ class BlockHashesTest {
             "weirdo_direction", 0, "upside_down_bit", (byte) 0, "minecraft:corner", "none")))));
     }
 
+    /**
+     * Every custom block of the spec capture BDS put in the creative inventory, the trait variants (every combination of
+     * {@code enabled_states}) among them: the first state the client derives is the default BDS sent the hash of.
+     */
     @Test
-    void customStatesIncludeTraits() throws IOException {
-        Path file = Path.of("../data/bds/1.26.63.1/addon/custom_block_properties.nbt");
-        Map<String, NbtMap> blocks = new java.util.HashMap<>();
-        for (NbtMap block : Nbt.readGzip(file).getList("blocks", NbtType.COMPOUND)) {
-            blocks.put(block.getString("name"), block.getCompound("properties"));
+    void customDefaultStatesAreTheOnesBdsSent() throws IOException {
+        Map<String, Long> sent = new HashMap<>();
+        try (Reader reader = new InputStreamReader(new GZIPInputStream(Files.newInputStream(SPEC.resolve(SpecCapture.CREATIVE_ITEMS))), StandardCharsets.UTF_8)) {
+            for (JsonElement e : JsonParser.parseReader(reader).getAsJsonObject().getAsJsonArray("items")) {
+                JsonObject item = e.getAsJsonObject();
+                if (item.has("block_runtime_id")) {
+                    sent.put(item.get("id").getAsString(), item.get("block_runtime_id").getAsLong());
+                }
+            }
         }
-        // Default states (first of each property, then trait states) as the creative inventory sent them
-        assertDefault(blocks, "paletter:states_block", 3387770614L, 3 * 2 * 4 * 2 * 4 * 6 * 2);
-        assertDefault(blocks, "paletter:multi_block", 428099933L, 2);
-        assertDefault(blocks, "paletter:connection_trait_block", 3371306093L, 16);
-    }
-
-    private static void assertDefault(Map<String, NbtMap> blocks, String name, long hash, int count) {
-        List<NbtMap> states = BlockHashes.customStates(name, blocks.get(name));
-        assertEquals(count, states.size(), name);
-        assertEquals(hash, Integer.toUnsignedLong(BlockHashes.hash(states.getFirst())), name);
-        assertTrue(states.stream().map(BlockHashes::hash).distinct().count() == count, name);
+        int traitBlocks = 0;
+        for (NbtMap block : Nbt.readGzip(SPEC.resolve("custom_block_properties.nbt")).getList("blocks", NbtType.COMPOUND)) {
+            String name = block.getString("name");
+            if (!sent.containsKey(name)) {
+                continue;
+            }
+            List<NbtMap> states = BlockHashes.customStates(name, block.getCompound("properties"));
+            assertEquals(sent.get(name), Integer.toUnsignedLong(BlockHashes.hash(states.getFirst())), name);
+            assertEquals(states.size(), states.stream().map(BlockHashes::hash).distinct().count(), name);
+            traitBlocks += block.getCompound("properties").containsKey("traits") ? 1 : 0;
+        }
+        assertTrue(traitBlocks >= 7 + 3 + 1 + 1, "a block per combination of every trait's enabled_states: " + traitBlocks);
     }
 
     private static NbtMap state(String name, Map<String, Object> states) {

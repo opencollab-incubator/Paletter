@@ -13,6 +13,7 @@ import org.geysermc.paletter.block.BlockHashes;
 import org.geysermc.paletter.tools.Layout;
 import org.geysermc.paletter.tools.data.Nbt;
 import org.geysermc.paletter.tools.model.Model;
+import org.geysermc.paletter.tools.update.SpecCapture;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -37,13 +38,15 @@ import java.util.zip.GZIPInputStream;
  * The client adds them; the wire carries only the trait, so the spec captures do not show them. They are derived from:
  * <ul>
  *     <li><b>names</b>: the docs' "adds state" notes of the trait. A value of {@code enabled_states} adds the state of its own
- *     name; the one value that names no state adds the states that no value names ({@code minecraft:cardinal_connections}
- *     the four {@code connection_*}). Anything else fails;</li>
+ *     name, a value naming states by parts the states of its parts ({@code minecraft:corner_and_cardinal_direction}:
+ *     {@code minecraft:corner} and {@code minecraft:cardinal_direction}, as the hash BDS sent says); the one value that
+ *     names no state adds the states that no value names ({@code minecraft:cardinal_connections} the four
+ *     {@code connection_*}). Anything else fails;</li>
  *     <li><b>values</b>: those of the vanilla state of the same name ({@code constants-history.json}, in BDS's palette order),
  *     which must be the docs' values; a state no vanilla block has keeps the docs' values in their order;</li>
  *     <li><b>default</b> (the first value): verified where BDS sent the hash of a default state that has the state: the
- *     creative inventory of the capture add-on ({@code data/bds/<build>/addon}) holds custom blocks with traits. A hash
- *     that differs from the table's default state fails the inference.</li>
+ *     creative inventory of a spec capture ({@code data/bds/<build>/spec}) holds one block per combination of every
+ *     trait's {@code enabled_states}. A hash that differs from the table's default state fails the inference.</li>
  * </ul>
  */
 final class TraitStateTable {
@@ -121,9 +124,13 @@ final class TraitStateTable {
         for (JsonElement e : enabled.enumValues()) {
             String value = e.getAsString();
             State state = documented.get(value);
+            List<String> parts = namedParts(value, documented.keySet());
             if (state != null) {
                 byValue.put(value, List.of(state));
                 unnamed.remove(value);
+            } else if (parts != null) {
+                byValue.put(value, parts.stream().map(documented::get).toList());
+                parts.forEach(unnamed::remove);
             } else if (unmatched != null) {
                 throw new IllegalStateException(trait.id() + ": enabled_states " + unmatched + " and " + value
                     + " name no state, so which adds what is open");
@@ -140,6 +147,20 @@ final class TraitStateTable {
             throw new IllegalStateException(trait.id() + ": no enabled_states value adds " + unnamed);
         }
         return byValue;
+    }
+
+    /**
+     * The states a value names by parts ({@code minecraft:corner_and_cardinal_direction}: {@code minecraft:corner} and
+     * {@code minecraft:cardinal_direction}), or null unless every part is a documented state.
+     */
+    static List<String> namedParts(String value, Set<String> documented) {
+        int colon = value.indexOf(':');
+        String[] parts = value.substring(colon + 1).split("_and_");
+        if (parts.length < 2) {
+            return null;
+        }
+        List<String> names = java.util.Arrays.stream(parts).map(part -> value.substring(0, colon + 1) + part).toList();
+        return documented.containsAll(names) ? names : null;
     }
 
     private static State state(Model.Component trait, String name, String docsType, List<String> docsValues, JsonObject history) {
@@ -184,22 +205,21 @@ final class TraitStateTable {
     }
 
     /**
-     * Compares the default state of every custom block with traits in a capture of the capture add-on with the hash BDS
-     * sent for it in the creative inventory.
+     * Compares the default state of every trait variant BDS accepted in a spec capture ({@code data/bds/<build>/spec}: one
+     * variant per combination of {@code enabled_states}) with the hash BDS sent for it in the creative inventory.
      *
      * @return state name -> where its default is verified
      */
     private static Map<String, String> verify(Path root, Map<String, Map<String, List<State>>> table) throws IOException {
         Map<String, String> verified = new TreeMap<>();
-        Path blocks = root.resolve(Layout.CAPTURE_ADDON).resolve("behavior_pack/blocks");
         List<Path> captures;
         try (Stream<Path> builds = Files.list(root.resolve(Layout.BDS))) {
-            captures = builds.map(build -> build.resolve("addon")).filter(dir -> Files.exists(dir.resolve("creative_items.json.gz"))).sorted().toList();
+            captures = builds.map(build -> build.resolve("spec")).filter(dir -> Files.exists(dir.resolve(SpecCapture.CREATIVE_ITEMS))).sorted().toList();
         }
         for (Path capture : captures) {
             String build = capture.getParent().getFileName().toString();
             Map<String, Long> sent = new LinkedHashMap<>();
-            try (Reader reader = new InputStreamReader(new GZIPInputStream(Files.newInputStream(capture.resolve("creative_items.json.gz"))), StandardCharsets.UTF_8)) {
+            try (Reader reader = new InputStreamReader(new GZIPInputStream(Files.newInputStream(capture.resolve(SpecCapture.CREATIVE_ITEMS))), StandardCharsets.UTF_8)) {
                 for (JsonElement e : JsonParser.parseReader(reader).getAsJsonObject().getAsJsonArray("items")) {
                     JsonObject item = e.getAsJsonObject();
                     if (item.has("block_runtime_id")) {
@@ -207,35 +227,41 @@ final class TraitStateTable {
                     }
                 }
             }
+            Map<String, JsonObject> traitVariants = new LinkedHashMap<>();
+            for (JsonElement e : JsonParser.parseString(Files.readString(capture.resolve("variants.json"), StandardCharsets.UTF_8)).getAsJsonArray()) {
+                JsonObject v = e.getAsJsonObject();
+                if (v.get("component").getAsString().startsWith("block:trait:") && v.get("json") instanceof JsonObject json
+                    && json.get("enabled_states") instanceof JsonArray) {
+                    traitVariants.put(v.get("identifier").getAsString(), v);
+                }
+            }
             for (NbtMap block : Nbt.read(capture.resolve("custom_block_properties.nbt")).getList("blocks", NbtType.COMPOUND)) {
                 String name = block.getString("name");
-                NbtMap properties = block.getCompound("properties");
-                Path file = blocks.resolve(name.substring(name.indexOf(':') + 1) + ".json");
-                if (!properties.containsKey("traits") || !sent.containsKey(name) || !Files.exists(file)) {
+                JsonObject variant = traitVariants.get(name);
+                if (variant == null || !sent.containsKey(name)) {
                     continue;
                 }
-                JsonObject traits = JsonParser.parseString(Files.readString(file)).getAsJsonObject().getAsJsonObject("minecraft:block")
-                    .getAsJsonObject("description").getAsJsonObject("traits");
+                String trait = variant.get("component").getAsString().substring("block:trait:".length());
                 NbtMapBuilder states = NbtMap.builder();
-                for (NbtMap property : properties.getList("properties", NbtType.COMPOUND, List.of())) {
+                for (NbtMap property : block.getCompound("properties").getList("properties", NbtType.COMPOUND, List.of())) {
                     states.put(property.getString("name"), ((NbtList<?>) property.get("enum")).getFirst());
                 }
                 List<String> added = new ArrayList<>();
-                for (Map.Entry<String, JsonElement> trait : traits.entrySet()) {
-                    for (JsonElement value : trait.getValue().getAsJsonObject().getAsJsonArray("enabled_states")) {
-                        for (State state : table.get(trait.getKey()).get(value.getAsString())) {
-                            states.put(state.name(), state.first());
-                            added.add(state.name());
-                        }
+                for (JsonElement value : variant.getAsJsonObject("json").getAsJsonArray("enabled_states")) {
+                    for (State state : table.get(trait).getOrDefault(value.getAsString(), List.of())) {
+                        states.put(state.name(), state.first());
+                        added.add(state.name());
                     }
                 }
                 long hash = Integer.toUnsignedLong(BlockHashes.hash(NbtMap.builder().putString("name", name).putCompound("states", states.build()).build()));
                 if (hash != sent.get(name)) {
                     throw new IllegalStateException("BDS " + build + " sent hash " + sent.get(name) + " for the default state of " + name
-                        + ", the trait states' first values give " + hash + " (" + states.build() + "): data/model/mappings.json traitStates is wrong");
+                        + " (" + trait + " " + variant.get("label").getAsString() + "), the trait states' first values give " + hash
+                        + " (" + states.build() + "): data/model/mappings.json traitStates is wrong");
                 }
                 for (String state : added) {
-                    verified.putIfAbsent(state, "verified (name and default): BDS " + build + " sent hash " + hash + " for the default state of " + name);
+                    verified.putIfAbsent(state, "verified (name and default): BDS " + build + " sent hash " + hash + " for the default state of "
+                        + name + " (enabled_states " + variant.getAsJsonObject("json").getAsJsonArray("enabled_states") + ")");
                 }
             }
         }
