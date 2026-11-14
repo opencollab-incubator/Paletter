@@ -40,16 +40,21 @@ public record BdsDistribution(String version, boolean preview, String platform, 
      *                (including the patch) has to be known
      */
     public static BdsDistribution resolve(boolean preview, String version) throws IOException, InterruptedException {
-        String platform = (BdsServer.WINDOWS ? "win" : "linux") + (preview ? "-preview" : "");
+        return resolve(!BdsServer.WINDOWS, preview, version);
+    }
+
+    /** @param linux the Linux build (else the Windows one), whatever this OS is */
+    public static BdsDistribution resolve(boolean linux, boolean preview, String version) throws IOException, InterruptedException {
+        String platform = (linux ? "linux" : "win") + (preview ? "-preview" : "");
         String url = version != null
             ? "https://www.minecraft.net/bedrockdedicatedserver/bin-" + platform + "/bedrock-server-" + version + ".zip"
-            : newest(preview);
+            : newest(linux, preview);
         String file = url.substring(url.lastIndexOf('/') + 1);
         return new BdsDistribution(file.replace("bedrock-server-", "").replace(".zip", ""), preview, platform, url);
     }
 
-    private static String newest(boolean preview) throws IOException, InterruptedException {
-        String type = "serverBedrock" + (preview ? "Preview" : "") + (BdsServer.WINDOWS ? "Windows" : "Linux");
+    private static String newest(boolean linux, boolean preview) throws IOException, InterruptedException {
+        String type = "serverBedrock" + (preview ? "Preview" : "") + (linux ? "Linux" : "Windows");
         String links = HTTP.send(HttpRequest.newBuilder(URI.create(LINKS)).header("User-Agent", "Paletter").build(),
             HttpResponse.BodyHandlers.ofString()).body();
         for (JsonElement link : JsonParser.parseString(links).getAsJsonObject().getAsJsonObject("result").getAsJsonArray("links")) {

@@ -31,6 +31,7 @@ this section is their marker; the JSON captures also name their build in `bdsVer
 | Path in `bds/<build>/` | Captured from BDS by |
 |------------------------|----------------------|
 | `dump.json.gz` | `./gradlew :tools:run --args="bds-run ..."` (the Script API dump pack `addons/dump`), baseline of `update` |
+| `inventory.json` | `bds-inventory` (also run by `update`): the block components with their JSON keys, the item components and every Script API class and member, read from the strings of the Linux `bedrock_server` without running it; `update` reports what changed against the previous build |
 | `experiments.json` | `update` (experiment discovery on BDS) |
 | `education.json` | `education-capture` |
 | `vanilla/` | `capture` (the headless client against vanilla BDS; `compare-*.txt` is the output of `compare`) |

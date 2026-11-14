@@ -3,6 +3,7 @@ package org.geysermc.paletter.tools.update;
 import org.geysermc.paletter.tools.data.Nbt;
 import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsDump;
+import org.geysermc.paletter.tools.bds.BdsInventory;
 import org.geysermc.paletter.tools.bds.BdsRunner;
 import org.geysermc.paletter.tools.bds.BdsServer;
 import org.geysermc.paletter.tools.client.NetherNet;
@@ -192,6 +193,7 @@ public final class Update {
 
         // 4. Compare and update
         scriptApi(distribution, dump, runs);
+        inventory(cache, distribution);
         Staging staging = new Staging(work.resolve("staging"));
         if (runs.vanilla != null) {
             networkData(distribution, dump, runs, staging);
@@ -899,6 +901,34 @@ public final class Update {
         }
         if (!preview || importPreview) {
             stage(target, gzip(runs.dumpJson), "Script API baseline " + distribution.version());
+        }
+    }
+
+    /**
+     * The inventory of the build's Linux binary ({@link BdsInventory}: block and item components, Script API members) and what
+     * changed against the inventory of the previous build: new BDS properties show up here before anything reads them.
+     */
+    private void inventory(Path cache, BdsDistribution distribution) {
+        try {
+            JsonObject inventory = BdsInventory.read(root, distribution.version(), distribution.preview(), cache);
+            Path previous = BdsInventory.previous(bdsData, distribution.version());
+            if (previous == null) {
+                report.check(Report.Status.INFO, "BDS inventory", "no inventory of an older build to diff against");
+            } else {
+                String before = previous.getParent().getFileName().toString();
+                List<String> diff = BdsInventory.diff(BdsInventory.parse(previous), inventory);
+                report.check(diff.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "BDS inventory vs " + before,
+                    diff.isEmpty() ? "no new or removed properties" : diff.size() + " new or removed properties");
+                if (!diff.isEmpty()) {
+                    report.section("BDS inventory: BDS " + distribution.version() + " vs " + before, diff);
+                }
+            }
+            if (!preview || importPreview) {
+                stage(bdsData.resolve(distribution.version()).resolve(BdsInventory.FILE),
+                    BdsInventory.json(inventory).getBytes(StandardCharsets.UTF_8), "BDS inventory " + distribution.version());
+            }
+        } catch (Exception e) {
+            report.fail("BDS inventory", e);
         }
     }
 

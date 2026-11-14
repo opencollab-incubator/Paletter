@@ -6,6 +6,7 @@ import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
 import org.geysermc.paletter.internal.data.PaletteDataCodec;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.tools.bds.BdsDump;
+import org.geysermc.paletter.tools.bds.BdsInventory;
 import org.geysermc.paletter.tools.bds.BdsRunner;
 import org.geysermc.paletter.tools.client.Capture;
 import org.geysermc.paletter.tools.client.CaptureClient;
@@ -51,7 +52,7 @@ import java.util.concurrent.Callable;
  * repository. See tools/README.md for what each command does.
  */
 @Command(name = "paletter-tools", mixinStandardHelpOptions = true, subcommands = {
-    Cli.Import.class, Cli.BdsRun.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.SpecCaptureCommand.class,
+    Cli.Import.class, Cli.BdsRun.class, Cli.BdsInventoryCommand.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.SpecCaptureCommand.class,
     Cli.VerifyCommand.class, Cli.CheckData.class, Cli.BlockItemsCommand.class, Cli.RewriteCommand.class, Cli.DataRewriteCommand.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class, Cli.ExperimentMarksCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
@@ -193,6 +194,27 @@ public final class Cli implements Runnable {
                 throw new IllegalArgumentException("Missing --server or --download");
             }
             new BdsRunner(root().resolve(Layout.DUMP_ADDON)).run(dir, log, timeout);
+            return 0;
+        }
+    }
+
+    @Command(name = "bds-inventory", description = "Reads the strings of the Linux bedrock_server of a BDS build (downloaded into the cache, not run) "
+        + "and writes data/bds/<VERSION>/inventory.json: block components and their JSON keys, item components, every Script API class and "
+        + "member; prints what changed against the inventory of the previous build. Downloading BDS means accepting the Minecraft EULA.")
+    static final class BdsInventoryCommand extends Rooted implements Callable<Integer> {
+        @Option(names = "--bds", required = true, description = "BDS version, e.g. 1.26.63.1") String bds;
+        @Option(names = "--cache") Path cache;
+
+        @Override
+        public Integer call() throws Exception {
+            Path file = BdsInventory.write(root(), bds, cache);
+            Path previous = BdsInventory.previous(root().resolve(Layout.BDS), bds);
+            if (previous != null) {
+                List<String> diff = BdsInventory.diff(
+                    BdsInventory.parse(previous), BdsInventory.parse(file));
+                System.out.println(diff.size() + " changes against " + previous + (diff.isEmpty() ? "" : ":"));
+                diff.forEach(System.out::println);
+            }
             return 0;
         }
     }
