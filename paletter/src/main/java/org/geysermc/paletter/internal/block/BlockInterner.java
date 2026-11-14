@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Shares what {@link BlockHashes#HASHED} palettes of different versions have in common: vanilla
+ * Shares what hashed palettes of different versions have in common: vanilla
  * {@link RegisteredBlockState}s (a state has the same hash in every version) and pages of canonical id tables with equal
  * content. One per {@link org.geysermc.paletter.Paletter}.
  * <p>
