@@ -19,83 +19,83 @@ public final class BlockBehaviour {
      * <p>
      * Custom blocks set it with {@code minecraft:destructible_by_mining}.
      */
-    public static final BehaviourKey<Float> DESTROY_TIME = key("destroy_time", Float.class);
+    public static final FloatKey DESTROY_TIME = new FloatKey("destroy_time", BehaviourKey.Owner.BLOCK, 0);
 
-    public static final BehaviourKey<Float> EXPLOSION_RESISTANCE = key("explosion_resistance", Float.class);
+    public static final FloatKey EXPLOSION_RESISTANCE = new FloatKey("explosion_resistance", BehaviourKey.Owner.BLOCK, 1);
 
     /**
      * Friction of an entity standing on the block: 0.6 for most blocks, 0.98 ice, 0.989 blue ice.
      * <p>
      * Custom blocks set it with {@code minecraft:friction}.
      */
-    public static final BehaviourKey<Float> FRICTION = key("friction", Float.class);
+    public static final FloatKey FRICTION = new FloatKey("friction", BehaviourKey.Owner.BLOCK, 2);
 
-    public static final BehaviourKey<Boolean> SOLID = key("solid", Boolean.class);
+    public static final BooleanKey SOLID = new BooleanKey("solid", BehaviourKey.Owner.BLOCK, 3);
 
     /**
      * The boxes entities collide with, without neighbours or position offsets (see {@link BlockShape}).
      * <p>
      * Custom blocks set it with {@code minecraft:collision_box} and {@code minecraft:transformation}.
      */
-    public static final BehaviourKey<BlockShape> COLLISION_SHAPE = key("collision_shape", BlockShape.class);
+    public static final ObjectKey<BlockShape> COLLISION_SHAPE = new ObjectKey<>("collision_shape", BehaviourKey.Owner.BLOCK, 4, BlockShape.class);
 
     /**
      * The selection outline, one box, without the random offset some plants have.
      * <p>
      * Custom blocks set it with {@code minecraft:selection_box} and {@code minecraft:transformation}.
      */
-    public static final BehaviourKey<BlockShape> OUTLINE_SHAPE = key("outline_shape", BlockShape.class);
+    public static final ObjectKey<BlockShape> OUTLINE_SHAPE = new ObjectKey<>("outline_shape", BehaviourKey.Owner.BLOCK, 5, BlockShape.class);
 
     /**
      * Custom blocks set it with {@code minecraft:light_emission}.
      */
-    public static final BehaviourKey<Integer> LIGHT_EMISSION = key("light_emission", Integer.class);
+    public static final IntKey LIGHT_EMISSION = new IntKey("light_emission", BehaviourKey.Owner.BLOCK, 6);
 
     /**
      * Custom blocks set it with {@code minecraft:light_dampening}.
      */
-    public static final BehaviourKey<Integer> LIGHT_DAMPENING = key("light_dampening", Integer.class);
+    public static final IntKey LIGHT_DAMPENING = new IntKey("light_dampening", BehaviourKey.Owner.BLOCK, 7);
 
     /**
      * Whether a liquid source can share the block (waterlogging).
      */
-    public static final BehaviourKey<Boolean> CAN_CONTAIN_LIQUID = key("can_contain_liquid", Boolean.class);
+    public static final BooleanKey CAN_CONTAIN_LIQUID = new BooleanKey("can_contain_liquid", BehaviourKey.Owner.BLOCK, 8);
 
     /**
      * What flowing liquid does to the block: {@code BLOCKING}, {@code BROKEN}, {@code POPPED}, {@code NO_REACTION}.
      */
-    public static final BehaviourKey<String> LIQUID_REACTION = key("liquid_reaction", String.class);
+    public static final ObjectKey<String> LIQUID_REACTION = new ObjectKey<>("liquid_reaction", BehaviourKey.Owner.BLOCK, 9, String.class);
 
-    public static final BehaviourKey<Boolean> REQUIRES_CORRECT_TOOL = key("requires_correct_tool", Boolean.class);
+    public static final BooleanKey REQUIRES_CORRECT_TOOL = new BooleanKey("requires_correct_tool", BehaviourKey.Owner.BLOCK, 10);
 
     /**
      * Map colour as {@code 0xRRGGBBAA}.
      */
-    public static final BehaviourKey<Integer> MAP_COLOR = key("map_color", Integer.class);
+    public static final IntKey MAP_COLOR = new IntKey("map_color", BehaviourKey.Owner.BLOCK, 11);
 
     /**
      * Biome tint of the texture, e.g. {@code None}, {@code Grass}, {@code Foliage}.
      */
-    public static final BehaviourKey<String> TINT_METHOD = key("tint_method", String.class);
+    public static final ObjectKey<String> TINT_METHOD = new ObjectKey<>("tint_method", BehaviourKey.Owner.BLOCK, 12, String.class);
 
     /**
      * Chance modifier of catching fire.
      */
-    public static final BehaviourKey<Integer> FLAME_ODDS = key("flame_odds", Integer.class);
+    public static final IntKey FLAME_ODDS = new IntKey("flame_odds", BehaviourKey.Owner.BLOCK, 13);
 
     /**
      * Chance modifier of burning away.
      */
-    public static final BehaviourKey<Integer> BURN_ODDS = key("burn_odds", Integer.class);
+    public static final IntKey BURN_ODDS = new IntKey("burn_odds", BehaviourKey.Owner.BLOCK, 14);
 
-    public static final BehaviourKey<Float> TRANSLUCENCY = key("translucency", Float.class);
+    public static final FloatKey TRANSLUCENCY = new FloatKey("translucency", BehaviourKey.Owner.BLOCK, 15);
 
-    public static final BehaviourKey<Float> THICKNESS = key("thickness", Float.class);
+    public static final FloatKey THICKNESS = new FloatKey("thickness", BehaviourKey.Owner.BLOCK, 16);
 
     /**
      * Whether entities climb the block. No bundled source yet (needs the native capture): always null.
      */
-    public static final BehaviourKey<Boolean> CLIMBABLE = key("climbable", Boolean.class);
+    public static final BooleanKey CLIMBABLE = new BooleanKey("climbable", BehaviourKey.Owner.BLOCK, 17);
 
     private static final List<BehaviourKey<?>> KEYS = List.of(DESTROY_TIME, EXPLOSION_RESISTANCE,
             FRICTION, SOLID, COLLISION_SHAPE, OUTLINE_SHAPE, LIGHT_EMISSION, LIGHT_DAMPENING,
@@ -103,10 +103,6 @@ public final class BlockBehaviour {
             FLAME_ODDS, BURN_ODDS, TRANSLUCENCY, THICKNESS, CLIMBABLE);
 
     private BlockBehaviour() {
-    }
-
-    private static <T> BehaviourKey<T> key(String name, Class<T> type) {
-        return new BehaviourKey<>(name, BehaviourKey.Owner.BLOCK, type);
     }
 
     /**

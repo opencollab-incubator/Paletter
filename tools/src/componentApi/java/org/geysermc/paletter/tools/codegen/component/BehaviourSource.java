@@ -99,6 +99,16 @@ final class BehaviourSource {
         return key.type().equals("BlockShape") ? ClassName.get(API_PKG, "BlockShape") : ClassName.get("java.lang", key.type());
     }
 
+    /** @return the key class of a key: {@code FloatKey}, {@code IntKey} and {@code BooleanKey} return primitives */
+    private static TypeName keyType(Key key) {
+        return switch (key.type()) {
+            case "Float" -> ClassName.get(API_PKG, "FloatKey");
+            case "Integer" -> ClassName.get(API_PKG, "IntKey");
+            case "Boolean" -> ClassName.get(API_PKG, "BooleanKey");
+            default -> ParameterizedTypeName.get(ClassName.get(API_PKG, "ObjectKey"), type(key));
+        };
+    }
+
     // ---- BlockBehaviour, ItemBehaviour ---------------------------------------------------------------------------------
 
     private static TypeSpec constants(Owner owner, List<Key> all) {
@@ -107,9 +117,13 @@ final class BehaviourSource {
         TypeSpec.Builder type = TypeSpec.classBuilder(constantsClass(owner)).addModifiers(Modifier.PUBLIC, Modifier.FINAL)
             .addJavadoc("$L\n\n@since 0.1.0\n", owner == Owner.BLOCK ? BehaviourKeys.BLOCK_DOC : BehaviourKeys.ITEM_DOC);
         for (Key key : keys) {
-            FieldSpec.Builder field = FieldSpec.builder(ParameterizedTypeName.get(BEHAVIOUR_KEY, type(key)), constant(key),
-                    Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                .initializer("key($S, $T.class)", key.name(), type(key));
+            // the ordinal is the position among every key, block and item ones alike
+            CodeBlock initializer = key.type().equals("Float") || key.type().equals("Integer") || key.type().equals("Boolean")
+                ? CodeBlock.of("new $T($S, $T.Owner.$L, $L)", keyType(key), key.name(), BEHAVIOUR_KEY, owner.name(), all.indexOf(key))
+                : CodeBlock.of("new $T<>($S, $T.Owner.$L, $L, $T.class)", ClassName.get(API_PKG, "ObjectKey"), key.name(), BEHAVIOUR_KEY,
+                    owner.name(), all.indexOf(key), type(key));
+            FieldSpec.Builder field = FieldSpec.builder(keyType(key), constant(key), Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                .initializer(initializer);
             String doc = doc(key);
             if (!doc.isEmpty()) {
                 field.addJavadoc("$L\n", doc);
@@ -123,11 +137,6 @@ final class BehaviourSource {
         type.addField(FieldSpec.builder(ParameterizedTypeName.get(ClassName.get(List.class), ANY_KEY), "KEYS",
             Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL).initializer(list.add(")").build()).build());
         type.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build());
-        TypeVariableName t = TypeVariableName.get("T");
-        type.addMethod(MethodSpec.methodBuilder("key").addModifiers(Modifier.PRIVATE, Modifier.STATIC).addTypeVariable(t)
-            .returns(ParameterizedTypeName.get(BEHAVIOUR_KEY, t)).addParameter(String.class, "name")
-            .addParameter(ParameterizedTypeName.get(ClassName.get(Class.class), t), "type")
-            .addStatement("return new $T<>(name, $T.Owner.$L, type)", BEHAVIOUR_KEY, BEHAVIOUR_KEY, owner.name()).build());
         type.addMethod(MethodSpec.methodBuilder("keys").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
             .addJavadoc("@return every $L key\n", plural)
             .returns(ApiSource.nonNull(ParameterizedTypeName.get(ClassName.get(List.class), ANY_KEY))).addStatement("return KEYS").build());

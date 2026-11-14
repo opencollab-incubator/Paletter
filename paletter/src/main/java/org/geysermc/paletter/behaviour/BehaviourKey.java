@@ -7,12 +7,14 @@ import java.util.Objects;
 /**
  * A typed behaviour property of blocks or items: what Bedrock Dedicated Server knows about vanilla content but never
  * sends to clients (friction, destroy time, collision shapes, attack damage, ...). The keys are the constants of
- * {@link BlockBehaviour} and {@link ItemBehaviour}; {@link Behaviour} looks their values up.
+ * {@link BlockBehaviour} and {@link ItemBehaviour}. Their type says what {@code get} returns: a {@link FloatKey} a
+ * {@code float}, an {@link IntKey} an {@code int}, a {@link BooleanKey} a {@code boolean} (none of them boxed) and an
+ * {@link ObjectKey} its object.
  *
  * @param <T> the value type: {@link Float}, {@link Integer}, {@link Boolean}, {@link String} or {@link BlockShape}
  * @since 0.1.0
  */
-public final class BehaviourKey<T> {
+public abstract sealed class BehaviourKey<T> permits FloatKey, IntKey, BooleanKey, ObjectKey {
     /** Whose property a key is. */
     public enum Owner {
         BLOCK,
@@ -22,11 +24,13 @@ public final class BehaviourKey<T> {
     private final String name;
     private final Owner owner;
     private final Class<T> type;
+    private final int ordinal;
 
-    BehaviourKey(String name, Owner owner, Class<T> type) {
+    BehaviourKey(String name, Owner owner, Class<T> type, int ordinal) {
         this.name = Objects.requireNonNull(name);
         this.owner = Objects.requireNonNull(owner);
         this.type = Objects.requireNonNull(type);
+        this.ordinal = ordinal;
     }
 
     /**
@@ -42,6 +46,14 @@ public final class BehaviourKey<T> {
 
     public @NonNull Class<T> type() {
         return type;
+    }
+
+    /**
+     * @return the position of the key among every block and item key, {@code 0} to their count - 1: where the values of
+     * the key are kept
+     */
+    public int ordinal() {
+        return ordinal;
     }
 
     @Override
