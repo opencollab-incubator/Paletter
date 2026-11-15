@@ -100,14 +100,15 @@ public final class ExperimentMarks {
 
     private static List<String> collect(Path root, boolean write) throws IOException {
         Path data = root.resolve(ConstantsGenerator.DATA);
-        List<ConstantsGenerator.Bundle> releases = ConstantsGenerator.readIndex(data).stream().filter(b -> !b.preview()).toList();
+        // A preview's record marks the preview, not the release before it
+        List<ConstantsGenerator.Bundle> bundles = ConstantsGenerator.readIndex(data);
         Map<String, JsonObject> records = new TreeMap<>();
         try (Stream<Path> captures = Files.list(root.resolve(Layout.BDS))) {
             for (Path capture : captures.filter(Files::isDirectory).sorted().toList()) {
                 Path file = capture.resolve("experiments.json");
                 if (Files.exists(file)) {
                     JsonObject record = ConstantsGenerator.readJson(file);
-                    String release = ConstantsGenerator.Sources.releaseOf(releases, record.get("protocol").getAsInt());
+                    String release = ConstantsGenerator.Sources.releaseOf(bundles, record.get("protocol").getAsInt());
                     if (release != null) {
                         records.put(release, record);
                     }
