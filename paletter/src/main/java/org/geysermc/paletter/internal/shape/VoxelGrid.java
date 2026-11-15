@@ -12,7 +12,7 @@ import java.util.TreeSet;
  * A voxel shape as Bedrock keeps and sends it: per axis the sorted coordinates of a grid (in blocks), and which of the
  * cells between them are filled. Immutable, with value equality: BDS keeps one shape per distinct grid.
  * <p>
- * Every rule here is what BDS does, read from captures (data/bds/WIRE-NOTES.md, "Voxel shapes") and checked by the
+ * Every rule here is what BDS does, read from captures (docs/wire-notes.md, "Voxel shapes") and checked by the
  * conformance test of the tools against every captured build:
  * <ul>
  *     <li>a grid is minimal: no coordinate with the same cells on both sides, none outside the filled cells;</li>

@@ -292,7 +292,7 @@ class VanillaConstantsTest {
         assertEquals(Ids.item(palette, ItemVariant.of("example:lamp")), Ids.item(palette, lamp.itemType()));
     }
 
-    /** The README example. */
+    /** Constants are accepted wherever an identifier is. */
     @Test
     void constantsWhereIdentifiersAreAccepted() {
         PaletteLayer layer = PaletteLayer.builder("server")

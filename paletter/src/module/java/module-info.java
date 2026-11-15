@@ -1,7 +1,7 @@
 /**
- * Paletter: Bedrock item and block palettes. The exported packages are the API, versioned by semantic versioning (see
- * {@code API.md}); everything else, in particular {@code org.geysermc.paletter.internal.*} (the encoders and the generated
- * wire shapes), is internal and may change in any release.
+ * Paletter: Bedrock item and block palettes. The exported packages are the API (see {@code docs/api.md}); before 1.0
+ * it may change in any release. Everything else, in particular {@code org.geysermc.paletter.internal.*} (the encoders
+ * and the generated wire shapes), is internal.
  * <p>
  * This descriptor is the single source of truth for what is API: the build compiles it against the main classes
  * ({@code :paletter:compileModuleInfo}), the API boundary test reads its exports, and the binary compatibility check

@@ -1,5 +1,5 @@
 {
-  "_comment": "Hand-written inputs of the capture add-on generator. Not a source of shapes: errata only ADD types/fields the docs omit or get wrong (the docs-literal form is generated too, so BDS confirms each erratum); samples are values that must name existing content; requires are companions BDS needs (from its content log); together is what a key needs next to it, by path or by name (material_instances alpha_masked_tint, on every face: BDS's own texts say \"'alpha_masked_tint' requires a non-default 'tint_method'\" and \"requires 'render_method' to be 'opaque'\", bedrock_server 1.26.63.1); a selection_box origin gets a size that keeps the box inside the block (BDS: \"Invalid box size \"origin\" + \"size\", must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,16,8)\").",
+  "_comment": "Hand-written inputs of the add-on generator: errata, samples, companions and replacements BDS needs. See docs/data-pipeline.md.",
   "formatVersion": "1.26.60",
   "filler": {"minecraft:max_stack_size": 64},
   "errata": [

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Builds the voxel shape registry of a palette the way BDS builds its own (data/bds/WIRE-NOTES.md, "Voxel shapes"):
+ * Builds the voxel shape registry of a palette the way BDS builds its own (docs/wire-notes.md, "Voxel shapes"):
  * <ol>
  *     <li>the named vanilla shapes, in the order of the bundled capture;</li>
  *     <li>the custom shapes in the order they were registered (BDS: the order of their file names). A shape equal to one

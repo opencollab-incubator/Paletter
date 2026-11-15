@@ -49,7 +49,7 @@ import java.util.concurrent.Callable;
 /**
  * The one command line of the tooling: {@code ./gradlew :tools:run --args="<command> ..."}. Paths are relative to the
  * working directory, which is the repository root for Gradle; {@code --root} overrides it where a command reads the
- * repository. See tools/README.md for what each command does.
+ * repository. See docs/data-pipeline.md for what each command does.
  */
 @Command(name = "paletter-tools", mixinStandardHelpOptions = true, subcommands = {
     Cli.Import.class, Cli.BdsRun.class, Cli.BdsInventoryCommand.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.SpecCaptureCommand.class,
@@ -457,7 +457,7 @@ public final class Cli implements Runnable {
     // ---------------------------------------------------------------------------------------------------------------
     // The Bedrock capture client
 
-    @Command(name = "capture", description = "Records what a Bedrock Dedicated Server sends a client. See data/bds/README.md.")
+    @Command(name = "capture", description = "Records what a Bedrock Dedicated Server sends a client. See docs/wire-notes.md.")
     static final class CaptureCommand implements Callable<Integer> {
         @Option(names = "--out", required = true) Path out;
         @Option(names = "--custom-out") Path customOut;

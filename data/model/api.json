@@ -1,5 +1,5 @@
 {
-  "_comment": "Hand-written Java shaping of the generated component API (see codegen/README.md). Never a source of wire behaviour.",
+  "_comment": "Hand-written Java shaping of the generated component API; never a source of wire behaviour. See docs/data-pipeline.md.",
   "rootLists": {
     "block:minecraft:collision_box": "boxes"
   },

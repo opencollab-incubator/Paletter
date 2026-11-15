@@ -11,8 +11,8 @@ import java.util.List;
  * as missing unless it enables the toggle ({@code VanillaContent#experiments}), so ordinary fallbacks apply to it; a block
  * is gated with its item (the block to item relation).
  * <p>
- * Recorded by the generator's {@code update} (one capture per toggle against one without any, see README.md
- * "Experiments").
+ * Recorded by the generator's {@code update} (one capture per toggle against one without any, see
+ * docs/data-pipeline.md, "Experiments").
  *
  * @param items item identifiers the toggle adds to the item registry or the Script API item types, changes
  *              (version, component based flag or components) or first puts into the creative inventory

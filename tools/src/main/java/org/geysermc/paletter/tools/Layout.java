@@ -1,6 +1,6 @@
 package org.geysermc.paletter.tools;
 
-/** Where the repository keeps its non-code inputs, relative to its root. See data/README.md. */
+/** Where the repository keeps its non-code inputs, relative to its root. See docs/data-pipeline.md. */
 public final class Layout {
     /** The component model and the generators' inputs: components.json, mappings.json, ... */
     public static final String MODEL = "data/model";

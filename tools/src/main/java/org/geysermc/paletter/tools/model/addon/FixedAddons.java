@@ -139,7 +139,7 @@ public final class FixedAddons {
 
     /**
      * Writes the creative order probe add-on ({@code behavior_pack} only) into {@code out}: custom items and blocks with every
-     * kind of menu_category placement, to see where BDS puts them in the creative inventory (data/bds/CREATIVE-ORDER.md).
+     * kind of menu_category placement, to see where BDS puts them in the creative inventory (docs/wire-notes.md).
      * Item file names are deliberately unrelated to the identifiers; BDS numbers custom blocks in descending file name order
      * and Paletter (no files) by descending identifier, so the block files are named b&lt;rank in identifier order&gt;.
      */

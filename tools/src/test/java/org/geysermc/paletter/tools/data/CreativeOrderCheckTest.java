@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Paletter's default creative ordering against what BDS 1.26.63.1 sent for three add-ons (see data/bds/CREATIVE-ORDER.md):
+ * Paletter's default creative ordering against what BDS 1.26.63.1 sent for three add-ons (see docs/wire-notes.md):
  * the capture add-on (66 blocks, 84 items, with experiments), the creative order probe (every kind of menu category
  * placement) and the large probe (700 blocks, so BDS's block map has more than 512 buckets).
  */

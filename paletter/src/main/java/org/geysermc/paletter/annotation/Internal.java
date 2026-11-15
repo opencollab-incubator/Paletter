@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * excluded from the binary compatibility check. Packages under {@code org.geysermc.paletter.internal} are internal as a
  * whole and carry no annotation.
  * <p>
- * Consumers must not use anything marked {@code @Internal}. See {@code API.md}.
+ * Consumers must not use anything marked {@code @Internal}. See {@code docs/api.md}.
  *
  * @since 0.1.0
  */

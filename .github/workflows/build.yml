@@ -17,7 +17,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v6
-      # build includes :codegen:checkComponents (generated component types up to date) and all tests
+      # build includes :tools:checkComponentApi (generated component API up to date) and all tests
       - run: ./gradlew build
       - name: Every captured bit and wire path is explained
         run: ./gradlew :tools:run --args="check-mappings --strict"

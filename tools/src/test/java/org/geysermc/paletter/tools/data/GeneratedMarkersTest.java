@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Everything generated says so, and names its generator: generated sources, generated JSON ({@code _generated} first key),
  * bundled data, the API dump and the packs; hand-written inputs carry no such marker; captures from BDS are the
- * directories of {@code data/bds}, described in {@code data/README.md}.
+ * directories of {@code data/bds}, described in {@code docs/data-pipeline.md}.
  */
 class GeneratedMarkersTest {
     private static final Path ROOT = Path.of(System.getProperty("paletter.root", ".."));

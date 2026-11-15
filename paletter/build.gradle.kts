@@ -19,7 +19,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
-// Generated sources (component API, vanilla constants) live beside the hand-written ones; see tools/README.md
+// Generated sources (component API, vanilla constants) live beside the hand-written ones; see docs/data-pipeline.md
 sourceSets.main {
     java.srcDir("src/generated/java")
 }
@@ -42,7 +42,7 @@ publishing {
     }
 }
 
-// API boundary and compatibility; see API.md.
+// API boundary and compatibility; see docs/api.md.
 //
 // src/module/java/module-info.java declares the API: its exports are the API packages. It is compiled against the main
 // classes to validate it, but not packaged (Cloudburst's split fastutil packages keep any module graph from resolving),
@@ -84,7 +84,7 @@ val compileModuleInfo = tasks.register<JavaCompile>("compileModuleInfo") {
 // The API dump: api/paletter.api lists every public and protected type, field, constant and method of the exported packages
 // (without @Internal and internal.*), generated from the compiled classes by the tools module (apiDump source set). It is
 // committed, so a change of the API shows in review: `./gradlew :paletter:apiDump` regenerates it, `apiCheck` (part of
-// `check`) fails with the difference when it is stale. See API.md.
+// `check`) fails with the difference when it is stale. See docs/api.md.
 evaluationDependsOn(":tools")
 val apiDumpFile = file("api/paletter.api")
 val apiDumpTool = project(":tools").extensions.getByType<SourceSetContainer>()["apiDump"].runtimeClasspath

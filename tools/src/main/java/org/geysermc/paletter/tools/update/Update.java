@@ -66,7 +66,7 @@ import java.util.zip.GZIPOutputStream;
 /**
  * {@code update}: pulls the newest BDS of a channel, runs the Script API dump and the network captures, compares the
  * result with the committed data and either updates the repository or (with {@code --verify-only}) only reports.
- * See README.md, "Updating data".
+ * See docs/data-pipeline.md, "Updating for a new BDS build".
  */
 public final class Update {
     /**
@@ -309,7 +309,7 @@ public final class Update {
         final ExperimentRun experiments = new ExperimentRun();
     }
 
-    /** What the experiment step found; see README.md, "Experiments". */
+    /** What the experiment step found; see docs/data-pipeline.md, "Experiments". */
     static final class ExperimentRun {
         /** discovered, --experiments, or fallback (discovery failed) */
         String source = "fallback";
@@ -1042,7 +1042,7 @@ public final class Update {
     /** Add-on definitions BDS rejects (content log errors and warnings) against the committed list. */
     /**
      * Paletter's default creative ordering ({@code CreativeOrdering.BDS}) against what BDS sent for the add-on and the
-     * creative order probe (data/bds/CREATIVE-ORDER.md). A difference means BDS changed where it puts custom content.
+     * creative order probe (docs/wire-notes.md). A difference means BDS changed where it puts custom content.
      */
     private void creativeOrder(Runs runs) throws IOException {
         if (runs.existing == null) {
@@ -1071,7 +1071,7 @@ public final class Update {
                 result.differences().forEach(difference -> lines.add("- `" + difference.replace("`", "'") + "`"));
                 report.section("Creative order: " + capture[0], lines);
                 report.todos.add("Creative order: BDS changed where it puts custom items/blocks (" + capture[0] + "); see "
-                    + "data/bds/CREATIVE-ORDER.md, update CreativeOrdering.BDS and the committed probe captures");
+                    + "docs/wire-notes.md, update CreativeOrdering.BDS and the committed probe captures");
             }
         }
     }

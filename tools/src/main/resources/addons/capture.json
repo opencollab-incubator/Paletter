@@ -1677,84 +1677,84 @@
     },
     {
       "name": "unit_cube",
-      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "skip": "rejected by BDS 1.26.63 in every format version (see docs/wire-notes.md)",
       "components": {
         "minecraft:unit_cube": {}
       }
     },
     {
       "name": "queued_ticking",
-      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "skip": "rejected by BDS 1.26.63 in every format version (see docs/wire-notes.md)",
       "components": {
         "minecraft:queued_ticking": {}
       }
     },
     {
       "name": "random_ticking",
-      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "skip": "rejected by BDS 1.26.63 in every format version (see docs/wire-notes.md)",
       "components": {
         "minecraft:random_ticking": {}
       }
     },
     {
       "name": "on_fall_on",
-      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "skip": "rejected by BDS 1.26.63 in every format version (see docs/wire-notes.md)",
       "components": {
         "minecraft:on_fall_on": {}
       }
     },
     {
       "name": "on_interact",
-      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "skip": "rejected by BDS 1.26.63 in every format version (see docs/wire-notes.md)",
       "components": {
         "minecraft:on_interact": {}
       }
     },
     {
       "name": "on_placed",
-      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "skip": "rejected by BDS 1.26.63 in every format version (see docs/wire-notes.md)",
       "components": {
         "minecraft:on_placed": {}
       }
     },
     {
       "name": "on_player_destroyed",
-      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "skip": "rejected by BDS 1.26.63 in every format version (see docs/wire-notes.md)",
       "components": {
         "minecraft:on_player_destroyed": {}
       }
     },
     {
       "name": "on_player_placing",
-      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "skip": "rejected by BDS 1.26.63 in every format version (see docs/wire-notes.md)",
       "components": {
         "minecraft:on_player_placing": {}
       }
     },
     {
       "name": "on_step_off",
-      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "skip": "rejected by BDS 1.26.63 in every format version (see docs/wire-notes.md)",
       "components": {
         "minecraft:on_step_off": {}
       }
     },
     {
       "name": "on_step_on",
-      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "skip": "rejected by BDS 1.26.63 in every format version (see docs/wire-notes.md)",
       "components": {
         "minecraft:on_step_on": {}
       }
     },
     {
       "name": "breathability_air",
-      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "skip": "rejected by BDS 1.26.63 in every format version (see docs/wire-notes.md)",
       "components": {
         "minecraft:breathability": "air"
       }
     },
     {
       "name": "breathability_solid",
-      "skip": "rejected by BDS 1.26.63 in every format version (see data/bds/WIRE-NOTES.md)",
+      "skip": "rejected by BDS 1.26.63 in every format version (see docs/wire-notes.md)",
       "components": {
         "minecraft:breathability": "solid"
       }

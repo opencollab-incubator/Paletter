@@ -4,14 +4,14 @@ plugins {
 
 // All tooling in one module, never shipped: the BDS update pipeline, the Bedrock capture client, the component model and
 // the code generators. One command line (org.geysermc.paletter.tools.Cli): ./gradlew :tools:run --args="<command> ..."
-// See tools/README.md.
+// See docs/data-pipeline.md.
 
 // The component API generator has its own source set: it reads only data/model (and the Transforms source), so it
 // runs without compiling paletter, whose generated sources it writes.
 val componentApi: SourceSet = sourceSets.create("componentApi")
 
 // The API dump (paletter/api/paletter.api) is generated from paletter's compiled classes; its own source set needs
-// neither paletter nor the rest of the tools, so :paletter:apiDump / apiCheck can run it. See API.md.
+// neither paletter nor the rest of the tools, so :paletter:apiDump / apiCheck can run it. See docs/api.md.
 val apiDump: SourceSet = sourceSets.create("apiDump")
 
 dependencies {
