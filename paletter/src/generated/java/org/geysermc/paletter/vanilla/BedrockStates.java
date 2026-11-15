@@ -4,6 +4,7 @@ package org.geysermc.paletter.vanilla;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.SincePreview;
 import org.geysermc.paletter.vanilla.state.Attachment;
 import org.geysermc.paletter.vanilla.state.BambooLeafSize;
 import org.geysermc.paletter.vanilla.state.BambooStalkThickness;
@@ -104,6 +105,13 @@ public final class BedrockStates {
      * {@code books_stored}: 0 to 63. Used by 1 block.
      */
     public static final IntState BOOKS_STORED = VanillaTypes.state(IntState.range("books_stored", 0, 63));
+
+    /**
+     * {@code bottom}: true or false. Used by 1 block.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BoolState BOTTOM = VanillaTypes.state(BoolState.of("bottom"));
 
     /**
      * {@code brewing_stand_slot_a_bit}: true or false. Used by 1 block.
@@ -369,6 +377,13 @@ public final class BedrockStates {
      * {@code lit}: true or false. Used by 42 blocks.
      */
     public static final BoolState LIT = VanillaTypes.state(BoolState.of("lit"));
+
+    /**
+     * {@code locked}: true or false. Used by 2 blocks.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BoolState LOCKED = VanillaTypes.state(BoolState.of("locked"));
 
     /**
      * {@code minecraft:facing_direction}: {@link Direction}. Used by 1 block.

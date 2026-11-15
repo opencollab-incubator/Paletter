@@ -15,7 +15,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * <p>
  * Add-on JSON: {@code "minecraft:movable"}.
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
- * 1.26.63.1), so it has no client effect. Palettes leave it out without a warning.
+ * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
  *
  * @param movementType How the block reacts to being pushed by another block like a piston. How the block reacts to being pushed by
  *        another block like a piston. The options are: "push_pull" - The default value for this field. The block will

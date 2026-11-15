@@ -17,7 +17,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * <p>
  * Add-on JSON: {@code "minecraft:tick"}.
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
- * 1.26.63.1), so it has no client effect. Palettes leave it out without a warning.
+ * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
  *
  * @param intervalRange A range of values, specified in ticks, to decide the next tick interval for a block. A range of values,
  *        specified in ticks, to decide the next tick interval for a block. After each block tick, a new value will be

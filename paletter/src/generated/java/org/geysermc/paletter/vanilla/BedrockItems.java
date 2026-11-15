@@ -3,6 +3,7 @@
 package org.geysermc.paletter.vanilla;
 
 import org.geysermc.paletter.annotation.Education;
+import org.geysermc.paletter.annotation.SincePreview;
 
 /**
  * Every item type of Bedrock 26.60, the newest bundled release. The constants are resolved against
@@ -17,6 +18,9 @@ import org.geysermc.paletter.annotation.Education;
  * (decided from the BDS captures in {@code data/bds}); {@code 26.40} is the oldest bundled release, so it may be older.
  * {@link org.geysermc.paletter.annotation.Education @Education} marks content BDS only offers to worlds with Education
  * Edition features, which {@code isEducation()} of the type answers at runtime.
+ * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks content only the bundled Bedrock preview
+ * has. It is only {@code isAvailable()} with previews loaded (system property {@code paletter.previews}), else it
+ * resolves to {@code minecraft:unknown}. The mark goes when a release has it; the constant goes if a newer preview drops it.
  *
  * @since 0.1.0
  */
@@ -1428,6 +1432,13 @@ public final class BedrockItems {
     public static final BedrockItemType BRICK_WALL = VanillaTypes.item("minecraft:brick_wall");
 
     /**
+     * {@code minecraft:brittle_ice}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType BRITTLE_ICE = VanillaTypes.item("minecraft:brittle_ice");
+
+    /**
      * {@code minecraft:brown_bundle}.
      *
      * @since 26.40
@@ -1700,6 +1711,41 @@ public final class BedrockItems {
      * @since 26.40
      */
     public static final BedrockItemType CALCITE = VanillaTypes.item("minecraft:calcite");
+
+    /**
+     * {@code minecraft:calcite_double_slab}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType CALCITE_DOUBLE_SLAB = VanillaTypes.item("minecraft:calcite_double_slab");
+
+    /**
+     * {@code minecraft:calcite_pillar}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType CALCITE_PILLAR = VanillaTypes.item("minecraft:calcite_pillar");
+
+    /**
+     * {@code minecraft:calcite_slab}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType CALCITE_SLAB = VanillaTypes.item("minecraft:calcite_slab");
+
+    /**
+     * {@code minecraft:calcite_stairs}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType CALCITE_STAIRS = VanillaTypes.item("minecraft:calcite_stairs");
+
+    /**
+     * {@code minecraft:calcite_wall}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType CALCITE_WALL = VanillaTypes.item("minecraft:calcite_wall");
 
     /**
      * {@code minecraft:calibrated_sculk_sensor}.
@@ -2124,6 +2170,13 @@ public final class BedrockItems {
     public static final BedrockItemType CHISELED_NETHER_BRICKS = VanillaTypes.item("minecraft:chiseled_nether_bricks");
 
     /**
+     * {@code minecraft:chiseled_packed_ice}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType CHISELED_PACKED_ICE = VanillaTypes.item("minecraft:chiseled_packed_ice");
+
+    /**
      * {@code minecraft:chiseled_polished_blackstone}.
      *
      * @since 26.40
@@ -2157,6 +2210,13 @@ public final class BedrockItems {
      * @since 26.40
      */
     public static final BedrockItemType CHISELED_SANDSTONE = VanillaTypes.item("minecraft:chiseled_sandstone");
+
+    /**
+     * {@code minecraft:chiseled_soulshale}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType CHISELED_SOULSHALE = VanillaTypes.item("minecraft:chiseled_soulshale");
 
     /**
      * {@code minecraft:chiseled_stone_bricks}.
@@ -6979,6 +7039,13 @@ public final class BedrockItems {
     public static final BedrockItemType ICE = VanillaTypes.item("minecraft:ice");
 
     /**
+     * {@code minecraft:ice_ball}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType ICE_BALL = VanillaTypes.item("minecraft:ice_ball");
+
+    /**
      * {@code minecraft:ice_bomb}.
      * Education Edition content: BDS only offers it to worlds with Education Edition features.
      *
@@ -9030,6 +9097,13 @@ public final class BedrockItems {
     public static final BedrockItemType MUSIC_DISC_FAR = VanillaTypes.item("minecraft:music_disc_far");
 
     /**
+     * {@code minecraft:music_disc_flurry}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType MUSIC_DISC_FLURRY = VanillaTypes.item("minecraft:music_disc_flurry");
+
+    /**
      * {@code minecraft:music_disc_lava_chicken}.
      *
      * @since 26.40
@@ -9830,6 +9904,41 @@ public final class BedrockItems {
     public static final BedrockItemType PACKED_ICE = VanillaTypes.item("minecraft:packed_ice");
 
     /**
+     * {@code minecraft:packed_ice_bricks}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType PACKED_ICE_BRICKS = VanillaTypes.item("minecraft:packed_ice_bricks");
+
+    /**
+     * {@code minecraft:packed_ice_brick_double_slab}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType PACKED_ICE_BRICK_DOUBLE_SLAB = VanillaTypes.item("minecraft:packed_ice_brick_double_slab");
+
+    /**
+     * {@code minecraft:packed_ice_brick_slab}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType PACKED_ICE_BRICK_SLAB = VanillaTypes.item("minecraft:packed_ice_brick_slab");
+
+    /**
+     * {@code minecraft:packed_ice_brick_stairs}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType PACKED_ICE_BRICK_STAIRS = VanillaTypes.item("minecraft:packed_ice_brick_stairs");
+
+    /**
+     * {@code minecraft:packed_ice_brick_wall}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType PACKED_ICE_BRICK_WALL = VanillaTypes.item("minecraft:packed_ice_brick_wall");
+
+    /**
      * {@code minecraft:packed_mud}.
      *
      * @since 26.40
@@ -10494,6 +10603,76 @@ public final class BedrockItems {
      * @since 26.40
      */
     public static final BedrockItemType POLISHED_BLACKSTONE_WALL = VanillaTypes.item("minecraft:polished_blackstone_wall");
+
+    /**
+     * {@code minecraft:polished_calcite}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType POLISHED_CALCITE = VanillaTypes.item("minecraft:polished_calcite");
+
+    /**
+     * {@code minecraft:polished_calcite_bricks}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType POLISHED_CALCITE_BRICKS = VanillaTypes.item("minecraft:polished_calcite_bricks");
+
+    /**
+     * {@code minecraft:polished_calcite_brick_double_slab}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType POLISHED_CALCITE_BRICK_DOUBLE_SLAB = VanillaTypes.item("minecraft:polished_calcite_brick_double_slab");
+
+    /**
+     * {@code minecraft:polished_calcite_brick_slab}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType POLISHED_CALCITE_BRICK_SLAB = VanillaTypes.item("minecraft:polished_calcite_brick_slab");
+
+    /**
+     * {@code minecraft:polished_calcite_brick_stairs}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType POLISHED_CALCITE_BRICK_STAIRS = VanillaTypes.item("minecraft:polished_calcite_brick_stairs");
+
+    /**
+     * {@code minecraft:polished_calcite_brick_wall}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType POLISHED_CALCITE_BRICK_WALL = VanillaTypes.item("minecraft:polished_calcite_brick_wall");
+
+    /**
+     * {@code minecraft:polished_calcite_double_slab}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType POLISHED_CALCITE_DOUBLE_SLAB = VanillaTypes.item("minecraft:polished_calcite_double_slab");
+
+    /**
+     * {@code minecraft:polished_calcite_slab}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType POLISHED_CALCITE_SLAB = VanillaTypes.item("minecraft:polished_calcite_slab");
+
+    /**
+     * {@code minecraft:polished_calcite_stairs}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType POLISHED_CALCITE_STAIRS = VanillaTypes.item("minecraft:polished_calcite_stairs");
+
+    /**
+     * {@code minecraft:polished_calcite_wall}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType POLISHED_CALCITE_WALL = VanillaTypes.item("minecraft:polished_calcite_wall");
 
     /**
      * {@code minecraft:polished_cinnabar}.
@@ -12357,6 +12536,41 @@ public final class BedrockItems {
      * @since 26.40
      */
     public static final BedrockItemType SNOWBALL = VanillaTypes.item("minecraft:snowball");
+
+    /**
+     * {@code minecraft:snow_bricks}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType SNOW_BRICKS = VanillaTypes.item("minecraft:snow_bricks");
+
+    /**
+     * {@code minecraft:snow_brick_double_slab}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType SNOW_BRICK_DOUBLE_SLAB = VanillaTypes.item("minecraft:snow_brick_double_slab");
+
+    /**
+     * {@code minecraft:snow_brick_slab}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType SNOW_BRICK_SLAB = VanillaTypes.item("minecraft:snow_brick_slab");
+
+    /**
+     * {@code minecraft:snow_brick_stairs}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType SNOW_BRICK_STAIRS = VanillaTypes.item("minecraft:snow_brick_stairs");
+
+    /**
+     * {@code minecraft:snow_brick_wall}.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockItemType SNOW_BRICK_WALL = VanillaTypes.item("minecraft:snow_brick_wall");
 
     /**
      * {@code minecraft:snow_golem_spawn_egg}.

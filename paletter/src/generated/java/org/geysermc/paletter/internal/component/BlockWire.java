@@ -122,8 +122,10 @@ public final class BlockWire {
             blockEntityUntil2193(c, ctx, out);
         } else if (protocol >= 2193 && protocol < 2225) {
             blockEntityFrom2193Until2225(c, ctx, out);
-        } else if (protocol >= 2225) {
-            blockEntityFrom2225(c, ctx, out);
+        } else if (protocol >= 2225 && protocol < 2259) {
+            blockEntityFrom2225Until2259(c, ctx, out);
+        } else if (protocol >= 2259) {
+            blockEntityFrom2259(c, ctx, out);
         }
     }
 
@@ -134,30 +136,32 @@ public final class BlockWire {
     private static void blockEntityFrom2193Until2225(BlockEntity c, WireContext ctx, WireNode out) {
         BlockEntity.Container v0 = c.container();
         if (v0 != null) {
-            int v1 = v0.slotCount();
-            out.put("minecraft:container.slot_count", Wire.toByte(v1));
-            String v2 = v0.title();
-            if (v2 != null) {
+            boolean v1 = v0.showUiOnInteraction();
+            int v2 = v0.slotCount();
+            out.put("minecraft:container.slot_count", Wire.toByte(v2));
+            String v3 = v0.title();
+            if (v3 != null) {
                 ctx.drop(BlockEntity.NAME, "container.title has no known wire mapping");
             }
         } else {
             out.remove("minecraft:container.slot_count");
         }
-        boolean v3 = c.dynamicProperties();
-        Boolean v4 = c.entityStorage();
-        if (v4 != null) {
+        boolean v4 = c.dynamicProperties();
+        Boolean v5 = c.entityStorage();
+        if (v5 != null) {
             ctx.drop(BlockEntity.NAME, "entity_storage has no known wire mapping");
         }
     }
 
-    private static void blockEntityFrom2225(BlockEntity c, WireContext ctx, WireNode out) {
+    private static void blockEntityFrom2225Until2259(BlockEntity c, WireContext ctx, WireNode out) {
         BlockEntity.Container v0 = c.container();
         if (v0 != null) {
-            int v1 = v0.slotCount();
-            out.put("minecraft:container.slot_count", Wire.toByte(v1));
-            String v2 = v0.title();
-            if (v2 != null) {
-                out.put("minecraft:container.title", v2);
+            boolean v1 = v0.showUiOnInteraction();
+            int v2 = v0.slotCount();
+            out.put("minecraft:container.slot_count", Wire.toByte(v2));
+            String v3 = v0.title();
+            if (v3 != null) {
+                out.put("minecraft:container.title", v3);
             } else {
                 out.remove("minecraft:container.title");
             }
@@ -165,9 +169,34 @@ public final class BlockWire {
             out.remove("minecraft:container.slot_count");
             out.remove("minecraft:container.title");
         }
-        boolean v3 = c.dynamicProperties();
-        Boolean v4 = c.entityStorage();
-        if (v4 != null) {
+        boolean v4 = c.dynamicProperties();
+        Boolean v5 = c.entityStorage();
+        if (v5 != null) {
+        }
+    }
+
+    private static void blockEntityFrom2259(BlockEntity c, WireContext ctx, WireNode out) {
+        BlockEntity.Container v0 = c.container();
+        if (v0 != null) {
+            boolean v1 = v0.showUiOnInteraction();
+            out.put("minecraft:container.show_ui_on_interaction", Wire.bool(v1));
+            int v2 = v0.slotCount();
+            out.put("minecraft:container.slot_count", Wire.toByte(v2));
+            String v3 = v0.title();
+            if (v3 != null) {
+                out.put("minecraft:container.title", v3);
+            } else {
+                out.remove("minecraft:container.title");
+            }
+        } else {
+            out.remove("minecraft:container.show_ui_on_interaction");
+            out.remove("minecraft:container.slot_count");
+            out.remove("minecraft:container.title");
+        }
+        boolean v4 = c.dynamicProperties();
+        Boolean v5 = c.entityStorage();
+        if (v5 != null) {
+            ctx.drop(BlockEntity.NAME, "entity_storage has no known wire mapping");
         }
     }
 
@@ -193,10 +222,30 @@ public final class BlockWire {
     }
 
     private static void collisionBox(CollisionBox c, WireContext ctx, WireNode out) {
+        int protocol = ctx.protocol();
+        if (protocol < 2259) {
+            collisionBoxUntil2259(c, ctx, out);
+        } else if (protocol >= 2259) {
+            collisionBoxFrom2259(c, ctx, out);
+        }
+    }
+
+    private static void collisionBoxUntil2259(CollisionBox c, WireContext ctx, WireNode out) {
         Boolean v0 = c.enabled();
         if (v0 != null) {
             out.put("minecraft:collision_box.boxes", Wire.EMPTY_LIST);
             out.put("minecraft:collision_box.enabled", Wire.bool(v0));
+        }
+        Transforms.collisionBoxes(ctx, out, c);
+    }
+
+    private static void collisionBoxFrom2259(CollisionBox c, WireContext ctx, WireNode out) {
+        Boolean v0 = c.enabled();
+        if (v0 != null) {
+            out.put("minecraft:collision_box.boxes", Wire.EMPTY_LIST);
+            out.put("minecraft:collision_box.enabled", Wire.bool(v0));
+            out.put("minecraft:collision_box.shape", "");
+            out.put("minecraft:collision_box.useVoxelShapes", (byte) 0);
         }
         Transforms.collisionBoxes(ctx, out, c);
     }

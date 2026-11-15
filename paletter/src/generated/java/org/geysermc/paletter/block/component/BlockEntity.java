@@ -6,6 +6,7 @@ package org.geysermc.paletter.block.component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.ServerOnly;
+import org.geysermc.paletter.annotation.SincePreview;
 import org.geysermc.paletter.internal.component.Check;
 
 /**
@@ -106,13 +107,17 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
     /**
      * Adds a container to this block.
      *
+     * @param showUiOnInteraction Determines whether interacting with this block opens its container UI. Defaults to true. When false, normal
+     *        block interaction events can run instead. Add-on JSON {@code show_ui_on_interaction}. Default:
+     *        <code>true</code>.
      * @param slotCount Sets the number of slots in the container. Value must be &gt;= 1. Value must be &lt;= 54. Add-on JSON {@code
      *        slot_count}. Required. Range [1, 54] (BDS 1.26.63.1).
      * @param title Optional container title, stored as a language file key or raw text. Must be nonempty and at most 256
      *        characters. Value must have at least 1 items. Value must have at most 256 items. Add-on JSON {@code title}.
      *        Optional (null: not set).
      */
-    public record Container(int slotCount, @Nullable String title) {
+    public record Container(@SincePreview("26.70") boolean showUiOnInteraction, int slotCount,
+            @Nullable String title) {
         public Container {
             Check.range("BlockEntity.Container.slotCount", slotCount, 1.0, 54.0);
         }
@@ -129,6 +134,7 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
          */
         public @NonNull Builder toBuilder() {
             Builder builder = new Builder();
+            builder.showUiOnInteraction = showUiOnInteraction;
             builder.slotCount = slotCount;
             builder.title = title;
             return builder;
@@ -138,11 +144,21 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
          * Builds {@link Container}: defaults applied, required fields and ranges checked by {@link #build()}.
          */
         public static final class Builder {
+            private @Nullable Boolean showUiOnInteraction = true;
+
             private @Nullable Integer slotCount;
 
             private @Nullable String title;
 
             private Builder() {
+            }
+
+            /**
+             * Sets {@code show_ui_on_interaction}.
+             */
+            public @NonNull Builder showUiOnInteraction(boolean showUiOnInteraction) {
+                this.showUiOnInteraction = showUiOnInteraction;
+                return this;
             }
 
             /**
@@ -169,7 +185,7 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
                 if (slotCount == null) {
                     throw new IllegalStateException("BlockEntity.Container.slotCount is required");
                 }
-                return new Container(slotCount, title);
+                return new Container(showUiOnInteraction, slotCount, title);
             }
         }
     }

@@ -16,7 +16,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * <p>
  * Add-on JSON: {@code "minecraft:flammable"}.
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
- * 1.26.63.1), so it has no client effect. Palettes leave it out without a warning.
+ * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
  *
  * @param catchChanceModifier A modifier affecting the chance that this block will catch flame when next to a fire. A modifier affecting the
  *        chance that this block will catch flame when next to a fire. Values are greater than or equal to 0, with a

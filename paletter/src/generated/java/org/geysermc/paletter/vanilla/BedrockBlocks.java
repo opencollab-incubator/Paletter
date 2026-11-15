@@ -3,6 +3,7 @@
 package org.geysermc.paletter.vanilla;
 
 import org.geysermc.paletter.annotation.Education;
+import org.geysermc.paletter.annotation.SincePreview;
 
 /**
  * Every block type of Bedrock 26.60, the newest bundled release. The constants are resolved against
@@ -15,6 +16,9 @@ import org.geysermc.paletter.annotation.Education;
  * (decided from the BDS captures in {@code data/bds}); {@code 26.40} is the oldest bundled release, so it may be older.
  * {@link org.geysermc.paletter.annotation.Education @Education} marks content BDS only offers to worlds with Education
  * Edition features, which {@code isEducation()} of the type answers at runtime.
+ * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks content only the bundled Bedrock preview
+ * has. It is only {@code isAvailable()} with previews loaded (system property {@code paletter.previews}), else it
+ * resolves to {@code minecraft:unknown}. The mark goes when a release has it; the constant goes if a newer preview drops it.
  *
  * @since 0.1.0
  */
@@ -1000,6 +1004,13 @@ public final class BedrockBlocks {
     public static final BedrockBlockType BRICK_WALL = VanillaTypes.block("minecraft:brick_wall");
 
     /**
+     * {@code minecraft:brittle_ice}: {@link BedrockStates#AGE}; 4 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType BRITTLE_ICE = VanillaTypes.block("minecraft:brittle_ice");
+
+    /**
      * {@code minecraft:brown_candle}: {@link BedrockStates#CANDLES}, {@link BedrockStates#LIT}; 8 states.
      *
      * @since 26.40
@@ -1208,6 +1219,41 @@ public final class BedrockBlocks {
      * @since 26.40
      */
     public static final BedrockBlockType CALCITE = VanillaTypes.block("minecraft:calcite");
+
+    /**
+     * {@code minecraft:calcite_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType CALCITE_DOUBLE_SLAB = VanillaTypes.block("minecraft:calcite_double_slab");
+
+    /**
+     * {@code minecraft:calcite_pillar}: {@link BedrockStates#PILLAR_AXIS}; 3 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType CALCITE_PILLAR = VanillaTypes.block("minecraft:calcite_pillar");
+
+    /**
+     * {@code minecraft:calcite_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType CALCITE_SLAB = VanillaTypes.block("minecraft:calcite_slab");
+
+    /**
+     * {@code minecraft:calcite_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType CALCITE_STAIRS = VanillaTypes.block("minecraft:calcite_stairs");
+
+    /**
+     * {@code minecraft:calcite_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType CALCITE_WALL = VanillaTypes.block("minecraft:calcite_wall");
 
     /**
      * {@code minecraft:calibrated_sculk_sensor}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#SCULK_SENSOR_PHASE}; 12 states.
@@ -1492,6 +1538,13 @@ public final class BedrockBlocks {
     public static final BedrockBlockType CHISELED_NETHER_BRICKS = VanillaTypes.block("minecraft:chiseled_nether_bricks");
 
     /**
+     * {@code minecraft:chiseled_packed_ice}, 1 state.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType CHISELED_PACKED_ICE = VanillaTypes.block("minecraft:chiseled_packed_ice");
+
+    /**
      * {@code minecraft:chiseled_polished_blackstone}, 1 state.
      *
      * @since 26.40
@@ -1525,6 +1578,13 @@ public final class BedrockBlocks {
      * @since 26.40
      */
     public static final BedrockBlockType CHISELED_SANDSTONE = VanillaTypes.block("minecraft:chiseled_sandstone");
+
+    /**
+     * {@code minecraft:chiseled_soulshale}, 1 state.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType CHISELED_SOULSHALE = VanillaTypes.block("minecraft:chiseled_soulshale");
 
     /**
      * {@code minecraft:chiseled_stone_bricks}, 1 state.
@@ -6953,6 +7013,41 @@ public final class BedrockBlocks {
     public static final BedrockBlockType PACKED_ICE = VanillaTypes.block("minecraft:packed_ice");
 
     /**
+     * {@code minecraft:packed_ice_bricks}, 1 state.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType PACKED_ICE_BRICKS = VanillaTypes.block("minecraft:packed_ice_bricks");
+
+    /**
+     * {@code minecraft:packed_ice_brick_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType PACKED_ICE_BRICK_DOUBLE_SLAB = VanillaTypes.block("minecraft:packed_ice_brick_double_slab");
+
+    /**
+     * {@code minecraft:packed_ice_brick_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType PACKED_ICE_BRICK_SLAB = VanillaTypes.block("minecraft:packed_ice_brick_slab");
+
+    /**
+     * {@code minecraft:packed_ice_brick_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType PACKED_ICE_BRICK_STAIRS = VanillaTypes.block("minecraft:packed_ice_brick_stairs");
+
+    /**
+     * {@code minecraft:packed_ice_brick_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType PACKED_ICE_BRICK_WALL = VanillaTypes.block("minecraft:packed_ice_brick_wall");
+
+    /**
      * {@code minecraft:packed_mud}, 1 state.
      *
      * @since 26.40
@@ -7441,6 +7536,76 @@ public final class BedrockBlocks {
      * @since 26.40
      */
     public static final BedrockBlockType POLISHED_BLACKSTONE_WALL = VanillaTypes.block("minecraft:polished_blackstone_wall");
+
+    /**
+     * {@code minecraft:polished_calcite}, 1 state.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType POLISHED_CALCITE = VanillaTypes.block("minecraft:polished_calcite");
+
+    /**
+     * {@code minecraft:polished_calcite_bricks}, 1 state.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType POLISHED_CALCITE_BRICKS = VanillaTypes.block("minecraft:polished_calcite_bricks");
+
+    /**
+     * {@code minecraft:polished_calcite_brick_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType POLISHED_CALCITE_BRICK_DOUBLE_SLAB = VanillaTypes.block("minecraft:polished_calcite_brick_double_slab");
+
+    /**
+     * {@code minecraft:polished_calcite_brick_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType POLISHED_CALCITE_BRICK_SLAB = VanillaTypes.block("minecraft:polished_calcite_brick_slab");
+
+    /**
+     * {@code minecraft:polished_calcite_brick_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType POLISHED_CALCITE_BRICK_STAIRS = VanillaTypes.block("minecraft:polished_calcite_brick_stairs");
+
+    /**
+     * {@code minecraft:polished_calcite_brick_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType POLISHED_CALCITE_BRICK_WALL = VanillaTypes.block("minecraft:polished_calcite_brick_wall");
+
+    /**
+     * {@code minecraft:polished_calcite_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType POLISHED_CALCITE_DOUBLE_SLAB = VanillaTypes.block("minecraft:polished_calcite_double_slab");
+
+    /**
+     * {@code minecraft:polished_calcite_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType POLISHED_CALCITE_SLAB = VanillaTypes.block("minecraft:polished_calcite_slab");
+
+    /**
+     * {@code minecraft:polished_calcite_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType POLISHED_CALCITE_STAIRS = VanillaTypes.block("minecraft:polished_calcite_stairs");
+
+    /**
+     * {@code minecraft:polished_calcite_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType POLISHED_CALCITE_WALL = VanillaTypes.block("minecraft:polished_calcite_wall");
 
     /**
      * {@code minecraft:polished_cinnabar}, 1 state.
@@ -8796,6 +8961,41 @@ public final class BedrockBlocks {
      * @since 26.40
      */
     public static final BedrockBlockType SNOW = VanillaTypes.block("minecraft:snow");
+
+    /**
+     * {@code minecraft:snow_bricks}, 1 state.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType SNOW_BRICKS = VanillaTypes.block("minecraft:snow_bricks");
+
+    /**
+     * {@code minecraft:snow_brick_double_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType SNOW_BRICK_DOUBLE_SLAB = VanillaTypes.block("minecraft:snow_brick_double_slab");
+
+    /**
+     * {@code minecraft:snow_brick_slab}: {@link BedrockStates#VERTICAL_HALF}; 2 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType SNOW_BRICK_SLAB = VanillaTypes.block("minecraft:snow_brick_slab");
+
+    /**
+     * {@code minecraft:snow_brick_stairs}: {@link BedrockStates#CORNER}, {@link BedrockStates#UPSIDE_DOWN_BIT}, {@link BedrockStates#WEIRDO_DIRECTION}; 40 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType SNOW_BRICK_STAIRS = VanillaTypes.block("minecraft:snow_brick_stairs");
+
+    /**
+     * {@code minecraft:snow_brick_wall}: {@link BedrockStates#WALL_CONNECTION_TYPE_EAST}, {@link BedrockStates#WALL_CONNECTION_TYPE_NORTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_SOUTH}, {@link BedrockStates#WALL_CONNECTION_TYPE_WEST}, {@link BedrockStates#WALL_POST_BIT}; 162 states.
+     * Only in the bundled preview 26.70.
+     */
+    @SincePreview("26.70")
+    public static final BedrockBlockType SNOW_BRICK_WALL = VanillaTypes.block("minecraft:snow_brick_wall");
 
     /**
      * {@code minecraft:snow_layer}: {@link BedrockStates#COVERED_BIT}, {@link BedrockStates#HEIGHT}; 16 states.

@@ -17,7 +17,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * <p>
  * Add-on JSON: {@code "minecraft:damage_absorption"}.
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
- * 1.26.63.1), so it has no client effect. Palettes leave it out without a warning.
+ * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
  *
  * @param absorbableCauses List of damage causes that can be absorbed by the item. By default, no damage cause is absorbed. Value must
  *        have at least 1 items. Add-on JSON {@code absorbable_causes}. Required.

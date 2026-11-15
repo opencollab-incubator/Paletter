@@ -15,7 +15,7 @@ import org.geysermc.paletter.internal.component.Check;
  * <p>
  * Add-on JSON: {@code "minecraft:destructible_by_explosion"}.
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
- * 1.26.63.1), so it has no client effect. Palettes leave it out without a warning.
+ * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
  *
  * @param explosionResistance Sets the explosion resistance for the block. Sets the explosion resistance for the block. Greater values
  *        result in greater resistance to explosions. The scale will be different for different explosion power levels.

@@ -305,6 +305,10 @@ public @interface org.geysermc.paletter.annotation.ServerOnly {
     public abstract int until()
 }
 
+public @interface org.geysermc.paletter.annotation.SincePreview {
+    public abstract java.lang.String value()
+}
+
 public sealed abstract class org.geysermc.paletter.behaviour.BehaviourKey<T> permits org.geysermc.paletter.behaviour.BooleanKey, org.geysermc.paletter.behaviour.FloatKey, org.geysermc.paletter.behaviour.IntKey, org.geysermc.paletter.behaviour.ObjectKey {
     public java.lang.String name()
     public int ordinal()
@@ -667,10 +671,11 @@ public static final class org.geysermc.paletter.block.component.BlockEntity$Buil
 }
 
 public record org.geysermc.paletter.block.component.BlockEntity$Container {
-    public <init>(int, java.lang.String)
+    public <init>(boolean, int, java.lang.String)
     public static org.geysermc.paletter.block.component.BlockEntity$Container$Builder builder()
     public final boolean equals(java.lang.Object)
     public final int hashCode()
+    public boolean showUiOnInteraction()
     public int slotCount()
     public java.lang.String title()
     public org.geysermc.paletter.block.component.BlockEntity$Container$Builder toBuilder()
@@ -679,6 +684,7 @@ public record org.geysermc.paletter.block.component.BlockEntity$Container {
 
 public static final class org.geysermc.paletter.block.component.BlockEntity$Container$Builder {
     public org.geysermc.paletter.block.component.BlockEntity$Container build()
+    public org.geysermc.paletter.block.component.BlockEntity$Container$Builder showUiOnInteraction(boolean)
     public org.geysermc.paletter.block.component.BlockEntity$Container$Builder slotCount(int)
     public org.geysermc.paletter.block.component.BlockEntity$Container$Builder title(java.lang.String)
 }
@@ -4230,6 +4236,7 @@ public final class org.geysermc.paletter.vanilla.BedrockBlocks {
     public static final org.geysermc.paletter.vanilla.BedrockBlockType BRICK_SLAB
     public static final org.geysermc.paletter.vanilla.BedrockBlockType BRICK_STAIRS
     public static final org.geysermc.paletter.vanilla.BedrockBlockType BRICK_WALL
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType BRITTLE_ICE
     public static final org.geysermc.paletter.vanilla.BedrockBlockType BROWN_CANDLE
     public static final org.geysermc.paletter.vanilla.BedrockBlockType BROWN_CANDLE_CAKE
     public static final org.geysermc.paletter.vanilla.BedrockBlockType BROWN_CARPET
@@ -4260,6 +4267,11 @@ public final class org.geysermc.paletter.vanilla.BedrockBlocks {
     public static final org.geysermc.paletter.vanilla.BedrockBlockType CACTUS_FLOWER
     public static final org.geysermc.paletter.vanilla.BedrockBlockType CAKE
     public static final org.geysermc.paletter.vanilla.BedrockBlockType CALCITE
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType CALCITE_DOUBLE_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType CALCITE_PILLAR
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType CALCITE_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType CALCITE_STAIRS
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType CALCITE_WALL
     public static final org.geysermc.paletter.vanilla.BedrockBlockType CALIBRATED_SCULK_SENSOR
     public static final org.geysermc.paletter.vanilla.BedrockBlockType CAMERA
     public static final org.geysermc.paletter.vanilla.BedrockBlockType CAMPFIRE
@@ -4300,11 +4312,13 @@ public final class org.geysermc.paletter.vanilla.BedrockBlocks {
     public static final org.geysermc.paletter.vanilla.BedrockBlockType CHISELED_COPPER
     public static final org.geysermc.paletter.vanilla.BedrockBlockType CHISELED_DEEPSLATE
     public static final org.geysermc.paletter.vanilla.BedrockBlockType CHISELED_NETHER_BRICKS
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType CHISELED_PACKED_ICE
     public static final org.geysermc.paletter.vanilla.BedrockBlockType CHISELED_POLISHED_BLACKSTONE
     public static final org.geysermc.paletter.vanilla.BedrockBlockType CHISELED_QUARTZ_BLOCK
     public static final org.geysermc.paletter.vanilla.BedrockBlockType CHISELED_RED_SANDSTONE
     public static final org.geysermc.paletter.vanilla.BedrockBlockType CHISELED_RESIN_BRICKS
     public static final org.geysermc.paletter.vanilla.BedrockBlockType CHISELED_SANDSTONE
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType CHISELED_SOULSHALE
     public static final org.geysermc.paletter.vanilla.BedrockBlockType CHISELED_STONE_BRICKS
     public static final org.geysermc.paletter.vanilla.BedrockBlockType CHISELED_SULFUR
     public static final org.geysermc.paletter.vanilla.BedrockBlockType CHISELED_TUFF
@@ -5034,6 +5048,11 @@ public final class org.geysermc.paletter.vanilla.BedrockBlocks {
     public static final org.geysermc.paletter.vanilla.BedrockBlockType OXIDIZED_DOUBLE_CUT_COPPER_SLAB
     public static final org.geysermc.paletter.vanilla.BedrockBlockType OXIDIZED_LIGHTNING_ROD
     public static final org.geysermc.paletter.vanilla.BedrockBlockType PACKED_ICE
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType PACKED_ICE_BRICKS
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType PACKED_ICE_BRICK_DOUBLE_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType PACKED_ICE_BRICK_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType PACKED_ICE_BRICK_STAIRS
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType PACKED_ICE_BRICK_WALL
     public static final org.geysermc.paletter.vanilla.BedrockBlockType PACKED_MUD
     public static final org.geysermc.paletter.vanilla.BedrockBlockType PALE_HANGING_MOSS
     public static final org.geysermc.paletter.vanilla.BedrockBlockType PALE_MOSS_BLOCK
@@ -5104,6 +5123,16 @@ public final class org.geysermc.paletter.vanilla.BedrockBlocks {
     public static final org.geysermc.paletter.vanilla.BedrockBlockType POLISHED_BLACKSTONE_SLAB
     public static final org.geysermc.paletter.vanilla.BedrockBlockType POLISHED_BLACKSTONE_STAIRS
     public static final org.geysermc.paletter.vanilla.BedrockBlockType POLISHED_BLACKSTONE_WALL
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType POLISHED_CALCITE
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_BRICKS
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_BRICK_DOUBLE_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_BRICK_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_BRICK_STAIRS
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_BRICK_WALL
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_DOUBLE_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_STAIRS
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_WALL
     public static final org.geysermc.paletter.vanilla.BedrockBlockType POLISHED_CINNABAR
     public static final org.geysermc.paletter.vanilla.BedrockBlockType POLISHED_CINNABAR_DOUBLE_SLAB
     public static final org.geysermc.paletter.vanilla.BedrockBlockType POLISHED_CINNABAR_SLAB
@@ -5295,6 +5324,11 @@ public final class org.geysermc.paletter.vanilla.BedrockBlocks {
     public static final org.geysermc.paletter.vanilla.BedrockBlockType SMOOTH_STONE_SLAB
     public static final org.geysermc.paletter.vanilla.BedrockBlockType SNIFFER_EGG
     public static final org.geysermc.paletter.vanilla.BedrockBlockType SNOW
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType SNOW_BRICKS
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType SNOW_BRICK_DOUBLE_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType SNOW_BRICK_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType SNOW_BRICK_STAIRS
+    public static final org.geysermc.paletter.vanilla.BedrockBlockType SNOW_BRICK_WALL
     public static final org.geysermc.paletter.vanilla.BedrockBlockType SNOW_LAYER
     public static final org.geysermc.paletter.vanilla.BedrockBlockType SOUL_CAMPFIRE
     public static final org.geysermc.paletter.vanilla.BedrockBlockType SOUL_FIRE
@@ -5803,6 +5837,7 @@ public final class org.geysermc.paletter.vanilla.BedrockItems {
     public static final org.geysermc.paletter.vanilla.BedrockItemType BRICK_SLAB
     public static final org.geysermc.paletter.vanilla.BedrockItemType BRICK_STAIRS
     public static final org.geysermc.paletter.vanilla.BedrockItemType BRICK_WALL
+    public static final org.geysermc.paletter.vanilla.BedrockItemType BRITTLE_ICE
     public static final org.geysermc.paletter.vanilla.BedrockItemType BROWN_BUNDLE
     public static final org.geysermc.paletter.vanilla.BedrockItemType BROWN_CANDLE
     public static final org.geysermc.paletter.vanilla.BedrockItemType BROWN_CANDLE_CAKE
@@ -5842,6 +5877,11 @@ public final class org.geysermc.paletter.vanilla.BedrockItems {
     public static final org.geysermc.paletter.vanilla.BedrockItemType CACTUS_FLOWER
     public static final org.geysermc.paletter.vanilla.BedrockItemType CAKE
     public static final org.geysermc.paletter.vanilla.BedrockItemType CALCITE
+    public static final org.geysermc.paletter.vanilla.BedrockItemType CALCITE_DOUBLE_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockItemType CALCITE_PILLAR
+    public static final org.geysermc.paletter.vanilla.BedrockItemType CALCITE_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockItemType CALCITE_STAIRS
+    public static final org.geysermc.paletter.vanilla.BedrockItemType CALCITE_WALL
     public static final org.geysermc.paletter.vanilla.BedrockItemType CALIBRATED_SCULK_SENSOR
     public static final org.geysermc.paletter.vanilla.BedrockItemType CAMEL_HUSK_SPAWN_EGG
     public static final org.geysermc.paletter.vanilla.BedrockItemType CAMEL_SPAWN_EGG
@@ -5902,11 +5942,13 @@ public final class org.geysermc.paletter.vanilla.BedrockItems {
     public static final org.geysermc.paletter.vanilla.BedrockItemType CHISELED_COPPER
     public static final org.geysermc.paletter.vanilla.BedrockItemType CHISELED_DEEPSLATE
     public static final org.geysermc.paletter.vanilla.BedrockItemType CHISELED_NETHER_BRICKS
+    public static final org.geysermc.paletter.vanilla.BedrockItemType CHISELED_PACKED_ICE
     public static final org.geysermc.paletter.vanilla.BedrockItemType CHISELED_POLISHED_BLACKSTONE
     public static final org.geysermc.paletter.vanilla.BedrockItemType CHISELED_QUARTZ_BLOCK
     public static final org.geysermc.paletter.vanilla.BedrockItemType CHISELED_RED_SANDSTONE
     public static final org.geysermc.paletter.vanilla.BedrockItemType CHISELED_RESIN_BRICKS
     public static final org.geysermc.paletter.vanilla.BedrockItemType CHISELED_SANDSTONE
+    public static final org.geysermc.paletter.vanilla.BedrockItemType CHISELED_SOULSHALE
     public static final org.geysermc.paletter.vanilla.BedrockItemType CHISELED_STONE_BRICKS
     public static final org.geysermc.paletter.vanilla.BedrockItemType CHISELED_SULFUR
     public static final org.geysermc.paletter.vanilla.BedrockItemType CHISELED_TUFF
@@ -6549,6 +6591,7 @@ public final class org.geysermc.paletter.vanilla.BedrockItems {
     public static final org.geysermc.paletter.vanilla.BedrockItemType HOWL_POTTERY_SHERD
     public static final org.geysermc.paletter.vanilla.BedrockItemType HUSK_SPAWN_EGG
     public static final org.geysermc.paletter.vanilla.BedrockItemType ICE
+    public static final org.geysermc.paletter.vanilla.BedrockItemType ICE_BALL
     public static final org.geysermc.paletter.vanilla.BedrockItemType ICE_BOMB
     public static final org.geysermc.paletter.vanilla.BedrockItemType ICE_CRYSTAL
     public static final org.geysermc.paletter.vanilla.BedrockItemType ICICLE
@@ -6840,6 +6883,7 @@ public final class org.geysermc.paletter.vanilla.BedrockItems {
     public static final org.geysermc.paletter.vanilla.BedrockItemType MUSIC_DISC_CREATOR
     public static final org.geysermc.paletter.vanilla.BedrockItemType MUSIC_DISC_CREATOR_MUSIC_BOX
     public static final org.geysermc.paletter.vanilla.BedrockItemType MUSIC_DISC_FAR
+    public static final org.geysermc.paletter.vanilla.BedrockItemType MUSIC_DISC_FLURRY
     public static final org.geysermc.paletter.vanilla.BedrockItemType MUSIC_DISC_LAVA_CHICKEN
     public static final org.geysermc.paletter.vanilla.BedrockItemType MUSIC_DISC_MALL
     public static final org.geysermc.paletter.vanilla.BedrockItemType MUSIC_DISC_MELLOHI
@@ -6954,6 +6998,11 @@ public final class org.geysermc.paletter.vanilla.BedrockItems {
     public static final org.geysermc.paletter.vanilla.BedrockItemType OXIDIZED_DOUBLE_CUT_COPPER_SLAB
     public static final org.geysermc.paletter.vanilla.BedrockItemType OXIDIZED_LIGHTNING_ROD
     public static final org.geysermc.paletter.vanilla.BedrockItemType PACKED_ICE
+    public static final org.geysermc.paletter.vanilla.BedrockItemType PACKED_ICE_BRICKS
+    public static final org.geysermc.paletter.vanilla.BedrockItemType PACKED_ICE_BRICK_DOUBLE_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockItemType PACKED_ICE_BRICK_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockItemType PACKED_ICE_BRICK_STAIRS
+    public static final org.geysermc.paletter.vanilla.BedrockItemType PACKED_ICE_BRICK_WALL
     public static final org.geysermc.paletter.vanilla.BedrockItemType PACKED_MUD
     public static final org.geysermc.paletter.vanilla.BedrockItemType PAINTING
     public static final org.geysermc.paletter.vanilla.BedrockItemType PALE_HANGING_MOSS
@@ -7049,6 +7098,16 @@ public final class org.geysermc.paletter.vanilla.BedrockItems {
     public static final org.geysermc.paletter.vanilla.BedrockItemType POLISHED_BLACKSTONE_SLAB
     public static final org.geysermc.paletter.vanilla.BedrockItemType POLISHED_BLACKSTONE_STAIRS
     public static final org.geysermc.paletter.vanilla.BedrockItemType POLISHED_BLACKSTONE_WALL
+    public static final org.geysermc.paletter.vanilla.BedrockItemType POLISHED_CALCITE
+    public static final org.geysermc.paletter.vanilla.BedrockItemType POLISHED_CALCITE_BRICKS
+    public static final org.geysermc.paletter.vanilla.BedrockItemType POLISHED_CALCITE_BRICK_DOUBLE_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockItemType POLISHED_CALCITE_BRICK_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockItemType POLISHED_CALCITE_BRICK_STAIRS
+    public static final org.geysermc.paletter.vanilla.BedrockItemType POLISHED_CALCITE_BRICK_WALL
+    public static final org.geysermc.paletter.vanilla.BedrockItemType POLISHED_CALCITE_DOUBLE_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockItemType POLISHED_CALCITE_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockItemType POLISHED_CALCITE_STAIRS
+    public static final org.geysermc.paletter.vanilla.BedrockItemType POLISHED_CALCITE_WALL
     public static final org.geysermc.paletter.vanilla.BedrockItemType POLISHED_CINNABAR
     public static final org.geysermc.paletter.vanilla.BedrockItemType POLISHED_CINNABAR_DOUBLE_SLAB
     public static final org.geysermc.paletter.vanilla.BedrockItemType POLISHED_CINNABAR_SLAB
@@ -7312,6 +7371,11 @@ public final class org.geysermc.paletter.vanilla.BedrockItems {
     public static final org.geysermc.paletter.vanilla.BedrockItemType SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE
     public static final org.geysermc.paletter.vanilla.BedrockItemType SNOW
     public static final org.geysermc.paletter.vanilla.BedrockItemType SNOWBALL
+    public static final org.geysermc.paletter.vanilla.BedrockItemType SNOW_BRICKS
+    public static final org.geysermc.paletter.vanilla.BedrockItemType SNOW_BRICK_DOUBLE_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockItemType SNOW_BRICK_SLAB
+    public static final org.geysermc.paletter.vanilla.BedrockItemType SNOW_BRICK_STAIRS
+    public static final org.geysermc.paletter.vanilla.BedrockItemType SNOW_BRICK_WALL
     public static final org.geysermc.paletter.vanilla.BedrockItemType SNOW_GOLEM_SPAWN_EGG
     public static final org.geysermc.paletter.vanilla.BedrockItemType SNOW_LAYER
     public static final org.geysermc.paletter.vanilla.BedrockItemType SOUL_CAMPFIRE
@@ -7707,6 +7771,7 @@ public final class org.geysermc.paletter.vanilla.BedrockStates {
     public static final org.geysermc.paletter.vanilla.EnumState<org.geysermc.paletter.vanilla.state.Direction> BLOCK_FACE
     public static final org.geysermc.paletter.vanilla.BoolState BLOOM
     public static final org.geysermc.paletter.vanilla.IntState BOOKS_STORED
+    public static final org.geysermc.paletter.vanilla.BoolState BOTTOM
     public static final org.geysermc.paletter.vanilla.BoolState BREWING_STAND_SLOT_A_BIT
     public static final org.geysermc.paletter.vanilla.BoolState BREWING_STAND_SLOT_B_BIT
     public static final org.geysermc.paletter.vanilla.BoolState BREWING_STAND_SLOT_C_BIT
@@ -7760,6 +7825,7 @@ public final class org.geysermc.paletter.vanilla.BedrockStates {
     public static final org.geysermc.paletter.vanilla.EnumState<org.geysermc.paletter.vanilla.state.LeverDirection> LEVER_DIRECTION
     public static final org.geysermc.paletter.vanilla.IntState LIQUID_DEPTH
     public static final org.geysermc.paletter.vanilla.BoolState LIT
+    public static final org.geysermc.paletter.vanilla.BoolState LOCKED
     public static final org.geysermc.paletter.vanilla.EnumState<org.geysermc.paletter.vanilla.state.Direction> MINECRAFT_FACING_DIRECTION
     public static final org.geysermc.paletter.vanilla.IntState MOISTURIZED_AMOUNT
     public static final org.geysermc.paletter.vanilla.IntState MULTI_FACE_DIRECTION_BITS

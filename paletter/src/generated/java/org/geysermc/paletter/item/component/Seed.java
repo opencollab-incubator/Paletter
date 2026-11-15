@@ -38,7 +38,7 @@ import org.geysermc.paletter.annotation.ReplacedBy;
  *        versions. Add-on JSON {@code plant_at_face}. Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_seed?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:seed</a>
  * @since 0.1.0
- * @deprecated replaced by {@link BlockPlacer} (BDS message (data/bds/1.26.63.1/spec): "Use minecraft:block_placer instead")
+ * @deprecated replaced by {@link BlockPlacer} (BDS message (data/bds/1.26.70.24/spec): "Use minecraft:block_placer instead")
  */
 @BedrockFormat("1.10.0")
 @Deprecated

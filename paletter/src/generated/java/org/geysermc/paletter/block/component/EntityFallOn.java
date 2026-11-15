@@ -15,7 +15,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * <p>
  * Add-on JSON: {@code "minecraft:entity_fall_on"}.
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
- * 1.26.63.1), so it has no client effect. Palettes leave it out without a warning.
+ * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
  *
  * @param minFallDistance The minimum distance in blocks that an actor needs to fall before events are triggered. Add-on JSON {@code
  *        min_fall_distance}. Default: <code>0</code>.

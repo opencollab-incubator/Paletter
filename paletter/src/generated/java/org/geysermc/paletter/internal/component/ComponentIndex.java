@@ -134,7 +134,7 @@ public final class ComponentIndex {
     /**
      * The newest protocol a spec capture of BDS exists for: a palette of a newer protocol is encoded with the shape observed here.
      */
-    public static final int NEWEST_CAPTURED_PROTOCOL = 2225;
+    public static final int NEWEST_CAPTURED_PROTOCOL = 2259;
 
     /**
      * The first protocol of the window of the spec capture of BDS 1.26.36.1 ({@code data/bds/1.26.36.1/spec}): what the hand
@@ -161,14 +161,20 @@ public final class ComponentIndex {
     public static final int BDS_1_26_63_1 = 2225;
 
     /**
+     * The first protocol of the window of the spec capture of BDS 1.26.70.24 ({@code data/bds/1.26.70.24/spec}): what the hand
+     * transforms compare {@code WireContext.protocol()} with where that build changed the wire.
+     */
+    public static final int BDS_1_26_70_24 = 2259;
+
+    /**
      * The {@code vanilla_block_data.block_id} of the first custom block: BDS numbers custom blocks from here, in
-     * every spec capture (1.26.36.1, 1.26.45.1, 1.26.52.3, 1.26.63.1).
+     * every spec capture (1.26.36.1, 1.26.45.1, 1.26.52.3, 1.26.63.1, 1.26.70.24).
      */
     public static final int CUSTOM_BLOCK_ID_START = 10000;
 
     /**
      * The item of a custom block has the runtime id {@code BLOCK_ITEM_ID_PLUS_BLOCK_ID - block_id} in every spec
-     * capture (1.26.36.1, 1.26.45.1, 1.26.52.3, 1.26.63.1).
+     * capture (1.26.36.1, 1.26.45.1, 1.26.52.3, 1.26.63.1, 1.26.70.24).
      */
     public static final int BLOCK_ITEM_ID_PLUS_BLOCK_ID = 255;
 
@@ -177,7 +183,7 @@ public final class ComponentIndex {
         keys(MenuCategory.class, "category", "category", "group", "group", "is_hidden_in_commands", "hiddenInCommands");
         BLOCK.put("minecraft:block_entity", BlockEntity.class);
         keys(BlockEntity.class, "container", "container", "dynamic_properties", "dynamicProperties", "entity_storage", "entityStorage");
-        keys(BlockEntity.Container.class, "slot_count", "slotCount", "title", "title");
+        keys(BlockEntity.Container.class, "show_ui_on_interaction", "showUiOnInteraction", "slot_count", "slotCount", "title", "title");
         BLOCK.put("minecraft:block_light_absorption", BlockLightAbsorption.class);
         keys(BlockLightAbsorption.class);
         FORMS.put(BlockLightAbsorption.class, Map.of("integer", "value"));

@@ -1,0 +1,18 @@
+{
+  "bdsVersion": "1.26.70.24",
+  "protocol": 2259,
+  "preview": true,
+  "formatVersion": "1.26.60",
+  "nativeCodec": false,
+  "codecProtocol": 2225,
+  "resolvedHashes": 4244,
+  "unresolvedHashes": 0,
+  "experiments": [
+    "upcoming_creator_features\u003dtrue",
+    "gametest\u003dtrue",
+    "experimental_creator_cameras\u003dtrue",
+    "villager_trades_rebalance\u003dtrue",
+    "voxel_shapes\u003dtrue",
+    "data_driven_vanilla_blocks_and_items\u003dtrue"
+  ]
+}
