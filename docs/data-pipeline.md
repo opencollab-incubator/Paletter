@@ -65,7 +65,7 @@ Generator tests compare against golden files. After an intended change of genera
 ./gradlew :tools:run --args="update --channel release --verify-only"    # write nothing, exit 1 on any difference
 ```
 
-Useful options: `--version <build>` for a specific build, `--import-preview` to allow importing a preview,
+Useful options: `--version <build>` for a specific build, `--channel preview` for the newest preview,
 `--keep-server`, `--cache DIR` (default `$PALETTER_BDS_CACHE`, else the Gradle user home), `--report FILE`, and
 `--experiments a,b` to skip experiment discovery. Run `update --help` for the rest.
 
@@ -83,7 +83,9 @@ A run downloads BDS and, in `<cache>/runs/<platform>-<version>/`:
 7. Unless `--verify-only`: imports a new protocol as a new bundled version, or refreshes item tags and default states of
    an existing one; writes the new captures; regenerates the component API and the vanilla constants.
 
-The report lists every check as PASS, DIFF or FAIL, and a TODO list of what needs a decision. Things that stay manual:
+The report lists every check as PASS, DIFF or FAIL, and a TODO list of what needs a decision. An update writes it to
+`data/bds/<build>/update-report.md` (generated, committed with the data, so a later run can be diffed against it) and
+exits with 2 while TODOs are open. Things that stay manual:
 
 - reviewing wire format changes in `data/model` and the regenerated component API;
 - re-importing a protocol whose network data changed in a hotfix;
@@ -106,8 +108,12 @@ toggle, the items, blocks and creative stacks it adds. The bundle itself is capt
 
 ### Previews
 
-Without `--import-preview` nothing from a preview is written. With it, the version is imported and marked `preview` in
-`versions.txt`; the library ignores it unless `paletter.previews` is `true`.
+Paletter bundles the newest preview next to the releases. `update --channel preview` imports it like a release, marked
+`preview` in `versions.txt`; the library serves it only when `paletter.previews` is `true`. Generated API that only the
+preview has (constants, states, enum values, components and fields BDS releases reject) is marked
+`@SincePreview("<version>")` and is kept out of `constants-history.json`. Importing a newer preview, or the preview's
+release, drops the bundled preview and its `data/bds/<build>` captures. Release runs never compare against a preview's
+captures.
 
 ### Other sources
 
@@ -125,7 +131,7 @@ hold nothing Paletter needs.
 - `build.yml` runs `./gradlew build`, `check-mappings --strict` (every captured bit and wire path is explained) and
   `check-data`.
 - `bds-data.yml` runs `update --verify-only` daily for the release and preview channels on Linux BDS. On a difference it
-  opens or comments on an issue; for releases it also opens a pull request with the updated data.
+  opens or comments on an issue and opens a pull request from `bds-data/<channel>` with the updated data.
 - `javadoc.yml` publishes the Javadoc of `main` to GitHub Pages.
 
 ## The component model
@@ -212,8 +218,8 @@ converts them. Shapes use the hand-written `internal.behaviour.ShapeRules`.
 ### Vanilla constants
 
 `./gradlew :tools:generateConstants` writes `BedrockBlocks`, `BedrockStates`, `BedrockItems`, the enums in
-`vanilla.state` and, while a preview is bundled, `BedrockPreviewBlocks` and `BedrockPreviewItems`. Inputs: the newest
-bundled release, `renames.txt` and `data/model/constants-history.json`, which records every constant ever generated so
+`vanilla.state`, with what only a bundled preview has marked `@SincePreview`. Inputs: the newest bundled release and
+preview, `renames.txt` and `data/model/constants-history.json`, which records every constant ever generated so
 regeneration cannot drop one. Commit the history together with the classes.
 
 - Names are the UPPER_SNAKE of the identifier path. Collisions fail until a name override in `ConstantsGenerator`
