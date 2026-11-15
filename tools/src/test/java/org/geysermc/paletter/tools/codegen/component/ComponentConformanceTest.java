@@ -14,6 +14,7 @@ import org.geysermc.paletter.PaletteReport;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.data.DataVersion;
+import org.geysermc.paletter.data.PaletteDataSource;
 import org.geysermc.paletter.internal.component.BlockCompiler;
 import org.geysermc.paletter.internal.component.ItemCompiler;
 import org.geysermc.paletter.internal.component.WireContext;
@@ -101,8 +102,10 @@ class ComponentConformanceTest {
         JsonArray manifest = JsonParser.parseString(Files.readString(capture.resolve("variants.json"), StandardCharsets.UTF_8)).getAsJsonArray();
         JsonObject[] recorded = manifest.asList().stream().map(JsonElement::getAsJsonObject).toArray(JsonObject[]::new);
         // The definitions of the variants as that capture's add-on had them (its format version and the bases it shrunk).
-        // For the newest capture they are also checked against what the generator makes of today's model.
-        AddonGenerator generator = new AddonGenerator(Model.read(MODEL.resolve("components.json")), Fixtures.read(MODEL),
+        // For the newest capture they are also checked against what the generator makes of today's model. Probed keys
+        // apply only to the build they were probed on, as in spec-capture.
+        AddonGenerator generator = new AddonGenerator(Model.read(MODEL.resolve("components.json")),
+            Fixtures.read(MODEL).forBuild(meta.get("bdsVersion").getAsString()),
             meta.get("formatVersion").getAsString(), AddonGenerator.Shrunk.of(manifest));
         if (newest) {
             assertEquals(recorded.length, generator.variants().size(), "the add-on generator no longer produces the captured variants");
@@ -125,8 +128,10 @@ class ComponentConformanceTest {
         }
         Set<String> errors = errorVariants(capture.resolve("content-log.txt"));
 
-        Paletter paletter = Paletter.bundled();
+        boolean preview = meta.has("preview") && meta.get("preview").getAsBoolean();
+        Paletter paletter = preview ? withPreviews() : Paletter.bundled();
         DataVersion version = paletter.version(protocol);
+        assertTrue(!preview || version.protocolVersion() == protocol, "the preview " + protocol + " is not bundled, got " + version);
         VanillaData data = paletter.vanillaData(version);
 
         List<Outcome> outcomes = new ArrayList<>();
@@ -265,6 +270,24 @@ class ComponentConformanceTest {
             }
         }
         return out;
+    }
+
+    /**
+     * The bundled data with its previews: the capture of a preview build is compiled for the preview's own version. Read
+     * from the sources, since the bundled source has read its version index already.
+     */
+    static Paletter withPreviews() {
+        String before = System.getProperty("paletter.previews");
+        System.setProperty("paletter.previews", "true");
+        try {
+            return Paletter.builder().data(PaletteDataSource.directory(ROOT.resolve("paletter/src/main/resources/paletter"))).build();
+        } finally {
+            if (before == null) {
+                System.clearProperty("paletter.previews");
+            } else {
+                System.setProperty("paletter.previews", before);
+            }
+        }
     }
 
     static NbtMap read(Path file) throws IOException {
