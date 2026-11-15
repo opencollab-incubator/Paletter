@@ -20,7 +20,9 @@ One command line, picocli (`Cli`): `./gradlew :tools:run --args="<command> ..."`
 |---------|------|
 | `update --channel release\|preview [--verify-only] ...` | The whole BDS update pipeline (see the README, "Data") |
 | `behaviour import [--cloudburst-data <checkout>] [--allay <checkout>]` | Behaviour values of vanilla blocks and items; read `data/behaviour/REPORT.md` after it (disagreements, inherited versions, keys without a source) |
-| `behaviour-probe --bds <version> [--server <dir>] [--from-log <console>]` | Runs `data/addons/probe` on BDS and writes what it measured to `data/bds/<version>/behaviour-probe/` (`probe.log`, `capture.json`): the BDS defaults of custom blocks (friction, explosion resistance, light, collision, fire) and the collision boxes of every door in every state. Input of `behaviour import`. Downloading BDS means accepting the Minecraft EULA |
+| `behaviour-probe --bds <version> [--server <dir>] [--from-log <console>]` | Runs `data/addons/probe` on BDS and writes what it measured to `data/bds/<version>/behaviour-probe/` (`probe.log`, `capture.json`): the BDS defaults of custom blocks (friction, explosion resistance, light, collision, fire) and the collision boxes of every door in every state, whether a body climbs in every block state. Input of `behaviour import`. Downloading BDS means accepting the Minecraft EULA |
+| `behaviour-dump --bds <version> [--server <dir>] [--from-log <console>]` | Runs `data/addons/behaviour-dump` on BDS with the Beta APIs (the `@minecraft/server` beta of the build, from npm) and writes `data/bds/<version>/behaviour-dump.json.gz`; fails when the add-on met API members it does not know how to read. Input of `behaviour import` and of the behaviour key check |
+| `bds-inventory --bds <version>` | Reads the strings of the build's Linux `bedrock_server` (downloaded, not run; works on any OS) and writes `data/bds/<version>/inventory.json`: block components with their JSON keys, item components, every Script API class and member; prints what changed against the previous build (`update` does the same and reports it) |
 | `import`, `bds-run`, `bds-compare`, `verify`, `check-data` | Importing and checking bundled data (`check-data` lists what older versions lack of the newest) |
 | `block-items`, `rewrite`, `data-diff` | Maintaining bundled data without a capture: add the block to item relation (from a stored dump, or derived from a newer version), rewrite files without fallbacks, diff two data files |
 | `spec-capture` | Runs the spec add-on on BDS, writes `data/bds/<version>/spec`; `--probe-keys` asks BDS about keys the docs omit (`spec-keys`, `data/model/bds-keys.json`), `--format-sweep` varies the add-on's `format_version` (`spec-format`), see [model.md](docs/model.md) |
@@ -37,5 +39,5 @@ Gradle tasks (run from anywhere in the build): `generateConstants`, `checkConsta
 The `check` tasks are part of `./gradlew build`; the generated sources they guard are in `paletter/src/generated/java`.
 Golden files: `./gradlew :tools:test -PupdateGolden=true` after an intended change of generator output, then review.
 
-Other documents: [../data/bds/WIRE-NOTES.md](../data/bds/WIRE-NOTES.md) (what BDS sends),
+Other documents: [docs/native-capture.md](docs/native-capture.md) (design of a native capture: Endstone in CI, LeviLamina locally), [../data/bds/WIRE-NOTES.md](../data/bds/WIRE-NOTES.md) (what BDS sends),
 [../data/bds/CREATIVE-ORDER.md](../data/bds/CREATIVE-ORDER.md).

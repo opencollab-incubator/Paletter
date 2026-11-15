@@ -1,0 +1,16 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:entity": {
+    "description": {"identifier": "probe:climber", "is_spawnable": false, "is_summonable": true},
+    "components": {
+      "minecraft:can_climb": {},
+      "minecraft:physics": {"has_gravity": false},
+      "minecraft:collision_box": {"width": 0.5, "height": 0.5},
+      "minecraft:health": {"value": 100, "max": 100},
+      "minecraft:pushable": {"is_pushable": false, "is_pushable_by_piston": false},
+      "minecraft:damage_sensor": {"triggers": {"deals_damage": "no"}},
+      "minecraft:breathable": {"breathes_solids": true, "breathes_water": true},
+      "minecraft:persistent": {}
+    }
+  }
+}

@@ -22,7 +22,13 @@
 //   tunnel    {block, behind, inside}                           block light behind and inside a block next to glowstone
 //   explosion {block: {distance: [destroyed, total]}}           blocks beside an explosion (power 4)
 //   flammable {block: {remaining, total}}                       blocks with fire on top after 400 ticks of fire ticking
-import { world, system, BlockPermutation, BlockTypes } from "@minecraft/server";
+//   climb     {block, states, climbing: [state], lost: [state]} every state of every block type, each in its own cell walled
+//                                                               in by barriers, with a body that can climb
+//                                                               (minecraft:can_climb, no wall climbing, no gravity) at its
+//                                                               feet; climbing lists the states where Entity.isClimbing was
+//                                                               true after 3 ticks; states is how many states were tried;
+//                                                               lost: states the body was gone after (not measured)
+import { world, system, BlockPermutation, BlockStates, BlockTypes } from "@minecraft/server";
 
 const out = (tag, data) => console.warn(`PROBE ${tag} ${JSON.stringify(data)}`);
 const wait = (ticks) => new Promise((resolve) => system.runTimeout(resolve, ticks));
@@ -227,7 +233,99 @@ async function main() {
         if (dim.getBlock({ x: f.x, y: Y, z: f.z }).typeId === f.block) count.remaining++;
     }
     out("flammable", burnt);
+
+    await climbing(dim);
     console.warn("PROBE-DONE");
+}
+
+// ---------- climbing ----------
+
+// Native arrays of the Script API are not always iterable; copy them by index
+function toArray(list) {
+    const array = [];
+    for (let i = 0; list && i < list.length; i++) array.push(list[i]);
+    return array;
+}
+
+// Every state of a block: every combination of the values its states accept, as BDS resolves them (legacy alias states make
+// some combinations the same state). The same enumeration as data/addons/behaviour-dump.
+function statesOf(id) {
+    const base = BlockPermutation.resolve(id);
+    const defaults = base.getAllStates();
+    const options = Object.keys(defaults).sort().map((name) => [name, toArray(BlockStates.get(name)?.validValues).filter((value) => {
+        try {
+            const changed = base.withState(name, value);
+            return changed.type.id === id && changed.getState(name) === value;
+        } catch {
+            return false;
+        }
+    })]);
+    const result = new Map();
+    const combine = (i, states) => {
+        if (i === options.length) {
+            try {
+                const permutation = BlockPermutation.resolve(id, states);
+                const all = permutation.getAllStates();
+                result.set(JSON.stringify(Object.keys(all).sort().map((name) => [name, all[name]])), permutation);
+            } catch {
+                // not a state of the block
+            }
+            return;
+        }
+        const [name, values] = options[i];
+        for (const value of values.length ? values : [defaults[name]]) combine(i + 1, { ...states, [name]: value });
+    };
+    combine(0, {});
+    return [...result.keys()].sort().map((key) => result.get(key));
+}
+
+async function climbing(dim) {
+    // cells every 2 blocks in a slab of barriers, so nothing of one cell (water, falling blocks) reaches another
+    const X = 0, Z = 200, CY = 120, ROWS = 16, COLUMNS = 32;
+    dim.runCommand(`tickingarea add ${X - 2} ${CY - 2} ${Z - 2} ${X + 2 * COLUMNS + 2} ${CY + 2} ${Z + 2 * ROWS + 2} probe3`);
+    for (let i = 0; i < 200 && !dim.getBlock({ x: X + 2 * COLUMNS, y: CY, z: Z + 2 * ROWS }); i++) await wait(10);
+    for (let x = X - 1; x <= X + 2 * COLUMNS; x += 16) {
+        dim.runCommand(`fill ${x} ${CY - 1} ${Z - 1} ${Math.min(x + 15, X + 2 * COLUMNS)} ${CY + 1} ${Z + 2 * ROWS} barrier`);
+    }
+    const cells = [];
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLUMNS; c++) cells.push({ x: X + 2 * c, z: Z + 2 * r });
+    const feet = (cell) => ({ x: cell.x + 0.5, y: CY + 0.1, z: cell.z + 0.5 });
+    const climbers = cells.map((cell) => dim.spawnEntity("probe:climber", feet(cell)));
+
+    const states = [];
+    for (const type of toArray(BlockTypes.getAll()).sort((a, b) => (a.id < b.id ? -1 : 1))) {
+        try {
+            for (const permutation of statesOf(type.id)) states.push(permutation);
+        } catch (e) {
+            console.warn(`PROBE-ERROR no states for ${type.id}: ${e}`);
+        }
+    }
+    const results = new Map(); // block -> {states, climbing}
+    for (let start = 0; start < states.length; start += cells.length) {
+        const wave = states.slice(start, start + cells.length);
+        wave.forEach((permutation, i) => {
+            try {
+                dim.getBlock({ x: cells[i].x, y: CY, z: cells[i].z }).setPermutation(permutation);
+            } catch (e) {
+                console.warn(`PROBE-ERROR could not place ${permutation.type.id}: ${e}`);
+            }
+            // a block can remove the body (a portal takes it away): a new one then
+            if (!climbers[i].isValid) climbers[i] = dim.spawnEntity("probe:climber", feet(cells[i]));
+            climbers[i].teleport(feet(cells[i]));
+        });
+        await wait(3);
+        wave.forEach((permutation, i) => {
+            const result = results.get(permutation.type.id) ?? { states: 0, climbing: [], lost: [] };
+            results.set(permutation.type.id, result);
+            result.states++;
+            if (!climbers[i].isValid) result.lost.push(permutation.getAllStates());
+            else if (climbers[i].isClimbing) result.climbing.push(permutation.getAllStates());
+        });
+        wave.forEach((permutation, i) => dim.getBlock({ x: cells[i].x, y: CY, z: cells[i].z }).setType("minecraft:barrier"));
+        await wait(1);
+    }
+    climbers.forEach((climber) => climber.isValid && climber.remove());
+    for (const [block, result] of results) out("climb", { block, ...result });
 }
 
 world.afterEvents.worldLoad.subscribe(() => {

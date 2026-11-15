@@ -11,6 +11,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -33,6 +34,8 @@ public final class BdsRunner {
     private final Path addon;
     private final String marker;
     private final String packDirectory;
+    private List<String> experiments = List.of();
+    private String betaModule;
 
     /** The dump addon: it prints {@code PALETTER-DONE}. */
     public BdsRunner(Path addon) {
@@ -47,6 +50,19 @@ public final class BdsRunner {
         this.addon = addon;
         this.marker = marker;
         this.packDirectory = packDirectory;
+    }
+
+    /**
+     * Runs the add-on with the beta Script API: on a world with the Beta APIs experiment ({@code gametest}; BDS starts
+     * once to create the fresh world, stops, and the toggle is set in its {@code level.dat}), and with the add-on's
+     * {@code @minecraft/server} dependency set to the beta of this build ({@link ScriptModules#betaVersion}).
+     *
+     * @param bdsVersion the build of the server, e.g. {@code 1.26.63.1}
+     */
+    public BdsRunner withBetaApis(String bdsVersion) throws IOException, InterruptedException {
+        this.experiments = List.of("gametest");
+        this.betaModule = ScriptModules.betaVersion(bdsVersion);
+        return this;
     }
 
     /**
@@ -76,6 +92,13 @@ public final class BdsRunner {
     public void run(Path server, Path log, int timeoutSeconds, int port, boolean echo) throws IOException, InterruptedException {
         installPack(server);
         configure(server, port);
+        if (!experiments.isEmpty()) {
+            try (BdsServer bds = new BdsServer(server, echo)) {
+                bds.start(log.resolveSibling(log.getFileName() + ".create"));
+                bds.awaitStarted(timeoutSeconds);
+            }
+            LevelDat.enableExperiments(server.resolve("worlds").resolve(WORLD).resolve("level.dat"), experiments);
+        }
         System.out.println("Starting BDS in " + server + ", log: " + log);
         dump(server, log, timeoutSeconds, echo);
         System.out.println("Dump complete: " + log);
@@ -134,7 +157,12 @@ public final class BdsRunner {
                 }
             }
         }
-        JsonObject header = JsonParser.parseString(Files.readString(addon.resolve("manifest.json"))).getAsJsonObject().getAsJsonObject("header");
+        JsonObject manifest = JsonParser.parseString(Files.readString(addon.resolve("manifest.json"))).getAsJsonObject();
+        if (betaModule != null) {
+            ScriptModules.setServerModule(manifest, betaModule);
+            Files.writeString(pack.resolve("manifest.json"), manifest.toString());
+        }
+        JsonObject header = manifest.getAsJsonObject("header");
         String uuid = header.get("uuid").getAsString();
         String version = header.get("version").toString();
 

@@ -36,6 +36,10 @@ class EndstoneDumpTest {
         assertEquals(Map.of(-1, 0.98f), values.byKey.get(BlockBehaviour.FRICTION), "unsigned hashes wrap to int");
         assertEquals(Map.of(-1, true), values.byKey.get(BlockBehaviour.SOLID));
         assertEquals(Map.of(-1, 0xa0a0ffff), values.byKey.get(BlockBehaviour.MAP_COLOR));
+        // the reaction as the Script API's three booleans
+        assertEquals(Map.of(-1, true), values.byKey.get(BlockBehaviour.LIQUID_BLOCKING));
+        assertEquals(Map.of(-1, false), values.byKey.get(BlockBehaviour.DESTROYED_BY_LIQUID));
+        assertEquals(Map.of(-1, false), values.byKey.get(BlockBehaviour.LIQUID_SPREAD_CAUSES_SPAWN));
         assertEquals(Map.of(-1, BlockShape.FULL_CUBE), values.byKey.get(BlockBehaviour.COLLISION_SHAPE));
         assertEquals(Map.of("newField", 1), values.unmappedFields, "liquidClipShape is ignored, unknown fields reported");
     }

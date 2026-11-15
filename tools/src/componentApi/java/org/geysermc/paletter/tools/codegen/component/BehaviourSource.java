@@ -74,6 +74,21 @@ final class BehaviourSource {
      * @return generated sources by path relative to the source root
      */
     static Map<String, String> generate(List<Key> keys, JsonObject mappings, JsonObject probe, String probeReference) {
+        return generate(keys, mappings, probe, probeReference, null);
+    }
+
+    /**
+     * @param evidence what the newest BDS captures have; null skips the check of the keys' sources (tests of the writers)
+     * @throws GenerationException if a key's source is not in its capture, or a property of the behaviour dump has neither
+     * a key nor an entry in {@link BehaviourKeys#IGNORED}
+     */
+    static Map<String, String> generate(List<Key> keys, JsonObject mappings, JsonObject probe, String probeReference, BehaviourEvidence evidence) {
+        if (evidence != null) {
+            List<String> problems = evidence.problems(keys, BehaviourKeys.IGNORED);
+            if (!problems.isEmpty()) {
+                throw new GenerationException("The behaviour keys do not match the BDS captures (BehaviourKeys):\n  " + String.join("\n  ", problems));
+            }
+        }
         Map<String, String> files = new TreeMap<>();
         for (Owner owner : Owner.values()) {
             String name = constantsClass(owner);
@@ -150,13 +165,19 @@ final class BehaviourSource {
         return type.build();
     }
 
-    /** The table's text plus which add-on components set the key on custom content. */
+    /** The table's text, the BDS property the key is, and which add-on components set the key on custom content. */
     private static String doc(Key key) {
         StringBuilder doc = new StringBuilder(key.doc());
+        if (!doc.isEmpty()) {
+            doc.append("\n<p>\n");
+        }
+        doc.append("BDS: ");
+        for (int i = 0; i < key.sources().size(); i++) {
+            doc.append(i == 0 ? "" : i == key.sources().size() - 1 ? " and " : ", ").append(describe(key.sources().get(i)));
+        }
+        doc.append('.');
         if (key.wire() != null) {
-            if (!doc.isEmpty()) {
-                doc.append("\n<p>\n");
-            }
+            doc.append("\n<p>\n");
             doc.append("Custom ").append(key.owner() == Owner.BLOCK ? "blocks" : "items").append(" set it with ");
             List<String> components = key.wire().components();
             for (int i = 0; i < components.size(); i++) {
@@ -165,6 +186,17 @@ final class BehaviourSource {
             doc.append('.');
         }
         return doc.toString();
+    }
+
+    /** A source of {@link BehaviourKeys} in words, for the Javadoc. */
+    static String describe(String source) {
+        String name = source.substring(source.indexOf(':') + 1).replace("{direction}", "<direction>");
+        return switch (source.substring(0, source.indexOf(':'))) {
+            case "SAPI" -> "the Script API's {@code " + name + "}";
+            case "PROBE" -> "measured by {@code behaviour-probe} ({@code " + name + "})";
+            case "NATIVE" -> "{@code " + name + "} (native; from third-party dumps until Paletter captures it)";
+            default -> throw new GenerationException("unknown source " + source);
+        };
     }
 
     // ---- WireRules -----------------------------------------------------------------------------------------------------

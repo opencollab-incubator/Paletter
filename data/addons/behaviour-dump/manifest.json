@@ -1,0 +1,25 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Paletter behaviour dump",
+    "description": "Hand-written. Dumps what the Script API says about every block state and item type (liquid queries, solid, map colour, every component getter) and which getters depend on the world, to the server console for behaviour-dump (tools)",
+    "uuid": "821102c0-2f98-4410-bf53-84761953c4dd",
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 21, 80]
+  },
+  "modules": [
+    {
+      "type": "script",
+      "language": "javascript",
+      "uuid": "040e71f5-0708-4e0f-947a-2f574b86bc4f",
+      "entry": "scripts/main.js",
+      "version": [1, 0, 0]
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.12.0-beta"
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
 import org.geysermc.paletter.internal.data.PaletteDataCodec;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.tools.bds.BdsDump;
+import org.geysermc.paletter.tools.bds.BdsInventory;
 import org.geysermc.paletter.tools.bds.BdsRunner;
 import org.geysermc.paletter.tools.client.Capture;
 import org.geysermc.paletter.tools.client.CaptureClient;
@@ -51,11 +52,11 @@ import java.util.concurrent.Callable;
  * repository. See tools/README.md for what each command does.
  */
 @Command(name = "paletter-tools", mixinStandardHelpOptions = true, subcommands = {
-    Cli.Import.class, Cli.BdsRun.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.SpecCaptureCommand.class,
+    Cli.Import.class, Cli.BdsRun.class, Cli.BdsInventoryCommand.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.SpecCaptureCommand.class,
     Cli.VerifyCommand.class, Cli.CheckData.class, Cli.BlockItemsCommand.class, Cli.RewriteCommand.class, Cli.DataRewriteCommand.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class, Cli.ExperimentMarksCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
-    Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class, Cli.BehaviourCommand.class, Cli.BehaviourProbeCommand.class,
+    Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class, Cli.BehaviourCommand.class, Cli.BehaviourProbeCommand.class, Cli.BehaviourDumpCommand.class,
     Cli.VoxelShapesCommand.class
 })
 public final class Cli implements Runnable {
@@ -193,6 +194,27 @@ public final class Cli implements Runnable {
                 throw new IllegalArgumentException("Missing --server or --download");
             }
             new BdsRunner(root().resolve(Layout.DUMP_ADDON)).run(dir, log, timeout);
+            return 0;
+        }
+    }
+
+    @Command(name = "bds-inventory", description = "Reads the strings of the Linux bedrock_server of a BDS build (downloaded into the cache, not run) "
+        + "and writes data/bds/<VERSION>/inventory.json: block components and their JSON keys, item components, every Script API class and "
+        + "member; prints what changed against the inventory of the previous build. Downloading BDS means accepting the Minecraft EULA.")
+    static final class BdsInventoryCommand extends Rooted implements Callable<Integer> {
+        @Option(names = "--bds", required = true, description = "BDS version, e.g. 1.26.63.1") String bds;
+        @Option(names = "--cache") Path cache;
+
+        @Override
+        public Integer call() throws Exception {
+            Path file = BdsInventory.write(root(), bds, cache);
+            Path previous = BdsInventory.previous(root().resolve(Layout.BDS), bds);
+            if (previous != null) {
+                List<String> diff = BdsInventory.diff(
+                    BdsInventory.parse(previous), BdsInventory.parse(file));
+                System.out.println(diff.size() + " changes against " + previous + (diff.isEmpty() ? "" : ":"));
+                diff.forEach(System.out::println);
+            }
             return 0;
         }
     }
@@ -695,6 +717,34 @@ public final class Cli implements Runnable {
                 org.geysermc.paletter.tools.behaviour.BehaviourProbe.run(root(), bds, server, cache, port, timeout, console);
             }
             org.geysermc.paletter.tools.behaviour.BehaviourProbe.write(root(), console);
+            return 0;
+        }
+    }
+
+    @Command(name = "behaviour-dump", description = "Runs data/addons/behaviour-dump on BDS (--bds VERSION, extracted into the cache, or --server DIR) "
+        + "with the Beta APIs and writes what the Script API says about every block state and item to data/bds/<BDS version>/behaviour-dump.json.gz "
+        + "(input of behaviour import and of the behaviour key check). With --from-log it reads a console log of an earlier run instead of "
+        + "starting BDS. Downloading BDS means accepting the Minecraft EULA.")
+    static final class BehaviourDumpCommand extends Rooted implements Callable<Integer> {
+        @Option(names = "--bds", description = "BDS version, e.g. 1.26.63.1") String bds;
+        @Option(names = "--server", description = "An extracted BDS of that version, instead of the cache") Path server;
+        @Option(names = "--cache") Path cache;
+        @Option(names = "--port", defaultValue = "19294") int port;
+        @Option(names = "--timeout", defaultValue = "1800") int timeout;
+        @Option(names = "--log", description = "Where the console of the run goes (default: <cache>/runs/behaviour-dump-<VERSION>.log)") Path log;
+        @Option(names = "--from-log", description = "Read this console log, do not start BDS") Path fromLog;
+
+        @Override
+        public Integer call() throws Exception {
+            Path console = fromLog;
+            if (console == null) {
+                if (bds == null) {
+                    throw new IllegalArgumentException("Missing --bds (or --from-log)");
+                }
+                console = log != null ? log : org.geysermc.paletter.tools.bds.BdsDistribution.defaultCache().resolve("runs").resolve("behaviour-dump-" + bds + ".log");
+                org.geysermc.paletter.tools.behaviour.BehaviourDump.run(root(), bds, server, cache, port, timeout, console);
+            }
+            org.geysermc.paletter.tools.behaviour.BehaviourDump.write(root(), console);
             return 0;
         }
     }
