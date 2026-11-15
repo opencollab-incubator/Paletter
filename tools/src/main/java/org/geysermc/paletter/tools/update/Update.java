@@ -98,11 +98,15 @@ public final class Update {
     private final Map<String, String> options;
     private final boolean preview;
     private final boolean verifyOnly;
-    private final boolean importPreview;
     private final boolean keepServer;
     private final int port;
     private final int timeout;
     private Report report;
+
+    /** The report of an update, in {@code data/bds/<build>/}. */
+    public static final String REPORT = "update-report.md";
+    /** The exit code of an update that wrote everything but left decisions (the report's TODO list). */
+    public static final int EXIT_TODOS = 2;
 
     public Update(Path root, Map<String, String> options) {
         this.root = root;
@@ -115,7 +119,6 @@ public final class Update {
         }
         this.preview = channel.equals("preview");
         this.verifyOnly = options.containsKey("verify-only");
-        this.importPreview = options.containsKey("import-preview");
         this.keepServer = options.containsKey("keep-server");
         this.port = Integer.parseInt(options.getOrDefault("port", "19260"));
         this.timeout = Integer.parseInt(options.getOrDefault("timeout", "300"));
@@ -141,15 +144,32 @@ public final class Update {
             report.fail("pipeline", e);
         }
 
-        Path reportFile = options.containsKey("report") ? Path.of(options.get("report")) : work.resolve("report.md");
+        // An update keeps its report with the data of its build, so a later run can be diffed against it
+        Path reportFile = options.containsKey("report") ? Path.of(options.get("report"))
+            : verifyOnly ? work.resolve("report.md") : bdsData.resolve(distribution.version()).resolve(REPORT);
+        report.generatedBy = command(distribution);
         report.write(reportFile);
         if (!reportFile.startsWith(work)) {
             report.write(work.resolve("report.md"));
         }
         System.out.println("Report: " + reportFile.toAbsolutePath());
-        boolean ok = !report.failed() && (!verifyOnly || !report.differs()) && (verifyOnly || report.todos.isEmpty());
         System.out.println(report.failed() ? "FAILED" : report.differs() ? (verifyOnly ? "DIFFERENCES (verify failed)" : "UPDATED") : "IDENTICAL");
-        return ok ? 0 : 1;
+        if (report.failed() || (verifyOnly && report.differs())) {
+            return 1;
+        }
+        return !verifyOnly && !report.todos.isEmpty() ? EXIT_TODOS : 0;
+    }
+
+    /** The command line of this run, without the options that only say where things go. */
+    private String command(BdsDistribution distribution) {
+        StringBuilder args = new StringBuilder("update --channel " + (preview ? "preview" : "release") + " --version " + distribution.version());
+        for (String option : List.of("verify-only", "name", "protocol", "experiments", "experiment-attribution")) {
+            if (options.containsKey(option)) {
+                String value = options.get(option);
+                args.append(" --").append(option).append(value == null || value.equals("true") ? "" : " " + value);
+            }
+        }
+        return "./gradlew :tools:run --args=\"" + args + "\"";
     }
 
     private void pipeline(Path cache, BdsDistribution distribution, Path work) throws Exception {
@@ -176,10 +196,10 @@ public final class Update {
             captures(server, work, dump, runs);
 
             // 3. Voxel shapes: the packet of the vanilla world, of the probe add-on and of the anchors
-            if (runs.vanilla != null && !runs.netherNet) {
+            if (runs.vanilla != null) {
                 voxelShapes(distribution, server, work, runs);
             } else {
-                report.check(Report.Status.SKIP, "Voxel shapes", "no RakNet capture of this build");
+                report.check(Report.Status.SKIP, "Voxel shapes", "no capture of this build");
             }
         } finally {
             if (!keepServer) {
@@ -206,11 +226,12 @@ public final class Update {
         if (runs.addon != null) {
             shapes(distribution, runs);
         }
+        constants(staging);
+        staging.apply();
+        // After the data is in place: the inference puts each capture into the window of its bundled version
         if (runs.protocol != null) {
             specCapture(distribution, work, runs);
         }
-        constants(staging);
-        staging.apply();
         if (runs.voxelShapesWritten) {
             // After the data of the version is in place: the import reads the block names of the bundled versions
             ShapeImport.run(root);
@@ -238,7 +259,7 @@ public final class Update {
             report.check(differing.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Voxel shapes",
                 differing.isEmpty() ? "`" + root.relativize(committed) + "` has the same captures"
                     : "`" + root.relativize(committed) + "` is missing or differs: " + String.join(", ", differing));
-            if (!differing.isEmpty() && (!preview || importPreview)) {
+            if (!differing.isEmpty()) {
                 for (String file : differing) {
                     stageCopy(committed.resolve(file), captured.resolve(file), "voxel shape capture " + file);
                 }
@@ -324,6 +345,8 @@ public final class Update {
         /** Toggles start game streamed: what the add-on world and the attribution use. */
         List<String> current = DEFAULT_EXPERIMENTS;
         List<String> retired = List.of();
+        /** Toggles start game reports for a world without any: part of vanilla, never attributed. */
+        List<String> alwaysOn = List.of();
         Map<String, String> codes = new TreeMap<>();
         ExperimentAttribution.Diff all;
         Map<String, ExperimentAttribution.Diff> each = new TreeMap<>();
@@ -390,6 +413,14 @@ public final class Update {
                 runs.reference = reference(runs.existing, dump, runs);
                 Capture.Summary summary = capture(address, runs, work.resolve("vanilla"), null, "vanilla capture");
                 runs.vanilla = work.resolve("vanilla");
+                // Toggles start game reports for a world without any are part of vanilla (1.26.70 previews:
+                // data_driven_vanilla_blocks_and_items), not toggles to attribute
+                runs.experiments.alwaysOn = summary.enabledExperiments();
+                alwaysOnToggles = runs.experiments.alwaysOn;
+                if (!alwaysOnToggles.isEmpty()) {
+                    report.check(Report.Status.INFO, "Experiments: always on", "start game of a world without experiments reports "
+                        + alwaysOnToggles + ": treated as vanilla");
+                }
                 hashCheck("vanilla", summary);
             }
         }
@@ -597,7 +628,9 @@ public final class Update {
             if (result.accepted.isEmpty()) {
                 throw new IOException("BDS kept none of " + candidates.size() + " candidate toggles in level.dat");
             }
-            boolean codesMatch = result.activeCodes != null && result.activeCodes.size() == result.accepted.size();
+            // An always-on toggle has no log code
+            long withCode = result.accepted.stream().filter(t -> !result.alwaysOn.contains(t)).count();
+            boolean codesMatch = result.activeCodes != null && result.activeCodes.size() == withCode;
             report.check(codesMatch ? Report.Status.PASS : Report.Status.DIFF, "Experiments: discovery",
                 result.candidates + " candidates (binary " + BdsServer.executable(server).getFileName() + ", experimental "
                     + "packs, known ids); BDS kept " + result.accepted.size() + " toggles in level.dat"
@@ -614,13 +647,13 @@ public final class Update {
             bds.awaitStarted(timeout);
             all = capture(address, runs, work.resolve("experiments/all"), null, "experiments capture (all toggles)");
         }
-        List<String> streamed = all.enabledExperiments();
+        List<String> streamed = all.enabledExperiments().stream().filter(t -> !result.alwaysOn.contains(t)).toList();
         if (manual) {
             appliedCheck("--experiments", toggles, all);
         } else {
             result.source = "discovered";
             result.current = streamed;
-            result.retired = toggles.stream().filter(t -> !streamed.contains(t)).toList();
+            result.retired = toggles.stream().filter(t -> !streamed.contains(t) && !result.alwaysOn.contains(t)).toList();
             retiredToggles = result.retired;
             List<String> notAccepted = streamed.stream().filter(t -> !toggles.contains(t)).toList();
             boolean uiMatch = streamed.size() == result.uiKeys.size();
@@ -631,7 +664,7 @@ public final class Update {
                     + (notAccepted.isEmpty() ? "" : "; streamed but not kept in level.dat: " + notAccepted));
         }
         List<String> packStack = all.packStackExperiments().stream().filter(e -> e.endsWith("=true"))
-            .map(e -> e.substring(0, e.length() - 5)).sorted().toList();
+            .map(e -> e.substring(0, e.length() - 5)).filter(t -> !result.alwaysOn.contains(t)).sorted().toList();
         report.check(packStack.equals(streamed) ? Report.Status.PASS : Report.Status.DIFF, "Experiments: resource pack stack",
             packStack.equals(streamed) ? "lists the same toggles as start game" : "lists " + packStack + ", start game " + streamed);
         result.uiKeyOf = ExperimentDiscovery.matchUiKeys(result.current, result.uiKeys);
@@ -690,7 +723,7 @@ public final class Update {
 
     /** Whether start game reported exactly the requested toggles; retired ones are kept but never streamed. */
     private void appliedCheck(String what, List<String> requested, Capture.Summary summary) {
-        List<String> echoed = summary.enabledExperiments();
+        List<String> echoed = summary.enabledExperiments().stream().filter(t -> !alwaysOnToggles.contains(t)).toList();
         List<String> retired = retiredToggles;
         List<String> expected = requested.stream().filter(t -> !retired.contains(t)).sorted().toList();
         boolean ok = echoed.equals(expected);
@@ -701,6 +734,8 @@ public final class Update {
 
     /** Retired toggles of this run: BDS keeps them in level.dat but never streams them. */
     private List<String> retiredToggles = List.of();
+    /** Always-on toggles of this run (see {@link ExperimentRun#alwaysOn}). */
+    private List<String> alwaysOnToggles = List.of();
 
     /** Toggle ids of the committed experiment records ({@code experiments.json} of every version in data/bds). */
     private Set<String> recordedToggles() throws IOException {
@@ -743,6 +778,9 @@ public final class Update {
         for (String toggle : result.retired) {
             lines.add("| `" + toggle + "` | retired | | | | | | |");
         }
+        for (String toggle : result.alwaysOn) {
+            lines.add("| `" + toggle + "` | always on (vanilla) | | | | | | |");
+        }
         lines.add("");
         result.each.forEach((toggle, diff) -> {
             lines.add("**" + toggle + "**" + (diff.isEmpty() ? ": no item, block or creative change" : ""));
@@ -763,7 +801,7 @@ public final class Update {
         docsExperiments(result, lines);
         report.section("Experiments", lines);
 
-        if (!result.source.equals("discovered") || (preview && !importPreview)) {
+        if (!result.source.equals("discovered")) {
             return;
         }
         stage(bdsData.resolve(distribution.version()).resolve("experiments.json"), record(distribution, runs), "experiment record");
@@ -837,9 +875,10 @@ public final class Update {
         JsonObject toggles = new JsonObject();
         List<String> all = new ArrayList<>(result.current);
         all.addAll(result.retired);
+        all.addAll(result.alwaysOn);
         all.stream().sorted().forEach(toggle -> {
             JsonObject entry = new JsonObject();
-            entry.addProperty("status", result.current.contains(toggle) ? "current" : "retired");
+            entry.addProperty("status", result.current.contains(toggle) ? "current" : result.alwaysOn.contains(toggle) ? "always-on" : "retired");
             if (result.codes.containsKey(toggle)) {
                 entry.addProperty("logCode", result.codes.get(toggle));
             }
@@ -899,9 +938,7 @@ public final class Update {
                 fallbackTodos(diff.lines("new blocks"), diff.lines("new items"), "Script API");
             }
         }
-        if (!preview || importPreview) {
-            stage(target, gzip(runs.dumpJson), "Script API baseline " + distribution.version());
-        }
+        stage(target, gzip(runs.dumpJson), "Script API baseline " + distribution.version());
     }
 
     /**
@@ -911,6 +948,12 @@ public final class Update {
     private void inventory(Path cache, BdsDistribution distribution) {
         try {
             JsonObject inventory = BdsInventory.read(root, distribution.version(), distribution.preview(), cache);
+            if (inventory.getAsJsonObject("blockComponents").isEmpty()) {
+                // The inventory reads RTTI type names; the Linux binaries of the 1.26.70 previews have none
+                report.check(Report.Status.SKIP, "BDS inventory", "the Linux bedrock_server of this build has no RTTI type names "
+                    + "(no Block*Description, no Scripting::Reflection bindings): nothing to inventory");
+                return;
+            }
             Path previous = BdsInventory.previous(bdsData, distribution.version());
             if (previous == null) {
                 report.check(Report.Status.INFO, "BDS inventory", "no inventory of an older build to diff against");
@@ -923,10 +966,8 @@ public final class Update {
                     report.section("BDS inventory: BDS " + distribution.version() + " vs " + before, diff);
                 }
             }
-            if (!preview || importPreview) {
-                stage(bdsData.resolve(distribution.version()).resolve(BdsInventory.FILE),
-                    BdsInventory.json(inventory).getBytes(StandardCharsets.UTF_8), "BDS inventory " + distribution.version());
-            }
+            stage(bdsData.resolve(distribution.version()).resolve(BdsInventory.FILE),
+                BdsInventory.json(inventory).getBytes(StandardCharsets.UTF_8), "BDS inventory " + distribution.version());
         } catch (Exception e) {
             report.fail("BDS inventory", e);
         }
@@ -1014,13 +1055,39 @@ public final class Update {
             report.check(Report.Status.DIFF, "New protocol " + runs.protocol, "not bundled yet; " + diff.count() + " differences to " + latest.name());
             report.diff("What changed: " + name + " (BDS " + distribution.version() + ") vs bundled " + latest.name(), diff);
             fallbackTodos(diff.lines("new blocks"), diff.lines("new items"), "network");
-            if (!preview || importPreview) {
-                new Importer(staging.resources).run(runs.vanilla, name, runs.protocol, null, runs.dumpLog, preview);
-                report.check(Report.Status.INFO, "Import", "imported " + name + " (" + runs.protocol + ")" + (preview ? " as a PREVIEW version" : ""));
-                // Content older versions lack is listed above (INFO); there are no bundled fallbacks to check
-                new Checker(staging.resources).problems(preview);
-            } else {
-                report.check(Report.Status.INFO, "Import", "preview not imported (pass --import-preview to bundle it as a preview version)");
+            dropPreviews(distribution, name, runs.protocol, staging);
+            new Importer(staging.resources).run(runs.vanilla, name, runs.protocol, null, runs.dumpLog, preview);
+            report.check(Report.Status.INFO, "Import", "imported " + name + " (" + runs.protocol + ")" + (preview ? " as a PREVIEW version" : ""));
+            // Content older versions lack is listed above (INFO); there are no bundled fallbacks to check
+            new Checker(staging.resources).problems(preview);
+        }
+    }
+
+    /**
+     * Only the newest preview is bundled, and only until its release: importing a version drops every bundled preview of
+     * the same name or an older protocol, with its BDS captures ({@code data/bds/<build>} of that name, but not this build).
+     */
+    private void dropPreviews(BdsDistribution distribution, String name, int protocol, Staging staging) throws IOException {
+        for (Importer.IndexEntry entry : Importer.readIndex(staging.resources)) {
+            boolean sameName = entry.name().equals(name);
+            // A preview imported again just replaces its own data
+            if (!entry.preview() || (preview && sameName) || (!sameName && entry.protocol() > protocol)) {
+                continue;
+            }
+            Importer.remove(staging.resources, entry.name());
+            report.check(Report.Status.INFO, "Import", "dropped preview " + entry.name() + " (" + entry.protocol() + "): "
+                + (preview ? "a newer preview replaces it" : "its release is imported"));
+            try (Stream<Path> dirs = Files.list(bdsData)) {
+                for (Path dir : dirs.filter(d -> d.getFileName().toString().matches("\\d+\\..*")).toList()) {
+                    String build = dir.getFileName().toString();
+                    if (!build.equals(distribution.version()) && versionName(build).equals(entry.name())) {
+                        report.repoChanges.add((verifyOnly ? "would " : "") + "remove `" + root.relativize(dir).toString().replace('\\', '/')
+                            + "` (captures of the dropped preview)");
+                        if (!verifyOnly) {
+                            BdsDistribution.deleteRecursively(dir);
+                        }
+                    }
+                }
             }
         }
     }
@@ -1094,7 +1161,7 @@ public final class Update {
         if (!lines.isEmpty()) {
             report.section("Add-on content log changes", lines);
         }
-        if ((!preview || importPreview) && !olderThanNewestBundled(runs)) {
+        if (!olderThanNewestBundled(runs)) {
             // The committed log is the newest build's: a backfill of an older build does not replace it
             stage(file, current.getBytes(StandardCharsets.UTF_8), "add-on content log");
         }
@@ -1102,7 +1169,7 @@ public final class Update {
 
     /** Component wire shapes: the new add-on and vanilla captures against the committed ones. */
     private void shapes(BdsDistribution distribution, Runs runs) throws Exception {
-        Path previous = latestAddonCapture(bdsData);
+        Path previous = latestAddonCapture(bdsData, previewBuilds());
         Path target = bdsData.resolve(distribution.version()).resolve("addon");
         List<String> files = List.of("custom_block_properties.nbt", "custom_item_registry.nbt");
         WireShapes captured = WireShapes.ofCapture(runs.customCapture);
@@ -1133,13 +1200,11 @@ public final class Update {
         }
         report.check(same ? Report.Status.PASS : Report.Status.DIFF, "Add-on capture vs " + root.relativize(bdsData),
             same ? "`" + root.relativize(target) + "` has the same NBT" : "`" + root.relativize(target) + "` is missing or differs");
-        if (!same && (!preview || importPreview)) {
+        if (!same) {
             for (String file : files) {
                 stageCopy(target.resolve(file), runs.customCapture.resolve(file), "component capture " + file);
             }
             report.check(Report.Status.INFO, "Component model", "new add-on capture staged; run the model checks (checkMappings, checkComponentApi) and review the diff");
-        } else if (!same) {
-            report.check(Report.Status.INFO, "Add-on capture", "preview capture not copied to " + root.relativize(bdsData) + " (pass --import-preview)");
         }
     }
 
@@ -1170,11 +1235,11 @@ public final class Update {
      * The spec capture of this build (every documented component field, varied: the add-on is generated for the build's
      * format version) and the mapping inference over all captures. The capture is compared with the newest earlier one
      * value by value ({@link SpecDiff}): a changed value (an axis that is mirrored, a unit, an enum id, bit packing) with the
-     * same keys and types is a DIFF as well as a changed shape. Verify-only runs and previews that are not imported write
-     * the capture into the work directory and infer nothing.
+     * same keys and types is a DIFF as well as a changed shape. Verify-only runs write the capture into the work directory
+     * and infer nothing.
      */
     private void specCapture(BdsDistribution distribution, Path work, Runs runs) throws Exception {
-        boolean write = !verifyOnly && (!preview || importPreview);
+        boolean write = !verifyOnly;
         Path out = write ? bdsData.resolve(distribution.version()).resolve("spec") : work.resolve("spec");
         Map<String, String> specOptions = new LinkedHashMap<>(options);
         specOptions.put("version", distribution.version());
@@ -1231,7 +1296,7 @@ public final class Update {
             report.repoChanges.add("update `" + Layout.MODEL + "/mappings.json`, `coverage.md`, `bds-feedback.json` (inferred from the spec captures)");
             report.check(Report.Status.INFO, "Component model", "mappings inferred; run :tools:generateComponentApi and the conformance suite (:tools:test) for the new protocol");
         } else {
-            report.check(Report.Status.INFO, "Component model", "mappings not inferred (verify only or preview not imported)");
+            report.check(Report.Status.INFO, "Component model", "mappings not inferred (verify only)");
         }
     }
 
@@ -1322,6 +1387,15 @@ public final class Update {
             try (Stream<Path> files = Files.list(resources)) {
                 for (Path file : files.sorted().toList()) {
                     stageCopy(Update.this.resources.resolve(file.getFileName()), file, "bundled data");
+                }
+            }
+            // What the run removed (a dropped preview)
+            try (Stream<Path> files = Files.list(Update.this.resources)) {
+                for (Path file : files.filter(f -> !Files.exists(resources.resolve(f.getFileName()))).sorted().toList()) {
+                    report.repoChanges.add((verifyOnly ? "would " : "") + "remove `" + root.relativize(file).toString().replace('\\', '/') + "` (bundled data)");
+                    if (!verifyOnly) {
+                        Files.delete(file);
+                    }
                 }
             }
         }
@@ -1629,7 +1703,7 @@ public final class Update {
     }
 
     /** {@code 1.26.70.23} -> {@code 26.70}, {@code 1.26.63.1} -> {@code 26.60}: hotfixes share their release's name. */
-    static String versionName(String bdsVersion) {
+    public static String versionName(String bdsVersion) {
         String[] parts = bdsVersion.split("[.-]");
         int offset = parts[0].equals("1") ? 1 : 0;
         return parts[offset] + "." + (Integer.parseInt(parts[offset + 1]) / 10 * 10);
@@ -1639,19 +1713,40 @@ public final class Update {
         if (!Files.isDirectory(bdsData)) {
             return null;
         }
+        Set<String> skip = previewBuilds();
         try (Stream<Path> dirs = Files.list(bdsData)) {
-            return dirs.map(d -> d.resolve("dump.json.gz")).filter(Files::exists)
+            return dirs.filter(d -> !skip.contains(d.getFileName().toString())).map(d -> d.resolve("dump.json.gz")).filter(Files::exists)
                 .max(Comparator.comparing(f -> versionKey(f.getParent().getFileName().toString()))).orElse(null);
+        }
+    }
+
+    /**
+     * The builds in {@code data/bds} of the bundled preview (their version name is marked {@code preview} in
+     * {@code versions.txt}). A release run does not compare against them; a preview run does (none are skipped).
+     */
+    private Set<String> previewBuilds() throws IOException {
+        if (preview || !Files.isDirectory(bdsData)) {
+            return Set.of();
+        }
+        Set<String> names = new TreeSet<>();
+        Importer.readIndex(resources).stream().filter(Importer.IndexEntry::preview).forEach(entry -> names.add(entry.name()));
+        try (Stream<Path> dirs = Files.list(bdsData)) {
+            return dirs.map(d -> d.getFileName().toString()).filter(build -> build.matches("\\d+\\..*") && names.contains(versionName(build)))
+                .collect(java.util.stream.Collectors.toSet());
         }
     }
 
     /** The newest committed add-on capture directory ({@code <bdsData>/<version>/addon}), null if there is none. */
     public static Path latestAddonCapture(Path bdsData) throws IOException {
+        return latestAddonCapture(bdsData, Set.of());
+    }
+
+    private static Path latestAddonCapture(Path bdsData, Set<String> skip) throws IOException {
         if (!Files.isDirectory(bdsData)) {
             return null;
         }
         try (Stream<Path> files = Files.list(bdsData)) {
-            return files.filter(f -> Files.exists(f.resolve("addon/custom_item_registry.nbt")))
+            return files.filter(f -> !skip.contains(f.getFileName().toString()) && Files.exists(f.resolve("addon/custom_item_registry.nbt")))
                 .max(Comparator.comparing(f -> versionKey(f.getFileName().toString()))).map(f -> f.resolve("addon")).orElse(null);
         }
     }

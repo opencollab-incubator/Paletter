@@ -119,14 +119,22 @@ public final class ShapeProbe {
         BdsServer.configure(server, properties);
         world(server, vanillaWorld, null);
         int protocol;
+        boolean netherNet;
         try (BdsServer bds = new BdsServer(server, false)) {
             bds.start(work.resolve("bds-create.log"));
             bds.awaitStarted(timeout);
+            // RakNet if the server answers a RakNet ping with its protocol, else NetherNet (the 1.26.70 previews)
             String[] pong = Capture.ping(address, 2000);
+            String[] lan = pong == null || pong.length < 3 ? Capture.netherNetPing(address, 10) : null;
+            netherNet = lan != null;
             if (pong == null || pong.length < 3) {
-                throw new IOException("BDS answers no RakNet ping with a protocol; the voxel shape capture needs a RakNet server");
+                if (lan == null || lan[0].equals("0")) {
+                    throw new IOException("BDS answers neither a RakNet ping nor NetherNet LAN discovery with a protocol");
+                }
+                protocol = Integer.parseInt(lan[0]);
+            } else {
+                protocol = Integer.parseInt(pong[2]);
             }
-            protocol = Integer.parseInt(pong[2]);
         }
         if (reference == null) {
             reference = EducationProbe.reference(root, null, protocol);
@@ -139,7 +147,7 @@ public final class ShapeProbe {
             try (BdsServer bds = new BdsServer(server, false)) {
                 bds.start(work.resolve("bds-" + label + ".log"));
                 bds.awaitStarted(timeout);
-                Capture.Summary summary = Capture.capture(address, protocol, reference, bdsVersion, work.resolve(label), null, 90);
+                Capture.Summary summary = Capture.capture(address, protocol, reference, bdsVersion, work.resolve(label), null, 90, netherNet);
                 if (summary.enabledExperiments().contains(EXPERIMENT) != experiment) {
                     throw new IOException("BDS did not apply " + EXPERIMENT + "=" + experiment + ": " + summary.experiments());
                 }
@@ -159,7 +167,7 @@ public final class ShapeProbe {
         ShapeAddon.write(pack, formatVersion, minEngine);
         Files.writeString(out.resolve("addon-variants.json"), ShapeAddon.variantsJson(bdsVersion, formatVersion));
         List<String> contentLog = addonWorld(server, properties, "paletter_shapes_addon", pack, work, "addon", address, protocol, reference,
-            bdsVersion, timeout);
+            bdsVersion, timeout, netherNet);
         Files.copy(packet(work.resolve("addon")), out.resolve("addon.json"), StandardCopyOption.REPLACE_EXISTING);
         Files.writeString(out.resolve("content-log.txt"), String.join("\n", contentLog) + "\n", StandardCharsets.UTF_8);
         boolean plainAddonDiffers = !Files.readString(packet(work.resolve("addon"))).equals(Files.readString(packet(work.resolve("addon-plain"))));
@@ -173,7 +181,7 @@ public final class ShapeProbe {
         List<ShapeAddon.Anchor> anchors = ShapeAddon.anchors(reference.blockStates().stream().map(state -> state.getString("name")).toList());
         ShapeAddon.writeAnchors(pack, anchors, formatVersion, minEngine);
         List<String> anchorLog = addonWorld(server, properties, "paletter_shapes_anchors", pack, work, "anchors", address, protocol, reference,
-            bdsVersion, timeout);
+            bdsVersion, timeout, netherNet);
         if (!anchorLog.isEmpty()) {
             throw new IOException("BDS logged about the anchors: " + anchorLog.subList(0, Math.min(5, anchorLog.size())));
         }
@@ -202,20 +210,20 @@ public final class ShapeProbe {
      */
     private static List<String> addonWorld(Path server, Map<String, String> properties, String world, Path pack, Path work, String label,
                                            InetSocketAddress address, int protocol, VanillaData reference, String bdsVersion,
-                                           int timeout) throws Exception {
+                                           int timeout, boolean netherNet) throws Exception {
         properties.put("level-name", world);
         BdsServer.configure(server, properties);
         world(server, world, pack);
         try (BdsServer bds = new BdsServer(server, false)) {
             bds.start(work.resolve("bds-" + label + "-plain.log"));
             bds.awaitStarted(timeout);
-            Capture.capture(address, protocol, reference, bdsVersion, work.resolve(label + "-plain"), null, 90);
+            Capture.capture(address, protocol, reference, bdsVersion, work.resolve(label + "-plain"), null, 90, netherNet);
         }
         LevelDat.setExperiments(server.resolve("worlds").resolve(world).resolve("level.dat"), List.of(EXPERIMENT));
         try (BdsServer bds = new BdsServer(server, false)) {
             bds.start(work.resolve("bds-" + label + ".log"));
             bds.awaitStarted(timeout);
-            Capture.capture(address, protocol, reference, bdsVersion, work.resolve(label), null, 90);
+            Capture.capture(address, protocol, reference, bdsVersion, work.resolve(label), null, 90, netherNet);
             return bds.lines(line -> line.matches(".*(ERROR|WARN)\\] \\[.*") && !line.contains("TRANSPORT"))
                 .stream().map(line -> line.replaceFirst("^\\[[^]]*(ERROR|WARN)\\] ", "$1 ")).sorted().distinct().toList();
         }

@@ -241,12 +241,12 @@ public final class Cli implements Runnable {
 
     @Command(name = "update", description = "The whole pipeline: newest BDS of the channel, Script API dump, vanilla and add-on network captures "
         + "(hashed and sequential block ids), comparison with the committed data, import or refresh, component shape comparison, markdown report. "
-        + "--verify-only writes nothing and exits with 1 on any difference.")
+        + "A preview is imported as a preview version. The report goes to data/bds/VERSION/update-report.md. "
+        + "--verify-only writes nothing and exits with 1 on any difference; an update exits with 2 when the report lists TODOs.")
     static final class UpdateCommand extends Rooted implements Callable<Integer> {
         @Option(names = "--channel", required = true, description = "release or preview") String channel;
         @Option(names = "--version") String version;
         @Option(names = "--verify-only") boolean verifyOnly;
-        @Option(names = "--import-preview") boolean importPreview;
         @Option(names = "--keep-server") boolean keepServer;
         @Option(names = "--cache") String cache;
         @Option(names = "--report") String report;
@@ -262,7 +262,6 @@ public final class Cli implements Runnable {
             options.put("channel", channel);
             put(options, "version", version);
             flag(options, "verify-only", verifyOnly);
-            flag(options, "import-preview", importPreview);
             flag(options, "keep-server", keepServer);
             put(options, "cache", cache);
             put(options, "report", report);
