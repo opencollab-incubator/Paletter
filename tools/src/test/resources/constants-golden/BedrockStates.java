@@ -4,6 +4,7 @@ package org.geysermc.paletter.vanilla;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.SincePreview;
 import org.geysermc.paletter.vanilla.state.CardinalDirection;
 import org.geysermc.paletter.vanilla.state.Facing;
 import org.geysermc.paletter.vanilla.state.WallSide;
@@ -55,6 +56,13 @@ public final class BedrockStates {
      * {@code open_bit}: true or false. Used by 1 block.
      */
     public static final BoolState OPEN_BIT = VanillaTypes.state(BoolState.of("open_bit"));
+
+    /**
+     * {@code minecraft:preview_bit}: true or false. Used by 1 block.
+     * Only in the bundled preview 1.2.
+     */
+    @SincePreview("1.2")
+    public static final BoolState PREVIEW_BIT = VanillaTypes.state(BoolState.of("minecraft:preview_bit"));
 
     /**
      * {@code wall_east}: {@link WallSide}. Used by 1 block.

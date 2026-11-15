@@ -1,5 +1,6 @@
 package org.geysermc.paletter.vanilla;
 
+import org.geysermc.paletter.annotation.SincePreview;
 import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.item.ResolvedItem;
 import org.geysermc.paletter.Ids;
@@ -221,7 +222,9 @@ class VanillaConstantsTest {
     private static Map<String, String> constants(Class<?> type) throws IllegalAccessException {
         Map<String, String> constants = new HashMap<>();
         for (Field field : type.getFields()) {
-            if (!Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(Deprecated.class)) {
+            // Deprecated constants are not in the data; preview constants only with previews loaded
+            if (!Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(Deprecated.class)
+                || field.isAnnotationPresent(SincePreview.class) && !Boolean.getBoolean("paletter.previews")) {
                 continue;
             }
             Object value = field.get(null);

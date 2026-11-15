@@ -50,6 +50,7 @@ final class ApiSource {
     static final ClassName BEDROCK_FORMAT = ClassName.get("org.geysermc.paletter.annotation", "BedrockFormat");
     static final ClassName EXPERIMENTAL = ClassName.get("org.geysermc.paletter.annotation", "Experimental");
     static final ClassName SERVER_ONLY = ClassName.get("org.geysermc.paletter.annotation", "ServerOnly");
+    static final ClassName SINCE_PREVIEW = ClassName.get("org.geysermc.paletter.annotation", "SincePreview");
     static final ClassName REPLACED_BY = ClassName.get("org.geysermc.paletter.annotation", "ReplacedBy");
     static final ClassName CHECK = ClassName.get("org.geysermc.paletter.internal.component", "Check");
     static final ClassName ITEM_TYPE = ClassName.get("org.geysermc.paletter.vanilla", "BedrockItemType");
@@ -276,6 +277,9 @@ final class ApiSource {
         if (top && !c.experiments.isEmpty()) {
             type.addAnnotation(EXPERIMENTAL);
         }
+        if (top && c.sincePreview != null) {
+            type.addAnnotation(AnnotationSpec.builder(SINCE_PREVIEW).addMember("value", "$S", c.sincePreview).build());
+        }
         if (top && c.serverOnly != null) {
             AnnotationSpec.Builder serverOnly = AnnotationSpec.builder(SERVER_ONLY);
             if (c.serverOnly.since() != Integer.MIN_VALUE) {
@@ -308,6 +312,9 @@ final class ApiSource {
             ParameterSpec.Builder p = ParameterSpec.builder(recordType(f), f.java);
             if (f.minFormat != null) {
                 p.addAnnotation(AnnotationSpec.builder(BEDROCK_FORMAT).addMember("value", "$S", f.minFormat).build());
+            }
+            if (f.sincePreview != null) {
+                p.addAnnotation(AnnotationSpec.builder(SINCE_PREVIEW).addMember("value", "$S", f.sincePreview).build());
             }
             params.add(p.build());
         }

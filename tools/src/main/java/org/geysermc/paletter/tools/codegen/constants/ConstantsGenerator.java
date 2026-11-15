@@ -33,8 +33,8 @@ import java.util.regex.Pattern;
 
 /**
  * Generates the vanilla constants ({@code org.geysermc.paletter.vanilla.BedrockBlocks}, {@code BedrockStates},
- * {@code BedrockItems}, the state enums and, when a preview is bundled, {@code BedrockPreviewBlocks} /
- * {@code BedrockPreviewItems}) from the newest bundled release, {@code renames.txt} and
+ * {@code BedrockItems} and the state enums) from the newest bundled release, with what only a newer bundled preview has
+ * marked {@code @SincePreview}, {@code renames.txt} and
  * {@code data/model/constants-history.json}. See {@code docs/data-pipeline.md}.
  * <p>
  * Used by {@code :tools:generateConstants} / {@code checkConstants} ({@link Main}) and by the generator's
@@ -226,7 +226,9 @@ public final class ConstantsGenerator {
             }
         }
 
-        StateModel states = states(layouts);
+        // Content only the bundled preview has goes into the same classes, marked @SincePreview and kept out of the history
+        List<BlockLayout> previewLayouts = preview == null ? List.of() : layouts(preview);
+        StateModel states = states(layouts, previewLayouts);
         states.enums.values().forEach(e -> files.put(STATE_DIR + "/" + e.name + ".java", JavaWriter.enumClass(e, version)));
         files.put(PACKAGE_DIR + "/BedrockStates.java", JavaWriter.states(states, release.version().name()));
         counts.put("BedrockStates", states.constants.size());
@@ -234,33 +236,35 @@ public final class ConstantsGenerator {
 
         Map<String, BlockLayout> byId = new LinkedHashMap<>();
         layouts.forEach(layout -> byId.put(layout.identifier(), layout));
-        List<Constant> blocks = constants("blocks", new ArrayList<>(byId.keySet()), "BedrockBlocks");
-        files.put(PACKAGE_DIR + "/BedrockBlocks.java", JavaWriter.blocks("BedrockBlocks", blocks, byId, states, release.version().name(), false));
+        List<String> releaseBlocks = new ArrayList<>(byId.keySet());
+        List<String> previewBlocks = new ArrayList<>();
+        for (BlockLayout layout : previewLayouts) {
+            if (!byId.containsKey(layout.identifier())) {
+                byId.put(layout.identifier(), layout);
+                previewBlocks.add(layout.identifier());
+            }
+        }
+        List<Constant> blocks = constants("blocks", releaseBlocks, previewBlocks, "BedrockBlocks");
+        files.put(PACKAGE_DIR + "/BedrockBlocks.java", JavaWriter.blocks(blocks, byId, states, release.version().name()));
         counts.put("BedrockBlocks", blocks.size());
 
         List<String> itemIds = new ArrayList<>();
         release.items().stream().sorted(Comparator.comparingInt(VanillaItem::runtimeId)).forEach(item -> itemIds.add(item.identifier()));
         Map<String, Integer> variantCounts = variantCounts(release);
-        List<Constant> items = constants("items", itemIds, "BedrockItems");
-        files.put(PACKAGE_DIR + "/BedrockItems.java", JavaWriter.items("BedrockItems", items, variantCounts, release.version().name(), false));
-        counts.put("BedrockItems", items.size());
-
+        List<String> previewItemIds = new ArrayList<>();
         if (preview != null) {
-            List<BlockLayout> previewLayouts = layouts(preview);
-            Map<String, BlockLayout> previewById = new LinkedHashMap<>();
-            previewLayouts.stream().filter(l -> !byId.containsKey(l.identifier())).forEach(l -> previewById.put(l.identifier(), l));
-            List<Constant> previewBlocks = previewConstants("blocks", new ArrayList<>(previewById.keySet()));
-            files.put(PACKAGE_DIR + "/BedrockPreviewBlocks.java",
-                JavaWriter.blocks("BedrockPreviewBlocks", previewBlocks, previewById, states, preview.version().name(), true));
-            counts.put("BedrockPreviewBlocks", previewBlocks.size());
             Set<String> releaseItems = new LinkedHashSet<>(itemIds);
-            List<String> previewItemIds = new ArrayList<>();
             preview.items().stream().sorted(Comparator.comparingInt(VanillaItem::runtimeId)).map(VanillaItem::identifier)
                 .filter(id -> !releaseItems.contains(id)).forEach(previewItemIds::add);
-            List<Constant> previewItems = previewConstants("items", previewItemIds);
-            files.put(PACKAGE_DIR + "/BedrockPreviewItems.java",
-                JavaWriter.items("BedrockPreviewItems", previewItems, variantCounts(preview), preview.version().name(), true));
-            counts.put("BedrockPreviewItems", previewItems.size());
+            variantCounts(preview).forEach(variantCounts::putIfAbsent);
+        }
+        List<Constant> items = constants("items", itemIds, previewItemIds, "BedrockItems");
+        files.put(PACKAGE_DIR + "/BedrockItems.java", JavaWriter.items(items, variantCounts, release.version().name()));
+        counts.put("BedrockItems", items.size());
+        if (preview != null) {
+            counts.put("preview only", (int) (blocks.stream().filter(c -> c.preview() != null).count()
+                + items.stream().filter(c -> c.preview() != null).count()
+                + states.constants.values().stream().filter(c -> c.preview != null).count()));
         }
 
         files.put(HISTORY, historyJson(newHistory));
@@ -320,12 +324,17 @@ public final class ConstantsGenerator {
      * @param bedrock the bundled Bedrock release it first appears in without an experiment, or null (preview constants)
      * @param education whether BDS only offers it with Education Edition features on
      * @param gating the experiment toggles that gate it in bundled releases, e.g. {@code `y_2026_drop_3` in 26.40}, or null
+     * @param preview the bundled preview that alone has it ({@code @SincePreview}; not in the history), or null
      */
     record Constant(String name, String identifier, String since, String deprecated, String replacement, String fallback,
-                    String bedrock, boolean education, String gating) {
+                    String bedrock, boolean education, String gating, String preview) {
     }
 
-    private List<Constant> constants(String kind, List<String> identifiers, String className) {
+    /**
+     * @param previewIdentifiers what only the bundled preview has: constants marked with the preview and not recorded in
+     *                           the history (they come and go with the preview until a release has them)
+     */
+    private List<Constant> constants(String kind, List<String> identifiers, List<String> previewIdentifiers, String className) {
         Map<String, String> overrides = names.overrides(kind);
         JsonObject previous = object(history, kind);
 
@@ -357,7 +366,7 @@ public final class ConstantsGenerator {
             String bedrock = old != null && old.has("bedrock") ? old.get("bedrock").getAsString() : sources.firstVersion(kind, entry.getValue());
             boolean education = old != null && old.has("education") && old.get("education").getAsBoolean() || sources.isEducation(kind, entry.getValue());
             constants.put(entry.getKey(), new Constant(entry.getKey(), entry.getValue(), since, null, null, null, bedrock, education,
-                sources.gating(kind, entry.getValue())));
+                sources.gating(kind, entry.getValue()), null));
         }
         // Constants the data no longer has under that name stay, deprecated
         for (Map.Entry<String, JsonElement> entry : new TreeMap<>(previous.asMap()).entrySet()) {
@@ -384,10 +393,10 @@ public final class ConstantsGenerator {
             }
             Constant constant;
             if (target != null) {
-                constant = new Constant(name, identifier, since, deprecatedSince, target, null, bedrock, education, sources.gating(kind, identifier));
+                constant = new Constant(name, identifier, since, deprecatedSince, target, null, bedrock, education, sources.gating(kind, identifier), null);
             } else {
                 String fallback = old.has("fallback") ? old.get("fallback").getAsString() : "minecraft:unknown";
-                constant = new Constant(name, identifier, since, deprecatedSince, null, fallback, bedrock, education, sources.gating(kind, identifier));
+                constant = new Constant(name, identifier, since, deprecatedSince, null, fallback, bedrock, education, sources.gating(kind, identifier), null);
             }
             if (!old.has("deprecated")) {
                 deprecated.add(className + "." + name + " (" + identifier + (target != null ? ", now " + target : ", removed; resolves to " + constant.fallback()) + ")");
@@ -421,22 +430,22 @@ public final class ConstantsGenerator {
             out.add(constant.name(), entry);
         }
         newHistory.add(kind, out);
-        return List.copyOf(constants.values());
-    }
-
-    private List<Constant> previewConstants(String kind, List<String> identifiers) {
-        Map<String, String> overrides = names.overrides(kind);
-        Map<String, Constant> constants = new TreeMap<>();
-        for (String identifier : identifiers) {
+        for (String identifier : previewIdentifiers) {
             String name = overrides.getOrDefault(identifier, constantName(identifier));
             if (!CONSTANT.matcher(name).matches()) {
                 throw new IllegalStateException("Preview " + identifier + " gives the constant name " + name + "; add it to " + OVERRIDES + " (" + kind + ")");
             }
-            if (constants.put(name, new Constant(name, identifier, version, null, null, null, null, false, null)) != null) {
-                throw new IllegalStateException("Duplicate preview constant " + name + "; give one a name in " + OVERRIDES + " (" + kind + ")");
+            if (constants.containsKey(name)) {
+                throw new IllegalStateException("Duplicate constant " + className + "." + name + " for " + constants.get(name).identifier()
+                    + " and the preview's " + identifier + "; give one a name in " + OVERRIDES + " (" + kind + ")");
             }
+            constants.put(name, new Constant(name, identifier, version, null, null, null, null, false, null, previewName()));
         }
         return List.copyOf(constants.values());
+    }
+
+    private String previewName() {
+        return preview == null ? null : preview.version().name();
     }
 
     /** UPPER_SNAKE of the path; other namespaces than {@code minecraft} are kept as a prefix. */
@@ -657,6 +666,8 @@ public final class ConstantsGenerator {
         String deprecated;
         String replacement;
         int blocks;
+        /** The bundled preview that alone has the state ({@code @SincePreview}; not in the history), or null. */
+        String preview;
 
         StateConstant(String constant, String name, Kind kind, List<Integer> ints, String since) {
             this.constant = constant;
@@ -671,6 +682,8 @@ public final class ConstantsGenerator {
     static final class EnumModel {
         final String name;
         final String since;
+        /** The bundled preview that alone has the enum's states, or null. */
+        String preview;
         final Map<String, EnumValue> values = new LinkedHashMap<>();
         final Set<String> states = new TreeSet<>();
 
@@ -680,7 +693,10 @@ public final class ConstantsGenerator {
         }
     }
 
-    record EnumValue(String constant, String value, String since, String deprecated) {
+    /**
+     * @param preview the bundled preview that alone has the value ({@code @SincePreview}; not in the history), or null
+     */
+    record EnumValue(String constant, String value, String since, String deprecated, String preview) {
     }
 
     static final class StateModel {
@@ -689,7 +705,11 @@ public final class ConstantsGenerator {
         final Map<String, EnumModel> enums = new TreeMap<>();
     }
 
-    private StateModel states(List<BlockLayout> layouts) {
+    /**
+     * @param previewLayouts the blocks of the bundled preview (empty without one): states and enum values only they have are
+     *                       marked with the preview and kept out of the history
+     */
+    private StateModel states(List<BlockLayout> layouts, List<BlockLayout> previewLayouts) {
         // Every state name with its values, in order of first appearance over the blocks sorted by identifier (so the
         // palette order of blocks does not matter), and how many blocks have it
         Map<String, List<Object>> values = new TreeMap<>();
@@ -705,6 +725,24 @@ public final class ConstantsGenerator {
                     }
                 }
                 usage.merge(layout.properties().get(p), 1, Integer::sum);
+            }
+        }
+        Map<String, List<Object>> releaseValues = new TreeMap<>();
+        values.forEach((name, list) -> releaseValues.put(name, List.copyOf(list)));
+        List<BlockLayout> previewByIdentifier = new ArrayList<>(previewLayouts);
+        previewByIdentifier.sort(Comparator.comparing(BlockLayout::identifier));
+        for (BlockLayout layout : previewByIdentifier) {
+            for (int p = 0; p < layout.properties().size(); p++) {
+                String name = layout.properties().get(p);
+                List<Object> list = values.computeIfAbsent(name, k -> new ArrayList<>());
+                for (Object value : layout.values().get(p)) {
+                    if (!list.contains(value)) {
+                        list.add(value);
+                    }
+                }
+                if (!releaseValues.containsKey(name)) {
+                    usage.merge(name, 1, Integer::sum);
+                }
             }
         }
 
@@ -729,7 +767,7 @@ public final class ConstantsGenerator {
                 JsonObject v = value.getValue().getAsJsonObject();
                 String where = "enums." + entry.getKey() + "." + value.getKey();
                 model1.values.put(required(v, "value", where), new EnumValue(value.getKey(), required(v, "value", where),
-                    required(v, "since", where), v.has("deprecated") ? v.get("deprecated").getAsString() : null));
+                    required(v, "since", where), v.has("deprecated") ? v.get("deprecated").getAsString() : null, null));
             }
             model.enums.put(model1.name, model1);
         }
@@ -764,13 +802,15 @@ public final class ConstantsGenerator {
             }
             List<Integer> ints = new ArrayList<>();
             if (kind == Kind.INT) {
-                list.forEach(v -> ints.add((Integer) v));
+                // A release state keeps the values of the release
+                releaseValues.getOrDefault(name, list).forEach(v -> ints.add((Integer) v));
                 ints.sort(null);
             }
             StateConstant state = new StateConstant(constant, name, kind, List.copyOf(ints),
                 old != null ? required(old, "since", "states." + constant) : version);
             state.blocks = usage.get(name);
-            if (old == null) {
+            state.preview = old == null && !releaseValues.containsKey(name) ? previewName() : null;
+            if (old == null && state.preview == null) {
                 added.add("BedrockStates." + constant + " = " + name);
             }
             model.constants.put(constant, state);
@@ -820,7 +860,9 @@ public final class ConstantsGenerator {
                 throw new IllegalStateException("Duplicate enum " + enumName + " for " + states + " and " + model.enums.get(enumName).states
                     + "; set a name in " + OVERRIDES + " (enums)");
             }
-            model.enums.put(enumName, new EnumModel(enumName, version));
+            EnumModel created = new EnumModel(enumName, version);
+            created.preview = states.stream().allMatch(state -> model.byName.get(state).preview != null) ? previewName() : null;
+            model.enums.put(enumName, created);
             for (String state : states) {
                 model.byName.get(state).enumName = enumName;
             }
@@ -840,12 +882,16 @@ public final class ConstantsGenerator {
                     if (!CONSTANT.matcher(constant).matches()) {
                         throw new IllegalStateException("Value " + value + " of " + state.name + " is no Java constant name");
                     }
-                    model1.values.put((String) value, new EnumValue(constant, (String) value, version, null));
-                    if (previousEnums.has(model1.name)) {
+                    // A value no state of the enum has in the release is the preview's
+                    boolean previewOnly = preview != null && values.keySet().stream()
+                        .filter(other -> model.byName.containsKey(other) && model1.name.equals(model.byName.get(other).enumName))
+                        .noneMatch(other -> releaseValues.getOrDefault(other, List.of()).contains(value));
+                    model1.values.put((String) value, new EnumValue(constant, (String) value, version, null, previewOnly ? previewName() : null));
+                    if (previousEnums.has(model1.name) && !previewOnly) {
                         added.add(model1.name + "." + constant);
                     }
                 } else if (existing.deprecated() != null) {
-                    model1.values.put((String) value, new EnumValue(existing.constant(), existing.value(), existing.since(), null));
+                    model1.values.put((String) value, new EnumValue(existing.constant(), existing.value(), existing.since(), null, null));
                 }
             }
         }
@@ -859,7 +905,7 @@ public final class ConstantsGenerator {
             for (Map.Entry<String, EnumValue> entry : new ArrayList<>(model1.values.entrySet())) {
                 EnumValue value = entry.getValue();
                 if (!current.contains(value.value()) && value.deprecated() == null) {
-                    model1.values.put(entry.getKey(), new EnumValue(value.constant(), value.value(), value.since(), version));
+                    model1.values.put(entry.getKey(), new EnumValue(value.constant(), value.value(), value.since(), version, null));
                     deprecated.add(model1.name + "." + value.constant() + " (no state has " + value.value() + " anymore)");
                 }
                 if (!constants.add(value.constant())) {
@@ -913,6 +959,9 @@ public final class ConstantsGenerator {
 
         JsonObject statesOut = new JsonObject();
         for (StateConstant state : model.constants.values()) {
+            if (state.preview != null) {
+                continue;
+            }
             JsonObject entry = new JsonObject();
             entry.addProperty("name", state.name);
             entry.addProperty("kind", state.kind.name().toLowerCase());
@@ -936,16 +985,23 @@ public final class ConstantsGenerator {
         newHistory.add("states", statesOut);
         JsonObject enumsOut = new JsonObject();
         for (EnumModel model1 : model.enums.values()) {
+            if (model1.preview != null) {
+                continue;
+            }
             JsonObject entry = new JsonObject();
             entry.addProperty("since", model1.since);
             JsonArray states = new JsonArray();
             // States of deprecated constants keep their enum
             Set<String> all = new TreeSet<>(model1.states);
-            model.constants.values().stream().filter(s -> model1.name.equals(s.enumName)).forEach(s -> all.add(s.name));
+            model.constants.values().stream().filter(s -> model1.name.equals(s.enumName) && s.preview == null).forEach(s -> all.add(s.name));
+            all.removeIf(state -> model.byName.containsKey(state) && model.byName.get(state).preview != null);
             all.forEach(states::add);
             entry.add("states", states);
             JsonObject valuesOut = new JsonObject();
             for (EnumValue value : model1.values.values()) {
+                if (value.preview() != null) {
+                    continue;
+                }
                 JsonObject v = new JsonObject();
                 v.addProperty("value", value.value());
                 v.addProperty("since", value.since());

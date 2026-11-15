@@ -232,25 +232,28 @@ class ConstantsGeneratorTest {
     }
 
     @Test
-    void previewContentGetsItsOwnClasses(@TempDir Path temp) throws IOException {
+    void previewContentIsMarkedSincePreview(@TempDir Path temp) throws IOException {
         List<NbtMap> states = new ArrayList<>(release.blockStates());
-        states.add(BlockStates.of("minecraft:preview_block", Map.of("lit", (byte) 0)));
-        states.add(BlockStates.of("minecraft:preview_block", Map.of("lit", (byte) 1)));
+        states.add(BlockStates.of("minecraft:preview_block", Map.of("preview_bit", (byte) 0)));
+        states.add(BlockStates.of("minecraft:preview_block", Map.of("preview_bit", (byte) 1)));
         List<VanillaItem> items = new ArrayList<>(release.items());
         items.add(new VanillaItem("minecraft:preview_item", 30000, 0, false, null));
         VanillaData preview = new VanillaData(new DataVersion("26.70", 9999), states, items, release.dataDrivenBlocks(), release.creative(),
             release.itemTags(), release.fallbacks(), release.blockDefaults());
 
         ConstantsGenerator.Result result = ConstantsGenerator.generate(release, preview, names, new JsonObject(), "0.1.0");
-        String blocks = result.files().get(ConstantsGenerator.PACKAGE_DIR + "/BedrockPreviewBlocks.java");
-        assertTrue(blocks.contains("@Experimental\npublic final class BedrockPreviewBlocks"));
-        assertTrue(blocks.contains("public static final BedrockBlockType PREVIEW_BLOCK = VanillaTypes.block(\"minecraft:preview_block\");"));
-        assertFalse(blocks.contains(" STONE "));
-        String previewItems = result.files().get(ConstantsGenerator.PACKAGE_DIR + "/BedrockPreviewItems.java");
-        assertTrue(previewItems.contains("PREVIEW_ITEM = VanillaTypes.item(\"minecraft:preview_item\");"));
-        assertFalse(result.files().get(BLOCKS).contains("PREVIEW_BLOCK"));
-        // Previews are not part of the history: they have no compatibility promise
+        // In the same classes as the release, marked with the preview
+        assertFalse(result.files().containsKey(ConstantsGenerator.PACKAGE_DIR + "/BedrockPreviewBlocks.java"));
+        assertTrue(result.files().get(BLOCKS).contains("    @SincePreview(\"26.70\")\n    public static final BedrockBlockType PREVIEW_BLOCK = "
+            + "VanillaTypes.block(\"minecraft:preview_block\");"));
+        assertTrue(result.files().get(ConstantsGenerator.PACKAGE_DIR + "/BedrockItems.java")
+            .contains("    @SincePreview(\"26.70\")\n    public static final BedrockItemType PREVIEW_ITEM = VanillaTypes.item(\"minecraft:preview_item\");"));
+        assertTrue(result.files().get(ConstantsGenerator.PACKAGE_DIR + "/BedrockStates.java")
+            .contains("    @SincePreview(\"26.70\")\n    public static final BoolState PREVIEW_BIT = "));
+        // Previews are not part of the history: they come and go with the preview
         assertNull(history(result).getAsJsonObject("blocks").get("PREVIEW_BLOCK"));
+        assertNull(history(result).getAsJsonObject("items").get("PREVIEW_ITEM"));
+        assertNull(history(result).getAsJsonObject("states").get("PREVIEW_BIT"));
         compile(result, temp);
     }
 

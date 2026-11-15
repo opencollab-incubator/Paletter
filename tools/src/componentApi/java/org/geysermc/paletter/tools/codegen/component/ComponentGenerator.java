@@ -162,6 +162,14 @@ public final class ComponentGenerator {
                 if (capture.has("windowProtocol") && capture.has("bdsVersion")) {
                     model.windowProtocols.put(capture.get("bdsVersion").getAsString(), capture.get("windowProtocol").getAsInt());
                 }
+                if (capture.has("windowProtocol")) {
+                    int window = capture.get("windowProtocol").getAsInt();
+                    if (capture.has("preview")) {
+                        model.previewProtocols.put(window, capture.get("preview").getAsString());
+                    } else {
+                        model.releaseProtocols.add(window);
+                    }
+                }
             });
             model.firstCustomBlockId = sameInEveryCapture("firstCustomBlockId");
             model.blockItemIdPlusBlockId = sameInEveryCapture("blockItemIdPlusBlockId");
@@ -260,9 +268,13 @@ public final class ComponentGenerator {
         return null;
     }
 
+    /** The BDS the schema feedback is read from: the newest release capture (else the newest capture). */
     private String bdsVersion() {
         if (in.mappings().has("captures") && !in.mappings().getAsJsonArray("captures").isEmpty()) {
-            return in.mappings().getAsJsonArray("captures").asList().getLast().getAsJsonObject().get("bdsVersion").getAsString();
+            List<JsonElement> captures = in.mappings().getAsJsonArray("captures").asList();
+            JsonObject capture = captures.stream().map(JsonElement::getAsJsonObject).filter(c -> !c.has("preview"))
+                .reduce((a, b) -> b).orElse(captures.getLast().getAsJsonObject());
+            return capture.get("bdsVersion").getAsString();
         }
         return "";
     }
@@ -289,6 +301,7 @@ public final class ComponentGenerator {
         }
         c.serverOnly = serverOnly(c);
         c.rejected = rejected(c);
+        c.sincePreview = sincePreview(c, Window::status);
         c.replacement = model.replacements.get(c.id);
         c.transform = transform(c.id, "");
         c.standalone = standalone != null;
@@ -532,6 +545,32 @@ public final class ComponentGenerator {
         return new Window(c.windows.get(i).since(), Integer.MAX_VALUE, c.windows.getLast().mapping());
     }
 
+    /**
+     * The bundled preview that alone has something: the window of every release capture rejects it (or does not have it),
+     * the window of a preview capture does not. Null if there is no such preview.
+     *
+     * @param status what a window says about it ({@code rejected}, ...), null if the window does not have it
+     */
+    private String sincePreview(Comp c, java.util.function.Function<Window, String> status) {
+        for (int protocol : model.releaseProtocols) {
+            String s = status.apply(window(c, protocol));
+            if (s != null && !s.equals("rejected")) {
+                return null;
+            }
+        }
+        for (Map.Entry<Integer, String> preview : model.previewProtocols.entrySet()) {
+            String s = status.apply(window(c, preview.getKey()));
+            if (s != null && !s.equals("rejected")) {
+                return preview.getValue();
+            }
+        }
+        return null;
+    }
+
+    private static Window window(Comp c, int protocol) {
+        return c.windows.stream().filter(w -> w.since() <= protocol && protocol < w.until()).findFirst().orElseThrow();
+    }
+
     private static List<Window> windows(String id, JsonObject mapping) {
         if (mapping == null) {
             return List.of();
@@ -766,6 +805,10 @@ public final class ComponentGenerator {
         javaName(f.java, c.id + " " + d.path);
         f.doc = d.doc;
         f.minFormat = d.minFormat;
+        f.sincePreview = c.sincePreview != null ? null : sincePreview(c, w -> {
+            JsonObject field = w.field(c.standalone ? c.standalonePath + "." + d.path : d.path);
+            return field == null || !field.has("status") ? null : field.get("status").getAsString();
+        });
         // A standalone type's fields are below its object in the definition's mappings (menu_category.category)
         f.mappingKey = c.standalone ? c.standalonePath + "." + d.path : d.path;
         f.transform = transform(c.id, d.path);

@@ -159,9 +159,9 @@ items.
 ## Previews
 
 Preview versions of Bedrock can be bundled next to releases. They are marked `preview` in `versions.txt` and skipped
-unless the system property `paletter.previews` is `true`. Content that only a bundled preview has goes into
-`BedrockPreviewBlocks` and `BedrockPreviewItems` (`@Experimental`); without previews enabled those constants resolve to
-`minecraft:unknown`.
+unless the system property `paletter.previews` is `true`. Generated API that only a bundled preview has (constants,
+states, enum values, components and fields) sits with the rest and is marked `@SincePreview("26.70")`; without previews
+enabled those constants resolve to `minecraft:unknown`. The mark goes away when the release has it.
 
 ## Behaviour
 

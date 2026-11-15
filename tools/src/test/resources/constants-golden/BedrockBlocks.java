@@ -3,6 +3,7 @@
 package org.geysermc.paletter.vanilla;
 
 import org.geysermc.paletter.annotation.Education;
+import org.geysermc.paletter.annotation.SincePreview;
 
 /**
  * Every block type of Bedrock 1.1, the newest bundled release. The constants are resolved against
@@ -15,6 +16,9 @@ import org.geysermc.paletter.annotation.Education;
  * (decided from the BDS captures in {@code data/bds}); {@code 26.40} is the oldest bundled release, so it may be older.
  * {@link org.geysermc.paletter.annotation.Education @Education} marks content BDS only offers to worlds with Education
  * Edition features, which {@code isEducation()} of the type answers at runtime.
+ * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks content only the bundled Bedrock preview
+ * has. It is only {@code isAvailable()} with previews loaded (system property {@code paletter.previews}), else it
+ * resolves to {@code minecraft:unknown}. The mark goes when a release has it; the constant goes if a newer preview drops it.
  *
  * @since 0.1.0
  */
@@ -72,6 +76,13 @@ public final class BedrockBlocks {
      * @since 1.1
      */
     public static final BedrockBlockType TEST_LAMP = VanillaTypes.block("minecraft:test_lamp");
+
+    /**
+     * {@code minecraft:test_preview}: {@link BedrockStates#PREVIEW_BIT}; 2 states.
+     * Only in the bundled preview 1.2.
+     */
+    @SincePreview("1.2")
+    public static final BedrockBlockType TEST_PREVIEW = VanillaTypes.block("minecraft:test_preview");
 
     /**
      * {@code minecraft:test_sparse}: {@link BedrockStates#AGE}, {@link BedrockStates#LIT}; 3 states (3 states, but its values have 6 combinations: not a full product: resolved with a lookup table).

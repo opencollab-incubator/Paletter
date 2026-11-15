@@ -36,7 +36,7 @@ public final class Main {
         }
     }
 
-    /** Generated files that the result no longer has: enums, and the preview classes once no preview is bundled. */
+    /** Generated files that the result no longer has: enums, and the preview classes earlier generators wrote. */
     public static List<Path> stale(Path root, Map<String, String> files) throws IOException {
         List<Path> stale = new ArrayList<>();
         Path dir = root.resolve(ConstantsGenerator.STATE_DIR);

@@ -12,7 +12,7 @@ import java.util.Map;
  * as the constants classes only create the types.
  */
 final class ConstantNames {
-    private static final String[] CLASSES = {"BedrockBlocks", "BedrockPreviewBlocks", "BedrockItems", "BedrockPreviewItems"};
+    private static final String[] CLASSES = {"BedrockBlocks", "BedrockItems"};
 
     private ConstantNames() {
     }
@@ -35,8 +35,7 @@ final class ConstantNames {
                 try {
                     constants = Class.forName(ConstantNames.class.getPackageName() + "." + name);
                 } catch (ClassNotFoundException e) {
-                    // The preview classes are only generated when a preview is bundled
-                    continue;
+                    throw new IllegalStateException(e);
                 }
                 for (Field field : constants.getFields()) {
                     if (!Modifier.isStatic(field.getModifiers())) {

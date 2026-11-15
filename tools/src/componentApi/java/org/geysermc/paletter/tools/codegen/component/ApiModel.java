@@ -51,6 +51,9 @@ final class ApiModel {
 
     /** The first protocol of the window of every capture, by BDS version, oldest first (the bounds hand transforms check). */
     final Map<String, Integer> windowProtocols = new LinkedHashMap<>();
+    /** The window protocol of every release capture, and of every preview capture with the preview's version name. */
+    final java.util.Set<Integer> releaseProtocols = new java.util.TreeSet<>();
+    final java.util.TreeMap<Integer, String> previewProtocols = new java.util.TreeMap<>();
     /** The oldest and the newest protocol a spec capture exists for (the window shapes are observed in between). */
     int oldestCaptured = Integer.MIN_VALUE;
     int newestCaptured = Integer.MAX_VALUE;
@@ -89,6 +92,8 @@ final class ApiModel {
         Replacements.Replacement replacement;
         /** The window in which BDS rejects the component, from the first capture that does until the newest (null: it accepts it). */
         Window rejected;
+        /** The bundled preview that alone has the component (every captured release rejects it), or null. */
+        String sincePreview;
 
         /** @return the newest window that sends the component (the API follows its shape), or null */
         Window latest() {
@@ -250,6 +255,8 @@ final class ApiModel {
         Double multipleOf;
         String doc = "";
         String minFormat;
+        /** The bundled preview that alone has the field (every captured release rejects it), or null. */
+        String sincePreview;
         boolean deprecated;
         String transform;
         /** "item" or "block": overloads taking vanilla constants. */

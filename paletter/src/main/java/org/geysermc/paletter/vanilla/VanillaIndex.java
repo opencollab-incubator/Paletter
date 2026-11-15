@@ -46,11 +46,8 @@ final class VanillaIndex {
         initialize("BedrockStates");
         Map<String, BedrockBlockType> constantBlocks = new HashMap<>();
         Map<String, BedrockItemType> constantItems = new HashMap<>();
-        for (String name : List.of("BedrockBlocks", "BedrockPreviewBlocks", "BedrockItems", "BedrockPreviewItems")) {
+        for (String name : List.of("BedrockBlocks", "BedrockItems")) {
             Class<?> constants = initialize(name);
-            if (constants == null) {
-                continue;
-            }
             for (Field field : constants.getFields()) {
                 if (!Modifier.isStatic(field.getModifiers())) {
                     continue;
@@ -127,12 +124,11 @@ final class VanillaIndex {
         });
     }
 
-    private static @Nullable Class<?> initialize(String simpleName) {
+    private static Class<?> initialize(String simpleName) {
         try {
             return Class.forName(VanillaIndex.class.getPackageName() + "." + simpleName, true, VanillaIndex.class.getClassLoader());
         } catch (ClassNotFoundException e) {
-            // The preview classes are only generated when a preview is bundled
-            return null;
+            throw new IllegalStateException(e);
         }
     }
 
