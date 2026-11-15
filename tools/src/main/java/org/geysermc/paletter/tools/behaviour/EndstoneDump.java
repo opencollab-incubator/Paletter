@@ -35,7 +35,6 @@ final class EndstoneDump {
         Map.entry("lightEmission", new Field(BlockBehaviour.LIGHT_EMISSION, JsonElement::getAsInt)),
         Map.entry("lightDampening", new Field(BlockBehaviour.LIGHT_DAMPENING, JsonElement::getAsInt)),
         Map.entry("canContainLiquidSource", new Field(BlockBehaviour.CAN_CONTAIN_LIQUID, JsonElement::getAsBoolean)),
-        Map.entry("liquidReactionOnTouch", new Field(BlockBehaviour.LIQUID_REACTION, JsonElement::getAsString)),
         Map.entry("requiresCorrectToolForDrops", new Field(BlockBehaviour.REQUIRES_CORRECT_TOOL, JsonElement::getAsBoolean)),
         Map.entry("mapColor", new Field(BlockBehaviour.MAP_COLOR, e -> Integer.parseUnsignedInt(e.getAsString().substring(1), 16))),
         Map.entry("tintMethod", new Field(BlockBehaviour.TINT_METHOD, JsonElement::getAsString)),
@@ -49,6 +48,18 @@ final class EndstoneDump {
         // model_base outlines (plants with a random offset) give the box before the offset
         Map.entry("geometry.outline", new Field(BlockBehaviour.OUTLINE_SHAPE, e -> box(e.getAsJsonObject().get("box"))))
     );
+    /**
+     * {@code liquidReactionOnTouch}, the source's name for BDS's {@code on_liquid_touches} reaction, as the three booleans the
+     * Script API gives (liquid_blocking, destroyed_by_liquid, liquid_spread_causes_spawn). Read off the Script API dump of BDS
+     * 1.26.63.1 against CloudburstMC/Data of the same version, where every block agrees; any state that does not shows under
+     * Disagreements in the report.
+     */
+    private static final Map<String, List<Boolean>> LIQUID_REACTIONS = Map.of(
+        "BLOCKING", List.of(true, false, false),
+        "BROKEN", List.of(false, true, false),
+        "POPPED", List.of(false, false, true),
+        "NOREACTION", List.of(false, false, false));
+
     /** Fields that are read elsewhere or deliberately not: identity, and shapes older dumps filled with garbage. */
     private static final Set<String> BLOCK_IGNORED = Set.of("name", "blockStateHash", "translationKey", "visualShape",
         "uiShape", "liquidClipShape", "geometry.visual", "geometry.ui", "geometry.liquidClip", "geometry.modelPosition");
@@ -125,6 +136,16 @@ final class EndstoneDump {
     }
 
     private static <I> void read(Values<I> values, I id, String name, JsonElement value, Map<String, Field> fields, Set<String> ignored) {
+        if (name.equals("liquidReactionOnTouch") && fields == BLOCK_FIELDS) {
+            List<Boolean> reaction = LIQUID_REACTIONS.get(value.getAsString());
+            if (reaction == null) {
+                throw new IllegalArgumentException("Unknown liquidReactionOnTouch " + value + ": add it to LIQUID_REACTIONS from a Script API dump");
+            }
+            values.put(BlockBehaviour.LIQUID_BLOCKING, id, reaction.get(0));
+            values.put(BlockBehaviour.DESTROYED_BY_LIQUID, id, reaction.get(1));
+            values.put(BlockBehaviour.LIQUID_SPREAD_CAUSES_SPAWN, id, reaction.get(2));
+            return;
+        }
         Field field = fields.get(name);
         if (field != null) {
             if (!value.isJsonNull()) {

@@ -16,7 +16,8 @@ import java.util.stream.Stream;
 
 /**
  * {@code generate --root DIR} writes the component API from {@code data/model}, and the behaviour keys from
- * {@link BehaviourKeys}, {@code mappings.json} and the newest behaviour probe capture ({@link BehaviourSource});
+ * {@link BehaviourKeys}, {@code mappings.json} and the newest behaviour probe capture ({@link BehaviourSource}), checked against
+ * the newest BDS captures ({@link BehaviourEvidence});
  * {@code check --root DIR} fails if the committed sources differ (and lists the files).
  */
 public final class Main {
@@ -53,7 +54,8 @@ public final class Main {
         Path probe = newestProbe(root);
         files.putAll(BehaviourSource.generate(BehaviourKeys.KEYS, inputs.mappings(), probe == null ? null
             : JsonParser.parseString(Files.readString(probe, StandardCharsets.UTF_8)).getAsJsonObject(),
-            probe == null ? "" : "data/bds/" + probe.getParent().getParent().getFileName() + "/behaviour-probe/capture.json"));
+            probe == null ? "" : "data/bds/" + probe.getParent().getParent().getFileName() + "/behaviour-probe/capture.json",
+            BehaviourEvidence.read(root)));
         int changed = 0;
         for (Map.Entry<String, String> file : files.entrySet()) {
             Path path = sources.resolve(file.getKey());

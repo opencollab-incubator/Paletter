@@ -8,11 +8,94 @@
 
 Values come from BDS directly wherever possible; third-party dumps rank below and are marked (`explain` says "third party"). Strongest first:
 
-1. Paletter's own captures of BDS: native capture (`NATIVE`, none yet), Script API dumps (`SCRIPT_API`), experiments on BDS (`BDS_PROBE`: `behaviour-probe`, the collision of doors) and what BDS sends clients (`WIRE`, ranked at runtime from the component data of the palette).
+1. Paletter's own captures of BDS: native capture (`NATIVE`, none yet), Script API dumps (`SCRIPT_API`), experiments on BDS (`BDS_PROBE`: `behaviour-probe`, the collision of doors and climbing) and what BDS sends clients (`WIRE`, ranked at runtime from the component data of the palette).
 2. `CLOUDBURST_DATA`: CloudburstMC/Data (Apache-2.0), a native BDS dump. Third party. It post-processes some values (see Post-processed values).
 3. `ALLAY_DATA`: AllayMC/Allay `data/` (MIT), the raw Endstone DevTools dump of BDS. Third party. Used only for what CloudburstMC/Data does not have (items: attack damage, armour, toughness, enchant value, furnace fuel and XP; CloudburstMC/Data has no item behaviour file in any commit of its history), and as the other opinion for disputes.
 
 Where sources disagree and no BDS evidence settles it, the value of the stronger one is used and marked disputed (`explain` lists the other values).
+
+## Keys
+
+Each key is a BDS property (`BehaviourKeys` in tools, checked against the newest captures when the keys are generated). `SAPI:` the Script API (`behaviour-dump`), `PROBE:` measured by `behaviour-probe`, `NATIVE:` BDS's own member (no Paletter capture yet: filled from the third-party dumps).
+
+| Key | BDS property, strongest first | Conversion |
+|---|---|---|
+| `block:destroy_time` | `NATIVE:BlockComponentDirectData.mDestroySpeed` |  |
+| `block:explosion_resistance` | `NATIVE:BlockComponentDirectData.mExplosionResistance` |  |
+| `block:friction` | `NATIVE:BlockComponentDirectData.mFriction` |  |
+| `block:solid` | `SAPI:Block.isSolid` |  |
+| `block:collision_shape` | `PROBE:doors`<br>`NATIVE:BlockType.getCollisionShape` |  |
+| `block:outline_shape` | `NATIVE:BlockType.getOutline` |  |
+| `block:light_emission` | `NATIVE:BlockComponentDirectData.mLightEmission` |  |
+| `block:light_dampening` | `NATIVE:BlockComponentDirectData.mLight` |  |
+| `block:can_contain_liquid` | `SAPI:BlockPermutation.canContainLiquid(Water)` |  |
+| `block:liquid_blocking` | `SAPI:BlockPermutation.isLiquidBlocking(Water)` |  |
+| `block:destroyed_by_liquid` | `SAPI:BlockPermutation.canBeDestroyedByLiquidSpread(Water)` |  |
+| `block:liquid_spread_causes_spawn` | `SAPI:BlockPermutation.liquidSpreadCausesSpawn(Water)` |  |
+| `block:liquid_flow_directions` | `SAPI:Block.liquidCanFlowFromDirection(Water,{direction})` | DIRECTION_BITS |
+| `block:requires_correct_tool` | `NATIVE:BlockType.mRequiresCorrectToolForDrops` |  |
+| `block:map_color` | `SAPI:BlockMapColorComponent.color`<br>`SAPI:Block.getMapColor` | RGBA |
+| `block:tint_method` | `SAPI:BlockMapColorComponent.tintMethod` |  |
+| `block:flame_odds` | `NATIVE:BlockComponentDirectData.mFlameOdds` |  |
+| `block:burn_odds` | `NATIVE:BlockComponentDirectData.mBurnOdds` |  |
+| `block:translucency` | `NATIVE:BlockType.mTranslucency` |  |
+| `block:thickness` | `NATIVE:BlockType.mThickness` |  |
+| `block:climbable` | `PROBE:climbing`<br>`NATIVE:BlockType.mProperties.Climbable` |  |
+| `block:movement_type` | `SAPI:BlockMovableComponent.movementType` |  |
+| `block:sticky_type` | `SAPI:BlockMovableComponent.stickyType` |  |
+| `block:accumulates_snow` | `SAPI:BlockPrecipitationInteractionsComponent.accumulatesSnow` |  |
+| `block:snow_loggable` | `SAPI:BlockPrecipitationInteractionsComponent.isSnowLoggable` |  |
+| `block:obstructs_rain` | `SAPI:BlockPrecipitationInteractionsComponent.obstructsRain` |  |
+| `block:dampens_vibrations` | `SAPI:BlockVibrationPropertiesComponent.getCanDampenVibrations` |  |
+| `block:occludes_vibrations` | `SAPI:BlockVibrationPropertiesComponent.getCanOccludeVibrations` |  |
+| `item:max_stack_size` | `SAPI:ItemStack.maxAmount` |  |
+| `item:max_damage` | `SAPI:ItemDurabilityComponent.maxDurability` | ABSENT_ZERO |
+| `item:attack_damage` | `NATIVE:Item.getAttackDamage` |  |
+| `item:armor_value` | `NATIVE:Item.getArmorValue` |  |
+| `item:toughness` | `NATIVE:Item.getToughnessValue` |  |
+| `item:enchant_value` | `NATIVE:Item.getEnchantValue` |  |
+| `item:furnace_burn_duration` | `NATIVE:FurnaceBlockActor.getBurnDuration` |  |
+| `item:furnace_xp_multiplier` | `NATIVE:Item.mFurnaceXPmultiplier` |  |
+| `item:use_duration` | `NATIVE:Item.mMaxUseDuration` |  |
+| `item:use_animation` | `NATIVE:Item.mUseAnim` |  |
+| `item:weight` | `SAPI:ItemStack.weight` |  |
+| `item:nutrition` | `SAPI:ItemFoodComponent.nutrition` |  |
+| `item:saturation_modifier` | `SAPI:ItemFoodComponent.saturationModifier` |  |
+| `item:can_always_eat` | `SAPI:ItemFoodComponent.canAlwaysEat` |  |
+| `item:cooldown_category` | `SAPI:ItemCooldownComponent.cooldownCategory` |  |
+| `item:cooldown_ticks` | `SAPI:ItemCooldownComponent.cooldownTicks` |  |
+| `item:compost_chance` | `SAPI:ItemCompostableComponent.compostingChance` |  |
+
+Script API properties that are no key, and why:
+
+- `SAPI:Block.getLightLevel`: world-dependent: the light at the position (the dump's world check)
+- `SAPI:Block.getRedstonePower`: the redstone power at the position: world state
+- `SAPI:Block.getSkyLightLevel`: world-dependent: the sky light at the position (the dump's world check)
+- `SAPI:Block.isAir`: the block's identity (air)
+- `SAPI:Block.isLiquid`: the block's identity (water and lava blocks)
+- `SAPI:Block.isWaterlogged`: world-dependent: whether water shares the position (the dump's world check)
+- `SAPI:BlockFluidContainerComponent.fillLevel`: the contents of the block entity (cauldron)
+- `SAPI:BlockFluidContainerComponent.fluidColor`: the contents of the block entity (cauldron)
+- `SAPI:BlockFluidContainerComponent.getFluidType`: the contents of the block entity (cauldron)
+- `SAPI:BlockInstrumentComponent.getInstrumentName({direction})`: the note block instrument per face: a sound, not modelled
+- `SAPI:BlockMapColorComponent.tintedColor`: world-dependent: the map colour tinted by the biome (the dump's world check); map_color is the base colour
+- `SAPI:BlockPistonComponent.isMoving`: the state of the block entity (piston)
+- `SAPI:BlockPistonComponent.state`: the state of the block entity (piston)
+- `SAPI:BlockRecipeCraftingComponent.players`: the players using the block entity (crafter)
+- `SAPI:BlockRecipeProcessingComponent.inputSlotCount`: the slots of a processing block entity: not modelled
+- `SAPI:BlockRedstoneProducerComponent.getConnectedFaces`: the redstone output of producers: not modelled
+- `SAPI:BlockRedstoneProducerComponent.getStronglyPoweredFace`: the redstone output of producers: not modelled
+- `SAPI:BlockRedstoneProducerComponent.power`: the redstone output of producers: not modelled
+- `SAPI:BlockSignComponent.isWaxed`: the state of the block entity (sign)
+- `SAPI:ItemDurabilityComponent.getDamageChance`: the chance of taking damage per use at unbreaking level 0: not modelled
+- `SAPI:ItemDurabilityComponent.getDamageChanceRange`: BDS 1.26.63.1 fails to read it for most items ("Failed to get property 'damageRange'")
+- `SAPI:ItemDurabilityComponent.unbreakable`: the stack's unbreakable flag, not the item type's
+- `SAPI:ItemDyeableComponent.defaultColor`: the default dye colour of dyeable items: not modelled
+- `SAPI:ItemEnchantableComponent.slots`: BDS 1.26.63.1 returns undefined elements (the dump records null): nothing to read
+- `SAPI:ItemFoodComponent.usingConvertsTo`: the item left after eating, an item identifier: not modelled
+- `SAPI:ItemPotionComponent.potionDeliveryType`: the potion of the stack (its aux value), not the item type's
+- `SAPI:ItemPotionComponent.potionEffectType`: the potion of the stack (its aux value), not the item type's
+- `SAPI:ItemStack.isStackable`: derived: whether maxAmount is more than 1
 
 ## Captures
 
@@ -22,15 +105,44 @@ In application order (per version the weakest source first; the strongest decide
 |---|---|---|---|---|
 | 26.30 | ALLAY_DATA | `AllayMC/Allay@cf68fe1ff0ab3a9c1d2df6b4af061be4653c9151` | 2026-07-17 | data/resources/unpacked/block_states_raw.json, same block states |
 | 26.30 | CLOUDBURST_DATA | `CloudburstMC/Data@fb969c547236d87a17181941cd585a0eb18f7ceb` | 2026-07-15 | block_properties.json, same block states |
-| 26.30 | SCRIPT_API | `Paletter data/bds/1.26.36.1/dump.json.gz` |  | BDS 1.26.36.1 |
+| 26.30 | SCRIPT_API | `Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (solid, liquid_flow_directions, movement_type, sticky_type, accumulates_snow, snow_loggable, obstructs_rain)` |  | BDS 1.26.36.1 |
+| 26.30 | SCRIPT_API | `Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (can_contain_liquid, liquid_blocking, destroyed_by_liquid, liquid_spread_causes_spawn)` |  | BDS 1.26.36.1 |
+| 26.30 | SCRIPT_API | `Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (map_color)` |  | BDS 1.26.36.1 |
+| 26.30 | SCRIPT_API | `Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (tint_method)` |  | BDS 1.26.36.1 |
+| 26.30 | SCRIPT_API | `Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (max_stack_size, max_damage, weight)` |  | BDS 1.26.36.1 |
+| 26.30 | SCRIPT_API | `Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (nutrition, saturation_modifier, can_always_eat)` |  | BDS 1.26.36.1 |
+| 26.30 | SCRIPT_API | `Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (cooldown_category, cooldown_ticks)` |  | BDS 1.26.36.1 |
+| 26.30 | SCRIPT_API | `Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (compost_chance)` |  | BDS 1.26.36.1 |
 | 26.40 | CLOUDBURST_DATA | `CloudburstMC/Data@7046791ae9fcf056a3b26cd6605ffc1db6d97357` | 2026-08-31 | blocks.json, same block states |
-| 26.40 | SCRIPT_API | `Paletter data/bds/1.26.45.1/dump.json.gz` |  | BDS 1.26.45.1 |
+| 26.40 | SCRIPT_API | `Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (solid, liquid_flow_directions, movement_type, sticky_type, accumulates_snow, snow_loggable, obstructs_rain)` |  | BDS 1.26.45.1 |
+| 26.40 | SCRIPT_API | `Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (can_contain_liquid, liquid_blocking, destroyed_by_liquid, liquid_spread_causes_spawn)` |  | BDS 1.26.45.1 |
+| 26.40 | SCRIPT_API | `Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (map_color)` |  | BDS 1.26.45.1 |
+| 26.40 | SCRIPT_API | `Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (tint_method)` |  | BDS 1.26.45.1 |
+| 26.40 | SCRIPT_API | `Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (max_stack_size, max_damage, weight)` |  | BDS 1.26.45.1 |
+| 26.40 | SCRIPT_API | `Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (nutrition, saturation_modifier, can_always_eat)` |  | BDS 1.26.45.1 |
+| 26.40 | SCRIPT_API | `Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (cooldown_category, cooldown_ticks)` |  | BDS 1.26.45.1 |
+| 26.40 | SCRIPT_API | `Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (compost_chance)` |  | BDS 1.26.45.1 |
 | 26.50 | ALLAY_DATA | `AllayMC/Allay@f8c660ed3a7f773aec11536cb958c0433ecef9d6` | 2026-10-24 | data/resources/unpacked/block_states_raw.json, same block states |
 | 26.50 | CLOUDBURST_DATA | `CloudburstMC/Data@88a2436a2d5c605da082a00fee5f103f888a9160` | 2026-10-20 | blocks.json, same block states |
-| 26.50 | SCRIPT_API | `Paletter data/bds/1.26.52.3/dump.json.gz` |  | BDS 1.26.52.3 |
+| 26.50 | SCRIPT_API | `Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (solid, liquid_flow_directions, movement_type, sticky_type, accumulates_snow, snow_loggable, obstructs_rain)` |  | BDS 1.26.52.3 |
+| 26.50 | SCRIPT_API | `Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (can_contain_liquid, liquid_blocking, destroyed_by_liquid, liquid_spread_causes_spawn)` |  | BDS 1.26.52.3 |
+| 26.50 | SCRIPT_API | `Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (map_color)` |  | BDS 1.26.52.3 |
+| 26.50 | SCRIPT_API | `Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (tint_method)` |  | BDS 1.26.52.3 |
+| 26.50 | SCRIPT_API | `Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (max_stack_size, max_damage, weight)` |  | BDS 1.26.52.3 |
+| 26.50 | SCRIPT_API | `Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (nutrition, saturation_modifier, can_always_eat)` |  | BDS 1.26.52.3 |
+| 26.50 | SCRIPT_API | `Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (cooldown_category, cooldown_ticks)` |  | BDS 1.26.52.3 |
+| 26.50 | SCRIPT_API | `Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (compost_chance)` |  | BDS 1.26.52.3 |
 | 26.60 | CLOUDBURST_DATA | `CloudburstMC/Data@0021592b1a4253528bad1e1d8b537e306e097557` | 2026-10-28 | blocks.json, same block states |
-| 26.60 | BDS_PROBE | `Paletter data/bds/1.26.63.1/behaviour-probe/capture.json` |  | BDS 1.26.63.1, Build ID 53340801 |
-| 26.60 | SCRIPT_API | `Paletter data/bds/1.26.63.1/dump.json.gz` |  | BDS 1.26.63.1 |
+| 26.60 | BDS_PROBE | `Paletter data/bds/1.26.63.1/behaviour-probe/capture.json (doors)` |  | BDS 1.26.63.1, Build ID 53340801 |
+| 26.60 | BDS_PROBE | `Paletter data/bds/1.26.63.1/behaviour-probe/capture.json (climbing)` |  | BDS 1.26.63.1, Build ID 53340801 |
+| 26.60 | SCRIPT_API | `Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (solid, liquid_flow_directions, movement_type, sticky_type, accumulates_snow, snow_loggable, obstructs_rain, dampens_vibrations, occludes_vibrations)` |  | BDS 1.26.63.1 |
+| 26.60 | SCRIPT_API | `Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (can_contain_liquid, liquid_blocking, destroyed_by_liquid, liquid_spread_causes_spawn)` |  | BDS 1.26.63.1 |
+| 26.60 | SCRIPT_API | `Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (map_color)` |  | BDS 1.26.63.1 |
+| 26.60 | SCRIPT_API | `Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (tint_method)` |  | BDS 1.26.63.1 |
+| 26.60 | SCRIPT_API | `Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (max_stack_size, max_damage, weight)` |  | BDS 1.26.63.1 |
+| 26.60 | SCRIPT_API | `Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (nutrition, saturation_modifier, can_always_eat)` |  | BDS 1.26.63.1 |
+| 26.60 | SCRIPT_API | `Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (cooldown_category, cooldown_ticks)` |  | BDS 1.26.63.1 |
+| 26.60 | SCRIPT_API | `Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (compost_chance)` |  | BDS 1.26.63.1 |
 
 ## Coverage
 
@@ -41,20 +153,31 @@ Per key and version: who decides the values of the version's block states / item
 | `block:destroy_time` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
 | `block:explosion_resistance` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
 | `block:friction` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
-| `block:solid` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
+| `block:solid` | CLOUDBURST_DATA 248<br>SCRIPT_API 16665<br> | CLOUDBURST_DATA 257<br>SCRIPT_API 17242<br> | CLOUDBURST_DATA 4456<br>SCRIPT_API 17635<br> | CLOUDBURST_DATA 6215<br>SCRIPT_API 17745<br> |
 | `block:collision_shape` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | BDS_PROBE 704<br>CLOUDBURST_DATA 23256<br> |
 | `block:outline_shape` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
 | `block:light_emission` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
 | `block:light_dampening` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
-| `block:can_contain_liquid` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
-| `block:liquid_reaction` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
+| `block:can_contain_liquid` | CLOUDBURST_DATA 12<br>SCRIPT_API 16901<br> | CLOUDBURST_DATA 12<br>SCRIPT_API 17487<br> | CLOUDBURST_DATA 12<br>SCRIPT_API 22079<br> | CLOUDBURST_DATA 12<br>SCRIPT_API 23948<br> |
+| `block:liquid_blocking` | CLOUDBURST_DATA 12<br>SCRIPT_API 16901<br> | CLOUDBURST_DATA 12<br>SCRIPT_API 17487<br> | CLOUDBURST_DATA 12<br>SCRIPT_API 22079<br> | CLOUDBURST_DATA 12<br>SCRIPT_API 23948<br> |
+| `block:destroyed_by_liquid` | CLOUDBURST_DATA 12<br>SCRIPT_API 16901<br> | CLOUDBURST_DATA 12<br>SCRIPT_API 17487<br> | CLOUDBURST_DATA 12<br>SCRIPT_API 22079<br> | CLOUDBURST_DATA 12<br>SCRIPT_API 23948<br> |
+| `block:liquid_spread_causes_spawn` | CLOUDBURST_DATA 12<br>SCRIPT_API 16901<br> | CLOUDBURST_DATA 12<br>SCRIPT_API 17487<br> | CLOUDBURST_DATA 12<br>SCRIPT_API 22079<br> | CLOUDBURST_DATA 12<br>SCRIPT_API 23948<br> |
+| `block:liquid_flow_directions` | SCRIPT_API 16665<br>none 248<br> | SCRIPT_API 17242<br>inherited from 26.30 SCRIPT_API 1<br>none 256<br> | SCRIPT_API 17635<br>inherited from 26.30 SCRIPT_API 1<br>none 4455<br> | SCRIPT_API 17745<br>inherited from 26.30 SCRIPT_API 1<br>none 6214<br> |
 | `block:requires_correct_tool` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
-| `block:map_color` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
-| `block:tint_method` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
+| `block:map_color` | CLOUDBURST_DATA 366<br>SCRIPT_API 16547<br> | CLOUDBURST_DATA 375<br>SCRIPT_API 17124<br> | CLOUDBURST_DATA 4574<br>SCRIPT_API 17517<br> | CLOUDBURST_DATA 6333<br>SCRIPT_API 17627<br> |
+| `block:tint_method` | CLOUDBURST_DATA 16778<br>SCRIPT_API 135<br> | CLOUDBURST_DATA 17364<br>SCRIPT_API 135<br> | CLOUDBURST_DATA 21563<br>SCRIPT_API 528<br> | CLOUDBURST_DATA 23432<br>SCRIPT_API 528<br> |
 | `block:flame_odds` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
 | `block:burn_odds` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
 | `block:translucency` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
 | `block:thickness` | CLOUDBURST_DATA 16913<br> | CLOUDBURST_DATA 17499<br> | CLOUDBURST_DATA 22091<br> | CLOUDBURST_DATA 23960<br> |
+| `block:climbable` | none 16913<br> | none 17499<br> | none 22091<br> | BDS_PROBE 23959<br>none 1<br> |
+| `block:movement_type` | SCRIPT_API 16665<br>none 248<br> | SCRIPT_API 17242<br>inherited from 26.30 SCRIPT_API 1<br>none 256<br> | SCRIPT_API 17635<br>inherited from 26.30 SCRIPT_API 1<br>none 4455<br> | SCRIPT_API 17745<br>inherited from 26.30 SCRIPT_API 1<br>none 6214<br> |
+| `block:sticky_type` | SCRIPT_API 16665<br>none 248<br> | SCRIPT_API 17242<br>inherited from 26.30 SCRIPT_API 1<br>none 256<br> | SCRIPT_API 17635<br>inherited from 26.30 SCRIPT_API 1<br>none 4455<br> | SCRIPT_API 17745<br>inherited from 26.30 SCRIPT_API 1<br>none 6214<br> |
+| `block:accumulates_snow` | SCRIPT_API 16665<br>none 248<br> | SCRIPT_API 17242<br>inherited from 26.30 SCRIPT_API 1<br>none 256<br> | SCRIPT_API 17635<br>inherited from 26.30 SCRIPT_API 1<br>none 4455<br> | SCRIPT_API 17745<br>inherited from 26.30 SCRIPT_API 1<br>none 6214<br> |
+| `block:snow_loggable` | SCRIPT_API 16665<br>none 248<br> | SCRIPT_API 17242<br>inherited from 26.30 SCRIPT_API 1<br>none 256<br> | SCRIPT_API 17635<br>inherited from 26.30 SCRIPT_API 1<br>none 4455<br> | SCRIPT_API 17745<br>inherited from 26.30 SCRIPT_API 1<br>none 6214<br> |
+| `block:obstructs_rain` | SCRIPT_API 16665<br>none 248<br> | SCRIPT_API 17242<br>inherited from 26.30 SCRIPT_API 1<br>none 256<br> | SCRIPT_API 17635<br>inherited from 26.30 SCRIPT_API 1<br>none 4455<br> | SCRIPT_API 17745<br>inherited from 26.30 SCRIPT_API 1<br>none 6214<br> |
+| `block:dampens_vibrations` | none 16913<br> | none 17499<br> | none 22091<br> | SCRIPT_API 17745<br>none 6215<br> |
+| `block:occludes_vibrations` | none 16913<br> | none 17499<br> | none 22091<br> | SCRIPT_API 17745<br>none 6215<br> |
 | `item:max_stack_size` | ALLAY_DATA 415<br>SCRIPT_API 1518<br> | SCRIPT_API 1518<br>inherited from 26.30 ALLAY_DATA 415<br>none 43<br> | ALLAY_DATA 453<br>SCRIPT_API 1623<br> | SCRIPT_API 1623<br>inherited from 26.50 ALLAY_DATA 453<br>none 4<br> |
 | `item:max_damage` | ALLAY_DATA 415<br>SCRIPT_API 1518<br> | SCRIPT_API 1518<br>inherited from 26.30 ALLAY_DATA 415<br>none 43<br> | ALLAY_DATA 453<br>SCRIPT_API 1623<br> | SCRIPT_API 1623<br>inherited from 26.50 ALLAY_DATA 453<br>none 4<br> |
 | `item:attack_damage` | ALLAY_DATA 1933<br> | inherited from 26.30 ALLAY_DATA 1933<br>none 43<br> | ALLAY_DATA 2076<br> | inherited from 26.50 ALLAY_DATA 2076<br>none 4<br> |
@@ -65,6 +188,13 @@ Per key and version: who decides the values of the version's block states / item
 | `item:furnace_xp_multiplier` | ALLAY_DATA 1933<br> | inherited from 26.30 ALLAY_DATA 1933<br>none 43<br> | ALLAY_DATA 2076<br> | inherited from 26.50 ALLAY_DATA 2076<br>none 4<br> |
 | `item:use_duration` | none 1933<br> | none 1976<br> | none 2076<br> | none 2080<br> |
 | `item:use_animation` | none 1933<br> | none 1976<br> | none 2076<br> | none 2080<br> |
+| `item:weight` | SCRIPT_API 1518<br>none 415<br> | SCRIPT_API 1518<br>none 458<br> | SCRIPT_API 1623<br>none 453<br> | SCRIPT_API 1623<br>none 457<br> |
+| `item:nutrition` | SCRIPT_API 1<br>none 1932<br> | SCRIPT_API 1<br>none 1975<br> | SCRIPT_API 1<br>none 2075<br> | SCRIPT_API 1<br>none 2079<br> |
+| `item:saturation_modifier` | SCRIPT_API 1<br>none 1932<br> | SCRIPT_API 1<br>none 1975<br> | SCRIPT_API 1<br>none 2075<br> | SCRIPT_API 1<br>none 2079<br> |
+| `item:can_always_eat` | SCRIPT_API 1<br>none 1932<br> | SCRIPT_API 1<br>none 1975<br> | SCRIPT_API 1<br>none 2075<br> | SCRIPT_API 1<br>none 2079<br> |
+| `item:cooldown_category` | SCRIPT_API 12<br>none 1921<br> | SCRIPT_API 12<br>none 1964<br> | SCRIPT_API 12<br>none 2064<br> | SCRIPT_API 12<br>none 2068<br> |
+| `item:cooldown_ticks` | SCRIPT_API 12<br>none 1921<br> | SCRIPT_API 12<br>none 1964<br> | SCRIPT_API 12<br>none 2064<br> | SCRIPT_API 12<br>none 2068<br> |
+| `item:compost_chance` | SCRIPT_API 116<br>none 1817<br> | SCRIPT_API 116<br>none 1860<br> | SCRIPT_API 123<br>none 1953<br> | SCRIPT_API 123<br>none 1957<br> |
 
 Keys no dump has:
 
@@ -110,6 +240,7 @@ Behaviour of custom blocks and items matches BDS: `explain` tells a component th
 - `block:collision_shape` = [0.0, 0.0, 0.0, 1.0, 1.0, 1.0] (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
 - `block:burn_odds` = 0 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
 - `block:flame_odds` = 0 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
+- `block:climbable` = false (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
 
 The friction of a custom block is 1 minus the `minecraft:friction` value, confirmed on BDS by the probe (`friction.components` of its capture).
 
@@ -124,6 +255,42 @@ Every pair of captures of the same version, on the ids both cover. The stronger 
 | `block:collision_shape` | 16913 | 672 | warped_door[door_hinge_bit=false,cardinal_direction=south,open_bit=false,upper_block_bit=false] (3763596343): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.0, 0.0, 0.0, 0.1875, 1.0, 1.0]<br>warped_door[door_hinge_bit=false,cardinal_direction=west,open_bit=false,upper_block_bit=false] (3673010788): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.0, 0.0, 0.0, 1.0, 1.0, 0.1875]<br>warped_door[door_hinge_bit=false,cardinal_direction=north,open_bit=false,upper_block_bit=false] (382742353): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.8125, 0.0, 0.0, 1.0, 1.0, 1.0]<br>in acacia_door 32, bamboo_door 32, birch_door 32, cherry_door 32, copper_door 32, crimson_door 32, dark_oak_door 32, exposed_copper_door 32, iron_door 32, jungle_door 32, mangrove_door 32, oxidized_copper_door 32, pale_oak_door 32, spruce_door 32, warped_door 32, waxed_copper_door 32, waxed_exposed_copper_door 32, waxed_oxidized_copper_door 32, waxed_weathered_copper_door 32, weathered_copper_door 32, wooden_door 32 |
 | `block:outline_shape` | 16913 | 672 | warped_door[door_hinge_bit=false,cardinal_direction=south,open_bit=false,upper_block_bit=false] (3763596343): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.0, 0.0, 0.0, 0.1875, 1.0, 1.0]<br>warped_door[door_hinge_bit=false,cardinal_direction=west,open_bit=false,upper_block_bit=false] (3673010788): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.0, 0.0, 0.0, 1.0, 1.0, 0.1875]<br>warped_door[door_hinge_bit=false,cardinal_direction=north,open_bit=false,upper_block_bit=false] (382742353): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.8125, 0.0, 0.0, 1.0, 1.0, 1.0]<br>in acacia_door 32, bamboo_door 32, birch_door 32, cherry_door 32, copper_door 32, crimson_door 32, dark_oak_door 32, exposed_copper_door 32, iron_door 32, jungle_door 32, mangrove_door 32, oxidized_copper_door 32, pale_oak_door 32, spruce_door 32, warped_door 32, waxed_copper_door 32, waxed_exposed_copper_door 32, waxed_oxidized_copper_door 32, waxed_weathered_copper_door 32, weathered_copper_door 32, wooden_door 32 |
 
+### 26.30: ALLAY_DATA vs SCRIPT_API
+
+| Key | Compared | Different | Examples (ALLAY_DATA / SCRIPT_API) |
+|---|---|---|---|
+| `block:map_color` | 16547 | 151 | dead_bubble_coral_fan[coral_fan_direction=0] (297061818): 0 / 1280068863<br>dead_bubble_coral_fan[coral_fan_direction=1] (235586995): 0 / 1280068863<br>bubble_coral_fan[coral_fan_direction=0] (363691816): 0 / -1<br>in acacia_leaves 4, bed 16, birch_leaves 4, brain_coral 1, brain_coral_fan 2, brain_coral_wall_fan 4, bubble_coral 1, bubble_coral_fan 2, bubble_coral_wall_fan 4, dark_oak_leaves 4, dead_brain_coral 1, dead_brain_coral_fan 2, dead_brain_coral_wall_fan 4, dead_bubble_coral 1, dead_bubble_coral_fan 2, dead_bubble_coral_wall_fan 4, dead_fire_coral 1, dead_fire_coral_fan 2, dead_fire_coral_wall_fan 4, dead_horn_coral 1, dead_horn_coral_fan 2, dead_horn_coral_wall_fan 4, dead_tube_coral 1, dead_tube_coral_fan 2, dead_tube_coral_wall_fan 4, fern 1, fire_coral 1, fire_coral_fan 2, fire_coral_wall_fan 4, grass_block 1, horn_coral 1, horn_coral_fan 2, horn_coral_wall_fan 4, jungle_leaves 4, mangrove_leaves 4, oak_leaves 4, short_dry_grass 1, short_grass 1, spruce_leaves 4, tall_dry_grass 1, ... (45 in all) |
+
+### 26.30: ALLAY_DATA vs SCRIPT_API
+
+| Key | Compared | Different | Examples (ALLAY_DATA / SCRIPT_API) |
+|---|---|---|---|
+| `block:tint_method` | 135 | 35 | bubble_coral_fan[coral_fan_direction=0] (363691816): None / Grass<br>bubble_coral_fan[coral_fan_direction=1] (302216993): None / Grass<br>tube_coral_fan[coral_fan_direction=0] (1658024058): None / Grass<br>in brain_coral 1, brain_coral_fan 2, brain_coral_wall_fan 4, bubble_coral 1, bubble_coral_fan 2, bubble_coral_wall_fan 4, fire_coral 1, fire_coral_fan 2, fire_coral_wall_fan 4, horn_coral 1, horn_coral_fan 2, horn_coral_wall_fan 4, tube_coral 1, tube_coral_fan 2, tube_coral_wall_fan 4 |
+
+### 26.30: CLOUDBURST_DATA vs SCRIPT_API
+
+| Key | Compared | Different | Examples (CLOUDBURST_DATA / SCRIPT_API) |
+|---|---|---|---|
+| `block:map_color` | 16547 | 151 | dead_bubble_coral_fan[coral_fan_direction=0] (297061818): 0 / 1280068863<br>dead_bubble_coral_fan[coral_fan_direction=1] (235586995): 0 / 1280068863<br>bubble_coral_fan[coral_fan_direction=0] (363691816): 0 / -1<br>in acacia_leaves 4, bed 16, birch_leaves 4, brain_coral 1, brain_coral_fan 2, brain_coral_wall_fan 4, bubble_coral 1, bubble_coral_fan 2, bubble_coral_wall_fan 4, dark_oak_leaves 4, dead_brain_coral 1, dead_brain_coral_fan 2, dead_brain_coral_wall_fan 4, dead_bubble_coral 1, dead_bubble_coral_fan 2, dead_bubble_coral_wall_fan 4, dead_fire_coral 1, dead_fire_coral_fan 2, dead_fire_coral_wall_fan 4, dead_horn_coral 1, dead_horn_coral_fan 2, dead_horn_coral_wall_fan 4, dead_tube_coral 1, dead_tube_coral_fan 2, dead_tube_coral_wall_fan 4, fern 1, fire_coral 1, fire_coral_fan 2, fire_coral_wall_fan 4, grass_block 1, horn_coral 1, horn_coral_fan 2, horn_coral_wall_fan 4, jungle_leaves 4, mangrove_leaves 4, oak_leaves 4, short_dry_grass 1, short_grass 1, spruce_leaves 4, tall_dry_grass 1, ... (45 in all) |
+
+### 26.30: CLOUDBURST_DATA vs SCRIPT_API
+
+| Key | Compared | Different | Examples (CLOUDBURST_DATA / SCRIPT_API) |
+|---|---|---|---|
+| `block:tint_method` | 135 | 35 | bubble_coral_fan[coral_fan_direction=0] (363691816): None / Grass<br>bubble_coral_fan[coral_fan_direction=1] (302216993): None / Grass<br>tube_coral_fan[coral_fan_direction=0] (1658024058): None / Grass<br>in brain_coral 1, brain_coral_fan 2, brain_coral_wall_fan 4, bubble_coral 1, bubble_coral_fan 2, bubble_coral_wall_fan 4, fire_coral 1, fire_coral_fan 2, fire_coral_wall_fan 4, horn_coral 1, horn_coral_fan 2, horn_coral_wall_fan 4, tube_coral 1, tube_coral_fan 2, tube_coral_wall_fan 4 |
+
+### 26.40: CLOUDBURST_DATA vs SCRIPT_API
+
+| Key | Compared | Different | Examples (CLOUDBURST_DATA / SCRIPT_API) |
+|---|---|---|---|
+| `block:map_color` | 17124 | 151 | dead_bubble_coral_fan[coral_fan_direction=0] (297061818): 0 / 1280068863<br>dead_bubble_coral_fan[coral_fan_direction=1] (235586995): 0 / 1280068863<br>bubble_coral_fan[coral_fan_direction=0] (363691816): 0 / -1<br>in acacia_leaves 4, bed 16, birch_leaves 4, brain_coral 1, brain_coral_fan 2, brain_coral_wall_fan 4, bubble_coral 1, bubble_coral_fan 2, bubble_coral_wall_fan 4, dark_oak_leaves 4, dead_brain_coral 1, dead_brain_coral_fan 2, dead_brain_coral_wall_fan 4, dead_bubble_coral 1, dead_bubble_coral_fan 2, dead_bubble_coral_wall_fan 4, dead_fire_coral 1, dead_fire_coral_fan 2, dead_fire_coral_wall_fan 4, dead_horn_coral 1, dead_horn_coral_fan 2, dead_horn_coral_wall_fan 4, dead_tube_coral 1, dead_tube_coral_fan 2, dead_tube_coral_wall_fan 4, fern 1, fire_coral 1, fire_coral_fan 2, fire_coral_wall_fan 4, grass_block 1, horn_coral 1, horn_coral_fan 2, horn_coral_wall_fan 4, jungle_leaves 4, mangrove_leaves 4, oak_leaves 4, short_dry_grass 1, short_grass 1, spruce_leaves 4, tall_dry_grass 1, ... (45 in all) |
+
+### 26.40: CLOUDBURST_DATA vs SCRIPT_API
+
+| Key | Compared | Different | Examples (CLOUDBURST_DATA / SCRIPT_API) |
+|---|---|---|---|
+| `block:tint_method` | 135 | 35 | bubble_coral_fan[coral_fan_direction=0] (363691816): None / Grass<br>bubble_coral_fan[coral_fan_direction=1] (302216993): None / Grass<br>tube_coral_fan[coral_fan_direction=0] (1658024058): None / Grass<br>in brain_coral 1, brain_coral_fan 2, brain_coral_wall_fan 4, bubble_coral 1, bubble_coral_fan 2, bubble_coral_wall_fan 4, fire_coral 1, fire_coral_fan 2, fire_coral_wall_fan 4, horn_coral 1, horn_coral_fan 2, horn_coral_wall_fan 4, tube_coral 1, tube_coral_fan 2, tube_coral_wall_fan 4 |
+
 ### 26.50: ALLAY_DATA vs CLOUDBURST_DATA
 
 | Key | Compared | Different | Examples (ALLAY_DATA / CLOUDBURST_DATA) |
@@ -131,11 +298,47 @@ Every pair of captures of the same version, on the ids both cover. The stronger 
 | `block:collision_shape` | 22091 | 736 | warped_door[door_hinge_bit=false,cardinal_direction=south,open_bit=false,upper_block_bit=false] (3763596343): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.0, 0.0, 0.0, 0.1875, 1.0, 1.0]<br>warped_door[door_hinge_bit=false,cardinal_direction=west,open_bit=false,upper_block_bit=false] (3673010788): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.0, 0.0, 0.0, 1.0, 1.0, 0.1875]<br>warped_door[door_hinge_bit=false,cardinal_direction=north,open_bit=false,upper_block_bit=false] (382742353): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.8125, 0.0, 0.0, 1.0, 1.0, 1.0]<br>in acacia_door 32, bamboo 12, bamboo_door 32, birch_door 32, cherry_door 32, copper_door 32, crimson_door 32, dark_oak_door 32, exposed_copper_door 32, iron_door 32, jungle_door 32, mangrove_door 32, oxidized_copper_door 32, pale_oak_door 32, pointed_dripstone 10, poplar_door 32, spruce_door 32, sulfur_spike 10, warped_door 32, waxed_copper_door 32, waxed_exposed_copper_door 32, waxed_oxidized_copper_door 32, waxed_weathered_copper_door 32, weathered_copper_door 32, wooden_door 32 |
 | `block:outline_shape` | 22091 | 817 | warped_door[door_hinge_bit=false,cardinal_direction=south,open_bit=false,upper_block_bit=false] (3763596343): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.0, 0.0, 0.0, 0.1875, 1.0, 1.0]<br>warped_door[door_hinge_bit=false,cardinal_direction=west,open_bit=false,upper_block_bit=false] (3673010788): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.0, 0.0, 0.0, 1.0, 1.0, 0.1875]<br>warped_door[door_hinge_bit=false,cardinal_direction=north,open_bit=false,upper_block_bit=false] (382742353): [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0] / [0.8125, 0.0, 0.0, 1.0, 1.0, 1.0]<br>in acacia_door 32, allium 1, azure_bluet 1, bamboo 12, bamboo_door 32, bamboo_sapling 2, birch_door 32, blue_orchid 1, brain_coral 1, brain_coral_fan 2, bubble_coral 1, bubble_coral_fan 2, cherry_door 32, closed_eyeblossom 1, copper_door 32, cornflower 1, crimson_door 32, crimson_roots 1, dandelion 1, dark_oak_door 32, dead_brain_coral 1, dead_brain_coral_fan 2, dead_bubble_coral 1, dead_bubble_coral_fan 2, dead_fire_coral 1, dead_fire_coral_fan 2, dead_horn_coral 1, dead_horn_coral_fan 2, dead_tube_coral 1, dead_tube_coral_fan 2, exposed_copper_door 32, fern 1, fire_coral 1, fire_coral_fan 2, golden_dandelion 1, hanging_roots 1, horn_coral 1, horn_coral_fan 2, iron_door 32, jungle_door 32, ... (79 in all) |
 
+### 26.50: ALLAY_DATA vs SCRIPT_API
+
+| Key | Compared | Different | Examples (ALLAY_DATA / SCRIPT_API) |
+|---|---|---|---|
+| `block:map_color` | 17517 | 544 | cyan_wool_double_slab[vertical_half=bottom] (3587257529): 0 / 379362559<br>cyan_wool_double_slab[vertical_half=top] (510444478): 0 / 379362559<br>light_blue_wool_double_slab[vertical_half=bottom] (3166760601): 0 / 984865535<br>in acacia_leaves 4, bed 16, birch_leaves 4, black_concrete_double_slab 2, black_concrete_slab 2, black_concrete_stairs 8, black_wool_double_slab 2, black_wool_slab 2, black_wool_stairs 8, blue_concrete_double_slab 2, blue_concrete_slab 2, blue_concrete_stairs 8, blue_wool_double_slab 2, blue_wool_slab 2, blue_wool_stairs 8, brain_coral 1, brain_coral_fan 2, brain_coral_wall_fan 4, brown_concrete_double_slab 2, brown_concrete_slab 2, brown_concrete_stairs 8, brown_wool_double_slab 2, brown_wool_slab 2, brown_wool_stairs 8, bubble_coral 1, bubble_coral_fan 2, bubble_coral_wall_fan 4, cyan_concrete_double_slab 2, cyan_concrete_slab 2, cyan_concrete_stairs 8, cyan_wool_double_slab 2, cyan_wool_slab 2, cyan_wool_stairs 8, dark_oak_leaves 4, dead_brain_coral 1, dead_brain_coral_fan 2, dead_brain_coral_wall_fan 4, dead_bubble_coral 1, dead_bubble_coral_fan 2, dead_bubble_coral_wall_fan 4, ... (143 in all) |
+
+### 26.50: ALLAY_DATA vs SCRIPT_API
+
+| Key | Compared | Different | Examples (ALLAY_DATA / SCRIPT_API) |
+|---|---|---|---|
+| `block:tint_method` | 528 | 35 | bubble_coral_fan[coral_fan_direction=0] (363691816): None / Grass<br>bubble_coral_fan[coral_fan_direction=1] (302216993): None / Grass<br>tube_coral_fan[coral_fan_direction=0] (1658024058): None / Grass<br>in brain_coral 1, brain_coral_fan 2, brain_coral_wall_fan 4, bubble_coral 1, bubble_coral_fan 2, bubble_coral_wall_fan 4, fire_coral 1, fire_coral_fan 2, fire_coral_wall_fan 4, horn_coral 1, horn_coral_fan 2, horn_coral_wall_fan 4, tube_coral 1, tube_coral_fan 2, tube_coral_wall_fan 4 |
+
+### 26.50: CLOUDBURST_DATA vs SCRIPT_API
+
+| Key | Compared | Different | Examples (CLOUDBURST_DATA / SCRIPT_API) |
+|---|---|---|---|
+| `block:map_color` | 17517 | 544 | cyan_wool_double_slab[vertical_half=bottom] (3587257529): 0 / 379362559<br>cyan_wool_double_slab[vertical_half=top] (510444478): 0 / 379362559<br>light_blue_wool_double_slab[vertical_half=bottom] (3166760601): 0 / 984865535<br>in acacia_leaves 4, bed 16, birch_leaves 4, black_concrete_double_slab 2, black_concrete_slab 2, black_concrete_stairs 8, black_wool_double_slab 2, black_wool_slab 2, black_wool_stairs 8, blue_concrete_double_slab 2, blue_concrete_slab 2, blue_concrete_stairs 8, blue_wool_double_slab 2, blue_wool_slab 2, blue_wool_stairs 8, brain_coral 1, brain_coral_fan 2, brain_coral_wall_fan 4, brown_concrete_double_slab 2, brown_concrete_slab 2, brown_concrete_stairs 8, brown_wool_double_slab 2, brown_wool_slab 2, brown_wool_stairs 8, bubble_coral 1, bubble_coral_fan 2, bubble_coral_wall_fan 4, cyan_concrete_double_slab 2, cyan_concrete_slab 2, cyan_concrete_stairs 8, cyan_wool_double_slab 2, cyan_wool_slab 2, cyan_wool_stairs 8, dark_oak_leaves 4, dead_brain_coral 1, dead_brain_coral_fan 2, dead_brain_coral_wall_fan 4, dead_bubble_coral 1, dead_bubble_coral_fan 2, dead_bubble_coral_wall_fan 4, ... (143 in all) |
+
+### 26.50: CLOUDBURST_DATA vs SCRIPT_API
+
+| Key | Compared | Different | Examples (CLOUDBURST_DATA / SCRIPT_API) |
+|---|---|---|---|
+| `block:tint_method` | 528 | 35 | bubble_coral_fan[coral_fan_direction=0] (363691816): None / Grass<br>bubble_coral_fan[coral_fan_direction=1] (302216993): None / Grass<br>tube_coral_fan[coral_fan_direction=0] (1658024058): None / Grass<br>in brain_coral 1, brain_coral_fan 2, brain_coral_wall_fan 4, bubble_coral 1, bubble_coral_fan 2, bubble_coral_wall_fan 4, fire_coral 1, fire_coral_fan 2, fire_coral_wall_fan 4, horn_coral 1, horn_coral_fan 2, horn_coral_wall_fan 4, tube_coral 1, tube_coral_fan 2, tube_coral_wall_fan 4 |
+
 ### 26.60: CLOUDBURST_DATA vs BDS_PROBE
 
 | Key | Compared | Different | Examples (CLOUDBURST_DATA / BDS_PROBE) |
 |---|---|---|---|
 | `block:collision_shape` | 704 | 704 | warped_door[door_hinge_bit=false,cardinal_direction=south,open_bit=false,upper_block_bit=false] (3763596343): [0.0, 0.0, 0.0, 0.1875, 1.0, 1.0] / [0.0, 0.0, 0.0, 0.1825, 1.0, 1.0]<br>warped_door[door_hinge_bit=false,cardinal_direction=west,open_bit=false,upper_block_bit=false] (3673010788): [0.0, 0.0, 0.0, 1.0, 1.0, 0.1875] / [0.0, 0.0, 0.0, 1.0, 1.0, 0.1825]<br>warped_door[door_hinge_bit=false,cardinal_direction=north,open_bit=false,upper_block_bit=false] (382742353): [0.8125, 0.0, 0.0, 1.0, 1.0, 1.0] / [0.8175, 0.0, 0.0, 1.0, 1.0, 1.0]<br>in acacia_door 32, bamboo_door 32, birch_door 32, cherry_door 32, copper_door 32, crimson_door 32, dark_oak_door 32, exposed_copper_door 32, iron_door 32, jungle_door 32, mangrove_door 32, oxidized_copper_door 32, pale_oak_door 32, poplar_door 32, spruce_door 32, warped_door 32, waxed_copper_door 32, waxed_exposed_copper_door 32, waxed_oxidized_copper_door 32, waxed_weathered_copper_door 32, weathered_copper_door 32, wooden_door 32 |
+
+### 26.60: CLOUDBURST_DATA vs SCRIPT_API
+
+| Key | Compared | Different | Examples (CLOUDBURST_DATA / SCRIPT_API) |
+|---|---|---|---|
+| `block:map_color` | 17627 | 544 | cyan_wool_double_slab[vertical_half=bottom] (3587257529): 0 / 379362559<br>cyan_wool_double_slab[vertical_half=top] (510444478): 0 / 379362559<br>light_blue_wool_double_slab[vertical_half=bottom] (3166760601): 0 / 984865535<br>in acacia_leaves 4, bed 16, birch_leaves 4, black_concrete_double_slab 2, black_concrete_slab 2, black_concrete_stairs 8, black_wool_double_slab 2, black_wool_slab 2, black_wool_stairs 8, blue_concrete_double_slab 2, blue_concrete_slab 2, blue_concrete_stairs 8, blue_wool_double_slab 2, blue_wool_slab 2, blue_wool_stairs 8, brain_coral 1, brain_coral_fan 2, brain_coral_wall_fan 4, brown_concrete_double_slab 2, brown_concrete_slab 2, brown_concrete_stairs 8, brown_wool_double_slab 2, brown_wool_slab 2, brown_wool_stairs 8, bubble_coral 1, bubble_coral_fan 2, bubble_coral_wall_fan 4, cyan_concrete_double_slab 2, cyan_concrete_slab 2, cyan_concrete_stairs 8, cyan_wool_double_slab 2, cyan_wool_slab 2, cyan_wool_stairs 8, dark_oak_leaves 4, dead_brain_coral 1, dead_brain_coral_fan 2, dead_brain_coral_wall_fan 4, dead_bubble_coral 1, dead_bubble_coral_fan 2, dead_bubble_coral_wall_fan 4, ... (143 in all) |
+
+### 26.60: CLOUDBURST_DATA vs SCRIPT_API
+
+| Key | Compared | Different | Examples (CLOUDBURST_DATA / SCRIPT_API) |
+|---|---|---|---|
+| `block:tint_method` | 528 | 35 | bubble_coral_fan[coral_fan_direction=0] (363691816): None / Grass<br>bubble_coral_fan[coral_fan_direction=1] (302216993): None / Grass<br>tube_coral_fan[coral_fan_direction=0] (1658024058): None / Grass<br>in brain_coral 1, brain_coral_fan 2, brain_coral_wall_fan 4, bubble_coral 1, bubble_coral_fan 2, bubble_coral_wall_fan 4, fire_coral 1, fire_coral_fan 2, fire_coral_wall_fan 4, horn_coral 1, horn_coral_fan 2, horn_coral_wall_fan 4, tube_coral 1, tube_coral_fan 2, tube_coral_wall_fan 4 |
 
 ## Unmapped source fields
 
@@ -146,6 +349,110 @@ None.
 
 ## Log
 
+- SCRIPT_API 1.26.36.1: 12 palette states the Script API did not list: [minecraft:chalkboard{
+  "direction": 10i
+}, minecraft:chalkboard{
+  "direction": 11i
+}, minecraft:chalkboard{
+  "direction": 12i
+}, minecraft:chalkboard{
+  "direction": 13i
+}, minecraft:chalkboard{
+  "direction": 14i
+}, minecraft:chalkboard{
+  "direction": 15i
+}, minecraft:chalkboard{
+  "direction": 4i
+}, minecraft:chalkboard{
+  "direction": 5i
+}, minecraft:chalkboard{
+  "direction": 6i
+}, minecraft:chalkboard{
+  "direction": 7i
+}, minecraft:chalkboard{
+  "direction": 8i
+}, minecraft:chalkboard{
+  "direction": 9i
+}]
+- SCRIPT_API 1.26.36.1: 118 colours of [Block.getMapColor] are no whole bytes (BDS keeps colours as floats; Education Edition elements): not stored, rounding would be a guess
+- SCRIPT_API 1.26.45.1: 12 palette states the Script API did not list: [minecraft:chalkboard{
+  "direction": 10i
+}, minecraft:chalkboard{
+  "direction": 11i
+}, minecraft:chalkboard{
+  "direction": 12i
+}, minecraft:chalkboard{
+  "direction": 13i
+}, minecraft:chalkboard{
+  "direction": 14i
+}, minecraft:chalkboard{
+  "direction": 15i
+}, minecraft:chalkboard{
+  "direction": 4i
+}, minecraft:chalkboard{
+  "direction": 5i
+}, minecraft:chalkboard{
+  "direction": 6i
+}, minecraft:chalkboard{
+  "direction": 7i
+}, minecraft:chalkboard{
+  "direction": 8i
+}, minecraft:chalkboard{
+  "direction": 9i
+}]
+- SCRIPT_API 1.26.45.1: 118 colours of [Block.getMapColor] are no whole bytes (BDS keeps colours as floats; Education Edition elements): not stored, rounding would be a guess
+- SCRIPT_API 1.26.52.3: 12 palette states the Script API did not list: [minecraft:chalkboard{
+  "direction": 10i
+}, minecraft:chalkboard{
+  "direction": 11i
+}, minecraft:chalkboard{
+  "direction": 12i
+}, minecraft:chalkboard{
+  "direction": 13i
+}, minecraft:chalkboard{
+  "direction": 14i
+}, minecraft:chalkboard{
+  "direction": 15i
+}, minecraft:chalkboard{
+  "direction": 4i
+}, minecraft:chalkboard{
+  "direction": 5i
+}, minecraft:chalkboard{
+  "direction": 6i
+}, minecraft:chalkboard{
+  "direction": 7i
+}, minecraft:chalkboard{
+  "direction": 8i
+}, minecraft:chalkboard{
+  "direction": 9i
+}]
+- SCRIPT_API 1.26.52.3: 118 colours of [Block.getMapColor] are no whole bytes (BDS keeps colours as floats; Education Edition elements): not stored, rounding would be a guess
+- SCRIPT_API 1.26.63.1: 12 palette states the Script API did not list: [minecraft:chalkboard{
+  "direction": 10i
+}, minecraft:chalkboard{
+  "direction": 11i
+}, minecraft:chalkboard{
+  "direction": 12i
+}, minecraft:chalkboard{
+  "direction": 13i
+}, minecraft:chalkboard{
+  "direction": 14i
+}, minecraft:chalkboard{
+  "direction": 15i
+}, minecraft:chalkboard{
+  "direction": 4i
+}, minecraft:chalkboard{
+  "direction": 5i
+}, minecraft:chalkboard{
+  "direction": 6i
+}, minecraft:chalkboard{
+  "direction": 7i
+}, minecraft:chalkboard{
+  "direction": 8i
+}, minecraft:chalkboard{
+  "direction": 9i
+}]
+- SCRIPT_API 1.26.63.1: 118 colours of [Block.getMapColor] are no whole bytes (BDS keeps colours as floats; Education Edition elements): not stored, rounding would be a guess
 - CLOUDBURST_DATA 0021592b1 2026-10-28 (More 26.60 data): 26.60, blocks.json, same block states
 - CLOUDBURST_DATA 88a2436a2 2026-10-20 (Restructure block geometry data and include native position samples): 26.50, blocks.json, same block states
 - CLOUDBURST_DATA 659ce1e2e 2026-09-28 (Fix bad data dump): 26.50, older than the commit used

@@ -66,6 +66,12 @@ class BehaviourProbeTest {
             cell(lines, "minecraft:wooden_door", half, "{\"minecraft:cardinal_direction\":\"north\",\"open_bit\":false,\"door_hinge_bit\":false,"
                 + "\"upper_block_bit\":" + half.equals("upper") + ",\"direction\":2}", new double[]{1.25, 0.5675, -1.08, 2.08}, level);
         }
+        // The climbing controls hold: ladder and vine climb in every state, stone, air and probe:plain in none
+        lines.add(observation("climb", "{\"block\":\"minecraft:ladder\",\"states\":1,\"climbing\":[{\"facing_direction\":2}],\"lost\":[]}"));
+        lines.add(observation("climb", "{\"block\":\"minecraft:vine\",\"states\":1,\"climbing\":[{\"vine_direction_bits\":0}],\"lost\":[]}"));
+        for (String still : List.of("minecraft:stone", "minecraft:air", "probe:plain")) {
+            lines.add(observation("climb", "{\"block\":\"" + still + "\",\"states\":1,\"climbing\":[],\"lost\":[]}"));
+        }
         lines.add("[2026-11-09 20:30:40:000 WARN] [Scripting] PROBE-DONE");
         return lines;
     }

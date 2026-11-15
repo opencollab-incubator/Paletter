@@ -321,20 +321,31 @@ public enum org.geysermc.paletter.behaviour.BehaviourKey$Owner {
 }
 
 public final class org.geysermc.paletter.behaviour.BlockBehaviour {
+    public static final org.geysermc.paletter.behaviour.BooleanKey ACCUMULATES_SNOW
     public static final org.geysermc.paletter.behaviour.IntKey BURN_ODDS
     public static final org.geysermc.paletter.behaviour.BooleanKey CAN_CONTAIN_LIQUID
+    public static final org.geysermc.paletter.behaviour.BooleanKey CLIMBABLE
     public static final org.geysermc.paletter.behaviour.ObjectKey<org.geysermc.paletter.behaviour.BlockShape> COLLISION_SHAPE
+    public static final org.geysermc.paletter.behaviour.BooleanKey DAMPENS_VIBRATIONS
+    public static final org.geysermc.paletter.behaviour.BooleanKey DESTROYED_BY_LIQUID
     public static final org.geysermc.paletter.behaviour.FloatKey DESTROY_TIME
     public static final org.geysermc.paletter.behaviour.FloatKey EXPLOSION_RESISTANCE
     public static final org.geysermc.paletter.behaviour.IntKey FLAME_ODDS
     public static final org.geysermc.paletter.behaviour.FloatKey FRICTION
     public static final org.geysermc.paletter.behaviour.IntKey LIGHT_DAMPENING
     public static final org.geysermc.paletter.behaviour.IntKey LIGHT_EMISSION
-    public static final org.geysermc.paletter.behaviour.ObjectKey<java.lang.String> LIQUID_REACTION
+    public static final org.geysermc.paletter.behaviour.BooleanKey LIQUID_BLOCKING
+    public static final org.geysermc.paletter.behaviour.IntKey LIQUID_FLOW_DIRECTIONS
+    public static final org.geysermc.paletter.behaviour.BooleanKey LIQUID_SPREAD_CAUSES_SPAWN
     public static final org.geysermc.paletter.behaviour.IntKey MAP_COLOR
+    public static final org.geysermc.paletter.behaviour.ObjectKey<java.lang.String> MOVEMENT_TYPE
+    public static final org.geysermc.paletter.behaviour.BooleanKey OBSTRUCTS_RAIN
+    public static final org.geysermc.paletter.behaviour.BooleanKey OCCLUDES_VIBRATIONS
     public static final org.geysermc.paletter.behaviour.ObjectKey<org.geysermc.paletter.behaviour.BlockShape> OUTLINE_SHAPE
     public static final org.geysermc.paletter.behaviour.BooleanKey REQUIRES_CORRECT_TOOL
+    public static final org.geysermc.paletter.behaviour.BooleanKey SNOW_LOGGABLE
     public static final org.geysermc.paletter.behaviour.BooleanKey SOLID
+    public static final org.geysermc.paletter.behaviour.ObjectKey<java.lang.String> STICKY_TYPE
     public static final org.geysermc.paletter.behaviour.FloatKey THICKNESS
     public static final org.geysermc.paletter.behaviour.ObjectKey<java.lang.String> TINT_METHOD
     public static final org.geysermc.paletter.behaviour.FloatKey TRANSLUCENCY
@@ -396,14 +407,21 @@ public final class org.geysermc.paletter.behaviour.IntKey extends org.geysermc.p
 public final class org.geysermc.paletter.behaviour.ItemBehaviour {
     public static final org.geysermc.paletter.behaviour.IntKey ARMOR_VALUE
     public static final org.geysermc.paletter.behaviour.IntKey ATTACK_DAMAGE
+    public static final org.geysermc.paletter.behaviour.BooleanKey CAN_ALWAYS_EAT
+    public static final org.geysermc.paletter.behaviour.IntKey COMPOST_CHANCE
+    public static final org.geysermc.paletter.behaviour.ObjectKey<java.lang.String> COOLDOWN_CATEGORY
+    public static final org.geysermc.paletter.behaviour.IntKey COOLDOWN_TICKS
     public static final org.geysermc.paletter.behaviour.IntKey ENCHANT_VALUE
     public static final org.geysermc.paletter.behaviour.IntKey FURNACE_BURN_DURATION
     public static final org.geysermc.paletter.behaviour.FloatKey FURNACE_XP_MULTIPLIER
     public static final org.geysermc.paletter.behaviour.IntKey MAX_DAMAGE
     public static final org.geysermc.paletter.behaviour.IntKey MAX_STACK_SIZE
+    public static final org.geysermc.paletter.behaviour.IntKey NUTRITION
+    public static final org.geysermc.paletter.behaviour.FloatKey SATURATION_MODIFIER
     public static final org.geysermc.paletter.behaviour.IntKey TOUGHNESS
     public static final org.geysermc.paletter.behaviour.IntKey USE_ANIMATION
     public static final org.geysermc.paletter.behaviour.IntKey USE_DURATION
+    public static final org.geysermc.paletter.behaviour.IntKey WEIGHT
     public static org.geysermc.paletter.behaviour.BehaviourKey<?> key(java.lang.String)
     public static java.util.List<org.geysermc.paletter.behaviour.BehaviourKey<?>> keys()
 }

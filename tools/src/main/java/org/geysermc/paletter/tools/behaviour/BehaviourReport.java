@@ -7,6 +7,7 @@ import org.geysermc.paletter.behaviour.BlockShape;
 import org.geysermc.paletter.behaviour.ItemBehaviour;
 import org.geysermc.paletter.internal.behaviour.BehaviourStore;
 import org.geysermc.paletter.internal.behaviour.WireRules;
+import org.geysermc.paletter.tools.codegen.component.BehaviourKeys;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +49,7 @@ final class BehaviourReport {
         out.append("# Behaviour data report\n\n**Generated** by `behaviour import` (tools); do not edit. The same sources at the same "
             + "commits give the same file. Format and lookup rules: `BehaviourStore`.\n\n");
         ranking(out);
+        keys(out);
         sources(out);
         coverage(out);
         disputes(out);
@@ -64,7 +66,7 @@ final class BehaviourReport {
         out.append("## Ranking\n\nValues come from BDS directly wherever possible; third-party dumps rank below and are marked "
             + "(`explain` says \"third party\"). Strongest first:\n\n"
             + "1. Paletter's own captures of BDS: native capture (`NATIVE`, none yet), Script API dumps (`SCRIPT_API`), experiments on BDS "
-            + "(`BDS_PROBE`: `behaviour-probe`, the collision of doors) and what BDS sends clients (`WIRE`, ranked at runtime from the "
+            + "(`BDS_PROBE`: `behaviour-probe`, the collision of doors and climbing) and what BDS sends clients (`WIRE`, ranked at runtime from the "
             + "component data of the palette).\n"
             + "2. `CLOUDBURST_DATA`: CloudburstMC/Data (Apache-2.0), a native BDS dump. Third party. It post-processes some values "
             + "(see Post-processed values).\n"
@@ -73,6 +75,22 @@ final class BehaviourReport {
             + "CloudburstMC/Data has no item behaviour file in any commit of its history), and as the other opinion for disputes.\n\n"
             + "Where sources disagree and no BDS evidence settles it, the value of the stronger one is used and marked disputed "
             + "(`explain` lists the other values).\n\n");
+    }
+
+    /** The naming table: which BDS property each key is (BehaviourKeys), and the properties of the dump that are no key. */
+    private void keys(StringBuilder out) {
+        out.append("## Keys\n\nEach key is a BDS property (`BehaviourKeys` in tools, checked against the newest captures when the keys are "
+            + "generated). `SAPI:` the Script API (`behaviour-dump`), `PROBE:` measured by `behaviour-probe`, `NATIVE:` BDS's own member "
+            + "(no Paletter capture yet: filled from the third-party dumps).\n\n");
+        out.append("| Key | BDS property, strongest first | Conversion |\n|---|---|---|\n");
+        for (BehaviourKeys.Key key : BehaviourKeys.KEYS) {
+            out.append("| `").append(key.owner().name().toLowerCase(java.util.Locale.ROOT)).append(':').append(key.name()).append("` | ")
+                .append(String.join("<br>", key.sources().stream().map(source -> "`" + source + "`").toList())).append(" | ")
+                .append(key.conversion() == BehaviourKeys.Conversion.NONE ? "" : key.conversion().name()).append(" |\n");
+        }
+        out.append("\nScript API properties that are no key, and why:\n\n");
+        BehaviourKeys.IGNORED.forEach((property, reason) -> out.append("- `").append(property).append("`: ").append(reason).append('\n'));
+        out.append('\n');
     }
 
     private void sources(StringBuilder out) {

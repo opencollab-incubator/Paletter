@@ -37,7 +37,7 @@ class BehaviourProbeCaptureTest {
         java.util.Map<String, Double> values = new java.util.TreeMap<>();
         for (JsonElement entry : defaults) {
             JsonObject object = entry.getAsJsonObject();
-            if (object.get("value").isJsonPrimitive()) {
+            if (object.get("value").isJsonPrimitive() && object.get("value").getAsJsonPrimitive().isNumber()) {
                 values.put(object.get("key").getAsString(), object.get("value").getAsDouble());
             }
             assertTrue(object.get("method").getAsString().length() > 40, "every value says how it was measured");
@@ -46,7 +46,9 @@ class BehaviourProbeCaptureTest {
             "block:light_emission", 0.0, "block:burn_odds", 0.0, "block:flame_odds", 0.0), values);
         assertEquals("[[0.0,0.0,0.0,1.0,1.0,1.0]]", defaults.asList().stream().map(JsonElement::getAsJsonObject)
             .filter(entry -> entry.get("key").getAsString().equals("block:collision_shape")).findFirst().orElseThrow().get("value").toString());
-        assertEquals(7, defaults.size(), "the selection box and the destroy time were not measured");
+        assertEquals("false", defaults.asList().stream().map(JsonElement::getAsJsonObject)
+            .filter(entry -> entry.get("key").getAsString().equals("block:climbable")).findFirst().orElseThrow().get("value").toString());
+        assertEquals(8, defaults.size(), "the selection box and the destroy time were not measured");
     }
 
     @Test

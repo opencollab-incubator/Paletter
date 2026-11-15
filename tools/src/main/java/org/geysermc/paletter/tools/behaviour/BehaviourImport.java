@@ -103,6 +103,7 @@ public final class BehaviourImport {
     public static void run(Path root, @Nullable Path cloudburstData, @Nullable Path allay) throws IOException {
         Path resources = root.resolve("paletter/src/main/resources/paletter");
         BehaviourImport importer = new BehaviourImport(bundled(resources));
+        importer.behaviourDumps(root.resolve("data/bds"));
         importer.scriptApi(root.resolve("data/bds"));
         importer.probe(root.resolve("data/bds"));
         importer.customDefaults(root.resolve("data/bds"));
@@ -241,10 +242,52 @@ public final class BehaviourImport {
                         + "stopped at both faces); its length and height are the block's 0 to 1, not measured");
                 }
             }
-            captures.add(new Capture(Provenance.Source.BDS_PROBE, "Paletter data/bds/" + bdsVersion + "/" + BehaviourProbe.DIRECTORY + "/"
-                + BehaviourProbe.CAPTURE, "", entry.getKey(), "BDS " + bdsVersion + ", Build ID "
-                + capture.getAsJsonObject("bds").get("build").getAsString(), blocks, new Values<>()));
+            String reference = "Paletter data/bds/" + bdsVersion + "/" + BehaviourProbe.DIRECTORY + "/" + BehaviourProbe.CAPTURE;
+            String match = "BDS " + bdsVersion + ", Build ID " + capture.getAsJsonObject("bds").get("build").getAsString();
+            captures.add(new Capture(Provenance.Source.BDS_PROBE, reference + " (doors)", "", entry.getKey(), match, blocks, new Values<>()));
+            if (capture.has("climbing")) {
+                captures.add(new Capture(Provenance.Source.BDS_PROBE, reference + " (climbing)", "", entry.getKey(), match,
+                    climbing(capture.getAsJsonObject("climbing"), bundled, Provenance.Source.BDS_PROBE + " " + bdsVersion), new Values<>()));
+            }
         }
+    }
+
+    /**
+     * The climbing the probe measured ({@link BehaviourProbe#climbing}): every state of a probed block is climbable if the
+     * probe's body climbed in it, else not; states after which the body was gone are not measured.
+     */
+    private Values<Integer> climbing(JsonObject climbing, Bundled bundled, String where) {
+        Set<String> probed = new HashSet<>();
+        climbing.getAsJsonArray("probed").forEach(block -> probed.add(block.getAsString()));
+        JsonArray climbed = new JsonArray();
+        for (Map.Entry<String, JsonElement> block : climbing.getAsJsonObject("climbing").entrySet()) {
+            for (JsonElement states : block.getValue().getAsJsonObject().getAsJsonArray("climbing")) {
+                JsonArray state = new JsonArray();
+                state.add(block.getKey());
+                state.add(states);
+                climbed.add(state);
+            }
+        }
+        Set<Integer> yes = new HashSet<>(java.util.Arrays.asList(ScriptApiValues.hashes(climbed, bundled.states(), log, where)));
+        JsonArray lostStates = new JsonArray();
+        if (climbing.has("lost")) {
+            for (Map.Entry<String, JsonElement> block : climbing.getAsJsonObject("lost").entrySet()) {
+                for (JsonElement states : block.getValue().getAsJsonArray()) {
+                    JsonArray state = new JsonArray();
+                    state.add(block.getKey());
+                    state.add(states);
+                    lostStates.add(state);
+                }
+            }
+        }
+        Set<Integer> lost = new HashSet<>(java.util.Arrays.asList(ScriptApiValues.hashes(lostStates, bundled.states(), log, where)));
+        Values<Integer> values = new Values<>();
+        bundled.states().forEach((hash, state) -> {
+            if (probed.contains(state.getString("name")) && !lost.contains(hash)) {
+                values.put(BlockBehaviour.CLIMBABLE, hash, yes.contains(hash));
+            }
+        });
+        return values;
     }
 
     /** @return the state of a palette whose block is {@code block} and whose door states are the capture's, or null */
@@ -276,6 +319,58 @@ public final class BehaviourImport {
 
     // ---- Sources ----
 
+    /** The newest behaviour dump of each version, read by {@link #behaviourDumps}. */
+    private final Map<DataVersion, Path> behaviourDumps = new TreeMap<>();
+
+    /**
+     * {@code data/bds/<bds>/behaviour-dump.json.gz} ({@link BehaviourDump}): every key whose source is a Script API property,
+     * for the newest build of each version. One capture per set of ids the keys cover ({@link ScriptApiValues}).
+     */
+    void behaviourDumps(Path bds) throws IOException {
+        behaviourDumps.putAll(newestPerVersion(bds, BehaviourDump.FILE));
+        for (Map.Entry<DataVersion, Path> entry : behaviourDumps.entrySet()) {
+            String bdsVersion = entry.getValue().getFileName().toString();
+            JsonObject dump = BehaviourDump.read(entry.getValue().resolve(BehaviourDump.FILE));
+            Bundled bundled = bundled(entry.getKey());
+            String where = Provenance.Source.SCRIPT_API + " " + bdsVersion;
+            ScriptApiValues values = new ScriptApiValues(dump, log);
+            String reference = "Paletter data/bds/" + bdsVersion + "/" + BehaviourDump.FILE;
+            for (Values<Integer> blocks : values.blocks(bundled.states(), where)) {
+                captures.add(new Capture(Provenance.Source.SCRIPT_API, reference + " (" + names(blocks) + ")", "", entry.getKey(),
+                    "BDS " + bdsVersion, blocks, new Values<>()));
+            }
+            for (Values<String> items : values.items(bundled.items(), where)) {
+                captures.add(new Capture(Provenance.Source.SCRIPT_API, reference + " (" + names(items) + ")", "", entry.getKey(),
+                    "BDS " + bdsVersion, new Values<>(), items));
+            }
+        }
+    }
+
+    private static String names(Values<?> values) {
+        return String.join(", ", values.byKey.keySet().stream().map(BehaviourKey::name).toList());
+    }
+
+    /** @return per bundled version the newest {@code data/bds/<bds>} that has the file, the version from the BDS protocol */
+    private Map<DataVersion, Path> newestPerVersion(Path bds, String file) throws IOException {
+        Map<DataVersion, Path> newest = new TreeMap<>();
+        if (!Files.isDirectory(bds)) {
+            return newest;
+        }
+        try (Stream<Path> dirs = Files.list(bds)) {
+            for (Path dir : dirs.sorted((a, b) -> compare(bdsOrder(a), bdsOrder(b))).toList()) {
+                Path experiments = dir.resolve("experiments.json");
+                if (Files.isRegularFile(dir.resolve(file)) && Files.isRegularFile(experiments)) {
+                    DataVersion version = versionOfProtocol(JsonParser.parseString(Files.readString(experiments)).getAsJsonObject()
+                        .get("protocol").getAsInt());
+                    if (version != null) {
+                        newest.put(version, dir);
+                    }
+                }
+            }
+        }
+        return newest;
+    }
+
     /** {@code data/bds/<bds>/dump.json.gz}: max stack size and durability per item; the version from the BDS protocol. */
     void scriptApi(Path bds) throws IOException {
         if (!Files.isDirectory(bds)) {
@@ -296,6 +391,10 @@ public final class BehaviourImport {
             }
         }
         newest.forEach((version, dir) -> {
+            if (behaviourDumps.containsKey(version)) {
+                // the behaviour dump of the version has these too, and every other Script API property
+                return;
+            }
             Values<String> items = new Values<>();
             try (Reader reader = new InputStreamReader(new GZIPInputStream(Files.newInputStream(dir.resolve("dump.json.gz"))), StandardCharsets.UTF_8)) {
                 JsonObject all = JsonParser.parseReader(reader).getAsJsonObject().getAsJsonObject("items");
@@ -661,8 +760,8 @@ public final class BehaviourImport {
         return switch (source) {
             case CLOUDBURST_DATA -> "https://github.com/CloudburstMC/Data (Apache-2.0): native BDS dump; post-processes some values (shapeSource)";
             case ALLAY_DATA -> "https://github.com/AllayMC/Allay data/ (MIT): raw Endstone DevTools dump of BDS";
-            case SCRIPT_API -> "Paletter data/bds: BDS Script API dumps";
-            case BDS_PROBE -> "Paletter data/bds: experiments on BDS (behaviour-probe): door collision";
+            case SCRIPT_API -> "Paletter data/bds: BDS Script API dumps (behaviour-dump.json.gz; dump.json.gz before)";
+            case BDS_PROBE -> "Paletter data/bds: experiments on BDS (behaviour-probe): door collision, climbing";
             default -> source.name();
         };
     }

@@ -36,11 +36,15 @@ class BehaviourSourceTest {
 
     private static List<Key> keys(String glowType) {
         return List.of(
-            new Key(Owner.BLOCK, "glow", glowType, "", new Leaf("minecraft:glow", "", "minecraft:glow.value")),
-            new Key(Owner.BLOCK, "shape", "BlockShape", "The shape.", new Hand("collisionShape", List.of("minecraft:box", "minecraft:turn"))),
-            new Key(Owner.BLOCK, "solid", "Boolean", "", null),
-            new Key(Owner.ITEM, "use_ticks", "Integer", "", new Leaf("minecraft:use", "seconds", "item_properties.use_ticks")),
-            new Key(Owner.ITEM, "use_seconds", "Float", "", new Leaf("minecraft:use", "seconds", "minecraft:use.seconds")));
+            key(Owner.BLOCK, "glow", glowType, "", new Leaf("minecraft:glow", "", "minecraft:glow.value")),
+            key(Owner.BLOCK, "shape", "BlockShape", "The shape.", new Hand("collisionShape", List.of("minecraft:box", "minecraft:turn"))),
+            key(Owner.BLOCK, "solid", "Boolean", "", null),
+            key(Owner.ITEM, "use_ticks", "Integer", "", new Leaf("minecraft:use", "seconds", "item_properties.use_ticks")),
+            key(Owner.ITEM, "use_seconds", "Float", "", new Leaf("minecraft:use", "seconds", "minecraft:use.seconds")));
+    }
+
+    private static Key key(Owner owner, String name, String type, String doc, BehaviourKeys.Wire wire) {
+        return new Key(owner, name, type, doc, List.of("SAPI:Block.isSolid"), BehaviourKeys.Conversion.NONE, wire);
     }
 
     private static JsonObject probe(double... pairs) {
