@@ -83,7 +83,8 @@ public final class Transforms {
      * <p>
      * y is {@code origin.y} to {@code origin.y + size.y}, z {@code 8 + origin.z} to that plus {@code size.z}. x runs like z
      * in the captures of BDS 1.26.36.1 to 1.26.52.3; from 1.26.63.1 BDS mirrors it: {@code minX = 8 - origin.x - size.x},
-     * {@code maxX = 8 - origin.x}.
+     * {@code maxX = 8 - origin.x}. From 1.26.70.24 BDS also sends {@code shape} "" and {@code useVoxelShapes} 0, as it does
+     * for the boolean form.
      */
     public static void collisionBoxes(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull CollisionBox c) {
         if (c.enabled() != null) {
@@ -105,6 +106,10 @@ public final class Transforms {
             b.put("minX", Math.min(x1, x2)).put("maxX", Math.max(x1, x2));
             b.put("minY", Math.min(y1, y2)).put("maxY", Math.max(y1, y2));
             b.put("minZ", Math.min(z1, z2)).put("maxZ", Math.max(z1, z2));
+        }
+        if (ctx.protocol() >= ComponentIndex.BDS_1_26_70_24) {
+            out.put("minecraft:collision_box.shape", "");
+            out.put("minecraft:collision_box.useVoxelShapes", (byte) 0);
         }
     }
 
