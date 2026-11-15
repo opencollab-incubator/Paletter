@@ -1,784 +1,148 @@
 # Paletter
 
-Paletter is a library to handle Bedrock item and block palettes - from vanilla to adding custom ones. 
-Paletter bundles vanilla data for every supported version, compiles it together with layers of custom content, 
-and hands out Cloudburst protocol types: definition registries for the codec,
-the item component packet, the creative content packet and block properties for start game.
+Paletter builds the item and block palettes a Minecraft: Bedrock Edition client expects. It bundles the vanilla data of
+each supported Bedrock version, adds your custom items and blocks on top, and gives you the Cloudburst protocol objects
+to send: the definition registries for the codec, the block properties for the start game packet, the item component
+packet, the creative content packet and the voxel shapes packet. You describe content once, as version independent
+keys; each palette turns those keys into what one client version needs.
 
-A palette can have multiple layers, which could be extended per client if desired.
+It is written for projects that talk to Bedrock clients directly:
+
+- [Geyser](https://github.com/GeyserMC/Geyser), which translates Java Edition content to Bedrock;
+- anticheats such as Boar, which need the same block and item behaviour values as the server;
+- Bedrock-only servers and proxies.
+
+## Quick start
 
 ```java
-PaletteLayer layer = PaletteLayer.builder("server")
+// Content, described once for every client version
+PaletteLayer content = PaletteLayer.builder("server")
     .item(CustomItem.builder("example:ruby")
         .component(Icon.of("ruby"))
-        .component(DisplayName.builder().value("item.ruby.name").build())
+        .component(DisplayName.builder().value("item.example.ruby.name").build())
         .component(MaxStackSize.of(16))
-        .component(Tags.builder().tags("minecraft:gems").build())
         .creative(CreativePlacement.group(CreativeCategory.ITEMS, "itemGroup.name.minerals"))
         .build())
+    .voxelShape("example:post", VoxelShape.ofBoxes("example:post", 6 / 16f, 0, 6 / 16f, 10 / 16f, 1, 10 / 16f))
+    .block(CustomBlock.builder("example:post")
+        .component(Geometry.builder().identifier("geometry.post").cullingShape("example:post").build())
+        .component(MaterialInstances.builder()
+            .all(MaterialInstances.Instance.builder().texture("post").build()).build())
+        .component(Friction.of(0.1f))
+        .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION))
+        .build())
     .overrideItem(BedrockItems.CAKE, item -> item.components(MaxStackSize.of(1)))
-    .creative(editor -> editor.remove(ItemMatcher.of(BedrockItems.EMPTY_MAP.variant(2))))
     .build();
 
-Paletter paletter = Paletter.builder()                  // the policy, the same for every palette
+// One Paletter per application: policy and global content
+Paletter paletter = Paletter.builder()
     .fallbacks(Fallbacks.builder().item(BedrockItems.POPLAR_BOAT, BedrockItems.OAK_BOAT).build())
-    .layer(layer)                                       // content
+    .layer(content)
     .build();
 
-Palette palette = paletter.palette(codec);              // once per client version, shared
-Palette forSession = palette.extend(sessionLayer);      // optional, per session
+// One palette per protocol version, compiled once and shared by every session on that version
+Palette palette = paletter.palette(session.getCodec());
+palette.applyTo(session.getPeer().getCodecHelper());   // item and block definitions
+palette.applyTo(startGamePacket);                      // block properties, hashed block ids
 
-palette.applyTo(codecHelper);                  // item + block definition registries
-palette.applyTo(startGamePacket);              // block properties, hashed block ids flag
+VoxelShapesPacket shapes = palette.voxelShapesPacket(); // null if no shapes are captured for this version
+if (shapes != null) {
+    session.sendPacket(shapes);                        // before start game
+}
+session.sendPacket(startGamePacket);
 session.sendPacket(palette.itemComponentPacket());
 session.sendPacket(palette.creativeContentPacket());
+
+// Blocks and items are keys; the palette gives the ids for its version
+int stone = palette.runtimeId(BedrockBlocks.STONE.defaultState());
+ItemData apples = palette.encode(BedrockItemStack.of(BedrockItems.APPLE.base(), 3));
+
+// Behaviour values BDS uses but never sends to clients
+float friction = palette.blockBehaviour(stone).get(BlockBehaviour.FRICTION);
+BlockShape collision = palette.blockBehaviour(stone).get(BlockBehaviour.COLLISION_SHAPE);
 ```
 
-The API is stable: semantic versioning, a deprecation cycle and a binary compatibility check. See [API.md](API.md) for
-what is API, what `@Experimental` and `@Internal` mean, and the policy.
-How the pieces fit together, and recipes for the common changes, are in [ARCHITECTURE.md](ARCHITECTURE.md);
-runnable examples are in [examples/](examples).
-The Javadoc of the latest `main` is at https://opencollab-incubator.github.io/Paletter/latest/.
-
-
-| Path        | What                                                                                           |
-|-------------|------------------------------------------------------------------------------------------------|
-| `paletter/` | The library (the only shipped module). Depends on Cloudburst `bedrock-codec` (its types are the public API) and fastutil. No JSON, no network. Hand-written sources are in `src/main/java`; everything generated (the component API in `item/component` and `block/component`, the vanilla constants and state enums) is in `src/generated/java`, same packages, never edited by hand. |
-| `tools/`    | All tooling, one module, never shipped, one command line (`./gradlew :tools:run --args="<command> ..."`, see [tools/README.md](tools/README.md)): the BDS update pipeline and data import (`tools.bds`, `tools.data`, `tools.update`), the headless Bedrock client that records what BDS sends (`tools.client`), the component model from Microsoft's creator docs and its wire inference (`tools.model`), and the generators of the component API and the constants (`tools.codegen`). |
-| `data/`     | Every non-code input: `model/` (the component model and the generators' inputs: `components.json`, `mappings.json`, ...), `bds/<bds version>/` (captures, Script API dump, experiment record; see [data/README.md](data/README.md)) and `addons/` (the add-on packs run on BDS: `capture`, `creative`, `dump`). |
-
-
+Runnable versions of this are in [`examples/`](examples) (`./gradlew :examples:run`): a Bedrock server, a translator
+and an anticheat.
 
 ## Concepts
 
-**Keys, registered, stacks.** Three things, kept apart. A *key* is an identity that never changes: `BedrockItemType`,
-`BedrockItemVariant` (type + aux), `BedrockBlockType`, `BedrockBlockState` (type + state values). Vanilla keys are the
-generated constants (see [Vanilla constants](#vanilla-constants)), custom ones are `BedrockItemType.of("example:ruby")` or
-`BedrockBlockType.of(customBlock)`; same classes. A key needs no existence in any version, and renames and splits of
-identifiers Bedrock made (`renames.txt`) map to the same or a new key. Vanilla keys are identity singletons; a custom
-key of an identifier Paletter does not know is a plain value, equal by identifier but not interned (nothing accumulates for
-the JVM lifetime), so compare keys with `equals`. The type of a custom block is also equal by its states:
-`BedrockBlockType.of(block)` equals the type of another block with the same identifier and states, and the type of the bare identifier only if the block has none. *Registered* is a key inside one palette:
-`RegisteredItem`, and `RegisteredBlock` (the block) with its `RegisteredBlockState`s (runtime id, components, origin).
-They implement Cloudburst's `ItemDefinition` / `BlockDefinition` and are compared by identity (as Cloudburst does); there is one
-instance per entry per palette, and they differ per version. `Palette#sameStack(ItemData, ItemData)` compares whole stacks
-(definition, damage, count, NBT, block, ...) and maps definitions of other palettes to this one first.
-A *stack* is `BedrockItemStack`: variant, count, NBT, optional block state. Cloudburst `ItemData` only appears where a
-packet needs it (`Palette#encode`, `Palette#decode`).
-
-**Paletter and Palette.** `Paletter.builder()` is the global policy: the data source, the versions, one
-`Fallbacks` (never per layer), which vanilla content exists (`.vanilla(v -> v.remove(...).experiments(...))`), the creative
-ordering, a report callback, and the global layers. `paletter.palette(protocol)` compiles a `Palette` per data version, once,
-and caches it: vanilla data of one version plus the layers, immutable and thread safe.
-
-**Layers.** A `PaletteLayer` is content only: custom items and blocks, overrides of vanilla items, creative edits, tags.
-Layers do not know protocol versions; the same layer compiles against every version. Layers given to the builder apply to
-every palette.
-
-**Extend.** `Palette#extend(layer)` is a patch over the shared palette, meant for short lived layers (a session): items it
-adds get ids after the base, lookups check the patch and then the base, the creative layout is rebuilt from the edited one,
-and everything the layer does not touch is the same instance as in the base, so `==` keeps working. The patch of custom
-blocks only holds the added states. `extend` never throws for a problem with the layer's content (a duplicate custom id,
-a hash collision, a duplicate item, an exception from a component encoder or a callback): it returns the palette it was
-called on, unchanged, with a `PaletteReport.Level.ERROR` entry in the returned palette's report (`report().errors()`)
-naming the layer, the version and the cause. Layers given to the builder are startup configuration and fail loudly with a
-`PaletteException` at the first `palette(...)`; `Paletter#warmUp()` compiles every version up front.
-
-**Properties.** What a key is made of: item components, data driven block data, custom components. They are versioned per
-Bedrock version (vanilla) or come from the layer (custom), the same generated component records for both, and bundled once
-with the version range they are valid for. `RegisteredItem#properties()`, `RegisteredBlock#properties()` and
-`RegisteredBlock#properties(state)` (a state also has the components of the permutations that match it) give them for a
-palette; `paletter.properties(key, version)` without one. Overrides edit the components of an entry, vanilla or custom alike.
-
-**Lookups.** Keys are version independent, each palette turns them into what its version needs, without allocating:
-
-| Lookup                          | Result                                              |
-|---------------------------------|-----------------------------------------------------|
-| `Paletter#block(NbtMap)`, `Paletter#item(identifier, aux)` | the key of a state or variant of **any** bundled version, or null (see below) |
-| `Palette#runtimeId(BedrockBlockState)` | runtime id (the state hash), a field read and an array load; throws for a state the palette lacks, `runtimeIdOrDefault(state, id)` does not |
-| `Palette#block(BedrockBlockState)` | `RegisteredBlockState`: exact, adapted, fallback, else air; throws for a state the palette lacks, `blockOrNull(state)` returns null |
-| `Palette#item(BedrockItemType\|BedrockItemVariant)` | `RegisteredItem` as this version registers it, or null if the version lacks the item; fallbacks are not applied (`resolve` and `encode` do) |
-| `Palette#resolve(BedrockItemVariant)` | `ResolvedItem` (definition, damage, block, fallback) as `encode` sends it, without building an `ItemData`: cached, no allocation; null if the version has neither the item nor a fallback |
-| `Palette#encode(BedrockItemStack)` | `ItemData` for the client, fallbacks applied: an item the version lacks and one nobody registered take the same stand-in (the default fallback, `minecraft:unknown`), air only without one |
-| `Palette#decode(ItemData)` | the `BedrockItemStack` a client sent, or null if unknown; the damage it carried is kept even where the item has no such variant |
-| `BlockRegistry#block(RegisteredBlockState)` | the `RegisteredBlock` of a state in this palette |
-
-`Paletter#block` / `Paletter#item` accept content of any bundled version, not only the newest: a state or variant the
-newest version lacks is mapped forward (state keys added, removed or reset like an older palette adapts newer states,
-renamed identifiers via `renames.txt`), and one that no longer exists returns null with a reason (`explainUnknown`). A mapping
-made against 26.50 therefore keeps working when 26.60 becomes the newest version. To match strictly instead, pass a `Lookup` (the overloads without one are `Lookup.STRICT.withRenames()`):
-`paletter.block(state, Lookup.STRICT)` (also `item(identifier, aux, lookup)`, `blockType` and `itemType`; `explainUnknown(..., lookup)` says why a lookup refuses) accepts only content that exists
-as is in the newest version's data, `Lookup.of(version)` only content of that data version, and `.withRenames()` additionally what the
-newest version has under a new name (never what the newest version has as is and `version` lacks: the version gates it); the handles and types returned are always those of the newest data. The key classes
-(`BedrockBlockType`, `BedrockItemType`, ...) have no such lookups of their own: whether content exists in some data is asked of `Paletter`. Content of a layer has keys of its own
-(`BedrockBlockType.of(customBlock)`, `customItem.type()`), valid in every palette that has the layer. Canonical ids, the dense
-ints of the newest version every table is built on, are plumbing in `internal`; canonical content a version lacks and that has
-no fallback is listed in the palette's report.
-
-**Block network ids.** Always hashed, what the client expects when `StartGamePacket#blockNetworkIdsHashed` is set (which
-`Palette#applyTo(StartGamePacket)` does): FNV-1a 32 over the little endian NBT of `{name, states}` with states sorted by
-key and no `version` (`minecraft:unknown` is -2), `BlockHashes#hash`. A state has the same id in every version and
-palette, so ids and encoded chunks can be shared between client versions. Paletter does so itself: palettes of all
-versions share one `RegisteredBlockState` per vanilla state and equal pages of their canonical tables (which is why a
-state does not know its block: ask the palette, `BlockRegistry#block(state)`). A hash collision fails compilation of the
-layer that causes it.
-
-**One mapping for all versions.** Map against the newest version only. For older versions, a palette adapts states
-automatically (states added or removed between versions, e.g. stair corners) and applies the fallbacks of the `Fallbacks`
-policy for blocks and items that do not exist (or are experimental) there. When matching stacks from the client, a variant
-that only reached a version through a fallback never shadows an item's own variant, and a stack that is only the fallback
-of several variants (e.g. the shared `minecraft:unknown`) matches none of them (`decode` returns null).
-
-**Fallbacks.** Content an older version lacks resolves, in this order, to: a fallback for that version
-(`Fallbacks.Builder#block(version, key, fallback)`, `#item(version, ...)`), a fallback for every version (`#block(key,
-fallback)`), and otherwise the default: the block `minecraft:unknown` and the item `minecraft:unknown` (its block item),
-which every client knows and shows as a placeholder (`Fallbacks.UNKNOWN`). `Fallbacks.NONE` restores air and missing
-items. Targets are keys: `ItemFallback.of(BedrockItemType|BedrockItemVariant)` (the type keeps the aux of the replaced item),
-`BlockFallback.of(BedrockBlockType|BedrockBlockState)` (the type carries matching state values over, the state is used as
-is); `.forced()` also replaces content that really exists in a version. Content a version has only behind an experiment toggle
-(26.40's poplar wood and cushions behind `y_2026_drop_3`) is missing unless the Paletter enables the toggle with
-`vanilla(v -> v.experiments("y_2026_drop_3"))`, so plain fallbacks apply to it (see [API.md](API.md#experiments)).
-**Paletter bundles no fallbacks**: which replacement is right (poplar wood to pale oak, ...) is the consumer's decision.
-`check-data` lists what older versions lack and what they only have behind an experiment toggle.
-
-```java
-Fallbacks fallbacks = Fallbacks.builder()
-    .block(BedrockBlocks.ICICLE, BedrockBlocks.STONE)                                                      // every version
-    .block(version, BedrockBlocks.POPLAR_LOG, BlockFallback.of(BedrockBlocks.BIRCH_LOG).forced())         // one DataVersion
-    .item(version, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.BIRCH_BOAT))
-    .defaultBlock(BlockFallback.of(BedrockBlocks.BARRIER))
-    .build();
-Paletter paletter = Paletter.builder().fallbacks(fallbacks).build();
-```
-
-**Block items.** Paletter alone decides which block an item is sent with: `Palette#blockOf(BedrockItemVariant)` (a block
-state of the stack wins), `Paletter#blockOf(BedrockItemVariant)` version independent. The order is a layer override, then
-the bundled block to item relation of the Script API (`VanillaData#blockItems`, bundle key `block_items`: the block whose
-creative state the item has, else the block named like the item, else the first block placing it), then the creative
-stacks' block states, then (data without the relation) the block of the same name, then custom block items. Clients'
-meaningless block definitions on other items are ignored.
-
-## Using Paletter from a Bedrock-only project
-
-A server or proxy that speaks Bedrock natively stores blocks and items as keys, and converts at the network edge:
-
-```java
-Paletter paletter = Paletter.builder().layer(serverLayer).build();
-Palette palette = paletter.palette(session.getCodec());
-palette.applyTo(session.getPeer().getCodecHelper());
-palette.applyTo(startGame);
-
-// World storage uses keys, so it does not care about the client version
-BedrockBlockState stone = BedrockBlocks.STONE.defaultState();
-int runtimeId = palette.runtimeId(stone);              // write into the chunk / UpdateBlockPacket
-
-// Items
-BedrockItemStack ruby = BedrockItemStack.of(rubyItem.type(), 3);
-ItemData stack = palette.encode(ruby);
-
-// What the client sent back
-BedrockItemStack received = palette.decode(inventoryAction.getFromItem());   // null if unknown
-```
-
-## Using it from a Java <-> Bedrock translator
-
-A translator keeps its own mapping, written once against the newest Bedrock version and turned into keys at startup.
-The keys are version independent; each client version only adds Paletter's per palette arrays.
-
-```java
-Paletter paletter = Paletter.builder().layer(translatorLayer).build();
-
-// Java block state id -> Bedrock block key, once
-BedrockBlockState[] javaToBedrock = new BedrockBlockState[javaStateCount];
-for (int javaId = 0; javaId < javaStateCount; javaId++) {
-    NbtMap bedrockState = mappings.bedrockStateOf(javaId);      // any bundled version
-    BedrockBlockState key = paletter.block(bedrockState);
-    if (key == null) {
-        throw new IllegalStateException(bedrockState + ": " + paletter.explainUnknown(bedrockState));
-    }
-    javaToBedrock[javaId] = key;
-}
-
-// Per client version (shared by its sessions); chunk translation is one array lookup per block
-Palette palette = paletter.palette(codec);
-int runtimeId = palette.runtimeId(javaToBedrock[javaStateId]);
-
-// Optionally cache per palette: int[] javaToRuntime, built once
-int[] javaToRuntime = new int[javaStateCount];
-for (int javaId = 0; javaId < javaStateCount; javaId++) {
-    javaToRuntime[javaId] = palette.runtimeId(javaToBedrock[javaId]);
-}
-// Block ids are hashes, so javaToRuntime is equal between versions for every state they share, so it can be deduplicated
-
-// Items, both directions. Variants the translator maps to that are not in creative get ids from its layer:
-//   PaletteLayer.builder("translator").variant(BedrockItemVariant.of("minecraft:banner", 15))...
-BedrockItemVariant[] javaItemToBedrock = ...;                 // from the translator's item mappings, via paletter.item(identifier, aux)
-Map<BedrockItemVariant, JavaItem> bedrockToJava = ...;       // the reverse, keyed by variant
-ItemData toClient = palette.encode(BedrockItemStack.of(javaItemToBedrock[javaItemId], count));
-JavaItem fromClient = bedrockToJava.get(palette.decode(itemDataFromClient).variant());
-
-// Custom content of the translator's layer has keys of its own, valid in every version with that layer
-BedrockItemVariant furnaceMinecart = BedrockItemVariant.of("geysermc:furnace_minecart", 0);
-```
-
-One to one mappings are the translator's business: two Java items claiming the same variant is a check on its own table,
-and is what turns bugs like GeyserMC/Geyser#6668 into a startup error.
-
-## Vanilla constants
-
-`org.geysermc.paletter.vanilla` has generated constants for the vanilla content of the newest bundled **release**:
-`BedrockBlocks` (one `BedrockBlockType` per block), `BedrockStates` (one typed constant per state name) and
-`BedrockItems` (one `BedrockItemType` per item). They are objects, not `int` compile time constants, so they stay binary
-compatible across Paletter releases, and they are resolved against the newest data of `Paletter.bundled()` the first
-time a state or id is needed; referencing them loads nothing.
-
-```java
-// Block states, typed. One instance per state: with() does not allocate, == works
-BedrockBlockState door = BedrockBlocks.WOODEN_DOOR.state()
-    .with(BedrockStates.CARDINAL_DIRECTION, CardinalDirection.NORTH)   // EnumState<CardinalDirection>
-    .with(BedrockStates.OPEN_BIT, true)                                // BoolState: byte 0/1 in NBT
-    .build();
-BedrockBlockState open = door.with(BedrockStates.UPPER_BLOCK_BIT, true);
-CardinalDirection facing = open.get(BedrockStates.CARDINAL_DIRECTION);
-List<Integer> growth = BedrockBlocks.WHEAT.values(BedrockStates.GROWTH);  // [0..7]: what this block accepts
-door.with(BedrockStates.GROWTH, 3);                                      // IllegalArgumentException: not a door state
-
-int runtimeId = palette.runtimeId(door);           // valid for the palette's version, an array load
-NbtMap nbt = door.toNbt();                         // {name, states}
-BedrockBlockState back = paletter.block(nbt);      // same instance
-
-// Items and their damage variants (the data has no names for those, so they are variant(int), not constants)
-ItemData apple = palette.encode(BedrockItemStack.of(BedrockItems.APPLE, 3));
-ItemData potion = palette.encode(BedrockItemStack.of(BedrockItems.POTION.variant(5)));
-
-// Everywhere an identifier is accepted, a constant is too
-Fallbacks fallbacks = Fallbacks.builder().block(BedrockBlocks.ICICLE, BedrockBlocks.STONE).build();
-PaletteLayer layer = PaletteLayer.builder("server")
-    .overrideItem(BedrockItems.CAKE, item -> item.components(MaxStackSize.of(1)))
-    .item(CustomItem.builder("example:ruby")
-        .component(Repairable.builder().repairItems(Repairable.RepairItems.builder().items(BedrockItems.DIAMOND).build()).build())
-        .component(Digger.builder().destroySpeeds(Digger.DestroySpeeds.builder()
-            .block(Digger.Block.of(BedrockBlocks.STONE)).speed(4).build()).build())
-        .creative(CreativePlacement.loose(CreativeCategory.ITEMS).after(BedrockItems.DIAMOND))
-        .build())
-    .creative(editor -> editor.remove(ItemMatcher.of(BedrockItems.EMPTY_MAP.variant(2))))
-    .build();
-```
-
-**Custom content is used alike.** `CustomBlock#type()` and `CustomItem#type()` (and `CustomBlock#itemType()`) return
-the same key types. Their keys are the same in every palette that has the layer, only the runtime ids differ:
-`palette.runtimeId(lamp.type().defaultState().with(lit, true))`, `palette.item(ruby.type())`. A vanilla constant matches
-custom properties by name, so a custom `minecraft:cardinal_direction` property works with `BedrockStates.CARDINAL_DIRECTION`.
-Custom properties are typed as `BoolState.of(name)`, `IntState.range(name, min, max)` or `StringState.of(name, values...)`
-(or `EnumState.of(name, MyEnum.class)` with an enum implementing `StateValue`).
-
-**Typing.** Byte states with the values 0 and 1 are `BoolState`, integer states `IntState` (a range or a list), string
-states `EnumState` with a generated enum in `org.geysermc.paletter.vanilla.state`. States with identical value sets
-share an enum (`minecraft:block_face` and `minecraft:facing_direction` share `Direction`; the four
-`wall_connection_type_*` and `pale_moss_carpet_side_*` states share `WallConnectionType`). The current release has 124
-state names, 24 enums, 1480 blocks and 2080 items.
-
-**Arithmetic state ids.** Bedrock enumerates the states of every block as the full cartesian product of its values. The
-generator verifies this for every block of the bundled release and derives each property's stride, so a state's
-state index is `first state of the block + sum(value index * stride)`, computed once per state; a block that is not a
-full product in a stride order would get a lookup table instead and be listed by the generator (none in 26.60).
-States are created per block on first use and interned, so `with()` only indexes an array.
-
-**Versions.** Constants describe the newest bundled release; for older clients the palette resolves them like any
-other key (adapted states, fallbacks). A constant whose content the data no longer has (Bedrock removed it) stays,
-`@Deprecated(forRemoval = true)`, and resolves to `minecraft:unknown`; `isAvailable()` is false. A renamed block or item keeps its old constant as a deprecated alias of the new one.
-Content only in a bundled preview goes to `BedrockPreviewBlocks` / `BedrockPreviewItems` (`@Experimental`, generated only
-while a preview is bundled); without `paletter.previews` those resolve to `minecraft:unknown` too.
-
-**Regenerating.** `./gradlew :tools:generateConstants` (`check` fails if the committed constants are stale), and the
-`update` pipeline does it whenever it imports data, listing added and deprecated constants in its report. See
-[tools/docs/codegen.md](tools/docs/codegen.md#vanilla-constants).
-
-## Components
-
-Custom items and blocks are described with Bedrock's own add-on component model, as generated Java: one immutable
-record per component (`minecraft:durability` is `Durability`, its `damage_chance` object `Durability.DamageChance`),
-nested records for object fields, Java enums for documented enums, and builders that apply the documented defaults and
-check required fields and the ranges Bedrock Dedicated Server enforces when `build()` runs. Consumers never write JSON or
-NBT; the definition entry points (`CustomItem`, `CustomBlock`: identifier, menu category, creative placement, block
-states, traits, permutations, `type()` handles) take the generated values.
-
-```java
-CustomItem sword = CustomItem.builder("example:sword")
-    .component(Icon.of("example_sword"))
-    .component(DisplayName.builder().value("item.example.sword.name").build())
-    .component(MaxStackSize.of(1))
-    .component(HandEquipped.of(true))
-    .component(Damage.of(7))
-    .component(Durability.builder().maxDurability(1561)
-        .damageChance(Durability.DamageChance.builder().min(60).max(100).build()).build())
-    .component(Enchantable.builder().slot("sword").value(10).build())
-    .component(Repairable.builder().repairItems(Repairable.RepairItems.builder()
-        .items(BedrockItems.DIAMOND).repairAmountExpression("q.max_durability * 0.25").build()).build())
-    .component(Tags.builder().tags("minecraft:is_sword").build())
-    .creative(CreativePlacement.group(CreativeCategory.EQUIPMENT, "itemGroup.name.sword"))
-    .build();
-
-CustomBlock lamp = CustomBlock.builder("example:lamp")
-    .property(BlockProperty.bool("example:lit"))
-    .trait(PlacementDirection.builder().enabledStates(PlacementDirection.EnabledStates.CARDINAL_DIRECTION).build())
-    .component(Geometry.of("minecraft:geometry.full_block"))
-    .component(MaterialInstances.builder()
-        .all(MaterialInstances.Instance.builder().texture("example_lamp").faceDimming(false).isotropic(true).build()).build())
-    .component(PlacementFilter.builder().conditions(PlacementFilter.Conditions.builder()
-        .allowedFaces("up").blockFilter(PlacementFilter.BlockFilter.of(BedrockBlocks.GRASS_BLOCK)).build()).build())
-    .component(CollisionBox.builder().boxes(CollisionBox.Entry.builder().origin(-8, 0, -8).size(16, 8, 16).build()).build())
-    .component(Transformation.builder().rotation(0, 90, 0).build())
-    .permutation("q.block_state('example:lit')", LightEmission.of(10))
-    .tags("minecraft:stone")
-    .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION))
-    .build();
-```
-
-Field names are the add-on JSON keys in camelCase, value forms are `of(...)` factories (`MaxStackSize.of(16)` is
-`"minecraft:max_stack_size": 16`), and every place the model has a block or item descriptor also takes the vanilla
-constants (`BedrockBlocks`, `BedrockItems`, a `BedrockBlockState` for a descriptor with states). Javadoc comes from the
-creator documentation; `@BedrockFormat("1.20.0")` names a component's minimum `format_version`, `@Experimental` marks
-components Bedrock gates behind an experiment, `@Deprecated` the ones the docs deprecate. Where the docs give a default
-that BDS does not use when the field is omitted (e.g. `use_modifiers.start_using`), the field is left unset and Paletter
-sends what BDS sends; the javadoc says so.
-
-Not generated: server-only components, which BDS accepts but never sends to clients (`minecraft:loot`,
-`minecraft:flammable`, `minecraft:tick`, ...; listed in the javadoc of `ItemComponent` / `BlockComponent`), and
-components BDS rejects (legacy and removed ones).
-
-### Versioned encoding
-
-Paletter compiles the components when a palette is compiled, for that palette's protocol, with encoders generated from
-the component model in `data/model`: `components.json` (the creator docs), `mappings.json` (per field, how BDS turns
-the JSON into wire NBT, inferred from captures of a generated add-on, per protocol window), the hand transforms of
-`Transforms` for what no inferred rule explains (e.g. collision box min/max or the packed material flags) and `api.json`
-(Java naming). A field a palette's protocol window does not send is left out with a warning in `Palette#report()`;
-compilation never fails because of a Bedrock version. Everything BDS sends in two places is written in both (the stack
-size as a component and an item property, tags as `item_tags` and `minecraft:tags`, the use animation as a name and an
-id), and the item properties BDS sends for every custom item (`mining_speed`, `frame_count`, ...) are always there.
-
-The conformance suite (`ComponentConformanceTest` in tools) rebuilds every variant of the BDS 1.26.63.1 capture that
-BDS accepted from its add-on JSON through the generated API and compares Paletter's NBT with BDS's: all 1368
-accepted variants are identical, and the suite has no list of exceptions: a variant the API cannot express or encodes differently
-fails the build (the same holds for every captured BDS back to 1.26.36.1). See `tools/docs/codegen.md` and
-`tools/docs/model.md`.
-
-## The creative inventory
-
-The model is `CreativeLayout`: per category, an ordered list of `CreativeNode`s, each either a `CreativeGroup` or a loose
-`CreativeItem` (a sealed interface, so `switch` covers both without `isGroup`/`asGroup` casts). Nodes do not know where they
-are; the layout does, so they cannot disagree with it. A `CreativeItem` holds a `BedrockItemStack` (variant, count, NBT, block
-state), never a definition, so one layout serves every version.
-
-Edits are relative to existing content, so they survive Bedrock reshuffling vanilla:
-
-```java
-editor.insert(stack).after(ItemMatcher.id("minecraft:hopper_minecart"));
-editor.insert(stack).after(anchor) || editor.insert(stack).intoGroup("itemGroup.name.minecart");
-editor.move(ItemMatcher.namespace("geysermc")).loose(CreativeCategory.ITEMS);
-editor.groupOrCreate(CreativeCategory.ITEMS, "geyser:tools").add(stack);
-editor.insert(stack).afterGroup("itemGroup.name.minecart");
-editor.replace(ItemMatcher.id("minecraft:firework_rocket"), s -> s.withNbt(lore));
-```
-
-`CreativeContent` compiles a layout per palette and enforces the protocol rules: categories in client order and contiguous,
-loose runs as unnamed groups with an air icon, items missing in the version dropped, empty groups dropped (they crash the
-client), missing icons replaced by the first stack, net ids sequential from 1 (`entry(netId)` is an array lookup). The
-category mess (protocol enum offset by `ALL`, numeric `creative_category` item property, `menu_category` names) lives in one
-enum, `CreativeCategory`.
-
-Custom items and blocks declare a `CreativePlacement` (a block may instead only have a `menu_category`): after an anchor
-if present, else in a named group, else loose at the end of the category. Without an anchor, the Paletter's
-`CreativeOrdering` decides the rest. `BDS` (default) puts content exactly where Bedrock Dedicated Server puts add-on
-content: block items first, in the iteration order of BDS's data driven block map, then items in definition order, each
-at the end of the group of its category (created at the end of the category if missing; `minecraft:` prefix ignored) or
-loose at the end of the category. `APPEND` is the old behaviour. The rule, its evidence and the checks against BDS
-captures are in [`data/bds/CREATIVE-ORDER.md`](data/bds/CREATIVE-ORDER.md). The same placement is written into the item's
-`creative_category`/`creative_group` and the block's `menu_category`.
-
-## Behaviour
-
-What BDS knows about blocks and items but never sends (friction, destroy time, collision shapes, light, max stack size,
-attack damage, ...), per state and per version, for servers and anticheats that need the same values as vanilla:
-
-```java
-float friction = palette.blockBehaviour(runtimeId).get(BlockBehaviour.FRICTION);      // the runtime id the palette sends
-float ice = palette.blockBehaviour(BedrockBlocks.BLUE_ICE).get(BlockBehaviour.FRICTION); // 0.989, the default state
-BlockShape stairs = palette.blockBehaviour(state).get(BlockBehaviour.COLLISION_SHAPE);  // several boxes
-int eating = palette.itemBehaviour(BedrockItems.APPLE).get(ItemBehaviour.USE_DURATION);  // 32 ticks
-
-palette.blockBehaviour(BedrockBlocks.BLUE_ICE).explain(BlockBehaviour.FRICTION);
-// "0.989 from CloudburstMC/Data@0021592 (CLOUDBURST_DATA, third party), 26.60"
-```
-
-- **Keys** are the `BlockBehaviour` and `ItemBehaviour` constants. Number and boolean keys return primitives, without
-  boxing; the others return a `String` or a `BlockShape`.
-- **`get` or `getOrElse`**: `get` returns the value and throws if none is known (a custom block's default that was
-  never measured). `getOrElse` returns your fallback instead.
-- **Fast**: `palette.blockBehaviour(runtimeId).get(key)` looks the runtime id up and reads an array: no allocation, no
-  boxing, about as fast as a lookup in an int map.
-- **Per palette, per version**: the same block state can have other values in another version (a newer capture), so
-  values come from the palette, not from the state. A session palette (`palette.extend(layer)`) shares the values of the
-  palette it extends; only the blocks its layers add have values of their own.
-- **`explain`** says where a value comes from, for debugging: the source and commit, the version it was captured for,
-  and whether it was set by the user, inherited from an older version, corrected by its source or disputed.
-- **Where values come from**, strongest first. Values come from BDS directly wherever possible, then from third-party
-  dumps of BDS, which are marked as such and never guessed or hand-written.
-  1. Paletter's own captures of BDS: a native capture (LeviLamina, run by hand, none yet), the Script API dumps in
-     `data/bds` (max stack size, durability), experiments on BDS (`behaviour-probe`: the collision of every door state,
-     and the defaults of custom blocks) and what BDS sends clients (the component data of data driven blocks and
-     component based items), which wins over a third-party value.
-  2. [CloudburstMC/Data](https://github.com/CloudburstMC/Data) (Apache-2.0): a native BDS dump of every block state. It
-     corrects some values itself (`door_state_correction` on doors); `explain` says so.
-  3. [AllayMC/Allay](https://github.com/AllayMC/Allay) `data/` (MIT), the raw Endstone DevTools dump of BDS. Used only
-     for what CloudburstMC/Data does not have: item attack damage, armour, toughness, enchant value and furnace fuel
-     (Data has no item behaviour file in any commit), and as the second opinion for disputes.
-
-  `behaviour import` reads their git history and identifies each commit's version by its block state hashes. A value is
-  stored once and holds until a later capture changes it; a version without a capture of its own inherits it, which
-  `explain` and [data/behaviour/REPORT.md](data/behaviour/REPORT.md) show.
-- **Disputes**: where the third-party sources disagree and no BDS evidence settles it (door outlines and, before 26.60,
-  door collision: Allay 0.1825 thick, Data 0.1875; plant model offsets), the stronger source's value is returned and
-  `explain` lists the other values. The report lists every dispute; nothing is picked silently. The probe measured the
-  collision of every door in every state on BDS 1.26.63.1 (26.60): the panel is 0.1825 thick, at the positions the door's
-  state says, so 26.60 door collision is not disputed.
-- **Custom blocks and items** answer the same keys from their components, read from the data the palette sends with the
-  rules that also read vanilla data driven blocks (checked against the dumps): `Friction`, `DestructibleByMining`,
-  `LightEmission`, `LightDampening`, `CollisionBox`, `SelectionBox` (with `Transformation` y rotations), `MaxStackSize`,
-  `Durability`, `Damage`, `UseModifiers`, `UseAnimation`. A key without the component gets the BDS default, measured by
-  `behaviour-probe` on BDS 1.26.63.1: friction 0.6, explosion resistance 0, light dampening 15, light emission 0, a full
-  cube collision box, not flammable. Not known (`get` throws): the selection box and the destroy time. The friction
-  conversion (engine friction is 1 minus the component value) is measured too.
-- Shapes are those of a state alone: shapes that depend on neighbours or the position (scaffolding, plant offsets)
-  are the caller's.
-- `behaviour.nbt` and `data/behaviour/REPORT.md` are generated (`./gradlew :tools:run --args="behaviour import
-  --cloudburst-data <clone> --allay <clone>"`): both say so, and the file records the command, the sources with their
-  commits and licences, and the ranking. The same sources give the same bytes.
-
-## Voxel shapes
-
-The shapes Bedrock culls the faces of neighbouring blocks with (`VoxelShapesPacket`, sent before start game). A palette
-has the vanilla shapes BDS of its version sends, and layers add custom ones that custom blocks name in
-`minecraft:geometry`:
-
-```java
-PaletteLayer layer = PaletteLayer.builder("content")
-    .voxelShape("example:post", VoxelShape.ofBoxes("example:post", 0, 0, 0, 1, 2 / 16f, 1,  6 / 16f, 2 / 16f, 7 / 16f, 9 / 16f, 1, 10 / 16f))
-    .block(CustomBlock.builder("example:post")
-        .component(Geometry.builder().identifier("geometry.post").cullingShape("example:post").build())
-        .component(MaterialInstances.builder().all(MaterialInstances.Instance.builder().texture("post").build()).build())
-        .build())
-    .build();
-
-session.sendPacket(palette.voxelShapesPacket());            // before start game; the packet BDS sends for the same content
-VoxelShape anvil = palette.voxelShapes().get("minecraft:anvil");   // grid: xCoordinates(), cell(x, y, z), boxes()
-```
-
-The packet is the one BDS sends, byte for byte, for every captured build: the shapes Bedrock derives for blocks (their
-faces, transformed shapes) are derived the same way, with the same ids, and the names come in BDS's order
-(`data/bds/WIRE-NOTES.md`, "Voxel shapes"). A `VoxelShape` is a culling shape only, not a `BlockShape`: collision and selection are
-`BlockBehaviour.COLLISION_SHAPE` and `OUTLINE_SHAPE`, and the Script API does not expose voxel shapes. `VoxelShape.ofBoxes`
-refuses what BDS refuses, with its messages. In 26.30 the vanilla shapes are behind the experiment
-`voxel_shapes` (`vanilla(v -> v.experiments("voxel_shapes"))`). `voxel_shapes.nbt` is generated from the captures by
-`voxel-shapes import`.
-
-## Data
-
-Bundled data lives in `paletter/src/main/resources/paletter/`: `versions.txt` and one gzipped NBT file per version
-(format documented in `PaletteDataCodec`). Each file holds block states, items with their components, data driven blocks,
-the creative layout, item tags, default block states and the block to item relation for that version (no fallbacks). The current bundle (26.40, 26.50,
-26.60, about 470 KB instead of about 2.9 MB) combines the network data Geyser shipped with BDS dumps of the same versions:
-
-| Version | Network data (block palette, items, components, creative) | BDS dump (item tags, block defaults) |
-|---------|-----------------------------------------------------------|--------------------------------------|
-| 26.40   | Geyser `*.26_40.*`                                        | BDS 1.26.45.1                        |
-| 26.50   | Geyser `*.26_50.*`                                        | BDS 1.26.51.1                        |
-| 26.60   | Geyser `*.26_60.*`                                        | BDS 1.26.63.1                        |
-
-The generator writes maps sorted, so an import is byte for byte reproducible.
-
-### Data sources
-
-What each source can provide, and whether the generator gets it automatically:
-
-| Datum | Source | Automated |
-|-------|--------|-----------|
-| Block list, block states and their valid values | BDS Script API (`BlockTypes`, `BlockPermutation.getAllStates`, `withState`) | dumped and cross-checked; the bundle still takes them from the network palette (see below) |
-| Default block state | BDS Script API (`BlockPermutation.resolve`) | **yes, bundled**. Only defaults that are not a block's first palette state are stored (26 to 28 per version); the first state is the default of every other block |
-| Block palette order (runtime ids) | not observable from scripts; client and server derive it from the block registry | no: BDS internals |
-| Item tags | BDS Script API (`ItemStack.getTags`) | **yes, bundled** (before: Geyser's 26.30 tags for every version) |
-| Item list | BDS Script API (`ItemTypes.getAll`) | dumped and cross-checked only: the Script API omits about 455 items the client knows (block-only items such as double slabs and wall signs, legacy ids such as `minecraft:boat`, education items) |
-| Item max stack size, durability, localization key, Script API components | BDS Script API (`ItemStack.maxAmount`, `minecraft:durability`, `localizationKey`) | dumped and cross-checked against the item components (no differences) |
-| Block tags, block to item | BDS Script API (`BlockPermutation.getTags`, `getItemStack`) | dumped, not bundled (no consumer yet) |
-| Item runtime ids, item version, component based flag | `ItemRegistryPacket` | no: network capture |
-| Item component NBT (vanilla data driven items) | `ItemRegistryPacket` | no: network capture |
-| Creative inventory (groups, order, icons, damage, block states, NBT) | `CreativeContentPacket` | no: network capture |
-| Data driven block properties | `StartGamePacket` block properties | no: network capture |
-| Item and block ids, `raw_id`, command names | `Mojang/bedrock-samples` `metadata/vanilladata_modules/mojang-items.json`, `mojang-blocks.json` | not used: `raw_id` is the item runtime id for most items but not all (34 of 1627 differ for 26.60), 450+ network items are missing, and blocks only list state *names* (with the same legacy alias states as the Script API) plus one global value list per state; no defaults, no order |
-| State value lists | `mojang-blocks.json` `block_properties`, Script API `BlockStates.getAll` | dumped (`state_types`); global per state, not per block |
-| Vanilla item and block JSON incl. `menu_category`, `minecraft:tags` | `bedrock-samples` `behavior_pack/items`, `behavior_pack/blocks` | not used: only the ~80 items and ~100 blocks vanilla defines in JSON; everything else is hard coded |
-| Creative catalog | BDS `behavior_packs/vanilla/__brarchive/item_catalog.brarchive` (`crafting_item_catalog.json`) | not used: Mojang's binary `MCB` encoding; it names groups and items per category, but no damage values, block states or NBT, so it cannot replace `CreativeContentPacket` |
-| Script API surface | `bedrock-samples` `metadata/script_modules/@minecraft/server-bindings_*.json` | used by hand to pick the addon's module version |
-| `definitions/` in the BDS zip | attachables, feature rules, features, spawn groups, persona, SDL layouts, disconnection errors | nothing Paletter needs |
-
-Things to know about the Script API data:
-
-- `getAllStates()` also returns **legacy alias states** that are not part of the network block state: 39 state names on
-  about 530 blocks (e.g. `wood_type` on planks, `color` on wool, `direction` next to `minecraft:cardinal_direction`,
-  `top_slot_bit` next to `minecraft:vertical_half`). The importer drops every state the block palette does not have.
-  After that, every BDS default of 26.40, 26.50 and 26.60 is a palette state.
-- `withState` answers with another block for alias values (e.g. `flower_type: poppy` on `minecraft:pink_tulip`) instead
-  of throwing, so the addon checks the type and value of the result.
-- Apart from `minecraft:chalkboard` (education edition: the palette has `direction` 0-15, the Script API accepts 0-3),
-  every block's palette states are exactly all combinations of the values the Script API reports. The *set* of block
-  states could therefore be generated from BDS; their order cannot be observed.
-- Native arrays such as `BlockStateType.validValues` are not iterable with `for ... of` in BDS 1.26; the addon copies
-  them by index.
-
-### What still needs a network capture
-
-The Script API cannot see what the server sends a client, so these still come from a capture of a vanilla BDS session
-in the CloudburstMC/Data layout, e.g. with ProxyPass between a client and BDS (`online-mode=false`). ProxyPass writes
-the files from the corresponding packets:
-
-- `runtime_item_states.json`: identifiers, runtime ids, item versions and the component based flag, from the
-  `ItemRegistryPacket` (formerly the item list of `StartGamePacket`);
-- `item_components.nbt`: component NBT of data driven vanilla items, from the same packet;
-- `creative_items.json`: the `CreativeContentPacket` (groups with names and icons, items with damage, block state, NBT);
-- `data_driven_blocks.nbt`: block properties from `StartGamePacket`;
-- `block_palette.nbt`: the vanilla palette is not sent at all. Both sides build it from the block registry (sequential
-  ids sort blocks by the FNV-1a hash of their name; with `block-network-ids-are-hashes` the id is a hash of the state).
-  CloudburstMC/Data and pmmp's BedrockData get it from BDS internals (pmmp/bds-mod-mapping is a native BDS mod for this).
-  Geyser's copy is the input today. With the Script API dump the set of states is known and cross-checked; only the
-  order of the permutations would have to be reproduced to generate it.
-
-### Updating data
-
-One command pulls the newest Bedrock Dedicated Server of a channel, runs everything against it and writes a report:
+**Keys, registered entries and stacks.** A key names content and does not depend on a version: `BedrockBlockType`,
+`BedrockBlockState`, `BedrockItemType` and `BedrockItemVariant` (a type plus an aux value). Vanilla keys are generated
+constants (`BedrockBlocks.STONE`, `BedrockItems.APPLE`); custom content gets its keys from `CustomBlock#type()` and
+`CustomItem#type()`. A registered entry (`RegisteredItem`, `RegisteredBlockState`) is a key inside one palette, with its
+runtime id and components; these implement Cloudburst's `ItemDefinition` and `BlockDefinition`. A stack
+(`BedrockItemStack`) is a variant with a count, NBT and an optional block state. Cloudburst's `ItemData` only appears
+where a packet needs it, through `Palette#encode` and `Palette#decode`.
+
+**Paletter, palettes and layers.** `Paletter` holds the settings shared by every version: the data source, fallbacks,
+which vanilla content and experiments are enabled, creative ordering and the global layers. `paletter.palette(...)`
+compiles one immutable, thread safe `Palette` per data version and caches it. A `PaletteLayer` is content only (custom
+items and blocks, overrides of vanilla items, creative edits, tags, voxel shapes) and compiles against every version.
+`palette.extend(layer)` adds a short-lived layer, for example per session, on top of a shared palette; anything the
+layer does not change stays the same object as in the base palette.
+
+**Hashed block ids.** Paletter always uses hashed block network ids (`StartGamePacket#blockNetworkIdsHashed`). A block
+state has the same id in every version, so chunk data encoded for one version can be reused for another.
+
+**Mapping against the newest version.** Map your content against the newest bundled version only. Older palettes adapt
+block states that changed between versions and apply your `Fallbacks` to content they lack. Paletter ships no fallbacks
+of its own: without one, missing content becomes `minecraft:unknown`.
+
+[docs/api.md](docs/api.md) covers all of this in more detail: lookups, components, the creative inventory, behaviour,
+voxel shapes, fallbacks, experiments and previews.
+
+## Where the data comes from
+
+Everything bundled is captured from Bedrock Dedicated Server (BDS) by the tools in this repository, or is checked
+against such captures. Nothing is typed in by hand. Third-party data is used only where no BDS capture exists yet, and
+it is labelled as such wherever it shows up.
+
+- Block palettes are verified against BDS (state hashes and the set of states). They descend from the
+  CloudburstMC/Data and Geyser files.
+- 26.30 items, item components and the creative inventory come from Paletter's own BDS 1.26.36.1 capture.
+- 26.40 and 26.50 items come from Geyser's network files. Item tags and default block states come from BDS Script API
+  dumps.
+- 26.60 is Geyser's files, verified identical to Paletter's own BDS 1.26.63.1 capture.
+- The component API is generated from Microsoft's creator documentation and checked against what BDS sends for every
+  variant of every component (see [data/model/coverage.md](data/model/coverage.md)).
+- Block and item behaviour comes from BDS captures first, then from CloudburstMC/Data and AllayMC/Allay. The generated
+  [data/behaviour/REPORT.md](data/behaviour/REPORT.md) lists which source decides each key in each version.
+
+[docs/data-pipeline.md](docs/data-pipeline.md) explains how data is captured and generated, and how to update it for
+a new Bedrock version.
+
+## Status
+
+Paletter is at 0.1.0-SNAPSHOT. Until 1.0 the API can change in any release, without a deprecation period. The build
+already tracks API changes (`paletter/api/paletter.api`), so every change is visible in review.
+
+Bundled versions: 26.30, 26.40, 26.50 and 26.60. Known gaps:
+
+- Biome definitions, entity identifiers and other data that is not about items or blocks are out of scope.
+- `MiningSpeed`, `FrameCount`, `RenderOffsets` and `OnPlayerPlacing` are hand-written wire-only components that Geyser
+  needs. They have no add-on JSON form and no BDS capture to check them against.
+- Some behaviour keys only have third-party sources so far; a native BDS capture is designed but not built
+  ([docs/native-capture.md](docs/native-capture.md)).
+- `renames.txt` is empty: no identifier renames between the bundled versions are known yet.
+
+## Documentation
+
+- [docs/api.md](docs/api.md): using the library, and what counts as API.
+- [docs/architecture.md](docs/architecture.md): how the library is put together, for contributors.
+- [docs/data-pipeline.md](docs/data-pipeline.md): the tools, BDS captures, code generation and CI.
+- [docs/wire-notes.md](docs/wire-notes.md): what BDS sends and how it orders custom content.
+- [docs/native-capture.md](docs/native-capture.md): design notes for capturing BDS internals.
+- Javadoc of `main`: https://opencollab-incubator.github.io/Paletter/latest/
+
+## Building
 
 ```
-./gradlew :tools:run --args="update --channel release"                  # update the repository
-./gradlew :tools:run --args="update --channel release --verify-only"    # CI: write nothing, exit 1 on any difference
-./gradlew :tools:run --args="update --channel preview --verify-only --report preview-report.md"
+./gradlew build                 # library, tools, tests and generated-code checks
+./gradlew :paletter:javadoc
 ```
 
-| Option | Meaning |
-|---|---|
-| `--channel release\|preview` | which BDS to resolve with the official links API (`net-secondary.web.minecraft-services.net/api/v1.0/download/links`); the Windows or Linux build, by host OS |
-| `--version 1.26.63.1` | a specific build instead of the newest (old builds stay downloadable, but are not listed anywhere) |
-| `--verify-only` | write nothing to the repository; exit 1 if anything differs from the committed data or spec, or a check fails |
-| `--import-preview` | allow a preview to be imported (as a version marked `preview` in `versions.txt`, see below) |
-| `--keep-server` | keep (and reuse) the extracted server; by default it is removed after the run, the zip stays cached |
-| `--cache DIR` | BDS cache; default `$PALETTER_BDS_CACHE`, else `<gradle user home>/caches/paletter/bds`. Never in the repository |
-| `--report FILE` | where to write the markdown report (always also `<cache>/runs/<platform>-<version>/report.md`) |
-| `--name 26.70`, `--protocol N` | name of a new bundled version (default from the BDS version: `1.26.70.23` -> `26.70`); protocol if the RakNet pong does not carry it |
-| `--experiments a,b` | manual override: use exactly these toggles instead of discovering them (see "Experiments" below) |
-| `--experiment-attribution each\|all\|none` | captures per experiment toggle (default `each`: one with all toggles and one per current toggle; `all` only the first) |
-| `--port 19260`, `--timeout 300` | base port (port + 1 for IPv6), seconds per server start |
+Java 21. The library depends on Cloudburst's `bedrock-codec` and fastutil. The `tools` module is never published.
 
-Downloading BDS means accepting the [Minecraft EULA](https://minecraft.net/eula). A run takes about a minute plus the
-download (about 100 MB, once per build). What it does, in `<cache>/runs/<platform>-<version>/` (logs, captures):
-
-1. **Download** the zip into `<cache>/zips/`, extract it into `<cache>/servers/`.
-2. **Script API dump**: `data/addons/dump` on a fresh flat world, BDS runs until the addon printed `PALETTER-DONE`
-   (`bds-dump.log`, `bds-dump.json`).
-3. **Vanilla world**, `transport=raknet`, `online-mode=false`, `block-network-ids-are-hashes=true`: a RakNet ping reads the
-   protocol (LAN visibility is on for this, otherwise the pong is empty), the headless capture client (`capture` module)
-   records the item registry, creative inventory and block properties, every creative block id is checked against the
-   FNV-1a 32 hashes of the palette. Then once more with sequential ids.
-4. **Experiments**: the toggles of this build are discovered, verified and attributed (see "Experiments" below).
-   **Add-on world**: `data/addons/capture` installed, the world created once, the current toggles switched on in `level.dat`
-   (start game must report exactly them), then the same two captures. The content log of that start (definitions BDS rejects) is kept.
-5. **Assertions** on every run, first confirmed by hand on 1.26.63.1: sequential block ids are positions in the palette
-   sorted by the FNV-1 64 hash of the block name (vanilla and with 66 custom blocks, checked through the hashed run's
-   states); custom `block_id`s are 10000+ in descending identifier order (really descending file name order; the capture add-on names files after blocks, see `data/bds/CREATIVE-ORDER.md`); custom block items have id `255 - block_id`;
-   the bundled palette is in name hash order.
-6. **Compare**: the Script API dump against the committed baseline of the newest release (`data/bds/*/dump.json.gz`); for a
-   protocol that is already bundled, the capture (imported like `import` would) against the bundled version (items,
-   runtime ids, components, data driven blocks, creative layout) and the refreshed item tags and block defaults; for a
-   new protocol, everything against the newest bundled release; the add-on content log against
-   `data/addons/capture/content-log.txt`; component wire shapes of the add-on capture (against the newest
-   `data/bds/*/addon`) and of the vanilla data driven items and blocks (against the bundled version), plus
-   coverage by the wire paths of `data/model/mappings.json` (an uncovered path is reported with its reason: block definition data, an untestable component, a component without documented fields or a wire-only `item_properties` entry; one without a reason fails the update), and the values of those components (a changed value behind the same shape is reported like a changed shape). An added, removed or retyped field, or a component that is no longer sent,
-   is a **WIRE FORMAT CHANGE** at the top of the report.
-7. **Write** (not with `--verify-only`): a new protocol is imported as a new bundled version (its palette starts from the
-   newest release, with blocks whose Script API states changed and new blocks generated from the Script API, then
-   verified by the hash and sequential checks); for an existing one only item tags and block defaults are refreshed
-   (network differences become a TODO); a new add-on capture goes to `data/bds/<version>/addon/` and the
-   component types are regenerated; the Script API baseline and the content log are updated.
-8. **Constants**: the vanilla constants (`BedrockBlocks`, `BedrockStates`, `BedrockItems`, ...) are regenerated from the
-   staged data with `data/model/constants-history.json`; the report lists the constants added and deprecated. A name
-   collision or a state that changes its kind fails this step until a name override in `ConstantsGenerator` settles it.
-
-The report lists checks with PASS/DIFF/FAIL, every difference, and a
-**TODO** list of what needs a decision.
-
-### Experiments
-
-Bedrock has no list of its experiment toggles anywhere: not in `server.properties`, the Script API, the BDS files, the
-docs or the protocol (start game and the resource pack stack only echo the toggles a world has *on*). `update` therefore
-discovers them for every build, so captures include experimental content without a hand-maintained list:
-
-1. **Candidates** (`ExperimentDiscovery`): every identifier-like string of the server binary (memory mapped), plus the
-   suffixes after `_` of each (the Windows linker merges `y_2026_drop_4` into the tail of
-   `behavior_packs/experimental_y_2026_drop_4`), plus the ASCII of x86-64 `mov r64, imm64` instructions and joins of
-   neighbouring ones (MSVC builds `gametest` from an immediate), plus the `experimental_*` pack folders, `DEFAULT_EXPERIMENTS`,
-   `KNOWN_RETIRED` and every id of the committed records. About 50 000 on Windows, 86 000 on Linux (where every id is a
-   plain string).
-2. **Oracle**: all candidates go into the `experiments` compound of a fresh world's `level.dat`. BDS reads it, logs
-   `Experiment(s) active: ucft, gtst, ...` (one four letter code per toggle it knows) and writes the file back with only
-   the keys it knows; unknown keys are dropped silently, nothing is rejected or logged. The keys left are the toggles of
-   the build; the count must match the log line.
-3. **Current vs retired**: a capture with all of them on. Start game streams only toggles that still do something
-   (current); the others are retired (kept in `level.dat`, logged active, never streamed, no content). The resource pack
-   stack must list the same ones, and the binary has one `createWorldScreen.experimental<Name>` UI string per current
-   toggle: a different count is a DIFF (a current toggle the candidates missed; pass it with `--experiments`). The UI
-   keys give the English names (`resource_packs/vanilla/texts/en_US.lang`), which map the creator docs' experiment names
-   (`data/model/components.json`) to ids.
-4. **Applied and attributed**: a capture and a Script API dump with each current toggle alone (start game must report
-   exactly that toggle, which also yields its log code), compared with the vanilla ones without any; plus all together, to
-   find content only several toggles add. `--experiment-attribution all` skips the single toggle runs, `none` both
-   (automatic above 12 current toggles).
-5. **Use**: the add-on world gets the current toggles (start game must report exactly them). The record
-   `data/bds/<bds version>/experiments.json` (toggles, status, code, UI key, name, content per toggle) is committed, and
-   the bundled version gets **experiment marks** (`VanillaData#experiments`, bundle key `experiments`, only written when
-   present): per toggle the items and blocks it adds or turns on and its creative stacks. The bundle itself stays a
-   capture without experiments. `check-data` uses the marks: content an older version has only behind a toggle but the
-   newest has without one is listed, since the older palette would send it to clients that never enabled the toggle
-   unless the consumer defines a fallback with `force`.
-
-`--experiments a,b` still overrides discovery (no oracle; the toggles are verified against start game).
-
-BDS 1.26.63.1 (Windows, 49 563 candidates): 23 toggles kept by the oracle on the first run, 31 with `KNOWN_RETIRED`
-(the candidates of the Linux binary, 85 653, contain all 31 without help; the Linux server itself was not run here).
-**7 current**: `experimental_creator_cameras` (exca, "Experimental Creator
-Camera Features"), `gametest` (gtst, "Beta APIs"), `poi` (epoi, "Points of Interest (POI)"), `upcoming_creator_features`
-(ucft), `villager_trades_rebalance` (vtra), `voxel_shapes` (vavs, "Experimental Voxel Shape Features"),
-`y_2026_drop_4` (26d4, "Drop 4 of 2026"). **24 retired**, among them `data_driven_biomes`, `experimental_molang_features`,
-`caves_and_cliffs`, `y_2025_drop_1..3`, `y_2026_drop_1..3`. The old hand-written list had `experimental_vanilla_shapes`,
-which is no toggle (BDS drops it; the toggle is `voxel_shapes`), and lacked `poi` and `villager_trades_rebalance`.
-Content: only `y_2026_drop_4` changes items, blocks or the creative inventory: it adds `minecraft:ice_ball`, makes
-`minecraft:icicle` and `minecraft:ice_crystal` data driven (version 2 -> 1, component based), adds those three and
-`minecraft:frostbite_spawn_egg` to the Script API item types and 12 creative stacks (the four items, arrows 48/49 and
-potions 47/48 of every kind). Its blocks (`minecraft:icicle`, `minecraft:ice_crystal`) are registered without the toggle
-too. All toggles together add nothing more. The step takes 90 to 125 s (18 server starts: create, discover, all,
-its dump, then a capture and a dump per current toggle) of a 3 minute run (Windows, cached zip).
-
-**Previews** never replace release data. Without `--import-preview` nothing of a preview is written. With it, the version
-is imported and marked in `versions.txt` (`26.70 2250 preview`); the library skips such versions unless the system
-property `paletter.previews` is `true`, and `check` ignores them.
-
-**Still manual**, each listed in the report's TODO section:
-
-- Nothing is required for new content: blocks and items an older bundled version lacks fall back to `minecraft:unknown`
-  unless a consumer defines a fallback. The report lists them per version (INFO); Paletter bundles no fallbacks.
-- The state order *within* blocks generated from the Script API (only creative stacks verify it; other blocks' ids do
-  not depend on it). BDS cannot be asked for it; `Update#keyOrder` infers it from the previous release (existing states
-  keep varying fastest, new ones follow in the order other blocks use, directions north, east, south, west, up, down),
-  which reproduces 126 of the 127 blocks generated in 26.40 -> 26.50 -> 26.60 (not `minecraft:trip_wire`). Check
-  generated blocks against CloudburstMC/Data with `verify` once it has the version.
-- Network data that differs for an already bundled protocol (a hotfix that changes content): re-import deliberately.
-- Wire format changes: review the component model (`data/model`) and the regenerated component types.
-- A new protocol needs a codec in the Cloudburst protocol library (`codec.vNNNN.Bedrock_vNNNN` is picked up by name);
-  without it the capture is decoded with the newest codec and the check is flagged.
-- Transports: 1.26.63.1 still accepts RakNet with `transport=raknet` (logging that NetherNet is the only supported
-  transport); the 1.26.70 previews only speak NetherNet. The capture client uses RakNet when the server answers a RakNet
-  ping and NetherNet otherwise (CloudburstMC/Network's `netty-transport-nethernet` with `libdatachannel-java`): HTTP
-  signaling on `server-port`, the protocol from NetherNet LAN discovery sent to `127.0.0.1:7551` (needs
-  `enable-lan-visibility=true`), and a self signed offer identity using the login chain's key, since BDS refuses
-  unsigned offers (`MultiplayerDisabled`) and chains not bound to the transport identity (`NOT_AUTHENTICATED`). No Xbox
-  sign in is involved with `online-mode=false`.
-
-CI (`.github/workflows/bds-data.yml`) runs `update --verify-only` daily for both channels on Linux BDS, opens or comments on
-an issue with the report when something differs, and for the release channel opens a pull request with the updated data.
-
-The lower level commands still exist:
-```
-./gradlew :tools:run --args="bds-run --download /tmp/bds --log /tmp/bds/bds.log"       # Script API dump only
-./gradlew :tools:run --args="import --source DUMP_DIR --name 26.70 --protocol 2250 --bds-dump /tmp/bds/bds.log"
-./gradlew :tools:run --args="bds-compare --bds-dump /tmp/bds/bds.log --name 26.70"
-./gradlew :tools:run --args="check-data"
-./gradlew :tools:run --args="verify --source DIR --name 26.60"                          # see below
-./gradlew :tools:run --args="capture --out DIR --bds-version 1.26.63.1"                    # see data/bds/WIRE-NOTES.md
-```
-`import --source` also reads Geyser's resource layout (`block_palette.26_70.nbt`, ...), i.e. `core/src/main/resources/bedrock`.
-
-The current bundle was produced with:
-```
-G=<Geyser>/core/src/main/resources/bedrock
-bds-run --download DIR --version 1.26.45.1 --log bds-1.26.45.1.log    (and 1.26.51.1, 1.26.63.1)
-import --source $G --name 26.40 --protocol 2168 --bds-dump bds-1.26.45.1.log
-import --source $G --name 26.50 --protocol 2193 --bds-dump bds-1.26.51.1.log
-import --source $G --name 26.60 --protocol 2225 --bds-dump bds-1.26.63.1.log
-```
-and is verified by `update --channel release --verify-only` against BDS 1.26.63.1: the capture reproduces 26.60, item
-tags and block defaults match. (Block defaults are now stored with the palette's state key order, so the Script API's
-varying order no longer changes the file.)
-
-### Verifying against other sources
-
-```
-./gradlew :tools:run --args="verify --source DIR --name 26.60 [--bundled FILE] [--report FILE] [--max 25]"
-```
-reads a directory in the CloudburstMC/Data layout (`block_palette.nbt`, `runtime_item_states.json`,
-`item_components.nbt`, `creative_items.json`, optional `data_driven_blocks.nbt`; Geyser's `block_palette.26_60.nbt`
-names work too) in memory, with the importer's readers, and diffs it against the bundled version (or any Paletter data
-file with `--bundled`). It writes nothing but the report (markdown, also on stdout) and exits with 1 on any difference.
-Sections, each with counts and the first `--max` differences:
-
-| Section | Compared |
-|---|---|
-| Block states | blocks and states only on one side, duplicate states |
-| Block order (FNV-1 64 name sort) | order of the blocks, whether each side is in name hash order, blocks whose states are not contiguous |
-| State order within blocks | blocks with the same states in another order (the sequential runtime ids within the block) |
-| Hashed block network ids | FNV-1a 32 of every state against the source's `network_id`, FNV-1 64 against `name_hash`, collisions |
-| Items | items only on one side, runtime id, version, componentBased, duplicate ids |
-| Item components | the NBT of every item, path by path, including tag types |
-| Data driven blocks | blocks only on one side, property NBT, order (skipped when the source has no file) |
-| Creative layout | per category: entries only on one side and moved entries (groups, icons, stacks with damage, count, block state, NBT) |
-
-Not compared, since the bundled format does not keep them: the order of `runtime_item_states` (the importer sorts items
-by identifier), the per state `version` tag (listed as info), item tags, block defaults and fallbacks (not in the layout),
-how the creative inventory is split into wire groups across categories, and the key order inside a state compound.
-
-Results (November 2026):
-
-- Geyser's resources (`core/src/main/resources/bedrock`, `*.26_40/26_50/26_60`, the import source) and
-  CloudburstMC/Data at `040a6cc` (26.40), `659ce1e` (26.50) and `0021592` (26.60): identical to the bundled 26.40,
-  26.50 and 26.60, including every `network_id` and `name_hash`. Geyser's files are byte copies of those Data commits,
-  so this is one independent source, not two. Data has no `data_driven_blocks.nbt` for 26.40, and its 26.60 file is
-  still the one of 26.50 (unchanged since `e5c8459`); it matches, so vanilla data driven blocks did not change.
-- 26.50 -> 26.60 regenerated by the pipeline (26.60 hidden, the 1.26.51.1 Script API dump as baseline, `update
-  --version 1.26.63.1 --verify-only`): the imported 26.60 is byte identical to the committed one, and `verify` finds it
-  identical to Geyser's and Data's 26.60. Getting there fixed three generator bugs: the state order within generated
-  blocks (see `Update#keyOrder`; fire, redstone wire, chorus plant and icicle were enumerated in the wrong order),
-  generated states not having sorted keys like BDS's palette, and imports depending on the source for item order and
-  empty item components.
-
-## Status and known gaps
-
-- Block palettes, items, item components and the creative inventory are still the network dumps Geyser shipped; see
-  "What still needs a network capture".
-- Item tags now come from BDS. Compared with Geyser's `item_tags.26_30.json` (used for every version before), all three
-  versions add `minecraft:mushrooms_for_stew` and no longer have `minecraft:observer` and `minecraft:redstone_lamp` in
-  `minecraft:sulfur_cube_archetype_slow_bouncy`; 26.50 and 26.60 also add the poplar wood set to the wood tags (boats,
-  door, signs, logs, planks, slab) and wool slabs and stairs to `minecraft:vibration_damper`.
-- Block tags are dumped but not bundled. The block to item relation is bundled; 26.40 and 26.50 have no BDS dump, so
-  their relation is the 26.60 one restricted to the blocks and items they have (`block-items --from 26.60`).
-- Content Geyser used to get from the bundled curated fallbacks (poplar wood to pale oak, concrete and wool slabs to
-  vanilla ones, ...) is `unknown` now until the consumer defines it. 26.40's experiment marks come from the BDS 1.26.45.1
-  capture (`experiment-marks`): its content behind `y_2026_drop_3` is missing by default, a plain fallback covers it.
-- `renames.txt` is empty: no identifier rename between the bundled versions is known yet, so `Paletter#block` /
-  `Paletter#item` only adapt states and report removed content; add a line `block|item <old> <new>`, or `item <old>@<aux> <new>[@<aux>]` for a legacy variant that became its own item, when
-  Bedrock renames or splits one.
-- The component API covers every component BDS 1.26.63.1 sends to clients. Geyser-only wire data that is not an add-on
-  component (custom `mining_speed`/`frame_count` item properties, the legacy `render_offsets`, `on_player_placing`) is
-  covered by the hand-written wire-only components (`MiningSpeed`, `FrameCount`, `RenderOffsets`, `OnPlayerPlacing`, see
-  API.md); there is still no raw NBT escape hatch, and the wire-only fields have no add-on JSON source to verify them
-  against.
-- Not covered: biome definitions, entity identifiers and other data Geyser ships that is not about items or blocks.
-- The BDS addon needs `@minecraft/server` 2.1.0; tested with BDS 1.26.45.1, 1.26.51.1, 1.26.63.1 and the
-  1.26.70.23 preview.
-- The 1.26.70 previews only accept NetherNet connections; they are captured over NetherNet (see "Updating data"). Their
-  protocol (2250) has no codec in the protocol library yet, so the captures are decoded with the 2225 codec.
+Attribution for the creator documentation the component API is derived from is in
+[data/model/ATTRIBUTION.md](data/model/ATTRIBUTION.md).
