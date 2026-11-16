@@ -269,6 +269,10 @@ jobs:
               || grep -E '(^|/)\.\.(/|$)' "$RUNNER_TEMP/paths.txt"; then
             echo "The patch touches paths outside the data paths"; exit 1
           fi
+          # No symlinks or submodules: a link inside data/ could point anywhere
+          if grep -Eq '^(new file|new|old|deleted file) mode (120000|160000)' "$PATCH"; then
+            echo "The patch adds a symlink or submodule"; exit 1
+          fi
           git apply --check "$PATCH"
           git apply "$PATCH"
           # The versioned report, committed with the data, is the pull request body
