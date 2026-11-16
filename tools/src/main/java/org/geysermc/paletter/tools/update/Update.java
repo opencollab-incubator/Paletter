@@ -114,6 +114,16 @@ public final class Update {
     private final boolean keepServer;
     private final int port;
     private final int timeout;
+    /**
+     * {@code --against <build>}: a history check of an earlier or later build ({@link BuildHistory}). Its captures are
+     * compared with the committed captures of that build instead of the newest ones, and only {@code data/bds/<this
+     * build>} is written (when anything differs); bundled data, constants, the content log and the model stay as they are.
+     */
+    private final String against;
+    /** In a history check: what this run would write into {@code data/bds/<build>}, written only when it differs. */
+    private final Map<Path, byte[]> pending = new LinkedHashMap<>();
+    private Path buildDirectory;
+    private Integer protocol;
     private Report report;
 
     /** The report of an update, in {@code data/bds/<build>/}. */
@@ -137,16 +147,45 @@ public final class Update {
         this.keepServer = options.containsKey("keep-server");
         this.port = Integer.parseInt(options.getOrDefault("port", "19260"));
         this.timeout = Integer.parseInt(options.getOrDefault("timeout", "300"));
+        this.against = options.get("against");
+        if (against != null && preview) {
+            throw new IllegalArgumentException("--against checks release builds only");
+        }
+    }
+
+    /** The protocol of the build this run captured, null if no capture worked. */
+    public Integer protocol() {
+        return protocol;
+    }
+
+    /** Whether a history check ({@code --against}) found anything that differs from the build it was compared with. */
+    public boolean changed() {
+        return !report.againstChanges.isEmpty();
+    }
+
+    /** Whether a step of the run failed. */
+    public boolean failed() {
+        return report.failed();
     }
 
     /** @return the process exit code */
     public int run() throws Exception {
         Path cache = options.containsKey("cache") ? Path.of(options.get("cache")) : BdsDistribution.defaultCache();
         BdsDistribution distribution = BdsDistribution.resolve(preview, options.get("version"));
-        report = new Report("Paletter data " + (verifyOnly ? "verification" : "update") + ": BDS " + distribution.version()
-            + (preview ? " (preview)" : ""));
+        report = new Report(against != null ? "Paletter build check: BDS " + distribution.version() + " against " + against
+            : "Paletter data " + (verifyOnly ? "verification" : "update") + ": BDS " + distribution.version() + (preview ? " (preview)" : ""));
+        report.against = against;
+        buildDirectory = bdsData.resolve(distribution.version());
+        if (against != null && !Files.isDirectory(bdsData.resolve(against))) {
+            throw new IllegalArgumentException("--against " + against + ": no captures in " + root.relativize(bdsData.resolve(against)));
+        }
+        if (against != null && !verifyOnly && Files.exists(buildDirectory)) {
+            throw new IllegalArgumentException(root.relativize(buildDirectory) + " exists: a history check only adds builds (use --verify-only)");
+        }
         report.header.put("Date", LocalDate.now().toString());
-        report.header.put("Mode", verifyOnly ? "verify only (nothing written)" : "update");
+        report.header.put("Mode", against != null ? "history check against " + against + (verifyOnly ? " (nothing written)"
+            : options.containsKey("keep") ? " (first build of the record: its captures are kept whatever the comparison says)"
+            : " (captures written to data/bds/" + distribution.version() + " only if they differ)") : verifyOnly ? "verify only (nothing written)" : "update");
         report.header.put("BDS", distribution.version() + " " + distribution.platform() + " (" + distribution.url() + ")");
         Path work = cache.resolve("runs").resolve(distribution.platform() + "-" + distribution.version());
         BdsDistribution.deleteRecursively(work);
@@ -161,9 +200,17 @@ public final class Update {
             report.fail("pipeline", e);
         }
 
+        // A history check keeps the captures of a build only if they differ from the build it was compared with
+        // (--keep: kept whatever the comparison says, for the first build of the record)
+        boolean kept = against != null && !verifyOnly && !report.failed() && (changed() || options.containsKey("keep"));
+        if (kept) {
+            keep(work);
+        }
         // An update keeps its report with the data of its build, so a later run can be diffed against it; an update that
-        // changed no data file keeps the committed report, so the report is never the only change
+        // changed no data file keeps the committed report, so the report is never the only change. A history check keeps
+        // its report with the captures of a kept build
         Path reportFile = options.containsKey("report") ? Path.of(options.get("report"))
+            : against != null ? (kept ? buildDirectory.resolve(REPORT) : work.resolve("report.md"))
             : verifyOnly || report.repoChanges.isEmpty() ? work.resolve("report.md") : bdsData.resolve(distribution.version()).resolve(REPORT);
         report.generatedBy = command(distribution);
         report.write(reportFile);
@@ -171,6 +218,10 @@ public final class Update {
             report.write(work.resolve("report.md"));
         }
         System.out.println("Report: " + reportFile.toAbsolutePath());
+        if (against != null) {
+            System.out.println(report.failed() ? "FAILED" : changed() ? "DIFFERS FROM " + against + (kept ? " (kept)" : "") : "IDENTICAL TO " + against);
+            return report.failed() || (verifyOnly && changed()) ? 1 : 0;
+        }
         System.out.println(report.failed() ? "FAILED" : report.differs() ? (verifyOnly ? "DIFFERENCES (verify failed)" : "UPDATED") : "IDENTICAL");
         return exitCode(report, verifyOnly, work);
     }
@@ -207,7 +258,7 @@ public final class Update {
     /** The command line of this run, without the options that only say where things go. */
     private String command(BdsDistribution distribution) {
         StringBuilder args = new StringBuilder("update --channel " + (preview ? "preview" : "release") + " --version " + distribution.version());
-        for (String option : List.of("verify-only", "name", "protocol", "experiments", "experiment-attribution")) {
+        for (String option : List.of("against", "keep", "verify-only", "name", "protocol", "experiments", "experiment-attribution")) {
             if (options.containsKey(option)) {
                 String value = options.get(option);
                 args.append(" --").append(option).append(value == null || value.equals("true") ? "" : " " + value);
@@ -238,6 +289,7 @@ public final class Update {
 
             // 2. Network captures (vanilla and add-on, hashed and sequential block ids)
             captures(server, work, dump, runs);
+            protocol = runs.protocol;
 
             // 3. Voxel shapes: the packet of the vanilla world, of the probe add-on and of the anchors
             if (runs.vanilla != null) {
@@ -271,6 +323,13 @@ public final class Update {
         if (runs.addon != null) {
             shapes(distribution, runs);
         }
+        if (against != null) {
+            // A history check leaves the repository's bundled data, constants and model alone
+            if (runs.protocol != null) {
+                specCapture(distribution, work, runs);
+            }
+            return;
+        }
         constants(staging);
         staging.apply();
         // After the data is in place: the inference puts each capture into the window of its bundled version
@@ -290,23 +349,35 @@ public final class Update {
      * into the work directory, and says whether they are the committed ones.
      */
     private void voxelShapes(BdsDistribution distribution, Path server, Path work, Runs runs) {
-        Path committed = bdsData.resolve(distribution.version()).resolve(ShapeProbe.DIRECTORY);
+        Path target = buildDirectory.resolve(ShapeProbe.DIRECTORY);
+        // A history check compares with the build it is checked against, apart from the version stamps
+        Path committed = against != null ? bdsData.resolve(against).resolve(ShapeProbe.DIRECTORY) : target;
         Path captured = work.resolve(ShapeProbe.DIRECTORY);
         try {
             ShapeProbe.capture(captured, root, distribution.version(), server, work.resolve("voxel-shapes-run"), runs.reference, port, timeout);
             List<String> differing = new ArrayList<>();
-            try (Stream<Path> files = Files.list(captured)) {
-                for (Path file : files.sorted().toList()) {
-                    Path other = committed.resolve(file.getFileName());
-                    if (!Files.exists(other) || !Arrays.equals(Files.readAllBytes(file), Files.readAllBytes(other))) {
-                        differing.add(file.getFileName().toString());
-                    }
+            List<Path> files = BuildHistory.files(captured);
+            for (Path file : files) {
+                Path other = committed.resolve(file.getFileName());
+                boolean same = Files.exists(other) && (against != null
+                    ? BuildHistory.sameData(file, BuildHistory.formatVersion(captured), other, BuildHistory.formatVersion(committed))
+                    : Arrays.equals(Files.readAllBytes(file), Files.readAllBytes(other)));
+                if (!same) {
+                    differing.add(file.getFileName().toString());
                 }
             }
-            report.check(differing.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Voxel shapes",
-                differing.isEmpty() ? "`" + relative(committed) + "` has the same captures"
-                    : "`" + relative(committed) + "` is missing or differs: " + String.join(", ", differing));
-            if (!differing.isEmpty()) {
+            if (against != null) {
+                // Files the earlier build has and this one does not (the probe writes some only when they say something)
+                BuildHistory.files(committed).stream().map(f -> f.getFileName().toString())
+                    .filter(name -> !Files.exists(captured.resolve(name))).forEach(name -> differing.add(name + " (not captured now)"));
+            }
+            compared(differing.isEmpty(), "Voxel shapes", differing.isEmpty() ? "`" + relative(committed) + "` has the same captures"
+                + (against != null ? " (version stamps aside)" : "") : "`" + relative(committed) + "` is missing or differs: " + String.join(", ", differing));
+            if (against != null) {
+                for (Path file : files) {
+                    stageCopy(target.resolve(file.getFileName()), file, "voxel shape capture " + file.getFileName());
+                }
+            } else if (!differing.isEmpty()) {
                 for (String file : differing) {
                     stageCopy(committed.resolve(file), captured.resolve(file), "voxel shape capture " + file);
                 }
@@ -453,7 +524,7 @@ public final class Update {
                 }
                 report.header.put("Transport", raknet ? "RakNet" : "NetherNet (HTTP signaling on server-port, WebRTC; "
                     + "self signed identity bound to the login chain)");
-                runs.existing = bundledName(runs.protocol);
+                runs.existing = against != null ? containingVersion(runs.protocol) : bundledName(runs.protocol);
                 runs.reference = reference(runs.existing, dump, runs);
                 Capture.Summary summary = capture(address, runs, work.resolve("vanilla"), null, "vanilla capture");
                 runs.vanilla = work.resolve("vanilla");
@@ -537,7 +608,16 @@ public final class Update {
         ordering.sequential("add-on", work.resolve("addon"), work.resolve("addon-sequential"));
         ordering.customBlockIds("add-on", work.resolve("addon"));
         ordering.passes.forEach(pass -> report.check(Report.Status.PASS, "Block numbering", pass));
-        ordering.failures.forEach(failure -> report.check(Report.Status.FAIL, "Block numbering", failure));
+        // A history check numbers against the bundled data version of its window, which may lack states of this build and
+        // of the build it is checked against alike: the states themselves are compared through the Script API dump
+        ordering.failures.forEach(failure -> {
+            if (against != null) {
+                report.check(Report.Status.INFO, "Block numbering", failure + " (against bundled " + runs.reference.version().name()
+                    + "; block states are compared through the Script API dump)");
+            } else {
+                report.check(Report.Status.FAIL, "Block numbering", failure);
+            }
+        });
         if (!ordering.withinBlockOrder.isEmpty()) {
             report.todo("Block palette: " + ordering.withinBlockOrder.size() + " creative states of generated blocks sit elsewhere "
                 + "within their block than generated; fix the state order of those blocks before importing", "States",
@@ -589,6 +669,12 @@ public final class Update {
         if (summary.unresolvedHashes() == 0) {
             report.check(Report.Status.PASS, "Block hashes (" + label + ")", "all " + summary.resolvedHashes()
                 + " creative block ids are FNV-1a 32 hashes of palette states");
+        } else if (against != null) {
+            // A history check: the bundled data version of the window lacks states this build sends (and maybe the build it
+            // is checked against too); the states themselves are compared through the Script API dump
+            report.check(Report.Status.INFO, "Block hashes (" + label + ")", summary.unresolvedHashes() + " creative block ids match no "
+                + "state of the reference palette (" + summary.resolvedHashes() + " do): this build has states the bundled data version "
+                + "lacks; block states are compared through the Script API dump");
         } else {
             report.check(Report.Status.FAIL, "Block hashes (" + label + ")", summary.unresolvedHashes() + " creative block ids match no "
                 + "palette state (" + summary.resolvedHashes() + " do): the palette lacks states this version has");
@@ -853,7 +939,14 @@ public final class Update {
         if (!result.source.equals("discovered")) {
             return;
         }
-        stage(bdsData.resolve(distribution.version()).resolve("experiments.json"), record(distribution, runs), "experiment record");
+        byte[] record = record(distribution, runs);
+        if (against != null) {
+            Path earlier = bdsData.resolve(against).resolve("experiments.json");
+            boolean same = Files.exists(earlier) && BuildHistory.sameData(record, Files.readAllBytes(earlier));
+            compared(same, "Experiment record vs " + against, same ? "same toggles and content (version stamps aside)"
+                : "`" + root.relativize(earlier) + "` is missing or lists other toggles or content");
+        }
+        stage(bdsData.resolve(distribution.version()).resolve("experiments.json"), record, "experiment record");
         if (runs.bundledName != null && result.attribution.equals("each")) {
             Path file = staging.resources.resolve(runs.bundledName + ".nbt");
             VanillaData data = read(file);
@@ -972,17 +1065,17 @@ public final class Update {
 
     /** The Script API view against the committed dump of this build, or of the build before ({@link #baseline}). */
     private void scriptApi(BdsDistribution distribution, BdsDump dump, Runs runs) throws IOException {
-        String baselineBuild = baseline(distribution.version(), committedBuilds("dump.json.gz"));
+        // A history check compares with the build it is checked against
+        String baselineBuild = against != null ? against : baseline(distribution.version(), committedBuilds("dump.json.gz"));
         Path baselineFile = baselineBuild == null ? null : bdsData.resolve(baselineBuild).resolve("dump.json.gz");
         Path target = bdsData.resolve(distribution.version()).resolve("dump.json.gz");
-        if (baselineFile == null) {
-            report.check(Report.Status.DIFF, "Script API vs baseline", "no baseline dump in data/bds/*/dump.json.gz");
+        if (baselineFile == null || !Files.exists(baselineFile)) {
+            compared(false, "Script API vs baseline", "no baseline dump in data/bds/" + (against != null ? against : "*") + "/dump.json.gz");
         } else {
             String baselineVersion = baselineBuild;
             BdsDump baseline = BdsDump.parse(readGzipText(baselineFile), baselineVersion);
             Diff diff = Diff.scriptApi(baseline, dump);
-            report.check(diff.identical() ? Report.Status.PASS : Report.Status.DIFF, "Script API vs baseline " + baselineVersion,
-                diff.identical() ? "identical" : diff.count() + " differences");
+            compared(diff.identical(), "Script API vs baseline " + baselineVersion, diff.identical() ? "identical" : diff.count() + " differences");
             report.diff("Script API: BDS " + distribution.version() + " vs baseline " + baselineVersion, diff);
             if (runs.vanilla == null) {
                 fallbackTodos(diff.lines("new blocks"), diff.lines("new items"), "Script API");
@@ -1188,9 +1281,8 @@ public final class Update {
         if (runs.existing != null) {
             VanillaData bundled = read(resources.resolve(name + ".nbt"));
             Diff network = Diff.vanilla(bundled, captured, true, false);
-            report.check(network.identical() ? Report.Status.PASS : Report.Status.DIFF, "Network data vs bundled " + name,
-                network.identical() ? "identical (items, runtime ids, components, data driven blocks, creative layout)"
-                    : network.count() + " differences");
+            compared(network.identical(), "Network data vs bundled " + name, network.identical()
+                ? "identical (items, runtime ids, components, data driven blocks, creative layout)" : network.count() + " differences");
             report.diff("Network data: BDS " + distribution.version() + " vs bundled " + name, network);
             if (!network.identical()) {
                 report.action("same protocol, different data: decide whether to re-import " + name + " (`import --source "
@@ -1201,11 +1293,16 @@ public final class Update {
                 bundled.creative(), captured.itemTags(), bundled.fallbacks(), captured.blockDefaults(), bundled.experiments(),
                 captured.blockItems());
             Diff bds = Diff.vanilla(bundled, refreshed, false, true);
-            report.check(bds.identical() ? Report.Status.PASS : Report.Status.DIFF, "Item tags and block defaults vs bundled " + name,
-                bds.identical() ? "identical" : bds.count() + " differences");
+            // A history check compares the Script API (where these come from) with the earlier build instead
+            Report.Status status = bds.identical() ? Report.Status.PASS : against != null ? Report.Status.INFO : Report.Status.DIFF;
+            report.check(status, "Item tags and block defaults vs bundled " + name, bds.identical() ? "identical" : bds.count() + " differences");
             report.diff("Item tags and block defaults: BDS " + distribution.version() + " vs bundled " + name, bds);
             Files.write(staging.resources.resolve(name + ".nbt"), write(refreshed));
             updateVariantNames(variantNames, name, dump, refreshed);
+        } else if (against != null) {
+            // Older than every bundled data version: nothing to compare the network data with
+            compared(false, "Network data", "protocol " + runs.protocol + " is older than every bundled data version; "
+                + "this build needs a data version of its own to be served");
         } else {
             Importer.IndexEntry latest = Importer.readIndex(resources).stream().filter(e -> !e.preview()).reduce((a, b) -> b).orElseThrow();
             VanillaData previous = read(resources.resolve(latest.name() + ".nbt"));
@@ -1283,6 +1380,9 @@ public final class Update {
      * creative order probe (docs/wire-notes.md). A difference means BDS changed where it puts custom content.
      */
     private void creativeOrder(Runs runs) throws IOException {
+        if (against != null && runs.addon != null) {
+            addonCreative(runs);
+        }
         if (runs.existing == null) {
             report.check(Report.Status.INFO, "Creative order", "skipped: protocol " + runs.protocol + " is not bundled, "
                 + "so Paletter has no vanilla layout of this version to place custom content in");
@@ -1302,8 +1402,14 @@ public final class Update {
             if (result.matches()) {
                 report.check(Report.Status.PASS, "Creative order (" + capture[0] + ")", "CreativeOrdering.BDS reproduces the "
                     + "creative inventory BDS sent (" + result.customStacks() + " custom stacks)");
+            } else if (against != null && capture[0].equals("add-on")) {
+                // The add-on world runs every experiment, whose vanilla stacks the bundled layout may lack; a history check
+                // compares this creative inventory with the earlier build's instead (addonCreative)
+                report.check(Report.Status.INFO, "Creative order (" + capture[0] + ")", "BDS places custom content differently "
+                    + "from CreativeOrdering.BDS on the bundled layout: " + result.differences().size() + "+ differences; the "
+                    + "creative inventory is compared with " + against + "'s");
             } else {
-                report.check(Report.Status.DIFF, "Creative order (" + capture[0] + ")", "BDS places custom content differently "
+                compared(false, "Creative order (" + capture[0] + ")", "BDS places custom content differently "
                     + "from CreativeOrdering.BDS: " + result.differences().size() + "+ differences");
                 List<String> lines = new ArrayList<>();
                 result.differences().forEach(difference -> lines.add("- `" + difference.replace("`", "'") + "`"));
@@ -1313,19 +1419,45 @@ public final class Update {
         }
     }
 
+    /**
+     * History check: the creative inventory of the add-on world (vanilla with every experiment, and the add-on's content)
+     * against the earlier build's, kept as {@code addon/creative_items.json.gz}.
+     */
+    private void addonCreative(Runs runs) throws IOException {
+        byte[] creative = gzip(JsonParser.parseString(Files.readString(runs.addon.resolve("creative_items.json"))).toString());
+        stage(buildDirectory.resolve("addon/creative_items.json.gz"), creative, "add-on creative inventory");
+        Path earlier = bdsData.resolve(against).resolve("addon/creative_items.json.gz");
+        if (!Files.exists(earlier)) {
+            report.check(Report.Status.INFO, "Add-on creative inventory", "not compared: " + against + " has no `addon/creative_items.json.gz`");
+            return;
+        }
+        compared(BuildHistory.sameData(creative, Files.readAllBytes(earlier)), "Add-on creative inventory",
+            "the add-on world's creative inventory against " + against + "'s");
+    }
+
     private void contentLog(Runs runs) throws IOException {
         if (runs.addonContentLog == null) {
             return;
         }
         Path file = root.resolve(Layout.CAPTURE_ADDON + "/content-log.txt");
         String current = String.join("\n", runs.addonContentLog) + "\n";
+        if (against != null) {
+            // A kept build keeps its log with its add-on capture; the one in data/addons/capture is the newest build's
+            stage(buildDirectory.resolve("addon/content-log.txt"), current.getBytes(StandardCharsets.UTF_8), "add-on content log");
+            file = bdsData.resolve(against).resolve("addon/content-log.txt");
+            if (!Files.exists(file)) {
+                report.check(Report.Status.INFO, "Add-on content log", "not compared: " + against + " has no add-on content log "
+                    + "(what BDS rejects shows in the add-on capture, compared below)");
+                return;
+            }
+        }
         String committed = Files.exists(file) ? Files.readString(file).replace("\r\n", "\n") : "";
         Set<String> before = new TreeSet<>(committed.lines().filter(l -> !l.isBlank()).toList());
         Set<String> after = new TreeSet<>(runs.addonContentLog);
         List<String> lines = new ArrayList<>();
         Diff.difference(after, before).forEach(line -> lines.add("- new: `" + line.replace("`", "'") + "`"));
         Diff.difference(before, after).forEach(line -> lines.add("- gone: `" + line.replace("`", "'") + "`"));
-        report.check(lines.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Add-on content log",
+        compared(lines.isEmpty(), "Add-on content log",
             lines.isEmpty() ? runs.addonContentLog.size() + " known rejections/warnings, unchanged"
                 : lines.size() + " changes in what BDS rejects or warns about in data/addons/capture");
         if (!lines.isEmpty()) {
@@ -1339,7 +1471,8 @@ public final class Update {
 
     /** Component wire shapes: the new add-on and vanilla captures against the committed ones. */
     private void shapes(BdsDistribution distribution, Runs runs) throws Exception {
-        String previousBuild = baseline(distribution.version(), committedBuilds("addon/custom_item_registry.nbt"));
+        // A history check: the add-on capture of the build it is checked against, or of the newest build before it
+        String previousBuild = baseline(against != null ? against : distribution.version(), committedBuilds("addon/custom_item_registry.nbt"));
         Path previous = previousBuild == null ? null : bdsData.resolve(previousBuild).resolve("addon");
         Path target = bdsData.resolve(distribution.version()).resolve("addon");
         List<String> files = List.of("custom_block_properties.nbt", "custom_item_registry.nbt");
@@ -1374,14 +1507,20 @@ public final class Update {
         Map<String, List<String>> uncovered = WireShapes.classify(captured.uncovered(mappings), mappings, components);
         reportUncovered(uncovered);
 
-        boolean same = Files.isDirectory(target);
+        // A history check compares with the add-on capture of the build it is checked against (or the newest older one)
+        Path committed = against != null ? previous : target;
+        boolean same = committed != null && Files.isDirectory(committed);
         for (String file : files) {
-            same &= Files.exists(target.resolve(file))
-                && Nbt.readGzip(target.resolve(file)).equals(Nbt.readGzip(runs.customCapture.resolve(file)));
+            same &= Files.exists(committed.resolve(file))
+                && Nbt.readGzip(committed.resolve(file)).equals(Nbt.readGzip(runs.customCapture.resolve(file)));
         }
-        report.check(same ? Report.Status.PASS : Report.Status.DIFF, "Add-on capture vs " + relative(bdsData),
-            same ? "`" + relative(target) + "` has the same NBT" : "`" + relative(target) + "` is missing or differs");
-        if (!same) {
+        String where = committed == null ? "no add-on capture" : "`" + relative(committed) + "`";
+        compared(same, "Add-on capture vs " + relative(bdsData), same ? where + " has the same NBT" : where + " is missing or differs");
+        if (against != null) {
+            for (String file : files) {
+                stageCopy(target.resolve(file), runs.customCapture.resolve(file), "component capture " + file);
+            }
+        } else if (!same) {
             for (String file : files) {
                 stageCopy(target.resolve(file), runs.customCapture.resolve(file), "component capture " + file);
             }
@@ -1420,7 +1559,8 @@ public final class Update {
      * and infer nothing.
      */
     private void specCapture(BdsDistribution distribution, Path work, Runs runs) throws Exception {
-        boolean write = !verifyOnly;
+        // A history check captures into the work directory; keep() copies the capture when the build is kept
+        boolean write = !verifyOnly && against == null;
         Path out = write ? bdsData.resolve(distribution.version()).resolve("spec") : work.resolve("spec");
         Map<String, String> specOptions = new LinkedHashMap<>(options);
         specOptions.put("version", distribution.version());
@@ -1428,7 +1568,8 @@ public final class Update {
         specOptions.put("port", String.valueOf(port + 10));
         specOptions.put("protocol", String.valueOf(runs.protocol));
         specOptions.put("out", out.toString());
-        String previousBuild = baseline(distribution.version(), committedBuilds("spec/capture.json"));
+        // A history check compares with the build it is checked against
+        String previousBuild = against != null ? against : baseline(distribution.version(), committedBuilds("spec/capture.json"));
         boolean own = distribution.version().equals(previousBuild);
         Path previous = previousBuild == null ? null : bdsData.resolve(previousBuild).resolve("spec");
         if (own && write) {
@@ -1452,12 +1593,12 @@ public final class Update {
         report.check(Report.Status.INFO, "Spec capture", "`" + (write ? root.relativize(out) : out) + "`");
         if (previous != null) {
             List<SpecDiff.Change> changes = SpecDiff.compare(previous, out);
-            String against = own ? "the committed capture of " + previousBuild : previousBuild;
+            String earlier = own ? "the committed capture of " + previousBuild : previousBuild;
             Map<String, List<SpecDiff.Change>> byComponent = new java.util.TreeMap<>();
             changes.forEach(change -> byComponent.computeIfAbsent(change.component(), k -> new ArrayList<>()).add(change));
-            report.check(changes.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Spec capture values",
-                changes.isEmpty() ? "every variant sent as in " + against : changes.size() + " leaves in " + byComponent.size()
-                    + " components differ from " + against + ", variant by variant");
+            compared(changes.isEmpty(), "Spec capture values",
+                changes.isEmpty() ? "every variant sent as in " + earlier : changes.size() + " leaves in " + byComponent.size()
+                    + " components differ from " + earlier + ", variant by variant");
             List<String> lines = new ArrayList<>();
             byComponent.forEach((component, list) -> {
                 long values = list.stream().filter(SpecDiff.Change::valueChange).count();
@@ -1466,7 +1607,7 @@ public final class Update {
                     : transformOf(component) != null ? "its hand transform `Transforms." + transformOf(component) + "` needs a protocol check"
                     : "the inferred mapping gets a protocol window (regenerate with :tools:inferMappings and :tools:generateComponentApi)";
                 if (!own) {
-                    report.wireChanges.add("spec capture vs " + against + ": " + component + ": " + list.size() + " leaves differ (" + values
+                    report.wireChanges.add("spec capture vs " + earlier + ": " + component + ": " + list.size() + " leaves differ (" + values
                         + " with another value); " + how);
                 }
                 lines.add("- `" + component + "`: " + how);
@@ -1478,6 +1619,20 @@ public final class Update {
             if (!lines.isEmpty()) {
                 report.evidence("Components", lines);
                 report.action(own ? "re-capture this build and review these components" : "review the protocol windows of these components");
+            }
+            // What BDS accepts and logs: a variant both builds were given that one accepts and the other rejects, or
+            // that logs other lines
+            List<String> acceptance = SpecDiff.acceptance(previous, out);
+            compared(acceptance.isEmpty(), "Spec capture acceptance", acceptance.isEmpty()
+                ? "every variant accepted or rejected, with the same content log, as in " + earlier
+                : acceptance.size() + " variants accepted, rejected or logged differently than in " + earlier);
+            if (!acceptance.isEmpty()) {
+                List<String> variants = new ArrayList<>();
+                acceptance.stream().limit(200).forEach(line -> variants.add("- `" + line.replace("`", "'") + "`"));
+                if (acceptance.size() > 200) {
+                    variants.add("- ... " + (acceptance.size() - 200) + " more");
+                }
+                report.evidence("Variants", variants);
             }
         }
         if (write) {
@@ -1502,7 +1657,7 @@ public final class Update {
             }
             report.check(Report.Status.INFO, "Component model", "mappings inferred; run :tools:generateComponentApi and the conformance suite (:tools:test) for the new protocol");
         } else {
-            report.check(Report.Status.INFO, "Component model", "mappings not inferred (verify only)");
+            report.check(Report.Status.INFO, "Component model", "mappings not inferred (" + (against != null ? "history check" : "verify only") + ")");
         }
     }
 
@@ -1565,8 +1720,7 @@ public final class Update {
     /** A value that came or went in a component both sides send: the shape is the same, what BDS puts in it is not. */
     private void reportValues(Diff diff, String what) {
         List<String> changes = diff.lines(Diff.VALUE_CHANGES);
-        report.check(changes.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Component values",
-            what + ": " + (changes.isEmpty() ? "identical" : changes.size() + " paths with other values"));
+        compared(changes.isEmpty(), "Component values", what + ": " + (changes.isEmpty() ? "identical" : changes.size() + " paths with other values"));
         if (!changes.isEmpty()) {
             report.action("review the component model and the hand transforms");
             report.evidence("Paths with other values", changes.stream().map(c -> "- `" + c.replace("`", "'") + "`").toList());
@@ -1578,7 +1732,7 @@ public final class Update {
             report.check(Report.Status.PASS, "Component shapes", what + ": identical");
             return;
         }
-        report.check(Report.Status.DIFF, "Component shapes", what + ": "
+        compared(false, "Component shapes", what + ": "
             + diff.lines(Diff.WIRE_CHANGES).size() + " wire format changes, " + diff.lines(Diff.NEW_COMPONENTS).size() + " new components");
         diff.lines(Diff.WIRE_CHANGES).forEach(change -> report.wireChanges.add(what + ": " + change));
         List<String> lines = new ArrayList<>();
@@ -1627,6 +1781,13 @@ public final class Update {
     }
 
     private void stage(Path target, byte[] content, String what) throws IOException {
+        if (against != null) {
+            // A history check writes only the captures of its build, and only when the build is kept (keep())
+            if (target.startsWith(buildDirectory)) {
+                pending.put(target, content);
+            }
+            return;
+        }
         byte[] existing = Files.exists(target) ? Files.readAllBytes(target) : null;
         if (existing != null && Arrays.equals(existing, content)) {
             return;
@@ -1700,12 +1861,55 @@ public final class Update {
         return digests;
     }
 
+    /**
+     * A check that compares this build with committed data. In a history check, a difference is a change against the
+     * build it is checked against: the build is kept.
+     */
+    private void compared(boolean same, String name, String detail) {
+        report.check(same ? Report.Status.PASS : Report.Status.DIFF, name, detail);
+        if (!same && against != null) {
+            report.againstChanges.add(name + ": " + detail);
+        }
+    }
+
+    /** Writes the captures of a kept build (history check) into {@code data/bds/<build>}. */
+    private void keep(Path work) throws IOException {
+        BdsDistribution.deleteRecursively(buildDirectory);
+        for (Map.Entry<Path, byte[]> file : pending.entrySet()) {
+            Files.createDirectories(file.getKey().getParent());
+            Files.write(file.getKey(), file.getValue());
+        }
+        Path spec = work.resolve("spec");
+        if (Files.isDirectory(spec)) {
+            Path target = buildDirectory.resolve("spec");
+            Files.createDirectories(target);
+            for (Path file : BuildHistory.files(spec)) {
+                Files.copy(file, target.resolve(file.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+        report.repoChanges.add("add `" + root.relativize(buildDirectory).toString().replace('\\', '/') + "` (captures of this build)");
+    }
+
     // ---------------------------------------------------------------------------------------------------------------
     // Helpers
 
     /** A path of the repository as the report shows it (forward slashes on every platform). */
     private String relative(Path path) {
         return root.relativize(path).toString().replace('\\', '/');
+    }
+
+    /**
+     * The bundled release whose window holds a protocol: the newest one not newer than it (a hotfix with a protocol bump
+     * is served the data version of its release), null if every bundled version is newer.
+     */
+    private String containingVersion(int protocol) throws IOException {
+        String name = null;
+        for (Importer.IndexEntry entry : Importer.readIndex(resources)) {
+            if (!entry.preview() && entry.protocol() <= protocol) {
+                name = entry.name();
+            }
+        }
+        return name;
     }
 
     private String bundledName(int protocol) throws IOException {

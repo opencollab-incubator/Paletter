@@ -55,6 +55,9 @@ public final class Report {
     final List<String> wireChanges = new ArrayList<>();
     private final List<Todo> todos = new ArrayList<>();
     final List<String> repoChanges = new ArrayList<>();
+    /** A history check ({@code update --against}): the build compared with, and what differs from it. */
+    String against;
+    final List<String> againstChanges = new ArrayList<>();
     private final String title;
     /** The command that wrote the report: its generated marker. */
     String generatedBy;
@@ -167,6 +170,15 @@ public final class Report {
         }
         out.append("# ").append(title).append("\n\n");
         out.append(verdict()).append("\n\n");
+        if (against != null) {
+            // A history check: whether this build's captures are the same as the earlier build's, and what differs
+            out.append("## Changes against ").append(against).append("\n\n");
+            if (againstChanges.isEmpty()) {
+                out.append(failed() ? "Not decided: the run failed.\n\n" : "None: every compared capture is the same, version stamps aside.\n\n");
+            }
+            againstChanges.forEach(change -> out.append("- ").append(oneLine(change)).append('\n'));
+            out.append('\n');
+        }
 
         List<Check> attention = checks.stream().filter(check -> check.status == Status.FAIL || check.status == Status.DIFF).toList();
         if (!attention.isEmpty() || !todos.isEmpty()) {

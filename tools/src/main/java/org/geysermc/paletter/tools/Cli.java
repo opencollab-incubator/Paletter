@@ -56,7 +56,7 @@ import java.util.concurrent.Callable;
  * repository. See docs/data-pipeline.md for what each command does.
  */
 @Command(name = "paletter-tools", mixinStandardHelpOptions = true, subcommands = {
-    Cli.Import.class, Cli.BdsInventoryCommand.class, Cli.WhiteboxCommand.class, Cli.WhiteboxCoverageCommand.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.SpecCaptureCommand.class,
+    Cli.Import.class, Cli.BdsInventoryCommand.class, Cli.WhiteboxCommand.class, Cli.WhiteboxCoverageCommand.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.Builds.class, Cli.SpecCaptureCommand.class,
     Cli.VerifyCommand.class, Cli.CheckData.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class, Cli.ExperimentMarksCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
@@ -251,11 +251,16 @@ public final class Cli implements Runnable {
         @Option(names = "--experiment-attribution", description = "each, all or none") String attribution;
         @Option(names = "--port") String port;
         @Option(names = "--timeout", description = "seconds") String timeout;
+        @Option(names = "--against", description = "A history check (see `builds`): compare with the committed captures of this build "
+            + "instead of the newest, and write only data/bds/VERSION, when anything differs") String against;
+        @Option(names = "--keep", description = "With --against: write data/bds/VERSION even when nothing differs") boolean keep;
 
         @Override
         public Integer call() throws Exception {
             Map<String, String> options = new HashMap<>();
             options.put("channel", channel);
+            put(options, "against", against);
+            flag(options, "keep", keep);
             put(options, "version", version);
             flag(options, "verify-only", verifyOnly);
             flag(options, "keep-server", keepServer);
@@ -267,6 +272,54 @@ public final class Cli implements Runnable {
             put(options, "port", port);
             put(options, "timeout", timeout);
             return new Update(root(), options).run();
+        }
+    }
+
+    @Command(name = "builds", description = "Every BDS release build, one by one: list them, or check the ones data/bds/builds.json lacks "
+        + "against the previous kept build (captures kept only when they differ).", subcommands = {Builds.ListBuilds.class, Builds.Check.class})
+    static final class Builds implements Runnable {
+        @Override
+        public void run() {
+            CommandLine.usage(this, System.out);
+        }
+
+        @Command(name = "list", description = "Prints the Windows release builds of the range, oldest first, with what data/bds/builds.json says of each.")
+        static final class ListBuilds extends Rooted implements Callable<Integer> {
+            @Option(names = "--from", required = true, description = "First build, e.g. 1.26.30") String from;
+            @Option(names = "--to", description = "Last build or line, e.g. 1.26.63 (default: the newest)") String to;
+
+            @Override
+            public Integer call() throws Exception {
+                Map<String, org.geysermc.paletter.tools.update.BuildHistory.Entry> record = org.geysermc.paletter.tools.update.BuildHistory.read(root());
+                for (String build : org.geysermc.paletter.tools.update.BuildHistory.releases(from, to)) {
+                    var entry = record.get(build);
+                    System.out.println(build + (entry == null ? "  not checked" : "  protocol " + entry.protocol()
+                        + (entry.kept() ? "  kept" : "  identical to " + entry.identicalTo())));
+                }
+                return 0;
+            }
+        }
+
+        @Command(name = "check", description = "Checks the builds of the range that data/bds/builds.json lacks, oldest first, with "
+            + "`update --against <previous kept build>` (Windows BDS), and records each in data/bds/builds.json.")
+        static final class Check extends Rooted implements Callable<Integer> {
+            @Option(names = "--from", required = true, description = "First build, e.g. 1.26.30") String from;
+            @Option(names = "--to", description = "Last build or line (default: the newest)") String to;
+            @Option(names = "--limit", description = "At most this many builds (default: all)") Integer limit;
+            @Option(names = "--min-free-mb", description = "Stop when the cache's disk has less free (default 1536)") Long minFreeMb;
+            @Option(names = "--cache") String cache;
+            @Option(names = "--port") String port;
+            @Option(names = "--timeout", description = "seconds") String timeout;
+
+            @Override
+            public Integer call() throws Exception {
+                Map<String, String> options = new HashMap<>();
+                put(options, "cache", cache);
+                put(options, "port", port);
+                put(options, "timeout", timeout);
+                return org.geysermc.paletter.tools.update.BuildHistory.check(root(), org.geysermc.paletter.tools.update.BuildHistory.releases(from, to),
+                    options, limit == null ? Integer.MAX_VALUE : limit, (minFreeMb == null ? 1536 : minFreeMb) << 20);
+            }
         }
     }
 

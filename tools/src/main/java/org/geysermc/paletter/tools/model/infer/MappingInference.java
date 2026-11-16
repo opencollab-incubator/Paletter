@@ -194,6 +194,22 @@ public final class MappingInference {
         }
         // By protocol, not by name: the oldest build first, the newest last
         captures.sort(java.util.Comparator.comparingInt(Capture::protocol));
+        // Several kept builds of one window (hotfixes, with or without a protocol bump): the newest build defines it
+        Map<Integer, Capture> newestOfWindow = new TreeMap<>();
+        Map<Integer, List<String>> replaced = new TreeMap<>();
+        for (Capture capture : captures) {
+            int window = dataProtocol(capture.protocol());
+            Capture other = newestOfWindow.get(window);
+            if (other != null && org.geysermc.paletter.tools.Versions.compare(other.bdsVersion(), capture.bdsVersion()) > 0) {
+                replaced.computeIfAbsent(window, w -> new ArrayList<>()).add(capture.bdsVersion());
+                continue;
+            }
+            if (other != null) {
+                replaced.computeIfAbsent(window, w -> new ArrayList<>()).add(other.bdsVersion());
+            }
+            newestOfWindow.put(window, capture);
+        }
+        captures = new ArrayList<>(newestOfWindow.values());
         // What BDS says about the schema is read from the newest release: an older one knows fewer members, and a preview
         // may not know some yet. Members only the newest preview knows stay (their API is @SincePreview)
         List<Capture> releases = new ArrayList<>();
@@ -219,6 +235,12 @@ public final class MappingInference {
             source.addProperty("bdsVersion", capture.bdsVersion());
             source.addProperty("protocol", capture.protocol());
             source.addProperty("windowProtocol", dataProtocol(capture.protocol()));
+            if (replaced.containsKey(dataProtocol(capture.protocol()))) {
+                // Older kept builds of the same window, whose captures this one replaces
+                JsonArray older = new JsonArray();
+                replaced.get(dataProtocol(capture.protocol())).stream().sorted(org.geysermc.paletter.tools.Versions.ORDER).forEach(older::add);
+                source.add("replaces", older);
+            }
             // A preview build: what only its window has is preview API (@SincePreview with this version name)
             if (previewName(capture) != null) {
                 source.addProperty("preview", previewName(capture));

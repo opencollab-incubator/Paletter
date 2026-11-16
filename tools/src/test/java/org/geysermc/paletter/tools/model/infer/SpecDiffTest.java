@@ -107,4 +107,16 @@ class SpecDiffTest {
         List<SpecDiff.Change> changes = SpecDiff.compare(root.resolve("1.0/spec"), root.resolve("3.0/spec"));
         assertEquals(List.of("paletter:a_1"), changes.stream().map(SpecDiff.Change::variant).distinct().toList());
     }
+
+    @Test
+    void acceptanceListsVariantsLoggedDifferently(@TempDir Path root) throws IOException {
+        capture(root.resolve("1.0/spec"), 1, false, false);
+        capture(root.resolve("2.0/spec"), -1, true, false);
+        // Other values, same acceptance and content log
+        assertTrue(SpecDiff.acceptance(root.resolve("1.0/spec"), root.resolve("2.0/spec")).isEmpty());
+        capture(root.resolve("3.0/spec"), 1, false, true);
+        List<String> changes = SpecDiff.acceptance(root.resolve("1.0/spec"), root.resolve("3.0/spec"));
+        assertEquals(1, changes.size(), changes.toString());
+        assertTrue(changes.getFirst().startsWith("paletter:a_2 (number:2): "), changes.getFirst());
+    }
 }
