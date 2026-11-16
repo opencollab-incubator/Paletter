@@ -226,7 +226,7 @@ public final class SpecCapture {
             bds.start(work.resolve("bds-capture.log"));
             bds.awaitStarted(timeout);
             List<String> contentLog = attribute(bds.lines(line -> line.matches(".*(ERROR|WARN)\\] \\[.*") && !line.contains("TRANSPORT"))
-                .stream().map(line -> line.replaceFirst("^\\[[^]]*(ERROR|WARN)\\] ", "$1 ")).toList());
+                .stream().map(SpecCapture::contentLine).toList());
             Capture.Reachable reachable = Capture.reachable(bds, address, 20);
             boolean raknet = reachable == null || !reachable.netherNet();
             int protocol = reachable != null && reachable.protocol() != 0 ? reachable.protocol()
@@ -319,6 +319,19 @@ public final class SpecCapture {
     static boolean accepted(AddonGenerator.Variant v, Map<String, Map<String, Leaf>> leaves, Map<String, List<String>> log) {
         return leaves.containsKey(v.kind() + " " + v.identifier())
             && log.getOrDefault(v.identifier(), List.of()).stream().noneMatch(line -> line.startsWith("ERROR"));
+    }
+
+    /**
+     * A console line of BDS as a content log line: {@code ERROR ...} or {@code WARN ...} without the timestamp. BDS
+     * sometimes writes {@code NO LOG FILE! - } before the timestamp (seen once on 1.26.45.1, on every line); the inference
+     * reads the level from the start of the line, so a line in any other shape fails the capture instead of being kept.
+     */
+    static String contentLine(String console) {
+        String line = console.replaceFirst("^(?:NO LOG FILE! - )?\\[[^]]*(ERROR|WARN)\\] ", "$1 ");
+        if (!line.startsWith("ERROR ") && !line.startsWith("WARN ")) {
+            throw new IllegalStateException("A content log line of BDS in an unknown shape: " + console);
+        }
+        return line;
     }
 
     /**

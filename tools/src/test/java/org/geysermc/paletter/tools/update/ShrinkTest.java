@@ -18,6 +18,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * How {@code spec-capture} shrinks the variants a build rejected for a member they do not vary, and how the generator
@@ -144,5 +145,13 @@ class ShrinkTest {
 
         assertEquals(shrunk.keySet(), read.keySet());
         assertEquals(captured.manifest(), rebuilt.manifest());
+    }
+
+    @Test
+    void contentLogLinesLoseTheirTimestampAndTheNoLogFilePrefix() {
+        String plain = "[2026-11-16 21:00:00:123 ERROR] [Blocks] block_definitions | blocks/b_x_1.json |  -> components -> minecraft:x: bad";
+        assertEquals("ERROR [Blocks] block_definitions | blocks/b_x_1.json |  -> components -> minecraft:x: bad", SpecCapture.contentLine(plain));
+        assertEquals("WARN [Item] \"minecraft:x\": odd", SpecCapture.contentLine("NO LOG FILE! - [2026-11-16 21:00:00:123 WARN] [Item] \"minecraft:x\": odd"));
+        assertThrows(IllegalStateException.class, () -> SpecCapture.contentLine("LOG LOST [2026-11-16 21:00:00:123 ERROR] [Blocks] bad"));
     }
 }
