@@ -93,7 +93,12 @@ public final class Behaviour {
      * @return the handle of the state there: of the palette this one extends for a state they share
      */
     public @NonNull BlockValues block(int index) {
-        return index < base ? parent.block(index) : new BlockValues(this, index - base);
+        // A loop, not a call on the parent: the JIT does not inline recursion, and the handle would escape
+        Behaviour owner = this;
+        while (index < owner.base) {
+            owner = owner.parent;
+        }
+        return new BlockValues(owner, index - owner.base);
     }
 
     /**

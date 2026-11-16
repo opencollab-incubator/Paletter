@@ -2,6 +2,7 @@ package org.geysermc.paletter;
 
 import com.sun.management.ThreadMXBean;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
+import org.geysermc.paletter.behaviour.BlockBehaviour;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
@@ -183,5 +184,17 @@ class HotPathTest {
             }
         }
         assertTrue(newer > 0, "the oldest version has every state of the newest");
+    }
+
+    @Test
+    void blockBehaviourDoesNotAllocate() {
+        Palette palette = layered();
+        int[] runtimeIds = new int[palette.blocks().size()];
+        for (int i = 0; i < runtimeIds.length; i++) {
+            runtimeIds[i] = palette.blocks().byIndex(i).getRuntimeId();
+        }
+        long allocated = allocated(runtimeIds.length,
+            i -> Float.floatToIntBits(palette.blockBehaviour(runtimeIds[i]).get(BlockBehaviour.FRICTION)));
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * runtimeIds.length + " lookups");
     }
 }
