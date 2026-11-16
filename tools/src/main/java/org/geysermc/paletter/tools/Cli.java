@@ -710,6 +710,7 @@ public final class Cli implements Runnable {
         + "With --from-log it measures a console log of an earlier run instead of starting BDS. Downloading BDS means accepting the Minecraft EULA.")
     static final class BehaviourProbeCommand extends Rooted implements Callable<Integer> {
         @Option(names = "--bds", description = "BDS version, e.g. 1.26.63.1") String bds;
+        @Option(names = "--preview", description = "--bds is a preview build") boolean preview;
         @Option(names = "--server", description = "An extracted BDS of that version, instead of the cache") Path server;
         @Option(names = "--cache") Path cache;
         @Option(names = "--port", defaultValue = "19290") int port;
@@ -725,7 +726,7 @@ public final class Cli implements Runnable {
                     throw new IllegalArgumentException("Missing --bds (or --from-log)");
                 }
                 console = log != null ? log : org.geysermc.paletter.tools.bds.BdsDistribution.defaultCache().resolve("runs").resolve("behaviour-probe-" + bds + ".log");
-                org.geysermc.paletter.tools.behaviour.BehaviourProbe.run(root(), bds, server, cache, port, timeout, console);
+                org.geysermc.paletter.tools.behaviour.BehaviourProbe.run(root(), bds, preview, server, cache, port, timeout, console);
             }
             org.geysermc.paletter.tools.behaviour.BehaviourProbe.write(root(), console);
             return 0;
@@ -738,6 +739,7 @@ public final class Cli implements Runnable {
         + "starting BDS. Downloading BDS means accepting the Minecraft EULA.")
     static final class BehaviourDumpCommand extends Rooted implements Callable<Integer> {
         @Option(names = "--bds", description = "BDS version, e.g. 1.26.63.1") String bds;
+        @Option(names = "--preview", description = "--bds is a preview build") boolean preview;
         @Option(names = "--server", description = "An extracted BDS of that version, instead of the cache") Path server;
         @Option(names = "--cache") Path cache;
         @Option(names = "--port", defaultValue = "19294") int port;
@@ -753,7 +755,7 @@ public final class Cli implements Runnable {
                     throw new IllegalArgumentException("Missing --bds (or --from-log)");
                 }
                 console = log != null ? log : org.geysermc.paletter.tools.bds.BdsDistribution.defaultCache().resolve("runs").resolve("behaviour-dump-" + bds + ".log");
-                org.geysermc.paletter.tools.behaviour.BehaviourDump.run(root(), bds, server, cache, port, timeout, console);
+                org.geysermc.paletter.tools.behaviour.BehaviourDump.run(root(), bds, preview, server, cache, port, timeout, console);
             }
             org.geysermc.paletter.tools.behaviour.BehaviourDump.write(root(), console);
             return 0;

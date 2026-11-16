@@ -224,7 +224,8 @@ public final class Update {
                 report.check(Report.Status.SKIP, "Voxel shapes", "no capture of this build");
             }
         } finally {
-            if (!keepServer) {
+            // With a capture, the spec capture runs on this server too (reuse-server) and removes it
+            if (!keepServer && runs.protocol == null) {
                 try {
                     BdsDistribution.deleteRecursively(server);
                 } catch (IOException e) {
@@ -1336,6 +1337,7 @@ public final class Update {
         Path out = write ? bdsData.resolve(distribution.version()).resolve("spec") : work.resolve("spec");
         Map<String, String> specOptions = new LinkedHashMap<>(options);
         specOptions.put("version", distribution.version());
+        specOptions.put("reuse-server", "true");
         specOptions.put("port", String.valueOf(port + 10));
         specOptions.put("protocol", String.valueOf(runs.protocol));
         specOptions.put("out", out.toString());

@@ -99,7 +99,7 @@ public record BdsDistribution(String version, boolean preview, String platform, 
      * @param fresh extract again even if the directory exists
      */
     public Path extract(Path cache, boolean fresh) throws IOException, InterruptedException {
-        Path server = cache.resolve("servers").resolve(platform + "-" + version);
+        Path server = server(cache);
         if (!fresh && Files.exists(BdsServer.executable(server))) {
             System.out.println("Using the extracted BDS " + version + " in " + server);
             return server;
@@ -108,6 +108,37 @@ public record BdsDistribution(String version, boolean preview, String platform, 
         deleteRecursively(server);
         extract(zip, server);
         return server;
+    }
+
+    /** Where {@link #extract(Path, boolean)} puts the server: {@code <cache>/servers/<platform>-<version>}. */
+    public Path server(Path cache) {
+        return cache.resolve("servers").resolve(platform + "-" + version);
+    }
+
+    /** What runs on an extracted server. */
+    @FunctionalInterface
+    public interface ServerTask {
+        void run(Path server) throws IOException, InterruptedException;
+    }
+
+    /**
+     * Runs the task on the extracted server of this build in the cache. A server that is already there (one kept with
+     * {@code --keep-server}) is used and kept; one extracted for the task is removed afterwards.
+     */
+    public void onServer(Path cache, ServerTask task) throws IOException, InterruptedException {
+        boolean extracted = Files.notExists(BdsServer.executable(server(cache)));
+        Path server = extract(cache, false);
+        try {
+            task.run(server);
+        } finally {
+            if (extracted) {
+                try {
+                    deleteRecursively(server);
+                } catch (IOException e) {
+                    System.out.println("Could not remove " + server + ": " + e);
+                }
+            }
+        }
     }
 
     public static void extract(Path zip, Path server) throws IOException {

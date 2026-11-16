@@ -41,15 +41,23 @@ public final class BehaviourDump {
     private BehaviourDump() {
     }
 
-    /** Runs the add-on and writes the console to {@code log}. */
-    public static void run(Path root, String bdsVersion, Path server, Path cache, int port, int timeout, Path log) throws IOException, InterruptedException {
-        Path directory = server;
-        if (directory == null) {
-            directory = BdsDistribution.resolve(false, bdsVersion).extract(cache == null ? BdsDistribution.defaultCache() : cache, false);
-        }
+    /**
+     * Runs the add-on and writes the console to {@code log}.
+     *
+     * @param preview whether {@code bdsVersion} is a preview build
+     * @param server an extracted BDS, or null to use the build's server in the cache (extracted for the run and removed
+     *               after it, unless it was there already)
+     */
+    public static void run(Path root, String bdsVersion, boolean preview, Path server, Path cache, int port, int timeout, Path log)
+        throws IOException, InterruptedException {
         Files.createDirectories(log.toAbsolutePath().getParent());
-        new BdsRunner(root.resolve(Layout.BEHAVIOUR_DUMP_ADDON), MARKER, "paletter_behaviour_dump").withBetaApis(bdsVersion)
-            .run(directory, log, timeout, port, false);
+        BdsRunner runner = new BdsRunner(root.resolve(Layout.BEHAVIOUR_DUMP_ADDON), MARKER, "paletter_behaviour_dump").withBetaApis(bdsVersion);
+        if (server != null) {
+            runner.run(server, log, timeout, port, false);
+        } else {
+            BdsDistribution.resolve(preview, bdsVersion).onServer(cache == null ? BdsDistribution.defaultCache() : cache,
+                extracted -> runner.run(extracted, log, timeout, port, false));
+        }
     }
 
     /**

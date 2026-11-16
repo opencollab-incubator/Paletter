@@ -50,14 +50,19 @@ public final class BehaviourProbe {
     /**
      * Runs the probe on a BDS and writes its console to {@code log}.
      *
-     * @param server an extracted BDS, or null to extract {@code bdsVersion} into the cache (downloading it if needed)
+     * @param preview whether {@code bdsVersion} is a preview build
+     * @param server an extracted BDS, or null to use the build's server in the cache (downloaded and extracted for the run
+     *               and removed after it, unless it was there already)
      */
-    public static void run(Path root, String bdsVersion, Path server, Path cache, int port, int timeout, Path log) throws IOException, InterruptedException {
-        Path directory = server;
-        if (directory == null) {
-            directory = BdsDistribution.resolve(false, bdsVersion).extract(cache == null ? BdsDistribution.defaultCache() : cache, false);
+    public static void run(Path root, String bdsVersion, boolean preview, Path server, Path cache, int port, int timeout, Path log)
+        throws IOException, InterruptedException {
+        BdsRunner runner = new BdsRunner(root.resolve(Layout.PROBE_ADDON), "PROBE", "paletter_probe");
+        if (server != null) {
+            runner.run(server, log, timeout, port, false);
+        } else {
+            BdsDistribution.resolve(preview, bdsVersion).onServer(cache == null ? BdsDistribution.defaultCache() : cache,
+                extracted -> runner.run(extracted, log, timeout, port, false));
         }
-        new BdsRunner(root.resolve(Layout.PROBE_ADDON), "PROBE", "paletter_probe").run(directory, log, timeout, port, false);
     }
 
     /**

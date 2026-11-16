@@ -77,7 +77,8 @@ public final class SpecCapture {
         Path out = options.containsKey("out") ? Path.of(options.get("out"))
             : root.resolve(Layout.BDS).resolve(distribution.version()).resolve(probeKeys ? "spec-keys" : formatSweep ? "spec-format" : "spec");
 
-        Path server = distribution.extract(cache, !options.containsKey("keep-server"));
+        // update passes reuse-server: the server its captures ran on is still extracted, and this run removes it
+        Path server = distribution.extract(cache, !options.containsKey("keep-server") && !options.containsKey("reuse-server"));
         try {
             Path modelDir = root.resolve("data/model");
             Fixtures fixtures = Fixtures.read(modelDir).forBuild(distribution.version());
