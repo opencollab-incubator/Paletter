@@ -9,9 +9,13 @@ import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.item.CustomItem;
+import org.geysermc.paletter.item.ItemFallback;
+import org.geysermc.paletter.item.ResolvedItem;
+import org.geysermc.paletter.item.component.MaxStackSize;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
+import org.geysermc.paletter.vanilla.BedrockItems;
 import org.junit.jupiter.api.Test;
 
 import java.lang.ref.WeakReference;
@@ -22,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A palette hands back the types a registered {@link CustomItem} or {@link CustomBlock} owns, so custom content compares
@@ -83,8 +88,57 @@ class CustomHandleIdentityTest {
             assertNotNull(damaged);
             assertSame(ruby.type(), damaged.type(), "a variant of a custom item is of the item's type");
             assertSame(damaged, palette.item("example:ruby", 5));
+            // Not the variant the layer was given: a variant of another damage value is equal, not identical (docs/api.md)
+            assertEquals(ruby.type().variantOf(5), damaged);
         }
         assertNull(base.item("example:sapphire", 0));
+    }
+
+    @Test
+    void anOverriddenCustomItemKeepsItsOwnedKey() {
+        CustomItem ruby = ruby("example:ruby");
+        CustomBlock lamp = lamp("example:lamp");
+        Palette base = PALETTER.palette(PALETTER.latest().protocolVersion())
+            .extend(PaletteLayer.builder("content").item(ruby).block(lamp).build());
+        Palette overridden = base.extend(PaletteLayer.builder("fixes")
+            .overrideItem(ruby.type(), item -> item.components(MaxStackSize.of(1))).build());
+        assertEquals(1, overridden.items().getDefinition("example:ruby").getComponentData().getCompound("components")
+            .getCompound("item_properties").getInt("max_stack_size"), "the override applies");
+        assertOwned(overridden, ruby, lamp);
+    }
+
+    @Test
+    void aFallbackToACustomItemResolvesToItsOwnedVariant() {
+        CustomItem ruby = ruby("example:ruby");
+        Paletter paletter = Paletter.builder()
+            .fallbacks(Fallbacks.builder().item(BedrockItems.DIAMOND_SWORD, ItemFallback.of(ruby.type()).forced()).build())
+            .layer(PaletteLayer.builder("content").item(ruby).build())
+            .build();
+        Palette palette = paletter.palette(paletter.latest().protocolVersion());
+        ResolvedItem resolved = palette.resolve(BedrockItems.DIAMOND_SWORD.base());
+        assertNotNull(resolved);
+        assertTrue(resolved.fallback());
+        assertSame(ruby.type(), resolved.definition().key());
+        assertSame(ruby.type().base(), palette.fallbackOf(BedrockItems.DIAMOND_SWORD.base()));
+        assertSame(ruby.type().base(), palette.decode(palette.encode(BedrockItemStack.of(BedrockItems.DIAMOND_SWORD))).variant());
+    }
+
+    @Test
+    void aBlockItemOfALaterLayerIsTheBlocksOwnItemType() {
+        CustomBlock lamp = CustomBlock.builder("example:lamp").property(BlockProperty.bool("example:lit"))
+            .item(CustomBlock.BlockItem.NONE).build();
+        Palette blockOnly = PALETTER.palette(PALETTER.latest().protocolVersion())
+            .extend(PaletteLayer.builder("blocks").block(lamp).build());
+        assertNull(blockOnly.item("example:lamp", 0));
+        Palette palette = blockOnly.extend(PaletteLayer.builder("items")
+            .blockItem(lamp.identifier(), CustomBlock.BlockItem.SIMPLE, CreativePlacement.loose(CreativeCategory.CONSTRUCTION)).build());
+        BedrockItemType itemType = lamp.itemType();
+        assertSame(itemType.base(), palette.item("example:lamp", 0));
+        assertSame(itemType, palette.item(itemType).key());
+        BedrockItemStack decoded = palette.decode(palette.encode(BedrockItemStack.of(itemType.base())));
+        assertNotNull(decoded);
+        assertSame(itemType.base(), decoded.variant());
+        assertSame(lamp.type().defaultState(), palette.blockKeyOf(itemType.base()));
     }
 
     @Test
