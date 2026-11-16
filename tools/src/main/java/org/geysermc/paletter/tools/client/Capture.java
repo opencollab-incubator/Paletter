@@ -1,5 +1,6 @@
 package org.geysermc.paletter.tools.client;
 
+import org.geysermc.paletter.tools.bds.BdsServer;
 import org.geysermc.paletter.tools.bds.CapturePlatform;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
 import org.cloudburstmc.protocol.bedrock.codec.v2225.Bedrock_v2225;
@@ -84,6 +85,7 @@ public final class Capture {
             codec = codec.toBuilder().protocolVersion(protocol).build();
         }
         codec = clientCodec(codec);
+        awaitConnectable(address, netherNet, CONNECT_SECONDS);
         System.out.println("Connecting to " + address + (netherNet ? " over NetherNet" : " over RakNet") + " with protocol " + protocol
             + (codecProtocol != protocol ? " (decoded with the " + codecProtocol + " codec)" : ""));
         CaptureClient.Result result = new CaptureClient(codec, address, netherNet).run(timeoutSeconds);
@@ -117,6 +119,71 @@ public final class Capture {
             .deregisterPacket(PacketViolationWarningPacket.class)
             .registerPacket(PacketViolationWarningPacket::new, PacketViolationWarningSerializer_v407.INSTANCE, 156, PacketRecipient.BOTH)
             .build();
+    }
+
+    /** How long a freshly started server may take to accept connections after it logged that it started. */
+    static final int CONNECT_SECONDS = 15;
+
+    /**
+     * How a freshly started BDS is reached and its protocol ({@code protocol} 0 when its status carries none).
+     *
+     * @param status the version from the RakNet pong or NetherNet LAN discovery, empty if none
+     */
+    public record Reachable(boolean netherNet, int protocol, String status) {
+    }
+
+    /**
+     * Waits until a started BDS answers on {@code address}, with backoff: "Server started." comes before the transport
+     * is fully up, and the RakNet pong carries the protocol only once LAN discovery is up. RakNet when the server logged
+     * {@code IPv4 supported, port: <port>} and answers a ping, else NetherNet (signaling on the same port, the 1.26.70
+     * previews).
+     *
+     * @return how to reach the server, or null if neither transport answered within {@code timeoutSeconds}
+     */
+    public static Reachable reachable(BdsServer bds, InetSocketAddress address, int timeoutSeconds) throws IOException, InterruptedException {
+        long deadline = System.nanoTime() + timeoutSeconds * 1_000_000_000L;
+        Reachable found = null;
+        long backoff = 250;
+        while (true) {
+            boolean raknetLogged = bds.sawLine(line -> line.contains("IPv4 supported, port: " + address.getPort()));
+            String[] pong = raknetLogged ? ping(address, 2000) : null;
+            if (pong != null) {
+                if (pong.length > 3) {
+                    return new Reachable(false, Integer.parseInt(pong[2]), pong[3]);
+                }
+                found = new Reachable(false, 0, "");
+            } else if (!raknetLogged) {
+                String[] lan = netherNetPing(address, 2);
+                if (lan != null) {
+                    if (!lan[0].equals("0")) {
+                        return new Reachable(true, Integer.parseInt(lan[0]), lan[1]);
+                    }
+                    found = new Reachable(true, 0, "");
+                }
+            }
+            if (System.nanoTime() > deadline) {
+                return found;
+            }
+            Thread.sleep(backoff);
+            backoff = Math.min(backoff * 2, 2000);
+        }
+    }
+
+    /**
+     * Waits, with backoff, until the server answers a RakNet ping or serves NetherNet signaling: a server started again
+     * in the same run can take a moment to bind its port again.
+     */
+    static void awaitConnectable(InetSocketAddress address, boolean netherNet, int timeoutSeconds) throws IOException, InterruptedException {
+        long deadline = System.nanoTime() + timeoutSeconds * 1_000_000_000L;
+        long backoff = 250;
+        while (!(netherNet ? NetherNet.serves(address, 2) : ping(address, 2000) != null)) {
+            if (System.nanoTime() > deadline) {
+                throw new IOException("BDS does not answer on " + address + (netherNet ? " (NetherNet signaling)" : " (RakNet)")
+                    + " within " + timeoutSeconds + " s");
+            }
+            Thread.sleep(backoff);
+            backoff = Math.min(backoff * 2, 2000);
+        }
     }
 
     /**

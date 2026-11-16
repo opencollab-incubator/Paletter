@@ -150,11 +150,11 @@ public final class EducationProbe {
         try (BdsServer bds = new BdsServer(server, false)) {
             bds.start(out.resolve("bds-create.log"));
             bds.awaitStarted(timeout);
-            String[] pong = Capture.ping(address, 2000);
-            if (pong == null || pong.length < 3) {
+            Capture.Reachable reachable = Capture.reachable(bds, address, 20);
+            if (reachable == null || reachable.netherNet() || reachable.protocol() == 0) {
                 throw new IOException("BDS answers no RakNet ping with a protocol; education-capture needs a RakNet server");
             }
-            protocol = Integer.parseInt(pong[2]);
+            protocol = reachable.protocol();
         }
         VanillaData reference = reference(root, options.get("reference"), protocol);
         System.out.println("BDS " + distribution.version() + ", protocol " + protocol + ", hashes resolved against " + reference.version().name());

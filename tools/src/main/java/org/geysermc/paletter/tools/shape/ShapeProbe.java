@@ -124,18 +124,12 @@ public final class ShapeProbe {
         try (BdsServer bds = new BdsServer(server, false)) {
             bds.start(work.resolve("bds-create.log"));
             bds.awaitStarted(timeout);
-            // RakNet if the server answers a RakNet ping with its protocol, else NetherNet (the 1.26.70 previews)
-            String[] pong = Capture.ping(address, 2000);
-            String[] lan = pong == null || pong.length < 3 ? Capture.netherNetPing(address, 10) : null;
-            netherNet = lan != null;
-            if (pong == null || pong.length < 3) {
-                if (lan == null || lan[0].equals("0")) {
-                    throw new IOException("BDS answers neither a RakNet ping nor NetherNet LAN discovery with a protocol");
-                }
-                protocol = Integer.parseInt(lan[0]);
-            } else {
-                protocol = Integer.parseInt(pong[2]);
+            Capture.Reachable reachable = Capture.reachable(bds, address, 20);
+            if (reachable == null || reachable.protocol() == 0) {
+                throw new IOException("BDS answers neither a RakNet ping nor NetherNet LAN discovery with a protocol");
             }
+            netherNet = reachable.netherNet();
+            protocol = reachable.protocol();
         }
         if (reference == null) {
             reference = EducationProbe.reference(root, null, protocol);

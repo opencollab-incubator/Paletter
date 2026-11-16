@@ -408,20 +408,17 @@ public final class Update {
         try (BdsServer bds = new BdsServer(server, false)) {
             bds.start(work.resolve("bds-vanilla.log"));
             bds.awaitStarted(timeout);
-            String[] pong = Capture.ping(address, 2000);
-            boolean raknet = pong != null && bds.sawLine(line -> line.contains("IPv4 supported, port: " + port));
-            String[] netherNet = raknet ? null : Capture.netherNetPing(address, 10);
-            if (!raknet && netherNet == null) {
+            Capture.Reachable reachable = Capture.reachable(bds, address, 20);
+            boolean raknet = reachable != null && !reachable.netherNet();
+            if (reachable == null) {
                 network = bds.lines(line -> line.contains("Accepting clients") || line.contains("supported, port")
                     || line.contains("NetherNet"));
             } else {
-                runs.netherNet = !raknet;
-                if (raknet && pong.length > 3) {
-                    runs.protocol = Integer.parseInt(pong[2]);
-                    report.header.put("Protocol", runs.protocol + " (RakNet pong: " + pong[3] + ")");
-                } else if (!raknet && !netherNet[0].equals("0")) {
-                    runs.protocol = Integer.parseInt(netherNet[0]);
-                    report.header.put("Protocol", runs.protocol + " (NetherNet LAN discovery: " + netherNet[1] + ")");
+                runs.netherNet = reachable.netherNet();
+                if (reachable.protocol() != 0) {
+                    runs.protocol = reachable.protocol();
+                    report.header.put("Protocol", runs.protocol + (raknet ? " (RakNet pong: " : " (NetherNet LAN discovery: ")
+                        + reachable.status() + ")");
                 } else {
                     runs.protocol = Integer.parseInt(options.getOrDefault("protocol", "0"));
                     if (runs.protocol == 0) {

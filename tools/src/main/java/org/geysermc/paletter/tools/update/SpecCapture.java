@@ -226,21 +226,10 @@ public final class SpecCapture {
             bds.awaitStarted(timeout);
             List<String> contentLog = attribute(bds.lines(line -> line.matches(".*(ERROR|WARN)\\] \\[.*") && !line.contains("TRANSPORT"))
                 .stream().map(line -> line.replaceFirst("^\\[[^]]*(ERROR|WARN)\\] ", "$1 ")).toList());
-            String[] pong = null;
-            for (int attempt = 0; attempt < 10 && (pong == null || pong.length <= 3); attempt++) {
-                Thread.sleep(1000); // the pong carries the protocol once LAN discovery is up
-                pong = Capture.ping(address, 2000);
-            }
-            boolean raknet = pong != null && bds.sawLine(line -> line.contains("IPv4 supported, port: " + port));
-            String[] netherNet = raknet ? null : Capture.netherNetPing(address, 10);
-            int protocol;
-            if (raknet && pong.length > 3) {
-                protocol = Integer.parseInt(pong[2]);
-            } else if (netherNet != null && !netherNet[0].equals("0")) {
-                protocol = Integer.parseInt(netherNet[0]);
-            } else {
-                protocol = Integer.parseInt(options.getOrDefault("protocol", "0"));
-            }
+            Capture.Reachable reachable = Capture.reachable(bds, address, 20);
+            boolean raknet = reachable == null || !reachable.netherNet();
+            int protocol = reachable != null && reachable.protocol() != 0 ? reachable.protocol()
+                : Integer.parseInt(options.getOrDefault("protocol", "0"));
             if (protocol == 0) {
                 throw new IOException("No protocol from the server status; pass --protocol");
             }
