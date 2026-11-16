@@ -20,8 +20,8 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *        range (-8, 0, -8) to (8, 16, 8), inclusive. Add-on JSON {@code origin}. Default: <code>[-8,0,-8]</code>.
  * @param size Size of each side of the selection box. Size is specified as [x, y, z]. "origin" + "size" must be in the range
  *        (-8, 0, -8) to (8, 16, 8), inclusive. Add-on JSON {@code size}. Default: <code>[16,16,16]</code>.
- * @param enabled The boolean form of the component (add-on JSON &#123;&#64;code "minecraft:selection_box":
- *        &lt;boolean&gt;&#125;). Optional (null: not set).
+ * @param enabled The boolean form of the component (add-on JSON {@code "minecraft:selection_box": <boolean>}). Optional (null:
+ *        not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_selection_box?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:selection_box</a>
  * @since 0.1.0
  */

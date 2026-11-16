@@ -172,6 +172,8 @@ final class ApiModel {
     static final class ObjType {
         String name;
         String doc;
+        /** Whether {@link #doc} is Javadoc this generator or {@code api.json} wrote, not docs text to escape. */
+        boolean javadoc;
         /** JSON path of the object (prefix of its fields), e.g. {@code damage_chance} or {@code destroy_speeds[]}. */
         String path;
         final List<Field> fields = new ArrayList<>();
@@ -254,6 +256,8 @@ final class ApiModel {
         /** The step BDS takes the values in (an inferred rule's {@code multipleOf}: it refused the others); null if none. */
         Double multipleOf;
         String doc = "";
+        /** Whether {@link #doc} is Javadoc this generator or {@code api.json} wrote, not docs text to escape. */
+        boolean javadoc;
         String minFormat;
         /** The bundled preview that alone has the field (every captured release rejects it), or null. */
         String sincePreview;

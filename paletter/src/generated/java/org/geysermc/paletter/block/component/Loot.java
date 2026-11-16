@@ -17,8 +17,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
  * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
  *
- * @param value The string form of the component (add-on JSON &#123;&#64;code "minecraft:loot": &lt;string&gt;&#125;).
- *        Required.
+ * @param value The string form of the component (add-on JSON {@code "minecraft:loot": <string>}). Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_loot?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:loot</a>
  * @since 0.1.0
  */

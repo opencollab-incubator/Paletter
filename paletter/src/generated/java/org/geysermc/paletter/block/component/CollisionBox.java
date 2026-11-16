@@ -20,8 +20,8 @@ import org.geysermc.paletter.annotation.Experimental;
  *
  * @param boxes The entries of the component (add-on JSON: the component's value is this list). Default: <code>[]</code>.
  *        Compiled by the hand transform {@code Transforms.collisionBoxes}.
- * @param enabled The boolean form of the component (add-on JSON &#123;&#64;code "minecraft:collision_box":
- *        &lt;boolean&gt;&#125;). Optional (null: not set).
+ * @param enabled The boolean form of the component (add-on JSON {@code "minecraft:collision_box": <boolean>}). Optional (null:
+ *        not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_collision_box?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:collision_box</a>
  * @since 0.1.0
  */
@@ -122,7 +122,7 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
     }
 
     /**
-     * An entry of &#123;&#64;code minecraft:collision_box&#125;.
+     * An entry of {@code minecraft:collision_box}.
      *
      * @param origin Add-on JSON {@code origin}. Optional (null: not set).
      * @param size Add-on JSON {@code size}. Optional (null: not set).

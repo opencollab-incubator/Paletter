@@ -16,8 +16,7 @@ import org.geysermc.paletter.annotation.ReplacedBy;
  * this component was found in the input, but is not present in the Schema. Its encoder writes nothing and adds a
  * report warning, as BDS would never send it to a client.
  *
- * @param value The boolean form of the component (add-on JSON &#123;&#64;code "minecraft:explosion_resistance":
- *        &lt;boolean&gt;&#125;). Required.
+ * @param value The boolean form of the component (add-on JSON {@code "minecraft:explosion_resistance": <boolean>}). Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_explosion_resistance?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:explosion_resistance</a>
  * @since 0.1.0
  * @deprecated replaced by {@link DestructibleByExplosion} (docs text: "Use minecraft:destructible_by_explosion in newer format versions.")

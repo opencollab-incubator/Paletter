@@ -92,7 +92,7 @@ public record Slab(@NonNull List<Slab.Entry> parts) implements BlockComponent {
     }
 
     /**
-     * An entry of &#123;&#64;code test:slab&#125;.
+     * An entry of {@code test:slab}.
      *
      * @param size Size. Add-on JSON {@code size}. Default: <code>16</code>.
      */

@@ -26,8 +26,8 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  * @param secondsToDestroy Sets the number of seconds it takes to destroy the block with base equipment. Greater numbers result in
  *        greater mining times. Add-on JSON {@code seconds_to_destroy}. Default: <code>0</code>. Range [0, inf) (BDS
  *        1.26.63.1).
- * @param enabled The boolean form of the component (add-on JSON &#123;&#64;code "minecraft:destructible_by_mining":
- *        &lt;boolean&gt;&#125;). Optional (null: not set).
+ * @param enabled The boolean form of the component (add-on JSON {@code "minecraft:destructible_by_mining": <boolean>}).
+ *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_destructible_by_mining?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:destructible_by_mining</a>
  * @since 0.1.0
  */

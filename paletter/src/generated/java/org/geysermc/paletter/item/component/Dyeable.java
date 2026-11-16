@@ -17,8 +17,8 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *
  * @param defaultColor Add-on JSON {@code default_color}. Default: <code>[255,255,255]</code>. Compiled by the hand transform {@code
  *        Transforms.rgbColor}.
- * @param defaultColorHex The string form of &#123;&#64;code default_color&#125; (hex); excludes &#123;&#64;link #defaultColor()&#125;.
- *        Add-on JSON {@code default_color}. Compiled by the hand transform {@code Transforms.rgbColor}.
+ * @param defaultColorHex The string form of {@code default_color} (hex); excludes {@link #defaultColor()}. Add-on JSON {@code
+ *        default_color}. Compiled by the hand transform {@code Transforms.rgbColor}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_dyeable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:dyeable</a>
  * @since 0.1.0
  */

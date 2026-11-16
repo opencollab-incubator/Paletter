@@ -13,8 +13,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:light_dampening"}.
  *
- * @param value The integer form of the component (add-on JSON &#123;&#64;code "minecraft:light_dampening":
- *        &lt;integer&gt;&#125;). Required.
+ * @param value The integer form of the component (add-on JSON {@code "minecraft:light_dampening": <integer>}). Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_light_dampening?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:light_dampening</a>
  * @since 0.1.0
  */

@@ -14,7 +14,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * Server only below protocol 200: BDS accepts it in packs but sends nothing to clients there (BDS 8.8.8), so
  * those palettes leave it out and add a report warning. Sent from protocol 200 (BDS 9.9.9).
  *
- * @param value The integer form of the component (add-on JSON &#123;&#64;code "test:glow": &lt;integer&gt;&#125;). Required.
+ * @param value The integer form of the component (add-on JSON {@code "test:glow": <integer>}). Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_glow?view=minecraft-bedrock-stable">Microsoft Learn: test:glow</a>
  * @since 0.1.0
  */

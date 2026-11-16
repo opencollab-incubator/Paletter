@@ -229,7 +229,7 @@ final class ApiSource {
         // Javadoc
         StringBuilder doc = new StringBuilder();
         String text = top ? c.doc : o.doc;
-        doc.append(lines(text.isEmpty() ? "The {@code " + o.path + "} object." : Docs.escape(text)));
+        doc.append(lines(text.isEmpty() ? "The {@code " + o.path + "} object." : !top && o.javadoc ? text : Docs.escape(text)));
         if (top && !c.standalone) {
             doc.append("<p>\nAdd-on JSON: {@code \"").append(c.name).append("\"}")
                 .append(c.page.isEmpty() || Docs.learnUrl(c.page) != null ? "" : ", documented in {@code " + c.page + "}").append(".\n");
@@ -372,7 +372,7 @@ final class ApiSource {
 
     private String fieldDoc(Field f) {
         StringBuilder s = new StringBuilder();
-        String doc = Docs.escape(f.doc);
+        String doc = f.javadoc ? f.doc : Docs.escape(f.doc);
         s.append(doc.isEmpty() ? (f.json == null ? "The value." : "Add-on JSON {@code " + f.json + "}.") : doc);
         if (f.json != null && !doc.isEmpty()) {
             s.append(" Add-on JSON {@code ").append(f.json).append("}.");

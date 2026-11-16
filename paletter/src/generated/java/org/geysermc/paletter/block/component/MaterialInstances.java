@@ -18,30 +18,22 @@ import org.geysermc.paletter.internal.component.Check;
  * Compiled by the hand transform {@code Transforms.materialInstances}.
  *
  * @param all Add-on JSON {@code *}. Optional (null: not set).
- * @param allAlias The string form of &#123;&#64;code *&#125; (alias); excludes &#123;&#64;link #all()&#125;. Add-on JSON {@code
- *        *}.
+ * @param allAlias The string form of {@code *} (alias); excludes {@link #all()}. Add-on JSON {@code *}.
  * @param down Add-on JSON {@code down}. Optional (null: not set).
- * @param downAlias The string form of &#123;&#64;code down&#125; (alias); excludes &#123;&#64;link #down()&#125;. Add-on JSON
- *        {@code down}.
+ * @param downAlias The string form of {@code down} (alias); excludes {@link #down()}. Add-on JSON {@code down}.
  * @param east Add-on JSON {@code east}. Optional (null: not set).
- * @param eastAlias The string form of &#123;&#64;code east&#125; (alias); excludes &#123;&#64;link #east()&#125;. Add-on JSON
- *        {@code east}.
+ * @param eastAlias The string form of {@code east} (alias); excludes {@link #east()}. Add-on JSON {@code east}.
  * @param north Add-on JSON {@code north}. Optional (null: not set).
- * @param northAlias The string form of &#123;&#64;code north&#125; (alias); excludes &#123;&#64;link #north()&#125;. Add-on JSON
- *        {@code north}.
+ * @param northAlias The string form of {@code north} (alias); excludes {@link #north()}. Add-on JSON {@code north}.
  * @param south Add-on JSON {@code south}. Optional (null: not set).
- * @param southAlias The string form of &#123;&#64;code south&#125; (alias); excludes &#123;&#64;link #south()&#125;. Add-on JSON
- *        {@code south}.
+ * @param southAlias The string form of {@code south} (alias); excludes {@link #south()}. Add-on JSON {@code south}.
  * @param up Add-on JSON {@code up}. Optional (null: not set).
- * @param upAlias The string form of &#123;&#64;code up&#125; (alias); excludes &#123;&#64;link #up()&#125;. Add-on JSON {@code
- *        up}.
+ * @param upAlias The string form of {@code up} (alias); excludes {@link #up()}. Add-on JSON {@code up}.
  * @param west Add-on JSON {@code west}. Optional (null: not set).
- * @param westAlias The string form of &#123;&#64;code west&#125; (alias); excludes &#123;&#64;link #west()&#125;. Add-on JSON
- *        {@code west}.
- * @param instances Instances with any other name, which geometry bones refer to (for example &#123;&#64;code "glass"&#125;); the
- *        keys &#123;&#64;code *&#125;, &#123;&#64;code up&#125;, &#123;&#64;code down&#125;, &#123;&#64;code
- *        north&#125;, &#123;&#64;code south&#125;, &#123;&#64;code east&#125; and &#123;&#64;code west&#125; have their
- *        own fields. Add-on JSON {@code *}. Default: <code>&#123;&#125;</code>.
+ * @param westAlias The string form of {@code west} (alias); excludes {@link #west()}. Add-on JSON {@code west}.
+ * @param instances Instances with any other name, which geometry bones refer to (for example {@code "glass"}); the keys {@code
+ *        *}, {@code up}, {@code down}, {@code north}, {@code south}, {@code east} and {@code west} have their own
+ *        fields. Add-on JSON {@code *}. Default: <code>&#123;&#125;</code>.
  * @param aliases Aliases with any other name: the key is an instance name, the value the instance it points at. Add-on JSON
  *        {@code *}. Default: <code>&#123;&#125;</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_material_instances?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:material_instances</a>

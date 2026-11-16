@@ -69,8 +69,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        the cube faces are square. This item requires a format version of at least 1.21.100. With UV locking, a single
  *        geometry can be reused for multiple texture rotations without authoring a new geometry per rotation. Add-on
  *        JSON {@code uv_lock}. Optional (null: not set).
- * @param uvLockBones The list of strings form of &#123;&#64;code uv_lock&#125; (bones); excludes &#123;&#64;link #uvLock()&#125;.
- *        Add-on JSON {@code uv_lock}.
+ * @param uvLockBones The list of strings form of {@code uv_lock} (bones); excludes {@link #uvLock()}. Add-on JSON {@code uv_lock}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_geometry?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:geometry</a>
  * @since 0.1.0
  */

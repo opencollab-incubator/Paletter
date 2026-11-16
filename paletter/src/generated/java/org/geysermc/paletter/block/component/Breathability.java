@@ -16,8 +16,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * "minecraft:breathability" is deprecated. Its encoder writes nothing and adds a report warning, as BDS would
  * never send it to a client.
  *
- * @param value The string form of the component (add-on JSON &#123;&#64;code "minecraft:breathability":
- *        &lt;string&gt;&#125;). Required.
+ * @param value The string form of the component (add-on JSON {@code "minecraft:breathability": <string>}). Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_breathability?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:breathability</a>
  * @since 0.1.0
  * @deprecated rejected by every captured BDS (oldest: 1.26.36.1, protocol 1001): minecraft:breathability: member

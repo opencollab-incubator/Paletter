@@ -34,8 +34,8 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  *        rare}; BDS takes other strings too.
  * @param stripes Stripes on or off, or the striped parts. Add-on JSON {@code stripes}. Optional (null: not set). Compiled by
  *        the hand transform {@code Transforms.testMap}.
- * @param stripesNames The list of strings form of &#123;&#64;code stripes&#125; (names); excludes &#123;&#64;link #stripes()&#125;.
- *        Add-on JSON {@code stripes}. Compiled by the hand transform {@code Transforms.testMap}.
+ * @param stripesNames The list of strings form of {@code stripes} (names); excludes {@link #stripes()}. Add-on JSON {@code stripes}.
+ *        Compiled by the hand transform {@code Transforms.testMap}.
  * @param fuel The item it burns. Add-on JSON {@code fuel}. Optional (null: not set).
  * @param reach The docs require it; BDS takes it omitted. Add-on JSON {@code reach}. Default: <code>3</code>.
  * @param moreNested Nested things under any other key. Add-on JSON {@code nested}. Default: <code>&#123;&#125;</code>.

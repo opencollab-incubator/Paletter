@@ -96,11 +96,10 @@ public record Repairable(
      * used for the repair and an optional <code>repair_amount</code> for how much durability is gained.
      *
      * @param items Add-on JSON {@code items}. Optional (null: not set).
-     * @param itemsTags The string form of &#123;&#64;code items&#125; (tags); excludes &#123;&#64;link #items()&#125;. Add-on JSON
-     *        {@code items}.
+     * @param itemsTags The string form of {@code items} (tags); excludes {@link #items()}. Add-on JSON {@code items}.
      * @param repairAmount Add-on JSON {@code repair_amount}. Optional (null: not set).
-     * @param repairAmountExpression The string form of &#123;&#64;code repair_amount&#125; (expression); excludes &#123;&#64;link
-     *        #repairAmount()&#125;. Add-on JSON {@code repair_amount}.
+     * @param repairAmountExpression The string form of {@code repair_amount} (expression); excludes {@link #repairAmount()}. Add-on JSON {@code
+     *        repair_amount}.
      */
     public record RepairItems(@Nullable List<String> items, @Nullable String itemsTags,
             @Nullable Float repairAmount, @Nullable String repairAmountExpression) {

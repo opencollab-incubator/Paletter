@@ -15,8 +15,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * <p>
  * Add-on JSON: {@code "minecraft:display_name"}.
  *
- * @param value The string form of the component (add-on JSON &#123;&#64;code "minecraft:display_name": &lt;string&gt;&#125;).
- *        Required.
+ * @param value The string form of the component (add-on JSON {@code "minecraft:display_name": <string>}). Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_display_name?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:display_name</a>
  * @since 0.1.0
  */

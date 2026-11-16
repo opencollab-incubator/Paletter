@@ -12,8 +12,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:interact_button"}.
  *
- * @param enabled The boolean form: &#123;&#64;code true&#125; shows the interact button with the default text. Optional (null:
- *        not set).
+ * @param enabled The boolean form: {@code true} shows the interact button with the default text. Optional (null: not set).
  * @param text The string form: the button text (a localization key or literal). Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_interact_button?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:interact_button</a>
  * @since 0.1.0

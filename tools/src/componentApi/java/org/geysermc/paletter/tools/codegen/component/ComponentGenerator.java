@@ -372,6 +372,7 @@ public final class ComponentGenerator {
             field.mappingKey = "form:" + type;
             field.doc = declared != null && declared.has("doc") ? declared.get("doc").getAsString()
                 : "The " + type + " form of the component (add-on JSON {@code \"" + c.name + "\": <" + type + ">}).";
+            field.javadoc = true;
             field.transform = transform(c.id, field.path);
             boolean only = scalarForms.size() == 1 && c.root.fields.isEmpty();
             field.required = only;
@@ -434,6 +435,7 @@ public final class ComponentGenerator {
         map.transform = base.transform;
         map.keyedExtraOf = base;
         map.doc = doc;
+        map.javadoc = true;
         c.root.fields.add(map);
         if (!base.alternatives.isEmpty()) {
             Field alias = base.alternatives.getFirst();
@@ -447,6 +449,7 @@ public final class ComponentGenerator {
             aliases.transform = alias.transform;
             aliases.keyedExtraOf = alias;
             aliases.doc = extra.get("aliasDoc").getAsString();
+            aliases.javadoc = true;
             c.root.fields.add(aliases);
         }
     }
@@ -511,10 +514,12 @@ public final class ComponentGenerator {
         list.mappingKey = "form:" + form;
         list.transform = transform(c.id, "[]");
         list.doc = "The entries of the component (add-on JSON: the component's value is this list).";
+        list.javadoc = true;
         ObjType element = new ObjType();
         element.path = "[]";
         element.name = typeName(c, "[]", null);
         element.doc = "An entry of {@code " + c.name + "}.";
+        element.javadoc = true;
         element.fields.addAll(children(c, "[]", fields, element));
         list.type = new ListOf(new ObjRef(element));
         list.defaultValue = new JsonArray();
@@ -882,6 +887,7 @@ public final class ComponentGenerator {
                 a.alternativeOf = f;
                 a.transform = f.transform;
                 a.doc = "The " + (type.startsWith("array<") ? "list of " + type.substring(6, type.length() - 1) + "s" : type) + " form of {@code " + f.json + "} (" + alt.get(type).getAsString() + "); excludes {@link #" + f.java + "()}.";
+                a.javadoc = true;
                 f.alternatives.add(a);
             }
         }
