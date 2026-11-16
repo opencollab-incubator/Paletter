@@ -1579,18 +1579,31 @@ public final class Update {
      */
     static <T> T track(Report report, Path root, List<Path> paths, String what, Callable<T> action) throws Exception {
         Map<String, String> before = digests(root, paths);
+        T result;
         try {
-            return action.call();
-        } finally {
-            Map<String, String> after = digests(root, paths);
-            Set<String> files = new TreeSet<>(before.keySet());
-            files.addAll(after.keySet());
-            for (String file : files) {
-                String old = before.get(file);
-                String now = after.get(file);
-                if (!Objects.equals(old, now)) {
-                    report.repoChanges.add((old == null ? "add" : now == null ? "remove" : "update") + " `" + file + "` (" + what + ")");
-                }
+            result = action.call();
+        } catch (Exception | Error e) {
+            // Also what a failed action wrote; a failure to read it back never hides the action's own
+            try {
+                recordChanges(report, root, paths, what, before);
+            } catch (IOException | RuntimeException suppressed) {
+                e.addSuppressed(suppressed);
+            }
+            throw e;
+        }
+        recordChanges(report, root, paths, what, before);
+        return result;
+    }
+
+    private static void recordChanges(Report report, Path root, List<Path> paths, String what, Map<String, String> before) throws IOException {
+        Map<String, String> after = digests(root, paths);
+        Set<String> files = new TreeSet<>(before.keySet());
+        files.addAll(after.keySet());
+        for (String file : files) {
+            String old = before.get(file);
+            String now = after.get(file);
+            if (!Objects.equals(old, now)) {
+                report.repoChanges.add((old == null ? "add" : now == null ? "remove" : "update") + " `" + file + "` (" + what + ")");
             }
         }
     }
