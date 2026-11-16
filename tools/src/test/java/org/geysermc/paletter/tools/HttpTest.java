@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,9 +30,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** Against a local server: retries, timeouts, the user agent and checked downloads. */
+/** Against a local server: retries, timeouts, the deadline, cut bodies, the user agent and checked downloads. */
 class HttpTest {
-    private static final Http FAST = new Http(Duration.ofSeconds(2), Duration.ofMillis(300), 3, Duration.ofMillis(1));
+    private static final Http FAST = new Http(Duration.ofSeconds(2), Duration.ofMillis(300), 3, Duration.ofMillis(1), Duration.ofSeconds(10));
 
     /** One answer per request, in order; the last one repeats. */
     @FunctionalInterface
@@ -123,7 +125,8 @@ class HttpTest {
     @Test
     void doesNotRetryANotFound() {
         answers.add(status(404));
-        assertThrows(Http.NetworkException.class, () -> FAST.get(url()));
+        Http.NetworkException e = assertThrows(Http.NetworkException.class, () -> FAST.get(url()));
+        assertEquals(404, e.status());
         assertEquals(1, requests.get());
     }
 
@@ -133,6 +136,77 @@ class HttpTest {
         answers.add(body("hello"));
         assertEquals("hello", FAST.get(url()));
         assertEquals(2, requests.get());
+    }
+
+    @Test
+    void aBodyThatStallsAfterTheHeadersTimesOutAndIsRetried() throws Exception {
+        answers.add(exchange -> {
+            exchange.sendResponseHeaders(200, 10);
+            OutputStream out = exchange.getResponseBody();
+            out.write("hello".getBytes(StandardCharsets.UTF_8));
+            out.flush();
+            Thread.sleep(2000);
+        });
+        answers.add(body("hello"));
+        assertEquals("hello", FAST.get(url()));
+        assertEquals(2, requests.get());
+    }
+
+    @Test
+    void aBodyThatStallsEveryTryIsANetworkFailure() {
+        answers.add(exchange -> {
+            exchange.sendResponseHeaders(200, 10);
+            OutputStream out = exchange.getResponseBody();
+            out.write("hello".getBytes(StandardCharsets.UTF_8));
+            out.flush();
+            Thread.sleep(2000);
+        });
+        Http.NetworkException e = assertThrows(Http.NetworkException.class, () -> FAST.get(url()));
+        assertEquals(0, e.status());
+        assertEquals(3, requests.get());
+    }
+
+    @Test
+    void aBodyShorterThanItsLengthFailsAndIsRetried() throws Exception {
+        // A raw server: the HTTP server of the JDK cannot cut a body short
+        try (ServerSocket raw = new ServerSocket(0, 0, InetAddress.getLoopbackAddress())) {
+            AtomicInteger connections = new AtomicInteger();
+            threads.submit(() -> {
+                while (!raw.isClosed()) {
+                    try (Socket socket = raw.accept()) {
+                        socket.getInputStream().read(new byte[4096]);
+                        String answer = connections.getAndIncrement() == 0
+                            ? "HTTP/1.1 200 OK\r\nContent-Length: 10\r\nConnection: close\r\n\r\nhello"
+                            : "HTTP/1.1 200 OK\r\nContent-Length: 5\r\nConnection: close\r\n\r\nwhole";
+                        socket.getOutputStream().write(answer.getBytes(StandardCharsets.US_ASCII));
+                    }
+                }
+                return null;
+            });
+            assertEquals("whole", FAST.get("http://" + raw.getInetAddress().getHostAddress() + ":" + raw.getLocalPort() + "/file"));
+            assertEquals(2, connections.get());
+        }
+    }
+
+    @Test
+    void aBodyThatTricklesInEndsAtTheDeadline() {
+        answers.add(exchange -> {
+            exchange.sendResponseHeaders(200, 100);
+            OutputStream out = exchange.getResponseBody();
+            for (int i = 0; i < 100; i++) {
+                // Each byte well within the read timeout, the whole body far beyond the deadline
+                out.write('x');
+                out.flush();
+                Thread.sleep(100);
+            }
+        });
+        Http slow = new Http(Duration.ofSeconds(2), Duration.ofMillis(300), 3, Duration.ofMillis(1), Duration.ofSeconds(1));
+        long start = System.nanoTime();
+        Http.NetworkException e = assertThrows(Http.NetworkException.class, () -> slow.get(url()));
+        assertTrue(e.getMessage().contains("deadline"), e.getMessage());
+        assertEquals(0, e.status());
+        assertEquals(1, requests.get());
+        assertTrue(Duration.ofNanos(System.nanoTime() - start).compareTo(Duration.ofSeconds(5)) < 0);
     }
 
     @Test
@@ -151,14 +225,16 @@ class HttpTest {
     }
 
     @Test
-    void aDownloadThatNeverPassesLeavesNothing(@TempDir Path directory) {
+    void aDownloadThatNeverPassesIsDownloadedOnceMoreAndLeavesNothing(@TempDir Path directory) {
         answers.add(body("broken"));
         Path file = directory.resolve("file.zip");
-        assertThrows(Http.NetworkException.class, () -> FAST.download(url(), file, Map.of(), part -> {
+        // A local error, not the network: its own exception, after one more download
+        IOException e = assertThrows(IOException.class, () -> FAST.download(url(), file, Map.of(), part -> {
             throw new IOException("not whole");
         }));
+        assertEquals("not whole", e.getMessage());
         assertFalse(Files.exists(file));
         assertFalse(Files.exists(directory.resolve("file.zip.part")));
-        assertEquals(3, requests.get());
+        assertEquals(2, requests.get());
     }
 }
