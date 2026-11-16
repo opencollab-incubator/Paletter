@@ -27,8 +27,10 @@ import java.util.Objects;
  *     .build();
  * }</pre>
  * <p>
- * An instance owns its {@link #type()}: the palette hands back that same type and its variants for the item, so they can
- * be compared with {@code ==}. Equal items (same identifier and definition) are {@code equals}, but each has a type of its
+ * An instance owns its {@link #type()}: the palette hands back that same type and its base variant for the item, so they
+ * can be compared with {@code ==}. Other variants, given canonical ids with a layer's
+ * {@link org.geysermc.paletter.PaletteLayer.Builder#variant(org.geysermc.paletter.vanilla.BedrockItemVariant) variant},
+ * are equal, not identical. Equal items (same identifier and definition) are {@code equals}, but each has a type of its
  * own, see {@link #type()}.
  *
  * @since 0.1.0

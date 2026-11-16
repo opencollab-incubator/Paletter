@@ -249,7 +249,8 @@ public final class PaletteLayer {
 
         /**
          * Gives a variant a canonical id, so that {@link Palette#decode} recognizes it. Needed for variants of the newest version that are
-         * neither an item's base variant nor in the creative inventory.
+         * neither an item's base variant nor in the creative inventory. A palette hands back a variant equal to this one,
+         * not necessarily this object: compare it with {@code equals}.
          *
          * @since 0.1.0
          */

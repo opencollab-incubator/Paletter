@@ -35,8 +35,10 @@ is not packaged, because Cloudburst's dependencies split packages across jars.
 
 Keys (`BedrockBlockType`, `BedrockBlockState`, `BedrockItemType`, `BedrockItemVariant`) are identities. `equals` always
 works. `==` works too for vanilla keys, which are singletons, and for registered custom content: a `CustomItem` or
-`CustomBlock` creates its types once and owns them, and a palette it is registered in hands back exactly those
-(`decode`, `block(NbtMap)`, `RegisteredItem#key`, `RegisteredBlockState#key`, ...). A key for an identifier Paletter does
+`CustomBlock` creates its types, their base item variant and its block states once and owns them, and a palette it is
+registered in hands back exactly those (`decode`, `block(NbtMap)`, `RegisteredItem#key`, `RegisteredBlockState#key`,
+...). Other variants of a custom item (`layer.variant(ruby.type().variantOf(5))`) are equal to the one the layer was
+given, not identical: compare them with `equals`. A key for an identifier Paletter does
 not know is a plain value, equal by identifier and not interned, so memory is bounded by registered content. Equal custom
 items or blocks in different layers each own their keys, which are equal but not identical. Registered entries (`RegisteredItem`, `RegisteredBlockState`) are compared by identity, like
 Cloudburst definitions: there is one instance per entry per palette.
