@@ -49,7 +49,8 @@ only hold canonical entries.
 
 `paletter/src/main/resources/paletter/` holds `versions.txt`, one gzipped NBT file per version (format in
 `internal.data.PaletteDataCodec`), `properties.nbt` (component data stored once with the version range it applies to),
-`behaviour.nbt`, `voxel_shapes.nbt` and the hand-written `renames.txt`. `PaletteDataSource#bundled()` reads them. Each
+`behaviour.nbt`, `voxel_shapes.nbt`, the generated `builds.txt` (the BDS builds each version was verified against,
+from `data/bds/builds.json`) and the hand-written `renames.txt`. `PaletteDataSource#bundled()` reads them. Each
 version file holds block states, items with components, data driven blocks, the creative layout, item tags, default
 block states, the block to item relation and experiment marks.
 

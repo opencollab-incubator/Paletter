@@ -2333,7 +2333,17 @@ public record org.geysermc.paletter.data.DataVersion extends java.lang.Record im
 public interface org.geysermc.paletter.data.PaletteDataSource {
     public static org.geysermc.paletter.data.PaletteDataSource bundled()
     public static org.geysermc.paletter.data.PaletteDataSource directory(java.nio.file.Path)
+    public default java.util.List<org.geysermc.paletter.data.VerifiedBuild> verifiedBuilds(org.geysermc.paletter.data.DataVersion)
     public abstract java.util.List<org.geysermc.paletter.data.DataVersion> versions()
+}
+
+public record org.geysermc.paletter.data.VerifiedBuild {
+    public <init>(java.lang.String, int)
+    public java.lang.String bdsVersion()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public int protocolVersion()
+    public java.lang.String toString()
 }
 
 public record org.geysermc.paletter.item.BedrockItemStack {

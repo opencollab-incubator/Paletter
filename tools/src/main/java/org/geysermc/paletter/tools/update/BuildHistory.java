@@ -491,6 +491,7 @@ public final class BuildHistory {
                 apply(record, captured, step, null, b -> false);
                 record.put(build, record.get(build).from(list.source(build)));
                 write(root, record, list);
+                BuildTable.run(root, false);
                 System.out.println(build + " (protocol " + record.get(build).protocol() + "): kept, the oldest kept build of the record");
                 continue;
             }
@@ -531,6 +532,7 @@ public final class BuildHistory {
                 captured.put(build, outcome.protocol());
             }
             write(root, record, list);
+            BuildTable.run(root, false);
             cleanUp(cache, build, record.get(build).kept(), linuxZip);
             Entry entry = record.get(build);
             String target = entry.kept() ? null : entry.identicalTo();

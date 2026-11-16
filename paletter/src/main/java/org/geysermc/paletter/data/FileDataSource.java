@@ -22,7 +22,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Reads data in the bundled format from a set of files: {@code versions.txt} lists one
@@ -31,7 +33,8 @@ import java.util.List;
  * (written by the generator, see {@link PaletteDataCodec}). Item components and data driven blocks are stored once with
  * their version ranges in {@code properties.nbt} (see {@link PropertyStore}), behaviour values in
  * {@code behaviour.nbt} (see {@link BehaviourStore}), the vanilla voxel shapes in {@code voxel_shapes.nbt} (see
- * {@link VoxelShapeStore}); {@code renames.txt} is optional.
+ * {@link VoxelShapeStore}); {@code renames.txt} is optional, as is {@code builds.txt}: one {@code <name> <BDS build> <protocol>}
+ * line per release build verified to send a version's data ({@link #verifiedBuilds}).
  * The files are either {@code /paletter/} on the classpath of the library ({@link PaletteDataSource#bundled()}) or a
  * directory ({@link PaletteDataSource#directory(Path)}).
  */
@@ -44,6 +47,7 @@ final class FileDataSource implements PaletteDataSource {
     static final String PREVIEWS_PROPERTY = "paletter.previews";
 
     private volatile List<DataVersion> versions;
+    private volatile Map<String, List<VerifiedBuild>> verifiedBuilds;
     private volatile PropertyStore properties;
     private volatile BehaviourStore behaviour;
     private volatile VoxelShapeStore voxelShapes;
@@ -97,6 +101,38 @@ final class FileDataSource implements PaletteDataSource {
         } catch (IOException e) {
             throw new UncheckedIOException("Unable to read the Paletter version index in " + origin, e);
         }
+    }
+
+    @Override
+    public @NonNull List<VerifiedBuild> verifiedBuilds(@NonNull DataVersion version) {
+        Map<String, List<VerifiedBuild>> builds = this.verifiedBuilds;
+        if (builds == null) {
+            this.verifiedBuilds = builds = readBuilds();
+        }
+        return builds.getOrDefault(version.name(), List.of());
+    }
+
+    private Map<String, List<VerifiedBuild>> readBuilds() {
+        Map<String, List<VerifiedBuild>> builds = new HashMap<>();
+        try (InputStream stream = opener.open("builds.txt")) {
+            if (stream == null) {
+                return Map.of();
+            }
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.strip();
+                if (line.isEmpty() || line.startsWith("#")) {
+                    continue;
+                }
+                String[] parts = line.split("\\s+");
+                builds.computeIfAbsent(parts[0], name -> new ArrayList<>()).add(new VerifiedBuild(parts[1], Integer.parseInt(parts[2])));
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException("Unable to read the Paletter build list in " + origin, e);
+        }
+        builds.replaceAll((name, list) -> List.copyOf(list));
+        return Map.copyOf(builds);
     }
 
     @Override

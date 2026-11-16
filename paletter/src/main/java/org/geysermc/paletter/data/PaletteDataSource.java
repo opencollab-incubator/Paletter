@@ -30,6 +30,21 @@ public interface PaletteDataSource {
     @NonNull List<DataVersion> versions();
 
     /**
+     * The Bedrock Dedicated Server release builds that were run and found to send the data of a version: the build its
+     * data was captured from and the builds identical to it, oldest first. Generated from the record of every checked
+     * release build ({@code data/bds/builds.json} in the repository, also shown in {@code data/bds/builds.md}). A
+     * version serves every protocol from its first one up to the next version's; these are the builds that were
+     * actually compared. The bundled source reads {@code builds.txt}; the default, and a preview version, has none.
+     *
+     * @param version a version of this source
+     * @return the builds, oldest first; empty when none were recorded
+     * @since 0.1.0
+     */
+    default @NonNull List<VerifiedBuild> verifiedBuilds(@NonNull DataVersion version) {
+        return List.of();
+    }
+
+    /**
      * Loads the data of the given version. Called at most once per version by {@link org.geysermc.paletter.Paletter}.
      */
     @org.geysermc.paletter.annotation.Internal
@@ -81,8 +96,8 @@ public interface PaletteDataSource {
     /**
      * @param directory a directory in the bundled format: {@code versions.txt}, one {@code <name>.nbt} per version,
      *                  {@code voxel_shapes.nbt} with the shapes of every version (a palette without them fails to build),
-     *                  and optionally {@code properties.nbt}, {@code behaviour.nbt} and {@code renames.txt}. Read when first
-     *                  needed
+     *                  and optionally {@code properties.nbt}, {@code behaviour.nbt}, {@code renames.txt} and
+     *                  {@code builds.txt}. Read when first needed
      * @return a source reading that directory
      * @since 0.1.0
      */

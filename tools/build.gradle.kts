@@ -148,8 +148,12 @@ val checkData = cliTask("checkData", "verification",
 val checkWhitebox = cliTask("checkWhitebox", "verification",
     "Fails if a committed whitebox-coverage.md is not what the committed whitebox.json and captures give", "whitebox-coverage", "--check", check = true)
 
+// What data/bds/builds.json says per bundled data version: the library's builds.txt and data/bds/builds.md
+val checkBuilds = cliTask("checkBuilds", "verification",
+    "Fails if builds.txt or data/bds/builds.md is stale against data/bds/builds.json", "builds", "table", "--check", check = true)
+
 tasks.named("check") {
-    dependsOn(checkConstants, checkComponentApi, checkMappings, checkData, checkWhitebox)
+    dependsOn(checkConstants, checkComponentApi, checkMappings, checkData, checkWhitebox, checkBuilds)
 }
 
 // The white-box analysis of a cached BDS binary against the committed whitebox.json. Explicit only (not in check or

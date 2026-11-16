@@ -27,6 +27,7 @@ import org.geysermc.paletter.tools.model.docs.DocsFetcher;
 import org.geysermc.paletter.tools.model.docs.DocsParser;
 import org.geysermc.paletter.tools.model.infer.MappingInference;
 import org.geysermc.paletter.tools.update.BuildHistory;
+import org.geysermc.paletter.tools.update.BuildTable;
 import org.geysermc.paletter.tools.update.CreativeProbe;
 import org.geysermc.paletter.tools.update.EducationProbe;
 import org.geysermc.paletter.tools.update.ExperimentMarks;
@@ -275,7 +276,7 @@ public final class Cli implements Runnable {
     }
 
     @Command(name = "builds", description = "Every BDS release build, one by one: list them, or check the ones data/bds/builds.json lacks "
-        + "against the previous kept build (captures kept only when they differ).", subcommands = {Builds.ListBuilds.class, Builds.Check.class})
+        + "against the previous kept build (captures kept only when they differ).", subcommands = {Builds.ListBuilds.class, Builds.Check.class, Builds.Table.class})
     static final class Builds implements Runnable {
         @Override
         public void run() {
@@ -323,6 +324,17 @@ public final class Cli implements Runnable {
                 BuildHistory.BuildList list = BuildHistory.fetchWithCurrentRelease();
                 return BuildHistory.check(root(), list, list.range(from, to), cache != null ? Path.of(cache) : BdsDistribution.defaultCache(),
                     BuildHistory.updates(root(), options), limit == null ? Integer.MAX_VALUE : limit, (minFreeMb == null ? 1536 : minFreeMb) << 20);
+            }
+        }
+
+        @Command(name = "table", description = "Writes what data/bds/builds.json says per bundled data version: the library's "
+            + "builds.txt and data/bds/builds.md (BuildTable). --check fails if they are stale instead.")
+        static final class Table extends Rooted implements Callable<Integer> {
+            @Option(names = "--check", description = "Fail if the committed files differ instead of writing them") boolean check;
+
+            @Override
+            public Integer call() throws Exception {
+                return BuildTable.run(root(), check) ? 0 : 1;
             }
         }
     }
