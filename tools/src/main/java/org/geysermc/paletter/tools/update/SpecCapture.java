@@ -398,6 +398,35 @@ public final class SpecCapture {
         return org.geysermc.paletter.tools.data.BundledFiles.read(resources.resolve(entry.name() + ".nbt"));
     }
 
+    /**
+     * Removes the packs in {@code packs} whose manifest has the spec add-on's UUID. On a server that {@code update} reuses,
+     * the creative order probe pack ({@code FixedAddons.writeCreative}) is still installed with that UUID, and BDS would
+     * load it for the spec world in place of the spec add-on.
+     */
+    static void removePacksWithUuid(Path packs, String uuid) throws IOException {
+        if (!Files.isDirectory(packs)) {
+            return;
+        }
+        try (Stream<Path> directories = Files.list(packs)) {
+            for (Path pack : directories.filter(Files::isDirectory).toList()) {
+                Path manifest = pack.resolve("manifest.json");
+                if (!Files.exists(manifest)) {
+                    continue;
+                }
+                com.google.gson.JsonElement json;
+                try {
+                    json = com.google.gson.JsonParser.parseString(Files.readString(manifest));
+                } catch (RuntimeException e) {
+                    continue;
+                }
+                com.google.gson.JsonObject header = json.isJsonObject() ? json.getAsJsonObject().getAsJsonObject("header") : null;
+                if (header != null && header.has("uuid") && uuid.equals(header.get("uuid").getAsString())) {
+                    BdsDistribution.deleteRecursively(pack);
+                }
+            }
+        }
+    }
+
     private static void freshWorld(Path server, Path addon) throws IOException {
         Path directory = server.resolve("worlds").resolve(WORLD);
         BdsDistribution.deleteRecursively(directory);
@@ -407,6 +436,7 @@ public final class SpecCapture {
             Path source = addon.resolve(kind + "_pack");
             Path target = server.resolve(kind + "_packs").resolve("paletter_spec");
             BdsDistribution.deleteRecursively(target);
+            removePacksWithUuid(server.resolve(kind + "_packs"), uuids.get(kind));
             try (Stream<Path> files = Files.walk(source)) {
                 for (Path file : files.toList()) {
                     Path copy = target.resolve(source.relativize(file).toString());
