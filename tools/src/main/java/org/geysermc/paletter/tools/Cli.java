@@ -3,11 +3,9 @@ package org.geysermc.paletter.tools;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
-import org.geysermc.paletter.internal.data.PaletteDataCodec;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.bds.BdsInventory;
-import org.geysermc.paletter.tools.bds.BdsRunner;
 import org.geysermc.paletter.tools.bds.CapturePlatform;
 import org.geysermc.paletter.tools.client.Capture;
 import org.geysermc.paletter.tools.client.CaptureClient;
@@ -53,8 +51,8 @@ import java.util.concurrent.Callable;
  * repository. See docs/data-pipeline.md for what each command does.
  */
 @Command(name = "paletter-tools", mixinStandardHelpOptions = true, subcommands = {
-    Cli.Import.class, Cli.BdsRun.class, Cli.BdsInventoryCommand.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.SpecCaptureCommand.class,
-    Cli.VerifyCommand.class, Cli.CheckData.class, Cli.BlockItemsCommand.class, Cli.RewriteCommand.class, Cli.DataRewriteCommand.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class, Cli.ExperimentMarksCommand.class,
+    Cli.Import.class, Cli.BdsInventoryCommand.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.SpecCaptureCommand.class,
+    Cli.VerifyCommand.class, Cli.CheckData.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class, Cli.ExperimentMarksCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
     Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class, Cli.BehaviourCommand.class, Cli.BehaviourProbeCommand.class, Cli.BehaviourDumpCommand.class,
@@ -106,64 +104,6 @@ public final class Cli implements Runnable {
         }
     }
 
-    @Command(name = "block-items", description = "Adds the block to item relation of a Script API dump to bundled data (rewrites resources/NAME.nbt, "
-        + "everything else is kept). Without --bds-dump the relation of the bundled version --from is applied to NAME: a block that exists in both "
-        + "gets that item if it exists in NAME. For versions that no dump exists for.")
-    static final class BlockItemsCommand extends Rooted implements Callable<Integer> {
-        @Option(names = "--name", required = true) String name;
-        @Option(names = "--bds-dump") Path bdsDump;
-        @Option(names = "--from", description = "Bundled version to copy the relation from") String from;
-
-        @Override
-        public Integer call() throws Exception {
-            Path file = resources().resolve(name + ".nbt");
-            VanillaData data = readPalette(file);
-            Map<String, String> relation;
-            if (bdsDump != null) {
-                relation = Importer.blockItems(BdsDump.read(bdsDump), data.blockStates(), data.items());
-            } else if (from != null) {
-                relation = Importer.deriveBlockItems(readPalette(resources().resolve(from + ".nbt")), data);
-            } else {
-                throw new IllegalArgumentException("Missing --bds-dump or --from");
-            }
-            java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
-            PaletteDataCodec.write(data.withBlockItems(relation), bytes);
-            Files.write(file, bytes.toByteArray());
-            System.out.println("Wrote " + file + " with " + relation.size() + " block to item entries");
-            return 0;
-        }
-    }
-
-    @Command(name = "rewrite", description = "Reads bundled data NAME and writes it again without fallbacks (Paletter bundles none; the codec still reads them from older files).")
-    static final class RewriteCommand extends Rooted implements Callable<Integer> {
-        @Option(names = "--name", required = true, split = ",") List<String> names;
-
-        @Override
-        public Integer call() throws Exception {
-            for (String name : names) {
-                Path file = resources().resolve(name + ".nbt");
-                java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
-                VanillaData data = readPalette(file);
-                PaletteDataCodec.write(new VanillaData(data.version(), data.blockStates(), data.items(), data.dataDrivenBlocks(), data.creative(),
-                    data.itemTags(), org.geysermc.paletter.internal.data.VersionFallbacks.NONE, data.blockDefaults(), data.experiments(), data.blockItems()), bytes);
-                Files.write(file, bytes.toByteArray());
-                System.out.println("Rewrote " + file);
-            }
-            return 0;
-        }
-    }
-
-    @Command(name = "data-rewrite", description = "Rewrites every bundled version file (format 2, without item components and data driven blocks) "
-        + "and rebuilds properties.nbt from all of them. Reads format 1 and 2; checks before writing that putting the data together again "
-        + "gives back exactly what was read.")
-    static final class DataRewriteCommand extends Rooted implements Callable<Integer> {
-        @Override
-        public Integer call() throws Exception {
-            BundledFiles.rewrite(resources());
-            return 0;
-        }
-    }
-
     @Command(name = "data-diff", description = "Diffs two bundled data files (network data, creative, tags, defaults, block to item relation). Exits with 1 on any difference.")
     static final class DataDiffCommand extends Rooted implements Callable<Integer> {
         @Option(names = "--before", required = true) Path before;
@@ -174,28 +114,6 @@ public final class Cli implements Runnable {
             Diff diff = Diff.vanilla(readPalette(before), readPalette(after), true, true);
             System.out.print(diff.markdown(Diff.DEFAULT_MAX_LINES));
             return diff.identical() ? 0 : 1;
-        }
-    }
-
-    @Command(name = "bds-run", description = "Installs data/addons/dump on a fresh flat world of a Bedrock Dedicated Server, runs it headless until the "
-        + "add-on printed PALETTER-DONE and writes the console output to --log (the input of import --bds-dump). --download fetches BDS for this OS "
-        + "from minecraft.net into DIR/VERSION first; keep DIR outside the repository. Downloading BDS means accepting the Minecraft EULA.")
-    static final class BdsRun extends Rooted implements Callable<Integer> {
-        @Option(names = "--log", required = true) Path log;
-        @Option(names = "--server", description = "An extracted BDS") Path server;
-        @Option(names = "--download", description = "Download BDS into this directory") Path download;
-        @Option(names = "--version") String version;
-        @Option(names = "--preview", arity = "0..1", fallbackValue = "true", description = "Download the preview") boolean preview;
-        @Option(names = "--timeout", defaultValue = "600") int timeout;
-
-        @Override
-        public Integer call() throws Exception {
-            Path dir = download != null ? BdsRunner.download(download, preview, version) : server;
-            if (dir == null) {
-                throw new IllegalArgumentException("Missing --server or --download");
-            }
-            new BdsRunner(root().resolve(Layout.DUMP_ADDON)).run(dir, log, timeout);
-            return 0;
         }
     }
 

@@ -121,24 +121,6 @@ public final class Importer {
     }
 
     /**
-     * The relation of a newer version, for a version no dump exists for: the entries of {@code newer} whose block and
-     * item both exist in {@code data}.
-     */
-    public static Map<String, String> deriveBlockItems(VanillaData newer, VanillaData data) {
-        Set<String> blockNames = new TreeSet<>();
-        data.blockStates().forEach(state -> blockNames.add(BlockStates.name(state)));
-        Set<String> itemNames = new TreeSet<>();
-        data.items().forEach(item -> itemNames.add(item.identifier()));
-        Map<String, String> result = new TreeMap<>();
-        newer.blockItems().forEach((block, item) -> {
-            if (blockNames.contains(block) && itemNames.contains(item)) {
-                result.put(block, item);
-            }
-        });
-        return result;
-    }
-
-    /**
      * Block defaults of the dump, reduced to network states. Only defaults that differ from a block's first palette
      * state are kept: the first state is the default of every block without an entry, so storing it is redundant.
      */

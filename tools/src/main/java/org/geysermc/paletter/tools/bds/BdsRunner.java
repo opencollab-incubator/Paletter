@@ -19,7 +19,6 @@ import java.util.stream.Stream;
  * Runs a Paletter addon (the dump addon, the behaviour probe) on a Bedrock Dedicated Server and captures its console
  * output.
  * <ol>
- *     <li>optionally downloads the newest BDS for this OS from the official download links API;</li>
  *     <li>installs the addon as a behavior pack on a fresh flat world;</li>
  *     <li>starts BDS headless, copies its output to the log file, waits for the addon's {@code <marker>-DONE} (the dump
  *     addon prints {@code PALETTER-DONE}) and stops it.</li>
@@ -28,7 +27,6 @@ import java.util.stream.Stream;
  * for nothing else. Keep the server directory outside the repository.
  */
 public final class BdsRunner {
-    static final int DUMP_PORT = 19232;
     public static final String WORLD = "paletter";
 
     private final Path addon;
@@ -63,27 +61,6 @@ public final class BdsRunner {
         this.experiments = List.of("gametest");
         this.betaModule = ScriptModules.betaVersion(bdsVersion);
         return this;
-    }
-
-    /**
-     * Downloads and extracts BDS into {@code parent/<version>} unless it is already there.
-     *
-     * @param version a BDS version such as {@code 1.26.51.1}, or {@code null} for the newest one (or newest preview)
-     * @return the server directory
-     */
-    public static Path download(Path parent, boolean preview, String version) throws IOException, InterruptedException {
-        BdsDistribution distribution = BdsDistribution.resolve(preview, version);
-        Path server = parent.resolve(distribution.version() + (preview ? "-preview" : ""));
-        if (Files.exists(BdsServer.executable(server))) {
-            System.out.println("BDS " + distribution.version() + " is already in " + server);
-            return server;
-        }
-        BdsDistribution.extract(distribution.zip(parent.resolve(".cache")), server);
-        return server;
-    }
-
-    public void run(Path server, Path log, int timeoutSeconds) throws IOException, InterruptedException {
-        run(server, log, timeoutSeconds, DUMP_PORT, true);
     }
 
     /**

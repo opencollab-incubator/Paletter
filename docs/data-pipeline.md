@@ -44,8 +44,8 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 |---|---|
 | `update` | The whole BDS pipeline (below). |
 | `capture`, `compare`, `experiments` | The headless client: record what a server sends, diff a capture with a bundled version, toggle experiments in a `level.dat`. |
-| `import`, `bds-run`, `bds-compare`, `verify`, `check-data` | Import and check bundled data. `check-data` lists what older versions lack. |
-| `block-items`, `rewrite`, `data-rewrite`, `data-diff`, `experiment-marks` | Maintain bundled data without a new capture. |
+| `import`, `bds-compare`, `verify`, `check-data` | Import and check bundled data. `check-data` lists what older versions lack. |
+| `data-diff`, `experiment-marks` | Maintain bundled data without a new capture. |
 | `bds-inventory` | Reads the strings of the Linux `bedrock_server` without running it: block and item components, Script API classes. |
 | `docs`, `addon`, `spec-capture`, `infer`, `check-mappings` | The component model (below). |
 | `components generate\|check`, `constants generate\|check` | The generators (below). |
