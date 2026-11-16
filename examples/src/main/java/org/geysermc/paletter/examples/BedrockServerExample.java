@@ -60,9 +60,9 @@ public final class BedrockServerExample {
         BedrockBlockState stone = BedrockBlocks.STONE.defaultState();
         System.out.println("stone: runtime id " + palette.runtimeId(stone));
 
-        // Items: handle -> stack for the client, and back
+        // Items: handle -> stack for the client, and back. Custom handles are equal, not identical: compare with equals
         ItemData stack = palette.encode(BedrockItemStack.of(ruby.type().base(), 3));
-        System.out.println("decode(ruby stack) is ruby: " + (palette.decode(stack).variant() == ruby.type().base()));
+        System.out.println("decode(ruby stack) is ruby: " + palette.decode(stack).variant().equals(ruby.type().base()));
         ItemData apple = palette.encode(BedrockItemStack.of(BedrockItems.APPLE));
         System.out.println("decode(apple) = " + palette.decode(apple));
 

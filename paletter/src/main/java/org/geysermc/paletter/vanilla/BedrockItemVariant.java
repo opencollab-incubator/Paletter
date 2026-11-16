@@ -10,6 +10,10 @@ import org.geysermc.paletter.internal.item.ItemVariant;
  * A variant of a {@link BedrockItemType}: the type and its aux (damage) value. The block a stack places is not part of
  * the variant, it belongs to the stack ({@link org.geysermc.paletter.item.BedrockItemStack#blockState()}). Obtained from
  * {@link BedrockItemType#variant(int)} and {@link BedrockItemType#variants()}.
+ * <p>
+ * Equality: as for {@link BedrockItemType}, compare with {@code equals}, never with {@code ==}. Variants of custom
+ * types (and variants made by {@link BedrockItemType#variantOf(int)}) are not interned: {@code customItem.type().base()}
+ * and the variant {@link org.geysermc.paletter.Palette#decode} gives back are equal, not identical.
  *
  * @since 0.1.0
  */
