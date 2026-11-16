@@ -1,5 +1,7 @@
 package org.geysermc.paletter.examples;
 
+import org.cloudburstmc.protocol.bedrock.codec.BedrockCodecHelper;
+import org.cloudburstmc.protocol.bedrock.codec.v2225.Bedrock_v2225;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
 import org.geysermc.paletter.Fallbacks;
@@ -40,8 +42,14 @@ public final class BedrockServerExample {
         // (a server takes the protocol version, or the codec, of the client's connection)
         Palette palette = paletter.palette(paletter.latest().protocolVersion());
 
-        // Login: palette.applyTo(session.getCodecHelper()) sets the definition registries of the connection's codec;
-        // start game gets the block properties and hashed block ids
+        // Login: the definition registries go into the codec helper of the connection (session.getPeer().getCodecHelper()).
+        // Without a connection here, a helper of a codec of the protocol library stands in: applyTo only sets the registries
+        BedrockCodecHelper helper = Bedrock_v2225.CODEC.createHelper();
+        palette.applyTo(helper);
+        System.out.println("stone through the codec helper: " + helper.getBlockDefinitions().getDefinition(
+            palette.runtimeId(BedrockBlocks.STONE.defaultState())));
+
+        // Start game gets the block properties and hashed block ids
         StartGamePacket startGame = new StartGamePacket();
         palette.applyTo(startGame);
         System.out.println("hashed block ids: " + startGame.isBlockNetworkIdsHashed());
