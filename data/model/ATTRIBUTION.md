@@ -17,5 +17,12 @@ format version notes in `coverage.md` and in generated sources) is derived from 
 
 Mojang's `bedrock-samples` JSON schemas are not used as an input (all rights reserved).
 
+The list of Bedrock Dedicated Server release builds that `builds list|check` walks (recorded in
+`data/bds/builds.json`) comes from **Bedrock-OSS/BDS-Versions**:
+
+- Source: https://github.com/Bedrock-OSS/BDS-Versions, `versions.json`, at the commit recorded in `data/bds/builds.json`
+  (`listCommit`, `listDate`). The repository states no license; only the build numbers are used, never its download
+  links: the servers themselves are downloaded from minecraft.net.
+
 `mappings.json`, `bds-feedback.json` and `bds-keys.json` are generated from Bedrock Dedicated Server runs of the
 generated add-on; `fixtures.json` and `api.json` are written by hand.

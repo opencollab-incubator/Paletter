@@ -26,6 +26,7 @@ import org.geysermc.paletter.tools.model.addon.FixedAddons;
 import org.geysermc.paletter.tools.model.docs.DocsFetcher;
 import org.geysermc.paletter.tools.model.docs.DocsParser;
 import org.geysermc.paletter.tools.model.infer.MappingInference;
+import org.geysermc.paletter.tools.update.BuildHistory;
 import org.geysermc.paletter.tools.update.CreativeProbe;
 import org.geysermc.paletter.tools.update.EducationProbe;
 import org.geysermc.paletter.tools.update.ExperimentMarks;
@@ -253,14 +254,12 @@ public final class Cli implements Runnable {
         @Option(names = "--timeout", description = "seconds") String timeout;
         @Option(names = "--against", description = "A history check (see `builds`): compare with the committed captures of this build "
             + "instead of the newest, and write only data/bds/VERSION, when anything differs") String against;
-        @Option(names = "--keep", description = "With --against: write data/bds/VERSION even when nothing differs") boolean keep;
 
         @Override
         public Integer call() throws Exception {
             Map<String, String> options = new HashMap<>();
             options.put("channel", channel);
             put(options, "against", against);
-            flag(options, "keep", keep);
             put(options, "version", version);
             flag(options, "verify-only", verifyOnly);
             flag(options, "keep-server", keepServer);
@@ -290,22 +289,30 @@ public final class Cli implements Runnable {
 
             @Override
             public Integer call() throws Exception {
-                Map<String, org.geysermc.paletter.tools.update.BuildHistory.Entry> record = org.geysermc.paletter.tools.update.BuildHistory.read(root());
-                for (String build : org.geysermc.paletter.tools.update.BuildHistory.releases(from, to)) {
-                    var entry = record.get(build);
+                BuildHistory.BuildList list = BuildHistory.fetch();
+                System.out.println(BuildHistory.REPOSITORY + " at " + list.commit() + " (" + list.date() + ")");
+                String stale = BuildHistory.staleness(list);
+                if (stale != null) {
+                    System.out.println(stale);
+                }
+                Map<String, BuildHistory.Entry> record = BuildHistory.read(root());
+                for (String build : list.range(from, to)) {
+                    BuildHistory.Entry entry = record.get(build);
+                    BuildHistory.Entry target = entry == null || entry.kept() ? null : record.get(entry.identicalTo());
                     System.out.println(build + (entry == null ? "  not checked" : "  protocol " + entry.protocol()
-                        + (entry.kept() ? "  kept" : "  identical to " + entry.identicalTo())));
+                        + (entry.kept() ? "  kept" : "  identical to " + entry.identicalTo()
+                        + (target != null && target.protocol() != entry.protocol() ? " (protocol " + target.protocol() + ")" : ""))));
                 }
                 return 0;
             }
         }
 
         @Command(name = "check", description = "Checks the builds of the range that data/bds/builds.json lacks, oldest first, with "
-            + "`update --against <previous kept build>` (Windows BDS), and records each in data/bds/builds.json.")
+            + "`update --against <kept build>` (Windows BDS), and records each in data/bds/builds.json.")
         static final class Check extends Rooted implements Callable<Integer> {
             @Option(names = "--from", required = true, description = "First build, e.g. 1.26.30") String from;
             @Option(names = "--to", description = "Last build or line (default: the newest)") String to;
-            @Option(names = "--limit", description = "At most this many builds (default: all)") Integer limit;
+            @Option(names = "--limit", description = "At most this many runs (default: all)") Integer limit;
             @Option(names = "--min-free-mb", description = "Stop when the cache's disk has less free (default 1536)") Long minFreeMb;
             @Option(names = "--cache") String cache;
             @Option(names = "--port") String port;
@@ -317,8 +324,14 @@ public final class Cli implements Runnable {
                 put(options, "cache", cache);
                 put(options, "port", port);
                 put(options, "timeout", timeout);
-                return org.geysermc.paletter.tools.update.BuildHistory.check(root(), org.geysermc.paletter.tools.update.BuildHistory.releases(from, to),
-                    options, limit == null ? Integer.MAX_VALUE : limit, (minFreeMb == null ? 1536 : minFreeMb) << 20);
+                BuildHistory.BuildList list = BuildHistory.fetch();
+                System.out.println(BuildHistory.REPOSITORY + " at " + list.commit() + " (" + list.date() + ")");
+                String stale = BuildHistory.staleness(list);
+                if (stale != null) {
+                    System.out.println(stale);
+                }
+                return BuildHistory.check(root(), list, list.range(from, to), cache != null ? Path.of(cache) : BdsDistribution.defaultCache(),
+                    BuildHistory.updates(root(), options), limit == null ? Integer.MAX_VALUE : limit, (minFreeMb == null ? 1536 : minFreeMb) << 20);
             }
         }
     }
