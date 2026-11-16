@@ -8,8 +8,11 @@ import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -66,33 +69,71 @@ public final class WireContext {
         }
     }
 
-    private static final Map<VanillaData, Registry> REGISTRIES = java.util.Collections.synchronizedMap(new java.util.WeakHashMap<>());
+    /**
+     * The registries built so far, by data instance. Compared by identity: there are a few instances (one per version a
+     * Paletter compiles), while hashing or comparing one walks all of its data. Copied on write, so the lookup of every
+     * palette extension takes no lock.
+     */
+    private static volatile Cached[] registries = new Cached[0];
+
+    private record Cached(WeakReference<VanillaData> data, Registry registry) {
+    }
 
     /**
      * @return the lookups of a version's vanilla data, built once per data instance
      */
     public static @NonNull Registry registry(@NonNull VanillaData data) {
-        return REGISTRIES.computeIfAbsent(data, d -> {
-            Set<String> items = new HashSet<>();
-            for (VanillaItem item : d.items()) {
-                items.add(item.identifier());
-            }
-            Map<String, NbtMap> blocks = new HashMap<>();
-            for (NbtMap state : d.blockStates()) {
-                blocks.putIfAbsent(state.getString("name"), state.getCompound("states"));
-            }
-            return new Registry() {
-                @Override
-                public boolean itemExists(@NonNull String identifier) {
-                    return items.contains(identifier.indexOf(':') < 0 ? "minecraft:" + identifier : identifier);
+        Registry registry = cached(registries, data);
+        if (registry != null) {
+            return registry;
+        }
+        synchronized (WireContext.class) {
+            Cached[] current = registries;
+            registry = cached(current, data);
+            if (registry == null) {
+                registry = build(data);
+                List<Cached> kept = new ArrayList<>(current.length + 1);
+                for (Cached cached : current) {
+                    if (cached.data.get() != null) {
+                        kept.add(cached);
+                    }
                 }
+                kept.add(new Cached(new WeakReference<>(data), registry));
+                registries = kept.toArray(Cached[]::new);
+            }
+            return registry;
+        }
+    }
 
-                @Override
-                public @Nullable NbtMap blockStates(@NonNull String identifier) {
-                    return blocks.get(identifier.indexOf(':') < 0 ? "minecraft:" + identifier : identifier);
-                }
-            };
-        });
+    private static @Nullable Registry cached(Cached[] registries, VanillaData data) {
+        for (Cached cached : registries) {
+            if (cached.data.get() == data) {
+                return cached.registry;
+            }
+        }
+        return null;
+    }
+
+    private static Registry build(VanillaData data) {
+        Set<String> items = new HashSet<>();
+        for (VanillaItem item : data.items()) {
+            items.add(item.identifier());
+        }
+        Map<String, NbtMap> blocks = new HashMap<>();
+        for (NbtMap state : data.blockStates()) {
+            blocks.putIfAbsent(state.getString("name"), state.getCompound("states"));
+        }
+        return new Registry() {
+            @Override
+            public boolean itemExists(@NonNull String identifier) {
+                return items.contains(identifier.indexOf(':') < 0 ? "minecraft:" + identifier : identifier);
+            }
+
+            @Override
+            public @Nullable NbtMap blockStates(@NonNull String identifier) {
+                return blocks.get(identifier.indexOf(':') < 0 ? "minecraft:" + identifier : identifier);
+            }
+        };
     }
 
     /**
