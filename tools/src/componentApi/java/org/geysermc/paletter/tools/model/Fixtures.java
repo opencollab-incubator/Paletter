@@ -156,9 +156,13 @@ public final class Fixtures {
     }
 
     /**
-     * The model with the errata applied: types, forms and fields are only ever added. First the hand written errata (an
-     * erratum's types come first: they are what BDS takes; the documented ones stay after them, so each capture asks BDS
-     * again), then what BDS said ({@link BdsErrata}: the types its content log demands, the keys the probe found it accepts).
+     * The model every tool works from (the add-on generator, the mapping inference and the component API generator): the docs
+     * with the errata applied. Types, forms and fields are only ever added. First the hand written errata: an erratum's
+     * types come first (they are what BDS takes), the documented ones stay after them (each capture asks BDS again), a field
+     * an erratum makes a string gets the values its docs text lists ({@link DocValues}; the docs parser skips them where the
+     * docs call the field a boolean), and a field only an erratum names gets its reason as docs text
+     * ({@code (erratum) ...}). Then what BDS said ({@link BdsErrata}: the types its content log demands, the keys the probe
+     * found it accepts).
      */
     public Model apply(Model model) {
         Map<String, Component> components = new LinkedHashMap<>();
@@ -191,7 +195,7 @@ public final class Fixtures {
                     existing.types().stream().filter(t -> merged.stream().noneMatch(m -> m.toString().equals(t.toString()))).forEach(merged::add);
                     List<JsonElement> values = existing.enumValues();
                     if (values.isEmpty() && types.stream().anyMatch(t -> t.type().equals("string"))) {
-                        values = org.geysermc.paletter.tools.model.docs.DocsParser.valuesIn(existing.doc());
+                        values = DocValues.valuesIn(existing.doc());
                     }
                     fields.set(fields.indexOf(existing), new Field(path, merged, existing.defaultValue(), existing.required(), values,
                         existing.range(), existing.minFormatVersion(), existing.examples(), existing.doc()));
@@ -202,7 +206,7 @@ public final class Fixtures {
         }
         Model errata = new Model(model.source(), model.commit(), model.license(), model.lists(), new ArrayList<>(components.values()), model.formatNotes());
         JsonObject json = Model.GSON.toJsonTree(errata).getAsJsonObject();
-        BdsErrata.apply(json, feedback, keys, false);
+        BdsErrata.apply(json, feedback, keys);
         return Model.GSON.fromJson(json, Model.class);
     }
 

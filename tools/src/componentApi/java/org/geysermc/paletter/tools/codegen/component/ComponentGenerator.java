@@ -21,6 +21,8 @@ import org.geysermc.paletter.tools.codegen.component.ApiModel.States;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Type;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Vec3;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Window;
+import org.geysermc.paletter.tools.model.Fixtures;
+import org.geysermc.paletter.tools.model.Model;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -44,7 +46,8 @@ import java.util.regex.Pattern;
  * Generates Paletter's custom item and block component API from the component model in {@code data/model}:
  * <ul>
  *     <li>{@code components.json}: every component and field as the creator docs describe it (types, defaults, enums,
- *     ranges, docs text, format versions, experiments, status), plus the {@code errata} of {@code fixtures.json};</li>
+ *     ranges, docs text, format versions, experiments, status), read as the model every tool shares: with the
+ *     {@code errata} of {@code fixtures.json} and what BDS said applied ({@link Fixtures#apply});</li>
  *     <li>{@code bds-feedback.json}: required fields and ranges BDS enforces, fields BDS does not know;</li>
  *     <li>{@code mappings.json}: per component and protocol window, what reaches the wire and how (inferred from BDS);</li>
  *     <li>{@link HandTransforms}: fields no inferred rule explains, by hand transform;</li>
@@ -64,6 +67,7 @@ public final class ComponentGenerator {
     }
 
     /**
+     * @param components the model ({@link Fixtures#apply}) as JSON, in the shape of {@code components.json}
      * @param transforms the hand transforms ({@link HandTransforms#BY_PATH}): {@code <component>:<path>} -> {@code Transforms} method
      * @param since the Paletter version for {@code @since}
      */
@@ -90,10 +94,9 @@ public final class ComponentGenerator {
     }
 
     public static Inputs read(Path modelDir, String since) throws IOException {
-        JsonObject components = json(modelDir.resolve("components.json"));
-        JsonObject feedback = json(modelDir.resolve("bds-feedback.json"));
-        BdsErrata.apply(components, feedback, json(modelDir.resolve("bds-keys.json")), true);
-        return new Inputs(components, json(modelDir.resolve("fixtures.json")), feedback, json(modelDir.resolve("mappings.json")),
+        Fixtures fixtures = Fixtures.read(modelDir);
+        JsonObject components = Model.GSON.toJsonTree(fixtures.apply(Model.read(modelDir.resolve("components.json")))).getAsJsonObject();
+        return new Inputs(components, fixtures.json, fixtures.feedback, json(modelDir.resolve("mappings.json")),
             HandTransforms.BY_PATH, json(modelDir.resolve(API_FILE)), since);
     }
 
@@ -637,39 +640,20 @@ public final class ComponentGenerator {
         for (JsonElement e : doc.getAsJsonArray("fields")) {
             JsonObject f = e.getAsJsonObject();
             List<JsonObject> types = new ArrayList<>();
-            f.getAsJsonArray("types").forEach(t -> types.add(t.getAsJsonObject()));
+            // The API offers no type BDS refuses
+            f.getAsJsonArray("types").forEach(t -> {
+                if (!(t.getAsJsonObject().has("label") && t.getAsJsonObject().get("label").getAsString().equals(BdsErrata.REFUSED))) {
+                    types.add(t.getAsJsonObject());
+                }
+            });
             List<JsonElement> enums = new ArrayList<>();
             f.getAsJsonArray("enumValues").forEach(enums::add);
             String path = f.get("path").getAsString();
+            // The reason of an erratum is the model's note on the docs, not documentation of the field
+            String text = text(f, "doc").startsWith("(erratum) ") ? "" : text(f, "doc");
             fields.put(path, new DocField(path, types, f.get("required").getAsBoolean(), f.get("defaultValue"), enums,
-                f.has("range") ? f.getAsJsonObject("range") : null, text(f, "doc"),
+                f.has("range") ? f.getAsJsonObject("range") : null, text,
                 f.has("minFormatVersion") ? f.get("minFormatVersion").getAsString() : null));
-        }
-        if (in.fixtures().has("errata")) {
-            for (JsonElement e : in.fixtures().getAsJsonArray("errata")) {
-                JsonObject erratum = e.getAsJsonObject();
-                if (!erratum.get("component").getAsString().equals(c.id) || !erratum.has("path")) {
-                    continue;
-                }
-                String path = erratum.get("path").getAsString();
-                List<JsonObject> added = new ArrayList<>();
-                erratum.getAsJsonArray("types").forEach(t -> added.add(parseType(t.getAsString())));
-                List<JsonObject> types = added;
-                DocField old = fields.get(path);
-                if (old != null) {
-                    // Errata add types the docs omit; the documented ones stay (BDS confirms or rejects each)
-                    List<JsonObject> merged = new ArrayList<>(types);
-                    for (JsonObject t : old.types) {
-                        if (merged.stream().noneMatch(m -> typeString(m).equals(typeString(t)))) {
-                            merged.add(t);
-                        }
-                    }
-                    types = merged;
-                }
-                fields.put(path, old == null
-                    ? new DocField(path, types, false, null, List.of(), null, "", null)
-                    : new DocField(path, types, old.required, old.defaultValue, old.enumValues, old.range, old.doc, old.minFormat));
-            }
         }
         Set<String> drop = new TreeSet<>();
         if (in.fixtures().has("probeOnly")) {
@@ -782,18 +766,6 @@ public final class ComponentGenerator {
         List<String> forms = new ArrayList<>();
         for (JsonElement e : doc.getAsJsonArray("forms")) {
             forms.add(typeString(e.getAsJsonObject()));
-        }
-        if (in.fixtures().has("errata")) {
-            for (JsonElement e : in.fixtures().getAsJsonArray("errata")) {
-                JsonObject erratum = e.getAsJsonObject();
-                if (erratum.get("component").getAsString().equals(c.id) && erratum.has("forms")) {
-                    erratum.getAsJsonArray("forms").forEach(f -> {
-                        if (!forms.contains(f.getAsString())) {
-                            forms.add(f.getAsString());
-                        }
-                    });
-                }
-            }
         }
         if (c.standalone) {
             return List.of("object");
@@ -1086,8 +1058,13 @@ public final class ComponentGenerator {
         return in.api().has("blockDescriptors") && in.api().getAsJsonArray("blockDescriptors").asList().stream().anyMatch(e -> e.getAsString().equals(key));
     }
 
+    /**
+     * The values a field's enum is made of: none for an open enum, and none where api.json {@code types} calls the field a
+     * {@code string} (the Java type is the one named there, a String; {@code *.tint_method} has the docs' values in the
+     * model, the same field of the single faces does not).
+     */
     private List<JsonElement> enumValuesOf(Comp c, DocField d) {
-        return isOpenEnum(c, d) ? List.of() : d.enumValues;
+        return isOpenEnum(c, d) || "string".equals(apiString("types", c.id + ":" + d.path)) ? List.of() : d.enumValues;
     }
 
     /** api.json {@code openEnums}: BDS takes (and answers) strings the docs do not list, so the field is a string. */

@@ -3,6 +3,7 @@ package org.geysermc.paletter.tools.model.docs;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+import org.geysermc.paletter.tools.model.DocValues;
 import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.Model.Component;
 import org.geysermc.paletter.tools.model.Model.Field;
@@ -550,73 +551,16 @@ public final class DocsParser {
         }
     }
 
-    private static final Pattern VALUE_LIST = Pattern.compile(
-        "(?i)(?:valid (?:\\(and required\\) )?values? (?:for this property )?(?:is|are)|options (?:are|include)|supported [a-z ]+? are|must be(?= \\[)|"
-            + "allowed [a-z ]+? are\\s*:?|one of|list of (?:any of )?the following [a-z]+)\\s*:?\\s*(.*?)(?:\\. |\\.$|$)");
-
     public static List<JsonElement> valuesIn(String text) {
-        return valuesFrom(text);
+        return DocValues.valuesIn(text);
     }
 
-    /**
-     * "Valid values are `a`, `b`", "Options are "a", "b"", "Must be [0.0, 90.0]", "Can be a list of the following
-     * directions: "up", ...": the listed values.
-     */
     static List<JsonElement> valuesFrom(String text) {
-        List<JsonElement> values = new ArrayList<>();
-        Matcher list = VALUE_LIST.matcher(text);
-        while (list.find()) {
-            String part = list.group(1);
-            Matcher code = Pattern.compile("`([^`]+)`").matcher(part);
-            boolean any = false;
-            while (code.find()) {
-                any = true;
-                for (String token : splitList(code.group(1))) {
-                    values.add(literal(token));
-                }
-            }
-            if (!any) {
-                Matcher quoted = Pattern.compile("\"([^\"]+)\"").matcher(part);
-                while (quoted.find()) {
-                    any = true;
-                    values.add(new JsonPrimitive(quoted.group(1)));
-                }
-            }
-            if (!any) {
-                Matcher bracket = Pattern.compile("\\[([^\\]]+)]").matcher(part);
-                if (bracket.find()) {
-                    for (String token : splitList(bracket.group(1))) {
-                        values.add(literal(token));
-                    }
-                }
-            }
-        }
-        return dedupe(values);
-    }
-
-    private static List<String> splitList(String text) {
-        List<String> tokens = new ArrayList<>();
-        for (String token : text.split(",")) {
-            String t = token.trim().replaceAll("^\"|\"$", "");
-            if (!t.isEmpty()) {
-                tokens.add(t);
-            }
-        }
-        return tokens;
+        return DocValues.valuesIn(text);
     }
 
     static JsonElement literal(String token) {
-        String t = token.trim();
-        if (t.matches("-?\\d+")) {
-            return new JsonPrimitive(Long.parseLong(t));
-        }
-        if (t.matches("-?\\d+\\.\\d+")) {
-            return new JsonPrimitive(Double.parseDouble(t));
-        }
-        if (t.equals("true") || t.equals("false")) {
-            return new JsonPrimitive(Boolean.parseBoolean(t));
-        }
-        return new JsonPrimitive(t.replaceAll("^\"|\"$", ""));
+        return DocValues.literal(token);
     }
 
     /** The sentences of {@code text} that {@code doc} does not have yet (a detail section often repeats the table's). */

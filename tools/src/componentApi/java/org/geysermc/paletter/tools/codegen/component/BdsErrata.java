@@ -9,15 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * What BDS said about the JSON, applied to the docs model ({@code components.json}) wherever it is read: the add-on
- * generator and the component API generator see the same model.
+ * What BDS said about the JSON, applied to the docs model ({@code components.json}) once, in {@code Fixtures#apply}: the
+ * add-on generator, the mapping inference and the component API generator see the same model.
  * <ul>
  *     <li><b>Types from the content log</b> (the {@code object} facts of {@code bds-feedback.json}): "expected an object" at
  *     a field the docs give no object type (a string in the docs' {@code n_way_visual_rotation}) adds the object type and
  *     puts it first; "expected a key/value object" at an element of a list ({@code material_instances[0]}) of a field that
- *     also has an object type says the list is the form BDS does not take, so the object comes first. The add-on keeps
- *     the docs' types, so every capture asks BDS again (and the fact stays in the feedback); the API offers only the
- *     object where the docs had none. "expected an array" (the {@code array} facts) at a field the docs give no list
+ *     also has an object type says the list is the form BDS does not take, so the object comes first. Where the docs had
+ *     no object, their types stay after it marked {@link #REFUSED}: the add-on still varies them, so every capture asks
+ *     BDS again (and the fact stays in the feedback), and the API leaves them out. "expected an array" (the {@code array} facts) at a field the docs give no list
  *     type ({@code connected_faces}, a string; {@code allowed_faces}, an object) adds a list and puts it first: of the
  *     field's scalar type, else of the type of its documented default list's elements, else (an empty default list) of
  *     any type.</li>
@@ -30,16 +30,18 @@ public final class BdsErrata {
     private BdsErrata() {
     }
 
+    /** The label of a documented type BDS refuses in favour of an object it demands (the content log said "expected an object"). */
+    public static final String REFUSED = "refused by BDS, which expects an object";
+
     /**
      * @param model the root of {@code components.json}; its components are changed in place
-     * @param api for the component API: a type BDS refuses in favour of an object is left out instead of coming second
      */
-    public static void apply(JsonObject model, JsonObject feedback, JsonObject keys, boolean api) {
+    public static void apply(JsonObject model, JsonObject feedback, JsonObject keys) {
         for (JsonElement e : model.getAsJsonArray("components")) {
             JsonObject component = e.getAsJsonObject();
             String id = component.get("id").getAsString();
             if (feedback.has(id)) {
-                types(component, feedback.getAsJsonObject(id), api);
+                types(component, feedback.getAsJsonObject(id));
             }
             if (keys.has("components") && keys.getAsJsonObject("components").has(id)) {
                 keys(component, keys.getAsJsonObject("components").getAsJsonObject(id), keys.get("bdsVersion").getAsString());
@@ -47,7 +49,7 @@ public final class BdsErrata {
         }
     }
 
-    private static void types(JsonObject component, JsonObject facts, boolean api) {
+    private static void types(JsonObject component, JsonObject facts) {
         for (String path : facts.keySet()) {
             if (facts.getAsJsonArray(path).asList().stream().anyMatch(f -> f.getAsString().equals("array"))) {
                 list(field(component, path));
@@ -64,10 +66,12 @@ public final class BdsErrata {
                 continue;
             }
             if (first == null) {
-                if (api) {
-                    // BDS wants an object where the docs say a scalar: the API offers no form BDS refuses
-                    types.clear();
-                }
+                // BDS wants an object where the docs say something else: what the docs say is refused
+                types.replaceAll(t -> {
+                    JsonObject refused = t.deepCopy().getAsJsonObject();
+                    refused.addProperty("label", REFUSED);
+                    return refused;
+                });
                 first = ComponentGenerator.parseType("object");
             } else {
                 types.remove(first);

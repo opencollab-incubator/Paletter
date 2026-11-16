@@ -224,6 +224,9 @@ Inputs, all in `data/model` except the last:
 - `components.json`: components, fields, defaults, docs text.
 - `fixtures.json` (hand): errata, samples, `replacedBy` with evidence.
 - `bds-feedback.json`: required fields and ranges BDS enforces, which win over the docs.
+
+  These three and `bds-keys.json` are read as one model, built once (`Fixtures#apply`) for the add-on generator, the
+  inference and this generator: the docs, then the errata (an erratum's types first), then what BDS said.
 - `mappings.json`: per component and protocol window, how each field reaches the wire.
 - `api.json` (hand): Java shape only (names, unions, value forms, open enums).
 - `HandTransforms` (hand, in the tools): which fields are compiled by a method of `internal.component.Transforms`.

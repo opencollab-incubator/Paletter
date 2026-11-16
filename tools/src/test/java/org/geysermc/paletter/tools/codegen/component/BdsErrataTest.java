@@ -19,25 +19,18 @@ class BdsErrataTest {
         {"block:minecraft:geo": {"rotation": ["object"], "items[]": ["object"], "faces": ["array"], "allowed": ["array"], "stops": ["array"]}}""").getAsJsonObject();
 
     @Test
-    void theAddonKeepsTheDocsTypeSoBdsIsAskedAgain() {
+    void theDocsTypeStaysMarkedRefusedSoBdsIsAskedAgain() {
         JsonObject model = JsonParser.parseString(MODEL).getAsJsonObject();
-        BdsErrata.apply(model, FEEDBACK, new JsonObject(), false);
-        assertEquals("[{\"type\":\"object\"},{\"type\":\"string\"}]", types(model, 0));
-        assertEquals("[{\"type\":\"object\"},{\"type\":\"array\",\"items\":{\"type\":\"object\"}}]", types(model, 1));
-    }
-
-    @Test
-    void theApiOffersOnlyTheObjectWhereTheDocsHadNone() {
-        JsonObject model = JsonParser.parseString(MODEL).getAsJsonObject();
-        BdsErrata.apply(model, FEEDBACK, new JsonObject(), true);
-        assertEquals("[{\"type\":\"object\"}]", types(model, 0));
-        assertEquals("[{\"type\":\"object\"},{\"type\":\"array\",\"items\":{\"type\":\"object\"}}]", types(model, 1), "the list stays, second");
+        BdsErrata.apply(model, FEEDBACK, new JsonObject());
+        assertEquals("[{\"type\":\"object\"},{\"type\":\"string\",\"label\":\"" + BdsErrata.REFUSED + "\"}]", types(model, 0));
+        assertEquals("[{\"type\":\"object\"},{\"type\":\"array\",\"items\":{\"type\":\"object\"}}]", types(model, 1),
+            "the docs had an object: the list stays, second");
     }
 
     @Test
     void expectedAnArrayPutsAListOfTheDocumentedElementsFirst() {
         JsonObject model = JsonParser.parseString(MODEL).getAsJsonObject();
-        BdsErrata.apply(model, FEEDBACK, new JsonObject(), false);
+        BdsErrata.apply(model, FEEDBACK, new JsonObject());
         assertEquals("[{\"type\":\"array\",\"items\":{\"type\":\"string\"}},{\"type\":\"string\"}]", types(model, 2), "the docs' scalar");
         assertEquals("[{\"type\":\"array\",\"items\":{\"type\":\"string\"}},{\"type\":\"object\"}]", types(model, 3), "the default's elements");
         assertEquals("[{\"type\":\"array\",\"items\":{\"type\":\"any\"}},{\"type\":\"object\"}]", types(model, 4), "nothing says which");
