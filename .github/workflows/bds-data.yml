@@ -18,7 +18,8 @@
 #     `paletter.previews`, its API marked `@SincePreview`) and replaces the preview before it; its release drops it. The
 #     update writes its report to `data/bds/<build>/update-report.md` (committed with the data, and the body of the
 #     pull request). It exits with 2 when the report lists decisions: the pull request is still opened, for a human to
-#     decide them; any other failure fails the run after the issue is updated.
+#     decide them; any other failure fails the run after the issue is updated. Gradle's run task reports every
+#     non-zero exit as 1, so the step reads the tool's own exit code from `exit-code` in its work directory.
 # When a run is clean (no failure, no difference, no data file changed), the open issue of its channel that this workflow
 # opened (author github-actions, its exact title) is closed with a comment; a manual run of an explicit `version` closes
 # nothing. An update that changes no data file does not write its report into the data, so a clean run has no patch.
@@ -139,10 +140,16 @@ jobs:
             ./gradlew :tools:run --args="update --channel $CHANNEL --version $BDS_VERSION"
           fi
           CODE=$?
-          # Every run also writes its report into its work directory, which starts empty
+          # Every run also writes its report and its exit code into its work directory, which starts empty. Gradle exits
+          # with 1 on any non-zero exit of the tool; the file tells decisions (2) from failures
           for f in "$PALETTER_BDS_CACHE"/runs/*-"$BDS_VERSION"/report.md; do
             if [ -f "$f" ]; then cp "$f" "$OUT/report.md"; fi
           done
+          if [ "$CODE" != 0 ]; then
+            for f in "$PALETTER_BDS_CACHE"/runs/*-"$BDS_VERSION"/exit-code; do
+              if [ -f "$f" ] && grep -Eqx '[1-9][0-9]*' "$f"; then CODE=$(cat "$f"); fi
+            done
+          fi
           VERDICT=""
           if [ -f "$OUT/report.md" ]; then
             # The report without the lines that change every run (date, paths)

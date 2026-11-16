@@ -120,6 +120,26 @@ class UpdateTest {
     }
 
     @Test
+    void theExitCodeIsWrittenToTheWorkDirectory(@TempDir Path work) throws Exception {
+        // Gradle's run task reports every non-zero exit as 1: the workflow reads the file to tell decisions from failures
+        Report report = new Report("t");
+        assertEquals(0, Update.exitCode(report, false, work));
+        assertEquals("0\n", Files.readString(work.resolve(Update.EXIT_CODE)));
+
+        report.check(Report.Status.DIFF, "Blocks", "1 new");
+        report.action("decide it");
+        assertEquals(Update.EXIT_TODOS, Update.exitCode(report, false, work));
+        assertEquals(Update.EXIT_TODOS + "\n", Files.readString(work.resolve(Update.EXIT_CODE)));
+        // A verification has no decisions, only differences
+        assertEquals(1, Update.exitCode(report, true, work));
+        assertEquals("1\n", Files.readString(work.resolve(Update.EXIT_CODE)));
+
+        report.check(Report.Status.FAIL, "Network capture", "no answer");
+        assertEquals(1, Update.exitCode(report, false, work));
+        assertEquals("1\n", Files.readString(work.resolve(Update.EXIT_CODE)));
+    }
+
+    @Test
     void aCaptureThatRewritesTheSameBytesChangesNothing(@TempDir Path root) throws Exception {
         Path spec = root.resolve("data/bds/1.26.70.1/spec");
         Path mappings = root.resolve("data/model/mappings.json");

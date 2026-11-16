@@ -115,6 +115,8 @@ public final class Update {
     public static final String REPORT = "update-report.md";
     /** The exit code of an update that wrote everything but left decisions (the report's TODO list). */
     public static final int EXIT_TODOS = 2;
+    /** The file in the work directory that holds the exit code of the run, as plain text. */
+    public static final String EXIT_CODE = "exit-code";
 
     public Update(Path root, Map<String, String> options) {
         this.root = root;
@@ -165,10 +167,18 @@ public final class Update {
         }
         System.out.println("Report: " + reportFile.toAbsolutePath());
         System.out.println(report.failed() ? "FAILED" : report.differs() ? (verifyOnly ? "DIFFERENCES (verify failed)" : "UPDATED") : "IDENTICAL");
-        if (report.failed() || (verifyOnly && report.differs())) {
-            return 1;
-        }
-        return !verifyOnly && report.hasTodos() ? EXIT_TODOS : 0;
+        return exitCode(report, verifyOnly, work);
+    }
+
+    /**
+     * The process exit code of a run with {@code report}, also written to {@link #EXIT_CODE} in its work directory:
+     * {@code ./gradlew :tools:run} turns every non-zero exit into a build failure with exit code 1, so a caller that
+     * needs to tell {@link #EXIT_TODOS} from a failure (the BDS data workflow) reads the file.
+     */
+    static int exitCode(Report report, boolean verifyOnly, Path work) throws IOException {
+        int code = report.failed() || (verifyOnly && report.differs()) ? 1 : !verifyOnly && report.hasTodos() ? EXIT_TODOS : 0;
+        Files.writeString(work.resolve(EXIT_CODE), code + "\n");
+        return code;
     }
 
     /**

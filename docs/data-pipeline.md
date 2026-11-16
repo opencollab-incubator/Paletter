@@ -93,7 +93,8 @@ each with what to do), then what the build changed; every check, the run's metad
 below. An update writes it to
 `data/bds/<build>/update-report.md` (generated, committed with the data, so a later run can be diffed against it; a run
 that changed no data file leaves the committed report and writes its own only into its work directory) and
-exits with 2 while decisions are open. Things that stay manual:
+exits with 2 while decisions are open. As `./gradlew :tools:run` turns every non-zero exit into exit code 1, a run also
+writes its exit code to `exit-code` in its work directory. Things that stay manual:
 
 - reviewing wire format changes in `data/model` and the regenerated component API;
 - re-importing a protocol whose network data changed in a hotfix;
