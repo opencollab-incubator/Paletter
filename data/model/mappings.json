@@ -4171,18 +4171,9 @@
             "minecraft:geometry: invalid string",
             "uv_lock[0]: invalid string"
           ],
-          "status": "inferred",
+          "transform": "geometry",
+          "status": "hand-rule",
           "rules": [
-            {
-              "kind": "ordered-set",
-              "order": [
-                "paletter_b",
-                "bone_a"
-              ],
-              "nbt": "string",
-              "tags": [],
-              "wire": "minecraft:geometry.uv_lock[]"
-            },
             {
               "kind": "identity",
               "nbt": "byte",
@@ -4191,8 +4182,33 @@
             }
           ],
           "whenAbsent": {
-            "minecraft:geometry.uv_lock": "0 (byte)"
-          }
+            "minecraft:geometry.uv_lock": "0 (byte)",
+            "minecraft:geometry.uv_lock[]": "omitted"
+          },
+          "unexplained": [
+            {
+              "wire": "minecraft:geometry.uv_lock[0]",
+              "samples": [
+                "[\"bone_a\"] -> bone_a (string)",
+                "<absent> -> -",
+                "true -> -",
+                "false -> -",
+                "[] -> -",
+                "[\"bone_a\"] -> bone_a (string)"
+              ]
+            },
+            {
+              "wire": "minecraft:geometry.uv_lock[1]",
+              "samples": [
+                "[\"bone_a\"] -> -",
+                "<absent> -> -",
+                "true -> -",
+                "false -> -",
+                "[] -> -",
+                "[\"bone_a\"] -> -"
+              ]
+            }
+          ]
         },
         "n_way_visual_rotation.x": {
           "status": "not-generated"
@@ -4448,18 +4464,9 @@
               "minecraft:geometry: invalid string",
               "uv_lock[0]: invalid string"
             ],
-            "status": "inferred",
+            "transform": "geometry",
+            "status": "hand-rule",
             "rules": [
-              {
-                "kind": "ordered-set",
-                "order": [
-                  "paletter_b",
-                  "bone_a"
-                ],
-                "nbt": "string",
-                "tags": [],
-                "wire": "minecraft:geometry.uv_lock[]"
-              },
               {
                 "kind": "identity",
                 "nbt": "byte",
@@ -4468,8 +4475,33 @@
               }
             ],
             "whenAbsent": {
-              "minecraft:geometry.uv_lock": "0 (byte)"
-            }
+              "minecraft:geometry.uv_lock": "0 (byte)",
+              "minecraft:geometry.uv_lock[]": "omitted"
+            },
+            "unexplained": [
+              {
+                "wire": "minecraft:geometry.uv_lock[0]",
+                "samples": [
+                  "[\"bone_a\"] -> bone_a (string)",
+                  "<absent> -> -",
+                  "true -> -",
+                  "false -> -",
+                  "[] -> -",
+                  "[\"bone_a\"] -> bone_a (string)"
+                ]
+              },
+              {
+                "wire": "minecraft:geometry.uv_lock[1]",
+                "samples": [
+                  "[\"bone_a\"] -> -",
+                  "<absent> -> -",
+                  "true -> -",
+                  "false -> -",
+                  "[] -> -",
+                  "[\"bone_a\"] -> -"
+                ]
+              }
+            ]
           },
           "n_way_visual_rotation.x": {
             "accepted": 3,
@@ -4755,18 +4787,9 @@
               "minecraft:geometry: invalid string",
               "uv_lock[0]: invalid string"
             ],
-            "status": "inferred",
+            "transform": "geometry",
+            "status": "hand-rule",
             "rules": [
-              {
-                "kind": "ordered-set",
-                "order": [
-                  "paletter_b",
-                  "bone_a"
-                ],
-                "nbt": "string",
-                "tags": [],
-                "wire": "minecraft:geometry.uv_lock[]"
-              },
               {
                 "kind": "identity",
                 "nbt": "byte",
@@ -4775,8 +4798,33 @@
               }
             ],
             "whenAbsent": {
-              "minecraft:geometry.uv_lock": "0 (byte)"
-            }
+              "minecraft:geometry.uv_lock": "0 (byte)",
+              "minecraft:geometry.uv_lock[]": "omitted"
+            },
+            "unexplained": [
+              {
+                "wire": "minecraft:geometry.uv_lock[0]",
+                "samples": [
+                  "[\"bone_a\"] -> bone_a (string)",
+                  "<absent> -> -",
+                  "true -> -",
+                  "false -> -",
+                  "[] -> -",
+                  "[\"bone_a\"] -> bone_a (string)"
+                ]
+              },
+              {
+                "wire": "minecraft:geometry.uv_lock[1]",
+                "samples": [
+                  "[\"bone_a\"] -> -",
+                  "<absent> -> -",
+                  "true -> -",
+                  "false -> -",
+                  "[] -> -",
+                  "[\"bone_a\"] -> -"
+                ]
+              }
+            ]
           },
           "n_way_visual_rotation.x": {
             "status": "not-generated"

@@ -54,6 +54,56 @@ class RuleFitTest {
         assertEquals(8.0, offset.get("offset").getAsDouble());
     }
 
+    /** A list observation: the JSON list and the elements BDS sent for it. */
+    private static Pair list(String json, String... sent) {
+        Map<String, Leaf> wire = new java.util.TreeMap<>();
+        for (int i = 0; i < sent.length; i++) {
+            wire.put("minecraft:x.list[" + i + "]", new Leaf("string", sent[i]));
+        }
+        return new Pair(JsonParser.parseString(json), wire, json);
+    }
+
+    @Test
+    void anOrderOfBdsOwnIsARuleOnlyForAClosedSetOfValuesAllSeen() {
+        java.util.Set<String> varying = java.util.Set.of("minecraft:x.list[0]", "minecraft:x.list[1]", "minecraft:x.list[2]");
+        List<Pair> faces = List.of(list("[\"north\", \"up\", \"east\"]", "up", "north", "east"), list("[\"east\", \"north\"]", "north", "east"));
+        List<JsonObject> closed = MappingInference.orderedSet(faces, varying, java.util.Set.of("up", "north", "east"));
+        assertEquals(1, closed.size());
+        assertEquals("[\"up\",\"north\",\"east\"]", closed.get(0).get("order").toString());
+        // One documented value was never sent: its place in the order is not known
+        assertEquals(List.of(), MappingInference.orderedSet(faces, varying, java.util.Set.of("up", "north", "east", "down")));
+        // Any string goes (bones, ordered by the hash of their names): the two captured names order no others
+        List<Pair> bones = List.of(list("[\"bone_a\", \"paletter_b\"]", "paletter_b", "bone_a"), list("[\"bone_a\"]", "bone_a"));
+        assertEquals(List.of(), MappingInference.orderedSet(bones, varying, java.util.Set.of()));
+        // Nor does a table of the strings seen at one place of the list say anything about other strings
+        List<Pair> second = pairs("[\"bone_a\", \"paletter_b\"]", "p", "[\"paletter_b\", \"bone_a\"]", "q");
+        JsonObject open = MappingInference.array(second, W, false);
+        assertFalse(open != null && open.get("kind").getAsString().equals("table"), String.valueOf(open));
+        assertEquals("table", MappingInference.array(second, W, true).get("kind").getAsString());
+        // The JSON's order without repeats needs no known set of values
+        List<Pair> tags = List.of(list("[\"a\", \"a\", \"b\"]", "a", "b"), list("[\"b\"]", "b"));
+        List<JsonObject> deduped = MappingInference.orderedSet(tags, varying, java.util.Set.of());
+        assertEquals(1, deduped.size());
+        assertFalse(deduped.get(0).has("order"));
+    }
+
+    @Test
+    void aLeafOnlyTheListFormSendsIsNotExplainedByTheScalarFormNotSendingIt() {
+        // uv_lock: a byte for true and false, the bones for a list, in an order of BDS's own
+        String first = "minecraft:x.leaf[0]";
+        List<Pair> uvLock = List.of(
+            new Pair(JsonParser.parseString("true"), Map.of(W, new Leaf("byte", (byte) 1)), "true"),
+            new Pair(JsonParser.parseString("false"), Map.of(W, new Leaf("byte", (byte) 0)), "false"),
+            new Pair(JsonParser.parseString("[\"bone_a\", \"paletter_b\"]"),
+                Map.of(first, new Leaf("string", "paletter_b"), "minecraft:x.leaf[1]", new Leaf("string", "bone_a")), "two"),
+            new Pair(JsonParser.parseString("[\"bone_a\"]"), Map.of(first, new Leaf("string", "bone_a")), "one"),
+            new Pair(JsonParser.parseString("[]"), Map.of(W, new Leaf("list", "[]")), "none"));
+        assertEquals("identity", MappingInference.mixed(uvLock, W, false, false).get("kind").getAsString(), "the byte follows the boolean");
+        assertNull(MappingInference.mixed(uvLock, first, false, false), "that booleans send no first element is no rule for the lists");
+        // A leaf the lists do not send either stays what the scalar part says
+        assertEquals("constant", MappingInference.mixed(uvLock, "minecraft:x.other", false, false).get("kind").getAsString());
+    }
+
     @Test
     void tableForEnumsOnly() {
         List<Pair> enums = pairs("\"eat\"", 1, "\"drink\"", 2, "\"spear\"", 6);
@@ -90,11 +140,11 @@ class RuleFitTest {
 
     @Test
     void bitset() {
-        JsonObject rule = MappingInference.array(pairs("[\"down\"]", 1, "[\"up\"]", 2, "[\"north\"]", 4, "[\"up\",\"north\"]", 6, "[]", 0), W);
+        JsonObject rule = MappingInference.array(pairs("[\"down\"]", 1, "[\"up\"]", 2, "[\"north\"]", 4, "[\"up\",\"north\"]", 6, "[]", 0), W, true);
         assertEquals("bitset", rule.get("kind").getAsString());
         assertEquals(4, rule.getAsJsonObject("bits").get("north").getAsInt());
         // OR does not hold: not a bit set
-        JsonObject broken = MappingInference.array(pairs("[\"down\"]", 1, "[\"up\"]", 2, "[\"up\",\"down\"]", 7), W);
+        JsonObject broken = MappingInference.array(pairs("[\"down\"]", 1, "[\"up\"]", 2, "[\"up\",\"down\"]", 7), W, true);
         assertTrue(broken == null || !broken.get("kind").getAsString().equals("bitset"));
     }
 
@@ -105,7 +155,7 @@ class RuleFitTest {
         for (int[] v : new int[][]{{0, 90, 0}, {90, 180, 270}, {180, 270, 0}}) {
             pairs.add(new Pair(JsonParser.parseString("[" + v[0] + "," + v[1] + "," + v[2] + "]"), Map.of(W, new Leaf("int", v[0] / 90)), ""));
         }
-        JsonObject rule = MappingInference.array(pairs, W);
+        JsonObject rule = MappingInference.array(pairs, W, false);
         assertEquals("linear", rule.get("kind").getAsString());
         assertEquals(0, rule.get("element").getAsInt());
         assertEquals(round(1 / 90.0), rule.get("scale").getAsDouble());
@@ -118,7 +168,7 @@ class RuleFitTest {
         for (int[] v : new int[][]{{90, 180, 270}, {180, 270, 0}}) {
             pairs.add(new Pair(JsonParser.parseString("[" + v[0] + "," + v[1] + "," + v[2] + "]"), Map.of(W, new Leaf("int", v[1] / 90)), ""));
         }
-        JsonObject rule = MappingInference.array(pairs, W);
+        JsonObject rule = MappingInference.array(pairs, W, false);
         assertEquals("linear", rule.get("kind").getAsString());
         assertEquals(1, rule.get("element").getAsInt());
         assertEquals(0.0, rule.get("offset").getAsDouble());

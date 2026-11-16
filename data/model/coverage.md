@@ -34,10 +34,10 @@ What the captures show but no field explains:
 | documented | 366 | 8 |
 | accepted by BDS | 305 | 5 |
 | sent on wire | 259 | 5 |
-| inferred | 245 | 4 |
+| inferred | 244 | 4 |
 | partial | 1 | 0 |
 | unresolved | 0 | 0 |
-| hand-rule | 13 | 1 |
+| hand-rule | 14 | 1 |
 | dropped | 42 | 0 |
 | rejected | 43 | 3 |
 | no-evidence | 4 | 0 |
@@ -59,7 +59,7 @@ field but nothing on the wire follows it (server only); `rejected`: every varian
 | empty-map | 7 |
 | identity | 231 |
 | linear | 15 |
-| ordered-set | 3 |
+| ordered-set | 2 |
 | structure | 29 |
 | table | 15 |
 
@@ -106,7 +106,7 @@ field but nothing on the wire follows it (server only); `rejected`: every varian
 | `block:minecraft:flammable` | active | server-only |  | 0 / 0 / 0 / 2 / 1 / 3 |
 | `block:minecraft:flower_pottable` | active | sent | minecraft:flower_pottable | 0 / 0 / 0 / 0 / 0 / 0 |
 | `block:minecraft:friction` | active | sent | minecraft:friction | 0 / 0 / 0 / 0 / 0 / 0 |
-| `block:minecraft:geometry` | active | sent | minecraft:geometry | 5 / 0 / 1 / 0 / 1 / 10 |
+| `block:minecraft:geometry` | active | sent | minecraft:geometry | 4 / 0 / 2 / 0 / 1 / 10 |
 | `block:minecraft:instrument_sound` | active (exp.) | server-only |  | 0 / 0 / 0 / 2 / 0 / 2 |
 | `block:minecraft:item_visual` | active | sent | minecraft:item_visual | 9 / 0 / 1 / 1 / 1 / 12 |
 | `block:minecraft:light_dampening` | active | sent | minecraft:light_dampening | 0 / 0 / 0 / 0 / 0 / 0 |
@@ -194,6 +194,7 @@ field but nothing on the wire follows it (server only); `rejected`: every varian
 
 - `block:minecraft:embedded_visual` `material_instances`: hand-rule -> `materialInstancesInline`
 - `block:minecraft:geometry` `bone_visibility`: hand-rule -> `geometry`
+- `block:minecraft:geometry` `uv_lock`: hand-rule -> `geometry` (unexplained: `minecraft:geometry.uv_lock[]`)
 - `block:minecraft:item_visual` `material_instances`: hand-rule -> `materialInstancesPacked` (unexplained: `minecraft:item_visual.materialInstancesDescription.materials.*.ambient_occlusion`, `minecraft:item_visual.materialInstancesDescription.materials.*.packed_bools`, `minecraft:item_visual.materialInstancesDescription.materials.*.render_method`, `minecraft:item_visual.materialInstancesDescription.materials.*.texture`)
 - `block:minecraft:placement_filter` `conditions[].block_filter[].states`: hand-rule -> `blockDescriptorStates` (unexplained: `minecraft:placement_filter.conditions`, `minecraft:placement_filter.conditions[].block_filter[].states[].state`, `minecraft:placement_filter.conditions[].block_filter[].states[].type`, `minecraft:placement_filter.conditions[].block_filter[].states[].value`)
 - `block:permutations` `[].condition`: hand-rule -> `permutationComponents` (unexplained: `permutations[].condition`)

@@ -1122,7 +1122,7 @@ public final class MappingInference {
             status = distinctValues ? "dropped" : "no-evidence";
         } else {
             Map<String, JsonObject> byGeneric = new LinkedHashMap<>();
-            for (JsonObject set : orderedSet(observations, varying)) {
+            for (JsonObject set : orderedSet(observations, varying, closedValues(component, path))) {
                 // the list leaves are explained as a whole: drop them from the leaf by leaf fit
                 String list = set.get("wire").getAsString();
                 varying.removeIf(w -> w.matches(Pattern.quote(list.substring(0, list.length() - 2)) + "\\[\\d+]"));
@@ -1268,21 +1268,11 @@ public final class MappingInference {
                 rule = affix(set, wire);
             }
         } else if (set.stream().allMatch(p -> p.json.isJsonArray())) {
-            rule = array(set, wire);
+            rule = array(set, wire, enumerated || feedback.has(component.id(), path + "[]", "values"));
         } else if (set.stream().allMatch(p -> p.json.isJsonObject())) {
             rule = object(set, wire);
         } else {
-            // Mixed forms (shorthand and object, or a vector as a list and as an object): fit each JSON type separately;
-            // take the scalar part if it fits, else the list part
-            List<Pair> primitive = set.stream().filter(p -> p.json.isJsonPrimitive()).toList();
-            List<Pair> lists = set.stream().filter(p -> p.json.isJsonArray()).toList();
-            rule = primitive.isEmpty() ? null : scalar(primitive, p -> p.json, wire);
-            if (rule != null && rule.get("kind").getAsString().equals("table") && !tableAllowed(primitive, enumerated)) {
-                rule = affix(primitive, wire);
-            }
-            if (rule == null && !lists.isEmpty()) {
-                rule = array(lists, wire);
-            }
+            rule = mixed(set, wire, enumerated, enumerated || feedback.has(component.id(), path + "[]", "values"));
         }
         if (rule == null) {
             return null;
@@ -1292,6 +1282,30 @@ public final class MappingInference {
             rule.addProperty("nbt", sample.type());
         }
         rule.add("tags", tags(component, path, jsonName, wire, rule, set));
+        return rule;
+    }
+
+    /**
+     * Mixed forms (shorthand and object, or a vector as a list and as an object): each JSON type is fitted separately, the
+     * scalar part first, else the list part. A leaf only the list form sends is the list part's to explain: that the
+     * scalar form does not send it says nothing about what a list puts there ({@code uv_lock}: a byte for the boolean, the
+     * bones for the list).
+     *
+     * @param enumerated     whether the scalar values are of a closed set (an enum)
+     * @param closedElements whether the list's elements are
+     */
+    static JsonObject mixed(List<Pair> set, String wire, boolean enumerated, boolean closedElements) {
+        List<Pair> primitive = set.stream().filter(p -> p.json.isJsonPrimitive()).toList();
+        List<Pair> lists = set.stream().filter(p -> p.json.isJsonArray()).toList();
+        JsonObject rule = primitive.isEmpty() ? null : scalar(primitive, p -> p.json, wire);
+        if (rule != null && rule.get("kind").getAsString().equals("table") && !tableAllowed(primitive, enumerated)) {
+            rule = affix(primitive, wire);
+        }
+        boolean scalarSilent = rule != null && rule.get("kind").getAsString().equals("constant")
+            && primitive.stream().allMatch(p -> p.wire.get(wire) == null) && lists.stream().anyMatch(p -> p.wire.get(wire) != null);
+        if ((rule == null || scalarSilent) && !lists.isEmpty()) {
+            rule = array(lists, wire, closedElements);
+        }
         return rule;
     }
 
@@ -1515,10 +1529,15 @@ public final class MappingInference {
      * every value seen), or in the JSON's order without the duplicates ({@code tags ["a", "a"]} -> {@code item_tags ["a"]};
      * no {@code order}). Every observed list leaf must hold the distinct values of the JSON list in that order, and the
      * order must differ from the JSON's somewhere or a duplicate must be dropped (else element identity explains it).
+     * <p>
+     * An order of BDS's own is a rule only for a closed set of values, all of them seen: for a list of any strings
+     * ({@code uv_lock}'s bones, sent in the order of their name hashes) the order of the few captured values says nothing
+     * about the others, and an encoder made from it would drop them. Such a list stays unexplained (a hand transform).
      *
+     * @param closed the values the list's elements can have, empty if any string goes
      * @return one rule per list leaf of {@code varying} that fits
      */
-    static List<JsonObject> orderedSet(List<Pair> observations, Set<String> varying) {
+    static List<JsonObject> orderedSet(List<Pair> observations, Set<String> varying, Set<String> closed) {
         List<Pair> set = observations.stream().filter(p -> p.json != null && p.json.isJsonArray()).toList();
         if (set.isEmpty() || set.stream().anyMatch(p -> p.json.getAsJsonArray().asList().stream()
             .anyMatch(e -> !e.isJsonPrimitive() || !e.getAsJsonPrimitive().isString()))) {
@@ -1533,7 +1552,7 @@ public final class MappingInference {
         }
         List<JsonObject> rules = new ArrayList<>();
         for (String list : lists) {
-            JsonObject rule = orderedSet(set, list);
+            JsonObject rule = orderedSet(set, list, closed);
             if (rule != null) {
                 rules.add(rule);
             }
@@ -1541,7 +1560,7 @@ public final class MappingInference {
         return rules;
     }
 
-    private static JsonObject orderedSet(List<Pair> set, String list) {
+    private static JsonObject orderedSet(List<Pair> set, String list, Set<String> closed) {
         Function<Pair, List<Object>> sent = p -> {
             List<Object> out = new ArrayList<>();
             for (int k = 0; p.wire.get(list + "[" + k + "]") != null; k++) {
@@ -1560,7 +1579,7 @@ public final class MappingInference {
         Set<String> all = new TreeSet<>();
         set.forEach(p -> p.json.getAsJsonArray().forEach(e -> all.add(e.getAsString())));
         List<Object> order = set.stream().map(sent).filter(l -> l.size() == all.size() && all.containsAll(l)).findFirst().orElse(null);
-        if (order == null || all.size() < 2) {
+        if (order == null || all.size() < 2 || closed.isEmpty() || !all.containsAll(closed)) {
             return null;
         }
         for (Pair p : set) {
@@ -1570,6 +1589,16 @@ public final class MappingInference {
             }
         }
         return orderedSetRule(list, order);
+    }
+
+    /** The strings the docs list as the values of a field (of its elements, for a list); empty if they list none. */
+    private static Set<String> closedValues(Component component, String path) {
+        Field field = component.field(path);
+        Set<String> values = new TreeSet<>();
+        if (field != null) {
+            field.enumValues().stream().filter(e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isString()).forEach(e -> values.add(e.getAsString()));
+        }
+        return values;
     }
 
     private static JsonObject orderedSetRule(String list, List<Object> order) {
@@ -1586,8 +1615,13 @@ public final class MappingInference {
         return rule;
     }
 
-    /** element k -> leaf, bit set, or list identity. */
-    static JsonObject array(List<Pair> set, String wire) {
+    /**
+     * element k -> leaf, bit set, or list identity.
+     *
+     * @param closed whether the elements are of a closed set of values (an enum): only then a table of the strings seen
+     *               is a rule, as for a scalar ({@link #tableAllowed})
+     */
+    static JsonObject array(List<Pair> set, String wire, boolean closed) {
         // the same leaf whatever the list (a structure the presence of the field adds)
         if (set.stream().map(p -> String.valueOf(p.wire.get(wire) == null ? null : p.wire.get(wire).value())).distinct().count() == 1) {
             JsonObject rule = new JsonObject();
@@ -1653,6 +1687,9 @@ public final class MappingInference {
                 rule = null;
             }
             if (rule != null && numericTable(rule)) {
+                rule = null;
+            }
+            if (rule != null && rule.get("kind").getAsString().equals("table") && !closed) {
                 rule = null;
             }
             if (rule != null && !rule.get("kind").getAsString().equals("constant")) {

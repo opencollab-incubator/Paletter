@@ -183,6 +183,11 @@ against the base is explained by the first rule that fits all observations: `ide
 sends when the field is omitted. Fields no rule explains need a hand transform. Captures from different builds that
 differ become separate protocol windows in `mappings.json`.
 
+A rule has to hold for values the capture did not try. A value table and an `ordered-set` in an order of BDS's own
+are fitted only for a closed set of values (an enum), all of them seen: for a list of any strings the order of the
+few captured ones says nothing about the others. A leaf only the list form of a field sends is not explained by the
+scalar form not sending it.
+
 The inference fails `check-mappings --strict` and `update` on integer bits no field explains and on wire paths that
 are neither mapped nor classified. [data/model/coverage.md](../data/model/coverage.md) lists the result per component,
 including fields that need a hand rule and hand transforms BDS has not verified.
