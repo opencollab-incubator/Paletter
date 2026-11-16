@@ -3,8 +3,8 @@ import me.champeau.gradle.japicmp.JapicmpTask
 plugins {
     `java-library`
     `maven-publish`
-    id("me.champeau.gradle.japicmp") version "0.4.6"
-    id("me.champeau.jmh") version "0.7.2"
+    alias(libs.plugins.japicmp)
+    alias(libs.plugins.jmh)
 }
 
 dependencies {
@@ -17,9 +17,6 @@ dependencies {
 
     // BehaviourTest reads the probe's capture (data/bds/<build>/behaviour-probe/capture.json)
     testImplementation(libs.gson)
-    testImplementation(platform(libs.junit.bom))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 // Generated sources (component API, vanilla constants) live beside the hand-written ones; see docs/data-pipeline.md
@@ -43,11 +40,6 @@ tasks.javadoc {
         // The default cap of 100 hides the real count
         addStringOption("Xmaxwarns", "10000")
     }
-}
-
-tasks.test {
-    useJUnitPlatform()
-    maxHeapSize = "1G"
 }
 
 // Microbenchmarks of the hot paths (src/jmh), not part of the build: `./gradlew :paletter:jmh`, narrowed with

@@ -13,6 +13,9 @@ junit = "6.0.0"
 picocli = "4.7.7"
 # The API dump (tools module, apiDump source set) reads class files
 asm = "9.9.1"
+# apiCompat (paletter): binary compatibility against the released artifact
+japicmp = "0.4.6"
+jmh-plugin = "0.7.2"
 
 [libraries]
 protocol-codec = { group = "org.cloudburstmc.protocol", name = "bedrock-codec", version.ref = "protocol" }
@@ -29,3 +32,10 @@ picocli = { group = "info.picocli", name = "picocli", version.ref = "picocli" }
 javapoet = { group = "com.palantir.javapoet", name = "javapoet", version.ref = "javapoet" }
 asm-util = { group = "org.ow2.asm", name = "asm-util", version.ref = "asm" }
 junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit" }
+# Versions from junit-bom
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+
+[plugins]
+japicmp = { id = "me.champeau.gradle.japicmp", version.ref = "japicmp" }
+jmh = { id = "me.champeau.jmh", version.ref = "jmh-plugin" }

@@ -42,15 +42,9 @@ dependencies {
     testImplementation(libs.javapoet)
     // ConstantsGeneratorTest compiles generated sources, which use the nullness annotations
     testImplementation(libs.checker.qual)
-    testImplementation(platform(libs.junit.bom))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.test {
-    useJUnitPlatform()
-    maxHeapSize = "1G"
-    systemProperty("paletter.root", rootProject.projectDir.absolutePath)
     // ./gradlew :tools:test -PupdateGolden=true rewrites the generator tests' golden files (Golden; review the diff)
     systemProperty("paletter.updateGolden", (findProperty("updateGolden") as String?) ?: "false")
     // -PupdateShapeDisagreements=true rewrites data/model/vanilla-shapes-known-<protocol>.txt (VanillaShapeOracleTest)
@@ -110,6 +104,7 @@ val checkComponentApi = tasks.register<JavaExec>("checkComponentApi") {
 // Generates into build/component-api (to look at, or while the committed API is being replaced)
 tasks.register<JavaExec>("generateComponentApiPreview") {
     group = "codegen"
+    description = "Generates the component API into tools/build/component-api, leaving the committed sources alone"
     classpath = componentApi.runtimeClasspath
     mainClass.set("org.geysermc.paletter.tools.codegen.component.Main")
     args = listOf("generate") + root + listOf("--sources", layout.buildDirectory.dir("component-api").get().asFile.absolutePath)
@@ -147,9 +142,4 @@ val checkData = cliTask("checkData", "verification",
 
 tasks.named("check") {
     dependsOn(checkConstants, checkComponentApi, checkMappings, checkData)
-}
-
-tasks.withType<JavaCompile>().configureEach {
-    options.compilerArgs.add("-Xmaxerrs")
-    options.compilerArgs.add("2000")
 }
