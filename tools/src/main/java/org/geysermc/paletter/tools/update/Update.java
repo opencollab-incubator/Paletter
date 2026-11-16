@@ -123,6 +123,8 @@ public final class Update {
     /** In a history check: what this run would write into {@code data/bds/<build>}, written only when it differs. */
     private final Map<Path, byte[]> pending = new LinkedHashMap<>();
     private Path buildDirectory;
+    /** The build this run captures ({@link #begin}). */
+    private BdsDistribution distribution;
     private Integer protocol;
     private Report report;
 
@@ -134,6 +136,8 @@ public final class Update {
     public static final String EXIT_CODE = "exit-code";
 
     public Update(Path root, Map<String, String> options) {
+        // Normalised, so that every path built from it compares with startsWith
+        root = root.toAbsolutePath().normalize();
         this.root = root;
         this.resources = root.resolve("paletter/src/main/resources/paletter");
         this.bdsData = root.resolve(Layout.BDS);
@@ -153,6 +157,11 @@ public final class Update {
         }
     }
 
+    /** The report of the run ({@link #begin}). */
+    Report report() {
+        return report;
+    }
+
     /** The protocol of the build this run captured, null if no capture worked. */
     public Integer protocol() {
         return protocol;
@@ -167,6 +176,11 @@ public final class Update {
         return !report.changes().isEmpty();
     }
 
+    /** What a history check could not compare with the other build: the report's "Not compared" list. */
+    public List<String> notCompared() {
+        return List.copyOf(report.notCompared);
+    }
+
     /** Whether a step of the run failed. */
     public boolean failed() {
         return report.failed();
@@ -176,6 +190,29 @@ public final class Update {
     public int run() throws Exception {
         Path cache = options.containsKey("cache") ? Path.of(options.get("cache")) : BdsDistribution.defaultCache();
         BdsDistribution distribution = BdsDistribution.resolve(preview, options.get("version"));
+        begin(distribution);
+        Path work = distribution.runDirectory(cache, "");
+        BdsDistribution.deleteRecursively(work);
+        Files.createDirectories(work);
+        report.header.put("Work directory", "`" + work + "` (logs, captures)");
+
+        try {
+            if (samePlatform()) {
+                pipeline(cache, distribution, work);
+            }
+        } catch (Exception e) {
+            report.fail("pipeline", e);
+        }
+        if (against == null && !verifyOnly && !report.failed()) {
+            // New captures of a bundled build change what the record says per data version
+            track(report, root, List.of(resources.resolve(BuildTable.RESOURCE), bdsData.resolve(BuildTable.TABLE)), "build table",
+                () -> BuildTable.run(root, false));
+        }
+        return finish(work);
+    }
+
+    /** Starts the report of a run of {@code distribution} and checks where it may write. */
+    void begin(BdsDistribution distribution) {
         report = new Report(against != null ? "Paletter build check: BDS " + distribution.version() + " against " + against
             : "Paletter data " + (verifyOnly ? "verification" : "update") + ": BDS " + distribution.version() + (preview ? " (preview)" : ""));
         report.against = against;
@@ -190,18 +227,11 @@ public final class Update {
         report.header.put("Mode", against != null ? "history check against " + against + (verifyOnly ? " (nothing written)"
             : " (captures written to data/bds/" + distribution.version() + " only if they differ)") : verifyOnly ? "verify only (nothing written)" : "update");
         report.header.put("BDS", distribution.version() + " " + distribution.platform() + " (" + distribution.url() + ")");
-        Path work = distribution.runDirectory(cache, "");
-        BdsDistribution.deleteRecursively(work);
-        Files.createDirectories(work);
-        report.header.put("Work directory", "`" + work + "` (logs, captures)");
+        this.distribution = distribution;
+    }
 
-        try {
-            if (samePlatform()) {
-                pipeline(cache, distribution, work);
-            }
-        } catch (Exception e) {
-            report.fail("pipeline", e);
-        }
+    /** Notes the protocols, keeps a history check's captures when they differ and writes the report. */
+    private int finish(Path work) throws IOException {
         if (against != null && protocol != null) {
             // Protocols are version stamps to the comparison, but builds of the same data under two protocols are worth saying
             Integer againstProtocol = BuildHistory.protocol(bdsData.resolve(against));
@@ -1492,7 +1522,7 @@ public final class Update {
         if (!lines.isEmpty()) {
             report.evidence("Content log changes", lines);
         }
-        if (!olderThanNewestBundled(runs)) {
+        if (against == null && !olderThanNewestBundled(runs)) {
             // The committed log is the newest build's: a backfill of an older build does not replace it
             stage(file, current.getBytes(StandardCharsets.UTF_8), "add-on content log");
         }
@@ -1620,14 +1650,26 @@ public final class Update {
             return;
         }
         report.check(Report.Status.INFO, "Spec capture", "`" + (write ? root.relativize(out) : out) + "`");
+        SpecDiff.Pairing pairing = previous == null ? null : SpecDiff.pairing(previous, out);
+        if (pairing != null && !pairing.same()) {
+            // The values and acceptance only cover the variants both were given alike: in a history check that would
+            // call two captures of different add-ons identical
+            if (against != null) {
+                report.check(Report.Status.FAIL, "Spec capture variants", previousBuild + ": " + pairing.mismatch());
+                return;
+            }
+            report.check(Report.Status.INFO, "Spec capture variants", previousBuild + ": " + pairing.mismatch()
+                + "; the comparison below covers the " + pairing.variants() + " variants alike only");
+        }
         if (previous != null) {
             List<SpecDiff.Change> changes = SpecDiff.compare(previous, out);
             String earlier = own ? "the committed capture of " + previousBuild : previousBuild;
             Map<String, List<SpecDiff.Change>> byComponent = new java.util.TreeMap<>();
             changes.forEach(change -> byComponent.computeIfAbsent(change.component(), k -> new ArrayList<>()).add(change));
             compared(changes.isEmpty(), "Spec capture values",
-                changes.isEmpty() ? "every variant sent as in " + earlier : changes.size() + " leaves in " + byComponent.size()
-                    + " components differ from " + earlier + ", variant by variant");
+                changes.isEmpty() ? "every one of the " + pairing.variants() + " variants both were given alike sent as in " + earlier
+                    : changes.size() + " leaves in " + byComponent.size() + " components differ from " + earlier + ", variant by variant ("
+                    + pairing.variants() + " variants compared)");
             List<String> lines = new ArrayList<>();
             byComponent.forEach((component, list) -> {
                 long values = list.stream().filter(SpecDiff.Change::valueChange).count();
@@ -1809,12 +1851,15 @@ public final class Update {
         }
     }
 
-    private void stage(Path target, byte[] content, String what) throws IOException {
+    void stage(Path target, byte[] content, String what) throws IOException {
         if (against != null) {
             // A history check writes only the captures of its build, and only when the build is kept (keep())
-            if (target.startsWith(buildDirectory)) {
-                pending.put(target, content);
+            Path normalized = target.toAbsolutePath().normalize();
+            if (!normalized.startsWith(buildDirectory) || normalized.equals(buildDirectory)) {
+                throw new IllegalStateException("A history check writes only into " + relative(buildDirectory) + ", not " + what
+                    + " to " + normalized);
             }
+            pending.put(normalized, content);
             return;
         }
         byte[] existing = Files.exists(target) ? Files.readAllBytes(target) : null;
@@ -1918,7 +1963,7 @@ public final class Update {
     }
 
     /** Writes the captures of a kept build (history check) into {@code data/bds/<build>}. */
-    private void keep(Path work) throws IOException {
+    void keep(Path work) throws IOException {
         BdsDistribution.deleteRecursively(buildDirectory);
         for (Map.Entry<Path, byte[]> file : pending.entrySet()) {
             Files.createDirectories(file.getKey().getParent());

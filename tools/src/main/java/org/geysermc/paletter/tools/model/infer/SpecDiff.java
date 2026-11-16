@@ -39,6 +39,52 @@ public final class SpecDiff {
         }
     }
 
+    /**
+     * How the variants of two captures pair up. {@link #compare} and {@link #acceptance} only look at variants both were
+     * given with the same JSON, so two captures of different add-ons would compare equal on whatever they share: a
+     * comparison that decides anything first requires {@link #same()}.
+     *
+     * @param variants the variants both captures have with the same component and JSON
+     * @param onlyBefore variants only the earlier capture has
+     * @param onlyAfter variants only the later capture has
+     * @param differentJson variants both have, with another component or JSON
+     */
+    public record Pairing(int variants, int onlyBefore, int onlyAfter, int differentJson) {
+        public boolean same() {
+            return onlyBefore == 0 && onlyAfter == 0 && differentJson == 0;
+        }
+
+        /** Why the captures cannot be compared, or null when they can. */
+        public String mismatch() {
+            return same() ? null : "captured from different add-ons (" + onlyBefore + " variants only in the earlier capture, "
+                + onlyAfter + " only in the later one, " + differentJson + " with other JSON; " + variants + " alike): recapture "
+                + "both with the same spec add-on";
+        }
+    }
+
+    public static Pairing pairing(Path previous, Path current) throws IOException {
+        return pairing(MappingInference.load(previous), MappingInference.load(current));
+    }
+
+    static Pairing pairing(MappingInference.Capture before, MappingInference.Capture after) {
+        Map<String, MappingInference.Variant> earlier = new HashMap<>();
+        before.variants().forEach(v -> earlier.put(v.identifier(), v));
+        int same = 0;
+        int onlyAfter = 0;
+        int different = 0;
+        for (MappingInference.Variant variant : after.variants()) {
+            MappingInference.Variant old = earlier.remove(variant.identifier());
+            if (old == null) {
+                onlyAfter++;
+            } else if (!old.component().equals(variant.component()) || !java.util.Objects.equals(old.json(), variant.json())) {
+                different++;
+            } else {
+                same++;
+            }
+        }
+        return new Pairing(same, earlier.size(), onlyAfter, different);
+    }
+
     /** @return the changes, in variant order */
     public static List<Change> compare(Path previous, Path current) throws IOException {
         MappingInference.Capture before = MappingInference.load(previous);
