@@ -10,6 +10,7 @@ import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataSource;
+import org.geysermc.paletter.data.VerifiedBuild;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.internal.CanonicalItems;
@@ -99,6 +100,21 @@ public final class Paletter {
 
     public @NonNull DataVersion latest() {
         return versions.getLast();
+    }
+
+    /**
+     * The Bedrock Dedicated Server release builds that were run and found to send a data version's data: the build it was
+     * captured from and the builds compared with it and found identical, oldest first. The list may hold the capture
+     * build alone. A data version serves every protocol from its first one up to the next version's; a build or protocol
+     * that is not in this list is served the same data, unverified.
+     *
+     * @param version a data version of this instance's data source
+     * @return the builds, oldest first; empty when the data source records none (a preview, or data of another source)
+     * @see PaletteDataSource#verifiedBuilds(DataVersion)
+     * @since 0.1.0
+     */
+    public @NonNull List<VerifiedBuild> verifiedBuilds(@NonNull DataVersion version) {
+        return source.verifiedBuilds(version);
     }
 
     /**

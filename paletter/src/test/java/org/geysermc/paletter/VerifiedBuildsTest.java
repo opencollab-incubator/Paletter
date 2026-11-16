@@ -18,7 +18,8 @@ class VerifiedBuildsTest {
         PaletteDataSource bundled = PaletteDataSource.bundled();
         Paletter paletter = Paletter.bundled();
         for (DataVersion version : bundled.versions()) {
-            List<VerifiedBuild> builds = bundled.verifiedBuilds(version);
+            List<VerifiedBuild> builds = paletter.verifiedBuilds(version);
+            assertEquals(bundled.verifiedBuilds(version), builds);
             assertFalse(builds.isEmpty(), version + " has no verified build");
             for (VerifiedBuild build : builds) {
                 // A verified build's protocol is served by the version it was verified for
