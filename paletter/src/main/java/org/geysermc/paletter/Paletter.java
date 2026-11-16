@@ -232,7 +232,7 @@ public final class Paletter {
      *              A state the newest version lacks is mapped forward to its newest equivalent (renamed identifiers, state
      *              keys added, removed or reset)
      * @return its handle, or null if the newest version has no equivalent (see {@link #explainUnknown(NbtMap)}).
-     *         Custom blocks have handles of their own ({@code BedrockBlockType.of(customBlock)}), valid in palettes with
+     *         Custom blocks have handles of their own ({@code customBlock.type()}), valid in palettes with
      *         their layer, see {@link Palette#block(NbtMap)}
      * @since 0.1.0
      */

@@ -79,13 +79,6 @@ public final class BedrockItemType {
     }
 
     /**
-     * @return the type of a custom item: {@link CustomItem#type()}
-     */
-    public static @NonNull BedrockItemType of(@NonNull CustomItem item) {
-        return item.type();
-    }
-
-    /**
      * Plumbing of {@link CustomItem} and {@link org.geysermc.paletter.block.CustomBlock}, which create their type once and
      * own it: use {@link CustomItem#type()} and {@link org.geysermc.paletter.block.CustomBlock#itemType()}.
      *

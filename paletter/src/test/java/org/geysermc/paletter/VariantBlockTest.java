@@ -5,7 +5,6 @@ import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
-import org.geysermc.paletter.vanilla.BedrockBlockType;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
@@ -121,7 +120,7 @@ class VariantBlockTest {
         BedrockItemVariant item = BedrockItemType.of("variant:keyed").base();
         BedrockBlockState key = palette.blockKeyOf(item);
         assertNotNull(key);
-        assertEquals(BedrockBlockType.of(lamp), key.type());
+        assertSame(lamp.type(), key.type());
         assertNull(PALETTER.blockOf(item), "Paletter alone does not know custom content");
     }
 }

@@ -70,7 +70,7 @@ class HandleTest {
         CustomBlock lamp = lamp();
         CustomItem ruby = ruby();
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").block(lamp).item(ruby).build());
-        BedrockBlockType type = BedrockBlockType.of(lamp);
+        BedrockBlockType type = lamp.type();
         for (BedrockBlockState state : type.states()) {
             assertSame(state, palette.block(state.toNbt()));
         }
@@ -102,7 +102,7 @@ class HandleTest {
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").block(lamp()).build());
         List<BedrockBlockState> states = new java.util.ArrayList<>(BedrockBlockType.vanillaTypes().stream()
             .flatMap(type -> type.states().stream()).toList());
-        states.addAll(BedrockBlockType.of(lamp()).states());
+        states.addAll(lamp().type().states());
         BedrockBlockState[] handles = states.toArray(BedrockBlockState[]::new);
         long sum = 0;
         for (int warmup = 0; warmup < 30; warmup++) {

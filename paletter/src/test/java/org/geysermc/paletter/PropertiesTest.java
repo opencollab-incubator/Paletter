@@ -15,7 +15,6 @@ import org.geysermc.paletter.item.RegisteredItem;
 import org.geysermc.paletter.item.component.MaxStackSize;
 import org.geysermc.paletter.property.Properties;
 import org.geysermc.paletter.property.PropertyKind;
-import org.geysermc.paletter.vanilla.BedrockBlockType;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.junit.jupiter.api.Test;
 
@@ -114,7 +113,7 @@ class PropertiesTest {
         RegisteredBlock registered = palette.blocks().block("example:glow");
         assertNotNull(registered);
         assertNotNull(registered.properties().component("minecraft:light_emission"));
-        assertEquals(Properties.EMPTY, PALETTER.properties(BedrockBlockType.of(block), PALETTER.latest()));
+        assertEquals(Properties.EMPTY, PALETTER.properties(block.type(), PALETTER.latest()));
         for (RegisteredBlockState state : registered.states()) {
             NbtMap emission = registered.properties(state).component("minecraft:light_emission");
             assertNotNull(emission);

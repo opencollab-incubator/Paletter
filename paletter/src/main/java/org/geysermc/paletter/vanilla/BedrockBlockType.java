@@ -69,14 +69,6 @@ public final class BedrockBlockType {
     }
 
     /**
-     * @return the type of a custom block: {@link CustomBlock#type()}. A type equals another of the same identifier and
-     *         states, so also the type of the identifier alone if the block has no states
-     */
-    public static @NonNull BedrockBlockType of(@NonNull CustomBlock block) {
-        return block.type();
-    }
-
-    /**
      * Plumbing of {@link CustomBlock}, which creates its type once and owns it: use {@link CustomBlock#type()}.
      *
      * @param properties the state properties, in declaration order ({@link CustomBlock#stateProperties()})
@@ -93,7 +85,7 @@ public final class BedrockBlockType {
      * The key of an identifier: the vanilla constant if the identifier is a vanilla block of the newest bundled data or
      * has a generated constant, else a custom type known by its identifier only (no states). Such types are not
      * interned: equal for equal identifiers, not identical, so compare them with {@code equals}, and unknown
-     * identifiers never accumulate. The type of a {@link CustomBlock} with states is {@link #of(CustomBlock)}. Loads
+     * identifiers never accumulate. The type of a {@link CustomBlock} is {@link CustomBlock#type()}. Loads
      * the data.
      *
      * @return the type of an identifier
