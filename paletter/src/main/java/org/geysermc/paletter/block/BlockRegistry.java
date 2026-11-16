@@ -659,7 +659,13 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         /** Own states: all of them without a parent. */
         private final RegisteredBlockState[] own;
         private final IntIndex ownByHash;
-        private final Map<NbtMap, RegisteredBlockState> ownByState;
+        /**
+         * Own custom states by state. Own vanilla states are not kept here: the interner has every one of them (as the
+         * same instances), so {@link #byState} looks them up there and checks that they are in this table.
+         */
+        private final Map<NbtMap, RegisteredBlockState> ownCustomByState;
+        /** Null if this table has no vanilla states (a table over a parent holds only custom ones). */
+        private final @Nullable BlockInterner interner;
         private final List<BlockPropertyData> blockProperties;
         /** Every custom block, including the parent's. */
         private final List<CustomBlock> customBlocks;
@@ -711,7 +717,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             }
 
             this.own = new RegisteredBlockState[states.size()];
-            Object2ObjectOpenHashMap<NbtMap, RegisteredBlockState> byState = new Object2ObjectOpenHashMap<>(states.size());
+            Object2ObjectOpenHashMap<NbtMap, RegisteredBlockState> customByState = new Object2ObjectOpenHashMap<>(customStates.size());
             IntIndex byHash = new IntIndex(states.size());
             for (int i = 0; i < states.size(); i++) {
                 NbtMap state = states.get(i);
@@ -719,14 +725,15 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                 RegisteredBlockState block;
                 if (custom) {
                     block = new RegisteredBlockState(BlockHashes.hash(state), state, true);
+                    customByState.put(state, block);
                 } else {
                     // A vanilla state has the same hash in every version: share the definition
                     block = interner.vanillaBlock(state);
                 }
-                if (byState.put(state, block) != null) {
+                int collision = byHash.put(block.getRuntimeId(), i);
+                if (collision != -1 && own[collision].getState().equals(state)) {
                     throw new PaletteException("Duplicate block state in " + version + " palette: " + state);
                 }
-                int collision = byHash.put(block.getRuntimeId(), i);
                 if (collision != -1) {
                     throw new PaletteException("Block network id hash collision in the " + version + " palette: "
                         + own[collision].getState() + " and " + state + " both hash to " + block.getRuntimeId());
@@ -738,8 +745,9 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                 }
                 own[i] = block;
             }
-            this.ownByState = byState;
+            this.ownCustomByState = customByState;
             this.ownByHash = byHash;
+            this.interner = parent == null ? interner : null;
 
             List<BlockPropertyData> properties = new ArrayList<>(data.dataDrivenBlocks());
             properties.addAll(customProperties);
@@ -775,7 +783,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             }
             this.ownBlocks = Collections.unmodifiableMap(blocks);
 
-            RegisteredBlockState air = parent != null ? parent.air : byState.get(BlockStates.of("minecraft:air"));
+            RegisteredBlockState air = parent != null ? parent.air : ownVanilla(BlockStates.of("minecraft:air"));
             if (air == null) {
                 throw new PaletteException("The " + version + " palette has no air");
             }
@@ -799,8 +807,21 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         }
 
         @Nullable RegisteredBlockState byState(NbtMap state) {
-            RegisteredBlockState found = ownByState.get(state);
+            RegisteredBlockState found = ownCustomByState.get(state);
+            if (found == null && interner != null) {
+                found = ownVanilla(state);
+            }
             return found != null || parent == null ? found : parent.byState(state);
+        }
+
+        /** The interner has the vanilla states of every version: only those of this table count. */
+        private @Nullable RegisteredBlockState ownVanilla(NbtMap state) {
+            RegisteredBlockState block = interner.knownVanillaBlock(state);
+            if (block == null) {
+                return null;
+            }
+            int index = ownByHash.get(block.getRuntimeId());
+            return index != -1 && own[index] == block ? block : null;
         }
 
         @Nullable RegisteredBlock block(String identifier) {

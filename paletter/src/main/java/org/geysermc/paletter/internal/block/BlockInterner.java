@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Shares what hashed palettes of different versions have in common: vanilla
@@ -26,7 +27,8 @@ import java.util.Map;
  */
 @Internal
 public final class BlockInterner {
-    private final Map<NbtMap, RegisteredBlockState> blocks = new HashMap<>();
+    /** Concurrent: palettes look their vanilla states up here, see {@link #knownVanillaBlock}. */
+    private final Map<NbtMap, RegisteredBlockState> blocks = new ConcurrentHashMap<>();
     private final Map<VanillaBlockKey, RegisteredBlock> vanillaTypes = new HashMap<>();
     private final Map<IntPage, int[]> intPages = new HashMap<>();
     private final Map<BlockPage, RegisteredBlockState[]> blockPages = new HashMap<>();
@@ -36,13 +38,15 @@ public final class BlockInterner {
     /**
      * @return the shared hashed definition of a vanilla state; its hash is computed once
      */
-    public synchronized @NonNull RegisteredBlockState vanillaBlock(@NonNull NbtMap state) {
-        RegisteredBlockState block = blocks.get(state);
-        if (block == null) {
-            block = new RegisteredBlockState(BlockHashes.hash(state), state, false);
-            blocks.put(state, block);
-        }
-        return block;
+    public @NonNull RegisteredBlockState vanillaBlock(@NonNull NbtMap state) {
+        return blocks.computeIfAbsent(state, key -> new RegisteredBlockState(BlockHashes.hash(key), key, false));
+    }
+
+    /**
+     * @return the shared definition of a vanilla state if one was made, else null. Takes no lock and does not allocate
+     */
+    public @Nullable RegisteredBlockState knownVanillaBlock(@NonNull NbtMap state) {
+        return blocks.get(state);
     }
 
     /**

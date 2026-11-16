@@ -18,6 +18,7 @@ import java.util.function.IntUnaryOperator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -165,5 +166,22 @@ class HotPathTest {
         }
         long allocated = allocated(customs.size(), i -> palette.blocks().key(customs.get(i)).hashCode());
         assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * customs.size() + " lookups");
+    }
+
+    @Test
+    void vanillaStatesOfOtherVersionsAreNotInAPalette() {
+        // Both palettes come from one Paletter, so they share the interned vanilla definitions
+        Palette latest = PALETTER.palette(PALETTER.latest().protocolVersion());
+        Palette oldest = PALETTER.vanilla(PALETTER.versions().getFirst());
+        int newer = 0;
+        for (int i = 0; i < latest.blocks().size(); i++) {
+            RegisteredBlockState state = latest.blocks().byIndex(i);
+            assertSame(state, latest.blocks().exact(state.getState()));
+            if (oldest.blocks().byRuntimeId(state.getRuntimeId()) == null) {
+                newer++;
+                assertNull(oldest.blocks().exact(state.getState()), state.toString());
+            }
+        }
+        assertTrue(newer > 0, "the oldest version has every state of the newest");
     }
 }
