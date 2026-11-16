@@ -10,7 +10,6 @@ import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.lang.management.ManagementFactory;
@@ -26,8 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The per packet lookups of a translator: they give the right answer on palettes extended by several layers, and do not
- * allocate (the timings are in the JMH benchmarks of src/jmh). The allocation tests (tag {@code allocation}) count the
- * bytes the test thread allocates once the lookups are compiled, the least of several measurements.
+ * allocate (the timings are in the JMH benchmarks of src/jmh). The allocation tests count the bytes the test thread
+ * allocates once the lookups are compiled, the least of several measurements.
  */
 class HotPathTest {
     private static final Paletter PALETTER = Paletter.bundled();
@@ -90,8 +89,8 @@ class HotPathTest {
      * encode would allocate; anything more (the 24 bytes of a small record per stack) fails.
      */
     @Test
-    @Tag("allocation")
     void encodeAllocatesOnlyTheItemData() {
+        Sizes sizes = Sizes.measure();
         for (DataVersion version : List.of(PALETTER.latest(), PALETTER.versions().getFirst())) {
             Palette palette = PALETTER.vanilla(version);
             BedrockItemStack[] stacks = palette.itemVariants().stream().map(BedrockItemStack::of).toArray(BedrockItemStack[]::new);
@@ -101,31 +100,32 @@ class HotPathTest {
                 return encoded[i].getCount();
             });
             long perStack = allocated / ((long) ROUNDS * stacks.length);
-            assertTrue(perStack == ITEM_DATA_SIZE || perStack == ITEM_DATA_SIZE + BUILDER_SIZE, version + ": " + perStack
-                + " bytes per encode; an item data takes " + ITEM_DATA_SIZE + ", its builder " + BUILDER_SIZE);
+            assertTrue(perStack == sizes.itemData() || perStack == sizes.itemData() + sizes.builder(), version + ": " + perStack
+                + " bytes per encode; an item data takes " + sizes.itemData() + ", its builder " + sizes.builder());
         }
     }
 
-    /** The bytes of one {@link ItemData} alone, and of its builder alone: both are kept, so neither is optimized away. */
-    private static final long BUILDER_SIZE;
-    private static final long ITEM_DATA_SIZE;
-
-    static {
-        ItemData template = ItemData.builder().definition(ItemData.AIR.getDefinition()).count(1).build();
-        int count = 10_000;
-        ItemData.Builder[] builders = new ItemData.Builder[count];
-        ItemData[] made = new ItemData[count];
-        long builder = allocated(count, i -> {
-            builders[i] = builder(template);
-            return builders[i] == null ? 0 : 1;
-        });
-        long both = allocated(count, i -> {
-            builders[i] = builder(template);
-            made[i] = builders[i].build();
-            return made[i].getCount();
-        });
-        BUILDER_SIZE = builder / ((long) ROUNDS * count);
-        ITEM_DATA_SIZE = (both - builder) / ((long) ROUNDS * count);
+    /**
+     * The bytes of one {@link ItemData} alone, and of its builder alone: both are kept, so neither is optimized away.
+     * Measured by the test that needs them, so a bad measurement fails that test only.
+     */
+    private record Sizes(long builder, long itemData) {
+        static Sizes measure() {
+            ItemData template = ItemData.builder().definition(ItemData.AIR.getDefinition()).count(1).build();
+            int count = 10_000;
+            ItemData.Builder[] builders = new ItemData.Builder[count];
+            ItemData[] made = new ItemData[count];
+            long builder = allocated(count, i -> {
+                builders[i] = HotPathTest.builder(template);
+                return builders[i] == null ? 0 : 1;
+            });
+            long both = allocated(count, i -> {
+                builders[i] = HotPathTest.builder(template);
+                made[i] = builders[i].build();
+                return made[i].getCount();
+            });
+            return new Sizes(builder / ((long) ROUNDS * count), (both - builder) / ((long) ROUNDS * count));
+        }
     }
 
     /** The builder of encode, filled the same way. */
@@ -139,7 +139,6 @@ class HotPathTest {
     }
 
     @Test
-    @Tag("allocation")
     void decodeOfAirDoesNotAllocate() {
         Palette palette = layered();
         long allocated = allocated(1000, i -> palette.decode(ItemData.AIR) == null ? 0 : 1);
@@ -147,7 +146,6 @@ class HotPathTest {
     }
 
     @Test
-    @Tag("allocation")
     void sameStackDoesNotAllocate() {
         Palette palette = layered();
         List<ItemData> stacks = new ArrayList<>();
@@ -181,7 +179,6 @@ class HotPathTest {
     }
 
     @Test
-    @Tag("allocation")
     void customBlockKeysDoNotAllocate() {
         Palette palette = layered();
         List<RegisteredBlockState> customs = new ArrayList<>();
@@ -212,7 +209,6 @@ class HotPathTest {
     }
 
     @Test
-    @Tag("allocation")
     void blockBehaviourDoesNotAllocate() {
         Palette palette = layered();
         int[] runtimeIds = new int[palette.blocks().size()];
