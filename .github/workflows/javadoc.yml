@@ -2,8 +2,11 @@
 #   push to main      -> /latest/
 #   published release -> /X.Y.Z/ (tag vX.Y.Z)
 # Only the target folder is replaced, other versions are kept; index.html lists them. Enable Pages with source
-# "Deploy from a branch" -> gh-pages / (root). No secrets: the default GITHUB_TOKEN pushes the branch, through the
-# checkout's credentials (gh-pages is a worktree of the checkout), never written into a URL.
+# "Deploy from a branch" -> gh-pages / (root); see docs/releasing.md.
+#
+# `build` runs Gradle with a read-only token and uploads the Javadoc as an artifact. `deploy` holds `contents: write`,
+# runs no Gradle or repository script, and pushes the branch with the default GITHUB_TOKEN through the checkout's
+# credentials (gh-pages is a worktree of the checkout), never written into a URL.
 
 name: Javadoc
 
@@ -13,37 +16,69 @@ on:
   release:
     types: [published]
 
-permissions:
-  contents: write
+permissions: {}
 
 concurrency:
   group: javadoc
   cancel-in-progress: false
 
 jobs:
-  javadoc:
+  build:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: read
+    outputs:
+      target: ${{ steps.target.outputs.target }}
     steps:
+      # The folder on gh-pages; deploy replaces it, so a release tag must be a plain version
+      - name: Resolve the target folder
+        id: target
+        env:
+          EVENT: ${{ github.event_name }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          if [ "$EVENT" = "release" ]; then
+            if ! echo "$TAG" | grep -Eq '^v[0-9]+(\.[0-9]+)*$'; then echo "Release tag '$TAG' is not vX.Y.Z"; exit 1; fi
+            echo "target=${TAG#v}" >> "$GITHUB_OUTPUT"
+          else
+            echo "target=latest" >> "$GITHUB_OUTPUT"
+          fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
         with:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
       - name: Build Javadoc
-        run: ./gradlew --max-workers=1 :paletter:javadoc
+        run: ./gradlew :paletter:javadoc
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: javadoc
+          path: paletter/build/docs/javadoc/
+          if-no-files-found: error
+          retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: javadoc
+          path: ${{ runner.temp }}/javadoc
       - name: Publish to gh-pages
         env:
-          EVENT: ${{ github.event_name }}
-          TAG: ${{ github.event.release.tag_name }}
+          TARGET: ${{ needs.build.outputs.target }}
         run: |
-          if [ "$EVENT" = "release" ]; then
-            target="${TAG#v}"
-          else
-            target="latest"
-          fi
-          cp -r paletter/build/docs/javadoc "$RUNNER_TEMP/javadoc"
+          # Checked again before rm -rf: the folder name comes from another job
+          if ! echo "$TARGET" | grep -Eq '^(latest|[0-9]+(\.[0-9]+)*)$'; then echo "Bad target '$TARGET'"; exit 1; fi
           # A worktree of the checkout shares its remote and credentials
           if git ls-remote --exit-code --heads origin gh-pages > /dev/null; then
             git fetch --depth 1 origin gh-pages
@@ -55,8 +90,8 @@ jobs:
             git -C "$RUNNER_TEMP/pages" clean -fdxq
           fi
           cd "$RUNNER_TEMP/pages"
-          rm -rf "$target"
-          cp -r "$RUNNER_TEMP/javadoc" "$target"
+          rm -rf "$TARGET"
+          cp -r "$RUNNER_TEMP/javadoc" "$TARGET"
           touch .nojekyll
           {
             echo '<!doctype html><meta charset="utf-8"><title>Paletter Javadoc</title>'
@@ -73,6 +108,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "Nothing changed"
           else
-            git commit -m "Javadoc $target (${GITHUB_SHA::7})"
+            git commit -m "Javadoc $TARGET (${GITHUB_SHA::7})"
             git push origin gh-pages
           fi

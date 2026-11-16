@@ -27,6 +27,20 @@ sourceSets.main {
 
 java {
     withSourcesJar()
+    // So `build` builds the Javadoc too, and a broken reference fails before merge
+    withJavadocJar()
+}
+
+tasks.javadoc {
+    options {
+        this as StandardJavadocDocletOptions
+        // Every doclint group but `missing` (undocumented members, 2,775 when this was set); any other warning fails.
+        // The JDK is linked by javadoc's built-in platform links (docs.oracle.com, no download).
+        addBooleanOption("Xdoclint:all,-missing", true)
+        addBooleanOption("Werror", true)
+        // The default cap of 100 hides the real count
+        addStringOption("Xmaxwarns", "10000")
+    }
 }
 
 tasks.test {
