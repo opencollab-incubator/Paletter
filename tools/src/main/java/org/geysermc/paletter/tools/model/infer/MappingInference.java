@@ -196,15 +196,28 @@ public final class MappingInference {
                 }
             }
         }
-        // Several kept builds of one window (hotfixes, with or without a protocol bump): the newest build defines it
-        Map<Integer, Window> windows = newestOfWindows(captures, this::dataProtocol, directories);
+        // Several kept builds of one window (hotfixes, with or without a protocol bump): the build its data version was
+        // imported from defines it
+        Set<String> historyKept = new TreeSet<>();
+        org.geysermc.paletter.tools.update.BuildHistory.read(root).forEach((build, entry) -> {
+            if (entry.keptByHistoryCheck()) {
+                historyKept.add(build);
+            }
+        });
+        Map<Integer, Window> windows = windowCaptures(captures, this::dataProtocol, directories, historyKept);
         Map<Integer, List<String>> replaced = new TreeMap<>();
+        Map<Integer, List<String>> differing = new TreeMap<>();
         windows.forEach((window, selected) -> {
             if (!selected.replaces().isEmpty()) {
                 replaced.put(window, selected.replaces());
             }
+            if (!selected.differs().isEmpty()) {
+                differing.put(window, selected.differs());
+                System.out.println("GAP: " + String.join(", ", selected.differs()) + " differ from " + selected.capture().bdsVersion()
+                    + " (window " + window + "): each needs a data version of its own; their captures are not used");
+            }
         });
-        captures = new ArrayList<>(windows.values().stream().map(Window::newest).toList());
+        captures = new ArrayList<>(windows.values().stream().map(Window::capture).toList());
         // By protocol, not by name: the oldest build first, the newest last
         captures.sort(java.util.Comparator.comparingInt(Capture::protocol));
         // What BDS says about the schema is read from the newest release: an older one knows fewer members, and a preview
@@ -237,6 +250,12 @@ public final class MappingInference {
                 JsonArray older = new JsonArray();
                 replaced.get(dataProtocol(capture.protocol())).stream().sorted(org.geysermc.paletter.tools.Versions.ORDER).forEach(older::add);
                 source.add("replaces", older);
+            }
+            if (differing.containsKey(dataProtocol(capture.protocol()))) {
+                // Kept builds of the window with other spec data: a gap, a data version of their own is missing
+                JsonArray other = new JsonArray();
+                differing.get(dataProtocol(capture.protocol())).forEach(other::add);
+                source.add("differs", other);
             }
             // A preview build: what only its window has is preview API (@SincePreview with this version name)
             if (previewName(capture) != null) {
@@ -517,48 +536,58 @@ public final class MappingInference {
     // ---------------------------------------------------------------------------------------------------------------
     // Loading
 
-    /** The capture that defines a data version window, and the older kept builds of that window it stands for, oldest first. */
-    record Window(Capture newest, List<String> replaces) {
+    /**
+     * The capture that defines a data version window, the other kept builds of the window with the same spec data
+     * ({@code replaces}) and those with other data ({@code differs}, each a gap: it needs a data version of its own), both
+     * oldest first.
+     */
+    record Window(Capture capture, List<String> replaces, List<String> differs) {
     }
 
     /**
-     * The newest capture of each window (by {@code window}, the data protocol of a capture's protocol). The others of a
-     * window are only replaced when they hold the same spec data as the newest ({@link SpecDiff#compare} and
-     * {@link SpecDiff#acceptance} find nothing): a kept build with other data needs a data version of its own.
+     * The capture of each window (by {@code window}, the data protocol of a capture's protocol): the newest build that a
+     * history check did not keep, which is the build the window's data version was imported from; the newest of all when
+     * every one was. The others are compared with it ({@link SpecDiff#compare} and {@link SpecDiff#acceptance}): the same
+     * data and it stands for them, other data and they are a gap, never the window's capture.
      *
      * @param directories the spec capture directory of each build
-     * @throws IllegalStateException when a replaced capture's spec data differs from the newest of its window
+     * @param historyKept the builds whose captures a history check kept ({@code data/bds/builds.json})
+     * @throws IllegalStateException when two captures of a window were made with different spec add-ons, so nothing
+     *                               could be said about them: recapture
      */
-    static Map<Integer, Window> newestOfWindows(List<Capture> captures, java.util.function.IntUnaryOperator window,
-                                                Map<String, Path> directories) throws IOException {
+    static Map<Integer, Window> windowCaptures(List<Capture> captures, java.util.function.IntUnaryOperator window,
+                                               Map<String, Path> directories, Set<String> historyKept) throws IOException {
         Map<Integer, List<Capture>> byWindow = new TreeMap<>();
         for (Capture capture : captures) {
             byWindow.computeIfAbsent(window.applyAsInt(capture.protocol()), w -> new ArrayList<>()).add(capture);
         }
         Map<Integer, Window> windows = new TreeMap<>();
-        List<String> differing = new ArrayList<>();
+        List<String> unpaired = new ArrayList<>();
         for (Map.Entry<Integer, List<Capture>> entry : byWindow.entrySet()) {
             List<Capture> builds = new ArrayList<>(entry.getValue());
             builds.sort(java.util.Comparator.comparing(Capture::bdsVersion, org.geysermc.paletter.tools.Versions.ORDER));
-            Capture newest = builds.getLast();
+            Capture chosen = builds.stream().filter(capture -> !historyKept.contains(capture.bdsVersion())).reduce((a, b) -> b)
+                .orElse(builds.getLast());
             List<String> replaces = new ArrayList<>();
-            for (Capture older : builds.subList(0, builds.size() - 1)) {
-                Path before = directories.get(older.bdsVersion());
-                Path after = directories.get(newest.bdsVersion());
-                int values = SpecDiff.compare(before, after).size();
-                int acceptance = SpecDiff.acceptance(before, after).size();
-                if (values + acceptance > 0) {
-                    differing.add(older.bdsVersion() + " vs " + newest.bdsVersion() + " (window " + entry.getKey() + "): " + values
-                        + " leaves with other values, " + acceptance + " variants accepted or logged differently");
+            List<String> differs = new ArrayList<>();
+            for (Capture other : builds) {
+                if (other == chosen) {
+                    continue;
                 }
-                replaces.add(older.bdsVersion());
+                SpecDiff.Pairing pairing = SpecDiff.pairing(other, chosen);
+                if (!pairing.same()) {
+                    unpaired.add(other.bdsVersion() + " vs " + chosen.bdsVersion() + ": " + pairing.mismatch());
+                    continue;
+                }
+                Path before = directories.get(other.bdsVersion());
+                Path after = directories.get(chosen.bdsVersion());
+                boolean same = SpecDiff.compare(before, after).isEmpty() && SpecDiff.acceptance(before, after).isEmpty();
+                (same ? replaces : differs).add(other.bdsVersion());
             }
-            windows.put(entry.getKey(), new Window(newest, replaces));
+            windows.put(entry.getKey(), new Window(chosen, replaces, differs));
         }
-        if (!differing.isEmpty()) {
-            throw new IllegalStateException("Kept builds of one data version window hold different spec captures, so the newest "
-                + "cannot stand for the others: " + String.join("; ", differing) + ". A build with other data needs a data version "
-                + "of its own (`import`); see docs/data-pipeline.md, \"Every release build\"");
+        if (!unpaired.isEmpty()) {
+            throw new IllegalStateException("Spec captures of one data version window cannot be compared: " + String.join("; ", unpaired));
         }
         return windows;
     }

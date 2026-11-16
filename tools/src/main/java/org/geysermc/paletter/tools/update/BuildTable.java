@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -18,13 +19,16 @@ import java.util.TreeMap;
  * generated, never written by hand:
  * <ul>
  *   <li>{@code builds.txt} next to {@code versions.txt} in the library: per release data version, the BDS builds verified
- *   to have its data (read by {@code PaletteDataSource#verifiedBuilds});</li>
- *   <li>{@code data/bds/builds.md}: every recorded build with its protocol, data version and status.</li>
+ *   to send its data (read by {@code PaletteDataSource#verifiedBuilds});</li>
+ *   <li>{@code data/bds/builds.md}: every recorded build with its protocol, data version, status and what its run could
+ *   not compare, and the gaps.</li>
  * </ul>
  * A build belongs to the release data version whose window holds its protocol (the newest one whose first protocol is not
- * newer). The newest kept build of a window is the one the data version stands for ({@code infer} uses its spec capture);
- * it and the builds recorded identical to it are verified. Kept builds the record lacks (captures that {@code update}
- * committed before the record knew them) count as kept.
+ * newer). A data version stands for the build its data was imported from: the kept build of its window that {@code update}
+ * captured (the newest, if there are several), never one a history check kept. It and the builds recorded identical to it
+ * are verified. A build a history check kept in such a window has other data: a gap, it needs a data version of its own.
+ * Kept builds the record lacks (captures that {@code update} committed before the record knew them) count as kept by
+ * {@code update}.
  */
 public final class BuildTable {
     /** The library's list of verified builds, next to {@code versions.txt}. */
@@ -38,15 +42,17 @@ public final class BuildTable {
     }
 
     /** One recorded build. */
-    record Row(String build, int protocol, String source, String dataVersion, Status status, String detail) {
+    record Row(String build, int protocol, String source, String dataVersion, Status status, String detail, List<String> notCompared) {
     }
 
     enum Status {
-        /** The newest kept build of its window: the data version stands for its captures. */
-        KEPT,
-        /** Recorded identical to the kept build of its window. */
+        /** The build its data version was imported from. */
+        IMPORTED,
+        /** Recorded identical to the build its data version was imported from. */
         IDENTICAL,
-        /** Kept, or identical to a kept build, but not the build its window's data version stands for. */
+        /** Kept by a history check in a window whose data version it does not match, or identical to such a build. */
+        GAP,
+        /** In a window whose data version has no import capture, or identical to a build that is no longer kept. */
         OTHER,
         /** Older than every bundled release data version. */
         NOT_SERVED
@@ -62,32 +68,46 @@ public final class BuildTable {
     static List<Row> rows(Map<String, BuildHistory.Entry> record, Map<String, Integer> captured, List<Importer.IndexEntry> index) {
         Map<String, BuildHistory.Entry> builds = new TreeMap<>(Versions.ORDER);
         builds.putAll(record);
-        captured.forEach((build, protocol) -> builds.putIfAbsent(build, new BuildHistory.Entry(protocol, null, "captures in data/bds")));
-        // The build each data version stands for: the newest kept build of its window
-        Map<String, String> kept = new TreeMap<>();
+        captured.forEach((build, protocol) -> builds.putIfAbsent(build, new BuildHistory.Entry(protocol, null,
+            "captures in data/bds", BuildHistory.KEPT_BY_UPDATE, List.of())));
+        // The build each data version was imported from: the newest kept build of its window that update captured
+        Map<String, String> imported = new TreeMap<>();
         builds.forEach((build, entry) -> {
             String version = dataVersion(index, entry.protocol());
-            if (entry.kept() && version != null) {
-                kept.merge(version, build, (a, b) -> Versions.compare(a, b) >= 0 ? a : b);
+            if (entry.kept() && !entry.keptByHistoryCheck() && version != null) {
+                imported.merge(version, build, (a, b) -> Versions.compare(a, b) >= 0 ? a : b);
             }
         });
         List<Row> rows = new ArrayList<>();
         builds.forEach((build, entry) -> {
             String version = dataVersion(index, entry.protocol());
-            String source = version == null ? null : kept.get(version);
+            String source = version == null ? null : imported.get(version);
+            Status status;
+            String detail;
             if (version == null) {
-                rows.add(new Row(build, entry.protocol(), entry.source(), null, Status.NOT_SERVED,
-                    entry.kept() ? "kept" : "identical to " + entry.identicalTo()));
+                status = Status.NOT_SERVED;
+                detail = entry.kept() ? "kept" : "identical to " + entry.identicalTo();
             } else if (entry.kept()) {
-                rows.add(build.equals(source) ? new Row(build, entry.protocol(), entry.source(), version, Status.KEPT, "kept")
-                    : new Row(build, entry.protocol(), entry.source(), version, Status.OTHER, "kept, differs from " + source
-                    + " (the build " + version + " stands for): needs a data version of its own"));
+                if (build.equals(source)) {
+                    status = Status.IMPORTED;
+                    detail = "kept; " + version + " was imported from it";
+                } else if (source != null && entry.keptByHistoryCheck()) {
+                    status = Status.GAP;
+                    detail = "kept, differs from " + source + " (" + version + " was imported from it): needs a data version of its own";
+                } else {
+                    status = Status.OTHER;
+                    detail = "kept by " + entry.keptBy() + (source == null ? "; " + version + " has no import capture" : "; not " + version + "'s import build " + source);
+                }
+            } else if (entry.identicalTo().equals(source)) {
+                status = Status.IDENTICAL;
+                detail = "identical to " + source;
             } else {
-                rows.add(entry.identicalTo().equals(source)
-                    ? new Row(build, entry.protocol(), entry.source(), version, Status.IDENTICAL, "identical to " + source)
-                    : new Row(build, entry.protocol(), entry.source(), version, Status.OTHER, "identical to " + entry.identicalTo()
-                    + ", not the build " + version + " stands for (" + source + ")"));
+                BuildHistory.Entry target = builds.get(entry.identicalTo());
+                boolean gap = target != null && target.kept() && target.keptByHistoryCheck() && source != null;
+                status = gap ? Status.GAP : Status.OTHER;
+                detail = "identical to " + entry.identicalTo() + (gap ? ", which needs a data version of its own" : ", not " + version + "'s import build");
             }
+            rows.add(new Row(build, entry.protocol(), entry.source(), version, status, detail, entry.notCompared()));
         });
         return rows;
     }
@@ -105,41 +125,68 @@ public final class BuildTable {
         return name;
     }
 
-    /** {@code builds.txt}: {@code <data version> <build> <protocol>} for the kept and identical builds, oldest first. */
+    private static boolean verified(Row row) {
+        return row.status() == Status.IMPORTED || row.status() == Status.IDENTICAL;
+    }
+
+    /** {@code builds.txt}: {@code <data version> <build> <protocol>} for the verified builds, oldest first. */
     static String resource(List<Row> rows) {
-        StringBuilder out = new StringBuilder("# <data version> <BDS build> <protocol>: release builds verified to have the data "
-            + "version's data (its kept build and the builds identical to it). " + GENERATED + "\n");
+        StringBuilder out = new StringBuilder("# <data version> <BDS build> <protocol>: release builds verified to send the data "
+            + "version's data (the build it was imported from and the builds identical to it). " + GENERATED + "\n");
         for (Row row : rows) {
-            if (row.status() == Status.KEPT || row.status() == Status.IDENTICAL) {
+            if (verified(row)) {
                 out.append(row.dataVersion()).append(' ').append(row.build()).append(' ').append(row.protocol()).append('\n');
             }
         }
         return out.toString();
     }
 
-    /** {@code data/bds/builds.md}: every recorded build, and per data version which protocols its builds had. */
+    /** The gaps, one line each: a build that needs a data version of its own. */
+    static List<String> gaps(List<Row> rows) {
+        return rows.stream().filter(row -> row.status() == Status.GAP).map(row -> row.build() + " (protocol " + row.protocol()
+            + ", data version " + row.dataVersion() + "): " + row.detail()).toList();
+    }
+
+    /** {@link #gaps(List)} of the repository. */
+    static List<String> gaps(Path root) throws IOException {
+        return gaps(rows(root));
+    }
+
+    private static List<Row> rows(Path root) throws IOException {
+        return rows(BuildHistory.read(root), BuildHistory.capturedReleases(root), Importer.readIndex(resources(root)));
+    }
+
+    private static Path resources(Path root) {
+        return root.resolve("paletter/src/main/resources/paletter");
+    }
+
+    /** {@code data/bds/builds.md}: every recorded build, the gaps, and per data version which protocols its builds had. */
     static String table(List<Row> rows, List<Importer.IndexEntry> index) {
         StringBuilder out = new StringBuilder("<!-- " + GENERATED + " -->\n\n# BDS release builds\n\n"
             + "Every release build `builds check` recorded, with the bundled data version that serves its protocol. A data "
-            + "version stands for the newest kept build of its window (captures in `data/bds/<build>`); the builds identical "
-            + "to it are verified to have the same data. The library lists both per data version "
-            + "(`PaletteDataSource#verifiedBuilds`). See docs/data-pipeline.md, \"Every release build\".\n\n"
-            + "| Build | Protocol | Data version | Status | Build number from |\n|---|---|---|---|---|\n");
+            + "version stands for the build it was imported from (captures in `data/bds/<build>`); the builds identical to it "
+            + "are verified to send the same data, and the library lists both (`builds.txt`). What a build's run could not "
+            + "compare with the other build is listed with it. See docs/data-pipeline.md, \"Every release build\".\n\n"
+            + "| Build | Protocol | Data version | Status | Not compared | Build number from |\n|---|---|---|---|---|---|\n");
         for (Row row : rows) {
             out.append("| ").append(row.build()).append(" | ").append(row.protocol()).append(" | ")
                 .append(row.dataVersion() == null ? "none" : row.dataVersion()).append(" | ").append(row.detail()).append(" | ")
+                .append(row.notCompared().isEmpty() ? "" : String.join("; ", row.notCompared()).replace("|", "\\|")).append(" | ")
                 .append(row.source()).append(" |\n");
         }
+        List<String> gaps = gaps(rows);
+        out.append("\n## Gaps\n\n").append(gaps.isEmpty() ? "None: every recorded build of a bundled data version's window sends its data.\n"
+            : "Builds a bundled data version serves without sending its data; each needs a data version of its own:\n\n");
+        gaps.forEach(gap -> out.append("- ").append(gap).append('\n'));
         out.append("\n## Protocols per data version\n\n"
             + "`versions.txt` gives each data version its first protocol; the version serves every protocol from there up to the "
-            + "next one. These are the protocols its verified builds had.\n\n"
+            + "next one, verified or not. These are the protocols its verified builds had.\n\n"
             + "| Data version | First protocol (versions.txt) | Protocols of verified builds |\n|---|---|---|\n");
         for (Importer.IndexEntry entry : index) {
             if (entry.preview()) {
                 continue;
             }
-            List<Integer> protocols = rows.stream().filter(row -> entry.name().equals(row.dataVersion()))
-                .filter(row -> row.status() == Status.KEPT || row.status() == Status.IDENTICAL)
+            List<Integer> protocols = rows.stream().filter(row -> entry.name().equals(row.dataVersion())).filter(BuildTable::verified)
                 .map(Row::protocol).distinct().sorted().toList();
             out.append("| ").append(entry.name()).append(" | ").append(entry.protocol()).append(" | ")
                 .append(protocols.isEmpty() ? "none" : String.join(", ", protocols.stream().map(String::valueOf).toList()))
@@ -150,33 +197,42 @@ public final class BuildTable {
     }
 
     /**
-     * Writes (or with {@code check}, compares) {@code builds.txt} and {@code data/bds/builds.md}.
+     * Writes (or with {@code check}, compares) {@code builds.txt} and {@code data/bds/builds.md}. A check also fails on
+     * problems of the record against data/bds ({@link BuildHistory#problems}).
      *
-     * @return whether the files are up to date (always true when writing)
+     * @return whether the files are up to date and the record is sound (always true when writing)
      */
     public static boolean run(Path root, boolean check) throws IOException {
-        Path resources = root.resolve("paletter/src/main/resources/paletter");
-        List<Importer.IndexEntry> index = Importer.readIndex(resources);
-        List<Row> rows = rows(BuildHistory.read(root), BuildHistory.capturedReleases(root), index);
-        Map<Path, String> files = Map.of(resources.resolve(RESOURCE), resource(rows), root.resolve(Layout.BDS).resolve(TABLE), table(rows, index));
-        boolean same = true;
+        List<Importer.IndexEntry> index = Importer.readIndex(resources(root));
+        Map<String, BuildHistory.Entry> record = BuildHistory.read(root);
+        Map<String, Integer> captured = BuildHistory.capturedReleases(root);
+        List<Row> rows = rows(record, captured, index);
+        Map<Path, String> files = new LinkedHashMap<>();
+        files.put(resources(root).resolve(RESOURCE), resource(rows));
+        files.put(root.resolve(Layout.BDS).resolve(TABLE), table(rows, index));
+        boolean sound = true;
+        if (check) {
+            for (String problem : BuildHistory.problems(root, record, captured)) {
+                System.out.println("ERROR: " + problem);
+                sound = false;
+            }
+        }
         for (Map.Entry<Path, String> file : files.entrySet()) {
             String committed = Files.exists(file.getKey()) ? Files.readString(file.getKey(), StandardCharsets.UTF_8).replace("\r\n", "\n") : null;
             if (file.getValue().equals(committed)) {
                 continue;
             }
-            same = false;
             if (check) {
+                sound = false;
                 System.out.println(root.relativize(file.getKey()) + " is stale: run ./gradlew :tools:run --args=\"builds table\"");
             } else {
-                Files.createDirectories(file.getKey().getParent());
-                Files.writeString(file.getKey(), file.getValue(), StandardCharsets.UTF_8);
+                BuildHistory.writeAtomically(file.getKey(), file.getValue());
                 System.out.println("Wrote " + root.relativize(file.getKey()));
             }
         }
-        if (check && same) {
+        if (check && sound) {
             System.out.println(RESOURCE + " and " + Layout.BDS + "/" + TABLE + " are up to date");
         }
-        return !check || same;
+        return !check || sound;
     }
 }

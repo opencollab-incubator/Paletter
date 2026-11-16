@@ -2,18 +2,22 @@
 
 # BDS release builds
 
-Every release build `builds check` recorded, with the bundled data version that serves its protocol. A data version stands for the newest kept build of its window (captures in `data/bds/<build>`); the builds identical to it are verified to have the same data. The library lists both per data version (`PaletteDataSource#verifiedBuilds`). See docs/data-pipeline.md, "Every release build".
+Every release build `builds check` recorded, with the bundled data version that serves its protocol. A data version stands for the build it was imported from (captures in `data/bds/<build>`); the builds identical to it are verified to send the same data, and the library lists both (`builds.txt`). What a build's run could not compare with the other build is listed with it. See docs/data-pipeline.md, "Every release build".
 
-| Build | Protocol | Data version | Status | Build number from |
-|---|---|---|---|---|
-| 1.26.36.1 | 1001 | 26.30 | kept | captures in data/bds |
-| 1.26.45.1 | 2169 | 26.40 | kept | captures in data/bds |
-| 1.26.52.3 | 2193 | 26.50 | kept | captures in data/bds |
-| 1.26.63.1 | 2225 | 26.60 | kept | captures in data/bds |
+| Build | Protocol | Data version | Status | Not compared | Build number from |
+|---|---|---|---|---|---|
+| 1.26.36.1 | 1001 | 26.30 | kept; 26.30 was imported from it |  | captures in data/bds |
+| 1.26.45.1 | 2169 | 26.40 | kept; 26.40 was imported from it |  | captures in data/bds |
+| 1.26.52.3 | 2193 | 26.50 | kept; 26.50 was imported from it |  | captures in data/bds |
+| 1.26.63.1 | 2225 | 26.60 | kept; 26.60 was imported from it |  | captures in data/bds |
+
+## Gaps
+
+None: every recorded build of a bundled data version's window sends its data.
 
 ## Protocols per data version
 
-`versions.txt` gives each data version its first protocol; the version serves every protocol from there up to the next one. These are the protocols its verified builds had.
+`versions.txt` gives each data version its first protocol; the version serves every protocol from there up to the next one, verified or not. These are the protocols its verified builds had.
 
 | Data version | First protocol (versions.txt) | Protocols of verified builds |
 |---|---|---|

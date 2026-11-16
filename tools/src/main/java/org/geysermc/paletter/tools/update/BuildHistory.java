@@ -15,8 +15,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -24,7 +26,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
@@ -67,29 +68,56 @@ public final class BuildHistory {
     public static final String FROM_LIST = "BDS-Versions";
     /** Where a build number came from: the download links API of minecraft.net, which names the current release only. */
     public static final String FROM_LINKS_API = "links API";
+    /** How a build was kept: {@code update} captured it, the source of a bundled data version that other files refer to. */
+    public static final String KEPT_BY_UPDATE = "update";
+    /** How a build was kept: a history check found it different from the build it was compared with; only the record refers to it. */
+    public static final String KEPT_BY_HISTORY_CHECK = "history check";
 
     /**
      * One build in the record: its protocol, and either kept (captures in data/bds) or the kept build it equals, which
      * can be newer than it (the first kept build of its stretch of identical builds).
      *
      * @param source where its build number came from: {@link #FROM_LIST} or {@link #FROM_LINKS_API}
+     * @param keptBy for a kept build, {@link #KEPT_BY_UPDATE} or {@link #KEPT_BY_HISTORY_CHECK}; null for an identical one
+     * @param notCompared what the run that recorded it could not compare with the other build (it lacked the capture,
+     *                    or the check is against the bundled data only), as the report listed it
      */
-    public record Entry(int protocol, String identicalTo, String source) {
-        /** A build of the list. */
+    public record Entry(int protocol, String identicalTo, String source, String keptBy, List<String> notCompared) {
+        public Entry {
+            notCompared = notCompared == null ? List.of() : List.copyOf(notCompared);
+            if (identicalTo == null && !KEPT_BY_UPDATE.equals(keptBy) && !KEPT_BY_HISTORY_CHECK.equals(keptBy)) {
+                throw new IllegalArgumentException("A kept build is kept by " + KEPT_BY_UPDATE + " or " + KEPT_BY_HISTORY_CHECK + ": " + keptBy);
+            }
+            if (identicalTo != null) {
+                keptBy = null;
+            }
+        }
+
+        /** A build of the list: identical to {@code identicalTo}, or kept by {@code update} when that is null. */
         public Entry(int protocol, String identicalTo) {
-            this(protocol, identicalTo, FROM_LIST);
+            this(protocol, identicalTo, FROM_LIST, identicalTo == null ? KEPT_BY_UPDATE : null, List.of());
+        }
+
+        /** A kept build of the list. */
+        static Entry kept(int protocol, String keptBy) {
+            return new Entry(protocol, null, FROM_LIST, keptBy, List.of());
         }
 
         public boolean kept() {
             return identicalTo == null;
         }
 
-        Entry identicalTo(String build) {
-            return new Entry(protocol, build, source);
+        /** Whether its captures came from a history check, so that only the record refers to them. */
+        public boolean keptByHistoryCheck() {
+            return KEPT_BY_HISTORY_CHECK.equals(keptBy);
         }
 
-        Entry from(String source) {
-            return new Entry(protocol, identicalTo, source);
+        Entry identicalTo(String build, List<String> notCompared) {
+            return new Entry(protocol, build, source, null, notCompared);
+        }
+
+        Entry identicalTo(String build) {
+            return identicalTo(build, notCompared);
         }
     }
 
@@ -247,9 +275,14 @@ public final class BuildHistory {
             JsonObject entries = JsonParser.parseString(Files.readString(file)).getAsJsonObject().getAsJsonObject("builds");
             entries.entrySet().forEach(entry -> {
                 JsonObject value = entry.getValue().getAsJsonObject();
-                builds.put(Versions.requireBuild(entry.getKey()), new Entry(value.get("protocol").getAsInt(),
-                    value.has("identicalTo") ? Versions.requireBuild(value.get("identicalTo").getAsString()) : null,
-                    value.has("source") ? value.get("source").getAsString() : FROM_LIST));
+                String identicalTo = value.has("identicalTo") ? Versions.requireBuild(value.get("identicalTo").getAsString()) : null;
+                List<String> notCompared = new ArrayList<>();
+                if (value.has("notCompared")) {
+                    value.getAsJsonArray("notCompared").forEach(line -> notCompared.add(line.getAsString()));
+                }
+                builds.put(Versions.requireBuild(entry.getKey()), new Entry(value.get("protocol").getAsInt(), identicalTo,
+                    value.has("source") ? value.get("source").getAsString() : FROM_LIST,
+                    identicalTo != null ? null : value.has("keptBy") ? value.get("keptBy").getAsString() : KEPT_BY_UPDATE, notCompared));
             });
         }
         return builds;
@@ -258,9 +291,11 @@ public final class BuildHistory {
     public static void write(Path root, Map<String, Entry> builds, BuildList list) throws IOException {
         JsonObject json = new JsonObject();
         json.addProperty("_generated", "Generated by `./gradlew :tools:run --args=\"builds check\"` (tools BuildHistory): every BDS "
-            + "release build checked, with its protocol; kept builds have their captures in data/bds/<build>, the others equal the "
-            + "kept build named (identicalToProtocol: that build's protocol, where it differs); source: where the build number came "
-            + "from, the list at listCommit or the download links API of minecraft.net. Do not edit by hand.");
+            + "release build checked, with its protocol. A kept build has its captures in data/bds/<build> (keptBy: update, the "
+            + "source of a bundled data version, or history check); any other equals the kept build named (identicalToProtocol: "
+            + "that build's protocol, where it differs). notCompared: what its run could not compare with the other build. "
+            + "source: where the build number came from, BDS-Versions (listCommit: the list at the latest run) or the download "
+            + "links API of minecraft.net. Do not edit by hand.");
         json.addProperty("list", VERSIONS);
         if (list != null) {
             json.addProperty("listCommit", list.commit());
@@ -268,26 +303,48 @@ public final class BuildHistory {
         }
         JsonObject entries = new JsonObject();
         for (Map.Entry<String, Entry> build : builds.entrySet().stream().sorted(Map.Entry.comparingByKey(Versions.ORDER)).toList()) {
+            Entry entry = build.getValue();
             JsonObject value = new JsonObject();
-            value.addProperty("protocol", build.getValue().protocol());
-            value.addProperty("source", build.getValue().source());
-            if (build.getValue().kept()) {
+            value.addProperty("protocol", entry.protocol());
+            value.addProperty("source", entry.source());
+            if (entry.kept()) {
                 value.addProperty("kept", true);
+                value.addProperty("keptBy", entry.keptBy());
             } else {
-                String target = build.getValue().identicalTo();
+                String target = entry.identicalTo();
                 value.addProperty("identicalTo", target);
                 // The kept build's protocol: from the record, or from its captures while the record lacks it
                 Integer protocol = builds.containsKey(target) ? Integer.valueOf(builds.get(target).protocol())
                     : protocol(BdsDistribution.inside(root.resolve(Layout.BDS), target));
-                if (protocol != null && protocol != build.getValue().protocol()) {
+                if (protocol != null && protocol != entry.protocol()) {
                     value.addProperty("identicalToProtocol", protocol);
                 }
+            }
+            if (!entry.notCompared().isEmpty()) {
+                JsonArray notCompared = new JsonArray();
+                entry.notCompared().forEach(notCompared::add);
+                value.add("notCompared", notCompared);
             }
             entries.add(build.getKey(), value);
         }
         json.add("builds", entries);
-        Path file = root.resolve(Layout.BDS).resolve(RECORD);
-        Files.writeString(file, new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(json) + "\n", StandardCharsets.UTF_8);
+        writeAtomically(root.resolve(Layout.BDS).resolve(RECORD), new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(json) + "\n");
+    }
+
+    /** Writes a file through a temporary file in its directory and a move, so a crash never leaves half of it. */
+    static void writeAtomically(Path file, String text) throws IOException {
+        Files.createDirectories(file.getParent());
+        Path temporary = Files.createTempFile(file.getParent(), file.getFileName().toString(), ".tmp");
+        try {
+            Files.writeString(temporary, text, StandardCharsets.UTF_8);
+            try {
+                Files.move(temporary, file, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(temporary, file, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } finally {
+            Files.deleteIfExists(temporary);
+        }
     }
 
     /**
@@ -318,20 +375,48 @@ public final class BuildHistory {
     }
 
     /**
-     * Whether a build's captures were kept by a history check ({@code update --against}): then the record is all that
-     * refers to them. Captures that {@code update} wrote are the source of bundled data, and other files refer to them.
+     * Whether a build directory's report was written by a history check ({@code update --against}), read from the
+     * generated marker {@link Report#render} puts on its first line. Only used to find captures that a history check
+     * kept but the record lacks (a run that stopped between the two); the record says how every recorded build was kept.
      */
-    static boolean keptByHistoryCheck(Path root, String build) throws IOException {
-        Path report = BdsDistribution.inside(root.resolve(Layout.BDS), build).resolve(Update.REPORT);
+    static boolean reportOfHistoryCheck(Path buildDirectory) throws IOException {
+        Path report = buildDirectory.resolve(Update.REPORT);
         if (!Files.exists(report)) {
             return false;
         }
         try (Stream<String> lines = Files.lines(report)) {
-            return lines.findFirst().orElse("").contains(" --against ");
+            String command = Report.generatedCommand(lines.findFirst().orElse(""));
+            return command != null && command.matches(".*\\s--against\\s.*");
         }
     }
 
-    /** The kept builds: those of the record, and builds with captures that the record lacks. */
+    /**
+     * What is wrong with the record against data/bds, empty if nothing: a kept build without captures, an identical build
+     * whose kept build is not kept, captures that a history check kept but the record lacks.
+     */
+    static List<String> problems(Path root, Map<String, Entry> record, Map<String, Integer> captured) throws IOException {
+        List<String> problems = new ArrayList<>();
+        record.forEach((build, entry) -> {
+            if (entry.kept() && !captured.containsKey(build)) {
+                problems.add(build + " is recorded as kept but has no captures in " + Layout.BDS + "/" + build);
+            }
+            if (!entry.kept()) {
+                Entry target = record.get(entry.identicalTo());
+                if (!(target != null ? target.kept() : captured.containsKey(entry.identicalTo()))) {
+                    problems.add(build + " is recorded as identical to " + entry.identicalTo() + ", which is not a kept build");
+                }
+            }
+        });
+        for (String build : captured.keySet()) {
+            if (!record.containsKey(build) && reportOfHistoryCheck(BdsDistribution.inside(root.resolve(Layout.BDS), build))) {
+                problems.add(Layout.BDS + "/" + build + " holds captures a history check kept, but the record lacks the build: "
+                    + "remove the directory and check the build again");
+            }
+        }
+        return problems;
+    }
+
+    /** The kept builds: those of the record, and builds with captures that the record lacks (kept by {@code update}). */
     static Map<String, Entry> keptView(Map<String, Entry> record, Map<String, Integer> captured) {
         Map<String, Entry> view = new TreeMap<>(Versions.ORDER);
         record.forEach((build, entry) -> {
@@ -339,7 +424,7 @@ public final class BuildHistory {
                 view.put(build, entry);
             }
         });
-        captured.forEach((build, protocol) -> view.putIfAbsent(build, new Entry(protocol, null)));
+        captured.forEach((build, protocol) -> view.putIfAbsent(build, Entry.kept(protocol, KEPT_BY_UPDATE)));
         return view;
     }
 
@@ -383,8 +468,19 @@ public final class BuildHistory {
     record Step(String build, Kind kind, String against) {
     }
 
-    /** What a run found. */
-    public record Outcome(Integer protocol, boolean failed, boolean changed) {
+    /**
+     * What a run found.
+     *
+     * @param notCompared what the run could not compare with the other build ({@code Report#notCompared})
+     */
+    public record Outcome(Integer protocol, boolean failed, boolean changed, List<String> notCompared) {
+        public Outcome {
+            notCompared = notCompared == null ? List.of() : List.copyOf(notCompared);
+        }
+
+        public Outcome(Integer protocol, boolean failed, boolean changed) {
+            this(protocol, failed, changed, List.of());
+        }
     }
 
     /** Runs {@code update --against} for {@link #check}. */
@@ -416,35 +512,38 @@ public final class BuildHistory {
 
     /**
      * Records what a step found. One build keeps its captures per stretch of identical builds: when a build with captures
-     * from {@code update} turns out identical to the previous kept build and that one's captures come from a history
-     * check ({@code historyKept}), the newer build stays kept and the older one, with every build identical to it, is
-     * recorded as identical to the newer one.
+     * from {@code update} turns out identical to the previous kept build and the record says that one was kept by a
+     * history check, the newer build stays kept and the older one, with every build identical to it, is recorded as
+     * identical to the newer one.
      *
-     * @return the build whose captures that replaced (to be removed from data/bds), or null
+     * @param source where the build number came from
+     * @return the build whose captures that replaced (to be removed from data/bds once the record is written), or null
      */
-    static String apply(Map<String, Entry> record, Map<String, Integer> captured, Step step, Outcome outcome, Predicate<String> historyKept) {
+    static String apply(Map<String, Entry> record, Map<String, Integer> captured, Step step, Outcome outcome, String source) {
         String build = step.build();
         switch (step.kind()) {
             case RECORDED -> {
                 return null;
             }
             case FIRST -> {
-                record.put(build, new Entry(captured.get(build), null));
+                record.put(build, new Entry(captured.get(build), null, source, KEPT_BY_UPDATE, List.of()));
                 return null;
             }
             case CHECK -> {
-                record.put(build, new Entry(outcome.protocol(), outcome.changed() ? null : step.against()));
+                record.put(build, outcome.changed()
+                    ? new Entry(outcome.protocol(), null, source, KEPT_BY_HISTORY_CHECK, outcome.notCompared())
+                    : new Entry(outcome.protocol(), step.against(), source, null, outcome.notCompared()));
                 return null;
             }
             case VERIFY -> {
-                record.put(build, new Entry(outcome.protocol(), null));
-                if (outcome.changed() || !historyKept.test(step.against())) {
+                record.put(build, new Entry(outcome.protocol(), null, source, KEPT_BY_UPDATE, outcome.notCompared()));
+                Entry previous = record.get(step.against());
+                if (outcome.changed() || previous == null || !previous.keptByHistoryCheck()) {
                     return null;
                 }
                 String replaced = step.against();
-                Entry old = record.containsKey(replaced) ? record.get(replaced) : new Entry(captured.get(replaced), null);
                 record.replaceAll((other, entry) -> replaced.equals(entry.identicalTo()) ? entry.identicalTo(build) : entry);
-                record.put(replaced, old.identicalTo(build));
+                record.put(replaced, previous.identicalTo(build, outcome.notCompared()));
                 return replaced;
             }
         }
@@ -463,13 +562,14 @@ public final class BuildHistory {
             }
             Update update = new Update(root, buildOptions);
             update.run();
-            return new Outcome(update.protocol(), update.failed(), update.changed());
+            return new Outcome(update.protocol(), update.failed(), update.changed(), update.notCompared());
         };
     }
 
     /**
-     * Checks the builds that the record lacks, oldest first ({@link #plan}), and records each ({@link #apply}). Stops at
-     * the first failed run, or when the cache's disk has less than {@code minFreeBytes} left.
+     * Checks the builds that the record lacks, oldest first ({@link #plan}), and records each ({@link #apply}): the record
+     * and the build table are written before any replaced captures are removed. Stops at the first failed run, or when
+     * the cache's disk has less than {@code minFreeBytes} left.
      *
      * @param list where the builds come from, recorded with them
      * @param builds the builds to check, oldest first
@@ -481,6 +581,21 @@ public final class BuildHistory {
         Files.createDirectories(cache);
         Map<String, Entry> record = read(root);
         Map<String, Integer> captured = capturedReleases(root);
+        List<String> problems = problems(root, record, captured);
+        if (!problems.isEmpty()) {
+            problems.forEach(problem -> System.out.println("ERROR: " + problem));
+            return 1;
+        }
+        List<String> unlisted = new ArrayList<>(record.keySet());
+        captured.keySet().forEach(build -> {
+            if (!unlisted.contains(build)) {
+                unlisted.add(build);
+            }
+        });
+        unlisted.removeIf(list.releases()::contains);
+        if (!unlisted.isEmpty()) {
+            System.out.println("NOTE: the list lacks " + unlisted.size() + " recorded or captured builds: " + String.join(", ", unlisted));
+        }
         int runs = 0;
         for (String build : builds) {
             Step step = plan(record, captured, build);
@@ -488,8 +603,7 @@ public final class BuildHistory {
                 continue;
             }
             if (step.kind() == Kind.FIRST) {
-                apply(record, captured, step, null, b -> false);
-                record.put(build, record.get(build).from(list.source(build)));
+                apply(record, captured, step, null, list.source(build));
                 write(root, record, list);
                 BuildTable.run(root, false);
                 System.out.println(build + " (protocol " + record.get(build).protocol() + "): kept, the oldest kept build of the record");
@@ -513,32 +627,28 @@ public final class BuildHistory {
                 System.out.println(build + " FAILED; see its report in " + cache.resolve("runs"));
                 return 1;
             }
-            String replaced = apply(record, captured, step, outcome, other -> {
-                try {
-                    return keptByHistoryCheck(root, other);
-                } catch (IOException e) {
-                    throw new java.io.UncheckedIOException(e);
-                }
-            });
+            String replaced = apply(record, captured, step, outcome, list.source(build));
+            if (step.kind() == Kind.CHECK && record.get(build).kept()) {
+                captured.put(build, outcome.protocol());
+            }
+            // The record first: a run that stops before the removal leaves captures the record no longer needs, never a
+            // record that names removed captures
+            write(root, record, list);
             if (replaced != null) {
-                // Only the record refers to captures a history check kept
                 BdsDistribution.deleteRecursively(BdsDistribution.inside(root.resolve(Layout.BDS), replaced));
                 captured.remove(replaced);
                 Files.deleteIfExists(BdsDistribution.resolve(false, false, replaced).zipFile(cache));
                 System.out.println("Removed " + Layout.BDS + "/" + replaced + ": " + build + " has the same data and its captures come from update");
             }
-            record.put(build, record.get(build).from(list.source(build)));
-            if (step.kind() == Kind.CHECK && record.get(build).kept()) {
-                captured.put(build, outcome.protocol());
-            }
-            write(root, record, list);
             BuildTable.run(root, false);
             cleanUp(cache, build, record.get(build).kept(), linuxZip);
             Entry entry = record.get(build);
             String target = entry.kept() ? null : entry.identicalTo();
             Integer targetProtocol = target == null ? null : record.containsKey(target) ? Integer.valueOf(record.get(target).protocol()) : captured.get(target);
-            System.out.println(build + " (protocol " + entry.protocol() + "): " + (entry.kept() ? "kept" : "identical to " + target)
-                + (targetProtocol != null && targetProtocol != entry.protocol() ? " (NOTE: protocol " + targetProtocol + " there)" : ""));
+            System.out.println(build + " (protocol " + entry.protocol() + "): " + (entry.kept() ? "kept (" + entry.keptBy() + ")" : "identical to " + target)
+                + (targetProtocol != null && targetProtocol != entry.protocol() ? " (NOTE: protocol " + targetProtocol + " there)" : "")
+                + (entry.notCompared().isEmpty() ? "" : "; not compared: " + String.join("; ", entry.notCompared())));
+            BuildTable.gaps(root).stream().filter(gap -> gap.startsWith(build + " ")).forEach(gap -> System.out.println("GAP: " + gap));
             runs++;
         }
         return 0;
