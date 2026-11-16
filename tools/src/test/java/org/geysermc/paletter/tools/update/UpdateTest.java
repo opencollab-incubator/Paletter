@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import com.google.gson.JsonParser;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -116,6 +117,38 @@ class UpdateTest {
         assertEquals("26.60", entries.get(0).name());
         assertFalse(entries.get(0).preview());
         assertTrue(entries.get(1).preview());
+    }
+
+    @Test
+    void aCaptureThatRewritesTheSameBytesChangesNothing(@TempDir Path root) throws Exception {
+        Path spec = root.resolve("data/bds/1.26.70.1/spec");
+        Path mappings = root.resolve("data/model/mappings.json");
+        Files.createDirectories(spec);
+        Files.createDirectories(mappings.getParent());
+        Files.writeString(spec.resolve("capture.json"), "{}\n");
+        Files.writeString(mappings, "{\"a\": 1}\n");
+
+        // What an update in update mode does: the capture and the inference write their files again, byte for byte the same
+        Report report = new Report("t");
+        Update.track(report, root, List.of(spec), "spec capture", () -> Files.writeString(spec.resolve("capture.json"), "{}\n"));
+        Update.track(report, root, List.of(mappings), "inferred", () -> Files.writeString(mappings, "{\"a\": 1}\n"));
+        report.check(Report.Status.INFO, "Spec capture", "`data/bds/1.26.70.1/spec`");
+        assertEquals(List.of(), report.repoChanges);
+        assertFalse(report.differs());
+        assertEquals("OK: no changes", report.verdict());
+
+        Update.track(report, root, List.of(spec), "spec capture", () -> {
+            Files.writeString(spec.resolve("capture.json"), "{\"protocol\": 1}\n");
+            Files.writeString(spec.resolve("variants.json"), "[]\n");
+            return null;
+        });
+        Update.track(report, root, List.of(mappings), "inferred", () -> {
+            Files.delete(mappings);
+            return null;
+        });
+        assertEquals(List.of("update `data/bds/1.26.70.1/spec/capture.json` (spec capture)",
+            "add `data/bds/1.26.70.1/spec/variants.json` (spec capture)", "remove `data/model/mappings.json` (inferred)"), report.repoChanges);
+        assertEquals("Changed: 3 repository files changed", report.verdict());
     }
 
     private static Map<String, Map<String, String>> shapes(String... pathsAndTypes) {

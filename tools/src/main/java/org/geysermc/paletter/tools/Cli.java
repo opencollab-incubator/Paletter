@@ -160,7 +160,8 @@ public final class Cli implements Runnable {
 
     @Command(name = "update", description = "The whole pipeline: newest BDS of the channel, Script API dump, vanilla and add-on network captures "
         + "(hashed and sequential block ids), comparison with the committed data, import or refresh, component shape comparison, markdown report. "
-        + "A preview is imported as a preview version. The report goes to data/bds/VERSION/update-report.md. "
+        + "A preview is imported as a preview version. The report goes to data/bds/VERSION/update-report.md when the update changed "
+        + "data, else only to the run's work directory. "
         + "--verify-only writes nothing and exits with 1 on any difference; an update exits with 2 when the report lists TODOs.")
     static final class UpdateCommand extends Rooted implements Callable<Integer> {
         @Option(names = "--channel", required = true, description = "release or preview") String channel;

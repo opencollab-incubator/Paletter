@@ -91,7 +91,8 @@ A run downloads BDS and, in `<cache>/runs/<platform>-<version>/`:
 The report starts with a one-line verdict and lists only what failed, changed or needs a decision ("Needs attention",
 each with what to do), then what the build changed; every check, the run's metadata and the evidence are collapsed
 below. An update writes it to
-`data/bds/<build>/update-report.md` (generated, committed with the data, so a later run can be diffed against it) and
+`data/bds/<build>/update-report.md` (generated, committed with the data, so a later run can be diffed against it; a run
+that changed no data file leaves the committed report and writes its own only into its work directory) and
 exits with 2 while decisions are open. Things that stay manual:
 
 - reviewing wire format changes in `data/model` and the regenerated component API;

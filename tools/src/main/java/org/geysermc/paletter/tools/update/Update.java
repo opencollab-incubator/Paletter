@@ -50,17 +50,22 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -148,9 +153,10 @@ public final class Update {
             report.fail("pipeline", e);
         }
 
-        // An update keeps its report with the data of its build, so a later run can be diffed against it
+        // An update keeps its report with the data of its build, so a later run can be diffed against it; an update that
+        // changed no data file keeps the committed report, so the report is never the only change
         Path reportFile = options.containsKey("report") ? Path.of(options.get("report"))
-            : verifyOnly ? work.resolve("report.md") : bdsData.resolve(distribution.version()).resolve(REPORT);
+            : verifyOnly || report.repoChanges.isEmpty() ? work.resolve("report.md") : bdsData.resolve(distribution.version()).resolve(REPORT);
         report.generatedBy = command(distribution);
         report.write(reportFile);
         if (!reportFile.startsWith(work)) {
@@ -1352,7 +1358,9 @@ public final class Update {
             previous = committed;
         }
         try {
-            if (new SpecCapture(root, specOptions).run() != 0) {
+            // Only the files whose bytes changed are repository changes: a capture identical to the committed one is none
+            if ((write ? track(report, root, List.of(out), "spec capture", () -> new SpecCapture(root, specOptions).run())
+                : new SpecCapture(root, specOptions).run()) != 0) {
                 report.check(Report.Status.FAIL, "Spec capture", "failed");
                 return;
             }
@@ -1361,9 +1369,6 @@ public final class Update {
             return;
         }
         report.check(Report.Status.INFO, "Spec capture", "`" + (write ? root.relativize(out) : out) + "`");
-        if (write) {
-            report.repoChanges.add("add or update `" + root.relativize(out).toString().replace('\\', '/') + "` (spec capture)");
-        }
         if (previous != null) {
             List<SpecDiff.Change> changes = SpecDiff.compare(previous, out);
             String against = own ? "the committed capture of " + previousBuild : previousBuild;
@@ -1396,14 +1401,18 @@ public final class Update {
         }
         if (write) {
             MappingInference inference = new MappingInference(root);
-            inference.run(false);
+            Path model = root.resolve(Layout.MODEL);
+            track(report, root, List.of(model.resolve("mappings.json"), model.resolve("coverage.md"), model.resolve("bds-feedback.json")),
+                "inferred from the spec captures", () -> {
+                    inference.run(false);
+                    return null;
+                });
             List<String> bits = inference.unexplainedBits();
             report.check(bits.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Residual bits", bits.isEmpty()
                 ? "every bit the captures set is explained by a field or the format sweep" : bits.size() + " leaves have bits nothing explains");
             if (!bits.isEmpty()) {
                 report.action("explain them by a field or the format sweep", "Leaves", bits.stream().map(finding -> "- " + finding).toList());
             }
-            report.repoChanges.add("update `" + Layout.MODEL + "/mappings.json`, `coverage.md`, `bds-feedback.json` (inferred from the spec captures)");
             report.check(Report.Status.INFO, "Component model", "mappings inferred; run :tools:generateComponentApi and the conformance suite (:tools:test) for the new protocol");
         } else {
             report.check(Report.Status.INFO, "Component model", "mappings not inferred (verify only)");
@@ -1546,6 +1555,50 @@ public final class Update {
 
     private void stageCopy(Path target, Path source, String what) throws IOException {
         stage(target, Files.readAllBytes(source), what);
+    }
+
+    /**
+     * Runs {@code action}, which writes into the repository itself, and adds a repository change for every file under
+     * {@code paths} (files or directories) that it added, updated or removed. A file rewritten with the same bytes is no change.
+     */
+    static <T> T track(Report report, Path root, List<Path> paths, String what, Callable<T> action) throws Exception {
+        Map<String, String> before = digests(root, paths);
+        try {
+            return action.call();
+        } finally {
+            Map<String, String> after = digests(root, paths);
+            Set<String> files = new TreeSet<>(before.keySet());
+            files.addAll(after.keySet());
+            for (String file : files) {
+                String old = before.get(file);
+                String now = after.get(file);
+                if (!Objects.equals(old, now)) {
+                    report.repoChanges.add((old == null ? "add" : now == null ? "remove" : "update") + " `" + file + "` (" + what + ")");
+                }
+            }
+        }
+    }
+
+    /** The SHA-256 of every regular file under {@code paths}, by repository path; a missing path has none. */
+    private static Map<String, String> digests(Path root, List<Path> paths) throws IOException {
+        Map<String, String> digests = new TreeMap<>();
+        for (Path path : paths) {
+            if (!Files.exists(path)) {
+                continue;
+            }
+            try (Stream<Path> files = Files.walk(path)) {
+                for (Path file : files.filter(Files::isRegularFile).toList()) {
+                    MessageDigest digest;
+                    try {
+                        digest = MessageDigest.getInstance("SHA-256");
+                    } catch (NoSuchAlgorithmException e) {
+                        throw new IllegalStateException(e);
+                    }
+                    digests.put(root.relativize(file).toString().replace('\\', '/'), HexFormat.of().formatHex(digest.digest(Files.readAllBytes(file))));
+                }
+            }
+        }
+        return digests;
     }
 
     // ---------------------------------------------------------------------------------------------------------------
