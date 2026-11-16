@@ -1,5 +1,8 @@
 package org.geysermc.paletter.behaviour;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
@@ -20,12 +23,21 @@ import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItems;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -98,34 +110,77 @@ class BehaviourTest {
         assertTrue(shape.boxes().size() >= 2, shape.toString());
     }
 
+    /**
+     * The newest palette's values from a fixture store instead of the bundled one, so the sources and versions are the
+     * test's, not whatever the newest data import brought: stone's friction from a third-party dump of the newest
+     * version, the sword's attack damage from an older version only, its stack size from the Script API.
+     */
+    private static Behaviour fixture() {
+        Palette palette = latest();
+        List<DataVersion> versions = PALETTER.versions();
+        DataVersion older = versions.get(versions.indexOf(LATEST) - 1);
+        String sword = BedrockItems.DIAMOND_SWORD.identifier();
+        int stone = palette.block(BedrockBlocks.STONE.defaultState()).getRuntimeId();
+        BehaviourStore.Builder store = new BehaviourStore.Builder(versions);
+        int allay = store.capture(older, Provenance.Source.ALLAY_DATA, "AllayMC/Allay@" + "a".repeat(40), List.of(), List.of(sword));
+        store.items(ItemBehaviour.ATTACK_DAMAGE, allay, Map.of(sword, 7));
+        int data = store.capture(LATEST, Provenance.Source.CLOUDBURST_DATA, "CloudburstMC/Data@" + "0123456789".repeat(4), List.of(stone), List.of());
+        store.blocks(BlockBehaviour.FRICTION, data, Map.of(stone, 0.6f));
+        int script = store.capture(LATEST, Provenance.Source.SCRIPT_API, "script", List.of(), List.of(sword));
+        store.items(ItemBehaviour.MAX_STACK_SIZE, script, Map.of(sword, 1));
+        return Behaviour.of(palette, store.build(), null);
+    }
+
     @Test
     void provenanceSaysWhereAndWhetherInherited() {
         Palette palette = latest();
+        Behaviour behaviour = fixture();
         RegisteredBlockState stone = palette.block(BedrockBlocks.STONE.defaultState());
-        Provenance block = palette.behaviour().provenance(stone, BlockBehaviour.FRICTION);
+        Provenance block = behaviour.provenance(stone, BlockBehaviour.FRICTION);
         assertEquals(Provenance.Source.CLOUDBURST_DATA, block.source());
         assertFalse(block.inherited());
         assertTrue(block.reference().startsWith("CloudburstMC/Data@"), block.reference());
 
-        // No Allay capture of the newest version: its item values are inherited from an older one
+        // No capture of the newest version: the value is inherited from an older one
         RegisteredItem sword = Objects.requireNonNull(palette.item(BedrockItems.DIAMOND_SWORD));
-        Provenance item = palette.behaviour().provenance(sword, ItemBehaviour.ATTACK_DAMAGE);
+        Provenance item = behaviour.provenance(sword, ItemBehaviour.ATTACK_DAMAGE);
         assertEquals(Provenance.Source.ALLAY_DATA, item.source());
         assertTrue(item.inherited());
         assertEquals(LATEST, item.version());
+        assertTrue(item.captured().compareTo(LATEST) < 0);
 
-        Provenance stack = palette.behaviour().provenance(sword, ItemBehaviour.MAX_STACK_SIZE);
+        Provenance stack = behaviour.provenance(sword, ItemBehaviour.MAX_STACK_SIZE);
         assertEquals(Provenance.Source.SCRIPT_API, stack.source());
         assertFalse(stack.inherited());
     }
 
     @Test
+    void bundledProvenanceIsConsistent() {
+        for (DataVersion version : PALETTER.versions()) {
+            Palette palette = PALETTER.vanilla(version);
+            RegisteredBlockState stone = palette.block(BedrockBlocks.STONE.defaultState());
+            RegisteredItem sword = Objects.requireNonNull(palette.item(BedrockItems.DIAMOND_SWORD));
+            List<Provenance> provenances = List.of(palette.behaviour().provenance(stone, BlockBehaviour.FRICTION),
+                palette.behaviour().provenance(sword, ItemBehaviour.ATTACK_DAMAGE), palette.behaviour().provenance(sword, ItemBehaviour.MAX_STACK_SIZE));
+            for (Provenance provenance : provenances) {
+                assertEquals(version, provenance.version());
+                assertTrue(provenance.captured().compareTo(version) <= 0, provenance.toString());
+                assertEquals(!provenance.captured().equals(version), provenance.inherited(), provenance.toString());
+                assertFalse(provenance.userSet());
+                assertFalse(provenance.reference().isBlank());
+            }
+        }
+    }
+
+    @Test
     void explainSaysTheValueAndWhereItComesFrom() {
         Palette palette = latest();
-        String ice = palette.blockBehaviour(BedrockBlocks.BLUE_ICE).explain(BlockBehaviour.FRICTION);
-        assertTrue(ice.matches("0\\.989 from CloudburstMC/Data@[0-9a-f]{7} \\(CLOUDBURST_DATA, third party\\), " + LATEST.name()), ice);
+        Behaviour behaviour = fixture();
+        String stone = behaviour.explain(palette.block(BedrockBlocks.STONE.defaultState()), BlockBehaviour.FRICTION);
+        assertEquals("0.6 from CloudburstMC/Data@0123456 (CLOUDBURST_DATA, third party), " + LATEST.name(), stone);
 
-        String sword = palette.itemBehaviour(BedrockItems.DIAMOND_SWORD).explain(ItemBehaviour.ATTACK_DAMAGE);
+        RegisteredItem diamondSword = Objects.requireNonNull(palette.item(BedrockItems.DIAMOND_SWORD));
+        String sword = behaviour.explain(diamondSword, ItemBehaviour.ATTACK_DAMAGE);
         assertTrue(sword.contains("(ALLAY_DATA, third party)") && sword.endsWith("inherited by " + LATEST.name()), sword);
 
         String door = PALETTER.vanilla(PALETTER.versions().getFirst()).blockBehaviour(BedrockBlocks.IRON_DOOR).explain(BlockBehaviour.COLLISION_SHAPE);
@@ -299,34 +354,77 @@ class BehaviourTest {
             .equals(oldest.blockBehaviour(door.getRuntimeId()).get(BlockBehaviour.COLLISION_SHAPE)), "measured in the newest version only");
     }
 
+    /** @return {@code data/bds/<build>/behaviour-probe} of the newest build that has one */
+    private static Path newestProbe() throws IOException {
+        Path builds = Path.of(System.getProperty("paletter.root", "..")).resolve("data/bds");
+        try (Stream<Path> stream = Files.list(builds)) {
+            return stream.map(build -> build.resolve("behaviour-probe")).filter(Files::isDirectory)
+                .max(Comparator.comparing(probe -> probe.getParent().getFileName().toString(), BehaviourTest::compareBuilds))
+                .orElseThrow(() -> new AssertionError("no behaviour-probe capture in " + builds));
+        }
+    }
+
+    /** Orders {@code 1.26.63.1} before {@code 1.26.70.24}: number by number. */
+    private static int compareBuilds(String a, String b) {
+        int[] x = Arrays.stream(a.split("\\.")).mapToInt(Integer::parseInt).toArray();
+        int[] y = Arrays.stream(b.split("\\.")).mapToInt(Integer::parseInt).toArray();
+        return Arrays.compare(x, y);
+    }
+
+    /** @return a value of the probe's capture as the key's type */
+    private static Object probed(BehaviourKey<?> key, JsonElement value) {
+        return switch (key) {
+            case FloatKey k -> value.getAsFloat();
+            case IntKey k -> value.getAsInt();
+            case BooleanKey k -> value.getAsBoolean();
+            case ObjectKey<?> k -> {
+                // a shape: one [minX, minY, minZ, maxX, maxY, maxZ] per box
+                List<Float> coordinates = new ArrayList<>();
+                value.getAsJsonArray().forEach(box -> box.getAsJsonArray().forEach(c -> coordinates.add(c.getAsFloat())));
+                float[] array = new float[coordinates.size()];
+                for (int i = 0; i < array.length; i++) {
+                    array[i] = coordinates.get(i);
+                }
+                yield BlockShape.of(array);
+            }
+        };
+    }
+
     @Test
-    void customBlocksGetTheDefaultsTheProbeMeasured() {
+    void customBlocksGetTheDefaultsTheProbeMeasured() throws IOException {
+        Path probe = newestProbe();
+        JsonObject capture = JsonParser.parseString(Files.readString(probe.resolve("capture.json"))).getAsJsonObject();
+        String build = probe.getParent().getFileName().toString();
+        JsonObject bds = capture.getAsJsonObject("bds");
+
         CustomBlock block = CustomBlock.builder("test:plain").build();
         Palette palette = latest().extend(PaletteLayer.builder("test").block(block).build());
         Behaviour behaviour = palette.behaviour();
         RegisteredBlockState state = palette.blocks().block("test:plain").defaultState();
         BlockValues values = palette.blockBehaviour(state.getRuntimeId());
 
-        assertEquals(0.6f, values.get(BlockBehaviour.FRICTION));
-        assertEquals(0f, values.get(BlockBehaviour.EXPLOSION_RESISTANCE));
-        assertEquals(15, values.get(BlockBehaviour.LIGHT_DAMPENING));
-        assertEquals(0, values.get(BlockBehaviour.LIGHT_EMISSION));
-        assertEquals(BlockShape.FULL_CUBE, values.get(BlockBehaviour.COLLISION_SHAPE));
-        assertEquals(0, values.get(BlockBehaviour.BURN_ODDS));
-        assertEquals(0, values.get(BlockBehaviour.FLAME_ODDS));
-        for (BehaviourKey<?> key : List.of(BlockBehaviour.FRICTION, BlockBehaviour.LIGHT_DAMPENING, BlockBehaviour.COLLISION_SHAPE)) {
+        List<BehaviourKey<?>> measured = new ArrayList<>();
+        for (JsonElement element : capture.getAsJsonArray("defaults")) {
+            JsonObject entry = element.getAsJsonObject();
+            BehaviourKey<?> key = BlockBehaviour.keys().stream().filter(k -> k.toString().equals(entry.get("key").getAsString()))
+                .findFirst().orElseThrow(() -> new AssertionError("no block key " + entry.get("key")));
+            measured.add(key);
+            assertEquals(probed(key, entry.get("value")), boxed(values, key), key.toString());
             Provenance provenance = behaviour.provenance(state, key);
             assertTrue(provenance.bdsDefault(), key.toString());
             assertFalse(provenance.userSet());
-            assertTrue(provenance.reference().contains("BDS_PROBE data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801)"),
-                provenance.reference());
+            assertTrue(provenance.reference().contains("BDS_PROBE data/bds/" + build + "/behaviour-probe/capture.json (BDS "
+                + bds.get("version").getAsString() + ", Build ID " + bds.get("build").getAsString() + ")"), provenance.reference());
         }
-        // What a custom block that sets neither has is not known: no selection box and no destroy time were measured
-        assertTrue(behaviour.provenance(state, BlockBehaviour.DESTROY_TIME).unknownDefault());
-        assertTrue(behaviour.provenance(state, BlockBehaviour.OUTLINE_SHAPE).unknownDefault());
-        assertThrows(IllegalStateException.class, () -> values.get(BlockBehaviour.OUTLINE_SHAPE));
-        assertSame(BlockShape.EMPTY, values.getOrElse(BlockBehaviour.OUTLINE_SHAPE, BlockShape.EMPTY));
-        assertTrue(values.explain(BlockBehaviour.DESTROY_TIME).contains("(UNKNOWN_DEFAULT)"), values.explain(BlockBehaviour.DESTROY_TIME));
+        assertFalse(measured.isEmpty());
+        // What a custom block that sets neither has is not known while the probe does not measure it
+        for (BehaviourKey<?> key : List.of(BlockBehaviour.DESTROY_TIME, BlockBehaviour.OUTLINE_SHAPE)) {
+            if (!measured.contains(key)) {
+                assertTrue(behaviour.provenance(state, key).unknownDefault(), key.toString());
+                assertNull(boxed(values, key), key.toString());
+                assertTrue(values.explain(key).contains("(UNKNOWN_DEFAULT)"), values.explain(key));
+            }
+        }
     }
 
     @Test

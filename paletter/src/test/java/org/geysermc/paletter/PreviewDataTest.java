@@ -18,11 +18,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * A bundled preview ({@code <name> <protocol> preview} in {@code versions.txt}) is only served with the system property
- * {@code paletter.previews}: then its protocol gets the preview's palette, else the newest release's.
+ * {@code paletter.previews}: then its protocol gets the preview's palette, else the newest release's. When no preview is
+ * bundled, the copy of the data marks the newest release as one.
  */
 class PreviewDataTest {
     private static final String PROPERTY = "paletter.previews";
@@ -36,7 +36,9 @@ class PreviewDataTest {
                 previews.add(parts);
             }
         }
-        assumeTrue(!previews.isEmpty(), "no preview bundled");
+        if (previews.isEmpty()) {
+            previews.add(markNewestAsPreview(directory));
+        }
         String before = System.getProperty(PROPERTY);
         try {
             for (String[] preview : previews) {
@@ -59,6 +61,28 @@ class PreviewDataTest {
                 System.setProperty(PROPERTY, before);
             }
         }
+    }
+
+    /** Appends {@code preview} to the line of the newest version in the copy's {@code versions.txt}, and returns its parts. */
+    private static String[] markNewestAsPreview(Path directory) throws IOException {
+        Path index = directory.resolve("versions.txt");
+        List<String> lines = Files.readAllLines(index, StandardCharsets.UTF_8);
+        int newest = -1;
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i).strip();
+            if (!line.isEmpty() && !line.startsWith("#") && (newest < 0 || protocol(line) > protocol(lines.get(newest).strip()))) {
+                newest = i;
+            }
+        }
+        assertTrue(newest >= 0, "no version bundled");
+        String line = lines.get(newest).strip() + " preview";
+        lines.set(newest, line);
+        Files.write(index, lines, StandardCharsets.UTF_8);
+        return line.split("\\s+");
+    }
+
+    private static int protocol(String line) {
+        return Integer.parseInt(line.split("\\s+")[1]);
     }
 
     /** Copies the bundled files into the directory and returns the lines of {@code versions.txt}. */

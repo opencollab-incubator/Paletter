@@ -7,16 +7,34 @@ import com.google.gson.JsonParser;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** The committed capture of the probe on BDS 1.26.63.1: what it says, and that it is what its console gives. */
+/** The newest committed capture of the probe: what it says, and that it is what its console gives. */
 class BehaviourProbeCaptureTest {
     private static final Path ROOT = Path.of(System.getProperty("paletter.root", ".."));
-    private static final Path DIRECTORY = ROOT.resolve("data/bds/1.26.63.1").resolve(BehaviourProbe.DIRECTORY);
+    private static final Path DIRECTORY = newest();
+    /** The BDS build of the capture: the name of its {@code data/bds} directory. */
+    private static final String BUILD = DIRECTORY.getParent().getFileName().toString();
+
+    /** @return {@code data/bds/<build>/behaviour-probe} of the newest build that has one */
+    private static Path newest() {
+        try (Stream<Path> builds = Files.list(ROOT.resolve("data/bds"))) {
+            return builds.map(build -> build.resolve(BehaviourProbe.DIRECTORY)).filter(Files::isDirectory)
+                .max(Comparator.comparing(probe -> Arrays.stream(probe.getParent().getFileName().toString().split("\\."))
+                    .mapToInt(Integer::parseInt).toArray(), Arrays::compare))
+                .orElseThrow(() -> new IllegalStateException("No behaviour-probe capture in data/bds"));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
 
     private static JsonObject committed() throws IOException {
         return JsonParser.parseString(Files.readString(DIRECTORY.resolve(BehaviourProbe.CAPTURE))).getAsJsonObject();
@@ -25,9 +43,10 @@ class BehaviourProbeCaptureTest {
     @Test
     void theCaptureIsWhatTheCommittedConsoleGives() throws IOException {
         ProbeLog log = ProbeLog.parse(Files.readAllLines(DIRECTORY.resolve(BehaviourProbe.LOG)));
-        assertEquals("1.26.63.1", log.version());
-        assertEquals("53340801", log.build());
-        assertEquals(committed(), BehaviourProbe.measure(log, "1.26.60"), "run behaviour-probe --from-log again");
+        assertEquals(BUILD, log.version());
+        assertEquals(committed().getAsJsonObject("bds").get("build").getAsString(), log.build());
+        assertEquals(committed(), BehaviourProbe.measure(log, committed().get("block_format_version").getAsString()),
+            "run behaviour-probe --from-log again");
         assertEquals(Json.pretty(committed()), Files.readString(DIRECTORY.resolve(BehaviourProbe.CAPTURE)), "written the way the tool writes it");
     }
 
@@ -69,8 +88,8 @@ class BehaviourProbeCaptureTest {
     @Test
     void theBuildIsThereForTheNextReader() throws IOException {
         JsonObject bds = committed().getAsJsonObject("bds");
-        assertEquals("1.26.63.1", bds.get("version").getAsString());
-        assertEquals("53340801", bds.get("build").getAsString());
+        assertEquals(BUILD, bds.get("version").getAsString());
+        assertTrue(bds.get("build").getAsString().matches("[0-9]+"), bds.toString());
         assertTrue(committed().get("generated").getAsString().contains("Do not edit"));
     }
 }

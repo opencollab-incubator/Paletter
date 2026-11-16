@@ -15,6 +15,8 @@ dependencies {
     api(libs.fastutil.`object`.`object`)
     compileOnlyApi(libs.checker.qual)
 
+    // BehaviourTest reads the probe's capture (data/bds/<build>/behaviour-probe/capture.json)
+    testImplementation(libs.gson)
     testImplementation(platform(libs.junit.bom))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
