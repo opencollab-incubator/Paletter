@@ -134,8 +134,10 @@ hold nothing Paletter needs.
 
 - `build.yml` runs `./gradlew build`, `check-mappings --strict` (every captured bit and wire path is explained) and
   `check-data`.
-- `bds-data.yml` runs `update --verify-only` daily for the release and preview channels on Linux BDS. On a difference it
-  opens or comments on an issue and opens a pull request from `bds-data/<channel>` with the updated data.
+- `bds-data.yml` runs `update --verify-only` daily for the release and preview channels on Windows BDS (a Windows
+  runner, like the committed captures). On a difference it opens or comments on an issue and opens a pull request from
+  `bds-data/<channel>` with the updated data (only data and generated paths; the issue and pull request bodies are
+  written to the runner's temp directory). A manual run can pick one channel and stop after the report (`verify-only`).
 - `javadoc.yml` publishes the Javadoc of `main` to GitHub Pages.
 
 ## The component model

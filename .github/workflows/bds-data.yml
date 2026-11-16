@@ -1,8 +1,10 @@
 # Daily check of the newest Bedrock Dedicated Server release and preview against the committed data.
 #
-# Per channel: resolves the newest build (or the `version` input), then runs `update --verify-only` on Linux BDS
-# (downloaded from minecraft.net; that means accepting the Minecraft EULA, https://minecraft.net/eula). When the run
-# fails or finds differences:
+# Per channel: resolves the newest build (or the `version` input), then runs `update --verify-only` on Windows BDS
+# (downloaded from minecraft.net; that means accepting the Minecraft EULA, https://minecraft.net/eula). The committed
+# captures come from Windows BDS, and Linux BDS numbers custom blocks, orders the creative inventory and encodes some
+# component NBT differently, so the captures run on Windows too (`update` refuses to compare captures of different
+# platforms). When the run fails or finds differences:
 #   - an issue labelled `bds-data` + `<channel>` is opened, or the open one gets a comment when the report changed
 #     (dates and paths ignored), so a standing difference does not spam;
 #   - the pipeline runs again in update mode, regenerates the component API, and `peter-evans/create-pull-request`
@@ -12,6 +14,13 @@
 #     `data/bds/<build>/update-report.md` (committed with the data, and the body of the pull request). It exits with 2
 #     when the report lists TODOs: the pull request is still opened, for a human to decide them; any other failure
 #     fails the job.
+# A manual run can check one channel only, and with `verify-only` stops after the report (no issue, no pull request).
+#
+# Windows runner assumptions: BDS and the capture client talk over loopback only (127.0.0.1: RakNet and NetherNet
+# signaling on server-port, NetherNet LAN discovery on UDP 7551). Windows Firewall does not filter loopback, and nothing
+# runs elevated or needs a UWP loopback exemption (that is only for the Bedrock client app). NetherNet's WebRTC uses
+# host candidates only (no STUN/TURN), and libdatachannel ships a Windows x64 native. No WSL is needed: the tools run
+# the Windows BDS directly; only the BDS inventory step downloads the Linux zip to read its binary.
 #
 # Required permissions (granted below): contents: write, pull-requests: write, issues: write. No extra secrets: the
 # default GITHUB_TOKEN is used. Note that pull requests opened with GITHUB_TOKEN do not trigger other workflows; to
@@ -26,9 +35,18 @@ on:
     - cron: "17 5 * * *"
   workflow_dispatch:
     inputs:
+      channel:
+        description: "Channel to check"
+        type: choice
+        options: [both, release, preview]
+        default: both
       version:
         description: "BDS version (empty: newest of each channel)"
         required: false
+      verify-only:
+        description: "Only verify and upload the report (no issue, no pull request)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -41,19 +59,33 @@ concurrency:
 
 jobs:
   verify:
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
+    runs-on: windows-latest
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
-        channel: [release, preview]
+        channel: ${{ fromJSON(inputs.channel == 'release' && '["release"]' || inputs.channel == 'preview' && '["preview"]' || '["release","preview"]') }}
+    defaults:
+      run:
+        # Git Bash on the Windows runner
+        shell: bash
     env:
       CHANNEL: ${{ matrix.channel }}
       INPUT_VERSION: ${{ inputs.version }}
+      # Scheduled runs have no inputs: false
+      VERIFY_ONLY: ${{ inputs.verify-only == true }}
     steps:
-      # Outside the checkout, as an absolute path: upload-artifact rejects '..' in paths
-      - name: Set the BDS cache directory
-        run: echo "PALETTER_BDS_CACHE=$RUNNER_TEMP/bds-cache" >> "$GITHUB_ENV"
+      # Everything temporary lives in the runner's temp directory, never in the checkout (create-pull-request would
+      # commit it). Forward slashes: Java, bash and the actions all read them; outside the checkout as an absolute path,
+      # as upload-artifact rejects '..' in paths.
+      - name: Set the temp and BDS cache directories
+        run: |
+          CI_TEMP=$(cygpath -m "$RUNNER_TEMP")
+          echo "CI_TEMP=$CI_TEMP" >> "$GITHUB_ENV"
+          echo "PALETTER_BDS_CACHE=$CI_TEMP/bds-cache" >> "$GITHUB_ENV"
+      # The data is compared byte for byte: keep the checkout's line endings as committed (LF)
+      - name: Check out with LF line endings
+        run: git config --global core.autocrlf false
       # The build every step uses, also the key of the download cache
       - name: Resolve the BDS version
         id: bds
@@ -61,8 +93,8 @@ jobs:
           if [ -n "$INPUT_VERSION" ]; then
             VERSION="$INPUT_VERSION"
           else
-            TYPE=serverBedrockLinux
-            if [ "$CHANNEL" = preview ]; then TYPE=serverBedrockPreviewLinux; fi
+            TYPE=serverBedrockWindows
+            if [ "$CHANNEL" = preview ]; then TYPE=serverBedrockPreviewWindows; fi
             URL=$(curl -sf -A Paletter https://net-secondary.web.minecraft-services.net/api/v1.0/download/links \
               | jq -r --arg type "$TYPE" '.result.links[] | select(.downloadType == $type) | .downloadUrl')
             VERSION=$(basename "$URL" .zip | sed 's/^bedrock-server-//')
@@ -80,17 +112,19 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ${{ env.PALETTER_BDS_CACHE }}/zips
-          key: bds-zips-${{ matrix.channel }}-${{ steps.bds.outputs.version }}
+          key: bds-zips-windows-${{ matrix.channel }}-${{ steps.bds.outputs.version }}
 
       - name: Verify against the committed data
         id: verify
         run: |
           set +e
-          ./gradlew :tools:run --args="update --channel $CHANNEL --version $BDS_VERSION --verify-only --report $RUNNER_TEMP/ci-$CHANNEL.md"
+          ./gradlew :tools:run --args="update --channel $CHANNEL --version $BDS_VERSION --verify-only --report $CI_TEMP/ci-$CHANNEL.md"
           echo "exit=$?" >> "$GITHUB_OUTPUT"
-          # The report without the lines that change every run (date, paths)
-          if [ -f "$RUNNER_TEMP/ci-$CHANNEL.md" ]; then
-            echo "hash=$(grep -v -e '^- \*\*Date\*\*' -e '^- \*\*Work directory' -e '^- \*\*Server' "$RUNNER_TEMP/ci-$CHANNEL.md" | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
+          REPORT="$CI_TEMP/ci-$CHANNEL.md"
+          if [ -f "$REPORT" ]; then
+            # The report without the lines that change every run (date, paths)
+            echo "hash=$(grep -v -e '^- \*\*Date\*\*' -e '^- \*\*Work directory' -e '^- \*\*Server' "$REPORT" | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
+            head -c 60000 "$REPORT" >> "$GITHUB_STEP_SUMMARY"
           fi
           exit 0
 
@@ -100,13 +134,13 @@ jobs:
         with:
           name: bds-data-${{ matrix.channel }}
           path: |
-            ${{ runner.temp }}/ci-${{ matrix.channel }}.md
+            ${{ env.CI_TEMP }}/ci-${{ matrix.channel }}.md
             ${{ env.PALETTER_BDS_CACHE }}/runs/*/*.log
             ${{ env.PALETTER_BDS_CACHE }}/runs/*/report.md
           if-no-files-found: ignore
 
       - name: Open or update the issue
-        if: steps.verify.outputs.exit != '0'
+        if: steps.verify.outputs.exit != '0' && env.VERIFY_ONLY != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           HASH: ${{ steps.verify.outputs.hash }}
@@ -115,28 +149,27 @@ jobs:
           gh label create bds-data --color 1d76db --description "Automated BDS data check" 2>/dev/null || true
           gh label create "$CHANNEL" --color c5def5 2>/dev/null || true
           TITLE="BDS data: $CHANNEL differs from the committed data"
-          BODY="$RUNNER_TEMP/ci-$CHANNEL.md"
+          ISSUE="$CI_TEMP/issue-$CHANNEL.md"
           MARKER="<!-- report-hash: $HASH -->"
           {
             echo "$MARKER"
             echo "Run: $RUN_URL"
             echo
             # GitHub limits bodies to 65536 characters
-            head -c 60000 "$BODY"
-          } > issue.md
+            head -c 60000 "$CI_TEMP/ci-$CHANNEL.md"
+          } > "$ISSUE"
           NUMBER=$(gh issue list --label bds-data --label "$CHANNEL" --state open --json number --jq '.[0].number')
           if [ -z "$NUMBER" ]; then
-            gh issue create --title "$TITLE" --label bds-data --label "$CHANNEL" --body-file issue.md
+            gh issue create --title "$TITLE" --label bds-data --label "$CHANNEL" --body-file "$ISSUE"
           elif ! gh issue view "$NUMBER" --json body,comments --jq '[.body] + [.comments[].body] | join("\n")' | grep -qF "$MARKER"; then
-            gh issue comment "$NUMBER" --body-file issue.md
+            gh issue comment "$NUMBER" --body-file "$ISSUE"
           else
             echo "Issue #$NUMBER already has this report"
           fi
 
       - name: Update the data
-        if: steps.verify.outputs.exit != '0'
+        if: steps.verify.outputs.exit != '0' && env.VERIFY_ONLY != 'true'
         run: |
-          rm -f issue.md
           set +e
           ./gradlew :tools:run --args="update --channel $CHANNEL --version $BDS_VERSION"
           CODE=$?
@@ -145,10 +178,11 @@ jobs:
           if [ "$CODE" != 0 ] && [ "$CODE" != 2 ]; then echo "update failed with exit code $CODE"; exit "$CODE"; fi
           # The component API follows the inferred mappings
           ./gradlew :tools:generateComponentApi
-          head -c 60000 "data/bds/$BDS_VERSION/update-report.md" > "$RUNNER_TEMP/pr-body.md"
+          # The versioned report, committed with the data, is the pull request body
+          head -c 60000 "data/bds/$BDS_VERSION/update-report.md" > "$CI_TEMP/pr-body-$CHANNEL.md"
 
       - name: Open or update the pull request
-        if: steps.verify.outputs.exit != '0'
+        if: steps.verify.outputs.exit != '0' && env.VERIFY_ONLY != 'true'
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.BDS_DATA_TOKEN || github.token }}
@@ -156,5 +190,12 @@ jobs:
           delete-branch: true
           title: "Update bundled data from the newest BDS ${{ matrix.channel }}"
           commit-message: "Update bundled data from the newest BDS ${{ matrix.channel }}"
-          body-path: ${{ runner.temp }}/pr-body.md
+          body-path: ${{ env.CI_TEMP }}/pr-body-${{ matrix.channel }}.md
           labels: bds-data
+          # Only what update and generateComponentApi write: captures and reports, the model, the bundled data, the
+          # generated sources and the add-on content log
+          add-paths: |
+            data/**
+            paletter/src/main/resources/paletter/**
+            paletter/src/generated/**
+            paletter/api/**
