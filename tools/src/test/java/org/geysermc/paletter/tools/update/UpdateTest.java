@@ -40,6 +40,22 @@ class UpdateTest {
     }
 
     @Test
+    void onlyBehaviourGettersOfTheInventoryNeedADecision() {
+        assertEquals("BlockPermutation.getAllStates()", Update.behaviourGetter("+ Script API ScriptModuleMinecraft ScriptBlockPermutation getAllStates()"));
+        assertEquals("BlockMapColorComponent.tintMethod", Update.behaviourGetter("- Script API ScriptModuleMinecraft ScriptBlockMapColorComponent get tintMethod"));
+        assertEquals("BookItemComponent._getTitle", Update.behaviourGetter("+ Script API ScriptModuleMinecraft ScriptBookItemComponent get _getTitle"));
+        assertEquals(null, Update.behaviourGetter("+ Script API ScriptModuleMinecraft ScriptBlockPermutation matches()"));
+        assertEquals(null, Update.behaviourGetter("+ Script API ScriptModuleMinecraft ScriptBlockCustomComponentStepOnAfterEvent get mEntity"));
+        assertEquals(null, Update.behaviourGetter("+ Script API ScriptModuleMinecraft ScriptWorld getDimension()"));
+        assertEquals(null, Update.behaviourGetter("+ block component minecraft:geometry key culling"));
+        // No value of the type or state: ids, runtime components, methods that take an argument, live objects
+        assertEquals(null, Update.behaviourGetter("+ Script API ScriptModuleMinecraft ScriptBlockEntityStorageComponent get mUniqueId"));
+        assertEquals(null, Update.behaviourGetter("+ Script API ScriptModuleMinecraft ScriptBlockRecipeProcessingComponent get getInputSlotCount"));
+        assertEquals(null, Update.behaviourGetter("+ Script API ScriptModuleMinecraft ScriptBlockPermutation getState()"));
+        assertEquals(null, Update.behaviourGetter("+ Script API ScriptModuleMinecraft ScriptBlock get getDimension"));
+    }
+
+    @Test
     void canonicalDumpJsonIgnoresOrder() {
         String a = "{\"b\": {\"y\": [2, 1], \"x\": [\"b\", \"a\"]}, \"a\": 1}";
         String b = "{\"a\": 1, \"b\": {\"x\": [\"a\", \"b\"], \"y\": [1, 2]}}";

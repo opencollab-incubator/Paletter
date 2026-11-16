@@ -12,7 +12,7 @@
 #     imported alike: a preview is bundled as a preview version (served with `paletter.previews`, its API marked
 #     `@SincePreview`) and replaces the preview before it; its release drops it. The update writes its report to
 #     `data/bds/<build>/update-report.md` (committed with the data, and the body of the pull request). It exits with 2
-#     when the report lists TODOs: the pull request is still opened, for a human to decide them; any other failure
+#     when the report lists decisions: the pull request is still opened, for a human to decide them; any other failure
 #     fails the job.
 # A manual run can check one channel only, and with `verify-only` stops after the report (no issue, no pull request).
 #
@@ -174,7 +174,7 @@ jobs:
           ./gradlew :tools:run --args="update --channel $CHANNEL --version $BDS_VERSION"
           CODE=$?
           set -e
-          # 2: everything written, decisions pending (the report's TODO list); the pull request is opened for them
+          # 2: everything written, decisions pending (the report's "to do" items); the pull request is opened for them
           if [ "$CODE" != 0 ] && [ "$CODE" != 2 ]; then echo "update failed with exit code $CODE"; exit "$CODE"; fi
           # The component API follows the inferred mappings
           ./gradlew :tools:generateComponentApi

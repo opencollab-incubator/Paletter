@@ -161,7 +161,7 @@ public final class Update {
         if (report.failed() || (verifyOnly && report.differs())) {
             return 1;
         }
-        return !verifyOnly && !report.todos.isEmpty() ? EXIT_TODOS : 0;
+        return !verifyOnly && report.hasTodos() ? EXIT_TODOS : 0;
     }
 
     /**
@@ -279,8 +279,8 @@ public final class Update {
                 }
             }
             report.check(differing.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Voxel shapes",
-                differing.isEmpty() ? "`" + root.relativize(committed) + "` has the same captures"
-                    : "`" + root.relativize(committed) + "` is missing or differs: " + String.join(", ", differing));
+                differing.isEmpty() ? "`" + relative(committed) + "` has the same captures"
+                    : "`" + relative(committed) + "` is missing or differs: " + String.join(", ", differing));
             if (!differing.isEmpty()) {
                 for (String file : differing) {
                     stageCopy(committed.resolve(file), captured.resolve(file), "voxel shape capture " + file);
@@ -304,8 +304,8 @@ public final class Update {
                 ConstantsGenerator.Sources.read(staging.resources, root.resolve(ConstantsGenerator.BDS)));
         } catch (IllegalStateException e) {
             // A name collision or a state that changed its kind needs an entry in the name overrides of ConstantsGenerator
-            report.todos.add("Vanilla constants: " + e.getMessage());
             report.check(Report.Status.FAIL, "Vanilla constants", e.getMessage());
+            report.action("add a name override in ConstantsGenerator");
             return;
         }
         List<String> lines = new ArrayList<>();
@@ -313,9 +313,9 @@ public final class Update {
         result.added().forEach(added -> lines.add("added `" + added + "`"));
         result.deprecated().forEach(deprecated -> lines.add("deprecated `" + deprecated + "`"));
         result.tableBlocks().forEach(block -> lines.add("lookup table (states are not a full product in a stride order): " + block));
-        report.section("Vanilla constants", lines);
         report.check(result.added().isEmpty() && result.deprecated().isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Vanilla constants",
             result.added().size() + " added, " + result.deprecated().size() + " deprecated, " + result.tableBlocks().size() + " blocks with a lookup table");
+        report.evidence("Constants", lines);
         for (Path stale : org.geysermc.paletter.tools.codegen.constants.Main.stale(root, result.files())) {
             report.repoChanges.add((verifyOnly ? "would " : "") + "remove `" + root.relativize(stale).toString().replace('\\', '/') + "` (constants)");
             if (!verifyOnly) {
@@ -445,8 +445,7 @@ public final class Update {
         }
         if (network != null) {
             report.check(Report.Status.FAIL, "Network capture", "BDS answers neither a RakNet ping nor NetherNet signaling on port " + port);
-            report.section("Network capture impossible", List.of(
-                "Network lines of the server:", "", "```", String.join("\n", network), "```"));
+            report.evidence("Network lines of the server", List.of("```", String.join("\n", network), "```"));
             runs.addonContentLog = addonWorldContentLog(server, work, properties, runs);
             return;
         }
@@ -468,7 +467,7 @@ public final class Update {
             experiments(server, work, address, dump, runs, properties);
         } catch (Exception e) {
             report.fail("Experiments", e);
-            report.todos.add("Experiment discovery failed; the add-on world used " + runs.experiments.current + " (" + runs.experiments.source + ")");
+            report.action("check the toggles: the add-on world used " + runs.experiments.current + " (" + runs.experiments.source + ")");
         }
 
         // Add-on world: created once, experiments switched on in level.dat, then captured
@@ -515,9 +514,9 @@ public final class Update {
         ordering.passes.forEach(pass -> report.check(Report.Status.PASS, "Block numbering", pass));
         ordering.failures.forEach(failure -> report.check(Report.Status.FAIL, "Block numbering", failure));
         if (!ordering.withinBlockOrder.isEmpty()) {
-            report.todos.add("Block palette: " + ordering.withinBlockOrder.size() + " creative states of generated blocks sit at another "
-                + "position within their block than generated; fix the state order of those blocks before importing: "
-                + String.join("; ", ordering.withinBlockOrder.subList(0, Math.min(10, ordering.withinBlockOrder.size()))));
+            report.todo("Block palette: " + ordering.withinBlockOrder.size() + " creative states of generated blocks sit elsewhere "
+                + "within their block than generated; fix the state order of those blocks before importing", "States",
+                ordering.withinBlockOrder.stream().map(state -> "- " + state).toList());
         }
     }
 
@@ -547,12 +546,19 @@ public final class Update {
 
     private Capture.Summary capture(InetSocketAddress address, Runs runs, Path out, Path customOut, String what) throws Exception {
         Capture.Summary summary = Capture.capture(address, runs.protocol, runs.reference, runs.bdsVersion, out, customOut, 90, runs.netherNet);
-        report.check(summary.nativeCodec() ? Report.Status.PASS : Report.Status.DIFF, what,
-            (summary.blockNetworkIdsHashed() ? "hashed" : "sequential") + " block ids; protocol " + summary.protocol()
-                + (summary.nativeCodec() ? "" : ", decoded with the " + summary.codecProtocol() + " codec (no codec for "
-                + summary.protocol() + " in the protocol library: update it and rerun)"));
+        report.check(Report.Status.PASS, what, (summary.blockNetworkIdsHashed() ? "hashed" : "sequential") + " block ids; protocol "
+            + summary.protocol() + (summary.nativeCodec() ? "" : ", decoded with the " + summary.codecProtocol() + " codec"));
+        if (!summary.nativeCodec() && !codecReported) {
+            // Once: every capture of the run decodes with the same codec
+            codecReported = true;
+            report.check(Report.Status.DIFF, "Protocol codec", "no codec for " + summary.protocol() + " in the protocol library, "
+                + "captures decoded with the " + summary.codecProtocol() + " codec: update it and rerun");
+        }
         return summary;
     }
+
+    /** Whether the missing protocol codec is reported already. */
+    private boolean codecReported;
 
     private void hashCheck(String label, Capture.Summary summary) {
         if (summary.unresolvedHashes() == 0) {
@@ -561,8 +567,7 @@ public final class Update {
         } else {
             report.check(Report.Status.FAIL, "Block hashes (" + label + ")", summary.unresolvedHashes() + " creative block ids match no "
                 + "palette state (" + summary.resolvedHashes() + " do): the palette lacks states this version has");
-            report.todos.add("Block palette: " + summary.unresolvedHashes() + " creative block ids of the " + label
-                + " capture match no known state; the palette needs those states (see `creativeBlockIdsUnresolved` in capture.json)");
+            report.action("add those states to the palette (`creativeBlockIdsUnresolved` in capture.json)");
         }
     }
 
@@ -981,10 +986,28 @@ public final class Update {
             } else {
                 String before = previous.getParent().getFileName().toString();
                 List<String> diff = BdsInventory.diff(BdsInventory.parse(previous), inventory);
-                report.check(diff.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "BDS inventory vs " + before,
+                // Only getters the behaviour dump reads need a decision; the rest of the inventory is for reference
+                report.check(diff.isEmpty() ? Report.Status.PASS : Report.Status.INFO, "BDS inventory vs " + before,
                     diff.isEmpty() ? "no new or removed properties" : diff.size() + " new or removed properties");
                 if (!diff.isEmpty()) {
-                    report.section("BDS inventory: BDS " + distribution.version() + " vs " + before, diff);
+                    report.evidence("New or removed properties", diff.stream().map(line -> "- `" + line + "`").toList());
+                }
+                List<String> added = new ArrayList<>();
+                List<String> removed = new ArrayList<>();
+                for (String line : diff) {
+                    String getter = behaviourGetter(line);
+                    if (getter != null) {
+                        (line.startsWith("+") ? added : removed).add(getter);
+                    }
+                }
+                if (!added.isEmpty() || !removed.isEmpty()) {
+                    report.check(Report.Status.DIFF, "Script API getters", (added.isEmpty() ? "" : added.size() + " new")
+                        + (added.isEmpty() || removed.isEmpty() ? "" : ", ") + (removed.isEmpty() ? "" : removed.size() + " removed")
+                        + " value getters of blocks, items or their components (the behaviour dump reads them)");
+                    List<String> lines = new ArrayList<>();
+                    added.forEach(getter -> lines.add("- new `" + getter + "`"));
+                    removed.forEach(getter -> lines.add("- removed `" + getter + "`"));
+                    report.action("give each a behaviour key or an ignored entry", "Getters", lines);
                 }
             }
             stage(bdsData.resolve(distribution.version()).resolve(BdsInventory.FILE),
@@ -992,6 +1015,47 @@ public final class Update {
         } catch (Exception e) {
             report.fail("BDS inventory", e);
         }
+    }
+
+    /** Script API classes whose getters the behaviour dump reads: the block, its permutation and type, the item stack. */
+    private static final Set<String> BEHAVIOUR_TYPES = Set.of("Block", "BlockPermutation", "BlockType", "ItemStack");
+    /** Component classes of runtime state, not of the block or item type or state: containers, recipes, stored entities. */
+    private static final java.util.regex.Pattern RUNTIME_TYPES = java.util.regex.Pattern.compile("Recipe|Crafting|Inventory|Container"
+        + "|EntityStorage|DynamicProperties|ItemActor");
+    /**
+     * Members that are no value of the type or state: native fields and ids, legacy {@code _010} bindings, live objects
+     * (dimension, location, entities, players, items, blocks, permutations, the type object) and the getters that take an
+     * argument (the inventory has no signatures, so these are named).
+     */
+    private static final java.util.regex.Pattern NOT_A_VALUE = java.util.regex.Pattern.compile("^m[A-Z]|^_?isValid|Ids?(\\(\\))?$"
+        + "|_?V?010|Dimension|Location|Entit|Player|Container|ItemStack|Item\\(\\)$|Record|Context|Blocks|BlockParts|Permutation"
+        + "|DynamicProperty|^(get)?Type$|^getState\\(|^getProperty|^getEnchantment\\(|^getDamageChance\\(|^getText\\(|^getRawText\\("
+        + "|^getTextDyeColor\\(|^getInputSlotEnabled\\(");
+
+    /**
+     * The getter of a {@link BdsInventory#diff} line that the behaviour dump ({@code data/addons/behaviour-dump}) reads or
+     * would read, e.g. {@code BlockPermutation.getAllStates()} for {@code + Script API ScriptModuleMinecraft
+     * ScriptBlockPermutation getAllStates()}: a getter of {@link #BEHAVIOUR_TYPES} or of a block or item component that
+     * returns a value of the type or state ({@link #RUNTIME_TYPES} and {@link #NOT_A_VALUE} are left out). A new one needs
+     * a behaviour key or an ignored entry, or the key table generation fails.
+     *
+     * @return {@code Type.member}, or null for any other line
+     */
+    static String behaviourGetter(String line) {
+        String[] parts = line.split(" ", 6);
+        if (parts.length < 6 || !parts[1].equals("Script") || !parts[2].equals("API") || !parts[4].startsWith("Script")) {
+            return null;
+        }
+        String type = parts[4].substring("Script".length());
+        String member = parts[5];
+        boolean component = (type.startsWith("Block") || type.startsWith("Item") || type.endsWith("ItemComponent"))
+            && type.contains("Component") && !type.contains("CustomComponent") && !type.endsWith("Registry");
+        String name = member.startsWith("get ") ? member.substring(4) : member;
+        if (!(BEHAVIOUR_TYPES.contains(type) || component) || !member.startsWith("get") || RUNTIME_TYPES.matcher(type).find()
+            || NOT_A_VALUE.matcher(name).find()) {
+            return null;
+        }
+        return type + "." + name;
     }
 
     /**
@@ -1021,11 +1085,7 @@ public final class Update {
         if (!lines.isEmpty()) {
             report.check(Report.Status.INFO, "Fallbacks", "new content falls back to unknown in older versions unless a consumer defines a fallback ("
                 + source + "), see the list");
-            List<String> section = new ArrayList<>(List.of("Paletter bundles no fallbacks: these fall back to `minecraft:unknown` "
-                + "(block and item) in the older version unless a consumer defines a fallback "
-                + "(`Fallbacks.builder()` of `Paletter.builder()`). Nothing is required here.", ""));
-            section.addAll(lines);
-            report.section("Fallbacks (" + source + "): content that falls back to unknown", section);
+            report.evidence("Content that falls back to unknown (" + source + ")", lines);
         }
     }
 
@@ -1039,7 +1099,7 @@ public final class Update {
 
     private void networkData(BdsDistribution distribution, BdsDump dump, Runs runs, Staging staging) throws Exception {
         String name = runs.existing != null ? runs.existing : options.getOrDefault("name", versionName(distribution.version()));
-        report.header.put("Bundled version", runs.existing != null ? name + " (existing, same protocol)" : name + " (NEW protocol)");
+        report.header.put("Bundled version", runs.existing != null ? name + " (existing, same protocol)" : name + " (new protocol)");
         runs.bundledName = name;
         // The capture in the bundled format, imported into a scratch directory
         Path scratch = staging.directory.resolveSibling("imported");
@@ -1056,9 +1116,8 @@ public final class Update {
                     : network.count() + " differences");
             report.diff("Network data: BDS " + distribution.version() + " vs bundled " + name, network);
             if (!network.identical()) {
-                report.todos.add("BDS " + distribution.version() + " has the protocol of bundled " + name + " but sends different data; "
-                    + "decide whether to re-import " + name + " (`import --source " + runs.vanilla + " --name " + name
-                    + " --protocol " + runs.protocol + " --bds-dump " + runs.dumpLog + "`)");
+                report.action("same protocol, different data: decide whether to re-import " + name + " (`import --source "
+                    + runs.vanilla + " --name " + name + " --protocol " + runs.protocol + " --bds-dump " + runs.dumpLog + "`)");
             }
             // Refresh what comes from the Script API (item tags, block defaults); keep the network data
             VanillaData refreshed = new VanillaData(bundled.version(), bundled.blockStates(), bundled.items(), bundled.dataDrivenBlocks(),
@@ -1078,7 +1137,7 @@ public final class Update {
             fallbackTodos(diff.lines("new blocks"), diff.lines("new items"), "network");
             dropPreviews(distribution, name, runs.protocol, staging);
             new Importer(staging.resources).run(runs.vanilla, name, runs.protocol, null, runs.dumpLog, preview);
-            report.check(Report.Status.INFO, "Import", "imported " + name + " (" + runs.protocol + ")" + (preview ? " as a PREVIEW version" : ""));
+            report.check(Report.Status.INFO, "Import", "imported " + name + " (" + runs.protocol + ")" + (preview ? " as a preview version" : ""));
             // Content older versions lack is listed above (INFO); there are no bundled fallbacks to check
             new Checker(staging.resources).problems(preview);
         }
@@ -1157,9 +1216,8 @@ public final class Update {
                     + "from CreativeOrdering.BDS: " + result.differences().size() + "+ differences");
                 List<String> lines = new ArrayList<>();
                 result.differences().forEach(difference -> lines.add("- `" + difference.replace("`", "'") + "`"));
-                report.section("Creative order: " + capture[0], lines);
-                report.todos.add("Creative order: BDS changed where it puts custom items/blocks (" + capture[0] + "); see "
-                    + "docs/wire-notes.md, update CreativeOrdering.BDS and the committed probe captures");
+                report.evidence("Differences", lines);
+                report.action("update CreativeOrdering.BDS and the committed probe captures (docs/wire-notes.md)");
             }
         }
     }
@@ -1180,7 +1238,7 @@ public final class Update {
             lines.isEmpty() ? runs.addonContentLog.size() + " known rejections/warnings, unchanged"
                 : lines.size() + " changes in what BDS rejects or warns about in data/addons/capture");
         if (!lines.isEmpty()) {
-            report.section("Add-on content log changes", lines);
+            report.evidence("Content log changes", lines);
         }
         if (!olderThanNewestBundled(runs)) {
             // The committed log is the newest build's: a backfill of an older build does not replace it
@@ -1230,8 +1288,8 @@ public final class Update {
             same &= Files.exists(target.resolve(file))
                 && Nbt.readGzip(target.resolve(file)).equals(Nbt.readGzip(runs.customCapture.resolve(file)));
         }
-        report.check(same ? Report.Status.PASS : Report.Status.DIFF, "Add-on capture vs " + root.relativize(bdsData),
-            same ? "`" + root.relativize(target) + "` has the same NBT" : "`" + root.relativize(target) + "` is missing or differs");
+        report.check(same ? Report.Status.PASS : Report.Status.DIFF, "Add-on capture vs " + relative(bdsData),
+            same ? "`" + relative(target) + "` has the same NBT" : "`" + relative(target) + "` is missing or differs");
         if (!same) {
             for (String file : files) {
                 stageCopy(target.resolve(file), runs.customCapture.resolve(file), "component capture " + file);
@@ -1249,17 +1307,17 @@ public final class Update {
         report.check(unclassified.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Spec coverage", unclassified.isEmpty()
             ? "every captured wire path is in " + Layout.MODEL + "/mappings.json or has a known reason (listed below)"
             : unclassified.size() + " captured wire paths are not in the mappings and have no known reason");
-        unclassified.forEach(path -> {
-            report.wireChanges.add("not covered by " + Layout.MODEL + "/mappings.json: " + path);
-            report.todos.add("UNEXPLAINED wire path " + path + ": not in " + Layout.MODEL + "/mappings.json and no reason of WireShapes.classify fits");
-        });
+        unclassified.forEach(path -> report.wireChanges.add("not covered by " + Layout.MODEL + "/mappings.json: " + path));
         List<String> lines = new ArrayList<>();
         uncovered.forEach((reason, paths) -> {
             lines.add("- " + reason + ":");
             paths.forEach(path -> lines.add("  - `" + path + "`"));
         });
         if (!lines.isEmpty()) {
-            report.section("Wire paths the model does not cover", lines);
+            report.evidence("Wire paths the model does not cover", lines);
+        }
+        if (!unclassified.isEmpty()) {
+            report.action("map them in " + Layout.MODEL + "/mappings.json or give WireShapes.classify a reason");
         }
     }
 
@@ -1327,9 +1385,8 @@ public final class Update {
                 }
             });
             if (!lines.isEmpty()) {
-                report.section("Spec capture value changes vs " + against, lines);
-                report.todos.add(own ? "The spec capture differs from the committed capture of this build: re-capture it and review the components listed in the report"
-                    : "VALUE CHANGE in the spec capture vs " + against + ": review the protocol windows of the components listed in the report");
+                report.evidence("Components", lines);
+                report.action(own ? "re-capture this build and review these components" : "review the protocol windows of these components");
             }
         }
         if (write) {
@@ -1338,7 +1395,9 @@ public final class Update {
             List<String> bits = inference.unexplainedBits();
             report.check(bits.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Residual bits", bits.isEmpty()
                 ? "every bit the captures set is explained by a field or the format sweep" : bits.size() + " leaves have bits nothing explains");
-            bits.forEach(finding -> report.todos.add("UNEXPLAINED bits " + finding));
+            if (!bits.isEmpty()) {
+                report.action("explain them by a field or the format sweep", "Leaves", bits.stream().map(finding -> "- " + finding).toList());
+            }
             report.repoChanges.add("update `" + Layout.MODEL + "/mappings.json`, `coverage.md`, `bds-feedback.json` (inferred from the spec captures)");
             report.check(Report.Status.INFO, "Component model", "mappings inferred; run :tools:generateComponentApi and the conformance suite (:tools:test) for the new protocol");
         } else {
@@ -1409,8 +1468,8 @@ public final class Update {
         report.check(changes.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Component values",
             what + ": " + (changes.isEmpty() ? "identical" : changes.size() + " paths with other values"));
         if (!changes.isEmpty()) {
-            report.todos.add("VALUE CHANGE in " + what + ": review the component model and the hand transforms (see the report section)");
-            report.section("Component value changes: " + what, changes.stream().map(c -> "- `" + c.replace("`", "'") + "`").toList());
+            report.action("review the component model and the hand transforms");
+            report.evidence("Paths with other values", changes.stream().map(c -> "- `" + c.replace("`", "'") + "`").toList());
         }
     }
 
@@ -1419,16 +1478,15 @@ public final class Update {
             report.check(Report.Status.PASS, "Component shapes", what + ": identical");
             return;
         }
-        if (!diff.lines(Diff.WIRE_CHANGES).isEmpty()) {
-            report.todos.add("WIRE FORMAT CHANGE in " + what + ": review the component model and the generated component types (see the top of this report)");
-        }
         report.check(Report.Status.DIFF, "Component shapes", what + ": "
             + diff.lines(Diff.WIRE_CHANGES).size() + " wire format changes, " + diff.lines(Diff.NEW_COMPONENTS).size() + " new components");
         diff.lines(Diff.WIRE_CHANGES).forEach(change -> report.wireChanges.add(what + ": " + change));
         List<String> lines = new ArrayList<>();
+        diff.lines(Diff.WIRE_CHANGES).forEach(change -> lines.add("- wire format change `" + change.replace("`", "'") + "`"));
         diff.lines(Diff.NEW_COMPONENTS).forEach(c -> lines.add("- new component `" + c + "`"));
-        if (!lines.isEmpty()) {
-            report.section("Component shape notes: " + what, lines);
+        report.evidence("Shape changes", lines);
+        if (!diff.lines(Diff.WIRE_CHANGES).isEmpty()) {
+            report.action("review the component model and the generated component types");
         }
     }
 
@@ -1487,6 +1545,11 @@ public final class Update {
 
     // ---------------------------------------------------------------------------------------------------------------
     // Helpers
+
+    /** A path of the repository as the report shows it (forward slashes on every platform). */
+    private String relative(Path path) {
+        return root.relativize(path).toString().replace('\\', '/');
+    }
 
     private String bundledName(int protocol) throws IOException {
         for (Importer.IndexEntry entry : Importer.readIndex(resources)) {
@@ -1577,9 +1640,9 @@ public final class Update {
             report.check(Report.Status.INFO, "Reference palette", latest.name() + " adjusted with the Script API: "
                 + (generated.isEmpty() ? "" : "generated " + String.join(", ", generated)) + (removed.isEmpty() ? "" : "; removed " + removed));
             if (!generated.isEmpty()) {
-                report.todos.add("Block palette: the states of " + generated.size() + " blocks were generated from the Script API. Their order "
-                    + "within each block is inferred from the reference palette (Update#keyOrder) and only creative stacks verify it (sequential ids of other blocks do not depend on it): "
-                    + String.join(", ", generated));
+                report.todo("Block palette: the states of " + generated.size() + " blocks were generated from the Script API; their order "
+                    + "within each block is inferred (Update#keyOrder) and only creative stacks verify it", "Generated blocks",
+                    generated.stream().map(block -> "- " + block).toList());
             }
         }
         return new VanillaData(new DataVersion(latest.name() + "+", 0), states, data.items(), data.dataDrivenBlocks(), data.creative(),

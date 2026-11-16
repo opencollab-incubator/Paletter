@@ -83,14 +83,16 @@ A run downloads BDS and, in `<cache>/runs/<platform>-<version>/`:
 5. Checks the assumptions the library relies on: sequential block ids sorted by name hash, custom block ids from 10000
    in descending identifier order, custom block items at `255 - block_id`, and the creative order rule.
 6. Compares everything against the committed data: a build with committed captures against its own, a build not
-   bundled yet against the newest older build. Only the latter can show new protocol windows: a changed wire shape is a
-   **WIRE FORMAT CHANGE** at the top of the report.
+   bundled yet against the newest older build. Only the latter can show new protocol windows: a changed wire shape
+   needs a review of the component model.
 7. Unless `--verify-only`: imports a new protocol as a new bundled version, or refreshes item tags and default states of
    an existing one; writes the new captures; regenerates the component API and the vanilla constants.
 
-The report lists every check as PASS, DIFF or FAIL, and a TODO list of what needs a decision. An update writes it to
+The report starts with a one-line verdict and lists only what failed, changed or needs a decision ("Needs attention",
+each with what to do), then what the build changed; every check, the run's metadata and the evidence are collapsed
+below. An update writes it to
 `data/bds/<build>/update-report.md` (generated, committed with the data, so a later run can be diffed against it) and
-exits with 2 while TODOs are open. Things that stay manual:
+exits with 2 while decisions are open. Things that stay manual:
 
 - reviewing wire format changes in `data/model` and the regenerated component API;
 - re-importing a protocol whose network data changed in a hotfix;
