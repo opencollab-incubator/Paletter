@@ -2,7 +2,6 @@ package org.geysermc.paletter.vanilla;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.block.BlockProperty;
-import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.internal.vanilla.BlockLayout;
 
 import java.util.ArrayList;
@@ -59,12 +58,10 @@ final class BlockTypeLayout {
     }
 
     /**
-     * The layout of a custom block's type. {@link BedrockBlockType#of(CustomBlock)} keeps the type in a weak map keyed by
-     * the block, so the layout must copy what it needs and never reference the block (or anything of it): a value that
-     * references its key would keep the block, and every layer holding it, alive for the life of the JVM.
+     * The layout of a custom block's type, from the block's state properties and default state values (copied, so the
+     * layout holds nothing of the block).
      */
-    static BlockTypeLayout custom(BedrockBlockType owner, CustomBlock block) {
-        List<BlockProperty<?>> declared = block.stateProperties();
+    static BlockTypeLayout custom(BedrockBlockType owner, List<BlockProperty<?>> declared, Map<String, Object> defaultStates) {
         BedrockState<?>[] properties = new BedrockState<?>[declared.size()];
         Object[][] values = new Object[declared.size()][];
         int defaultOffset = 0;
@@ -74,7 +71,7 @@ final class BlockTypeLayout {
             List<Object> list = new ArrayList<>(property.values());
             values[p] = list.toArray();
             properties[p] = state(property.name(), list);
-            Object value = block.defaultStates().get(property.name());
+            Object value = defaultStates.get(property.name());
             if (value != null) {
                 defaultOffset += list.indexOf(value) * radix;
             }

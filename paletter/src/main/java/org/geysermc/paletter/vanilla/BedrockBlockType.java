@@ -2,6 +2,8 @@ package org.geysermc.paletter.vanilla;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.Internal;
+import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
 
 import java.util.ArrayList;
@@ -61,23 +63,34 @@ public final class BedrockBlockType {
         this.available = true;
     }
 
-    private BedrockBlockType(CustomBlock block) {
-        this.identifier = block.identifier();
+    private BedrockBlockType(String identifier, List<BlockProperty<?>> properties, Map<String, Object> defaultStates) {
+        this.identifier = Objects.requireNonNull(identifier);
         this.fallback = null;
         this.custom = true;
         this.education = false;
-        this.layout = BlockTypeLayout.custom(this, block);
+        this.layout = BlockTypeLayout.custom(this, properties, defaultStates);
         this.available = true;
     }
 
     /**
-     * @return the type of a custom block. Equal blocks have the same type; a type equals another of the same identifier
-     *         and states, so also the type of the identifier alone if the block has no states
+     * @return the type of a custom block: {@link CustomBlock#type()}. A type equals another of the same identifier and
+     *         states, so also the type of the identifier alone if the block has no states
      */
     public static @NonNull BedrockBlockType of(@NonNull CustomBlock block) {
-        synchronized (CUSTOM) {
-            return CUSTOM.computeIfAbsent(block, BedrockBlockType::new);
-        }
+        return block.type();
+    }
+
+    /**
+     * Plumbing of {@link CustomBlock}, which creates its type once and owns it: use {@link CustomBlock#type()}.
+     *
+     * @param properties the state properties, in declaration order ({@link CustomBlock#stateProperties()})
+     * @param defaultStates the values of the default state; properties not listed use their first value
+     * @return a new custom type. Loads no data
+     */
+    @Internal
+    public static @NonNull BedrockBlockType custom(@NonNull String identifier, @NonNull List<BlockProperty<?>> properties,
+                                                   @NonNull Map<String, Object> defaultStates) {
+        return new BedrockBlockType(identifier, properties, defaultStates);
     }
 
     /**

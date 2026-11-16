@@ -110,14 +110,14 @@ class CustomKeysLeakTest {
                 Thread.currentThread().interrupt();
             }
         }
-        assertEquals(null, block.get(), "the type references the block it is the weak map value of");
+        assertEquals(null, block.get(), "the type references its block");
         assertEquals(2, type.defaultState().type().states().size());
     }
 
     private static BedrockBlockType typeOfTemporaryBlock(List<WeakReference<CustomBlock>> reference) {
         CustomBlock block = CustomBlock.builder("gc:custom").property(BlockProperty.bool("gc:lit")).build();
         reference.add(new WeakReference<>(block));
-        BedrockBlockType type = BedrockBlockType.of(block);
+        BedrockBlockType type = block.type();
         type.states();
         return type;
     }
@@ -127,10 +127,14 @@ class CustomKeysLeakTest {
         CustomBlock lit = CustomBlock.builder("eq:custom").property(BlockProperty.bool("eq:lit")).build();
         CustomBlock same = CustomBlock.builder("eq:custom").property(BlockProperty.bool("eq:lit")).build();
         CustomBlock other = CustomBlock.builder("eq:custom").property(BlockProperty.bool("eq:open")).build();
-        assertSame(BedrockBlockType.of(lit), BedrockBlockType.of(same));
-        assertTrue(!BedrockBlockType.of(lit).equals(BedrockBlockType.of(other)));
-        assertTrue(!BedrockBlockType.of(lit).equals(BedrockBlockType.of("eq:custom")));
-        assertEquals(BedrockBlockType.of("eq:custom"), BedrockBlockType.of(CustomBlock.builder("eq:custom").build()));
+        // Each block owns its type: equal blocks have equal types, not the same one
+        assertNotSame(lit.type(), same.type());
+        assertEquals(lit.type(), same.type());
+        assertEquals(lit.type().hashCode(), same.type().hashCode());
+        assertEquals(lit.type().defaultState(), same.type().defaultState());
+        assertTrue(!lit.type().equals(other.type()));
+        assertTrue(!lit.type().equals(BedrockBlockType.of("eq:custom")));
+        assertEquals(BedrockBlockType.of("eq:custom"), CustomBlock.builder("eq:custom").build().type());
     }
 
     @Test

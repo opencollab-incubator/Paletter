@@ -79,10 +79,21 @@ public final class BedrockItemType {
     }
 
     /**
-     * @return the type of a custom item; same as {@link #of(String)}
+     * @return the type of a custom item: {@link CustomItem#type()}
      */
     public static @NonNull BedrockItemType of(@NonNull CustomItem item) {
-        return of(item.identifier());
+        return item.type();
+    }
+
+    /**
+     * Plumbing of {@link CustomItem} and {@link org.geysermc.paletter.block.CustomBlock}, which create their type once and
+     * own it: use {@link CustomItem#type()} and {@link org.geysermc.paletter.block.CustomBlock#itemType()}.
+     *
+     * @return a new custom type of an identifier, with its base variant. Loads no data
+     */
+    @Internal
+    public static @NonNull BedrockItemType custom(@NonNull String identifier) {
+        return new BedrockItemType(identifier);
     }
 
     /**

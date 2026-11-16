@@ -26,20 +26,64 @@ import java.util.Objects;
  *     .creative(CreativePlacement.group(CreativeCategory.ITEMS, "itemGroup.name.minerals"))
  *     .build();
  * }</pre>
+ * <p>
+ * An instance owns its {@link #type()}: the palette hands back that same type and its variants for the item, so they can
+ * be compared with {@code ==}. Equal items (same identifier and definition) are {@code equals}, but each has a type of its
+ * own, see {@link #type()}.
  *
- * @param identifier the item identifier, e.g. {@code geysermc:furnace_minecart} (description {@code identifier})
- * @param components the components (one per component name), in the order they were added
- * @param menuCategory the description's {@code menu_category}, or null: then it follows {@link #creative()} (and without
- *                     one, Bedrock's default)
- * @param creative where it goes in the creative inventory, or null to leave it out
  * @since 0.1.0
  */
-public record CustomItem(@NonNull String identifier, @NonNull List<ItemComponent> components, @Nullable MenuCategory menuCategory,
-                         @Nullable CreativePlacement creative) {
-    public CustomItem {
-        Objects.requireNonNull(identifier, "identifier");
-        components = List.copyOf(components);
-        checkUnique(identifier, components);
+public final class CustomItem {
+    private final String identifier;
+    private final List<ItemComponent> components;
+    private final @Nullable MenuCategory menuCategory;
+    private final @Nullable CreativePlacement creative;
+    private final BedrockItemType type;
+
+    /**
+     * @param identifier the item identifier, e.g. {@code geysermc:furnace_minecart} (description {@code identifier})
+     * @param components the components (one per component name), in the order they were added
+     * @param menuCategory the description's {@code menu_category}, or null: then it follows {@link #creative()} (and
+     *                     without one, Bedrock's default)
+     * @param creative where it goes in the creative inventory, or null to leave it out
+     */
+    public CustomItem(@NonNull String identifier, @NonNull List<ItemComponent> components, @Nullable MenuCategory menuCategory,
+                      @Nullable CreativePlacement creative) {
+        this.identifier = Objects.requireNonNull(identifier, "identifier");
+        this.components = List.copyOf(components);
+        this.menuCategory = menuCategory;
+        this.creative = creative;
+        checkUnique(identifier, this.components);
+        this.type = BedrockItemType.custom(identifier);
+    }
+
+    /**
+     * @return the item identifier, e.g. {@code geysermc:furnace_minecart} (description {@code identifier})
+     */
+    public @NonNull String identifier() {
+        return identifier;
+    }
+
+    /**
+     * @return the components (one per component name), in the order they were added
+     */
+    public @NonNull List<ItemComponent> components() {
+        return components;
+    }
+
+    /**
+     * @return the description's {@code menu_category}, or null: then it follows {@link #creative()} (and without one,
+     *         Bedrock's default)
+     */
+    public @Nullable MenuCategory menuCategory() {
+        return menuCategory;
+    }
+
+    /**
+     * @return where it goes in the creative inventory, or null to leave it out
+     */
+    public @Nullable CreativePlacement creative() {
+        return creative;
     }
 
     static void checkUnique(String identifier, List<ItemComponent> components) {
@@ -77,16 +121,43 @@ public record CustomItem(@NonNull String identifier, @NonNull List<ItemComponent
     }
 
     /**
-     * @return the type of the item, to use it like a vanilla {@link org.geysermc.paletter.vanilla.BedrockItems} constant
+     * The type of the item, to use it like a vanilla {@link org.geysermc.paletter.vanilla.BedrockItems} constant. It is
+     * created with the item and belongs to it: every call returns the same type (and the same {@link BedrockItemType#base()
+     * base variant}), and a palette the item is registered in hands back exactly these for it ({@code decode},
+     * {@code resolve}, {@link RegisteredItem#key()}, ...), so {@code ==} works like for vanilla constants. Another, equal
+     * item has a type of its own, equal to this one but not identical: a palette hands back the type of the instance its
+     * layer registered.
+     *
+     * @return the type of the item
      * @since 0.1.0
      */
     public @NonNull BedrockItemType type() {
-        return BedrockItemType.of(this);
+        return type;
     }
 
     @Internal
     public @NonNull ItemVariant variant() {
         return ItemVariant.of(identifier);
+    }
+
+    /**
+     * @return true for an item with the same identifier and definition; its {@link #type()} is not compared
+     */
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof CustomItem other && identifier.equals(other.identifier) && components.equals(other.components)
+            && Objects.equals(menuCategory, other.menuCategory) && Objects.equals(creative, other.creative);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(identifier, components, menuCategory, creative);
+    }
+
+    @Override
+    public String toString() {
+        return "CustomItem[identifier=" + identifier + ", components=" + components + ", menuCategory=" + menuCategory
+            + ", creative=" + creative + "]";
     }
 
     public static final class Builder {

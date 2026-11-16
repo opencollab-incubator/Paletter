@@ -36,45 +36,60 @@ import java.util.Objects;
  *     .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION))
  *     .build();
  * }</pre>
+ * <p>
+ * An instance owns its {@link #type()} (with its states) and its {@link #itemType()}: the palette hands back exactly those
+ * for the block, so they can be compared with {@code ==}. Equal blocks (same identifier and definition) are
+ * {@code equals}, but each has types of its own, see {@link #type()}.
  *
- * @param identifier the block identifier (description {@code identifier})
- * @param properties the state properties (description {@code states}), in declaration order
- * @param traits the traits (description {@code traits}); the states they add are part of {@link #states()}
- * @param components the base components (one per component name)
- * @param permutations components applied when a Molang condition on the state holds
- * @param menuCategory the description's {@code menu_category}, or null: then it follows {@link #creative()}, else
- *                     {@code none}
- * @param item how the block item is registered
- * @param creative where the block item goes in the creative inventory, or null to leave it out
- * @param defaultStates state values of the default state; properties not listed use their first value
- * @param tags block tags, queryable with Molang (sent as the block's {@code blockTags})
  * @since 0.1.0
  */
-public record CustomBlock(
-    @NonNull String identifier,
-    @NonNull List<BlockProperty<?>> properties,
-    @NonNull List<BlockTrait> traits,
-    @NonNull List<BlockComponent> components,
-    @NonNull List<Permutation> permutations,
-    @Nullable MenuCategory menuCategory,
-    @NonNull BlockItem item,
-    @Nullable CreativePlacement creative,
-    @NonNull Map<String, Object> defaultStates,
-    @NonNull List<String> tags
-) {
-    public CustomBlock {
-        properties = List.copyOf(properties);
-        traits = List.copyOf(traits);
-        components = List.copyOf(components);
-        permutations = List.copyOf(permutations);
-        defaultStates = Map.copyOf(defaultStates);
-        tags = List.copyOf(tags);
-        checkUnique(identifier, components);
-        checkUvLock(identifier, components);
-        for (Permutation permutation : permutations) {
+public final class CustomBlock {
+    private final String identifier;
+    private final List<BlockProperty<?>> properties;
+    private final List<BlockTrait> traits;
+    private final List<BlockComponent> components;
+    private final List<Permutation> permutations;
+    private final @Nullable MenuCategory menuCategory;
+    private final BlockItem item;
+    private final @Nullable CreativePlacement creative;
+    private final Map<String, Object> defaultStates;
+    private final List<String> tags;
+    private final BedrockBlockType type;
+    private final BedrockItemType itemType;
+
+    /**
+     * @param identifier the block identifier (description {@code identifier})
+     * @param properties the state properties (description {@code states}), in declaration order
+     * @param traits the traits (description {@code traits}); the states they add are part of {@link #states()}
+     * @param components the base components (one per component name)
+     * @param permutations components applied when a Molang condition on the state holds
+     * @param menuCategory the description's {@code menu_category}, or null: then it follows {@link #creative()}, else
+     *                     {@code none}
+     * @param item how the block item is registered
+     * @param creative where the block item goes in the creative inventory, or null to leave it out
+     * @param defaultStates state values of the default state; properties not listed use their first value
+     * @param tags block tags, queryable with Molang (sent as the block's {@code blockTags})
+     */
+    public CustomBlock(@NonNull String identifier, @NonNull List<BlockProperty<?>> properties, @NonNull List<BlockTrait> traits,
+                       @NonNull List<BlockComponent> components, @NonNull List<Permutation> permutations,
+                       @Nullable MenuCategory menuCategory, @NonNull BlockItem item, @Nullable CreativePlacement creative,
+                       @NonNull Map<String, Object> defaultStates, @NonNull List<String> tags) {
+        this.identifier = Objects.requireNonNull(identifier, "identifier");
+        this.properties = List.copyOf(properties);
+        this.traits = List.copyOf(traits);
+        this.components = List.copyOf(components);
+        this.permutations = List.copyOf(permutations);
+        this.menuCategory = menuCategory;
+        this.item = Objects.requireNonNull(item, "item");
+        this.creative = creative;
+        this.defaultStates = Map.copyOf(defaultStates);
+        this.tags = List.copyOf(tags);
+        checkUnique(identifier, this.components);
+        checkUvLock(identifier, this.components);
+        for (Permutation permutation : this.permutations) {
             checkUvLock(identifier, permutation.components());
         }
-        List<BlockProperty<?>> stateProperties = stateProperties(properties, traits);
+        List<BlockProperty<?>> stateProperties = stateProperties(this.properties, this.traits);
         long combinations = 1;
         for (BlockProperty<?> property : stateProperties) {
             combinations *= property.values().size();
@@ -82,13 +97,85 @@ public record CustomBlock(
                 throw new IllegalArgumentException(identifier + " has more than 2^24 state combinations");
             }
         }
-        for (Map.Entry<String, Object> entry : defaultStates.entrySet()) {
+        for (Map.Entry<String, Object> entry : this.defaultStates.entrySet()) {
             BlockProperty<?> property = stateProperties.stream().filter(p -> p.name().equals(entry.getKey())).findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(identifier + " has no property " + entry.getKey()));
             if (!property.values().contains(entry.getValue())) {
                 throw new IllegalArgumentException(entry.getValue() + " is not a value of " + identifier + "'s " + entry.getKey());
             }
         }
+        this.type = BedrockBlockType.custom(identifier, stateProperties, this.defaultStates);
+        this.itemType = BedrockItemType.custom(identifier);
+    }
+
+    /**
+     * @return the block identifier (description {@code identifier})
+     */
+    public @NonNull String identifier() {
+        return identifier;
+    }
+
+    /**
+     * @return the state properties (description {@code states}), in declaration order
+     */
+    public @NonNull List<BlockProperty<?>> properties() {
+        return properties;
+    }
+
+    /**
+     * @return the traits (description {@code traits}); the states they add are part of {@link #states()}
+     */
+    public @NonNull List<BlockTrait> traits() {
+        return traits;
+    }
+
+    /**
+     * @return the base components (one per component name)
+     */
+    public @NonNull List<BlockComponent> components() {
+        return components;
+    }
+
+    /**
+     * @return components applied when a Molang condition on the state holds
+     */
+    public @NonNull List<Permutation> permutations() {
+        return permutations;
+    }
+
+    /**
+     * @return the description's {@code menu_category}, or null: then it follows {@link #creative()}, else {@code none}
+     */
+    public @Nullable MenuCategory menuCategory() {
+        return menuCategory;
+    }
+
+    /**
+     * @return how the block item is registered
+     */
+    public @NonNull BlockItem item() {
+        return item;
+    }
+
+    /**
+     * @return where the block item goes in the creative inventory, or null to leave it out
+     */
+    public @Nullable CreativePlacement creative() {
+        return creative;
+    }
+
+    /**
+     * @return state values of the default state; properties not listed use their first value
+     */
+    public @NonNull Map<String, Object> defaultStates() {
+        return defaultStates;
+    }
+
+    /**
+     * @return block tags, queryable with Molang (sent as the block's {@code blockTags})
+     */
+    public @NonNull List<String> tags() {
+        return tags;
     }
 
     /** The most state combinations a block may have, like vanilla blocks. */
@@ -227,21 +314,33 @@ public record CustomBlock(
     }
 
     /**
-     * @return the type of the block, to use it like a vanilla {@link org.geysermc.paletter.vanilla.BedrockBlocks}
-     *         constant. Its states have canonical ids per layer lineage, see
-     *         {@link org.geysermc.paletter.Palette#runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState)}
+     * The type of the block, to use it like a vanilla {@link org.geysermc.paletter.vanilla.BedrockBlocks} constant. Its
+     * states have canonical ids per layer lineage, see
+     * {@link org.geysermc.paletter.Palette#runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState)}.
+     * <p>
+     * It is created with the block and belongs to it: every call returns the same type with the same states, and a
+     * palette the block is registered in hands back exactly these for it ({@code block}, {@code decode},
+     * {@link RegisteredBlock#key()}, {@link RegisteredBlockState#key()}, ...), so {@code ==} works like for vanilla
+     * constants. Another, equal block has a type of its own, equal to this one but not identical: a palette hands back
+     * the type of the instance its layer registered.
+     *
+     * @return the type of the block
      * @since 0.1.0
      */
     public @NonNull BedrockBlockType type() {
-        return BedrockBlockType.of(this);
+        return type;
     }
 
     /**
-     * @return the type of the block item, or null if the block has none ({@link BlockItem#NONE})
+     * The type of the block item, owned by the block like {@link #type()}: a palette hands back this type and its base
+     * variant for the block item. A palette has the item if it is registered: with the block unless {@link #item()} is
+     * {@link BlockItem#NONE}, or by a later layer ({@link org.geysermc.paletter.PaletteLayer.Builder#blockItem}).
+     *
+     * @return the type of the block item
      * @since 0.1.0
      */
-    public @Nullable BedrockItemType itemType() {
-        return item instanceof BlockItem.None ? null : BedrockItemType.of(identifier);
+    public @NonNull BedrockItemType itemType() {
+        return itemType;
     }
 
     public @NonNull NbtMap defaultState() {
@@ -251,6 +350,29 @@ public record CustomBlock(
             builder.put(property.name(), value != null ? value : property.values().getFirst());
         }
         return BlockStates.of(identifier, builder.build());
+    }
+
+    /**
+     * @return true for a block with the same identifier and definition; its types are not compared
+     */
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof CustomBlock other && identifier.equals(other.identifier) && properties.equals(other.properties)
+            && traits.equals(other.traits) && components.equals(other.components) && permutations.equals(other.permutations)
+            && Objects.equals(menuCategory, other.menuCategory) && item.equals(other.item) && Objects.equals(creative, other.creative)
+            && defaultStates.equals(other.defaultStates) && tags.equals(other.tags);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(identifier, properties, traits, components, permutations, menuCategory, item, creative, defaultStates, tags);
+    }
+
+    @Override
+    public String toString() {
+        return "CustomBlock[identifier=" + identifier + ", properties=" + properties + ", traits=" + traits + ", components="
+            + components + ", permutations=" + permutations + ", menuCategory=" + menuCategory + ", item=" + item + ", creative="
+            + creative + ", defaultStates=" + defaultStates + ", tags=" + tags + "]";
     }
 
     public static final class Builder {
