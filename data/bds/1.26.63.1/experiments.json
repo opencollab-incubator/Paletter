@@ -5,6 +5,9 @@
     "armadillo": {
       "status": "retired"
     },
+    "bundles": {
+      "status": "retired"
+    },
     "camera_aim_assist": {
       "status": "retired"
     },
