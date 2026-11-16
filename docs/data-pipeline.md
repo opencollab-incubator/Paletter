@@ -215,7 +215,8 @@ Rules the generator follows:
 
 - Defaults are the documented ones, unless BDS sends something else for an omitted field; then the field stays unset
   and the encoder writes BDS's value.
-- Required fields, ranges and step sizes are checked in `build()`.
+- Required fields are checked in `build()`; ranges and step sizes in the record's constructor, so with or without a
+  builder.
 - A field with no rule in a protocol window is dropped there with a report warning.
 - `@ServerOnly`, `@Deprecated` and `@ReplacedBy` come from the data: the windows' status, the docs status, BDS's
   rejection message, or a `fixtures.json` `replacedBy` entry.

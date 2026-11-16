@@ -8,6 +8,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.BedrockFormat;
 import org.geysermc.paletter.annotation.Experimental;
 import org.geysermc.paletter.annotation.ServerOnly;
+import org.geysermc.paletter.internal.component.Check;
 
 /**
  * A component describing how a block can consume and potentially propagate a redstone signal. This component is
@@ -21,7 +22,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * @param minPower Optional minimum value for incoming signal strength. Optional minimum value for incoming signal strength. If
  *        signal strength is greater than or equal to this value then the 'onRedstoneUpdate' event is sent to Scripts.
  *        Defaults to 0 meaning event is always emitted. Value must be &lt;= 15. Add-on JSON {@code min_power}. Default:
- *        <code>0</code>.
+ *        <code>0</code>. At most 15 (BDS 1.26.63.1).
  * @param propagatesPower Optional Boolean to control whether a signal can pass through this block or not, defaults to false. Add-on
  *        JSON {@code propagates_power}. Default: <code>false</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_consumer?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:redstone_consumer</a>
@@ -35,6 +36,10 @@ public record RedstoneConsumer(int minPower, boolean propagatesPower) implements
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:redstone_consumer";
+
+    public RedstoneConsumer {
+        Check.range("RedstoneConsumer.minPower", minPower, null, 15.0);
+    }
 
     @Override
     public @NonNull String name() {

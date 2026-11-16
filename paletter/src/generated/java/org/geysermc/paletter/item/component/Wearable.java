@@ -17,7 +17,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param hidesPlayerLocation Determines whether the Player's location is hidden on Locator Maps and the Locator Bar when the wearable item
  *        is worn. Default is false. Add-on JSON {@code hides_player_location}. Default: <code>false</code>.
  * @param protection How much protection the wearable item provides. Default is set to 0. Add-on JSON {@code protection}. Default:
- *        <code>0</code>. Range [0, inf) (BDS 1.26.63.1).
+ *        <code>0</code>. At least 0 (BDS 1.26.63.1).
  * @param slot Specifies where the item can be worn. If any non-hand slot is chosen, the max stack size is set to 1. Add-on
  *        JSON {@code slot}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_wearable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:wearable</a>

@@ -5,6 +5,7 @@ package org.geysermc.paletter.block.component;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.internal.component.Check;
 
 /**
  * The amount of light this block will emit in a range of 0-15. Higher value means more light will be emitted.
@@ -13,7 +14,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:light_emission"}.
  *
- * @param value The integer form of the component (add-on JSON {@code "minecraft:light_emission": <integer>}). Required.
+ * @param value The integer form of the component (add-on JSON {@code "minecraft:light_emission": <integer>}). Required. At
+ *        most 15 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_light_emission?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:light_emission</a>
  * @since 0.1.0
  */
@@ -22,6 +24,10 @@ public record LightEmission(int value) implements BlockComponent {
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:light_emission";
+
+    public LightEmission {
+        Check.range("LightEmission.value", value, null, 15.0);
+    }
 
     @Override
     public @NonNull String name() {

@@ -9,6 +9,7 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.BedrockFormat;
+import org.geysermc.paletter.internal.component.Check;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 
 /**
@@ -24,7 +25,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  * @param bannedItems List of items that are not allowed in this Storage Item. Add-on JSON {@code banned_items}. Default:
  *        <code>[]</code>.
  * @param maxSlots The maximum allowed weight of the sum of all contained items. Maximum is 64. Default is 64. Value must be
- *        &lt;= 64. Add-on JSON {@code max_slots}. Default: <code>64</code>.
+ *        &lt;= 64. Add-on JSON {@code max_slots}. Default: <code>64</code>. At most 64 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_storage_item?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:storage_item</a>
  * @since 0.1.0
  */
@@ -39,6 +40,7 @@ public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String>
     public StorageItem {
         allowedItems = List.copyOf(Objects.requireNonNull(allowedItems, "StorageItem.allowedItems"));
         bannedItems = List.copyOf(Objects.requireNonNull(bannedItems, "StorageItem.bannedItems"));
+        Check.range("StorageItem.maxSlots", maxSlots, null, 64.0);
     }
 
     @Override

@@ -251,7 +251,9 @@ final class ApiModel {
         String defaultNote;
         Double min;
         Double max;
-        String rangeSource;
+        /** Where each limit comes from: {@code docs} or {@code BDS <build>}. */
+        String minSource;
+        String maxSource;
         List<Double> allowed;
         /** The step BDS takes the values in (an inferred rule's {@code multipleOf}: it refused the others); null if none. */
         Double multipleOf;

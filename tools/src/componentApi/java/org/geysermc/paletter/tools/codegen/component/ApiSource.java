@@ -387,9 +387,16 @@ final class ApiSource {
         if (f.defaultNote != null) {
             s.append(' ').append(f.defaultNote);
         }
-        if (f.min != null || f.max != null) {
-            s.append(" Range ").append(f.min == null ? "(-inf" : "[" + Docs.number(f.min)).append(", ")
-                .append(f.max == null ? "inf)" : Docs.number(f.max) + "]").append(" (").append(f.rangeSource).append(").");
+        // Each limit with where it comes from; a limit nothing states is not written (BDS may still refuse values there)
+        if (f.min != null && f.max != null && f.minSource.equals(f.maxSource)) {
+            s.append(" Range [").append(Docs.number(f.min)).append(", ").append(Docs.number(f.max)).append("] (").append(f.minSource).append(").");
+        } else {
+            if (f.min != null) {
+                s.append(" At least ").append(Docs.number(f.min)).append(" (").append(f.minSource).append(").");
+            }
+            if (f.max != null) {
+                s.append(" At most ").append(Docs.number(f.max)).append(" (").append(f.maxSource).append(").");
+            }
         }
         if (f.allowed != null) {
             s.append(" One of ").append(f.allowed.stream().map(Docs::number).toList()).append('.');

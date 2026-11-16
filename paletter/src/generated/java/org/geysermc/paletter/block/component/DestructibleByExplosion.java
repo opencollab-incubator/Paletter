@@ -20,7 +20,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param explosionResistance Sets the explosion resistance for the block. Sets the explosion resistance for the block. Greater values
  *        result in greater resistance to explosions. The scale will be different for different explosion power levels.
  *        A value of 0 means it will easily explode; larger numbers increase level of resistance. Add-on JSON {@code
- *        explosion_resistance}. Default: <code>0</code>. Range [0, inf) (BDS 1.26.63.1).
+ *        explosion_resistance}. Default: <code>0</code>. At least 0 (BDS 1.26.63.1).
  * @param enabled The boolean form of the component (add-on JSON {@code "minecraft:destructible_by_explosion": <boolean>}).
  *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_destructible_by_explosion?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:destructible_by_explosion</a>

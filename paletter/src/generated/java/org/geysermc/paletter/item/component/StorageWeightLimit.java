@@ -6,6 +6,7 @@ package org.geysermc.paletter.item.component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.BedrockFormat;
+import org.geysermc.paletter.internal.component.Check;
 
 /**
  * Specifies the maximum weight limit that a storage item can hold.
@@ -13,7 +14,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * Add-on JSON: {@code "minecraft:storage_weight_limit"}.
  *
  * @param maxWeightLimit The maximum allowed weight of the sum of all contained items. Maximum is 64. Default is 64. Value must be
- *        &lt;= 64. Add-on JSON {@code max_weight_limit}. Default: <code>64</code>.
+ *        &lt;= 64. Add-on JSON {@code max_weight_limit}. Default: <code>64</code>. At most 64 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_storage_weight_limit?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:storage_weight_limit</a>
  * @since 0.1.0
  */
@@ -23,6 +24,10 @@ public record StorageWeightLimit(int maxWeightLimit) implements ItemComponent {
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:storage_weight_limit";
+
+    public StorageWeightLimit {
+        Check.range("StorageWeightLimit.maxWeightLimit", maxWeightLimit, null, 64.0);
+    }
 
     @Override
     public @NonNull String name() {

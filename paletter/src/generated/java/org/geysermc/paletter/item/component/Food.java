@@ -20,7 +20,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  *        nutrition}. Default: <code>0</code>.
  * @param saturationModifier saturation_modifier is used in this formula: (nutrition * saturation_modifier * 2) when applying the
  *        saturation buff. Default is set to 0.6. Add-on JSON {@code saturation_modifier}. Default:
- *        <code>0.6000000238418579</code>. Range [0, inf) (BDS 1.26.63.1).
+ *        <code>0.6000000238418579</code>. At least 0 (BDS 1.26.63.1).
  * @param usingConvertsTo When used, converts to the item specified by the string in this field. Default does not convert item. Add-on
  *        JSON {@code using_converts_to}. Optional (null: not set). The docs give the default {}, which is not a value
  *        of this type; unset, BDS's behaviour applies.

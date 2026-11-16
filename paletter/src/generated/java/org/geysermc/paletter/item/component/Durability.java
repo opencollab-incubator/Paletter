@@ -20,7 +20,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        limits imposed on the range (minimum, maximum and maximum distance between values) are respected. Add-on JSON
  *        {@code damage_chance}. Default: <code>&#123;"max":100,"min":100&#125;</code>.
  * @param maxDurability Max durability is the amount of damage that this item can take before breaking. This is a required parameter
- *        and has a minimum of 0. Add-on JSON {@code max_durability}. Required. Range [0, inf) (BDS 1.26.63.1).
+ *        and has a minimum of 0. Add-on JSON {@code max_durability}. Required. At least 0 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_durability?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:durability</a>
  * @since 0.1.0
  */

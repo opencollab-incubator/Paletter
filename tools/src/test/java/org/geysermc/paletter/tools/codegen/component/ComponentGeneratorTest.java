@@ -240,6 +240,21 @@ class ComponentGeneratorTest {
     }
 
     @Test
+    void theRecordConstructorChecksTheLimitsOfAValueForm() {
+        // What BDS says about the component's value itself (path "") limits the field of its value form
+        Inputs in = inputs();
+        in.feedback().add("block:test:glow", json("{\"\": [\"max 15\"]}"));
+        String glow = ComponentGenerator.generate(in).get("org/geysermc/paletter/block/component/Glow.java");
+        assertTrue(glow.contains("""
+                public Glow {
+                    Check.range("Glow.value", value, null, 15.0);
+                }
+            """), glow);
+        // Text the generator writes keeps its Javadoc tags
+        assertTrue(glow.contains("(add-on JSON {@code \"test:glow\": <integer>})"), glow);
+    }
+
+    @Test
     void learnLinksFollowTheDocsPaths() {
         assertEquals("https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_render_offsets?view=minecraft-bedrock-stable",
             Docs.learnUrl("creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_render_offsets.md"));

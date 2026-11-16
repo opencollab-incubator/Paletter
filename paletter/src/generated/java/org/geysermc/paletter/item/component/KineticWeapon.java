@@ -260,9 +260,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
      *        applied indefinitely. Add-on JSON {@code max_duration}. Default: <code>-1</code>.
      * @param minRelativeSpeed Minimum relative speed of the user with respect to the target (projected onto the view vector via a dot
      *        product) required for the effect to be applied. Add-on JSON {@code min_relative_speed}. Default:
-     *        <code>0</code>. Range [0, inf) (BDS 1.26.63.1).
+     *        <code>0</code>. At least 0 (BDS 1.26.63.1).
      * @param minSpeed Minimum user's speed (projected onto the view vector via a dot product) required for the effect to be applied.
-     *        Add-on JSON {@code min_speed}. Default: <code>0</code>. Range [0, inf) (BDS 1.26.63.1).
+     *        Add-on JSON {@code min_speed}. Default: <code>0</code>. At least 0 (BDS 1.26.63.1).
      */
     public record Conditions(int maxDuration, float minRelativeSpeed, float minSpeed) {
         public Conditions {

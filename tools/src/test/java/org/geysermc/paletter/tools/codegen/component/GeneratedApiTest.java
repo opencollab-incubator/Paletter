@@ -3,7 +3,9 @@ package org.geysermc.paletter.tools.codegen.component;
 import com.google.gson.JsonElement;
 import org.geysermc.paletter.block.component.CollisionBox;
 import org.geysermc.paletter.block.component.DestructibleByMining;
+import org.geysermc.paletter.block.component.Friction;
 import org.geysermc.paletter.block.component.Geometry;
+import org.geysermc.paletter.block.component.LightEmission;
 import org.geysermc.paletter.internal.component.ComponentIndex;
 import org.geysermc.paletter.item.component.KineticWeapon;
 import org.geysermc.paletter.item.component.Rarity;
@@ -111,6 +113,47 @@ class GeneratedApiTest {
         }
         System.out.println("required checks " + required + ", range checks " + ranges + ", defaults " + defaults);
         assertTrue(required > 0 && ranges > 0 && defaults > 0);
+    }
+
+    /** A record refuses a value outside its range in its constructor, not only when a builder makes it ({@code new Friction(5f)}). */
+    @Test
+    void theRecordConstructorChecksRanges() throws Exception {
+        int checked = 0;
+        for (ApiModel.Comp c : model().components) {
+            for (ApiModel.ObjType o : types(c)) {
+                Class<?> type = recordClass(c, o);
+                var components = type.getRecordComponents();
+                if (!java.util.Arrays.stream(components).allMatch(rc -> rc.getType().isPrimitive())) {
+                    continue; // only numbers and booleans: every other argument can be given a valid value here
+                }
+                var constructor = type.getDeclaredConstructor(java.util.Arrays.stream(components).map(java.lang.reflect.RecordComponent::getType)
+                    .toArray(Class<?>[]::new));
+                List<ApiModel.Field> fields = ApiSource.allFields(o);
+                for (ApiModel.Field ranged : fields) {
+                    if (ranged.min == null && ranged.max == null) {
+                        continue;
+                    }
+                    Object[] arguments = new Object[components.length];
+                    for (int i = 0; i < components.length; i++) {
+                        String name = components[i].getName();
+                        ApiModel.Field f = fields.stream().filter(x -> x.java.equals(name)).findFirst().orElseThrow();
+                        double value = f == ranged ? (f.min != null ? f.min - 1 : f.max + 1) : f.min != null ? f.min : f.max != null ? f.max : 0;
+                        Class<?> kind = components[i].getType();
+                        arguments[i] = kind == boolean.class ? (Object) false : kind == int.class ? (Object) (int) value : (Object) (float) value;
+                    }
+                    try {
+                        constructor.newInstance(arguments);
+                        fail(c.id + " " + ranged.java + ": the constructor accepted a value outside the range");
+                    } catch (InvocationTargetException e) {
+                        assertInstanceOf(IllegalArgumentException.class, e.getCause(), c.id + " " + ranged.java);
+                        checked++;
+                    }
+                }
+            }
+        }
+        assertTrue(checked > 0);
+        assertThrows(IllegalArgumentException.class, () -> new Friction(5f), "BDS takes 0 to 0.9");
+        assertThrows(IllegalArgumentException.class, () -> new LightEmission(16), "BDS takes at most 15");
     }
 
     /** The JSON BDS accepts that the docs do not model, as the API expresses it (the conformance suite checks each against BDS's NBT). */

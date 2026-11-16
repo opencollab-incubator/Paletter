@@ -5,6 +5,7 @@ package org.geysermc.paletter.block.component;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.internal.component.Check;
 
 /**
  * Describes the friction for this block in a range of 0.0 to 0.9. Friction affects an entity's movement speed
@@ -13,7 +14,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:friction"}.
  *
- * @param value The number form of the component (add-on JSON {@code "minecraft:friction": <number>}). Required.
+ * @param value The number form of the component (add-on JSON {@code "minecraft:friction": <number>}). Required. Range [0,
+ *        0.9] (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_friction?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:friction</a>
  * @since 0.1.0
  */
@@ -22,6 +24,10 @@ public record Friction(float value) implements BlockComponent {
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:friction";
+
+    public Friction {
+        Check.range("Friction.value", value, 0.0, 0.9);
+    }
 
     @Override
     public @NonNull String name() {

@@ -24,7 +24,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  *        requires UpcomingFeatures experiment to be enabled. Add-on JSON {@code item_specific_speeds}. Optional (null:
  *        not set).
  * @param secondsToDestroy Sets the number of seconds it takes to destroy the block with base equipment. Greater numbers result in
- *        greater mining times. Add-on JSON {@code seconds_to_destroy}. Default: <code>0</code>. Range [0, inf) (BDS
+ *        greater mining times. Add-on JSON {@code seconds_to_destroy}. Default: <code>0</code>. At least 0 (BDS
  *        1.26.63.1).
  * @param enabled The boolean form of the component (add-on JSON {@code "minecraft:destructible_by_mining": <boolean>}).
  *        Optional (null: not set).

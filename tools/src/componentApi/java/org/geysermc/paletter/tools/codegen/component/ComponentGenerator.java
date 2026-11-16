@@ -374,6 +374,8 @@ public final class ComponentGenerator {
                 : "The " + type + " form of the component (add-on JSON {@code \"" + c.name + "\": <" + type + ">}).";
             field.javadoc = true;
             field.transform = transform(c.id, field.path);
+            // The limits BDS gives the component's value itself
+            limits(c, field, "", null, List.of(), c.latest() == null ? null : c.latest().form(type));
             boolean only = scalarForms.size() == 1 && c.root.fields.isEmpty();
             field.required = only;
             c.root.fields.add(field);
@@ -702,6 +704,64 @@ public final class ComponentGenerator {
         return out;
     }
 
+    /** What BDS said about a path of a component ({@code bds-feedback.json}): {@code required}, {@code range 0 15}, ... */
+    private List<String> notes(Comp c, String path) {
+        JsonObject feedback = in.feedback().has(c.id) ? in.feedback().getAsJsonObject(c.id) : new JsonObject();
+        List<String> notes = new ArrayList<>();
+        if (feedback.has(path)) {
+            feedback.getAsJsonArray(path).forEach(n -> notes.add(n.getAsString()));
+        }
+        return notes;
+    }
+
+    /**
+     * The limits of a number field, which the record's compact constructor checks: the docs' range with the limits BDS
+     * states (content log) over it; the values of an integer enum; the step of its rule (numbers and vectors). Only numbers have
+     * the others.
+     *
+     * @param docsRange the docs' range of the field, or null
+     * @param observed  the field's (or value form's) mapping in the newest window, or null
+     */
+    private void limits(Comp c, Field f, String feedbackPath, JsonObject docsRange, List<JsonElement> enumValues, JsonObject observed) {
+        if (observed != null && observed.has("rules")) {
+            for (JsonElement rule : observed.getAsJsonArray("rules")) {
+                if (rule.getAsJsonObject().has("multipleOf")) {
+                    f.multipleOf = rule.getAsJsonObject().get("multipleOf").getAsDouble();
+                }
+            }
+        }
+        if (!(f.type instanceof Scalar s && (s.kind() == ScalarKind.INT || s.kind() == ScalarKind.FLOAT))) {
+            return;
+        }
+        if (docsRange != null && docsRange.has("min")) {
+            f.min = docsRange.get("min").getAsDouble();
+            f.minSource = "docs";
+        }
+        if (docsRange != null && docsRange.has("max")) {
+            f.max = docsRange.get("max").getAsDouble();
+            f.maxSource = "docs";
+        }
+        // A limit BDS states wins over the docs' (a limit it does not state stays the docs': BDS refuses a value past it
+        // some other way, or the conformance suite shows it accepted one)
+        for (String note : notes(c, feedbackPath)) {
+            Matcher range = Pattern.compile("range (-?[\\d.]+) (-?[\\d.]+)").matcher(note);
+            Matcher min = Pattern.compile("min (-?[\\d.]+)").matcher(note);
+            Matcher max = Pattern.compile("max (-?[\\d.]+)").matcher(note);
+            String bds = "BDS " + bdsVersion();
+            if (range.matches() || min.matches()) {
+                f.min = Double.parseDouble((range.matches() ? range : min).group(1));
+                f.minSource = bds;
+            }
+            if (range.matches() || max.matches()) {
+                f.max = Double.parseDouble(range.matches() ? range.group(2) : max.group(1));
+                f.maxSource = bds;
+            }
+        }
+        if (s.kind() == ScalarKind.INT && !enumValues.isEmpty()) {
+            f.allowed = enumValues.stream().map(JsonElement::getAsDouble).toList();
+        }
+    }
+
     /** Whether the newest capture shows BDS taking a field: a probe only field it accepts is part of the API all the same. */
     private static boolean takenByBds(Comp c, String path) {
         Window w = c.latest();
@@ -823,12 +883,8 @@ public final class ComponentGenerator {
             f.documentedValues = d.enumValues.stream().map(JsonElement::getAsString).toList();
         }
         f.docsDefault = d.defaultValue;
-        JsonObject feedback = in.feedback().has(c.id) ? in.feedback().getAsJsonObject(c.id) : new JsonObject();
-        List<String> notes = new ArrayList<>();
         String feedbackPath = c.standalone ? standalonePrefix(c.id) + "." + d.path : d.path;
-        if (feedback.has(feedbackPath)) {
-            feedback.getAsJsonArray(feedbackPath).forEach(n -> notes.add(n.getAsString()));
-        }
+        List<String> notes = notes(c, feedbackPath);
         // Required unless BDS accepted the field's omission (it then knows what to send)
         Window latest = c.latest();
         JsonObject observed = latest == null ? null : latest.field(d.path);
@@ -836,43 +892,7 @@ public final class ComponentGenerator {
         boolean optional = in.api().has("optional") && in.api().getAsJsonArray("optional").asList().stream()
             .anyMatch(e -> e.getAsString().equals(c.id + ":" + d.path));
         f.required = !optional && (d.required || (notes.contains("required") && !omissionAccepted));
-        // Ranges: what BDS enforces wins over the docs
-        for (String note : notes) {
-            Matcher range = Pattern.compile("range (-?[\\d.]+) (-?[\\d.]+)").matcher(note);
-            Matcher min = Pattern.compile("min (-?[\\d.]+)").matcher(note);
-            if (range.matches()) {
-                f.min = Double.parseDouble(range.group(1));
-                f.max = Double.parseDouble(range.group(2));
-                f.rangeSource = "BDS " + bdsVersion();
-            } else if (min.matches()) {
-                f.min = Double.parseDouble(min.group(1));
-                f.rangeSource = "BDS " + bdsVersion();
-            }
-        }
-        if (f.rangeSource == null && d.range != null && (d.range.has("min") || d.range.has("max"))) {
-            f.min = d.range.has("min") ? d.range.get("min").getAsDouble() : null;
-            f.max = d.range.has("max") ? d.range.get("max").getAsDouble() : null;
-            f.rangeSource = "docs";
-        }
-        if (f.type instanceof Scalar s && s.kind() == ScalarKind.INT && !d.enumValues.isEmpty()) {
-            f.allowed = d.enumValues.stream().map(JsonElement::getAsDouble).toList();
-        }
-        if (observed != null && observed.has("rules")) {
-            for (JsonElement rule : observed.getAsJsonArray("rules")) {
-                if (rule.getAsJsonObject().has("multipleOf")) {
-                    f.multipleOf = rule.getAsJsonObject().get("multipleOf").getAsDouble();
-                }
-            }
-        }
-        if (f.min != null && f.max != null && !(f.type instanceof Scalar s && (s.kind() == ScalarKind.INT || s.kind() == ScalarKind.FLOAT))) {
-            f.min = null;
-            f.max = null;
-        }
-        if (!(f.type instanceof Scalar s && (s.kind() == ScalarKind.INT || s.kind() == ScalarKind.FLOAT))) {
-            f.min = null;
-            f.max = null;
-            f.rangeSource = null;
-        }
+        limits(c, f, feedbackPath, d.range, d.enumValues, observed);
         // The alternative of a union kept as a field of its own
         JsonObject union = api("unions").has(c.id + ":" + d.path) ? api("unions").getAsJsonObject(c.id + ":" + d.path) : null;
         if (union != null && union.has("alternative")) {

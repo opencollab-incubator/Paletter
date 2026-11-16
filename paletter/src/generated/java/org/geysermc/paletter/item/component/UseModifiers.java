@@ -26,8 +26,8 @@ import org.geysermc.paletter.internal.component.Check;
  *        JSON {@code start_using}. Optional (null: not set). The docs give the default <code>"always"</code>, but BDS
  *        sends minecraft:use_modifiers.start_using = if_first (string) when it is omitted; so it is unset by default,
  *        and the encoder sends what BDS sends then.
- * @param useDuration Time, in seconds, that the item takes to use. Add-on JSON {@code use_duration}. Default: <code>0</code>. Range
- *        [0, inf) (BDS 1.26.63.1).
+ * @param useDuration Time, in seconds, that the item takes to use. Add-on JSON {@code use_duration}. Default: <code>0</code>. At
+ *        least 0 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_use_modifiers?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:use_modifiers</a>
  * @since 0.1.0
  */
