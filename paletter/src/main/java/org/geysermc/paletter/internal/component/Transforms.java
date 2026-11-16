@@ -387,7 +387,7 @@ public final class Transforms {
         }
         boolean vanilla = block.indexOf(':') < 0 || block.startsWith("minecraft:");
         if (vanilla && ctx.registry().blockStates(block) == null) {
-            ctx.drop(BlockPlacer.NAME, "block " + block + " is not a block of this version (sent as an empty name, like BDS)");
+            ctx.changed(BlockPlacer.NAME, "block " + block + " is not a block of this version; sent as an empty name, like BDS");
             out.put("minecraft:block_placer.block", "");
             return;
         }
@@ -426,7 +426,7 @@ public final class Transforms {
             List<String> items = entry.items() == null ? List.of() : entry.items();
             for (String item : items) {
                 if (!ctx.registry().itemExists(item)) {
-                    ctx.drop(Repairable.NAME, "repair item " + item + " is not an item of this version (sent anyway, as BDS does)");
+                    ctx.changed(Repairable.NAME, "repair item " + item + " is not an item of this version; sent anyway, as BDS does");
                 }
             }
             WireNode e = out.element("minecraft:repairable.repair_items");

@@ -165,4 +165,11 @@ public final class WireContext {
     public void drop(@NonNull String component, @NonNull String message) {
         report.warn(source, subject + ": " + component + " " + message + " in " + version + "; left out");
     }
+
+    /**
+     * Reports a value that is sent, but not as it was given ({@code message} says as what).
+     */
+    public void changed(@NonNull String component, @NonNull String message) {
+        report.warn(source, subject + ": " + component + " " + message + " in " + version);
+    }
 }
