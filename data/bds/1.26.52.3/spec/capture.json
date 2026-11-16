@@ -1,5 +1,6 @@
 {
   "bdsVersion": "1.26.52.3",
+  "platform": "windows",
   "protocol": 2193,
   "preview": false,
   "formatVersion": "1.26.52",

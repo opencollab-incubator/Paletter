@@ -6,6 +6,7 @@ import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.bds.BdsInventory;
 import org.geysermc.paletter.tools.bds.BdsRunner;
 import org.geysermc.paletter.tools.bds.BdsServer;
+import org.geysermc.paletter.tools.bds.CapturePlatform;
 import org.geysermc.paletter.tools.client.NetherNet;
 import org.geysermc.paletter.tools.data.Checker;
 import org.geysermc.paletter.tools.data.CreativeOrderCheck;
@@ -139,7 +140,9 @@ public final class Update {
         report.header.put("Work directory", "`" + work + "` (logs, captures)");
 
         try {
-            pipeline(cache, distribution, work);
+            if (samePlatform()) {
+                pipeline(cache, distribution, work);
+            }
         } catch (Exception e) {
             report.fail("pipeline", e);
         }
@@ -158,6 +161,24 @@ public final class Update {
             return 1;
         }
         return !verifyOnly && !report.todos.isEmpty() ? EXIT_TODOS : 0;
+    }
+
+    /**
+     * Whether this machine captures on the platform of the committed captures ({@link CapturePlatform}); else the run is
+     * a FAIL that says so, and nothing is captured or compared.
+     */
+    private boolean samePlatform() throws IOException {
+        String committed;
+        try {
+            committed = CapturePlatform.single(bdsData);
+        } catch (IllegalStateException e) {
+            report.check(Report.Status.FAIL, "Capture platform", e.getMessage());
+            return false;
+        }
+        String mismatch = committed == null ? null : CapturePlatform.mismatch("The committed data (" + Layout.BDS + ")", committed, CapturePlatform.host());
+        report.check(mismatch == null ? Report.Status.PASS : Report.Status.FAIL, "Capture platform",
+            mismatch == null ? CapturePlatform.host() + (committed == null ? " (no committed captures yet)" : ", like the committed captures") : mismatch);
+        return mismatch == null;
     }
 
     /** The command line of this run, without the options that only say where things go. */

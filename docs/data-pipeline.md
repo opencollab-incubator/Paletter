@@ -19,7 +19,11 @@ Downloading BDS means accepting the [Minecraft EULA](https://minecraft.net/eula)
 ## Layout and markers
 
 - `data/bds/<build>/`: what one BDS build gave, captured by a tool in this repository and never edited by hand. A
-  capture is replaced by running its command again.
+  capture is replaced by running its command again. Each `capture.json` records the `platform` of the BDS it ran
+  (`windows`; the tools run the Windows build on Windows and the Linux build elsewhere). Windows and Linux BDS number
+  custom blocks, order the creative inventory and encode some component NBT differently, so captures of different
+  platforms are never compared: `update` refuses to run on another platform than the committed captures', and the
+  conformance suites fail if `data/bds` mixes platforms.
 - `data/model/`: the component model. `components.json`, `mappings.json`, `coverage.md`, `bds-feedback.json`,
   `bds-keys.json` and `constants-history.json` are generated; `fixtures.json` and `api.json` are written by hand.
   [ATTRIBUTION.md](../data/model/ATTRIBUTION.md) covers the creator documentation they derive from.

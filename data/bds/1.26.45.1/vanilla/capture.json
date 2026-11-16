@@ -1,5 +1,6 @@
 {
   "bdsVersion": "1.26.45.1",
+  "platform": "windows",
   "serverEngine": "1.26.45",
   "vanillaVersion": "*",
   "blockNetworkIdsHashed": true,

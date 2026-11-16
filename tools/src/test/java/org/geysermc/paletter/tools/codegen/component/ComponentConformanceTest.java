@@ -1,5 +1,6 @@
 package org.geysermc.paletter.tools.codegen.component;
 
+import org.geysermc.paletter.tools.bds.CapturePlatform;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -88,6 +89,8 @@ class ComponentConformanceTest {
 
     @TestFactory
     Stream<DynamicTest> everyAcceptedVariantReproducesBdsWire() throws IOException {
+        // Captures of different BDS platforms are never compared: fails with the captures per platform if data/bds mixes them
+        CapturePlatform.single(ROOT.resolve("data/bds"));
         List<Path> captures = captures();
         assertFalse(captures.isEmpty(), "no spec capture in data/bds");
         return captures.stream().map(capture -> DynamicTest.dynamicTest(

@@ -1,5 +1,6 @@
 package org.geysermc.paletter.tools.shape;
 
+import org.geysermc.paletter.tools.bds.CapturePlatform;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -195,6 +196,7 @@ public final class ShapeProbe {
         JsonObject metadata = new JsonObject();
         metadata.addProperty("_generated", GENERATED);
         metadata.addProperty("bdsVersion", bdsVersion);
+        metadata.addProperty(CapturePlatform.KEY, CapturePlatform.host());
         metadata.addProperty("protocol", protocol);
         metadata.addProperty("formatVersion", formatVersion);
         metadata.addProperty("experimentChangesPacket", experimentChanges);

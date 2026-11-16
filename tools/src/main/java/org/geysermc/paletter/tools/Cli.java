@@ -8,6 +8,7 @@ import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.bds.BdsInventory;
 import org.geysermc.paletter.tools.bds.BdsRunner;
+import org.geysermc.paletter.tools.bds.CapturePlatform;
 import org.geysermc.paletter.tools.client.Capture;
 import org.geysermc.paletter.tools.client.CaptureClient;
 import org.geysermc.paletter.tools.client.CaptureWriter;
@@ -464,6 +465,7 @@ public final class Cli implements Runnable {
         @Option(names = "--port", defaultValue = "19140") int port;
         @Option(names = "--reference", defaultValue = "26.60") String reference;
         @Option(names = "--bds-version", defaultValue = "unknown") String bdsVersion;
+        @Option(names = "--bds-platform", description = "windows or linux: the OS the server runs on (default: this one's)") String bdsPlatform;
         @Option(names = "--timeout", defaultValue = "90") long timeout;
         @Option(names = "--transport", defaultValue = "raknet", description = "raknet or nethernet") String transport;
         @Option(names = "--protocol") Integer protocol;
@@ -479,7 +481,7 @@ public final class Cli implements Runnable {
                 }
                 System.out.println("NetherNet status: " + String.join(", ", status));
                 Capture.Summary summary = Capture.capture(address, Integer.parseInt(status[0]), reference(reference), bdsVersion,
-                    out, customOut, timeout, true);
+                    platform(), out, customOut, timeout, true);
                 System.out.println(summary);
                 return 0;
             }
@@ -498,11 +500,21 @@ public final class Cli implements Runnable {
             System.out.printf("Captured: %d block properties, %d items, %d creative groups, %d creative items, packets %s%n",
                 result.startGame.getBlockProperties().size(), result.items.size(), result.creative.getGroups().size(),
                 result.creative.getContents().size(), result.packetCounts);
-            CaptureWriter writer = new CaptureWriter(result, reference(reference), bdsVersion);
+            CaptureWriter writer = new CaptureWriter(result, reference(reference), bdsVersion, platform());
             writer.write(out, customOut);
             System.out.println("Wrote " + out + (writer.unresolvedHashes() > 0
                 ? "; WARNING: " + writer.unresolvedHashes() + " creative block ids do not match any palette hash" : "; all creative block ids match palette hashes"));
             return 0;
+        }
+
+        private String platform() {
+            if (bdsPlatform == null) {
+                return CapturePlatform.host();
+            }
+            if (!bdsPlatform.equals(CapturePlatform.WINDOWS) && !bdsPlatform.equals(CapturePlatform.LINUX)) {
+                throw new IllegalArgumentException("--bds-platform must be " + CapturePlatform.WINDOWS + " or " + CapturePlatform.LINUX);
+            }
+            return bdsPlatform;
         }
     }
 

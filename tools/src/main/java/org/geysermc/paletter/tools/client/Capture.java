@@ -1,5 +1,6 @@
 package org.geysermc.paletter.tools.client;
 
+import org.geysermc.paletter.tools.bds.CapturePlatform;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
 import org.cloudburstmc.protocol.bedrock.codec.v2225.Bedrock_v2225;
 import org.cloudburstmc.protocol.bedrock.codec.v407.serializer.PacketViolationWarningSerializer_v407;
@@ -69,6 +70,14 @@ public final class Capture {
      */
     public static Summary capture(InetSocketAddress address, int protocol, VanillaData reference, String bdsVersion,
                                   Path out, Path customOut, long timeoutSeconds, boolean netherNet) throws Exception {
+        return capture(address, protocol, reference, bdsVersion, CapturePlatform.host(), out, customOut, timeoutSeconds, netherNet);
+    }
+
+    /**
+     * @param platform the OS the server runs on ({@link CapturePlatform}); the other overloads assume a server on this machine
+     */
+    public static Summary capture(InetSocketAddress address, int protocol, VanillaData reference, String bdsVersion, String platform,
+                                  Path out, Path customOut, long timeoutSeconds, boolean netherNet) throws Exception {
         BedrockCodec codec = codecFor(protocol);
         int codecProtocol = codec.getProtocolVersion();
         if (codecProtocol != protocol) {
@@ -78,7 +87,7 @@ public final class Capture {
         System.out.println("Connecting to " + address + (netherNet ? " over NetherNet" : " over RakNet") + " with protocol " + protocol
             + (codecProtocol != protocol ? " (decoded with the " + codecProtocol + " codec)" : ""));
         CaptureClient.Result result = new CaptureClient(codec, address, netherNet).run(timeoutSeconds);
-        CaptureWriter writer = new CaptureWriter(result, reference, bdsVersion);
+        CaptureWriter writer = new CaptureWriter(result, reference, bdsVersion, platform);
         writer.write(out, customOut);
         List<String> experiments = result.startGame.getExperiments().stream()
             .map(experiment -> experiment.getName() + "=" + experiment.isEnabled()).toList();

@@ -1,5 +1,6 @@
 package org.geysermc.paletter.tools.update;
 
+import org.geysermc.paletter.tools.bds.CapturePlatform;
 import org.geysermc.paletter.tools.Layout;
 import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsServer;
@@ -150,6 +151,7 @@ public final class SpecCapture {
             Files.writeString(out.resolve("variants.json"), Model.GSON.toJson(generator.manifest()) + "\n", StandardCharsets.UTF_8);
             JsonObject metadata = new JsonObject();
             metadata.addProperty("bdsVersion", distribution.version());
+            metadata.addProperty(CapturePlatform.KEY, CapturePlatform.host());
             metadata.addProperty("protocol", protocol);
             metadata.addProperty("preview", preview);
             metadata.addProperty("formatVersion", formatVersion);

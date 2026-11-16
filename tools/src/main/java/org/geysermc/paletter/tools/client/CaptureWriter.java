@@ -1,5 +1,6 @@
 package org.geysermc.paletter.tools.client;
 
+import org.geysermc.paletter.tools.bds.CapturePlatform;
 import org.geysermc.paletter.tools.data.Nbt;
 import org.geysermc.paletter.tools.data.Importer;
 import com.google.gson.Gson;
@@ -45,15 +46,22 @@ public final class CaptureWriter {
     private final CaptureClient.Result result;
     private final VanillaData reference;
     private final String bdsVersion;
+    private final String platform;
     private final Map<Integer, NbtMap> statesByHash = new LinkedHashMap<>();
     private final List<NbtMap> palette = new ArrayList<>();
     private final Set<Integer> unresolvedHashes = new LinkedHashSet<>();
     private int resolvedHashes;
 
     public CaptureWriter(CaptureClient.Result result, VanillaData reference, String bdsVersion) {
+        this(result, reference, bdsVersion, CapturePlatform.host());
+    }
+
+    /** @param platform the OS the server runs on ({@link CapturePlatform}), recorded in {@code capture.json} */
+    public CaptureWriter(CaptureClient.Result result, VanillaData reference, String bdsVersion, String platform) {
         this.result = result;
         this.reference = reference;
         this.bdsVersion = bdsVersion;
+        this.platform = platform;
         Set<String> referenceBlocks = new LinkedHashSet<>();
         for (NbtMap state : reference.blockStates()) {
             palette.add(state);
@@ -231,6 +239,7 @@ public final class CaptureWriter {
         StartGamePacket startGame = result.startGame;
         JsonObject json = new JsonObject();
         json.addProperty("bdsVersion", bdsVersion);
+        json.addProperty(CapturePlatform.KEY, platform);
         json.addProperty("serverEngine", startGame.getServerEngine());
         json.addProperty("vanillaVersion", startGame.getVanillaVersion());
         json.addProperty("blockNetworkIdsHashed", startGame.isBlockNetworkIdsHashed());

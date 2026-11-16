@@ -1,5 +1,6 @@
 package org.geysermc.paletter.tools.shape;
 
+import org.geysermc.paletter.tools.bds.CapturePlatform;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -52,6 +53,8 @@ class VoxelShapeConformanceTest {
     @TestFactory
     List<DynamicTest> everyCapture() throws IOException {
         List<DynamicTest> tests = new ArrayList<>();
+        // Captures of different BDS platforms are never compared: fails with the captures per platform if data/bds mixes them
+        CapturePlatform.single(ROOT.resolve("data/bds"));
         List<ShapeImport.Captured> captures = ShapeImport.captures(ROOT);
         assertFalse(captures.isEmpty(), "no voxel shape captures under data/bds");
         for (ShapeImport.Captured capture : captures) {
