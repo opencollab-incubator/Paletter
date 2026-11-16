@@ -66,7 +66,37 @@ class BuildHistoryTest {
     void aListBehindMinecraftNetIsWarnedAbout() {
         assertNull(BuildHistory.staleness(list(), "1.26.100.2"));
         String warning = BuildHistory.staleness(list(), "1.26.101.1");
-        assertTrue(warning.contains("1.26.100.2") && warning.contains("1.26.101.1") && warning.contains(COMMIT), warning);
+        assertTrue(warning.startsWith("WARNING") && warning.contains("1.26.100.2") && warning.contains("1.26.101.1") && warning.contains(COMMIT), warning);
+    }
+
+    @Test
+    void theCurrentReleaseOfTheLinksApiJoinsAListThatLacksIt() {
+        BuildHistory.BuildList list = list().withCurrentRelease("1.26.101.1");
+        assertEquals("1.26.101.1", list.newest());
+        assertEquals(List.of("1.26.101.1"), list.fromLinksApi());
+        assertEquals(BuildHistory.FROM_LINKS_API, list.source("1.26.101.1"));
+        assertEquals(BuildHistory.FROM_LIST, list.source("1.26.100.2"));
+        // Covered this way, the difference is a note, not a warning
+        String note = BuildHistory.staleness(list, "1.26.101.1");
+        assertTrue(note.startsWith("NOTE") && note.contains("newest listed 1.26.100.2"), note);
+        // Listed already, older than the list, or unknown: the list stays as it is
+        assertEquals(list(), list().withCurrentRelease("1.26.100.2"));
+        assertEquals(list(), list().withCurrentRelease("1.26.63.1"));
+        assertEquals(list(), list().withCurrentRelease(null));
+        assertThrows(IllegalArgumentException.class, () -> list().withCurrentRelease("1.26.101.1\\..\\x"));
+    }
+
+    @Test
+    void theRecordSaysWhereEachBuildNumberCameFrom(@TempDir Path root) throws IOException {
+        Files.createDirectories(root.resolve("data/bds"));
+        Map<String, BuildHistory.Entry> builds = new TreeMap<>(Versions.ORDER);
+        builds.put("1.26.63.1", new BuildHistory.Entry(2225, null));
+        builds.put("1.26.65.1", new BuildHistory.Entry(2225, "1.26.63.1", BuildHistory.FROM_LINKS_API));
+        BuildHistory.write(root, builds, list());
+        JsonObject entries = JsonParser.parseString(Files.readString(root.resolve("data/bds/builds.json"))).getAsJsonObject().getAsJsonObject("builds");
+        assertEquals("BDS-Versions", entries.getAsJsonObject("1.26.63.1").get("source").getAsString());
+        assertEquals("links API", entries.getAsJsonObject("1.26.65.1").get("source").getAsString());
+        assertEquals(builds, BuildHistory.read(root));
     }
 
     @Test

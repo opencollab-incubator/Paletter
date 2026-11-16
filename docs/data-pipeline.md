@@ -129,8 +129,10 @@ checked one by one:
 
 The list of builds comes from [Bedrock-OSS/BDS-Versions](https://github.com/Bedrock-OSS/BDS-Versions), since the
 download links API only names the newest build; the zips still come from minecraft.net. Each run reads the list at the
-newest commit that changed it and records that commit (`listCommit`, `listDate`) in `data/bds/builds.json`; it warns
-when the list's newest release is not the current release of the links API. Every build number of the list, and every
+newest commit that changed it and records that commit (`listCommit`, `listDate`) in `data/bds/builds.json`. The
+current release of the download links API (Mojang's own, so authoritative for the newest build) joins the list when the
+list lacks it and it is newer than every listed build; the run notes that, and warns when the two disagree otherwise.
+Each recorded build says where its number came from (`source`: `BDS-Versions` or `links API`). Every build number of the list, and every
 `--from`, `--to` and `--against`, must be four (a bound: one to four) dotted numbers, since build numbers name
 directories that are deleted; paths built from them are checked to stay in their directory as well.
 

@@ -289,17 +289,13 @@ public final class Cli implements Runnable {
 
             @Override
             public Integer call() throws Exception {
-                BuildHistory.BuildList list = BuildHistory.fetch();
-                System.out.println(BuildHistory.REPOSITORY + " at " + list.commit() + " (" + list.date() + ")");
-                String stale = BuildHistory.staleness(list);
-                if (stale != null) {
-                    System.out.println(stale);
-                }
+                BuildHistory.BuildList list = BuildHistory.fetchWithCurrentRelease();
                 Map<String, BuildHistory.Entry> record = BuildHistory.read(root());
                 for (String build : list.range(from, to)) {
                     BuildHistory.Entry entry = record.get(build);
                     BuildHistory.Entry target = entry == null || entry.kept() ? null : record.get(entry.identicalTo());
-                    System.out.println(build + (entry == null ? "  not checked" : "  protocol " + entry.protocol()
+                    System.out.println(build + (list.fromLinksApi().contains(build) ? " (links API)" : "")
+                        + (entry == null ? "  not checked" : "  protocol " + entry.protocol()
                         + (entry.kept() ? "  kept" : "  identical to " + entry.identicalTo()
                         + (target != null && target.protocol() != entry.protocol() ? " (protocol " + target.protocol() + ")" : ""))));
                 }
@@ -324,12 +320,7 @@ public final class Cli implements Runnable {
                 put(options, "cache", cache);
                 put(options, "port", port);
                 put(options, "timeout", timeout);
-                BuildHistory.BuildList list = BuildHistory.fetch();
-                System.out.println(BuildHistory.REPOSITORY + " at " + list.commit() + " (" + list.date() + ")");
-                String stale = BuildHistory.staleness(list);
-                if (stale != null) {
-                    System.out.println(stale);
-                }
+                BuildHistory.BuildList list = BuildHistory.fetchWithCurrentRelease();
                 return BuildHistory.check(root(), list, list.range(from, to), cache != null ? Path.of(cache) : BdsDistribution.defaultCache(),
                     BuildHistory.updates(root(), options), limit == null ? Integer.MAX_VALUE : limit, (minFreeMb == null ? 1536 : minFreeMb) << 20);
             }
