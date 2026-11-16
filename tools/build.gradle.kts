@@ -130,10 +130,15 @@ tasks.register<JavaExec>("generateAddon") {
 
 cliTask("inferMappings", "spec", "Infers data/model/mappings.json and coverage.md from the committed captures", "infer")
 val checkMappings = cliTask("checkMappings", "verification",
-    "Fails if inferring the mappings from the committed model and captures yields a diff", "check-mappings", check = true)
+    "Fails if inferring the mappings from the committed model and captures yields a diff, or leaves a captured bit or wire path unexplained",
+    "check-mappings", "--strict", check = true)
+
+// What older bundled versions lack of the newest one (fallback coverage); fails on problems of the bundled data
+val checkData = cliTask("checkData", "verification",
+    "Fails on problems of the bundled data: what older bundled versions lack of the newest one", "check-data", check = true)
 
 tasks.named("check") {
-    dependsOn(checkConstants, checkComponentApi, checkMappings)
+    dependsOn(checkConstants, checkComponentApi, checkMappings, checkData)
 }
 
 tasks.withType<JavaCompile>().configureEach {

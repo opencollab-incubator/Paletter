@@ -56,8 +56,8 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 | `inspect` | Prints `Palette#explain` for a block state or item in one or all bundled versions. |
 
 Gradle tasks: `generateConstants`, `generateComponentApi`, `generateComponentApiPreview`, `generateModel`,
-`generateAddon` and `inferMappings` write; `checkConstants`, `checkComponentApi` and `checkMappings` are part of
-`./gradlew build` and fail when committed output is stale.
+`generateAddon` and `inferMappings` write; `checkConstants`, `checkComponentApi` and `checkMappings` (strict) are part
+of `./gradlew build` and fail when committed output is stale, `checkData` fails on problems of the bundled data.
 
 Generator tests compare against golden files. After an intended change of generator output, run
 `./gradlew :tools:test -PupdateGolden=true` and review the diff.
@@ -135,8 +135,8 @@ hold nothing Paletter needs.
 
 ### CI
 
-- `build.yml` runs `./gradlew build`, `check-mappings --strict` (every captured bit and wire path is explained) and
-  `check-data`.
+- `build.yml` runs `./gradlew build` on pushes to `main` and on pull requests. Its `check` includes `:tools:checkMappings`
+  (`check-mappings --strict`: every captured bit and wire path is explained) and `:tools:checkData` (`check-data`).
 - `bds-data.yml` runs `update` once a day for the release and preview channels on Windows BDS (a Windows runner, like
   the committed captures), then `generateComponentApi` and `:paletter:apiDump`. On a failure or a difference it opens
   or comments on an issue and opens a pull request from `bds-data/<channel>` with the updated data (only data and
