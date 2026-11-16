@@ -8,9 +8,14 @@ import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 
 /**
- * One state of a {@link BedrockBlockType}. There is one instance per state of a vanilla type, so {@link #with} does not
- * allocate and states can be compared with {@code ==}; the states of a custom type of an unknown identifier are equal by
- * value, so compare those with {@code equals}.
+ * One state of a {@link BedrockBlockType}. A type creates each of its states once, so {@link #with} does not allocate.
+ * <p>
+ * Equality: {@code equals} always works. {@code ==} works too for the states of vanilla types (the constants) and of
+ * registered custom blocks: a {@link org.geysermc.paletter.block.CustomBlock} owns its {@link
+ * org.geysermc.paletter.block.CustomBlock#type() type} and states, and a palette it is registered in hands back exactly
+ * those ({@code Palette#block(NbtMap)}, {@link org.geysermc.paletter.block.RegisteredBlockState#key()}, ...). The states
+ * of a type made by {@link BedrockBlockType#of(String)} for an unknown identifier are equal by value, not identical.
+ * Equal custom blocks registered by different layers each own their states; those are equal, not identical.
  * <p>
  * Canonical ids come from {@link org.geysermc.paletter.Paletter#canonicalBlocks()} (vanilla states) and
  * {@link org.geysermc.paletter.Palette#runtimeId(BedrockBlockState)} (vanilla and custom states). For a vanilla

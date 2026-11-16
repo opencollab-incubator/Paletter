@@ -27,6 +27,9 @@ import java.util.Objects;
  * org.geysermc.paletter.Paletter#bundled()} on first use. A vanilla constant the data does not have (deprecated
  * because Bedrock removed the block, or a preview block without the preview loaded) is not {@link #isAvailable()
  * available}: its states are those of its fallback, normally {@code minecraft:unknown}.
+ * <p>
+ * Equality: like its states (see {@link BedrockBlockState}), {@code equals} always works, and {@code ==} works for the
+ * vanilla constants and for the type a registered {@link CustomBlock} owns.
  *
  * @since 0.1.0
  */

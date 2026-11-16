@@ -11,9 +11,12 @@ import org.geysermc.paletter.internal.item.ItemVariant;
  * the variant, it belongs to the stack ({@link org.geysermc.paletter.item.BedrockItemStack#blockState()}). Obtained from
  * {@link BedrockItemType#variant(int)} and {@link BedrockItemType#variants()}.
  * <p>
- * Equality: as for {@link BedrockItemType}, compare with {@code equals}, never with {@code ==}. Variants of custom
- * types (and variants made by {@link BedrockItemType#variantOf(int)}) are not interned: {@code customItem.type().base()}
- * and the variant {@link org.geysermc.paletter.Palette#decode} gives back are equal, not identical.
+ * Equality: as for {@link BedrockItemType}, {@code equals} always works. {@code ==} works too for the variants of the
+ * vanilla constants and for the base variant of registered custom content: {@code customItem.type().base()} is the very
+ * variant {@link org.geysermc.paletter.Palette#decode} gives back. Variants made by
+ * {@link BedrockItemType#variantOf(int)} for an aux value that is not one of {@link BedrockItemType#variants()}, and
+ * variants of types made by {@link BedrockItemType#of(String)} for unknown identifiers, are new objects: compare those
+ * with {@code equals}.
  *
  * @since 0.1.0
  */

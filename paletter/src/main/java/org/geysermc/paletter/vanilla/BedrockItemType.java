@@ -20,9 +20,14 @@ import java.util.Objects;
  * Items whose variants differ by damage (potions, banners, goat horns, ...) expose them with {@link #variant(int)} (null if unknown, {@link #variantOf(int)} makes any): the
  * bundled data has no names for them, so they have no constants of their own.
  * <p>
- * Equality: vanilla types are singletons (the constants); custom types are not interned, so two calls of {@link #of(String)}
- * with one identifier give equal but not identical types. Compare with {@code equals} (or use them as map keys), never
- * with {@code ==}. Nothing is kept for identifiers Paletter does not know, so untrusted identifiers cannot grow memory.
+ * Equality: {@code equals} always works, and types are map keys. {@code ==} works too for vanilla types, which are
+ * singletons (the constants), and for registered custom content: a {@link CustomItem} owns its {@link CustomItem#type()
+ * type} (a {@link org.geysermc.paletter.block.CustomBlock} its {@link org.geysermc.paletter.block.CustomBlock#itemType()
+ * item type}), and a palette it is registered in hands back exactly that type. Types made by {@link #of(String)} for an
+ * identifier that is not vanilla are not interned: equal to each other and to the custom item's type, not identical.
+ * Nothing is kept for identifiers Paletter does not know, so untrusted identifiers cannot grow memory: what is kept is
+ * bounded by the registered content. Equal custom items registered by different layers each own their type; those
+ * types are equal, not identical.
  * <p>
  * Referencing a type loads nothing. A vanilla constant the bundled data does not have (deprecated, or a preview item
  * without the preview loaded) is not {@link #isAvailable() available} and resolves to its fallback, normally
@@ -60,7 +65,8 @@ public final class BedrockItemType {
     /**
      * The key of an identifier: the vanilla constant if the identifier (after renames) is vanilla in the newest bundled
      * data or has a generated constant, else a custom type known by its identifier only. Custom types are not interned (equal, not identical,
-     * for equal identifiers), so unknown identifiers never accumulate. Loads the data.
+     * for equal identifiers), so unknown identifiers never accumulate; the type a registered custom item owns, which
+     * palettes hand back, is {@link CustomItem#type()}. Loads the data.
      *
      * @return the type of an identifier
      */

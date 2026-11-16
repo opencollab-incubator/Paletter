@@ -33,9 +33,12 @@ is not packaged, because Cloudburst's dependencies split packages across jars.
 
 ## Keys and lookups
 
-Keys (`BedrockBlockType`, `BedrockBlockState`, `BedrockItemType`, `BedrockItemVariant`) are identities. Vanilla keys are
-singletons; a key for an identifier Paletter does not know is a plain value, equal by identifier and not interned. Compare
-keys with `equals`. Registered entries (`RegisteredItem`, `RegisteredBlockState`) are compared by identity, like
+Keys (`BedrockBlockType`, `BedrockBlockState`, `BedrockItemType`, `BedrockItemVariant`) are identities. `equals` always
+works. `==` works too for vanilla keys, which are singletons, and for registered custom content: a `CustomItem` or
+`CustomBlock` creates its types once and owns them, and a palette it is registered in hands back exactly those
+(`decode`, `block(NbtMap)`, `RegisteredItem#key`, `RegisteredBlockState#key`, ...). A key for an identifier Paletter does
+not know is a plain value, equal by identifier and not interned, so memory is bounded by registered content. Equal custom
+items or blocks in different layers each own their keys, which are equal but not identical. Registered entries (`RegisteredItem`, `RegisteredBlockState`) are compared by identity, like
 Cloudburst definitions: there is one instance per entry per palette.
 
 | Lookup | Returns |
