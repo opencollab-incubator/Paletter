@@ -1,3 +1,8 @@
+# Security: the job that runs untrusted code (the downloaded BDS binary, Gradle and its dependencies, the tools) is
+# `capture`. It can only read the repository, keeps no credentials in the checkout and sees no secrets. It hands over the
+# report and a patch of the data paths as artifacts. `publish` holds the write permissions and BDS_DATA_TOKEN, runs no
+# Gradle, BDS or repository script, applies only patches confined to the data paths and passes report text as files.
+#
 # Daily check of the newest Bedrock Dedicated Server release and preview against the committed data.
 #
 # Per channel: resolves the newest build (or the `version` input), then runs `update --verify-only` on Windows BDS
@@ -7,13 +12,13 @@
 # platforms). When the run fails or finds differences:
 #   - an issue labelled `bds-data` + `<channel>` is opened, or the open one gets a comment when the report changed
 #     (dates and paths ignored), so a standing difference does not spam;
-#   - the pipeline runs again in update mode, regenerates the component API, and `peter-evans/create-pull-request`
+#   - the pipeline runs again in update mode and regenerates the component API, and `peter-evans/create-pull-request`
 #     opens (or updates) a pull request from branch `bds-data/<channel>` with the new data. Releases and previews are
 #     imported alike: a preview is bundled as a preview version (served with `paletter.previews`, its API marked
 #     `@SincePreview`) and replaces the preview before it; its release drops it. The update writes its report to
 #     `data/bds/<build>/update-report.md` (committed with the data, and the body of the pull request). It exits with 2
 #     when the report lists decisions: the pull request is still opened, for a human to decide them; any other failure
-#     fails the job.
+#     fails the run after the issue is updated.
 # A manual run can check one channel only, and with `verify-only` stops after the report (no issue, no pull request).
 #
 # Windows runner assumptions: BDS and the capture client talk over loopback only (127.0.0.1: RakNet and NetherNet
@@ -22,11 +27,9 @@
 # host candidates only (no STUN/TURN), and libdatachannel ships a Windows x64 native. No WSL is needed: the tools run
 # the Windows BDS directly; only the BDS inventory step downloads the Linux zip to read its binary.
 #
-# Required permissions (granted below): contents: write, pull-requests: write, issues: write. No extra secrets: the
-# default GITHUB_TOKEN is used. Note that pull requests opened with GITHUB_TOKEN do not trigger other workflows; to
-# run the build on them, use a fine grained PAT (contents + pull requests: read and write) in a `BDS_DATA_TOKEN`
-# secret, which this workflow prefers when it exists. The repository setting "Allow GitHub Actions to create and
-# approve pull requests" must be enabled for the pull requests.
+# Pull requests opened with GITHUB_TOKEN do not trigger other workflows; to run the build on them, use a fine grained
+# PAT (contents + pull requests: read and write) in a `BDS_DATA_TOKEN` secret, which `publish` prefers when it exists.
+# The repository setting "Allow GitHub Actions to create and approve pull requests" must be enabled.
 
 name: BDS data
 
@@ -48,19 +51,18 @@ on:
         type: boolean
         default: false
 
-permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+permissions: {}
 
 concurrency:
   group: bds-data
   cancel-in-progress: false
 
 jobs:
-  verify:
+  capture:
     runs-on: windows-latest
-    timeout-minutes: 90
+    timeout-minutes: 120
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -75,14 +77,14 @@ jobs:
       # Scheduled runs have no inputs: false
       VERIFY_ONLY: ${{ inputs.verify-only == true }}
     steps:
-      # Everything temporary lives in the runner's temp directory, never in the checkout (create-pull-request would
-      # commit it). Forward slashes: Java, bash and the actions all read them; outside the checkout as an absolute path,
-      # as upload-artifact rejects '..' in paths.
+      # Everything temporary lives in the runner's temp directory, never in the checkout. Forward slashes: Java, bash
+      # and the actions all read them; outside the checkout as an absolute path, as upload-artifact rejects '..'.
       - name: Set the temp and BDS cache directories
         run: |
           CI_TEMP=$(cygpath -m "$RUNNER_TEMP")
           echo "CI_TEMP=$CI_TEMP" >> "$GITHUB_ENV"
           echo "PALETTER_BDS_CACHE=$CI_TEMP/bds-cache" >> "$GITHUB_ENV"
+          mkdir -p "$CI_TEMP/out"
       # The data is compared byte for byte: keep the checkout's line endings as committed (LF)
       - name: Check out with LF line endings
         run: git config --global core.autocrlf false
@@ -102,14 +104,16 @@ jobs:
           if ! echo "$VERSION" | grep -Eq '^[0-9]+(\.[0-9]+)+$'; then echo "No BDS version: '$VERSION'"; exit 1; fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "BDS_VERSION=$VERSION" >> "$GITHUB_ENV"
-      - uses: actions/checkout@v7
-      - uses: actions/setup-java@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
         with:
           distribution: temurin
           java-version: 21
-      - uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
       - name: Cache BDS downloads
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ env.PALETTER_BDS_CACHE }}/zips
           key: bds-zips-windows-${{ matrix.channel }}-${{ steps.bds.outputs.version }}
@@ -118,9 +122,9 @@ jobs:
         id: verify
         run: |
           set +e
-          ./gradlew :tools:run --args="update --channel $CHANNEL --version $BDS_VERSION --verify-only --report $CI_TEMP/ci-$CHANNEL.md"
+          REPORT="$CI_TEMP/out/report.md"
+          ./gradlew :tools:run --args="update --channel $CHANNEL --version $BDS_VERSION --verify-only --report $REPORT"
           echo "exit=$?" >> "$GITHUB_OUTPUT"
-          REPORT="$CI_TEMP/ci-$CHANNEL.md"
           if [ -f "$REPORT" ]; then
             # The report without the lines that change every run (date, paths)
             echo "hash=$(grep -v -e '^- \*\*Date\*\*' -e '^- \*\*Work directory' -e '^- \*\*Server' "$REPORT" | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
@@ -128,35 +132,118 @@ jobs:
           fi
           exit 0
 
-      - name: Upload report and logs
+      # Writes the data into the checkout only; publish turns it into a pull request
+      - name: Update the data
+        id: update
+        if: steps.verify.outputs.exit != '0' && env.VERIFY_ONLY != 'true'
+        run: |
+          set +e
+          ./gradlew :tools:run --args="update --channel $CHANNEL --version $BDS_VERSION"
+          CODE=$?
+          echo "exit=$CODE" >> "$GITHUB_OUTPUT"
+          # 2: everything written, decisions pending; the pull request is opened for them
+          if [ "$CODE" != 0 ] && [ "$CODE" != 2 ]; then echo "update failed with exit code $CODE"; exit 0; fi
+          set -e
+          # The component API follows the inferred mappings
+          ./gradlew :tools:generateComponentApi
+          # Only the data paths, new files included, without renames (publish checks every path)
+          git add -A -- data paletter/src/main/resources/paletter paletter/src/generated paletter/api
+          git diff --cached --binary --no-renames -- data paletter/src/main/resources/paletter paletter/src/generated paletter/api \
+            > "$CI_TEMP/out/data.patch"
+
+      # What publish reads: values only, checked again there
+      - name: Write the result
         if: always()
-        uses: actions/upload-artifact@v7
+        env:
+          VERIFY_EXIT: ${{ steps.verify.outputs.exit }}
+          HASH: ${{ steps.verify.outputs.hash }}
+          UPDATE_EXIT: ${{ steps.update.outputs.exit }}
+        run: |
+          {
+            echo "version=$BDS_VERSION"
+            echo "verify=$VERIFY_EXIT"
+            echo "hash=$HASH"
+            echo "update=$UPDATE_EXIT"
+          } > "$CI_TEMP/out/result.txt"
+
+      - name: Upload the result
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: bds-data-${{ matrix.channel }}
+          path: ${{ env.CI_TEMP }}/out/
+          if-no-files-found: ignore
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: bds-logs-${{ matrix.channel }}
           path: |
-            ${{ env.CI_TEMP }}/ci-${{ matrix.channel }}.md
             ${{ env.PALETTER_BDS_CACHE }}/runs/*/*.log
             ${{ env.PALETTER_BDS_CACHE }}/runs/*/report.md
           if-no-files-found: ignore
 
+  publish:
+    needs: capture
+    if: ${{ !cancelled() && inputs.verify-only != true }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    strategy:
+      fail-fast: false
+      matrix:
+        channel: ${{ fromJSON(inputs.channel == 'release' && '["release"]' || inputs.channel == 'preview' && '["preview"]' || '["release","preview"]') }}
+    env:
+      CHANNEL: ${{ matrix.channel }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: bds-data-${{ matrix.channel }}
+          path: ${{ runner.temp }}/in
+
+      # Values from the capture job are data: checked against strict patterns, never sourced or interpolated
+      - name: Read the result
+        id: result
+        run: |
+          IN="$RUNNER_TEMP/in"
+          value() { grep -m1 "^$1=" "$IN/result.txt" | cut -d= -f2-; }
+          VERSION=$(value version); VERIFY=$(value verify); HASH=$(value hash); UPDATE=$(value update)
+          echo "$VERSION" | grep -Eq '^[0-9]+(\.[0-9]+)+$' || { echo "Bad version"; exit 1; }
+          echo "$VERIFY" | grep -Eq '^[0-9]*$' || { echo "Bad verify exit code"; exit 1; }
+          echo "$UPDATE" | grep -Eq '^[0-9]*$' || { echo "Bad update exit code"; exit 1; }
+          echo "$HASH" | grep -Eq '^[0-9a-f]*$' || { echo "Bad hash"; exit 1; }
+          {
+            echo "version=$VERSION"
+            echo "verify=$VERIFY"
+            echo "hash=$HASH"
+            echo "update=$UPDATE"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Open or update the issue
-        if: steps.verify.outputs.exit != '0' && env.VERIFY_ONLY != 'true'
+        if: steps.result.outputs.verify != '0'
         env:
           GH_TOKEN: ${{ github.token }}
-          HASH: ${{ steps.verify.outputs.hash }}
+          HASH: ${{ steps.result.outputs.hash }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           gh label create bds-data --color 1d76db --description "Automated BDS data check" 2>/dev/null || true
           gh label create "$CHANNEL" --color c5def5 2>/dev/null || true
           TITLE="BDS data: $CHANNEL differs from the committed data"
-          ISSUE="$CI_TEMP/issue-$CHANNEL.md"
+          ISSUE="$RUNNER_TEMP/issue.md"
           MARKER="<!-- report-hash: $HASH -->"
           {
             echo "$MARKER"
             echo "Run: $RUN_URL"
             echo
             # GitHub limits bodies to 65536 characters
-            head -c 60000 "$CI_TEMP/ci-$CHANNEL.md"
+            if [ -f "$RUNNER_TEMP/in/report.md" ]; then head -c 60000 "$RUNNER_TEMP/in/report.md"; else echo "The run wrote no report; see the logs."; fi
           } > "$ISSUE"
           NUMBER=$(gh issue list --label bds-data --label "$CHANNEL" --state open --json number --jq '.[0].number')
           if [ -z "$NUMBER" ]; then
@@ -167,35 +254,48 @@ jobs:
             echo "Issue #$NUMBER already has this report"
           fi
 
-      - name: Update the data
-        if: steps.verify.outputs.exit != '0' && env.VERIFY_ONLY != 'true'
+      # Only patches confined to the data paths; anything else fails the job before the working tree changes
+      - name: Apply the data
+        id: apply
+        if: steps.result.outputs.update == '0' || steps.result.outputs.update == '2'
+        env:
+          VERSION: ${{ steps.result.outputs.version }}
         run: |
-          set +e
-          ./gradlew :tools:run --args="update --channel $CHANNEL --version $BDS_VERSION"
-          CODE=$?
-          set -e
-          # 2: everything written, decisions pending (the report's "to do" items); the pull request is opened for them
-          if [ "$CODE" != 0 ] && [ "$CODE" != 2 ]; then echo "update failed with exit code $CODE"; exit "$CODE"; fi
-          # The component API follows the inferred mappings
-          ./gradlew :tools:generateComponentApi
+          PATCH="$RUNNER_TEMP/in/data.patch"
+          if [ ! -s "$PATCH" ]; then echo "No data changes"; echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          # One path per file (no renames in the patch); a quoted path with unusual characters fails the check below
+          git apply --numstat "$PATCH" | cut -f3 > "$RUNNER_TEMP/paths.txt"
+          if grep -Ev '^(data/|paletter/src/main/resources/paletter/|paletter/src/generated/|paletter/api/)' "$RUNNER_TEMP/paths.txt" \
+              || grep -E '(^|/)\.\.(/|$)' "$RUNNER_TEMP/paths.txt"; then
+            echo "The patch touches paths outside the data paths"; exit 1
+          fi
+          git apply --check "$PATCH"
+          git apply "$PATCH"
           # The versioned report, committed with the data, is the pull request body
-          head -c 60000 "data/bds/$BDS_VERSION/update-report.md" > "$CI_TEMP/pr-body-$CHANNEL.md"
+          head -c 60000 "data/bds/$VERSION/update-report.md" > "$RUNNER_TEMP/pr-body.md"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
 
       - name: Open or update the pull request
-        if: steps.verify.outputs.exit != '0' && env.VERIFY_ONLY != 'true'
-        uses: peter-evans/create-pull-request@v8
+        if: steps.apply.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
         with:
           token: ${{ secrets.BDS_DATA_TOKEN || github.token }}
           branch: bds-data/${{ matrix.channel }}
           delete-branch: true
           title: "Update bundled data from the newest BDS ${{ matrix.channel }}"
           commit-message: "Update bundled data from the newest BDS ${{ matrix.channel }}"
-          body-path: ${{ env.CI_TEMP }}/pr-body-${{ matrix.channel }}.md
+          body-path: ${{ runner.temp }}/pr-body.md
           labels: bds-data
-          # Only what update and generateComponentApi write: captures and reports, the model, the bundled data, the
-          # generated sources and the add-on content log
           add-paths: |
             data/**
             paletter/src/main/resources/paletter/**
             paletter/src/generated/**
             paletter/api/**
+
+      - name: Fail on a failed update
+        if: steps.result.outputs.update != '' && steps.result.outputs.update != '0' && steps.result.outputs.update != '2'
+        env:
+          UPDATE: ${{ steps.result.outputs.update }}
+        run: |
+          echo "update failed with exit code $UPDATE; see the bds-logs artifact"
+          exit 1

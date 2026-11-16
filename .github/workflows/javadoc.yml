@@ -2,7 +2,8 @@
 #   push to main      -> /latest/
 #   published release -> /X.Y.Z/ (tag vX.Y.Z)
 # Only the target folder is replaced, other versions are kept; index.html lists them. Enable Pages with source
-# "Deploy from a branch" -> gh-pages / (root). No secrets: the default GITHUB_TOKEN pushes the branch.
+# "Deploy from a branch" -> gh-pages / (root). No secrets: the default GITHUB_TOKEN pushes the branch, through the
+# checkout's credentials (gh-pages is a worktree of the checkout), never written into a URL.
 
 name: Javadoc
 
@@ -24,12 +25,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-java@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
         with:
           distribution: temurin
           java-version: 21
-      - uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
       - name: Build Javadoc
         run: ./gradlew --max-workers=1 :paletter:javadoc
       - name: Publish to gh-pages
@@ -43,13 +44,15 @@ jobs:
             target="latest"
           fi
           cp -r paletter/build/docs/javadoc "$RUNNER_TEMP/javadoc"
-          repo="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-          if git ls-remote --exit-code --heads "$repo" gh-pages > /dev/null; then
-            git clone --branch gh-pages --depth 1 "$repo" "$RUNNER_TEMP/pages"
+          # A worktree of the checkout shares its remote and credentials
+          if git ls-remote --exit-code --heads origin gh-pages > /dev/null; then
+            git fetch --depth 1 origin gh-pages
+            git worktree add -B gh-pages "$RUNNER_TEMP/pages" FETCH_HEAD
           else
-            git init "$RUNNER_TEMP/pages"
+            git worktree add --detach "$RUNNER_TEMP/pages"
             git -C "$RUNNER_TEMP/pages" checkout --orphan gh-pages
-            git -C "$RUNNER_TEMP/pages" remote add origin "$repo"
+            git -C "$RUNNER_TEMP/pages" rm -rq --cached .
+            git -C "$RUNNER_TEMP/pages" clean -fdxq
           fi
           cd "$RUNNER_TEMP/pages"
           rm -rf "$target"

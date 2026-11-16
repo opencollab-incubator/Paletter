@@ -141,6 +141,8 @@ hold nothing Paletter needs.
   runner, like the committed captures). On a difference it opens or comments on an issue and opens a pull request from
   `bds-data/<channel>` with the updated data (only data and generated paths; the issue and pull request bodies are
   written to the runner's temp directory). A manual run can pick one channel and stop after the report (`verify-only`).
+  The capture job runs BDS and Gradle with a read-only token and no secrets; a separate publish job, which runs no
+  build, applies the data patch (rejected if it touches other paths) and writes the issue and pull request.
 - `javadoc.yml` publishes the Javadoc of `main` to GitHub Pages.
 
 ## The component model
