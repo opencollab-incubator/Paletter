@@ -58,14 +58,6 @@ public final class ConstantsGenerator {
     private static final Map<String, String> STATE_NAMES = Map.of(
         // The default FACING_DIRECTION is taken by "facing_direction", a state of another kind
         "minecraft:facing_direction", "MINECRAFT_FACING_DIRECTION");
-    /** State name to the enum class of its values, where the default (PascalCase of the first state name) does not work. */
-    private static final Map<String, String> ENUM_NAMES = Map.of(
-        // The default would carry the direction: "WallConnectionTypeEast"
-        "wall_connection_type_east", "WallConnectionType",
-        // The default would carry the direction: "RedstoneEast"
-        "redstone_east", "RedstoneConnection",
-        // The default "BlockFace" is the same six directions as the shared "Direction"
-        "minecraft:block_face", "Direction");
 
     /**
      * The names constants get where they differ from the default.
@@ -80,7 +72,7 @@ public final class ConstantsGenerator {
                         Renames renames) {
         /** The overrides Paletter generates with. */
         public static Names of(Renames renames) {
-            return new Names(Map.of(), Map.of(), STATE_NAMES, ENUM_NAMES, renames);
+            return new Names(Map.of(), Map.of(), STATE_NAMES, Map.of(), renames);
         }
 
         Map<String, String> overrides(String kind) {

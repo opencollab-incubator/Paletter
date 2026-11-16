@@ -13,9 +13,9 @@ import org.geysermc.paletter.tools.model.Model.Field;
 import org.geysermc.paletter.tools.model.Model.JType;
 import org.geysermc.paletter.tools.model.docs.DocsParser;
 
-import java.io.ByteArrayOutputStream;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,8 +28,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
-import java.util.zip.CRC32;
-import java.util.zip.Deflater;
 
 /**
  * Generates the spec capture add-on from the component model: per component a control (companions only), a base
@@ -1376,43 +1374,16 @@ public final class AddonGenerator {
         Files.writeString(file, Model.GSON.toJson(json) + "\n", StandardCharsets.UTF_8);
     }
 
+    /** A 16x16 texture of one opaque colour. */
     private static void png(Path file, int r, int g, int b) throws IOException {
-        ByteArrayOutputStream raw = new ByteArrayOutputStream();
+        BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
         for (int y = 0; y < 16; y++) {
-            raw.write(0);
             for (int x = 0; x < 16; x++) {
-                raw.write(r);
-                raw.write(g);
-                raw.write(b);
-                raw.write(255);
+                image.setRGB(x, y, 0xff << 24 | r << 16 | g << 8 | b);
             }
         }
-        Deflater deflater = new Deflater();
-        deflater.setInput(raw.toByteArray());
-        deflater.finish();
-        byte[] buffer = new byte[4096];
-        ByteArrayOutputStream idat = new ByteArrayOutputStream();
-        while (!deflater.finished()) {
-            idat.write(buffer, 0, deflater.deflate(buffer));
-        }
-        ByteArrayOutputStream png = new ByteArrayOutputStream();
-        png.write(new byte[]{(byte) 0x89, 'P', 'N', 'G', '\r', '\n', 0x1a, '\n'});
-        chunk(png, "IHDR", ByteBuffer.allocate(13).putInt(16).putInt(16).put((byte) 8).put((byte) 6).put((byte) 0).put((byte) 0).put((byte) 0).array());
-        chunk(png, "IDAT", idat.toByteArray());
-        chunk(png, "IEND", new byte[0]);
         Files.createDirectories(file.getParent());
-        Files.write(file, png.toByteArray());
-    }
-
-    private static void chunk(ByteArrayOutputStream out, String type, byte[] data) throws IOException {
-        out.write(ByteBuffer.allocate(4).putInt(data.length).array());
-        byte[] t = type.getBytes(StandardCharsets.US_ASCII);
-        out.write(t);
-        out.write(data);
-        CRC32 crc = new CRC32();
-        crc.update(t);
-        crc.update(data);
-        out.write(ByteBuffer.allocate(4).putInt((int) crc.getValue()).array());
+        ImageIO.write(image, "png", file.toFile());
     }
 
     static String lower(String s) {

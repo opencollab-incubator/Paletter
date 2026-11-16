@@ -773,7 +773,7 @@ public final class ComponentGenerator {
         if (dot >= 0) {
             return path.substring(0, dot);
         }
-        return path.equals("[]") || path.equals("{}") ? "" : "";
+        return "";
     }
 
     static String token(String path) {
