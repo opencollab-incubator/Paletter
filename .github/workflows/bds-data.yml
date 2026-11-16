@@ -5,21 +5,23 @@
 #
 # Daily check of the newest Bedrock Dedicated Server release and preview against the committed data.
 #
-# Per channel: resolves the newest build (or the `version` input), then runs `update --verify-only` on Windows BDS
-# (downloaded from minecraft.net; that means accepting the Minecraft EULA, https://minecraft.net/eula). The committed
-# captures come from Windows BDS, and Linux BDS numbers custom blocks, orders the creative inventory and encodes some
-# component NBT differently, so the captures run on Windows too (`update` refuses to compare captures of different
-# platforms). When the run fails or finds differences:
+# Per channel: resolves the newest build (or the `version` input), then runs `update` once on Windows BDS (downloaded
+# from minecraft.net; that means accepting the Minecraft EULA, https://minecraft.net/eula). The committed captures come
+# from Windows BDS, and Linux BDS numbers custom blocks, orders the creative inventory and encodes some component NBT
+# differently, so the captures run on Windows too (`update` refuses to compare captures of different platforms). The
+# update writes into the checkout and its report says whether anything differs; the component API and the API dump are
+# regenerated from the result. When the run fails or finds differences:
 #   - an issue labelled `bds-data` + `<channel>` is opened, or the open one gets a comment when the report changed
 #     (dates and paths ignored), so a standing difference does not spam;
-#   - the pipeline runs again in update mode and regenerates the component API, and `peter-evans/create-pull-request`
-#     opens (or updates) a pull request from branch `bds-data/<channel>` with the new data. Releases and previews are
-#     imported alike: a preview is bundled as a preview version (served with `paletter.previews`, its API marked
-#     `@SincePreview`) and replaces the preview before it; its release drops it. The update writes its report to
-#     `data/bds/<build>/update-report.md` (committed with the data, and the body of the pull request). It exits with 2
-#     when the report lists decisions: the pull request is still opened, for a human to decide them; any other failure
-#     fails the run after the issue is updated.
-# A manual run can check one channel only, and with `verify-only` stops after the report (no issue, no pull request).
+#   - `peter-evans/create-pull-request` opens (or updates) a pull request from branch `bds-data/<channel>` with the new
+#     data. Releases and previews are imported alike: a preview is bundled as a preview version (served with
+#     `paletter.previews`, its API marked `@SincePreview`) and replaces the preview before it; its release drops it. The
+#     update writes its report to `data/bds/<build>/update-report.md` (committed with the data, and the body of the
+#     pull request). It exits with 2 when the report lists decisions: the pull request is still opened, for a human to
+#     decide them; any other failure fails the run after the issue is updated.
+# When a run is clean (no failure, no difference), the open issue of its channel is closed with a comment.
+# A manual run can check one channel only, and with `verify-only` runs `update --verify-only` and stops after the report
+# (nothing written, no issue, no pull request).
 #
 # Windows runner assumptions: BDS and the capture client talk over loopback only (127.0.0.1: RakNet and NetherNet
 # signaling on server-port, NetherNet LAN discovery on UDP 7551). Windows Firewall does not filter loopback, and nothing
@@ -29,7 +31,9 @@
 #
 # Pull requests opened with GITHUB_TOKEN do not trigger other workflows; to run the build on them, use a fine grained
 # PAT (contents + pull requests: read and write) in a `BDS_DATA_TOKEN` secret, which `publish` prefers when it exists.
-# The repository setting "Allow GitHub Actions to create and approve pull requests" must be enabled.
+# A patch that changes generated code (paletter/src/generated) is only turned into a pull request with that token, so
+# the build always checks generated code before review; without it `publish` fails and says so. The repository setting
+# "Allow GitHub Actions to create and approve pull requests" must be enabled. See docs/releasing.md.
 
 name: BDS data
 
@@ -118,52 +122,75 @@ jobs:
           path: ${{ env.PALETTER_BDS_CACHE }}/zips
           key: bds-zips-windows-${{ matrix.channel }}-${{ steps.bds.outputs.version }}
 
-      - name: Verify against the committed data
-        id: verify
+      # One pass: verify-only for a manual verify-only run, else update, which writes into the checkout only (publish
+      # turns the patch into a pull request). The result is written last, after the patch exists, so a failure on the
+      # way (including the code generation) can never look like "no changes".
+      - name: Run the update
+        id: run
         run: |
           set +e
-          REPORT="$CI_TEMP/out/report.md"
-          ./gradlew :tools:run --args="update --channel $CHANNEL --version $BDS_VERSION --verify-only --report $REPORT"
-          echo "exit=$?" >> "$GITHUB_OUTPUT"
-          if [ -f "$REPORT" ]; then
-            # The report without the lines that change every run (date, paths)
-            echo "hash=$(grep -v -e '^- \*\*Date\*\*' -e '^- \*\*Work directory' -e '^- \*\*Server' "$REPORT" | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
-            head -c 60000 "$REPORT" >> "$GITHUB_STEP_SUMMARY"
+          OUT="$CI_TEMP/out"
+          DATA_PATHS="data paletter/src/main/resources/paletter paletter/src/generated paletter/api"
+          if [ "$VERIFY_ONLY" = true ]; then
+            ./gradlew :tools:run --args="update --channel $CHANNEL --version $BDS_VERSION --verify-only"
+          else
+            ./gradlew :tools:run --args="update --channel $CHANNEL --version $BDS_VERSION"
           fi
+          CODE=$?
+          # Every run also writes its report into its work directory, which starts empty
+          for f in "$PALETTER_BDS_CACHE"/runs/*-"$BDS_VERSION"/report.md; do
+            if [ -f "$f" ]; then cp "$f" "$OUT/report.md"; fi
+          done
+          VERDICT=""
+          if [ -f "$OUT/report.md" ]; then
+            # The report without the lines that change every run (date, paths)
+            HASH=$(grep -v -e '^- \*\*Date\*\*' -e '^- \*\*Work directory' -e '^- \*\*Server' "$OUT/report.md" | sha256sum | cut -c1-16)
+            VERDICT=$(grep -m1 -E '^(OK|Changed|Failed): ' "$OUT/report.md")
+            head -c 60000 "$OUT/report.md" >> "$GITHUB_STEP_SUMMARY"
+          else
+            # No report to compare: every such failure is new
+            HASH="$GITHUB_RUN_ID"
+          fi
+          DIFFERS=true
+          if [ "$VERIFY_ONLY" != true ] && { [ "$CODE" = 0 ] || [ "$CODE" = 2 ]; }; then
+            # The component API follows the inferred mappings, the API dump follows the component API. Separate runs:
+            # the dump compiles what the generator wrote
+            if ! { ./gradlew :tools:generateComponentApi && ./gradlew :paletter:apiDump; }; then
+              echo "::error::The data was updated, but generateComponentApi or apiDump failed"
+              CODE=3
+            fi
+            # Only the data paths, new files included, without renames (publish checks every path)
+            git add -A -- $DATA_PATHS
+            # A clean run still rewrites its own report (the date)
+            if [ "$CODE" = 0 ] && [ "$VERDICT" = "OK: no changes" ] \
+                && git diff --cached --quiet -- $DATA_PATHS ':(exclude)data/bds/*/update-report.md'; then
+              DIFFERS=false
+            elif [ "$CODE" = 0 ] || [ "$CODE" = 2 ]; then
+              git diff --cached --binary --no-renames -- $DATA_PATHS > "$OUT/data.patch"
+            fi
+          elif [ "$CODE" = 0 ]; then
+            DIFFERS=false
+          fi
+          {
+            echo "exit=$CODE"
+            echo "differs=$DIFFERS"
+            echo "hash=$HASH"
+          } >> "$GITHUB_OUTPUT"
           exit 0
 
-      # Writes the data into the checkout only; publish turns it into a pull request
-      - name: Update the data
-        id: update
-        if: steps.verify.outputs.exit != '0' && env.VERIFY_ONLY != 'true'
-        run: |
-          set +e
-          ./gradlew :tools:run --args="update --channel $CHANNEL --version $BDS_VERSION"
-          CODE=$?
-          echo "exit=$CODE" >> "$GITHUB_OUTPUT"
-          # 2: everything written, decisions pending; the pull request is opened for them
-          if [ "$CODE" != 0 ] && [ "$CODE" != 2 ]; then echo "update failed with exit code $CODE"; exit 0; fi
-          set -e
-          # The component API follows the inferred mappings
-          ./gradlew :tools:generateComponentApi
-          # Only the data paths, new files included, without renames (publish checks every path)
-          git add -A -- data paletter/src/main/resources/paletter paletter/src/generated paletter/api
-          git diff --cached --binary --no-renames -- data paletter/src/main/resources/paletter paletter/src/generated paletter/api \
-            > "$CI_TEMP/out/data.patch"
-
-      # What publish reads: values only, checked again there
+      # What publish reads: values only, checked again there. A step that died before its outputs counts as a failure
       - name: Write the result
         if: always()
         env:
-          VERIFY_EXIT: ${{ steps.verify.outputs.exit }}
-          HASH: ${{ steps.verify.outputs.hash }}
-          UPDATE_EXIT: ${{ steps.update.outputs.exit }}
+          UPDATE_EXIT: ${{ steps.run.outputs.exit || '1' }}
+          DIFFERS: ${{ steps.run.outputs.differs || 'true' }}
+          HASH: ${{ steps.run.outputs.hash || github.run_id }}
         run: |
           {
             echo "version=$BDS_VERSION"
-            echo "verify=$VERIFY_EXIT"
-            echo "hash=$HASH"
             echo "update=$UPDATE_EXIT"
+            echo "differs=$DIFFERS"
+            echo "hash=$HASH"
           } > "$CI_TEMP/out/result.txt"
 
       - name: Upload the result
@@ -214,20 +241,20 @@ jobs:
         run: |
           IN="$RUNNER_TEMP/in"
           value() { grep -m1 "^$1=" "$IN/result.txt" | cut -d= -f2-; }
-          VERSION=$(value version); VERIFY=$(value verify); HASH=$(value hash); UPDATE=$(value update)
+          VERSION=$(value version); UPDATE=$(value update); DIFFERS=$(value differs); HASH=$(value hash)
           echo "$VERSION" | grep -Eq '^[0-9]+(\.[0-9]+)+$' || { echo "Bad version"; exit 1; }
-          echo "$VERIFY" | grep -Eq '^[0-9]*$' || { echo "Bad verify exit code"; exit 1; }
-          echo "$UPDATE" | grep -Eq '^[0-9]*$' || { echo "Bad update exit code"; exit 1; }
-          echo "$HASH" | grep -Eq '^[0-9a-f]*$' || { echo "Bad hash"; exit 1; }
+          echo "$UPDATE" | grep -Eq '^[0-9]+$' || { echo "Bad update exit code"; exit 1; }
+          echo "$DIFFERS" | grep -Eq '^(true|false)$' || { echo "Bad differs"; exit 1; }
+          echo "$HASH" | grep -Eq '^[0-9a-f]+$' || { echo "Bad hash"; exit 1; }
           {
             echo "version=$VERSION"
-            echo "verify=$VERIFY"
-            echo "hash=$HASH"
             echo "update=$UPDATE"
+            echo "differs=$DIFFERS"
+            echo "hash=$HASH"
           } >> "$GITHUB_OUTPUT"
 
       - name: Open or update the issue
-        if: steps.result.outputs.verify != '0'
+        if: steps.result.outputs.differs == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           HASH: ${{ steps.result.outputs.hash }}
@@ -254,12 +281,26 @@ jobs:
             echo "Issue #$NUMBER already has this report"
           fi
 
+      - name: Close the issue of a clean run
+        if: steps.result.outputs.differs == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.result.outputs.version }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          NUMBER=$(gh issue list --label bds-data --label "$CHANNEL" --state open --json number --jq '.[0].number')
+          if [ -n "$NUMBER" ]; then
+            gh issue close "$NUMBER" --comment "BDS $VERSION matches the committed data. Run: $RUN_URL"
+          fi
+
       # Only patches confined to the data paths; anything else fails the job before the working tree changes
       - name: Apply the data
         id: apply
-        if: steps.result.outputs.update == '0' || steps.result.outputs.update == '2'
+        if: steps.result.outputs.differs == 'true' && (steps.result.outputs.update == '0' || steps.result.outputs.update == '2')
         env:
           VERSION: ${{ steps.result.outputs.version }}
+          # Whether the token that makes the build run on the pull request is set (never the token itself)
+          HAS_TOKEN: ${{ secrets.BDS_DATA_TOKEN != '' }}
         run: |
           PATCH="$RUNNER_TEMP/in/data.patch"
           if [ ! -s "$PATCH" ]; then echo "No data changes"; echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
@@ -272,6 +313,11 @@ jobs:
           # No symlinks or submodules: a link inside data/ could point anywhere
           if grep -Eq '^(new file|new|old|deleted file) mode (120000|160000)' "$PATCH"; then
             echo "The patch adds a symlink or submodule"; exit 1
+          fi
+          # Generated code is reviewed only after the build ran on it, and a pull request opened with GITHUB_TOKEN gets no build
+          if [ "$HAS_TOKEN" != true ] && grep -q '^paletter/src/generated/' "$RUNNER_TEMP/paths.txt"; then
+            echo "::error::The data changes generated code, and no BDS_DATA_TOKEN secret is set, so the build would not run on the pull request. Set BDS_DATA_TOKEN (see docs/releasing.md) and run this workflow again."
+            exit 1
           fi
           git apply --check "$PATCH"
           git apply "$PATCH"
@@ -297,9 +343,13 @@ jobs:
             paletter/api/**
 
       - name: Fail on a failed update
-        if: steps.result.outputs.update != '' && steps.result.outputs.update != '0' && steps.result.outputs.update != '2'
+        if: steps.result.outputs.update != '0' && steps.result.outputs.update != '2'
         env:
           UPDATE: ${{ steps.result.outputs.update }}
         run: |
-          echo "update failed with exit code $UPDATE; see the bds-logs artifact"
+          if [ "$UPDATE" = 3 ]; then
+            echo "update wrote the data, but generateComponentApi or apiDump failed on it; see the capture job's log"
+          else
+            echo "update failed with exit code $UPDATE; see the bds-logs artifact"
+          fi
           exit 1
