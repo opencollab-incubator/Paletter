@@ -13,7 +13,13 @@ subprojects {
     repositories {
         mavenCentral()
         maven("https://repo.opencollab.dev/main")
-        maven("https://repo.opencollab.dev/maven-snapshots")
+        // Only the Cloudburst and opencollab snapshots come from here; everything else must resolve elsewhere
+        maven("https://repo.opencollab.dev/maven-snapshots") {
+            content {
+                includeGroupAndSubgroups("org.cloudburstmc")
+                includeGroupAndSubgroups("dev.opencollab")
+            }
+        }
     }
 
     java {
