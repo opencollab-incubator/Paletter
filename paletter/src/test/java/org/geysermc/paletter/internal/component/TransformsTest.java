@@ -36,8 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Every hand transform, on its own. Expected values are the wire forms BDS sends (see each method's Javadoc); the
- * conformance suite in the tools checks them against the captures too.
+ * Every hand transform, on its own: what is particular to it, and what no captured variant shows (protocol windows,
+ * report warnings, clamping, tables no accepted variant sends). The full wire forms of the variants BDS accepted are the
+ * conformance suite's in the tools, which compares them with the captures; {@code HandTransformsTest} there checks that
+ * every hand transform has such variants.
  */
 class TransformsTest {
     private static final Paletter PALETTER = Paletter.bundled();
@@ -87,11 +89,12 @@ class TransformsTest {
         NbtMap wire = compound(out, "minecraft:collision_box");
         assertEquals((byte) 1, wire.getByte("enabled"));
         NbtMap b = wire.getList("boxes", NbtType.COMPOUND).getFirst();
-        // x like z: 8 + origin .. + size
+        // x like z: 8 + origin .. + size; y as is
         assertEquals(9f, b.getFloat("minX"));
         assertEquals(10f, b.getFloat("maxX"));
+        assertEquals(2f, b.getFloat("minY"));
+        assertEquals(4f, b.getFloat("maxY"));
         assertEquals(11f, b.getFloat("minZ"));
-        assertEquals(14f - 3f, b.getFloat("minZ"));
         assertEquals(14f, b.getFloat("maxZ"));
         WireNode untouched = new WireNode();
         Transforms.collisionBoxes(ctx26_50, untouched, CollisionBox.builder().enabled(false).build());
@@ -154,10 +157,6 @@ class TransformsTest {
         assertEquals("0.000000", g.getCompound("bone_visibility").getString("lid"));
         assertEquals("1.000000", g.getCompound("bone_visibility").getString("base"));
         assertEquals("q.block_property('open') == 'true'", g.getCompound("bone_visibility").getString("door"), "Molang is kept as a string");
-        assertEquals("minecraft:culling_layer.undefined", g.getString("culling_layer"));
-        assertEquals("", g.getString("culling_shape"), "the documented default minecraft:empty is sent as an empty string");
-        assertEquals((byte) 1, g.getByte("uv_lock"));
-        assertEquals((byte) 0, g.getByte("isV1Fullblock"));
 
         WireNode embedded = new WireNode();
         Transforms.embeddedGeometry(ctx, embedded, EmbeddedVisual.builder()
@@ -166,7 +165,6 @@ class TransformsTest {
         NbtMap e = compound(embedded, "minecraft:embedded_visual").getCompound("geometry");
         assertEquals("minecraft:geometry.cross", e.getString("identifier"));
         assertFalse(e.containsKey("isV1Fullblock"));
-        assertEquals("", e.getString("culling"), "an unset culling is sent empty, like minecraft:geometry's");
     }
 
     @Test
@@ -180,9 +178,6 @@ class TransformsTest {
         NbtMap m = compound(out, "minecraft:material_instances");
         NbtMap all = m.getCompound("materials").getCompound("*");
         assertEquals((byte) 6, all.getByte("packed_bools"), "bit 2 always, bit 1 isotropic, no face dimming");
-        assertEquals(1f, all.getFloat("ambient_occlusion"));
-        assertEquals("opaque", all.getString("render_method"));
-        assertEquals("none", all.getString("tint_method"));
         assertEquals("*", m.getCompound("mappings").getCompound("up").getString("value"));
 
         WireNode visual = new WireNode();
@@ -314,10 +309,7 @@ class TransformsTest {
 
         WireNode selection = new WireNode();
         Transforms.selectionBox(ctx, selection, SelectionBox.of(false));
-        NbtMap s = compound(selection, "minecraft:selection_box");
-        assertEquals((byte) 0, s.getByte("enabled"));
-        assertEquals(List.of(-8f, 0f, -8f), s.getList("origin", NbtType.FLOAT));
-        assertEquals(List.of(16f, 16f, 16f), s.getList("size", NbtType.FLOAT));
+        assertEquals((byte) 0, compound(selection, "minecraft:selection_box").getByte("enabled"));
 
         WireNode animation = new WireNode();
         Transforms.useAnimationId(ctx, animation, UseAnimation.of("spear"));
