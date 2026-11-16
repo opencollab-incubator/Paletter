@@ -6,9 +6,11 @@ import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.BedrockItemStack;
+import org.geysermc.paletter.vanilla.BedrockItemVariant;
 import org.junit.jupiter.api.Test;
 
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntUnaryOperator;
 
@@ -112,5 +114,18 @@ class HotPathTest {
         Palette palette = layered();
         long allocated = allocated(1000, i -> palette.decode(ItemData.AIR) == null ? 0 : 1);
         assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * 1000 + " decodes");
+    }
+
+    @Test
+    void sameStackDoesNotAllocate() {
+        Palette palette = layered();
+        List<ItemData> stacks = new ArrayList<>();
+        List<ItemData> copies = new ArrayList<>();
+        for (BedrockItemVariant variant : palette.itemVariants()) {
+            stacks.add(palette.encode(BedrockItemStack.of(variant)));
+            copies.add(palette.encode(BedrockItemStack.of(variant)));
+        }
+        long allocated = allocated(stacks.size(), i -> palette.sameStack(stacks.get(i), copies.get(i)) ? 1 : 0);
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * stacks.size() + " comparisons");
     }
 }

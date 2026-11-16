@@ -486,14 +486,23 @@ public final class Palette {
         if (a == b) {
             return true;
         }
+        // The cheap checks first: the NBT compare is deep
         return a.getCount() == b.getCount()
             && a.getDamage() == b.getDamage()
             && a.getBlockingTicks() == b.getBlockingTicks()
+            && sameItem(a.getDefinition(), b.getDefinition())
+            && sameBlock(a.getBlockDefinition(), b.getBlockDefinition())
             && sameTag(a.getTag(), b.getTag())
             && sameList(a.getCanPlace(), b.getCanPlace())
-            && sameList(a.getCanBreak(), b.getCanBreak())
-            && ownItem(a.getDefinition()) == ownItem(b.getDefinition())
-            && ownBlock(a.getBlockDefinition()) == ownBlock(b.getBlockDefinition());
+            && sameList(a.getCanBreak(), b.getCanBreak());
+    }
+
+    private boolean sameItem(ItemDefinition a, ItemDefinition b) {
+        return a == b || ownItem(a) == ownItem(b);
+    }
+
+    private boolean sameBlock(@Nullable BlockDefinition a, @Nullable BlockDefinition b) {
+        return a == b || ownBlock(a) == ownBlock(b);
     }
 
     private static boolean sameTag(@Nullable NbtMap a, @Nullable NbtMap b) {
