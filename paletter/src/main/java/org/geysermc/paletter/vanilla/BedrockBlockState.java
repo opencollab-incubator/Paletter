@@ -1,6 +1,5 @@
 package org.geysermc.paletter.vanilla;
 
-import org.geysermc.paletter.block.CustomBlock;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
@@ -49,16 +48,8 @@ public final class BedrockBlockState {
             // The ids belong to the palette's own newest version, which is not necessarily the bundled one
             return index.state(canonical.root() == index.blocks ? id : canonical.vanillaIdsIn(index.blocks)[id]);
         }
-        CustomBlock block = canonical.customBlockAt(id);
-        if (block == null) {
-            return null;
-        }
-        int base = canonical.customBase(block.identifier(), block.stateCount());
-        if (base == -1) {
-            return null;
-        }
-        BlockTypeLayout layout = BedrockBlockType.of(block).layout();
-        return layout.byOffset(id - base);
+        BedrockBlockType type = canonical.customTypeAt(id);
+        return type == null ? null : type.layout().byOffset(id - canonical.customStartAt(id));
     }
 
     public @NonNull BedrockBlockType type() {

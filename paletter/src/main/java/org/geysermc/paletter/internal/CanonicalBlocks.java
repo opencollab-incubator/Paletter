@@ -12,8 +12,10 @@ import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.vanilla.BedrockBlockType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,6 +40,9 @@ public final class CanonicalBlocks {
     private final int offset;
     private final NbtMap[] states;
     private final CustomBlock[] customs;
+    /** The types of {@link #customs}, so a custom id gives its handle without looking the block up. */
+    private final BedrockBlockType[] customTypes;
+    /** The canonical id of the first state of each of {@link #customs}, ascending. */
     private final int[] customStarts;
     private final Object2IntMap<NbtMap> index;
     private final Object2IntMap<String> customBases;
@@ -74,10 +79,12 @@ public final class CanonicalBlocks {
         this.customBases.defaultReturnValue(-1);
         this.customCounts = new Object2IntOpenHashMap<>(blocks.size());
         this.customs = blocks.toArray(CustomBlock[]::new);
+        this.customTypes = new BedrockBlockType[customs.length];
         this.customStarts = new int[customs.length];
         int base = offset;
         for (int i = 0; i < customs.length; i++) {
             CustomBlock block = customs[i];
+            customTypes[i] = block.type();
             customStarts[i] = base;
             int count = block.stateCount();
             customBases.put(block.identifier(), base);
@@ -233,22 +240,46 @@ public final class CanonicalBlocks {
     }
 
     /**
-     * @return the custom block that owns a canonical id of this lineage, or null if it is a vanilla state
+     * @return the type of the custom block that owns a canonical id of this lineage, or null if it is a vanilla state
+     *         or no id of this lineage
      */
-    public @Nullable CustomBlock customBlockAt(int canonical) {
-        CanonicalBlocks current = this;
-        while (current != null && canonical < current.offset) {
-            current = current.parent;
-        }
-        if (current == null) {
+    @Internal
+    public @Nullable BedrockBlockType customTypeAt(int canonical) {
+        CanonicalBlocks owner = customOwner(canonical);
+        return owner == null ? null : owner.customTypes[owner.customIndex(canonical)];
+    }
+
+    /**
+     * @return the canonical id of the first state of the custom block that owns a canonical id of this lineage, or -1
+     *         if it is a vanilla state or no id of this lineage
+     */
+    @Internal
+    public int customStartAt(int canonical) {
+        CanonicalBlocks owner = customOwner(canonical);
+        return owner == null ? -1 : owner.customStarts[owner.customIndex(canonical)];
+    }
+
+    /**
+     * @return the extension that added a custom canonical id, or null for a vanilla id or one past this lineage
+     */
+    private @Nullable CanonicalBlocks customOwner(int canonical) {
+        if (canonical < vanillaSize() || canonical >= size()) {
             return null;
         }
-        for (int i = current.customs.length - 1; i >= 0; i--) {
-            if (canonical >= current.customStarts[i]) {
-                return current.customs[i];
-            }
+        CanonicalBlocks current = this;
+        while (canonical < current.offset) {
+            current = current.parent;
         }
-        return null;
+        return current;
+    }
+
+    /**
+     * @return the index in {@link #customs} of the block that owns a canonical id of this extension
+     */
+    private int customIndex(int canonical) {
+        int found = Arrays.binarySearch(customStarts, canonical);
+        // Not a first state: the block before the insertion point owns it
+        return found >= 0 ? found : -found - 2;
     }
 
     private Forwarding forwardVanilla(NbtMap state) {

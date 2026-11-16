@@ -4,8 +4,10 @@ import com.sun.management.ThreadMXBean;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
+import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.BedrockItemStack;
+import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntUnaryOperator;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -127,5 +132,38 @@ class HotPathTest {
         }
         long allocated = allocated(stacks.size(), i -> palette.sameStack(stacks.get(i), copies.get(i)) ? 1 : 0);
         assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * stacks.size() + " comparisons");
+    }
+
+    @Test
+    void customBlockKeysAcrossLayers() {
+        Palette palette = layered();
+        int customs = 0;
+        for (int i = 0; i < palette.blocks().size(); i++) {
+            RegisteredBlockState state = palette.blocks().byIndex(i);
+            if (!state.isCustom()) {
+                continue;
+            }
+            customs++;
+            BedrockBlockState key = palette.blocks().key(state);
+            assertNotNull(key, state.toString());
+            assertEquals(state.getState(), key.toNbt(), state.toString());
+            assertSame(key.type(), palette.blocks().block(state).customBlock().type(), state.toString());
+            assertEquals(state.getRuntimeId(), palette.runtimeId(key), state.toString());
+        }
+        // 9 blocks of 2 * (level + 1) states
+        assertEquals(2 * (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9), customs);
+    }
+
+    @Test
+    void customBlockKeysDoNotAllocate() {
+        Palette palette = layered();
+        List<RegisteredBlockState> customs = new ArrayList<>();
+        for (int i = 0; i < palette.blocks().size(); i++) {
+            if (palette.blocks().byIndex(i).isCustom()) {
+                customs.add(palette.blocks().byIndex(i));
+            }
+        }
+        long allocated = allocated(customs.size(), i -> palette.blocks().key(customs.get(i)).hashCode());
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * customs.size() + " lookups");
     }
 }
