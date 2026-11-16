@@ -14,6 +14,12 @@ val componentApi: SourceSet = sourceSets.create("componentApi")
 // neither paletter nor the rest of the tools, so :paletter:apiDump / apiCheck can run it. See docs/api.md.
 val apiDump: SourceSet = sourceSets.create("apiDump")
 
+// What :paletter:apiDump runs: the classes of the apiDump source set and their dependencies
+configurations.consumable("apiDumpElements") {
+    extendsFrom(configurations[apiDump.implementationConfigurationName], configurations[apiDump.runtimeOnlyConfigurationName])
+    outgoing.artifact(tasks.named<JavaCompile>(apiDump.compileJavaTaskName).flatMap { it.destinationDirectory })
+}
+
 dependencies {
     "apiDumpImplementation"(libs.asm.util)
     testImplementation(apiDump.output)

@@ -114,9 +114,15 @@ val compileModuleInfo = tasks.register<JavaCompile>("compileModuleInfo") {
 // (without @Internal and internal.*), generated from the compiled classes by the tools module (apiDump source set). It is
 // committed, so a change of the API shows in review: `./gradlew :paletter:apiDump` regenerates it, `apiCheck` (part of
 // `check`) fails with the difference when it is stale. See docs/api.md.
-evaluationDependsOn(":tools")
 val apiDumpFile = file("api/paletter.api")
-val apiDumpTool = project(":tools").extensions.getByType<SourceSetContainer>()["apiDump"].runtimeClasspath
+// The tool's classes and runtime classpath, from the apiDumpElements configuration of :tools (no cross-project access)
+val apiDumpTool = configurations.create("apiDumpTool") {
+    isCanBeConsumed = false
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+    }
+}
+dependencies.add(apiDumpTool.name, dependencies.project(mapOf("path" to ":tools", "configuration" to "apiDumpElements")))
 
 fun apiDumpTask(name: String, mode: String, text: String) = tasks.register<JavaExec>(name) {
     group = "verification"
