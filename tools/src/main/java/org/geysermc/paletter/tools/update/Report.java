@@ -55,9 +55,12 @@ public final class Report {
     final List<String> wireChanges = new ArrayList<>();
     private final List<Todo> todos = new ArrayList<>();
     final List<String> repoChanges = new ArrayList<>();
-    /** A history check ({@code update --against}): the build compared with, and what differs from it. */
+    /** A history check ({@code update --against}): the build compared with. */
     String against;
-    final List<String> againstChanges = new ArrayList<>();
+    /** A history check: what was checked against the bundled data instead of the build compared with, and why. */
+    final List<String> notCompared = new ArrayList<>();
+    /** A history check: what a reader of the comparison has to know that is no difference (another protocol). */
+    final List<String> againstNotes = new ArrayList<>();
     private final String title;
     /** The command that wrote the report: its generated marker. */
     String generatedBy;
@@ -136,6 +139,11 @@ public final class Report {
         return checks.stream().anyMatch(check -> check.status == Status.FAIL);
     }
 
+    /** What differs from the committed data: every changed check, as {@code name: detail}. */
+    List<String> changes() {
+        return checks.stream().filter(check -> check.status == Status.DIFF).map(check -> check.name + ": " + check.detail).toList();
+    }
+
     boolean differs() {
         return checks.stream().anyMatch(check -> check.status == Status.DIFF) || !wireChanges.isEmpty() || !repoChanges.isEmpty();
     }
@@ -173,11 +181,18 @@ public final class Report {
         if (against != null) {
             // A history check: whether this build's captures are the same as the earlier build's, and what differs
             out.append("## Changes against ").append(against).append("\n\n");
-            if (againstChanges.isEmpty()) {
-                out.append(failed() ? "Not decided: the run failed.\n\n" : "None: every compared capture is the same, version stamps aside.\n\n");
+            List<String> changes = changes();
+            if (changes.isEmpty()) {
+                out.append(failed() ? "Not decided: the run failed.\n\n" : "None: every compared check is the same, version stamps aside.\n\n");
             }
-            againstChanges.forEach(change -> out.append("- ").append(oneLine(change)).append('\n'));
+            changes.forEach(change -> out.append("- ").append(oneLine(change)).append('\n'));
             out.append('\n');
+            againstNotes.forEach(note -> out.append("Note: ").append(oneLine(note)).append("\n\n"));
+            if (!notCompared.isEmpty()) {
+                out.append("Not compared with ").append(against).append(" (checked against the bundled data version only):\n\n");
+                notCompared.forEach(line -> out.append("- ").append(oneLine(line)).append('\n'));
+                out.append('\n');
+            }
         }
 
         List<Check> attention = checks.stream().filter(check -> check.status == Status.FAIL || check.status == Status.DIFF).toList();

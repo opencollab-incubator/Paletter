@@ -128,30 +128,53 @@ checked one by one:
 ```
 
 The list of builds comes from [Bedrock-OSS/BDS-Versions](https://github.com/Bedrock-OSS/BDS-Versions), since the
-download links API only names the newest build; the zips still come from minecraft.net. `builds check` takes the
-builds of the range that the record lacks, oldest first, and runs `update --against <previous kept build>` on Windows
-BDS for each. That captures everything an update captures, but compares it with the committed captures of the previous
-kept build instead of the newest ones, version stamps (`bdsVersion`, `protocol`, `_generated`) aside:
+download links API only names the newest build; the zips still come from minecraft.net. Each run reads the list at the
+newest commit that changed it and records that commit (`listCommit`, `listDate`) in `data/bds/builds.json`; it warns
+when the list's newest release is not the current release of the links API. Every build number of the list, and every
+`--from`, `--to` and `--against`, must be four (a bound: one to four) dotted numbers, since build numbers name
+directories that are deleted; paths built from them are checked to stay in their directory as well.
 
-- the Script API dump, the experiment record, the voxel shapes, the add-on capture (or the newest older one) and its
-  content log, the creative order, and the spec capture, value by value and in what BDS accepts and logs per variant;
+`builds check` takes the builds of the range that the record lacks, oldest first, and runs `update --against <kept
+build>` on Windows BDS for each: the previous kept build, or the next one when nothing older is kept (the first builds
+of the record, which may then be identical to a newer build). That captures everything an update captures, but compares
+it with the committed captures of that build instead of the newest ones, version stamps aside (`bdsVersion`,
+`protocol`, `_generated` and the packs' `formatVersion`, at the top level of a capture and of the packet the voxel
+shape anchors embed, nowhere else):
+
+- the Script API dump (block states, items, item and block tags, block defaults), the BDS inventory and the Script API
+  getters it lists, the experiment record and the experiment self-checks (discovery, current toggles, resource pack
+  stack), the voxel shapes, the add-on capture (or the newest older one), its content log and creative inventory, and
+  the spec capture, value by value and in what BDS accepts and logs per variant;
 - the network data (block palette, items, components, creative layout) against the bundled data version whose window
   holds the build's protocol. That is the data of the newest committed build of that version, so two builds compare
-  equal through it. Block states that the bundled version lacks (experimental blocks of an older hotfix, say) are
-  reported but decide nothing: the Script API dump, compared build to build, has every registered block's states.
+  equal through it.
+
+A build is identical only when every one of these checks is. Some checks can only be made against the bundled data
+version: block numbering and block hashes (an older hotfix may have experimental states the bundled version lacks), the
+experiment marks, item tags and block defaults, and the creative order on the bundled layout. They decide nothing, and
+the report lists them under "Not compared" with what compares the same thing build to build (mostly the Script API
+dump). So does a capture the other build lacks (builds that `update` captured before history checks existed have no
+add-on content log, say). The report notes when the two builds speak different protocols.
 
 Nothing else in the repository is written. When something differs the build is **kept**: its captures and
 `update-report.md`, with the changes at the top, go to `data/bds/<build>`. Otherwise nothing is written. Either way
 `data/bds/builds.json` (generated) records the build with its protocol, and says which kept build an identical one
-equals. A later run only checks new builds, so a wider range is just `--from` an older build. The first build of the
-record has nothing older to be compared with: it is kept, and its report compares it with the next kept build. The run
-stops at the first failure and when the disk of the cache has less than `--min-free-mb` (1536) left. It removes each
-build's run and server, the Linux zip it read the inventory from, and the Windows zip of builds that are not kept.
+equals (with `identicalToProtocol` when that build's protocol differs). A later run only checks new builds, so a wider
+range is just `--from` an older build. The run stops at the first failure and when the disk of the cache has less than
+`--min-free-mb` (1536) left. It removes each build's run and server, the Linux zip it read the inventory from (unless it
+was cached before), and the Windows zip of builds that are not kept.
 
-Kept builds of one data version window (a hotfix that changed behaviour, with or without a protocol bump) all keep
-their captures, but the newest defines the window: `infer` uses only its spec capture and lists the others under
-`replaces` in `mappings.json`. A kept build whose network data differs from its bundled data version needs a data
-version of its own; its report says so, and adding it is an `import`.
+One build keeps its captures per stretch of identical builds. A build whose captures `update` committed (the source of
+a bundled data version, referred to elsewhere) is checked too, with `--verify-only` against the previous kept build.
+When the two are identical and the previous build's captures come from a history check (its report says `--against`),
+the committed build stays and the other one is replaced: it and every build identical to it are recorded as identical
+to the committed build, and its directory is removed, since only the record refers to it.
+
+Kept builds of one data version window (a hotfix that changed behaviour, with or without a protocol bump) keep their
+captures, and the newest defines the window: `infer` uses only its spec capture and lists the others under `replaces`
+in `mappings.json`, but only when their spec captures hold the same values and acceptance; otherwise it fails, since
+such a build needs a data version of its own. A kept build whose network data differs from its bundled data version
+needs one too; its report says so, and adding it is an `import`.
 
 ### Experiments
 

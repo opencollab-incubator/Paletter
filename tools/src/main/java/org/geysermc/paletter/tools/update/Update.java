@@ -147,7 +147,7 @@ public final class Update {
         this.keepServer = options.containsKey("keep-server");
         this.port = Integer.parseInt(options.getOrDefault("port", "19260"));
         this.timeout = Integer.parseInt(options.getOrDefault("timeout", "300"));
-        this.against = options.get("against");
+        this.against = options.containsKey("against") ? Versions.requireBuild(options.get("against")) : null;
         if (against != null && preview) {
             throw new IllegalArgumentException("--against checks release builds only");
         }
@@ -158,9 +158,13 @@ public final class Update {
         return protocol;
     }
 
-    /** Whether a history check ({@code --against}) found anything that differs from the build it was compared with. */
+    /**
+     * Whether a history check ({@code --against}) found anything that differs from the build it was compared with: any
+     * check that compared something and found it changed. Checks against the bundled data instead are not comparisons
+     * of the two builds ({@link #notCompared}).
+     */
     public boolean changed() {
-        return !report.againstChanges.isEmpty();
+        return !report.changes().isEmpty();
     }
 
     /** Whether a step of the run failed. */
@@ -175,19 +179,18 @@ public final class Update {
         report = new Report(against != null ? "Paletter build check: BDS " + distribution.version() + " against " + against
             : "Paletter data " + (verifyOnly ? "verification" : "update") + ": BDS " + distribution.version() + (preview ? " (preview)" : ""));
         report.against = against;
-        buildDirectory = bdsData.resolve(distribution.version());
-        if (against != null && !Files.isDirectory(bdsData.resolve(against))) {
-            throw new IllegalArgumentException("--against " + against + ": no captures in " + root.relativize(bdsData.resolve(against)));
+        buildDirectory = BdsDistribution.inside(bdsData, distribution.version());
+        if (against != null && !Files.isDirectory(BdsDistribution.inside(bdsData, against))) {
+            throw new IllegalArgumentException("--against " + against + ": no captures in " + relative(bdsData.resolve(against)));
         }
         if (against != null && !verifyOnly && Files.exists(buildDirectory)) {
             throw new IllegalArgumentException(root.relativize(buildDirectory) + " exists: a history check only adds builds (use --verify-only)");
         }
         report.header.put("Date", LocalDate.now().toString());
         report.header.put("Mode", against != null ? "history check against " + against + (verifyOnly ? " (nothing written)"
-            : options.containsKey("keep") ? " (first build of the record: its captures are kept whatever the comparison says)"
             : " (captures written to data/bds/" + distribution.version() + " only if they differ)") : verifyOnly ? "verify only (nothing written)" : "update");
         report.header.put("BDS", distribution.version() + " " + distribution.platform() + " (" + distribution.url() + ")");
-        Path work = cache.resolve("runs").resolve(distribution.platform() + "-" + distribution.version());
+        Path work = distribution.runDirectory(cache, "");
         BdsDistribution.deleteRecursively(work);
         Files.createDirectories(work);
         report.header.put("Work directory", "`" + work + "` (logs, captures)");
@@ -199,10 +202,17 @@ public final class Update {
         } catch (Exception e) {
             report.fail("pipeline", e);
         }
+        if (against != null && protocol != null) {
+            // Protocols are version stamps to the comparison, but builds of the same data under two protocols are worth saying
+            Integer againstProtocol = BuildHistory.protocol(bdsData.resolve(against));
+            if (againstProtocol != null && againstProtocol.intValue() != protocol) {
+                report.againstNotes.add("this build speaks protocol " + protocol + ", " + against + " protocol " + againstProtocol
+                    + "; the comparison leaves protocols aside");
+            }
+        }
 
         // A history check keeps the captures of a build only if they differ from the build it was compared with
-        // (--keep: kept whatever the comparison says, for the first build of the record)
-        boolean kept = against != null && !verifyOnly && !report.failed() && (changed() || options.containsKey("keep"));
+        boolean kept = against != null && !verifyOnly && !report.failed() && changed();
         if (kept) {
             keep(work);
         }
@@ -258,7 +268,7 @@ public final class Update {
     /** The command line of this run, without the options that only say where things go. */
     private String command(BdsDistribution distribution) {
         StringBuilder args = new StringBuilder("update --channel " + (preview ? "preview" : "release") + " --version " + distribution.version());
-        for (String option : List.of("against", "keep", "verify-only", "name", "protocol", "experiments", "experiment-attribution")) {
+        for (String option : List.of("against", "verify-only", "name", "protocol", "experiments", "experiment-attribution")) {
             if (options.containsKey(option)) {
                 String value = options.get(option);
                 args.append(" --").append(option).append(value == null || value.equals("true") ? "" : " " + value);
@@ -614,6 +624,8 @@ public final class Update {
             if (against != null) {
                 report.check(Report.Status.INFO, "Block numbering", failure + " (against bundled " + runs.reference.version().name()
                     + "; block states are compared through the Script API dump)");
+                report.notCompared.add("Block numbering: " + failure + " (against bundled " + runs.reference.version().name()
+                    + "); the block states themselves are compared through the Script API dump");
             } else {
                 report.check(Report.Status.FAIL, "Block numbering", failure);
             }
@@ -675,6 +687,8 @@ public final class Update {
             report.check(Report.Status.INFO, "Block hashes (" + label + ")", summary.unresolvedHashes() + " creative block ids match no "
                 + "state of the reference palette (" + summary.resolvedHashes() + " do): this build has states the bundled data version "
                 + "lacks; block states are compared through the Script API dump");
+            report.notCompared.add("Block hashes (" + label + "): " + summary.unresolvedHashes() + " creative block ids match no state "
+                + "of the bundled data version; the block states themselves are compared through the Script API dump");
         } else {
             report.check(Report.Status.FAIL, "Block hashes (" + label + ")", summary.unresolvedHashes() + " creative block ids match no "
                 + "palette state (" + summary.resolvedHashes() + " do): the palette lacks states this version has");
@@ -766,7 +780,7 @@ public final class Update {
             // An always-on toggle has no log code
             long withCode = result.accepted.stream().filter(t -> !result.alwaysOn.contains(t)).count();
             boolean codesMatch = result.activeCodes != null && result.activeCodes.size() == withCode;
-            report.check(codesMatch ? Report.Status.PASS : Report.Status.DIFF, "Experiments: discovery",
+            compared(codesMatch, "Experiments: discovery",
                 result.candidates + " candidates (binary " + BdsServer.executable(server).getFileName() + ", experimental "
                     + "packs, known ids); BDS kept " + result.accepted.size() + " toggles in level.dat"
                     + (codesMatch ? " and logged as many active" : "; it logged " + (result.activeCodes == null ? "no" : result.activeCodes.size())
@@ -792,7 +806,7 @@ public final class Update {
             retiredToggles = result.retired;
             List<String> notAccepted = streamed.stream().filter(t -> !toggles.contains(t)).toList();
             boolean uiMatch = streamed.size() == result.uiKeys.size();
-            report.check(notAccepted.isEmpty() && uiMatch ? Report.Status.PASS : Report.Status.DIFF, "Experiments: current toggles",
+            compared(notAccepted.isEmpty() && uiMatch, "Experiments: current toggles",
                 streamed.size() + " streamed in start game " + streamed + ", " + result.retired.size() + " retired (kept, not streamed); "
                     + result.uiKeys.size() + " `" + ExperimentDiscovery.UI_PREFIX + "*` UI keys in the binary"
                     + (uiMatch ? "" : ": a current toggle may be missing from the candidates; pass it with --experiments or add it to DEFAULT_EXPERIMENTS")
@@ -800,7 +814,7 @@ public final class Update {
         }
         List<String> packStack = all.packStackExperiments().stream().filter(e -> e.endsWith("=true"))
             .map(e -> e.substring(0, e.length() - 5)).filter(t -> !result.alwaysOn.contains(t)).sorted().toList();
-        report.check(packStack.equals(streamed) ? Report.Status.PASS : Report.Status.DIFF, "Experiments: resource pack stack",
+        compared(packStack.equals(streamed), "Experiments: resource pack stack",
             packStack.equals(streamed) ? "lists the same toggles as start game" : "lists " + packStack + ", start game " + streamed);
         result.uiKeyOf = ExperimentDiscovery.matchUiKeys(result.current, result.uiKeys);
 
@@ -957,8 +971,9 @@ public final class Update {
                 }
             });
             boolean same = new TreeMap<>(data.experiments()).equals(marks);
-            report.check(same ? Report.Status.PASS : Report.Status.DIFF, "Experiment marks vs bundled " + runs.bundledName,
-                same ? "identical" : "bundled " + new TreeSet<>(data.experiments().keySet()) + ", captured " + marks.keySet());
+            notCompared(same, "Experiment marks vs bundled " + runs.bundledName,
+                same ? "identical" : "bundled " + new TreeSet<>(data.experiments().keySet()) + ", captured " + marks.keySet(),
+                "the experiment content is compared build to build in the experiment record");
             Files.write(file, write(data.withExperiments(marks)));
         }
     }
@@ -1097,16 +1112,26 @@ public final class Update {
                     + "(no Block*Description, no Scripting::Reflection bindings): nothing to inventory");
                 return;
             }
-            String previousBuild = baseline(distribution.version(), committedBuilds(BdsInventory.FILE));
+            // A history check compares with the inventory of the build it is checked against
+            String previousBuild = against != null ? against : baseline(distribution.version(), committedBuilds(BdsInventory.FILE));
             Path previous = previousBuild == null ? null : bdsData.resolve(previousBuild).resolve(BdsInventory.FILE);
-            if (previous == null) {
-                report.check(Report.Status.INFO, "BDS inventory", "no inventory of an older build to diff against");
+            if (previous == null || !Files.exists(previous)) {
+                report.check(Report.Status.INFO, "BDS inventory", against != null ? "not compared: " + against + " has no " + BdsInventory.FILE
+                    : "no inventory of an older build to diff against");
+                if (against != null) {
+                    report.notCompared.add("BDS inventory: " + against + " has no " + BdsInventory.FILE);
+                }
             } else {
-                String before = previous.getParent().getFileName().toString();
+                String before = previousBuild;
                 List<String> diff = BdsInventory.diff(BdsInventory.parse(previous), inventory);
-                // Only getters the behaviour dump reads need a decision; the rest of the inventory is for reference
-                report.check(diff.isEmpty() ? Report.Status.PASS : Report.Status.INFO, "BDS inventory vs " + before,
-                    diff.isEmpty() ? "no new or removed properties" : diff.size() + " new or removed properties");
+                // Only getters the behaviour dump reads need a decision; the rest of the inventory is for reference. In a
+                // history check any difference is one between the two builds
+                String detail = diff.isEmpty() ? "no new or removed properties" : diff.size() + " new or removed properties";
+                if (against != null) {
+                    compared(diff.isEmpty(), "BDS inventory vs " + before, detail);
+                } else {
+                    report.check(diff.isEmpty() ? Report.Status.PASS : Report.Status.INFO, "BDS inventory vs " + before, detail);
+                }
                 if (!diff.isEmpty()) {
                     report.evidence("New or removed properties", diff.stream().map(line -> "- `" + line + "`").toList());
                 }
@@ -1119,7 +1144,7 @@ public final class Update {
                     }
                 }
                 if (!added.isEmpty() || !removed.isEmpty()) {
-                    report.check(Report.Status.DIFF, "Script API getters", (added.isEmpty() ? "" : added.size() + " new")
+                    compared(false, "Script API getters", (added.isEmpty() ? "" : added.size() + " new")
                         + (added.isEmpty() || removed.isEmpty() ? "" : ", ") + (removed.isEmpty() ? "" : removed.size() + " removed")
                         + " value getters of blocks, items or their components (the behaviour dump reads them)");
                     List<String> lines = new ArrayList<>();
@@ -1294,8 +1319,8 @@ public final class Update {
                 captured.blockItems());
             Diff bds = Diff.vanilla(bundled, refreshed, false, true);
             // A history check compares the Script API (where these come from) with the earlier build instead
-            Report.Status status = bds.identical() ? Report.Status.PASS : against != null ? Report.Status.INFO : Report.Status.DIFF;
-            report.check(status, "Item tags and block defaults vs bundled " + name, bds.identical() ? "identical" : bds.count() + " differences");
+            notCompared(bds.identical(), "Item tags and block defaults vs bundled " + name, bds.identical() ? "identical" : bds.count() + " differences",
+                "item tags and block defaults are compared build to build through the Script API dump");
             report.diff("Item tags and block defaults: BDS " + distribution.version() + " vs bundled " + name, bds);
             Files.write(staging.resources.resolve(name + ".nbt"), write(refreshed));
             updateVariantNames(variantNames, name, dump, refreshed);
@@ -1408,6 +1433,8 @@ public final class Update {
                 report.check(Report.Status.INFO, "Creative order (" + capture[0] + ")", "BDS places custom content differently "
                     + "from CreativeOrdering.BDS on the bundled layout: " + result.differences().size() + "+ differences; the "
                     + "creative inventory is compared with " + against + "'s");
+                report.notCompared.add("Creative order (" + capture[0] + "): CreativeOrdering.BDS on the bundled layout places custom "
+                    + "content differently; the add-on world's creative inventory itself is compared build to build");
             } else {
                 compared(false, "Creative order (" + capture[0] + ")", "BDS places custom content differently "
                     + "from CreativeOrdering.BDS: " + result.differences().size() + "+ differences");
@@ -1429,6 +1456,7 @@ public final class Update {
         Path earlier = bdsData.resolve(against).resolve("addon/creative_items.json.gz");
         if (!Files.exists(earlier)) {
             report.check(Report.Status.INFO, "Add-on creative inventory", "not compared: " + against + " has no `addon/creative_items.json.gz`");
+            report.notCompared.add("Add-on creative inventory: " + against + " has no `addon/creative_items.json.gz`");
             return;
         }
         compared(BuildHistory.sameData(creative, Files.readAllBytes(earlier)), "Add-on creative inventory",
@@ -1448,6 +1476,7 @@ public final class Update {
             if (!Files.exists(file)) {
                 report.check(Report.Status.INFO, "Add-on content log", "not compared: " + against + " has no add-on content log "
                     + "(what BDS rejects shows in the add-on capture, compared below)");
+                report.notCompared.add("Add-on content log: " + against + " has none; what BDS rejects shows in the add-on capture, compared");
                 return;
             }
         }
@@ -1862,13 +1891,29 @@ public final class Update {
     }
 
     /**
-     * A check that compares this build with committed data. In a history check, a difference is a change against the
-     * build it is checked against: the build is kept.
+     * A check that compares this build with committed data, or with what BDS itself says elsewhere. In a history check,
+     * any difference (any {@link Report.Status#DIFF}) is a change against the build it is checked against: the build is
+     * kept.
      */
     private void compared(boolean same, String name, String detail) {
         report.check(same ? Report.Status.PASS : Report.Status.DIFF, name, detail);
-        if (!same && against != null) {
-            report.againstChanges.add(name + ": " + detail);
+    }
+
+    /**
+     * A history check: a check against the bundled data version of the window rather than the build compared with
+     * (an INFO, never a change), listed in the report as not compared. Outside a history check it is a {@link #compared}
+     * check.
+     *
+     * @param instead how the same thing is compared build to build, if it is
+     */
+    private void notCompared(boolean same, String name, String detail, String instead) {
+        if (against == null) {
+            compared(same, name, detail);
+            return;
+        }
+        report.check(same ? Report.Status.PASS : Report.Status.INFO, name, detail);
+        if (!same) {
+            report.notCompared.add(name + ": " + detail + (instead == null ? "" : "; " + instead));
         }
     }
 
