@@ -424,10 +424,28 @@ class BehaviourTest {
         for (BehaviourKey<?> key : List.of(BlockBehaviour.DESTROY_TIME, BlockBehaviour.OUTLINE_SHAPE)) {
             if (!measured.contains(key)) {
                 assertTrue(behaviour.provenance(state, key).unknownDefault(), key.toString());
+                // get has no value to give; getOrElse gives the fallback
+                assertThrows(IllegalStateException.class, () -> strict(values, key), key.toString());
                 assertNull(boxed(values, key), key.toString());
                 assertTrue(values.explain(key).contains("(UNKNOWN_DEFAULT)"), values.explain(key));
             }
         }
+        if (!measured.contains(BlockBehaviour.OUTLINE_SHAPE)) {
+            assertSame(BlockShape.EMPTY, values.getOrElse(BlockBehaviour.OUTLINE_SHAPE, BlockShape.EMPTY));
+        }
+        if (!measured.contains(BlockBehaviour.DESTROY_TIME)) {
+            assertEquals(-1f, values.getOrElse(BlockBehaviour.DESTROY_TIME, -1f));
+        }
+    }
+
+    /** @return what {@code get} says, boxed; it throws where there is no value */
+    private static Object strict(BlockValues values, BehaviourKey<?> key) {
+        return switch (key) {
+            case FloatKey k -> values.get(k);
+            case IntKey k -> values.get(k);
+            case BooleanKey k -> values.get(k);
+            case ObjectKey<?> k -> values.get(k);
+        };
     }
 
     @Test
