@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /** {@link SpecDiff} on two synthetic captures: a value that changes with the same keys and types, a leaf that disappears. */
 class SpecDiffTest {
     /** Item {@code paletter:a_N}: component {@code minecraft:box} with {@code minX} and, optionally, {@code extra}. */
-    private static void capture(Path dir, double minX, boolean extra, boolean secondRejected) throws IOException {
+    static void capture(Path dir, double minX, boolean extra, boolean secondRejected) throws IOException {
         Files.createDirectories(dir);
         List<NbtMap> items = new ArrayList<>();
         JsonArray variants = new JsonArray();

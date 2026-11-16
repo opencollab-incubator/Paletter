@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -184,32 +185,28 @@ public final class MappingInference {
         fixtures = Fixtures.read(modelDir);
         model = fixtures.apply(model);
         List<Capture> captures = new ArrayList<>();
+        Map<String, Path> directories = new HashMap<>();
         Path dir = root.resolve(org.geysermc.paletter.tools.Layout.BDS);
         if (Files.isDirectory(dir)) {
             try (Stream<Path> dirs = Files.list(dir)) {
                 for (Path capture : dirs.map(d -> d.resolve("spec")).filter(d -> Files.exists(d.resolve("variants.json"))).toList()) {
-                    captures.add(load(capture));
+                    Capture loaded = load(capture);
+                    captures.add(loaded);
+                    directories.put(loaded.bdsVersion(), capture);
                 }
             }
         }
+        // Several kept builds of one window (hotfixes, with or without a protocol bump): the newest build defines it
+        Map<Integer, Window> windows = newestOfWindows(captures, this::dataProtocol, directories);
+        Map<Integer, List<String>> replaced = new TreeMap<>();
+        windows.forEach((window, selected) -> {
+            if (!selected.replaces().isEmpty()) {
+                replaced.put(window, selected.replaces());
+            }
+        });
+        captures = new ArrayList<>(windows.values().stream().map(Window::newest).toList());
         // By protocol, not by name: the oldest build first, the newest last
         captures.sort(java.util.Comparator.comparingInt(Capture::protocol));
-        // Several kept builds of one window (hotfixes, with or without a protocol bump): the newest build defines it
-        Map<Integer, Capture> newestOfWindow = new TreeMap<>();
-        Map<Integer, List<String>> replaced = new TreeMap<>();
-        for (Capture capture : captures) {
-            int window = dataProtocol(capture.protocol());
-            Capture other = newestOfWindow.get(window);
-            if (other != null && org.geysermc.paletter.tools.Versions.compare(other.bdsVersion(), capture.bdsVersion()) > 0) {
-                replaced.computeIfAbsent(window, w -> new ArrayList<>()).add(capture.bdsVersion());
-                continue;
-            }
-            if (other != null) {
-                replaced.computeIfAbsent(window, w -> new ArrayList<>()).add(other.bdsVersion());
-            }
-            newestOfWindow.put(window, capture);
-        }
-        captures = new ArrayList<>(newestOfWindow.values());
         // What BDS says about the schema is read from the newest release: an older one knows fewer members, and a preview
         // may not know some yet. Members only the newest preview knows stay (their API is @SincePreview)
         List<Capture> releases = new ArrayList<>();
@@ -519,6 +516,52 @@ public final class MappingInference {
 
     // ---------------------------------------------------------------------------------------------------------------
     // Loading
+
+    /** The capture that defines a data version window, and the older kept builds of that window it stands for, oldest first. */
+    record Window(Capture newest, List<String> replaces) {
+    }
+
+    /**
+     * The newest capture of each window (by {@code window}, the data protocol of a capture's protocol). The others of a
+     * window are only replaced when they hold the same spec data as the newest ({@link SpecDiff#compare} and
+     * {@link SpecDiff#acceptance} find nothing): a kept build with other data needs a data version of its own.
+     *
+     * @param directories the spec capture directory of each build
+     * @throws IllegalStateException when a replaced capture's spec data differs from the newest of its window
+     */
+    static Map<Integer, Window> newestOfWindows(List<Capture> captures, java.util.function.IntUnaryOperator window,
+                                                Map<String, Path> directories) throws IOException {
+        Map<Integer, List<Capture>> byWindow = new TreeMap<>();
+        for (Capture capture : captures) {
+            byWindow.computeIfAbsent(window.applyAsInt(capture.protocol()), w -> new ArrayList<>()).add(capture);
+        }
+        Map<Integer, Window> windows = new TreeMap<>();
+        List<String> differing = new ArrayList<>();
+        for (Map.Entry<Integer, List<Capture>> entry : byWindow.entrySet()) {
+            List<Capture> builds = new ArrayList<>(entry.getValue());
+            builds.sort(java.util.Comparator.comparing(Capture::bdsVersion, org.geysermc.paletter.tools.Versions.ORDER));
+            Capture newest = builds.getLast();
+            List<String> replaces = new ArrayList<>();
+            for (Capture older : builds.subList(0, builds.size() - 1)) {
+                Path before = directories.get(older.bdsVersion());
+                Path after = directories.get(newest.bdsVersion());
+                int values = SpecDiff.compare(before, after).size();
+                int acceptance = SpecDiff.acceptance(before, after).size();
+                if (values + acceptance > 0) {
+                    differing.add(older.bdsVersion() + " vs " + newest.bdsVersion() + " (window " + entry.getKey() + "): " + values
+                        + " leaves with other values, " + acceptance + " variants accepted or logged differently");
+                }
+                replaces.add(older.bdsVersion());
+            }
+            windows.put(entry.getKey(), new Window(newest, replaces));
+        }
+        if (!differing.isEmpty()) {
+            throw new IllegalStateException("Kept builds of one data version window hold different spec captures, so the newest "
+                + "cannot stand for the others: " + String.join("; ", differing) + ". A build with other data needs a data version "
+                + "of its own (`import`); see docs/data-pipeline.md, \"Every release build\"");
+        }
+        return windows;
+    }
 
     static Capture load(Path dir) throws IOException {
         JsonObject meta = JsonParser.parseString(Files.readString(dir.resolve("capture.json"))).getAsJsonObject();
