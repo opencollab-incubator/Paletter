@@ -39,7 +39,7 @@ public final class CreativeProbe {
         Path out = Path.of(options.get("out")).toAbsolutePath();
         Path cache = options.containsKey("cache") ? Path.of(options.get("cache")) : BdsDistribution.defaultCache();
         BdsDistribution distribution = BdsDistribution.resolve(false, options.getOrDefault("version", "1.26.63.1"));
-        Path server = cache.resolve("servers").resolve("creative-probe-" + distribution.platform() + "-" + distribution.version());
+        Path server = distribution.serverDirectory(cache, "creative-probe-");
         if (!Files.exists(BdsServer.executable(server))) {
             BdsDistribution.extract(distribution.zip(cache), server);
         }

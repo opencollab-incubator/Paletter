@@ -11,10 +11,13 @@ public final class Versions {
      * counts as 0.
      */
     public static final Comparator<String> ORDER = Versions::compare;
-    /** A BDS build number: four dotted numbers ({@code 1.26.63.1}). Builds name directories, so nothing else is one. */
-    private static final Pattern BUILD = Pattern.compile("[0-9]+(\\.[0-9]+){3}");
+    /**
+     * A BDS build number: four dotted numbers of at most nine digits ({@code 1.26.63.1}). Builds name directories, so
+     * nothing else is one. Leading zeros stay: older builds have them ({@code 1.21.73.01} is the name of its zip).
+     */
+    private static final Pattern BUILD = Pattern.compile("[0-9]{1,9}(\\.[0-9]{1,9}){3}");
     /** A build or a line ({@code 1.26}, {@code 1.26.30}, {@code 1.26.30.5}), as a bound of a range of builds. */
-    private static final Pattern BOUND = Pattern.compile("[0-9]+(\\.[0-9]+){0,3}");
+    private static final Pattern BOUND = Pattern.compile("[0-9]{1,9}(\\.[0-9]{1,9}){0,3}");
 
     private Versions() {
     }

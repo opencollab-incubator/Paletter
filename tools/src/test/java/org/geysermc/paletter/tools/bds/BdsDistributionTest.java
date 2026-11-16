@@ -111,4 +111,21 @@ class BdsDistributionTest {
         assertThrows(IllegalArgumentException.class, () -> BdsDistribution.inside(cache, "."));
         assertEquals(cache.toAbsolutePath().normalize().resolve("1.26.63.1"), BdsDistribution.inside(cache, "1.26.63.1"));
     }
+
+    @Test
+    void deletingNeverEntersALink(@TempDir Path directory) throws IOException {
+        Path outside = Files.createDirectories(directory.resolve("outside"));
+        Files.writeString(outside.resolve("keep.txt"), "kept");
+        Path tree = Files.createDirectories(directory.resolve("tree/sub"));
+        Files.writeString(tree.resolve("a.txt"), "a");
+        try {
+            Files.createSymbolicLink(tree.resolve("link"), outside);
+        } catch (IOException | UnsupportedOperationException e) {
+            // Creating links needs a privilege on Windows; the walk is the same either way
+            org.junit.jupiter.api.Assumptions.abort("no symbolic links here: " + e);
+        }
+        BdsDistribution.deleteRecursively(directory.resolve("tree"));
+        assertFalse(Files.exists(directory.resolve("tree")));
+        assertEquals("kept", Files.readString(outside.resolve("keep.txt")));
+    }
 }

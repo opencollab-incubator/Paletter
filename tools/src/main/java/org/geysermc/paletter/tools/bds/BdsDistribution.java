@@ -7,12 +7,14 @@ import org.geysermc.paletter.tools.Versions;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
-import java.util.Comparator;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -145,7 +147,12 @@ public record BdsDistribution(String version, boolean preview, String platform, 
 
     /** Where {@link #extract(Path, boolean)} puts the server: {@code <cache>/servers/<platform>-<version>}. */
     public Path server(Path cache) {
-        return inside(cache.resolve("servers"), platform + "-" + version);
+        return serverDirectory(cache, "");
+    }
+
+    /** A server directory of this build for a probe of its own: {@code <cache>/servers/<prefix><platform>-<version>}. */
+    public Path serverDirectory(Path cache, String prefix) {
+        return inside(cache.resolve("servers"), prefix + platform + "-" + version);
     }
 
     /** What runs on an extracted server. */
@@ -196,15 +203,39 @@ public record BdsDistribution(String version, boolean preview, String platform, 
         }
     }
 
+    /**
+     * Deletes a file or a directory with everything in it. A symbolic link, or a junction or other reparse point, is
+     * deleted itself: what it points to is never entered.
+     */
     public static void deleteRecursively(Path path) throws IOException {
-        if (Files.notExists(path)) {
+        if (Files.notExists(path, LinkOption.NOFOLLOW_LINKS)) {
             return;
         }
-        try (Stream<Path> files = Files.walk(path)) {
-            for (Path file : files.sorted(Comparator.reverseOrder()).toList()) {
-                Files.delete(file);
+        Files.walkFileTree(path, new SimpleFileVisitor<>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attributes) throws IOException {
+                if (attributes.isSymbolicLink() || attributes.isOther()) {
+                    Files.delete(directory);
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+                return FileVisitResult.CONTINUE;
             }
-        }
+
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path directory, IOException error) throws IOException {
+                if (error != null) {
+                    throw error;
+                }
+                Files.delete(directory);
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 
     /** The default cache: {@code $PALETTER_BDS_CACHE}, else {@code <gradle user home>/caches/paletter/bds}. */

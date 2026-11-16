@@ -106,7 +106,7 @@ public final class EducationProbe {
     public static void run(Path root, Map<String, String> options) throws Exception {
         Path cache = options.containsKey("cache") ? Path.of(options.get("cache")) : BdsDistribution.defaultCache();
         BdsDistribution distribution = BdsDistribution.resolve(false, options.get("version"));
-        Path server = cache.resolve("servers").resolve("education-" + distribution.platform() + "-" + distribution.version());
+        Path server = distribution.serverDirectory(cache, "education-");
         Path out = options.containsKey("out") ? Path.of(options.get("out")).toAbsolutePath()
             : distribution.runDirectory(cache, "education-");
         int port = Integer.parseInt(options.getOrDefault("port", "19300"));
@@ -181,7 +181,7 @@ public final class EducationProbe {
             throw new IOException("The Education Edition world has no content the other lacks: BDS " + distribution.version()
                 + " ignored educationFeaturesEnabled, or the capture is incomplete");
         }
-        Path target = root.resolve(Layout.BDS).resolve(distribution.version()).resolve("education.json");
+        Path target = BdsDistribution.inside(root.resolve(Layout.BDS), distribution.version()).resolve("education.json");
         Files.createDirectories(target.getParent());
         Files.writeString(target, GSON.toJson(result.toJson(distribution.version(), protocol)) + "\n", StandardCharsets.UTF_8);
         System.out.println("Wrote " + root.relativize(target));

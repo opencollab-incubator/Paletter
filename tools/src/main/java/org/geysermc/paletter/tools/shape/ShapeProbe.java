@@ -61,9 +61,8 @@ public final class ShapeProbe {
     public static void run(Path root, Map<String, String> options) throws Exception {
         Path cache = options.containsKey("cache") ? Path.of(options.get("cache")) : BdsDistribution.defaultCache();
         BdsDistribution distribution = BdsDistribution.resolve(false, options.get("version"));
-        String name = "shapes-" + distribution.platform() + "-" + distribution.version();
-        Path server = cache.resolve("servers").resolve(name);
-        Path work = cache.resolve("runs").resolve(name);
+        Path server = distribution.serverDirectory(cache, "shapes-");
+        Path work = distribution.runDirectory(cache, "shapes-");
         int port = Integer.parseInt(options.getOrDefault("port", "19310"));
         int timeout = Integer.parseInt(options.getOrDefault("timeout", "300"));
         BdsDistribution.deleteRecursively(work);
