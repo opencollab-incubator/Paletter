@@ -40,7 +40,11 @@ public final class CanonicalBlocks {
     private final int offset;
     private final NbtMap[] states;
     private final CustomBlock[] customs;
-    /** The types of {@link #customs}, so a custom id gives its handle without looking the block up. */
+    /**
+     * The types of {@link #customs}, taken from {@link BedrockBlockType#of(CustomBlock)} (its weak map, under its lock) once,
+     * when this extension is made. A custom id then gives its handle from this array: the map is still where every type
+     * of a custom block comes from, the hot path only no longer goes through it.
+     */
     private final BedrockBlockType[] customTypes;
     /** The canonical id of the first state of each of {@link #customs}, ascending. */
     private final int[] customStarts;
