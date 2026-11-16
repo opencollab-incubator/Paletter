@@ -19,7 +19,9 @@
 #     update writes its report to `data/bds/<build>/update-report.md` (committed with the data, and the body of the
 #     pull request). It exits with 2 when the report lists decisions: the pull request is still opened, for a human to
 #     decide them; any other failure fails the run after the issue is updated.
-# When a run is clean (no failure, no difference), the open issue of its channel is closed with a comment.
+# When a run is clean (no failure, no difference, no data file changed), the open issue of its channel that this workflow
+# opened (author github-actions, its exact title) is closed with a comment; a manual run of an explicit `version` closes
+# nothing. An update that changes no data file does not write its report into the data, so a clean run has no patch.
 # A manual run can check one channel only, and with `verify-only` runs `update --verify-only` and stops after the report
 # (nothing written, no issue, no pull request).
 #
@@ -161,7 +163,8 @@ jobs:
             fi
             # Only the data paths, new files included, without renames (publish checks every path)
             git add -A -- $DATA_PATHS
-            # A clean run still rewrites its own report (the date)
+            # Clean: the report has nothing to say and no data file changed. update writes its report into the data only
+            # with a data change; the exclusion keeps a report alone from ever counting as one
             if [ "$CODE" = 0 ] && [ "$VERDICT" = "OK: no changes" ] \
                 && git diff --cached --quiet -- $DATA_PATHS ':(exclude)data/bds/*/update-report.md'; then
               DIFFERS=false
@@ -226,6 +229,11 @@ jobs:
         channel: ${{ fromJSON(inputs.channel == 'release' && '["release"]' || inputs.channel == 'preview' && '["preview"]' || '["release","preview"]') }}
     env:
       CHANNEL: ${{ matrix.channel }}
+      # The issue this workflow opens; only an open issue with this title by github-actions is commented on or closed,
+      # never one a human filed with the same labels (OWN_ISSUE: jq over `gh issue list --json number,title,author`)
+      ISSUE_TITLE: "BDS data: ${{ matrix.channel }} differs from the committed data"
+      OWN_ISSUE: >-
+        [.[] | select(.title == $title and (.author.login | IN("app/github-actions", "github-actions", "github-actions[bot]")))][0].number // empty
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -262,7 +270,6 @@ jobs:
         run: |
           gh label create bds-data --color 1d76db --description "Automated BDS data check" 2>/dev/null || true
           gh label create "$CHANNEL" --color c5def5 2>/dev/null || true
-          TITLE="BDS data: $CHANNEL differs from the committed data"
           ISSUE="$RUNNER_TEMP/issue.md"
           MARKER="<!-- report-hash: $HASH -->"
           {
@@ -272,23 +279,24 @@ jobs:
             # GitHub limits bodies to 65536 characters
             if [ -f "$RUNNER_TEMP/in/report.md" ]; then head -c 60000 "$RUNNER_TEMP/in/report.md"; else echo "The run wrote no report; see the logs."; fi
           } > "$ISSUE"
-          NUMBER=$(gh issue list --label bds-data --label "$CHANNEL" --state open --json number --jq '.[0].number')
+          NUMBER=$(gh issue list --label bds-data --label "$CHANNEL" --state open --json number,title,author | jq -r --arg title "$ISSUE_TITLE" "$OWN_ISSUE")
           if [ -z "$NUMBER" ]; then
-            gh issue create --title "$TITLE" --label bds-data --label "$CHANNEL" --body-file "$ISSUE"
+            gh issue create --title "$ISSUE_TITLE" --label bds-data --label "$CHANNEL" --body-file "$ISSUE"
           elif ! gh issue view "$NUMBER" --json body,comments --jq '[.body] + [.comments[].body] | join("\n")' | grep -qF "$MARKER"; then
             gh issue comment "$NUMBER" --body-file "$ISSUE"
           else
             echo "Issue #$NUMBER already has this report"
           fi
 
+      # Not on a manual run of an explicit version: an older or other build being clean says nothing about the newest
       - name: Close the issue of a clean run
-        if: steps.result.outputs.differs == 'false'
+        if: steps.result.outputs.differs == 'false' && !inputs.version
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.result.outputs.version }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          NUMBER=$(gh issue list --label bds-data --label "$CHANNEL" --state open --json number --jq '.[0].number')
+          NUMBER=$(gh issue list --label bds-data --label "$CHANNEL" --state open --json number,title,author | jq -r --arg title "$ISSUE_TITLE" "$OWN_ISSUE")
           if [ -n "$NUMBER" ]; then
             gh issue close "$NUMBER" --comment "BDS $VERSION matches the committed data. Run: $RUN_URL"
           fi
@@ -321,8 +329,11 @@ jobs:
           fi
           git apply --check "$PATCH"
           git apply "$PATCH"
-          # The versioned report, committed with the data, is the pull request body
-          head -c 60000 "data/bds/$VERSION/update-report.md" > "$RUNNER_TEMP/pr-body.md"
+          # The versioned report, committed with the data, is the pull request body; when the patch has none (only
+          # regenerated code changed), the run's own copy of it
+          BODY="data/bds/$VERSION/update-report.md"
+          grep -qxF "$BODY" "$RUNNER_TEMP/paths.txt" || BODY="$RUNNER_TEMP/in/report.md"
+          head -c 60000 "$BODY" > "$RUNNER_TEMP/pr-body.md"
           echo "changed=true" >> "$GITHUB_OUTPUT"
 
       - name: Open or update the pull request

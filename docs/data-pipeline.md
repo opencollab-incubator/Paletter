@@ -141,8 +141,9 @@ hold nothing Paletter needs.
 - `bds-data.yml` runs `update` once a day for the release and preview channels on Windows BDS (a Windows runner, like
   the committed captures), then `generateComponentApi` and `:paletter:apiDump`. On a failure or a difference it opens
   or comments on an issue and opens a pull request from `bds-data/<channel>` with the updated data (only data and
-  generated paths; the issue and pull request bodies are written to the runner's temp directory). A clean run closes
-  the channel's open issue. A manual run can pick one channel and stop after the report (`verify-only`).
+  generated paths; the issue and pull request bodies are written to the runner's temp directory). A clean run (no
+  failure, no difference, no data file changed) closes the channel's open issue that the workflow opened; a manual run
+  of an explicit version closes nothing. A manual run can pick one channel and stop after the report (`verify-only`).
   The capture job runs BDS and Gradle with a read-only token and no secrets; a separate publish job, which runs no
   build, applies the data patch (rejected if it touches other paths) and writes the issue and pull request. A patch
   that changes generated code needs the `BDS_DATA_TOKEN` secret, so the build runs on its pull request.
