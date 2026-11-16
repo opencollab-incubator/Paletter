@@ -81,7 +81,7 @@ tasks.jar {
 val compileModuleInfo = tasks.register<JavaCompile>("compileModuleInfo") {
     group = "verification"
     description = "Compiles module-info.java against the main classes, validating the declared API packages"
-    val main = sourceSets.main.get()
+    val mainClasses = sourceSets.main.get().output.classesDirs
     source(moduleInfo)
     classpath = files()
     destinationDirectory.set(layout.buildDirectory.dir("module-info"))
@@ -92,12 +92,12 @@ val compileModuleInfo = tasks.register<JavaCompile>("compileModuleInfo") {
         it.name.startsWith("bedrock-codec") || it.name.startsWith("common-") || it.name.startsWith("nbt-") || it.name.startsWith("checker-qual")
     }
     inputs.files(modulePath)
-    inputs.files(main.output.classesDirs)
+    inputs.files(mainClasses)
     doFirst {
         options.compilerArgs.addAll(listOf(
             "-Xlint:-requires-transitive-automatic",
             "--module-path", modulePath.asPath,
-            "--patch-module", "org.geysermc.paletter=" + main.output.classesDirs.asPath
+            "--patch-module", "org.geysermc.paletter=" + mainClasses.asPath
         ))
     }
 }
