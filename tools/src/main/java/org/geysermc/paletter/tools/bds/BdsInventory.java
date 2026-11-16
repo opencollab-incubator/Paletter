@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.geysermc.paletter.tools.Versions;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -326,29 +327,13 @@ public final class BdsInventory {
         }
         Path result = null;
         try (var dirs = Files.list(bds)) {
-            for (Path dir : dirs.sorted((a, b) -> compareVersions(a.getFileName().toString(), b.getFileName().toString())).toList()) {
-                if (compareVersions(dir.getFileName().toString(), version) < 0 && Files.isRegularFile(dir.resolve(FILE))) {
+            for (Path dir : dirs.sorted((a, b) -> Versions.compare(a.getFileName().toString(), b.getFileName().toString())).toList()) {
+                if (Versions.compare(dir.getFileName().toString(), version) < 0 && Files.isRegularFile(dir.resolve(FILE))) {
                     result = dir.resolve(FILE);
                 }
             }
         }
         return result;
-    }
-
-    static int compareVersions(String a, String b) {
-        String[] x = a.split("\\.");
-        String[] y = b.split("\\.");
-        for (int i = 0; i < Math.min(x.length, y.length); i++) {
-            int c = Integer.compare(number(x[i]), number(y[i]));
-            if (c != 0) {
-                return c;
-            }
-        }
-        return Integer.compare(x.length, y.length);
-    }
-
-    private static int number(String part) {
-        return part.chars().allMatch(Character::isDigit) && !part.isEmpty() ? Integer.parseInt(part) : -1;
     }
 
     public static String json(JsonObject inventory) {

@@ -9,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -123,7 +122,7 @@ public final class BdsRunner {
 
     private void installPack(Path server) throws IOException {
         Path pack = server.resolve("behavior_packs").resolve(packDirectory);
-        deleteRecursively(pack);
+        BdsDistribution.deleteRecursively(pack);
         try (Stream<Path> files = Files.walk(addon)) {
             for (Path file : files.toList()) {
                 Path target = pack.resolve(addon.relativize(file).toString());
@@ -145,20 +144,9 @@ public final class BdsRunner {
 
         // A fresh world every time: nothing of a previous run (or a previous BDS version) leaks into the dump
         Path world = server.resolve("worlds").resolve(WORLD);
-        deleteRecursively(world);
+        BdsDistribution.deleteRecursively(world);
         Files.createDirectories(world);
         Files.writeString(world.resolve("world_behavior_packs.json"),
             "[{\"pack_id\": \"" + uuid + "\", \"version\": " + version + "}]\n");
-    }
-
-    private static void deleteRecursively(Path path) throws IOException {
-        if (Files.notExists(path)) {
-            return;
-        }
-        try (Stream<Path> files = Files.walk(path)) {
-            for (Path file : files.sorted(Comparator.reverseOrder()).toList()) {
-                Files.delete(file);
-            }
-        }
     }
 }
