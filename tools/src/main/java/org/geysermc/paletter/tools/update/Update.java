@@ -1012,6 +1012,9 @@ public final class Update {
             }
             stage(bdsData.resolve(distribution.version()).resolve(BdsInventory.FILE),
                 BdsInventory.json(inventory).getBytes(StandardCharsets.UTF_8), "BDS inventory " + distribution.version());
+        } catch (org.geysermc.paletter.tools.Http.NetworkException e) {
+            // The Linux zip is only read for the inventory: without the network there is nothing to inventory, nothing failed
+            report.check(Report.Status.SKIP, "BDS inventory", "the Linux build could not be downloaded: " + e.getMessage());
         } catch (Exception e) {
             report.fail("BDS inventory", e);
         }

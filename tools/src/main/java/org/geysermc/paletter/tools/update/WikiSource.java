@@ -1,10 +1,8 @@
 package org.geysermc.paletter.tools.update;
 
+import org.geysermc.paletter.tools.Http;
+
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,7 +30,6 @@ final class WikiSource {
     private static final String BASE = "https://raw.githubusercontent.com/Bedrock-OSS/bedrock-wiki/wiki/docs/";
     static final List<String> COMPONENT_PAGES = List.of("blocks/block-components.md", "items/item-components.md");
     static final List<String> HISTORY_PAGES = List.of("blocks/block-format-history.md", "items/item-format-history.md");
-    private static final HttpClient HTTP = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build();
 
     private static final Pattern COMPONENT = Pattern.compile("^\"(minecraft:[a-z0-9_]+)\"");
     private static final Pattern KEY_BULLET = Pattern.compile("^(\\s*)-\\s+`([A-Za-z0-9_*]+)`\\s+—");
@@ -59,13 +56,9 @@ final class WikiSource {
         Path file = cache.resolve("wiki").resolve(page.replace('/', '_'));
         try {
             if (!Files.exists(file)) {
-                HttpResponse<String> response = HTTP.send(HttpRequest.newBuilder(URI.create(BASE + page)).header("User-Agent", "Paletter").build(),
-                    HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-                if (response.statusCode() != 200) {
-                    throw new IOException("HTTP " + response.statusCode());
-                }
+                String markdown = Http.DEFAULT.get(BASE + page);
                 Files.createDirectories(file.getParent());
-                Files.writeString(file, response.body(), StandardCharsets.UTF_8);
+                Files.writeString(file, markdown, StandardCharsets.UTF_8);
             }
             return Files.readString(file, StandardCharsets.UTF_8);
         } catch (IOException | InterruptedException e) {

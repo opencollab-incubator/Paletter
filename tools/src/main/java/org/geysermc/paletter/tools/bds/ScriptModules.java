@@ -3,12 +3,10 @@ package org.geysermc.paletter.tools.bds;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.geysermc.paletter.tools.Http;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,9 +24,7 @@ public final class ScriptModules {
     /** @return the beta dependency version for the build, e.g. {@code 2.12.0-beta} for {@code 1.26.63.1} */
     public static String betaVersion(String bdsVersion) throws IOException, InterruptedException {
         // the abbreviated metadata: only the version list
-        HttpRequest request = HttpRequest.newBuilder(URI.create(REGISTRY)).header("Accept", "application/vnd.npm.install-v1+json").build();
-        String body = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build()
-            .send(request, HttpResponse.BodyHandlers.ofString()).body();
+        String body = Http.DEFAULT.get(REGISTRY, Map.of("Accept", "application/vnd.npm.install-v1+json"));
         return betaVersion(JsonParser.parseString(body).getAsJsonObject().getAsJsonObject("versions"), bdsVersion);
     }
 

@@ -2,19 +2,18 @@ package org.geysermc.paletter.tools.bds;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import org.geysermc.paletter.tools.Http;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Comparator;
+import java.util.Map;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -32,7 +31,8 @@ import java.util.zip.ZipInputStream;
  */
 public record BdsDistribution(String version, boolean preview, String platform, String url) {
     static final String LINKS = "https://net-secondary.web.minecraft-services.net/api/v1.0/download/links";
-    private static final HttpClient HTTP = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build();
+    /** The zips have been downloaded with a browser-like agent from the start; a plain one is not known to work. */
+    private static final Map<String, String> ZIP_HEADERS = Map.of("User-Agent", "Mozilla/5.0 " + Http.USER_AGENT);
 
     /**
      * @param version a BDS version such as {@code 1.26.51.1}, or {@code null} for the newest one of the channel. Older
@@ -55,8 +55,7 @@ public record BdsDistribution(String version, boolean preview, String platform, 
 
     private static String newest(boolean linux, boolean preview) throws IOException, InterruptedException {
         String type = "serverBedrock" + (preview ? "Preview" : "") + (linux ? "Linux" : "Windows");
-        String links = HTTP.send(HttpRequest.newBuilder(URI.create(LINKS)).header("User-Agent", "Paletter").build(),
-            HttpResponse.BodyHandlers.ofString()).body();
+        String links = Http.DEFAULT.get(LINKS);
         for (JsonElement link : JsonParser.parseString(links).getAsJsonObject().getAsJsonObject("result").getAsJsonArray("links")) {
             if (link.getAsJsonObject().get("downloadType").getAsString().equals(type)) {
                 return link.getAsJsonObject().get("downloadUrl").getAsString();
@@ -65,23 +64,33 @@ public record BdsDistribution(String version, boolean preview, String platform, 
         throw new IOException("No " + type + " download in " + links);
     }
 
-    /** Downloads the zip into the cache unless it is there. */
+    /**
+     * Downloads the zip into the cache unless a readable one is there. A download only replaces the cached zip once its
+     * central directory reads ({@link #checkZip}); a cached zip that does not read is downloaded again.
+     */
     public Path zip(Path cache) throws IOException, InterruptedException {
         Path zip = cache.resolve("zips").resolve(platform).resolve("bedrock-server-" + version + ".zip");
         if (Files.exists(zip)) {
-            return zip;
+            try {
+                checkZip(zip);
+                return zip;
+            } catch (IOException e) {
+                System.out.println("The cached " + zip + " does not read (" + e.getMessage() + "), downloading it again");
+            }
         }
         Files.createDirectories(zip.getParent());
         System.out.println("Downloading " + url);
-        Path part = zip.resolveSibling(zip.getFileName() + ".part");
-        HttpRequest request = HttpRequest.newBuilder(URI.create(url)).header("User-Agent", "Mozilla/5.0 Paletter").build();
-        HttpResponse<Path> response = HTTP.send(request, HttpResponse.BodyHandlers.ofFile(part));
-        if (response.statusCode() != 200) {
-            Files.deleteIfExists(part);
-            throw new IOException("Download of " + url + " failed with HTTP " + response.statusCode());
-        }
-        Files.move(part, zip, StandardCopyOption.REPLACE_EXISTING);
+        Http.DEFAULT.download(url, zip, ZIP_HEADERS, BdsDistribution::checkZip);
         return zip;
+    }
+
+    /** Throws unless the zip's central directory reads and lists at least one entry: a truncated download does not. */
+    static void checkZip(Path zip) throws IOException {
+        try (ZipFile file = new ZipFile(zip.toFile())) {
+            if (file.size() == 0) {
+                throw new IOException(zip.getFileName() + " has no entries");
+            }
+        }
     }
 
     /**
