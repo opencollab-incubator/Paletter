@@ -1,0 +1,24 @@
+# Weekly version updates. Actions stay pinned to a commit SHA; Dependabot updates the SHA and its version comment.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # gradle/libs.versions.toml, the plugins and the wrapper
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      gradle:
+        patterns: ["*"]
+    ignore:
+      # Timestamped snapshots, kept in sync with Geyser's gradle/libs.versions.toml by hand
+      - dependency-name: "org.cloudburstmc.protocol:*"
+      - dependency-name: "org.cloudburstmc.netty:*"
+      - dependency-name: "dev.opencollab:*"
