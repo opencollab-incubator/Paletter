@@ -82,8 +82,9 @@ A run downloads BDS and, in `<cache>/runs/<platform>-<version>/`:
 4. Captures the add-on world (`data/addons/capture`) and keeps its content log.
 5. Checks the assumptions the library relies on: sequential block ids sorted by name hash, custom block ids from 10000
    in descending identifier order, custom block items at `255 - block_id`, and the creative order rule.
-6. Compares everything against the committed data. A changed wire shape is a **WIRE FORMAT CHANGE** at the top of the
-   report.
+6. Compares everything against the committed data: a build with committed captures against its own, a build not
+   bundled yet against the newest older build. Only the latter can show new protocol windows: a changed wire shape is a
+   **WIRE FORMAT CHANGE** at the top of the report.
 7. Unless `--verify-only`: imports a new protocol as a new bundled version, or refreshes item tags and default states of
    an existing one; writes the new captures; regenerates the component API and the vanilla constants.
 

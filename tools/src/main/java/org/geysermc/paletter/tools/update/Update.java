@@ -53,6 +53,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -942,14 +943,15 @@ public final class Update {
     // ---------------------------------------------------------------------------------------------------------------
     // Comparison
 
-    /** The Script API view against the committed baseline dump of the newest bundled release. */
+    /** The Script API view against the committed dump of this build, or of the build before ({@link #baseline}). */
     private void scriptApi(BdsDistribution distribution, BdsDump dump, Runs runs) throws IOException {
-        Path baselineFile = latestDump();
+        String baselineBuild = baseline(distribution.version(), committedBuilds("dump.json.gz"));
+        Path baselineFile = baselineBuild == null ? null : bdsData.resolve(baselineBuild).resolve("dump.json.gz");
         Path target = bdsData.resolve(distribution.version()).resolve("dump.json.gz");
         if (baselineFile == null) {
             report.check(Report.Status.DIFF, "Script API vs baseline", "no baseline dump in data/bds/*/dump.json.gz");
         } else {
-            String baselineVersion = baselineFile.getFileName().toString().replace(".json.gz", "");
+            String baselineVersion = baselineBuild;
             BdsDump baseline = BdsDump.parse(readGzipText(baselineFile), baselineVersion);
             Diff diff = Diff.scriptApi(baseline, dump);
             report.check(diff.identical() ? Report.Status.PASS : Report.Status.DIFF, "Script API vs baseline " + baselineVersion,
@@ -975,7 +977,8 @@ public final class Update {
                     + "(no Block*Description, no Scripting::Reflection bindings): nothing to inventory");
                 return;
             }
-            Path previous = BdsInventory.previous(bdsData, distribution.version());
+            String previousBuild = baseline(distribution.version(), committedBuilds(BdsInventory.FILE));
+            Path previous = previousBuild == null ? null : bdsData.resolve(previousBuild).resolve(BdsInventory.FILE);
             if (previous == null) {
                 report.check(Report.Status.INFO, "BDS inventory", "no inventory of an older build to diff against");
             } else {
@@ -1190,15 +1193,26 @@ public final class Update {
 
     /** Component wire shapes: the new add-on and vanilla captures against the committed ones. */
     private void shapes(BdsDistribution distribution, Runs runs) throws Exception {
-        Path previous = latestAddonCapture(bdsData, previewBuilds());
+        String previousBuild = baseline(distribution.version(), committedBuilds("addon/custom_item_registry.nbt"));
+        Path previous = previousBuild == null ? null : bdsData.resolve(previousBuild).resolve("addon");
         Path target = bdsData.resolve(distribution.version()).resolve("addon");
         List<String> files = List.of("custom_block_properties.nbt", "custom_item_registry.nbt");
         WireShapes captured = WireShapes.ofCapture(runs.customCapture);
 
         if (previous != null) {
             WireShapes earlier = WireShapes.ofCapture(previous);
-            report(Diff.shapes(earlier.components(), captured.components()), "add-on components vs " + previous.getParent().getFileName());
-            reportValues(Diff.values(earlier.values(), captured.values()), "add-on components vs " + previous.getParent().getFileName());
+            if (previousBuild.equals(distribution.version())) {
+                // This build's own committed capture: a difference is BDS sending it differently now, not a new wire format
+                String what = "add-on components vs the committed capture of " + previousBuild;
+                Diff shapes = Diff.shapes(earlier.components(), captured.components());
+                report.check(shapes.identical() ? Report.Status.PASS : Report.Status.DIFF, "Component shapes", what + ": "
+                    + (shapes.identical() ? "identical" : shapes.count() + " differences; re-capture this build and review the diff"));
+                report.diff("Component shapes: " + what, shapes);
+                reportValues(Diff.values(earlier.values(), captured.values()), what);
+            } else {
+                report(Diff.shapes(earlier.components(), captured.components()), "add-on components vs " + previousBuild);
+                reportValues(Diff.values(earlier.values(), captured.values()), "add-on components vs " + previousBuild);
+            }
         }
         // Vanilla data driven items and blocks: the reference version against the capture
         if (runs.imported != null) {
@@ -1267,7 +1281,16 @@ public final class Update {
         specOptions.put("port", String.valueOf(port + 10));
         specOptions.put("protocol", String.valueOf(runs.protocol));
         specOptions.put("out", out.toString());
-        Path previous = previousSpecCapture(runs.protocol, out);
+        String previousBuild = baseline(distribution.version(), committedBuilds("spec/capture.json"));
+        boolean own = distribution.version().equals(previousBuild);
+        Path previous = previousBuild == null ? null : bdsData.resolve(previousBuild).resolve("spec");
+        if (own && write) {
+            // The capture replaces the committed one: keep that to compare with
+            Path committed = work.resolve("spec-committed");
+            BdsDistribution.deleteRecursively(committed);
+            copyRecursively(previous, committed);
+            previous = committed;
+        }
         try {
             if (new SpecCapture(root, specOptions).run() != 0) {
                 report.check(Report.Status.FAIL, "Spec capture", "failed");
@@ -1283,7 +1306,7 @@ public final class Update {
         }
         if (previous != null) {
             List<SpecDiff.Change> changes = SpecDiff.compare(previous, out);
-            String against = previous.getParent().getFileName().toString();
+            String against = own ? "the committed capture of " + previousBuild : previousBuild;
             Map<String, List<SpecDiff.Change>> byComponent = new java.util.TreeMap<>();
             changes.forEach(change -> byComponent.computeIfAbsent(change.component(), k -> new ArrayList<>()).add(change));
             report.check(changes.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Spec capture values",
@@ -1292,10 +1315,14 @@ public final class Update {
             List<String> lines = new ArrayList<>();
             byComponent.forEach((component, list) -> {
                 long values = list.stream().filter(SpecDiff.Change::valueChange).count();
-                String how = transformOf(component) != null ? "its hand transform `Transforms." + transformOf(component) + "` needs a protocol check"
+                // Against this build's own capture BDS answers differently now: no new protocol window to check
+                String how = own ? "BDS sends it differently from the committed capture of this build: re-capture and review"
+                    : transformOf(component) != null ? "its hand transform `Transforms." + transformOf(component) + "` needs a protocol check"
                     : "the inferred mapping gets a protocol window (regenerate with :tools:inferMappings and :tools:generateComponentApi)";
-                report.wireChanges.add("spec capture vs " + against + ": " + component + ": " + list.size() + " leaves differ (" + values
-                    + " with another value); " + how);
+                if (!own) {
+                    report.wireChanges.add("spec capture vs " + against + ": " + component + ": " + list.size() + " leaves differ (" + values
+                        + " with another value); " + how);
+                }
                 lines.add("- `" + component + "`: " + how);
                 list.stream().limit(6).forEach(change -> lines.add("  - " + change));
                 if (list.size() > 6) {
@@ -1304,7 +1331,8 @@ public final class Update {
             });
             if (!lines.isEmpty()) {
                 report.section("Spec capture value changes vs " + against, lines);
-                report.todos.add("VALUE CHANGE in the spec capture vs " + against + ": review the protocol windows of the components listed in the report");
+                report.todos.add(own ? "The spec capture differs from the committed capture of this build: re-capture it and review the components listed in the report"
+                    : "VALUE CHANGE in the spec capture vs " + against + ": review the protocol windows of the components listed in the report");
             }
         }
         if (write) {
@@ -1329,26 +1357,47 @@ public final class Update {
         return Importer.readIndex(resources).stream().anyMatch(entry -> entry.protocol() > runs.protocol && !entry.preview());
     }
 
-    /** The newest spec capture of a protocol older than {@code protocol}, other than {@code except}. */
-    private Path previousSpecCapture(int protocol, Path except) throws IOException {
-        if (!Files.isDirectory(bdsData)) {
-            return null;
+    /**
+     * The committed build a capture of {@code build} is compared with: its own when it has one, so an already bundled
+     * build is verified against what was committed for it; else the newest older build that has one, so a build not
+     * bundled yet shows what changed since (and only then do differences hint at new protocol windows).
+     *
+     * @param committed the builds with such a capture
+     * @return the build, or null if no build qualifies
+     */
+    static String baseline(String build, Collection<String> committed) {
+        if (committed.contains(build)) {
+            return build;
         }
-        Path best = null;
-        int bestProtocol = Integer.MIN_VALUE;
+        return committed.stream().filter(other -> versionKey(other).compareTo(versionKey(build)) < 0)
+            .max(Comparator.comparing(Update::versionKey)).orElse(null);
+    }
+
+    /** The builds in {@code data/bds} that have {@code relative}; a release run leaves out the bundled preview's. */
+    private Set<String> committedBuilds(String relative) throws IOException {
+        Set<String> builds = new TreeSet<>();
+        if (!Files.isDirectory(bdsData)) {
+            return builds;
+        }
+        Set<String> skip = previewBuilds();
         try (Stream<Path> dirs = Files.list(bdsData)) {
-            for (Path dir : dirs.map(d -> d.resolve("spec")).filter(d -> Files.exists(d.resolve("capture.json"))).toList()) {
-                if (dir.equals(except)) {
-                    continue;
-                }
-                int p = JsonParser.parseString(Files.readString(dir.resolve("capture.json"))).getAsJsonObject().get("protocol").getAsInt();
-                if (p < protocol && p > bestProtocol) {
-                    best = dir;
-                    bestProtocol = p;
+            dirs.filter(dir -> Files.exists(dir.resolve(relative))).map(dir -> dir.getFileName().toString())
+                .filter(build -> !skip.contains(build)).forEach(builds::add);
+        }
+        return builds;
+    }
+
+    private static void copyRecursively(Path source, Path target) throws IOException {
+        try (Stream<Path> files = Files.walk(source)) {
+            for (Path file : files.toList()) {
+                Path copy = target.resolve(source.relativize(file).toString());
+                if (Files.isDirectory(file)) {
+                    Files.createDirectories(copy);
+                } else {
+                    Files.copy(file, copy, StandardCopyOption.REPLACE_EXISTING);
                 }
             }
         }
-        return best;
     }
 
     /** The hand transform of a component, if {@link HandTransforms} names one (component level or for a field). */

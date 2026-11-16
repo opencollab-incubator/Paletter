@@ -28,6 +28,18 @@ class UpdateTest {
     }
 
     @Test
+    void aBundledBuildIsVerifiedAgainstItsOwnCapture() {
+        List<String> committed = List.of("1.26.45.1", "1.26.52.3", "1.26.63.1");
+        // Already bundled: its own committed capture, not the build before
+        assertEquals("1.26.63.1", Update.baseline("1.26.63.1", committed));
+        assertEquals("1.26.52.3", Update.baseline("1.26.52.3", committed));
+        // Not bundled yet: the newest older build, what changed since
+        assertEquals("1.26.63.1", Update.baseline("1.26.70.24", committed));
+        assertEquals("1.26.52.3", Update.baseline("1.26.53.1", committed));
+        assertEquals(null, Update.baseline("1.26.30.1", committed));
+    }
+
+    @Test
     void canonicalDumpJsonIgnoresOrder() {
         String a = "{\"b\": {\"y\": [2, 1], \"x\": [\"b\", \"a\"]}, \"a\": 1}";
         String b = "{\"a\": 1, \"b\": {\"x\": [\"a\", \"b\"], \"y\": [1, 2]}}";
