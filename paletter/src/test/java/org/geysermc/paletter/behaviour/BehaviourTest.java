@@ -364,7 +364,10 @@ class BehaviourTest {
         }
     }
 
-    /** Orders {@code 1.26.63.1} before {@code 1.26.70.24}: number by number. */
+    /**
+     * Orders {@code 1.26.63.1} before {@code 1.26.70.24}: number by number, as {@code Versions.ORDER} of the tools, which
+     * this module's tests cannot see (the tools depend on this module).
+     */
     private static int compareBuilds(String a, String b) {
         int[] x = Arrays.stream(a.split("\\.")).mapToInt(Integer::parseInt).toArray();
         int[] y = Arrays.stream(b.split("\\.")).mapToInt(Integer::parseInt).toArray();

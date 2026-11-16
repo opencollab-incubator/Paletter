@@ -17,6 +17,7 @@ import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.data.WireShapes;
 import org.geysermc.paletter.tools.Layout;
+import org.geysermc.paletter.tools.Versions;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
@@ -1444,8 +1445,7 @@ public final class Update {
         if (committed.contains(build)) {
             return build;
         }
-        return committed.stream().filter(other -> versionKey(other).compareTo(versionKey(build)) < 0)
-            .max(Comparator.comparing(Update::versionKey)).orElse(null);
+        return committed.stream().filter(other -> Versions.compare(other, build) < 0).max(Versions.ORDER).orElse(null);
     }
 
     /** The builds in {@code data/bds} that have {@code relative}; a release run leaves out the bundled preview's. */
@@ -1909,7 +1909,7 @@ public final class Update {
         Set<String> skip = previewBuilds();
         try (Stream<Path> dirs = Files.list(bdsData)) {
             return dirs.filter(d -> !skip.contains(d.getFileName().toString())).map(d -> d.resolve("dump.json.gz")).filter(Files::exists)
-                .max(Comparator.comparing(f -> versionKey(f.getParent().getFileName().toString()))).orElse(null);
+                .max(Comparator.comparing(f -> f.getParent().getFileName().toString(), Versions.ORDER)).orElse(null);
         }
     }
 
@@ -1940,17 +1940,8 @@ public final class Update {
         }
         try (Stream<Path> files = Files.list(bdsData)) {
             return files.filter(f -> !skip.contains(f.getFileName().toString()) && Files.exists(f.resolve("addon/custom_item_registry.nbt")))
-                .max(Comparator.comparing(f -> versionKey(f.getFileName().toString()))).map(f -> f.resolve("addon")).orElse(null);
+                .max(Comparator.comparing(f -> f.getFileName().toString(), Versions.ORDER)).map(f -> f.resolve("addon")).orElse(null);
         }
-    }
-
-    /** Sortable form of a dotted version. */
-    private static String versionKey(String version) {
-        StringBuilder key = new StringBuilder();
-        for (String part : version.split("[.-]")) {
-            key.append(String.format("%08d", part.chars().allMatch(Character::isDigit) && !part.isEmpty() ? Integer.parseInt(part) : 0));
-        }
-        return key.toString();
     }
 
     private static VanillaData read(Path file) throws IOException {

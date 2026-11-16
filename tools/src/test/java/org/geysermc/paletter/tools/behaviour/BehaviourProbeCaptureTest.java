@@ -4,13 +4,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.geysermc.paletter.tools.Versions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.stream.Stream;
 
@@ -28,8 +28,7 @@ class BehaviourProbeCaptureTest {
     private static Path newest() {
         try (Stream<Path> builds = Files.list(ROOT.resolve("data/bds"))) {
             return builds.map(build -> build.resolve(BehaviourProbe.DIRECTORY)).filter(Files::isDirectory)
-                .max(Comparator.comparing(probe -> Arrays.stream(probe.getParent().getFileName().toString().split("\\."))
-                    .mapToInt(Integer::parseInt).toArray(), Arrays::compare))
+                .max(Comparator.comparing(probe -> probe.getParent().getFileName().toString(), Versions.ORDER))
                 .orElseThrow(() -> new IllegalStateException("No behaviour-probe capture in data/bds"));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
