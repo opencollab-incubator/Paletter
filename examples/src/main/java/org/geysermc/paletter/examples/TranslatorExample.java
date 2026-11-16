@@ -1,6 +1,5 @@
 package org.geysermc.paletter.examples;
 
-import org.cloudburstmc.protocol.bedrock.codec.v2225.Bedrock_v2225;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.PaletteLayer;
@@ -46,7 +45,7 @@ public final class TranslatorExample {
         Paletter paletter = Paletter.builder().layer(translator).build();
 
         // Java block state id -> Bedrock block handle, once (0 air, 1 stone, 2 lamp). Handles are the same in every version
-        Palette shared = paletter.palette(Bedrock_v2225.CODEC);
+        Palette shared = paletter.palette(paletter.latest().protocolVersion());
         BedrockBlockState[] javaToBedrock = {
             BedrockBlocks.AIR.defaultState(),
             BedrockBlocks.STONE.defaultState(),

@@ -1,7 +1,5 @@
 package org.geysermc.paletter.examples;
 
-import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
-import org.cloudburstmc.protocol.bedrock.codec.v2225.Bedrock_v2225;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
 import org.geysermc.paletter.Fallbacks;
@@ -38,12 +36,12 @@ public final class BedrockServerExample {
             .layer(server)
             .build();
 
-        // One palette per client version, compiled once and shared by all its players
-        BedrockCodec codec = Bedrock_v2225.CODEC;
-        Palette palette = paletter.palette(codec);
+        // One palette per client version, compiled once and shared by all its players; here the newest bundled version
+        // (a server takes the protocol version, or the codec, of the client's connection)
+        Palette palette = paletter.palette(paletter.latest().protocolVersion());
 
-        // Login: definition registries for the codec, block properties and hashed block ids for start game
-        palette.applyTo(codec.createHelper());
+        // Login: palette.applyTo(session.getCodecHelper()) sets the definition registries of the connection's codec;
+        // start game gets the block properties and hashed block ids
         StartGamePacket startGame = new StartGamePacket();
         palette.applyTo(startGame);
         System.out.println("hashed block ids: " + startGame.isBlockNetworkIdsHashed());

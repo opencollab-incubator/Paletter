@@ -1,6 +1,5 @@
 package org.geysermc.paletter.examples;
 
-import org.cloudburstmc.protocol.bedrock.codec.v2225.Bedrock_v2225;
 import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
@@ -64,12 +63,13 @@ public final class AnticheatExample {
     public static void main(String[] args) {
         // A server's custom block: its friction component is read with the same key
         CustomBlock slippery = CustomBlock.builder("example:slippery").component(Friction.of(0.02f)).build();
-        Palette palette = Paletter.builder().layer(PaletteLayer.builder("server").block(slippery).build()).build()
-            .palette(Bedrock_v2225.CODEC);
+        Paletter paletter = Paletter.builder().layer(PaletteLayer.builder("server").block(slippery).build()).build();
+        // The palette of the client's protocol version; here the newest bundled one
+        Palette palette = paletter.palette(paletter.latest().protocolVersion());
         AnticheatExample check = new AnticheatExample(palette);
 
         check.world.put(List.of(0, 63, 0), palette.runtimeId(BedrockBlocks.BLUE_ICE.defaultState()));
-        check.world.put(List.of(1, 63, 0), palette.blocks().block("example:slippery").defaultState().getRuntimeId());
+        check.world.put(List.of(1, 63, 0), palette.runtimeId(slippery.type().defaultState()));
         check.world.put(List.of(0, 64, 1), palette.runtimeId(BedrockBlocks.OAK_STAIRS.defaultState()));
 
         System.out.println("friction on blue ice: " + check.frictionUnder(0.5, 64, 0.5));
@@ -82,7 +82,7 @@ public final class AnticheatExample {
         System.out.println("blue ice friction: " + palette.blockBehaviour(BedrockBlocks.BLUE_ICE).explain(BlockBehaviour.FRICTION));
 
         // A custom block: set by the server, a BDS default (measured on BDS), or not known
-        BlockValues custom = palette.blockBehaviour(palette.blocks().block("example:slippery").defaultState().getRuntimeId());
+        BlockValues custom = palette.blockBehaviour(palette.runtimeId(slippery.type().defaultState()));
         System.out.println("custom friction: " + custom.explain(BlockBehaviour.FRICTION));
         System.out.println("custom explosion resistance: " + custom.explain(BlockBehaviour.EXPLOSION_RESISTANCE));
         System.out.println("custom destroy time: " + custom.getOrElse(BlockBehaviour.DESTROY_TIME, -2f) + ", "
