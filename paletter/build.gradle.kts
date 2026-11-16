@@ -4,6 +4,7 @@ plugins {
     `java-library`
     `maven-publish`
     id("me.champeau.gradle.japicmp") version "0.4.6"
+    id("me.champeau.jmh") version "0.7.2"
 }
 
 dependencies {
@@ -31,6 +32,18 @@ java {
 tasks.test {
     useJUnitPlatform()
     maxHeapSize = "1G"
+}
+
+// Microbenchmarks of the hot paths (src/jmh), not part of the build: `./gradlew :paletter:jmh`, narrowed with
+// `-Pjmh.includes=<regex>`. Results go to build/results/jmh.
+jmh {
+    jmhVersion.set("1.37")
+    fork.set(1)
+    warmupIterations.set(3)
+    warmup.set("1s")
+    iterations.set(5)
+    timeOnIteration.set("1s")
+    providers.gradleProperty("jmh.includes").orNull?.let { includes.set(listOf(it)) }
 }
 
 publishing {
