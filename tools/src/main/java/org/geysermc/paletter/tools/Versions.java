@@ -1,6 +1,7 @@
 package org.geysermc.paletter.tools;
 
 import java.util.Comparator;
+import java.util.regex.Pattern;
 
 /** The order of dotted versions, such as BDS builds ({@code 1.26.63.1}) and the names of {@code data/bds} directories. */
 public final class Versions {
@@ -10,8 +11,32 @@ public final class Versions {
      * counts as 0.
      */
     public static final Comparator<String> ORDER = Versions::compare;
+    /** A BDS build number: four dotted numbers ({@code 1.26.63.1}). Builds name directories, so nothing else is one. */
+    private static final Pattern BUILD = Pattern.compile("[0-9]+(\\.[0-9]+){3}");
+    /** A build or a line ({@code 1.26}, {@code 1.26.30}, {@code 1.26.30.5}), as a bound of a range of builds. */
+    private static final Pattern BOUND = Pattern.compile("[0-9]+(\\.[0-9]+){0,3}");
 
     private Versions() {
+    }
+
+    /**
+     * The build number, checked: four dotted numbers and nothing else, so it can name a file or directory.
+     *
+     * @throws IllegalArgumentException for anything else (a separator, {@code ..}, a suffix)
+     */
+    public static String requireBuild(String build) {
+        if (build == null || !BUILD.matcher(build).matches()) {
+            throw new IllegalArgumentException("Not a BDS build number (four dotted numbers, e.g. 1.26.63.1): " + build);
+        }
+        return build;
+    }
+
+    /** A bound of a range of builds, checked: one to four dotted numbers. */
+    public static String requireBound(String bound) {
+        if (bound == null || !BOUND.matcher(bound).matches()) {
+            throw new IllegalArgumentException("Not a BDS build or line (one to four dotted numbers, e.g. 1.26.30): " + bound);
+        }
+        return bound;
     }
 
     public static int compare(String a, String b) {

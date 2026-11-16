@@ -3,6 +3,7 @@ package org.geysermc.paletter.tools.bds;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import org.geysermc.paletter.tools.Http;
+import org.geysermc.paletter.tools.Versions;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +38,8 @@ public record BdsDistribution(String version, boolean preview, String platform, 
     /**
      * @param version a BDS version such as {@code 1.26.51.1}, or {@code null} for the newest one of the channel. Older
      *                builds stay downloadable under the same url scheme, but are not listed anywhere: the exact version
-     *                (including the patch) has to be known
+     *                (including the patch) has to be known. It names files and directories of the cache, so it must be four
+     *                dotted numbers ({@link Versions#requireBuild}), as must the newest one the links API names
      */
     public static BdsDistribution resolve(boolean preview, String version) throws IOException, InterruptedException {
         return resolve(!BdsServer.WINDOWS, preview, version);
@@ -46,11 +48,14 @@ public record BdsDistribution(String version, boolean preview, String platform, 
     /** @param linux the Linux build (else the Windows one), whatever this OS is */
     public static BdsDistribution resolve(boolean linux, boolean preview, String version) throws IOException, InterruptedException {
         String platform = (linux ? "linux" : "win") + (preview ? "-preview" : "");
+        if (version != null) {
+            Versions.requireBuild(version);
+        }
         String url = version != null
             ? "https://www.minecraft.net/bedrockdedicatedserver/bin-" + platform + "/bedrock-server-" + version + ".zip"
             : newest(linux, preview);
         String file = url.substring(url.lastIndexOf('/') + 1);
-        return new BdsDistribution(file.replace("bedrock-server-", "").replace(".zip", ""), preview, platform, url);
+        return new BdsDistribution(Versions.requireBuild(file.replace("bedrock-server-", "").replace(".zip", "")), preview, platform, url);
     }
 
     private static String newest(boolean linux, boolean preview) throws IOException, InterruptedException {
@@ -69,7 +74,7 @@ public record BdsDistribution(String version, boolean preview, String platform, 
      * central directory reads ({@link #checkZip}); a cached zip that does not read is downloaded again.
      */
     public Path zip(Path cache) throws IOException, InterruptedException {
-        Path zip = cache.resolve("zips").resolve(platform).resolve("bedrock-server-" + version + ".zip");
+        Path zip = zipFile(cache);
         if (Files.exists(zip)) {
             try {
                 checkZip(zip);
@@ -82,6 +87,34 @@ public record BdsDistribution(String version, boolean preview, String platform, 
         System.out.println("Downloading " + url);
         Http.DEFAULT.download(url, zip, ZIP_HEADERS, BdsDistribution::checkZip);
         return zip;
+    }
+
+    /** Where {@link #zip(Path)} keeps the zip: {@code <cache>/zips/<platform>/bedrock-server-<version>.zip}. */
+    public Path zipFile(Path cache) {
+        return inside(cache.resolve("zips").resolve(platform), "bedrock-server-" + version + ".zip");
+    }
+
+    /**
+     * The directory a run of this build works in: {@code <cache>/runs/<prefix><platform>-<version>}, removed and recreated
+     * by the run.
+     */
+    public Path runDirectory(Path cache, String prefix) {
+        return inside(cache.resolve("runs"), prefix + platform + "-" + version);
+    }
+
+    /**
+     * {@code directory/name}, checked to be inside {@code directory}: a name that the network or the command line gave
+     * (a build number) can never reach a path elsewhere, even if a check upstream missed it.
+     *
+     * @throws IllegalArgumentException when the name leaves the directory or is the directory itself
+     */
+    public static Path inside(Path directory, String name) {
+        Path base = directory.toAbsolutePath().normalize();
+        Path path = base.resolve(name).normalize();
+        if (!path.startsWith(base) || path.equals(base) || name.contains("/") || name.contains("\\")) {
+            throw new IllegalArgumentException("`" + name + "` is not a name inside " + base);
+        }
+        return path;
     }
 
     /** Throws unless the zip's central directory reads and lists at least one entry: a truncated download does not. */
@@ -112,7 +145,7 @@ public record BdsDistribution(String version, boolean preview, String platform, 
 
     /** Where {@link #extract(Path, boolean)} puts the server: {@code <cache>/servers/<platform>-<version>}. */
     public Path server(Path cache) {
-        return cache.resolve("servers").resolve(platform + "-" + version);
+        return inside(cache.resolve("servers"), platform + "-" + version);
     }
 
     /** What runs on an extracted server. */

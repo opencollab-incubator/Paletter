@@ -69,7 +69,7 @@ public final class SpecCapture {
         BdsDistribution distribution = BdsDistribution.resolve(preview, options.get("version"));
         int port = Integer.parseInt(options.getOrDefault("port", "19270"));
         int timeout = Integer.parseInt(options.getOrDefault("timeout", "600"));
-        Path work = cache.resolve("runs").resolve("spec-" + distribution.platform() + "-" + distribution.version());
+        Path work = distribution.runDirectory(cache, "spec-");
         BdsDistribution.deleteRecursively(work);
         Files.createDirectories(work);
         boolean probeKeys = options.containsKey("probe-keys");

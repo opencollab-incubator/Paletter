@@ -108,7 +108,7 @@ public final class EducationProbe {
         BdsDistribution distribution = BdsDistribution.resolve(false, options.get("version"));
         Path server = cache.resolve("servers").resolve("education-" + distribution.platform() + "-" + distribution.version());
         Path out = options.containsKey("out") ? Path.of(options.get("out")).toAbsolutePath()
-            : cache.resolve("runs").resolve("education-" + distribution.platform() + "-" + distribution.version());
+            : distribution.runDirectory(cache, "education-");
         int port = Integer.parseInt(options.getOrDefault("port", "19300"));
         int timeout = Integer.parseInt(options.getOrDefault("timeout", "300"));
         BdsDistribution.deleteRecursively(out);

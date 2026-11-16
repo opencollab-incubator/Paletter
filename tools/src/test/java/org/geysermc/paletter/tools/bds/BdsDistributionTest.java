@@ -17,8 +17,10 @@ import java.util.zip.ZipOutputStream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BdsDistributionTest {
     private static Path zip(Path file) throws IOException {
@@ -83,5 +85,30 @@ class BdsDistributionTest {
         } finally {
             server.stop(0);
         }
+    }
+
+    @Test
+    void aVersionNamesNothingButABuild() {
+        // Resolving a given version reads no network; a version that is no build number never reaches a path
+        assertDoesNotThrow(() -> BdsDistribution.resolve(false, false, "1.26.63.1"));
+        for (String bad : new String[] {"1.26.63.1/../../x", "1.26.63.1\\..\\x", "..", "1.26.63", "1.26.63.1-beta", ""}) {
+            assertThrows(IllegalArgumentException.class, () -> BdsDistribution.resolve(false, false, bad), bad);
+        }
+    }
+
+    @Test
+    void pathsOfABuildStayInTheCache(@TempDir Path cache) throws Exception {
+        BdsDistribution windows = BdsDistribution.resolve(false, false, "1.26.63.1");
+        assertTrue(windows.runDirectory(cache, "spec-").startsWith(cache.resolve("runs")));
+        assertTrue(windows.server(cache).startsWith(cache.resolve("servers")));
+        assertTrue(windows.zipFile(cache).startsWith(cache.resolve("zips")));
+        // A record built around the check still cannot leave the directory
+        BdsDistribution forged = new BdsDistribution("..\\..\\x", false, "win", null);
+        assertThrows(IllegalArgumentException.class, () -> forged.server(cache));
+        assertThrows(IllegalArgumentException.class, () -> BdsDistribution.inside(cache, ".."));
+        assertThrows(IllegalArgumentException.class, () -> BdsDistribution.inside(cache, "a/../../b"));
+        assertThrows(IllegalArgumentException.class, () -> BdsDistribution.inside(cache, "a\\b"));
+        assertThrows(IllegalArgumentException.class, () -> BdsDistribution.inside(cache, "."));
+        assertEquals(cache.toAbsolutePath().normalize().resolve("1.26.63.1"), BdsDistribution.inside(cache, "1.26.63.1"));
     }
 }
