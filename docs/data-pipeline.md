@@ -145,7 +145,8 @@ hold nothing Paletter needs.
   The capture job runs BDS and Gradle with a read-only token and no secrets; a separate publish job, which runs no
   build, applies the data patch (rejected if it touches other paths) and writes the issue and pull request. A patch
   that changes generated code needs the `BDS_DATA_TOKEN` secret, so the build runs on its pull request.
-- `javadoc.yml` publishes the Javadoc of `main` to GitHub Pages.
+- `javadoc.yml` publishes the Javadoc of `main` and of each release to GitHub Pages.
+- [releasing.md](releasing.md) lists the repository settings, secrets and Pages setup these workflows need.
 
 ## The component model
 
