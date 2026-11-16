@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.WeakHashMap;
 
 /**
  * A Bedrock block type: an identifier with its state properties. Vanilla types are the constants of
@@ -32,9 +31,6 @@ import java.util.WeakHashMap;
  * @since 0.1.0
  */
 public final class BedrockBlockType {
-    /** Weak in the block: a type must never reference its block, see {@link BlockTypeLayout#custom}. */
-    private static final Map<CustomBlock, BedrockBlockType> CUSTOM = new WeakHashMap<>();
-
     private final String identifier;
     private final @Nullable String fallback;
     private final boolean custom;
