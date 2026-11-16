@@ -16,10 +16,9 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  * <p>
  * Add-on JSON: {@code "minecraft:shooter"}.
  *
- * @param ammunition A list of ammunition entries that define which items can be used as projectiles for this shooter. A list of
- *        ammunition entries that define which items can be used as projectiles for this shooter. Each entry specifies
- *        the item, whether to search the offhand, inventory, and whether to use in creative mode. Add-on JSON {@code
- *        ammunition}. Default: <code>[]</code>.
+ * @param ammunition A list of ammunition entries that define which items can be used as projectiles for this shooter. Each entry
+ *        specifies the item, whether to search the offhand, inventory, and whether to use in creative mode. Add-on JSON
+ *        {@code ammunition}. Default: <code>[]</code>.
  * @param chargeOnDraw When true, the shooter begins charging when the player starts drawing, similar to a crossbow. Default is
  *        false. Add-on JSON {@code charge_on_draw}. Default: <code>false</code>.
  * @param maxDrawDuration The maximum time in seconds that a player can draw the shooter before it automatically fires or reaches
@@ -129,9 +128,8 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
     }
 
     /**
-     * A list of ammunition entries that define which items can be used as projectiles for this shooter. A list of
-     * ammunition entries that define which items can be used as projectiles for this shooter. Each entry specifies
-     * the item, whether to search the offhand, inventory, and whether to use in creative mode.
+     * A list of ammunition entries that define which items can be used as projectiles for this shooter. Each entry
+     * specifies the item, whether to search the offhand, inventory, and whether to use in creative mode.
      *
      * @param item Ammunition item description identifier. Add-on JSON {@code item}. Optional (null: not set). Compiled by the
      *        hand transform {@code Transforms.ammunitionItemDescriptor}.

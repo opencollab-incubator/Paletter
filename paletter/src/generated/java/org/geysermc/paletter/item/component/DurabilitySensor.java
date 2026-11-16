@@ -18,10 +18,9 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
  * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
  *
- * @param durabilityThresholds The list of both durability thresholds and effects emitted when each threshold is met. The list of both
- *        durability thresholds and effects emitted when each threshold is met. When multiple thresholds are met, only
- *        the threshold with the lowest durability after applying the damage is considered. Value must have at least 1
- *        items. Add-on JSON {@code durability_thresholds}. Required.
+ * @param durabilityThresholds The list of both durability thresholds and effects emitted when each threshold is met. When multiple
+ *        thresholds are met, only the threshold with the lowest durability after applying the damage is considered.
+ *        Value must have at least 1 items. Add-on JSON {@code durability_thresholds}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_durability_sensor?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:durability_sensor</a>
  * @since 0.1.0
  */
@@ -98,10 +97,9 @@ public record DurabilitySensor(
     }
 
     /**
-     * The list of both durability thresholds and effects emitted when each threshold is met. The list of both
-     * durability thresholds and effects emitted when each threshold is met. When multiple thresholds are met, only
-     * the threshold with the lowest durability after applying the damage is considered. Value must have at least 1
-     * items.
+     * The list of both durability thresholds and effects emitted when each threshold is met. When multiple
+     * thresholds are met, only the threshold with the lowest durability after applying the damage is considered.
+     * Value must have at least 1 items.
      *
      * @param durability The effects are emitted when the item durability value is less than or equal to this value. Add-on JSON {@code
      *        durability}. Default: <code>0</code>.

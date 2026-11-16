@@ -79,9 +79,14 @@ public final class BehaviourKeys {
      * @param component the add-on component, e.g. {@code minecraft:friction}
      * @param field the field of the component that writes the leaf (as in {@code mappings.json}); empty for the value of
      * the component itself (a number or boolean form)
-     * @param leaf the wire leaf, {@code <wire component>.<field>}
+     * @param leaf the wire leaf, {@code <wire component>.<field>}; null for the one leaf the field's value rules write
      */
     public record Leaf(String component, String field, String leaf) implements Wire {
+        /** A key read from the one wire leaf the field's value rules write ({@code mappings.json}). */
+        public Leaf(String component, String field) {
+            this(component, field, null);
+        }
+
         @Override
         public List<String> components() {
             return List.of(component);
@@ -111,10 +116,10 @@ public final class BehaviourKeys {
     public static final List<Key> KEYS = List.of(
         block("destroy_time", "Float", "Destroy time (\"hardness\") in seconds with bare hands before tool and effect factors; -1 for unbreakable blocks.",
             List.of("NATIVE:BlockComponentDirectData.mDestroySpeed"),
-            new Leaf("minecraft:destructible_by_mining", "seconds_to_destroy", "minecraft:destructible_by_mining.value")),
+            new Leaf("minecraft:destructible_by_mining", "seconds_to_destroy")),
         block("explosion_resistance", "Float", "", List.of("NATIVE:BlockComponentDirectData.mExplosionResistance"), null),
         block("friction", "Float", "Friction of an entity standing on the block: 0.6 for most blocks, 0.98 ice, 0.989 blue ice.",
-            List.of("NATIVE:BlockComponentDirectData.mFriction"), new Leaf("minecraft:friction", "", "minecraft:friction.value")),
+            List.of("NATIVE:BlockComponentDirectData.mFriction"), new Leaf("minecraft:friction", "")),
         block("solid", "Boolean", "Whether the block is solid and impassable ({@code Block.isSolid}: BDS's cached {@code Block::_isSolid()}).",
             List.of("SAPI:Block.isSolid"), null),
         block("collision_shape", "BlockShape", "The boxes entities collide with, without neighbours or position offsets (see {@link BlockShape}).",
@@ -123,9 +128,9 @@ public final class BehaviourKeys {
         block("outline_shape", "BlockShape", "The selection outline, one box, without the random offset some plants have.",
             List.of("NATIVE:BlockType.getOutline"), new Hand("outlineShape", List.of("minecraft:selection_box", "minecraft:transformation"))),
         block("light_emission", "Integer", "", List.of("NATIVE:BlockComponentDirectData.mLightEmission"),
-            new Leaf("minecraft:light_emission", "", "minecraft:light_emission.emission")),
+            new Leaf("minecraft:light_emission", "")),
         block("light_dampening", "Integer", "", List.of("NATIVE:BlockComponentDirectData.mLight"),
-            new Leaf("minecraft:light_dampening", "", "minecraft:light_dampening.lightLevel")),
+            new Leaf("minecraft:light_dampening", "")),
         block("can_contain_liquid", "Boolean", "Whether water can share the block (waterlogging).",
             List.of("SAPI:BlockPermutation.canContainLiquid(Water)"), null),
         block("liquid_blocking", "Boolean", "Whether the block stops flowing water.",
@@ -165,7 +170,7 @@ public final class BehaviourKeys {
             new Leaf("minecraft:max_stack_size", "value", "item_properties.max_stack_size")),
         item("max_damage", "Integer", "Durability; 0 for items that take no damage.",
             List.of("SAPI:ItemDurabilityComponent.maxDurability"), Conversion.ABSENT_ZERO,
-            new Leaf("minecraft:durability", "max_durability", "minecraft:durability.max_durability")),
+            new Leaf("minecraft:durability", "max_durability")),
         item("attack_damage", "Integer", "", List.of("NATIVE:Item.getAttackDamage"), new Leaf("minecraft:damage", "value", "item_properties.damage")),
         item("armor_value", "Integer", "", List.of("NATIVE:Item.getArmorValue"), null),
         item("toughness", "Integer", "", List.of("NATIVE:Item.getToughnessValue"), null),

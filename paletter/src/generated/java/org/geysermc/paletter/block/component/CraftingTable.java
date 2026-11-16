@@ -19,12 +19,11 @@ import org.geysermc.paletter.annotation.Experimental;
  *
  * @param craftingTags Defines the tags recipes should define to be crafted on this table. Limited to 64 tags. Each tag is limited to
  *        64 characters. Value must have at most 64 items. Add-on JSON {@code crafting_tags}. Required.
- * @param tableName Specifies the language file key that maps to what text will be displayed in the UI of this table. Specifies
- *        the language file key that maps to what text will be displayed in the UI of this table. If the string given
- *        can not be resolved as a loc string, the raw string given will be displayed. If this field is omitted, the
- *        name displayed will default to the name specified in the "display_name" component. If this block has no
- *        "display_name" component, the name displayed will default to the name of the block. Value must have at most
- *        256 items. Add-on JSON {@code table_name}. Optional (null: not set).
+ * @param tableName Specifies the language file key that maps to what text will be displayed in the UI of this table. If the
+ *        string given can not be resolved as a loc string, the raw string given will be displayed. If this field is
+ *        omitted, the name displayed will default to the name specified in the "display_name" component. If this block
+ *        has no "display_name" component, the name displayed will default to the name of the block. Value must have at
+ *        most 256 items. Add-on JSON {@code table_name}. Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_crafting_table?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:crafting_table</a>
  * @since 0.1.0
  */

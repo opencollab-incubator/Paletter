@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * {@code codegen/model/fixtures.json}: the hand-written inputs of the add-on generator (errata, content samples,
- * companions). See the file's comments.
+ * {@code data/model/fixtures.json}: the hand-written inputs of the add-on generator (errata, content samples,
+ * companions), with the generated {@code bds-feedback.json} and {@code bds-keys.json}. See the file's comments.
  */
 public final class Fixtures {
     /** The generated result of the key probe, in {@code data/model}. */

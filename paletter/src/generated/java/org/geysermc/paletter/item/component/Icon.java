@@ -15,11 +15,10 @@ import org.geysermc.paletter.internal.component.Check;
  * Add-on JSON: {@code "minecraft:icon"}.
  * Compiled by the hand transform {@code Transforms.iconTextures}.
  *
- * @param textures This map contains the different textures that can be used for the item's icon. This map contains the different
- *        textures that can be used for the item's icon. Default will contain the actual icon texture. Armor trim
- *        textures and palettes can be specified here as well. The icon textures are the keys from the
- *        resource_pack/textures/item_texture.json 'texture_data' object associated with the texture file. Add-on JSON
- *        {@code textures}. Optional (null: not set).
+ * @param textures This map contains the different textures that can be used for the item's icon. Default will contain the actual
+ *        icon texture. Armor trim textures and palettes can be specified here as well. The icon textures are the keys
+ *        from the resource_pack/textures/item_texture.json 'texture_data' object associated with the texture file.
+ *        Add-on JSON {@code textures}. Optional (null: not set).
  * @param texture The string form: the icon's default texture (item_texture.json short name). Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_icon?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:icon</a>
  * @since 0.1.0

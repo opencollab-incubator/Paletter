@@ -19,8 +19,7 @@ import org.geysermc.paletter.internal.component.Check;
  * Add-on JSON: {@code "minecraft:geometry"}.
  * Compiled by the hand transform {@code Transforms.geometry}.
  *
- * @param boneVisibility An optional list of true/false values that define the visibility of individual bones in the geometry file. An
- *        optional list of true/false values that define the visibility of individual bones in the geometry file. In
+ * @param boneVisibility An optional list of true/false values that define the visibility of individual bones in the geometry file. In
  *        order to set up 'bone_visibility', the geometry file name must be entered as an identifier. After the
  *        identifier has been specified, bone_visibility can be defined based on the names of the bones in the specified
  *        geometry file on a true/false basis. Note that all bones default to 'true,' so bones should only be defined if
@@ -29,46 +28,42 @@ import org.geysermc.paletter.internal.component.Check;
  *        the previous part_visibility component. As of 1.20.10, bone visibility values support Molang expressions,
  *        restoring functionality closer to the original experimental part_visibility component. Add-on JSON {@code
  *        bone_visibility}. Optional (null: not set).
- * @param culling An optional identifer of a culling definition. An optional identifer of a culling definition. The culling
- *        definition is used to determine which faces of the block should be culled when rendering. The culling
- *        definition can be used to optimize rendering performance by reducing the number of faces that need to be
- *        rendered. This identifier must match an existing culling definition in any of the currently loaded resource
- *        packs. This item requires a format version of at least 1.20.60. Data-driven culling rules are referenced by
- *        this identifier and were added in 1.20.60. Add-on JSON {@code culling}. Optional (null: not set).
- * @param cullingLayer [Experimental] - A string that allows culling rule to group multiple blocks together when comparing them.
- *        [Experimental] - A string that allows culling rule to group multiple blocks together when comparing them. When
+ * @param culling An optional identifer of a culling definition. The culling definition is used to determine which faces of the
+ *        block should be culled when rendering. The culling definition can be used to optimize rendering performance by
+ *        reducing the number of faces that need to be rendered. This identifier must match an existing culling
+ *        definition in any of the currently loaded resource packs. This item requires a format version of at least
+ *        1.20.60. Data-driven culling rules are referenced by this identifier and were added in 1.20.60. Add-on JSON
+ *        {@code culling}. Optional (null: not set).
+ * @param cullingLayer [Experimental] - A string that allows culling rule to group multiple blocks together when comparing them. When
  *        using the minecraft namespace, the only allowed culling layer identifiers are :
  *        "minecraft:culling_layer.undefined" or "minecraft:culling_layer.leaves". Additionally, the feature is
  *        currently only usable behind the "upcoming creator features" toggle. When using no namespaces or a custom one,
  *        the names must start and end with an alpha-numeric character. Add-on JSON {@code culling_layer}. Default:
  *        <code>"minecraft:culling_layer.undefined"</code>.
- * @param cullingShape The voxel shape used for culling adjacent block faces. The voxel shape used for culling adjacent block faces.
- *        Voxel shapes work together with culling rules and will not function if there is no culling rule defined for
- *        the block. Only adjacent blocks with voxel shapes will occlude using this shape. Blocks using
- *        "minecraft:geometry.full_block" always use the unit cube shape and will ignore custom shapes if specified.
- *        This item requires a format version of at least 1.26.30. Available for custom blocks in format version
- *        1.26.30. Applying non-unit-cube culling shapes to Vanilla blocks (fences, bells, slabs, etc.) still requires
- *        the Voxel Shapes experimental toggle. When using the minecraft namespace, only <code>minecraft:empty</code>
- *        and <code>minecraft:unit_cube</code> are available; custom namespaces must start and end with an alpha-numeric
- *        character. Add-on JSON {@code culling_shape}. Default: <code>"minecraft:empty"</code>.
- * @param identifier Specifies the geometry description identifier to use to render this block. Specifies the geometry description
- *        identifier to use to render this block. This identifier must match an existing geometry identifier in any of
- *        the currently loaded resource packs. The reserved identifier <code>minecraft:geometry.full_cube</code> was
- *        added in 1.20.60 to provide the most efficient rendering path for 1x1x1 blocks. Add-on JSON {@code
- *        identifier}. Required.
- * @param nWayVisualRotation The name of a block state that drives visual-only rotation of this block. The name of a block state that
- *        drives visual-only rotation of this block. The renderer reads the current value of the named state at runtime
- *        and rotates the geometry accordingly without changing collision or interaction. Supported states are
- *        <code>minecraft:cardinal_direction</code>, <code>minecraft:sixteen_way_rotation</code>, and any custom integer
- *        state. This item requires a format version of at least 1.26.30. Add-on JSON {@code n_way_visual_rotation}.
- *        Optional (null: not set).
+ * @param cullingShape The voxel shape used for culling adjacent block faces. Voxel shapes work together with culling rules and will
+ *        not function if there is no culling rule defined for the block. Only adjacent blocks with voxel shapes will
+ *        occlude using this shape. Blocks using "minecraft:geometry.full_block" always use the unit cube shape and will
+ *        ignore custom shapes if specified. This item requires a format version of at least 1.26.30. Available for
+ *        custom blocks in format version 1.26.30. Applying non-unit-cube culling shapes to Vanilla blocks (fences,
+ *        bells, slabs, etc.) still requires the Voxel Shapes experimental toggle. When using the minecraft namespace,
+ *        only <code>minecraft:empty</code> and <code>minecraft:unit_cube</code> are available; custom namespaces must
+ *        start and end with an alpha-numeric character. Add-on JSON {@code culling_shape}. Default:
+ *        <code>"minecraft:empty"</code>.
+ * @param identifier Specifies the geometry description identifier to use to render this block. This identifier must match an
+ *        existing geometry identifier in any of the currently loaded resource packs. The reserved identifier
+ *        <code>minecraft:geometry.full_cube</code> was added in 1.20.60 to provide the most efficient rendering path
+ *        for 1x1x1 blocks. Add-on JSON {@code identifier}. Required.
+ * @param nWayVisualRotation The name of a block state that drives visual-only rotation of this block. The renderer reads the current value
+ *        of the named state at runtime and rotates the geometry accordingly without changing collision or interaction.
+ *        Supported states are <code>minecraft:cardinal_direction</code>, <code>minecraft:sixteen_way_rotation</code>,
+ *        and any custom integer state. This item requires a format version of at least 1.26.30. Add-on JSON {@code
+ *        n_way_visual_rotation}. Optional (null: not set).
  * @param uvLock A Boolean locking UV orientation of all bones in the geometry, or an array of strings locking UV orientation
- *        of specific bones in the geometry. A Boolean locking UV orientation of all bones in the geometry, or an array
- *        of strings locking UV orientation of specific bones in the geometry. For performance reasons it is recommended
- *        to use the Boolean. Note that for cubes using Box UVs, rather than Per-face UVs, uv_lock is only supported if
- *        the cube faces are square. This item requires a format version of at least 1.21.100. With UV locking, a single
- *        geometry can be reused for multiple texture rotations without authoring a new geometry per rotation. Add-on
- *        JSON {@code uv_lock}. Optional (null: not set).
+ *        of specific bones in the geometry. For performance reasons it is recommended to use the Boolean. Note that for
+ *        cubes using Box UVs, rather than Per-face UVs, uv_lock is only supported if the cube faces are square. This
+ *        item requires a format version of at least 1.21.100. With UV locking, a single geometry can be reused for
+ *        multiple texture rotations without authoring a new geometry per rotation. Add-on JSON {@code uv_lock}.
+ *        Optional (null: not set).
  * @param uvLockBones The list of strings form of {@code uv_lock} (bones); excludes {@link #uvLock()}. Add-on JSON {@code uv_lock}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_geometry?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:geometry</a>
  * @since 0.1.0
@@ -247,11 +242,10 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
     }
 
     /**
-     * The name of a block state that drives visual-only rotation of this block. The name of a block state that
-     * drives visual-only rotation of this block. The renderer reads the current value of the named state at runtime
-     * and rotates the geometry accordingly without changing collision or interaction. Supported states are
-     * <code>minecraft:cardinal_direction</code>, <code>minecraft:sixteen_way_rotation</code>, and any custom integer
-     * state. This item requires a format version of at least 1.26.30.
+     * The name of a block state that drives visual-only rotation of this block. The renderer reads the current value
+     * of the named state at runtime and rotates the geometry accordingly without changing collision or interaction.
+     * Supported states are <code>minecraft:cardinal_direction</code>, <code>minecraft:sixteen_way_rotation</code>,
+     * and any custom integer state. This item requires a format version of at least 1.26.30.
      *
      * @param x (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code x}. Optional
      *        (null: not set).

@@ -20,12 +20,12 @@ import org.geysermc.paletter.internal.component.Check;
  * @param startSound Sound played when the item starts being used. Accepts the name of any sound event defined in
  *        <code>sound_definitions.json</code>, including the built-in vanilla sound events. Add-on JSON {@code
  *        start_sound}. Optional (null: not set).
- * @param startUsing When the player begins using the item. When the player begins using the item. Use <code>always</code> to start
- *        as soon as the use action is triggered (default), or <code>on_attack</code> to start using only when an attack
- *        input is received while the item is selected. This item requires a format version of at least 1.26.30. Add-on
- *        JSON {@code start_using}. Optional (null: not set). The docs give the default <code>"always"</code>, but BDS
- *        sends minecraft:use_modifiers.start_using = if_first (string) when it is omitted; so it is unset by default,
- *        and the encoder sends what BDS sends then.
+ * @param startUsing When the player begins using the item. Use <code>always</code> to start as soon as the use action is triggered
+ *        (default), or <code>on_attack</code> to start using only when an attack input is received while the item is
+ *        selected. This item requires a format version of at least 1.26.30. Add-on JSON {@code start_using}. Optional
+ *        (null: not set). The docs give the default <code>"always"</code>, but BDS sends
+ *        minecraft:use_modifiers.start_using = if_first (string) when it is omitted; so it is unset by default, and the
+ *        encoder sends what BDS sends then.
  * @param useDuration Time, in seconds, that the item takes to use. Add-on JSON {@code use_duration}. Default: <code>0</code>. At
  *        least 0 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_use_modifiers?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:use_modifiers</a>

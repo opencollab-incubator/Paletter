@@ -18,12 +18,12 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
  * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
  *
- * @param obstructionRule [optional] How the block should be evaluated by a chest during chest opening. [optional] How the block should
- *        be evaluated by a chest during chest opening. Must be one of the following options: "always" - Will always oba
- *        chest from opening when directly above it. "never" - Will never obstruct a chest from opening when directly
- *        above it. "shape" - Will use the Blocks collision shape to determine if the chest is obstructed from opening
- *        when directly above it; this is the default value if no rule is provided. A Block can define its collision
- *        shape by adding a collision component. Add-on JSON {@code obstruction_rule}. Default: <code>"shape"</code>.
+ * @param obstructionRule [optional] How the block should be evaluated by a chest during chest opening. Must be one of the following
+ *        options: "always" - Will always oba chest from opening when directly above it. "never" - Will never obstruct a
+ *        chest from opening when directly above it. "shape" - Will use the Blocks collision shape to determine if the
+ *        chest is obstructed from opening when directly above it; this is the default value if no rule is provided. A
+ *        Block can define its collision shape by adding a collision component. Add-on JSON {@code obstruction_rule}.
+ *        Default: <code>"shape"</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_chest_obstruction?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:chest_obstruction</a>
  * @since 0.1.0
  */

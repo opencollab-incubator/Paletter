@@ -439,7 +439,7 @@ public final class DocsParser {
                     }
                     Matcher version = MIN_FORMAT.matcher(text);
                     String minVersion = field.minFormatVersion() != null ? field.minFormatVersion() : version.find() ? version.group(1) : null;
-                    String doc = text.isEmpty() || field.doc().contains(text) ? field.doc() : (field.doc() + " " + text).trim();
+                    String doc = (field.doc() + " " + newSentences(field.doc(), text)).trim();
                     fields.put(field.path(), new Field(field.path(), field.types(), field.defaultValue(), field.required(), dedupe(values),
                         field.range() != null ? field.range() : range(text), minVersion, field.examples(), doc));
                 }
@@ -617,6 +617,17 @@ public final class DocsParser {
             return new JsonPrimitive(Boolean.parseBoolean(t));
         }
         return new JsonPrimitive(t.replaceAll("^\"|\"$", ""));
+    }
+
+    /** The sentences of {@code text} that {@code doc} does not have yet (a detail section often repeats the table's). */
+    static String newSentences(String doc, String text) {
+        List<String> added = new ArrayList<>();
+        for (String sentence : text.split("(?<=[.!?])\\s+")) {
+            if (!sentence.isBlank() && !doc.contains(sentence.trim()) && !added.contains(sentence.trim())) {
+                added.add(sentence.trim());
+            }
+        }
+        return String.join(" ", added);
     }
 
     private static final String NUM = "(-?\\d+(?:\\.\\d+)?)";

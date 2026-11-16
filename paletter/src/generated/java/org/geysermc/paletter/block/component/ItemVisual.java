@@ -185,44 +185,39 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
      * The "minecraft:geometry" component of the item.
      *
      * @param boneVisibility A JSON object that contains a list of key/value pairs that map from bone name in the specified geometry file
-     *        (key) to a Molang expression that tells whether the bone should be visible or not (value). A JSON object that
-     *        contains a list of key/value pairs that map from bone name in the specified geometry file (key) to a Molang
-     *        expression that tells whether the bone should be visible or not (value). The expression is limited to using
-     *        the "query.block_state()" query. When using "bone_visibility" in geometry components in the "permutations"
-     *        section, you must also have a default version of the geometry component with "bone_visibility" in the
-     *        "components" section. Value must have at most 64 items. Add-on JSON {@code bone_visibility}. Default:
+     *        (key) to a Molang expression that tells whether the bone should be visible or not (value). The expression is
+     *        limited to using the "query.block_state()" query. When using "bone_visibility" in geometry components in the
+     *        "permutations" section, you must also have a default version of the geometry component with "bone_visibility"
+     *        in the "components" section. Value must have at most 64 items. Add-on JSON {@code bone_visibility}. Default:
      *        <code>&#123;&#125;</code>.
      * @param culling Which block_culling .json file to use when rendering this block. Value must have at most 256 items. Add-on
      *        JSON {@code culling}. Optional (null: not set).
-     * @param cullingLayer A string that allows culling rule to group multiple blocks together when comparing them. A string that allows
-     *        culling rule to group multiple blocks together when comparing them. When using the minecraft namespace, the
-     *        only allowed culling layer identifiers are : "minecraft:culling_layer.undefined" or
+     * @param cullingLayer A string that allows culling rule to group multiple blocks together when comparing them. When using the
+     *        minecraft namespace, the only allowed culling layer identifiers are : "minecraft:culling_layer.undefined" or
      *        "minecraft:culling_layer.leaves". When using no namespaces or a custom one, the names must start and end with
      *        an alpha-numeric character. Value must have at least 1 items. Value must have at most 256 items. Value must
      *        match a regular expression pattern of
      *        "^(?:minecraft:culling_layer.undefined|minecraft:culling_layer.leaves|(?!minecraft:)[a-z0-9].*[a-z0-9])$".
      *        Add-on JSON {@code culling_layer}. Optional (null: not set).
-     * @param cullingShape Currently only available with the VoxelShape experiment on. Currently only available with the VoxelShape
-     *        experiment on. The voxel shape used for culling adjacent block faces. Voxel shapes work together with culling
-     *        rules and will not function if there is no culling rule defined for the block. Only adjacent blocks with voxel
-     *        shapes will occlude using this shape. Blocks using &#92;"minecraft:geometry.full_block&#92;" always use the
-     *        unit cube shape and will ignore custom shapes if specified. When using the minecraft namespace, the only
-     *        currently available culling shape identifiers are : &#92;"minecraft:empty&#92;" or
-     *        &#92;"minecraft:unit_cube&#92;". When using no namespaces or a custom one, the names must start and end with
-     *        an alpha-numeric character. Value must have at most 256 items. Value must match a regular expression pattern
-     *        of "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$". Add-on JSON {@code
-     *        culling_shape}. Optional (null: not set).
-     * @param identifier The description identifier of the geometry to use to render this block. The description identifier of the
-     *        geometry to use to render this block. This identifier must either match an existing geometry identifier in any
-     *        of the loaded resource packs or be one of the currently supported Vanilla identifiers:
-     *        "minecraft:geometry.full_block" or "minecraft:geometry.cross". Value must have at most 256 items. Add-on JSON
-     *        {@code identifier}. Optional (null: not set).
+     * @param cullingShape Currently only available with the VoxelShape experiment on. The voxel shape used for culling adjacent block
+     *        faces. Voxel shapes work together with culling rules and will not function if there is no culling rule defined
+     *        for the block. Only adjacent blocks with voxel shapes will occlude using this shape. Blocks using
+     *        &#92;"minecraft:geometry.full_block&#92;" always use the unit cube shape and will ignore custom shapes if
+     *        specified. When using the minecraft namespace, the only currently available culling shape identifiers are :
+     *        &#92;"minecraft:empty&#92;" or &#92;"minecraft:unit_cube&#92;". When using no namespaces or a custom one, the
+     *        names must start and end with an alpha-numeric character. Value must have at most 256 items. Value must match
+     *        a regular expression pattern of "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$".
+     *        Add-on JSON {@code culling_shape}. Optional (null: not set).
+     * @param identifier The description identifier of the geometry to use to render this block. This identifier must either match an
+     *        existing geometry identifier in any of the loaded resource packs or be one of the currently supported Vanilla
+     *        identifiers: "minecraft:geometry.full_block" or "minecraft:geometry.cross". Value must have at most 256 items.
+     *        Add-on JSON {@code identifier}. Optional (null: not set).
      * @param nWayVisualRotation Optional object that maps x/y/z axes to block state names that drive visual-only geometry rotation. Add-on
      *        JSON {@code n_way_visual_rotation}. Optional (null: not set).
-     * @param uvLock A field that is either a Boolean or an array of strings, max size 64 strings. A field that is either a Boolean
-     *        or an array of strings, max size 64 strings. This field locks UV orientation for all/some bones in the
-     *        geometry, regardless of how the block is rotated using "minecraft:transformation" component. For performance
-     *        reasons it's recommended to use the Boolean. Add-on JSON {@code uv_lock}. Default: <code>false</code>.
+     * @param uvLock A field that is either a Boolean or an array of strings, max size 64 strings. This field locks UV orientation
+     *        for all/some bones in the geometry, regardless of how the block is rotated using "minecraft:transformation"
+     *        component. For performance reasons it's recommended to use the Boolean. Add-on JSON {@code uv_lock}. Default:
+     *        <code>false</code>.
      */
     public record Geometry(@NonNull Map<String, String> boneVisibility, @Nullable String culling,
             @Nullable String cullingLayer, @Nullable String cullingShape,

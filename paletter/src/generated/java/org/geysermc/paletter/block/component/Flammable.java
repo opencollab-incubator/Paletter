@@ -18,24 +18,22 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
  * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
  *
- * @param catchChanceModifier A modifier affecting the chance that this block will catch flame when next to a fire. A modifier affecting the
- *        chance that this block will catch flame when next to a fire. Values are greater than or equal to 0, with a
- *        higher number meaning more likely to catch on fire. For a "catch_chance_modifier" greater than 0, the fire
- *        will continue to burn until the block is destroyed (or it will burn forever if the "destroy_chance_modifier"
- *        is 0). If the "catch_chance_modifier" is 0, and the block is directly ignited, the fire will eventually burn
- *        out without destroying the block (or it will have a chance to be destroyed if "destroy_chance_modifier" is
- *        greater than 0). The default value of 5 is the same as that of Planks. Add-on JSON {@code
- *        catch_chance_modifier}. Default: <code>5</code>.
- * @param destroyChanceModifier A modifier affecting the chance that this block will be destroyed by flames when on fire. A modifier affecting
- *        the chance that this block will be destroyed by flames when on fire. Values are greater than or equal to 0,
- *        with a higher number meaning more likely to be destroyed by fire. For a "destroy_chance_modifier" of 0, the
- *        block will never be destroyed by fire, and the fire will burn forever if the "catch_chance_modifier" is
- *        greater than 0. The default value of 20 is the same as that of Planks. Add-on JSON {@code
- *        destroy_chance_modifier}. Default: <code>20</code>.
- * @param lavaFlammable Whether the block can be ignited by adjacent lava. Whether the block can be ignited by adjacent lava. Defaults
- *        to false for backwards compatibility; set to true to allow lava to set the block on fire the way it does
- *        Planks and other vanilla flammable blocks. This item requires a format version of at least 1.26.30. Add-on
- *        JSON {@code lava_flammable}. Default: <code>false</code>.
+ * @param catchChanceModifier A modifier affecting the chance that this block will catch flame when next to a fire. Values are greater than
+ *        or equal to 0, with a higher number meaning more likely to catch on fire. For a "catch_chance_modifier"
+ *        greater than 0, the fire will continue to burn until the block is destroyed (or it will burn forever if the
+ *        "destroy_chance_modifier" is 0). If the "catch_chance_modifier" is 0, and the block is directly ignited, the
+ *        fire will eventually burn out without destroying the block (or it will have a chance to be destroyed if
+ *        "destroy_chance_modifier" is greater than 0). The default value of 5 is the same as that of Planks. Add-on
+ *        JSON {@code catch_chance_modifier}. Default: <code>5</code>.
+ * @param destroyChanceModifier A modifier affecting the chance that this block will be destroyed by flames when on fire. Values are greater
+ *        than or equal to 0, with a higher number meaning more likely to be destroyed by fire. For a
+ *        "destroy_chance_modifier" of 0, the block will never be destroyed by fire, and the fire will burn forever if
+ *        the "catch_chance_modifier" is greater than 0. The default value of 20 is the same as that of Planks. Add-on
+ *        JSON {@code destroy_chance_modifier}. Default: <code>20</code>.
+ * @param lavaFlammable Whether the block can be ignited by adjacent lava. Defaults to false for backwards compatibility; set to true
+ *        to allow lava to set the block on fire the way it does Planks and other vanilla flammable blocks. This item
+ *        requires a format version of at least 1.26.30. Add-on JSON {@code lava_flammable}. Default:
+ *        <code>false</code>.
  * @param enabled The boolean form of the component (add-on JSON {@code "minecraft:flammable": <boolean>}). Optional (null: not
  *        set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_flammable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:flammable</a>

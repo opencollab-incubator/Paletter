@@ -21,10 +21,9 @@ import org.geysermc.paletter.internal.component.Check;
  * @param power The strength of the redstone signal produced by this block. Valid values are from 0 to 15, where 0 means no
  *        signal and 15 is the maximum signal strength. Value must be &lt;= 15. Add-on JSON {@code power}. Required. At
  *        least 0 (docs). At most 15 (BDS 1.26.63.1).
- * @param stronglyPoweredFace The block touching this face will become strongly powered with the signal level strength of 'power'. The block
- *        touching this face will become strongly powered with the signal level strength of 'power'. Strongly powered
- *        blocks will power adjacent blocks. By default, the block will not strongly power any face. Add-on JSON {@code
- *        strongly_powered_face}. Optional (null: not set).
+ * @param stronglyPoweredFace The block touching this face will become strongly powered with the signal level strength of 'power'. Strongly
+ *        powered blocks will power adjacent blocks. By default, the block will not strongly power any face. Add-on JSON
+ *        {@code strongly_powered_face}. Optional (null: not set).
  * @param transformRelative If true, the <code>strongly_powered_face</code> and <code>connected_faces</code> properties will be rotated
  *        according to the 'minecraft:transformation' component. Add-on JSON {@code transform_relative}. Optional (null:
  *        not set). The docs give the default <code>false</code>, but BDS sends

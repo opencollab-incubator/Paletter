@@ -18,16 +18,14 @@ import org.geysermc.paletter.vanilla.BedrockBlockType;
  * <p>
  * Add-on JSON: {@code "minecraft:block_placer"}.
  *
- * @param alignedPlacement When true, block placement through this item is aligned while the interaction button is held down. When true,
- *        block placement through this item is aligned while the interaction button is held down. Supported from
- *        <code>format_version</code> 1.26.0 onward. This item requires a format version of at least 1.26.10. Add-on
- *        JSON {@code aligned_placement}. Default: <code>false</code>.
+ * @param alignedPlacement When true, block placement through this item is aligned while the interaction button is held down. Supported
+ *        from <code>format_version</code> 1.26.0 onward. This item requires a format version of at least 1.26.10.
+ *        Add-on JSON {@code aligned_placement}. Default: <code>false</code>.
  * @param block Defines the block that will be placed. Add-on JSON {@code block}. Required. Compiled by the hand transform
  *        {@code Transforms.blockName}.
- * @param replaceBlockItem If true, the item will be registered as the item for this block. If true, the item will be registered as the
- *        item for this block. This item will be returned by default when the block is broken/picked. Note: the
- *        identifier for this item must match the block's identifier for this field to be valid. Defaults to false.
- *        Add-on JSON {@code replace_block_item}. Default: <code>false</code>.
+ * @param replaceBlockItem If true, the item will be registered as the item for this block. This item will be returned by default when
+ *        the block is broken/picked. Note: the identifier for this item must match the block's identifier for this
+ *        field to be valid. Defaults to false. Add-on JSON {@code replace_block_item}. Default: <code>false</code>.
  * @param useOn List of block descriptors of the blocks that this item can be used on. If left empty, all blocks will be
  *        allowed. Value must have at most 256 items. Add-on JSON {@code use_on}. Default: <code>[]</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_block_placer?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:block_placer</a>

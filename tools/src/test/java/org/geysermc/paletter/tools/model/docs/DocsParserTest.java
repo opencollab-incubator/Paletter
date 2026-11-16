@@ -56,6 +56,14 @@ class DocsParserTest {
         """;
 
     @Test
+    void aDetailSectionAddsOnlyWhatTheTableDidNotSay() {
+        assertEquals("Use always to start at once.", DocsParser.newSentences("When the player begins using the item.",
+            "When the player begins using the item. Use always to start at once."));
+        assertEquals("", DocsParser.newSentences("One. Two.", "Two. One."));
+        assertEquals("Three!", DocsParser.newSentences("One. Two.", "Three! Three!"));
+    }
+
+    @Test
     void parsesComponentPage() throws Exception {
         DocsParser.DocsSource source = new DocsParser.DocsSource() {
             @Override

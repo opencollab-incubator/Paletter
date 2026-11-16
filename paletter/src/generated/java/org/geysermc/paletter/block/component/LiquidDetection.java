@@ -96,13 +96,12 @@ public record LiquidDetection(
      * @param liquidType The type of liquid this detection rule is for. Currently, <code>water</code> is the only supported liquid
      *        type. If this field is omitted, <code>water</code> will be the liquid type by default. Add-on JSON {@code
      *        liquid_type}. Default: <code>"water"</code>.
-     * @param onLiquidTouches How the block reacts to flowing water. How the block reacts to flowing water. Must be one of the following
-     *        options: "blocking" - The default value for this field. The block stops the liquid from flowing. "broken" -
-     *        The block is destroyed completely. "popped" - The block is destroyed and its item is spawned. "no_reaction" -
-     *        The block is unaffected; visually, the liquid will flow through the block. Add-on JSON {@code
-     *        on_liquid_touches}. Default: <code>"blocking"</code>.
+     * @param onLiquidTouches How the block reacts to flowing water. Must be one of the following options: "blocking" - The default value
+     *        for this field. The block stops the liquid from flowing. "broken" - The block is destroyed completely.
+     *        "popped" - The block is destroyed and its item is spawned. "no_reaction" - The block is unaffected; visually,
+     *        the liquid will flow through the block. Add-on JSON {@code on_liquid_touches}. Default:
+     *        <code>"blocking"</code>.
      * @param stopsLiquidFlowingFromDirection When a block contains a liquid, controls the directions in which the liquid can't flow out from the block.
-     *        When a block contains a liquid, controls the directions in which the liquid can't flow out from the block.
      *        Also controls the directions in which a block can stop liquid flowing into it if <code>no_reaction</code> is
      *        set for the <code>on_liquid_touches</code> field. Can be a list of the following directions: "up", "down",
      *        "north", "south", "east", "west". The default is an empty list; this means that liquid can flow out of all
@@ -114,12 +113,10 @@ public record LiquidDetection(
      *        will attempt to reduce the visible volume of water if the collision shape allows it. Eg. a wall will turn the
      *        water base shape into a rectangle on the side of the incoming water. When use_liquid_clipping is FALSE, the
      *        game will preserve the water base shape as a full square, no matter what the collision shape of the block they
-     *        share space with is. If true, the block uses its collision box to visually clip the liquid (reducing the
-     *        visible water volume to match the block's shape). If false, the liquid renders as a full square across the
-     *        whole block regardless of the collision shape. This item requires a format version of at least 1.26.0. Added
-     *        to <code>detection_rules</code> entries in 1.26.0. Defaults to <code>true</code> for format_version older than
-     *        1.26.0 and to <code>false</code> for 1.26.0 and newer. Add-on JSON {@code use_liquid_clipping}. Default:
-     *        <code>false</code>.
+     *        share space with is. If false, the liquid renders as a full square across the whole block regardless of the
+     *        collision shape. This item requires a format version of at least 1.26.0. Added to <code>detection_rules</code>
+     *        entries in 1.26.0. Defaults to <code>true</code> for format_version older than 1.26.0 and to
+     *        <code>false</code> for 1.26.0 and newer. Add-on JSON {@code use_liquid_clipping}. Default: <code>false</code>.
      */
     public record DetectionRules(boolean canContainLiquid, @NonNull LiquidType liquidType,
             @NonNull OnLiquidTouches onLiquidTouches,

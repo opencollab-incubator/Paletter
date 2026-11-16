@@ -346,11 +346,11 @@ public record MaterialInstances(MaterialInstances. @Nullable Instance all,
      *        at least 1.21.80. Add-on JSON {@code isotropic}. Default: <code>false</code>.
      * @param renderMethod The render method to use. Add-on JSON {@code render_method}. Optional (null: not set).
      * @param texture Texture name for the material. Add-on JSON {@code texture}. Optional (null: not set).
-     * @param tintMethod Tint multiplied to the color. Tint multiplied to the color. Tint method logic varies, but often refers to the
-     *        "rain" and "temperature" of the biome the block is placed in to compute the tint. Supported tint methods are
-     *        "none", "default_foliage", "birch_foliage", "evergreen_foliage", "dry_foliage", "grass" and "water" This item
-     *        requires a format version of at least 1.21.80. Add-on JSON {@code tint_method}. Optional (null: not set). The
-     *        docs give the default false, which is not a value of this type; unset, BDS's behaviour applies.
+     * @param tintMethod Tint multiplied to the color. Tint method logic varies, but often refers to the "rain" and "temperature" of
+     *        the biome the block is placed in to compute the tint. Supported tint methods are "none", "default_foliage",
+     *        "birch_foliage", "evergreen_foliage", "dry_foliage", "grass" and "water" This item requires a format version
+     *        of at least 1.21.80. Add-on JSON {@code tint_method}. Optional (null: not set). The docs give the default
+     *        false, which is not a value of this type; unset, BDS's behaviour applies.
      * @param alphaMaskedTint (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. BDS names the format version
      *        1.21.120 for it. Add-on JSON {@code alpha_masked_tint}. Optional (null: not set).
      */

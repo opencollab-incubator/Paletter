@@ -863,7 +863,7 @@ public final class Update {
         }
     }
 
-    /** Which toggle each experiment named in the creator docs ({@code codegen/model/components.json}) is. */
+    /** Which toggle each experiment named in the creator docs ({@code data/model/components.json}) is. */
     private void docsExperiments(ExperimentRun result, List<String> lines) throws IOException {
         Path model = root.resolve(Layout.MODEL + "/components.json");
         if (!Files.exists(model)) {

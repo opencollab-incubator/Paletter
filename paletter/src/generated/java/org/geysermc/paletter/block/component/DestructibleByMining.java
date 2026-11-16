@@ -19,10 +19,8 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  * Compiled by the hand transform {@code Transforms.destructibleByMining}.
  *
  * @param itemSpecificSpeeds Optional array of objects to describe item specific block destroy speeds, each object contains an 'item'
- *        ItemDescriptor and a 'destroy_speed' float. Optional array of objects to describe item specific block destroy
- *        speeds, each object contains an 'item' ItemDescriptor and a 'destroy_speed' float. This array currently
- *        requires UpcomingFeatures experiment to be enabled. Add-on JSON {@code item_specific_speeds}. Optional (null:
- *        not set).
+ *        ItemDescriptor and a 'destroy_speed' float. This array currently requires UpcomingFeatures experiment to be
+ *        enabled. Add-on JSON {@code item_specific_speeds}. Optional (null: not set).
  * @param secondsToDestroy Sets the number of seconds it takes to destroy the block with base equipment. Greater numbers result in
  *        greater mining times. Add-on JSON {@code seconds_to_destroy}. Default: <code>0</code>. At least 0 (BDS
  *        1.26.63.1).
@@ -134,9 +132,8 @@ public record DestructibleByMining(
 
     /**
      * Optional array of objects to describe item specific block destroy speeds, each object contains an 'item'
-     * ItemDescriptor and a 'destroy_speed' float. Optional array of objects to describe item specific block destroy
-     * speeds, each object contains an 'item' ItemDescriptor and a 'destroy_speed' float. This array currently
-     * requires UpcomingFeatures experiment to be enabled.
+     * ItemDescriptor and a 'destroy_speed' float. This array currently requires UpcomingFeatures experiment to be
+     * enabled.
      *
      * @param destroySpeed Required. A destroy speed applied while using the defined 'item'. Add-on JSON {@code destroy_speed}. Required.
      * @param item Required. A filter for the item used while mining. Add-on JSON {@code item}. Optional (null: not set).

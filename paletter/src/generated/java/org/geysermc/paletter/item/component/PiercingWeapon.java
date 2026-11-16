@@ -19,10 +19,9 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *        {@code creative_reach}. Optional (null: not set).
  * @param hitboxMargin Added tolerance to the view vector raycast for detecting entity collisions. Add-on JSON {@code hitbox_margin}.
  *        Default: <code>0</code>.
- * @param reach Defines the range (in blocks) along the user's view vector where entities can be hit. Defines the range (in
- *        blocks) along the user's view vector where entities can be hit. Only targets within this distance are
- *        considered. Block collisions between the user and target block damage and its effects. Add-on JSON {@code
- *        reach}. Default: <code>&#123;"max":3,"min":0&#125;</code>.
+ * @param reach Defines the range (in blocks) along the user's view vector where entities can be hit. Only targets within this
+ *        distance are considered. Block collisions between the user and target block damage and its effects. Add-on
+ *        JSON {@code reach}. Default: <code>&#123;"max":3,"min":0&#125;</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_piercing_weapon?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:piercing_weapon</a>
  * @since 0.1.0
  */
@@ -169,9 +168,8 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
     }
 
     /**
-     * Defines the range (in blocks) along the user's view vector where entities can be hit. Defines the range (in
-     * blocks) along the user's view vector where entities can be hit. Only targets within this distance are
-     * considered. Block collisions between the user and target block damage and its effects.
+     * Defines the range (in blocks) along the user's view vector where entities can be hit. Only targets within this
+     * distance are considered. Block collisions between the user and target block damage and its effects.
      *
      * @param max Add-on JSON {@code max}. Default: <code>3</code>.
      * @param min Add-on JSON {@code min}. Default: <code>0</code>.

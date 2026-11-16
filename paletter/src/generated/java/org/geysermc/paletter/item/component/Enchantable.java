@@ -15,9 +15,8 @@ import org.geysermc.paletter.internal.component.Check;
  * <p>
  * Add-on JSON: {@code "minecraft:enchantable"}.
  *
- * @param slot Specifies which types of enchantments can be applied. Specifies which types of enchantments can be applied.
- *        For example, <code>bow</code> would allow this item to be enchanted as if it were a bow. Value must match a
- *        regular expression pattern of
+ * @param slot Specifies which types of enchantments can be applied. For example, <code>bow</code> would allow this item to
+ *        be enchanted as if it were a bow. Value must match a regular expression pattern of
  *        "none|all|g_armor|armor_head|armor_torso|armor_feet|armor_legs|sword|bow|spear|crossbow|melee_spear|g_tool|hoe|shears|flintsteel|shield|g_digging|axe|pickaxe|shovel|fishing_rod|carrot_stick|elytra|cosmetic_head".
  *        Add-on JSON {@code slot}. Required.
  * @param value Specifies the value of the enchantment (minimum of 0). Add-on JSON {@code value}. Required. At least 0 (BDS

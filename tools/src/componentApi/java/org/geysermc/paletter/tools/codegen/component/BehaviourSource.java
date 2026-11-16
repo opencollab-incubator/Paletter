@@ -265,22 +265,23 @@ final class BehaviourSource {
         if (!key.type().equals("Float") && !key.type().equals("Integer")) {
             throw new GenerationException(where + ": a wire leaf is read as a number, the key is " + key.type());
         }
-        int dot = leaf.leaf().indexOf('.');
-        if (dot < 0 || leaf.leaf().indexOf('.', dot + 1) >= 0) {
-            throw new GenerationException(where + ": the leaf " + leaf.leaf() + " is not <component>.<field>");
-        }
-        String wireComponent = leaf.leaf().substring(0, dot);
-        String wireField = leaf.leaf().substring(dot + 1);
         JsonObject rule = rule(where, key.owner(), leaf, mappings);
+        String wire = rule.get("wire").getAsString();
+        int dot = wire.indexOf('.');
+        if (dot < 0 || wire.indexOf('.', dot + 1) >= 0) {
+            throw new GenerationException(where + ": the leaf " + wire + " is not <component>.<field>");
+        }
+        String wireComponent = wire.substring(0, dot);
+        String wireField = wire.substring(dot + 1);
         String getter = key.type().equals("Float") ? "floatOf" : "intOf";
         CodeBlock get = CodeBlock.of("$N(properties.component($S), $S)", getter, wireComponent, wireField);
         String from = leaf.component() + (leaf.field().isEmpty() ? " (value form)" : " " + leaf.field());
         Relation relation = relation(where, key.name(), probe, probeReference);
         if (wireComponent.equals("item_properties")) {
             if (relation != null) {
-                throw new GenerationException(where + ": the probe measured a relation, but " + leaf.leaf() + " is read as sent");
+                throw new GenerationException(where + ": the probe measured a relation, but " + wire + " is read as sent");
             }
-            read.add("// $L -> $L ($L): the engine's item property, read as sent\n", from, leaf.leaf(), describe(rule));
+            read.add("// $L -> $L ($L): the engine's item property, read as sent\n", from, wire, describe(rule));
             read.addStatement("return $L", get);
             return;
         }
@@ -296,15 +297,15 @@ final class BehaviourSource {
                 double s = rule.get("scale").getAsDouble();
                 double o = rule.get("offset").getAsDouble();
                 if (rule.has("modulo") || s == 0) {
-                    throw new GenerationException(where + ": the linear rule onto " + leaf.leaf() + " cannot be inverted: " + rule);
+                    throw new GenerationException(where + ": the linear rule onto " + wire + " cannot be inverted: " + rule);
                 }
                 scale = 1 / s;
                 offset = -o / s;
             }
-            default -> throw new GenerationException(where + ": the " + rule.get("kind").getAsString() + " rule onto " + leaf.leaf()
+            default -> throw new GenerationException(where + ": the " + rule.get("kind").getAsString() + " rule onto " + wire
                 + " cannot be inverted; read the key by hand");
         }
-        read.add("// $L -> $L ($L): read back\n", from, leaf.leaf(), describe(rule));
+        read.add("// $L -> $L ($L): read back\n", from, wire, describe(rule));
         if (relation != null) {
             read.add("// engine = $L, measured by behaviour-probe ($L $L.components)\n", linear("component", relation.scale(), relation.offset()),
                 relation.reference(), key.name());
@@ -365,10 +366,16 @@ final class BehaviourSource {
             } else if (window.has("fields") && window.getAsJsonObject("fields").has(leaf.field())) {
                 rules.addAll(rules(window.getAsJsonObject("fields").getAsJsonObject(leaf.field())));
             }
-            List<JsonObject> onto = rules.stream().filter(r -> r.has("wire") && r.get("wire").getAsString().equals(leaf.leaf())).toList();
+            List<JsonObject> onto = rules.stream().filter(r -> r.has("wire") && (leaf.leaf() == null
+                ? ComponentGenerator.VALUE_KINDS.contains(r.get("kind").getAsString()) : r.get("wire").getAsString().equals(leaf.leaf()))).toList();
             if (onto.isEmpty()) {
-                throw new GenerationException(where + ": mappings.json has no rule of " + id + " " + (leaf.field().isEmpty() ? "(value forms)" : leaf.field())
-                    + " onto " + leaf.leaf() + (window == component ? "" : " in a protocol window") + "; the leaf was renamed or moved: update BehaviourKeys");
+                throw new GenerationException(where + ": mappings.json has no " + (leaf.leaf() == null ? "value rule" : "rule") + " of " + id + " "
+                    + (leaf.field().isEmpty() ? "(value forms)" : leaf.field()) + (leaf.leaf() == null ? "" : " onto " + leaf.leaf())
+                    + (window == component ? "" : " in a protocol window") + "; the leaf was renamed or moved: update BehaviourKeys");
+            }
+            if (leaf.leaf() == null && onto.stream().map(r -> r.get("wire").getAsString()).distinct().count() > 1) {
+                throw new GenerationException(where + ": the value rules of " + id + " " + (leaf.field().isEmpty() ? "(value forms)" : leaf.field())
+                    + " write several leaves (" + onto.stream().map(r -> r.get("wire").getAsString()).distinct().toList() + "); name the leaf in BehaviourKeys");
             }
             for (JsonObject r : onto) {
                 if (found == null) {

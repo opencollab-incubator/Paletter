@@ -15,10 +15,10 @@ import org.geysermc.paletter.internal.component.Check;
  * <p>
  * Add-on JSON: {@code "minecraft:durability"}.
  *
- * @param damageChance Specifies the percentage chance of this item losing durability. Specifies the percentage chance of this item
- *        losing durability. Default is set to 100. Defined as an int range with min and max value. Check that the
- *        limits imposed on the range (minimum, maximum and maximum distance between values) are respected. Add-on JSON
- *        {@code damage_chance}. Default: <code>&#123;"max":100,"min":100&#125;</code>.
+ * @param damageChance Specifies the percentage chance of this item losing durability. Default is set to 100. Defined as an int range
+ *        with min and max value. Check that the limits imposed on the range (minimum, maximum and maximum distance
+ *        between values) are respected. Add-on JSON {@code damage_chance}. Default:
+ *        <code>&#123;"max":100,"min":100&#125;</code>.
  * @param maxDurability Max durability is the amount of damage that this item can take before breaking. This is a required parameter
  *        and has a minimum of 0. Add-on JSON {@code max_durability}. Required. At least 0 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_durability?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:durability</a>
@@ -99,9 +99,9 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
     }
 
     /**
-     * Specifies the percentage chance of this item losing durability. Specifies the percentage chance of this item
-     * losing durability. Default is set to 100. Defined as an int range with min and max value. Check that the
-     * limits imposed on the range (minimum, maximum and maximum distance between values) are respected.
+     * Specifies the percentage chance of this item losing durability. Default is set to 100. Defined as an int range
+     * with min and max value. Check that the limits imposed on the range (minimum, maximum and maximum distance
+     * between values) are respected.
      *
      * @param max Add-on JSON {@code max}. Default: <code>100</code>. Range [0, 100] (BDS 1.26.63.1).
      * @param min Add-on JSON {@code min}. Default: <code>100</code>. Range [0, 100] (BDS 1.26.63.1).

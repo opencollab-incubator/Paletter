@@ -24,18 +24,17 @@ import org.geysermc.paletter.annotation.ReplacedBy;
  *        Add-on JSON {@code crop_result}. Optional (null: not set).
  * @param plantAt Array of block identifiers that this seed can be planted on or attached to. If not specified, standard
  *        farmland rules apply. Add-on JSON {@code plant_at}. Optional (null: not set).
- * @param plantAtAnySolidSurface Deprecated - no longer in use. Deprecated - no longer in use. If true, the seed can be planted on any solid
- *        surface, not just farmland or specified blocks. This property was deprecated and removed in versions after
- *        1.18. This property no longer works after format versions of at least 1.19.0. This item requires a format
- *        version of at least 1.16.0. This property was available in versions 1.16.0 through 1.18.x for items like glow
- *        berries, but has been removed in later versions. Add-on JSON {@code plant_at_any_solid_surface}. Default:
- *        <code>false</code>.
- * @param plantAtFace Deprecated - no longer in use. Deprecated - no longer in use. The face of a block where this seed can be
- *        planted. Values: 'UP' for top of blocks (normal crops), 'DOWN' for bottom (hanging plants like glow berries).
- *        This property was deprecated and removed in versions after 1.18. This property no longer works after format
- *        versions of at least 1.19.0. This item requires a format version of at least 1.16.0. This property was
- *        available in versions 1.16.0 through 1.18.x for items like glow berries, but has been removed in later
- *        versions. Add-on JSON {@code plant_at_face}. Optional (null: not set).
+ * @param plantAtAnySolidSurface Deprecated - no longer in use. If true, the seed can be planted on any solid surface, not just farmland or
+ *        specified blocks. This property was deprecated and removed in versions after 1.18. This property no longer
+ *        works after format versions of at least 1.19.0. This item requires a format version of at least 1.16.0. This
+ *        property was available in versions 1.16.0 through 1.18.x for items like glow berries, but has been removed in
+ *        later versions. Add-on JSON {@code plant_at_any_solid_surface}. Default: <code>false</code>.
+ * @param plantAtFace Deprecated - no longer in use. The face of a block where this seed can be planted. Values: 'UP' for top of
+ *        blocks (normal crops), 'DOWN' for bottom (hanging plants like glow berries). This property was deprecated and
+ *        removed in versions after 1.18. This property no longer works after format versions of at least 1.19.0. This
+ *        item requires a format version of at least 1.16.0. This property was available in versions 1.16.0 through
+ *        1.18.x for items like glow berries, but has been removed in later versions. Add-on JSON {@code plant_at_face}.
+ *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_seed?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:seed</a>
  * @since 0.1.0
  * @deprecated replaced by {@link BlockPlacer} (BDS message (data/bds/1.26.70.24/spec): "Use minecraft:block_placer instead")

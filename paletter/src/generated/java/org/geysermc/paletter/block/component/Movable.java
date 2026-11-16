@@ -17,13 +17,11 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
  * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
  *
- * @param movementType How the block reacts to being pushed by another block like a piston. How the block reacts to being pushed by
- *        another block like a piston. The options are: "push_pull" - The default value for this field. The block will
- *        be pushed and pulled by a piston. "push" - The block will only be pulled by a piston and will ignore a sticky
- *        piston. "popped" - The block is destroyed when moved by a piston. "immovable" - The block is unaffected by a
- *        piston. Add-on JSON {@code movement_type}. Required.
- * @param sticky How the block should handle adjacent blocks around it when being pushed by another block like a piston. How
- *        the block should handle adjacent blocks around it when being pushed by another block like a piston. The
+ * @param movementType How the block reacts to being pushed by another block like a piston. The options are: "push_pull" - The
+ *        default value for this field. The block will be pushed and pulled by a piston. "push" - The block will only be
+ *        pulled by a piston and will ignore a sticky piston. "popped" - The block is destroyed when moved by a piston.
+ *        "immovable" - The block is unaffected by a piston. Add-on JSON {@code movement_type}. Required.
+ * @param sticky How the block should handle adjacent blocks around it when being pushed by another block like a piston. The
  *        options are: "same" - Adjacent blocks to this block will be moved when moved. This excludes other blocks with
  *        the "same" property. This will only work with the movement_type: "push_pull". "none" - The default and will
  *        not move adjacent blocks. Add-on JSON {@code sticky}. Default: <code>"none"</code>.

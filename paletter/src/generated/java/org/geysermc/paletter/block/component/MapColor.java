@@ -19,10 +19,10 @@ import org.geysermc.paletter.annotation.ServerOnly;
  *
  * @param color The color is represented as a hex value in the format "#RRGGBB". May also be expressed as an array of [R, G,
  *        B] from 0 to 255. Add-on JSON {@code color}. Required.
- * @param tintMethod Tint multiplier applied to the map color. Tint multiplier applied to the map color. Typically references the
- *        biome's "rain" and "temperature" to compute the tint. Supported values: "none", "default_foliage",
- *        "birch_foliage", "evergreen_foliage", "dry_foliage", "grass", "water". This item requires a format version of
- *        at least 1.21.80. Add-on JSON {@code tint_method}. Optional (null: not set).
+ * @param tintMethod Tint multiplier applied to the map color. Typically references the biome's "rain" and "temperature" to compute
+ *        the tint. Supported values: "none", "default_foliage", "birch_foliage", "evergreen_foliage", "dry_foliage",
+ *        "grass", "water". This item requires a format version of at least 1.21.80. Add-on JSON {@code tint_method}.
+ *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_map_color?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:map_color</a>
  * @since 0.1.0
  */
