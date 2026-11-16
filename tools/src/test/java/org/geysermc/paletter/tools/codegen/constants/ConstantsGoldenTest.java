@@ -339,7 +339,7 @@ class ConstantsGoldenTest {
 
         ConstantsGenerator.Names noState = names(Map.of("minecraft:test.block", "TEST_DOT_BLOCK"), Map.of(), Map.of(), Map.of("wall_east", "WallSide"));
         assertEquals("Duplicate constant BedrockStates.FACING for facing and minecraft:facing; give one a name in "
-            + "the name overrides of ConstantsGenerator (states)", failure(temp.resolve("b"), releaseBlocks(false), noState, new JsonObject()));
+            + "data/model/constants-history.json (add its entry there under the name it should have)", failure(temp.resolve("b"), releaseBlocks(false), noState, new JsonObject()));
 
         ConstantsGenerator.Names digit = names(Map.of("minecraft:test.block", "TEST_DOT_BLOCK"), Map.of("minecraft:apple", "1APPLE"),
             Map.of("minecraft:facing", "MINECRAFT_FACING"), Map.of("wall_east", "WallSide"));
@@ -349,7 +349,7 @@ class ConstantsGoldenTest {
         ConstantsGenerator.Names enumName = names(Map.of("minecraft:test.block", "TEST_DOT_BLOCK"), Map.of(),
             Map.of("minecraft:facing", "MINECRAFT_FACING"), Map.of("wall_east", "wall side"));
         assertEquals("Enum name wall side of [wall_east, wall_west] is no Java class name; set one in "
-            + "the name overrides of ConstantsGenerator (enums)", failure(temp.resolve("d"), releaseBlocks(false), enumName, new JsonObject()));
+            + "data/model/constants-history.json (add its entry there under the name it should have)", failure(temp.resolve("d"), releaseBlocks(false), enumName, new JsonObject()));
     }
 
     @Test
@@ -369,7 +369,7 @@ class ConstantsGoldenTest {
                 return history;
             }));
         assertEquals("BedrockStates.OPEN_BIT (open_bit) changed from int to BOOL, which would change the type of the constant; give the state "
-            + "a new name in the name overrides of ConstantsGenerator (states)", historyFailure(temp.resolve("c"), history -> {
+            + "a new name in data/model/constants-history.json (add its entry there under the name it should have)", historyFailure(temp.resolve("c"), history -> {
                 history.getAsJsonObject("states").getAsJsonObject("OPEN_BIT").addProperty("kind", "int");
                 return history;
             }));

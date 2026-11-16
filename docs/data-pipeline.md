@@ -239,8 +239,8 @@ converts them. Shapes use the hand-written `internal.behaviour.ShapeRules`.
 preview, `renames.txt` and `data/model/constants-history.json`, which records every constant ever generated so
 regeneration cannot drop one. Commit the history together with the classes.
 
-- Names are the UPPER_SNAKE of the identifier path. Collisions fail until a name override in `ConstantsGenerator`
-  settles them.
+- Names are the UPPER_SNAKE of the identifier path. A state and a state enum keep the name `constants-history.json`
+  records; a new one whose default name collides fails generation until the history names it.
 - A state keeps its type and enum; a state that changes kind fails generation.
 - Removed content stays as a deprecated constant: an alias where the identifier moved, otherwise resolving to
   `minecraft:unknown`.

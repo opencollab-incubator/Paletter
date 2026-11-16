@@ -123,7 +123,7 @@ class ConstantsGeneratorTest {
     }
 
     private static ConstantsGenerator.Names names() {
-        return ConstantsGenerator.Names.of(Renames.NONE);
+        return ConstantsGenerator.Names.of(Renames.NONE, new JsonObject());
     }
 
     @Test

@@ -54,13 +54,15 @@ public final class ConstantsGenerator {
     private static final Pattern CLASS = Pattern.compile("[A-Z][A-Za-z0-9]*");
     /** What the message of a name that needs an override points to. */
     private static final String OVERRIDES = "the name overrides of ConstantsGenerator";
-    /** State name to constant name, where the default (UPPER_SNAKE of the state name) does not work. */
-    private static final Map<String, String> STATE_NAMES = Map.of(
-        // The default FACING_DIRECTION is taken by "facing_direction", a state of another kind
-        "minecraft:facing_direction", "MINECRAFT_FACING_DIRECTION");
+    /** Where a state or enum that needs another name than the default gets it. */
+    private static final String HISTORY_NAMES = HISTORY + " (add its entry there under the name it should have)";
 
     /**
-     * The names constants get where they differ from the default.
+     * The names constants get where they differ from the default (UPPER_SNAKE of a state name, PascalCase of an enum's first
+     * state). The names of states and enums are the ones {@code constants-history.json} records
+     * ({@code minecraft:facing_direction} is {@code MINECRAFT_FACING_DIRECTION}, as {@code FACING_DIRECTION} is
+     * {@code facing_direction}; the enum of {@code wall_connection_type_east} is {@code WallConnectionType}); a new state
+     * or enum whose default name does not work fails generation until the history names it.
      *
      * @param blocks block identifier to constant name
      * @param items item identifier to constant name
@@ -70,9 +72,14 @@ public final class ConstantsGenerator {
      */
     public record Names(Map<String, String> blocks, Map<String, String> items, Map<String, String> states, Map<String, String> enums,
                         Renames renames) {
-        /** The overrides Paletter generates with. */
-        public static Names of(Renames renames) {
-            return new Names(Map.of(), Map.of(), STATE_NAMES, Map.of(), renames);
+        /** The names a history records: a state's constant and a string state's enum. */
+        public static Names of(Renames renames, JsonObject history) {
+            Map<String, String> states = new TreeMap<>();
+            Map<String, String> enums = new TreeMap<>();
+            object(history, "states").entrySet().forEach(state -> states.put(state.getValue().getAsJsonObject().get("name").getAsString(), state.getKey()));
+            object(history, "enums").entrySet().forEach(type -> type.getValue().getAsJsonObject().getAsJsonArray("states")
+                .forEach(state -> enums.put(state.getAsString(), type.getKey())));
+            return new Names(Map.of(), Map.of(), states, enums, renames);
         }
 
         Map<String, String> overrides(String kind) {
@@ -166,9 +173,9 @@ public final class ConstantsGenerator {
         return new ConstantsGenerator(release, preview, names, history, version, sources).run();
     }
 
-    /** The default names with the renames Paletter bundles. */
+    /** The names the committed history records, with the renames Paletter bundles. */
     public static Names names(Path root) throws IOException {
-        return Names.of(Renames.parse(Files.readAllLines(root.resolve(RENAMES))));
+        return Names.of(Renames.parse(Files.readAllLines(root.resolve(RENAMES))), readJson(root.resolve(HISTORY)));
     }
 
     public static JsonObject readJson(Path file) throws IOException {
@@ -780,17 +787,17 @@ public final class ConstantsGenerator {
             }
             String constant = overrides.getOrDefault(name, constantName(name));
             if (!CONSTANT.matcher(constant).matches()) {
-                throw new IllegalStateException("State " + name + " gives the constant name " + constant + "; add it to " + OVERRIDES + " (states)");
+                throw new IllegalStateException("State " + name + " gives the constant name " + constant + "; add it to " + HISTORY_NAMES);
             }
             if (constantOf.containsKey(constant)) {
                 throw new IllegalStateException("Duplicate constant BedrockStates." + constant + " for " + constantOf.get(constant) + " and " + name
-                    + "; give one a name in " + OVERRIDES + " (states)");
+                    + "; give one a name in " + HISTORY_NAMES);
             }
             constantOf.put(constant, name);
             JsonObject old = previousStates.has(constant) ? previousStates.getAsJsonObject(constant) : null;
             if (old != null && !required(old, "kind", "states." + constant).equals(kind.name().toLowerCase())) {
                 throw new IllegalStateException("BedrockStates." + constant + " (" + name + ") changed from " + old.get("kind").getAsString()
-                    + " to " + kind + ", which would change the type of the constant; give the state a new name in " + OVERRIDES + " (states)");
+                    + " to " + kind + ", which would change the type of the constant; give the state a new name in " + HISTORY_NAMES);
             }
             List<Integer> ints = new ArrayList<>();
             if (kind == Kind.INT) {
@@ -846,11 +853,11 @@ public final class ConstantsGenerator {
                 enumName = className(states.stream().sorted().findFirst().orElseThrow());
             }
             if (!CLASS.matcher(enumName).matches()) {
-                throw new IllegalStateException("Enum name " + enumName + " of " + states + " is no Java class name; set one in " + OVERRIDES + " (enums)");
+                throw new IllegalStateException("Enum name " + enumName + " of " + states + " is no Java class name; set one in " + HISTORY_NAMES);
             }
             if (model.enums.containsKey(enumName)) {
                 throw new IllegalStateException("Duplicate enum " + enumName + " for " + states + " and " + model.enums.get(enumName).states
-                    + "; set a name in " + OVERRIDES + " (enums)");
+                    + "; set a name in " + HISTORY_NAMES);
             }
             EnumModel created = new EnumModel(enumName, version);
             created.preview = states.stream().allMatch(state -> model.byName.get(state).preview != null) ? previewName() : null;
