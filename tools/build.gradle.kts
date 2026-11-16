@@ -45,8 +45,10 @@ tasks.test {
     useJUnitPlatform()
     maxHeapSize = "1G"
     systemProperty("paletter.root", rootProject.projectDir.absolutePath)
-    // ./gradlew :tools:test -PupdateGolden=true rewrites src/test/resources/constants-golden (review the diff)
+    // ./gradlew :tools:test -PupdateGolden=true rewrites the generator tests' golden files (Golden; review the diff)
     systemProperty("paletter.updateGolden", (findProperty("updateGolden") as String?) ?: "false")
+    // -PupdateShapeDisagreements=true rewrites data/model/vanilla-shapes-known-<protocol>.txt (VanillaShapeOracleTest)
+    systemProperty("paletter.updateShapeDisagreements", (findProperty("updateShapeDisagreements") as String?) ?: "false")
 }
 
 application {

@@ -10,6 +10,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.nbt.NbtUtils;
+import org.geysermc.paletter.tools.Golden;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 import org.geysermc.paletter.tools.model.infer.MappingInference;
 import org.geysermc.paletter.tools.model.Model;
@@ -17,9 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -67,16 +66,7 @@ class SyntheticPipelineTest {
     void generatedVariantsMatchGolden(@TempDir Path root) throws IOException {
         Path model = modelDir(root);
         String actual = Model.GSON.toJson(generator(model).manifest()) + "\n";
-        String golden;
-        try (InputStream in = getClass().getResourceAsStream("/golden/synthetic-variants.json")) {
-            golden = in == null ? "" : new String(in.readAllBytes(), StandardCharsets.UTF_8).replace("\r\n", "\n");
-        }
-        if (Boolean.getBoolean("spec.updateGolden") || golden.isEmpty()) {
-            Path file = Path.of("src/test/resources/golden/synthetic-variants.json");
-            Files.createDirectories(file.getParent());
-            Files.writeString(file, actual);
-        }
-        assertEquals(golden.isEmpty() ? actual : golden, actual, "variants differ from src/test/resources/golden (-Dspec.updateGolden=true)");
+        Golden.assertFile(Path.of("src/test/resources/golden/synthetic-variants.json"), actual);
         // deterministic
         assertEquals(actual, Model.GSON.toJson(generator(model).manifest()) + "\n");
     }

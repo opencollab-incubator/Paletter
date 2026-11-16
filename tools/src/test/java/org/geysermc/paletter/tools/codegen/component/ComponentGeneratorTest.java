@@ -4,13 +4,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.geysermc.paletter.tools.Golden;
 import org.geysermc.paletter.tools.codegen.component.ComponentGenerator.GenerationException;
 import org.geysermc.paletter.tools.codegen.component.ComponentGenerator.Inputs;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,9 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -198,29 +195,7 @@ class ComponentGeneratorTest {
     @Test
     void generatesTheGoldenSources() throws IOException {
         Map<String, String> files = ComponentGenerator.generate(inputs());
-        if (Boolean.getBoolean("paletter.updateGolden")) {
-            if (Files.isDirectory(GOLDEN)) {
-                try (Stream<Path> walk = Files.walk(GOLDEN)) {
-                    for (Path p : walk.sorted(Collections.reverseOrder()).toList()) {
-                        Files.delete(p);
-                    }
-                }
-            }
-            for (Map.Entry<String, String> file : files.entrySet()) {
-                Path p = GOLDEN.resolve(file.getKey());
-                Files.createDirectories(p.getParent());
-                Files.writeString(p, file.getValue(), StandardCharsets.UTF_8);
-            }
-        }
-        Set<String> golden = new TreeSet<>();
-        try (Stream<Path> walk = Files.walk(GOLDEN)) {
-            walk.filter(Files::isRegularFile).forEach(p -> golden.add(GOLDEN.relativize(p).toString().replace('\\', '/')));
-        }
-        assertEquals(golden, files.keySet(), "generated file set");
-        for (Map.Entry<String, String> file : files.entrySet()) {
-            String expected = Files.readString(GOLDEN.resolve(file.getKey()), StandardCharsets.UTF_8).replace("\r\n", "\n");
-            assertEquals(expected, file.getValue(), file.getKey());
-        }
+        Golden.assertDirectory(GOLDEN, files);
     }
 
     @Test

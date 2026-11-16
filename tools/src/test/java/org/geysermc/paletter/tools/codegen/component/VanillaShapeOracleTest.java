@@ -45,7 +45,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The compiled side is every variant of the version's spec capture that BDS accepted and the API can express (compiled the
  * way the conformance suite does). Disagreements that are no bug are listed per protocol in
  * {@code data/model/vanilla-shapes-known-<protocol>.txt}, which exists only for a protocol that has any; the test fails on
- * any change either way.
+ * any change either way. The list is rewritten only on its own request,
+ * {@code ./gradlew :tools:test -PupdateShapeDisagreements=true}, never with the golden files: each new disagreement is a
+ * decision.
  */
 class VanillaShapeOracleTest {
     @TestFactory
@@ -129,14 +131,14 @@ class VanillaShapeOracleTest {
                 }
             }
         }
-        if (Boolean.getBoolean("paletter.updateGolden")) {
+        if (Boolean.getBoolean("paletter.updateShapeDisagreements")) {
             if (disagreements.isEmpty()) {
                 // nothing to list: no file (an empty one would be an untracked leftover)
                 Files.deleteIfExists(known);
                 return;
             }
             List<String> lines = new ArrayList<>(List.of("# Wire paths of protocol " + protocol + " whose NBT type in that version's vanilla data differs from what Paletter compiles.",
-                "# Written by VanillaShapeOracleTest (-PupdateGolden=true); a path not listed must agree. Format: <component> <path> | <difference>"));
+                "# Written by VanillaShapeOracleTest (-PupdateShapeDisagreements=true); a path not listed must agree. Format: <component> <path> | <difference>"));
             disagreements.forEach((k, v) -> lines.add(k + " | " + v));
             Files.writeString(known, String.join("\n", lines) + "\n", StandardCharsets.UTF_8);
             return;

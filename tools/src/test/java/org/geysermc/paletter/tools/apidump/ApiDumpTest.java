@@ -1,12 +1,12 @@
 package org.geysermc.paletter.tools.apidump;
 
+import org.geysermc.paletter.tools.Golden;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -45,12 +45,7 @@ class ApiDumpTest {
     @Test
     void theDumpOfTheFixtureMatchesTheGoldenFile(@TempDir Path temp) throws IOException {
         String dump = ApiDump.dump(compile(temp), EXPORTS);
-        if (Boolean.getBoolean("paletter.updateGolden")) {
-            Files.createDirectories(GOLDEN.getParent());
-            Files.writeString(GOLDEN, dump, StandardCharsets.UTF_8);
-        }
-        assertEquals(Files.readString(GOLDEN, StandardCharsets.UTF_8).replace("\r\n", "\n"), dump,
-            "differs from the golden file; if intended, run with -PupdateGolden=true");
+        Golden.assertFile(GOLDEN, dump);
     }
 
     @Test

@@ -15,12 +15,12 @@ import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.internal.data.VersionFallbacks;
+import org.geysermc.paletter.tools.Golden;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -31,9 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.function.UnaryOperator;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -240,30 +238,7 @@ class ConstantsGoldenTest {
         Map<String, String> expected = new TreeMap<>();
         result.files().forEach((path, content) -> expected.put(golden(path), content));
 
-        if (Boolean.getBoolean("paletter.updateGolden")) {
-            if (Files.isDirectory(GOLDEN)) {
-                try (Stream<Path> files = Files.walk(GOLDEN)) {
-                    for (Path file : files.sorted(Collections.reverseOrder()).toList()) {
-                        Files.delete(file);
-                    }
-                }
-            }
-            for (Map.Entry<String, String> file : expected.entrySet()) {
-                Path path = GOLDEN.resolve(file.getKey());
-                Files.createDirectories(path.getParent());
-                Files.writeString(path, file.getValue(), StandardCharsets.UTF_8);
-            }
-        }
-
-        TreeSet<String> committed = new TreeSet<>();
-        try (Stream<Path> files = Files.walk(GOLDEN)) {
-            files.filter(Files::isRegularFile).forEach(file -> committed.add(GOLDEN.relativize(file).toString().replace('\\', '/')));
-        }
-        assertEquals(expected.keySet(), committed, "generated files vs " + GOLDEN);
-        for (Map.Entry<String, String> file : expected.entrySet()) {
-            String content = Files.readString(GOLDEN.resolve(file.getKey()), StandardCharsets.UTF_8).replace("\r\n", "\n");
-            assertEquals(content, file.getValue(), file.getKey() + " differs from the golden file; if intended, run with -PupdateGolden=true");
-        }
+        Golden.assertDirectory(GOLDEN, expected);
 
         assertEquals(List.of("minecraft:test_sparse: 3 states, but its values have 6 combinations: not a full product"), result.tableBlocks());
         assertEquals(List.of("BedrockBlocks.OLD_DOOR (minecraft:old_door, now TEST_DOOR)",
