@@ -126,7 +126,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             ItemVersion itemVersion = ItemVersion.from(item.version());
             builder.put(ItemInterner.intern(item.identifier(), item.runtimeId(), itemVersion, item.componentBased(), item.componentData(),
                 () -> new RegisteredItem(item.identifier(), item.runtimeId(), itemVersion, item.componentBased(), item.componentData(),
-                    Origin.VANILLA, List.of(), null)));
+                    Origin.VANILLA, List.of(), null, null)));
         }
         data.itemTags().forEach((tag, items) -> builder.tags.put(tag, new LinkedHashSet<>(items)));
         return builder;
@@ -307,7 +307,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         if (resolved == null || !resolved.fallback()) {
             return null;
         }
-        return BedrockItemType.of(resolved.definition().getIdentifier()).variantOf(resolved.damage());
+        return resolved.definition().key().variantOf(resolved.damage());
     }
 
     /**
@@ -830,7 +830,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             NbtMap componentData = ItemCompiler.componentData(custom.identifier(), runtimeId, custom.components(), custom.menuCategory(),
                 custom.creative(), context(report, source));
             RegisteredItem item = new RegisteredItem(custom.identifier(), runtimeId, ItemVersion.DATA_DRIVEN, true, componentData,
-                Origin.custom(source), custom.components(), custom);
+                Origin.custom(source), custom.components(), custom, custom.type());
             put(item);
             customItems.add(custom);
             for (String tag : custom.tags()) {
@@ -879,7 +879,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                 }
                 case CustomBlock.BlockItem.Simple simple -> {
                     checkUnused(block.identifier());
-                    item = new RegisteredItem(block.identifier(), nextRuntimeId, ItemVersion.NONE, false, null, Origin.custom(source), List.of(), null);
+                    item = new RegisteredItem(block.identifier(), nextRuntimeId, ItemVersion.NONE, false, null, Origin.custom(source), List.of(), null,
+                        block.itemType());
                 }
                 case CustomBlock.BlockItem.DataDriven dataDriven -> {
                     checkUnused(block.identifier());
@@ -890,7 +891,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                     int runtimeId = nextRuntimeId;
                     item = new RegisteredItem(block.identifier(), runtimeId, ItemVersion.DATA_DRIVEN, true,
                         ItemCompiler.componentData(block.identifier(), runtimeId, components, null, block.creative(),
-                            context(report, source)), Origin.custom(source), components, null);
+                            context(report, source)), Origin.custom(source), components, null, block.itemType());
                 }
             }
             put(item);

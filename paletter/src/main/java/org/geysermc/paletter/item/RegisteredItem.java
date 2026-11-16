@@ -33,8 +33,11 @@ public final class RegisteredItem implements ItemDefinition {
     private volatile @Nullable BedrockItemType key;
     private volatile @Nullable Properties properties;
 
+    /**
+     * @param key the type a custom item or block owns, or null for the type of the identifier
+     */
     RegisteredItem(String identifier, int runtimeId, ItemVersion version, boolean componentBased, @Nullable NbtMap componentData,
-                   Origin origin, List<ItemComponent> components, @Nullable CustomItem customItem) {
+                   Origin origin, List<ItemComponent> components, @Nullable CustomItem customItem, @Nullable BedrockItemType key) {
         this.identifier = identifier.intern();
         this.runtimeId = runtimeId;
         this.version = version;
@@ -43,6 +46,7 @@ public final class RegisteredItem implements ItemDefinition {
         this.origin = origin;
         this.components = List.copyOf(components);
         this.customItem = customItem;
+        this.key = key;
     }
 
     @Override
@@ -79,7 +83,9 @@ public final class RegisteredItem implements ItemDefinition {
     }
 
     /**
-     * @return the key of this item: the vanilla constant, or the custom type of its identifier
+     * @return the key of this item: the vanilla constant, or for a custom item or block item the type the
+     *         {@link CustomItem} or {@link org.geysermc.paletter.block.CustomBlock} owns ({@link CustomItem#type()},
+     *         {@link org.geysermc.paletter.block.CustomBlock#itemType()})
      */
     public @NonNull BedrockItemType key() {
         BedrockItemType result = key;

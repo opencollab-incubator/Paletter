@@ -6,6 +6,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.PaletteException;
 import org.geysermc.paletter.internal.item.ItemVariant;
+import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.internal.data.Renames;
@@ -13,7 +14,9 @@ import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -48,14 +51,15 @@ public final class CanonicalItems {
     /** Of a root only: its vanilla ids and those of the one other root asked about last. */
     private volatile @Nullable Translation translation;
 
-    private CanonicalItems(@Nullable CanonicalItems parent, List<ItemVariant> variants, Renames renames, String version) {
+    private CanonicalItems(@Nullable CanonicalItems parent, List<ItemVariant> variants, BedrockItemVariant[] handles, Renames renames,
+                           String version) {
         this.parent = parent;
         this.root = parent == null ? this : parent.root;
         this.renames = renames;
         this.version = version;
         this.offset = parent == null ? 0 : parent.size();
         this.variants = variants.toArray(ItemVariant[]::new);
-        this.handles = new BedrockItemVariant[this.variants.length];
+        this.handles = handles;
         Object2IntOpenHashMap<ItemVariant> index = new Object2IntOpenHashMap<>(variants.size());
         index.defaultReturnValue(-1);
         for (int i = 0; i < this.variants.length; i++) {
@@ -87,7 +91,7 @@ public final class CanonicalItems {
             variants.add(ItemVariant.of(item.identifier()));
         }
         newest.creative().forEachStack(stack -> variants.add(normalize(stack.variant())));
-        return new CanonicalItems(null, List.copyOf(variants), renames, newest.version().toString());
+        return new CanonicalItems(null, List.copyOf(variants), new BedrockItemVariant[variants.size()], renames, newest.version().toString());
     }
 
     private static ItemVariant normalize(ItemVariant variant) {
@@ -99,9 +103,13 @@ public final class CanonicalItems {
      *            for as long as it is referenced
      * @param additional variants to append, e.g. base variants of custom items. Variants that already have an id
      *                   (here or earlier in the list) are skipped; a block state equal to the item's default is dropped
+     * @param types the types of the custom items (and custom block items) the variants belong to: their handles are
+     *              these types' own variants, so the palette hands back the objects {@code CustomItem#type()} owns.
+     *              Variants of a custom item of an earlier extension use that item's type
      * @return these indices with the given variants appended, or this if there are none
      */
-    public @NonNull CanonicalItems extend(@NonNull Object key, @NonNull List<ItemVariant> additional) {
+    public @NonNull CanonicalItems extend(@NonNull Object key, @NonNull List<ItemVariant> additional,
+                                          @NonNull Collection<BedrockItemType> types) {
         if (additional.isEmpty()) {
             return this;
         }
@@ -118,11 +126,36 @@ public final class CanonicalItems {
                 if (variants.isEmpty()) {
                     return this;
                 }
-                existing = new CanonicalItems(this, List.copyOf(variants), renames, version);
+                List<ItemVariant> list = List.copyOf(variants);
+                Map<String, BedrockItemType> byIdentifier = new HashMap<>();
+                types.forEach(type -> byIdentifier.put(type.identifier(), type));
+                BedrockItemVariant[] handles = new BedrockItemVariant[list.size()];
+                for (int i = 0; i < handles.length; i++) {
+                    handles[i] = customHandle(list.get(i), byIdentifier);
+                }
+                existing = new CanonicalItems(this, list, handles, renames, version);
                 extensions.put(key, existing);
             }
             return existing;
         }
+    }
+
+    /**
+     * @return the custom item's own variant (of its own type), or null for a variant of no custom item: its handle is
+     *         made on first use
+     */
+    private @Nullable BedrockItemVariant customHandle(ItemVariant variant, Map<String, BedrockItemType> types) {
+        BedrockItemType type = types.get(variant.identifier());
+        if (type == null) {
+            // An item of an earlier extension: its base variant has that item's handle
+            int base = lookup(ItemVariant.of(variant.identifier()));
+            BedrockItemVariant handle = base < vanillaSize() ? null : handle(base);
+            if (handle == null || !handle.type().isCustom()) {
+                return null;
+            }
+            type = handle.type();
+        }
+        return type.variantOf(variant.damage());
     }
 
     /**
@@ -242,7 +275,8 @@ public final class CanonicalItems {
     }
 
     /**
-     * @return the handle of a canonical id, or null if there is no such id. Handles of custom content are created once
+     * @return the handle of a canonical id, or null if there is no such id. The handle of a custom item's variant is that
+     *         item's own ({@code CustomItem#type()}, {@code CustomBlock#itemType()}); other handles are created once
      */
     public @Nullable BedrockItemVariant handle(int canonical) {
         if (canonical < 0 || canonical >= size()) {

@@ -77,8 +77,8 @@ class HandleTest {
         assertNull(PALETTER.block(type.defaultState().toNbt()));
         BedrockItemVariant handle = palette.item("example:ruby", 0);
         assertNotNull(handle);
-        assertEquals(ruby.type().base(), handle);
-        assertSame(handle, palette.item("example:ruby", 0), "custom handles are created once");
+        assertSame(ruby.type().base(), handle, "the palette hands back the item's own handle");
+        assertSame(handle, palette.item("example:ruby", 0));
         assertNotNull(palette.item(handle));
         assertTrue(palette.itemVariants().contains(handle));
         assertTrue(palette.itemVariants().contains(BedrockItems.APPLE.base()));

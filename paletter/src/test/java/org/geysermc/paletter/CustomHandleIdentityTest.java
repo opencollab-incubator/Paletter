@@ -1,0 +1,192 @@
+package org.geysermc.paletter;
+
+import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
+import org.geysermc.paletter.block.BlockProperty;
+import org.geysermc.paletter.block.CustomBlock;
+import org.geysermc.paletter.block.RegisteredBlockState;
+import org.geysermc.paletter.creative.CreativeCategory;
+import org.geysermc.paletter.creative.CreativePlacement;
+import org.geysermc.paletter.data.DataVersion;
+import org.geysermc.paletter.item.BedrockItemStack;
+import org.geysermc.paletter.item.CustomItem;
+import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.vanilla.BedrockItemType;
+import org.geysermc.paletter.vanilla.BedrockItemVariant;
+import org.junit.jupiter.api.Test;
+
+import java.lang.ref.WeakReference;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
+/**
+ * A palette hands back the types a registered {@link CustomItem} or {@link CustomBlock} owns, so custom content compares
+ * with {@code ==} like vanilla constants, in every version and at every level of layers.
+ */
+class CustomHandleIdentityTest {
+    private static final Paletter PALETTER = Paletter.bundled();
+
+    private static CustomBlock lamp(String identifier) {
+        return CustomBlock.builder(identifier).property(BlockProperty.bool("example:lit"))
+            .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION)).build();
+    }
+
+    private static CustomItem ruby(String identifier) {
+        return CustomItem.builder(identifier).creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
+    }
+
+    @Test
+    void customTypesAreCreatedOnce() {
+        CustomItem ruby = ruby("example:ruby");
+        CustomBlock lamp = lamp("example:lamp");
+        assertSame(ruby.type(), ruby.type());
+        assertSame(ruby.type().base(), ruby.type().base());
+        assertSame(ruby.type().base(), ruby.type().variant(0));
+        assertSame(lamp.type(), lamp.type());
+        assertSame(lamp.type().defaultState(), lamp.type().defaultState());
+        assertSame(lamp.itemType(), lamp.itemType());
+    }
+
+    @Test
+    void aPaletteHandsBackTheTypesItsContentOwns() {
+        CustomItem ruby = ruby("example:ruby");
+        CustomBlock lamp = lamp("example:lamp");
+        PaletteLayer layer = PaletteLayer.builder("content").item(ruby).block(lamp).build();
+        Paletter paletter = Palettes.paletter(layer);
+        List<DataVersion> versions = paletter.versions();
+        for (DataVersion version : List.of(versions.getFirst(), versions.getLast())) {
+            assertOwned(paletter.palette(version.protocolVersion()), ruby, lamp);
+        }
+    }
+
+    @Test
+    void handlesStayTheOwnedOnesAcrossExtendLevels() {
+        CustomItem ruby = ruby("example:ruby");
+        CustomBlock lamp = lamp("example:lamp");
+        CustomItem sapphire = ruby("example:sapphire");
+        CustomBlock lantern = lamp("example:lantern");
+        Palette base = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("global").item(ruby).block(lamp).build());
+        Palette session = base.extend(PaletteLayer.builder("session").item(sapphire).block(lantern)
+            // A variant of an item of the layer below
+            .variant(ruby.type().variantOf(5)).build());
+        Palette deeper = session.extend(PaletteLayer.builder("deeper").item(ruby("example:emerald")).build());
+        for (Palette palette : List.of(base, session, deeper)) {
+            assertOwned(palette, ruby, lamp);
+        }
+        for (Palette palette : List.of(session, deeper)) {
+            assertOwned(palette, sapphire, lantern);
+            BedrockItemVariant damaged = palette.item("example:ruby", 5);
+            assertNotNull(damaged);
+            assertSame(ruby.type(), damaged.type(), "a variant of a custom item is of the item's type");
+            assertSame(damaged, palette.item("example:ruby", 5));
+        }
+        assertNull(base.item("example:sapphire", 0));
+    }
+
+    @Test
+    void equalItemsInSiblingLayersEachGetTheirOwnHandles() {
+        CustomItem first = ruby("example:ruby");
+        CustomItem second = ruby("example:ruby");
+        CustomBlock firstLamp = lamp("example:lamp");
+        CustomBlock secondLamp = lamp("example:lamp");
+        assertEquals(first, second);
+        assertEquals(firstLamp, secondLamp);
+        Palette vanilla = PALETTER.palette(PALETTER.latest().protocolVersion());
+        Palette a = vanilla.extend(PaletteLayer.builder("a").item(first).block(firstLamp).build());
+        Palette b = vanilla.extend(PaletteLayer.builder("b").item(second).block(secondLamp).build());
+        assertOwned(a, first, firstLamp);
+        assertOwned(b, second, secondLamp);
+        // Not the same objects, but equal: equals and hash keys work across the two
+        assertNotSame(a.item("example:ruby", 0), b.item("example:ruby", 0));
+        assertEquals(a.item("example:ruby", 0), b.item("example:ruby", 0));
+        assertEquals(a.item("example:ruby", 0).hashCode(), b.item("example:ruby", 0).hashCode());
+        BedrockBlockState lampA = a.block(firstLamp.type().defaultState().toNbt());
+        BedrockBlockState lampB = b.block(firstLamp.type().defaultState().toNbt());
+        assertNotSame(lampA, lampB);
+        assertEquals(lampA, lampB);
+        assertEquals(lampA.hashCode(), lampB.hashCode());
+        // A handle of one works in the other palette
+        assertEquals(a.runtimeId(lampA), b.runtimeId(lampA));
+        assertSame(b.item(first.type()), b.item(second.type()));
+    }
+
+    @Test
+    void handlesSurviveGarbageCollection() {
+        CustomItem ruby = ruby("example:ruby");
+        CustomBlock lamp = lamp("example:lamp");
+        Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion())
+            .extend(PaletteLayer.builder("gc").item(ruby).block(lamp).build());
+        BedrockBlockState state = palette.block(lamp.type().defaultState().toNbt());
+        BedrockItemVariant variant = palette.item("example:ruby", 0);
+        // Equal blocks and items made and dropped meanwhile must not change what the palette hands back
+        WeakReference<CustomBlock> temporary = temporaryCopies();
+        for (int i = 0; i < 100 && temporary.get() != null; i++) {
+            System.gc();
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        assertNull(temporary.get(), "nothing keeps a dropped block alive");
+        assertSame(state, palette.block(lamp.type().defaultState().toNbt()));
+        assertSame(lamp.type().defaultState(), state);
+        assertSame(variant, palette.item("example:ruby", 0));
+        assertSame(ruby.type().base(), variant);
+        assertOwned(palette, ruby, lamp);
+    }
+
+    private static WeakReference<CustomBlock> temporaryCopies() {
+        CustomBlock copy = lamp("example:lamp");
+        copy.type().states();
+        ruby("example:ruby").type().base();
+        return new WeakReference<>(copy);
+    }
+
+    /** Every way a palette hands back a handle of the item or block gives the one it owns. */
+    private static void assertOwned(Palette palette, CustomItem item, CustomBlock block) {
+        String where = palette.version() + " " + palette.layers().size() + " layers";
+        BedrockItemType type = item.type();
+        BedrockItemVariant base = type.base();
+
+        // Items
+        assertSame(base, palette.item(item.identifier(), 0), where);
+        ItemData encoded = palette.encode(BedrockItemStack.of(base, 3));
+        BedrockItemStack decoded = palette.decode(encoded);
+        assertNotNull(decoded, where);
+        assertSame(base, decoded.variant(), where);
+        assertSame(type, palette.item(type).key(), where);
+        assertSame(type, palette.resolve(base).definition().key(), where);
+        assertSame(item, palette.item(type).customItem(), where);
+        assertSame(base, palette.explain(item.identifier(), 0).handle(), where);
+        assertSame(base, palette.itemVariants().stream().filter(v -> v.type().identifier().equals(item.identifier())).findFirst().orElseThrow(), where);
+        assertSame(type, palette.creativeLayout().stacks().filter(stack -> stack.type().identifier().equals(item.identifier()))
+            .findFirst().orElseThrow().type(), where);
+
+        // The block item
+        BedrockItemType blockItem = block.itemType();
+        assertSame(blockItem.base(), palette.item(block.identifier(), 0), where);
+        BedrockItemStack decodedBlockItem = palette.decode(palette.encode(BedrockItemStack.of(blockItem.base())));
+        assertNotNull(decodedBlockItem, where);
+        assertSame(blockItem.base(), decodedBlockItem.variant(), where);
+        assertSame(blockItem, palette.item(blockItem).key(), where);
+        assertSame(blockItem, palette.creativeLayout().stacks().filter(stack -> stack.type().identifier().equals(block.identifier()))
+            .findFirst().orElseThrow().type(), where);
+
+        // Blocks
+        assertSame(block.type(), palette.blocks().block(block.identifier()).key(), where);
+        for (BedrockBlockState state : block.type().states()) {
+            assertSame(state, palette.block(state.toNbt()), where);
+            RegisteredBlockState registered = palette.block(state);
+            assertSame(state, registered.key(), where);
+            assertSame(state, palette.blocks().key(registered), where);
+            assertSame(state, BedrockBlockState.fromCanonical(palette.blocks().canonical(), palette.blocks().canonical().index(state.toNbt())), where);
+            assertSame(state, palette.explain(state.toNbt()).handle(), where);
+        }
+        assertSame(block.type().defaultState(), palette.blockKeyOf(blockItem.base()), where);
+    }
+}

@@ -8,7 +8,6 @@ import org.geysermc.paletter.Lookup;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
-import org.geysermc.paletter.vanilla.BedrockBlockType;
 
 import java.util.List;
 
@@ -93,7 +92,7 @@ public final class RegisteredBlockState implements BlockDefinition {
         if (key == null) {
             if (custom) {
                 CustomBlock block = customBlock;
-                List<BedrockBlockState> keys = block == null ? List.of() : BedrockBlockType.of(block).states();
+                List<BedrockBlockState> keys = block == null ? List.of() : block.type().states();
                 key = indexInBlock < keys.size() ? keys.get(indexInBlock) : null;
             } else {
                 key = Paletter.bundled().block(state, Lookup.STRICT);

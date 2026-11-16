@@ -113,6 +113,9 @@ final class PaletteCompiler {
                 .withCustomBlocks(data, layer, layer.blocks(), report, source);
 
             List<ItemVariant> newVariants = new ArrayList<>();
+            // The handles of the new variants are the types the custom items and blocks own
+            List<BedrockItemType> customTypes = new ArrayList<>();
+            blocks.customBlocks().forEach(block -> customTypes.add(block.itemType()));
             // blockItem(...) for a block of this layer takes over the item registration the block would do itself
             Set<String> explicit = new HashSet<>();
             layer.itemEntries().forEach(entry -> {
@@ -122,7 +125,10 @@ final class PaletteCompiler {
             });
             for (PaletteLayer.ItemEntry entry : layer.itemEntries()) {
                 switch (entry) {
-                    case PaletteLayer.ItemEntry.Custom custom -> newVariants.add(custom.item().variant());
+                    case PaletteLayer.ItemEntry.Custom custom -> {
+                        newVariants.add(custom.item().variant());
+                        customTypes.add(custom.item().type());
+                    }
                     case PaletteLayer.ItemEntry.OfBlock ofBlock -> {
                         if (!(ofBlock.item() instanceof CustomBlock.BlockItem.None)) {
                             newVariants.add(ItemVariant.of(ofBlock.block()));
@@ -137,7 +143,7 @@ final class PaletteCompiler {
             }
             List<String> registered = newVariants.stream().map(ItemVariant::identifier).toList();
             newVariants.addAll(layer.variants());
-            CanonicalItems canonicalItems = parent.items().canonical().extend(layer, newVariants);
+            CanonicalItems canonicalItems = parent.items().canonical().extend(layer, newVariants, customTypes);
 
             ItemRegistry.Builder items = parent.items().extend(blocks, canonicalItems);
             // Components refer to items of this layer registered later: declare them all first
@@ -156,7 +162,7 @@ final class PaletteCompiler {
                     case PaletteLayer.ItemEntry.Custom(CustomItem custom) -> {
                         items.addCustom(custom, report, source);
                         if (custom.creative() != null) {
-                            placed.add(new Placed(null, BedrockItemStack.of(BedrockItemType.of(custom.identifier())), custom.creative()));
+                            placed.add(new Placed(null, BedrockItemStack.of(custom.type()), custom.creative()));
                         }
                     }
                     case PaletteLayer.ItemEntry.OfBlock(String identifier, CustomBlock.BlockItem blockItem, var placement) -> {
@@ -265,7 +271,7 @@ final class PaletteCompiler {
 
     private static BedrockItemStack blockItemStack(CustomBlock block, BlockRegistry blocks) {
         BedrockBlockState state = blocks.canonical().handle(Canonicals.block(blocks.canonical(), block.defaultState()));
-        return BedrockItemStack.of(BedrockItemType.of(block.identifier())).withBlockState(state);
+        return BedrockItemStack.of(block.itemType()).withBlockState(state);
     }
 
     /** A creative placement to apply; {@code block} is the custom block if the stack is a block item. */
