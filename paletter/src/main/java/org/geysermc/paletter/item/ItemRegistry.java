@@ -490,7 +490,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      */
     @Internal
     public @NonNull ItemData encode(@NonNull BedrockItemStack stack) {
-        ResolvedItem resolved = resolve(stack.variant().toItemVariant());
+        ResolvedItem resolved = resolve(stack.variant());
         if (resolved == null) {
             return ItemData.AIR;
         }
@@ -713,7 +713,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      */
     @Internal
     public @Nullable ItemData toItemData(@NonNull BedrockItemStack stack) {
-        ResolvedItem resolved = resolve(stack.variant().toItemVariant());
+        ResolvedItem resolved = resolve(stack.variant());
         if (resolved == null || resolved.fallback()) {
             return null;
         }
