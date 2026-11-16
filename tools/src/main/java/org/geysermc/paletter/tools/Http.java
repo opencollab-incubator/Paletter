@@ -151,7 +151,7 @@ public record Http(Duration connectTimeout, Duration readTimeout, int tries, Dur
     }
 
     /** Server errors, timeouts and rate limits may pass; anything else (404 above all) is the answer. */
-    static boolean retried(int status) {
+    public static boolean retried(int status) {
         return status >= 500 || status == 408 || status == 429;
     }
 

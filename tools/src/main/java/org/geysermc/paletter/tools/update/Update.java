@@ -1031,12 +1031,13 @@ public final class Update {
             stage(bdsData.resolve(distribution.version()).resolve(BdsInventory.FILE),
                 BdsInventory.json(inventory).getBytes(StandardCharsets.UTF_8), "BDS inventory " + distribution.version());
         } catch (org.geysermc.paletter.tools.Http.NetworkException e) {
-            if (e.status() != 0) {
-                // An answer (404 above all): the Linux build is not where it should be, which is a failure
+            if (e.status() != 0 && !org.geysermc.paletter.tools.Http.retried(e.status())) {
+                // An answer a retry would not change (404 above all): the Linux build is not where it should be, which is a failure
                 report.fail("BDS inventory", e);
                 return;
             }
-            // The Linux zip is only read for the inventory: without the network there is nothing to inventory, nothing failed
+            // The Linux zip is only read for the inventory: without the network (or with a server error or rate limit that
+            // outlasted the retries) there is nothing to inventory, nothing failed
             report.check(Report.Status.SKIP, "BDS inventory", "the Linux build could not be downloaded: " + e.getMessage());
         } catch (Exception e) {
             report.fail("BDS inventory", e);
