@@ -185,7 +185,7 @@ public final class FixedAddons {
             write(bp.resolve("blocks/" + String.format("b%02d", rank + 1) + ".json"), versioned(formatVersion, "minecraft:block", body));
         }
         write(bp.resolve("manifest.json"), manifest("Paletter creative order probe", "Custom items and blocks with every menu_category placement",
-            "a1e5c0de-0000-4000-8000-00000000d001", "a1e5c0de-0000-4000-8000-00000000d002", "data", null, formatVersion));
+            "a1e5c0de-0000-4000-8000-00000000a001", "a1e5c0de-0000-4000-8000-00000000a002", "data", null, formatVersion));
     }
 
     /**
@@ -246,9 +246,9 @@ public final class FixedAddons {
                 versioned(FORMAT_VERSION, "minecraft:item", body));
         }
         writeCompact(bp.resolve("manifest.json"), json("""
-            {"format_version": 2, "header": {"name": "big", "description": "big", "uuid": "a1e5c0de-0000-4000-8000-00000000e001",
+            {"format_version": 2, "header": {"name": "big", "description": "big", "uuid": "a1e5c0de-0000-4000-8000-000000009001",
                                               "version": [1, 0, 0], "min_engine_version": [1, 26, 60]},
-             "modules": [{"type": "data", "uuid": "a1e5c0de-0000-4000-8000-00000000e002", "version": [1, 0, 0]}]}"""));
+             "modules": [{"type": "data", "uuid": "a1e5c0de-0000-4000-8000-000000009002", "version": [1, 0, 0]}]}"""));
     }
 
     /** The identifiers of the large probe, for checking the generator against a capture of the pack. */
