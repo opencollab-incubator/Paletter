@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -77,5 +78,28 @@ class ExtendReuseTest {
         CreativeEntry cake = child.creative().items().stream().map(data -> child.creative().entry(data.getNetId()))
             .filter(entry -> entry.stack().type().identifier().equals("minecraft:cake")).findFirst().orElseThrow();
         assertSame(child.items().item("minecraft:cake"), cake.item().getDefinition());
+    }
+
+    private static org.cloudburstmc.protocol.bedrock.data.BlockPropertyData properties(Palette palette, String identifier) {
+        return palette.blocks().blockProperties().stream().filter(data -> data.getName().equals(identifier)).findFirst().orElseThrow();
+    }
+
+    @Test
+    void aBlockKeepsItsEncodingWhileItsBlockIdStays() {
+        Palette parent = parent().extend(PaletteLayer.builder("lamp").block(LAMP).build());
+        // "reuse:aa" sorts after "reuse:lamp": BDS numbers by identifier in descending order, so the lamp keeps its id
+        Palette child = parent.extend(PaletteLayer.builder("after").block(CustomBlock.builder("reuse:aa").build()).build());
+        assertEquals(parent.blocks().customBlockId("reuse:lamp"), child.blocks().customBlockId("reuse:lamp"));
+        assertSame(properties(parent, "reuse:lamp"), properties(child, "reuse:lamp"));
+    }
+
+    @Test
+    void aBlockIsEncodedAgainWhenItsBlockIdChanges() {
+        Palette parent = parent().extend(PaletteLayer.builder("lamp").block(LAMP).build());
+        // "reuse:zz" sorts before "reuse:lamp": the lamp's id moves up
+        Palette child = parent.extend(PaletteLayer.builder("before").block(CustomBlock.builder("reuse:zz").build()).build());
+        assertNotEquals(parent.blocks().customBlockId("reuse:lamp"), child.blocks().customBlockId("reuse:lamp"));
+        assertNotSame(properties(parent, "reuse:lamp"), properties(child, "reuse:lamp"));
+        assertEquals(child.blocks().customBlockId("reuse:lamp"), properties(child, "reuse:lamp").getProperties().getCompound("vanilla_block_data").getInt("block_id"));
     }
 }

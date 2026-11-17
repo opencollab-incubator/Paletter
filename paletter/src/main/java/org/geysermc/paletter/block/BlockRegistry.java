@@ -179,10 +179,21 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         WireContext context = WireContext.of(data, report, source);
         // The blocks already here were reported by their own layers: encode them again into a report nobody reads
         WireContext earlier = WireContext.of(data, new PaletteReportBuilder(), source);
+        // The blocks already here keep their encoding (the same instance) while their block id is the same: nothing else
+        // that a layer changes goes into it
+        Map<String, BlockPropertyData> earlierEncoded = new HashMap<>();
+        for (BlockPropertyData property : table.blockProperties) {
+            if (table.customBlockIds.containsKey(property.getName())) {
+                earlierEncoded.put(property.getName(), property);
+            }
+        }
         for (int i = 0; i < all.size(); i++) {
             CustomBlock block = all.get(i);
-            WireContext blockContext = i < table.customBlocks.size() ? earlier : context;
-            encoded.add(new BlockPropertyData(block.identifier(), BlockCompiler.propertyData(block, blockIds.get(block.identifier()), blockContext)));
+            int blockId = blockIds.get(block.identifier());
+            boolean isEarlier = i < table.customBlocks.size();
+            BlockPropertyData kept = isEarlier && table.customBlockIds.get(block.identifier()) == blockId ? earlierEncoded.get(block.identifier()) : null;
+            encoded.add(kept != null ? kept
+                : new BlockPropertyData(block.identifier(), BlockCompiler.propertyData(block, blockId, isEarlier ? earlier : context)));
         }
         // The property list BDS sends follows its block ids too
         encoded.sort(java.util.Comparator.comparing(BlockPropertyData::getName).reversed());
