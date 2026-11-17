@@ -10,6 +10,7 @@ creator docs               -> docs                               -> data/model/c
 data/model + spec capture  -> infer                              -> data/model/mappings.json, coverage.md
 data/model                 -> generateComponentApi               -> paletter/src/generated/java (components, encoders, behaviour keys)
 bundled data               -> generateConstants                  -> paletter/src/generated/java (vanilla constants)
+BDS binary (not run)       -> whitebox, whitebox-coverage         -> data/bds/<build>/whitebox.json, whitebox-coverage.md
 data/bds + third party     -> behaviour import                   -> behaviour.nbt, data/behaviour/REPORT.md
 data/bds/<build>/voxel-shapes -> voxel-shapes import             -> voxel_shapes.nbt
 ```
@@ -47,6 +48,7 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 | `import`, `bds-compare`, `verify`, `check-data` | Import and check bundled data. `check-data` lists what older versions lack. |
 | `data-diff`, `experiment-marks` | Maintain bundled data without a new capture. |
 | `bds-inventory` | Reads the strings of the Linux `bedrock_server` without running it: block and item components, Script API classes. |
+| `whitebox`, `whitebox-coverage` | Reads the code of the server binary without running it: what each component can send, and what no capture shows of it ([below](#white-box-discovery)). |
 | `docs`, `addon`, `spec-capture`, `infer`, `check-mappings` | The component model (below). |
 | `components generate\|check`, `constants generate\|check` | The generators (below). |
 | `behaviour import`, `behaviour-probe`, `behaviour-dump` | Behaviour values (below). |
@@ -211,6 +213,135 @@ component, including fields that need a hand rule and hand transforms BDS has no
 with BDS's, for every captured build. It has no list of exceptions: a variant the API cannot express, or encodes
 differently, fails the build. Such gaps are closed in the model (`api.json` `optional`, `openEnums`, `unions`, `forms`,
 protocol windows) or with a hand transform, never waived.
+
+## White-box discovery
+
+Captures show what BDS sends for the add-on it is given. They cannot show a component nobody wrote a variant for, a
+key that only a rare input switches on, or a component the docs do not mention. The code of BDS can: `whitebox` reads
+the public server binary of a build, without running it, and lists what the code is able to send. `whitebox-coverage`
+then names what no capture of that build shows. Status: a prototype. `update` does not run it yet (see "In `update`").
+
+```
+./gradlew :tools:run --args="whitebox --bds 1.26.63.1"      # -> data/bds/1.26.63.1/whitebox.json, and the diff to the build before
+./gradlew :tools:run --args="whitebox-coverage"              # -> data/bds/<build>/whitebox-coverage.md for every build with a whitebox.json
+```
+
+The facts are used to direct captures and to notice changes, never as data: the component model still learns every
+shape from a capture. Only facts leave the binary (names, flags, keys, kinds); no code does.
+
+### What it finds
+
+`whitebox.json` (generated, per build):
+
+- `itemComponents`, `blockComponents`: every registered component with `network` (is it sent to the client), `kind`
+  (`reflection`: written by BDS's generic schema writer; `hand-written`: by code of its own; `mixed`: both; `not-sent`),
+  `writes` (the keys and string values the hand-written writer mentions), `writesExtra` (those of a second writer that
+  some classes have, such as the four geometry flags), `writesNested` (those of functions the writer calls, such as the
+  block and item descriptors), `reads` (the reader's), `types` (the NBT type stored after a key), `schema` (the keys of
+  the reflection schema, where one function registers the component alone), `hooks` (virtual functions after the reader
+  that only this class has) and `code` (a checksum of what the writer does, to notice a change that adds no key).
+- `itemClassesWithoutName`: classes of the item family that are constructed elsewhere than in the registration, such as
+  the component BDS adds for a script `onUseOn` callback.
+- `traits` and `envelopes`: the same for the block traits and for the code that writes `item_properties` and the block
+  definition around the components.
+- `layout`: the virtual function slots it read the above from; `notes`: what it could not resolve.
+
+### How it finds it
+
+The discovery needs no symbols and no type names. It relies on how the code is built, and fails rather than guess when
+an anchor is missing:
+
+1. Functions come from the unwind tables, pointers in data from the relocations (Linux) or the read-only data
+   (Windows).
+2. A component is a class with virtual functions. Block components return their name from a virtual function that
+   only returns a static string; every table of function pointers that has such a function is a candidate, and
+   `minecraft:geometry` anchors the family. Item components are named by the one function that registers them, found
+   through `minecraft:max_stack_size`: it mentions each name and constructs each class in turn.
+3. In the anchor's table, the first function that returns a constant and is followed by two functions with real code
+   is "is this sent to the client"; the next two are the writer and the reader. All classes of a family share that
+   layout, so the slots are found per build and never written down.
+4. A writer that mentions no key and uses the one writer class that all such writers share is `reflection`. The
+   functions that hand-written writers hand their keys to (and that no reader calls) tell a second writer from a
+   reader.
+5. Keys are string literals, or short strings that the compiler builds in place with a few instructions
+   (`Listing` follows those). The Linux build also stores each tag's type right after its key.
+
+Class names are added as `class` where the build has type information (Linux releases), as a label only.
+
+| Build | Result |
+|---|---|
+| Linux release (type names) | everything above |
+| Linux preview (no type names) | the same, without `class` |
+| Windows | block components, traits and envelopes as on Linux, without tag types; item classes are found with their kinds and keys but cannot be paired with their names, so `whitebox.windows.json` is a cross-check only |
+
+What it cannot know: values, defaults, list and compound shapes, which input switches a key on, and the keys of
+reflection components whose schema is registered together with others. A literal may be a string value (`water`,
+`opaque`) rather than a key.
+
+### Other sources that were looked at
+
+| Source | Gives | Verdict |
+|---|---|---|
+| The binary, read statically (`whitebox`) | registered components, network flag, kind, hand-written keys, envelopes, changes per build | used: no BDS run, any platform, about 15 s per build |
+| BDS's documentation generator (`test_config.json` with `generate_documentation`, about 40 s, stops by itself) | JSON schemas of every component: keys, types, enums, ranges per format version | BDS's own output; fits the docs side of the component model and the enum tables. The schemas are of the JSON, not of the network, and say nothing about hand-written components |
+| Instrumenting a running BDS (`LD_PRELOAD` on Linux in CI, a DLL or Frida on Windows) to call each writer on a default object | real NBT, also of components whose JSON BDS rejects | not built: every address would come from `whitebox` anyway, a default object is not what an add-on produces, and it would be native code to maintain per build. Worth it only for components that no JSON at any format version reaches |
+| The content log and server switches | nothing about component data beyond what `spec-capture` already reads | no hook found |
+
+### Coverage
+
+`whitebox-coverage` compares `whitebox.json` with every capture of the same build (`spec`, `spec-format`, `spec-keys`,
+`addon`, the vanilla capture's data-driven content) and writes `whitebox-coverage.md`, the gaps:
+
+- a component that is sent and was never captured;
+- a key or string value a writer mentions that no capture of its component has;
+- a key that every capture has with the same value: a branch of the writer that was never seen (`replaceBlockItem`,
+  `molangVersion`, a trait's `place_behavior`).
+
+A gap closes with a capture: a new variant in the spec add-on, a format sweep entry, or a probe add-on. Some never
+close (a value BDS writes as a constant, a literal that is not sent) and stay listed; the report is the place to see
+them, there is no list of exceptions.
+
+`whitebox-coverage --check` fails when a committed report is not what the committed facts and captures give, so the
+list cannot drift from the data. `--strict` fails on any gap; it becomes the build's check once the list is down to
+the ones that cannot close.
+
+### Script custom components
+
+Captured with a probe add-on on 1.26.63.1 (a script module that registers one custom component per callback, used by
+blocks and items in both JSON forms), and matching what `whitebox` reads from the code:
+
+- Blocks: `minecraft:custom_components` is sent as three bytes, `hasPlayerInteract`, `hasPlayerPlacing` and
+  `isV1Component`. Component names and parameters are never sent.
+  - The old form (`"minecraft:custom_components": ["ns:name"]`, block format versions up to 1.21.80) sends 1, 1, 1
+    whatever the script registers.
+  - The new form (`"ns:name": {parameters}` as a component key) sends `isV1Component` 0, `hasPlayerInteract` 1 only if
+    one of the block's components has `onPlayerInteract`, and `hasPlayerPlacing` 1 only if one has
+    `beforeOnPlayerPlace`. The other callbacks change nothing on the wire.
+  - From format 1.21.90 BDS drops the old form with a content log error, and from 1.26.20 it rejects the block.
+- Items: the custom components component is not sent. A component with an `onUseOn` callback makes BDS add
+  `minecraft:publisher_on_use_on: {autoSucceedOnClient: 1b}`; no other callback changes the item's data.
+
+To capture this in the pipeline, the spec add-on needs a script module like the one of `data/addons/dump`: it
+registers, on `system.beforeEvents.startup`, one block component per callback, one without callbacks and one with all,
+and the same for items; the blocks and items use them in the old form at format 1.21.80 and in the new form at the
+current format, plus a block with two components. `fixtures.json` skips both components until then.
+
+### In `update`
+
+Not wired in yet. The plan:
+
+1. After the Script API dump, `update` runs `whitebox` on the build's Linux zip (it is already downloaded for
+   `bds-inventory`) and stages `whitebox.json`.
+2. It diffs against the build before and puts the `!` lines under "Needs attention" in the report: a new component,
+   a changed network flag or kind, a key that came or went. Each names the component to capture again. `~` lines (the
+   writer's code changed, its keys did not) go to the collapsed part.
+3. After the captures, it runs `whitebox-coverage` and stages `whitebox-coverage.md`; new gaps against the committed
+   report are listed under "Needs attention" with the component and key.
+4. `./gradlew build` runs `:tools:checkWhitebox` (`whitebox-coverage --check`), like `checkMappings`. The task exists;
+   it joins `check` together with steps 1 to 3, so that an `update` cannot leave a stale report behind.
+
+What stays capture-based: every shape, type, value and default; the order of keys; which JSON produces what; the
+versions at which behaviour changes (the format sweep); everything `mappings.json` and the conformance tests hold.
 
 ## Code generation
 
