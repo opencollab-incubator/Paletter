@@ -46,7 +46,7 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 | Command | Does |
 |---|---|
 | `update` | The whole BDS pipeline (below). |
-| `builds list\|check` | Every release build, one by one, against the previous kept build ([below](#every-release-build)). |
+| `builds list\|check\|plan` | Every release build, one by one, against the previous kept build ([below](#every-release-build)); `plan` lists the builds of a [full recapture](#full-recapture). |
 | `capture`, `compare`, `experiments` | The headless client: record what a server sends, diff a capture with a bundled version, toggle experiments in a `level.dat`. |
 | `import`, `bds-compare`, `verify`, `check-data` | Import and check bundled data. `check-data` lists what older versions lack. |
 | `data-diff`, `experiment-marks` | Maintain bundled data without a new capture. |
@@ -196,6 +196,76 @@ kept one), and `update` regenerates the table after it captures. `versions.txt` 
 data version its first protocol, which a preview or a fresh import has before any record does; the table flags a data
 version whose first protocol no verified build has.
 
+### Full recapture
+
+The captures of a build answer for the add-on they were made with: the spec add-on is generated from the model, the
+fixtures and `bds-feedback.json`, and history checks refuse to compare spec captures of different add-ons. So when the add-on
+changes, every kept build has to be captured again, or the model describes some builds with the old add-on and others
+with the new one. `recapture.yml` does that in parallel and opens **one** pull request.
+
+**When it runs.** By hand (Actions > Recapture > Run workflow; the `ref` input names the branch to recapture, empty is
+the branch the run was started on), and from `bds-data.yml` when the data update's patch changes an add-on input
+(`data/model/components.json`, `fixtures.json`, `bds-feedback.json`, `schema.json`): the daily workflow then calls it
+on the update's own branch, `bds-data/<channel>`, and the recapture pull request is opened against that branch. Nothing
+starts it on a push. If both channels change the add-on in one run, only the release one is recaptured; start the
+workflow by hand on `bds-data/preview` for the other.
+
+**What it does.**
+
+1. `plan` runs `builds plan`: every kept release build (`data/bds/builds.json`, plus builds with captures the record
+   lacks) and the newest preview with captures in `data/bds`, as a matrix. It pins the commit all jobs use.
+2. `capture`, one Windows job per build (`fail-fast: false`, at most 6 at a time), runs
+   `update --channel <channel> --version <build> --capture-only <dir>`, with the add-on generated from the checked-out
+   commit. `--capture-only` is the capture half of `update`: the same captures and the same comparison with the committed
+   captures of that build, but nothing is written into the repository; the files that would go to `data/bds/<build>` (and
+   `spec/`) are written to `<dir>` instead, and the bundled data, constants, model, white-box and build table are left to
+   the next job. A release kept by a history check is recaptured as one (`--against <build>`). The BDS zips are cached
+   per build (the daily check's cache keys). The captures and the run's report are uploaded as the artifact
+   `captures-<build>`; a failed leg uploads its report and logs, no captures.
+3. `assemble` (only when every leg succeeded: captures of two add-ons never share a pull request) validates the
+   artifacts, copies them over `data/bds/<build>/` (overlaying, deleting nothing) and runs what `update` does after the
+   captures, with no BDS: `inferMappings`, `whitebox-coverage` (from the committed `whitebox.json`; the binary did not
+   change), `generateComponentApi`, `:paletter:apiDump`, `generateConstants`. It fails when the inference changed
+   `bds-feedback.json`, `fixtures.json` or `components.json`: those captures were made with an add-on that is not the
+   final one, so the change is committed and the workflow runs again until a pass changes nothing. It writes a patch of
+   the data paths and a report (one verdict line and the collapsed report per build).
+4. `publish` applies the patch with the checks of `bds-data.yml` and opens or updates the pull request
+   `bds-data/recapture`, with the report as its body.
+
+The builds are not checked against each other again: the set of kept builds does not change in a recapture (that is
+`builds check`, which stays a separate step), and each leg compared its capture with the committed captures of its own
+build, which is what the pull request shows as the effect of the add-on change. Files that an earlier capture had and the
+new one lacks stay in `data/bds/<build>`; the patch has no deletions of them.
+
+**Security.** The jobs that run the BDS binary and Gradle over captures (`capture`, and `assemble`, which runs Gradle on
+data from the capture jobs) have `contents: read`, no credentials in the checkout and no secrets. Only `publish` has write
+permissions and `BDS_DATA_TOKEN`, and it runs no Gradle, BDS or repository script: it applies a patch confined to the data
+paths (no other path, no `..`, no renames, no links, and every changed path of the working tree checked again). Artifacts
+are data: the build names are checked against the plan and strict patterns, the captures may hold only regular files and
+directories, every path matches a plain relative-path pattern without `..`, size is capped, and nothing in an artifact is
+run. All actions are pinned by commit SHA.
+
+**Determinism.** The capture platform stays `windows` (`CapturePlatform`): the committed captures come from Windows BDS, and
+the daily `bds-data.yml` already captures on GitHub's Windows runners, so captures from them have to equal local Windows
+captures. That is an assumption of the workflow, not something it proves: the first recapture is best checked against a
+local capture of one build (`update --capture-only` with the same inputs, then compare the directories); a difference on
+a build whose add-on did not change is a bug to find before the pull request is trusted.
+
+**Cost** (estimates, not measurements of this workflow). A leg is about the time of a `builds check` run, which was about
+8 minutes per build locally, plus 3 to 6 minutes of runner start, checkout and Gradle build and the BDS download on a
+cache miss: 15 to 30 minutes per leg. With 5 builds today (4 kept releases and the preview) and 6 jobs in parallel the
+capture phase takes as long as the slowest leg, then `assemble` takes 10 to 20 minutes (Gradle builds, inference, code
+generation): about 30 to 60 minutes of wall-clock time and about 2 to 3 runner hours in total, most of it on Windows
+runners. The matrix grows with the kept builds, so wall-clock time stays flat up to 6 builds and then grows by the slowest
+leg per 6 builds.
+
+**The trade-off.** A change to the model that changes the add-on is complete only with its recapture, so it merges only
+after its recapture pull request does: the two belong together (merging the model change alone leaves captures of the
+old add-on next to the new model). In exchange nobody recaptures by hand, and the captures of every
+build always answer for the committed add-on. A daily update that changes the add-on therefore leaves two pull requests,
+the data update and the recapture stacked on it; merge the first, then the second (GitHub retargets the second when its
+base branch is deleted on merge).
+
 ### Experiments
 
 Bedrock has no list of its experiment toggles, so `update` discovers them (`ExperimentDiscovery`). Candidates are
@@ -247,6 +317,7 @@ hold nothing Paletter needs.
   The capture job runs BDS and Gradle with a read-only token and no secrets; a separate publish job, which runs no
   build, applies the data patch (rejected if it touches other paths) and writes the issue and pull request. A patch
   that changes generated code needs the `BDS_DATA_TOKEN` secret, so the build runs on its pull request.
+- `recapture.yml` captures every kept build again after the add-on changed ([Full recapture](#full-recapture)).
 - `javadoc.yml` publishes the Javadoc of `main` and of each release to GitHub Pages.
 - [releasing.md](releasing.md) lists the repository settings, secrets and Pages setup these workflows need.
 

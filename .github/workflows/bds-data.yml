@@ -352,6 +352,11 @@ jobs:
           grep -qxF "$BODY" "$RUNNER_TEMP/paths.txt" || BODY="$RUNNER_TEMP/in/report.md"
           head -c 60000 "$BODY" > "$RUNNER_TEMP/pr-body.md"
           echo "changed=true" >> "$GITHUB_OUTPUT"
+          # The inputs of the capture add-on (the model, the fixtures, the feedback and the schema): captures made before
+          # this change answer for the old add-on, so every kept build is captured again (recapture.yml)
+          if grep -Eq '^data/model/(components|fixtures|bds-feedback|schema)\.json$' "$RUNNER_TEMP/paths.txt"; then
+            echo "addon=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Open or update the pull request
         if: steps.apply.outputs.changed == 'true'
@@ -370,6 +375,19 @@ jobs:
             paletter/src/generated/**
             paletter/api/**
 
+      # After the pull request exists: the recapture stacks its own on that branch (see the recapture jobs below)
+      - name: Note a changed add-on
+        if: steps.apply.outputs.addon == 'true'
+        run: |
+          mkdir -p "$RUNNER_TEMP/recapture"
+          echo "bds-data/$CHANNEL" > "$RUNNER_TEMP/recapture/branch.txt"
+      - name: Upload the note
+        if: steps.apply.outputs.addon == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: recapture-${{ matrix.channel }}
+          path: ${{ runner.temp }}/recapture/
+
       - name: Fail on a failed update
         if: steps.result.outputs.update != '0' && steps.result.outputs.update != '2'
         env:
@@ -381,3 +399,46 @@ jobs:
             echo "update failed with exit code $UPDATE; see the bds-logs artifact"
           fi
           exit 1
+
+  # A new build whose schema or model changes the capture add-on: every kept build is captured again with it, in the
+  # recapture workflow, which opens one more pull request on the branch of the data update. The model change merges
+  # only after that pull request (docs/data-pipeline.md, "Full recapture"). One branch per run: the release one when
+  # both channels changed the add-on; start recapture.yml by hand for the other.
+  recapture-plan:
+    needs: publish
+    if: ${{ !cancelled() && inputs.verify-only != true && needs.publish.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    outputs:
+      ref: ${{ steps.pick.outputs.ref }}
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: recapture-*
+          path: ${{ runner.temp }}/in
+      # The note is data: only its exact expected content counts
+      - name: Pick the branch
+        id: pick
+        run: |
+          REF=""
+          for channel in release preview; do
+            f="$RUNNER_TEMP/in/recapture-$channel/branch.txt"
+            if [ -f "$f" ] && [ "$(head -1 "$f")" = "bds-data/$channel" ]; then
+              if [ -n "$REF" ]; then echo "::notice::The $channel update changes the add-on too: run recapture.yml on bds-data/$channel by hand"; continue; fi
+              REF="bds-data/$channel"
+            fi
+          done
+          echo "ref=$REF" >> "$GITHUB_OUTPUT"
+
+  recapture:
+    needs: recapture-plan
+    if: ${{ !cancelled() && needs.recapture-plan.outputs.ref != '' }}
+    # The most the called workflow may use: its publish job
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: ./.github/workflows/recapture.yml
+    with:
+      ref: ${{ needs.recapture-plan.outputs.ref }}
+    secrets: inherit
