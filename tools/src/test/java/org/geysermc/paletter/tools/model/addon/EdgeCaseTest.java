@@ -72,11 +72,18 @@ class EdgeCaseTest {
     }
 
     @Test
-    void aLimitBdsLogsWinsOverTheDocsRange(@TempDir Path root) throws IOException {
+    void aLimitBdsLogsComesFirstAndTheDocsRangeItContradictsIsTestedToo(@TempDir Path root) throws IOException {
         List<String> count = labels(root, "count", """
             {"block:minecraft:box": {"": ["box origin size -8,0,-8 8,16,8"], "count": ["max 16", "min 2"]}}""");
-        assertEquals(List.of("2", "1", "16", "17"), count.subList(0, 4), "BDS's limits, not the docs' 1 to 64");
-        assertTrue(!count.contains("64") && !count.contains("65"));
+        assertEquals(List.of("2", "1", "16", "17"), count.subList(0, 4), "BDS's limits first");
+        assertEquals(List.of("0", "64", "65"), count.subList(4, 7), "then both bounds of the docs' 1 to 64 (1 is BDS's one past 2 already): BDS decides");
+    }
+
+    @Test
+    void vectorsGetAThirdDistinctValueOfEveryElementBetweenTheTypicalOnes(@TempDir Path root) throws IOException {
+        List<String> origin = labels(root, "origin");
+        // the typical (1,2,3), (-4,5.5,0) and (0,0,0) give z only 0 and 3: a rule fitted to them would rest on two points
+        assertTrue(origin.containsAll(List.of("1,2,3", "-4,5.5,0", "0,0,0", "-2,1,1")), origin.toString());
     }
 
     @Test

@@ -786,10 +786,11 @@ public final class AddonGenerator {
      * its boundary and one past it.
      */
     private List<Labeled> values(Component c, String path, JType type, Field field) {
+        Model.Range docsRange = field == null ? null : field.range();
         field = withFeedback(c, field);
         List<Labeled> values = switch (type.type()) {
             case "boolean" -> List.of(new Labeled("true", new JsonPrimitive(true)), new Labeled("false", new JsonPrimitive(false)));
-            case "integer", "number" -> numbers(c, path, field, type.type().equals("integer"));
+            case "integer", "number" -> numbers(c, path, field, docsRange, type.type().equals("integer"));
             case "string" -> strings(c, path, type, field);
             case "vec3" -> vectors(c, path, field);
             case "array" -> lists(c, path, type, field);
@@ -821,20 +822,24 @@ public final class AddonGenerator {
     }
 
     /**
-     * Numbers: the limits and one past each, the enum values and one the enum does not list, the default, off-step values
+     * Numbers: the limits (BDS's where its content log gave them, and the docs' where they differ: BDS decides which holds)
+     * and one past each, the enum values and one the enum does not list, the default, off-step values
      * where the inference found a step, a non-integer for an integer field, then zero, a negative and a few typical values
      * (for a member of a vector's object form also what its list form takes).
      */
-    private List<Labeled> numbers(Component c, String path, Field field, boolean integer) {
+    private List<Labeled> numbers(Component c, String path, Field field, Model.Range docsRange, boolean integer) {
         Set<Double> numbers = new LinkedHashSet<>();
         Model.Range range = field == null ? null : field.range();
-        if (range != null && range.min() != null) {
-            numbers.add(range.min());
-            numbers.add(range.min() - 1);
-        }
-        if (range != null && range.max() != null) {
-            numbers.add(range.max());
-            numbers.add(range.max() + 1);
+        // the field's range is BDS's where the content log gave one; the docs' own bounds follow (the same ones add nothing)
+        for (Model.Range limits : java.util.Arrays.asList(range, docsRange)) {
+            if (limits != null && limits.min() != null) {
+                numbers.add(limits.min());
+                numbers.add(limits.min() - 1);
+            }
+            if (limits != null && limits.max() != null) {
+                numbers.add(limits.max());
+                numbers.add(limits.max() + 1);
+            }
         }
         // The limits of the content log that the schema contradicts: BDS decides which holds, so both are tested
         for (String fact : fixtures.disputed(c.id(), path)) {
@@ -937,6 +942,7 @@ public final class AddonGenerator {
                 strings.add(new JsonPrimitive("0"));
             }
         }
+        strings.addAll(fixtures.probeValues(c.id(), path));
         return new LinkedHashSet<>(strings).stream().map(s -> new Labeled(s.getAsString(), s)).toList();
     }
 
@@ -979,6 +985,9 @@ public final class AddonGenerator {
         values.add(new Labeled("-4,5.5,0", arrayOf(number(-4), number(5.5), number(0))));
         values.add(new Labeled("0,0,0", array(0, 0, 0)));
         values.add(new Labeled("16,16,16", array(16, 16, 16)));
+        // Between the typical values above in every element (x -4 to 1, y 0 to 5.5, z 0 to 3: BDS took those), so inside the
+        // limits they keep. It is a further distinct value of each element, so that no rule over them is fitted to two points
+        values.add(new Labeled("-2,1,1", array(-2, 1, 1)));
         return values;
     }
 
@@ -1095,6 +1104,9 @@ public final class AddonGenerator {
             case "object" -> {
                 values.add(new Labeled("[1]", copies(first, 1)));
                 values.add(new Labeled("[2]", copies(first, 2)));
+                if (descriptor(c, path + "[]")) {
+                    fixtures.descriptorValues().forEach(d -> values.add(new Labeled("[1] " + describe(d), arrayOf(d))));
+                }
             }
             case "number", "integer" -> {
                 values.add(new Labeled("[3]", array(3)));
@@ -1219,6 +1231,9 @@ public final class AddonGenerator {
                 values.add(new Labeled("minimal", minimal));
             }
         }
+        if (descriptor(c, path)) {
+            fixtures.descriptorValues().forEach(d -> values.add(new Labeled(describe(d), d.deepCopy())));
+        }
         JsonObject example = field == null || container(c, path) ? null : field.examples().stream()
             .filter(e -> e.isJsonObject() && !e.getAsJsonObject().isEmpty()).map(JsonElement::getAsJsonObject).findFirst().orElse(null);
         if (example != null) {
@@ -1229,6 +1244,16 @@ public final class AddonGenerator {
             values.add(new Labeled("{2}", two));
         }
         return values;
+    }
+
+    /** Whether the object at the path is a block descriptor: it has the members {@code name}, {@code states} and {@code tags}. */
+    private static boolean descriptor(Component c, String path) {
+        return List.of("name", "states", "tags").stream().allMatch(member -> c.field(path + "." + member) != null);
+    }
+
+    /** A descriptor as its variant label: the block without namespace and the states as sent, so a value's JSON type shows. */
+    private static String describe(JsonObject descriptor) {
+        return descriptor.get("name").getAsString().replaceFirst("^minecraft:", "") + descriptor.get("states");
     }
 
     /**

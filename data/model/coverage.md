@@ -260,33 +260,33 @@ Fields BDS reports as "not present in the Schema" (docs describe them, BDS 1.26.
 - `item:minecraft:weapon` `on_not_hurt_entity`
 - `item:minecraft:wearable` `dispensable`
 
-Numeric ranges BDS enforces (content log "accepted range") vs the docs:
+Numeric ranges BDS enforces (content log "accepted range") vs the docs. A bound the docs state and BDS's differs from is disputed: BDS's bounds beat the docs' in the add-on, which varies both:
 
-| component | field | docs | BDS |
-|---|---|---|---|
-| `block:minecraft:block_entity` | `container.slot_count` | none | [1,54] |
-| `block:minecraft:material_instances` | `*.ambient_occlusion` | none | [0,10] |
-| `block:minecraft:material_instances` | `down.ambient_occlusion` | none | [0,10] |
-| `block:minecraft:material_instances` | `east.ambient_occlusion` | none | [0,10] |
-| `block:minecraft:material_instances` | `north.ambient_occlusion` | none | [0,10] |
-| `block:minecraft:material_instances` | `south.ambient_occlusion` | none | [0,10] |
-| `block:minecraft:material_instances` | `up.ambient_occlusion` | none | [0,10] |
-| `block:minecraft:material_instances` | `west.ambient_occlusion` | none | [0,10] |
-| `block:minecraft:random_offset` | `x.range.max` | none | [-8,8] |
-| `block:minecraft:random_offset` | `x.range.min` | none | [-8,8] |
-| `block:minecraft:random_offset` | `y.range.max` | none | [-8,8] |
-| `block:minecraft:random_offset` | `y.range.min` | none | [-8,8] |
-| `block:minecraft:random_offset` | `z.range.max` | none | [-8,8] |
-| `block:minecraft:random_offset` | `z.range.min` | none | [-8,8] |
-| `block:trait:minecraft:multi_block` | `parts` | none | [2,4] |
-| `block:trait:minecraft:placement_direction` | `y_rotation_offset` | [0.0, 360.0] | [0,360] |
-| `item:minecraft:bundle_interaction` | `num_viewable_slots` | [1.0, 64.0] | [1,64] |
-| `item:minecraft:compostable` | `composting_chance` | none | [1,100] |
-| `item:minecraft:damage` | `value` | none | [0,32767] |
-| `item:minecraft:durability` | `damage_chance.max` | none | [0,100] |
-| `item:minecraft:durability` | `damage_chance.min` | none | [0,100] |
-| `item:minecraft:max_stack_size` | `value` | none | [1,64] |
-| `item:minecraft:use_modifiers` | `movement_modifier` | none | [0,1] |
+| component | field | docs | BDS | disputed |
+|---|---|---|---|---|
+| `block:minecraft:block_entity` | `container.slot_count` | none | [1,54] |  |
+| `block:minecraft:material_instances` | `*.ambient_occlusion` | none | [0,10] |  |
+| `block:minecraft:material_instances` | `down.ambient_occlusion` | none | [0,10] |  |
+| `block:minecraft:material_instances` | `east.ambient_occlusion` | none | [0,10] |  |
+| `block:minecraft:material_instances` | `north.ambient_occlusion` | none | [0,10] |  |
+| `block:minecraft:material_instances` | `south.ambient_occlusion` | none | [0,10] |  |
+| `block:minecraft:material_instances` | `up.ambient_occlusion` | none | [0,10] |  |
+| `block:minecraft:material_instances` | `west.ambient_occlusion` | none | [0,10] |  |
+| `block:minecraft:random_offset` | `x.range.max` | none | [-8,8] |  |
+| `block:minecraft:random_offset` | `x.range.min` | none | [-8,8] |  |
+| `block:minecraft:random_offset` | `y.range.max` | none | [-8,8] |  |
+| `block:minecraft:random_offset` | `y.range.min` | none | [-8,8] |  |
+| `block:minecraft:random_offset` | `z.range.max` | none | [-8,8] |  |
+| `block:minecraft:random_offset` | `z.range.min` | none | [-8,8] |  |
+| `block:trait:minecraft:multi_block` | `parts` | none | [2,4] |  |
+| `block:trait:minecraft:placement_direction` | `y_rotation_offset` | [0.0, 360.0] | [0,360] |  |
+| `item:minecraft:bundle_interaction` | `num_viewable_slots` | [1.0, 64.0] | [1,64] |  |
+| `item:minecraft:compostable` | `composting_chance` | none | [1,100] |  |
+| `item:minecraft:damage` | `value` | none | [0,32767] |  |
+| `item:minecraft:durability` | `damage_chance.max` | none | [0,100] |  |
+| `item:minecraft:durability` | `damage_chance.min` | none | [0,100] |  |
+| `item:minecraft:max_stack_size` | `value` | none | [1,64] |  |
+| `item:minecraft:use_modifiers` | `movement_modifier` | none | [0,1] |  |
 
 ## Format versions in the docs
 

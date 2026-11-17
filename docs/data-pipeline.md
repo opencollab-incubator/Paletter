@@ -335,8 +335,16 @@ docs and from what BDS does.
 field value. Values come from the field's type: limits and one past each, enum values plus an invalid one, empty and
 wrong-length lists, and so on; where the text of a map's entries matters (the Molang of `bone_visibility`), `fixtures.json`
 `mapValues` lists the values to try. Limits come from the docs and from `bds-feedback.json`, which records what BDS's content
-log said last time; `spec-capture` and `infer` are repeated until that file stops changing. When BDS rejects a variant
+log said last time; where BDS's bound differs from the docs' it comes first and the docs' bound is tried too (`coverage.md`
+marks such a range as disputed). `spec-capture` and `infer` are repeated until that file stops changing. When BDS rejects a variant
 for a member it does not vary, `spec-capture` shrinks the variant and captures again.
+
+**Probes.** Values that no docs text or BDS message lists, but that a hand table of `Transforms` holds, are tried too: `fixtures.json`
+`probeValues` gives a field further strings (the formatting colour names of `hover_text_color`, the animation names of
+`use_animation`), and `descriptorValues` gives every block descriptor field real vanilla blocks with enum, boolean and string
+state values. They are probes, not facts: only what BDS accepts and sends is evidence. `spec-capture` also keeps the content log
+in the order BDS wrote it (`content-log.raw.txt`) beside the sorted `content-log.txt`, so that a line can later be attributed
+by the lines around it.
 
 **Linked fields.** One field at a time is not enough where BDS ties two fields: `damage_chance.max` below the default
 `min` is refused, `replace_block_item` is ignored unless `block` is the item itself. The content log says so, and

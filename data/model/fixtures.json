@@ -153,6 +153,33 @@
     "items": "name",
     "default": "paletter:k"
   },
+  "probeValues": {
+    "_comment": "Further strings of a field no enum lists, each tried as a value of its own, by '<component>:<path>'. Probes, not facts: the names of the hand tables of Transforms (FORMATTING, USE_ANIMATIONS) that no BDS message lists; only the ones BDS accepts and sends are evidence.",
+    "item:minecraft:hover_text_color:": ["black", "dark_blue", "dark_green", "dark_aqua", "dark_red", "dark_purple", "gold", "gray", "dark_gray", "blue", "green", "aqua", "red", "light_purple", "yellow", "white", "minecoin_gold", "material_quartz", "material_iron", "material_netherite", "material_redstone", "material_copper", "material_gold", "material_emerald", "material_diamond", "material_lapis", "material_amethyst", "material_resin"],
+    "item:minecraft:hover_text_color:value": ["black", "dark_blue", "dark_green", "dark_aqua", "dark_red", "dark_purple", "gold", "gray", "dark_gray", "blue", "green", "aqua", "red", "light_purple", "yellow", "white", "minecoin_gold", "material_quartz", "material_iron", "material_netherite", "material_redstone", "material_copper", "material_gold", "material_emerald", "material_diamond", "material_lapis", "material_amethyst", "material_resin"],
+    "item:minecraft:use_animation:": ["none", "eat", "drink", "block", "bow", "camera", "spear", "crossbow", "spyglass", "brush"],
+    "item:minecraft:use_animation:value": ["none", "eat", "drink", "block", "bow", "camera", "spear", "crossbow", "spyglass", "brush"]
+  },
+  "descriptorValues": {
+    "_comment": "Block descriptors tried in every field that is one (name, states and tags members), each as the whole descriptor: real vanilla blocks (Bedrock's state names) with enum values (all of pillar_axis, to see their order on the wire; two of cardinal_direction and lever_direction), an unlisted and an integer one, booleans, strings for a boolean and an integer state, and an integer for contrast. BDS's registry decides which it takes and how it sends them (enum index, state type).",
+    "values": [
+      {"name": "minecraft:oak_log", "states": {"pillar_axis": "y"}},
+      {"name": "minecraft:oak_log", "states": {"pillar_axis": "x"}},
+      {"name": "minecraft:oak_log", "states": {"pillar_axis": "z"}},
+      {"name": "minecraft:oak_log", "states": {"pillar_axis": "w"}},
+      {"name": "minecraft:oak_log", "states": {"pillar_axis": 1}},
+      {"name": "minecraft:furnace", "states": {"minecraft:cardinal_direction": "south"}},
+      {"name": "minecraft:furnace", "states": {"minecraft:cardinal_direction": "east"}},
+      {"name": "minecraft:lever", "states": {"lever_direction": "east"}},
+      {"name": "minecraft:lever", "states": {"open_bit": true}},
+      {"name": "minecraft:lever", "states": {"open_bit": false}},
+      {"name": "minecraft:lever", "states": {"lever_direction": "up_east_west", "open_bit": true}},
+      {"name": "minecraft:lever", "states": {"open_bit": "true"}},
+      {"name": "minecraft:white_candle", "states": {"candles": 2}},
+      {"name": "minecraft:white_candle", "states": {"candles": "2"}},
+      {"name": "minecraft:white_candle", "states": {"lit": true}}
+    ]
+  },
   "context": {
     "_comment": "Extra description entries a component's variants need (states its conditions refer to).",
     "block:permutations": {"states": {"paletter:flag": [false, true]}},

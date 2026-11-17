@@ -146,11 +146,22 @@ class ComponentConformanceTest {
     }
 
     /**
-     * Components whose variants the generator makes differently from the newest capture, because the add-on changed after it
-     * (enchantable slot: the accepted strings are now read from BDS's regex message, so its values are all tried). Their
-     * definitions are compared again once the capture is redone; until then this must name them, and fails when they match.
+     * Components whose variants the generator makes differently from the newest capture, because the add-on changed after it.
+     * Their definitions are compared again once the capture is redone; until then this must name them, each with its reason,
+     * and fails when one matches again.
+     * <ul>
+     *   <li>enchantable: the accepted slot strings are now read from BDS's regex message, so all of them are tried;</li>
+     *   <li>hover_text_color, use_animation: the names of the hand tables of {@code Transforms} are tried
+     *       ({@code fixtures.json probeValues});</li>
+     *   <li>block_placer, entity_placer, digger, placement_filter: block descriptors with enum, boolean and string states
+     *       on vanilla blocks are tried ({@code fixtures.json descriptorValues});</li>
+     *   <li>collision_box, selection_box, transformation: a vector with a third distinct value of every element is tried, so
+     *       that no linear rule over them is fitted to two points.</li>
+     * </ul>
      */
-    private static final Set<String> RECAPTURE_PENDING = Set.of("item:minecraft:enchantable");
+    private static final Set<String> RECAPTURE_PENDING = Set.of("item:minecraft:enchantable", "item:minecraft:hover_text_color",
+        "item:minecraft:use_animation", "item:minecraft:block_placer", "item:minecraft:entity_placer", "item:minecraft:digger",
+        "block:minecraft:placement_filter", "block:minecraft:collision_box", "block:minecraft:selection_box", "block:minecraft:transformation");
 
     private void conformance(Path capture, boolean newest) throws IOException {
         JsonObject meta = JsonParser.parseString(Files.readString(capture.resolve("capture.json"))).getAsJsonObject();

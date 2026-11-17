@@ -208,7 +208,8 @@ public final class Coverage {
                 }
                 if (field.has("bdsRange")) {
                     String docs = f.range() == null ? "none" : "[" + f.range().min() + ", " + f.range().max() + "]";
-                    ranges.add("| `" + c.id() + "` | `" + f.path() + "` | " + docs + " | " + field.get("bdsRange") + " |");
+                    ranges.add("| `" + c.id() + "` | `" + f.path() + "` | " + docs + " | " + field.get("bdsRange") + " | "
+                        + (disputed(f.range(), field.getAsJsonArray("bdsRange")) ? "yes" : "") + " |");
                 }
             }
         }
@@ -216,7 +217,8 @@ public final class Coverage {
         if (unknown.isEmpty()) {
             md.append("None.\n");
         }
-        md.append("\nNumeric ranges BDS enforces (content log \"accepted range\") vs the docs:\n\n| component | field | docs | BDS |\n|---|---|---|---|\n");
+        md.append("\nNumeric ranges BDS enforces (content log \"accepted range\") vs the docs. A bound the docs state and BDS's differs "
+            + "from is disputed: BDS's bounds beat the docs' in the add-on, which varies both:\n\n| component | field | docs | BDS | disputed |\n|---|---|---|---|---|\n");
         ranges.forEach(r -> md.append(r).append('\n'));
         // Format versions
         TreeSet<String> versions = new TreeSet<>((a, b) -> key(a).compareTo(key(b)));
@@ -345,6 +347,12 @@ public final class Coverage {
         if (lines.isEmpty()) {
             md.append("None.\n");
         }
+    }
+
+    /** Whether the docs state a bound that BDS's range ({@code [min, max]}) does not have. */
+    static boolean disputed(Model.Range docs, com.google.gson.JsonArray bds) {
+        return docs != null && ((docs.min() != null && docs.min() != bds.get(0).getAsDouble())
+            || (docs.max() != null && docs.max() != bds.get(1).getAsDouble()));
     }
 
     private static String key(String version) {

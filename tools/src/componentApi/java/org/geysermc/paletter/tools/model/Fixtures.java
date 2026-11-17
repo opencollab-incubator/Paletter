@@ -208,6 +208,28 @@ public final class Fixtures {
         return list == null ? List.of() : list.getAsJsonArray().asList();
     }
 
+    /**
+     * Further strings of a field that no enum lists (by '<component>:<path>'), each tried as a value of its own: names the
+     * hand tables of {@code Transforms} hold, which BDS's messages do not list. Probes, not facts: a name BDS rejects says so
+     * in the content log, and only an accepted one is evidence.
+     */
+    public List<JsonElement> probeValues(String component, String path) {
+        JsonObject values = json.has("probeValues") ? json.getAsJsonObject("probeValues") : new JsonObject();
+        return values.has(component + ":" + path) ? values.getAsJsonArray(component + ":" + path).asList() : List.of();
+    }
+
+    /**
+     * Block descriptors ({@code name}, {@code states}) to try in every field that is one: real vanilla blocks with state
+     * values of each JSON type, so BDS's registry says which it takes and how it sends them.
+     */
+    public List<JsonObject> descriptorValues() {
+        List<JsonObject> values = new ArrayList<>();
+        if (json.has("descriptorValues")) {
+            json.getAsJsonObject("descriptorValues").getAsJsonArray("values").forEach(d -> values.add(d.getAsJsonObject()));
+        }
+        return values;
+    }
+
     public String mapKey(String component, String path, String name) {
         JsonObject keys = json.getAsJsonObject("mapKeys");
         if (keys.has(component + ":" + path)) {
@@ -289,7 +311,7 @@ public final class Fixtures {
 
     /** The sections of fixtures.json and api.json whose keys start with a component id ({@code item:minecraft:food:path}). */
     private static final List<String> FIXTURE_SECTIONS = List.of("requires", "context", "skip", "together", "samples", "alternatives",
-        "mapValues", "mapKeys", "probeOnly");
+        "mapValues", "mapKeys", "probeOnly", "probeValues");
     private static final List<String> API_SECTIONS = List.of("rootLists", "forms", "types", "unions", "keyedExtras", "descriptors",
         "blockDescriptors", "fields", "typeNames", "standalone", "standalonePaths", "openEnums", "exclude", "handWritten", "classes",
         "optional", "noDefaults", "enums");

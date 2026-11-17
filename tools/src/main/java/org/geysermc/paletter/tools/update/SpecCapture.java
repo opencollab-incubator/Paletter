@@ -52,6 +52,8 @@ public final class SpecCapture {
     private static final String WORLD = "paletter_spec";
     /** The custom creative inventory BDS sent in a capture ({@code id}, {@code block_runtime_id}: the hash of the default state). */
     public static final String CREATIVE_ITEMS = "custom_creative_items.json.gz";
+    /** The content log in the order BDS wrote it, beside the sorted {@code content-log.txt}. */
+    public static final String RAW_CONTENT_LOG = "content-log.raw.txt";
     /** At most this many captures per build: the first, and the ones of the variants it shrunk. */
     private static final int SHRINK_ROUNDS = 4;
 
@@ -151,6 +153,8 @@ public final class SpecCapture {
                 in.transferTo(gz);
             }
             Files.writeString(out.resolve("content-log.txt"), String.join("\n", contentLog) + "\n", StandardCharsets.UTF_8);
+            // In the order BDS wrote it: what a line follows says what it is about, which the sorted log cannot
+            Files.writeString(out.resolve(RAW_CONTENT_LOG), String.join("\n", run.rawLog()) + "\n", StandardCharsets.UTF_8);
             Files.writeString(out.resolve("variants.json"), Model.GSON.toJson(generator.manifest()) + "\n", StandardCharsets.UTF_8);
             JsonObject metadata = new JsonObject();
             metadata.addProperty("bdsVersion", distribution.version());
@@ -198,8 +202,8 @@ public final class SpecCapture {
         }
     }
 
-    /** What one BDS run of an add-on gave: its content log, the capture and the protocol it spoke. */
-    private record Run(List<String> contentLog, Capture.Summary summary, int protocol) {
+    /** What one BDS run of an add-on gave: its content log (sorted, and as BDS wrote it), the capture and the protocol it spoke. */
+    private record Run(List<String> contentLog, List<String> rawLog, Capture.Summary summary, int protocol) {
     }
 
     /** Installs the add-on on a fresh world, starts BDS with the experiments on and captures what it sends a client. */
@@ -233,8 +237,8 @@ public final class SpecCapture {
         try (BdsServer bds = new BdsServer(server, false)) {
             bds.start(work.resolve("bds-capture.log"));
             bds.awaitStarted(timeout);
-            List<String> contentLog = attribute(bds.lines(line -> line.matches(".*(ERROR|WARN)\\] \\[.*") && !line.contains("TRANSPORT"))
-                .stream().map(SpecCapture::contentLine).toList());
+            List<String> rawLog = bds.lines(line -> line.matches(".*(ERROR|WARN)\\] \\[.*") && !line.contains("TRANSPORT"))
+                .stream().map(SpecCapture::contentLine).toList();
             Capture.Reachable reachable = Capture.reachable(bds, address, 20);
             boolean raknet = reachable == null || !reachable.netherNet();
             int protocol = reachable != null && reachable.protocol() != 0 ? reachable.protocol()
@@ -244,7 +248,7 @@ public final class SpecCapture {
             }
             Capture.Summary summary = Capture.capture(address, protocol, reference(protocol), version, work.resolve("capture"),
                 work.resolve("custom"), 120, !raknet);
-            return new Run(contentLog, summary, protocol);
+            return new Run(attribute(rawLog), rawLog, summary, protocol);
         }
     }
 
