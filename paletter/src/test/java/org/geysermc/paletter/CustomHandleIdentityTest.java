@@ -74,10 +74,11 @@ class CustomHandleIdentityTest {
         CustomBlock lamp = lamp("example:lamp");
         CustomItem sapphire = ruby("example:sapphire");
         CustomBlock lantern = lamp("example:lantern");
+        BedrockItemVariant given = ruby.type().variantOf(5);
         Palette base = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("global").item(ruby).block(lamp).build());
         Palette session = base.extend(PaletteLayer.builder("session").item(sapphire).block(lantern)
             // A variant of an item of the layer below
-            .variant(ruby.type().variantOf(5)).build());
+            .variant(given).build());
         Palette deeper = session.extend(PaletteLayer.builder("deeper").item(ruby("example:emerald")).build());
         for (Palette palette : List.of(base, session, deeper)) {
             assertOwned(palette, ruby, lamp);
@@ -89,7 +90,8 @@ class CustomHandleIdentityTest {
             assertSame(ruby.type(), damaged.type(), "a variant of a custom item is of the item's type");
             assertSame(damaged, palette.item("example:ruby", 5));
             // Not the variant the layer was given: a variant of another damage value is equal, not identical (docs/api.md)
-            assertEquals(ruby.type().variantOf(5), damaged);
+            assertEquals(given, damaged);
+            assertNotSame(given, damaged);
         }
         assertNull(base.item("example:sapphire", 0));
     }
