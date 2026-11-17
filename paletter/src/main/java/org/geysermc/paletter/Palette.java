@@ -443,6 +443,39 @@ public final class Palette {
         return definition instanceof RegisteredBlockState block ? blocks.key(block) : null;
     }
 
+    /**
+     * @param runtimeId a block runtime id of this palette (block network ids are always hashes)
+     * @return the key of the block with this runtime id, or null if this palette has no such block. For ids decoded from
+     *         packets the codec helper already gives definitions; use this for ids a server stores itself, e.g. chunk
+     *         palettes
+     * @since 0.1.0
+     */
+    public @Nullable BedrockBlockState blockState(int runtimeId) {
+        RegisteredBlockState block = blocks.byRuntimeId(runtimeId);
+        return block == null ? null : blocks.key(block);
+    }
+
+    /**
+     * @param runtimeId a block runtime id of this palette (block network ids are always hashes)
+     * @return the block with this runtime id as sent, or null if this palette has no such block. For ids decoded from
+     *         packets the codec helper already gives definitions; use this for ids a server stores itself, e.g. chunk
+     *         palettes
+     * @since 0.1.0
+     */
+    public @Nullable RegisteredBlockState blockDefinition(int runtimeId) {
+        return blocks.byRuntimeId(runtimeId);
+    }
+
+    /**
+     * @param runtimeId an item runtime id of this palette (negative for the plain item of a custom block)
+     * @return the item with this runtime id as registered in this palette, or null if it has none. For ids decoded from
+     *         packets the codec helper already gives definitions; use this for ids a server stores itself
+     * @since 0.1.0
+     */
+    public @Nullable RegisteredItem itemDefinition(int runtimeId) {
+        return items.getDefinition(runtimeId);
+    }
+
     // ---- Stacks ----
 
     /**
