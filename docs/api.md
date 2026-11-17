@@ -18,8 +18,9 @@ Not API:
 - the bundled data format and the `tools` module.
 
 `@Experimental` marks API that follows a Bedrock experiment, such as components Bedrock gates behind a toggle.
-It also marks vanilla item overrides (`PaletteLayer.Builder#overrideItem`, `ItemOverride`): BDS only supports overriding
-data driven vanilla items, and the client's behaviour for Paletter's overrides is unverified (see
+It also marks vanilla item overrides (`PaletteLayer.Builder#overrideItem`, `ItemOverride`): BDS replaced the components of
+an overridden data driven item (apple), accepted the hard coded feather at format 1.10 as a legacy item and rejected the
+stick at 1.26.60. The client's behaviour for Paletter's overrides is unverified on a client (see
 [wire-notes](wire-notes.md#overriding-vanilla-items)). `replaceComponents` has BDS's shape, `modifyComponents` merges.
 
 Paletter is at 0.1.0-SNAPSHOT, so any release may change or remove API. The build keeps API changes visible:

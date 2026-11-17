@@ -204,9 +204,10 @@ public final class PaletteLayer {
         /**
          * Changes an existing item definition. Skipped (and reported) for versions without the item.
          * <p>
-         * <b>Experimental.</b> BDS only supports overriding vanilla data driven items; it rejects modern format overrides
-         * of hard coded and legacy items, which Paletter does not refuse. The client's behaviour for Paletter's overrides
-         * is <b>unverified</b> (no client test exists). The API may change.
+         * <b>Experimental.</b> BDS replaced the components of an overridden vanilla data driven item; for hard coded items
+         * it accepted the feather at format 1.10 (as a legacy item) and rejected the stick at 1.26.60, and it rejected a
+         * legacy bread at 1.16.100 (1.20 and up was never tried). Paletter refuses nothing. The client's behaviour for
+         * Paletter's overrides is <b>unverified on a client</b> (no client test exists). The API may change.
          */
         @Experimental
         public @NonNull Builder overrideItem(@NonNull String identifier, @NonNull Consumer<ItemOverride> modifier) {

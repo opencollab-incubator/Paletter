@@ -23,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
- * The client often requires vanilla item ids to be exactly those of the bundled data: custom content never moves a
- * vanilla item, nor takes a vanilla id.
+ * Custom content never moves a vanilla item, nor takes a vanilla id: the ids stay those of the bundled data. Whether the
+ * client requires this is unverified on a client.
  */
 class VanillaItemIdTest {
     private static final Paletter PALETTER = Paletter.bundled();

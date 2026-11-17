@@ -152,8 +152,8 @@ class LayerTest {
     void overridesChangeVanillaDefinitions() {
         PaletteLayer layer = PaletteLayer.builder("fixes")
             .overrideItem("minecraft:cake", item -> item.modifyComponents(MaxStackSize.of(1)))
-            // TODO(client test): firework_rocket is hard coded in BDS, which rejects such an add-on override; this deviates from BDS
-            // and the client's result is unverified
+            // TODO(client test): firework_rocket is hard coded; BDS rejected the hard coded stick at 1.26.60 and the rocket was
+            // never probed (inferred). If BDS rejects it too, this deviates from BDS. The client's result is unverified.
             .overrideItem("minecraft:firework_rocket", item -> item.replaceComponents(MaxStackSize.of(64),
                 ThrowableItem.builder().doSwingAnimation(true).build()))
             .overrideItem("minecraft:structure_block", item -> item.noBlock())

@@ -19,15 +19,20 @@ import java.util.List;
  * <pre>{@code
  * // Bedrock stacks cakes to 64, Java to 1
  * layer.overrideItem("minecraft:cake", item -> item.modifyComponents(MaxStackSize.of(1)));
- * // Prevent client side firework boosting by making the item data driven
- * layer.overrideItem("minecraft:firework_rocket", item -> item.replaceComponents(MaxStackSize.of(64), Throwable.builder().build()));
+ * // Like a BDS add-on for a data driven item: only these components are left (the apple keeps its creative category)
+ * layer.overrideItem("minecraft:apple", item -> item.replaceComponents(MaxStackSize.of(3)));
+ * // Make the firework rocket data driven and merge onto its current data; whether that stops the client's
+ * // own firework boosting is unverified on a client
+ * layer.overrideItem("minecraft:firework_rocket", item -> item.version(ItemVersion.DATA_DRIVEN).modifyComponents(MaxStackSize.of(64)));
  * }</pre>
  * <p>
- * <b>Experimental.</b> BDS only supports overriding vanilla <em>data driven</em> items (such as {@code minecraft:apple}),
- * and there the pack's components replace the vanilla ones ({@link #replaceComponents}). It rejects modern format
- * overrides of hard coded and legacy items, e.g. {@code minecraft:stick}; Paletter does not refuse them. How the Bedrock
- * client treats Paletter's overrides is <b>unverified</b>: no client test exists. Paletter also keeps every vanilla
- * runtime id fixed, where BDS moves an overridden data driven item. This API may change.
+ * <b>Experimental.</b> BDS overrides of a vanilla data driven item (such as {@code minecraft:apple}, format 1.26.60)
+ * replace the vanilla components ({@link #replaceComponents}). For hard coded items BDS accepted
+ * {@code minecraft:feather} at format 1.10 (it became a legacy item, id kept) and rejected {@code minecraft:stick} at
+ * 1.26.60; a legacy {@code minecraft:bread} at 1.16.100 was rejected, asking for 1.20.0 or higher, which was never
+ * tried. Paletter does not refuse any override. How the Bedrock client treats Paletter's overrides is <b>unverified on a
+ * client</b>: no client test exists. Paletter also keeps every vanilla runtime id fixed, where BDS moves an overridden
+ * data driven item. This API may change.
  *
  * @since 0.1.0
  */
@@ -81,10 +86,13 @@ public final class ItemOverride {
     /**
      * Replaces the item's components with only these (the custom item defaults underneath), like a BDS add-on that
      * overrides a vanilla data driven item. The vanilla {@code item_properties.creative_category} is kept, as BDS does.
-     * The client then stops applying its hardcoded behaviour, e.g. firework boosting.
+     * Also forces the item data driven and component based, and discards the components of earlier
+     * {@link #modifyComponents} calls. Whether the client then stops applying hard coded behaviour is unverified on a
+     * client.
      * <p>
-     * BDS accepts this for data driven items only; for a hard coded or legacy item it rejects the add-on, while Paletter
-     * applies it (unverified on a client). Unlike BDS, the runtime id stays the vanilla one.
+     * BDS accepted this for the data driven apple; for a hard coded item it rejected the stick (1.26.60) and accepted
+     * the feather only as a legacy item (1.10). Paletter applies it to any item (unverified on a client). Unlike BDS,
+     * the runtime id stays the vanilla one.
      */
     public @NonNull ItemOverride replaceComponents(@NonNull ItemComponent... components) {
         version(ItemVersion.DATA_DRIVEN);
@@ -128,6 +136,8 @@ public final class ItemOverride {
         NbtMap originalComponents = original.getComponentData() == null ? null : original.getComponentData().getCompound("components");
         NbtMap properties = originalComponents == null ? null : originalComponents.getCompound("item_properties");
         if (properties == null || !properties.containsKey("creative_category")) {
+            // TODO(client test): a hard coded or legacy item replaced like this deviates from BDS (it rejected the stick
+            //  at 1.26.60 and made the feather legacy); the client's result is unverified
             return componentData;
         }
         NbtMap components = componentData.getCompound("components");
@@ -139,7 +149,6 @@ public final class ItemOverride {
     RegisteredItem apply(WireContext context) {
         NbtMap componentData = original.getComponentData();
         if (fresh || (componentData == null && !components.isEmpty())) {
-            // TODO(client test): a hard coded or legacy item replaced like this deviates from BDS, which rejects such overrides
             componentData = ItemCompiler.componentData(original.getIdentifier(), original.getRuntimeId(), components, null, null, context);
             if (fresh) {
                 componentData = keepCreativeCategory(componentData);
