@@ -55,9 +55,12 @@ public final class BedrockBlockState {
         VanillaIndex index = VanillaIndex.get();
         if (id < canonical.vanillaSize()) {
             // The ids belong to the palette's own newest version, which is not necessarily the bundled one
-            int bundled = canonical.root() == index.blocks ? id : canonical.vanillaIdsIn(index.blocks)[id];
-            // A state only a preview has: the constants are linked to the release, so the palette's own table makes it
-            return bundled != -1 ? index.state(bundled) : PreviewBlocks.state(canonical.root(), id);
+            if (canonical.root() == index.blocks) {
+                return index.state(id);
+            }
+            // Blocks a preview added or changed: the constants are linked to the release, so the palette's own table makes them
+            BedrockBlockState preview = PreviewBlocks.state(canonical.root(), id);
+            return preview != null ? preview : index.state(canonical.vanillaIdsIn(index.blocks)[id]);
         }
         BedrockBlockType type = canonical.customTypeAt(id);
         return type == null ? null : type.layout().byOffset(id - canonical.customStartAt(id));
@@ -162,6 +165,9 @@ public final class BedrockBlockState {
      */
     @Internal
     public int canonicalIn(@NonNull CanonicalBlocks canonical) {
+        if (layout.root != null && canonical.root() == layout.root) {
+            return layout.rootBase + layout.offset(combination);
+        }
         if (id >= 0) {
             CanonicalBlocks bundled = VanillaIndex.get().blocks;
             return canonical.root() == bundled ? id : canonical.vanillaIdsFrom(bundled)[id];

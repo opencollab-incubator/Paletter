@@ -5,11 +5,17 @@ import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.vanilla.BedrockBlockType;
+import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -49,6 +55,41 @@ class PreviewHandlesTest {
             assertEquals(item.identifier(), variant.type().identifier());
             BedrockItemType type = palette.itemType(item.identifier(), Lookup.EXACT);
             assertNotNull(type, item.toString());
+        }
+    }
+
+    @Test
+    void defaultStatesAreBdsDefaults() {
+        data.blockDefaults().forEach((name, state) -> {
+            BedrockBlockState handle = palette.blockState(state, Lookup.EXACT);
+            assertNotNull(handle, name);
+            assertEquals(handle, handle.type().defaultState(), name);
+        });
+    }
+
+    @Test
+    void typesEqualTheReleaseConstantOnlyForTheSameStates() {
+        for (NbtMap state : data.blockStates()) {
+            BedrockBlockState handle = palette.blockState(state, Lookup.EXACT);
+            BedrockBlockType release = BedrockBlockType.vanillaType(handle.type().identifier());
+            if (release != null) {
+                assertEquals(release.properties().equals(handle.type().properties())
+                    && release.stateCount() == handle.type().stateCount(), release.equals(handle.type()), handle.toString());
+            }
+        }
+        BedrockBlockState scaffolding = palette.blockState(
+            data.blockStates().stream().filter(s -> s.getString("name").equals("minecraft:scaffolding")).findFirst().orElseThrow(),
+            Lookup.EXACT);
+        assertNotEquals(BedrockBlocks.SCAFFOLDING, scaffolding.type());
+        assertNotEquals(BedrockBlocks.SCAFFOLDING.defaultState(), scaffolding.type().defaultState());
+    }
+
+    @Test
+    void aBlockHasOneTypePerIdentifier() {
+        Map<String, BedrockBlockType> types = new HashMap<>();
+        for (NbtMap state : data.blockStates()) {
+            BedrockBlockType type = palette.blockState(state, Lookup.EXACT).type();
+            assertSame(type, types.computeIfAbsent(type.identifier(), name -> type), type.identifier());
         }
     }
 }

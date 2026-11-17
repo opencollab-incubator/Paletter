@@ -13,11 +13,12 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
- * The handles of the states a palette's newest version has and the newest release (which the generated constants and
- * {@link VanillaIndex} are linked to) lacks: with previews, the states of the preview. They are made from the canonical
- * table of the palette, once, when the first one is asked for. Their types are not the constants (those resolve through
- * their fallback), they are equal to them; a state has no canonical id of the bundled data, so it finds its canonical id
- * by its NBT.
+ * The handles of the blocks a palette's newest version added or changed since the newest release, which the generated
+ * constants and {@link VanillaIndex} are linked to: with previews, those of the preview. They are made from the canonical
+ * blocks of the palette, once, when the first handle of such a root is asked for. A block that only gained a value or
+ * property has all its states here, so each identifier has one type per root. Their types are not the constants (those
+ * resolve through their fallback); a type equals the constant if the states are the same. The states know their canonical
+ * id in their root, and find it by their NBT in others.
  */
 final class PreviewBlocks {
     private static final Map<CanonicalBlocks, PreviewBlocks> BY_ROOT = Collections.synchronizedMap(new WeakHashMap<>());
@@ -35,13 +36,15 @@ final class PreviewBlocks {
                 continue;
             }
             BedrockBlockType type = new BedrockBlockType(source.identifier(), VanillaTypes.UNKNOWN);
-            // The first state is the default: which one BDS places is not in the canonical table
-            BlockTypeLayout layout = BlockTypeLayout.vanilla(type, source, -1, 0);
+            NbtMap defaultState = root.defaultState(source.identifier());
+            int defaultOffset = defaultState == null ? 0 : root.index(defaultState) - source.first();
+            if (defaultOffset < 0 || defaultOffset >= source.count()) {
+                defaultOffset = 0;
+            }
+            BlockTypeLayout layout = BlockTypeLayout.preview(type, source, root, defaultOffset);
             type.link(layout);
             for (int offset = 0; offset < source.count(); offset++) {
-                if (bundled[source.first() + offset] == -1) {
-                    states.put(source.first() + offset, layout.byOffset(offset));
-                }
+                states.put(source.first() + offset, layout.byOffset(offset));
             }
         }
     }
@@ -57,7 +60,8 @@ final class PreviewBlocks {
 
     /**
      * @param root the canonical blocks of a palette lineage
-     * @param id a vanilla canonical id of it that the bundled release does not have
+     * @param id a vanilla canonical id of it
+     * @return its state if the block is one the bundled release lacks or has differently, else null
      */
     static BedrockBlockState state(CanonicalBlocks root, int id) {
         return BY_ROOT.computeIfAbsent(root, PreviewBlocks::new).states.get(id);

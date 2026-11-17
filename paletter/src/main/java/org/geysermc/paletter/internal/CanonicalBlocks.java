@@ -139,6 +139,19 @@ public final class CanonicalBlocks {
     }
 
     /**
+     * @return the default state BDS places for a vanilla block of the newest version (normalized), or null if the data has none
+     */
+    @Internal
+    public @Nullable NbtMap defaultState(@NonNull String name) {
+        for (Map.Entry<NbtMap, String> entry : root.defaultStates.entrySet()) {
+            if (entry.getValue().equals(name)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    /**
      * @return the amount of canonical ids; valid ids are {@code 0} to {@code size() - 1}
      */
     public int size() {

@@ -29,7 +29,8 @@ import java.util.Objects;
  * available}: its states are those of its fallback, normally {@code minecraft:unknown}.
  * <p>
  * Equality: like its states (see {@link BedrockBlockState}), {@code equals} always works, and {@code ==} works for the
- * vanilla constants and for the type a registered {@link CustomBlock} owns.
+ * vanilla constants and for the type a registered {@link CustomBlock} owns. Not in a Paletter with previews, for the
+ * blocks the preview added or changed: those have types of their own, equal to a constant if the states are the same.
  *
  * @since 1.0.0
  */
@@ -302,9 +303,9 @@ public final class BedrockBlockType {
         if (!(o instanceof BedrockBlockType other) || custom != other.custom || !identifier.equals(other.identifier)) {
             return false;
         }
-        // Vanilla types are singletons, except those of blocks only a preview has (see PreviewBlocks): equal to the
-        // constant of the identifier. Custom types are equal if they have the same identifier and states
-        return !custom || Arrays.equals(layout().properties, other.layout().properties)
+        // Vanilla types are singletons, except those of blocks a preview added or changed (see PreviewBlocks): equal to
+        // the constant of the identifier if they have the same states. Custom types likewise
+        return Arrays.equals(layout().properties, other.layout().properties)
             && Arrays.deepEquals(layout().values, other.layout().values);
     }
 

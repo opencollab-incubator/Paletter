@@ -2,6 +2,7 @@ package org.geysermc.paletter.vanilla;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.block.BlockProperty;
+import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.internal.vanilla.BlockLayout;
 
 import java.util.ArrayList;
@@ -24,11 +25,14 @@ final class BlockTypeLayout {
     /** Vanilla: offsets from strides or a table. Custom: null, the offset is the combination. */
     private final @Nullable BlockLayout source;
     private final int defaultOffset;
+    /** A block a preview added or changed: the canonical blocks it belongs to and the id of its first state there. */
+    final @Nullable CanonicalBlocks root;
+    final int rootBase;
     private volatile BedrockBlockState @Nullable [] byCombination;
     private BedrockBlockState[] byOffset;
 
     private BlockTypeLayout(BedrockBlockType owner, BedrockState<?>[] properties, Object[][] values, int base,
-                            @Nullable BlockLayout source, int defaultOffset) {
+                            @Nullable BlockLayout source, int defaultOffset, @Nullable CanonicalBlocks root, int rootBase) {
         this.owner = owner;
         this.properties = properties;
         this.values = values;
@@ -43,6 +47,8 @@ final class BlockTypeLayout {
         this.base = base;
         this.source = source;
         this.defaultOffset = defaultOffset;
+        this.root = root;
+        this.rootBase = rootBase;
     }
 
     static BlockTypeLayout vanilla(BedrockBlockType owner, BlockLayout source, int base, int defaultOffset) {
@@ -54,7 +60,13 @@ final class BlockTypeLayout {
             values[p] = list.toArray();
             properties[p] = state(source.properties().get(p), list);
         }
-        return new BlockTypeLayout(owner, properties, values, base, source, defaultOffset);
+        return new BlockTypeLayout(owner, properties, values, base, source, defaultOffset, null, -1);
+    }
+
+    /** The layout of a block as a palette's canonical blocks have it, where the generated constants do not reach it. */
+    static BlockTypeLayout preview(BedrockBlockType owner, BlockLayout source, CanonicalBlocks root, int defaultOffset) {
+        BlockTypeLayout layout = vanilla(owner, source, -1, defaultOffset);
+        return new BlockTypeLayout(owner, layout.properties, layout.values, -1, source, defaultOffset, root, source.first());
     }
 
     /**
@@ -77,12 +89,12 @@ final class BlockTypeLayout {
             }
             radix *= list.size();
         }
-        return new BlockTypeLayout(owner, properties, values, -1, null, defaultOffset);
+        return new BlockTypeLayout(owner, properties, values, -1, null, defaultOffset, null, -1);
     }
 
     /** A type known by its identifier only: no properties, one state. */
     static BlockTypeLayout bare(BedrockBlockType owner) {
-        return new BlockTypeLayout(owner, new BedrockState<?>[0], new Object[0][], -1, null, 0);
+        return new BlockTypeLayout(owner, new BedrockState<?>[0], new Object[0][], -1, null, 0, null, -1);
     }
 
     /**
