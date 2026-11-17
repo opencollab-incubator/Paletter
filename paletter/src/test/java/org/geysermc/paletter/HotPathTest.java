@@ -272,4 +272,25 @@ class HotPathTest {
         });
         assertTrue(allocated < 1024, allocated + " bytes allocated by " + runtimeIds.length + " lookups");
     }
+
+    @Test
+    void anExtendedPaletteSharesTheResolutionsOfItsParent() {
+        Palette parent = PALETTER.palette(PALETTER.latest().protocolVersion()).extend(layer("parent", 0));
+        Palette child = parent.extend(layer("child", 3));
+        int shared = 0;
+        for (int i = 0; i < parent.blocks().size(); i++) {
+            RegisteredBlockState state = parent.blocks().byIndex(i);
+            assertSame(parent.resolveBlock(state.getRuntimeId()), child.resolveBlock(state.getRuntimeId()), state.toString());
+            BedrockBlockState key = parent.blocks().key(state);
+            if (key != null) {
+                assertSame(parent.resolve(key), child.resolve(key), state.toString());
+                shared++;
+            }
+        }
+        assertTrue(shared > 0);
+        // The child's own blocks are its own, and the parent does not have them
+        RegisteredBlockState own = child.blocks().byIndex(child.blocks().size() - 1);
+        assertNotNull(child.resolveBlock(own.getRuntimeId()));
+        assertNull(parent.resolveBlock(own.getRuntimeId()));
+    }
 }

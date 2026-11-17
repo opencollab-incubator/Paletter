@@ -99,9 +99,15 @@ public final class Palette {
      * The resolutions handed out by {@link #resolve(BedrockBlockState)} (by canonical id) and
      * {@link #resolveBlock(int)} (by palette index), made on first use: a lookup allocates nothing. Threads may race to
      * fill a slot and publish equal instances; that is safe because {@link ResolvedBlock}'s fields are final.
+     * <p>
+     * An extended palette keeps slots only for the canonical ids and block states of its own layer: those of its parent
+     * are the parent's, with the same definition, fallback and behaviour (a layer cannot change them), so it asks the
+     * parent. The tables start at the parent's sizes.
      */
     private volatile ResolvedBlock[] resolvedByCanonical;
     private volatile ResolvedBlock[] resolvedByIndex;
+    private final int parentCanonicalSize;
+    private final int parentSize;
     private volatile CanonicalBlocks versionBlocks;
     private volatile CanonicalItems versionItems;
     private volatile Map<String, NbtMap> firstStates;
@@ -112,6 +118,8 @@ public final class Palette {
             CreativeLayout creativeLayout, CreativeContent creative, PaletteReport report, CreativeOrdering ordering,
             VanillaContent.ExperimentGating gating, Supplier<BehaviourStore> behaviourStore, Shapes shapes, @Nullable Palette parent) {
         this.parent = parent;
+        this.parentCanonicalSize = parent == null ? 0 : parent.blocks.canonical().size();
+        this.parentSize = parent == null ? 0 : parent.blocks.size();
         this.behaviourStore = behaviourStore;
         this.shapes = shapes;
         this.gating = gating;
@@ -210,14 +218,18 @@ public final class Palette {
     }
 
     private ResolvedBlock resolveCanonical(int canonical) {
+        int own = canonical - parentCanonicalSize;
+        if (own < 0) {
+            return parent.resolveCanonical(canonical);
+        }
         ResolvedBlock[] cache = resolvedByCanonical;
         if (cache == null) {
             cache = resolvedByCanonicalTable();
         }
-        ResolvedBlock resolved = cache[canonical];
+        ResolvedBlock resolved = cache[own];
         if (resolved == null) {
             RegisteredBlockState block = blocks.block(canonical);
-            cache[canonical] = resolved = new ResolvedBlock(block, blocks.isFallback(canonical),
+            cache[own] = resolved = new ResolvedBlock(block, blocks.isFallback(canonical),
                 behaviour().block(blocks.indexOfRuntimeId(block.getRuntimeId())));
         }
         return resolved;
@@ -226,7 +238,7 @@ public final class Palette {
     private synchronized ResolvedBlock[] resolvedByCanonicalTable() {
         ResolvedBlock[] cache = resolvedByCanonical;
         if (cache == null) {
-            resolvedByCanonical = cache = new ResolvedBlock[blocks.canonical().size()];
+            resolvedByCanonical = cache = new ResolvedBlock[blocks.canonical().size() - parentCanonicalSize];
         }
         return cache;
     }
@@ -234,9 +246,25 @@ public final class Palette {
     private synchronized ResolvedBlock[] resolvedByIndexTable() {
         ResolvedBlock[] cache = resolvedByIndex;
         if (cache == null) {
-            resolvedByIndex = cache = new ResolvedBlock[blocks.size()];
+            resolvedByIndex = cache = new ResolvedBlock[blocks.size() - parentSize];
         }
         return cache;
+    }
+
+    private ResolvedBlock resolveIndex(int index) {
+        int own = index - parentSize;
+        if (own < 0) {
+            return parent.resolveIndex(index);
+        }
+        ResolvedBlock[] cache = resolvedByIndex;
+        if (cache == null) {
+            cache = resolvedByIndexTable();
+        }
+        ResolvedBlock resolved = cache[own];
+        if (resolved == null) {
+            cache[own] = resolved = new ResolvedBlock(blocks.byIndex(index), false, behaviour().block(index));
+        }
+        return resolved;
     }
 
     /**
@@ -252,15 +280,7 @@ public final class Palette {
         if (index == -1) {
             return null;
         }
-        ResolvedBlock[] cache = resolvedByIndex;
-        if (cache == null) {
-            cache = resolvedByIndexTable();
-        }
-        ResolvedBlock resolved = cache[index];
-        if (resolved == null) {
-            cache[index] = resolved = new ResolvedBlock(blocks.byIndex(index), false, behaviour().block(index));
-        }
-        return resolved;
+        return resolveIndex(index);
     }
 
     public @NonNull DataVersion version() {
