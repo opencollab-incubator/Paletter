@@ -3,10 +3,14 @@ package org.geysermc.paletter.tools.model.infer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.geysermc.paletter.tools.model.rule.Affine;
 import org.geysermc.paletter.tools.model.rule.Affix;
+import org.geysermc.paletter.tools.model.rule.Descriptor;
+import org.geysermc.paletter.tools.model.rule.EnumTable;
 import org.geysermc.paletter.tools.model.rule.Leaf;
 import org.geysermc.paletter.tools.model.rule.Observation;
 import org.geysermc.paletter.tools.model.rule.OrderedSet;
+import org.geysermc.paletter.tools.model.rule.Union;
 import org.geysermc.paletter.tools.model.rule.Rule;
 import org.junit.jupiter.api.Test;
 
@@ -116,6 +120,100 @@ class RuleFitTest {
         assertTrue(RuleFit.tableAllowed(enums, true));
         assertFalse(RuleFit.tableAllowed(enums, false), "free strings must not become a table");
         assertTrue(RuleFit.tableAllowed(pairs("true", (byte) 1, "false", (byte) 2), false));
+    }
+
+    @Test
+    void aTableOfAnEnumIsCompleteOnlyWhenEveryValueOfTheSchemaWasSeen() {
+        List<Observation> seen = pairs("\"eat\"", 1, "\"drink\"", 2, "\"spear\"", 6);
+        Rule table = RuleFit.scalar(seen, Observation::json, W);
+        EnumTable complete = EnumTable.fit(table, java.util.Set.of("eat", "drink", "spear"));
+        assertEquals("enum-table", json(complete).get("kind").getAsString());
+        assertEquals("6", json(complete).getAsJsonObject("table").get("spear").getAsString());
+        // A value of the schema no capture tried: its leaf is not known, so the table stays a table
+        assertNull(EnumTable.fit(table, java.util.Set.of("eat", "drink", "spear", "brush")));
+        // A value outside the schema, and a field with no schema enum
+        assertNull(EnumTable.fit(table, java.util.Set.of("eat", "drink")));
+        assertNull(EnumTable.fit(table, java.util.Set.of()));
+        // Not a table at all
+        assertNull(EnumTable.fit(RuleFit.scalar(pairs("\"a\"", "a", "\"b\"", "b"), Observation::json, W), java.util.Set.of("a", "b")));
+    }
+
+    /** A collision box: the JSON object and the leaf BDS sent for it. */
+    private static Observation box(int originX, int sizeX, int originY, float leaf) {
+        String json = "{\"origin\": [" + originX + ", " + originY + ", 3], \"size\": [" + sizeX + ", 2, 3]}";
+        return new Observation(JsonParser.parseString(json), Map.of(W, new Leaf("float", leaf)), json);
+    }
+
+    @Test
+    void aLeafSeveralNumbersOfOneValueDecideIsAnAffineRule() {
+        // minX = 8 - origin.x - size.x (the mirrored x of BDS 1.26.63.1)
+        List<Observation> mirrored = List.of(box(1, 2, 0, 5), box(-4, 2, 0, 10), box(0, 2, 0, 6), box(1, 3, 0, 4), box(1, 0, 0, 7));
+        JsonObject rule = json(Affine.fit(mirrored, W));
+        assertEquals("affine", rule.get("kind").getAsString());
+        assertEquals("{\"origin[0]\":-1,\"size[0]\":-1}", rule.get("terms").toString());
+        assertEquals(8.0, rule.get("constant").getAsDouble());
+        // the same through the fit of an object (an element of a list of boxes)
+        assertEquals("affine", json(RuleFit.object(mirrored, W, false)).get("kind").getAsString());
+        // minX = 8 + origin.x does not depend on the size: one input is a linear rule, not an affine one
+        assertNull(Affine.fit(List.of(box(1, 2, 0, 9), box(-4, 2, 0, 4), box(0, 3, 0, 8)), W));
+        // the origin and the size never moved apart: either one explains the leaf, the observations do not say which
+        assertNull(Affine.fit(List.of(box(1, 1, 0, 7), box(2, 2, 0, 6), box(1, 1, 2, 5), box(3, 3, 1, 4)), W));
+        // no sum of the numbers gives the leaves
+        assertNull(Affine.fit(List.of(box(1, 2, 0, 5), box(-4, 2, 0, 11), box(0, 2, 0, 6), box(1, 3, 0, 4)), W));
+    }
+
+    @Test
+    void aFieldWhoseJsonTypesLandOnOneLeafGetsARulePerType() {
+        // repair_amount-like: a number is scaled into an int, a string is sent as it is
+        List<Observation> mixed = pairs("1.5", 30, "3", 60, "0.5", 10, "\"a\"", "a", "\"b\"", "b");
+        JsonObject union = json(Union.fit(mixed, W, type -> RuleFit.scalar(type, Observation::json, W)));
+        assertEquals("union", union.get("kind").getAsString());
+        assertEquals("linear", union.getAsJsonObject("by").getAsJsonObject("number").get("kind").getAsString());
+        assertEquals("int", union.getAsJsonObject("by").getAsJsonObject("number").get("nbt").getAsString());
+        assertEquals("identity", union.getAsJsonObject("by").getAsJsonObject("string").get("kind").getAsString());
+        assertEquals("string", union.getAsJsonObject("by").getAsJsonObject("string").get("nbt").getAsString());
+        // one JSON type is no union, and a type no rule fits makes none
+        assertNull(Union.fit(pairs("1.5", 30, "3", 60), W, type -> RuleFit.scalar(type, Observation::json, W)));
+        assertNull(Union.fit(pairs("1.5", 30, "3", 60, "\"a\"", 1, "\"a\"", 2), W, type -> RuleFit.scalar(type, Observation::json, W)));
+    }
+
+    /** A descriptor: the JSON value and the leaves BDS sent for it, as path, value pairs. */
+    private static Observation descriptor(String json, Object... leaves) {
+        Map<String, Leaf> wire = new java.util.TreeMap<>();
+        for (int i = 0; i < leaves.length; i += 2) {
+            wire.put((String) leaves[i], new Leaf(Wire.typeOf(leaves[i + 1]), leaves[i + 1]));
+        }
+        return new Observation(JsonParser.parseString(json), wire, json);
+    }
+
+    @Test
+    void aBlockDescriptorIsTheTripleOfItsJson() {
+        String d = "x.use_on[0]";
+        List<Observation> block = List.of(
+            descriptor("{\"name\": \"minecraft:stone\"}", d + ".name", "minecraft:stone", d + ".tags", ""),
+            descriptor("{\"name\": \"minecraft:wheat\", \"states\": {\"growth\": 3, \"lit\": true}}",
+                d + ".name", "minecraft:wheat", d + ".states.growth", 3, d + ".states.lit", (byte) 1, d + ".tags", ""),
+            descriptor("{\"tags\": \"q.any_tag('a')\"}", d + ".name", "", d + ".tags", "q.any_tag('a')"));
+        JsonObject rule = json(Descriptor.fit(block, d));
+        assertEquals("descriptor", rule.get("kind").getAsString());
+        assertEquals("block", rule.get("of").getAsString());
+        // a name the leaf does not carry, a state the leaves lack and a state they add are no descriptor of the JSON
+        assertNull(Descriptor.fit(List.of(descriptor("{\"name\": \"minecraft:stone\"}", d + ".name", "minecraft:dirt", d + ".tags", "")), d));
+        assertNull(Descriptor.fit(List.of(descriptor("{\"name\": \"a:b\", \"states\": {\"n\": 1}}", d + ".name", "a:b", d + ".tags", "")), d));
+        assertNull(Descriptor.fit(List.of(descriptor("{\"name\": \"a:b\"}", d + ".name", "a:b", d + ".states.n", 1, d + ".tags", "")), d));
+    }
+
+    @Test
+    void anItemDescriptorIsTheNamespacedNameOfAnItemTheRegistryKnows() {
+        String d = "x.item";
+        List<Observation> item = List.of(
+            descriptor("\"minecraft:apple\"", d + ".name", "minecraft:apple"),
+            descriptor("\"apple\"", d + ".name", "minecraft:apple"),
+            descriptor("\"paletter_unknown\""));
+        assertEquals("item", json(Descriptor.fit(item, d)).get("of").getAsString());
+        // no item was ever sent: nothing shows the leaf is a descriptor
+        assertNull(Descriptor.fit(List.of(descriptor("\"paletter_unknown\"")), d));
+        assertNull(Descriptor.fit(List.of(descriptor("\"apple\"", d + ".name", "apple")), d));
     }
 
     @Test

@@ -7,18 +7,21 @@ import org.geysermc.paletter.tools.model.Model.Field;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 import org.geysermc.paletter.tools.model.addon.JsonPath;
 import org.geysermc.paletter.tools.model.infer.SpecCaptures.Obs;
+import org.geysermc.paletter.tools.model.rule.Affine;
 import org.geysermc.paletter.tools.model.rule.Affix;
 import org.geysermc.paletter.tools.model.rule.Bitset;
 import org.geysermc.paletter.tools.model.rule.Constant;
 import org.geysermc.paletter.tools.model.rule.Count;
 import org.geysermc.paletter.tools.model.rule.EmptyList;
 import org.geysermc.paletter.tools.model.rule.EmptyMap;
+import org.geysermc.paletter.tools.model.rule.EnumTable;
 import org.geysermc.paletter.tools.model.rule.Identity;
 import org.geysermc.paletter.tools.model.rule.Leaf;
 import org.geysermc.paletter.tools.model.rule.Linear;
 import org.geysermc.paletter.tools.model.rule.Observation;
 import org.geysermc.paletter.tools.model.rule.Rule;
 import org.geysermc.paletter.tools.model.rule.Table;
+import org.geysermc.paletter.tools.model.rule.Union;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -50,22 +53,10 @@ final class RuleFit {
             return null;
         }
         String jsonName = path.isEmpty() ? "" : JsonPath.tokens(path).getLast();
-        boolean scalars = set.stream().allMatch(p -> p.json().isJsonPrimitive());
-        Rule rule;
-        Field field = component.field(path);
-        // an enum of the docs, or one BDS lists in its content log ("expects one of the following strings")
-        boolean enumerated = field != null && !field.enumValues().isEmpty() || feedback.has(component.id(), path, "values");
-        if (scalars) {
-            rule = scalar(set, Observation::json, wire);
-            if (rule instanceof Table && !tableAllowed(set, enumerated)) {
-                rule = Affix.fit(set, wire);
-            }
-        } else if (set.stream().allMatch(p -> p.json().isJsonArray())) {
-            rule = array(set, wire, enumerated || feedback.has(component.id(), path + "[]", "values"));
-        } else if (set.stream().allMatch(p -> p.json().isJsonObject())) {
-            rule = object(set, wire, enumerated || feedback.has(component.id(), path + "{}", "values"));
-        } else {
-            rule = mixed(set, wire, enumerated, enumerated || feedback.has(component.id(), path + "[]", "values"));
+        Rule rule = byShape(component, path, wire, set);
+        if (rule == null) {
+            // no one rule for every JSON type of the field: a rule for each type
+            rule = Union.fit(set, wire, type -> byShape(component, path, wire, type));
         }
         if (rule == null) {
             return null;
@@ -76,6 +67,28 @@ final class RuleFit {
         }
         rule.tags = tags(component, path, jsonName, wire, rule, set);
         return rule;
+    }
+
+    /** The rule of observations of one shape of JSON value (scalars, lists or objects), or of a mix of shapes. */
+    private Rule byShape(Component component, String path, String wire, List<Observation> set) {
+        Field field = component.field(path);
+        // an enum of the docs, or one BDS lists in its content log ("expects one of the following strings")
+        boolean enumerated = field != null && !field.enumValues().isEmpty() || feedback.has(component.id(), path, "values");
+        if (set.stream().allMatch(p -> p.json().isJsonPrimitive())) {
+            Rule rule = scalar(set, Observation::json, wire);
+            if (rule instanceof Table && !tableAllowed(set, enumerated)) {
+                rule = Affix.fit(set, wire);
+            }
+            EnumTable complete = EnumTable.fit(rule, closedValues(component, path));
+            return complete != null ? complete : rule;
+        }
+        if (set.stream().allMatch(p -> p.json().isJsonArray())) {
+            return array(set, wire, enumerated || feedback.has(component.id(), path + "[]", "values"));
+        }
+        if (set.stream().allMatch(p -> p.json().isJsonObject())) {
+            return object(set, wire, enumerated || feedback.has(component.id(), path + "{}", "values"));
+        }
+        return mixed(set, wire, enumerated, enumerated || feedback.has(component.id(), path + "[]", "values"));
     }
 
     /**
@@ -229,7 +242,8 @@ final class RuleFit {
             return best;
         }
         Rule count = Count.fit(set, wire);
-        return count != null ? count : EmptyList.fit(set, wire);
+        Rule list = count != null ? count : EmptyList.fit(set, wire);
+        return list != null ? list : Affine.fit(set, wire);
     }
 
     /**
@@ -282,7 +296,7 @@ final class RuleFit {
                 }
             }
         }
-        return null;
+        return Affine.fit(set, wire);
     }
 
     private List<String> tags(Component component, String path, String jsonName, String wire, Rule rule, List<Observation> set) {

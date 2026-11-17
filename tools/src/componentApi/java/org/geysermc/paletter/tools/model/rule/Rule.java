@@ -18,7 +18,7 @@ import java.util.List;
  * {@code RuleFit}), its encoder and its evaluation.
  */
 public abstract sealed class Rule permits Identity, Linear, Table, Affix, Bitset, Count, OrderedSet, Constant, EmptyList, EmptyMap,
-    Structure, CrossField {
+    Structure, CrossField, EnumTable, Affine, Union, Descriptor {
     /** A table entry or constant for a leaf BDS does not send. */
     public static final String NOT_SENT = "<not sent>";
 
@@ -82,13 +82,18 @@ public abstract sealed class Rule permits Identity, Linear, Table, Affix, Bitset
      * cannot be evaluated on it.
      */
     public final String evaluate(JsonElement json) {
-        if (nbt == null || json == null || !json.isJsonPrimitive() || element != null) {
+        if (nbt == null || json == null || element != null) {
             return null;
         }
-        return evaluate(json.getAsJsonPrimitive());
+        return json.isJsonPrimitive() ? evaluate(json.getAsJsonPrimitive()) : evaluateStructured(json);
     }
 
     String evaluate(JsonPrimitive p) {
+        return null;
+    }
+
+    /** Evaluates the rule on a JSON list or object, for the kinds whose value is one. */
+    String evaluateStructured(JsonElement json) {
         return null;
     }
 
@@ -117,6 +122,10 @@ public abstract sealed class Rule permits Identity, Linear, Table, Affix, Bitset
             case EmptyMap.KIND -> new EmptyMap();
             case Structure.KIND -> new Structure();
             case CrossField.KIND -> new CrossField();
+            case EnumTable.KIND -> EnumTable.read(json);
+            case Affine.KIND -> Affine.read(json);
+            case Union.KIND -> Union.read(json);
+            case Descriptor.KIND -> Descriptor.read(json);
             default -> throw new IllegalArgumentException("unknown rule kind " + kind + ": " + json);
         };
         rule.wire = json.has("wire") ? json.get("wire").getAsString() : null;

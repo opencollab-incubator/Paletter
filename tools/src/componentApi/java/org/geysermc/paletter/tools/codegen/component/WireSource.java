@@ -41,6 +41,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Writes the internal encoders with JavaPoet: per component, the inferred rules of each protocol window as straight line
@@ -721,6 +723,52 @@ final class WireSource {
         @Override
         public CodeBlock number() {
             return numeric(t, expr);
+        }
+
+        @Override
+        public CodeBlock node() {
+            return CodeBlock.of("$N", node);
+        }
+
+        @Override
+        public String leaf() {
+            return rel;
+        }
+
+        @Override
+        public CodeBlock holds(String jsonType) {
+            throw error("a union rule needs the sealed type of the union, which the API does not generate yet");
+        }
+
+        @Override
+        public Emitter as(String jsonType) {
+            throw error("a union rule needs the sealed type of the union, which the API does not generate yet");
+        }
+
+        @Override
+        public CodeBlock input(String path) {
+            Type type = t;
+            CodeBlock at = expr;
+            Matcher token = Pattern.compile("([^.\\[\\]]+)|\\[(\\d+)]").matcher(path);
+            while (token.find()) {
+                if (token.group(1) != null && type instanceof ObjRef object) {
+                    Field child = object.wire().fields.stream().filter(x -> token.group(1).equals(x.json)).findFirst().orElse(null);
+                    if (child == null || ApiSource.nullable(child)) {
+                        throw error("the input " + path + " is no field every value has");
+                    }
+                    at = CodeBlock.of("$L.$N()", at, child.java);
+                    type = child.type;
+                } else if (token.group(2) != null && type instanceof Vec3) {
+                    at = CodeBlock.of("$L.$L()", at, List.of("x", "y", "z").get(Integer.parseInt(token.group(2))));
+                    type = new Scalar(ScalarKind.FLOAT);
+                } else if (token.group(2) != null && type instanceof ListOf l) {
+                    at = CodeBlock.of("$L.get($L)", at, token.group(2));
+                    type = l.element();
+                } else {
+                    throw error("the input " + path + " is not in the value");
+                }
+            }
+            return numeric(type, at);
         }
 
         @Override

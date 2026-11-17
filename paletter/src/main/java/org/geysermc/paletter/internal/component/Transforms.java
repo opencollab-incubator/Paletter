@@ -412,23 +412,15 @@ public final class Transforms {
      * is reported too. No rule over the JSON value fits, because the registry decides the type.
      */
     public static void blockDescriptorStates(@NonNull WireContext ctx, @NonNull WireNode out, BlockPlacer.UseOn d) {
-        descriptor(ctx, out, "", d.name(), d.states(), d.tags());
+        Wire.blockDescriptor(ctx, out, "", d.name(), d.states(), d.tags());
     }
 
     public static void blockDescriptorStates(@NonNull WireContext ctx, @NonNull WireNode out, EntityPlacer.UseOn d) {
-        descriptor(ctx, out, "", d.name(), d.states(), d.tags());
+        Wire.blockDescriptor(ctx, out, "", d.name(), d.states(), d.tags());
     }
 
     public static void blockDescriptorStates(@NonNull WireContext ctx, @NonNull WireNode out, Digger.Block d) {
-        descriptor(ctx, out, "block.", d.name(), d.states(), d.tags());
-    }
-
-    /** Item components send block descriptors as the full {name, states, tags} triple, "" for what is not set. */
-    private static void descriptor(WireContext ctx, WireNode out, String prefix, @Nullable String name, Map<String, Object> states,
-                                   @Nullable String tags) {
-        out.put(prefix + "name", name == null ? "" : name);
-        out.put(prefix + "states", states(ctx, name, states));
-        out.put(prefix + "tags", tags == null ? "" : tags);
+        Wire.blockDescriptor(ctx, out, "block", d.name(), d.states(), d.tags());
     }
 
     /**
@@ -438,7 +430,7 @@ public final class Transforms {
         if (d.states().isEmpty()) {
             return;
         }
-        NbtMap typed = states(ctx, d.name(), d.states());
+        NbtMap typed = Wire.states(ctx, d.name(), d.states());
         out.list("states");
         typed.forEach((state, value) -> {
             WireNode entry = out.element("states");
@@ -455,35 +447,6 @@ public final class Transforms {
      */
     private static int stateType(Object value) {
         return value instanceof Integer ? 2 : value instanceof Byte ? 0 : 1;
-    }
-
-    static @NonNull NbtMap states(WireContext ctx, @Nullable String block, Map<String, Object> states) {
-        NbtMap known = block == null ? null : ctx.registry().blockStates(block);
-        if (!states.isEmpty() && block != null && known == null && (block.indexOf(':') < 0 || block.startsWith("minecraft:"))) {
-            ctx.changed("block descriptor", "block " + block + " is not a block of this version; BDS drops a descriptor it cannot resolve");
-        }
-        NbtMapBuilder out = NbtMap.builder();
-        states.forEach((name, value) -> {
-            Object type = known == null ? null : known.get(name);
-            if (known != null && type == null) {
-                // the capture's evidence is a vanilla block without states (stone) and invented state names: BDS dropped them
-                ctx.changed("block descriptor", known.isEmpty()
-                    ? "block " + block + " has no states, so state " + name + " names none; BDS dropped such descriptors of a stateless block"
-                    : "block " + block + " has no state " + name + "; unverified for a block with states, BDS dropped the descriptors of a stateless one");
-            } else if (value instanceof String) {
-                ctx.changed("block descriptor", "state " + name + " is sent as the string " + value + "; BDS sends an enum state as its index (unverified beyond pillar_axis y = 0)");
-            }
-            Object converted;
-            if (value instanceof Boolean b) {
-                converted = Wire.bool(b);
-            } else if (value instanceof Integer i) {
-                converted = type instanceof Byte ? (Object) i.byteValue() : i;
-            } else {
-                converted = value;
-            }
-            out.put(name, converted);
-        });
-        return out.build();
     }
 
     // ---- block_name ----------------------------------------------------------------------------------------------------
@@ -535,13 +498,7 @@ public final class Transforms {
      * without item is sent with the empty descriptor too.
      */
     public static void ammunitionItemDescriptor(@NonNull WireContext ctx, @NonNull WireNode out, Shooter.@NonNull Ammunition c) {
-        String item = c.item();
-        NbtMap descriptor = item != null && ctx.registry().itemExists(item)
-            ? NbtMap.builder().putString("name", Wire.namespaced(item)).build() : NbtMap.EMPTY;
-        if (item != null && descriptor.isEmpty()) {
-            ctx.drop(Shooter.NAME, "ammunition[].item " + item + " is not an item");
-        }
-        out.put("item", descriptor);
+        Wire.itemDescriptor(ctx, out, "item", Shooter.NAME, "ammunition[].item", c.item());
     }
 
     /**

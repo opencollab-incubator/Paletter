@@ -77,7 +77,7 @@ public final class TraitWire {
             case "south" -> out.put("direction", (byte) 3);
             case "up" -> out.put("direction", (byte) 1);
             case "west" -> out.put("direction", (byte) 4);
-            default -> ctx.drop(MultiBlock.NAME, "direction = " + v2.value() + " has no known wire value");
+            default -> throw new IllegalStateException("direction is not a value of its enum: " + v2.value());
         }
     }
 

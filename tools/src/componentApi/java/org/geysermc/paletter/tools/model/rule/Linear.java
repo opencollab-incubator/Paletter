@@ -144,7 +144,7 @@ public final class Linear extends Rule {
         e.put(e.fromNumber(nbt, number));
     }
 
-    private static String decimal(double d) {
+    static String decimal(double d) {
         return Docs.number(d) + (d == Math.rint(d) ? ".0" : "");
     }
 

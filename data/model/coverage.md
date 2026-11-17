@@ -61,11 +61,12 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | constant | 208 |
 | empty-list | 18 |
 | empty-map | 9 |
+| enum-table | 4 |
 | identity | 232 |
 | linear | 15 |
 | ordered-set | 2 |
 | structure | 29 |
-| table | 15 |
+| table | 11 |
 
 | tag | rules |
 |---|---|

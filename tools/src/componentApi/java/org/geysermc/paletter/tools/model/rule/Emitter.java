@@ -28,6 +28,21 @@ public interface Emitter {
     /** @return the value as a {@code double} (a boolean as 0 or 1) */
     CodeBlock number();
 
+    /** @return the node the leaf is written to */
+    CodeBlock node();
+
+    /** @return the path of the leaf relative to {@link #node} */
+    String leaf();
+
+    /** @return the condition that the value of a union field is of a JSON type ({@code string}, {@code object}, ...) */
+    CodeBlock holds(String jsonType);
+
+    /** @return the emitter of the value of a union field as the alternative of a JSON type */
+    Emitter as(String jsonType);
+
+    /** @return the number at a path of the value, a list or object ({@code origin[0]}), as a {@code double} */
+    CodeBlock input(String path);
+
     /** @return the value as a string (an enum's own value) */
     CodeBlock string();
 
