@@ -108,7 +108,7 @@ public final class org.geysermc.paletter.Palette {
     public org.geysermc.paletter.block.RegisteredBlockState blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)
     public org.geysermc.paletter.vanilla.BedrockBlockState blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)
     public org.geysermc.paletter.block.RegisteredBlockState blockOrNull(org.geysermc.paletter.vanilla.BedrockBlockState)
-    public org.geysermc.paletter.block.BlockRegistry blocks()
+    public org.geysermc.paletter.vanilla.BedrockBlockState blockState(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)
     public org.geysermc.paletter.creative.CreativeContent creative()
     public org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket creativeContentPacket()
     public org.geysermc.paletter.creative.CreativeLayout creativeLayout()
@@ -125,9 +125,11 @@ public final class org.geysermc.paletter.Palette {
     public org.geysermc.paletter.vanilla.BedrockItemVariant item(java.lang.String, int)
     public org.geysermc.paletter.behaviour.ItemValues itemBehaviour(org.geysermc.paletter.vanilla.BedrockItemType)
     public org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket itemComponentPacket()
+    public org.geysermc.paletter.item.RegisteredItem itemDefinition(java.lang.String)
     public org.geysermc.paletter.item.RegisteredItem itemDefinition(org.geysermc.paletter.vanilla.BedrockItemType)
+    public java.util.List<org.geysermc.paletter.item.RegisteredItem> itemDefinitions()
+    public java.util.Map<java.lang.String, java.util.List<java.lang.String>> itemTags()
     public java.util.List<org.geysermc.paletter.vanilla.BedrockItemVariant> itemVariants()
-    public org.geysermc.paletter.item.ItemRegistry items()
     public java.util.List<org.geysermc.paletter.PaletteLayer> layers()
     public org.geysermc.paletter.PaletteReport report()
     public org.geysermc.paletter.item.ResolvedItem resolve(org.geysermc.paletter.vanilla.BedrockItemVariant)
@@ -477,30 +479,6 @@ public enum org.geysermc.paletter.block.BlockProperty$Type {
     public static org.geysermc.paletter.block.BlockProperty$Type[] values()
 }
 
-public final class org.geysermc.paletter.block.BlockRegistry implements org.cloudburstmc.protocol.common.DefinitionRegistry<org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition> {
-    public static final int CUSTOM_BLOCK_ID_START = 10000
-    public org.geysermc.paletter.block.RegisteredBlockState air()
-    public org.geysermc.paletter.block.RegisteredBlock block(java.lang.String)
-    public org.geysermc.paletter.block.RegisteredBlock block(org.geysermc.paletter.block.RegisteredBlockState)
-    public java.util.List<org.cloudburstmc.protocol.bedrock.data.BlockPropertyData> blockProperties()
-    public java.util.Collection<org.geysermc.paletter.block.RegisteredBlock> blocks()
-    public org.geysermc.paletter.block.RegisteredBlockState byIndex(int)
-    public org.geysermc.paletter.block.RegisteredBlockState byRuntimeId(int)
-    public boolean contains(java.lang.String)
-    public java.util.List<org.geysermc.paletter.block.CustomBlock> customBlocks()
-    public org.geysermc.paletter.block.RegisteredBlockState defaultState(java.lang.String)
-    public java.util.Map<java.lang.String, org.geysermc.paletter.block.BlockFallback> fallbacks()
-    public org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition getDefinition(int)
-    public int indexOf(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)
-    public int indexOfRuntimeId(int)
-    public boolean isRegistered(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)
-    public org.geysermc.paletter.vanilla.BedrockBlockState key(org.geysermc.paletter.block.RegisteredBlockState)
-    public int size()
-    public java.util.List<org.geysermc.paletter.block.RegisteredBlockState> states(java.lang.String)
-    public java.lang.String toString()
-    public org.geysermc.paletter.data.DataVersion version()
-}
-
 public final class org.geysermc.paletter.block.CustomBlock {
     public static org.geysermc.paletter.block.CustomBlock$Builder builder(java.lang.String)
     public <T extends org.geysermc.paletter.block.component.BlockComponent> T component(java.lang.Class<T>)
@@ -578,28 +556,11 @@ public record org.geysermc.paletter.block.CustomBlock$Permutation {
     public final java.lang.String toString()
 }
 
-public final class org.geysermc.paletter.block.RegisteredBlock {
-    public java.util.List<org.geysermc.paletter.block.component.BlockComponent> components()
-    public java.util.List<org.geysermc.paletter.block.component.BlockComponent> components(org.geysermc.paletter.block.RegisteredBlockState)
-    public org.geysermc.paletter.block.CustomBlock customBlock()
-    public org.geysermc.paletter.block.RegisteredBlockState defaultState()
-    public java.lang.String identifier()
-    public org.geysermc.paletter.vanilla.BedrockBlockType key()
-    public org.geysermc.paletter.Origin origin()
-    public org.geysermc.paletter.property.Properties properties()
-    public org.geysermc.paletter.property.Properties properties(org.geysermc.paletter.block.RegisteredBlockState)
-    public org.cloudburstmc.nbt.NbtMap propertyData()
-    public java.util.List<org.geysermc.paletter.block.BlockProperty<?>> stateProperties()
-    public java.util.List<org.geysermc.paletter.block.RegisteredBlockState> states()
-    public java.lang.String toString()
-}
-
 public final class org.geysermc.paletter.block.RegisteredBlockState implements org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition {
     public int getRuntimeId()
     public org.cloudburstmc.nbt.NbtMap getState()
     public java.lang.String identifier()
     public boolean isCustom()
-    public org.geysermc.paletter.vanilla.BedrockBlockState key()
     public org.cloudburstmc.nbt.NbtMap states()
     public java.lang.String toString()
 }
@@ -2449,23 +2410,6 @@ public final class org.geysermc.paletter.item.ItemOverride {
     public org.geysermc.paletter.item.ItemOverride noBlock()
     public org.geysermc.paletter.item.RegisteredItem original()
     public org.geysermc.paletter.item.ItemOverride version(org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion)
-}
-
-public final class org.geysermc.paletter.item.ItemRegistry implements org.cloudburstmc.protocol.common.DefinitionRegistry<org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition> {
-    public org.geysermc.paletter.block.RegisteredBlockState blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)
-    public org.geysermc.paletter.block.BlockRegistry blocks()
-    public java.util.List<org.geysermc.paletter.item.CustomItem> customItems()
-    public java.util.List<org.geysermc.paletter.item.RegisteredItem> definitions()
-    public org.geysermc.paletter.item.RegisteredItem getDefinition(int)
-    public org.geysermc.paletter.item.RegisteredItem getDefinition(java.lang.String)
-    public boolean isRegistered(org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition)
-    public org.geysermc.paletter.item.RegisteredItem item(java.lang.String)
-    public java.util.Collection<org.geysermc.paletter.item.RegisteredItem> items()
-    public org.geysermc.paletter.item.ResolvedItem resolve(org.geysermc.paletter.vanilla.BedrockItemVariant)
-    public java.util.Map<java.lang.String, java.util.List<java.lang.String>> tags()
-    public org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket toPacket()
-    public java.lang.String toString()
-    public org.geysermc.paletter.data.DataVersion version()
 }
 
 public final class org.geysermc.paletter.item.RegisteredItem implements org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition {
