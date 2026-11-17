@@ -1747,8 +1747,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets <code>block</code>.</div>
 </dd>
-<dt><a href="org/geysermc/paletter/Palette.html#block(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">block(BedrockBlockState)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/item/component/BlockPlacer.Builder.html#block(org.geysermc.paletter.vanilla.BedrockBlockType)" class="member-name-link">block(BedrockBlockType)</a> - Method in class org.geysermc.paletter.item.component.<a href="org/geysermc/paletter/item/component/BlockPlacer.Builder.html" title="class in org.geysermc.paletter.item.component">BlockPlacer.Builder</a></dt>
 <dd>
 <div class="block">Sets <code>block</code> to a vanilla or custom block.</div>
@@ -1814,6 +1812,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <a href="./org/geysermc/paletter/internal/data/VanillaData.html#param-blockDefaults"><code>blockDefaults</code></a> record component.</div>
 </dd>
+<dt><a href="org/geysermc/paletter/Palette.html#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockDefinition(BedrockBlockState)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/internal/component/Transforms.html#blockDescriptorStates(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.block.component.PlacementFilter.BlockFilter)" class="member-name-link">blockDescriptorStates(WireContext, WireNode, PlacementFilter.BlockFilter)</a> - Static method in class org.geysermc.paletter.internal.component.<a href="org/geysermc/paletter/internal/component/Transforms.html" title="class in org.geysermc.paletter.internal.component">Transforms</a></dt>
 <dd>
 <div class="block">Placement filter descriptors send their states as a list of <code>{state, type, value}</code>, only when there are any.</div>
@@ -1915,11 +1915,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <a href="./org/geysermc/paletter/internal/data/VanillaData.html#param-blockItems"><code>blockItems</code></a> record component.</div>
 </dd>
-<dt><a href="org/geysermc/paletter/Palette.html#blockKeyOf(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">blockKeyOf(BedrockItemVariant)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
-<dd>
-<div class="block">The version independent key of <a href="org/geysermc/paletter/Palette.html#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)"><code>Palette.blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)</code></a>: the block state an item variant is sent with, as a
- <a href="org/geysermc/paletter/vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockBlockState</code></a>, for every kind of variant (vanilla, extra, custom block items, fallbacks).</div>
-</dd>
 <dt><a href="org/geysermc/paletter/internal/vanilla/BlockLayout.html" class="type-name-link" title="class in org.geysermc.paletter.internal.vanilla">BlockLayout</a> - Class in <a href="org/geysermc/paletter/internal/vanilla/package-summary.html">org.geysermc.paletter.internal.vanilla</a></dt>
 <dd>
 <div class="block">How the states of one block type are laid out in a palette: its properties (sorted by name), the values of each in
@@ -1968,13 +1963,13 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="org/geysermc/paletter/Palette.html#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">blockOf(BedrockItemVariant)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
 <dd>
-<div class="block">The block an item variant is sent with in this palette's version, in its default state: Paletter alone decides it,
- see <a href="org/geysermc/paletter/item/ItemRegistry.html#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)"><code>ItemRegistry.blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)</code></a>.</div>
+<div class="block">The block an item variant is sent with in this palette's version, in its default state, as a key: a
+ <a href="org/geysermc/paletter/vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockBlockState</code></a>, for every kind of variant (vanilla, extra, custom block items, fallbacks).</div>
 </dd>
 <dt><a href="org/geysermc/paletter/Paletter.html#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">blockOf(BedrockItemVariant)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Paletter.html" title="class in org.geysermc.paletter">Paletter</a></dt>
 <dd>
 <div class="block">The block state an item places, version independent: the block the newest version sends the item with
- (<a href="org/geysermc/paletter/Palette.html#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)"><code>Palette.blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)</code></a>).</div>
+ (<a href="org/geysermc/paletter/Palette.html#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)"><code>Palette.blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)</code></a>, the same key).</div>
 </dd>
 <dt><a href="org/geysermc/paletter/creative/CreativeOrdering.html#blockOrder(java.util.List,java.util.Collection)" class="member-name-link">blockOrder(List&lt;String&gt;, Collection&lt;String&gt;)</a> - Method in enum class org.geysermc.paletter.creative.<a href="org/geysermc/paletter/creative/CreativeOrdering.html" title="enum class in org.geysermc.paletter.creative">CreativeOrdering</a></dt>
 <dd>
@@ -1987,7 +1982,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="org/geysermc/paletter/Palette.html#blockOrNull(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockOrNull(BedrockBlockState)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
 <dd>
-<div class="block">Like <a href="org/geysermc/paletter/Palette.html#block(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>Palette.block(BedrockBlockState)</code></a>, but for a state that is not in this palette it returns null instead of
+<div class="block">Like <a href="org/geysermc/paletter/Palette.html#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>Palette.blockDefinition(BedrockBlockState)</code></a>, but for a state that is not in this palette it returns null instead of
  throwing.</div>
 </dd>
 <dt><a href="org/geysermc/paletter/item/component/BlockPlacer.html" class="type-name-link" title="class in org.geysermc.paletter.item.component">BlockPlacer</a> - Record Class in <a href="org/geysermc/paletter/item/component/package-summary.html">org.geysermc.paletter.item.component</a></dt>
@@ -10378,16 +10373,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">It does not exist in this version; a fallback was used.</div>
 </dd>
-<dt><a href="org/geysermc/paletter/item/ItemRegistry.html#fallbackOf(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">fallbackOf(BedrockItemVariant)</a> - Method in class org.geysermc.paletter.item.<a href="org/geysermc/paletter/item/ItemRegistry.html" title="class in org.geysermc.paletter.item">ItemRegistry</a></dt>
-<dd>
-<div class="block">What this version sends instead of a variant: its fallback, that is the replacement of a <a href="org/geysermc/paletter/item/ItemFallback.html" title="class in org.geysermc.paletter.item"><code>ItemFallback</code></a> (also
- a forced one), or the default fallback (<code>minecraft:unknown</code>) for a variant the version lacks.</div>
-</dd>
-<dt><a href="org/geysermc/paletter/Palette.html#fallbackOf(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">fallbackOf(BedrockItemVariant)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
-<dd>
-<div class="block">The item variant this palette sends in place of a variant its version lacks (or that a forced <code>Fallbacks</code>
- entry replaces), or the default fallback (<code>minecraft:unknown</code>).</div>
-</dd>
 <dt><a href="org/geysermc/paletter/block/BlockRegistry.html#fallbacks()" class="member-name-link">fallbacks()</a> - Method in class org.geysermc.paletter.block.<a href="org/geysermc/paletter/block/BlockRegistry.html" title="class in org.geysermc.paletter.block">BlockRegistry</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/internal/data/VanillaData.html#fallbacks()" class="member-name-link">fallbacks()</a> - Method in record class org.geysermc.paletter.internal.data.<a href="org/geysermc/paletter/internal/data/VanillaData.html" title="class in org.geysermc.paletter.internal.data">VanillaData</a></dt>
@@ -13598,12 +13583,6 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/internal/block/BlockResolution.html#isExact()" class="member-name-link">isExact()</a> - Method in record class org.geysermc.paletter.internal.block.<a href="org/geysermc/paletter/internal/block/BlockResolution.html" title="class in org.geysermc.paletter.internal.block">BlockResolution</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="org/geysermc/paletter/item/ItemRegistry.html#isFallback(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">isFallback(BedrockItemVariant)</a> - Method in class org.geysermc.paletter.item.<a href="org/geysermc/paletter/item/ItemRegistry.html" title="class in org.geysermc.paletter.item">ItemRegistry</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="org/geysermc/paletter/Palette.html#isFallback(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">isFallback(BedrockItemVariant)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
-<dd>
-<div class="block">Whether this palette sends an item variant as another item, see <a href="org/geysermc/paletter/Palette.html#fallbackOf(org.geysermc.paletter.vanilla.BedrockItemVariant)"><code>Palette.fallbackOf(org.geysermc.paletter.vanilla.BedrockItemVariant)</code></a>.</div>
-</dd>
 <dt><a href="org/geysermc/paletter/internal/shape/ShapeTransformation.html#isIdentity()" class="member-name-link">isIdentity()</a> - Method in record class org.geysermc.paletter.internal.shape.<a href="org/geysermc/paletter/internal/shape/ShapeTransformation.html" title="class in org.geysermc.paletter.internal.shape">ShapeTransformation</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/block/BlockRegistry.html#isMissing(int)" class="member-name-link">isMissing(int)</a> - Method in class org.geysermc.paletter.block.<a href="org/geysermc/paletter/block/BlockRegistry.html" title="class in org.geysermc.paletter.block">BlockRegistry</a></dt>
@@ -13699,16 +13678,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets <code>item</code> to a vanilla or custom item.</div>
 </dd>
-<dt><a href="org/geysermc/paletter/Palette.html#item(org.geysermc.paletter.vanilla.BedrockItemType)" class="member-name-link">item(BedrockItemType)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/Fallbacks.Builder.html#item(org.geysermc.paletter.vanilla.BedrockItemType,org.geysermc.paletter.item.ItemFallback)" class="member-name-link">item(BedrockItemType, ItemFallback)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Fallbacks.Builder.html" title="class in org.geysermc.paletter">Fallbacks.Builder</a></dt>
 <dd>
 <div class="block">Uses <code>fallback</code> for an item in every version that lacks it (or, with <a href="org/geysermc/paletter/item/ItemFallback.html#force()"><code>ItemFallback.force()</code></a>,
  in every version).</div>
 </dd>
 <dt><a href="org/geysermc/paletter/Fallbacks.Builder.html#item(org.geysermc.paletter.vanilla.BedrockItemType,org.geysermc.paletter.vanilla.BedrockItemType)" class="member-name-link">item(BedrockItemType, BedrockItemType)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Fallbacks.Builder.html" title="class in org.geysermc.paletter">Fallbacks.Builder</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="org/geysermc/paletter/Palette.html#item(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">item(BedrockItemVariant)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/behaviour/BehaviourKey.Owner.html#ITEM" class="member-name-link">ITEM</a> - Enum constant in enum class org.geysermc.paletter.behaviour.<a href="org/geysermc/paletter/behaviour/BehaviourKey.Owner.html" title="enum class in org.geysermc.paletter.behaviour">BehaviourKey.Owner</a></dt>
 <dd>&nbsp;</dd>
@@ -13821,6 +13796,8 @@ loadScripts(document, 'script');</script>
  from the component model in <code>data/model</code> (creator docs plus what Bedrock Dedicated Server sends).</div>
 </dd>
 <dt><a href="org/geysermc/paletter/Palette.html#itemComponentPacket()" class="member-name-link">itemComponentPacket()</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="org/geysermc/paletter/Palette.html#itemDefinition(org.geysermc.paletter.vanilla.BedrockItemType)" class="member-name-link">itemDefinition(BedrockItemType)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/internal/component/Transforms.html#itemDescriptorList(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.item.component.Repairable)" class="member-name-link">itemDescriptorList(WireContext, WireNode, Repairable)</a> - Static method in class org.geysermc.paletter.internal.component.<a href="org/geysermc/paletter/internal/component/Transforms.html" title="class in org.geysermc.paletter.internal.component">Transforms</a></dt>
 <dd>
@@ -22618,6 +22595,12 @@ loadScripts(document, 'script');</script>
 <dt><a href="org/geysermc/paletter/BlockExplanation.html#sent()" class="member-name-link">sent()</a> - Method in record class org.geysermc.paletter.<a href="org/geysermc/paletter/BlockExplanation.html" title="class in org.geysermc.paletter">BlockExplanation</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./org/geysermc/paletter/BlockExplanation.html#param-sent"><code>sent</code></a> record component.</div>
+</dd>
+<dt><a href="org/geysermc/paletter/item/ResolvedItem.html#sent()" class="member-name-link">sent()</a> - Method in record class org.geysermc.paletter.item.<a href="org/geysermc/paletter/item/ResolvedItem.html" title="class in org.geysermc.paletter.item">ResolvedItem</a></dt>
+<dd>
+<div class="block">The variant this palette sends, as a key: the resolved variant itself, or if <a href="org/geysermc/paletter/item/ResolvedItem.html#fallback()"><code>ResolvedItem.fallback()</code></a> its replacement
+ (of an <code>ItemFallback</code>, also a forced one, or the default fallback <code>minecraft:unknown</code> for a variant
+ the version lacks).</div>
 </dd>
 <dt><a href="org/geysermc/paletter/vanilla/BedrockItems.html#SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE" class="member-name-link">SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE</a> - Static variable in class org.geysermc.paletter.vanilla.<a href="org/geysermc/paletter/vanilla/BedrockItems.html" title="class in org.geysermc.paletter.vanilla">BedrockItems</a></dt>
 <dd>

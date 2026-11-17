@@ -156,7 +156,7 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">blockOf</a><wbr>(@NonNull <a href="vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The block state an item places, version independent: the block the newest version sends the item with
- (<a href="Palette.html#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)"><code>Palette.blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)</code></a>).</div>
+ (<a href="Palette.html#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)"><code>Palette.blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)</code></a>, the same key).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockType.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockType</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockType(java.lang.String,org.geysermc.paletter.Lookup)" class="member-name-link">blockType</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
@@ -467,9 +467,9 @@ loadScripts(document, 'script');</script>
 <h3>blockOf</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a></span>&nbsp;<span class="element-name">blockOf</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</span></div>
 <div class="block">The block state an item places, version independent: the block the newest version sends the item with
- (<a href="Palette.html#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)"><code>Palette.blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)</code></a>). Accepts variants of any bundled version like <a href="#item(java.lang.String,int)"><code>item(String, int)</code></a>.
+ (<a href="Palette.html#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)"><code>Palette.blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)</code></a>, the same key). Accepts variants of any bundled version like <a href="#item(java.lang.String,int)"><code>item(String, int)</code></a>.
  Vanilla variants of the newest data only; for a palette's view (fallbacks, custom content) use
- <a href="Palette.html#blockKeyOf(org.geysermc.paletter.vanilla.BedrockItemVariant)"><code>Palette.blockKeyOf(org.geysermc.paletter.vanilla.BedrockItemVariant)</code></a>.</div>
+ <a href="Palette.html#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)"><code>Palette.blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)</code></a>.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the block state, or null if the item is not a block item or has no handle</dd>

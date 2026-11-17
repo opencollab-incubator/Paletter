@@ -183,23 +183,14 @@ implements org.cloudburstmc.protocol.common.DefinitionRegistry&lt;org.cloudburst
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Starts a palette extending this one.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="../vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fallbackOf(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">fallbackOf</a><wbr>(@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">What this version sends instead of a variant: its fallback, that is the replacement of a <a href="ItemFallback.html" title="class in org.geysermc.paletter.item"><code>ItemFallback</code></a> (also
- a forced one), or the default fallback (<code>minecraft:unknown</code>) for a variant the version lacks.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="RegisteredItem.html" title="class in org.geysermc.paletter.item">RegisteredItem</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDefinition(int)" class="member-name-link">getDefinition</a><wbr>(int&nbsp;runtimeId)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="RegisteredItem.html" title="class in org.geysermc.paletter.item">RegisteredItem</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDefinition(java.lang.String)" class="member-name-link">getDefinition</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDefinition(int)" class="member-name-link">getDefinition</a><wbr>(int&nbsp;runtimeId)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isBlockItem(org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition)" class="member-name-link">isBlockItem</a><wbr>(@NonNull org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition&nbsp;definition)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="RegisteredItem.html" title="class in org.geysermc.paletter.item">RegisteredItem</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDefinition(java.lang.String)" class="member-name-link">getDefinition</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isFallback(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">isFallback</a><wbr>(@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isBlockItem(org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition)" class="member-name-link">isBlockItem</a><wbr>(@NonNull org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition&nbsp;definition)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isMultiStateBlockItem(java.lang.String)" class="member-name-link">isMultiStateBlockItem</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
@@ -448,38 +439,6 @@ implements org.cloudburstmc.protocol.common.DefinitionRegistry&lt;org.cloudburst
 <dd><code>variant</code> - a variant, written against the newest Bedrock version like <a href="#resolve(org.geysermc.paletter.internal.item.ItemVariant)"><code>resolve(ItemVariant)</code></a></dd>
 <dt>Returns:</dt>
 <dd>the block, or null if the item is not a block item here (or does not exist and has no fallback)</dd>
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="fallbackOf(org.geysermc.paletter.vanilla.BedrockItemVariant)">
-<h3>fallbackOf</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="../vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">fallbackOf</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</span></div>
-<div class="block">What this version sends instead of a variant: its fallback, that is the replacement of a <a href="ItemFallback.html" title="class in org.geysermc.paletter.item"><code>ItemFallback</code></a> (also
- a forced one), or the default fallback (<code>minecraft:unknown</code>) for a variant the version lacks. A lookup in the
- canonical table, cheap enough to ask for every item at startup (unlike <code>Palette#explain</code>).</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>variant</code> - a variant, written against the newest Bedrock version</dd>
-<dt>Returns:</dt>
-<dd>the variant that is sent in its place (the aux of the fallback's variant, else the aux of the replaced
-         item), or null if the variant is sent as itself, or nothing is sent for it at all (see
-         <a href="#isFallback(org.geysermc.paletter.vanilla.BedrockItemVariant)"><code>isFallback(org.geysermc.paletter.vanilla.BedrockItemVariant)</code></a>)</dd>
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="isFallback(org.geysermc.paletter.vanilla.BedrockItemVariant)">
-<h3>isFallback</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isFallback</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</span></div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>true if this version sends the variant as another item, see <a href="#fallbackOf(org.geysermc.paletter.vanilla.BedrockItemVariant)"><code>fallbackOf(org.geysermc.paletter.vanilla.BedrockItemVariant)</code></a>; false if it is sent as
-         itself, and for a variant nothing is sent for</dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>
