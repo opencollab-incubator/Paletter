@@ -279,6 +279,12 @@ What it cannot know: values, defaults, list and compound shapes, which input swi
 reflection components whose schema is registered together with others. A literal may be a string value (`water`,
 `opaque`) rather than a key.
 
+Items of the legacy format (most vanilla items, and add-on items of old format versions; their data has no
+`item_properties`) are sent under the keys of that format, and some of those are not component classes:
+`minecraft:foil`, `minecraft:seed`, `minecraft:use_duration`, `minecraft:camera` and `minecraft:block` are handled by
+the code of the legacy item format, not by a registered class. `whitebox` does not list them, and the self-checks do
+not ask for them.
+
 ### Other sources that were looked at
 
 | Source | Gives | Verdict |
@@ -338,9 +344,10 @@ Safeguards, so that it can never break an update or go quietly wrong:
 
 - An exception or a failed self-check is a FAIL row, "white-box unavailable for this build: <reason>"; `whitebox.json`
   is staged only after a pass, and everything else of the update goes on. The self-checks (`WhiteboxChecks`): every
-  component the build's spec captures show is found, and no more than 3 components or keys (or 2%) are lost against the
-  build before unless its captures lost them too. Docs-generator schemas are not read yet; the captures and the build
-  before stand in for them.
+  component the build's captures show is found (the keys of legacy format items aside, see below), and no more than 3
+  components or keys (or 2%) that a capture of the build still shows are lost against the build before. What no capture
+  shows may go; it is a `!` line of the diff. Docs-generator schemas are not read yet; the captures and the build before
+  stand in for them.
 - CI (`:tools:checkWhitebox`, in `check`) compares committed reports with committed facts and captures, never the
   binary; `--strict` is opt-in and a gap is a line in the report, not a red build. `:tools:whiteboxRegression` (not in
   `check`) runs the analysis on a cached zip and compares it with the committed facts, and skips without the zip.

@@ -61,6 +61,19 @@ class WhiteboxChecksTest {
     }
 
     @Test
+    void doesNotAskForTheKeysOfLegacyItems() {
+        Captured captured = new Captured();
+        // A legacy format item sends the keys of its JSON; a component-based one has item_properties
+        captured.addItem(NbtMap.builder().putCompound("components", NbtMap.builder().putByte("minecraft:foil", (byte) 1).build()).build());
+        assertEquals(List.of(), WhiteboxChecks.problems(facts(), null, captured));
+        captured.addItem(NbtMap.builder().putCompound("components", NbtMap.builder().putCompound("item_properties", NbtMap.EMPTY)
+            .putByte("minecraft:foil", (byte) 1).build()).build());
+        List<String> problems = WhiteboxChecks.problems(facts(), null, captured);
+        assertEquals(1, problems.size(), problems.toString());
+        assertTrue(problems.getFirst().contains("[item:minecraft:foil]"), problems.toString());
+    }
+
+    @Test
     void stopsALargeDropAgainstTheBuildBeforeUnlessCapturesShowIt() {
         String[] many = new String[8];
         for (int i = 0; i < many.length; i++) {
@@ -100,7 +113,7 @@ class WhiteboxChecksTest {
         JsonObject previous = null;
         for (Path build : builds) {
             JsonObject facts = Whitebox.parse(build.resolve(Whitebox.FILE));
-            assertEquals(List.of(), WhiteboxChecks.problems(facts, previous, WhiteboxCoverage.captured(build, "spec"::equals)), build.toString());
+            assertEquals(List.of(), WhiteboxChecks.problems(facts, previous, WhiteboxCoverage.captured(build)), build.toString());
             previous = facts;
         }
     }

@@ -28,8 +28,8 @@ public record WhiteboxRun(JsonObject facts, List<String> problems, List<String> 
         Path previousFile = Whitebox.previous(bds, build, Whitebox.FILE);
         JsonObject previous = previousFile == null ? null : Whitebox.parse(previousFile);
         boolean captured = Files.isDirectory(buildData);
-        List<String> problems = WhiteboxChecks.problems(facts, previous,
-            captured ? WhiteboxCoverage.captured(buildData, "spec"::equals) : new WhiteboxCoverage.Captured());
+        WhiteboxCoverage.Captured captures = captured ? WhiteboxCoverage.captured(buildData) : new WhiteboxCoverage.Captured();
+        List<String> problems = WhiteboxChecks.problems(facts, previous, captures);
         if (!problems.isEmpty()) {
             return new WhiteboxRun(null, problems, List.of(), null, List.of(), List.of());
         }
@@ -38,7 +38,7 @@ public record WhiteboxRun(JsonObject facts, List<String> problems, List<String> 
             return new WhiteboxRun(facts, problems, changes, null, List.of(), List.of());
         }
         JsonObject mappings = JsonParser.parseString(Files.readString(root.resolve(Layout.MODEL).resolve("mappings.json"))).getAsJsonObject();
-        List<Gap> gaps = WhiteboxCoverage.gaps(facts, WhiteboxCoverage.captured(buildData), mappings);
+        List<Gap> gaps = WhiteboxCoverage.gaps(facts, captures, mappings);
         Path report = Files.isRegularFile(buildData.resolve(WhiteboxCoverage.FILE)) || previousFile == null
             ? buildData.resolve(WhiteboxCoverage.FILE) : previousFile.resolveSibling(WhiteboxCoverage.FILE);
         Set<Gap> known = WhiteboxCoverage.read(report);

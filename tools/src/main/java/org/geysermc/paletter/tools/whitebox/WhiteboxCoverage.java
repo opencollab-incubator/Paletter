@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -49,15 +48,28 @@ public final class WhiteboxCoverage {
      */
     public static final class Captured {
         private final Map<String, Map<String, Set<String>>> components = new TreeMap<>();
+        /** The item components seen on a component-based item: one whose data has {@code item_properties}. */
+        private final Set<String> componentBased = new TreeSet<>();
 
-        /** Adds the component data of an item: {@code {components: {item_properties, item_tags, minecraft:...}}}. */
+        /**
+         * Adds the component data of an item: {@code {components: {item_properties, item_tags, minecraft:...}}}. An
+         * item without {@code item_properties} is not component-based (a legacy format item, as most vanilla items
+         * are): it is sent under the keys of that format, which are not all component classes ({@code minecraft:foil}).
+         */
         public void addItem(NbtMap data) {
             NbtMap components = data.containsKey("components") ? data.getCompound("components") : data;
-            components.forEach((name, value) -> add("item:" + name, value));
+            boolean legacy = !components.containsKey("item_properties");
+            components.forEach((name, value) -> {
+                add("item:" + name, value);
+                if (!legacy) {
+                    componentBased.add("item:" + name);
+                }
+            });
             // The icon is a component that the envelope carries inside item_properties
             components.getCompound("item_properties", NbtMap.EMPTY).forEach((name, value) -> {
                 if (value instanceof NbtMap) {
                     add("item:" + name, value);
+                    componentBased.add("item:" + name);
                 }
             });
         }
@@ -122,6 +134,11 @@ public final class WhiteboxCoverage {
         Set<String> names() {
             return components.keySet();
         }
+
+        /** @return whether the item component is only ever captured on items that are not component-based */
+        boolean onlyLegacy(String component) {
+            return component.startsWith("item:") && has(component) && !componentBased.contains(component);
+        }
     }
 
     private WhiteboxCoverage() {
@@ -147,15 +164,10 @@ public final class WhiteboxCoverage {
 
     /** Everything the captures of a build show: the add-on captures and the data-driven content of the vanilla capture. */
     public static Captured captured(Path build) throws IOException {
-        return captured(build, name -> true);
-    }
-
-    /** What the captures in the directories of a build that {@code which} accepts show. */
-    public static Captured captured(Path build, Predicate<String> which) throws IOException {
         Captured captured = new Captured();
         List<Path> directories;
         try (Stream<Path> list = Files.list(build)) {
-            directories = list.filter(Files::isDirectory).filter(directory -> which.test(directory.getFileName().toString())).sorted().toList();
+            directories = list.filter(Files::isDirectory).sorted().toList();
         }
         for (Path directory : directories) {
             Path blocks = directory.resolve("custom_block_properties.nbt");
