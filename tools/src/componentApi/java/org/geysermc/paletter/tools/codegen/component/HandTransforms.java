@@ -25,6 +25,7 @@ public final class HandTransforms {
         entry("block:minecraft:embedded_visual:geometry", "embeddedGeometry"),
         entry("block:minecraft:embedded_visual:material_instances", "materialInstancesInline"),
         entry("block:minecraft:geometry:", "geometry"),
+        entry("block:minecraft:item_visual:geometry.bone_visibility", "itemVisualBoneVisibility"),
         entry("block:minecraft:item_visual:geometry.uv_lock", "itemVisualUvLock"),
         entry("block:minecraft:item_visual:material_instances", "materialInstancesPacked"),
         entry("block:minecraft:material_instances:", "materialInstances"),
@@ -34,6 +35,7 @@ public final class HandTransforms {
         entry("block:permutations:[].condition", "permutationComponents"),
         // items
         entry("item:minecraft:block_placer:block", "blockName"),
+        entry("item:minecraft:block_placer:replace_block_item", "replaceBlockItem"),
         entry("item:minecraft:block_placer:use_on[].states", "blockDescriptorStates"),
         entry("item:minecraft:digger:destroy_speeds[].block.states", "blockDescriptorStates"),
         entry("item:minecraft:dyeable:default_color", "rgbColor"),

@@ -136,30 +136,29 @@ public final class ItemWire {
 
     private static void blockPlacer(BlockPlacer c, WireContext ctx, WireNode out) {
         out.put("minecraft:block_placer.canUseBlockAsIcon", (byte) 1);
-        out.put("minecraft:block_placer.replaceBlockItem", (byte) 0);
         out.put("minecraft:publisher_on_use_on.autoSucceedOnClient", (byte) 0);
         boolean v0 = c.alignedPlacement();
         out.put("minecraft:block_placer.alignedPlacement", Wire.bool(v0));
-        boolean v1 = c.replaceBlockItem();
-        List<BlockPlacer.UseOn> v2 = c.useOn();
+        List<BlockPlacer.UseOn> v1 = c.useOn();
         out.list("minecraft:block_placer.use_on");
-        for (BlockPlacer.UseOn e3 : v2) {
-            WireNode n4 = out.element("minecraft:block_placer.use_on");
-            String v5 = e3.name();
+        for (BlockPlacer.UseOn e2 : v1) {
+            WireNode n3 = out.element("minecraft:block_placer.use_on");
+            String v4 = e2.name();
+            if (v4 != null) {
+                n3.put("name", v4);
+            } else {
+                n3.remove("name");
+            }
+            String v5 = e2.tags();
             if (v5 != null) {
-                n4.put("name", v5);
+                n3.put("tags", v5);
             } else {
-                n4.remove("name");
+                n3.remove("tags");
             }
-            String v6 = e3.tags();
-            if (v6 != null) {
-                n4.put("tags", v6);
-            } else {
-                n4.remove("tags");
-            }
-            Transforms.blockDescriptorStates(ctx, n4, e3);
+            Transforms.blockDescriptorStates(ctx, n3, e2);
         }
         Transforms.blockName(ctx, out, c);
+        Transforms.replaceBlockItem(ctx, out, c);
     }
 
     private static void bundleInteraction(BundleInteraction c, WireContext ctx, WireNode out) {
@@ -254,9 +253,9 @@ public final class ItemWire {
     }
 
     private static void durability(Durability c, WireContext ctx, WireNode out) {
-        out.put("minecraft:durability.damage_chance.max", 100);
         Durability.DamageChance v0 = c.damageChance();
         int v1 = v0.max();
+        out.put("minecraft:durability.damage_chance.max", Wire.toInt(v1));
         int v2 = v0.min();
         out.put("minecraft:durability.damage_chance.min", Wire.toInt(v2));
         int v3 = c.maxDurability();

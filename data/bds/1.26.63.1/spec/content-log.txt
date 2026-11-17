@@ -193,38 +193,44 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destr
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_9.json |  -> components -> minecraft:destruction_particles -> particle_count: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_11.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_11.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_12.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_12.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_13.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_13.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_27.json |  -> components -> minecraft:embedded_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_27.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_28.json |  -> components -> minecraft:embedded_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_28.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_29.json |  -> components -> minecraft:embedded_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_29.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_15.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_15.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_21.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_21.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_23.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_23.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_25.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_25.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_3.json |  -> components -> minecraft:embedded_visual -> geometry: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_30.json |  -> components -> minecraft:embedded_visual -> geometry -> identifier: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_30.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_35.json |  -> components -> minecraft:embedded_visual -> geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_35.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_4.json |  -> components -> minecraft:embedded_visual -> geometry -> identifier: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_4.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_58.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_58.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock[0]: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_58.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_40.json |  -> components -> minecraft:embedded_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_40.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_41.json |  -> components -> minecraft:embedded_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_41.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_42.json |  -> components -> minecraft:embedded_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_42.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_43.json |  -> components -> minecraft:embedded_visual -> geometry -> identifier: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_43.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_48.json |  -> components -> minecraft:embedded_visual -> geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_48.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_6.json |  -> components -> minecraft:embedded_visual -> geometry: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_6.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_62.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_62.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_62.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_63.json |  -> components -> minecraft:embedded_visual -> material_instances: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_67.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_68.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_7.json |  -> components -> minecraft:embedded_visual -> geometry: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_7.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_71.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_71.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock[0]: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_71.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_75.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_75.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_75.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_76.json |  -> components -> minecraft:embedded_visual -> material_instances: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_8.json |  -> components -> minecraft:embedded_visual -> geometry: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_8.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_80.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_81.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_entity_fall_on_10.json |  -> components -> minecraft:entity_fall_on -> minimum_fall_distance: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_entity_fall_on_11.json |  -> components -> minecraft:entity_fall_on -> minimum_fall_distance: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_entity_fall_on_12.json |  -> components -> minecraft:entity_fall_on -> minimum_fall_distance: this member was found in the input, but is not present in the Schema
@@ -251,76 +257,82 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_frict
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_friction_6.json |  -> components -> minecraft:friction: the input is outside of the accepted range [0, 0.900000]
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_friction_7.json |  -> components -> minecraft:friction: the input is outside of the accepted range [0, 0.900000]
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_friction_8.json |  -> components -> minecraft:friction: the input is outside of the accepted range [0, 0.900000]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_24.json |  -> components -> minecraft:geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_24.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_25.json |  -> components -> minecraft:geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_25.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json |  -> components -> minecraft:geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_27.json |  -> components -> minecraft:geometry -> identifier: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_27.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_29.json |  -> components -> minecraft:geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_28.json |  -> components -> minecraft:geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_28.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_29.json |  -> components -> minecraft:geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_29.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_34.json |  -> components -> minecraft:geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_34.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_36.json |  -> components -> minecraft:geometry -> n_way_visual_rotation: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_36.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_37.json |  -> components -> minecraft:geometry -> n_way_visual_rotation: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_37.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_38.json |  -> components -> minecraft:geometry -> n_way_visual_rotation: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_30.json |  -> components -> minecraft:geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_30.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_31.json |  -> components -> minecraft:geometry -> identifier: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_31.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_33.json |  -> components -> minecraft:geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_33.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_38.json |  -> components -> minecraft:geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_38.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_43.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_43.json |  -> components -> minecraft:geometry -> uv_lock[0]: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_43.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_47.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_40.json |  -> components -> minecraft:geometry -> n_way_visual_rotation: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_40.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_41.json |  -> components -> minecraft:geometry -> n_way_visual_rotation: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_41.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_42.json |  -> components -> minecraft:geometry -> n_way_visual_rotation: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_42.json |  -> components -> minecraft:geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_47.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_47.json |  -> components -> minecraft:geometry -> uv_lock[0]: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_47.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_48.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_48.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_48.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_49.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_49.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_49.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_50.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_50.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_50.json |  -> components -> minecraft:geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_51.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_51.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_51.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_54.json | 'minecraft:geometry' field 'n_way_visual_rotation.x' references unknown state 'paletter_b'
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_56.json | 'minecraft:geometry' field 'n_way_visual_rotation.x' references unknown state 'cardinal_direction'
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_57.json | 'minecraft:geometry' field 'n_way_visual_rotation.x' references unknown state 'minecraft:paletter_unknown'
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_60.json | 'minecraft:geometry' field 'n_way_visual_rotation.y' references unknown state 'paletter_b'
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_62.json | 'minecraft:geometry' field 'n_way_visual_rotation.y' references unknown state 'cardinal_direction'
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_63.json | 'minecraft:geometry' field 'n_way_visual_rotation.y' references unknown state 'minecraft:paletter_unknown'
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_66.json | 'minecraft:geometry' field 'n_way_visual_rotation.z' references unknown state 'paletter_b'
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_68.json | 'minecraft:geometry' field 'n_way_visual_rotation.z' references unknown state 'cardinal_direction'
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_69.json | 'minecraft:geometry' field 'n_way_visual_rotation.z' references unknown state 'minecraft:paletter_unknown'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_52.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_52.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_52.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_53.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_53.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_53.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_54.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_54.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_54.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_55.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_55.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_55.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_58.json | 'minecraft:geometry' field 'n_way_visual_rotation.x' references unknown state 'paletter_b'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_60.json | 'minecraft:geometry' field 'n_way_visual_rotation.x' references unknown state 'cardinal_direction'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_61.json | 'minecraft:geometry' field 'n_way_visual_rotation.x' references unknown state 'minecraft:paletter_unknown'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_64.json | 'minecraft:geometry' field 'n_way_visual_rotation.y' references unknown state 'paletter_b'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_66.json | 'minecraft:geometry' field 'n_way_visual_rotation.y' references unknown state 'cardinal_direction'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_67.json | 'minecraft:geometry' field 'n_way_visual_rotation.y' references unknown state 'minecraft:paletter_unknown'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_70.json | 'minecraft:geometry' field 'n_way_visual_rotation.z' references unknown state 'paletter_b'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_72.json | 'minecraft:geometry' field 'n_way_visual_rotation.z' references unknown state 'cardinal_direction'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_73.json | 'minecraft:geometry' field 'n_way_visual_rotation.z' references unknown state 'minecraft:paletter_unknown'
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_instrument_sound_2.json |  -> components -> minecraft:instrument_sound: expected object with at least 1 elements
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_instrument_sound_3.json |  -> components -> minecraft:instrument_sound -> down: This value is bound to 'Instrument' and expects one of the following strings: 'note.harp', 'note.bd', 'note.snare', ... (24 others). Found: 'paletter_invalid'
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_instrument_sound_31.json |  -> components -> minecraft:instrument_sound -> up: This value is bound to 'Instrument' and expects one of the following strings: 'note.harp', 'note.bd', 'note.snare', ... (24 others). Found: 'paletter_invalid'
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_13.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_13.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_14.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_14.json |  -> components -> minecraft:item_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_15.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_15.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_26.json |  -> components -> minecraft:item_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_26.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_27.json |  -> components -> minecraft:item_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_17.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_17.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_23.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_23.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_25.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_25.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_27.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_27.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_28.json |  -> components -> minecraft:item_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_28.json |  -> components -> minecraft:item_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_3.json |  -> components -> minecraft:item_visual -> geometry: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_32.json |  -> components -> minecraft:item_visual -> geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_32.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_52.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_52.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock[0]: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_52.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_56.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_56.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_56.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_57.json |  -> components -> minecraft:item_visual -> material_instances: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_39.json |  -> components -> minecraft:item_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_39.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_40.json |  -> components -> minecraft:item_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_40.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_41.json |  -> components -> minecraft:item_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_41.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_45.json |  -> components -> minecraft:item_visual -> geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_45.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_65.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_65.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock[0]: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_65.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_69.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_69.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_69.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_70.json |  -> components -> minecraft:item_visual -> material_instances: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_9.json |  -> components -> minecraft:item_visual -> geometry -> identifier: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_9.json |  -> components -> minecraft:item_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_light_dampening_7.json |  -> components -> minecraft:light_dampening: the input must be a number <= 15
@@ -554,51 +566,69 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queue
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_7.json |  -> components -> minecraft:queued_ticking: member "minecraft:queued_ticking" is deprecated
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_8.json |  -> components -> minecraft:queued_ticking: member "minecraft:queued_ticking" is deprecated
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_9.json |  -> components -> minecraft:queued_ticking: member "minecraft:queued_ticking" is deprecated
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_14.json |  -> components -> minecraft:random_offset -> x -> range -> max: the input is outside of the accepted range [-8, 8]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_15.json |  -> components -> minecraft:random_offset -> x -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_17.json |  -> components -> minecraft:random_offset -> x -> range -> min: the input is outside of the accepted range [-8, 8]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_18.json |  -> components -> minecraft:random_offset -> x -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_19.json |  -> components -> minecraft:random_offset -> x -> range -> min: the input is outside of the accepted range [-8, 8]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_21.json |  -> components -> minecraft:random_offset -> x -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_22.json |  -> components -> minecraft:random_offset -> x -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_23.json |  -> components -> minecraft:random_offset -> x -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_24.json |  -> components -> minecraft:random_offset -> x -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_101.json |  -> components -> minecraft:random_offset -> y -> steps: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_102.json |  -> components -> minecraft:random_offset -> y -> steps: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_103.json |  -> components -> minecraft:random_offset -> z -> range: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_106.json |  -> components -> minecraft:random_offset -> z -> range: max value cannot be lower than min value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_108.json |  -> components -> minecraft:random_offset -> z -> range -> max: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_109.json |  -> components -> minecraft:random_offset -> z -> range -> max: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_112.json |  -> components -> minecraft:random_offset -> z -> range -> max: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_113.json |  -> components -> minecraft:random_offset -> z -> range -> max: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_12.json |  -> components -> minecraft:random_offset -> x -> range -> max: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_122.json |  -> components -> minecraft:random_offset -> z -> range -> max: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_123.json |  -> components -> minecraft:random_offset -> z -> range -> max: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_124.json |  -> components -> minecraft:random_offset -> z -> range: max value cannot be lower than min value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_128.json |  -> components -> minecraft:random_offset -> z -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_129.json |  -> components -> minecraft:random_offset -> z -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_13.json |  -> components -> minecraft:random_offset -> x -> range -> max: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_130.json |  -> components -> minecraft:random_offset -> z -> range: max value cannot be lower than min value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_132.json |  -> components -> minecraft:random_offset -> z -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_133.json |  -> components -> minecraft:random_offset -> z -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_136.json |  -> components -> minecraft:random_offset -> z -> range: max value cannot be lower than min value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_138.json |  -> components -> minecraft:random_offset -> z -> range: max value cannot be lower than min value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_140.json |  -> components -> minecraft:random_offset -> z -> range: max value cannot be lower than min value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_142.json |  -> components -> minecraft:random_offset -> z -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_143.json |  -> components -> minecraft:random_offset -> z -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_151.json |  -> components -> minecraft:random_offset -> z -> steps: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_152.json |  -> components -> minecraft:random_offset -> z -> steps: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_22.json |  -> components -> minecraft:random_offset -> x -> range -> max: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_23.json |  -> components -> minecraft:random_offset -> x -> range -> max: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_24.json |  -> components -> minecraft:random_offset -> x -> range: max value cannot be lower than min value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_28.json |  -> components -> minecraft:random_offset -> x -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_29.json |  -> components -> minecraft:random_offset -> x -> range -> min: the input is outside of the accepted range [-8, 8]
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_3.json |  -> components -> minecraft:random_offset -> x -> range: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_31.json |  -> components -> minecraft:random_offset -> x -> steps: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_32.json |  -> components -> minecraft:random_offset -> x -> steps: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_33.json |  -> components -> minecraft:random_offset -> y -> range: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_36.json |  -> components -> minecraft:random_offset -> y -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_37.json |  -> components -> minecraft:random_offset -> y -> range -> max: the input is outside of the accepted range [-8, 8]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_39.json |  -> components -> minecraft:random_offset -> y -> range -> max: the input is outside of the accepted range [-8, 8]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_44.json |  -> components -> minecraft:random_offset -> y -> range -> max: the input is outside of the accepted range [-8, 8]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_45.json |  -> components -> minecraft:random_offset -> y -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_47.json |  -> components -> minecraft:random_offset -> y -> range -> min: the input is outside of the accepted range [-8, 8]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_48.json |  -> components -> minecraft:random_offset -> y -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_49.json |  -> components -> minecraft:random_offset -> y -> range -> min: the input is outside of the accepted range [-8, 8]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_51.json |  -> components -> minecraft:random_offset -> y -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_52.json |  -> components -> minecraft:random_offset -> y -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_53.json |  -> components -> minecraft:random_offset -> y -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_54.json |  -> components -> minecraft:random_offset -> y -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_30.json |  -> components -> minecraft:random_offset -> x -> range: max value cannot be lower than min value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_32.json |  -> components -> minecraft:random_offset -> x -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_33.json |  -> components -> minecraft:random_offset -> x -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_36.json |  -> components -> minecraft:random_offset -> x -> range: max value cannot be lower than min value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_38.json |  -> components -> minecraft:random_offset -> x -> range: max value cannot be lower than min value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_40.json |  -> components -> minecraft:random_offset -> x -> range: max value cannot be lower than min value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_42.json |  -> components -> minecraft:random_offset -> x -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_43.json |  -> components -> minecraft:random_offset -> x -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_51.json |  -> components -> minecraft:random_offset -> x -> steps: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_52.json |  -> components -> minecraft:random_offset -> x -> steps: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_53.json |  -> components -> minecraft:random_offset -> y -> range: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_56.json |  -> components -> minecraft:random_offset -> y -> range: max value cannot be lower than min value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_58.json |  -> components -> minecraft:random_offset -> y -> range -> max: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_59.json |  -> components -> minecraft:random_offset -> y -> range -> max: the input is outside of the accepted range [-8, 8]
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_6.json |  -> components -> minecraft:random_offset -> x -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_61.json |  -> components -> minecraft:random_offset -> y -> steps: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_62.json |  -> components -> minecraft:random_offset -> y -> steps: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_63.json |  -> components -> minecraft:random_offset -> z -> range: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_66.json |  -> components -> minecraft:random_offset -> z -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_67.json |  -> components -> minecraft:random_offset -> z -> range -> max: the input is outside of the accepted range [-8, 8]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_69.json |  -> components -> minecraft:random_offset -> z -> range -> max: the input is outside of the accepted range [-8, 8]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_7.json |  -> components -> minecraft:random_offset -> x -> range -> max: the input is outside of the accepted range [-8, 8]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_74.json |  -> components -> minecraft:random_offset -> z -> range -> max: the input is outside of the accepted range [-8, 8]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_75.json |  -> components -> minecraft:random_offset -> z -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_77.json |  -> components -> minecraft:random_offset -> z -> range -> min: the input is outside of the accepted range [-8, 8]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_78.json |  -> components -> minecraft:random_offset -> z -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_79.json |  -> components -> minecraft:random_offset -> z -> range -> min: the input is outside of the accepted range [-8, 8]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_81.json |  -> components -> minecraft:random_offset -> z -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_82.json |  -> components -> minecraft:random_offset -> z -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_83.json |  -> components -> minecraft:random_offset -> z -> range: max value cannot be lower than min value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_84.json |  -> components -> minecraft:random_offset -> z -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_62.json |  -> components -> minecraft:random_offset -> y -> range -> max: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_63.json |  -> components -> minecraft:random_offset -> y -> range -> max: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_72.json |  -> components -> minecraft:random_offset -> y -> range -> max: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_73.json |  -> components -> minecraft:random_offset -> y -> range -> max: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_74.json |  -> components -> minecraft:random_offset -> y -> range: max value cannot be lower than min value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_78.json |  -> components -> minecraft:random_offset -> y -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_79.json |  -> components -> minecraft:random_offset -> y -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_8.json |  -> components -> minecraft:random_offset -> x -> range -> max: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_80.json |  -> components -> minecraft:random_offset -> y -> range: max value cannot be lower than min value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_82.json |  -> components -> minecraft:random_offset -> y -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_83.json |  -> components -> minecraft:random_offset -> y -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_86.json |  -> components -> minecraft:random_offset -> y -> range: max value cannot be lower than min value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_88.json |  -> components -> minecraft:random_offset -> y -> range: max value cannot be lower than min value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_9.json |  -> components -> minecraft:random_offset -> x -> range -> max: the input is outside of the accepted range [-8, 8]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_91.json |  -> components -> minecraft:random_offset -> z -> steps: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_92.json |  -> components -> minecraft:random_offset -> z -> steps: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_90.json |  -> components -> minecraft:random_offset -> y -> range: max value cannot be lower than min value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_92.json |  -> components -> minecraft:random_offset -> y -> range -> min: the input is outside of the accepted range [-8, 8]
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_offset_93.json |  -> components -> minecraft:random_offset -> y -> range -> min: the input is outside of the accepted range [-8, 8]
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_2.json |  -> components -> minecraft:random_ticking: member "minecraft:random_ticking" is deprecated
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_3.json |  -> components -> minecraft:random_ticking: member "minecraft:random_ticking" is deprecated
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_4.json |  -> components -> minecraft:random_ticking: member "minecraft:random_ticking" is deprecated
@@ -788,19 +818,15 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_
 ERROR [Components] MaterialInstances can't mix and match opaque and transparent materials.
 ERROR [Components] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_28.json | Detected duplicate direction in "stops_liquid_flowing_from_direction" field: "up"
 ERROR [Components] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_16.json | Detected duplicate direction in "stops_liquid_flowing_from_direction" field: "down"
-ERROR [Item]  'paletter:block_placer_17': Failed to parse field ' -> components -> minecraft:block_placer -> use_on: No duplicates allowed'
-ERROR [Item]  'paletter:block_placer_18': Failed to parse field ' -> components -> minecraft:block_placer -> use_on: expected an array'
-ERROR [Item]  'paletter:block_placer_19': Failed to parse field ' -> components -> minecraft:block_placer -> use_on: expected an array'
+ERROR [Item]  'paletter:block_placer_19': Failed to parse field ' -> components -> minecraft:block_placer -> use_on: No duplicates allowed'
 ERROR [Item]  'paletter:block_placer_20': Failed to parse field ' -> components -> minecraft:block_placer -> use_on: expected an array'
 ERROR [Item]  'paletter:block_placer_21': Failed to parse field ' -> components -> minecraft:block_placer -> use_on: expected an array'
 ERROR [Item]  'paletter:block_placer_22': Failed to parse field ' -> components -> minecraft:block_placer -> use_on: expected an array'
 ERROR [Item]  'paletter:block_placer_23': Failed to parse field ' -> components -> minecraft:block_placer -> use_on: expected an array'
-ERROR [Item]  'paletter:block_placer_26': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: Block name is missing in block descriptor'
-ERROR [Item]  'paletter:block_placer_26': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
-ERROR [Item]  'paletter:block_placer_33': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0] -> states: one or more block states are not valid Vanilla states; block filter entries cannot use custom block states.'
-ERROR [Item]  'paletter:block_placer_33': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
-ERROR [Item]  'paletter:block_placer_34': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0] -> states: one or more block states are not valid Vanilla states; block filter entries cannot use custom block states.'
-ERROR [Item]  'paletter:block_placer_34': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
+ERROR [Item]  'paletter:block_placer_24': Failed to parse field ' -> components -> minecraft:block_placer -> use_on: expected an array'
+ERROR [Item]  'paletter:block_placer_25': Failed to parse field ' -> components -> minecraft:block_placer -> use_on: expected an array'
+ERROR [Item]  'paletter:block_placer_28': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: Block name is missing in block descriptor'
+ERROR [Item]  'paletter:block_placer_28': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
 ERROR [Item]  'paletter:block_placer_35': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0] -> states: one or more block states are not valid Vanilla states; block filter entries cannot use custom block states.'
 ERROR [Item]  'paletter:block_placer_35': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
 ERROR [Item]  'paletter:block_placer_36': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0] -> states: one or more block states are not valid Vanilla states; block filter entries cannot use custom block states.'
@@ -811,8 +837,12 @@ ERROR [Item]  'paletter:block_placer_38': Failed to parse field ' -> components 
 ERROR [Item]  'paletter:block_placer_38': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
 ERROR [Item]  'paletter:block_placer_39': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0] -> states: one or more block states are not valid Vanilla states; block filter entries cannot use custom block states.'
 ERROR [Item]  'paletter:block_placer_39': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
-ERROR [Item]  'paletter:block_placer_42': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: Block name is missing in block descriptor'
-ERROR [Item]  'paletter:block_placer_42': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
+ERROR [Item]  'paletter:block_placer_40': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0] -> states: one or more block states are not valid Vanilla states; block filter entries cannot use custom block states.'
+ERROR [Item]  'paletter:block_placer_40': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
+ERROR [Item]  'paletter:block_placer_41': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0] -> states: one or more block states are not valid Vanilla states; block filter entries cannot use custom block states.'
+ERROR [Item]  'paletter:block_placer_41': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
+ERROR [Item]  'paletter:block_placer_44': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: Block name is missing in block descriptor'
+ERROR [Item]  'paletter:block_placer_44': Failed to parse field ' -> components -> minecraft:block_placer -> use_on[0]: invalid string'
 ERROR [Item]  'paletter:block_placer_5': Failed to parse field ' -> components -> minecraft:block_placer -> block: missing required field'
 ERROR [Item]  'paletter:bundle_interaction_10': Failed to parse field ' -> components -> minecraft:bundle_interaction -> num_viewable_slots: the input is outside of the accepted range [1, 64]'
 ERROR [Item]  'paletter:bundle_interaction_11': Failed to parse field ' -> components -> minecraft:bundle_interaction -> num_viewable_slots: the input is outside of the accepted range [1, 64]'
@@ -908,19 +938,25 @@ ERROR [Item]  'paletter:digger_33': Failed to parse field ' -> components -> min
 ERROR [Item]  'paletter:digger_40': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> speed: invalid numeric value'
 ERROR [Item]  'paletter:digger_6': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> block: Block name is missing in block descriptor'
 ERROR [Item]  'paletter:digger_6': Failed to parse field ' -> components -> minecraft:digger -> destroy_speeds[0] -> block: invalid string'
-ERROR [Item]  'paletter:durability_10': Failed to parse field ' -> components -> minecraft:durability -> damage_chance: max value cannot be lower than min value'
-ERROR [Item]  'paletter:durability_11': Failed to parse field ' -> components -> minecraft:durability -> damage_chance -> max: invalid numeric value'
-ERROR [Item]  'paletter:durability_13': Failed to parse field ' -> components -> minecraft:durability -> damage_chance -> min: the input is outside of the accepted range [0, 100]'
-ERROR [Item]  'paletter:durability_15': Failed to parse field ' -> components -> minecraft:durability -> damage_chance -> min: the input is outside of the accepted range [0, 100]'
-ERROR [Item]  'paletter:durability_19': Failed to parse field ' -> components -> minecraft:durability -> damage_chance -> min: invalid numeric value'
-ERROR [Item]  'paletter:durability_20': Failed to parse field ' -> components -> minecraft:durability -> max_durability: missing required field'
-ERROR [Item]  'paletter:durability_22': Failed to parse field ' -> components -> minecraft:durability -> max_durability: the input must be a number >= 0'
-ERROR [Item]  'paletter:durability_27': Failed to parse field ' -> components -> minecraft:durability -> max_durability: invalid numeric value'
+ERROR [Item]  'paletter:durability_10': Failed to parse field ' -> components -> minecraft:durability -> damage_chance -> max: the input is outside of the accepted range [0, 100]'
+ERROR [Item]  'paletter:durability_11': Failed to parse field ' -> components -> minecraft:durability -> damage_chance -> max: the input is outside of the accepted range [0, 100]'
+ERROR [Item]  'paletter:durability_12': Failed to parse field ' -> components -> minecraft:durability -> damage_chance: max value cannot be lower than min value'
+ERROR [Item]  'paletter:durability_14': Failed to parse field ' -> components -> minecraft:durability -> damage_chance: max value cannot be lower than min value'
+ERROR [Item]  'paletter:durability_16': Failed to parse field ' -> components -> minecraft:durability -> damage_chance: max value cannot be lower than min value'
+ERROR [Item]  'paletter:durability_18': Failed to parse field ' -> components -> minecraft:durability -> damage_chance -> max: invalid numeric value'
+ERROR [Item]  'paletter:durability_19': Failed to parse field ' -> components -> minecraft:durability -> damage_chance -> max: invalid numeric value'
+ERROR [Item]  'paletter:durability_22': Failed to parse field ' -> components -> minecraft:durability -> damage_chance -> min: the input is outside of the accepted range [0, 100]'
+ERROR [Item]  'paletter:durability_23': Failed to parse field ' -> components -> minecraft:durability -> damage_chance -> min: the input is outside of the accepted range [0, 100]'
+ERROR [Item]  'paletter:durability_26': Failed to parse field ' -> components -> minecraft:durability -> damage_chance -> min: the input is outside of the accepted range [0, 100]'
+ERROR [Item]  'paletter:durability_27': Failed to parse field ' -> components -> minecraft:durability -> damage_chance -> min: the input is outside of the accepted range [0, 100]'
+ERROR [Item]  'paletter:durability_34': Failed to parse field ' -> components -> minecraft:durability -> damage_chance -> min: invalid numeric value'
+ERROR [Item]  'paletter:durability_35': Failed to parse field ' -> components -> minecraft:durability -> damage_chance -> min: invalid numeric value'
+ERROR [Item]  'paletter:durability_36': Failed to parse field ' -> components -> minecraft:durability -> max_durability: missing required field'
+ERROR [Item]  'paletter:durability_38': Failed to parse field ' -> components -> minecraft:durability -> max_durability: the input must be a number >= 0'
 ERROR [Item]  'paletter:durability_4': Failed to parse field ' -> components -> minecraft:durability -> damage_chance: max value cannot be lower than min value'
-ERROR [Item]  'paletter:durability_5': Failed to parse field ' -> components -> minecraft:durability -> damage_chance -> max: the input is outside of the accepted range [0, 100]'
+ERROR [Item]  'paletter:durability_43': Failed to parse field ' -> components -> minecraft:durability -> max_durability: invalid numeric value'
+ERROR [Item]  'paletter:durability_6': Failed to parse field ' -> components -> minecraft:durability -> damage_chance -> max: the input is outside of the accepted range [0, 100]'
 ERROR [Item]  'paletter:durability_7': Failed to parse field ' -> components -> minecraft:durability -> damage_chance -> max: the input is outside of the accepted range [0, 100]'
-ERROR [Item]  'paletter:durability_8': Failed to parse field ' -> components -> minecraft:durability -> damage_chance: max value cannot be lower than min value'
-ERROR [Item]  'paletter:durability_9': Failed to parse field ' -> components -> minecraft:durability -> damage_chance: max value cannot be lower than min value'
 ERROR [Item]  'paletter:durability_sensor_13': Failed to parse field ' -> components -> minecraft:durability_sensor -> durability_thresholds[0] -> durability: invalid numeric value'
 ERROR [Item]  'paletter:durability_sensor_14': Failed to parse field ' -> components -> minecraft:durability_sensor -> durability_thresholds[0] -> particle_type: This value is bound to 'ParticleType' and expects one of the following strings: 'none', 'bubble', 'bubblemanual', ... (95 others). Found: 'paletter_invalid''
 ERROR [Item]  'paletter:durability_sensor_3': Failed to parse field ' -> components -> minecraft:durability_sensor -> durability_thresholds: missing required field'
@@ -1187,22 +1223,22 @@ ERROR [Item]  'paletter:wearable_13': Failed to parse field ' -> components -> m
 ERROR [Item]  'paletter:wearable_21': Failed to parse field ' -> components -> minecraft:wearable -> dispensable: this member was found in the input, but is not present in the Schema'
 ERROR [Item]  'paletter:wearable_22': Failed to parse field ' -> components -> minecraft:wearable -> dispensable: this member was found in the input, but is not present in the Schema'
 ERROR [Item]  'paletter:wearable_6': Failed to parse field ' -> components -> minecraft:wearable -> protection: the input must be a number >= 0'
-ERROR [Item]  Error Parsing Item 'paletter:block_placer_17':
-ERROR [Item]  Error Parsing Item 'paletter:block_placer_18':
 ERROR [Item]  Error Parsing Item 'paletter:block_placer_19':
 ERROR [Item]  Error Parsing Item 'paletter:block_placer_20':
 ERROR [Item]  Error Parsing Item 'paletter:block_placer_21':
 ERROR [Item]  Error Parsing Item 'paletter:block_placer_22':
 ERROR [Item]  Error Parsing Item 'paletter:block_placer_23':
-ERROR [Item]  Error Parsing Item 'paletter:block_placer_26':
-ERROR [Item]  Error Parsing Item 'paletter:block_placer_33':
-ERROR [Item]  Error Parsing Item 'paletter:block_placer_34':
+ERROR [Item]  Error Parsing Item 'paletter:block_placer_24':
+ERROR [Item]  Error Parsing Item 'paletter:block_placer_25':
+ERROR [Item]  Error Parsing Item 'paletter:block_placer_28':
 ERROR [Item]  Error Parsing Item 'paletter:block_placer_35':
 ERROR [Item]  Error Parsing Item 'paletter:block_placer_36':
 ERROR [Item]  Error Parsing Item 'paletter:block_placer_37':
 ERROR [Item]  Error Parsing Item 'paletter:block_placer_38':
 ERROR [Item]  Error Parsing Item 'paletter:block_placer_39':
-ERROR [Item]  Error Parsing Item 'paletter:block_placer_42':
+ERROR [Item]  Error Parsing Item 'paletter:block_placer_40':
+ERROR [Item]  Error Parsing Item 'paletter:block_placer_41':
+ERROR [Item]  Error Parsing Item 'paletter:block_placer_44':
 ERROR [Item]  Error Parsing Item 'paletter:block_placer_5':
 ERROR [Item]  Error Parsing Item 'paletter:bundle_interaction_10':
 ERROR [Item]  Error Parsing Item 'paletter:bundle_interaction_11':
@@ -1283,17 +1319,23 @@ ERROR [Item]  Error Parsing Item 'paletter:digger_40':
 ERROR [Item]  Error Parsing Item 'paletter:digger_6':
 ERROR [Item]  Error Parsing Item 'paletter:durability_10':
 ERROR [Item]  Error Parsing Item 'paletter:durability_11':
-ERROR [Item]  Error Parsing Item 'paletter:durability_13':
-ERROR [Item]  Error Parsing Item 'paletter:durability_15':
+ERROR [Item]  Error Parsing Item 'paletter:durability_12':
+ERROR [Item]  Error Parsing Item 'paletter:durability_14':
+ERROR [Item]  Error Parsing Item 'paletter:durability_16':
+ERROR [Item]  Error Parsing Item 'paletter:durability_18':
 ERROR [Item]  Error Parsing Item 'paletter:durability_19':
-ERROR [Item]  Error Parsing Item 'paletter:durability_20':
 ERROR [Item]  Error Parsing Item 'paletter:durability_22':
+ERROR [Item]  Error Parsing Item 'paletter:durability_23':
+ERROR [Item]  Error Parsing Item 'paletter:durability_26':
 ERROR [Item]  Error Parsing Item 'paletter:durability_27':
+ERROR [Item]  Error Parsing Item 'paletter:durability_34':
+ERROR [Item]  Error Parsing Item 'paletter:durability_35':
+ERROR [Item]  Error Parsing Item 'paletter:durability_36':
+ERROR [Item]  Error Parsing Item 'paletter:durability_38':
 ERROR [Item]  Error Parsing Item 'paletter:durability_4':
-ERROR [Item]  Error Parsing Item 'paletter:durability_5':
+ERROR [Item]  Error Parsing Item 'paletter:durability_43':
+ERROR [Item]  Error Parsing Item 'paletter:durability_6':
 ERROR [Item]  Error Parsing Item 'paletter:durability_7':
-ERROR [Item]  Error Parsing Item 'paletter:durability_8':
-ERROR [Item]  Error Parsing Item 'paletter:durability_9':
 ERROR [Item]  Error Parsing Item 'paletter:durability_sensor_13':
 ERROR [Item]  Error Parsing Item 'paletter:durability_sensor_14':
 ERROR [Item]  Error Parsing Item 'paletter:durability_sensor_3':

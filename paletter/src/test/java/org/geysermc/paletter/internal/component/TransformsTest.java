@@ -149,6 +149,64 @@ class TransformsTest {
     }
 
     @Test
+    void boneVisibilityIsMolangTextInEveryGeometry() {
+        Map<String, String> bones = Map.of("shade", "true", "bulb", "false", "arm", "q.block_state('lit')", "base", "1.0");
+        ItemVisual.Geometry geometry = ItemVisual.Geometry.builder().identifier("geometry.lamp").boneVisibility(bones).build();
+        WireNode out = new WireNode();
+        Transforms.itemVisualBoneVisibility(ctx, out, geometry);
+        NbtMap description = compound(out, "minecraft:item_visual").getCompound("geometryDescription");
+        Map<String, String> sent = Map.of("shade", "1.000000", "bulb", "0.000000", "arm", "q.block_state('lit')", "base", "1.000000");
+        assertEquals(Map.of("bone_visibility", sent), description, "only this leaf: the other geometry fields of item_visual have inferred rules");
+
+        WireNode block = new WireNode();
+        Transforms.geometry(ctx, block, Geometry.builder().identifier("geometry.lamp").boneVisibility(bones).build());
+        assertEquals(sent, compound(block, "minecraft:geometry").getCompound("bone_visibility"));
+        WireNode embedded = new WireNode();
+        Transforms.embeddedGeometry(ctx, embedded, EmbeddedVisual.builder()
+            .geometry(EmbeddedVisual.Geometry.builder().identifier("geometry.lamp").boneVisibility(bones).build())
+            .materialInstances(MaterialInstances.builder().build()).build());
+        assertEquals(sent, compound(embedded, "minecraft:embedded_visual").getCompound("geometry").getCompound("bone_visibility"));
+        assertTrue(report.entries().isEmpty());
+    }
+
+    @Test
+    void boneVisibilityBefore26_60TakesNoBooleanAndBefore26_40IsACompound() {
+        Map<String, String> bones = Map.of("shade", "true", "arm", "q.block_state('lit')", "base", "1.0");
+        // BDS 1.26.45.1 and 1.26.52.3 refuse the block for a boolean: that entry is left out, with a warning
+        WireNode before = new WireNode();
+        Transforms.geometry(ctx26_50, before, Geometry.builder().identifier("geometry.lamp").boneVisibility(bones).build());
+        assertEquals(Map.of("arm", "q.block_state('lit')", "base", "1.000000"), compound(before, "minecraft:geometry").getCompound("bone_visibility"));
+        assertEquals(1, report.warnings().size());
+
+        // BDS 1.26.36.1 sends each expression with the Molang version
+        WireNode oldest = new WireNode();
+        Transforms.itemVisualBoneVisibility(ctx26_30, oldest, ItemVisual.Geometry.builder().identifier("geometry.lamp").boneVisibility(bones).build());
+        NbtMap visibility = compound(oldest, "minecraft:item_visual").getCompound("geometryDescription").getCompound("bone_visibility");
+        assertEquals(Map.of("arm", Map.of("expression", "q.block_state('lit')", "version", (short) 13),
+            "base", Map.of("expression", "1.000000", "version", (short) 13)), visibility);
+        assertEquals(2, report.warnings().size(), "the boolean again");
+    }
+
+    @Test
+    void replaceBlockItemOnlyForTheBlockOfTheItemsIdentifier() {
+        BlockPlacer own = BlockPlacer.builder().block("test:lamp").replaceBlockItem(true).build();
+        WireNode replaced = new WireNode();
+        Transforms.replaceBlockItem(ctx.subject("test:lamp"), replaced, own);
+        assertEquals(1, replaced.build().getCompound("minecraft:block_placer").getByte("replaceBlockItem"));
+        assertTrue(report.entries().isEmpty());
+
+        WireNode other = new WireNode();
+        Transforms.replaceBlockItem(ctx.subject("test:lamp_item"), other, own);
+        assertEquals(0, other.build().getCompound("minecraft:block_placer").getByte("replaceBlockItem"), "BDS ignores it for another block");
+        assertEquals(1, report.warnings().size());
+
+        WireNode off = new WireNode();
+        Transforms.replaceBlockItem(ctx.subject("test:lamp"), off, BlockPlacer.builder().block("test:lamp").build());
+        assertEquals(0, off.build().getCompound("minecraft:block_placer").getByte("replaceBlockItem"));
+        assertEquals(1, report.warnings().size(), "false is no warning");
+    }
+
+    @Test
     void geometry() {
         WireNode out = new WireNode();
         Transforms.geometry(ctx, out, Geometry.builder().identifier("geometry.lamp").boneVisibility(Map.of("lid", "false", "door", "q.block_property('open') == 'true'", "base", "true")).uvLock(true).build());

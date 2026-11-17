@@ -1430,6 +1430,12 @@ public final class Update {
             if (!bits.isEmpty()) {
                 report.action("explain them by a field or the format sweep", "Leaves", bits.stream().map(finding -> "- " + finding).toList());
             }
+            List<String> linked = inference.linkedFields();
+            report.check(linked.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Linked fields", linked.isEmpty()
+                ? "no field's evidence was decided by another field" : linked.size() + " fields need a capture that varies them with another field");
+            if (!linked.isEmpty()) {
+                report.action("capture again: the add-on generator links them from bds-feedback.json", "Fields", linked.stream().map(field -> "- " + field).toList());
+            }
             report.check(Report.Status.INFO, "Component model", "mappings inferred; run :tools:generateComponentApi and the conformance suite (:tools:test) for the new protocol");
         } else {
             report.check(Report.Status.INFO, "Component model", "mappings not inferred (verify only)");

@@ -4,7 +4,6 @@
 package org.geysermc.paletter.internal.component;
 
 import java.util.List;
-import java.util.Map;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
@@ -303,7 +302,6 @@ public final class BlockWire {
     }
 
     private static void embeddedVisual(EmbeddedVisual c, WireContext ctx, WireNode out) {
-        out.put("minecraft:embedded_visual.geometry.bone_visibility", NbtMap.EMPTY);
         Transforms.embeddedGeometry(ctx, out, c);
         Transforms.materialInstancesInline(ctx, out, c);
     }
@@ -330,24 +328,6 @@ public final class BlockWire {
     }
 
     private static void geometry(Geometry c, WireContext ctx, WireNode out) {
-        int protocol = ctx.protocol();
-        if (protocol < 2225) {
-            geometryUntil2225(c, ctx, out);
-        } else if (protocol >= 2225) {
-            geometryFrom2225(c, ctx, out);
-        }
-    }
-
-    private static void geometryUntil2225(Geometry c, WireContext ctx, WireNode out) {
-        out.put("minecraft:geometry.bone_visibility", NbtMap.EMPTY);
-        out.put("minecraft:geometry.ignoreGeometryForIsSolid", (byte) 0);
-        out.put("minecraft:geometry.isV1Fullblock", (byte) 0);
-        out.put("minecraft:geometry.needsLegacyTopRotation", (byte) 0);
-        out.put("minecraft:geometry.useBlockTypeLightAbsorption", (byte) 0);
-        Transforms.geometry(ctx, out, c);
-    }
-
-    private static void geometryFrom2225(Geometry c, WireContext ctx, WireNode out) {
         out.put("minecraft:geometry.ignoreGeometryForIsSolid", (byte) 0);
         out.put("minecraft:geometry.isV1Fullblock", (byte) 0);
         out.put("minecraft:geometry.needsLegacyTopRotation", (byte) 0);
@@ -369,104 +349,101 @@ public final class BlockWire {
     }
 
     private static void itemVisualUntil2225(ItemVisual c, WireContext ctx, WireNode out) {
-        out.put("minecraft:item_visual.geometryDescription.bone_visibility", NbtMap.EMPTY);
         out.put("minecraft:item_visual.geometryDescription.ignoreGeometryForIsSolid", (byte) 0);
         out.put("minecraft:item_visual.geometryDescription.isV1Fullblock", (byte) 0);
         out.put("minecraft:item_visual.geometryDescription.needsLegacyTopRotation", (byte) 0);
         out.put("minecraft:item_visual.geometryDescription.useBlockTypeLightAbsorption", (byte) 0);
         out.put("minecraft:item_visual.materialInstancesDescription.mappings", NbtMap.EMPTY);
         ItemVisual.Geometry v0 = c.geometry();
-        Map<String, String> v1 = v0.boneVisibility();
-        String v2 = v0.culling();
-        if (v2 != null) {
-            out.put("minecraft:item_visual.geometryDescription.culling", v2);
+        String v1 = v0.culling();
+        if (v1 != null) {
+            out.put("minecraft:item_visual.geometryDescription.culling", v1);
         } else {
             out.put("minecraft:item_visual.geometryDescription.culling", "");
         }
-        String v3 = v0.cullingLayer();
-        if (v3 != null) {
-            out.put("minecraft:item_visual.geometryDescription.culling_layer", v3);
+        String v2 = v0.cullingLayer();
+        if (v2 != null) {
+            out.put("minecraft:item_visual.geometryDescription.culling_layer", v2);
         } else {
             out.put("minecraft:item_visual.geometryDescription.culling_layer", "minecraft:culling_layer.undefined");
         }
-        String v4 = v0.cullingShape();
-        if (v4 != null) {
-            out.put("minecraft:item_visual.geometryDescription.culling_shape", v4);
+        String v3 = v0.cullingShape();
+        if (v3 != null) {
+            out.put("minecraft:item_visual.geometryDescription.culling_shape", v3);
         } else {
             out.put("minecraft:item_visual.geometryDescription.culling_shape", "");
         }
-        String v5 = v0.identifier();
-        if (v5 != null) {
-            out.put("minecraft:item_visual.geometryDescription.identifier", v5);
+        String v4 = v0.identifier();
+        if (v4 != null) {
+            out.put("minecraft:item_visual.geometryDescription.identifier", v4);
         } else {
             out.put("minecraft:item_visual.geometryDescription.identifier", "minecraft:geometry.full_block");
         }
-        ItemVisual.NWayVisualRotation v6 = v0.nWayVisualRotation();
-        if (v6 != null) {
-            String v7 = v6.x();
+        ItemVisual.NWayVisualRotation v5 = v0.nWayVisualRotation();
+        if (v5 != null) {
+            String v6 = v5.x();
+            if (v6 != null) {
+            }
+            String v7 = v5.y();
             if (v7 != null) {
             }
-            String v8 = v6.y();
+            String v8 = v5.z();
             if (v8 != null) {
             }
-            String v9 = v6.z();
-            if (v9 != null) {
-            }
         }
+        Transforms.itemVisualBoneVisibility(ctx, out, v0);
         Transforms.itemVisualUvLock(ctx, out, v0);
         Transforms.materialInstancesPacked(ctx, out, c);
     }
 
     private static void itemVisualFrom2225(ItemVisual c, WireContext ctx, WireNode out) {
-        out.put("minecraft:item_visual.geometryDescription.bone_visibility", NbtMap.EMPTY);
         out.put("minecraft:item_visual.geometryDescription.ignoreGeometryForIsSolid", (byte) 0);
         out.put("minecraft:item_visual.geometryDescription.isV1Fullblock", (byte) 0);
         out.put("minecraft:item_visual.geometryDescription.needsLegacyTopRotation", (byte) 0);
         out.put("minecraft:item_visual.geometryDescription.useBlockTypeLightAbsorption", (byte) 0);
         out.put("minecraft:item_visual.materialInstancesDescription.mappings", NbtMap.EMPTY);
         ItemVisual.Geometry v0 = c.geometry();
-        Map<String, String> v1 = v0.boneVisibility();
-        String v2 = v0.culling();
-        if (v2 != null) {
-            out.put("minecraft:item_visual.geometryDescription.culling", v2);
+        String v1 = v0.culling();
+        if (v1 != null) {
+            out.put("minecraft:item_visual.geometryDescription.culling", v1);
         } else {
             out.put("minecraft:item_visual.geometryDescription.culling", "");
         }
-        String v3 = v0.cullingLayer();
-        if (v3 != null) {
-            out.put("minecraft:item_visual.geometryDescription.culling_layer", v3);
+        String v2 = v0.cullingLayer();
+        if (v2 != null) {
+            out.put("minecraft:item_visual.geometryDescription.culling_layer", v2);
         } else {
             out.put("minecraft:item_visual.geometryDescription.culling_layer", "minecraft:culling_layer.undefined");
         }
-        String v4 = v0.cullingShape();
-        if (v4 != null) {
-            out.put("minecraft:item_visual.geometryDescription.culling_shape", v4);
+        String v3 = v0.cullingShape();
+        if (v3 != null) {
+            out.put("minecraft:item_visual.geometryDescription.culling_shape", v3);
         } else {
             out.put("minecraft:item_visual.geometryDescription.culling_shape", "");
         }
-        String v5 = v0.identifier();
-        if (v5 != null) {
-            out.put("minecraft:item_visual.geometryDescription.identifier", v5);
+        String v4 = v0.identifier();
+        if (v4 != null) {
+            out.put("minecraft:item_visual.geometryDescription.identifier", v4);
         } else {
             out.put("minecraft:item_visual.geometryDescription.identifier", "minecraft:geometry.full_block");
         }
-        ItemVisual.NWayVisualRotation v6 = v0.nWayVisualRotation();
-        if (v6 != null) {
-            String v7 = v6.x();
-            if (v7 != null) {
-                out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.x", v7);
+        ItemVisual.NWayVisualRotation v5 = v0.nWayVisualRotation();
+        if (v5 != null) {
+            String v6 = v5.x();
+            if (v6 != null) {
+                out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.x", v6);
             } else {
                 out.remove("minecraft:item_visual.geometryDescription.n_way_visual_rotation.x");
             }
-            String v8 = v6.y();
-            if (v8 != null) {
-                out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.y", v8);
+            String v7 = v5.y();
+            if (v7 != null) {
+                out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.y", v7);
             } else {
                 out.remove("minecraft:item_visual.geometryDescription.n_way_visual_rotation.y");
             }
-            String v9 = v6.z();
-            if (v9 != null) {
-                out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.z", v9);
+            String v8 = v5.z();
+            if (v8 != null) {
+                out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.z", v8);
             } else {
                 out.remove("minecraft:item_visual.geometryDescription.n_way_visual_rotation.z");
             }
@@ -475,6 +452,7 @@ public final class BlockWire {
             out.remove("minecraft:item_visual.geometryDescription.n_way_visual_rotation.y");
             out.remove("minecraft:item_visual.geometryDescription.n_way_visual_rotation.z");
         }
+        Transforms.itemVisualBoneVisibility(ctx, out, v0);
         Transforms.itemVisualUvLock(ctx, out, v0);
         Transforms.materialInstancesPacked(ctx, out, c);
     }

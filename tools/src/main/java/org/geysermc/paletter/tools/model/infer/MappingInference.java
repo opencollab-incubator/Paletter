@@ -62,12 +62,16 @@ public final class MappingInference {
         this.modelDir = root.resolve("data/model");
     }
 
+    /**
+     * @param linked the other fields the variant sets because BDS ties them to the varied one (add-on generator links)
+     */
     record Variant(String identifier, String kind, String file, String component, String role, String path, String label,
-                   JsonElement value, JsonElement json) {
+                   JsonElement value, JsonElement json, List<String> linked) {
         static Variant of(JsonObject o) {
             return new Variant(o.get("identifier").getAsString(), o.get("kind").getAsString(), o.get("file").getAsString(),
                 o.get("component").getAsString(), o.get("role").getAsString(), o.get("path").getAsString(), o.get("label").getAsString(),
-                o.has("value") ? o.get("value") : null, o.has("json") ? o.get("json") : null);
+                o.has("value") ? o.get("value") : null, o.has("json") ? o.get("json") : null,
+                o.has("linked") ? o.getAsJsonArray("linked").asList().stream().map(JsonElement::getAsString).toList() : List.of());
         }
     }
 
@@ -92,8 +96,11 @@ public final class MappingInference {
      * item of a custom block has the runtime id {@code itemIdPlusBlockId - block_id}.
      */
     record CustomBlockIds(int first, int itemIdPlusBlockId) {
-        /** @return the numbering, or null for a capture without custom blocks */
-        static CustomBlockIds of(String capture, List<NbtMap> blocks, List<NbtMap> items) {
+        /**
+         * @param ownItems the identifiers of the item variants: a block a link gave an item's identifier has no block item
+         * @return the numbering, or null for a capture without custom blocks
+         */
+        static CustomBlockIds of(String capture, List<NbtMap> blocks, List<NbtMap> items, Set<String> ownItems) {
             Map<String, Integer> blockIds = new TreeMap<>();
             for (NbtMap block : blocks) {
                 blockIds.put(block.getString("name"), block.getCompound("properties").getCompound("vanilla_block_data").getInt("block_id"));
@@ -107,10 +114,13 @@ public final class MappingInference {
             }
             Set<Integer> sums = new TreeSet<>();
             for (NbtMap item : items) {
-                Integer blockId = blockIds.get(item.getString("name"));
+                Integer blockId = ownItems.contains(item.getString("name")) ? null : blockIds.get(item.getString("name"));
                 if (blockId != null) {
                     sums.add(((Number) item.get("id")).intValue() + blockId);
                 }
+            }
+            if (sums.isEmpty()) {
+                return null; // only blocks that items' links defined: nothing to number
             }
             if (sums.size() != 1) {
                 throw new IllegalStateException(capture + ": block item id + block_id is not one constant but " + sums);
@@ -120,6 +130,7 @@ public final class MappingInference {
     }
 
     private final List<String> unexplainedBits = new ArrayList<>();
+    private final Set<String> linkedFields = new TreeSet<>();
 
     /**
      * The findings of the last {@link #run} whose bits no format sweep explains: bits every value sets and nothing explains.
@@ -127,6 +138,17 @@ public final class MappingInference {
      */
     public List<String> unexplainedBits() {
         return unexplainedBits;
+    }
+
+    /**
+     * The fields of the last {@link #run} whose value no rule follows (nothing on the wire does, or only their presence)
+     * while the messages of their variants name another field: what BDS sent says nothing about them, as the other field
+     * decided it (status {@code linked}). The add-on
+     * generator varies them with that field ({@code bds-feedback.json} links) once the capture shows how they are tied.
+     * {@code check-mappings --strict} and {@code update} fail on them.
+     */
+    public List<String> linkedFields() {
+        return List.copyOf(linkedFields);
     }
 
     /** The generated texts. */
@@ -220,6 +242,7 @@ public final class MappingInference {
         Map<String, String> findings = new TreeMap<>();
         Map<String, Long> formatBits = formatDependentBits();
         unexplainedBits.clear();
+        linkedFields.clear();
         // Per capture: component id -> its result there
         List<Map<String, JsonObject>> resultsByCapture = new ArrayList<>();
         captures.forEach(capture -> resultsByCapture.add(new TreeMap<>()));
@@ -514,11 +537,12 @@ public final class MappingInference {
         Pattern itemFile = Pattern.compile("items/([a-z0-9_]+)\\.json");
         Pattern itemName = Pattern.compile("'(paletter:[a-z0-9_]+)'");
         Pattern bare = Pattern.compile("(paletter:[a-z0-9_]+)");
+        Map<String, Variant> byIdentifier = new LinkedHashMap<>();
+        variants.forEach(v -> byIdentifier.put(v.identifier(), v));
         for (String line : Files.readAllLines(dir.resolve("content-log.txt"), StandardCharsets.UTF_8)) {
             if (line.isBlank()) {
                 continue;
             }
-            feedback.add(line.contains("[Item]") ? "item" : "block", line);
             String id = null;
             Matcher m;
             if ((m = blockFile.matcher(line)).find() || (m = itemFile.matcher(line)).find()) {
@@ -526,14 +550,17 @@ public final class MappingInference {
             } else if ((m = itemName.matcher(line)).find() || (m = bare.matcher(line)).find()) {
                 id = m.group(1);
             }
+            feedback.add(line.contains("[Item]") ? "item" : "block", line, id == null ? null : byIdentifier.get(id));
             if (id == null) {
                 unattributed.add(line);
             } else {
                 log.computeIfAbsent(id, k -> new ArrayList<>()).add(line);
             }
         }
+        Set<String> ownItems = new TreeSet<>();
+        variants.stream().filter(v -> v.kind().equals("item")).forEach(v -> ownItems.add(v.identifier()));
         CustomBlockIds customBlockIds = CustomBlockIds.of(dir.toString(), blocks.getList("blocks", org.cloudburstmc.nbt.NbtType.COMPOUND),
-            items.getList("items", org.cloudburstmc.nbt.NbtType.COMPOUND));
+            items.getList("items", org.cloudburstmc.nbt.NbtType.COMPOUND), ownItems);
         return new Capture(dir.getFileName().toString(), meta.get("bdsVersion").getAsString(), meta.get("protocol").getAsInt(),
             variants, byVariant, log, unattributed, feedback, definitions, customBlockIds);
     }
@@ -755,7 +782,7 @@ public final class MappingInference {
             }
         }
         for (Map.Entry<String, List<Obs>> form : byForm.entrySet()) {
-            forms.add(form.getKey(), field(component, "", form.getValue(), control, filler, true));
+            forms.add(form.getKey(), field(component, "", form.getValue(), control, filler, true, Map.of()));
         }
         if (!forms.isEmpty()) {
             result.add("forms", forms);
@@ -768,6 +795,8 @@ public final class MappingInference {
                 byField.computeIfAbsent(o.variant().path(), k -> new ArrayList<>()).add(o);
             }
         }
+        Obs fieldReference = base != null && base.accepted() ? base : control;
+        Map<String, Set<String>> moved = moved(byField, fieldReference);
         for (Field field : component.fields()) {
             List<Obs> list = byField.get(field.path());
             if (list == null) {
@@ -780,10 +809,16 @@ public final class MappingInference {
                 fields.add(field.path(), skipped);
                 continue;
             }
-            Obs reference = base != null && base.accepted() ? base : control;
-            JsonObject f = field(component, field.path(), list, reference, filler, false);
-            if (reference == control && base != null) {
+            JsonObject f = field(component, field.path(), list, fieldReference, filler, false, moved);
+            if (fieldReference == control && base != null) {
                 f.addProperty("reference", "control (the base was rejected)");
+            }
+            if (f.get("status").getAsString().equals("linked")) {
+                boolean tried = list.stream().anyMatch(o -> o.accepted() && !o.variant().linked().isEmpty());
+                linkedFields.add(component.id() + " " + field.path() + " (BDS " + capture.bdsVersion() + "): no rule follows its value, and"
+                    + " its variants' messages name " + String.join(", ", f.getAsJsonArray("linkedTo").asList().stream().map(JsonElement::getAsString).toList())
+                    + (tried ? "; BDS accepted variants linked with it, which no rule explains: it needs a rule or a hand transform"
+                    : "; vary them together (bds-feedback.json links) and capture again"));
             }
             fields.add(field.path(), f);
         }
@@ -798,6 +833,21 @@ public final class MappingInference {
         }
         transformEvidence(capture, component, result, observations, controlVariant);
         return result;
+    }
+
+    /**
+     * Per field, the wire leaves its own variants move against the reference (generic paths): what a variant that sets the
+     * field only because BDS ties it to the varied one ({@link Variant#linked}) moves besides the varied field.
+     */
+    private static Map<String, Set<String>> moved(Map<String, List<Obs>> byField, Obs reference) {
+        Map<String, Set<String>> moved = new TreeMap<>();
+        byField.forEach((path, observations) -> {
+            Set<String> leaves = new TreeSet<>();
+            observations.stream().filter(o -> o.accepted() && o.variant().linked().isEmpty())
+                .forEach(o -> Wire.diff(reference.wire(), o.wire()).keySet().forEach(leaf -> leaves.add(Wire.generic(leaf))));
+            moved.put(path, leaves);
+        });
+        return moved;
     }
 
     /**
@@ -1058,8 +1108,10 @@ public final class MappingInference {
      * One field (or the whole value, path ""): which wire leaves follow its JSON value, and how.
      *
      * @param reference the observation the variants are compared with (base for fields, control for forms)
+     * @param moved     per field, the leaves its own variants move ({@link #moved}): a linked variant's other fields move these
      */
-    private JsonObject field(Component component, String path, List<Obs> variants, Obs reference, String filler, boolean form) {
+    private JsonObject field(Component component, String path, List<Obs> variants, Obs reference, String filler, boolean form,
+                             Map<String, Set<String>> moved) {
         JsonObject out = new JsonObject();
         List<Obs> accepted = variants.stream().filter(Obs::accepted).toList();
         List<Obs> rejected = variants.stream().filter(o -> !o.accepted()).toList();
@@ -1100,8 +1152,10 @@ public final class MappingInference {
         }
         Set<String> varying = new TreeSet<>();
         for (Obs o : accepted) {
+            Set<String> byLinked = new TreeSet<>();
+            o.variant().linked().forEach(other -> byLinked.addAll(moved.getOrDefault(other, Set.of())));
             for (Map.Entry<String, Leaf[]> d : Wire.diff(reference.wire(), o.wire()).entrySet()) {
-                if (filler != null && d.getKey().startsWith(filler) && d.getValue()[1] == null) {
+                if ((filler != null && d.getKey().startsWith(filler) && d.getValue()[1] == null) || byLinked.contains(Wire.generic(d.getKey()))) {
                     continue;
                 }
                 varying.add(d.getKey());
@@ -1177,11 +1231,25 @@ public final class MappingInference {
             status = unexplained.isEmpty() ? (onlyStructural && !container(component, path) && !form ? "dropped" : "inferred")
                 : rules.isEmpty() ? "unresolved" : "partial";
         }
+        if (status.equals("dropped")) {
+            // Whichever way the field came to be dropped (no leaf follows it, or only its presence does): not server only if
+            // BDS may have decided the wire by another field (an order, a value it cannot be used with). Where no leaf
+            // follows it even in the variants linked with that field, it is server only after all
+            List<String> others = linkedTo(component, path, variants, varying.isEmpty());
+            if (!others.isEmpty()) {
+                status = "linked";
+                JsonArray to = new JsonArray();
+                others.forEach(to::add);
+                out.add("linkedTo", to);
+            }
+        }
         // A transform of the field, of an object or list containing it, or of the whole component covers it
         String transformKey = HandTransforms.covering(transforms, component.id(), path);
         // (a field whose leaves only follow its presence, under a transform, is the transform's too)
-        if ((status.equals("unresolved") || status.equals("partial") || (status.equals("dropped") && !rules.isEmpty())) && transformKey != null) {
+        if ((status.equals("unresolved") || status.equals("partial") || ((status.equals("dropped") || status.equals("linked")) && !rules.isEmpty()))
+            && transformKey != null) {
             out.addProperty("transform", transforms.get(transformKey));
+            out.remove("linkedTo");
             status = "hand-rule";
         }
         out.addProperty("status", status);
@@ -1202,6 +1270,24 @@ public final class MappingInference {
             }
         }
         return out;
+    }
+
+    /**
+     * The other fields the messages of a field's unlinked variants name ({@link Feedback#otherFields}).
+     *
+     * @param exceptTried without the ones BDS accepted a linked variant with: those were varied together
+     */
+    private static List<String> linkedTo(Component component, String path, List<Obs> variants, boolean exceptTried) {
+        Set<String> others = new TreeSet<>();
+        for (Obs o : variants) {
+            if (o.variant().linked().isEmpty()) {
+                o.log().forEach(line -> others.addAll(Feedback.otherFields(component, path, o.variant().json(), Feedback.message(line))));
+            }
+        }
+        if (exceptTried) {
+            variants.stream().filter(Obs::accepted).forEach(o -> o.variant().linked().forEach(others::remove));
+        }
+        return List.copyOf(others);
     }
 
     /**

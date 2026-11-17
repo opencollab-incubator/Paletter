@@ -93,6 +93,9 @@
       "object",
       "required"
     ],
+    "geometry.bone_visibility": [
+      "conflicts geometry.identifier"
+    ],
     "geometry.identifier": [
       "required"
     ],
@@ -155,6 +158,9 @@
   "block:minecraft:item_visual": {
     "geometry": [
       "required"
+    ],
+    "geometry.bone_visibility": [
+      "conflicts geometry.identifier"
     ],
     "geometry.identifier": [
       "required"
@@ -314,6 +320,7 @@
   },
   "block:minecraft:random_offset": {
     "x.range": [
+      "order min max",
       "required"
     ],
     "x.range.max": [
@@ -323,6 +330,7 @@
       "range -8 8"
     ],
     "y.range": [
+      "order min max",
       "required"
     ],
     "y.range.max": [
@@ -332,6 +340,7 @@
       "range -8 8"
     ],
     "z.range": [
+      "order min max",
       "required"
     ],
     "z.range.max": [
@@ -473,6 +482,9 @@
     "block": [
       "required"
     ],
+    "replace_block_item": [
+      "identifier block block"
+    ],
     "use_on": [
       "array"
     ]
@@ -525,6 +537,9 @@
     ]
   },
   "item:minecraft:durability": {
+    "damage_chance": [
+      "order min max"
+    ],
     "damage_chance.max": [
       "range 0 100"
     ],

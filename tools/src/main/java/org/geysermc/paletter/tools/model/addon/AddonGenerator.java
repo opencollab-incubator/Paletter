@@ -62,9 +62,12 @@ public final class AddonGenerator {
      * @param value      the JSON value at the path (null for control and omit)
      * @param component  the component JSON value as written (null for a control without the component)
      * @param format     the {@code format_version} of the file when it is not the generator's (the format sweep), else null
+     * @param linked     the other fields this variant sets because BDS ties them to the varied one ({@link #link}), else empty
+     * @param companion  the definition of another item or block a link needs (a block with the item's own identifier), else null
      */
     public record Variant(String identifier, String kind, String file, String componentId, String role, String path, String label,
-                          JsonElement value, JsonElement component, JsonObject definition, String format) {
+                          JsonElement value, JsonElement component, JsonObject definition, String format, List<String> linked,
+                          JsonObject companion) {
     }
 
     public AddonGenerator(Model model, Fixtures fixtures) {
@@ -231,7 +234,13 @@ public final class AddonGenerator {
                     for (Labeled value : values(c, field.path(), type, field)) {
                         JsonElement json = with(c, base, field.path(), value.value);
                         if (json != null) {
-                            variant(c, "field", field.path(), type + ":" + value.label, value.value, json);
+                            String label = type + ":" + value.label;
+                            variant(c, "field", field.path(), label, value.value, json);
+                            Links links = link(c, json, field.path());
+                            if (links != null) {
+                                variant(c, "field", field.path(), label + LINKED + String.join(", ", links.paths()), value.value,
+                                    links.json(), null, links);
+                            }
                         }
                     }
                 }
@@ -258,6 +267,11 @@ public final class AddonGenerator {
     }
 
     private Variant variant(Component c, String role, String path, String label, JsonElement value, JsonElement json, String format) {
+        return variant(c, role, path, label, value, json, format, null);
+    }
+
+    private Variant variant(Component c, String role, String path, String label, JsonElement value, JsonElement json, String format,
+                            Links links) {
         Shrunk shrunk = this.shrunk.get(Shrunk.key(role, c.id(), path, label));
         if (shrunk != null) {
             label = shrunk.shrunkLabel();
@@ -266,11 +280,121 @@ public final class AddonGenerator {
         String shortName = c.id().replaceFirst("^(item|block):", "").replace("minecraft:", "").replace("trait:", "trait_").replace(':', '_');
         int n = counters.merge(c.id(), 1, Integer::sum);
         String identifier = NAMESPACE + ":" + (c.kind().equals("block") ? "b_" : "") + shortName + "_" + n;
+        JsonObject companion = null;
+        if (links != null) {
+            for (Map.Entry<String, String> sameIdentifier : links.identifiers().entrySet()) {
+                set(json, sameIdentifier.getKey(), new JsonPrimitive(identifier));
+                if (!sameIdentifier.getValue().equals(c.kind())) {
+                    companion = companion(sameIdentifier.getValue(), identifier, format == null ? formatVersion : format);
+                }
+            }
+        }
         JsonObject definition = definition(c, identifier, json, format == null ? formatVersion : format);
         String file = (c.kind().equals("block") ? "blocks/" : "items/") + identifier.substring(NAMESPACE.length() + 1) + ".json";
-        Variant variant = new Variant(identifier, c.kind(), file, c.id(), role, path, label, value, json, definition, format);
+        Variant variant = new Variant(identifier, c.kind(), file, c.id(), role, path, label, value, json, definition, format,
+            links == null ? List.of() : links.paths(), companion);
         variants.add(variant);
         return variant;
+    }
+
+    /** What a linked variant's label adds to the label of the variant it links ({@code integer:7 linked damage_chance.min}). */
+    public static final String LINKED = " linked ";
+
+    /**
+     * The fields BDS ties to a field, from what its content log said in the last capture ({@code bds-feedback.json}):
+     * <ul>
+     *     <li>{@code order <low> <high>} on an object ("max value cannot be lower than min value"): a variant of one of the
+     *     two sets the other to its far limit (the low one to its lowest value, the high one to its highest; without a
+     *     known limit to the varied value), so every value of the varied one keeps the order;</li>
+     *     <li>{@code conflicts <path>} on a field (BDS refused its variants for the value another field has in them,
+     *     "Cannot use bone visibility feature with: minecraft:geometry.full_block"): the other field takes its second valid
+     *     value ({@code fixtures.json} {@code alternatives});</li>
+     *     <li>{@code identifier <path> <kind>} on a field (BDS wants another field to name the item or block itself, "Item
+     *     identifier ... does not match the block identifier ..."): the other field gets the variant's own identifier, and
+     *     the add-on a minimal {@code <kind>} with that identifier.</li>
+     * </ul>
+     * The variant as generated stays, so BDS keeps saying what ties the fields; the linked one is generated beside it.
+     *
+     * @param json the component's JSON of the variant
+     * @return the linked JSON and the fields it sets, or null if BDS ties nothing to the field
+     */
+    private Links link(Component c, JsonElement json, String path) {
+        JsonElement linked = json.deepCopy();
+        List<String> paths = new ArrayList<>();
+        Map<String, String> identifiers = new LinkedHashMap<>();
+        String name = tokens(path).getLast();
+        String parent = parentOf(path);
+        for (String fact : fixtures.facts(c.id(), parent)) {
+            String[] parts = fact.split(" ");
+            if (parts[0].equals("order") && (parts[1].equals(name) || parts[2].equals(name)) && !path.endsWith("[]") && !path.endsWith("{}")) {
+                boolean high = parts[2].equals(name);
+                String other = (parent.isEmpty() ? "" : parent + ".") + (high ? parts[1] : parts[2]);
+                JsonElement limit = limit(c, other, high, get(linked, path));
+                if (limit != null && set(linked, other, limit)) {
+                    paths.add(other);
+                }
+            }
+        }
+        for (String fact : fixtures.facts(c.id(), path)) {
+            String[] parts = fact.split(" ");
+            if (parts[0].equals("conflicts")) {
+                JsonElement alternative = fixtures.alternative(c.id(), parts[1], tokens(parts[1]).getLast());
+                if (alternative != null && set(linked, parts[1], alternative)) {
+                    paths.add(parts[1]);
+                }
+            } else if (parts[0].equals("identifier") && (parentOf(parts[1]).isEmpty() || get(linked, parentOf(parts[1])) != null)) {
+                identifiers.put(parts[1], parts[2]);
+                paths.add(parts[1]);
+            }
+        }
+        return paths.isEmpty() ? null : new Links(linked, List.copyOf(paths), identifiers);
+    }
+
+    /**
+     * @param paths       the fields a link sets
+     * @param identifiers of those, the ones that get the variant's own identifier, with the kind of content they name
+     */
+    private record Links(JsonElement json, List<String> paths, Map<String, String> identifiers) {
+    }
+
+    /**
+     * The far limit of a number field for an order link: its lowest value ({@code low}) or its highest, from the docs or
+     * the content log; without a known limit the value of the varied field, when that is a number.
+     */
+    private JsonElement limit(Component c, String path, boolean low, JsonElement varied) {
+        Field field = withFeedback(c, c.field(path));
+        Double limit = field == null || field.range() == null ? null : low ? field.range().min() : field.range().max();
+        if (limit != null) {
+            return number(limit);
+        }
+        return varied != null && varied.isJsonPrimitive() && varied.getAsJsonPrimitive().isNumber() ? varied.deepCopy() : null;
+    }
+
+    /** Sets a value in an existing object of the JSON; false if the object is not there. */
+    private static boolean set(JsonElement root, String path, JsonElement value) {
+        String parent = parentOf(path);
+        JsonElement object = parent.isEmpty() ? root : get(root, parent);
+        if (object == null || !object.isJsonObject() || path.endsWith("[]") || path.endsWith("{}")) {
+            return false;
+        }
+        object.getAsJsonObject().add(tokens(path).getLast(), value.deepCopy());
+        return true;
+    }
+
+    /** A minimal item or block with the given identifier, for a link that needs it to exist. */
+    private static JsonObject companion(String kind, String identifier, String format) {
+        JsonObject description = new JsonObject();
+        description.addProperty("identifier", identifier);
+        JsonObject menu = new JsonObject();
+        menu.addProperty("category", "none");
+        description.add("menu_category", menu);
+        JsonObject body = new JsonObject();
+        body.add("description", description);
+        body.add("components", new JsonObject());
+        JsonObject file = new JsonObject();
+        file.addProperty("format_version", format);
+        file.add("minecraft:" + kind, body);
+        return file;
     }
 
     /**
@@ -1004,7 +1128,10 @@ public final class AddonGenerator {
         return array;
     }
 
-    /** Maps: empty, one entry, two, and an entry under a key nothing defines. */
+    /**
+     * Maps: empty, one entry, two (the second with the element's second valid value, {@code fixtures.json}
+     * {@code alternatives}, where it has one), and an entry under a key nothing defines.
+     */
     private List<Labeled> maps(Component c, String path, JType type, Field field) {
         List<Labeled> values = new ArrayList<>();
         JType items = type.items() == null ? JType.of("string") : type.items();
@@ -1016,7 +1143,9 @@ public final class AddonGenerator {
             one.add(key, element);
             values.add(new Labeled("{1}", one));
             JsonObject two = one.deepCopy();
-            two.add(key + "_2", items.type().equals("boolean") ? new JsonPrimitive(false) : element.deepCopy());
+            JsonElement alternative = fixtures.alternative(c.id(), path + "{}", null);
+            two.add(key + "_2", items.type().equals("boolean") ? new JsonPrimitive(false)
+                : alternative != null && matches(items, alternative) ? alternative.deepCopy() : element.deepCopy());
             values.add(new Labeled("{2}", two));
             JsonObject unknown = new JsonObject();
             unknown.add(NAMESPACE + "_unknown", element.deepCopy());
@@ -1314,6 +1443,10 @@ public final class AddonGenerator {
         Path rp = out.resolve("resource_pack");
         for (Variant variant : variants) {
             json(bp.resolve(variant.file()), variant.definition());
+            if (variant.companion() != null) {
+                String folder = variant.companion().has("minecraft:block") ? "blocks/" : "items/";
+                json(bp.resolve(folder + variant.identifier().substring(NAMESPACE.length() + 1) + ".json"), variant.companion());
+            }
         }
         json(bp.resolve("loot_tables/paletter_empty.json"), JsonParser.parseString("{\"pools\": []}"));
         json(bp.resolve("manifest.json"), JsonParser.parseString("""
@@ -1363,6 +1496,11 @@ public final class AddonGenerator {
             entry.add("json", v.component() == null ? JsonNull.INSTANCE : v.component());
             if (v.format() != null) {
                 entry.addProperty("format", v.format());
+            }
+            if (!v.linked().isEmpty()) {
+                JsonArray linked = new JsonArray();
+                v.linked().forEach(linked::add);
+                entry.add("linked", linked);
             }
             array.add(entry);
         }

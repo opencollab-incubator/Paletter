@@ -4589,7 +4589,7 @@
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
-    "label": "object:{}",
+    "label": "map<string>:{}",
     "value": {},
     "json": {
       "geometry": {
@@ -4618,6 +4618,310 @@
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
+    "label": "map<string>:{} linked geometry.identifier",
+    "value": {},
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {}
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_11",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_11.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1}",
+    "value": {
+      "bone_a": "q.block_state('paletter:flag')"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "q.block_state('paletter:flag')"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_12",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_12.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} linked geometry.identifier",
+    "value": {
+      "bone_a": "q.block_state('paletter:flag')"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "q.block_state('paletter:flag')"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_13",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_13.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{2}",
+    "value": {
+      "bone_a": "q.block_state('paletter:flag')",
+      "bone_a_2": "1.0"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "q.block_state('paletter:flag')",
+          "bone_a_2": "1.0"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_14",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_14.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{2} linked geometry.identifier",
+    "value": {
+      "bone_a": "q.block_state('paletter:flag')",
+      "bone_a_2": "1.0"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "q.block_state('paletter:flag')",
+          "bone_a_2": "1.0"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_15",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_15.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{unknown key}",
+    "value": {
+      "paletter_unknown": "q.block_state('paletter:flag')"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "paletter_unknown": "q.block_state('paletter:flag')"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_16",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_16.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{unknown key} linked geometry.identifier",
+    "value": {
+      "paletter_unknown": "q.block_state('paletter:flag')"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "paletter_unknown": "q.block_state('paletter:flag')"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_17",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_17.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "object:{}",
+    "value": {},
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {}
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_18",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_18.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "object:{} linked geometry.identifier",
+    "value": {},
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {}
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_19",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_19.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
     "label": "map<boolean>:{}",
     "value": {},
     "json": {
@@ -4641,9 +4945,41 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_11",
+    "identifier": "paletter:b_embedded_visual_20",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_11.json",
+    "file": "blocks/b_embedded_visual_20.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<boolean>:{} linked geometry.identifier",
+    "value": {},
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {}
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_21",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_21.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -4674,9 +5010,45 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_12",
+    "identifier": "paletter:b_embedded_visual_22",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_12.json",
+    "file": "blocks/b_embedded_visual_22.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<boolean>:{1} linked geometry.identifier",
+    "value": {
+      "bone_a": true
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": true
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_23",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_23.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -4709,9 +5081,47 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_13",
+    "identifier": "paletter:b_embedded_visual_24",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_13.json",
+    "file": "blocks/b_embedded_visual_24.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<boolean>:{2} linked geometry.identifier",
+    "value": {
+      "bone_a": true,
+      "bone_a_2": false
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": true,
+          "bone_a_2": false
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_25",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_25.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -4742,9 +5152,45 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_14",
+    "identifier": "paletter:b_embedded_visual_26",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_14.json",
+    "file": "blocks/b_embedded_visual_26.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<boolean>:{unknown key} linked geometry.identifier",
+    "value": {
+      "paletter_unknown": true
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "paletter_unknown": true
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_27",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_27.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "geometry.culling",
@@ -4768,9 +5214,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_15",
+    "identifier": "paletter:b_embedded_visual_28",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_15.json",
+    "file": "blocks/b_embedded_visual_28.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -4796,9 +5242,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_16",
+    "identifier": "paletter:b_embedded_visual_29",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_16.json",
+    "file": "blocks/b_embedded_visual_29.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -4824,9 +5270,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_17",
+    "identifier": "paletter:b_embedded_visual_30",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_17.json",
+    "file": "blocks/b_embedded_visual_30.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -4852,9 +5298,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_18",
+    "identifier": "paletter:b_embedded_visual_31",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_18.json",
+    "file": "blocks/b_embedded_visual_31.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -4880,9 +5326,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_19",
+    "identifier": "paletter:b_embedded_visual_32",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_19.json",
+    "file": "blocks/b_embedded_visual_32.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -4908,9 +5354,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_20",
+    "identifier": "paletter:b_embedded_visual_33",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_20.json",
+    "file": "blocks/b_embedded_visual_33.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "geometry.culling_layer",
@@ -4934,9 +5380,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_21",
+    "identifier": "paletter:b_embedded_visual_34",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_21.json",
+    "file": "blocks/b_embedded_visual_34.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling_layer",
@@ -4962,9 +5408,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_22",
+    "identifier": "paletter:b_embedded_visual_35",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_22.json",
+    "file": "blocks/b_embedded_visual_35.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling_layer",
@@ -4990,9 +5436,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_23",
+    "identifier": "paletter:b_embedded_visual_36",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_23.json",
+    "file": "blocks/b_embedded_visual_36.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling_layer",
@@ -5018,9 +5464,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_24",
+    "identifier": "paletter:b_embedded_visual_37",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_24.json",
+    "file": "blocks/b_embedded_visual_37.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "geometry.culling_shape",
@@ -5044,9 +5490,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_25",
+    "identifier": "paletter:b_embedded_visual_38",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_25.json",
+    "file": "blocks/b_embedded_visual_38.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -5072,9 +5518,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_26",
+    "identifier": "paletter:b_embedded_visual_39",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_26.json",
+    "file": "blocks/b_embedded_visual_39.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -5100,9 +5546,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_27",
+    "identifier": "paletter:b_embedded_visual_40",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_27.json",
+    "file": "blocks/b_embedded_visual_40.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -5128,9 +5574,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_28",
+    "identifier": "paletter:b_embedded_visual_41",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_28.json",
+    "file": "blocks/b_embedded_visual_41.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -5156,9 +5602,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_29",
+    "identifier": "paletter:b_embedded_visual_42",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_29.json",
+    "file": "blocks/b_embedded_visual_42.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -5184,9 +5630,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_30",
+    "identifier": "paletter:b_embedded_visual_43",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_30.json",
+    "file": "blocks/b_embedded_visual_43.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "geometry.identifier",
@@ -5210,9 +5656,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_31",
+    "identifier": "paletter:b_embedded_visual_44",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_31.json",
+    "file": "blocks/b_embedded_visual_44.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.identifier",
@@ -5238,9 +5684,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_32",
+    "identifier": "paletter:b_embedded_visual_45",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_32.json",
+    "file": "blocks/b_embedded_visual_45.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.identifier",
@@ -5266,9 +5712,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_33",
+    "identifier": "paletter:b_embedded_visual_46",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_33.json",
+    "file": "blocks/b_embedded_visual_46.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.identifier",
@@ -5294,9 +5740,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_34",
+    "identifier": "paletter:b_embedded_visual_47",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_34.json",
+    "file": "blocks/b_embedded_visual_47.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "geometry.n_way_visual_rotation",
@@ -5316,9 +5762,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_35",
+    "identifier": "paletter:b_embedded_visual_48",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_35.json",
+    "file": "blocks/b_embedded_visual_48.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation",
@@ -5340,9 +5786,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_36",
+    "identifier": "paletter:b_embedded_visual_49",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_36.json",
+    "file": "blocks/b_embedded_visual_49.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation",
@@ -5372,9 +5818,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_37",
+    "identifier": "paletter:b_embedded_visual_50",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_37.json",
+    "file": "blocks/b_embedded_visual_50.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "geometry.n_way_visual_rotation.x",
@@ -5398,9 +5844,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_38",
+    "identifier": "paletter:b_embedded_visual_51",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_38.json",
+    "file": "blocks/b_embedded_visual_51.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -5426,9 +5872,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_39",
+    "identifier": "paletter:b_embedded_visual_52",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_39.json",
+    "file": "blocks/b_embedded_visual_52.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -5454,9 +5900,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_40",
+    "identifier": "paletter:b_embedded_visual_53",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_40.json",
+    "file": "blocks/b_embedded_visual_53.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -5482,9 +5928,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_41",
+    "identifier": "paletter:b_embedded_visual_54",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_41.json",
+    "file": "blocks/b_embedded_visual_54.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -5510,9 +5956,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_42",
+    "identifier": "paletter:b_embedded_visual_55",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_42.json",
+    "file": "blocks/b_embedded_visual_55.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -5538,9 +5984,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_43",
+    "identifier": "paletter:b_embedded_visual_56",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_43.json",
+    "file": "blocks/b_embedded_visual_56.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "geometry.n_way_visual_rotation.y",
@@ -5564,9 +6010,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_44",
+    "identifier": "paletter:b_embedded_visual_57",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_44.json",
+    "file": "blocks/b_embedded_visual_57.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -5592,9 +6038,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_45",
+    "identifier": "paletter:b_embedded_visual_58",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_45.json",
+    "file": "blocks/b_embedded_visual_58.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -5620,9 +6066,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_46",
+    "identifier": "paletter:b_embedded_visual_59",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_46.json",
+    "file": "blocks/b_embedded_visual_59.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -5648,9 +6094,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_47",
+    "identifier": "paletter:b_embedded_visual_60",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_47.json",
+    "file": "blocks/b_embedded_visual_60.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -5676,9 +6122,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_48",
+    "identifier": "paletter:b_embedded_visual_61",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_48.json",
+    "file": "blocks/b_embedded_visual_61.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -5704,9 +6150,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_49",
+    "identifier": "paletter:b_embedded_visual_62",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_49.json",
+    "file": "blocks/b_embedded_visual_62.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "geometry.n_way_visual_rotation.z",
@@ -5730,9 +6176,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_50",
+    "identifier": "paletter:b_embedded_visual_63",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_50.json",
+    "file": "blocks/b_embedded_visual_63.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -5758,9 +6204,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_51",
+    "identifier": "paletter:b_embedded_visual_64",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_51.json",
+    "file": "blocks/b_embedded_visual_64.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -5786,9 +6232,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_52",
+    "identifier": "paletter:b_embedded_visual_65",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_52.json",
+    "file": "blocks/b_embedded_visual_65.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -5814,9 +6260,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_53",
+    "identifier": "paletter:b_embedded_visual_66",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_53.json",
+    "file": "blocks/b_embedded_visual_66.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -5842,9 +6288,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_54",
+    "identifier": "paletter:b_embedded_visual_67",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_54.json",
+    "file": "blocks/b_embedded_visual_67.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -5870,9 +6316,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_55",
+    "identifier": "paletter:b_embedded_visual_68",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_55.json",
+    "file": "blocks/b_embedded_visual_68.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -5899,9 +6345,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_56",
+    "identifier": "paletter:b_embedded_visual_69",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_56.json",
+    "file": "blocks/b_embedded_visual_69.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -5928,9 +6374,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_57",
+    "identifier": "paletter:b_embedded_visual_70",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_57.json",
+    "file": "blocks/b_embedded_visual_70.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -5957,9 +6403,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_58",
+    "identifier": "paletter:b_embedded_visual_71",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_58.json",
+    "file": "blocks/b_embedded_visual_71.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -5990,9 +6436,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_59",
+    "identifier": "paletter:b_embedded_visual_72",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_59.json",
+    "file": "blocks/b_embedded_visual_72.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -6023,9 +6469,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_60",
+    "identifier": "paletter:b_embedded_visual_73",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_60.json",
+    "file": "blocks/b_embedded_visual_73.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -6058,9 +6504,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_61",
+    "identifier": "paletter:b_embedded_visual_74",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_61.json",
+    "file": "blocks/b_embedded_visual_74.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -6093,9 +6539,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_62",
+    "identifier": "paletter:b_embedded_visual_75",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_62.json",
+    "file": "blocks/b_embedded_visual_75.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -6122,9 +6568,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_63",
+    "identifier": "paletter:b_embedded_visual_76",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_63.json",
+    "file": "blocks/b_embedded_visual_76.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "material_instances",
@@ -6144,9 +6590,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_64",
+    "identifier": "paletter:b_embedded_visual_77",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_64.json",
+    "file": "blocks/b_embedded_visual_77.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "material_instances",
@@ -6168,9 +6614,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_65",
+    "identifier": "paletter:b_embedded_visual_78",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_65.json",
+    "file": "blocks/b_embedded_visual_78.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "material_instances",
@@ -6200,9 +6646,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_66",
+    "identifier": "paletter:b_embedded_visual_79",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_66.json",
+    "file": "blocks/b_embedded_visual_79.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "material_instances",
@@ -6224,9 +6670,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_67",
+    "identifier": "paletter:b_embedded_visual_80",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_67.json",
+    "file": "blocks/b_embedded_visual_80.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "material_instances",
@@ -6252,9 +6698,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_68",
+    "identifier": "paletter:b_embedded_visual_81",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_68.json",
+    "file": "blocks/b_embedded_visual_81.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "material_instances",
@@ -6983,7 +7429,7 @@
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "bone_visibility",
-    "label": "map<boolean>:{}",
+    "label": "map<string>:{}",
     "value": {},
     "json": {
       "bone_visibility": {},
@@ -6998,6 +7444,92 @@
     "identifier": "paletter:b_geometry_10",
     "kind": "block",
     "file": "blocks/b_geometry_10.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1}",
+    "value": {
+      "bone_a": "q.block_state('paletter:flag')"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_11",
+    "kind": "block",
+    "file": "blocks/b_geometry_11.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{2}",
+    "value": {
+      "bone_a": "q.block_state('paletter:flag')",
+      "bone_a_2": "1.0"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')",
+        "bone_a_2": "1.0"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_12",
+    "kind": "block",
+    "file": "blocks/b_geometry_12.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{unknown key}",
+    "value": {
+      "paletter_unknown": "q.block_state('paletter:flag')"
+    },
+    "json": {
+      "bone_visibility": {
+        "paletter_unknown": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_13",
+    "kind": "block",
+    "file": "blocks/b_geometry_13.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<boolean>:{}",
+    "value": {},
+    "json": {
+      "bone_visibility": {},
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_14",
+    "kind": "block",
+    "file": "blocks/b_geometry_14.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "bone_visibility",
@@ -7017,9 +7549,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_11",
+    "identifier": "paletter:b_geometry_15",
     "kind": "block",
-    "file": "blocks/b_geometry_11.json",
+    "file": "blocks/b_geometry_15.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "bone_visibility",
@@ -7041,9 +7573,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_12",
+    "identifier": "paletter:b_geometry_16",
     "kind": "block",
-    "file": "blocks/b_geometry_12.json",
+    "file": "blocks/b_geometry_16.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "bone_visibility",
@@ -7063,9 +7595,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_13",
+    "identifier": "paletter:b_geometry_17",
     "kind": "block",
-    "file": "blocks/b_geometry_13.json",
+    "file": "blocks/b_geometry_17.json",
     "component": "block:minecraft:geometry",
     "role": "omit",
     "path": "culling",
@@ -7081,9 +7613,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_14",
+    "identifier": "paletter:b_geometry_18",
     "kind": "block",
-    "file": "blocks/b_geometry_14.json",
+    "file": "blocks/b_geometry_18.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "culling",
@@ -7101,9 +7633,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_15",
+    "identifier": "paletter:b_geometry_19",
     "kind": "block",
-    "file": "blocks/b_geometry_15.json",
+    "file": "blocks/b_geometry_19.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "culling",
@@ -7121,9 +7653,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_16",
+    "identifier": "paletter:b_geometry_20",
     "kind": "block",
-    "file": "blocks/b_geometry_16.json",
+    "file": "blocks/b_geometry_20.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "culling",
@@ -7141,9 +7673,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_17",
+    "identifier": "paletter:b_geometry_21",
     "kind": "block",
-    "file": "blocks/b_geometry_17.json",
+    "file": "blocks/b_geometry_21.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "culling",
@@ -7161,9 +7693,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_18",
+    "identifier": "paletter:b_geometry_22",
     "kind": "block",
-    "file": "blocks/b_geometry_18.json",
+    "file": "blocks/b_geometry_22.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "culling",
@@ -7181,9 +7713,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_19",
+    "identifier": "paletter:b_geometry_23",
     "kind": "block",
-    "file": "blocks/b_geometry_19.json",
+    "file": "blocks/b_geometry_23.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "culling_layer",
@@ -7202,9 +7734,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_20",
+    "identifier": "paletter:b_geometry_24",
     "kind": "block",
-    "file": "blocks/b_geometry_20.json",
+    "file": "blocks/b_geometry_24.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "culling_layer",
@@ -7223,9 +7755,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_21",
+    "identifier": "paletter:b_geometry_25",
     "kind": "block",
-    "file": "blocks/b_geometry_21.json",
+    "file": "blocks/b_geometry_25.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "culling_layer",
@@ -7244,9 +7776,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_22",
+    "identifier": "paletter:b_geometry_26",
     "kind": "block",
-    "file": "blocks/b_geometry_22.json",
+    "file": "blocks/b_geometry_26.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "culling_shape",
@@ -7265,9 +7797,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_23",
+    "identifier": "paletter:b_geometry_27",
     "kind": "block",
-    "file": "blocks/b_geometry_23.json",
+    "file": "blocks/b_geometry_27.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "culling_shape",
@@ -7286,9 +7818,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_24",
+    "identifier": "paletter:b_geometry_28",
     "kind": "block",
-    "file": "blocks/b_geometry_24.json",
+    "file": "blocks/b_geometry_28.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "culling_shape",
@@ -7307,9 +7839,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_25",
+    "identifier": "paletter:b_geometry_29",
     "kind": "block",
-    "file": "blocks/b_geometry_25.json",
+    "file": "blocks/b_geometry_29.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "culling_shape",
@@ -7328,9 +7860,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_26",
+    "identifier": "paletter:b_geometry_30",
     "kind": "block",
-    "file": "blocks/b_geometry_26.json",
+    "file": "blocks/b_geometry_30.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "culling_shape",
@@ -7349,9 +7881,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_27",
+    "identifier": "paletter:b_geometry_31",
     "kind": "block",
-    "file": "blocks/b_geometry_27.json",
+    "file": "blocks/b_geometry_31.json",
     "component": "block:minecraft:geometry",
     "role": "omit",
     "path": "identifier",
@@ -7367,9 +7899,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_28",
+    "identifier": "paletter:b_geometry_32",
     "kind": "block",
-    "file": "blocks/b_geometry_28.json",
+    "file": "blocks/b_geometry_32.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "identifier",
@@ -7387,9 +7919,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_29",
+    "identifier": "paletter:b_geometry_33",
     "kind": "block",
-    "file": "blocks/b_geometry_29.json",
+    "file": "blocks/b_geometry_33.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "identifier",
@@ -7407,9 +7939,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_30",
+    "identifier": "paletter:b_geometry_34",
     "kind": "block",
-    "file": "blocks/b_geometry_30.json",
+    "file": "blocks/b_geometry_34.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "identifier",
@@ -7427,9 +7959,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_31",
+    "identifier": "paletter:b_geometry_35",
     "kind": "block",
-    "file": "blocks/b_geometry_31.json",
+    "file": "blocks/b_geometry_35.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "identifier",
@@ -7447,9 +7979,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_32",
+    "identifier": "paletter:b_geometry_36",
     "kind": "block",
-    "file": "blocks/b_geometry_32.json",
+    "file": "blocks/b_geometry_36.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "identifier",
@@ -7467,9 +7999,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_33",
+    "identifier": "paletter:b_geometry_37",
     "kind": "block",
-    "file": "blocks/b_geometry_33.json",
+    "file": "blocks/b_geometry_37.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation",
@@ -7488,9 +8020,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_34",
+    "identifier": "paletter:b_geometry_38",
     "kind": "block",
-    "file": "blocks/b_geometry_34.json",
+    "file": "blocks/b_geometry_38.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation",
@@ -7509,9 +8041,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_35",
+    "identifier": "paletter:b_geometry_39",
     "kind": "block",
-    "file": "blocks/b_geometry_35.json",
+    "file": "blocks/b_geometry_39.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation",
@@ -7530,9 +8062,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_36",
+    "identifier": "paletter:b_geometry_40",
     "kind": "block",
-    "file": "blocks/b_geometry_36.json",
+    "file": "blocks/b_geometry_40.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation",
@@ -7551,9 +8083,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_37",
+    "identifier": "paletter:b_geometry_41",
     "kind": "block",
-    "file": "blocks/b_geometry_37.json",
+    "file": "blocks/b_geometry_41.json",
     "component": "block:minecraft:geometry",
     "role": "omit",
     "path": "uv_lock",
@@ -7567,9 +8099,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_38",
+    "identifier": "paletter:b_geometry_42",
     "kind": "block",
-    "file": "blocks/b_geometry_38.json",
+    "file": "blocks/b_geometry_42.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -7585,9 +8117,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_39",
+    "identifier": "paletter:b_geometry_43",
     "kind": "block",
-    "file": "blocks/b_geometry_39.json",
+    "file": "blocks/b_geometry_43.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -7603,9 +8135,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_40",
+    "identifier": "paletter:b_geometry_44",
     "kind": "block",
-    "file": "blocks/b_geometry_40.json",
+    "file": "blocks/b_geometry_44.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -7621,9 +8153,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_41",
+    "identifier": "paletter:b_geometry_45",
     "kind": "block",
-    "file": "blocks/b_geometry_41.json",
+    "file": "blocks/b_geometry_45.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -7643,9 +8175,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_42",
+    "identifier": "paletter:b_geometry_46",
     "kind": "block",
-    "file": "blocks/b_geometry_42.json",
+    "file": "blocks/b_geometry_46.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -7665,9 +8197,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_43",
+    "identifier": "paletter:b_geometry_47",
     "kind": "block",
-    "file": "blocks/b_geometry_43.json",
+    "file": "blocks/b_geometry_47.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -7689,9 +8221,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_44",
+    "identifier": "paletter:b_geometry_48",
     "kind": "block",
-    "file": "blocks/b_geometry_44.json",
+    "file": "blocks/b_geometry_48.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -7713,9 +8245,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_45",
+    "identifier": "paletter:b_geometry_49",
     "kind": "block",
-    "file": "blocks/b_geometry_45.json",
+    "file": "blocks/b_geometry_49.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -7731,9 +8263,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_46",
+    "identifier": "paletter:b_geometry_50",
     "kind": "block",
-    "file": "blocks/b_geometry_46.json",
+    "file": "blocks/b_geometry_50.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -7749,9 +8281,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_47",
+    "identifier": "paletter:b_geometry_51",
     "kind": "block",
-    "file": "blocks/b_geometry_47.json",
+    "file": "blocks/b_geometry_51.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -7767,9 +8299,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_48",
+    "identifier": "paletter:b_geometry_52",
     "kind": "block",
-    "file": "blocks/b_geometry_48.json",
+    "file": "blocks/b_geometry_52.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -7785,9 +8317,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_49",
+    "identifier": "paletter:b_geometry_53",
     "kind": "block",
-    "file": "blocks/b_geometry_49.json",
+    "file": "blocks/b_geometry_53.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "uv_lock",
@@ -8744,7 +9276,7 @@
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
-    "label": "object:{}",
+    "label": "map<string>:{}",
     "value": {},
     "json": {
       "geometry": {
@@ -8773,6 +9305,310 @@
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
+    "label": "map<string>:{} linked geometry.identifier",
+    "value": {},
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {}
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_13",
+    "kind": "block",
+    "file": "blocks/b_item_visual_13.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1}",
+    "value": {
+      "bone_a": "q.block_state('paletter:flag')"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "q.block_state('paletter:flag')"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_14",
+    "kind": "block",
+    "file": "blocks/b_item_visual_14.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} linked geometry.identifier",
+    "value": {
+      "bone_a": "q.block_state('paletter:flag')"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "q.block_state('paletter:flag')"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_15",
+    "kind": "block",
+    "file": "blocks/b_item_visual_15.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{2}",
+    "value": {
+      "bone_a": "q.block_state('paletter:flag')",
+      "bone_a_2": "1.0"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "q.block_state('paletter:flag')",
+          "bone_a_2": "1.0"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_16",
+    "kind": "block",
+    "file": "blocks/b_item_visual_16.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{2} linked geometry.identifier",
+    "value": {
+      "bone_a": "q.block_state('paletter:flag')",
+      "bone_a_2": "1.0"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "q.block_state('paletter:flag')",
+          "bone_a_2": "1.0"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_17",
+    "kind": "block",
+    "file": "blocks/b_item_visual_17.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{unknown key}",
+    "value": {
+      "paletter_unknown": "q.block_state('paletter:flag')"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "paletter_unknown": "q.block_state('paletter:flag')"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_18",
+    "kind": "block",
+    "file": "blocks/b_item_visual_18.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{unknown key} linked geometry.identifier",
+    "value": {
+      "paletter_unknown": "q.block_state('paletter:flag')"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "paletter_unknown": "q.block_state('paletter:flag')"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_19",
+    "kind": "block",
+    "file": "blocks/b_item_visual_19.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "object:{}",
+    "value": {},
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {}
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_20",
+    "kind": "block",
+    "file": "blocks/b_item_visual_20.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "object:{} linked geometry.identifier",
+    "value": {},
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {}
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_21",
+    "kind": "block",
+    "file": "blocks/b_item_visual_21.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
     "label": "map<boolean>:{}",
     "value": {},
     "json": {
@@ -8796,9 +9632,41 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_13",
+    "identifier": "paletter:b_item_visual_22",
     "kind": "block",
-    "file": "blocks/b_item_visual_13.json",
+    "file": "blocks/b_item_visual_22.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<boolean>:{} linked geometry.identifier",
+    "value": {},
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {}
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_23",
+    "kind": "block",
+    "file": "blocks/b_item_visual_23.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -8829,9 +9697,45 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_14",
+    "identifier": "paletter:b_item_visual_24",
     "kind": "block",
-    "file": "blocks/b_item_visual_14.json",
+    "file": "blocks/b_item_visual_24.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<boolean>:{1} linked geometry.identifier",
+    "value": {
+      "bone_a": true
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": true
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_25",
+    "kind": "block",
+    "file": "blocks/b_item_visual_25.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -8864,9 +9768,47 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_15",
+    "identifier": "paletter:b_item_visual_26",
     "kind": "block",
-    "file": "blocks/b_item_visual_15.json",
+    "file": "blocks/b_item_visual_26.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<boolean>:{2} linked geometry.identifier",
+    "value": {
+      "bone_a": true,
+      "bone_a_2": false
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": true,
+          "bone_a_2": false
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_27",
+    "kind": "block",
+    "file": "blocks/b_item_visual_27.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -8897,9 +9839,45 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_16",
+    "identifier": "paletter:b_item_visual_28",
     "kind": "block",
-    "file": "blocks/b_item_visual_16.json",
+    "file": "blocks/b_item_visual_28.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<boolean>:{unknown key} linked geometry.identifier",
+    "value": {
+      "paletter_unknown": true
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "paletter_unknown": true
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_29",
+    "kind": "block",
+    "file": "blocks/b_item_visual_29.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -8925,9 +9903,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_17",
+    "identifier": "paletter:b_item_visual_30",
     "kind": "block",
-    "file": "blocks/b_item_visual_17.json",
+    "file": "blocks/b_item_visual_30.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -8953,9 +9931,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_18",
+    "identifier": "paletter:b_item_visual_31",
     "kind": "block",
-    "file": "blocks/b_item_visual_18.json",
+    "file": "blocks/b_item_visual_31.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -8981,9 +9959,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_19",
+    "identifier": "paletter:b_item_visual_32",
     "kind": "block",
-    "file": "blocks/b_item_visual_19.json",
+    "file": "blocks/b_item_visual_32.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -9009,9 +9987,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_20",
+    "identifier": "paletter:b_item_visual_33",
     "kind": "block",
-    "file": "blocks/b_item_visual_20.json",
+    "file": "blocks/b_item_visual_33.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -9037,9 +10015,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_21",
+    "identifier": "paletter:b_item_visual_34",
     "kind": "block",
-    "file": "blocks/b_item_visual_21.json",
+    "file": "blocks/b_item_visual_34.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling_layer",
@@ -9065,9 +10043,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_22",
+    "identifier": "paletter:b_item_visual_35",
     "kind": "block",
-    "file": "blocks/b_item_visual_22.json",
+    "file": "blocks/b_item_visual_35.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling_layer",
@@ -9093,9 +10071,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_23",
+    "identifier": "paletter:b_item_visual_36",
     "kind": "block",
-    "file": "blocks/b_item_visual_23.json",
+    "file": "blocks/b_item_visual_36.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling_layer",
@@ -9121,9 +10099,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_24",
+    "identifier": "paletter:b_item_visual_37",
     "kind": "block",
-    "file": "blocks/b_item_visual_24.json",
+    "file": "blocks/b_item_visual_37.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -9149,9 +10127,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_25",
+    "identifier": "paletter:b_item_visual_38",
     "kind": "block",
-    "file": "blocks/b_item_visual_25.json",
+    "file": "blocks/b_item_visual_38.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -9177,9 +10155,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_26",
+    "identifier": "paletter:b_item_visual_39",
     "kind": "block",
-    "file": "blocks/b_item_visual_26.json",
+    "file": "blocks/b_item_visual_39.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -9205,9 +10183,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_27",
+    "identifier": "paletter:b_item_visual_40",
     "kind": "block",
-    "file": "blocks/b_item_visual_27.json",
+    "file": "blocks/b_item_visual_40.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -9233,9 +10211,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_28",
+    "identifier": "paletter:b_item_visual_41",
     "kind": "block",
-    "file": "blocks/b_item_visual_28.json",
+    "file": "blocks/b_item_visual_41.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -9261,9 +10239,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_29",
+    "identifier": "paletter:b_item_visual_42",
     "kind": "block",
-    "file": "blocks/b_item_visual_29.json",
+    "file": "blocks/b_item_visual_42.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.identifier",
@@ -9289,9 +10267,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_30",
+    "identifier": "paletter:b_item_visual_43",
     "kind": "block",
-    "file": "blocks/b_item_visual_30.json",
+    "file": "blocks/b_item_visual_43.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.identifier",
@@ -9317,9 +10295,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_31",
+    "identifier": "paletter:b_item_visual_44",
     "kind": "block",
-    "file": "blocks/b_item_visual_31.json",
+    "file": "blocks/b_item_visual_44.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.identifier",
@@ -9345,9 +10323,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_32",
+    "identifier": "paletter:b_item_visual_45",
     "kind": "block",
-    "file": "blocks/b_item_visual_32.json",
+    "file": "blocks/b_item_visual_45.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation",
@@ -9369,9 +10347,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_33",
+    "identifier": "paletter:b_item_visual_46",
     "kind": "block",
-    "file": "blocks/b_item_visual_33.json",
+    "file": "blocks/b_item_visual_46.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation",
@@ -9401,9 +10379,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_34",
+    "identifier": "paletter:b_item_visual_47",
     "kind": "block",
-    "file": "blocks/b_item_visual_34.json",
+    "file": "blocks/b_item_visual_47.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -9429,9 +10407,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_35",
+    "identifier": "paletter:b_item_visual_48",
     "kind": "block",
-    "file": "blocks/b_item_visual_35.json",
+    "file": "blocks/b_item_visual_48.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -9457,9 +10435,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_36",
+    "identifier": "paletter:b_item_visual_49",
     "kind": "block",
-    "file": "blocks/b_item_visual_36.json",
+    "file": "blocks/b_item_visual_49.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -9485,9 +10463,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_37",
+    "identifier": "paletter:b_item_visual_50",
     "kind": "block",
-    "file": "blocks/b_item_visual_37.json",
+    "file": "blocks/b_item_visual_50.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -9513,9 +10491,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_38",
+    "identifier": "paletter:b_item_visual_51",
     "kind": "block",
-    "file": "blocks/b_item_visual_38.json",
+    "file": "blocks/b_item_visual_51.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -9541,9 +10519,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_39",
+    "identifier": "paletter:b_item_visual_52",
     "kind": "block",
-    "file": "blocks/b_item_visual_39.json",
+    "file": "blocks/b_item_visual_52.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -9569,9 +10547,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_40",
+    "identifier": "paletter:b_item_visual_53",
     "kind": "block",
-    "file": "blocks/b_item_visual_40.json",
+    "file": "blocks/b_item_visual_53.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -9597,9 +10575,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_41",
+    "identifier": "paletter:b_item_visual_54",
     "kind": "block",
-    "file": "blocks/b_item_visual_41.json",
+    "file": "blocks/b_item_visual_54.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -9625,9 +10603,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_42",
+    "identifier": "paletter:b_item_visual_55",
     "kind": "block",
-    "file": "blocks/b_item_visual_42.json",
+    "file": "blocks/b_item_visual_55.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -9653,9 +10631,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_43",
+    "identifier": "paletter:b_item_visual_56",
     "kind": "block",
-    "file": "blocks/b_item_visual_43.json",
+    "file": "blocks/b_item_visual_56.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -9681,9 +10659,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_44",
+    "identifier": "paletter:b_item_visual_57",
     "kind": "block",
-    "file": "blocks/b_item_visual_44.json",
+    "file": "blocks/b_item_visual_57.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -9709,9 +10687,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_45",
+    "identifier": "paletter:b_item_visual_58",
     "kind": "block",
-    "file": "blocks/b_item_visual_45.json",
+    "file": "blocks/b_item_visual_58.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -9737,9 +10715,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_46",
+    "identifier": "paletter:b_item_visual_59",
     "kind": "block",
-    "file": "blocks/b_item_visual_46.json",
+    "file": "blocks/b_item_visual_59.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -9765,9 +10743,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_47",
+    "identifier": "paletter:b_item_visual_60",
     "kind": "block",
-    "file": "blocks/b_item_visual_47.json",
+    "file": "blocks/b_item_visual_60.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -9793,9 +10771,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_48",
+    "identifier": "paletter:b_item_visual_61",
     "kind": "block",
-    "file": "blocks/b_item_visual_48.json",
+    "file": "blocks/b_item_visual_61.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -9821,9 +10799,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_49",
+    "identifier": "paletter:b_item_visual_62",
     "kind": "block",
-    "file": "blocks/b_item_visual_49.json",
+    "file": "blocks/b_item_visual_62.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -9850,9 +10828,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_50",
+    "identifier": "paletter:b_item_visual_63",
     "kind": "block",
-    "file": "blocks/b_item_visual_50.json",
+    "file": "blocks/b_item_visual_63.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -9879,9 +10857,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_51",
+    "identifier": "paletter:b_item_visual_64",
     "kind": "block",
-    "file": "blocks/b_item_visual_51.json",
+    "file": "blocks/b_item_visual_64.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -9908,9 +10886,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_52",
+    "identifier": "paletter:b_item_visual_65",
     "kind": "block",
-    "file": "blocks/b_item_visual_52.json",
+    "file": "blocks/b_item_visual_65.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -9941,9 +10919,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_53",
+    "identifier": "paletter:b_item_visual_66",
     "kind": "block",
-    "file": "blocks/b_item_visual_53.json",
+    "file": "blocks/b_item_visual_66.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -9974,9 +10952,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_54",
+    "identifier": "paletter:b_item_visual_67",
     "kind": "block",
-    "file": "blocks/b_item_visual_54.json",
+    "file": "blocks/b_item_visual_67.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -10009,9 +10987,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_55",
+    "identifier": "paletter:b_item_visual_68",
     "kind": "block",
-    "file": "blocks/b_item_visual_55.json",
+    "file": "blocks/b_item_visual_68.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -10044,9 +11022,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_56",
+    "identifier": "paletter:b_item_visual_69",
     "kind": "block",
-    "file": "blocks/b_item_visual_56.json",
+    "file": "blocks/b_item_visual_69.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -10073,9 +11051,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_57",
+    "identifier": "paletter:b_item_visual_70",
     "kind": "block",
-    "file": "blocks/b_item_visual_57.json",
+    "file": "blocks/b_item_visual_70.json",
     "component": "block:minecraft:item_visual",
     "role": "omit",
     "path": "material_instances",
@@ -10085,9 +11063,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_58",
+    "identifier": "paletter:b_item_visual_71",
     "kind": "block",
-    "file": "blocks/b_item_visual_58.json",
+    "file": "blocks/b_item_visual_71.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "material_instances",
@@ -30223,6 +31201,27 @@
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.max",
+    "label": "number:-8 linked x.range.min",
+    "value": -8,
+    "json": {
+      "x": {
+        "range": {
+          "max": -8,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "x.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_8",
+    "kind": "block",
+    "file": "blocks/b_random_offset_8.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.max",
     "label": "number:-9",
     "value": -9,
     "json": {
@@ -30234,9 +31233,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_8",
+    "identifier": "paletter:b_random_offset_9",
     "kind": "block",
-    "file": "blocks/b_random_offset_8.json",
+    "file": "blocks/b_random_offset_9.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.max",
+    "label": "number:-9 linked x.range.min",
+    "value": -9,
+    "json": {
+      "x": {
+        "range": {
+          "max": -9,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "x.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_10",
+    "kind": "block",
+    "file": "blocks/b_random_offset_10.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.max",
@@ -30251,9 +31271,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_9",
+    "identifier": "paletter:b_random_offset_11",
     "kind": "block",
-    "file": "blocks/b_random_offset_9.json",
+    "file": "blocks/b_random_offset_11.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.max",
+    "label": "number:8 linked x.range.min",
+    "value": 8,
+    "json": {
+      "x": {
+        "range": {
+          "max": 8,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "x.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_12",
+    "kind": "block",
+    "file": "blocks/b_random_offset_12.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.max",
@@ -30268,9 +31309,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_10",
+    "identifier": "paletter:b_random_offset_13",
     "kind": "block",
-    "file": "blocks/b_random_offset_10.json",
+    "file": "blocks/b_random_offset_13.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.max",
+    "label": "number:9 linked x.range.min",
+    "value": 9,
+    "json": {
+      "x": {
+        "range": {
+          "max": 9,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "x.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_14",
+    "kind": "block",
+    "file": "blocks/b_random_offset_14.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.max",
@@ -30285,9 +31347,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_11",
+    "identifier": "paletter:b_random_offset_15",
     "kind": "block",
-    "file": "blocks/b_random_offset_11.json",
+    "file": "blocks/b_random_offset_15.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.max",
+    "label": "number:0 linked x.range.min",
+    "value": 0,
+    "json": {
+      "x": {
+        "range": {
+          "max": 0,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "x.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_16",
+    "kind": "block",
+    "file": "blocks/b_random_offset_16.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.max",
@@ -30302,9 +31385,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_12",
+    "identifier": "paletter:b_random_offset_17",
     "kind": "block",
-    "file": "blocks/b_random_offset_12.json",
+    "file": "blocks/b_random_offset_17.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.max",
+    "label": "number:0.5 linked x.range.min",
+    "value": 0.5,
+    "json": {
+      "x": {
+        "range": {
+          "max": 0.5,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "x.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_18",
+    "kind": "block",
+    "file": "blocks/b_random_offset_18.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.max",
@@ -30319,9 +31423,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_13",
+    "identifier": "paletter:b_random_offset_19",
     "kind": "block",
-    "file": "blocks/b_random_offset_13.json",
+    "file": "blocks/b_random_offset_19.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.max",
+    "label": "number:1 linked x.range.min",
+    "value": 1,
+    "json": {
+      "x": {
+        "range": {
+          "max": 1,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "x.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_20",
+    "kind": "block",
+    "file": "blocks/b_random_offset_20.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.max",
@@ -30336,9 +31461,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_14",
+    "identifier": "paletter:b_random_offset_21",
     "kind": "block",
-    "file": "blocks/b_random_offset_14.json",
+    "file": "blocks/b_random_offset_21.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.max",
+    "label": "number:2.25 linked x.range.min",
+    "value": 2.25,
+    "json": {
+      "x": {
+        "range": {
+          "max": 2.25,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "x.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_22",
+    "kind": "block",
+    "file": "blocks/b_random_offset_22.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.max",
@@ -30353,9 +31499,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_15",
+    "identifier": "paletter:b_random_offset_23",
     "kind": "block",
-    "file": "blocks/b_random_offset_15.json",
+    "file": "blocks/b_random_offset_23.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.max",
+    "label": "number:30 linked x.range.min",
+    "value": 30,
+    "json": {
+      "x": {
+        "range": {
+          "max": 30,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "x.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_24",
+    "kind": "block",
+    "file": "blocks/b_random_offset_24.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.max",
@@ -30370,9 +31537,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_16",
+    "identifier": "paletter:b_random_offset_25",
     "kind": "block",
-    "file": "blocks/b_random_offset_16.json",
+    "file": "blocks/b_random_offset_25.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.max",
+    "label": "number:-1 linked x.range.min",
+    "value": -1,
+    "json": {
+      "x": {
+        "range": {
+          "max": -1,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "x.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_26",
+    "kind": "block",
+    "file": "blocks/b_random_offset_26.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.min",
@@ -30387,9 +31575,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_17",
+    "identifier": "paletter:b_random_offset_27",
     "kind": "block",
-    "file": "blocks/b_random_offset_17.json",
+    "file": "blocks/b_random_offset_27.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.min",
+    "label": "number:-8 linked x.range.max",
+    "value": -8,
+    "json": {
+      "x": {
+        "range": {
+          "min": -8,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "x.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_28",
+    "kind": "block",
+    "file": "blocks/b_random_offset_28.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.min",
@@ -30404,9 +31613,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_18",
+    "identifier": "paletter:b_random_offset_29",
     "kind": "block",
-    "file": "blocks/b_random_offset_18.json",
+    "file": "blocks/b_random_offset_29.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.min",
+    "label": "number:-9 linked x.range.max",
+    "value": -9,
+    "json": {
+      "x": {
+        "range": {
+          "min": -9,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "x.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_30",
+    "kind": "block",
+    "file": "blocks/b_random_offset_30.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.min",
@@ -30421,9 +31651,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_19",
+    "identifier": "paletter:b_random_offset_31",
     "kind": "block",
-    "file": "blocks/b_random_offset_19.json",
+    "file": "blocks/b_random_offset_31.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.min",
+    "label": "number:8 linked x.range.max",
+    "value": 8,
+    "json": {
+      "x": {
+        "range": {
+          "min": 8,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "x.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_32",
+    "kind": "block",
+    "file": "blocks/b_random_offset_32.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.min",
@@ -30438,9 +31689,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_20",
+    "identifier": "paletter:b_random_offset_33",
     "kind": "block",
-    "file": "blocks/b_random_offset_20.json",
+    "file": "blocks/b_random_offset_33.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.min",
+    "label": "number:9 linked x.range.max",
+    "value": 9,
+    "json": {
+      "x": {
+        "range": {
+          "min": 9,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "x.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_34",
+    "kind": "block",
+    "file": "blocks/b_random_offset_34.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.min",
@@ -30455,9 +31727,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_21",
+    "identifier": "paletter:b_random_offset_35",
     "kind": "block",
-    "file": "blocks/b_random_offset_21.json",
+    "file": "blocks/b_random_offset_35.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.min",
+    "label": "number:0 linked x.range.max",
+    "value": 0,
+    "json": {
+      "x": {
+        "range": {
+          "min": 0,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "x.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_36",
+    "kind": "block",
+    "file": "blocks/b_random_offset_36.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.min",
@@ -30472,9 +31765,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_22",
+    "identifier": "paletter:b_random_offset_37",
     "kind": "block",
-    "file": "blocks/b_random_offset_22.json",
+    "file": "blocks/b_random_offset_37.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.min",
+    "label": "number:0.5 linked x.range.max",
+    "value": 0.5,
+    "json": {
+      "x": {
+        "range": {
+          "min": 0.5,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "x.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_38",
+    "kind": "block",
+    "file": "blocks/b_random_offset_38.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.min",
@@ -30489,9 +31803,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_23",
+    "identifier": "paletter:b_random_offset_39",
     "kind": "block",
-    "file": "blocks/b_random_offset_23.json",
+    "file": "blocks/b_random_offset_39.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.min",
+    "label": "number:1 linked x.range.max",
+    "value": 1,
+    "json": {
+      "x": {
+        "range": {
+          "min": 1,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "x.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_40",
+    "kind": "block",
+    "file": "blocks/b_random_offset_40.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.min",
@@ -30506,9 +31841,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_24",
+    "identifier": "paletter:b_random_offset_41",
     "kind": "block",
-    "file": "blocks/b_random_offset_24.json",
+    "file": "blocks/b_random_offset_41.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.min",
+    "label": "number:2.25 linked x.range.max",
+    "value": 2.25,
+    "json": {
+      "x": {
+        "range": {
+          "min": 2.25,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "x.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_42",
+    "kind": "block",
+    "file": "blocks/b_random_offset_42.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.min",
@@ -30523,9 +31879,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_25",
+    "identifier": "paletter:b_random_offset_43",
     "kind": "block",
-    "file": "blocks/b_random_offset_25.json",
+    "file": "blocks/b_random_offset_43.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.min",
+    "label": "number:30 linked x.range.max",
+    "value": 30,
+    "json": {
+      "x": {
+        "range": {
+          "min": 30,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "x.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_44",
+    "kind": "block",
+    "file": "blocks/b_random_offset_44.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.range.min",
@@ -30540,9 +31917,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_26",
+    "identifier": "paletter:b_random_offset_45",
     "kind": "block",
-    "file": "blocks/b_random_offset_26.json",
+    "file": "blocks/b_random_offset_45.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "x.range.min",
+    "label": "number:-1 linked x.range.max",
+    "value": -1,
+    "json": {
+      "x": {
+        "range": {
+          "min": -1,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "x.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_46",
+    "kind": "block",
+    "file": "blocks/b_random_offset_46.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.steps",
@@ -30556,9 +31954,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_27",
+    "identifier": "paletter:b_random_offset_47",
     "kind": "block",
-    "file": "blocks/b_random_offset_27.json",
+    "file": "blocks/b_random_offset_47.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.steps",
@@ -30572,9 +31970,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_28",
+    "identifier": "paletter:b_random_offset_48",
     "kind": "block",
-    "file": "blocks/b_random_offset_28.json",
+    "file": "blocks/b_random_offset_48.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.steps",
@@ -30588,9 +31986,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_29",
+    "identifier": "paletter:b_random_offset_49",
     "kind": "block",
-    "file": "blocks/b_random_offset_29.json",
+    "file": "blocks/b_random_offset_49.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.steps",
@@ -30604,9 +32002,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_30",
+    "identifier": "paletter:b_random_offset_50",
     "kind": "block",
-    "file": "blocks/b_random_offset_30.json",
+    "file": "blocks/b_random_offset_50.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.steps",
@@ -30620,9 +32018,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_31",
+    "identifier": "paletter:b_random_offset_51",
     "kind": "block",
-    "file": "blocks/b_random_offset_31.json",
+    "file": "blocks/b_random_offset_51.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.steps",
@@ -30636,9 +32034,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_32",
+    "identifier": "paletter:b_random_offset_52",
     "kind": "block",
-    "file": "blocks/b_random_offset_32.json",
+    "file": "blocks/b_random_offset_52.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "x.steps",
@@ -30652,9 +32050,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_33",
+    "identifier": "paletter:b_random_offset_53",
     "kind": "block",
-    "file": "blocks/b_random_offset_33.json",
+    "file": "blocks/b_random_offset_53.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y",
@@ -30665,9 +32063,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_34",
+    "identifier": "paletter:b_random_offset_54",
     "kind": "block",
-    "file": "blocks/b_random_offset_34.json",
+    "file": "blocks/b_random_offset_54.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y",
@@ -30682,9 +32080,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_35",
+    "identifier": "paletter:b_random_offset_55",
     "kind": "block",
-    "file": "blocks/b_random_offset_35.json",
+    "file": "blocks/b_random_offset_55.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range",
@@ -30697,9 +32095,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_36",
+    "identifier": "paletter:b_random_offset_56",
     "kind": "block",
-    "file": "blocks/b_random_offset_36.json",
+    "file": "blocks/b_random_offset_56.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.max",
@@ -30714,9 +32112,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_37",
+    "identifier": "paletter:b_random_offset_57",
     "kind": "block",
-    "file": "blocks/b_random_offset_37.json",
+    "file": "blocks/b_random_offset_57.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.max",
+    "label": "number:-8 linked y.range.min",
+    "value": -8,
+    "json": {
+      "y": {
+        "range": {
+          "max": -8,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "y.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_58",
+    "kind": "block",
+    "file": "blocks/b_random_offset_58.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.max",
@@ -30731,9 +32150,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_38",
+    "identifier": "paletter:b_random_offset_59",
     "kind": "block",
-    "file": "blocks/b_random_offset_38.json",
+    "file": "blocks/b_random_offset_59.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.max",
+    "label": "number:-9 linked y.range.min",
+    "value": -9,
+    "json": {
+      "y": {
+        "range": {
+          "max": -9,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "y.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_60",
+    "kind": "block",
+    "file": "blocks/b_random_offset_60.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.max",
@@ -30748,9 +32188,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_39",
+    "identifier": "paletter:b_random_offset_61",
     "kind": "block",
-    "file": "blocks/b_random_offset_39.json",
+    "file": "blocks/b_random_offset_61.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.max",
+    "label": "number:8 linked y.range.min",
+    "value": 8,
+    "json": {
+      "y": {
+        "range": {
+          "max": 8,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "y.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_62",
+    "kind": "block",
+    "file": "blocks/b_random_offset_62.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.max",
@@ -30765,9 +32226,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_40",
+    "identifier": "paletter:b_random_offset_63",
     "kind": "block",
-    "file": "blocks/b_random_offset_40.json",
+    "file": "blocks/b_random_offset_63.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.max",
+    "label": "number:9 linked y.range.min",
+    "value": 9,
+    "json": {
+      "y": {
+        "range": {
+          "max": 9,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "y.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_64",
+    "kind": "block",
+    "file": "blocks/b_random_offset_64.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.max",
@@ -30782,9 +32264,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_41",
+    "identifier": "paletter:b_random_offset_65",
     "kind": "block",
-    "file": "blocks/b_random_offset_41.json",
+    "file": "blocks/b_random_offset_65.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.max",
+    "label": "number:0 linked y.range.min",
+    "value": 0,
+    "json": {
+      "y": {
+        "range": {
+          "max": 0,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "y.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_66",
+    "kind": "block",
+    "file": "blocks/b_random_offset_66.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.max",
@@ -30799,9 +32302,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_42",
+    "identifier": "paletter:b_random_offset_67",
     "kind": "block",
-    "file": "blocks/b_random_offset_42.json",
+    "file": "blocks/b_random_offset_67.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.max",
+    "label": "number:0.5 linked y.range.min",
+    "value": 0.5,
+    "json": {
+      "y": {
+        "range": {
+          "max": 0.5,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "y.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_68",
+    "kind": "block",
+    "file": "blocks/b_random_offset_68.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.max",
@@ -30816,9 +32340,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_43",
+    "identifier": "paletter:b_random_offset_69",
     "kind": "block",
-    "file": "blocks/b_random_offset_43.json",
+    "file": "blocks/b_random_offset_69.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.max",
+    "label": "number:1 linked y.range.min",
+    "value": 1,
+    "json": {
+      "y": {
+        "range": {
+          "max": 1,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "y.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_70",
+    "kind": "block",
+    "file": "blocks/b_random_offset_70.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.max",
@@ -30833,9 +32378,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_44",
+    "identifier": "paletter:b_random_offset_71",
     "kind": "block",
-    "file": "blocks/b_random_offset_44.json",
+    "file": "blocks/b_random_offset_71.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.max",
+    "label": "number:2.25 linked y.range.min",
+    "value": 2.25,
+    "json": {
+      "y": {
+        "range": {
+          "max": 2.25,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "y.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_72",
+    "kind": "block",
+    "file": "blocks/b_random_offset_72.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.max",
@@ -30850,9 +32416,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_45",
+    "identifier": "paletter:b_random_offset_73",
     "kind": "block",
-    "file": "blocks/b_random_offset_45.json",
+    "file": "blocks/b_random_offset_73.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.max",
+    "label": "number:30 linked y.range.min",
+    "value": 30,
+    "json": {
+      "y": {
+        "range": {
+          "max": 30,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "y.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_74",
+    "kind": "block",
+    "file": "blocks/b_random_offset_74.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.max",
@@ -30867,9 +32454,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_46",
+    "identifier": "paletter:b_random_offset_75",
     "kind": "block",
-    "file": "blocks/b_random_offset_46.json",
+    "file": "blocks/b_random_offset_75.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.max",
+    "label": "number:-1 linked y.range.min",
+    "value": -1,
+    "json": {
+      "y": {
+        "range": {
+          "max": -1,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "y.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_76",
+    "kind": "block",
+    "file": "blocks/b_random_offset_76.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.min",
@@ -30884,9 +32492,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_47",
+    "identifier": "paletter:b_random_offset_77",
     "kind": "block",
-    "file": "blocks/b_random_offset_47.json",
+    "file": "blocks/b_random_offset_77.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.min",
+    "label": "number:-8 linked y.range.max",
+    "value": -8,
+    "json": {
+      "y": {
+        "range": {
+          "min": -8,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "y.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_78",
+    "kind": "block",
+    "file": "blocks/b_random_offset_78.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.min",
@@ -30901,9 +32530,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_48",
+    "identifier": "paletter:b_random_offset_79",
     "kind": "block",
-    "file": "blocks/b_random_offset_48.json",
+    "file": "blocks/b_random_offset_79.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.min",
+    "label": "number:-9 linked y.range.max",
+    "value": -9,
+    "json": {
+      "y": {
+        "range": {
+          "min": -9,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "y.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_80",
+    "kind": "block",
+    "file": "blocks/b_random_offset_80.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.min",
@@ -30918,9 +32568,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_49",
+    "identifier": "paletter:b_random_offset_81",
     "kind": "block",
-    "file": "blocks/b_random_offset_49.json",
+    "file": "blocks/b_random_offset_81.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.min",
+    "label": "number:8 linked y.range.max",
+    "value": 8,
+    "json": {
+      "y": {
+        "range": {
+          "min": 8,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "y.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_82",
+    "kind": "block",
+    "file": "blocks/b_random_offset_82.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.min",
@@ -30935,9 +32606,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_50",
+    "identifier": "paletter:b_random_offset_83",
     "kind": "block",
-    "file": "blocks/b_random_offset_50.json",
+    "file": "blocks/b_random_offset_83.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.min",
+    "label": "number:9 linked y.range.max",
+    "value": 9,
+    "json": {
+      "y": {
+        "range": {
+          "min": 9,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "y.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_84",
+    "kind": "block",
+    "file": "blocks/b_random_offset_84.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.min",
@@ -30952,9 +32644,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_51",
+    "identifier": "paletter:b_random_offset_85",
     "kind": "block",
-    "file": "blocks/b_random_offset_51.json",
+    "file": "blocks/b_random_offset_85.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.min",
+    "label": "number:0 linked y.range.max",
+    "value": 0,
+    "json": {
+      "y": {
+        "range": {
+          "min": 0,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "y.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_86",
+    "kind": "block",
+    "file": "blocks/b_random_offset_86.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.min",
@@ -30969,9 +32682,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_52",
+    "identifier": "paletter:b_random_offset_87",
     "kind": "block",
-    "file": "blocks/b_random_offset_52.json",
+    "file": "blocks/b_random_offset_87.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.min",
+    "label": "number:0.5 linked y.range.max",
+    "value": 0.5,
+    "json": {
+      "y": {
+        "range": {
+          "min": 0.5,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "y.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_88",
+    "kind": "block",
+    "file": "blocks/b_random_offset_88.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.min",
@@ -30986,9 +32720,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_53",
+    "identifier": "paletter:b_random_offset_89",
     "kind": "block",
-    "file": "blocks/b_random_offset_53.json",
+    "file": "blocks/b_random_offset_89.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.min",
+    "label": "number:1 linked y.range.max",
+    "value": 1,
+    "json": {
+      "y": {
+        "range": {
+          "min": 1,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "y.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_90",
+    "kind": "block",
+    "file": "blocks/b_random_offset_90.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.min",
@@ -31003,9 +32758,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_54",
+    "identifier": "paletter:b_random_offset_91",
     "kind": "block",
-    "file": "blocks/b_random_offset_54.json",
+    "file": "blocks/b_random_offset_91.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.min",
+    "label": "number:2.25 linked y.range.max",
+    "value": 2.25,
+    "json": {
+      "y": {
+        "range": {
+          "min": 2.25,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "y.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_92",
+    "kind": "block",
+    "file": "blocks/b_random_offset_92.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.min",
@@ -31020,9 +32796,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_55",
+    "identifier": "paletter:b_random_offset_93",
     "kind": "block",
-    "file": "blocks/b_random_offset_55.json",
+    "file": "blocks/b_random_offset_93.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.min",
+    "label": "number:30 linked y.range.max",
+    "value": 30,
+    "json": {
+      "y": {
+        "range": {
+          "min": 30,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "y.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_94",
+    "kind": "block",
+    "file": "blocks/b_random_offset_94.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.range.min",
@@ -31037,9 +32834,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_56",
+    "identifier": "paletter:b_random_offset_95",
     "kind": "block",
-    "file": "blocks/b_random_offset_56.json",
+    "file": "blocks/b_random_offset_95.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "y.range.min",
+    "label": "number:-1 linked y.range.max",
+    "value": -1,
+    "json": {
+      "y": {
+        "range": {
+          "min": -1,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "y.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_96",
+    "kind": "block",
+    "file": "blocks/b_random_offset_96.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.steps",
@@ -31053,9 +32871,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_57",
+    "identifier": "paletter:b_random_offset_97",
     "kind": "block",
-    "file": "blocks/b_random_offset_57.json",
+    "file": "blocks/b_random_offset_97.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.steps",
@@ -31069,9 +32887,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_58",
+    "identifier": "paletter:b_random_offset_98",
     "kind": "block",
-    "file": "blocks/b_random_offset_58.json",
+    "file": "blocks/b_random_offset_98.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.steps",
@@ -31085,9 +32903,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_59",
+    "identifier": "paletter:b_random_offset_99",
     "kind": "block",
-    "file": "blocks/b_random_offset_59.json",
+    "file": "blocks/b_random_offset_99.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.steps",
@@ -31101,9 +32919,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_60",
+    "identifier": "paletter:b_random_offset_100",
     "kind": "block",
-    "file": "blocks/b_random_offset_60.json",
+    "file": "blocks/b_random_offset_100.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.steps",
@@ -31117,9 +32935,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_61",
+    "identifier": "paletter:b_random_offset_101",
     "kind": "block",
-    "file": "blocks/b_random_offset_61.json",
+    "file": "blocks/b_random_offset_101.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.steps",
@@ -31133,9 +32951,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_62",
+    "identifier": "paletter:b_random_offset_102",
     "kind": "block",
-    "file": "blocks/b_random_offset_62.json",
+    "file": "blocks/b_random_offset_102.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "y.steps",
@@ -31149,9 +32967,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_63",
+    "identifier": "paletter:b_random_offset_103",
     "kind": "block",
-    "file": "blocks/b_random_offset_63.json",
+    "file": "blocks/b_random_offset_103.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z",
@@ -31162,9 +32980,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_64",
+    "identifier": "paletter:b_random_offset_104",
     "kind": "block",
-    "file": "blocks/b_random_offset_64.json",
+    "file": "blocks/b_random_offset_104.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z",
@@ -31179,9 +32997,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_65",
+    "identifier": "paletter:b_random_offset_105",
     "kind": "block",
-    "file": "blocks/b_random_offset_65.json",
+    "file": "blocks/b_random_offset_105.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range",
@@ -31194,9 +33012,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_66",
+    "identifier": "paletter:b_random_offset_106",
     "kind": "block",
-    "file": "blocks/b_random_offset_66.json",
+    "file": "blocks/b_random_offset_106.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.max",
@@ -31211,9 +33029,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_67",
+    "identifier": "paletter:b_random_offset_107",
     "kind": "block",
-    "file": "blocks/b_random_offset_67.json",
+    "file": "blocks/b_random_offset_107.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.max",
+    "label": "number:-8 linked z.range.min",
+    "value": -8,
+    "json": {
+      "z": {
+        "range": {
+          "max": -8,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "z.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_108",
+    "kind": "block",
+    "file": "blocks/b_random_offset_108.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.max",
@@ -31228,9 +33067,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_68",
+    "identifier": "paletter:b_random_offset_109",
     "kind": "block",
-    "file": "blocks/b_random_offset_68.json",
+    "file": "blocks/b_random_offset_109.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.max",
+    "label": "number:-9 linked z.range.min",
+    "value": -9,
+    "json": {
+      "z": {
+        "range": {
+          "max": -9,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "z.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_110",
+    "kind": "block",
+    "file": "blocks/b_random_offset_110.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.max",
@@ -31245,9 +33105,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_69",
+    "identifier": "paletter:b_random_offset_111",
     "kind": "block",
-    "file": "blocks/b_random_offset_69.json",
+    "file": "blocks/b_random_offset_111.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.max",
+    "label": "number:8 linked z.range.min",
+    "value": 8,
+    "json": {
+      "z": {
+        "range": {
+          "max": 8,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "z.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_112",
+    "kind": "block",
+    "file": "blocks/b_random_offset_112.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.max",
@@ -31262,9 +33143,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_70",
+    "identifier": "paletter:b_random_offset_113",
     "kind": "block",
-    "file": "blocks/b_random_offset_70.json",
+    "file": "blocks/b_random_offset_113.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.max",
+    "label": "number:9 linked z.range.min",
+    "value": 9,
+    "json": {
+      "z": {
+        "range": {
+          "max": 9,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "z.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_114",
+    "kind": "block",
+    "file": "blocks/b_random_offset_114.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.max",
@@ -31279,9 +33181,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_71",
+    "identifier": "paletter:b_random_offset_115",
     "kind": "block",
-    "file": "blocks/b_random_offset_71.json",
+    "file": "blocks/b_random_offset_115.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.max",
+    "label": "number:0 linked z.range.min",
+    "value": 0,
+    "json": {
+      "z": {
+        "range": {
+          "max": 0,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "z.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_116",
+    "kind": "block",
+    "file": "blocks/b_random_offset_116.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.max",
@@ -31296,9 +33219,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_72",
+    "identifier": "paletter:b_random_offset_117",
     "kind": "block",
-    "file": "blocks/b_random_offset_72.json",
+    "file": "blocks/b_random_offset_117.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.max",
+    "label": "number:0.5 linked z.range.min",
+    "value": 0.5,
+    "json": {
+      "z": {
+        "range": {
+          "max": 0.5,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "z.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_118",
+    "kind": "block",
+    "file": "blocks/b_random_offset_118.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.max",
@@ -31313,9 +33257,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_73",
+    "identifier": "paletter:b_random_offset_119",
     "kind": "block",
-    "file": "blocks/b_random_offset_73.json",
+    "file": "blocks/b_random_offset_119.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.max",
+    "label": "number:1 linked z.range.min",
+    "value": 1,
+    "json": {
+      "z": {
+        "range": {
+          "max": 1,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "z.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_120",
+    "kind": "block",
+    "file": "blocks/b_random_offset_120.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.max",
@@ -31330,9 +33295,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_74",
+    "identifier": "paletter:b_random_offset_121",
     "kind": "block",
-    "file": "blocks/b_random_offset_74.json",
+    "file": "blocks/b_random_offset_121.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.max",
+    "label": "number:2.25 linked z.range.min",
+    "value": 2.25,
+    "json": {
+      "z": {
+        "range": {
+          "max": 2.25,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "z.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_122",
+    "kind": "block",
+    "file": "blocks/b_random_offset_122.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.max",
@@ -31347,9 +33333,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_75",
+    "identifier": "paletter:b_random_offset_123",
     "kind": "block",
-    "file": "blocks/b_random_offset_75.json",
+    "file": "blocks/b_random_offset_123.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.max",
+    "label": "number:30 linked z.range.min",
+    "value": 30,
+    "json": {
+      "z": {
+        "range": {
+          "max": 30,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "z.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_124",
+    "kind": "block",
+    "file": "blocks/b_random_offset_124.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.max",
@@ -31364,9 +33371,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_76",
+    "identifier": "paletter:b_random_offset_125",
     "kind": "block",
-    "file": "blocks/b_random_offset_76.json",
+    "file": "blocks/b_random_offset_125.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.max",
+    "label": "number:-1 linked z.range.min",
+    "value": -1,
+    "json": {
+      "z": {
+        "range": {
+          "max": -1,
+          "min": -8
+        }
+      }
+    },
+    "linked": [
+      "z.range.min"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_126",
+    "kind": "block",
+    "file": "blocks/b_random_offset_126.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.min",
@@ -31381,9 +33409,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_77",
+    "identifier": "paletter:b_random_offset_127",
     "kind": "block",
-    "file": "blocks/b_random_offset_77.json",
+    "file": "blocks/b_random_offset_127.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.min",
+    "label": "number:-8 linked z.range.max",
+    "value": -8,
+    "json": {
+      "z": {
+        "range": {
+          "min": -8,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "z.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_128",
+    "kind": "block",
+    "file": "blocks/b_random_offset_128.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.min",
@@ -31398,9 +33447,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_78",
+    "identifier": "paletter:b_random_offset_129",
     "kind": "block",
-    "file": "blocks/b_random_offset_78.json",
+    "file": "blocks/b_random_offset_129.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.min",
+    "label": "number:-9 linked z.range.max",
+    "value": -9,
+    "json": {
+      "z": {
+        "range": {
+          "min": -9,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "z.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_130",
+    "kind": "block",
+    "file": "blocks/b_random_offset_130.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.min",
@@ -31415,9 +33485,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_79",
+    "identifier": "paletter:b_random_offset_131",
     "kind": "block",
-    "file": "blocks/b_random_offset_79.json",
+    "file": "blocks/b_random_offset_131.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.min",
+    "label": "number:8 linked z.range.max",
+    "value": 8,
+    "json": {
+      "z": {
+        "range": {
+          "min": 8,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "z.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_132",
+    "kind": "block",
+    "file": "blocks/b_random_offset_132.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.min",
@@ -31432,9 +33523,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_80",
+    "identifier": "paletter:b_random_offset_133",
     "kind": "block",
-    "file": "blocks/b_random_offset_80.json",
+    "file": "blocks/b_random_offset_133.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.min",
+    "label": "number:9 linked z.range.max",
+    "value": 9,
+    "json": {
+      "z": {
+        "range": {
+          "min": 9,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "z.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_134",
+    "kind": "block",
+    "file": "blocks/b_random_offset_134.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.min",
@@ -31449,9 +33561,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_81",
+    "identifier": "paletter:b_random_offset_135",
     "kind": "block",
-    "file": "blocks/b_random_offset_81.json",
+    "file": "blocks/b_random_offset_135.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.min",
+    "label": "number:0 linked z.range.max",
+    "value": 0,
+    "json": {
+      "z": {
+        "range": {
+          "min": 0,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "z.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_136",
+    "kind": "block",
+    "file": "blocks/b_random_offset_136.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.min",
@@ -31466,9 +33599,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_82",
+    "identifier": "paletter:b_random_offset_137",
     "kind": "block",
-    "file": "blocks/b_random_offset_82.json",
+    "file": "blocks/b_random_offset_137.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.min",
+    "label": "number:0.5 linked z.range.max",
+    "value": 0.5,
+    "json": {
+      "z": {
+        "range": {
+          "min": 0.5,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "z.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_138",
+    "kind": "block",
+    "file": "blocks/b_random_offset_138.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.min",
@@ -31483,9 +33637,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_83",
+    "identifier": "paletter:b_random_offset_139",
     "kind": "block",
-    "file": "blocks/b_random_offset_83.json",
+    "file": "blocks/b_random_offset_139.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.min",
+    "label": "number:1 linked z.range.max",
+    "value": 1,
+    "json": {
+      "z": {
+        "range": {
+          "min": 1,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "z.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_140",
+    "kind": "block",
+    "file": "blocks/b_random_offset_140.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.min",
@@ -31500,9 +33675,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_84",
+    "identifier": "paletter:b_random_offset_141",
     "kind": "block",
-    "file": "blocks/b_random_offset_84.json",
+    "file": "blocks/b_random_offset_141.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.min",
+    "label": "number:2.25 linked z.range.max",
+    "value": 2.25,
+    "json": {
+      "z": {
+        "range": {
+          "min": 2.25,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "z.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_142",
+    "kind": "block",
+    "file": "blocks/b_random_offset_142.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.min",
@@ -31517,9 +33713,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_85",
+    "identifier": "paletter:b_random_offset_143",
     "kind": "block",
-    "file": "blocks/b_random_offset_85.json",
+    "file": "blocks/b_random_offset_143.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.min",
+    "label": "number:30 linked z.range.max",
+    "value": 30,
+    "json": {
+      "z": {
+        "range": {
+          "min": 30,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "z.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_144",
+    "kind": "block",
+    "file": "blocks/b_random_offset_144.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.range.min",
@@ -31534,9 +33751,30 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_86",
+    "identifier": "paletter:b_random_offset_145",
     "kind": "block",
-    "file": "blocks/b_random_offset_86.json",
+    "file": "blocks/b_random_offset_145.json",
+    "component": "block:minecraft:random_offset",
+    "role": "field",
+    "path": "z.range.min",
+    "label": "number:-1 linked z.range.max",
+    "value": -1,
+    "json": {
+      "z": {
+        "range": {
+          "min": -1,
+          "max": 8
+        }
+      }
+    },
+    "linked": [
+      "z.range.max"
+    ]
+  },
+  {
+    "identifier": "paletter:b_random_offset_146",
+    "kind": "block",
+    "file": "blocks/b_random_offset_146.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.steps",
@@ -31550,9 +33788,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_87",
+    "identifier": "paletter:b_random_offset_147",
     "kind": "block",
-    "file": "blocks/b_random_offset_87.json",
+    "file": "blocks/b_random_offset_147.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.steps",
@@ -31566,9 +33804,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_88",
+    "identifier": "paletter:b_random_offset_148",
     "kind": "block",
-    "file": "blocks/b_random_offset_88.json",
+    "file": "blocks/b_random_offset_148.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.steps",
@@ -31582,9 +33820,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_89",
+    "identifier": "paletter:b_random_offset_149",
     "kind": "block",
-    "file": "blocks/b_random_offset_89.json",
+    "file": "blocks/b_random_offset_149.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.steps",
@@ -31598,9 +33836,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_90",
+    "identifier": "paletter:b_random_offset_150",
     "kind": "block",
-    "file": "blocks/b_random_offset_90.json",
+    "file": "blocks/b_random_offset_150.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.steps",
@@ -31614,9 +33852,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_91",
+    "identifier": "paletter:b_random_offset_151",
     "kind": "block",
-    "file": "blocks/b_random_offset_91.json",
+    "file": "blocks/b_random_offset_151.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.steps",
@@ -31630,9 +33868,9 @@
     }
   },
   {
-    "identifier": "paletter:b_random_offset_92",
+    "identifier": "paletter:b_random_offset_152",
     "kind": "block",
-    "file": "blocks/b_random_offset_92.json",
+    "file": "blocks/b_random_offset_152.json",
     "component": "block:minecraft:random_offset",
     "role": "field",
     "path": "z.steps",
@@ -39835,6 +42073,23 @@
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "replace_block_item",
+    "label": "boolean:true linked block",
+    "value": true,
+    "json": {
+      "block": "paletter:block_placer_14",
+      "replace_block_item": true
+    },
+    "linked": [
+      "block"
+    ]
+  },
+  {
+    "identifier": "paletter:block_placer_15",
+    "kind": "item",
+    "file": "items/block_placer_15.json",
+    "component": "item:minecraft:block_placer",
+    "role": "field",
+    "path": "replace_block_item",
     "label": "boolean:false",
     "value": false,
     "json": {
@@ -39843,9 +42098,26 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_15",
+    "identifier": "paletter:block_placer_16",
     "kind": "item",
-    "file": "items/block_placer_15.json",
+    "file": "items/block_placer_16.json",
+    "component": "item:minecraft:block_placer",
+    "role": "field",
+    "path": "replace_block_item",
+    "label": "boolean:false linked block",
+    "value": false,
+    "json": {
+      "block": "paletter:block_placer_16",
+      "replace_block_item": false
+    },
+    "linked": [
+      "block"
+    ]
+  },
+  {
+    "identifier": "paletter:block_placer_17",
+    "kind": "item",
+    "file": "items/block_placer_17.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on",
@@ -39857,9 +42129,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_16",
+    "identifier": "paletter:block_placer_18",
     "kind": "item",
-    "file": "items/block_placer_16.json",
+    "file": "items/block_placer_18.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on",
@@ -39879,9 +42151,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_17",
+    "identifier": "paletter:block_placer_19",
     "kind": "item",
-    "file": "items/block_placer_17.json",
+    "file": "items/block_placer_19.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on",
@@ -39907,9 +42179,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_18",
+    "identifier": "paletter:block_placer_20",
     "kind": "item",
-    "file": "items/block_placer_18.json",
+    "file": "items/block_placer_20.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on",
@@ -39921,9 +42193,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_19",
+    "identifier": "paletter:block_placer_21",
     "kind": "item",
-    "file": "items/block_placer_19.json",
+    "file": "items/block_placer_21.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on",
@@ -39935,9 +42207,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_20",
+    "identifier": "paletter:block_placer_22",
     "kind": "item",
-    "file": "items/block_placer_20.json",
+    "file": "items/block_placer_22.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on",
@@ -39949,9 +42221,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_21",
+    "identifier": "paletter:block_placer_23",
     "kind": "item",
-    "file": "items/block_placer_21.json",
+    "file": "items/block_placer_23.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on",
@@ -39963,9 +42235,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_22",
+    "identifier": "paletter:block_placer_24",
     "kind": "item",
-    "file": "items/block_placer_22.json",
+    "file": "items/block_placer_24.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on",
@@ -39977,9 +42249,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_23",
+    "identifier": "paletter:block_placer_25",
     "kind": "item",
-    "file": "items/block_placer_23.json",
+    "file": "items/block_placer_25.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on",
@@ -39991,9 +42263,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_24",
+    "identifier": "paletter:block_placer_26",
     "kind": "item",
-    "file": "items/block_placer_24.json",
+    "file": "items/block_placer_26.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].name",
@@ -40009,9 +42281,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_25",
+    "identifier": "paletter:block_placer_27",
     "kind": "item",
-    "file": "items/block_placer_25.json",
+    "file": "items/block_placer_27.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].name",
@@ -40027,9 +42299,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_26",
+    "identifier": "paletter:block_placer_28",
     "kind": "item",
-    "file": "items/block_placer_26.json",
+    "file": "items/block_placer_28.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].name",
@@ -40045,9 +42317,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_27",
+    "identifier": "paletter:block_placer_29",
     "kind": "item",
-    "file": "items/block_placer_27.json",
+    "file": "items/block_placer_29.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].name",
@@ -40063,9 +42335,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_28",
+    "identifier": "paletter:block_placer_30",
     "kind": "item",
-    "file": "items/block_placer_28.json",
+    "file": "items/block_placer_30.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].name",
@@ -40081,9 +42353,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_29",
+    "identifier": "paletter:block_placer_31",
     "kind": "item",
-    "file": "items/block_placer_29.json",
+    "file": "items/block_placer_31.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].states",
@@ -40100,9 +42372,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_30",
+    "identifier": "paletter:block_placer_32",
     "kind": "item",
-    "file": "items/block_placer_30.json",
+    "file": "items/block_placer_32.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].states",
@@ -40123,9 +42395,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_31",
+    "identifier": "paletter:block_placer_33",
     "kind": "item",
-    "file": "items/block_placer_31.json",
+    "file": "items/block_placer_33.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].states",
@@ -40148,9 +42420,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_32",
+    "identifier": "paletter:block_placer_34",
     "kind": "item",
-    "file": "items/block_placer_32.json",
+    "file": "items/block_placer_34.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].states",
@@ -40171,9 +42443,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_33",
+    "identifier": "paletter:block_placer_35",
     "kind": "item",
-    "file": "items/block_placer_33.json",
+    "file": "items/block_placer_35.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].states",
@@ -40190,9 +42462,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_34",
+    "identifier": "paletter:block_placer_36",
     "kind": "item",
-    "file": "items/block_placer_34.json",
+    "file": "items/block_placer_36.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].states",
@@ -40209,9 +42481,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_35",
+    "identifier": "paletter:block_placer_37",
     "kind": "item",
-    "file": "items/block_placer_35.json",
+    "file": "items/block_placer_37.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].states",
@@ -40228,9 +42500,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_36",
+    "identifier": "paletter:block_placer_38",
     "kind": "item",
-    "file": "items/block_placer_36.json",
+    "file": "items/block_placer_38.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].states",
@@ -40247,9 +42519,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_37",
+    "identifier": "paletter:block_placer_39",
     "kind": "item",
-    "file": "items/block_placer_37.json",
+    "file": "items/block_placer_39.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].states",
@@ -40266,9 +42538,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_38",
+    "identifier": "paletter:block_placer_40",
     "kind": "item",
-    "file": "items/block_placer_38.json",
+    "file": "items/block_placer_40.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].states",
@@ -40285,9 +42557,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_39",
+    "identifier": "paletter:block_placer_41",
     "kind": "item",
-    "file": "items/block_placer_39.json",
+    "file": "items/block_placer_41.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].states",
@@ -40304,9 +42576,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_40",
+    "identifier": "paletter:block_placer_42",
     "kind": "item",
-    "file": "items/block_placer_40.json",
+    "file": "items/block_placer_42.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].tags",
@@ -40322,9 +42594,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_41",
+    "identifier": "paletter:block_placer_43",
     "kind": "item",
-    "file": "items/block_placer_41.json",
+    "file": "items/block_placer_43.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].tags",
@@ -40340,9 +42612,9 @@
     }
   },
   {
-    "identifier": "paletter:block_placer_42",
+    "identifier": "paletter:block_placer_44",
     "kind": "item",
-    "file": "items/block_placer_42.json",
+    "file": "items/block_placer_44.json",
     "component": "item:minecraft:block_placer",
     "role": "field",
     "path": "use_on[].tags",
@@ -42471,6 +44743,26 @@
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "damage_chance.max",
+    "label": "integer:0 linked damage_chance.min",
+    "value": 0,
+    "json": {
+      "max_durability": 1,
+      "damage_chance": {
+        "max": 0,
+        "min": 0
+      }
+    },
+    "linked": [
+      "damage_chance.min"
+    ]
+  },
+  {
+    "identifier": "paletter:durability_6",
+    "kind": "item",
+    "file": "items/durability_6.json",
+    "component": "item:minecraft:durability",
+    "role": "field",
+    "path": "damage_chance.max",
     "label": "integer:-1",
     "value": -1,
     "json": {
@@ -42481,9 +44773,29 @@
     }
   },
   {
-    "identifier": "paletter:durability_6",
+    "identifier": "paletter:durability_7",
     "kind": "item",
-    "file": "items/durability_6.json",
+    "file": "items/durability_7.json",
+    "component": "item:minecraft:durability",
+    "role": "field",
+    "path": "damage_chance.max",
+    "label": "integer:-1 linked damage_chance.min",
+    "value": -1,
+    "json": {
+      "max_durability": 1,
+      "damage_chance": {
+        "max": -1,
+        "min": 0
+      }
+    },
+    "linked": [
+      "damage_chance.min"
+    ]
+  },
+  {
+    "identifier": "paletter:durability_8",
+    "kind": "item",
+    "file": "items/durability_8.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "damage_chance.max",
@@ -42497,9 +44809,29 @@
     }
   },
   {
-    "identifier": "paletter:durability_7",
+    "identifier": "paletter:durability_9",
     "kind": "item",
-    "file": "items/durability_7.json",
+    "file": "items/durability_9.json",
+    "component": "item:minecraft:durability",
+    "role": "field",
+    "path": "damage_chance.max",
+    "label": "integer:100 linked damage_chance.min",
+    "value": 100,
+    "json": {
+      "max_durability": 1,
+      "damage_chance": {
+        "max": 100,
+        "min": 0
+      }
+    },
+    "linked": [
+      "damage_chance.min"
+    ]
+  },
+  {
+    "identifier": "paletter:durability_10",
+    "kind": "item",
+    "file": "items/durability_10.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "damage_chance.max",
@@ -42513,9 +44845,29 @@
     }
   },
   {
-    "identifier": "paletter:durability_8",
+    "identifier": "paletter:durability_11",
     "kind": "item",
-    "file": "items/durability_8.json",
+    "file": "items/durability_11.json",
+    "component": "item:minecraft:durability",
+    "role": "field",
+    "path": "damage_chance.max",
+    "label": "integer:101 linked damage_chance.min",
+    "value": 101,
+    "json": {
+      "max_durability": 1,
+      "damage_chance": {
+        "max": 101,
+        "min": 0
+      }
+    },
+    "linked": [
+      "damage_chance.min"
+    ]
+  },
+  {
+    "identifier": "paletter:durability_12",
+    "kind": "item",
+    "file": "items/durability_12.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "damage_chance.max",
@@ -42529,9 +44881,29 @@
     }
   },
   {
-    "identifier": "paletter:durability_9",
+    "identifier": "paletter:durability_13",
     "kind": "item",
-    "file": "items/durability_9.json",
+    "file": "items/durability_13.json",
+    "component": "item:minecraft:durability",
+    "role": "field",
+    "path": "damage_chance.max",
+    "label": "integer:1 linked damage_chance.min",
+    "value": 1,
+    "json": {
+      "max_durability": 1,
+      "damage_chance": {
+        "max": 1,
+        "min": 0
+      }
+    },
+    "linked": [
+      "damage_chance.min"
+    ]
+  },
+  {
+    "identifier": "paletter:durability_14",
+    "kind": "item",
+    "file": "items/durability_14.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "damage_chance.max",
@@ -42545,9 +44917,29 @@
     }
   },
   {
-    "identifier": "paletter:durability_10",
+    "identifier": "paletter:durability_15",
     "kind": "item",
-    "file": "items/durability_10.json",
+    "file": "items/durability_15.json",
+    "component": "item:minecraft:durability",
+    "role": "field",
+    "path": "damage_chance.max",
+    "label": "integer:2 linked damage_chance.min",
+    "value": 2,
+    "json": {
+      "max_durability": 1,
+      "damage_chance": {
+        "max": 2,
+        "min": 0
+      }
+    },
+    "linked": [
+      "damage_chance.min"
+    ]
+  },
+  {
+    "identifier": "paletter:durability_16",
+    "kind": "item",
+    "file": "items/durability_16.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "damage_chance.max",
@@ -42561,9 +44953,29 @@
     }
   },
   {
-    "identifier": "paletter:durability_11",
+    "identifier": "paletter:durability_17",
     "kind": "item",
-    "file": "items/durability_11.json",
+    "file": "items/durability_17.json",
+    "component": "item:minecraft:durability",
+    "role": "field",
+    "path": "damage_chance.max",
+    "label": "integer:7 linked damage_chance.min",
+    "value": 7,
+    "json": {
+      "max_durability": 1,
+      "damage_chance": {
+        "max": 7,
+        "min": 0
+      }
+    },
+    "linked": [
+      "damage_chance.min"
+    ]
+  },
+  {
+    "identifier": "paletter:durability_18",
+    "kind": "item",
+    "file": "items/durability_18.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "damage_chance.max",
@@ -42577,9 +44989,29 @@
     }
   },
   {
-    "identifier": "paletter:durability_12",
+    "identifier": "paletter:durability_19",
     "kind": "item",
-    "file": "items/durability_12.json",
+    "file": "items/durability_19.json",
+    "component": "item:minecraft:durability",
+    "role": "field",
+    "path": "damage_chance.max",
+    "label": "integer:0.5 linked damage_chance.min",
+    "value": 0.5,
+    "json": {
+      "max_durability": 1,
+      "damage_chance": {
+        "max": 0.5,
+        "min": 0
+      }
+    },
+    "linked": [
+      "damage_chance.min"
+    ]
+  },
+  {
+    "identifier": "paletter:durability_20",
+    "kind": "item",
+    "file": "items/durability_20.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "damage_chance.min",
@@ -42593,9 +45025,29 @@
     }
   },
   {
-    "identifier": "paletter:durability_13",
+    "identifier": "paletter:durability_21",
     "kind": "item",
-    "file": "items/durability_13.json",
+    "file": "items/durability_21.json",
+    "component": "item:minecraft:durability",
+    "role": "field",
+    "path": "damage_chance.min",
+    "label": "integer:0 linked damage_chance.max",
+    "value": 0,
+    "json": {
+      "max_durability": 1,
+      "damage_chance": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "linked": [
+      "damage_chance.max"
+    ]
+  },
+  {
+    "identifier": "paletter:durability_22",
+    "kind": "item",
+    "file": "items/durability_22.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "damage_chance.min",
@@ -42609,9 +45061,29 @@
     }
   },
   {
-    "identifier": "paletter:durability_14",
+    "identifier": "paletter:durability_23",
     "kind": "item",
-    "file": "items/durability_14.json",
+    "file": "items/durability_23.json",
+    "component": "item:minecraft:durability",
+    "role": "field",
+    "path": "damage_chance.min",
+    "label": "integer:-1 linked damage_chance.max",
+    "value": -1,
+    "json": {
+      "max_durability": 1,
+      "damage_chance": {
+        "min": -1,
+        "max": 100
+      }
+    },
+    "linked": [
+      "damage_chance.max"
+    ]
+  },
+  {
+    "identifier": "paletter:durability_24",
+    "kind": "item",
+    "file": "items/durability_24.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "damage_chance.min",
@@ -42625,9 +45097,29 @@
     }
   },
   {
-    "identifier": "paletter:durability_15",
+    "identifier": "paletter:durability_25",
     "kind": "item",
-    "file": "items/durability_15.json",
+    "file": "items/durability_25.json",
+    "component": "item:minecraft:durability",
+    "role": "field",
+    "path": "damage_chance.min",
+    "label": "integer:100 linked damage_chance.max",
+    "value": 100,
+    "json": {
+      "max_durability": 1,
+      "damage_chance": {
+        "min": 100,
+        "max": 100
+      }
+    },
+    "linked": [
+      "damage_chance.max"
+    ]
+  },
+  {
+    "identifier": "paletter:durability_26",
+    "kind": "item",
+    "file": "items/durability_26.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "damage_chance.min",
@@ -42641,9 +45133,29 @@
     }
   },
   {
-    "identifier": "paletter:durability_16",
+    "identifier": "paletter:durability_27",
     "kind": "item",
-    "file": "items/durability_16.json",
+    "file": "items/durability_27.json",
+    "component": "item:minecraft:durability",
+    "role": "field",
+    "path": "damage_chance.min",
+    "label": "integer:101 linked damage_chance.max",
+    "value": 101,
+    "json": {
+      "max_durability": 1,
+      "damage_chance": {
+        "min": 101,
+        "max": 100
+      }
+    },
+    "linked": [
+      "damage_chance.max"
+    ]
+  },
+  {
+    "identifier": "paletter:durability_28",
+    "kind": "item",
+    "file": "items/durability_28.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "damage_chance.min",
@@ -42657,9 +45169,29 @@
     }
   },
   {
-    "identifier": "paletter:durability_17",
+    "identifier": "paletter:durability_29",
     "kind": "item",
-    "file": "items/durability_17.json",
+    "file": "items/durability_29.json",
+    "component": "item:minecraft:durability",
+    "role": "field",
+    "path": "damage_chance.min",
+    "label": "integer:1 linked damage_chance.max",
+    "value": 1,
+    "json": {
+      "max_durability": 1,
+      "damage_chance": {
+        "min": 1,
+        "max": 100
+      }
+    },
+    "linked": [
+      "damage_chance.max"
+    ]
+  },
+  {
+    "identifier": "paletter:durability_30",
+    "kind": "item",
+    "file": "items/durability_30.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "damage_chance.min",
@@ -42673,9 +45205,29 @@
     }
   },
   {
-    "identifier": "paletter:durability_18",
+    "identifier": "paletter:durability_31",
     "kind": "item",
-    "file": "items/durability_18.json",
+    "file": "items/durability_31.json",
+    "component": "item:minecraft:durability",
+    "role": "field",
+    "path": "damage_chance.min",
+    "label": "integer:2 linked damage_chance.max",
+    "value": 2,
+    "json": {
+      "max_durability": 1,
+      "damage_chance": {
+        "min": 2,
+        "max": 100
+      }
+    },
+    "linked": [
+      "damage_chance.max"
+    ]
+  },
+  {
+    "identifier": "paletter:durability_32",
+    "kind": "item",
+    "file": "items/durability_32.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "damage_chance.min",
@@ -42689,9 +45241,29 @@
     }
   },
   {
-    "identifier": "paletter:durability_19",
+    "identifier": "paletter:durability_33",
     "kind": "item",
-    "file": "items/durability_19.json",
+    "file": "items/durability_33.json",
+    "component": "item:minecraft:durability",
+    "role": "field",
+    "path": "damage_chance.min",
+    "label": "integer:7 linked damage_chance.max",
+    "value": 7,
+    "json": {
+      "max_durability": 1,
+      "damage_chance": {
+        "min": 7,
+        "max": 100
+      }
+    },
+    "linked": [
+      "damage_chance.max"
+    ]
+  },
+  {
+    "identifier": "paletter:durability_34",
+    "kind": "item",
+    "file": "items/durability_34.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "damage_chance.min",
@@ -42705,9 +45277,29 @@
     }
   },
   {
-    "identifier": "paletter:durability_20",
+    "identifier": "paletter:durability_35",
     "kind": "item",
-    "file": "items/durability_20.json",
+    "file": "items/durability_35.json",
+    "component": "item:minecraft:durability",
+    "role": "field",
+    "path": "damage_chance.min",
+    "label": "integer:0.5 linked damage_chance.max",
+    "value": 0.5,
+    "json": {
+      "max_durability": 1,
+      "damage_chance": {
+        "min": 0.5,
+        "max": 100
+      }
+    },
+    "linked": [
+      "damage_chance.max"
+    ]
+  },
+  {
+    "identifier": "paletter:durability_36",
+    "kind": "item",
+    "file": "items/durability_36.json",
     "component": "item:minecraft:durability",
     "role": "omit",
     "path": "max_durability",
@@ -42715,9 +45307,9 @@
     "json": {}
   },
   {
-    "identifier": "paletter:durability_21",
+    "identifier": "paletter:durability_37",
     "kind": "item",
-    "file": "items/durability_21.json",
+    "file": "items/durability_37.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "max_durability",
@@ -42728,9 +45320,9 @@
     }
   },
   {
-    "identifier": "paletter:durability_22",
+    "identifier": "paletter:durability_38",
     "kind": "item",
-    "file": "items/durability_22.json",
+    "file": "items/durability_38.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "max_durability",
@@ -42741,9 +45333,9 @@
     }
   },
   {
-    "identifier": "paletter:durability_23",
+    "identifier": "paletter:durability_39",
     "kind": "item",
-    "file": "items/durability_23.json",
+    "file": "items/durability_39.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "max_durability",
@@ -42754,9 +45346,9 @@
     }
   },
   {
-    "identifier": "paletter:durability_24",
+    "identifier": "paletter:durability_40",
     "kind": "item",
-    "file": "items/durability_24.json",
+    "file": "items/durability_40.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "max_durability",
@@ -42767,9 +45359,9 @@
     }
   },
   {
-    "identifier": "paletter:durability_25",
+    "identifier": "paletter:durability_41",
     "kind": "item",
-    "file": "items/durability_25.json",
+    "file": "items/durability_41.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "max_durability",
@@ -42780,9 +45372,9 @@
     }
   },
   {
-    "identifier": "paletter:durability_26",
+    "identifier": "paletter:durability_42",
     "kind": "item",
-    "file": "items/durability_26.json",
+    "file": "items/durability_42.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "max_durability",
@@ -42793,9 +45385,9 @@
     }
   },
   {
-    "identifier": "paletter:durability_27",
+    "identifier": "paletter:durability_43",
     "kind": "item",
-    "file": "items/durability_27.json",
+    "file": "items/durability_43.json",
     "component": "item:minecraft:durability",
     "role": "field",
     "path": "max_durability",

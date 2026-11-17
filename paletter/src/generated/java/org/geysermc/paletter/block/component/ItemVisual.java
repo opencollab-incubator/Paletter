@@ -190,7 +190,7 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
      *        limited to using the "query.block_state()" query. When using "bone_visibility" in geometry components in the
      *        "permutations" section, you must also have a default version of the geometry component with "bone_visibility"
      *        in the "components" section. Value must have at most 64 items. Add-on JSON {@code bone_visibility}. Default:
-     *        <code>&#123;&#125;</code>.
+     *        <code>&#123;&#125;</code>. Compiled by the hand transform {@code Transforms.itemVisualBoneVisibility}.
      * @param culling Which block_culling .json file to use when rendering this block. Value must have at most 256 items. Add-on
      *        JSON {@code culling}. Optional (null: not set).
      * @param cullingLayer A string that allows culling rule to group multiple blocks together when comparing them. When using the

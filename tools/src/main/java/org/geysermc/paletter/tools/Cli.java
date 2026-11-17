@@ -535,7 +535,8 @@ public final class Cli implements Runnable {
 
     @Command(name = "check-mappings", description = "infer, but fail if the committed outputs differ")
     static final class CheckMappings extends Rooted implements Callable<Integer> {
-        @Option(names = "--strict", description = "also fail on residual bits and captured wire paths nothing explains (CI and update)")
+        @Option(names = "--strict", description = "also fail on residual bits, captured wire paths nothing explains and fields whose "
+            + "evidence another field decided (CI and update)")
         boolean strict;
 
         @Override
@@ -546,6 +547,7 @@ public final class Cli implements Runnable {
                 return ok ? 0 : 1;
             }
             List<String> unexplained = new ArrayList<>(inference.unexplainedBits());
+            unexplained.addAll(inference.linkedFields());
             Path model = root().resolve(Layout.MODEL);
             JsonObject mappings = JsonParser.parseString(Files.readString(model.resolve("mappings.json"))).getAsJsonObject();
             Model components = Fixtures.read(model).apply(Model.read(model.resolve("components.json")));

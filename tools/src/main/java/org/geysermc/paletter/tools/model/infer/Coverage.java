@@ -69,7 +69,7 @@ public final class Coverage {
                     status = r.get("status").getAsString().equals("rejected") ? "rejected" : "not-generated";
                 }
                 map.merge(status, 1, Integer::sum);
-                if (List.of("inferred", "partial", "unresolved", "hand-rule", "dropped", "no-evidence").contains(status)) {
+                if (List.of("inferred", "partial", "unresolved", "hand-rule", "dropped", "linked", "no-evidence").contains(status)) {
                     map.merge("accepted by BDS", 1, Integer::sum);
                 }
                 if (List.of("inferred", "partial", "unresolved", "hand-rule").contains(status)) {
@@ -105,7 +105,7 @@ public final class Coverage {
         fields.values().forEach(m -> statuses.addAll(m.keySet()));
         md.append("| status | docs fields | errata fields |\n|---|---|---|\n");
         for (String s : List.of("documented", "accepted by BDS", "sent on wire", "inferred", "partial", "unresolved", "hand-rule",
-            "dropped", "rejected", "no-evidence", "not-generated")) {
+            "dropped", "linked", "rejected", "no-evidence", "not-generated")) {
             md.append("| ").append(s).append(" | ").append(fields.get("docs").getOrDefault(s, 0)).append(" | ")
                 .append(fields.get("errata").getOrDefault(s, 0)).append(" |\n");
         }
@@ -113,7 +113,9 @@ public final class Coverage {
 
             `inferred`: every wire leaf the field moves is explained by an automatic rule; `partial`: some are; `unresolved`: none is
             (needs a hand rule); `hand-rule`: unresolved or partial and named in `HandTransforms`; `dropped`: BDS accepts the
-            field but nothing on the wire follows it (server only); `rejected`: every variant setting it was rejected;
+            field but nothing on the wire follows it (server only); `linked`: no rule follows its value (nothing on the wire
+            does, or only its presence), but its variants' messages name another field, which may have decided it (vary them
+            together and capture again); `rejected`: every variant setting it was rejected;
             `no-evidence`: only values equal to the base were accepted; `not-generated`: skipped (see `fixtures.json`).
 
             """);

@@ -117,15 +117,14 @@ public final class Transforms {
      * {@code minecraft:geometry}, in the shape every BDS 1.26.63.1 capture shows: the description fields plus four flags
      * BDS always sends as 0 ({@code ignoreGeometryForIsSolid}, {@code isV1Fullblock}, {@code needsLegacyTopRotation},
      * {@code useBlockTypeLightAbsorption}), unset fields as BDS sends them ({@code culling} "", {@code culling_layer}
-     * undefined). Bone visibility is a Molang expression, kept as a string like BDS does; the constants
-     * {@code true}/{@code false} become {@code "1.000000"}/{@code "0.000000"}, which no rule over the JSON value fits.
+     * undefined). Bone visibility is {@link #boneVisibility}.
      * <p>
      * BDS sends {@code n_way_visual_rotation} from 1.26.63.1 on, every axis, "" for an axis not set. The captures of
      * BDS 1.26.36.1 to 1.26.52.3 rejected the base of the component, so their shape is this one without it.
      */
     public static void geometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Geometry c) {
-        NbtMapBuilder geometry = geometry(c.identifier(), c.boneVisibility(), c.culling(), c.cullingLayer(), c.cullingShape(),
-            c.uvLock(), c.uvLockBones()).toBuilder();
+        NbtMapBuilder geometry = geometry(c.identifier(), boneVisibility(ctx, Geometry.NAME, c.boneVisibility()), c.culling(), c.cullingLayer(),
+            c.cullingShape(), c.uvLock(), c.uvLockBones()).toBuilder();
         Geometry.NWayVisualRotation rotation = c.nWayVisualRotation();
         if (rotation != null && ctx.protocol() >= ComponentIndex.BDS_1_26_63_1) {
             geometry.putCompound("n_way_visual_rotation", rotation(rotation.x(), rotation.y(), rotation.z()));
@@ -135,13 +134,13 @@ public final class Transforms {
 
     /**
      * The geometry of {@code minecraft:embedded_visual}: the shape of {@link #geometry} without its four flags, inline,
-     * with {@code n_way_visual_rotation} from BDS 1.26.63.1 on and the {@code uv_lock} of {@link #uvLock(Boolean, List)}
-     * (the captures of BDS 1.26.36.1 to 1.26.70.24).
+     * with {@code n_way_visual_rotation} from BDS 1.26.63.1 on, the {@code uv_lock} of {@link #uvLock(Boolean, List)} and the
+     * bone visibility of {@link #boneVisibility}. The captures of BDS 1.26.36.1 to 1.26.70.24 bear it out.
      */
     public static void embeddedGeometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull EmbeddedVisual c) {
         EmbeddedVisual.Geometry g = c.geometry();
-        NbtMapBuilder geometry = geometry(g.identifier(), g.boneVisibility(), g.culling(), g.cullingLayer(), g.cullingShape(), g.uvLock(),
-            g.uvLockBones()).toBuilder();
+        NbtMapBuilder geometry = geometry(g.identifier(), boneVisibility(ctx, EmbeddedVisual.NAME, g.boneVisibility()), g.culling(),
+            g.cullingLayer(), g.cullingShape(), g.uvLock(), g.uvLockBones()).toBuilder();
         for (String flag : List.of("ignoreGeometryForIsSolid", "isV1Fullblock", "needsLegacyTopRotation", "useBlockTypeLightAbsorption")) {
             geometry.remove(flag);
         }
@@ -150,6 +149,52 @@ public final class Transforms {
             geometry.putCompound("n_way_visual_rotation", rotation(rotation.x(), rotation.y(), rotation.z()));
         }
         out.put("minecraft:embedded_visual.geometry", geometry.build());
+    }
+
+    /**
+     * {@code item_visual.geometry.bone_visibility}: the {@link #boneVisibility} every geometry sends, which no rule over the
+     * JSON value fits; the other geometry fields of {@code item_visual} have inferred rules.
+     */
+    public static void itemVisualBoneVisibility(@NonNull WireContext ctx, @NonNull WireNode out, ItemVisual.@NonNull Geometry c) {
+        out.put("minecraft:item_visual.geometryDescription.bone_visibility", boneVisibility(ctx, ItemVisual.NAME, c.boneVisibility()));
+    }
+
+    /**
+     * {@code bone_visibility} as BDS sends it for the geometry of {@code minecraft:geometry}, {@code embedded_visual} and
+     * {@code item_visual} alike (captures of BDS 1.26.36.1 to 1.26.70.24, with a geometry other than
+     * {@code minecraft:geometry.full_block}, for which BDS refuses any entry; a bone the geometry does not have is taken):
+     * per bone a Molang expression.
+     * <ul>
+     *     <li>The text is sent as written, a number constant in six decimals ({@code "1.0"} -> {@code "1.000000"}, like
+     *     {@link #condition}).</li>
+     *     <li>BDS 1.26.36.1 sends each as a compound {@code {expression, version: 13s}} (13: the block's
+     *     {@code molangVersion}), 1.26.45.1 and later as a string.</li>
+     *     <li>A boolean is {@code "1.000000"} or {@code "0.000000"} from BDS 1.26.63.1 on. The older builds refuse the
+     *     block for it ("expected an object", "invalid numeric value", "invalid string"): left out there, with a
+     *     warning.</li>
+     * </ul>
+     */
+    private static @NonNull NbtMap boneVisibility(@NonNull WireContext ctx, @NonNull String component, @Nullable Map<String, String> bones) {
+        NbtMapBuilder visibility = NbtMap.builder();
+        if (bones == null) {
+            return visibility.build();
+        }
+        boolean booleans = ctx.protocol() >= ComponentIndex.BDS_1_26_63_1;
+        boolean compound = ctx.protocol() < ComponentIndex.BDS_1_26_45_1;
+        bones.forEach((bone, value) -> {
+            boolean constant = value.equals("true") || value.equals("false");
+            if (constant && !booleans) {
+                ctx.drop(component, "bone_visibility " + bone + ": " + value + " (BDS before 1.26.63.1 takes a Molang expression, not a boolean)");
+                return;
+            }
+            String expression = constant ? (value.equals("true") ? "1.000000" : "0.000000") : condition(value);
+            if (compound) {
+                visibility.putCompound(bone, NbtMap.builder().putString("expression", expression).putShort("version", (short) 13).build());
+            } else {
+                visibility.putString(bone, expression);
+            }
+        });
+        return visibility.build();
     }
 
     /** {@code n_way_visual_rotation}: every axis, an empty string for an axis that is not set. */
@@ -161,19 +206,11 @@ public final class Transforms {
             .build();
     }
 
-    static @NonNull NbtMap geometry(String identifier, @Nullable Map<String, String> bones, @Nullable String culling,
+    static @NonNull NbtMap geometry(String identifier, @NonNull NbtMap boneVisibility, @Nullable String culling,
                                     @Nullable String cullingLayer, @Nullable String cullingShape, @Nullable Boolean uvLock,
                                     @Nullable List<String> uvLockBones) {
-        NbtMapBuilder visibility = NbtMap.builder();
-        if (bones != null) {
-            bones.forEach((bone, expression) -> visibility.putString(bone, switch (expression) {
-                case "true" -> "1.000000";
-                case "false" -> "0.000000";
-                default -> expression;
-            }));
-        }
         NbtMapBuilder geometry = NbtMap.builder()
-            .putCompound("bone_visibility", visibility.build())
+            .putCompound("bone_visibility", boneVisibility)
             .putString("culling", culling == null ? "" : culling)
             .putString("culling_layer", cullingLayer == null ? DEFAULT_CULLING_LAYER : cullingLayer)
             .putString("culling_shape", cullingShape == null || cullingShape.equals(DEFAULT_CULLING_SHAPE) ? "" : cullingShape)
@@ -245,7 +282,7 @@ public final class Transforms {
     /**
      * {@code minecraft:embedded_visual}'s material instances: a whole {@code minecraft:material_instances} object, inline
      * per face with its flags as bytes. Setting it also fills in the sibling geometry's defaults, so correlating one field
-     * at a time cannot separate the two. Unverified: BDS rejected every {@code embedded_visual} variant of the captures.
+     * at a time cannot separate the two. The captures of BDS 1.26.36.1 to 1.26.70.24 bear out three accepted variants.
      */
     public static void materialInstancesInline(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull EmbeddedVisual c) {
         NbtMapBuilder faces = NbtMap.builder();
@@ -407,6 +444,22 @@ public final class Transforms {
             return;
         }
         out.put("minecraft:block_placer.block", vanilla ? Wire.namespaced(block) : block);
+    }
+
+    /**
+     * {@code block_placer.replace_block_item}: BDS takes it only for the block that has the item's own identifier. For
+     * any other block it logs "Item identifier ... does not match the block identifier ... Cannot replace the block item"
+     * and sends {@code replaceBlockItem} 0, so the leaf follows two fields and the item's identifier, which no rule over
+     * the field's value fits. The captures of BDS 1.26.36.1 to 1.26.70.24 send 1 for {@code true} with a block of the
+     * item's identifier and 0 for {@code true} with {@code minecraft:dirt}.
+     */
+    public static void replaceBlockItem(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull BlockPlacer c) {
+        boolean ownBlock = c.block() != null && Wire.namespaced(c.block()).equals(ctx.subject());
+        if (c.replaceBlockItem() && !ownBlock) {
+            ctx.changed(BlockPlacer.NAME, "replace_block_item needs the block to have the item's identifier, not " + c.block()
+                + "; sent as false, like BDS");
+        }
+        out.put("minecraft:block_placer.replaceBlockItem", Wire.bool(c.replaceBlockItem() && ownBlock));
     }
 
     // ---- item descriptors --------------------------------------------------------------------------------------------

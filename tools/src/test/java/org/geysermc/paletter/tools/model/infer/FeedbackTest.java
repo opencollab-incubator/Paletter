@@ -12,7 +12,7 @@ class FeedbackTest {
     private static String facts(String component, String path, String... lines) {
         Feedback feedback = new Feedback();
         for (String line : lines) {
-            feedback.add("block", line);
+            feedback.add("block", line, null);
         }
         JsonObject json = feedback.json();
         return json.getAsJsonObject(component).getAsJsonArray(path).toString();
@@ -33,6 +33,12 @@ class FeedbackTest {
         assertEquals("[\"box origin size -8,0,-8 8,24,8\"]", facts("block:minecraft:collision_box", "",
             BLOCK + "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: "
                 + "Vec3(-8,0,-8) and Vec3(8,24,8)"));
+    }
+
+    @Test
+    void theOrderOfTwoMembers() {
+        assertEquals("[\"order min max\"]", facts("block:minecraft:random_offset", "x.range",
+            BLOCK + "minecraft:random_offset -> x -> range: max value cannot be lower than min value"));
     }
 
     @Test

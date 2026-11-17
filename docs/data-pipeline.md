@@ -172,6 +172,13 @@ wrong-length lists, and so on. Limits come from the docs and from `bds-feedback.
 log said last time; `spec-capture` and `infer` are repeated until that file stops changing. When BDS rejects a variant
 for a member it does not vary, `spec-capture` shrinks the variant and captures again.
 
+**Linked fields.** One field at a time is not enough where BDS ties two fields: `damage_chance.max` below the default
+`min` is refused, `replace_block_item` is ignored unless `block` is the item itself. The content log says so, and
+`bds-feedback.json` keeps it as a link: `order <low> <high>`, `conflicts <path>`, `identifier <path> <kind>`. Beside each
+variant of such a field the generator adds a linked one (label `<label> linked <paths>`): the other field at its far
+limit, at its second valid value (`fixtures.json` `alternatives`), or the variant's own identifier with a minimal block of
+that name. The plain variant stays, so BDS keeps saying what ties the fields.
+
 **What BDS says that the docs do not.** BDS wins over the docs. Type errors in the content log become errata.
 `spec-capture --probe-keys` asks BDS about keys the docs leave out, using candidates from the BDS binary, the bedrock
 wiki and vanilla packs (only as names, never as values); accepted keys land in `data/model/bds-keys.json`.
@@ -181,16 +188,22 @@ wiki and vanilla packs (only as names, never as values); accepted keys land in `
 against the base is explained by the first rule that fits all observations: `identity`, `linear`, `table`, `affix`,
 `bitset`, `ordered-set`, `element`, or a constant switched on by the field's presence. `whenAbsent` records what BDS
 sends when the field is omitted. Fields no rule explains need a hand transform. Captures from different builds that
-differ become separate protocol windows in `mappings.json`.
+differ become separate protocol windows in `mappings.json`. What a linked variant's other field moves on the wire is
+not attributed to the field it varies.
 
 A rule has to hold for values the capture did not try. A value table and an `ordered-set` in an order of BDS's own
 are fitted only for a closed set of values (an enum), all of them seen: for a list of any strings the order of the
 few captured ones says nothing about the others. A leaf only the list form of a field sends is not explained by the
 scalar form not sending it.
 
-The inference fails `check-mappings --strict` and `update` on integer bits no field explains and on wire paths that
-are neither mapped nor classified. [data/model/coverage.md](../data/model/coverage.md) lists the result per component,
-including fields that need a hand rule and hand transforms BDS has not verified.
+A field BDS accepts whose value no rule follows (nothing on the wire moves, or only its presence does) is `dropped`
+(server only), unless the messages of its variants name another field or quote its value: then it is `linked`, as the
+other field may have decided what BDS sent.
+
+The inference fails `check-mappings --strict` and `update` on integer bits no field explains, on wire paths that
+are neither mapped nor classified, and on `linked` fields (capture again: the generator links them; if it already did,
+the field needs a rule or a hand transform). [data/model/coverage.md](../data/model/coverage.md) lists the result per
+component, including fields that need a hand rule and hand transforms BDS has not verified.
 
 `ComponentConformanceTest` rebuilds every variant BDS accepted through the generated API and compares Paletter's NBT
 with BDS's, for every captured build. It has no list of exceptions: a variant the API cannot express, or encodes

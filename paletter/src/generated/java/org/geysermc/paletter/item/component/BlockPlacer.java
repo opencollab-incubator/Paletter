@@ -26,6 +26,7 @@ import org.geysermc.paletter.vanilla.BedrockBlockType;
  * @param replaceBlockItem If true, the item will be registered as the item for this block. This item will be returned by default when
  *        the block is broken/picked. Note: the identifier for this item must match the block's identifier for this
  *        field to be valid. Defaults to false. Add-on JSON {@code replace_block_item}. Default: <code>false</code>.
+ *        Compiled by the hand transform {@code Transforms.replaceBlockItem}.
  * @param useOn List of block descriptors of the blocks that this item can be used on. If left empty, all blocks will be
  *        allowed. Value must have at most 256 items. Add-on JSON {@code use_on}. Default: <code>[]</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_block_placer?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:block_placer</a>
