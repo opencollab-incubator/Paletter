@@ -2039,6 +2039,18 @@ public static final class org.geysermc.paletter.block.component.Replaceable$Buil
     public org.geysermc.paletter.block.component.Replaceable build()
 }
 
+public record org.geysermc.paletter.block.component.ScriptHooks implements org.geysermc.paletter.block.component.WireOnlyBlockComponent {
+    public static final java.lang.String NAME = "minecraft:custom_components"
+    public <init>(boolean, boolean)
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public static org.geysermc.paletter.block.component.ScriptHooks of(boolean, boolean)
+    public boolean playerInteract()
+    public boolean playerPlacing()
+    public final java.lang.String toString()
+}
+
 public record org.geysermc.paletter.block.component.SelectionBox implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:selection_box"
     public <init>(org.geysermc.paletter.block.component.SelectionBox$Vec3, org.geysermc.paletter.block.component.SelectionBox$Vec3, java.lang.Boolean)
@@ -2174,7 +2186,7 @@ public static final class org.geysermc.paletter.block.component.UnitCube$Builder
     public org.geysermc.paletter.block.component.UnitCube build()
 }
 
-public sealed interface org.geysermc.paletter.block.component.WireOnlyBlockComponent extends org.geysermc.paletter.block.component.BlockComponent permits org.geysermc.paletter.block.component.OnPlayerPlacing {
+public sealed interface org.geysermc.paletter.block.component.WireOnlyBlockComponent extends org.geysermc.paletter.block.component.BlockComponent permits org.geysermc.paletter.block.component.OnPlayerPlacing, org.geysermc.paletter.block.component.ScriptHooks {
 }
 
 public enum org.geysermc.paletter.creative.CreativeCategory {
@@ -3842,6 +3854,17 @@ public enum org.geysermc.paletter.item.component.UseModifiers$StartUsing {
     public static org.geysermc.paletter.item.component.UseModifiers$StartUsing[] values()
 }
 
+public record org.geysermc.paletter.item.component.UseOnHook implements org.geysermc.paletter.item.component.WireOnlyItemComponent {
+    public static final java.lang.String NAME = "minecraft:publisher_on_use_on"
+    public <init>(boolean)
+    public boolean autoSucceedOnClient()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public static org.geysermc.paletter.item.component.UseOnHook of(boolean)
+    public final java.lang.String toString()
+}
+
 public record org.geysermc.paletter.item.component.Wearable implements org.geysermc.paletter.item.component.ItemComponent {
     public static final java.lang.String NAME = "minecraft:wearable"
     public <init>(boolean, int, org.geysermc.paletter.item.component.Wearable$Slot)
@@ -3877,7 +3900,7 @@ public enum org.geysermc.paletter.item.component.Wearable$Slot {
     public static org.geysermc.paletter.item.component.Wearable$Slot[] values()
 }
 
-public sealed interface org.geysermc.paletter.item.component.WireOnlyItemComponent extends org.geysermc.paletter.item.component.ItemComponent permits org.geysermc.paletter.item.component.FrameCount, org.geysermc.paletter.item.component.MiningSpeed, org.geysermc.paletter.item.component.RenderOffsets {
+public sealed interface org.geysermc.paletter.item.component.WireOnlyItemComponent extends org.geysermc.paletter.item.component.ItemComponent permits org.geysermc.paletter.item.component.FrameCount, org.geysermc.paletter.item.component.MiningSpeed, org.geysermc.paletter.item.component.RenderOffsets, org.geysermc.paletter.item.component.UseOnHook {
 }
 
 public final class org.geysermc.paletter.property.Properties {

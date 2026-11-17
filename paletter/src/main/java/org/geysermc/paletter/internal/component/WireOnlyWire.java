@@ -3,10 +3,12 @@ package org.geysermc.paletter.internal.component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.block.component.OnPlayerPlacing;
+import org.geysermc.paletter.block.component.ScriptHooks;
 import org.geysermc.paletter.block.component.WireOnlyBlockComponent;
 import org.geysermc.paletter.item.component.FrameCount;
 import org.geysermc.paletter.item.component.MiningSpeed;
 import org.geysermc.paletter.item.component.RenderOffsets;
+import org.geysermc.paletter.item.component.UseOnHook;
 import org.geysermc.paletter.item.component.WireOnlyItemComponent;
 
 import java.util.List;
@@ -30,6 +32,9 @@ public final class WireOnlyWire {
     public static final int FRAME_COUNT_FROM = ComponentIndex.OLDEST_CAPTURED_PROTOCOL;
     /** Not sent by BDS: no capture to date it from, assumed. */
     static final int ON_PLAYER_PLACING_FROM = 0;
+    /** BDS sends both, but no capture has them yet (the add-on's script components are not captured): assumed for every bundled version, unverified. */
+    static final int SCRIPT_HOOKS_FROM = 0;
+    static final int USE_ON_HOOK_FROM = 0;
 
     private WireOnlyWire() {
     }
@@ -51,6 +56,11 @@ public final class WireOnlyWire {
                     out.put("item_properties.frame_count", c.value());
                 }
             }
+            case UseOnHook c -> {
+                if (check(ctx, USE_ON_HOOK_FROM, c.name())) {
+                    out.put("minecraft:publisher_on_use_on.autoSucceedOnClient", Wire.bool(c.autoSucceedOnClient()));
+                }
+            }
         }
     }
 
@@ -63,6 +73,14 @@ public final class WireOnlyWire {
                 if (check(ctx, ON_PLAYER_PLACING_FROM, c.name())) {
                     out.remove(OnPlayerPlacing.NAME);
                     out.child(OnPlayerPlacing.NAME).put("triggerType", c.triggerType());
+                }
+            }
+            case ScriptHooks c -> {
+                if (check(ctx, SCRIPT_HOOKS_FROM, c.name())) {
+                    WireNode hooks = out.child(ScriptHooks.NAME);
+                    hooks.put("hasPlayerInteract", Wire.bool(c.playerInteract()));
+                    hooks.put("hasPlayerPlacing", Wire.bool(c.playerPlacing()));
+                    hooks.put("isV1Component", (byte) 0);
                 }
             }
         }
