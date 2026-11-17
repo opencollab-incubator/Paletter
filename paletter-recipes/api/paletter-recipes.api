@@ -73,6 +73,10 @@ public record org.geysermc.paletter.recipes.Ingredient$Tag implements org.geyser
     public final java.lang.String toString()
 }
 
+public final class org.geysermc.paletter.recipes.Ingredients {
+    public static org.geysermc.paletter.recipes.Ingredient$Tag tagOf(org.geysermc.paletter.Palette, java.util.Set<org.geysermc.paletter.vanilla.BedrockItemType>, java.util.function.Predicate<org.geysermc.paletter.vanilla.BedrockItemType>)
+}
+
 public record org.geysermc.paletter.recipes.PotionMix {
     public <init>(org.geysermc.paletter.vanilla.BedrockItemVariant, org.geysermc.paletter.vanilla.BedrockItemVariant, org.geysermc.paletter.vanilla.BedrockItemVariant)
     public final boolean equals(java.lang.Object)

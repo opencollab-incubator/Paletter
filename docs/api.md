@@ -326,6 +326,11 @@ added. UUIDs come from the recipe's id (and station), so they are the same on ev
 UUIDs. Apart from net ids and UUIDs the packet is what BDS sends for the same palette: a test compares the encoding of
 BDS 1.26.63.1's recipes with the committed capture. `applyTo` sets `cleanRecipes`, as BDS does.
 
+`Ingredients.tagOf(palette, items, unobtainable)` finds the palette's item tag (layers included) whose members are exactly a set
+of items, for sending an ingredient as one tag instead of one entry per item. Items the palette lacks (an older version) and
+items the predicate calls unobtainable are left out on both sides; with several matches the smallest tag wins, then the first
+by name; no match gives null.
+
 ## Errors and reports
 
 Layers given to `Paletter.builder()` are startup configuration: a problem throws `PaletteException` on the first
