@@ -163,7 +163,7 @@ final class PaletteCompiler {
             // BDS registers block items in the order of the block files, identifier descending without files, whatever
             // order the layer lists them in
             List<CustomBlock> blocksByItemOrder = new ArrayList<>(layer.blocks());
-            blocksByItemOrder.sort(Comparator.comparing(CustomBlock::identifier).reversed());
+            blocksByItemOrder.sort(Comparator.comparing(CustomBlock::identifier, org.geysermc.paletter.internal.BlockIdOrder.DESCENDING));
             for (CustomBlock block : blocksByItemOrder) {
                 CustomItem replacement = replacements.get(block.identifier());
                 if (replacement != null) {
@@ -236,7 +236,7 @@ final class PaletteCompiler {
             placed.stream().filter(entry -> entry.block() != null).forEach(entry -> blockItems.put(entry.block(), entry));
             List<String> byBlockId = new ArrayList<>();
             blocks.customBlocks().forEach(block -> byBlockId.add(block.identifier()));
-            byBlockId.sort(Comparator.reverseOrder());
+            byBlockId.sort(org.geysermc.paletter.internal.BlockIdOrder.DESCENDING);
             for (String identifier : ordering.blockOrder(byBlockId,
                 data.dataDrivenBlocks().stream().map(BlockPropertyData::getName).toList())) {
                 Placed entry = blockItems.get(identifier);
