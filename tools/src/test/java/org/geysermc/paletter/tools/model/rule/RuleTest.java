@@ -59,6 +59,8 @@ class RuleTest {
         assertEquals("30 (int)", rule("{\"kind\": \"union\", \"by\": {\"number\": {\"kind\": \"linear\", \"scale\": 20.0, \"offset\": 0.0, \"nbt\": \"int\"}, \"string\": {\"kind\": \"identity\", \"nbt\": \"string\"}}, \"nbt\": \"int\"}").evaluate(half));
         assertEquals("a (string)", rule("{\"kind\": \"union\", \"by\": {\"number\": {\"kind\": \"linear\", \"scale\": 20.0, \"offset\": 0.0, \"nbt\": \"int\"}, \"string\": {\"kind\": \"identity\", \"nbt\": \"string\"}}, \"nbt\": \"int\"}").evaluate(JsonParser.parseString("\"a\"")));
         assertNull(rule("{\"kind\": \"union\", \"by\": {\"number\": {\"kind\": \"linear\", \"scale\": 20.0, \"offset\": 0.0, \"nbt\": \"int\"}, \"string\": {\"kind\": \"identity\", \"nbt\": \"string\"}}, \"nbt\": \"int\"}").evaluate(JsonParser.parseString("true")), "no rule for booleans");
+        // a descriptor depends on the registry, not on the value
+        assertNull(rule("{\"kind\": \"descriptor\", \"of\": \"item\", \"nbt\": \"string\"}").evaluate(JsonParser.parseString("\"apple\"")));
         // no NBT type, an element of a list, a constant: nothing to evaluate
         assertNull(rule("{\"kind\": \"identity\"}").evaluate(half));
         assertNull(rule("{\"kind\": \"identity\", \"element\": 0, \"nbt\": \"float\"}").evaluate(half));
@@ -99,6 +101,18 @@ class RuleTest {
               put(convert("string"));
             }""", e.written());
         JsonObject json = JsonParser.parseString("{\"kind\": \"union\", \"by\": {\"string\": {\"kind\": \"identity\", \"nbt\": \"string\"}}}").getAsJsonObject();
+        assertEquals(json.toString(), Rule.of(json).toJson().toString());
+    }
+
+    @Test
+    void aDescriptorCallsThePrimitiveOfItsKind() {
+        RecordingEmitter block = new RecordingEmitter();
+        rule("{\"kind\": \"descriptor\", \"of\": \"block\", \"nbt\": \"compound\"}").emit(block);
+        assertEquals("org.geysermc.paletter.internal.component.Wire.blockDescriptor(ctx, out, \"leaf\", value.name(), value.states(), value.tags());", block.written());
+        RecordingEmitter item = new RecordingEmitter();
+        rule("{\"kind\": \"descriptor\", \"of\": \"item\", \"nbt\": \"compound\"}").emit(item);
+        assertEquals("org.geysermc.paletter.internal.component.Wire.itemDescriptor(ctx, out, \"leaf\", component, \"path\", string);", item.written());
+        JsonObject json = JsonParser.parseString("{\"kind\": \"descriptor\", \"of\": \"item\"}").getAsJsonObject();
         assertEquals(json.toString(), Rule.of(json).toJson().toString());
     }
 }

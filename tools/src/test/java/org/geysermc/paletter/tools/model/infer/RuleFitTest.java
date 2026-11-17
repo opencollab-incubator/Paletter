@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.geysermc.paletter.tools.model.rule.Affine;
 import org.geysermc.paletter.tools.model.rule.Affix;
+import org.geysermc.paletter.tools.model.rule.Descriptor;
 import org.geysermc.paletter.tools.model.rule.EnumTable;
 import org.geysermc.paletter.tools.model.rule.Leaf;
 import org.geysermc.paletter.tools.model.rule.Observation;
@@ -174,6 +175,45 @@ class RuleFitTest {
         // one JSON type is no union, and a type no rule fits makes none
         assertNull(Union.fit(pairs("1.5", 30, "3", 60), W, type -> RuleFit.scalar(type, Observation::json, W)));
         assertNull(Union.fit(pairs("1.5", 30, "3", 60, "\"a\"", 1, "\"a\"", 2), W, type -> RuleFit.scalar(type, Observation::json, W)));
+    }
+
+    /** A descriptor: the JSON value and the leaves BDS sent for it, as path, value pairs. */
+    private static Observation descriptor(String json, Object... leaves) {
+        Map<String, Leaf> wire = new java.util.TreeMap<>();
+        for (int i = 0; i < leaves.length; i += 2) {
+            wire.put((String) leaves[i], new Leaf(Wire.typeOf(leaves[i + 1]), leaves[i + 1]));
+        }
+        return new Observation(JsonParser.parseString(json), wire, json);
+    }
+
+    @Test
+    void aBlockDescriptorIsTheTripleOfItsJson() {
+        String d = "x.use_on[0]";
+        List<Observation> block = List.of(
+            descriptor("{\"name\": \"minecraft:stone\"}", d + ".name", "minecraft:stone", d + ".tags", ""),
+            descriptor("{\"name\": \"minecraft:wheat\", \"states\": {\"growth\": 3, \"lit\": true}}",
+                d + ".name", "minecraft:wheat", d + ".states.growth", 3, d + ".states.lit", (byte) 1, d + ".tags", ""),
+            descriptor("{\"tags\": \"q.any_tag('a')\"}", d + ".name", "", d + ".tags", "q.any_tag('a')"));
+        JsonObject rule = json(Descriptor.fit(block, d));
+        assertEquals("descriptor", rule.get("kind").getAsString());
+        assertEquals("block", rule.get("of").getAsString());
+        // a name the leaf does not carry, a state the leaves lack and a state they add are no descriptor of the JSON
+        assertNull(Descriptor.fit(List.of(descriptor("{\"name\": \"minecraft:stone\"}", d + ".name", "minecraft:dirt", d + ".tags", "")), d));
+        assertNull(Descriptor.fit(List.of(descriptor("{\"name\": \"a:b\", \"states\": {\"n\": 1}}", d + ".name", "a:b", d + ".tags", "")), d));
+        assertNull(Descriptor.fit(List.of(descriptor("{\"name\": \"a:b\"}", d + ".name", "a:b", d + ".states.n", 1, d + ".tags", "")), d));
+    }
+
+    @Test
+    void anItemDescriptorIsTheNamespacedNameOfAnItemTheRegistryKnows() {
+        String d = "x.item";
+        List<Observation> item = List.of(
+            descriptor("\"minecraft:apple\"", d + ".name", "minecraft:apple"),
+            descriptor("\"apple\"", d + ".name", "minecraft:apple"),
+            descriptor("\"paletter_unknown\""));
+        assertEquals("item", json(Descriptor.fit(item, d)).get("of").getAsString());
+        // no item was ever sent: nothing shows the leaf is a descriptor
+        assertNull(Descriptor.fit(List.of(descriptor("\"paletter_unknown\"")), d));
+        assertNull(Descriptor.fit(List.of(descriptor("\"apple\"", d + ".name", "apple")), d));
     }
 
     @Test

@@ -726,6 +726,16 @@ final class WireSource {
         }
 
         @Override
+        public CodeBlock node() {
+            return CodeBlock.of("$N", node);
+        }
+
+        @Override
+        public String leaf() {
+            return rel;
+        }
+
+        @Override
         public CodeBlock holds(String jsonType) {
             throw error("a union rule needs the sealed type of the union, which the API does not generate yet");
         }

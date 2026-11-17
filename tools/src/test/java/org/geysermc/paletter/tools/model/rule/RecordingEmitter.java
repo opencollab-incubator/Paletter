@@ -37,6 +37,16 @@ final class RecordingEmitter implements Emitter {
     }
 
     @Override
+    public CodeBlock node() {
+        return CodeBlock.of("out");
+    }
+
+    @Override
+    public String leaf() {
+        return "leaf";
+    }
+
+    @Override
     public CodeBlock holds(String jsonType) {
         return CodeBlock.of("holds($S)", jsonType);
     }
