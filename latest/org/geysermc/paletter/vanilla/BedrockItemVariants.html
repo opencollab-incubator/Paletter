@@ -92,17 +92,18 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">BedrockItemVariants</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">The named aux variants of Bedrock 26.60, the newest bundled release: potions, splash and lingering
- potions and tipped arrows by effect, beds and banners by colour. The names are BDS's own spellings, taken from the
- Script API (the potion effect id, the localization key of the stack), such as <code>POTION_LONG_NIGHTVISION</code> or
- <code>BED_SILVER</code>. Every constant is the very <a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockItemVariant</code></a> of <code>type.variant(aux)</code>. Referencing
- them loads nothing.
+<div class="block">The named aux variants of Bedrock 26.60, the newest bundled release, of the items
+ <a href="BedrockItems.html#ARROW"><code>BedrockItems.ARROW</code></a>, <a href="BedrockItems.html#BANNER"><code>BedrockItems.BANNER</code></a>, <a href="BedrockItems.html#BED"><code>BedrockItems.BED</code></a>,
+ <a href="BedrockItems.html#LINGERING_POTION"><code>BedrockItems.LINGERING_POTION</code></a>, <a href="BedrockItems.html#POTION"><code>BedrockItems.POTION</code></a>, <a href="BedrockItems.html#SPLASH_POTION"><code>BedrockItems.SPLASH_POTION</code></a>.
+ The names are BDS's own spellings, taken from the Script API (the potion effect id, the localization key of the
+ stack). Every constant is the very <a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockItemVariant</code></a> of <code>type.variant(aux)</code>. Referencing them loads
+ nothing.
  <p>
  Constants are added when Bedrock adds variants (binary compatible). A variant Bedrock removes keeps its constant,
  deprecated: <code>type.variant(aux)</code> is then a plain variant, equal to the constant. A name BDS changes stays as a deprecated alias of the new one.
  <p>
- The <code>@since</code> of a constant is the Paletter version that added it. The names come from BDS dumps of the newest
- builds only: a variant is first captured in the oldest release with variant data, and may be older.
+ <code>@since</code> is the Paletter version that added a constant, only written if newer than the class. The
+ names come from BDS dumps of the newest builds only, so a variant says nothing of the Bedrock release it is first in: it may be older than the dumps.
  <a href="../annotation/SincePreview.html" title="annotation interface in org.geysermc.paletter.annotation"><code>@SincePreview</code></a> marks variants only the bundled Bedrock preview
  has: without previews loaded (<code>paletter.previews</code>) its type has no such variant, so <code>type.variant(aux)</code>
  is a plain variant and the constant stays a plain key. The mark goes when a release has it; the constant goes if a newer
@@ -1264,10 +1265,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_FIRE_RESISTANCE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_FIRE_RESISTANCE</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 13.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1284,10 +1281,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_HARMING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_HARMING</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 24.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1295,10 +1288,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_HEALING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_HEALING</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 22.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1306,10 +1295,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_INFESTED</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_INFESTED</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 47.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1317,10 +1302,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_INVISIBILITY</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_INVISIBILITY</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 8.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1328,10 +1309,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_LEAPING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_LEAPING</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 10.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1339,10 +1316,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_LONG_FIRE_RESISTANCE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_LONG_FIRE_RESISTANCE</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 14.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1359,10 +1332,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_LONG_INVISIBILITY</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_LONG_INVISIBILITY</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 9.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1370,10 +1339,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_LONG_LEAPING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_LONG_LEAPING</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 11.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1381,10 +1346,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_LONG_NIGHTVISION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_LONG_NIGHTVISION</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 7.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1392,10 +1353,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_LONG_POISON</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_LONG_POISON</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 27.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1403,10 +1360,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_LONG_REGENERATION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_LONG_REGENERATION</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 30.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1414,10 +1367,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_LONG_SLOWNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_LONG_SLOWNESS</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 19.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1425,10 +1374,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_LONG_SLOW_FALLING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_LONG_SLOW_FALLING</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 42.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1436,10 +1381,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_LONG_STRENGTH</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_LONG_STRENGTH</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 33.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1447,10 +1388,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_LONG_SWIFTNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_LONG_SWIFTNESS</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 16.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1458,10 +1395,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_LONG_TURTLE_MASTER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_LONG_TURTLE_MASTER</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 39.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1469,10 +1402,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_LONG_WATER_BREATHING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_LONG_WATER_BREATHING</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 21.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1480,10 +1409,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_LONG_WEAKNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_LONG_WEAKNESS</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 36.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1491,10 +1416,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_NIGHTVISION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_NIGHTVISION</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 6.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1502,10 +1423,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_OOZING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_OOZING</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 46.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1513,10 +1430,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_POISON</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_POISON</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 26.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1524,10 +1437,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_REGENERATION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_REGENERATION</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 29.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1535,10 +1444,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_SLOWNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_SLOWNESS</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 18.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1546,10 +1451,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_SLOW_FALLING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_SLOW_FALLING</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 41.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1557,10 +1458,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_STRENGTH</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_STRENGTH</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 32.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1568,10 +1465,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_STRONG_HARMING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_STRONG_HARMING</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 25.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1579,10 +1472,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_STRONG_HEALING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_STRONG_HEALING</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 23.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1590,10 +1479,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_STRONG_LEAPING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_STRONG_LEAPING</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 12.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1601,10 +1486,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_STRONG_POISON</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_STRONG_POISON</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 28.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1612,10 +1493,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_STRONG_REGENERATION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_STRONG_REGENERATION</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 31.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1623,10 +1500,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_STRONG_SLOWNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_STRONG_SLOWNESS</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 43.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1634,10 +1507,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_STRONG_STRENGTH</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_STRONG_STRENGTH</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 34.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1645,10 +1514,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_STRONG_SWIFTNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_STRONG_SWIFTNESS</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 17.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1656,10 +1521,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_STRONG_TURTLE_MASTER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_STRONG_TURTLE_MASTER</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 40.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1667,10 +1528,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_SWIFTNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_SWIFTNESS</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 15.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1678,10 +1535,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_TURTLE_MASTER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_TURTLE_MASTER</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 38.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1689,10 +1542,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_WATER_BREATHING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_WATER_BREATHING</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 20.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1700,10 +1549,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_WEAKNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_WEAKNESS</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 35.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1711,10 +1556,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_WEAVING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_WEAVING</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 45.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1722,10 +1563,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_WIND_CHARGED</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_WIND_CHARGED</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 44.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1733,10 +1570,6 @@ loadScripts(document, 'script');</script>
 <h3>ARROW_WITHER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">ARROW_WITHER</span></div>
 <div class="block"><code>minecraft:arrow</code> with aux 37.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1744,10 +1577,6 @@ loadScripts(document, 'script');</script>
 <h3>BANNER_BLACK</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BANNER_BLACK</span></div>
 <div class="block"><code>minecraft:banner</code> with aux 0.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1755,10 +1584,6 @@ loadScripts(document, 'script');</script>
 <h3>BANNER_BLUE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BANNER_BLUE</span></div>
 <div class="block"><code>minecraft:banner</code> with aux 4.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1766,10 +1591,6 @@ loadScripts(document, 'script');</script>
 <h3>BANNER_BROWN</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BANNER_BROWN</span></div>
 <div class="block"><code>minecraft:banner</code> with aux 3.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1777,10 +1598,6 @@ loadScripts(document, 'script');</script>
 <h3>BANNER_CYAN</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BANNER_CYAN</span></div>
 <div class="block"><code>minecraft:banner</code> with aux 6.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1788,10 +1605,6 @@ loadScripts(document, 'script');</script>
 <h3>BANNER_GRAY</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BANNER_GRAY</span></div>
 <div class="block"><code>minecraft:banner</code> with aux 8.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1799,10 +1612,6 @@ loadScripts(document, 'script');</script>
 <h3>BANNER_GREEN</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BANNER_GREEN</span></div>
 <div class="block"><code>minecraft:banner</code> with aux 2.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1810,10 +1619,6 @@ loadScripts(document, 'script');</script>
 <h3>BANNER_LIGHT_BLUE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BANNER_LIGHT_BLUE</span></div>
 <div class="block"><code>minecraft:banner</code> with aux 12.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1821,10 +1626,6 @@ loadScripts(document, 'script');</script>
 <h3>BANNER_LIME</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BANNER_LIME</span></div>
 <div class="block"><code>minecraft:banner</code> with aux 10.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1832,10 +1633,6 @@ loadScripts(document, 'script');</script>
 <h3>BANNER_MAGENTA</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BANNER_MAGENTA</span></div>
 <div class="block"><code>minecraft:banner</code> with aux 13.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1843,10 +1640,6 @@ loadScripts(document, 'script');</script>
 <h3>BANNER_ORANGE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BANNER_ORANGE</span></div>
 <div class="block"><code>minecraft:banner</code> with aux 14.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1854,10 +1647,6 @@ loadScripts(document, 'script');</script>
 <h3>BANNER_PINK</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BANNER_PINK</span></div>
 <div class="block"><code>minecraft:banner</code> with aux 9.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1865,10 +1654,6 @@ loadScripts(document, 'script');</script>
 <h3>BANNER_PURPLE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BANNER_PURPLE</span></div>
 <div class="block"><code>minecraft:banner</code> with aux 5.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1876,10 +1661,6 @@ loadScripts(document, 'script');</script>
 <h3>BANNER_RED</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BANNER_RED</span></div>
 <div class="block"><code>minecraft:banner</code> with aux 1.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1887,10 +1668,6 @@ loadScripts(document, 'script');</script>
 <h3>BANNER_SILVER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BANNER_SILVER</span></div>
 <div class="block"><code>minecraft:banner</code> with aux 7.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1898,10 +1675,6 @@ loadScripts(document, 'script');</script>
 <h3>BANNER_WHITE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BANNER_WHITE</span></div>
 <div class="block"><code>minecraft:banner</code> with aux 15.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1909,10 +1682,6 @@ loadScripts(document, 'script');</script>
 <h3>BANNER_YELLOW</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BANNER_YELLOW</span></div>
 <div class="block"><code>minecraft:banner</code> with aux 11.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1920,10 +1689,6 @@ loadScripts(document, 'script');</script>
 <h3>BED_BLACK</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BED_BLACK</span></div>
 <div class="block"><code>minecraft:bed</code> with aux 15.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1931,10 +1696,6 @@ loadScripts(document, 'script');</script>
 <h3>BED_BLUE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BED_BLUE</span></div>
 <div class="block"><code>minecraft:bed</code> with aux 11.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1942,10 +1703,6 @@ loadScripts(document, 'script');</script>
 <h3>BED_BROWN</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BED_BROWN</span></div>
 <div class="block"><code>minecraft:bed</code> with aux 12.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1953,10 +1710,6 @@ loadScripts(document, 'script');</script>
 <h3>BED_CYAN</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BED_CYAN</span></div>
 <div class="block"><code>minecraft:bed</code> with aux 9.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1964,10 +1717,6 @@ loadScripts(document, 'script');</script>
 <h3>BED_GRAY</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BED_GRAY</span></div>
 <div class="block"><code>minecraft:bed</code> with aux 7.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1975,10 +1724,6 @@ loadScripts(document, 'script');</script>
 <h3>BED_GREEN</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BED_GREEN</span></div>
 <div class="block"><code>minecraft:bed</code> with aux 13.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1986,10 +1731,6 @@ loadScripts(document, 'script');</script>
 <h3>BED_LIGHT_BLUE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BED_LIGHT_BLUE</span></div>
 <div class="block"><code>minecraft:bed</code> with aux 3.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -1997,10 +1738,6 @@ loadScripts(document, 'script');</script>
 <h3>BED_LIME</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BED_LIME</span></div>
 <div class="block"><code>minecraft:bed</code> with aux 5.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2008,10 +1745,6 @@ loadScripts(document, 'script');</script>
 <h3>BED_MAGENTA</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BED_MAGENTA</span></div>
 <div class="block"><code>minecraft:bed</code> with aux 2.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2019,10 +1752,6 @@ loadScripts(document, 'script');</script>
 <h3>BED_ORANGE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BED_ORANGE</span></div>
 <div class="block"><code>minecraft:bed</code> with aux 1.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2030,10 +1759,6 @@ loadScripts(document, 'script');</script>
 <h3>BED_PINK</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BED_PINK</span></div>
 <div class="block"><code>minecraft:bed</code> with aux 6.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2041,10 +1766,6 @@ loadScripts(document, 'script');</script>
 <h3>BED_PURPLE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BED_PURPLE</span></div>
 <div class="block"><code>minecraft:bed</code> with aux 10.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2052,10 +1773,6 @@ loadScripts(document, 'script');</script>
 <h3>BED_RED</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BED_RED</span></div>
 <div class="block"><code>minecraft:bed</code> with aux 14.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2063,10 +1780,6 @@ loadScripts(document, 'script');</script>
 <h3>BED_SILVER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BED_SILVER</span></div>
 <div class="block"><code>minecraft:bed</code> with aux 8.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2074,10 +1787,6 @@ loadScripts(document, 'script');</script>
 <h3>BED_WHITE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BED_WHITE</span></div>
 <div class="block"><code>minecraft:bed</code> with aux 0.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2085,10 +1794,6 @@ loadScripts(document, 'script');</script>
 <h3>BED_YELLOW</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">BED_YELLOW</span></div>
 <div class="block"><code>minecraft:bed</code> with aux 4.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2096,10 +1801,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_AWKWARD</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_AWKWARD</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 4.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2107,10 +1808,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_FIRE_RESISTANCE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_FIRE_RESISTANCE</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 12.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2127,10 +1824,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_HARMING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_HARMING</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 23.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2138,10 +1831,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_HEALING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_HEALING</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 21.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2149,10 +1838,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_INFESTED</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_INFESTED</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 46.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2160,10 +1845,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_INVISIBILITY</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_INVISIBILITY</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 7.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2171,10 +1852,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_LEAPING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_LEAPING</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 9.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2182,10 +1859,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_LONG_FIRE_RESISTANCE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_LONG_FIRE_RESISTANCE</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 13.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2202,10 +1875,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_LONG_INVISIBILITY</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_LONG_INVISIBILITY</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 8.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2213,10 +1882,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_LONG_LEAPING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_LONG_LEAPING</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 10.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2224,10 +1889,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_LONG_MUNDANE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_LONG_MUNDANE</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 2.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2235,10 +1896,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_LONG_NIGHTVISION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_LONG_NIGHTVISION</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 6.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2246,10 +1903,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_LONG_POISON</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_LONG_POISON</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 26.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2257,10 +1910,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_LONG_REGENERATION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_LONG_REGENERATION</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 29.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2268,10 +1917,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_LONG_SLOWNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_LONG_SLOWNESS</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 18.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2279,10 +1924,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_LONG_SLOW_FALLING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_LONG_SLOW_FALLING</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 41.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2290,10 +1931,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_LONG_STRENGTH</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_LONG_STRENGTH</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 32.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2301,10 +1938,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_LONG_SWIFTNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_LONG_SWIFTNESS</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 15.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2312,10 +1945,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_LONG_TURTLE_MASTER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_LONG_TURTLE_MASTER</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 38.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2323,10 +1952,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_LONG_WATER_BREATHING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_LONG_WATER_BREATHING</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 20.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2334,10 +1959,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_LONG_WEAKNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_LONG_WEAKNESS</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 35.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2345,10 +1966,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_MUNDANE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_MUNDANE</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 1.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2356,10 +1973,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_NIGHTVISION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_NIGHTVISION</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 5.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2367,10 +1980,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_OOZING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_OOZING</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 45.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2378,10 +1987,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_POISON</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_POISON</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 25.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2389,10 +1994,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_REGENERATION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_REGENERATION</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 28.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2400,10 +2001,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_SLOWNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_SLOWNESS</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 17.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2411,10 +2008,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_SLOW_FALLING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_SLOW_FALLING</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 40.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2422,10 +2015,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_STRENGTH</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_STRENGTH</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 31.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2433,10 +2022,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_STRONG_HARMING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_STRONG_HARMING</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 24.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2444,10 +2029,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_STRONG_HEALING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_STRONG_HEALING</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 22.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2455,10 +2036,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_STRONG_LEAPING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_STRONG_LEAPING</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 11.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2466,10 +2043,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_STRONG_POISON</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_STRONG_POISON</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 27.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2477,10 +2050,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_STRONG_REGENERATION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_STRONG_REGENERATION</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 30.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2488,10 +2057,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_STRONG_SLOWNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_STRONG_SLOWNESS</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 42.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2499,10 +2064,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_STRONG_STRENGTH</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_STRONG_STRENGTH</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 33.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2510,10 +2071,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_STRONG_SWIFTNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_STRONG_SWIFTNESS</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 16.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2521,10 +2078,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_STRONG_TURTLE_MASTER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_STRONG_TURTLE_MASTER</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 39.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2532,10 +2085,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_SWIFTNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_SWIFTNESS</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 14.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2543,10 +2092,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_THICK</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_THICK</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 3.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2554,10 +2099,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_TURTLE_MASTER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_TURTLE_MASTER</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 37.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2565,10 +2106,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_WATER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_WATER</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 0.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2576,10 +2113,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_WATER_BREATHING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_WATER_BREATHING</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 19.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2587,10 +2120,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_WEAKNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_WEAKNESS</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 34.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2598,10 +2127,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_WEAVING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_WEAVING</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 44.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2609,10 +2134,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_WIND_CHARGED</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_WIND_CHARGED</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 43.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2620,10 +2141,6 @@ loadScripts(document, 'script');</script>
 <h3>LINGERING_POTION_WITHER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">LINGERING_POTION_WITHER</span></div>
 <div class="block"><code>minecraft:lingering_potion</code> with aux 36.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2631,10 +2148,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_AWKWARD</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_AWKWARD</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 4.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2642,10 +2155,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_FIRE_RESISTANCE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_FIRE_RESISTANCE</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 12.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2662,10 +2171,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_HARMING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_HARMING</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 23.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2673,10 +2178,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_HEALING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_HEALING</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 21.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2684,10 +2185,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_INFESTED</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_INFESTED</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 46.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2695,10 +2192,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_INVISIBILITY</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_INVISIBILITY</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 7.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2706,10 +2199,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_LEAPING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_LEAPING</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 9.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2717,10 +2206,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_LONG_FIRE_RESISTANCE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_LONG_FIRE_RESISTANCE</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 13.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2737,10 +2222,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_LONG_INVISIBILITY</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_LONG_INVISIBILITY</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 8.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2748,10 +2229,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_LONG_LEAPING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_LONG_LEAPING</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 10.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2759,10 +2236,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_LONG_MUNDANE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_LONG_MUNDANE</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 2.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2770,10 +2243,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_LONG_NIGHTVISION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_LONG_NIGHTVISION</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 6.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2781,10 +2250,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_LONG_POISON</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_LONG_POISON</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 26.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2792,10 +2257,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_LONG_REGENERATION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_LONG_REGENERATION</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 29.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2803,10 +2264,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_LONG_SLOWNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_LONG_SLOWNESS</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 18.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2814,10 +2271,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_LONG_SLOW_FALLING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_LONG_SLOW_FALLING</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 41.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2825,10 +2278,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_LONG_STRENGTH</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_LONG_STRENGTH</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 32.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2836,10 +2285,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_LONG_SWIFTNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_LONG_SWIFTNESS</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 15.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2847,10 +2292,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_LONG_TURTLE_MASTER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_LONG_TURTLE_MASTER</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 38.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2858,10 +2299,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_LONG_WATER_BREATHING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_LONG_WATER_BREATHING</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 20.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2869,10 +2306,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_LONG_WEAKNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_LONG_WEAKNESS</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 35.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2880,10 +2313,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_MUNDANE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_MUNDANE</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 1.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2891,10 +2320,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_NIGHTVISION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_NIGHTVISION</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 5.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2902,10 +2327,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_OOZING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_OOZING</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 45.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2913,10 +2334,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_POISON</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_POISON</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 25.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2924,10 +2341,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_REGENERATION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_REGENERATION</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 28.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2935,10 +2348,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_SLOWNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_SLOWNESS</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 17.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2946,10 +2355,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_SLOW_FALLING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_SLOW_FALLING</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 40.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2957,10 +2362,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_STRENGTH</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_STRENGTH</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 31.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2968,10 +2369,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_STRONG_HARMING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_STRONG_HARMING</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 24.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2979,10 +2376,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_STRONG_HEALING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_STRONG_HEALING</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 22.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -2990,10 +2383,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_STRONG_LEAPING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_STRONG_LEAPING</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 11.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3001,10 +2390,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_STRONG_POISON</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_STRONG_POISON</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 27.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3012,10 +2397,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_STRONG_REGENERATION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_STRONG_REGENERATION</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 30.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3023,10 +2404,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_STRONG_SLOWNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_STRONG_SLOWNESS</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 42.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3034,10 +2411,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_STRONG_STRENGTH</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_STRONG_STRENGTH</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 33.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3045,10 +2418,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_STRONG_SWIFTNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_STRONG_SWIFTNESS</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 16.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3056,10 +2425,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_STRONG_TURTLE_MASTER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_STRONG_TURTLE_MASTER</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 39.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3067,10 +2432,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_SWIFTNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_SWIFTNESS</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 14.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3078,10 +2439,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_THICK</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_THICK</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 3.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3089,10 +2446,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_TURTLE_MASTER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_TURTLE_MASTER</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 37.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3100,10 +2453,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_WATER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_WATER</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 0.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3111,10 +2460,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_WATER_BREATHING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_WATER_BREATHING</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 19.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3122,10 +2467,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_WEAKNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_WEAKNESS</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 34.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3133,10 +2474,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_WEAVING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_WEAVING</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 44.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3144,10 +2481,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_WIND_CHARGED</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_WIND_CHARGED</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 43.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3155,10 +2488,6 @@ loadScripts(document, 'script');</script>
 <h3>POTION_WITHER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">POTION_WITHER</span></div>
 <div class="block"><code>minecraft:potion</code> with aux 36.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3166,10 +2495,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_AWKWARD</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_AWKWARD</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 4.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3177,10 +2502,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_FIRE_RESISTANCE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_FIRE_RESISTANCE</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 12.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3197,10 +2518,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_HARMING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_HARMING</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 23.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3208,10 +2525,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_HEALING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_HEALING</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 21.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3219,10 +2532,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_INFESTED</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_INFESTED</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 46.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3230,10 +2539,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_INVISIBILITY</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_INVISIBILITY</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 7.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3241,10 +2546,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_LEAPING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_LEAPING</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 9.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3252,10 +2553,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_LONG_FIRE_RESISTANCE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_LONG_FIRE_RESISTANCE</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 13.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3272,10 +2569,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_LONG_INVISIBILITY</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_LONG_INVISIBILITY</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 8.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3283,10 +2576,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_LONG_LEAPING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_LONG_LEAPING</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 10.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3294,10 +2583,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_LONG_MUNDANE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_LONG_MUNDANE</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 2.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3305,10 +2590,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_LONG_NIGHTVISION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_LONG_NIGHTVISION</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 6.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3316,10 +2597,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_LONG_POISON</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_LONG_POISON</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 26.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3327,10 +2604,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_LONG_REGENERATION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_LONG_REGENERATION</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 29.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3338,10 +2611,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_LONG_SLOWNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_LONG_SLOWNESS</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 18.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3349,10 +2618,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_LONG_SLOW_FALLING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_LONG_SLOW_FALLING</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 41.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3360,10 +2625,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_LONG_STRENGTH</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_LONG_STRENGTH</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 32.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3371,10 +2632,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_LONG_SWIFTNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_LONG_SWIFTNESS</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 15.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3382,10 +2639,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_LONG_TURTLE_MASTER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_LONG_TURTLE_MASTER</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 38.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3393,10 +2646,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_LONG_WATER_BREATHING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_LONG_WATER_BREATHING</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 20.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3404,10 +2653,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_LONG_WEAKNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_LONG_WEAKNESS</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 35.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3415,10 +2660,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_MUNDANE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_MUNDANE</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 1.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3426,10 +2667,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_NIGHTVISION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_NIGHTVISION</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 5.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3437,10 +2674,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_OOZING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_OOZING</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 45.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3448,10 +2681,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_POISON</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_POISON</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 25.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3459,10 +2688,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_REGENERATION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_REGENERATION</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 28.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3470,10 +2695,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_SLOWNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_SLOWNESS</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 17.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3481,10 +2702,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_SLOW_FALLING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_SLOW_FALLING</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 40.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3492,10 +2709,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_STRENGTH</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_STRENGTH</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 31.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3503,10 +2716,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_STRONG_HARMING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_STRONG_HARMING</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 24.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3514,10 +2723,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_STRONG_HEALING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_STRONG_HEALING</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 22.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3525,10 +2730,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_STRONG_LEAPING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_STRONG_LEAPING</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 11.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3536,10 +2737,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_STRONG_POISON</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_STRONG_POISON</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 27.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3547,10 +2744,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_STRONG_REGENERATION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_STRONG_REGENERATION</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 30.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3558,10 +2751,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_STRONG_SLOWNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_STRONG_SLOWNESS</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 42.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3569,10 +2758,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_STRONG_STRENGTH</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_STRONG_STRENGTH</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 33.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3580,10 +2765,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_STRONG_SWIFTNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_STRONG_SWIFTNESS</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 16.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3591,10 +2772,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_STRONG_TURTLE_MASTER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_STRONG_TURTLE_MASTER</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 39.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3602,10 +2779,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_SWIFTNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_SWIFTNESS</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 14.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3613,10 +2786,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_THICK</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_THICK</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 3.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3624,10 +2793,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_TURTLE_MASTER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_TURTLE_MASTER</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 37.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3635,10 +2800,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_WATER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_WATER</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 0.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3646,10 +2807,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_WATER_BREATHING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_WATER_BREATHING</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 19.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3657,10 +2814,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_WEAKNESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_WEAKNESS</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 34.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3668,10 +2821,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_WEAVING</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_WEAVING</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 44.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3679,10 +2828,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_WIND_CHARGED</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_WIND_CHARGED</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 43.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 <li>
@@ -3690,10 +2835,6 @@ loadScripts(document, 'script');</script>
 <h3>SPLASH_POTION_WITHER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">SPLASH_POTION_WITHER</span></div>
 <div class="block"><code>minecraft:splash_potion</code> with aux 36.</div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>0.1.0</dd>
-</dl>
 </section>
 </li>
 </ul>

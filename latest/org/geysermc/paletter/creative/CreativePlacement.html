@@ -159,7 +159,7 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#after(org.geysermc.paletter.vanilla.ItemKey)" class="member-name-link">after</a><wbr>(@NonNull <a href="../vanilla/ItemKey.html" title="interface in org.geysermc.paletter.vanilla">ItemKey</a>&nbsp;anchor)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="CreativePlacement.html" title="class in org.geysermc.paletter.creative">CreativePlacement</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#afterAnyOf(org.geysermc.paletter.vanilla.BedrockItemType)" class="member-name-link">afterAnyOf</a><wbr>(@NonNull <a href="../vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;anchor)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#afterAnyVariantOf(org.geysermc.paletter.vanilla.BedrockItemType)" class="member-name-link">afterAnyVariantOf</a><wbr>(@NonNull <a href="../vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;anchor)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#apply(org.geysermc.paletter.creative.CreativeEditor,org.geysermc.paletter.item.BedrockItemStack,org.geysermc.paletter.creative.CreativeOrdering)" class="member-name-link">apply</a><wbr>(@NonNull <a href="CreativeEditor.html" title="class in org.geysermc.paletter.creative">CreativeEditor</a>&nbsp;editor,
@@ -260,12 +260,12 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="afterAnyOf(org.geysermc.paletter.vanilla.BedrockItemType)">
-<h3>afterAnyOf</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="CreativePlacement.html" title="class in org.geysermc.paletter.creative">CreativePlacement</a></span>&nbsp;<span class="element-name">afterAnyOf</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;anchor)</span></div>
+<section class="detail" id="afterAnyVariantOf(org.geysermc.paletter.vanilla.BedrockItemType)">
+<h3>afterAnyVariantOf</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="CreativePlacement.html" title="class in org.geysermc.paletter.creative">CreativePlacement</a></span>&nbsp;<span class="element-name">afterAnyVariantOf</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;anchor)</span></div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>this placement, right after the stacks of every variant of an item type if present</dd>
+<dd>this placement, right after the stacks of any variant of an item type if present</dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>
@@ -277,7 +277,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="CreativePlacement.html" title="class in org.geysermc.paletter.creative">CreativePlacement</a></span>&nbsp;<span class="element-name">after</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/ItemKey.html" title="interface in org.geysermc.paletter.vanilla">ItemKey</a>&nbsp;anchor)</span></div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>this placement, right after exactly this variant if present (a type is its base variant, aux 0)</dd>
+<dd>this placement, right after exactly that variant if present (a type is its base variant)</dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>

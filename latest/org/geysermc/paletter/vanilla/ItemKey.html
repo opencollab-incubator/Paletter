@@ -99,9 +99,9 @@ loadScripts(document, 'script');</script>
  ResolvedItem apple = palette.resolve(BedrockItems.APPLE);
  ResolvedItem potion = palette.resolve(BedrockItems.POTION.variant(5));
  </code></pre>
- Every method that takes an <code>ItemKey</code> means exactly that variant, and reads a type as its base variant, aux 0.
- The forms that mean every aux instead say so in their name (<code>ItemFallback.keepingAux</code>, <code>ItemMatcher.anyVariantOf</code>,
- <code>CreativePlacement.afterAnyOf</code>), so dropping a <code>.variant()</code> never changes what a call means.
+ Every method that takes an <code>ItemKey</code> means exactly that variant, and reads a type as its base variant.
+ The forms that mean every aux instead say so in their name (<code>ItemMatcher.anyVariantOf</code>,
+ <code>CreativePlacement.afterAnyVariantOf</code>), so dropping a <code>.variant()</code> never changes what a call means.
  <p>
  A key is a plain value, a type and an aux: creating or referencing one loads no data, so the constants of
  <a href="BedrockItems.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockItems</code></a> and <a href="BedrockItemVariants.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockItemVariants</code></a> can be used in static initializers.</div>

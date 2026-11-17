@@ -225,7 +225,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">variant</span>()</div>
 <div class="block">The variant this palette sends for the requested one, as a key: the requested variant itself, or if <a href="#fallback()"><code>fallback()</code></a> its replacement
  (of an <code>ItemFallback</code>, also a forced one, or the default fallback <code>minecraft:unknown</code> for a variant
- the version lacks). A replacement has the aux of the fallback's variant, else the replaced variant's.</div>
+ the version lacks). A replacement is exactly the fallback's variant.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the variant this palette sends for the requested one, never null</dd>
