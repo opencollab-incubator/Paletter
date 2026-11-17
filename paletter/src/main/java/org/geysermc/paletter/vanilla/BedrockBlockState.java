@@ -13,7 +13,7 @@ import org.geysermc.paletter.internal.CanonicalBlocks;
  * Equality: {@code equals} always works. {@code ==} works too for the states of vanilla types (the constants) and of
  * registered custom blocks: a {@link org.geysermc.paletter.block.CustomBlock} owns its {@link
  * org.geysermc.paletter.block.CustomBlock#type() type} and states, and a palette it is registered in hands back exactly
- * those ({@code Palette#block(NbtMap)}, {@link org.geysermc.paletter.block.RegisteredBlockState#key()}, ...). The states
+ * those ({@code Palette#block(NbtMap)}, {@code Palette#blockState}, ...). The states
  * of a type made by {@link BedrockBlockType#of(String)} for an unknown identifier are equal by value, not identical.
  * Equal custom blocks registered by different layers each own their states; those are equal, not identical.
  * <p>

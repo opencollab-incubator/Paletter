@@ -334,7 +334,7 @@ public final class CustomBlock {
      * <p>
      * It is created with the block and belongs to it: every call returns the same type with the same states, and a
      * palette the block is registered in hands back exactly these for it ({@code block}, {@code decode},
-     * {@link RegisteredBlock#key()}, {@link RegisteredBlockState#key()}, ...), so {@code ==} works like for vanilla
+     * {@link RegisteredBlock#key()}, {@code Palette#blockState}, ...), so {@code ==} works like for vanilla
      * constants. Another, equal block has a type of its own, equal to this one but not identical: a palette hands back
      * the type of the instance its layer registered.
      *

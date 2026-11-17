@@ -23,7 +23,6 @@ class BlockKeyTest {
                 BedrockBlockState key = blocks.key(state);
                 assertNotNull(key, state.toString());
                 assertEquals(state.getState(), key.toNbt());
-                assertSame(key, state.key());
             }
         }
     }

@@ -238,7 +238,6 @@ class CustomHandleIdentityTest {
         for (BedrockBlockState state : block.type().states()) {
             assertSame(state, palette.block(state.toNbt()), where);
             RegisteredBlockState registered = palette.blockDefinition(state);
-            assertSame(state, registered.key(), where);
             assertSame(state, palette.blocks().key(registered), where);
             assertSame(state, BedrockBlockState.fromCanonical(palette.blocks().canonical(), palette.blocks().canonical().index(state.toNbt())), where);
             assertSame(state, palette.explain(state.toNbt()).handle(), where);
