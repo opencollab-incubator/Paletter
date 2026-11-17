@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * {@link Palette#isFallback} and {@link Palette#fallbackOf}: the cheap answer to "is this variant sent as itself".
+ * {@link org.geysermc.paletter.item.ResolvedItem#fallback} and {@link org.geysermc.paletter.item.ResolvedItem#sent}: the cheap answer to "is this variant sent as itself".
  */
 class FallbackQueryTest {
     private static final int OLDEST = 2168;
@@ -27,7 +27,7 @@ class FallbackQueryTest {
         Palette oldest = PALETTER.palette(OLDEST);
         List<BedrockItemVariant> missing = new ArrayList<>();
         for (BedrockItemVariant variant : PALETTER.palette(Integer.MAX_VALUE).itemVariants()) {
-            if (oldest.item(variant) == null) {
+            if (oldest.itemDefinition(variant.type()) == null) {
                 missing.add(variant);
             }
         }
@@ -39,28 +39,28 @@ class FallbackQueryTest {
     void theNewestVersionSendsEverythingAsItself() {
         Palette newest = Palettes.palette(Integer.MAX_VALUE);
         for (BedrockItemVariant variant : newest.itemVariants()) {
-            assertFalse(newest.isFallback(variant), variant.toString());
-            assertNull(newest.fallbackOf(variant), variant.toString());
+            assertFalse(Palettes.isFallback(newest, variant), variant.toString());
+            assertNull(Palettes.fallbackOf(newest, variant), variant.toString());
         }
         // Content behind an experiment the Paletter did not enable is missing even in the newest version
-        assertTrue(PALETTER.palette(Integer.MAX_VALUE).isFallback(BedrockItems.ICICLE.base()));
+        assertTrue(Palettes.isFallback(PALETTER.palette(Integer.MAX_VALUE), BedrockItems.ICICLE.base()));
     }
 
     @Test
     void missingItemsFallBackToUnknownByDefault() {
         Palette oldest = PALETTER.palette(OLDEST);
         for (BedrockItemVariant variant : missingInOldest()) {
-            assertTrue(oldest.isFallback(variant), variant.toString());
-            assertEquals(BedrockItems.UNKNOWN.base(), oldest.fallbackOf(variant), variant.toString());
+            assertTrue(Palettes.isFallback(oldest, variant), variant.toString());
+            assertEquals(BedrockItems.UNKNOWN.base(), Palettes.fallbackOf(oldest, variant), variant.toString());
         }
     }
 
     @Test
     void existingItemsAreNotFallbacks() {
         Palette oldest = PALETTER.palette(OLDEST);
-        assertFalse(oldest.isFallback(BedrockItems.STICK.base()));
-        assertNull(oldest.fallbackOf(BedrockItems.STICK.base()));
-        assertFalse(oldest.isFallback(BedrockItems.DIAMOND_SWORD.base()));
+        assertFalse(Palettes.isFallback(oldest, BedrockItems.STICK.base()));
+        assertNull(Palettes.fallbackOf(oldest, BedrockItems.STICK.base()));
+        assertFalse(Palettes.isFallback(oldest, BedrockItems.DIAMOND_SWORD.base()));
     }
 
     @Test
@@ -73,10 +73,10 @@ class FallbackQueryTest {
             }
             ItemExplanation.Kind kind = oldest.explain(variant.type().identifier(), variant.aux(), null).kind();
             boolean fallback = kind == ItemExplanation.Kind.FALLBACK || kind == ItemExplanation.Kind.DEFAULT;
-            assertEquals(fallback, oldest.isFallback(variant), variant + " " + kind);
-            assertEquals(fallback, oldest.fallbackOf(variant) != null, variant + " " + kind);
+            assertEquals(fallback, Palettes.isFallback(oldest, variant), variant + " " + kind);
+            assertEquals(fallback, Palettes.fallbackOf(oldest, variant) != null, variant + " " + kind);
             if (fallback) {
-                assertEquals(oldest.explain(variant.type().identifier(), variant.aux(), null).item(), oldest.fallbackOf(variant).type().identifier(), variant.toString());
+                assertEquals(oldest.explain(variant.type().identifier(), variant.aux(), null).item(), Palettes.fallbackOf(oldest, variant).type().identifier(), variant.toString());
             }
         }
         assertTrue(checked > 100);
@@ -88,15 +88,15 @@ class FallbackQueryTest {
         Palette type = Paletter.builder()
             .fallbacks(Fallbacks.builder().item(missing.type(), ItemFallback.of(BedrockItems.STICK)).build())
             .build().palette(OLDEST);
-        assertTrue(type.isFallback(missing));
+        assertTrue(Palettes.isFallback(type, missing));
         // The aux of the replaced variant is kept
-        assertEquals(BedrockItems.STICK.variantOf(missing.aux()), type.fallbackOf(missing));
+        assertEquals(BedrockItems.STICK.variantOf(missing.aux()), Palettes.fallbackOf(type, missing));
 
         BedrockItemVariant target = BedrockItems.STICK.variantOf(3);
         Palette variant = Paletter.builder()
             .fallbacks(Fallbacks.builder().item(missing.type(), ItemFallback.of(target)).build())
             .build().palette(OLDEST);
-        assertEquals(target, variant.fallbackOf(missing));
+        assertEquals(target, Palettes.fallbackOf(variant, missing));
     }
 
     @Test
@@ -104,34 +104,34 @@ class FallbackQueryTest {
         Palette forced = Paletter.builder()
             .fallbacks(Fallbacks.builder().item(BedrockItems.DIAMOND_SWORD, ItemFallback.of(BedrockItems.STICK).forced()).build())
             .build().palette(OLDEST);
-        assertTrue(forced.isFallback(BedrockItems.DIAMOND_SWORD.base()));
-        assertEquals(BedrockItems.STICK.base(), forced.fallbackOf(BedrockItems.DIAMOND_SWORD.base()));
-        assertFalse(forced.isFallback(BedrockItems.STICK.base()));
+        assertTrue(Palettes.isFallback(forced, BedrockItems.DIAMOND_SWORD.base()));
+        assertEquals(BedrockItems.STICK.base(), Palettes.fallbackOf(forced, BedrockItems.DIAMOND_SWORD.base()));
+        assertFalse(Palettes.isFallback(forced, BedrockItems.STICK.base()));
     }
 
     @Test
     void anItemWithoutFallbackIsNeitherAFallbackNorSent() {
         Palette none = Paletter.builder().fallbacks(Fallbacks.NONE).build().palette(OLDEST);
         BedrockItemVariant missing = missingInOldest().getFirst();
-        assertFalse(none.isFallback(missing));
-        assertNull(none.fallbackOf(missing));
-        assertNull(none.item(missing));
+        assertFalse(Palettes.isFallback(none, missing));
+        assertNull(Palettes.fallbackOf(none, missing));
+        assertNull(none.itemDefinition(missing.type()));
 
         // A key Paletter has never heard of
         BedrockItemVariant custom = BedrockItemType.of("paletter:nothing").base();
-        assertFalse(none.isFallback(custom));
-        assertNull(none.fallbackOf(custom));
+        assertFalse(Palettes.isFallback(none, custom));
+        assertNull(Palettes.fallbackOf(none, custom));
     }
 
     @Test
     void anUnknownAuxTakesTheSamePath() {
         // An aux value that is not a variant of the newest data takes the same path as a known one
         Palette oldest = PALETTER.palette(OLDEST);
-        assertFalse(oldest.isFallback(BedrockItems.STICK.variantOf(99)));
+        assertFalse(Palettes.isFallback(oldest, BedrockItems.STICK.variantOf(99)));
         BedrockItemVariant missing = missingInOldest().getFirst();
         // The default fallback serves every variant of a missing item, canonical or not, as encode does
         BedrockItemVariant unlisted = missing.type().variantOf(99);
-        assertTrue(oldest.isFallback(unlisted));
+        assertTrue(Palettes.isFallback(oldest, unlisted));
         assertEquals("minecraft:unknown", oldest.encode(BedrockItemStack.of(unlisted)).getDefinition().getIdentifier());
     }
 }

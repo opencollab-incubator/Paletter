@@ -27,7 +27,7 @@ class PaletteLookupTest {
         Palette base = HASHED.palette(HASHED.latest().protocolVersion());
         BedrockBlockState lamp = LAMP.type().defaultState();
         assertThrows(IllegalArgumentException.class, () -> base.runtimeId(lamp));
-        assertThrows(IllegalArgumentException.class, () -> base.block(lamp));
+        assertThrows(IllegalArgumentException.class, () -> base.blockDefinition(lamp));
         int air = base.runtimeId(BedrockBlocks.AIR.defaultState());
         assertEquals(air, base.runtimeIdOrDefault(lamp, air));
         assertEquals(-1, base.runtimeIdOrDefault(lamp, -1));
@@ -42,9 +42,9 @@ class PaletteLookupTest {
         assertEquals(session.runtimeId(lamp), session.runtimeIdOrDefault(lamp, -1));
         RegisteredBlockState block = session.blockOrNull(lamp);
         assertNotNull(block);
-        assertSame(session.block(lamp), block);
+        assertSame(session.blockDefinition(lamp), block);
         BedrockBlockState stone = BedrockBlocks.STONE.defaultState();
         assertEquals(base.runtimeId(stone), base.runtimeIdOrDefault(stone, -1));
-        assertSame(base.block(stone), base.blockOrNull(stone));
+        assertSame(base.blockDefinition(stone), base.blockOrNull(stone));
     }
 }

@@ -72,7 +72,7 @@ import java.util.function.Supplier;
  * }</pre>
  * Translating content uses handles, version independent and interned objects ({@link BedrockBlockState},
  * {@link BedrockItemVariant}): {@link #block(NbtMap)} and {@link #item(String, int)} find them once, then
- * {@link #runtimeId(BedrockBlockState)} and {@link #block(BedrockBlockState)} for blocks, {@link #item(BedrockItemVariant)}
+ * {@link #runtimeId(BedrockBlockState)} and {@link #blockDefinition(BedrockBlockState)} for blocks, {@link #resolve(BedrockItemVariant)}
  * for items. {@link #encode} and {@link #decode} translate whole stacks at the protocol boundary. They are field reads and array lookups that do not allocate. The ids behind
  * the handles are not API.
  *
@@ -186,12 +186,12 @@ public final class Palette {
     }
 
     /**
-     * @return the behaviour values of the state this palette sends for a state, see {@link #block(BedrockBlockState)}
+     * @return the behaviour values of the state this palette sends for a state, see {@link #blockDefinition(BedrockBlockState)}
      * @throws IllegalArgumentException if the state is not in this palette
      * @since 0.1.0
      */
     public @NonNull BlockValues blockBehaviour(@NonNull BedrockBlockState state) {
-        return blockBehaviour(block(state).getRuntimeId());
+        return blockBehaviour(blockDefinition(state).getRuntimeId());
     }
 
     /**
@@ -207,11 +207,11 @@ public final class Palette {
      * The behaviour values (max stack size, durability, attack damage, ...) of an item in this palette:
      * {@code palette.itemBehaviour(BedrockItems.APPLE).get(ItemBehaviour.MAX_STACK_SIZE)}.
      *
-     * @throws IllegalArgumentException if this palette has no such item, see {@link #item(BedrockItemType)}
+     * @throws IllegalArgumentException if this palette has no such item, see {@link #itemDefinition(BedrockItemType)}
      * @since 0.1.0
      */
     public @NonNull ItemValues itemBehaviour(@NonNull BedrockItemType type) {
-        RegisteredItem item = item(type);
+        RegisteredItem item = itemDefinition(type);
         ItemValues values = item == null ? null : behaviour().item(item);
         if (values == null) {
             throw new IllegalArgumentException(type + " is not an item of " + this);
@@ -308,12 +308,12 @@ public final class Palette {
      *         {@link #blockOrNull(BedrockBlockState)}: exceptions are expensive and the stack trace is built every time
      * @since 0.1.0
      */
-    public @NonNull RegisteredBlockState block(@NonNull BedrockBlockState state) {
+    public @NonNull RegisteredBlockState blockDefinition(@NonNull BedrockBlockState state) {
         return blocks.block(requireCanonical(state));
     }
 
     /**
-     * Like {@link #block(BedrockBlockState)}, but for a state that is not in this palette it returns null instead of
+     * Like {@link #blockDefinition(BedrockBlockState)}, but for a state that is not in this palette it returns null instead of
      * throwing. Same cost otherwise.
      *
      * @return the block to send for a state, or null if the state is not in this palette
@@ -357,44 +357,11 @@ public final class Palette {
     }
 
     /**
-     * The block an item variant is sent with in this palette's version, in its default state: Paletter alone decides it,
-     * see {@link ItemRegistry#blockOf}. A stack may carry a block state of its own, see {@link #encode}. Works for every
-     * variant: known, registered with {@code PaletteLayer.Builder#variant}, of a custom block item, or one Paletter has never
-     * heard of (the block of its item). {@link #blockKeyOf} is the block as a key.
-     *
-     * @return the block, or null if the item is not a block item (or does not exist in this version and has no fallback)
-     * @since 0.1.0
-     */
-    public @Nullable RegisteredBlockState blockOf(@NonNull BedrockItemVariant variant) {
-        return items.blockOf(variant);
-    }
-
-    /**
-     * Whether this palette sends an item variant as another item, see {@link #fallbackOf}. A lookup, not a debugging
-     * aid: cheap for every item of a version.
-     *
-     * @return true if the variant is replaced by a fallback; false if it is sent as itself, or nothing is sent for it
-     * @since 0.1.0
-     */
-    public boolean isFallback(@NonNull BedrockItemVariant variant) {
-        return items.isFallback(variant);
-    }
-
-    /**
-     * The item variant this palette sends in place of a variant its version lacks (or that a forced {@code Fallbacks}
-     * entry replaces), or the default fallback ({@code minecraft:unknown}). Customised by {@code Fallbacks} of the
-     * {@link Paletter}; the aux is the one of the fallback's variant, else the replaced variant's.
-     *
-     * @return the replacement, or null if the variant is sent as itself (or not at all: no fallback, see {@link #encode})
-     * @since 0.1.0
-     */
-    public @Nullable BedrockItemVariant fallbackOf(@NonNull BedrockItemVariant variant) {
-        return items.fallbackOf(variant);
-    }
-
-    /**
-     * The version independent key of {@link #blockOf}: the block state an item variant is sent with, as a
-     * {@link BedrockBlockState}, for every kind of variant (vanilla, extra, custom block items, fallbacks). Unlike
+     * The block an item variant is sent with in this palette's version, in its default state, as a key: a
+     * {@link BedrockBlockState}, for every kind of variant (vanilla, extra, custom block items, fallbacks). Paletter alone
+     * decides it, see {@link ItemRegistry#blockOf}. A stack may carry a block state of its own, see {@link #encode}.
+     * {@code blockDefinition(blockOf(variant))} is what is sent, and {@code resolve(variant).block()} the same without the
+     * key. Unlike
      * {@link Paletter#blockOf}, which knows the vanilla variants of the newest data only, this follows the palette: the
      * fallback's block in an old version, the custom block of a layer. {@link #runtimeId(BedrockBlockState)} gives its
      * runtime id here.
@@ -403,7 +370,7 @@ public final class Palette {
      *         resolves to the block, see {@link BlockRegistry#key})
      * @since 0.1.0
      */
-    public @Nullable BedrockBlockState blockKeyOf(@NonNull BedrockItemVariant variant) {
+    public @Nullable BedrockBlockState blockOf(@NonNull BedrockItemVariant variant) {
         RegisteredBlockState block = items.blockOf(variant);
         return block == null ? null : blocks.key(block);
     }
@@ -426,16 +393,8 @@ public final class Palette {
      *         does not have, or one that does not exist in this version; fallbacks are not applied, see {@link #encode})
      * @since 0.1.0
      */
-    public @Nullable RegisteredItem item(@NonNull BedrockItemType type) {
+    public @Nullable RegisteredItem itemDefinition(@NonNull BedrockItemType type) {
         return items.item(type.identifier());
-    }
-
-    /**
-     * @return the item of a variant as registered in this palette, like {@link #item(BedrockItemType)}
-     * @since 0.1.0
-     */
-    public @Nullable RegisteredItem item(@NonNull BedrockItemVariant variant) {
-        return item(variant.type());
     }
 
     // ---- Stacks ----

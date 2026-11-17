@@ -99,7 +99,7 @@ class BehaviourTest {
         BlockValues byType = palette.blockBehaviour(BedrockBlocks.ICE);
         assertEquals(byType, palette.blockBehaviour(BedrockBlocks.ICE.defaultState()));
         assertEquals(byType, palette.blockBehaviour(palette.runtimeId(BedrockBlocks.ICE.defaultState())));
-        assertSame(palette.block(BedrockBlocks.ICE.defaultState()), byType.state());
+        assertSame(palette.blockDefinition(BedrockBlocks.ICE.defaultState()), byType.state());
         assertThrows(IllegalArgumentException.class, () -> palette.blockBehaviour(0x7eadbeef), "no such runtime id");
         assertEquals(palette.itemBehaviour(BedrockItems.APPLE), palette.itemBehaviour(BedrockItems.APPLE));
     }
@@ -120,7 +120,7 @@ class BehaviourTest {
         List<DataVersion> versions = PALETTER.versions();
         DataVersion older = versions.get(versions.indexOf(LATEST) - 1);
         String sword = BedrockItems.DIAMOND_SWORD.identifier();
-        int stone = palette.block(BedrockBlocks.STONE.defaultState()).getRuntimeId();
+        int stone = palette.blockDefinition(BedrockBlocks.STONE.defaultState()).getRuntimeId();
         BehaviourStore.Builder store = new BehaviourStore.Builder(versions);
         int allay = store.capture(older, Provenance.Source.ALLAY_DATA, "AllayMC/Allay@" + "a".repeat(40), List.of(), List.of(sword));
         store.items(ItemBehaviour.ATTACK_DAMAGE, allay, Map.of(sword, 7));
@@ -135,14 +135,14 @@ class BehaviourTest {
     void provenanceSaysWhereAndWhetherInherited() {
         Palette palette = latest();
         Behaviour behaviour = fixture();
-        RegisteredBlockState stone = palette.block(BedrockBlocks.STONE.defaultState());
+        RegisteredBlockState stone = palette.blockDefinition(BedrockBlocks.STONE.defaultState());
         Provenance block = behaviour.provenance(stone, BlockBehaviour.FRICTION);
         assertEquals(Provenance.Source.CLOUDBURST_DATA, block.source());
         assertFalse(block.inherited());
         assertTrue(block.reference().startsWith("CloudburstMC/Data@"), block.reference());
 
         // No capture of the newest version: the value is inherited from an older one
-        RegisteredItem sword = Objects.requireNonNull(palette.item(BedrockItems.DIAMOND_SWORD));
+        RegisteredItem sword = Objects.requireNonNull(palette.itemDefinition(BedrockItems.DIAMOND_SWORD));
         Provenance item = behaviour.provenance(sword, ItemBehaviour.ATTACK_DAMAGE);
         assertEquals(Provenance.Source.ALLAY_DATA, item.source());
         assertTrue(item.inherited());
@@ -158,8 +158,8 @@ class BehaviourTest {
     void bundledProvenanceIsConsistent() {
         for (DataVersion version : PALETTER.versions()) {
             Palette palette = PALETTER.vanilla(version);
-            RegisteredBlockState stone = palette.block(BedrockBlocks.STONE.defaultState());
-            RegisteredItem sword = Objects.requireNonNull(palette.item(BedrockItems.DIAMOND_SWORD));
+            RegisteredBlockState stone = palette.blockDefinition(BedrockBlocks.STONE.defaultState());
+            RegisteredItem sword = Objects.requireNonNull(palette.itemDefinition(BedrockItems.DIAMOND_SWORD));
             List<Provenance> provenances = List.of(palette.behaviour().provenance(stone, BlockBehaviour.FRICTION),
                 palette.behaviour().provenance(sword, ItemBehaviour.ATTACK_DAMAGE), palette.behaviour().provenance(sword, ItemBehaviour.MAX_STACK_SIZE));
             for (Provenance provenance : provenances) {
@@ -176,10 +176,10 @@ class BehaviourTest {
     void explainSaysTheValueAndWhereItComesFrom() {
         Palette palette = latest();
         Behaviour behaviour = fixture();
-        String stone = behaviour.explain(palette.block(BedrockBlocks.STONE.defaultState()), BlockBehaviour.FRICTION);
+        String stone = behaviour.explain(palette.blockDefinition(BedrockBlocks.STONE.defaultState()), BlockBehaviour.FRICTION);
         assertEquals("0.6 from CloudburstMC/Data@0123456 (CLOUDBURST_DATA, third party), " + LATEST.name(), stone);
 
-        RegisteredItem diamondSword = Objects.requireNonNull(palette.item(BedrockItems.DIAMOND_SWORD));
+        RegisteredItem diamondSword = Objects.requireNonNull(palette.itemDefinition(BedrockItems.DIAMOND_SWORD));
         String sword = behaviour.explain(diamondSword, ItemBehaviour.ATTACK_DAMAGE);
         assertTrue(sword.contains("(ALLAY_DATA, third party)") && sword.endsWith("inherited by " + LATEST.name()), sword);
 
@@ -198,7 +198,7 @@ class BehaviourTest {
         assertEquals(16, palette.itemBehaviour(BedrockItems.ENDER_PEARL).get(ItemBehaviour.MAX_STACK_SIZE));
         assertEquals(1561, palette.itemBehaviour(BedrockItems.DIAMOND_SWORD).get(ItemBehaviour.MAX_DAMAGE));
         assertEquals(32, palette.itemBehaviour(BedrockItems.APPLE).get(ItemBehaviour.USE_DURATION), "from the component data");
-        RegisteredItem apple = Objects.requireNonNull(palette.item(BedrockItems.APPLE));
+        RegisteredItem apple = Objects.requireNonNull(palette.itemDefinition(BedrockItems.APPLE));
         assertEquals(Provenance.Source.WIRE, palette.behaviour().provenance(apple, ItemBehaviour.USE_DURATION).source());
         ItemValues bow = palette.itemBehaviour(BedrockItems.BOW);
         assertThrows(IllegalStateException.class, () -> bow.get(ItemBehaviour.USE_DURATION), "native item: needs the native capture");
@@ -261,10 +261,10 @@ class BehaviourTest {
     @Test
     void thirdPartyValuesAreMarkedAndBdsOnesAreNot() {
         Palette palette = latest();
-        RegisteredBlockState stone = palette.block(BedrockBlocks.STONE.defaultState());
+        RegisteredBlockState stone = palette.blockDefinition(BedrockBlocks.STONE.defaultState());
         assertTrue(palette.behaviour().provenance(stone, BlockBehaviour.FRICTION).thirdParty());
         assertFalse(palette.behaviour().provenance(stone, BlockBehaviour.FRICTION).userSet());
-        RegisteredItem sword = Objects.requireNonNull(palette.item(BedrockItems.DIAMOND_SWORD));
+        RegisteredItem sword = Objects.requireNonNull(palette.itemDefinition(BedrockItems.DIAMOND_SWORD));
         assertFalse(palette.behaviour().provenance(sword, ItemBehaviour.MAX_STACK_SIZE).thirdParty(), "own Script API capture");
         assertTrue(palette.behaviour().provenance(sword, ItemBehaviour.ATTACK_DAMAGE).thirdParty());
         assertFalse(Provenance.Source.WIRE.thirdParty());
@@ -298,7 +298,7 @@ class BehaviourTest {
                 }
             }
             assertTrue(disputed, "doors are disputed in " + version.name());
-            Provenance stone = palette.behaviour().provenance(palette.block(BedrockBlocks.STONE.defaultState()), BlockBehaviour.COLLISION_SHAPE);
+            Provenance stone = palette.behaviour().provenance(palette.blockDefinition(BedrockBlocks.STONE.defaultState()), BlockBehaviour.COLLISION_SHAPE);
             assertFalse(stone.disputed());
             assertFalse(stone.postProcessed());
         }
@@ -468,12 +468,12 @@ class BehaviourTest {
         assertEquals(Provenance.Source.UNKNOWN_DEFAULT, destroy.source());
         assertFalse(destroy.userSet());
 
-        RegisteredItem registered = Objects.requireNonNull(palette.item(item.type()));
+        RegisteredItem registered = Objects.requireNonNull(palette.itemDefinition(item.type()));
         assertTrue(behaviour.provenance(registered, ItemBehaviour.MAX_STACK_SIZE).userSet());
         assertTrue(behaviour.provenance(registered, ItemBehaviour.ARMOR_VALUE).unknownDefault());
 
         // Vanilla values are never user-set
-        RegisteredBlockState stone = palette.block(BedrockBlocks.STONE.defaultState());
+        RegisteredBlockState stone = palette.blockDefinition(BedrockBlocks.STONE.defaultState());
         assertFalse(behaviour.provenance(stone, BlockBehaviour.FRICTION).userSet());
     }
 
@@ -549,18 +549,18 @@ class BehaviourTest {
     @Test
     void overriddenItemsAreUserSetForTheComponentsOfTheLayer() {
         Palette palette = mixed();
-        RegisteredItem apple = Objects.requireNonNull(palette.item(BedrockItems.APPLE));
+        RegisteredItem apple = Objects.requireNonNull(palette.itemDefinition(BedrockItems.APPLE));
         assertEquals(3, palette.itemBehaviour(BedrockItems.APPLE).get(ItemBehaviour.MAX_STACK_SIZE));
         assertTrue(palette.behaviour().provenance(apple, ItemBehaviour.MAX_STACK_SIZE).userSet());
         assertFalse(palette.behaviour().provenance(apple, ItemBehaviour.USE_DURATION).userSet());
-        RegisteredItem pearl = Objects.requireNonNull(palette.item(BedrockItems.ENDER_PEARL));
+        RegisteredItem pearl = Objects.requireNonNull(palette.itemDefinition(BedrockItems.ENDER_PEARL));
         assertFalse(palette.behaviour().provenance(pearl, ItemBehaviour.MAX_STACK_SIZE).userSet());
     }
 
     @Test
     void itemHandlesOnlyKnowTheItemsOfThePalette() {
         Palette palette = mixed();
-        RegisteredItem foreign = Objects.requireNonNull(PALETTER.vanilla(PALETTER.versions().getFirst()).item(BedrockItems.APPLE));
+        RegisteredItem foreign = Objects.requireNonNull(PALETTER.vanilla(PALETTER.versions().getFirst()).itemDefinition(BedrockItems.APPLE));
         assertEquals(null, palette.behaviour().item(foreign), "an item of another palette is not an item of this one");
         assertThrows(IllegalArgumentException.class, () -> latest().itemBehaviour(CustomItem.builder("test:nowhere").build().type()));
     }

@@ -43,13 +43,16 @@ not know is a plain value, equal by identifier and not interned, so memory is bo
 items or blocks in different layers each own their keys, which are equal but not identical. Registered entries (`RegisteredItem`, `RegisteredBlockState`) are compared by identity, like
 Cloudburst definitions: there is one instance per entry per palette.
 
+Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named `...Definition` return what is sent.
+
 | Lookup | Returns |
 |---|---|
 | `Paletter#block(NbtMap)`, `Paletter#item(identifier, aux)` | The key for a state or variant of any bundled version, or null. `explainUnknown` says why. |
 | `Palette#runtimeId(BedrockBlockState)` | The runtime id (the state hash). Throws if the palette lacks the state; `runtimeIdOrDefault` does not. |
-| `Palette#block(BedrockBlockState)` | The `RegisteredBlockState` this version sends, after adapting and fallbacks. `blockOrNull` returns null instead of throwing. |
-| `Palette#item(BedrockItemType)` | The `RegisteredItem`, or null if the version lacks it. Fallbacks are not applied. |
-| `Palette#resolve(BedrockItemVariant)` | What `encode` would send, without building an `ItemData`. |
+| `Palette#blockDefinition(BedrockBlockState)` | The `RegisteredBlockState` this version sends, after adapting and fallbacks. `blockOrNull` returns null instead of throwing. |
+| `Palette#itemDefinition(BedrockItemType)` | The `RegisteredItem`, or null if the version lacks it. Fallbacks are not applied. |
+| `Palette#resolve(BedrockItemVariant)` | What `encode` would send, without building an `ItemData`. `sent()` is the variant sent in place of a fallback, null if the variant is sent as itself. |
+| `Palette#blockOf(BedrockItemVariant)` | The key of the block an item is sent with, or null. `blockDefinition(blockOf(v))` is what is sent. |
 | `Palette#encode(BedrockItemStack)` | The `ItemData` for the client, with fallbacks applied. |
 | `Palette#decode(ItemData)` | The stack a client sent, or null if unknown. |
 | `Palette#explain(...)` | A readable explanation of how a block state or item resolves. |
@@ -60,7 +63,7 @@ working when 26.60 becomes the newest version. To match strictly, pass a `Lookup
 exists as is in the newest data, `Lookup.of(version)` only what exists in that version, and `.withRenames()` also
 accepts renamed identifiers.
 
-Paletter decides which block an item carries (`Palette#blockOf`). A layer override wins, then the block to item relation
+Paletter decides which block an item carries (`Palette#blockOf`, a key). A layer override wins, then the block to item relation
 captured from the Script API, then the block states in the creative inventory.
 
 Vanilla items keep the runtime ids of the bundled data in every palette: custom items and data driven block items get

@@ -42,18 +42,18 @@ class ExperimentGatingTest {
         Paletter paletter = Paletter.builder().fallbacks(flat).build();
 
         Palette gated = paletter.palette(OLDEST);
-        assertTrue(gated.isFallback(BedrockItems.BLACK_CUSHION.base()));
-        assertEquals(BedrockItems.STICK.base(), gated.fallbackOf(BedrockItems.BLACK_CUSHION.base()));
-        assertNull(gated.item(BedrockItems.BLACK_CUSHION));
+        assertTrue(Palettes.isFallback(gated, BedrockItems.BLACK_CUSHION.base()));
+        assertEquals(BedrockItems.STICK.base(), Palettes.fallbackOf(gated, BedrockItems.BLACK_CUSHION.base()));
+        assertNull(gated.itemDefinition(BedrockItems.BLACK_CUSHION));
         assertEquals(List.of(), gated.experiments());
 
         Palette regular = paletter.palette(MIDDLE);
-        assertFalse(regular.isFallback(BedrockItems.BLACK_CUSHION.base()));
-        assertNotNull(regular.item(BedrockItems.BLACK_CUSHION));
+        assertFalse(Palettes.isFallback(regular, BedrockItems.BLACK_CUSHION.base()));
+        assertNotNull(regular.itemDefinition(BedrockItems.BLACK_CUSHION));
         assertEquals(List.of(), regular.experiments());
 
         // Without a fallback of its own the gated item is the default fallback, like content the version lacks
-        assertEquals(BedrockItems.UNKNOWN.base(), PALETTER.palette(OLDEST).fallbackOf(BedrockItems.BLACK_CUSHION.base()));
+        assertEquals(BedrockItems.UNKNOWN.base(), Palettes.fallbackOf(PALETTER.palette(OLDEST), BedrockItems.BLACK_CUSHION.base()));
     }
 
     private static final Paletter PALETTER = Paletter.bundled();
@@ -64,8 +64,8 @@ class ExperimentGatingTest {
         Paletter paletter = Paletter.builder().fallbacks(flat).vanilla(vanilla -> vanilla.experiments(TOGGLE)).build();
 
         Palette enabled = paletter.palette(OLDEST);
-        assertFalse(enabled.isFallback(BedrockItems.BLACK_CUSHION.base()));
-        assertNotNull(enabled.item(BedrockItems.BLACK_CUSHION));
+        assertFalse(Palettes.isFallback(enabled, BedrockItems.BLACK_CUSHION.base()));
+        assertNotNull(enabled.itemDefinition(BedrockItems.BLACK_CUSHION));
         assertEquals(List.of(TOGGLE), enabled.experiments());
         assertEquals(TOGGLE, enabled.experimentOf(BedrockItems.BLACK_CUSHION));
         assertNull(enabled.experimentOf(BedrockItems.STICK));

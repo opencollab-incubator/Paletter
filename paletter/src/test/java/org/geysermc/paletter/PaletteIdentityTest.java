@@ -85,8 +85,8 @@ class PaletteIdentityTest {
             assertSame(palette, HASHED.palette(version.protocolVersion()));
             for (BedrockBlockType type : BedrockBlockType.vanillaTypes().subList(0, 50)) {
                 for (BedrockBlockState state : type.states()) {
-                    assertSame(palette.block(state), palette.block(state));
-                    assertSame(palette.block(state), palette.blocks().getDefinition(palette.runtimeId(state)));
+                    assertSame(palette.blockDefinition(state), palette.blockDefinition(state));
+                    assertSame(palette.blockDefinition(state), palette.blocks().getDefinition(palette.runtimeId(state)));
                 }
             }
         }
@@ -136,10 +136,10 @@ class PaletteIdentityTest {
             // Handles of vanilla states give the base's instance in the patch
             for (BedrockBlockType type : BedrockBlockType.vanillaTypes().subList(0, 50)) {
                 for (BedrockBlockState state : type.states()) {
-                    assertSame(base.block(state), session.block(state));
+                    assertSame(base.blockDefinition(state), session.blockDefinition(state));
                 }
             }
-            assertNotNull(session.block(LAMP.type().defaultState()));
+            assertNotNull(session.blockDefinition(LAMP.type().defaultState()));
         }
     }
 
@@ -158,6 +158,6 @@ class PaletteIdentityTest {
             assertSame(base.blocks().byIndex(i), second.blocks().byIndex(i));
         }
         BedrockItemVariant variant = base.items().canonical().handle(0);
-        assertSame(base.item(variant), second.item(variant));
+        assertSame(base.itemDefinition(variant.type()), second.itemDefinition(variant.type()));
     }
 }

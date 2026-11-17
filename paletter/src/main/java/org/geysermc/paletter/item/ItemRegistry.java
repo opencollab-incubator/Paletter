@@ -300,35 +300,6 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     /**
-     * What this version sends instead of a variant: its fallback, that is the replacement of a {@link ItemFallback} (also
-     * a forced one), or the default fallback ({@code minecraft:unknown}) for a variant the version lacks. A lookup in the
-     * canonical table, cheap enough to ask for every item at startup (unlike {@code Palette#explain}).
-     *
-     * @param variant a variant, written against the newest Bedrock version
-     * @return the variant that is sent in its place (the aux of the fallback's variant, else the aux of the replaced
-     *         item), or null if the variant is sent as itself, or nothing is sent for it at all (see
-     *         {@link #isFallback})
-     * @since 0.1.0
-     */
-    public @Nullable BedrockItemVariant fallbackOf(@NonNull BedrockItemVariant variant) {
-        ResolvedItem resolved = resolve(variant);
-        if (resolved == null || !resolved.fallback()) {
-            return null;
-        }
-        return resolved.definition().key().variantOf(resolved.damage());
-    }
-
-    /**
-     * @return true if this version sends the variant as another item, see {@link #fallbackOf}; false if it is sent as
-     *         itself, and for a variant nothing is sent for
-     * @since 0.1.0
-     */
-    public boolean isFallback(@NonNull BedrockItemVariant variant) {
-        ResolvedItem resolved = resolve(variant);
-        return resolved != null && resolved.fallback();
-    }
-
-    /**
      * @return the block this item is sent with by default, or null if it is not a block item; see {@link #blockOf}
      */
     @Internal

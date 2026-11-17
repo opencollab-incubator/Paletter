@@ -51,7 +51,7 @@ class HandleTest {
         assertNotNull(PALETTER.explainUnknown(BlockStates.of("minecraft:not_a_block")));
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
         assertSame(stone, palette.block(BlockStates.of("minecraft:stone")));
-        assertEquals(palette.block(stone).getRuntimeId(), palette.runtimeId(stone));
+        assertEquals(palette.blockDefinition(stone).getRuntimeId(), palette.runtimeId(stone));
     }
 
     @Test
@@ -79,7 +79,7 @@ class HandleTest {
         assertNotNull(handle);
         assertSame(ruby.type().base(), handle, "the palette hands back the item's own handle");
         assertSame(handle, palette.item("example:ruby", 0));
-        assertNotNull(palette.item(handle));
+        assertNotNull(palette.itemDefinition(handle.type()));
         assertTrue(palette.itemVariants().contains(handle));
         assertTrue(palette.itemVariants().contains(BedrockItems.APPLE.base()));
         assertNull(PALETTER.item("example:ruby", 0));
@@ -136,7 +136,7 @@ class HandleTest {
                 assertSame(resolved.definition(), sent.getDefinition(), version.toString());
                 assertEquals(resolved.damage(), sent.getDamage(), version.toString());
                 assertSame(resolved.block(), sent.getBlockDefinition(), version.toString());
-                assertEquals(palette.isFallback(variant), resolved.fallback(), version.toString());
+                assertEquals(resolved.fallback(), resolved.sent() != null, version.toString());
             }
         }
     }

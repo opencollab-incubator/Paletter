@@ -37,7 +37,7 @@ class UnknownItemTest {
     /** A canonical item of the newest version that the oldest lacks. */
     private static BedrockItemVariant missingInOldest(Palette oldest) {
         for (BedrockItemVariant variant : latest().itemVariants()) {
-            if (oldest.item(variant) == null) {
+            if (oldest.itemDefinition(variant.type()) == null) {
                 return variant;
             }
         }
@@ -54,9 +54,9 @@ class UnknownItemTest {
         assertEquals("minecraft:unknown", fromMissing.getDefinition().getIdentifier());
         assertSame(fromMissing.getDefinition(), fromNobody.getDefinition());
         assertEquals(3, fromNobody.getCount());
-        assertTrue(oldest.isFallback(nobody));
-        assertEquals(BedrockItems.UNKNOWN.base(), oldest.fallbackOf(nobody));
-        assertEquals(oldest.fallbackOf(missing), oldest.fallbackOf(nobody));
+        assertTrue(Palettes.isFallback(oldest, nobody));
+        assertEquals(BedrockItems.UNKNOWN.base(), Palettes.fallbackOf(oldest, nobody));
+        assertEquals(Palettes.fallbackOf(oldest, missing), Palettes.fallbackOf(oldest, nobody));
         // The newest version has no item of that name either
         assertEquals("minecraft:unknown", latest().encode(BedrockItemStack.of(nobody)).getDefinition().getIdentifier());
     }
@@ -69,7 +69,7 @@ class UnknownItemTest {
         BedrockItemVariant nobody = BedrockItemVariant.of("nobody:item", 7);
         assertEquals("minecraft:stick", oldest.encode(BedrockItemStack.of(missing)).getDefinition().getIdentifier());
         assertEquals("minecraft:stick", oldest.encode(BedrockItemStack.of(nobody)).getDefinition().getIdentifier());
-        assertEquals(BedrockItems.STICK.base(), oldest.fallbackOf(nobody));
+        assertEquals(BedrockItems.STICK.base(), Palettes.fallbackOf(oldest, nobody));
     }
 
     @Test
@@ -80,8 +80,8 @@ class UnknownItemTest {
         BedrockItemVariant nobody = BedrockItemVariant.of("nobody:item", 0);
         assertEquals(ItemData.AIR, oldest.encode(BedrockItemStack.of(missing)));
         assertEquals(ItemData.AIR, oldest.encode(BedrockItemStack.of(nobody)));
-        assertFalse(oldest.isFallback(nobody));
-        assertNull(oldest.fallbackOf(nobody));
+        assertFalse(Palettes.isFallback(oldest, nobody));
+        assertNull(Palettes.fallbackOf(oldest, nobody));
     }
 
     @Test

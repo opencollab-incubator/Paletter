@@ -121,7 +121,7 @@ class CustomHandleIdentityTest {
         assertNotNull(resolved);
         assertTrue(resolved.fallback());
         assertSame(ruby.type(), resolved.definition().key());
-        assertSame(ruby.type().base(), palette.fallbackOf(BedrockItems.DIAMOND_SWORD.base()));
+        assertSame(ruby.type().base(), Palettes.fallbackOf(palette, BedrockItems.DIAMOND_SWORD.base()));
         assertSame(ruby.type().base(), palette.decode(palette.encode(BedrockItemStack.of(BedrockItems.DIAMOND_SWORD))).variant());
     }
 
@@ -136,11 +136,11 @@ class CustomHandleIdentityTest {
             .blockItem(lamp.identifier(), CustomBlock.BlockItem.SIMPLE, CreativePlacement.loose(CreativeCategory.CONSTRUCTION)).build());
         BedrockItemType itemType = lamp.itemType();
         assertSame(itemType.base(), palette.item("example:lamp", 0));
-        assertSame(itemType, palette.item(itemType).key());
+        assertSame(itemType, palette.itemDefinition(itemType).key());
         BedrockItemStack decoded = palette.decode(palette.encode(BedrockItemStack.of(itemType.base())));
         assertNotNull(decoded);
         assertSame(itemType.base(), decoded.variant());
-        assertSame(lamp.type().defaultState(), palette.blockKeyOf(itemType.base()));
+        assertSame(lamp.type().defaultState(), palette.blockOf(itemType.base()));
     }
 
     @Test
@@ -167,7 +167,7 @@ class CustomHandleIdentityTest {
         assertEquals(lampA.hashCode(), lampB.hashCode());
         // A handle of one works in the other palette
         assertEquals(a.runtimeId(lampA), b.runtimeId(lampA));
-        assertSame(b.item(first.type()), b.item(second.type()));
+        assertSame(b.itemDefinition(first.type()), b.itemDefinition(second.type()));
     }
 
     @Test
@@ -215,9 +215,9 @@ class CustomHandleIdentityTest {
         BedrockItemStack decoded = palette.decode(encoded);
         assertNotNull(decoded, where);
         assertSame(base, decoded.variant(), where);
-        assertSame(type, palette.item(type).key(), where);
+        assertSame(type, palette.itemDefinition(type).key(), where);
         assertSame(type, palette.resolve(base).definition().key(), where);
-        assertSame(item, palette.item(type).customItem(), where);
+        assertSame(item, palette.itemDefinition(type).customItem(), where);
         assertSame(base, palette.explain(item.identifier(), 0, null).handle(), where);
         assertSame(base, palette.itemVariants().stream().filter(v -> v.type().identifier().equals(item.identifier())).findFirst().orElseThrow(), where);
         assertSame(type, palette.creativeLayout().stacks().filter(stack -> stack.type().identifier().equals(item.identifier()))
@@ -229,7 +229,7 @@ class CustomHandleIdentityTest {
         BedrockItemStack decodedBlockItem = palette.decode(palette.encode(BedrockItemStack.of(blockItem.base())));
         assertNotNull(decodedBlockItem, where);
         assertSame(blockItem.base(), decodedBlockItem.variant(), where);
-        assertSame(blockItem, palette.item(blockItem).key(), where);
+        assertSame(blockItem, palette.itemDefinition(blockItem).key(), where);
         assertSame(blockItem, palette.creativeLayout().stacks().filter(stack -> stack.type().identifier().equals(block.identifier()))
             .findFirst().orElseThrow().type(), where);
 
@@ -237,12 +237,12 @@ class CustomHandleIdentityTest {
         assertSame(block.type(), palette.blocks().block(block.identifier()).key(), where);
         for (BedrockBlockState state : block.type().states()) {
             assertSame(state, palette.block(state.toNbt()), where);
-            RegisteredBlockState registered = palette.block(state);
+            RegisteredBlockState registered = palette.blockDefinition(state);
             assertSame(state, registered.key(), where);
             assertSame(state, palette.blocks().key(registered), where);
             assertSame(state, BedrockBlockState.fromCanonical(palette.blocks().canonical(), palette.blocks().canonical().index(state.toNbt())), where);
             assertSame(state, palette.explain(state.toNbt()).handle(), where);
         }
-        assertSame(block.type().defaultState(), palette.blockKeyOf(blockItem.base()), where);
+        assertSame(block.type().defaultState(), palette.blockOf(blockItem.base()), where);
     }
 }

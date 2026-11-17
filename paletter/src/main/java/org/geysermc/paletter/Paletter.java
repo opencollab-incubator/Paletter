@@ -6,6 +6,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
+import org.geysermc.paletter.block.RegisteredBlockState;
+import org.geysermc.paletter.item.ResolvedItem;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.internal.block.BlockInterner;
 import org.geysermc.paletter.internal.block.BlockStates;
@@ -350,9 +352,9 @@ public final class Paletter {
 
     /**
      * The block state an item places, version independent: the block the newest version sends the item with
-     * ({@link Palette#blockOf}). Accepts variants of any bundled version like {@link #item(String, int)}.
+     * ({@link Palette#blockOf}, the same key). Accepts variants of any bundled version like {@link #item(String, int)}.
      * Vanilla variants of the newest data only; for a palette's view (fallbacks, custom content) use
-     * {@link Palette#blockKeyOf}.
+     * {@link Palette#blockOf}.
      *
      * @return the block state, or null if the item is not a block item or has no handle
      * @since 0.1.0
@@ -362,7 +364,8 @@ public final class Paletter {
         if (canonical == -1) {
             return null;
         }
-        var block = vanilla(newest()).blockOf(variant);
+        ResolvedItem resolved = vanilla(newest()).resolve(variant);
+        RegisteredBlockState block = resolved == null ? null : resolved.block();
         return block == null ? null : block(block.getState());
     }
 
