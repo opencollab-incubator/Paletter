@@ -141,6 +141,11 @@ val checkMappings = cliTask("checkMappings", "verification",
 val checkData = cliTask("checkData", "verification",
     "Fails on problems of the bundled data: what older bundled versions lack of the newest one", "check-data", check = true)
 
+// What the code of a build can send that its captures do not show (docs/data-pipeline.md, "White-box discovery").
+// Not part of check yet: update does not regenerate the reports.
+cliTask("checkWhitebox", "verification",
+    "Fails if a committed whitebox-coverage.md is not what the committed whitebox.json and captures give", "whitebox-coverage", "--check", check = true)
+
 tasks.named("check") {
     dependsOn(checkConstants, checkComponentApi, checkMappings, checkData)
 }

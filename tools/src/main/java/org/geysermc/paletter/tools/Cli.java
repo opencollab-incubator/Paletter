@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
 import org.geysermc.paletter.internal.data.VanillaData;
+import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.bds.BdsInventory;
 import org.geysermc.paletter.tools.bds.CapturePlatform;
@@ -29,6 +30,9 @@ import org.geysermc.paletter.tools.update.EducationProbe;
 import org.geysermc.paletter.tools.update.ExperimentMarks;
 import org.geysermc.paletter.tools.update.SpecCapture;
 import org.geysermc.paletter.tools.update.Update;
+import org.geysermc.paletter.tools.whitebox.Whitebox;
+import org.geysermc.paletter.tools.whitebox.WhiteboxCoverage;
+import org.geysermc.paletter.tools.whitebox.WhiteboxDiff;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -51,7 +55,7 @@ import java.util.concurrent.Callable;
  * repository. See docs/data-pipeline.md for what each command does.
  */
 @Command(name = "paletter-tools", mixinStandardHelpOptions = true, subcommands = {
-    Cli.Import.class, Cli.BdsInventoryCommand.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.SpecCaptureCommand.class,
+    Cli.Import.class, Cli.BdsInventoryCommand.class, Cli.WhiteboxCommand.class, Cli.WhiteboxCoverageCommand.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.SpecCaptureCommand.class,
     Cli.VerifyCommand.class, Cli.CheckData.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class, Cli.ExperimentMarksCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
@@ -135,6 +139,77 @@ public final class Cli implements Runnable {
                 diff.forEach(System.out::println);
             }
             return 0;
+        }
+    }
+
+    @Command(name = "whitebox", description = "Reads the code of the server binary of a BDS build (downloaded into the cache, not run) and writes "
+        + "data/bds/<VERSION>/whitebox.json: every registered item and block component, whether it is sent to the client, whether reflection or "
+        + "hand-written code writes it, the NBT keys the code mentions, the envelopes and the traits; prints what changed against the previous "
+        + "build. Downloading BDS means accepting the Minecraft EULA.")
+    static final class WhiteboxCommand extends Rooted implements Callable<Integer> {
+        @Option(names = "--bds", required = true, description = "BDS version, e.g. 1.26.63.1") String bds;
+        @Option(names = "--preview", description = "The version is a preview build") boolean preview;
+        @Option(names = "--platform", defaultValue = "linux", description = "linux (default: the build that names its classes and shows the tag types) "
+            + "or windows (a cross-check, written to whitebox.windows.json)") String platform;
+        @Option(names = "--binary", description = "The server binary or a BDS zip, instead of downloading") Path binary;
+        @Option(names = "--cache") Path cache;
+
+        @Override
+        public Integer call() throws Exception {
+            boolean linux = !platform.equals("windows");
+            Path source = binary != null ? binary
+                : BdsDistribution.resolve(linux, preview, bds).zip(cache == null ? BdsDistribution.defaultCache() : cache);
+            JsonObject facts = Whitebox.discover(source, bds);
+            String name = Whitebox.file(facts.get("platform").getAsString());
+            Path file = root().resolve(Layout.BDS).resolve(bds).resolve(name);
+            Files.createDirectories(file.getParent());
+            Files.writeString(file, Whitebox.json(facts));
+            System.out.println("Wrote " + file);
+            facts.getAsJsonArray("notes").forEach(note -> System.out.println("note: " + note.getAsString()));
+            Path previous = Whitebox.previous(root().resolve(Layout.BDS), bds, name);
+            if (previous != null) {
+                List<String> diff = WhiteboxDiff.diff(Whitebox.parse(previous), facts);
+                System.out.println(diff.size() + " changes against " + previous + (diff.isEmpty() ? "" : ":"));
+                diff.forEach(System.out::println);
+            }
+            return 0;
+        }
+    }
+
+    @Command(name = "whitebox-coverage", description = "Compares what the code of a build can send (whitebox.json) with what its captures show and "
+        + "writes data/bds/<VERSION>/whitebox-coverage.md: the network components and keys no capture has.")
+    static final class WhiteboxCoverageCommand extends Rooted implements Callable<Integer> {
+        @Option(names = "--bds", description = "BDS version (default: every build with a whitebox.json)") String bds;
+        @Option(names = "--check", description = "Write nothing; exit with 1 if a committed report differs from what the committed data gives") boolean check;
+        @Option(names = "--strict", description = "Exit with 1 if any gap is left") boolean strict;
+
+        @Override
+        public Integer call() throws Exception {
+            List<String> builds = new ArrayList<>();
+            if (bds != null) {
+                builds.add(bds);
+            } else {
+                try (var list = Files.list(root().resolve(Layout.BDS))) {
+                    list.filter(build -> Files.isRegularFile(build.resolve(Whitebox.FILE))).map(build -> build.getFileName().toString()).sorted().forEach(builds::add);
+                }
+            }
+            boolean failed = false;
+            for (String build : builds) {
+                Path report = root().resolve(Layout.BDS).resolve(build).resolve(WhiteboxCoverage.FILE);
+                String committed = Files.isRegularFile(report) ? Files.readString(report) : null;
+                if (check) {
+                    String now = WhiteboxCoverage.report(root(), build);
+                    if (!now.equals(committed)) {
+                        System.out.println(report + " is stale: run whitebox-coverage and review what changed");
+                        failed = true;
+                    }
+                    continue;
+                }
+                List<WhiteboxCoverage.Gap> gaps = WhiteboxCoverage.write(root(), build);
+                System.out.println(build + ": " + gaps.size() + " gaps, written to " + report);
+                failed |= strict && !gaps.isEmpty();
+            }
+            return failed ? 1 : 0;
         }
     }
 
