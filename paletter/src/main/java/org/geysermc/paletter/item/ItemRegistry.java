@@ -801,14 +801,20 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             }
             for (String identifier : parent.customBlockItems) {
                 RegisteredItem item = parent.getDefinition(identifier);
-                if (item == null || item.getVersion() != ItemVersion.NONE || item.isComponentBased()) {
+                // A plain block item has its block's id, also after an override made it component based
+                if (item == null || item.getRuntimeId() != ComponentIndex.BLOCK_ITEM_ID_PLUS_BLOCK_ID - parent.blocks.customBlockId(identifier)) {
                     continue;
                 }
                 int runtimeId = plainBlockItemId(identifier);
                 if (runtimeId != item.getRuntimeId()) {
                     renumbered.add(item.getRuntimeId());
                     renumberedBlockItems.add(identifier);
-                    put(new RegisteredItem(identifier, runtimeId, ItemVersion.NONE, false, null, item.origin(), List.of(), null, item.key()));
+                    NbtMap componentData = item.getComponentData();
+                    if (componentData != null && componentData.containsKey("id")) {
+                        componentData = componentData.toBuilder().putInt("id", runtimeId).build();
+                    }
+                    put(new RegisteredItem(identifier, runtimeId, item.getVersion(), item.isComponentBased(), componentData, item.origin(),
+                        item.components(), item.customItem(), item.key()));
                 }
             }
         }
