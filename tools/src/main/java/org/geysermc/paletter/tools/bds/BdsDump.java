@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
  * @param blockTags tag to sorted block identifiers
  * @param blockItems block identifier to the identifier of its item
  * @param items item identifier to what the Script API knows about it
+ * @param itemVariants item identifier to aux value to what BDS says of that variant (format 3; empty before)
  * @param errors problems the addon reported
  */
 public record BdsDump(
@@ -48,6 +49,7 @@ public record BdsDump(
     Map<String, List<String>> blockTags,
     Map<String, String> blockItems,
     Map<String, Item> items,
+    Map<String, Map<Integer, Variant>> itemVariants,
     List<String> errors
 ) {
     private static final Pattern VERSION = Pattern.compile("INFO\\] Version: (\\S+)");
@@ -59,6 +61,18 @@ public record BdsDump(
      * @param maxDurability the maximum durability, or 0 if it has none
      */
     public record Item(int maxStackSize, String localizationKey, List<String> components, int maxDurability) {
+    }
+
+    /**
+     * What BDS says of an item variant: the aux values of potions, tipped arrows, beds and banners.
+     *
+     * @param localizationKey the translation key of the stack
+     * @param potion the potion effect, e.g. {@code minecraft:long_nightvision}, or null (potions: the Script API's potion
+     *               component; tipped arrows: the effect whose {@code set_potion} loot table gives this aux, if one does)
+     * @param delivery the potion delivery of the potion component ({@code Consume}, {@code ThrownSplash},
+     *                 {@code ThrownLingering}), or null
+     */
+    public record Variant(String localizationKey, String potion, String delivery) {
     }
 
     /**
@@ -161,6 +175,18 @@ public record BdsDump(
                 item.has("max_durability") ? item.get("max_durability").getAsInt() : 0));
         }
 
+        Map<String, Map<Integer, Variant>> itemVariants = new TreeMap<>();
+        for (Map.Entry<String, JsonElement> item : object(root, "item_variants").entrySet()) {
+            Map<Integer, Variant> variants = new TreeMap<>();
+            for (Map.Entry<String, JsonElement> aux : item.getValue().getAsJsonObject().entrySet()) {
+                JsonObject variant = aux.getValue().getAsJsonObject();
+                variants.put(Integer.parseInt(aux.getKey()), new Variant(variant.get("key").getAsString(),
+                    variant.has("potion") ? variant.get("potion").getAsString() : null,
+                    variant.has("delivery") ? variant.get("delivery").getAsString() : null));
+            }
+            itemVariants.put(item.getKey(), variants);
+        }
+
         List<String> errors = new ArrayList<>();
         if (root.has("errors")) {
             root.getAsJsonArray("errors").forEach(error -> errors.add(error.getAsString()));
@@ -170,7 +196,7 @@ public record BdsDump(
         Map<String, List<String>> blockTags = tagMap(object(root, "block_tags"));
         System.out.println("  BDS dump of " + version + ": " + itemTags.size() + " item tags, " + items.size() + " items, "
             + defaults.size() + " block defaults, " + blockTags.size() + " block tags, " + errors.size() + " addon errors");
-        return new BdsDump(version, itemTags, defaults, blockStates, blockTags, blockItems, items, errors);
+        return new BdsDump(version, itemTags, defaults, blockStates, blockTags, blockItems, items, itemVariants, errors);
     }
 
     /**

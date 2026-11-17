@@ -3,6 +3,7 @@ package org.geysermc.paletter.tools.update;
 import org.geysermc.paletter.tools.data.Nbt;
 import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsDump;
+import org.geysermc.paletter.tools.bds.ScriptApiDump;
 import org.geysermc.paletter.tools.bds.BdsInventory;
 import org.geysermc.paletter.tools.bds.BdsRunner;
 import org.geysermc.paletter.tools.bds.BdsServer;
@@ -224,7 +225,7 @@ public final class Update {
         try {
             // 1. Script API dump
             Path dumpLog = work.resolve("bds-dump.log");
-            new BdsRunner(root.resolve(Layout.DUMP_ADDON)).run(server, dumpLog, timeout, port, false);
+            ScriptApiDump.run(root, server, dumpLog, timeout, port);
             String[] json = BdsDump.json(dumpLog);
             dump = BdsDump.parse(json[1], json[0]);
             Files.writeString(work.resolve("bds-dump.json"), json[1]);

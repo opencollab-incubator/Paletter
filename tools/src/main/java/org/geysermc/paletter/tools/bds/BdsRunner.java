@@ -33,6 +33,7 @@ public final class BdsRunner {
     private final String packDirectory;
     private List<String> experiments = List.of();
     private String betaModule;
+    private Map<String, String> packFiles = Map.of();
 
     /** The dump addon: it prints {@code PALETTER-DONE}. */
     public BdsRunner(Path addon) {
@@ -59,6 +60,12 @@ public final class BdsRunner {
     public BdsRunner withBetaApis(String bdsVersion) throws IOException, InterruptedException {
         this.experiments = List.of("gametest");
         this.betaModule = ScriptModules.betaVersion(bdsVersion);
+        return this;
+    }
+
+    /** Files the run adds to the installed pack (pack path to content), e.g. loot tables the tool derives from BDS. */
+    public BdsRunner withPackFiles(Map<String, String> files) {
+        this.packFiles = files;
         return this;
     }
 
@@ -94,7 +101,7 @@ public final class BdsRunner {
         dump(server, log, timeoutSeconds, false);
     }
 
-    private static void configure(Path server, int port) throws IOException {
+    static void configure(Path server, int port) throws IOException {
         Map<String, String> properties = new LinkedHashMap<>();
         properties.put("level-name", WORLD);
         properties.put("level-type", "FLAT");
@@ -132,6 +139,11 @@ public final class BdsRunner {
                     Files.copy(file, target, StandardCopyOption.REPLACE_EXISTING);
                 }
             }
+        }
+        for (Map.Entry<String, String> file : packFiles.entrySet()) {
+            Path target = pack.resolve(file.getKey());
+            Files.createDirectories(target.getParent());
+            Files.writeString(target, file.getValue());
         }
         JsonObject manifest = JsonParser.parseString(Files.readString(addon.resolve("manifest.json"))).getAsJsonObject();
         if (betaModule != null) {
