@@ -208,6 +208,9 @@ toggle, the items, blocks and creative stacks it adds. The bundle itself is capt
 The record also lists, per toggle, the recipes it adds, removes or changes (`content.recipes`, the recipe diff of the
 toggle's capture against the one without experiments). They are not part of the bundle's marks: the recipes module
 bundles them.
+The committed records do not have them yet: `content.recipes` appears with the next full `update` run, and until then a history
+check does not count a toggle's recipes as a difference when the earlier record lacks them. `recipes-capture` refuses a
+build without captures in `data/bds` and a machine of another BDS platform than the committed captures.
 
 ### Previews
 

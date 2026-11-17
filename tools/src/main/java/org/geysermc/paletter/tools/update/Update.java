@@ -897,7 +897,6 @@ public final class Update {
                     result.unexplained = ExperimentAttribution.unexplained(result.all, result.each);
                 } else if (result.current.size() == 1) {
                     result.content.put(result.current.getFirst(), result.all.content(creativeBefore));
-                    recipes(result, result.current.getFirst(), runs.vanilla, work.resolve("experiments/all"));
                 }
             } finally {
                 // The dump world back without experiments
@@ -907,10 +906,15 @@ public final class Update {
         result.millis = (System.nanoTime() - started) / 1_000_000;
     }
 
-    private static void recipes(ExperimentRun result, String toggle, Path base, Path with) throws IOException {
-        Map<String, List<String>> changes = ExperimentAttribution.recipes(base, with);
-        if (!changes.isEmpty()) {
-            result.recipes.put(toggle, changes);
+    /** The recipes of a toggle; a failure is one INFO row, the rest of the attribution goes on. */
+    private void recipes(ExperimentRun result, String toggle, Path base, Path with) {
+        try {
+            Map<String, List<String>> changes = ExperimentAttribution.recipes(base, with);
+            if (!changes.isEmpty()) {
+                result.recipes.put(toggle, changes);
+            }
+        } catch (Exception e) {
+            report.check(Report.Status.INFO, "Experiments: recipes of " + toggle, "not attributed: " + e);
         }
     }
 
@@ -1000,7 +1004,7 @@ public final class Update {
         byte[] record = record(distribution, runs);
         if (against != null) {
             Path earlier = bdsData.resolve(against).resolve("experiments.json");
-            boolean same = Files.exists(earlier) && BuildHistory.sameData(record, Files.readAllBytes(earlier));
+            boolean same = Files.exists(earlier) && BuildHistory.sameExperimentRecord(record, Files.readAllBytes(earlier));
             compared(same, "Experiment record vs " + against, same ? "same toggles and content (version stamps aside)"
                 : "`" + root.relativize(earlier) + "` is missing or lists other toggles or content");
         }
@@ -1354,14 +1358,13 @@ public final class Update {
         Map<String, List<VariantNames.Entry>> variantNames = VariantNames.read(root.resolve(VariantNames.FILE));
         try {
             recipes(distribution, runs, captured);
+            stageRecipes(distribution, runs);
         } catch (Exception e) {
             // The recipe data never blocks the import
-            report.check(Report.Status.DIFF, "Recipes", "not compared: " + e);
-        }
-        // The recipe data of the capture, committed with the build's other vanilla captures
-        for (String file : List.of(RecipeCapture.CRAFTING, RecipeCapture.TRIM)) {
-            if (Files.exists(runs.vanilla.resolve(file))) {
-                stageCopy(bdsData.resolve(distribution.version()).resolve("vanilla").resolve(file), runs.vanilla.resolve(file), "recipe capture " + file);
+            report.check(Report.Status.INFO, "Recipes", "not compared: " + e);
+            report.evidence("Recipes", List.of("- " + e));
+            if (against != null) {
+                report.notCompared.add("Recipes: " + e);
             }
         }
 
@@ -1428,15 +1431,21 @@ public final class Update {
             return;
         }
         RecipeCapture.Recipes recipes = RecipeCapture.read(runs.vanilla);
-        String previousBuild = baseline(distribution.version(), committedBuilds("vanilla/" + RecipeCapture.CRAFTING));
-        if (previousBuild == null) {
-            report.check(Report.Status.INFO, "Recipes", "no committed recipe capture to compare with");
+        // A history check compares with the build it is checked against
+        String previousBuild = against != null ? against : baseline(distribution.version(), committedBuilds("vanilla/" + RecipeCapture.CRAFTING));
+        Path previous = previousBuild == null ? null : bdsData.resolve(previousBuild).resolve("vanilla");
+        if (previous == null || !Files.exists(previous.resolve(RecipeCapture.CRAFTING))) {
+            report.check(Report.Status.INFO, "Recipes", against != null ? "not compared: " + against + " has no " + RecipeCapture.CRAFTING
+                : "no committed recipe capture to compare with");
+            if (against != null) {
+                report.notCompared.add("Recipes: " + against + " has no " + RecipeCapture.CRAFTING);
+            }
         } else {
-            Diff diff = Diff.recipes(RecipeCapture.read(bdsData.resolve(previousBuild).resolve("vanilla")), recipes);
-            String against = previousBuild.equals(distribution.version()) ? "the committed capture of " + previousBuild : previousBuild;
-            report.check(diff.identical() ? Report.Status.PASS : Report.Status.DIFF, "Recipes vs " + against,
+            Diff diff = Diff.recipes(RecipeCapture.read(previous), recipes);
+            String compared = previousBuild.equals(distribution.version()) ? "the committed capture of " + previousBuild : previousBuild;
+            report.check(diff.identical() ? Report.Status.PASS : Report.Status.DIFF, "Recipes vs " + compared,
                 diff.identical() ? "identical" : diff.count() + " differences");
-            report.diff("Recipes: BDS " + distribution.version() + " vs " + against, diff);
+            report.diff("Recipes: BDS " + distribution.version() + " vs " + compared, diff);
         }
         Set<String> items = new HashSet<>();
         captured.items().forEach(item -> items.add(item.identifier()));
@@ -1446,10 +1455,40 @@ public final class Update {
         assumption("Recipe net ids are 1..n", RecipeData.netIdProblems(recipes));
     }
 
+    /** A broken assumption is information about the recipe data, never a difference of the build. */
     private void assumption(String name, List<String> problems) {
-        report.check(problems.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, name, problems.isEmpty() ? "holds" : problems.size() + " problems");
+        report.check(problems.isEmpty() ? Report.Status.PASS : Report.Status.INFO, name, problems.isEmpty() ? "holds" : problems.size() + " problems");
         if (!problems.isEmpty()) {
             report.evidence("Problems", problems.stream().map(problem -> "- " + problem).toList());
+            if (against != null) {
+                report.notCompared.add(name + ": " + problems.size() + " problems");
+            }
+        }
+    }
+
+    /** Whether a capture's recipes differ from the committed ones (normalised), or none are committed. */
+    static boolean recipesChanged(Path committed, Path captured) throws IOException {
+        return !Files.exists(committed.resolve(RecipeCapture.CRAFTING))
+            || !Diff.recipes(RecipeCapture.read(committed), RecipeCapture.read(captured)).identical();
+    }
+
+    /**
+     * Commits the recipe files of the capture with the build's other vanilla captures, but only when they differ from the
+     * committed ones: the UUIDs of shaped and shapeless recipes are random per BDS start, so the bytes change on every run
+     * ({@link Diff#recipes} compares them normalised).
+     */
+    private void stageRecipes(BdsDistribution distribution, Runs runs) throws IOException {
+        if (!Files.exists(runs.vanilla.resolve(RecipeCapture.CRAFTING))) {
+            return;
+        }
+        Path committed = bdsData.resolve(distribution.version()).resolve("vanilla");
+        if (!recipesChanged(committed, runs.vanilla)) {
+            return;
+        }
+        for (String file : List.of(RecipeCapture.CRAFTING, RecipeCapture.TRIM)) {
+            if (Files.exists(runs.vanilla.resolve(file))) {
+                stageCopy(committed.resolve(file), runs.vanilla.resolve(file), "recipe capture " + file);
+            }
         }
     }
 

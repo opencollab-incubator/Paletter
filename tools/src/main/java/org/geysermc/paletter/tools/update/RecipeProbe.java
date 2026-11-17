@@ -4,6 +4,7 @@ import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.tools.Layout;
 import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsServer;
+import org.geysermc.paletter.tools.bds.CapturePlatform;
 import org.geysermc.paletter.tools.client.Capture;
 import org.geysermc.paletter.tools.client.RecipeCapture;
 
@@ -20,7 +21,8 @@ import java.util.Map;
  * {@code recipes-capture --version <build> [--preview]}: captures a vanilla world of one BDS build, the same capture as the
  * one of {@code update}, and copies only the recipe files ({@link RecipeCapture#CRAFTING}, {@link RecipeCapture#TRIM}) into
  * {@code data/bds/<build>/vanilla}. Options: {@code --cache DIR}, {@code --port 19750}, {@code --timeout 300},
- * {@code --keep-server}.
+ * {@code --keep-server}. It refuses a build without captures in {@code data/bds} and a machine of another BDS platform
+ * than the committed captures ({@link CapturePlatform}).
  */
 public final class RecipeProbe {
     private static final String WORLD = "paletter_recipes";
@@ -35,6 +37,16 @@ public final class RecipeProbe {
         }
         Path cache = options.containsKey("cache") ? path(options.get("cache")) : BdsDistribution.defaultCache();
         BdsDistribution distribution = BdsDistribution.resolve(options.containsKey("preview"), options.get("version"));
+        // The recipe files go beside the captures of the build, which `update` made (a preview has no vanilla/capture.json)
+        Path build = root.resolve(Layout.BDS).resolve(distribution.version());
+        if (!Files.isDirectory(build)) {
+            throw new IllegalArgumentException("No captures of BDS " + distribution.version() + " in " + build + ": run `update` for it first");
+        }
+        String committed = CapturePlatform.single(root.resolve(Layout.BDS));
+        String mismatch = committed == null ? null : CapturePlatform.mismatch("The committed data (" + Layout.BDS + ")", committed, CapturePlatform.host());
+        if (mismatch != null) {
+            throw new IllegalStateException(mismatch);
+        }
         String name = "recipes-" + distribution.platform() + "-" + distribution.version();
         Path server = cache.resolve("servers").resolve(name);
         Path work = cache.resolve("runs").resolve(name);
@@ -46,7 +58,7 @@ public final class RecipeProbe {
             BdsDistribution.extract(distribution.zip(cache), server);
         }
         try {
-            capture(root.resolve(Layout.BDS).resolve(distribution.version()).resolve("vanilla"), root, distribution.version(), server, work, port, timeout);
+            capture(build.resolve("vanilla"), root, distribution.version(), server, work, port, timeout);
         } finally {
             if (!options.containsKey("keep-server")) {
                 BdsDistribution.deleteRecursively(server);

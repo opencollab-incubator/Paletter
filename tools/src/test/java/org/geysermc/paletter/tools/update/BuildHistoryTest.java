@@ -363,4 +363,14 @@ class BuildHistoryTest {
         }
         return out.toByteArray();
     }
+
+    @Test
+    void recipesOfAnExperimentRecordOnlyCountWhenTheEarlierRecordHasThem() throws IOException {
+        String without = "{\"bdsVersion\":\"1\",\"toggles\":{\"t\":{\"status\":\"current\",\"content\":{\"itemsAdded\":[]}}}}";
+        String with = without.replace("\"itemsAdded\":[]", "\"itemsAdded\":[],\"recipes\":{\"recipes added\":[\"shaped x\"]}");
+        byte[] earlier = without.replace("\"1\"", "\"0\"").getBytes(StandardCharsets.UTF_8);
+        assertTrue(BuildHistory.sameExperimentRecord(with.getBytes(StandardCharsets.UTF_8), earlier));
+        assertFalse(BuildHistory.sameExperimentRecord(with.getBytes(StandardCharsets.UTF_8), with.replace("shaped x", "shaped y").getBytes(StandardCharsets.UTF_8)));
+        assertFalse(BuildHistory.sameExperimentRecord(without.replace("[]", "[\"a\"]").getBytes(StandardCharsets.UTF_8), earlier));
+    }
 }

@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** Attribution diffs on synthetic captures shaped like the y_2026_drop_4 one of BDS 1.26.63.1. */
@@ -53,6 +54,18 @@ class ExperimentAttributionTest {
         Path with = crafting(Files.createDirectory(temp.resolve("with")), fancy + "," + torch.replace("\"netId\":1", "\"netId\":9"));
         assertEquals(Map.of("recipes added", List.of("shapeless minecraft:fancy")), ExperimentAttribution.recipes(base, with));
         assertEquals(Map.of(), ExperimentAttribution.recipes(base, Files.createDirectory(temp.resolve("none"))));
+    }
+
+    @Test
+    void recipesAreOnlyStagedWhenTheyDifferNormalised(@TempDir Path temp) throws IOException {
+        String torch = "{\"id\":\"minecraft:torch\",\"ingredients\":[],\"results\":[],\"uuid\":\"UUID\",\"tag\":\"crafting_table\",\"netId\":NET}";
+        Path committed = crafting(Files.createDirectory(temp.resolve("committed")), torch.replace("UUID", "a").replace("NET", "1"));
+        // Another start of BDS: random UUID, other net id
+        Path again = crafting(Files.createDirectory(temp.resolve("again")), torch.replace("UUID", "b").replace("NET", "7"));
+        Path changed = crafting(Files.createDirectory(temp.resolve("changed")), torch.replace("torch", "lantern").replace("UUID", "c").replace("NET", "1"));
+        assertFalse(Update.recipesChanged(committed, again));
+        assertTrue(Update.recipesChanged(committed, changed));
+        assertTrue(Update.recipesChanged(Files.createDirectory(temp.resolve("none")), again), "nothing committed yet");
     }
 
     private static NbtMap item(String name, int id, int version, boolean componentBased) {
