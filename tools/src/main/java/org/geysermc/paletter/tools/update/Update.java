@@ -1085,7 +1085,8 @@ public final class Update {
                 report.action("capture them with a spec variant, a format sweep entry or a probe add-on", "New gaps",
                     run.newGaps().stream().map(gap -> "- " + gap.subject() + ": " + gap.missing()).toList());
             }
-        } catch (Exception e) {
+        } catch (Exception | StackOverflowError | OutOfMemoryError e) {
+            // Also what a binary the analysis does not expect can run into: deep listings, a large image
             report.check(Report.Status.FAIL, "White-box", "white-box unavailable for this build: " + e);
         }
     }
