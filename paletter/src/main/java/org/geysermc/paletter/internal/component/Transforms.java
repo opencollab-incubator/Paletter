@@ -25,12 +25,15 @@ import org.geysermc.paletter.item.component.Repairable;
 import org.geysermc.paletter.item.component.Shooter;
 import org.geysermc.paletter.item.component.UseAnimation;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * The hand transforms: the fields no rule inferred from the BDS captures explains. The code generator's table
@@ -153,7 +156,7 @@ public final class Transforms {
 
     /**
      * {@code item_visual.geometry.bone_visibility}: the {@link #boneVisibility} every geometry sends, which no rule over the
-     * JSON value fits; the other geometry fields of {@code item_visual} have inferred rules.
+     * JSON value fits (BDS parses the expression); the other geometry fields of {@code item_visual} have inferred rules.
      */
     public static void itemVisualBoneVisibility(@NonNull WireContext ctx, @NonNull WireNode out, ItemVisual.@NonNull Geometry c) {
         out.put("minecraft:item_visual.geometryDescription.bone_visibility", boneVisibility(ctx, ItemVisual.NAME, c.boneVisibility()));
@@ -161,40 +164,81 @@ public final class Transforms {
 
     /**
      * {@code bone_visibility} as BDS sends it for the geometry of {@code minecraft:geometry}, {@code embedded_visual} and
-     * {@code item_visual} alike (captures of BDS 1.26.36.1 to 1.26.70.24, with a geometry other than
-     * {@code minecraft:geometry.full_block}, for which BDS refuses any entry; a bone the geometry does not have is taken):
-     * per bone a Molang expression.
+     * {@code item_visual} alike: per bone a Molang expression, which BDS parses. The map of the API holds text: the
+     * expression as the add-on JSON has it, {@code "true"} or {@code "false"} for a JSON boolean. The captures of BDS
+     * 1.26.36.1 to 1.26.70.24, with a geometry other than {@code minecraft:geometry.full_block} (BDS refuses an entry
+     * for that one, and so does the API; a bone the geometry does not have is taken), show the same in every build:
      * <ul>
-     *     <li>The text is sent as written, a number constant in six decimals ({@code "1.0"} -> {@code "1.000000"}, like
-     *     {@link #condition}).</li>
-     *     <li>BDS 1.26.36.1 sends each as a compound {@code {expression, version: 13s}} (13: the block's
-     *     {@code molangVersion}), 1.26.45.1 and later as a string.</li>
-     *     <li>A boolean is {@code "1.000000"} or {@code "0.000000"} from BDS 1.26.63.1 on. The older builds refuse the
-     *     block for it ("expected an object", "invalid numeric value", "invalid string"): left out there, with a
-     *     warning.</li>
+     *     <li>A number is sent as the float it is, in six decimals: {@code "1"}, {@code "1.0"}, {@code " 1 "} and
+     *     {@code "1."} as {@code "1.000000"}, {@code ".5"} as {@code "0.500000"}, {@code "1e3"} as {@code "1000.000000"},
+     *     {@code "16777217"} as {@code "16777216.000000"}, {@code "0.0078125"} as {@code "0.007812"}, {@code "-0"} as
+     *     {@code "-0.000000"} ({@link #molangNumber}).</li>
+     *     <li>{@code "true"} is {@code "1.000000"} and {@code "false"} is {@code "0.000000"}. That is what BDS sends for
+     *     the text in every build and for the JSON boolean from 1.26.63.1 on; the older builds refuse the JSON boolean
+     *     ("expected an object"), so there the text is what an add-on can write.</li>
+     *     <li>An expression with a query is sent as written ({@code "q.block_state('a:b')"},
+     *     {@code "!q.block_state('a:b')"}, {@code "query.block_state('a:b')"}).</li>
+     *     <li>Any other expression BDS computes where it can ({@code "1 + 1"} is {@code "2.000000"}: a capture that is
+     *     not kept, see {@code mapValues} of {@code fixtures.json}) and sends as written where it cannot ({@code "+1"},
+     *     with an error in its log). Paletter does not compute Molang: it sends the text as written, with a warning.</li>
      * </ul>
+     * BDS 1.26.36.1 sends each entry as a compound {@code {expression, version}}, the version being the
+     * {@code molangVersion} it sends for every block; 1.26.45.1 and later send the expression as a string.
      */
     private static @NonNull NbtMap boneVisibility(@NonNull WireContext ctx, @NonNull String component, @Nullable Map<String, String> bones) {
         NbtMapBuilder visibility = NbtMap.builder();
-        if (bones == null) {
+        if (bones == null || bones.isEmpty()) {
             return visibility.build();
         }
-        boolean booleans = ctx.protocol() >= ComponentIndex.BDS_1_26_63_1;
         boolean compound = ctx.protocol() < ComponentIndex.BDS_1_26_45_1;
-        bones.forEach((bone, value) -> {
-            boolean constant = value.equals("true") || value.equals("false");
-            if (constant && !booleans) {
-                ctx.drop(component, "bone_visibility " + bone + ": " + value + " (BDS before 1.26.63.1 takes a Molang expression, not a boolean)");
-                return;
+        short version = 0;
+        if (compound) {
+            WireNode envelope = new WireNode();
+            BlockWire.envelope(ctx, envelope);
+            version = (short) envelope.build().getInt("molangVersion");
+        }
+        for (Map.Entry<String, String> bone : bones.entrySet()) {
+            String value = bone.getValue();
+            String expression = value.equals("true") ? "1.000000" : value.equals("false") ? "0.000000" : molangNumber(value);
+            if (expression == null) {
+                expression = value;
+                if (!MOLANG_QUERY.matcher(value).find()) {
+                    ctx.changed(component, "bone_visibility " + bone.getKey() + ": " + value + " is sent as written; BDS computes an "
+                        + "expression without a query where it can, which Paletter does not");
+                }
             }
-            String expression = constant ? (value.equals("true") ? "1.000000" : "0.000000") : condition(value);
             if (compound) {
-                visibility.putCompound(bone, NbtMap.builder().putString("expression", expression).putShort("version", (short) 13).build());
+                visibility.putCompound(bone.getKey(), NbtMap.builder().putString("expression", expression).putShort("version", version).build());
             } else {
-                visibility.putString(bone, expression);
+                visibility.putString(bone.getKey(), expression);
             }
-        });
+        }
         return visibility.build();
+    }
+
+    /** A query in a Molang expression: BDS sends an expression that has one as written. */
+    private static final Pattern MOLANG_QUERY = Pattern.compile("(?<![A-Za-z0-9_.])(q|query)\\.[a-z_]");
+
+    /** The shapes of a Molang number the captures have: digits with or without a fraction or an exponent, spaces around. */
+    private static final Pattern MOLANG_NUMBER = Pattern.compile("\\s*-?(\\d+\\.?\\d*|\\.\\d+)([eE]-?\\d+)?\\s*");
+
+    /**
+     * A Molang number as BDS sends it where it computes an expression (bone visibility, BDS 1.26.36.1 to 1.26.70.24): the
+     * float in six decimals of its exact value, a tie to the even digit ({@code 0.0078125} is {@code "0.007812"}), the
+     * sign kept ({@code "-0.000000"}).
+     *
+     * @return the number, or null if the text is not a number of a captured shape or is beyond a float
+     */
+    static @Nullable String molangNumber(@NonNull String text) {
+        if (!MOLANG_NUMBER.matcher(text).matches()) {
+            return null;
+        }
+        float value = Float.parseFloat(text.trim());
+        if (Float.isInfinite(value)) {
+            return null;
+        }
+        String digits = new BigDecimal(value).setScale(6, RoundingMode.HALF_EVEN).toPlainString();
+        return (Float.floatToRawIntBits(value) < 0 && !digits.startsWith("-") ? "-" : "") + digits;
     }
 
     /** {@code n_way_visual_rotation}: every axis, an empty string for an axis that is not set. */

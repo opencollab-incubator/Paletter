@@ -6,8 +6,8 @@
       "bdsVersion": "1.26.36.1",
       "protocol": 1001,
       "windowProtocol": 1001,
-      "variants": 2771,
-      "accepted": 2197,
+      "variants": 2881,
+      "accepted": 2262,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     },
@@ -16,8 +16,8 @@
       "bdsVersion": "1.26.45.1",
       "protocol": 2169,
       "windowProtocol": 2168,
-      "variants": 2771,
-      "accepted": 2226,
+      "variants": 2881,
+      "accepted": 2291,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     },
@@ -26,8 +26,8 @@
       "bdsVersion": "1.26.52.3",
       "protocol": 2193,
       "windowProtocol": 2193,
-      "variants": 2773,
-      "accepted": 2231,
+      "variants": 2883,
+      "accepted": 2296,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     },
@@ -36,8 +36,8 @@
       "bdsVersion": "1.26.63.1",
       "protocol": 2225,
       "windowProtocol": 2225,
-      "variants": 2811,
-      "accepted": 2267,
+      "variants": 2921,
+      "accepted": 2333,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     },
@@ -47,8 +47,8 @@
       "protocol": 2259,
       "windowProtocol": 2259,
       "preview": "26.70",
-      "variants": 2774,
-      "accepted": 2241,
+      "variants": 2884,
+      "accepted": 2307,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     }
@@ -3175,8 +3175,8 @@
     },
     "block:minecraft:embedded_visual": {
       "variants": {
-        "accepted": 56,
-        "rejected": 24
+        "accepted": 77,
+        "rejected": 47
       },
       "wire": [
         "minecraft:embedded_visual"
@@ -3202,12 +3202,35 @@
           "status": "no-evidence"
         },
         "geometry.bone_visibility": {
-          "accepted": 9,
-          "rejected": 9,
+          "accepted": 30,
+          "rejected": 32,
           "rejectedValues": [
             "map<string>:{1}",
             "map<string>:{2}",
             "map<string>:{unknown key}",
+            "map<string>:{1} 0",
+            "map<string>:{1} 0.0",
+            "map<string>:{1} 1",
+            "map<string>:{1} 0.5",
+            "map<string>:{1} -1",
+            "map<string>:{1} 0.1234567",
+            "map<string>:{1} 0.0078125",
+            "map<string>:{1} 16777217",
+            "map<string>:{1} 2",
+            "map<string>:{1} -0",
+            "map<string>:{1} -0.5",
+            "map<string>:{1} .5",
+            "map<string>:{1} 1.",
+            "map<string>:{1} +1",
+            "map<string>:{1} +1 linked geometry.identifier",
+            "map<string>:{1}  1 ",
+            "map<string>:{1} 1e3",
+            "map<string>:{1} 1e-3",
+            "map<string>:{1} 1.5E2",
+            "map<string>:{1} true",
+            "map<string>:{1} false",
+            "map<string>:{1} !q.block_state('paletter:flag')",
+            "map<string>:{1} query.block_state('paletter:flag')",
             "map<boolean>:{1}",
             "map<boolean>:{1} linked geometry.identifier",
             "map<boolean>:{2}",
@@ -3218,8 +3241,8 @@
           "bdsErrors": [
             "geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block",
             "geometry: invalid string",
-            "bone_a: expected an object",
-            "bone_a: invalid numeric value"
+            "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_44.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
+            "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_44.json | +1 | Error: binary Add + operator at end of expression"
           ],
           "transform": "embeddedGeometry",
           "status": "hand-rule",
@@ -3231,14 +3254,14 @@
               "wire": "minecraft:embedded_visual.geometry.bone_visibility"
             },
             {
-              "kind": "identity",
+              "kind": "constant",
+              "value": "13",
               "mapEntry": true,
-              "nbt": "string",
+              "nbt": "short",
               "tags": [
-                "renamed",
-                "nested"
+                "injected-default"
               ],
-              "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a.expression"
+              "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a.version"
             },
             {
               "kind": "identity",
@@ -3262,13 +3285,13 @@
           },
           "unexplained": [
             {
-              "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a.version",
+              "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a.expression",
               "samples": [
                 "<absent> -> -",
                 "{} -> -",
                 "{} -> -",
-                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> 13 (short)",
-                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 13 (short)",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
                 "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
               ]
             },
@@ -3559,7 +3582,7 @@
         "geometry": {
           "verified": {
             "build": "1.26.36.1",
-            "variants": 45
+            "variants": 66
           }
         },
         "material_instances": {
@@ -3574,8 +3597,8 @@
       ],
       "protocol2168": {
         "variants": {
-          "accepted": 56,
-          "rejected": 24
+          "accepted": 77,
+          "rejected": 47
         },
         "wire": [
           "minecraft:embedded_visual"
@@ -3601,12 +3624,35 @@
             "status": "no-evidence"
           },
           "geometry.bone_visibility": {
-            "accepted": 9,
-            "rejected": 9,
+            "accepted": 30,
+            "rejected": 32,
             "rejectedValues": [
               "map<string>:{1}",
               "map<string>:{2}",
               "map<string>:{unknown key}",
+              "map<string>:{1} 0",
+              "map<string>:{1} 0.0",
+              "map<string>:{1} 1",
+              "map<string>:{1} 0.5",
+              "map<string>:{1} -1",
+              "map<string>:{1} 0.1234567",
+              "map<string>:{1} 0.0078125",
+              "map<string>:{1} 16777217",
+              "map<string>:{1} 2",
+              "map<string>:{1} -0",
+              "map<string>:{1} -0.5",
+              "map<string>:{1} .5",
+              "map<string>:{1} 1.",
+              "map<string>:{1} +1",
+              "map<string>:{1} +1 linked geometry.identifier",
+              "map<string>:{1}  1 ",
+              "map<string>:{1} 1e3",
+              "map<string>:{1} 1e-3",
+              "map<string>:{1} 1.5E2",
+              "map<string>:{1} true",
+              "map<string>:{1} false",
+              "map<string>:{1} !q.block_state('paletter:flag')",
+              "map<string>:{1} query.block_state('paletter:flag')",
               "map<boolean>:{1}",
               "map<boolean>:{1} linked geometry.identifier",
               "map<boolean>:{2}",
@@ -3617,8 +3663,8 @@
             "bdsErrors": [
               "geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block",
               "geometry: invalid string",
-              "bone_a: expected an object",
-              "bone_a: invalid numeric value"
+              "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_44.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
+              "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_44.json | +1 | Error: binary Add + operator at end of expression"
             ],
             "transform": "embeddedGeometry",
             "status": "hand-rule",
@@ -3637,7 +3683,7 @@
                   "renamed",
                   "nested"
                 ],
-                "wire": "minecraft:embedded_visual.geometry.bone_visibility{}"
+                "wire": "minecraft:embedded_visual.geometry.bone_visibility.paletter_unknown"
               }
             ],
             "whenAbsent": {
@@ -3647,6 +3693,17 @@
               "minecraft:embedded_visual.geometry.bone_visibility.paletter_unknown": "omitted"
             },
             "unexplained": [
+              {
+                "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a",
+                "samples": [
+                  "<absent> -> -",
+                  "{} -> -",
+                  "{} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
+                  "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+                ]
+              },
               {
                 "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a_2",
                 "samples": [
@@ -3912,7 +3969,7 @@
           "geometry": {
             "verified": {
               "build": "1.26.45.1",
-              "variants": 45
+              "variants": 66
             }
           },
           "material_instances": {
@@ -3929,8 +3986,8 @@
       },
       "protocol2225": {
         "variants": {
-          "accepted": 59,
-          "rejected": 21
+          "accepted": 80,
+          "rejected": 44
         },
         "wire": [
           "minecraft:embedded_visual"
@@ -3956,19 +4013,44 @@
             "status": "no-evidence"
           },
           "geometry.bone_visibility": {
-            "accepted": 12,
-            "rejected": 6,
+            "accepted": 33,
+            "rejected": 29,
             "rejectedValues": [
               "map<string>:{1}",
               "map<string>:{2}",
               "map<string>:{unknown key}",
+              "map<string>:{1} 0",
+              "map<string>:{1} 0.0",
+              "map<string>:{1} 1",
+              "map<string>:{1} 0.5",
+              "map<string>:{1} -1",
+              "map<string>:{1} 0.1234567",
+              "map<string>:{1} 0.0078125",
+              "map<string>:{1} 16777217",
+              "map<string>:{1} 2",
+              "map<string>:{1} -0",
+              "map<string>:{1} -0.5",
+              "map<string>:{1} .5",
+              "map<string>:{1} 1.",
+              "map<string>:{1} +1",
+              "map<string>:{1} +1 linked geometry.identifier",
+              "map<string>:{1}  1 ",
+              "map<string>:{1} 1e3",
+              "map<string>:{1} 1e-3",
+              "map<string>:{1} 1.5E2",
+              "map<string>:{1} true",
+              "map<string>:{1} false",
+              "map<string>:{1} !q.block_state('paletter:flag')",
+              "map<string>:{1} query.block_state('paletter:flag')",
               "map<boolean>:{1}",
               "map<boolean>:{2}",
               "map<boolean>:{unknown key}"
             ],
             "bdsErrors": [
               "geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block",
-              "geometry: invalid string"
+              "geometry: invalid string",
+              "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_44.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
+              "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_44.json | +1 | Error: binary Add + operator at end of expression"
             ],
             "transform": "embeddedGeometry",
             "status": "hand-rule",
@@ -4341,7 +4423,7 @@
           "geometry": {
             "verified": {
               "build": "1.26.63.1",
-              "variants": 48
+              "variants": 69
             }
           },
           "material_instances": {
@@ -4592,8 +4674,8 @@
     },
     "block:minecraft:geometry": {
       "variants": {
-        "accepted": 35,
-        "rejected": 17
+        "accepted": 55,
+        "rejected": 19
       },
       "wire": [
         "minecraft:geometry"
@@ -4616,18 +4698,19 @@
       },
       "fields": {
         "bone_visibility": {
-          "accepted": 6,
-          "rejected": 3,
+          "accepted": 27,
+          "rejected": 4,
           "rejectedValues": [
+            "map<string>:{1} +1",
             "map<boolean>:{1}",
             "map<boolean>:{2}",
             "map<boolean>:{unknown key}"
           ],
           "bdsErrors": [
+            "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
+            "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | +1 | Error: binary Add + operator at end of expression",
             "bone_a: expected an object",
-            "bone_a: invalid numeric value",
-            "bone_a: invalid string",
-            "minecraft:geometry: invalid string"
+            "bone_a: invalid numeric value"
           ],
           "transform": "geometry",
           "status": "hand-rule",
@@ -4639,14 +4722,14 @@
               "wire": "minecraft:geometry.bone_visibility"
             },
             {
-              "kind": "identity",
+              "kind": "constant",
+              "value": "13",
               "mapEntry": true,
-              "nbt": "string",
+              "nbt": "short",
               "tags": [
-                "renamed",
-                "nested"
+                "injected-default"
               ],
-              "wire": "minecraft:geometry.bone_visibility.bone_a.expression"
+              "wire": "minecraft:geometry.bone_visibility.bone_a.version"
             },
             {
               "kind": "identity",
@@ -4670,20 +4753,20 @@
           },
           "unexplained": [
             {
-              "wire": "minecraft:geometry.bone_visibility.bone_a.version",
+              "wire": "minecraft:geometry.bone_visibility.bone_a.expression",
               "samples": [
-                "{} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
                 "<absent> -> -",
                 "{} -> -",
-                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> 13 (short)",
-                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 13 (short)",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
                 "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
               ]
             },
             {
               "wire": "minecraft:geometry.bone_visibility.bone_a_2.expression",
               "samples": [
-                "{} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
                 "<absent> -> -",
                 "{} -> -",
                 "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
@@ -4694,7 +4777,7 @@
             {
               "wire": "minecraft:geometry.bone_visibility.bone_a_2.version",
               "samples": [
-                "{} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
                 "<absent> -> -",
                 "{} -> -",
                 "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
@@ -4705,7 +4788,7 @@
             {
               "wire": "minecraft:geometry.bone_visibility.paletter_unknown.version",
               "samples": [
-                "{} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
                 "<absent> -> -",
                 "{} -> -",
                 "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
@@ -4773,14 +4856,16 @@
           }
         },
         "identifier": {
-          "accepted": 5,
-          "rejected": 1,
+          "accepted": 4,
+          "rejected": 2,
           "rejectedValues": [
-            "omitted"
+            "omitted",
+            "string:minecraft:geometry.full_block"
           ],
           "bdsErrors": [
             "identifier: missing required field",
-            "minecraft:geometry: invalid string"
+            "minecraft:geometry: invalid string",
+            "minecraft:geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block"
           ],
           "status": "inferred",
           "rules": [
@@ -4884,7 +4969,7 @@
         "": {
           "verified": {
             "build": "1.26.36.1",
-            "variants": 32
+            "variants": 52
           },
           "rejectedFields": [
             "n_way_visual_rotation"
@@ -4896,8 +4981,8 @@
       ],
       "protocol2168": {
         "variants": {
-          "accepted": 35,
-          "rejected": 17
+          "accepted": 55,
+          "rejected": 19
         },
         "wire": [
           "minecraft:geometry"
@@ -4920,18 +5005,19 @@
         },
         "fields": {
           "bone_visibility": {
-            "accepted": 6,
-            "rejected": 3,
+            "accepted": 27,
+            "rejected": 4,
             "rejectedValues": [
+              "map<string>:{1} +1",
               "map<boolean>:{1}",
               "map<boolean>:{2}",
               "map<boolean>:{unknown key}"
             ],
             "bdsErrors": [
+              "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
+              "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | +1 | Error: binary Add + operator at end of expression",
               "bone_a: expected an object",
-              "bone_a: invalid numeric value",
-              "bone_a: invalid string",
-              "minecraft:geometry: invalid string"
+              "bone_a: invalid numeric value"
             ],
             "transform": "geometry",
             "status": "hand-rule",
@@ -4950,7 +5036,7 @@
                   "renamed",
                   "nested"
                 ],
-                "wire": "minecraft:geometry.bone_visibility{}"
+                "wire": "minecraft:geometry.bone_visibility.paletter_unknown"
               }
             ],
             "whenAbsent": {
@@ -4961,9 +5047,20 @@
             },
             "unexplained": [
               {
+                "wire": "minecraft:geometry.bone_visibility.bone_a",
+                "samples": [
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
+                  "<absent> -> -",
+                  "{} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
+                  "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+                ]
+              },
+              {
                 "wire": "minecraft:geometry.bone_visibility.bone_a_2",
                 "samples": [
-                  "{} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
                   "<absent> -> -",
                   "{} -> -",
                   "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
@@ -5031,14 +5128,16 @@
             }
           },
           "identifier": {
-            "accepted": 5,
-            "rejected": 1,
+            "accepted": 4,
+            "rejected": 2,
             "rejectedValues": [
-              "omitted"
+              "omitted",
+              "string:minecraft:geometry.full_block"
             ],
             "bdsErrors": [
               "identifier: missing required field",
-              "minecraft:geometry: invalid string"
+              "minecraft:geometry: invalid string",
+              "minecraft:geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block"
             ],
             "status": "inferred",
             "rules": [
@@ -5142,7 +5241,7 @@
           "": {
             "verified": {
               "build": "1.26.45.1",
-              "variants": 32
+              "variants": 52
             },
             "rejectedFields": [
               "n_way_visual_rotation"
@@ -5156,8 +5255,8 @@
       },
       "protocol2225": {
         "variants": {
-          "accepted": 48,
-          "rejected": 24
+          "accepted": 69,
+          "rejected": 25
         },
         "wire": [
           "minecraft:geometry"
@@ -5180,8 +5279,15 @@
         },
         "fields": {
           "bone_visibility": {
-            "accepted": 9,
-            "rejected": 0,
+            "accepted": 30,
+            "rejected": 1,
+            "rejectedValues": [
+              "map<string>:{1} +1"
+            ],
+            "bdsErrors": [
+              "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
+              "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | +1 | Error: binary Add + operator at end of expression"
+            ],
             "transform": "geometry",
             "status": "hand-rule",
             "rules": [
@@ -5202,7 +5308,7 @@
               {
                 "wire": "minecraft:geometry.bone_visibility.bone_a",
                 "samples": [
-                  "{\"bone_a\":true} -> 1.000000 (string)",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
                   "<absent> -> -",
                   "{} -> -",
                   "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
@@ -5213,7 +5319,7 @@
               {
                 "wire": "minecraft:geometry.bone_visibility.bone_a_2",
                 "samples": [
-                  "{\"bone_a\":true} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
                   "<absent> -> -",
                   "{} -> -",
                   "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
@@ -5224,7 +5330,7 @@
               {
                 "wire": "minecraft:geometry.bone_visibility.paletter_unknown",
                 "samples": [
-                  "{\"bone_a\":true} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
                   "<absent> -> -",
                   "{} -> -",
                   "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
@@ -5428,9 +5534,9 @@
               "string:minecraft:paletter_unknown"
             ],
             "bdsErrors": [
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_58.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_b",
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_60.json | minecraft:geometry field n_way_visual_rotation.x references unknown state cardinal_direction",
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_61.json | minecraft:geometry field n_way_visual_rotation.x references unknown state minecraft:paletter_unknown"
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_80.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_b",
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_82.json | minecraft:geometry field n_way_visual_rotation.x references unknown state cardinal_direction",
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_83.json | minecraft:geometry field n_way_visual_rotation.x references unknown state minecraft:paletter_unknown"
             ],
             "status": "inferred",
             "rules": [
@@ -5454,9 +5560,9 @@
               "string:minecraft:paletter_unknown"
             ],
             "bdsErrors": [
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_64.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_b",
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_66.json | minecraft:geometry field n_way_visual_rotation.y references unknown state cardinal_direction",
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_67.json | minecraft:geometry field n_way_visual_rotation.y references unknown state minecraft:paletter_unknown"
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_86.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_b",
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_88.json | minecraft:geometry field n_way_visual_rotation.y references unknown state cardinal_direction",
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_89.json | minecraft:geometry field n_way_visual_rotation.y references unknown state minecraft:paletter_unknown"
             ],
             "status": "inferred",
             "rules": [
@@ -5480,9 +5586,9 @@
               "string:minecraft:paletter_unknown"
             ],
             "bdsErrors": [
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_70.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_b",
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_72.json | minecraft:geometry field n_way_visual_rotation.z references unknown state cardinal_direction",
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_73.json | minecraft:geometry field n_way_visual_rotation.z references unknown state minecraft:paletter_unknown"
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_92.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_b",
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_94.json | minecraft:geometry field n_way_visual_rotation.z references unknown state cardinal_direction",
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_95.json | minecraft:geometry field n_way_visual_rotation.z references unknown state minecraft:paletter_unknown"
             ],
             "status": "inferred",
             "rules": [
@@ -5508,7 +5614,7 @@
           "": {
             "verified": {
               "build": "1.26.63.1",
-              "variants": 41
+              "variants": 62
             }
           }
         },
@@ -5518,8 +5624,8 @@
       },
       "protocol2259": {
         "variants": {
-          "accepted": 37,
-          "rejected": 15
+          "accepted": 58,
+          "rejected": 16
         },
         "wire": [
           "minecraft:geometry"
@@ -5542,8 +5648,15 @@
         },
         "fields": {
           "bone_visibility": {
-            "accepted": 9,
-            "rejected": 0,
+            "accepted": 30,
+            "rejected": 1,
+            "rejectedValues": [
+              "map<string>:{1} +1"
+            ],
+            "bdsErrors": [
+              "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
+              "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | +1 | Error: binary Add + operator at end of expression"
+            ],
             "transform": "geometry",
             "status": "hand-rule",
             "rules": [
@@ -5564,7 +5677,7 @@
               {
                 "wire": "minecraft:geometry.bone_visibility.bone_a",
                 "samples": [
-                  "{\"bone_a\":true} -> 1.000000 (string)",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
                   "<absent> -> -",
                   "{} -> -",
                   "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
@@ -5575,7 +5688,7 @@
               {
                 "wire": "minecraft:geometry.bone_visibility.bone_a_2",
                 "samples": [
-                  "{\"bone_a\":true} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
                   "<absent> -> -",
                   "{} -> -",
                   "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
@@ -5586,7 +5699,7 @@
               {
                 "wire": "minecraft:geometry.bone_visibility.paletter_unknown",
                 "samples": [
-                  "{\"bone_a\":true} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
                   "<absent> -> -",
                   "{} -> -",
                   "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
@@ -5767,7 +5880,7 @@
           "": {
             "verified": {
               "build": "1.26.70.24",
-              "variants": 34
+              "variants": 55
             },
             "rejectedFields": [
               "n_way_visual_rotation"
@@ -5823,8 +5936,8 @@
     },
     "block:minecraft:item_visual": {
       "variants": {
-        "accepted": 52,
-        "rejected": 18
+        "accepted": 73,
+        "rejected": 41
       },
       "wire": [
         "minecraft:item_visual"
@@ -5875,12 +5988,35 @@
           ]
         },
         "geometry.bone_visibility": {
-          "accepted": 9,
-          "rejected": 9,
+          "accepted": 30,
+          "rejected": 32,
           "rejectedValues": [
             "map<string>:{1}",
             "map<string>:{2}",
             "map<string>:{unknown key}",
+            "map<string>:{1} 0",
+            "map<string>:{1} 0.0",
+            "map<string>:{1} 1",
+            "map<string>:{1} 0.5",
+            "map<string>:{1} -1",
+            "map<string>:{1} 0.1234567",
+            "map<string>:{1} 0.0078125",
+            "map<string>:{1} 16777217",
+            "map<string>:{1} 2",
+            "map<string>:{1} -0",
+            "map<string>:{1} -0.5",
+            "map<string>:{1} .5",
+            "map<string>:{1} 1.",
+            "map<string>:{1} +1",
+            "map<string>:{1} +1 linked geometry.identifier",
+            "map<string>:{1}  1 ",
+            "map<string>:{1} 1e3",
+            "map<string>:{1} 1e-3",
+            "map<string>:{1} 1.5E2",
+            "map<string>:{1} true",
+            "map<string>:{1} false",
+            "map<string>:{1} !q.block_state('paletter:flag')",
+            "map<string>:{1} query.block_state('paletter:flag')",
             "map<boolean>:{1}",
             "map<boolean>:{1} linked geometry.identifier",
             "map<boolean>:{2}",
@@ -5891,8 +6027,8 @@
           "bdsErrors": [
             "geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block",
             "geometry: invalid string",
-            "bone_a: expected an object",
-            "bone_a: invalid numeric value"
+            "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_46.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
+            "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_46.json | +1 | Error: binary Add + operator at end of expression"
           ],
           "transform": "itemVisualBoneVisibility",
           "status": "hand-rule",
@@ -5904,14 +6040,14 @@
               "wire": "minecraft:item_visual.geometryDescription.bone_visibility"
             },
             {
-              "kind": "identity",
+              "kind": "constant",
+              "value": "13",
               "mapEntry": true,
-              "nbt": "string",
+              "nbt": "short",
               "tags": [
-                "renamed",
-                "nested"
+                "injected-default"
               ],
-              "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a.expression"
+              "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a.version"
             },
             {
               "kind": "identity",
@@ -5955,13 +6091,13 @@
           },
           "unexplained": [
             {
-              "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a.version",
+              "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a.expression",
               "samples": [
                 "<absent> -> -",
                 "{} -> -",
                 "{} -> -",
-                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> 13 (short)",
-                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 13 (short)",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
                 "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
               ]
             },
@@ -6396,7 +6532,7 @@
         "geometry.bone_visibility": {
           "verified": {
             "build": "1.26.36.1",
-            "variants": 9
+            "variants": 30
           }
         },
         "geometry.uv_lock": {
@@ -6417,8 +6553,8 @@
       ],
       "protocol2168": {
         "variants": {
-          "accepted": 52,
-          "rejected": 18
+          "accepted": 73,
+          "rejected": 41
         },
         "wire": [
           "minecraft:item_visual"
@@ -6469,12 +6605,35 @@
             ]
           },
           "geometry.bone_visibility": {
-            "accepted": 9,
-            "rejected": 9,
+            "accepted": 30,
+            "rejected": 32,
             "rejectedValues": [
               "map<string>:{1}",
               "map<string>:{2}",
               "map<string>:{unknown key}",
+              "map<string>:{1} 0",
+              "map<string>:{1} 0.0",
+              "map<string>:{1} 1",
+              "map<string>:{1} 0.5",
+              "map<string>:{1} -1",
+              "map<string>:{1} 0.1234567",
+              "map<string>:{1} 0.0078125",
+              "map<string>:{1} 16777217",
+              "map<string>:{1} 2",
+              "map<string>:{1} -0",
+              "map<string>:{1} -0.5",
+              "map<string>:{1} .5",
+              "map<string>:{1} 1.",
+              "map<string>:{1} +1",
+              "map<string>:{1} +1 linked geometry.identifier",
+              "map<string>:{1}  1 ",
+              "map<string>:{1} 1e3",
+              "map<string>:{1} 1e-3",
+              "map<string>:{1} 1.5E2",
+              "map<string>:{1} true",
+              "map<string>:{1} false",
+              "map<string>:{1} !q.block_state('paletter:flag')",
+              "map<string>:{1} query.block_state('paletter:flag')",
               "map<boolean>:{1}",
               "map<boolean>:{1} linked geometry.identifier",
               "map<boolean>:{2}",
@@ -6485,8 +6644,8 @@
             "bdsErrors": [
               "geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block",
               "geometry: invalid string",
-              "bone_a: expected an object",
-              "bone_a: invalid numeric value"
+              "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_46.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
+              "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_46.json | +1 | Error: binary Add + operator at end of expression"
             ],
             "transform": "itemVisualBoneVisibility",
             "status": "hand-rule",
@@ -6505,7 +6664,7 @@
                   "renamed",
                   "nested"
                 ],
-                "wire": "minecraft:item_visual.geometryDescription.bone_visibility{}"
+                "wire": "minecraft:item_visual.geometryDescription.bone_visibility.paletter_unknown"
               },
               {
                 "kind": "constant",
@@ -6535,6 +6694,17 @@
               "minecraft:item_visual.geometryDescription.culling_shape": " (string)"
             },
             "unexplained": [
+              {
+                "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a",
+                "samples": [
+                  "<absent> -> -",
+                  "{} -> -",
+                  "{} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
+                  "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+                ]
+              },
               {
                 "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a_2",
                 "samples": [
@@ -6944,7 +7114,7 @@
           "geometry.bone_visibility": {
             "verified": {
               "build": "1.26.45.1",
-              "variants": 9
+              "variants": 30
             }
           },
           "geometry.uv_lock": {
@@ -6967,8 +7137,8 @@
       },
       "protocol2225": {
         "variants": {
-          "accepted": 55,
-          "rejected": 15
+          "accepted": 76,
+          "rejected": 38
         },
         "wire": [
           "minecraft:item_visual"
@@ -7046,19 +7216,44 @@
             ]
           },
           "geometry.bone_visibility": {
-            "accepted": 12,
-            "rejected": 6,
+            "accepted": 33,
+            "rejected": 29,
             "rejectedValues": [
               "map<string>:{1}",
               "map<string>:{2}",
               "map<string>:{unknown key}",
+              "map<string>:{1} 0",
+              "map<string>:{1} 0.0",
+              "map<string>:{1} 1",
+              "map<string>:{1} 0.5",
+              "map<string>:{1} -1",
+              "map<string>:{1} 0.1234567",
+              "map<string>:{1} 0.0078125",
+              "map<string>:{1} 16777217",
+              "map<string>:{1} 2",
+              "map<string>:{1} -0",
+              "map<string>:{1} -0.5",
+              "map<string>:{1} .5",
+              "map<string>:{1} 1.",
+              "map<string>:{1} +1",
+              "map<string>:{1} +1 linked geometry.identifier",
+              "map<string>:{1}  1 ",
+              "map<string>:{1} 1e3",
+              "map<string>:{1} 1e-3",
+              "map<string>:{1} 1.5E2",
+              "map<string>:{1} true",
+              "map<string>:{1} false",
+              "map<string>:{1} !q.block_state('paletter:flag')",
+              "map<string>:{1} query.block_state('paletter:flag')",
               "map<boolean>:{1}",
               "map<boolean>:{2}",
               "map<boolean>:{unknown key}"
             ],
             "bdsErrors": [
               "geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block",
-              "geometry: invalid string"
+              "geometry: invalid string",
+              "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_46.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
+              "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_46.json | +1 | Error: binary Add + operator at end of expression"
             ],
             "transform": "itemVisualBoneVisibility",
             "status": "hand-rule",
@@ -7819,7 +8014,7 @@
           "geometry.bone_visibility": {
             "verified": {
               "build": "1.26.63.1",
-              "variants": 12
+              "variants": 33
             }
           },
           "geometry.uv_lock": {

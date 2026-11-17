@@ -4933,6 +4933,1524 @@
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0",
+    "value": {
+      "bone_a": "0"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_18",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_18.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0 linked geometry.identifier",
+    "value": {
+      "bone_a": "0"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_19",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_19.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0.0",
+    "value": {
+      "bone_a": "0.0"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0.0"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_20",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_20.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0.0 linked geometry.identifier",
+    "value": {
+      "bone_a": "0.0"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0.0"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_21",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_21.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1",
+    "value": {
+      "bone_a": "1"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_22",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_22.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1 linked geometry.identifier",
+    "value": {
+      "bone_a": "1"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_23",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_23.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0.5",
+    "value": {
+      "bone_a": "0.5"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0.5"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_24",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_24.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0.5 linked geometry.identifier",
+    "value": {
+      "bone_a": "0.5"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0.5"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_25",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_25.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} -1",
+    "value": {
+      "bone_a": "-1"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "-1"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_26",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_26.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} -1 linked geometry.identifier",
+    "value": {
+      "bone_a": "-1"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "-1"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_27",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_27.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0.1234567",
+    "value": {
+      "bone_a": "0.1234567"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0.1234567"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_28",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_28.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0.1234567 linked geometry.identifier",
+    "value": {
+      "bone_a": "0.1234567"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0.1234567"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_29",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_29.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0.0078125",
+    "value": {
+      "bone_a": "0.0078125"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0.0078125"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_30",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_30.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0.0078125 linked geometry.identifier",
+    "value": {
+      "bone_a": "0.0078125"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0.0078125"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_31",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_31.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 16777217",
+    "value": {
+      "bone_a": "16777217"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "16777217"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_32",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_32.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 16777217 linked geometry.identifier",
+    "value": {
+      "bone_a": "16777217"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "16777217"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_33",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_33.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 2",
+    "value": {
+      "bone_a": "2"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "2"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_34",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_34.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 2 linked geometry.identifier",
+    "value": {
+      "bone_a": "2"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "2"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_35",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_35.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} -0",
+    "value": {
+      "bone_a": "-0"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "-0"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_36",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_36.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} -0 linked geometry.identifier",
+    "value": {
+      "bone_a": "-0"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "-0"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_37",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_37.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} -0.5",
+    "value": {
+      "bone_a": "-0.5"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "-0.5"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_38",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_38.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} -0.5 linked geometry.identifier",
+    "value": {
+      "bone_a": "-0.5"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "-0.5"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_39",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_39.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} .5",
+    "value": {
+      "bone_a": ".5"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": ".5"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_40",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_40.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} .5 linked geometry.identifier",
+    "value": {
+      "bone_a": ".5"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": ".5"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_41",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_41.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1.",
+    "value": {
+      "bone_a": "1."
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1."
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_42",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_42.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1. linked geometry.identifier",
+    "value": {
+      "bone_a": "1."
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1."
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_43",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_43.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} +1",
+    "value": {
+      "bone_a": "+1"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "+1"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_44",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_44.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} +1 linked geometry.identifier",
+    "value": {
+      "bone_a": "+1"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "+1"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_45",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_45.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1}  1 ",
+    "value": {
+      "bone_a": " 1 "
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": " 1 "
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_46",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_46.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1}  1  linked geometry.identifier",
+    "value": {
+      "bone_a": " 1 "
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": " 1 "
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_47",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_47.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1e3",
+    "value": {
+      "bone_a": "1e3"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1e3"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_48",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_48.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1e3 linked geometry.identifier",
+    "value": {
+      "bone_a": "1e3"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1e3"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_49",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_49.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1e-3",
+    "value": {
+      "bone_a": "1e-3"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1e-3"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_50",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_50.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1e-3 linked geometry.identifier",
+    "value": {
+      "bone_a": "1e-3"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1e-3"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_51",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_51.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1.5E2",
+    "value": {
+      "bone_a": "1.5E2"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1.5E2"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_52",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_52.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1.5E2 linked geometry.identifier",
+    "value": {
+      "bone_a": "1.5E2"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1.5E2"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_53",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_53.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} true",
+    "value": {
+      "bone_a": "true"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "true"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_54",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_54.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} true linked geometry.identifier",
+    "value": {
+      "bone_a": "true"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "true"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_55",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_55.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} false",
+    "value": {
+      "bone_a": "false"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "false"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_56",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_56.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} false linked geometry.identifier",
+    "value": {
+      "bone_a": "false"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "false"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_57",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_57.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} !q.block_state('paletter:flag')",
+    "value": {
+      "bone_a": "!q.block_state('paletter:flag')"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "!q.block_state('paletter:flag')"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_58",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_58.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} !q.block_state('paletter:flag') linked geometry.identifier",
+    "value": {
+      "bone_a": "!q.block_state('paletter:flag')"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "!q.block_state('paletter:flag')"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_59",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_59.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} query.block_state('paletter:flag')",
+    "value": {
+      "bone_a": "query.block_state('paletter:flag')"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "query.block_state('paletter:flag')"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_60",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_60.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} query.block_state('paletter:flag') linked geometry.identifier",
+    "value": {
+      "bone_a": "query.block_state('paletter:flag')"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "query.block_state('paletter:flag')"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_embedded_visual_61",
+    "kind": "block",
+    "file": "blocks/b_embedded_visual_61.json",
+    "component": "block:minecraft:embedded_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
     "label": "object:{}",
     "value": {},
     "json": {
@@ -4956,9 +6474,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_18",
+    "identifier": "paletter:b_embedded_visual_62",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_18.json",
+    "file": "blocks/b_embedded_visual_62.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -4988,9 +6506,9 @@
     ]
   },
   {
-    "identifier": "paletter:b_embedded_visual_19",
+    "identifier": "paletter:b_embedded_visual_63",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_19.json",
+    "file": "blocks/b_embedded_visual_63.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -5017,9 +6535,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_20",
+    "identifier": "paletter:b_embedded_visual_64",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_20.json",
+    "file": "blocks/b_embedded_visual_64.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -5049,9 +6567,9 @@
     ]
   },
   {
-    "identifier": "paletter:b_embedded_visual_21",
+    "identifier": "paletter:b_embedded_visual_65",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_21.json",
+    "file": "blocks/b_embedded_visual_65.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -5082,9 +6600,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_22",
+    "identifier": "paletter:b_embedded_visual_66",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_22.json",
+    "file": "blocks/b_embedded_visual_66.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -5118,9 +6636,9 @@
     ]
   },
   {
-    "identifier": "paletter:b_embedded_visual_23",
+    "identifier": "paletter:b_embedded_visual_67",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_23.json",
+    "file": "blocks/b_embedded_visual_67.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -5153,9 +6671,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_24",
+    "identifier": "paletter:b_embedded_visual_68",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_24.json",
+    "file": "blocks/b_embedded_visual_68.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -5191,9 +6709,9 @@
     ]
   },
   {
-    "identifier": "paletter:b_embedded_visual_25",
+    "identifier": "paletter:b_embedded_visual_69",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_25.json",
+    "file": "blocks/b_embedded_visual_69.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -5224,9 +6742,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_26",
+    "identifier": "paletter:b_embedded_visual_70",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_26.json",
+    "file": "blocks/b_embedded_visual_70.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -5260,9 +6778,9 @@
     ]
   },
   {
-    "identifier": "paletter:b_embedded_visual_27",
+    "identifier": "paletter:b_embedded_visual_71",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_27.json",
+    "file": "blocks/b_embedded_visual_71.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "geometry.culling",
@@ -5286,9 +6804,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_28",
+    "identifier": "paletter:b_embedded_visual_72",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_28.json",
+    "file": "blocks/b_embedded_visual_72.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -5314,9 +6832,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_29",
+    "identifier": "paletter:b_embedded_visual_73",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_29.json",
+    "file": "blocks/b_embedded_visual_73.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -5342,9 +6860,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_30",
+    "identifier": "paletter:b_embedded_visual_74",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_30.json",
+    "file": "blocks/b_embedded_visual_74.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -5370,9 +6888,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_31",
+    "identifier": "paletter:b_embedded_visual_75",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_31.json",
+    "file": "blocks/b_embedded_visual_75.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -5398,9 +6916,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_32",
+    "identifier": "paletter:b_embedded_visual_76",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_32.json",
+    "file": "blocks/b_embedded_visual_76.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -5426,9 +6944,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_33",
+    "identifier": "paletter:b_embedded_visual_77",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_33.json",
+    "file": "blocks/b_embedded_visual_77.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "geometry.culling_layer",
@@ -5452,9 +6970,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_34",
+    "identifier": "paletter:b_embedded_visual_78",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_34.json",
+    "file": "blocks/b_embedded_visual_78.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling_layer",
@@ -5480,9 +6998,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_35",
+    "identifier": "paletter:b_embedded_visual_79",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_35.json",
+    "file": "blocks/b_embedded_visual_79.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling_layer",
@@ -5508,9 +7026,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_36",
+    "identifier": "paletter:b_embedded_visual_80",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_36.json",
+    "file": "blocks/b_embedded_visual_80.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling_layer",
@@ -5536,9 +7054,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_37",
+    "identifier": "paletter:b_embedded_visual_81",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_37.json",
+    "file": "blocks/b_embedded_visual_81.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "geometry.culling_shape",
@@ -5562,9 +7080,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_38",
+    "identifier": "paletter:b_embedded_visual_82",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_38.json",
+    "file": "blocks/b_embedded_visual_82.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -5590,9 +7108,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_39",
+    "identifier": "paletter:b_embedded_visual_83",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_39.json",
+    "file": "blocks/b_embedded_visual_83.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -5618,9 +7136,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_40",
+    "identifier": "paletter:b_embedded_visual_84",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_40.json",
+    "file": "blocks/b_embedded_visual_84.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -5646,9 +7164,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_41",
+    "identifier": "paletter:b_embedded_visual_85",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_41.json",
+    "file": "blocks/b_embedded_visual_85.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -5674,9 +7192,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_42",
+    "identifier": "paletter:b_embedded_visual_86",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_42.json",
+    "file": "blocks/b_embedded_visual_86.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -5702,9 +7220,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_43",
+    "identifier": "paletter:b_embedded_visual_87",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_43.json",
+    "file": "blocks/b_embedded_visual_87.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "geometry.identifier",
@@ -5728,9 +7246,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_44",
+    "identifier": "paletter:b_embedded_visual_88",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_44.json",
+    "file": "blocks/b_embedded_visual_88.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.identifier",
@@ -5756,9 +7274,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_45",
+    "identifier": "paletter:b_embedded_visual_89",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_45.json",
+    "file": "blocks/b_embedded_visual_89.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.identifier",
@@ -5784,9 +7302,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_46",
+    "identifier": "paletter:b_embedded_visual_90",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_46.json",
+    "file": "blocks/b_embedded_visual_90.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.identifier",
@@ -5812,9 +7330,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_47",
+    "identifier": "paletter:b_embedded_visual_91",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_47.json",
+    "file": "blocks/b_embedded_visual_91.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "geometry.n_way_visual_rotation",
@@ -5834,9 +7352,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_48",
+    "identifier": "paletter:b_embedded_visual_92",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_48.json",
+    "file": "blocks/b_embedded_visual_92.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation",
@@ -5858,9 +7376,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_49",
+    "identifier": "paletter:b_embedded_visual_93",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_49.json",
+    "file": "blocks/b_embedded_visual_93.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation",
@@ -5890,9 +7408,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_50",
+    "identifier": "paletter:b_embedded_visual_94",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_50.json",
+    "file": "blocks/b_embedded_visual_94.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "geometry.n_way_visual_rotation.x",
@@ -5916,9 +7434,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_51",
+    "identifier": "paletter:b_embedded_visual_95",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_51.json",
+    "file": "blocks/b_embedded_visual_95.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -5944,9 +7462,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_52",
+    "identifier": "paletter:b_embedded_visual_96",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_52.json",
+    "file": "blocks/b_embedded_visual_96.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -5972,9 +7490,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_53",
+    "identifier": "paletter:b_embedded_visual_97",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_53.json",
+    "file": "blocks/b_embedded_visual_97.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -6000,9 +7518,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_54",
+    "identifier": "paletter:b_embedded_visual_98",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_54.json",
+    "file": "blocks/b_embedded_visual_98.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -6028,9 +7546,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_55",
+    "identifier": "paletter:b_embedded_visual_99",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_55.json",
+    "file": "blocks/b_embedded_visual_99.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -6056,9 +7574,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_56",
+    "identifier": "paletter:b_embedded_visual_100",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_56.json",
+    "file": "blocks/b_embedded_visual_100.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "geometry.n_way_visual_rotation.y",
@@ -6082,9 +7600,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_57",
+    "identifier": "paletter:b_embedded_visual_101",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_57.json",
+    "file": "blocks/b_embedded_visual_101.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -6110,9 +7628,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_58",
+    "identifier": "paletter:b_embedded_visual_102",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_58.json",
+    "file": "blocks/b_embedded_visual_102.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -6138,9 +7656,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_59",
+    "identifier": "paletter:b_embedded_visual_103",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_59.json",
+    "file": "blocks/b_embedded_visual_103.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -6166,9 +7684,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_60",
+    "identifier": "paletter:b_embedded_visual_104",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_60.json",
+    "file": "blocks/b_embedded_visual_104.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -6194,9 +7712,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_61",
+    "identifier": "paletter:b_embedded_visual_105",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_61.json",
+    "file": "blocks/b_embedded_visual_105.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -6222,9 +7740,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_62",
+    "identifier": "paletter:b_embedded_visual_106",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_62.json",
+    "file": "blocks/b_embedded_visual_106.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "geometry.n_way_visual_rotation.z",
@@ -6248,9 +7766,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_63",
+    "identifier": "paletter:b_embedded_visual_107",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_63.json",
+    "file": "blocks/b_embedded_visual_107.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -6276,9 +7794,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_64",
+    "identifier": "paletter:b_embedded_visual_108",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_64.json",
+    "file": "blocks/b_embedded_visual_108.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -6304,9 +7822,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_65",
+    "identifier": "paletter:b_embedded_visual_109",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_65.json",
+    "file": "blocks/b_embedded_visual_109.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -6332,9 +7850,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_66",
+    "identifier": "paletter:b_embedded_visual_110",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_66.json",
+    "file": "blocks/b_embedded_visual_110.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -6360,9 +7878,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_67",
+    "identifier": "paletter:b_embedded_visual_111",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_67.json",
+    "file": "blocks/b_embedded_visual_111.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -6388,9 +7906,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_68",
+    "identifier": "paletter:b_embedded_visual_112",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_68.json",
+    "file": "blocks/b_embedded_visual_112.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -6417,9 +7935,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_69",
+    "identifier": "paletter:b_embedded_visual_113",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_69.json",
+    "file": "blocks/b_embedded_visual_113.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -6446,9 +7964,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_70",
+    "identifier": "paletter:b_embedded_visual_114",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_70.json",
+    "file": "blocks/b_embedded_visual_114.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -6475,9 +7993,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_71",
+    "identifier": "paletter:b_embedded_visual_115",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_71.json",
+    "file": "blocks/b_embedded_visual_115.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -6508,9 +8026,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_72",
+    "identifier": "paletter:b_embedded_visual_116",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_72.json",
+    "file": "blocks/b_embedded_visual_116.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -6541,9 +8059,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_73",
+    "identifier": "paletter:b_embedded_visual_117",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_73.json",
+    "file": "blocks/b_embedded_visual_117.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -6576,9 +8094,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_74",
+    "identifier": "paletter:b_embedded_visual_118",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_74.json",
+    "file": "blocks/b_embedded_visual_118.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -6611,9 +8129,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_75",
+    "identifier": "paletter:b_embedded_visual_119",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_75.json",
+    "file": "blocks/b_embedded_visual_119.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -6640,9 +8158,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_76",
+    "identifier": "paletter:b_embedded_visual_120",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_76.json",
+    "file": "blocks/b_embedded_visual_120.json",
     "component": "block:minecraft:embedded_visual",
     "role": "omit",
     "path": "material_instances",
@@ -6662,9 +8180,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_77",
+    "identifier": "paletter:b_embedded_visual_121",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_77.json",
+    "file": "blocks/b_embedded_visual_121.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "material_instances",
@@ -6686,9 +8204,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_78",
+    "identifier": "paletter:b_embedded_visual_122",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_78.json",
+    "file": "blocks/b_embedded_visual_122.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "material_instances",
@@ -6718,9 +8236,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_79",
+    "identifier": "paletter:b_embedded_visual_123",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_79.json",
+    "file": "blocks/b_embedded_visual_123.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "material_instances",
@@ -6742,9 +8260,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_80",
+    "identifier": "paletter:b_embedded_visual_124",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_80.json",
+    "file": "blocks/b_embedded_visual_124.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "material_instances",
@@ -6770,9 +8288,9 @@
     }
   },
   {
-    "identifier": "paletter:b_embedded_visual_81",
+    "identifier": "paletter:b_embedded_visual_125",
     "kind": "block",
-    "file": "blocks/b_embedded_visual_81.json",
+    "file": "blocks/b_embedded_visual_125.json",
     "component": "block:minecraft:embedded_visual",
     "role": "field",
     "path": "material_instances",
@@ -7414,7 +8932,7 @@
     "label": "base",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -7617,6 +9135,600 @@
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "bone_visibility",
+    "label": "map<string>:{1} 0",
+    "value": {
+      "bone_a": "0"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "0"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_14",
+    "kind": "block",
+    "file": "blocks/b_geometry_14.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} 0.0",
+    "value": {
+      "bone_a": "0.0"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "0.0"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_15",
+    "kind": "block",
+    "file": "blocks/b_geometry_15.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} 1",
+    "value": {
+      "bone_a": "1"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "1"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_16",
+    "kind": "block",
+    "file": "blocks/b_geometry_16.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} 0.5",
+    "value": {
+      "bone_a": "0.5"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "0.5"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_17",
+    "kind": "block",
+    "file": "blocks/b_geometry_17.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} -1",
+    "value": {
+      "bone_a": "-1"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "-1"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_18",
+    "kind": "block",
+    "file": "blocks/b_geometry_18.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} 0.1234567",
+    "value": {
+      "bone_a": "0.1234567"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "0.1234567"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_19",
+    "kind": "block",
+    "file": "blocks/b_geometry_19.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} 0.0078125",
+    "value": {
+      "bone_a": "0.0078125"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "0.0078125"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_20",
+    "kind": "block",
+    "file": "blocks/b_geometry_20.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} 16777217",
+    "value": {
+      "bone_a": "16777217"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "16777217"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_21",
+    "kind": "block",
+    "file": "blocks/b_geometry_21.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} 2",
+    "value": {
+      "bone_a": "2"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "2"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_22",
+    "kind": "block",
+    "file": "blocks/b_geometry_22.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} -0",
+    "value": {
+      "bone_a": "-0"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "-0"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_23",
+    "kind": "block",
+    "file": "blocks/b_geometry_23.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} -0.5",
+    "value": {
+      "bone_a": "-0.5"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "-0.5"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_24",
+    "kind": "block",
+    "file": "blocks/b_geometry_24.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} .5",
+    "value": {
+      "bone_a": ".5"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": ".5"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_25",
+    "kind": "block",
+    "file": "blocks/b_geometry_25.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} 1.",
+    "value": {
+      "bone_a": "1."
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "1."
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_26",
+    "kind": "block",
+    "file": "blocks/b_geometry_26.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} +1",
+    "value": {
+      "bone_a": "+1"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "+1"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_27",
+    "kind": "block",
+    "file": "blocks/b_geometry_27.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1}  1 ",
+    "value": {
+      "bone_a": " 1 "
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": " 1 "
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_28",
+    "kind": "block",
+    "file": "blocks/b_geometry_28.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} 1e3",
+    "value": {
+      "bone_a": "1e3"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "1e3"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_29",
+    "kind": "block",
+    "file": "blocks/b_geometry_29.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} 1e-3",
+    "value": {
+      "bone_a": "1e-3"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "1e-3"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_30",
+    "kind": "block",
+    "file": "blocks/b_geometry_30.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} 1.5E2",
+    "value": {
+      "bone_a": "1.5E2"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "1.5E2"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_31",
+    "kind": "block",
+    "file": "blocks/b_geometry_31.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} true",
+    "value": {
+      "bone_a": "true"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "true"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_32",
+    "kind": "block",
+    "file": "blocks/b_geometry_32.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} false",
+    "value": {
+      "bone_a": "false"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "false"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_33",
+    "kind": "block",
+    "file": "blocks/b_geometry_33.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} !q.block_state('paletter:flag')",
+    "value": {
+      "bone_a": "!q.block_state('paletter:flag')"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "!q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_34",
+    "kind": "block",
+    "file": "blocks/b_geometry_34.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
+    "label": "map<string>:{1} query.block_state('paletter:flag')",
+    "value": {
+      "bone_a": "query.block_state('paletter:flag')"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "query.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_35",
+    "kind": "block",
+    "file": "blocks/b_geometry_35.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "bone_visibility",
     "label": "map<boolean>:{}",
     "value": {},
     "json": {
@@ -7634,9 +9746,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_14",
+    "identifier": "paletter:b_geometry_36",
     "kind": "block",
-    "file": "blocks/b_geometry_14.json",
+    "file": "blocks/b_geometry_36.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "bone_visibility",
@@ -7661,9 +9773,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_15",
+    "identifier": "paletter:b_geometry_37",
     "kind": "block",
-    "file": "blocks/b_geometry_15.json",
+    "file": "blocks/b_geometry_37.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "bone_visibility",
@@ -7690,9 +9802,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_16",
+    "identifier": "paletter:b_geometry_38",
     "kind": "block",
-    "file": "blocks/b_geometry_16.json",
+    "file": "blocks/b_geometry_38.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "bone_visibility",
@@ -7717,567 +9829,17 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_17",
-    "kind": "block",
-    "file": "blocks/b_geometry_17.json",
-    "component": "block:minecraft:geometry",
-    "role": "omit",
-    "path": "culling",
-    "label": "omitted",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_18",
-    "kind": "block",
-    "file": "blocks/b_geometry_18.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "culling",
-    "label": "string:paletter:culling",
-    "value": "paletter:culling",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_19",
-    "kind": "block",
-    "file": "blocks/b_geometry_19.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "culling",
-    "label": "string:paletter_b",
-    "value": "paletter_b",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter_b",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_20",
-    "kind": "block",
-    "file": "blocks/b_geometry_20.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "culling",
-    "label": "string:",
-    "value": "",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_21",
-    "kind": "block",
-    "file": "blocks/b_geometry_21.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "culling",
-    "label": "string:culling",
-    "value": "culling",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_22",
-    "kind": "block",
-    "file": "blocks/b_geometry_22.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "culling",
-    "label": "string:minecraft:paletter_unknown",
-    "value": "minecraft:paletter_unknown",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "minecraft:paletter_unknown",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_23",
-    "kind": "block",
-    "file": "blocks/b_geometry_23.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "culling_layer",
-    "label": "string:paletter_invalid",
-    "value": "paletter_invalid",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ],
-      "culling_layer": "paletter_invalid"
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_24",
-    "kind": "block",
-    "file": "blocks/b_geometry_24.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "culling_layer",
-    "label": "string:minecraft:culling_layer.undefined",
-    "value": "minecraft:culling_layer.undefined",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ],
-      "culling_layer": "minecraft:culling_layer.undefined"
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_25",
-    "kind": "block",
-    "file": "blocks/b_geometry_25.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "culling_layer",
-    "label": "string:minecraft:culling_layer.leaves",
-    "value": "minecraft:culling_layer.leaves",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ],
-      "culling_layer": "minecraft:culling_layer.leaves"
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_26",
-    "kind": "block",
-    "file": "blocks/b_geometry_26.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "culling_shape",
-    "label": "string:paletter_a",
-    "value": "paletter_a",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ],
-      "culling_shape": "paletter_a"
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_27",
-    "kind": "block",
-    "file": "blocks/b_geometry_27.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "culling_shape",
-    "label": "string:paletter_b",
-    "value": "paletter_b",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ],
-      "culling_shape": "paletter_b"
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_28",
-    "kind": "block",
-    "file": "blocks/b_geometry_28.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "culling_shape",
-    "label": "string:",
-    "value": "",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ],
-      "culling_shape": ""
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_29",
-    "kind": "block",
-    "file": "blocks/b_geometry_29.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "culling_shape",
-    "label": "string:minecraft:paletter_a",
-    "value": "minecraft:paletter_a",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ],
-      "culling_shape": "minecraft:paletter_a"
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_30",
-    "kind": "block",
-    "file": "blocks/b_geometry_30.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "culling_shape",
-    "label": "string:minecraft:paletter_unknown",
-    "value": "minecraft:paletter_unknown",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ],
-      "culling_shape": "minecraft:paletter_unknown"
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_31",
-    "kind": "block",
-    "file": "blocks/b_geometry_31.json",
-    "component": "block:minecraft:geometry",
-    "role": "omit",
-    "path": "identifier",
-    "label": "omitted",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_32",
-    "kind": "block",
-    "file": "blocks/b_geometry_32.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "identifier",
-    "label": "string:geometry.paletter_cube",
-    "value": "geometry.paletter_cube",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_33",
-    "kind": "block",
-    "file": "blocks/b_geometry_33.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "identifier",
-    "label": "string:minecraft:geometry.full_block",
-    "value": "minecraft:geometry.full_block",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "minecraft:geometry.full_block",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_34",
-    "kind": "block",
-    "file": "blocks/b_geometry_34.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "identifier",
-    "label": "string:",
-    "value": "",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_35",
-    "kind": "block",
-    "file": "blocks/b_geometry_35.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "identifier",
-    "label": "string:minecraft:geometry.paletter_cube",
-    "value": "minecraft:geometry.paletter_cube",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "minecraft:geometry.paletter_cube",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_36",
-    "kind": "block",
-    "file": "blocks/b_geometry_36.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "identifier",
-    "label": "string:minecraft:paletter_unknown",
-    "value": "minecraft:paletter_unknown",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "minecraft:paletter_unknown",
-      "n_way_visual_rotation": {
-        "x": "minecraft:cardinal_direction",
-        "y": "minecraft:cardinal_direction",
-        "z": "minecraft:cardinal_direction"
-      },
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_37",
-    "kind": "block",
-    "file": "blocks/b_geometry_37.json",
-    "component": "block:minecraft:geometry",
-    "role": "omit",
-    "path": "n_way_visual_rotation",
-    "label": "omitted",
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
-    "identifier": "paletter:b_geometry_38",
-    "kind": "block",
-    "file": "blocks/b_geometry_38.json",
-    "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "n_way_visual_rotation",
-    "label": "object:{}",
-    "value": {},
-    "json": {
-      "bone_visibility": {
-        "bone_a": true
-      },
-      "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": {},
-      "uv_lock": [
-        "bone_a"
-      ]
-    }
-  },
-  {
     "identifier": "paletter:b_geometry_39",
     "kind": "block",
     "file": "blocks/b_geometry_39.json",
     "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "n_way_visual_rotation",
-    "label": "object:minimal",
-    "value": {
-      "x": "minecraft:cardinal_direction",
-      "y": "minecraft:cardinal_direction",
-      "z": "minecraft:cardinal_direction"
-    },
+    "role": "omit",
+    "path": "culling",
+    "label": "omitted",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
-      "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
       "n_way_visual_rotation": {
         "x": "minecraft:cardinal_direction",
@@ -8295,16 +9857,20 @@
     "file": "blocks/b_geometry_40.json",
     "component": "block:minecraft:geometry",
     "role": "field",
-    "path": "n_way_visual_rotation",
-    "label": "string:paletter_invalid",
-    "value": "paletter_invalid",
+    "path": "culling",
+    "label": "string:paletter:culling",
+    "value": "paletter:culling",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": "paletter_invalid",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
       "uv_lock": [
         "bone_a"
       ]
@@ -8316,16 +9882,20 @@
     "file": "blocks/b_geometry_41.json",
     "component": "block:minecraft:geometry",
     "role": "field",
-    "path": "n_way_visual_rotation",
-    "label": "string:minecraft:cardinal_direction",
-    "value": "minecraft:cardinal_direction",
+    "path": "culling",
+    "label": "string:paletter_b",
+    "value": "paletter_b",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
-      "culling": "paletter:culling",
+      "culling": "paletter_b",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": "minecraft:cardinal_direction",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
       "uv_lock": [
         "bone_a"
       ]
@@ -8337,16 +9907,20 @@
     "file": "blocks/b_geometry_42.json",
     "component": "block:minecraft:geometry",
     "role": "field",
-    "path": "n_way_visual_rotation",
-    "label": "string:minecraft:sixteen_way_rotation",
-    "value": "minecraft:sixteen_way_rotation",
+    "path": "culling",
+    "label": "string:",
+    "value": "",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
-      "culling": "paletter:culling",
+      "culling": "",
       "identifier": "geometry.paletter_cube",
-      "n_way_visual_rotation": "minecraft:sixteen_way_rotation",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
       "uv_lock": [
         "bone_a"
       ]
@@ -8357,20 +9931,24 @@
     "kind": "block",
     "file": "blocks/b_geometry_43.json",
     "component": "block:minecraft:geometry",
-    "role": "omit",
-    "path": "uv_lock",
-    "label": "omitted",
+    "role": "field",
+    "path": "culling",
+    "label": "string:culling",
+    "value": "culling",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
-      "culling": "paletter:culling",
+      "culling": "culling",
       "identifier": "geometry.paletter_cube",
       "n_way_visual_rotation": {
         "x": "minecraft:cardinal_direction",
         "y": "minecraft:cardinal_direction",
         "z": "minecraft:cardinal_direction"
-      }
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
     }
   },
   {
@@ -8379,21 +9957,23 @@
     "file": "blocks/b_geometry_44.json",
     "component": "block:minecraft:geometry",
     "role": "field",
-    "path": "uv_lock",
-    "label": "boolean:true",
-    "value": true,
+    "path": "culling",
+    "label": "string:minecraft:paletter_unknown",
+    "value": "minecraft:paletter_unknown",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
-      "culling": "paletter:culling",
+      "culling": "minecraft:paletter_unknown",
       "identifier": "geometry.paletter_cube",
       "n_way_visual_rotation": {
         "x": "minecraft:cardinal_direction",
         "y": "minecraft:cardinal_direction",
         "z": "minecraft:cardinal_direction"
       },
-      "uv_lock": true
+      "uv_lock": [
+        "bone_a"
+      ]
     }
   },
   {
@@ -8402,12 +9982,12 @@
     "file": "blocks/b_geometry_45.json",
     "component": "block:minecraft:geometry",
     "role": "field",
-    "path": "uv_lock",
-    "label": "boolean:false",
-    "value": false,
+    "path": "culling_layer",
+    "label": "string:paletter_invalid",
+    "value": "paletter_invalid",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8416,7 +9996,10 @@
         "y": "minecraft:cardinal_direction",
         "z": "minecraft:cardinal_direction"
       },
-      "uv_lock": false
+      "uv_lock": [
+        "bone_a"
+      ],
+      "culling_layer": "paletter_invalid"
     }
   },
   {
@@ -8425,12 +10008,12 @@
     "file": "blocks/b_geometry_46.json",
     "component": "block:minecraft:geometry",
     "role": "field",
-    "path": "uv_lock",
-    "label": "array<string>:[]",
-    "value": [],
+    "path": "culling_layer",
+    "label": "string:minecraft:culling_layer.undefined",
+    "value": "minecraft:culling_layer.undefined",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8439,7 +10022,10 @@
         "y": "minecraft:cardinal_direction",
         "z": "minecraft:cardinal_direction"
       },
-      "uv_lock": []
+      "uv_lock": [
+        "bone_a"
+      ],
+      "culling_layer": "minecraft:culling_layer.undefined"
     }
   },
   {
@@ -8448,14 +10034,12 @@
     "file": "blocks/b_geometry_47.json",
     "component": "block:minecraft:geometry",
     "role": "field",
-    "path": "uv_lock",
-    "label": "array<string>:[wrong type]",
-    "value": [
-      1
-    ],
+    "path": "culling_layer",
+    "label": "string:minecraft:culling_layer.leaves",
+    "value": "minecraft:culling_layer.leaves",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8465,8 +10049,9 @@
         "z": "minecraft:cardinal_direction"
       },
       "uv_lock": [
-        1
-      ]
+        "bone_a"
+      ],
+      "culling_layer": "minecraft:culling_layer.leaves"
     }
   },
   {
@@ -8475,14 +10060,12 @@
     "file": "blocks/b_geometry_48.json",
     "component": "block:minecraft:geometry",
     "role": "field",
-    "path": "uv_lock",
-    "label": "array<string>:[1]",
-    "value": [
-      "bone_a"
-    ],
+    "path": "culling_shape",
+    "label": "string:paletter_a",
+    "value": "paletter_a",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8493,7 +10076,8 @@
       },
       "uv_lock": [
         "bone_a"
-      ]
+      ],
+      "culling_shape": "paletter_a"
     }
   },
   {
@@ -8502,15 +10086,12 @@
     "file": "blocks/b_geometry_49.json",
     "component": "block:minecraft:geometry",
     "role": "field",
-    "path": "uv_lock",
-    "label": "array<string>:[2]",
-    "value": [
-      "bone_a",
-      "paletter_b"
-    ],
+    "path": "culling_shape",
+    "label": "string:paletter_b",
+    "value": "paletter_b",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8520,9 +10101,9 @@
         "z": "minecraft:cardinal_direction"
       },
       "uv_lock": [
-        "bone_a",
-        "paletter_b"
-      ]
+        "bone_a"
+      ],
+      "culling_shape": "paletter_b"
     }
   },
   {
@@ -8531,15 +10112,12 @@
     "file": "blocks/b_geometry_50.json",
     "component": "block:minecraft:geometry",
     "role": "field",
-    "path": "uv_lock",
-    "label": "array<string>:[2x]",
-    "value": [
-      "bone_a",
-      "bone_a"
-    ],
+    "path": "culling_shape",
+    "label": "string:",
+    "value": "",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8549,9 +10127,9 @@
         "z": "minecraft:cardinal_direction"
       },
       "uv_lock": [
-        "bone_a",
         "bone_a"
-      ]
+      ],
+      "culling_shape": ""
     }
   },
   {
@@ -8560,12 +10138,12 @@
     "file": "blocks/b_geometry_51.json",
     "component": "block:minecraft:geometry",
     "role": "field",
-    "path": "uv_lock",
-    "label": "string:bone_a",
-    "value": "bone_a",
+    "path": "culling_shape",
+    "label": "string:minecraft:paletter_a",
+    "value": "minecraft:paletter_a",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8574,7 +10152,10 @@
         "y": "minecraft:cardinal_direction",
         "z": "minecraft:cardinal_direction"
       },
-      "uv_lock": "bone_a"
+      "uv_lock": [
+        "bone_a"
+      ],
+      "culling_shape": "minecraft:paletter_a"
     }
   },
   {
@@ -8583,12 +10164,12 @@
     "file": "blocks/b_geometry_52.json",
     "component": "block:minecraft:geometry",
     "role": "field",
-    "path": "uv_lock",
-    "label": "string:paletter_b",
-    "value": "paletter_b",
+    "path": "culling_shape",
+    "label": "string:minecraft:paletter_unknown",
+    "value": "minecraft:paletter_unknown",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8597,7 +10178,10 @@
         "y": "minecraft:cardinal_direction",
         "z": "minecraft:cardinal_direction"
       },
-      "uv_lock": "paletter_b"
+      "uv_lock": [
+        "bone_a"
+      ],
+      "culling_shape": "minecraft:paletter_unknown"
     }
   },
   {
@@ -8605,22 +10189,22 @@
     "kind": "block",
     "file": "blocks/b_geometry_53.json",
     "component": "block:minecraft:geometry",
-    "role": "field",
-    "path": "uv_lock",
-    "label": "string:",
-    "value": "",
+    "role": "omit",
+    "path": "identifier",
+    "label": "omitted",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
       "n_way_visual_rotation": {
         "x": "minecraft:cardinal_direction",
         "y": "minecraft:cardinal_direction",
         "z": "minecraft:cardinal_direction"
       },
-      "uv_lock": ""
+      "uv_lock": [
+        "bone_a"
+      ]
     }
   },
   {
@@ -8629,12 +10213,12 @@
     "file": "blocks/b_geometry_54.json",
     "component": "block:minecraft:geometry",
     "role": "field",
-    "path": "uv_lock",
-    "label": "string:minecraft:bone_a",
-    "value": "minecraft:bone_a",
+    "path": "identifier",
+    "label": "string:geometry.paletter_cube",
+    "value": "geometry.paletter_cube",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8643,7 +10227,9 @@
         "y": "minecraft:cardinal_direction",
         "z": "minecraft:cardinal_direction"
       },
-      "uv_lock": "minecraft:bone_a"
+      "uv_lock": [
+        "bone_a"
+      ]
     }
   },
   {
@@ -8652,21 +10238,23 @@
     "file": "blocks/b_geometry_55.json",
     "component": "block:minecraft:geometry",
     "role": "field",
-    "path": "uv_lock",
-    "label": "string:minecraft:paletter_unknown",
-    "value": "minecraft:paletter_unknown",
+    "path": "identifier",
+    "label": "string:minecraft:geometry.full_block",
+    "value": "minecraft:geometry.full_block",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
+      "identifier": "minecraft:geometry.full_block",
       "n_way_visual_rotation": {
         "x": "minecraft:cardinal_direction",
         "y": "minecraft:cardinal_direction",
         "z": "minecraft:cardinal_direction"
       },
-      "uv_lock": "minecraft:paletter_unknown"
+      "uv_lock": [
+        "bone_a"
+      ]
     }
   },
   {
@@ -8674,16 +10262,18 @@
     "kind": "block",
     "file": "blocks/b_geometry_56.json",
     "component": "block:minecraft:geometry",
-    "role": "omit",
-    "path": "n_way_visual_rotation.x",
-    "label": "omitted",
+    "role": "field",
+    "path": "identifier",
+    "label": "string:",
+    "value": "",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
+      "identifier": "",
       "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
         "y": "minecraft:cardinal_direction",
         "z": "minecraft:cardinal_direction"
       },
@@ -8698,15 +10288,15 @@
     "file": "blocks/b_geometry_57.json",
     "component": "block:minecraft:geometry",
     "role": "field",
-    "path": "n_way_visual_rotation.x",
-    "label": "string:minecraft:cardinal_direction",
-    "value": "minecraft:cardinal_direction",
+    "path": "identifier",
+    "label": "string:minecraft:geometry.paletter_cube",
+    "value": "minecraft:geometry.paletter_cube",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
-      "identifier": "geometry.paletter_cube",
+      "identifier": "minecraft:geometry.paletter_cube",
       "n_way_visual_rotation": {
         "x": "minecraft:cardinal_direction",
         "y": "minecraft:cardinal_direction",
@@ -8723,12 +10313,534 @@
     "file": "blocks/b_geometry_58.json",
     "component": "block:minecraft:geometry",
     "role": "field",
+    "path": "identifier",
+    "label": "string:minecraft:paletter_unknown",
+    "value": "minecraft:paletter_unknown",
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "minecraft:paletter_unknown",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_59",
+    "kind": "block",
+    "file": "blocks/b_geometry_59.json",
+    "component": "block:minecraft:geometry",
+    "role": "omit",
+    "path": "n_way_visual_rotation",
+    "label": "omitted",
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_60",
+    "kind": "block",
+    "file": "blocks/b_geometry_60.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "n_way_visual_rotation",
+    "label": "object:{}",
+    "value": {},
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {},
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_61",
+    "kind": "block",
+    "file": "blocks/b_geometry_61.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "n_way_visual_rotation",
+    "label": "object:minimal",
+    "value": {
+      "x": "minecraft:cardinal_direction",
+      "y": "minecraft:cardinal_direction",
+      "z": "minecraft:cardinal_direction"
+    },
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_62",
+    "kind": "block",
+    "file": "blocks/b_geometry_62.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "n_way_visual_rotation",
+    "label": "string:paletter_invalid",
+    "value": "paletter_invalid",
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": "paletter_invalid",
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_63",
+    "kind": "block",
+    "file": "blocks/b_geometry_63.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "n_way_visual_rotation",
+    "label": "string:minecraft:cardinal_direction",
+    "value": "minecraft:cardinal_direction",
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": "minecraft:cardinal_direction",
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_64",
+    "kind": "block",
+    "file": "blocks/b_geometry_64.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "n_way_visual_rotation",
+    "label": "string:minecraft:sixteen_way_rotation",
+    "value": "minecraft:sixteen_way_rotation",
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": "minecraft:sixteen_way_rotation",
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_65",
+    "kind": "block",
+    "file": "blocks/b_geometry_65.json",
+    "component": "block:minecraft:geometry",
+    "role": "omit",
+    "path": "uv_lock",
+    "label": "omitted",
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_66",
+    "kind": "block",
+    "file": "blocks/b_geometry_66.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "uv_lock",
+    "label": "boolean:true",
+    "value": true,
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": true
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_67",
+    "kind": "block",
+    "file": "blocks/b_geometry_67.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "uv_lock",
+    "label": "boolean:false",
+    "value": false,
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": false
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_68",
+    "kind": "block",
+    "file": "blocks/b_geometry_68.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "uv_lock",
+    "label": "array<string>:[]",
+    "value": [],
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": []
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_69",
+    "kind": "block",
+    "file": "blocks/b_geometry_69.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "uv_lock",
+    "label": "array<string>:[wrong type]",
+    "value": [
+      1
+    ],
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        1
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_70",
+    "kind": "block",
+    "file": "blocks/b_geometry_70.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "uv_lock",
+    "label": "array<string>:[1]",
+    "value": [
+      "bone_a"
+    ],
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_71",
+    "kind": "block",
+    "file": "blocks/b_geometry_71.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "uv_lock",
+    "label": "array<string>:[2]",
+    "value": [
+      "bone_a",
+      "paletter_b"
+    ],
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a",
+        "paletter_b"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_72",
+    "kind": "block",
+    "file": "blocks/b_geometry_72.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "uv_lock",
+    "label": "array<string>:[2x]",
+    "value": [
+      "bone_a",
+      "bone_a"
+    ],
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a",
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_73",
+    "kind": "block",
+    "file": "blocks/b_geometry_73.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "uv_lock",
+    "label": "string:bone_a",
+    "value": "bone_a",
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": "bone_a"
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_74",
+    "kind": "block",
+    "file": "blocks/b_geometry_74.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "uv_lock",
+    "label": "string:paletter_b",
+    "value": "paletter_b",
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": "paletter_b"
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_75",
+    "kind": "block",
+    "file": "blocks/b_geometry_75.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "uv_lock",
+    "label": "string:",
+    "value": "",
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": ""
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_76",
+    "kind": "block",
+    "file": "blocks/b_geometry_76.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "uv_lock",
+    "label": "string:minecraft:bone_a",
+    "value": "minecraft:bone_a",
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": "minecraft:bone_a"
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_77",
+    "kind": "block",
+    "file": "blocks/b_geometry_77.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "uv_lock",
+    "label": "string:minecraft:paletter_unknown",
+    "value": "minecraft:paletter_unknown",
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": "minecraft:paletter_unknown"
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_78",
+    "kind": "block",
+    "file": "blocks/b_geometry_78.json",
+    "component": "block:minecraft:geometry",
+    "role": "omit",
+    "path": "n_way_visual_rotation.x",
+    "label": "omitted",
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_79",
+    "kind": "block",
+    "file": "blocks/b_geometry_79.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
+    "path": "n_way_visual_rotation.x",
+    "label": "string:minecraft:cardinal_direction",
+    "value": "minecraft:cardinal_direction",
+    "json": {
+      "bone_visibility": {
+        "bone_a": "q.block_state('paletter:flag')"
+      },
+      "culling": "paletter:culling",
+      "identifier": "geometry.paletter_cube",
+      "n_way_visual_rotation": {
+        "x": "minecraft:cardinal_direction",
+        "y": "minecraft:cardinal_direction",
+        "z": "minecraft:cardinal_direction"
+      },
+      "uv_lock": [
+        "bone_a"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_geometry_80",
+    "kind": "block",
+    "file": "blocks/b_geometry_80.json",
+    "component": "block:minecraft:geometry",
+    "role": "field",
     "path": "n_way_visual_rotation.x",
     "label": "string:paletter_b",
     "value": "paletter_b",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8743,9 +10855,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_59",
+    "identifier": "paletter:b_geometry_81",
     "kind": "block",
-    "file": "blocks/b_geometry_59.json",
+    "file": "blocks/b_geometry_81.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation.x",
@@ -8753,7 +10865,7 @@
     "value": "",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8768,9 +10880,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_60",
+    "identifier": "paletter:b_geometry_82",
     "kind": "block",
-    "file": "blocks/b_geometry_60.json",
+    "file": "blocks/b_geometry_82.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation.x",
@@ -8778,7 +10890,7 @@
     "value": "cardinal_direction",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8793,9 +10905,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_61",
+    "identifier": "paletter:b_geometry_83",
     "kind": "block",
-    "file": "blocks/b_geometry_61.json",
+    "file": "blocks/b_geometry_83.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation.x",
@@ -8803,7 +10915,7 @@
     "value": "minecraft:paletter_unknown",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8818,16 +10930,16 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_62",
+    "identifier": "paletter:b_geometry_84",
     "kind": "block",
-    "file": "blocks/b_geometry_62.json",
+    "file": "blocks/b_geometry_84.json",
     "component": "block:minecraft:geometry",
     "role": "omit",
     "path": "n_way_visual_rotation.y",
     "label": "omitted",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8841,9 +10953,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_63",
+    "identifier": "paletter:b_geometry_85",
     "kind": "block",
-    "file": "blocks/b_geometry_63.json",
+    "file": "blocks/b_geometry_85.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation.y",
@@ -8851,7 +10963,7 @@
     "value": "minecraft:cardinal_direction",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8866,9 +10978,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_64",
+    "identifier": "paletter:b_geometry_86",
     "kind": "block",
-    "file": "blocks/b_geometry_64.json",
+    "file": "blocks/b_geometry_86.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation.y",
@@ -8876,7 +10988,7 @@
     "value": "paletter_b",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8891,9 +11003,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_65",
+    "identifier": "paletter:b_geometry_87",
     "kind": "block",
-    "file": "blocks/b_geometry_65.json",
+    "file": "blocks/b_geometry_87.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation.y",
@@ -8901,7 +11013,7 @@
     "value": "",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8916,9 +11028,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_66",
+    "identifier": "paletter:b_geometry_88",
     "kind": "block",
-    "file": "blocks/b_geometry_66.json",
+    "file": "blocks/b_geometry_88.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation.y",
@@ -8926,7 +11038,7 @@
     "value": "cardinal_direction",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8941,9 +11053,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_67",
+    "identifier": "paletter:b_geometry_89",
     "kind": "block",
-    "file": "blocks/b_geometry_67.json",
+    "file": "blocks/b_geometry_89.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation.y",
@@ -8951,7 +11063,7 @@
     "value": "minecraft:paletter_unknown",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8966,16 +11078,16 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_68",
+    "identifier": "paletter:b_geometry_90",
     "kind": "block",
-    "file": "blocks/b_geometry_68.json",
+    "file": "blocks/b_geometry_90.json",
     "component": "block:minecraft:geometry",
     "role": "omit",
     "path": "n_way_visual_rotation.z",
     "label": "omitted",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -8989,9 +11101,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_69",
+    "identifier": "paletter:b_geometry_91",
     "kind": "block",
-    "file": "blocks/b_geometry_69.json",
+    "file": "blocks/b_geometry_91.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation.z",
@@ -8999,7 +11111,7 @@
     "value": "minecraft:cardinal_direction",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -9014,9 +11126,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_70",
+    "identifier": "paletter:b_geometry_92",
     "kind": "block",
-    "file": "blocks/b_geometry_70.json",
+    "file": "blocks/b_geometry_92.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation.z",
@@ -9024,7 +11136,7 @@
     "value": "paletter_b",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -9039,9 +11151,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_71",
+    "identifier": "paletter:b_geometry_93",
     "kind": "block",
-    "file": "blocks/b_geometry_71.json",
+    "file": "blocks/b_geometry_93.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation.z",
@@ -9049,7 +11161,7 @@
     "value": "",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -9064,9 +11176,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_72",
+    "identifier": "paletter:b_geometry_94",
     "kind": "block",
-    "file": "blocks/b_geometry_72.json",
+    "file": "blocks/b_geometry_94.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation.z",
@@ -9074,7 +11186,7 @@
     "value": "cardinal_direction",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -9089,9 +11201,9 @@
     }
   },
   {
-    "identifier": "paletter:b_geometry_73",
+    "identifier": "paletter:b_geometry_95",
     "kind": "block",
-    "file": "blocks/b_geometry_73.json",
+    "file": "blocks/b_geometry_95.json",
     "component": "block:minecraft:geometry",
     "role": "field",
     "path": "n_way_visual_rotation.z",
@@ -9099,7 +11211,7 @@
     "value": "minecraft:paletter_unknown",
     "json": {
       "bone_visibility": {
-        "bone_a": true
+        "bone_a": "q.block_state('paletter:flag')"
       },
       "culling": "paletter:culling",
       "identifier": "geometry.paletter_cube",
@@ -10327,6 +12439,1524 @@
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0",
+    "value": {
+      "bone_a": "0"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_20",
+    "kind": "block",
+    "file": "blocks/b_item_visual_20.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0 linked geometry.identifier",
+    "value": {
+      "bone_a": "0"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_21",
+    "kind": "block",
+    "file": "blocks/b_item_visual_21.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0.0",
+    "value": {
+      "bone_a": "0.0"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0.0"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_22",
+    "kind": "block",
+    "file": "blocks/b_item_visual_22.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0.0 linked geometry.identifier",
+    "value": {
+      "bone_a": "0.0"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0.0"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_23",
+    "kind": "block",
+    "file": "blocks/b_item_visual_23.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1",
+    "value": {
+      "bone_a": "1"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_24",
+    "kind": "block",
+    "file": "blocks/b_item_visual_24.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1 linked geometry.identifier",
+    "value": {
+      "bone_a": "1"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_25",
+    "kind": "block",
+    "file": "blocks/b_item_visual_25.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0.5",
+    "value": {
+      "bone_a": "0.5"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0.5"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_26",
+    "kind": "block",
+    "file": "blocks/b_item_visual_26.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0.5 linked geometry.identifier",
+    "value": {
+      "bone_a": "0.5"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0.5"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_27",
+    "kind": "block",
+    "file": "blocks/b_item_visual_27.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} -1",
+    "value": {
+      "bone_a": "-1"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "-1"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_28",
+    "kind": "block",
+    "file": "blocks/b_item_visual_28.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} -1 linked geometry.identifier",
+    "value": {
+      "bone_a": "-1"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "-1"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_29",
+    "kind": "block",
+    "file": "blocks/b_item_visual_29.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0.1234567",
+    "value": {
+      "bone_a": "0.1234567"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0.1234567"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_30",
+    "kind": "block",
+    "file": "blocks/b_item_visual_30.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0.1234567 linked geometry.identifier",
+    "value": {
+      "bone_a": "0.1234567"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0.1234567"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_31",
+    "kind": "block",
+    "file": "blocks/b_item_visual_31.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0.0078125",
+    "value": {
+      "bone_a": "0.0078125"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0.0078125"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_32",
+    "kind": "block",
+    "file": "blocks/b_item_visual_32.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 0.0078125 linked geometry.identifier",
+    "value": {
+      "bone_a": "0.0078125"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "0.0078125"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_33",
+    "kind": "block",
+    "file": "blocks/b_item_visual_33.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 16777217",
+    "value": {
+      "bone_a": "16777217"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "16777217"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_34",
+    "kind": "block",
+    "file": "blocks/b_item_visual_34.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 16777217 linked geometry.identifier",
+    "value": {
+      "bone_a": "16777217"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "16777217"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_35",
+    "kind": "block",
+    "file": "blocks/b_item_visual_35.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 2",
+    "value": {
+      "bone_a": "2"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "2"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_36",
+    "kind": "block",
+    "file": "blocks/b_item_visual_36.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 2 linked geometry.identifier",
+    "value": {
+      "bone_a": "2"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "2"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_37",
+    "kind": "block",
+    "file": "blocks/b_item_visual_37.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} -0",
+    "value": {
+      "bone_a": "-0"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "-0"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_38",
+    "kind": "block",
+    "file": "blocks/b_item_visual_38.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} -0 linked geometry.identifier",
+    "value": {
+      "bone_a": "-0"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "-0"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_39",
+    "kind": "block",
+    "file": "blocks/b_item_visual_39.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} -0.5",
+    "value": {
+      "bone_a": "-0.5"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "-0.5"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_40",
+    "kind": "block",
+    "file": "blocks/b_item_visual_40.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} -0.5 linked geometry.identifier",
+    "value": {
+      "bone_a": "-0.5"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "-0.5"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_41",
+    "kind": "block",
+    "file": "blocks/b_item_visual_41.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} .5",
+    "value": {
+      "bone_a": ".5"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": ".5"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_42",
+    "kind": "block",
+    "file": "blocks/b_item_visual_42.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} .5 linked geometry.identifier",
+    "value": {
+      "bone_a": ".5"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": ".5"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_43",
+    "kind": "block",
+    "file": "blocks/b_item_visual_43.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1.",
+    "value": {
+      "bone_a": "1."
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1."
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_44",
+    "kind": "block",
+    "file": "blocks/b_item_visual_44.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1. linked geometry.identifier",
+    "value": {
+      "bone_a": "1."
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1."
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_45",
+    "kind": "block",
+    "file": "blocks/b_item_visual_45.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} +1",
+    "value": {
+      "bone_a": "+1"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "+1"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_46",
+    "kind": "block",
+    "file": "blocks/b_item_visual_46.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} +1 linked geometry.identifier",
+    "value": {
+      "bone_a": "+1"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "+1"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_47",
+    "kind": "block",
+    "file": "blocks/b_item_visual_47.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1}  1 ",
+    "value": {
+      "bone_a": " 1 "
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": " 1 "
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_48",
+    "kind": "block",
+    "file": "blocks/b_item_visual_48.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1}  1  linked geometry.identifier",
+    "value": {
+      "bone_a": " 1 "
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": " 1 "
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_49",
+    "kind": "block",
+    "file": "blocks/b_item_visual_49.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1e3",
+    "value": {
+      "bone_a": "1e3"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1e3"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_50",
+    "kind": "block",
+    "file": "blocks/b_item_visual_50.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1e3 linked geometry.identifier",
+    "value": {
+      "bone_a": "1e3"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1e3"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_51",
+    "kind": "block",
+    "file": "blocks/b_item_visual_51.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1e-3",
+    "value": {
+      "bone_a": "1e-3"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1e-3"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_52",
+    "kind": "block",
+    "file": "blocks/b_item_visual_52.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1e-3 linked geometry.identifier",
+    "value": {
+      "bone_a": "1e-3"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1e-3"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_53",
+    "kind": "block",
+    "file": "blocks/b_item_visual_53.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1.5E2",
+    "value": {
+      "bone_a": "1.5E2"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1.5E2"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_54",
+    "kind": "block",
+    "file": "blocks/b_item_visual_54.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} 1.5E2 linked geometry.identifier",
+    "value": {
+      "bone_a": "1.5E2"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "1.5E2"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_55",
+    "kind": "block",
+    "file": "blocks/b_item_visual_55.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} true",
+    "value": {
+      "bone_a": "true"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "true"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_56",
+    "kind": "block",
+    "file": "blocks/b_item_visual_56.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} true linked geometry.identifier",
+    "value": {
+      "bone_a": "true"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "true"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_57",
+    "kind": "block",
+    "file": "blocks/b_item_visual_57.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} false",
+    "value": {
+      "bone_a": "false"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "false"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_58",
+    "kind": "block",
+    "file": "blocks/b_item_visual_58.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} false linked geometry.identifier",
+    "value": {
+      "bone_a": "false"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "false"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_59",
+    "kind": "block",
+    "file": "blocks/b_item_visual_59.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} !q.block_state('paletter:flag')",
+    "value": {
+      "bone_a": "!q.block_state('paletter:flag')"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "!q.block_state('paletter:flag')"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_60",
+    "kind": "block",
+    "file": "blocks/b_item_visual_60.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} !q.block_state('paletter:flag') linked geometry.identifier",
+    "value": {
+      "bone_a": "!q.block_state('paletter:flag')"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "!q.block_state('paletter:flag')"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_61",
+    "kind": "block",
+    "file": "blocks/b_item_visual_61.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} query.block_state('paletter:flag')",
+    "value": {
+      "bone_a": "query.block_state('paletter:flag')"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "minecraft:geometry.full_block",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "query.block_state('paletter:flag')"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    }
+  },
+  {
+    "identifier": "paletter:b_item_visual_62",
+    "kind": "block",
+    "file": "blocks/b_item_visual_62.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
+    "label": "map<string>:{1} query.block_state('paletter:flag') linked geometry.identifier",
+    "value": {
+      "bone_a": "query.block_state('paletter:flag')"
+    },
+    "json": {
+      "geometry": {
+        "culling": "paletter:culling",
+        "culling_layer": "minecraft:culling_layer.undefined",
+        "culling_shape": "paletter_a",
+        "identifier": "geometry.paletter_cube",
+        "n_way_visual_rotation": {
+          "x": "paletter_a",
+          "y": "paletter_a",
+          "z": "paletter_a"
+        },
+        "bone_visibility": {
+          "bone_a": "query.block_state('paletter:flag')"
+        }
+      },
+      "material_instances": {
+        "*": {
+          "texture": "paletter_tex"
+        }
+      }
+    },
+    "linked": [
+      "geometry.identifier"
+    ]
+  },
+  {
+    "identifier": "paletter:b_item_visual_63",
+    "kind": "block",
+    "file": "blocks/b_item_visual_63.json",
+    "component": "block:minecraft:item_visual",
+    "role": "field",
+    "path": "geometry.bone_visibility",
     "label": "object:{}",
     "value": {},
     "json": {
@@ -10350,9 +13980,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_20",
+    "identifier": "paletter:b_item_visual_64",
     "kind": "block",
-    "file": "blocks/b_item_visual_20.json",
+    "file": "blocks/b_item_visual_64.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -10382,9 +14012,9 @@
     ]
   },
   {
-    "identifier": "paletter:b_item_visual_21",
+    "identifier": "paletter:b_item_visual_65",
     "kind": "block",
-    "file": "blocks/b_item_visual_21.json",
+    "file": "blocks/b_item_visual_65.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -10411,9 +14041,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_22",
+    "identifier": "paletter:b_item_visual_66",
     "kind": "block",
-    "file": "blocks/b_item_visual_22.json",
+    "file": "blocks/b_item_visual_66.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -10443,9 +14073,9 @@
     ]
   },
   {
-    "identifier": "paletter:b_item_visual_23",
+    "identifier": "paletter:b_item_visual_67",
     "kind": "block",
-    "file": "blocks/b_item_visual_23.json",
+    "file": "blocks/b_item_visual_67.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -10476,9 +14106,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_24",
+    "identifier": "paletter:b_item_visual_68",
     "kind": "block",
-    "file": "blocks/b_item_visual_24.json",
+    "file": "blocks/b_item_visual_68.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -10512,9 +14142,9 @@
     ]
   },
   {
-    "identifier": "paletter:b_item_visual_25",
+    "identifier": "paletter:b_item_visual_69",
     "kind": "block",
-    "file": "blocks/b_item_visual_25.json",
+    "file": "blocks/b_item_visual_69.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -10547,9 +14177,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_26",
+    "identifier": "paletter:b_item_visual_70",
     "kind": "block",
-    "file": "blocks/b_item_visual_26.json",
+    "file": "blocks/b_item_visual_70.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -10585,9 +14215,9 @@
     ]
   },
   {
-    "identifier": "paletter:b_item_visual_27",
+    "identifier": "paletter:b_item_visual_71",
     "kind": "block",
-    "file": "blocks/b_item_visual_27.json",
+    "file": "blocks/b_item_visual_71.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -10618,9 +14248,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_28",
+    "identifier": "paletter:b_item_visual_72",
     "kind": "block",
-    "file": "blocks/b_item_visual_28.json",
+    "file": "blocks/b_item_visual_72.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.bone_visibility",
@@ -10654,9 +14284,9 @@
     ]
   },
   {
-    "identifier": "paletter:b_item_visual_29",
+    "identifier": "paletter:b_item_visual_73",
     "kind": "block",
-    "file": "blocks/b_item_visual_29.json",
+    "file": "blocks/b_item_visual_73.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -10682,9 +14312,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_30",
+    "identifier": "paletter:b_item_visual_74",
     "kind": "block",
-    "file": "blocks/b_item_visual_30.json",
+    "file": "blocks/b_item_visual_74.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -10710,9 +14340,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_31",
+    "identifier": "paletter:b_item_visual_75",
     "kind": "block",
-    "file": "blocks/b_item_visual_31.json",
+    "file": "blocks/b_item_visual_75.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -10738,9 +14368,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_32",
+    "identifier": "paletter:b_item_visual_76",
     "kind": "block",
-    "file": "blocks/b_item_visual_32.json",
+    "file": "blocks/b_item_visual_76.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -10766,9 +14396,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_33",
+    "identifier": "paletter:b_item_visual_77",
     "kind": "block",
-    "file": "blocks/b_item_visual_33.json",
+    "file": "blocks/b_item_visual_77.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling",
@@ -10794,9 +14424,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_34",
+    "identifier": "paletter:b_item_visual_78",
     "kind": "block",
-    "file": "blocks/b_item_visual_34.json",
+    "file": "blocks/b_item_visual_78.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling_layer",
@@ -10822,9 +14452,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_35",
+    "identifier": "paletter:b_item_visual_79",
     "kind": "block",
-    "file": "blocks/b_item_visual_35.json",
+    "file": "blocks/b_item_visual_79.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling_layer",
@@ -10850,9 +14480,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_36",
+    "identifier": "paletter:b_item_visual_80",
     "kind": "block",
-    "file": "blocks/b_item_visual_36.json",
+    "file": "blocks/b_item_visual_80.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling_layer",
@@ -10878,9 +14508,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_37",
+    "identifier": "paletter:b_item_visual_81",
     "kind": "block",
-    "file": "blocks/b_item_visual_37.json",
+    "file": "blocks/b_item_visual_81.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -10906,9 +14536,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_38",
+    "identifier": "paletter:b_item_visual_82",
     "kind": "block",
-    "file": "blocks/b_item_visual_38.json",
+    "file": "blocks/b_item_visual_82.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -10934,9 +14564,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_39",
+    "identifier": "paletter:b_item_visual_83",
     "kind": "block",
-    "file": "blocks/b_item_visual_39.json",
+    "file": "blocks/b_item_visual_83.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -10962,9 +14592,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_40",
+    "identifier": "paletter:b_item_visual_84",
     "kind": "block",
-    "file": "blocks/b_item_visual_40.json",
+    "file": "blocks/b_item_visual_84.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -10990,9 +14620,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_41",
+    "identifier": "paletter:b_item_visual_85",
     "kind": "block",
-    "file": "blocks/b_item_visual_41.json",
+    "file": "blocks/b_item_visual_85.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.culling_shape",
@@ -11018,9 +14648,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_42",
+    "identifier": "paletter:b_item_visual_86",
     "kind": "block",
-    "file": "blocks/b_item_visual_42.json",
+    "file": "blocks/b_item_visual_86.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.identifier",
@@ -11046,9 +14676,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_43",
+    "identifier": "paletter:b_item_visual_87",
     "kind": "block",
-    "file": "blocks/b_item_visual_43.json",
+    "file": "blocks/b_item_visual_87.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.identifier",
@@ -11074,9 +14704,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_44",
+    "identifier": "paletter:b_item_visual_88",
     "kind": "block",
-    "file": "blocks/b_item_visual_44.json",
+    "file": "blocks/b_item_visual_88.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.identifier",
@@ -11102,9 +14732,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_45",
+    "identifier": "paletter:b_item_visual_89",
     "kind": "block",
-    "file": "blocks/b_item_visual_45.json",
+    "file": "blocks/b_item_visual_89.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation",
@@ -11126,9 +14756,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_46",
+    "identifier": "paletter:b_item_visual_90",
     "kind": "block",
-    "file": "blocks/b_item_visual_46.json",
+    "file": "blocks/b_item_visual_90.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation",
@@ -11158,9 +14788,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_47",
+    "identifier": "paletter:b_item_visual_91",
     "kind": "block",
-    "file": "blocks/b_item_visual_47.json",
+    "file": "blocks/b_item_visual_91.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -11186,9 +14816,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_48",
+    "identifier": "paletter:b_item_visual_92",
     "kind": "block",
-    "file": "blocks/b_item_visual_48.json",
+    "file": "blocks/b_item_visual_92.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -11214,9 +14844,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_49",
+    "identifier": "paletter:b_item_visual_93",
     "kind": "block",
-    "file": "blocks/b_item_visual_49.json",
+    "file": "blocks/b_item_visual_93.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -11242,9 +14872,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_50",
+    "identifier": "paletter:b_item_visual_94",
     "kind": "block",
-    "file": "blocks/b_item_visual_50.json",
+    "file": "blocks/b_item_visual_94.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -11270,9 +14900,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_51",
+    "identifier": "paletter:b_item_visual_95",
     "kind": "block",
-    "file": "blocks/b_item_visual_51.json",
+    "file": "blocks/b_item_visual_95.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.x",
@@ -11298,9 +14928,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_52",
+    "identifier": "paletter:b_item_visual_96",
     "kind": "block",
-    "file": "blocks/b_item_visual_52.json",
+    "file": "blocks/b_item_visual_96.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -11326,9 +14956,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_53",
+    "identifier": "paletter:b_item_visual_97",
     "kind": "block",
-    "file": "blocks/b_item_visual_53.json",
+    "file": "blocks/b_item_visual_97.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -11354,9 +14984,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_54",
+    "identifier": "paletter:b_item_visual_98",
     "kind": "block",
-    "file": "blocks/b_item_visual_54.json",
+    "file": "blocks/b_item_visual_98.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -11382,9 +15012,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_55",
+    "identifier": "paletter:b_item_visual_99",
     "kind": "block",
-    "file": "blocks/b_item_visual_55.json",
+    "file": "blocks/b_item_visual_99.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -11410,9 +15040,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_56",
+    "identifier": "paletter:b_item_visual_100",
     "kind": "block",
-    "file": "blocks/b_item_visual_56.json",
+    "file": "blocks/b_item_visual_100.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.y",
@@ -11438,9 +15068,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_57",
+    "identifier": "paletter:b_item_visual_101",
     "kind": "block",
-    "file": "blocks/b_item_visual_57.json",
+    "file": "blocks/b_item_visual_101.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -11466,9 +15096,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_58",
+    "identifier": "paletter:b_item_visual_102",
     "kind": "block",
-    "file": "blocks/b_item_visual_58.json",
+    "file": "blocks/b_item_visual_102.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -11494,9 +15124,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_59",
+    "identifier": "paletter:b_item_visual_103",
     "kind": "block",
-    "file": "blocks/b_item_visual_59.json",
+    "file": "blocks/b_item_visual_103.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -11522,9 +15152,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_60",
+    "identifier": "paletter:b_item_visual_104",
     "kind": "block",
-    "file": "blocks/b_item_visual_60.json",
+    "file": "blocks/b_item_visual_104.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -11550,9 +15180,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_61",
+    "identifier": "paletter:b_item_visual_105",
     "kind": "block",
-    "file": "blocks/b_item_visual_61.json",
+    "file": "blocks/b_item_visual_105.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.n_way_visual_rotation.z",
@@ -11578,9 +15208,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_62",
+    "identifier": "paletter:b_item_visual_106",
     "kind": "block",
-    "file": "blocks/b_item_visual_62.json",
+    "file": "blocks/b_item_visual_106.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -11607,9 +15237,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_63",
+    "identifier": "paletter:b_item_visual_107",
     "kind": "block",
-    "file": "blocks/b_item_visual_63.json",
+    "file": "blocks/b_item_visual_107.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -11636,9 +15266,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_64",
+    "identifier": "paletter:b_item_visual_108",
     "kind": "block",
-    "file": "blocks/b_item_visual_64.json",
+    "file": "blocks/b_item_visual_108.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -11665,9 +15295,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_65",
+    "identifier": "paletter:b_item_visual_109",
     "kind": "block",
-    "file": "blocks/b_item_visual_65.json",
+    "file": "blocks/b_item_visual_109.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -11698,9 +15328,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_66",
+    "identifier": "paletter:b_item_visual_110",
     "kind": "block",
-    "file": "blocks/b_item_visual_66.json",
+    "file": "blocks/b_item_visual_110.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -11731,9 +15361,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_67",
+    "identifier": "paletter:b_item_visual_111",
     "kind": "block",
-    "file": "blocks/b_item_visual_67.json",
+    "file": "blocks/b_item_visual_111.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -11766,9 +15396,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_68",
+    "identifier": "paletter:b_item_visual_112",
     "kind": "block",
-    "file": "blocks/b_item_visual_68.json",
+    "file": "blocks/b_item_visual_112.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -11801,9 +15431,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_69",
+    "identifier": "paletter:b_item_visual_113",
     "kind": "block",
-    "file": "blocks/b_item_visual_69.json",
+    "file": "blocks/b_item_visual_113.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "geometry.uv_lock",
@@ -11830,9 +15460,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_70",
+    "identifier": "paletter:b_item_visual_114",
     "kind": "block",
-    "file": "blocks/b_item_visual_70.json",
+    "file": "blocks/b_item_visual_114.json",
     "component": "block:minecraft:item_visual",
     "role": "omit",
     "path": "material_instances",
@@ -11842,9 +15472,9 @@
     }
   },
   {
-    "identifier": "paletter:b_item_visual_71",
+    "identifier": "paletter:b_item_visual_115",
     "kind": "block",
-    "file": "blocks/b_item_visual_71.json",
+    "file": "blocks/b_item_visual_115.json",
     "component": "block:minecraft:item_visual",
     "role": "field",
     "path": "material_instances",

@@ -36,11 +36,13 @@ class EdgeCaseTest {
              {"path": "rules", "types": [{"type": "array", "items": {"type": "string"}}], "required": false, "defaultValue": [],
               "enumValues": [], "examples": [], "doc": ""},
              {"path": "bones", "types": [{"type": "map", "items": {"type": "boolean"}}], "required": false, "defaultValue": {},
-              "enumValues": [], "examples": [], "doc": ""}
+              "enumValues": [], "examples": [], "doc": ""},
+             {"path": "shown", "types": [{"type": "map", "items": {"type": "string"}}, {"type": "map", "items": {"type": "boolean"}}],
+              "required": false, "defaultValue": {}, "enumValues": [], "examples": [], "doc": ""}
            ]}
         ]}""";
     static final String FIXTURES = """
-        {"formatVersion": "1.26.60", "filler": {}, "errata": [], "mapKeys": {"default": "k"}, "context": {}, "skip": {}, "requires": {},
+        {"formatVersion": "1.26.60", "filler": {}, "errata": [], "mapKeys": {"default": "k"}, "mapValues": {"shown": ["0.5", "true"]}, "context": {}, "skip": {}, "requires": {},
          "samples": {"block:minecraft:box:block": "minecraft:stone", "block:minecraft:box:origin": [-8, 0, -8], "block:minecraft:box:size": [16, 16, 16]}}""";
     static final String FEEDBACK = """
         {"block:minecraft:box": {"": ["box origin size -8,0,-8 8,16,8"], "rules": ["maxItems 3"], "angle": ["step 90"]}}""";
@@ -63,6 +65,19 @@ class EdgeCaseTest {
         List<String> free = labels(root, "free");
         assertTrue(free.containsAll(List.of("0", "-1")) && !free.contains("65"), "no known limit: only the safe values");
         assertTrue(labels(root, "angle").containsAll(List.of("45", "135")), "off the step BDS's rule has");
+    }
+
+    @Test
+    void mapsGetEachFurtherValueOfTheirElementsInAMapOfItsOwn(@TempDir Path root) throws IOException {
+        Path model = Files.createDirectories(root.resolve("model"));
+        Files.writeString(model.resolve("components.json"), MODEL);
+        Files.writeString(model.resolve("fixtures.json"), FIXTURES);
+        AddonGenerator generator = new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model), "1.26.60");
+        List<AddonGenerator.Variant> shown = generator.variants().stream().filter(v -> v.role().equals("field") && v.path().equals("shown")).toList();
+        // fixtures.json mapValues: the strings for the map of strings, none of them for the map of booleans
+        assertEquals(List.of("map<string>:{}", "map<string>:{1}", "map<string>:{2}", "map<string>:{unknown key}", "map<string>:{1} 0.5",
+            "map<string>:{1} true", "map<boolean>:{}", "map<boolean>:{1}", "map<boolean>:{2}", "map<boolean>:{unknown key}"), shown.stream().map(AddonGenerator.Variant::label).toList());
+        assertEquals("{\"k\":\"0.5\"}", shown.get(4).value().toString());
     }
 
     @Test

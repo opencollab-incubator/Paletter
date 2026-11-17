@@ -224,62 +224,106 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destr
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_9.json |  -> components -> minecraft:destruction_particles -> particle_count: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_11.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_11.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_115.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_115.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock[0]: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_115.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_119.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_119.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_119.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_120.json |  -> components -> minecraft:embedded_visual -> material_instances: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_124.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_125.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_13.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_13.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_15.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_15.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_21.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_21.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_21.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_17.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_17.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_19.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_19.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_21.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_21.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_22.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_22.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_22.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_22.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_23.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_23.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_23.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_23.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_23.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_24.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_24.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_24.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_24.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_25.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> paletter_unknown: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_25.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> paletter_unknown: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_25.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> paletter_unknown: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_25.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_25.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_26.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> paletter_unknown: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_26.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> paletter_unknown: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_26.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> paletter_unknown: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_26.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_27.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_27.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_29.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_29.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_3.json |  -> components -> minecraft:embedded_visual -> geometry: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_31.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_31.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_33.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_33.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_35.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_35.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_37.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_37.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_39.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_39.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_4.json |  -> components -> minecraft:embedded_visual -> geometry -> identifier: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_4.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_40.json |  -> components -> minecraft:embedded_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_40.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_41.json |  -> components -> minecraft:embedded_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_41.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_41.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_42.json |  -> components -> minecraft:embedded_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_42.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_43.json |  -> components -> minecraft:embedded_visual -> geometry -> identifier: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_43.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_43.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_48.json |  -> components -> minecraft:embedded_visual -> geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_48.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_45.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_45.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_47.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_47.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_49.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_49.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_51.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_51.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_53.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_53.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_55.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_55.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_57.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_57.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_59.json |  -> components -> minecraft:embedded_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_59.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_6.json |  -> components -> minecraft:embedded_visual -> geometry: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_6.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_65.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_65.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_65.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_65.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_66.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_66.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_66.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_66.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_67.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_67.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_67.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_67.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_68.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_68.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_68.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> bone_a: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_68.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_69.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> paletter_unknown: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_69.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> paletter_unknown: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_69.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> paletter_unknown: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_69.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_7.json |  -> components -> minecraft:embedded_visual -> geometry: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_7.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_71.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_71.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock[0]: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_71.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_75.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_75.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_75.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_76.json |  -> components -> minecraft:embedded_visual -> material_instances: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_70.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> paletter_unknown: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_70.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> paletter_unknown: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_70.json |  -> components -> minecraft:embedded_visual -> geometry -> bone_visibility -> paletter_unknown: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_70.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_8.json |  -> components -> minecraft:embedded_visual -> geometry: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_8.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_80.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_81.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_84.json |  -> components -> minecraft:embedded_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_84.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_85.json |  -> components -> minecraft:embedded_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_85.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_86.json |  -> components -> minecraft:embedded_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_86.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_87.json |  -> components -> minecraft:embedded_visual -> geometry -> identifier: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_87.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_92.json |  -> components -> minecraft:embedded_visual -> geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_92.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_entity_fall_on_10.json |  -> components -> minecraft:entity_fall_on -> minimum_fall_distance: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_entity_fall_on_11.json |  -> components -> minecraft:entity_fall_on -> minimum_fall_distance: this member was found in the input, but is not present in the Schema
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_entity_fall_on_12.json |  -> components -> minecraft:entity_fall_on -> minimum_fall_distance: this member was found in the input, but is not present in the Schema
@@ -306,101 +350,147 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_frict
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_friction_6.json |  -> components -> minecraft:friction: the input is outside of the accepted range [0, 0.900000]
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_friction_7.json |  -> components -> minecraft:friction: the input is outside of the accepted range [0, 0.900000]
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_friction_8.json |  -> components -> minecraft:friction: the input is outside of the accepted range [0, 0.900000]
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_14.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_14.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_14.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_14.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_15.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_15.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_15.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_15.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_16.json |  -> components -> minecraft:geometry -> bone_visibility -> paletter_unknown: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_16.json |  -> components -> minecraft:geometry -> bone_visibility -> paletter_unknown: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_16.json |  -> components -> minecraft:geometry -> bone_visibility -> paletter_unknown: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_16.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_28.json |  -> components -> minecraft:geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_28.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_29.json |  -> components -> minecraft:geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_29.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_30.json |  -> components -> minecraft:geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_30.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_31.json |  -> components -> minecraft:geometry -> identifier: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_31.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_37.json |  -> components -> minecraft:geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_36.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_36.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_36.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_36.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_37.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_37.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_37.json |  -> components -> minecraft:geometry -> bone_visibility -> bone_a: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_37.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_38.json |  -> components -> minecraft:geometry -> n_way_visual_rotation: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_38.json |  -> components -> minecraft:geometry -> bone_visibility -> paletter_unknown: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_38.json |  -> components -> minecraft:geometry -> bone_visibility -> paletter_unknown: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_38.json |  -> components -> minecraft:geometry -> bone_visibility -> paletter_unknown: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_38.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_39.json |  -> components -> minecraft:geometry -> n_way_visual_rotation: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_39.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_40.json |  -> components -> minecraft:geometry -> n_way_visual_rotation: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_40.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_45.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_45.json |  -> components -> minecraft:geometry -> uv_lock[0]: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_45.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_49.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_49.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_49.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_50.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_50.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_50.json |  -> components -> minecraft:geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_50.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_51.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_51.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_51.json |  -> components -> minecraft:geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_51.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_52.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_52.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_52.json |  -> components -> minecraft:geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_52.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_53.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_53.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_53.json |  -> components -> minecraft:geometry -> identifier: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_53.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_55.json |  -> components -> minecraft:geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_55.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_59.json |  -> components -> minecraft:geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_59.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_60.json |  -> components -> minecraft:geometry -> n_way_visual_rotation: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_60.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_61.json |  -> components -> minecraft:geometry -> n_way_visual_rotation: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_61.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_62.json |  -> components -> minecraft:geometry -> n_way_visual_rotation: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_62.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_67.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_67.json |  -> components -> minecraft:geometry -> uv_lock[0]: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_67.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_71.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_71.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_71.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_72.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_72.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_72.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_73.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_73.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_73.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_74.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_74.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_74.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_75.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_75.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_75.json |  -> components -> minecraft:geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_instrument_sound_2.json |  -> components -> minecraft:instrument_sound: expected object with at least 1 elements
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_instrument_sound_3.json |  -> components -> minecraft:instrument_sound -> down: This value is bound to 'Instrument' and expects one of the following strings: 'note.harp', 'note.bd', 'note.snare', ... (24 others). Found: 'paletter_invalid'
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_instrument_sound_31.json |  -> components -> minecraft:instrument_sound -> up: This value is bound to 'Instrument' and expects one of the following strings: 'note.harp', 'note.bd', 'note.snare', ... (24 others). Found: 'paletter_invalid'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_109.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_109.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock[0]: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_109.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_113.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_113.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_113.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_114.json |  -> components -> minecraft:item_visual -> material_instances: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_13.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_13.json |  -> components -> minecraft:item_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_15.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_15.json |  -> components -> minecraft:item_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_17.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_17.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_23.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_23.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_23.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_19.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_19.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_21.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_21.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_23.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_23.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_24.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_24.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_24.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_24.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_25.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_25.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_25.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_25.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_25.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_26.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_26.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_26.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_26.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_27.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> paletter_unknown: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_27.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> paletter_unknown: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_27.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> paletter_unknown: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_27.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_27.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_28.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> paletter_unknown: expected an object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_28.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> paletter_unknown: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_28.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> paletter_unknown: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_28.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_29.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_29.json |  -> components -> minecraft:item_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_3.json |  -> components -> minecraft:item_visual -> geometry: missing required field
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_39.json |  -> components -> minecraft:item_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_31.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_31.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_33.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_33.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_35.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_35.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_37.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_37.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_39.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_39.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_40.json |  -> components -> minecraft:item_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_40.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_41.json |  -> components -> minecraft:item_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_41.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_41.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_45.json |  -> components -> minecraft:item_visual -> geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_43.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_43.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_45.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_45.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_65.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_65.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock[0]: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_65.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_69.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_69.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_47.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_47.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_49.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_49.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_51.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_51.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_53.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_53.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_55.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_55.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_57.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_57.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_59.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_59.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_61.json |  -> components -> minecraft:item_visual -> geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_61.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_67.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_67.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_67.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_67.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_68.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_68.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_68.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_68.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_69.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_69.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_69.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_69.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_70.json |  -> components -> minecraft:item_visual -> material_instances: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_70.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_70.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_70.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> bone_a: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_70.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_71.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> paletter_unknown: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_71.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> paletter_unknown: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_71.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> paletter_unknown: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_71.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_72.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> paletter_unknown: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_72.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> paletter_unknown: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_72.json |  -> components -> minecraft:item_visual -> geometry -> bone_visibility -> paletter_unknown: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_72.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_83.json |  -> components -> minecraft:item_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_83.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_84.json |  -> components -> minecraft:item_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_84.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_85.json |  -> components -> minecraft:item_visual -> geometry -> culling_shape: expected string to match the "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$" regex
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_85.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_89.json |  -> components -> minecraft:item_visual -> geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_89.json |  -> components -> minecraft:item_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_9.json |  -> components -> minecraft:item_visual -> geometry -> identifier: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_9.json |  -> components -> minecraft:item_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_light_dampening_7.json |  -> components -> minecraft:light_dampening: the input must be a number <= 15
@@ -884,6 +974,9 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_trans
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_transformation_96.json |  -> components -> minecraft:transformation -> scale: Expected [x, y, z].
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_2.json |  -> components -> minecraft:unit_cube: member "minecraft:unit_cube" is deprecated
 ERROR [Components] MaterialInstances can't mix and match opaque and transparent materials.
+ERROR [Components] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_44.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube
+ERROR [Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube
+ERROR [Components] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_46.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube
 ERROR [Components] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_28.json | Detected duplicate direction in "stops_liquid_flowing_from_direction" field: "up"
 ERROR [Components] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_16.json | Detected duplicate direction in "stops_liquid_flowing_from_direction" field: "down"
 ERROR [Item]  'paletter:block_placer_19': Failed to parse field ' -> components -> minecraft:block_placer -> use_on: No duplicates allowed'
@@ -1666,6 +1759,9 @@ ERROR [Item]  Error Parsing Item 'paletter:wearable_22':
 ERROR [Item]  Error Parsing Item 'paletter:wearable_6':
 ERROR [Item] ItemDescriptor missing key to reconstruct from (expression tags, item name or item tag)
 ERROR [Json] Damage Source not found: paletter_b
+ERROR [Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_44.json | +1 | Error: binary Add '+' operator at end of expression
+ERROR [Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | +1 | Error: binary Add '+' operator at end of expression
+ERROR [Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_46.json | +1 | Error: binary Add '+' operator at end of expression
 ERROR [Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_permutations_8.json | paletter_b | Error: unknown token: paletter_b
 ERROR [Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_permutations_8.json | paletter_b | unrecognized token: paletter_b
 ERROR [Molang] minecraft:paletter_a | Error: unknown token: minecraft:paletter_a

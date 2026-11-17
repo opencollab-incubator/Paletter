@@ -144,6 +144,14 @@ public final class Fixtures {
         return name != null && alternatives.has(name) ? alternatives.get(name) : null;
     }
 
+    /** Further values of a map's elements, each tried in a map of its own (by '<component>:<path>', then field name). */
+    public List<JsonElement> mapValues(String component, String path, String name) {
+        JsonObject values = json.has("mapValues") ? json.getAsJsonObject("mapValues") : new JsonObject();
+        JsonElement list = values.has(component + ":" + path) ? values.get(component + ":" + path)
+            : name != null && values.has(name) ? values.get(name) : null;
+        return list == null ? List.of() : list.getAsJsonArray().asList();
+    }
+
     public String mapKey(String component, String path, String name) {
         JsonObject keys = json.getAsJsonObject("mapKeys");
         if (keys.has(component + ":" + path)) {

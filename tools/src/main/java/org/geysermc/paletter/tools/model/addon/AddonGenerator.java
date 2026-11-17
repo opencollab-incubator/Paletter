@@ -1130,7 +1130,8 @@ public final class AddonGenerator {
 
     /**
      * Maps: empty, one entry, two (the second with the element's second valid value, {@code fixtures.json}
-     * {@code alternatives}, where it has one), and an entry under a key nothing defines.
+     * {@code alternatives}, where it has one), an entry under a key nothing defines, and one entry with each further
+     * value of the element ({@code fixtures.json} {@code mapValues}).
      */
     private List<Labeled> maps(Component c, String path, JType type, Field field) {
         List<Labeled> values = new ArrayList<>();
@@ -1150,6 +1151,13 @@ public final class AddonGenerator {
             JsonObject unknown = new JsonObject();
             unknown.add(NAMESPACE + "_unknown", element.deepCopy());
             values.add(new Labeled("{unknown key}", unknown));
+            for (JsonElement other : fixtures.mapValues(c.id(), path, field == null ? null : field.name())) {
+                if (matches(items, other)) {
+                    JsonObject single = new JsonObject();
+                    single.add(key, other.deepCopy());
+                    values.add(new Labeled("{1} " + (other.isJsonPrimitive() ? other.getAsString() : other.toString()), single));
+                }
+            }
         }
         return values;
     }

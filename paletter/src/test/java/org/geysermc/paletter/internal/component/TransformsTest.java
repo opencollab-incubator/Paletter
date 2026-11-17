@@ -33,6 +33,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -170,21 +171,65 @@ class TransformsTest {
     }
 
     @Test
-    void boneVisibilityBefore26_60TakesNoBooleanAndBefore26_40IsACompound() {
-        Map<String, String> bones = Map.of("shade", "true", "arm", "q.block_state('lit')", "base", "1.0");
-        // BDS 1.26.45.1 and 1.26.52.3 refuse the block for a boolean: that entry is left out, with a warning
+    void boneVisibilityIsTheSameInEveryBuildAndACompoundBefore26_40() {
+        Map<String, String> bones = Map.of("shade", "true", "bulb", "false", "arm", "q.block_state('lit')", "base", "1.0");
+        Map<String, String> sent = Map.of("shade", "1.000000", "bulb", "0.000000", "arm", "q.block_state('lit')", "base", "1.000000");
+        // BDS 1.26.45.1 and 1.26.52.3 refuse the JSON boolean and take the text for it, which is what the map holds
         WireNode before = new WireNode();
         Transforms.geometry(ctx26_50, before, Geometry.builder().identifier("geometry.lamp").boneVisibility(bones).build());
-        assertEquals(Map.of("arm", "q.block_state('lit')", "base", "1.000000"), compound(before, "minecraft:geometry").getCompound("bone_visibility"));
-        assertEquals(1, report.warnings().size());
+        assertEquals(sent, compound(before, "minecraft:geometry").getCompound("bone_visibility"));
 
-        // BDS 1.26.36.1 sends each expression with the Molang version
+        // BDS 1.26.36.1 sends each expression with the Molang version of the block
         WireNode oldest = new WireNode();
         Transforms.itemVisualBoneVisibility(ctx26_30, oldest, ItemVisual.Geometry.builder().identifier("geometry.lamp").boneVisibility(bones).build());
         NbtMap visibility = compound(oldest, "minecraft:item_visual").getCompound("geometryDescription").getCompound("bone_visibility");
-        assertEquals(Map.of("arm", Map.of("expression", "q.block_state('lit')", "version", (short) 13),
-            "base", Map.of("expression", "1.000000", "version", (short) 13)), visibility);
-        assertEquals(2, report.warnings().size(), "the boolean again");
+        WireNode envelope = new WireNode();
+        BlockWire.envelope(ctx26_30, envelope);
+        short version = (short) envelope.build().getInt("molangVersion");
+        assertEquals(13, version);
+        Map<String, Object> compounds = new java.util.HashMap<>();
+        sent.forEach((bone, expression) -> compounds.put(bone, Map.of("expression", expression, "version", version)));
+        assertEquals(compounds, visibility);
+        assertTrue(report.entries().isEmpty());
+    }
+
+    @Test
+    void aMolangNumberIsTheFloatInSixDecimals() {
+        // every shape of the captures of BDS 1.26.36.1 to 1.26.70.24, as BDS sent it
+        Map<String, String> captured = new java.util.LinkedHashMap<>();
+        captured.put("0", "0.000000");
+        captured.put("0.0", "0.000000");
+        captured.put("1", "1.000000");
+        captured.put("1.0", "1.000000");
+        captured.put("0.5", "0.500000");
+        captured.put("-1", "-1.000000");
+        captured.put("0.1234567", "0.123457");
+        captured.put("0.0078125", "0.007812");
+        captured.put("16777217", "16777216.000000");
+        captured.put("2", "2.000000");
+        captured.put("-0", "-0.000000");
+        captured.put("-0.5", "-0.500000");
+        captured.put(".5", "0.500000");
+        captured.put("1.", "1.000000");
+        captured.put(" 1 ", "1.000000");
+        captured.put("1e3", "1000.000000");
+        captured.put("1e-3", "0.001000");
+        captured.put("1.5E2", "150.000000");
+        captured.forEach((text, sent) -> assertEquals(sent, Transforms.molangNumber(text), text));
+        for (String text : List.of("+1", "1 + 1", "1e+3", "0x10", "1f", "NaN", "Infinity", "1e39", "", "q.life_time")) {
+            assertNull(Transforms.molangNumber(text), text + " is not a number of a captured shape");
+        }
+    }
+
+    @Test
+    void anExpressionWithoutAQueryIsSentAsWrittenWithAWarning() {
+        Map<String, String> bones = Map.of("arm", "+1", "lid", "!query.block_state('lit')", "base", "math.pi");
+        WireNode out = new WireNode();
+        Transforms.geometry(ctx, out, Geometry.builder().identifier("geometry.lamp").boneVisibility(bones).build());
+        assertEquals(bones, compound(out, "minecraft:geometry").getCompound("bone_visibility"));
+        // BDS sends "+1" as written too (a bad expression, says its log); what it can compute it sends as a number
+        assertEquals(2, report.warnings().size(), report.entries().toString());
+        assertTrue(report.warnings().stream().noneMatch(w -> w.message().contains("lid")), "an expression with a query is sent as written by BDS");
     }
 
     @Test

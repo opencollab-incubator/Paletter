@@ -168,7 +168,8 @@ docs and from what BDS does.
 
 **Variants.** The spec add-on has, per component, a control, a base with every required field set, and one variant per
 field value. Values come from the field's type: limits and one past each, enum values plus an invalid one, empty and
-wrong-length lists, and so on. Limits come from the docs and from `bds-feedback.json`, which records what BDS's content
+wrong-length lists, and so on; where the text of a map's entries matters (the Molang of `bone_visibility`), `fixtures.json`
+`mapValues` lists the values to try. Limits come from the docs and from `bds-feedback.json`, which records what BDS's content
 log said last time; `spec-capture` and `infer` are repeated until that file stops changing. When BDS rejects a variant
 for a member it does not vary, `spec-capture` shrinks the variant and captures again.
 
