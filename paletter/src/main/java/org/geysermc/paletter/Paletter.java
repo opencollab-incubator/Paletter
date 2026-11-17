@@ -599,7 +599,7 @@ public final class Paletter {
 
     /**
      * @return the properties of a vanilla item in a version, without compiling a palette; empty for custom items and for
-     * items the version does not have. Equal to {@code palette.items().item(...).properties()} of a palette of that version
+     * items the version does not have. Equal to {@code palette.itemDefinition(type).properties()} of a palette of that version
      * @since 0.1.0
      */
     public @NonNull Properties properties(@NonNull BedrockItemType type, @NonNull DataVersion version) {

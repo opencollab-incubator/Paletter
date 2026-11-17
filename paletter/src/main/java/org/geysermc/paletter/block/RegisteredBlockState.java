@@ -11,11 +11,8 @@ import org.geysermc.paletter.annotation.Internal;
  * <p>
  * Vanilla states are additionally shared between all palettes of a
  * {@link org.geysermc.paletter.Paletter}, across versions: equal state, same instance. That is why a state does not
- * know its block, the state set of a block can differ between versions. Ask the palette you have the state from,
- * {@link BlockRegistry#block(RegisteredBlockState)}, for its {@link RegisteredBlock}, which also has the effective
- * {@linkplain RegisteredBlock#components(RegisteredBlockState) components} and
- * {@linkplain RegisteredBlock#properties(RegisteredBlockState) properties} of a state. The position of a state in its
- * palette is {@link BlockRegistry#indexOf}.
+ * know its key: ask the palette you have the state from,
+ * {@link org.geysermc.paletter.Palette#blockState(BlockDefinition)}.
  *
  * @since 0.1.0
  */

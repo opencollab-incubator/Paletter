@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * {@link ResolvedItem#fallback} and {@link ResolvedItem#sent} of {@link Palette#resolve}: the cheap answer to "is this
+ * {@link ResolvedItem#fallback} and {@link ResolvedItem#variant} of {@link Palette#resolve}: the cheap answer to "is this
  * variant sent as itself".
  */
 class FallbackQueryTest {
