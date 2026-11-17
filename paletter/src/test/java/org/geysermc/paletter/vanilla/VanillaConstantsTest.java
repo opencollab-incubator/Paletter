@@ -299,7 +299,7 @@ class VanillaConstantsTest {
     @Test
     void constantsWhereIdentifiersAreAccepted() {
         PaletteLayer layer = PaletteLayer.builder("server")
-            .overrideItem(BedrockItems.CAKE, item -> item.components(org.geysermc.paletter.item.component.MaxStackSize.of(1)))
+            .overrideItem(BedrockItems.CAKE, item -> item.modifyComponents(org.geysermc.paletter.item.component.MaxStackSize.of(1)))
             .item(CustomItem.builder("example:ruby")
                 .component(org.geysermc.paletter.item.component.Repairable.builder()
                     .repairItems(org.geysermc.paletter.item.component.Repairable.RepairItems.builder().items(BedrockItems.DIAMOND).build())

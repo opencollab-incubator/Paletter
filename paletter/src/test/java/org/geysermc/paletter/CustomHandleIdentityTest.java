@@ -103,7 +103,7 @@ class CustomHandleIdentityTest {
         Palette base = PALETTER.palette(PALETTER.latest().protocolVersion())
             .extend(PaletteLayer.builder("content").item(ruby).block(lamp).build());
         Palette overridden = base.extend(PaletteLayer.builder("fixes")
-            .overrideItem(ruby.type(), item -> item.components(MaxStackSize.of(1))).build());
+            .overrideItem(ruby.type(), item -> item.modifyComponents(MaxStackSize.of(1))).build());
         assertEquals(1, overridden.items().getDefinition("example:ruby").getComponentData().getCompound("components")
             .getCompound("item_properties").getInt("max_stack_size"), "the override applies");
         assertOwned(overridden, ruby, lamp);

@@ -23,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
- * The client often requires vanilla item ids to be exactly those of the bundled data: custom content never moves a
- * vanilla item, nor takes a vanilla id.
+ * Custom content never moves a vanilla item, nor takes a vanilla id: the ids stay those of the bundled data. Whether the
+ * client requires this is unverified on a client.
  */
 class VanillaItemIdTest {
     private static final Paletter PALETTER = Paletter.bundled();
@@ -45,8 +45,10 @@ class VanillaItemIdTest {
     private static final PaletteLayer FIRST = dataDrivenBlock(PaletteLayer.builder("first"), "ids:dd")
         .item(item("ids:ruby")).block(block("ids:m")).block(block("ids:p")).build();
     private static final PaletteLayer SECOND = PaletteLayer.builder("second")
-        .overrideItem("ids:p", item -> item.components(MaxStackSize.of(1)))
-        .overrideItem("minecraft:apple", item -> item.components(MaxStackSize.of(8)))
+        .overrideItem("ids:p", item -> item.modifyComponents(MaxStackSize.of(1)))
+        // BDS would move the apple (883 to 853) when an add-on replaces it; Paletter keeps the id, unverified on a client
+        .overrideItem("minecraft:apple", item -> item.replaceComponents(MaxStackSize.of(8)))
+        .overrideItem("minecraft:cake", item -> item.replaceComponents(MaxStackSize.of(1)))
         .item(item("ids:sapphire")).block(block("ids:z")).block(block("ids:a")).build();
     private static final PaletteLayer THIRD = dataDrivenBlock(PaletteLayer.builder("third"), "ids:dd2")
         .item(item("ids:emerald")).block(block("ids:y")).build();

@@ -121,7 +121,7 @@ class CustomContentTest {
     void overridesWriteOverTheOriginalComponentData() {
         Palette vanilla = PALETTER.vanilla(PALETTER.latest());
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("fixes")
-            .overrideItem("minecraft:apple", item -> item.components(MaxStackSize.of(8))).build());
+            .overrideItem("minecraft:apple", item -> item.modifyComponents(MaxStackSize.of(8))).build());
         NbtMap before = vanilla.items().getDefinition("minecraft:apple").getComponentData().getCompound("components");
         NbtMap after = palette.items().getDefinition("minecraft:apple").getComponentData().getCompound("components");
         assertEquals(8, after.getCompound("item_properties").getInt("max_stack_size"));
