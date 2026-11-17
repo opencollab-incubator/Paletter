@@ -113,7 +113,7 @@ writes its exit code to `exit-code` in its work directory. Things that stay manu
 
 - reviewing wire format changes in `data/model` and the regenerated component API;
 - re-importing a protocol whose network data changed in a hotfix;
-- the order of states inside newly generated blocks, which BDS does not expose (`Update#keyOrder` infers it from the
+- the order of states inside newly generated blocks, which BDS does not expose (`ReferencePalette#keyOrder` infers it from the
   previous release; check against CloudburstMC/Data with `verify` once it has the version);
 - adding a codec for a new protocol to the Cloudburst protocol library.
 
