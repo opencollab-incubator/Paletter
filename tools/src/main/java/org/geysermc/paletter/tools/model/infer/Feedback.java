@@ -160,7 +160,14 @@ public final class Feedback {
         if (message.contains("expects one of the following") || message.contains("to match the")) {
             return;
         }
-        for (String other : quoted(variant.json(), variant.path(), message)) {
+        // a line that quotes what the variant gives its own field is about that value ("Bad expression: +1, for bone visibilities
+        // of bone bone_a of geometry geometry.paletter_cube"), wherever it says the value sits
+        JsonElement varied = variant.path().isEmpty() ? variant.json() : MappingInference.jsonAt(variant.json(), variant.path());
+        List<String> ownValues = new ArrayList<>();
+        leaves(varied, ownValues);
+        boolean aboutOwnValue = ownValues.stream().anyMatch(value -> !value.isBlank()
+            && Pattern.compile("(?<![\\w.:])" + Pattern.quote(value) + "(?![\\w:])").matcher(message).find());
+        for (String other : aboutOwnValue ? List.<String>of() : quoted(variant.json(), variant.path(), message)) {
             String value = MappingInference.jsonAt(variant.json(), other).getAsString();
             Matcher identifier = Pattern.compile("([a-z]+) identifier " + Pattern.quote(value)).matcher(message);
             String fact = message.contains(OWN_IDENTIFIER) && identifier.find() ? "identifier " + other + " " + identifier.group(1) : "conflicts " + other + " '" + value + "'";
@@ -187,6 +194,20 @@ public final class Feedback {
     static boolean names(String message, String key) {
         return key.contains("_") && Pattern.compile("(?<![a-z0-9_])" + Pattern.quote(key).replace("_", "\\E[ _]\\Q") + "(?![a-z0-9_])")
             .matcher(message.toLowerCase(java.util.Locale.ROOT)).find();
+    }
+
+    /** Every string in a JSON value. */
+    private static void leaves(JsonElement json, List<String> out) {
+        if (json == null || json.isJsonNull()) {
+            return;
+        }
+        if (json.isJsonObject()) {
+            json.getAsJsonObject().asMap().values().forEach(value -> leaves(value, out));
+        } else if (json.isJsonArray()) {
+            json.getAsJsonArray().forEach(value -> leaves(value, out));
+        } else if (json.getAsJsonPrimitive().isString()) {
+            out.add(json.getAsString());
+        }
     }
 
     /** The path of every member of the objects of a JSON value ({@code a}, {@code a.b}). */

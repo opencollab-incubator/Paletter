@@ -57,6 +57,12 @@ class FeedbackTest {
         identifier.add("block", line, variant("identifier", "{\"identifier\": \"minecraft:geometry.full_block\", \"bone_visibility\": {\"arm\": \"1.0\"}}"));
         assertEquals(fact, identifier.json().getAsJsonObject("block:minecraft:geometry").getAsJsonArray("bone_visibility").toString());
         assertEquals(1, identifier.json().getAsJsonObject("block:minecraft:geometry").size(), "nothing about the identifier itself");
+        // a line about the value the variant gives its own field ties nothing, whatever else of the variant it quotes
+        Feedback expression = new Feedback();
+        expression.add("block", "ERROR [Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_1.json | Bad expression: +1, "
+            + "for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
+            variant("bone_visibility", "{\"identifier\": \"geometry.paletter_cube\", \"uv_lock\": [\"bone_a\"], \"bone_visibility\": {\"bone_a\": \"+1\"}}"));
+        assertEquals(1, expression.json().size(), "only the generated marker");
         // a message that names no other field says nothing about one
         Feedback unnamed = new Feedback();
         unnamed.add("block", BLOCK + "minecraft:geometry: no geometry minecraft:geometry.full_block", variant("identifier",
