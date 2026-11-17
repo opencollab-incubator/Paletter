@@ -168,7 +168,8 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockDefinition</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockDefinitionOrNull(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockDefinitionOrNull</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState,org.geysermc.paletter.block.RegisteredBlockState)" class="member-name-link">blockDefinition</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state,
+ @Nullable <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a>&nbsp;orElse)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">blockOf</a><wbr>(@NonNull <a href="vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</code></div>
@@ -539,20 +540,24 @@ loadScripts(document, 'script');</script>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the state is not in this palette: a custom block of a layer it does not have,
          e.g. one a session palette shows from another session. Never for a vanilla state when the data is
-         bundled: every version sends something for it. Use <a href="#blockDefinitionOrNull(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>blockDefinitionOrNull(BedrockBlockState)</code></a> for
-         states that may be missing</dd>
+         bundled: every version sends something for it. Use <a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState,org.geysermc.paletter.block.RegisteredBlockState)"><code>blockDefinition(BedrockBlockState, RegisteredBlockState)</code></a>
+         for states that may be missing</dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="blockDefinitionOrNull(org.geysermc.paletter.vanilla.BedrockBlockState)">
-<h3>blockDefinitionOrNull</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></span>&nbsp;<span class="element-name">blockDefinitionOrNull</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</span></div>
+<section class="detail" id="blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState,org.geysermc.paletter.block.RegisteredBlockState)">
+<h3>blockDefinition</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></span>&nbsp;<span class="element-name">blockDefinition</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state,
+ @Nullable <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a>&nbsp;orElse)</span></div>
 <dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>orElse</code> - what to return where <a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>blockDefinition(BedrockBlockState)</code></a> throws, may be null; not the
+         configured <code>Fallbacks</code>, which apply before it</dd>
 <dt>Returns:</dt>
-<dd>the block to send for a state like <a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>blockDefinition(BedrockBlockState)</code></a>, or null where that throws</dd>
+<dd>the block to send for a state, or <code>orElse</code> if the state is not in this palette</dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>
