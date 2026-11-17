@@ -69,12 +69,13 @@ probe's strings is not in the repository):
 
 - **Data driven vanilla item** (`minecraft:apple`, format 1.26.60): the pack's components **replace** the vanilla
   ones entirely (food, icon, display name, tags and use components are gone). Only `item_properties.creative_category`
-  keeps the vanilla value (2). The runtime id moves from 883 to 853, to the front of the data driven range, and every
-  vanilla item from 853 up shifts (32 ids).
-- **Hard coded item at format 1.10** (`minecraft:feather`): accepted. It becomes a legacy item with legacy style
-  component NBT (`{minecraft:max_stack_size: 9}`), its id stays 330.
+  keeps the vanilla value (2). The runtime id moves from 883 to 853, to the front of the data driven range, and with the
+  probe's control item also present, 32 vanilla ids changed: apple 883 to 853, 30 items +2 (red_shrub to wind_charge),
+  glow_berries +1. The override alone would be +1 on the 30, inferred, not captured.
+- **Hard coded item at format 1.10** (`minecraft:feather`): accepted. It becomes a legacy item (version 2 to 0) with
+  legacy style component NBT (`{minecraft:max_stack_size: 9}`), its id stays 330.
 - **Hard coded item at 1.16.100 or higher** (`minecraft:stick`): rejected ("no 1.16.100+ Vanilla format version
-  exists"). A legacy item with components (`minecraft:bread` at 1.16.100): rejected, asking for 1.20.0 or higher;
+  exists"). A legacy item with components (`minecraft:bread` at 1.16.100 only): rejected, asking for 1.20.0 or higher;
   format 1.20 and up was not captured.
 - **Several packs** overriding the same item: the top pack wins (seen in binary strings only, not captured).
 
@@ -86,7 +87,8 @@ Paletter's choices, all **unverified on a client** (no client test exists; vanil
   and keeps the vanilla `creative_category`. `ItemOverrideTest` compares the apple with BDS's captured entry.
 - `modifyComponents` merges onto the vanilla data. BDS never sends this shape.
 - Hard coded and legacy targets (e.g. `firework_rocket`, which Geyser overrides) are not refused, though BDS rejects
-  modern format overrides of them. The client's result is unverified.
+  modern format overrides of the stick (the rocket itself was never probed). The client's result is unverified on a
+  client.
 
 ## Content log findings
 
