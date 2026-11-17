@@ -49,7 +49,8 @@ class SyntheticPipelineTest {
         ]}""";
     static final String FIXTURES = """
         {"formatVersion": "1.26.60", "filler": {"minecraft:max_stack_size": 64}, "errata": [], "requires": {}, "samples": {},
-         "mapKeys": {"default": "k"}, "context": {}, "skip": {}}""";
+         "mapKeys": {"default": "k"}, "context": {}, "skip": {},
+         "scriptComponents": {"module": "2.0.0", "block": {}, "item": {}, "variants": {}}}""";
 
     private static Path modelDir(Path root) throws IOException {
         Path model = Files.createDirectories(root.resolve("data/model"));

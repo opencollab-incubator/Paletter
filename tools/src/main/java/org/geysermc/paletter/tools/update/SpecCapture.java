@@ -233,7 +233,13 @@ public final class SpecCapture {
         try (BdsServer bds = new BdsServer(server, false)) {
             bds.start(work.resolve("bds-capture.log"));
             bds.awaitStarted(timeout);
-            List<String> contentLog = attribute(bds.lines(line -> line.matches(".*(ERROR|WARN)\\] \\[.*") && !line.contains("TRANSPORT"))
+            // Without its script the script custom components would look like ones without callbacks: wrong evidence that looks valid
+            if (!bds.sawLine(line -> line.contains(AddonGenerator.SCRIPT_MARKER))) {
+                throw new IOException("The add-on's script did not register its components (no " + AddonGenerator.SCRIPT_MARKER
+                    + " line); the scripting log:\n  " + String.join("\n  ", bds.lines(line -> line.contains("Scripting"))));
+            }
+            List<String> contentLog = attribute(bds.lines(line -> line.matches(".*(ERROR|WARN)\\] \\[.*") && !line.contains("TRANSPORT")
+                && !line.contains(AddonGenerator.SCRIPT_MARKER))
                 .stream().map(SpecCapture::contentLine).toList());
             Capture.Reachable reachable = Capture.reachable(bds, address, 20);
             boolean raknet = reachable == null || !reachable.netherNet();

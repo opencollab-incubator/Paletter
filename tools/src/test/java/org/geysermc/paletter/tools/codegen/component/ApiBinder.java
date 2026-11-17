@@ -9,10 +9,15 @@ import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.BlockComponent;
 import org.geysermc.paletter.block.component.BlockTrait;
+import org.geysermc.paletter.block.component.ScriptHooks;
 import org.geysermc.paletter.internal.component.ComponentIndex;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.component.ItemComponent;
+import org.geysermc.paletter.item.component.UseOnHook;
+import org.geysermc.paletter.tools.model.Fixtures;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -21,8 +26,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Builds add-on JSON through the generated API, the way a consumer would: every JSON object through its record's builder
@@ -39,6 +46,9 @@ import java.util.Map;
  * <li>an empty list for an object is that object with nothing set;</li>
  * <li>the JSON constants {@code true} and {@code false} where a Molang expression (a string) is taken are the strings
  * {@code "true"} and {@code "false"}.</li>
+ * <li>script custom components (a key outside the {@code minecraft:} namespace, registered in the {@code scriptComponents} of
+ * {@code fixtures.json}) are not bound one by one: the callbacks of all of them on a block are the {@link ScriptHooks} flags, and
+ * {@code onUseOn} on an item is {@link UseOnHook}. The old form (a list of names) is not in the API.</li>
  * </ul>
  */
 public final class ApiBinder {
@@ -59,12 +69,19 @@ public final class ApiBinder {
             builder.menuCategory((org.geysermc.paletter.item.component.MenuCategory) bind(org.geysermc.paletter.item.component.MenuCategory.class,
                 description.get("menu_category")));
         }
+        Set<String> callbacks = new HashSet<>();
         for (Map.Entry<String, JsonElement> e : item.getAsJsonObject("components").entrySet()) {
+            if (scriptComponent("item", e, callbacks)) {
+                continue;
+            }
             Class<?> type = ComponentIndex.ITEM.get(e.getKey());
             if (type == null) {
                 throw new Unbindable("no generated item component " + e.getKey());
             }
             builder.component((ItemComponent) bind(type, e.getValue()));
+        }
+        if (callbacks.contains("onUseOn")) {
+            builder.component(UseOnHook.of(true));
         }
         return builder.build();
     }
@@ -113,14 +130,43 @@ public final class ApiBinder {
 
     private static List<BlockComponent> blockComponents(JsonObject components) {
         List<BlockComponent> out = new ArrayList<>();
+        Set<String> callbacks = new HashSet<>();
+        boolean script = false;
         for (Map.Entry<String, JsonElement> e : components.entrySet()) {
+            if (scriptComponent("block", e, callbacks)) {
+                script = true;
+                continue;
+            }
             Class<?> type = ComponentIndex.BLOCK.get(e.getKey());
             if (type == null) {
                 throw new Unbindable("no generated block component " + e.getKey());
             }
             out.add((BlockComponent) bind(type, e.getValue()));
         }
+        if (script) {
+            out.add(ScriptHooks.of(callbacks.contains("onPlayerInteract"), callbacks.contains("beforeOnPlayerPlace")));
+        }
         return out;
+    }
+
+    /** Adds the callbacks of a script custom component to the set; false if the entry is no such component. */
+    private static boolean scriptComponent(String kind, Map.Entry<String, JsonElement> entry, Set<String> callbacks) {
+        if (entry.getKey().equals("minecraft:custom_components")) {
+            throw new Unbindable("the old form of custom_components (a list of names) is not in the API: Paletter always writes the new form");
+        }
+        if (entry.getKey().startsWith("minecraft:")) {
+            return false;
+        }
+        try {
+            JsonObject registered = Fixtures.read(ComponentConformanceTest.MODEL).scriptComponents().getAsJsonObject(kind);
+            if (!registered.has(entry.getKey())) {
+                throw new Unbindable("script component " + entry.getKey() + " is not registered by the add-on script");
+            }
+            registered.getAsJsonArray(entry.getKey()).forEach(c -> callbacks.add(c.getAsString()));
+            return true;
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     private static BlockProperty<?> property(String name, JsonElement values) {

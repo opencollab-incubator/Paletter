@@ -150,7 +150,9 @@ class ComponentConformanceTest {
      * (enchantable slot: the accepted strings are now read from BDS's regex message, so its values are all tried). Their
      * definitions are compared again once the capture is redone; until then this must name them, and fails when they match.
      */
-    private static final Set<String> RECAPTURE_PENDING = Set.of("item:minecraft:enchantable");
+    private static final Set<String> RECAPTURE_PENDING = Set.of("item:minecraft:enchantable",
+        // the script custom component variants (and the placers' ones next to them) are not in the committed captures yet
+        "block:minecraft:custom_components", "item:minecraft:custom_components", "item:minecraft:block_placer", "item:minecraft:entity_placer");
 
     private void conformance(Path capture, boolean newest) throws IOException {
         JsonObject meta = JsonParser.parseString(Files.readString(capture.resolve("capture.json"))).getAsJsonObject();
@@ -200,11 +202,16 @@ class ComponentConformanceTest {
         Set<String> components = new TreeSet<>();
         Set<String> compared = new TreeSet<>();
         int rejected = 0;
+        int oldForm = 0;
         for (JsonObject entry : recorded) {
             String identifier = entry.get("identifier").getAsString();
             boolean block = entry.get("kind").getAsString().equals("block");
             String component = entry.get("component").getAsString();
             components.add(component);
+            if (component.endsWith(":minecraft:custom_components") && entry.get("json").isJsonArray()) {
+                oldForm++; // the old list of component names: the API deliberately offers only the new form
+                continue;
+            }
             if (errors.contains(identifier)) {
                 rejected++; // rejected by BDS: nothing to conform to
                 continue;
@@ -237,7 +244,7 @@ class ComponentConformanceTest {
         }
         StringBuilder report = new StringBuilder("# Component conformance against " + capture.getParent().getFileName() + " (protocol " + protocol + ")\n\n");
         report.append("Accepted variants: ").append(outcomes.size()).append(". ").append(totals).append(". Rejected by BDS (content log ERROR, not compared): ")
-            .append(rejected).append("\n\n");
+            .append(rejected).append(". Old-form custom_components (not in the API, not compared): ").append(oldForm).append("\n\n");
         report.append("| component | pass | fail | unbindable | not generated | missing |\n|---|---|---|---|---|---|\n");
         perComponent.forEach((c, n) -> report.append("| `").append(c).append("` | ").append(n[0]).append(" | ").append(n[1]).append(" | ")
             .append(n[2]).append(" | ").append(n[3]).append(" | ").append(n[4]).append(" |\n"));

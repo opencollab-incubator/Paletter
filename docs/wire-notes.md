@@ -60,7 +60,7 @@ capture has one:
 
 BDS 1.26.63 rejects the block components `unit_cube`, `breathability`, `queued_ticking`, `random_ticking`, `on_fall_on`,
 `on_interact`, `on_placed`, `on_player_destroyed`, `on_player_placing`, `on_step_off` and `on_step_on` (replaced by
-script custom components), and the legacy `tag:<name>` components, at every format version tried.
+script custom components, which BDS sends as the three flags of `ScriptHooks`; documented, not captured yet), and the legacy `tag:<name>` components, at every format version tried.
 
 ## Overriding vanilla items
 
