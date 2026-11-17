@@ -271,7 +271,7 @@ public final class Fixtures {
                         forms.add(type);
                     }
                 });
-                if (forms.size() == before && !erratum.has("path")) {
+                if (forms.size() == before) {
                     throw new IllegalStateException("Erratum of " + id + " adds no form the docs lack: it is stale, remove it");
                 }
             }
@@ -289,8 +289,10 @@ public final class Fixtures {
                 } else {
                     List<JType> merged = new ArrayList<>(types);
                     existing.types().stream().filter(t -> merged.stream().noneMatch(m -> m.toString().equals(t.toString()))).forEach(merged::add);
-                    if (merged.stream().map(JType::toString).toList().equals(existing.types().stream().map(JType::toString).toList())) {
-                        throw new IllegalStateException("Erratum of " + id + " for " + path + " changes nothing the docs say: it is stale, remove it");
+                    // the merge keeps every documented type, so it is longer only if the erratum names one the docs lack: the same
+                    // types in another order are no change
+                    if (merged.size() == existing.types().size()) {
+                        throw new IllegalStateException("Erratum of " + id + " for " + path + " adds no type the docs lack: it is stale, remove it");
                     }
                     List<JsonElement> values = existing.enumValues();
                     if (values.isEmpty() && types.stream().anyMatch(t -> t.type().equals("string"))) {

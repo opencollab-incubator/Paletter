@@ -64,7 +64,7 @@ public final class ComponentIndex {
      * The first protocol of the window of the spec capture of BDS 9.9.9 ({@code data/bds/9.9.9/spec}): what the hand
      * transforms compare {@code WireContext.protocol()} with where that build changed the wire.
      */
-    public static final int BDS_9_9_9 = 100;
+    public static final int BDS_9_9_9 = 200;
 
     /**
      * The {@code vanilla_block_data.block_id} of the first custom block: BDS numbers custom blocks from here, in

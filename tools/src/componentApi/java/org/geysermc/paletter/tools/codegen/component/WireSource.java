@@ -547,10 +547,19 @@ final class WireSource {
         if (!mapped && rules.stream().noneMatch(x -> x.get("kind").getAsString().equals("constant"))) {
             JsonObject m = ComponentGenerator.mappingOf(window, f);
             String status = m == null ? "none" : m.get("status").getAsString();
-            if (!status.equals("dropped")) {
+            if (!status.equals("dropped") && !replacedByConstant(f, prefix)) {
                 unmapped(f, null);
             }
         }
+    }
+
+    /**
+     * Whether the window sends a constant in the place of the field: the leaf the component's own compound has for it
+     * ({@code minecraft:enchantable.slot}), which an encoder writes whatever the field says. The value is replaced, not
+     * dropped, so the encoder does not report it as dropped.
+     */
+    private boolean replacedByConstant(Field f, String prefix) {
+        return prefix.isEmpty() && window.constants().keySet().stream().anyMatch(leaf -> strip(leaf).equals(c.name + "." + f.path));
     }
 
     private void unmapped(Field f, String emptyCheck) {

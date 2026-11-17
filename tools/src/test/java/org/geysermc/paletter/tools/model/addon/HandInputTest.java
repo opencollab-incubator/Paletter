@@ -46,6 +46,22 @@ class HandInputTest {
     }
 
     @Test
+    void anErratumWithAPathIsStaleWhenItsFormsAddNothing(@TempDir Path root) {
+        // the path would add a field, but the form it also names is documented: the form half of the erratum is stale
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> apply(root,
+            "[{\"component\": \"block:minecraft:box\", \"forms\": [\"object\"], \"path\": \"mode.extra\", \"types\": [\"string\"], \"why\": \"x\"}]"));
+        assertTrue(e.getMessage().contains("adds no form the docs lack"), e.getMessage());
+    }
+
+    @Test
+    void anErratumThatOnlyReordersTheDocumentedTypesIsStale(@TempDir Path root) {
+        // shown is documented as map<string> and map<boolean>: naming them in the other order adds no type
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> apply(root,
+            "[{\"component\": \"block:minecraft:box\", \"path\": \"shown\", \"types\": [\"map<boolean>\", \"map<string>\"], \"why\": \"x\"}]"));
+        assertTrue(e.getMessage().contains("adds no type the docs lack"), e.getMessage());
+    }
+
+    @Test
     void anErratumWhoseParentIsNoFieldIsAMistypedPath(@TempDir Path root) {
         IllegalStateException e = assertThrows(IllegalStateException.class,
             () -> apply(root, "[{\"component\": \"block:minecraft:box\", \"path\": \"nowhere.child\", \"types\": [\"string\"], \"why\": \"x\"}]"));

@@ -259,7 +259,7 @@ class ComponentWindowsTest {
                          "examples": [], "doc": ""}]}"""));
         JsonObject mappings = ComponentGeneratorTest.mappings();
         mappings.getAsJsonObject("components").add("item:description", ComponentGeneratorTest.json("""
-            {"status": "sent", "wire": ["props.tab"], "protocols": [100], "fields": {
+            {"status": "sent", "wire": ["props.tab"], "protocols": [100, 200], "fields": {
               "menu": {"status": "inferred", "rules": [], "whenAbsent": {"props.tab": "9 (int)"}},
               "menu.tab": {"status": "inferred", "rules": [{"kind": "table", "table": {"blocks": "1", "none": "9"}, "nbt": "int", "tags": [],
                            "wire": "props.tab"}], "whenAbsent": {"props.tab": "9 (int)"}}}}"""));

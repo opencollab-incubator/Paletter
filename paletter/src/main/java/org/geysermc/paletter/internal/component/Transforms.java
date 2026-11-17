@@ -466,7 +466,10 @@ public final class Transforms {
         states.forEach((name, value) -> {
             Object type = known == null ? null : known.get(name);
             if (known != null && type == null) {
-                ctx.changed("block descriptor", "block " + block + " has no state " + name + "; BDS drops the descriptor");
+                // the capture's evidence is a vanilla block without states (stone) and invented state names: BDS dropped them
+                ctx.changed("block descriptor", known.isEmpty()
+                    ? "block " + block + " has no states, so state " + name + " names none; BDS dropped such descriptors of a stateless block"
+                    : "block " + block + " has no state " + name + "; unverified for a block with states, BDS dropped the descriptors of a stateless one");
             } else if (value instanceof String) {
                 ctx.changed("block descriptor", "state " + name + " is sent as the string " + value + "; BDS sends an enum state as its index (unverified beyond pillar_axis y = 0)");
             }

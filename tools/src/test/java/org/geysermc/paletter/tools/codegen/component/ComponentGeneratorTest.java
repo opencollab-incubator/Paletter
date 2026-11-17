@@ -117,7 +117,7 @@ class ComponentGeneratorTest {
         return json("""
             {"captures": [{"capture": "data/bds/8.8.8/spec", "bdsVersion": "8.8.8", "protocol": 100, "windowProtocol": 100,
                            "firstCustomBlockId": 10000, "blockItemIdPlusBlockId": 255},
-                         {"capture": "data/bds/9.9.9/spec", "bdsVersion": "9.9.9", "protocol": 200, "windowProtocol": 100,
+                         {"capture": "data/bds/9.9.9/spec", "bdsVersion": "9.9.9", "protocol": 200, "windowProtocol": 200,
                            "firstCustomBlockId": 10000, "blockItemIdPlusBlockId": 255}],
              "traitStates": {"test:turn": {
                "test:facing": [{"name": "test:facing", "type": "string", "values": ["south", "north"],
@@ -154,27 +154,27 @@ class ComponentGeneratorTest {
                   "offset": {"status": "inferred", "rules": [{"kind": "identity", "element": 0, "nbt": "float", "tags": [], "wire": "test:widget.ox"},
                              {"kind": "identity", "element": 1, "nbt": "float", "tags": [], "wire": "test:widget.oy"},
                              {"kind": "identity", "element": 2, "nbt": "float", "tags": [], "wire": "test:widget.oz"}]}
-                }, "protocols": [100]},
+                }, "protocols": [100, 200]},
               "item:test:gadget": {"status": "sent", "wire": ["test:gadget"],
                 "forms": {"boolean": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:gadget.value"}]}},
                 "fields": {"value": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:gadget.value"}]}},
                 "protocols": [100],
-                "protocol200": {"status": "sent", "wire": ["test:gadget"],
+                "protocol200": {"status": "sent", "protocols": [200], "wire": ["test:gadget"],
                   "fields": {"value": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:gadget.on"}]},
                              "level": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "int", "tags": [], "wire": "test:gadget.level"}]}}}},
               "block:test:hidden": {"status": "server-only", "fields": {}},
               "block:test:slab": {"status": "sent", "wire": ["test:slab"], "fields": {"[].size": {"status": "hand-rule"}}, "protocols": [100],
-                "protocol200": {"status": "sent", "wire": ["test:slab"], "forms": {"object": {"status": "rejected"}},
+                "protocol200": {"status": "sent", "protocols": [200], "wire": ["test:slab"], "forms": {"object": {"status": "rejected"}},
                   "fields": {"[].size": {"status": "hand-rule"}}}},
               "block:test:glow": {"status": "server-only", "fields": {}, "protocols": [100],
-                "protocol200": {"status": "sent", "wire": ["test:glow"],
+                "protocol200": {"status": "sent", "protocols": [200], "wire": ["test:glow"],
                   "forms": {"integer": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:glow.emission"}]}},
                   "fields": {}}},
-              "item:test:old": {"status": "rejected", "note": "item:test:old has been deprecated. Use test:widget instead", "fields": {}, "protocols": [100]},
-              "item:test:former": {"status": "rejected", "fields": {}, "protocols": [100]},
-              "item:test:count": {"status": "rejected", "fields": {}, "protocols": [100]},
-              "item:test:quiet": {"status": "server-only", "fields": {}, "protocols": [100]},
-              "item:test:ancient": {"status": "rejected", "fields": {}, "protocols": [100]}
+              "item:test:old": {"status": "rejected", "note": "item:test:old has been deprecated. Use test:widget instead", "fields": {}, "protocols": [100, 200]},
+              "item:test:former": {"status": "rejected", "fields": {}, "protocols": [100, 200]},
+              "item:test:count": {"status": "rejected", "fields": {}, "protocols": [100, 200]},
+              "item:test:quiet": {"status": "server-only", "fields": {}, "protocols": [100, 200]},
+              "item:test:ancient": {"status": "rejected", "fields": {}, "protocols": [100, 200]}
             }}""");
     }
 
@@ -226,6 +226,16 @@ class ComponentGeneratorTest {
         assertEquals(Integer.MIN_VALUE, gadget.windows.get(0).since());
         assertEquals(200, gadget.windows.get(0).until());
         assertEquals(200, gadget.windows.get(1).since());
+    }
+
+    @Test
+    void handInputThatNamesNoComponentFailsTheGeneration() {
+        Inputs in = inputs();
+        in.fixtures().add("samples", json("{\"item:test:widget:label\": \"x\", \"item:test:gone:x\": 1}"));
+        in.api().add("types", json("{\"block:test:renamed:field\": \"Field\"}"));
+        GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generate(in));
+        assertTrue(e.getMessage().contains("fixtures.json samples: item:test:gone:x; api.json types: block:test:renamed:field"), e.getMessage());
+        assertFalse(e.getMessage().contains("item:test:widget:label"), "an entry of a component of the model is no orphan: " + e.getMessage());
     }
 
     // ---- Links and annotations -----------------------------------------------------------------------------------
