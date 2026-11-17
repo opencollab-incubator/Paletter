@@ -189,6 +189,12 @@
     "block:minecraft:item_visual": {"states": {"paletter:flag": [false, true]}},
     "block:minecraft:embedded_visual": {"states": {"paletter:flag": [false, true]}}
   },
+  "sweepValues": {
+    "_comment": "Whole values the format sweep tries for the components BDS rejects at the current format, at every known format besides their base (inputs, not evidence: BDS decides).",
+    "block:minecraft:breathability": ["solid", "air"],
+    "block:minecraft:random_ticking": [{"on_tick": {"event": "paletter:event", "target": "self"}}],
+    "item:minecraft:render_offsets": [{"main_hand": {"first_person": {"position": [0, 0, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1]}}}, "tools"]
+  },
   "skip": {
     "item:minecraft:hand_equippped": "misspelled duplicate page of minecraft:hand_equipped",
     "block:minecraft:tag": "tag:<name> components; the docs page has no table (probed by hand in capture/addon: rejected by 1.26.60)",

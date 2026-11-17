@@ -1858,6 +1858,10 @@ public final class Update {
         specOptions.put("port", String.valueOf(port + 10));
         specOptions.put("protocol", String.valueOf(runs.protocol));
         specOptions.put("out", out.toString());
+        // The format sweep: what BDS accepts at older formats of the components it rejects now, on the same server
+        if (!verifyOnly && against == null) {
+            specOptions.put("with-format-sweep", "true");
+        }
         // A history check compares with the build it is checked against
         String previousBuild = against != null ? against : baseline(distribution.version(), committedBuilds("spec/capture.json"));
         boolean own = distribution.version().equals(previousBuild);
@@ -1871,7 +1875,7 @@ public final class Update {
         }
         try {
             // Only the files whose bytes changed are repository changes: a capture identical to the committed one is none
-            if ((write ? track(report, root, List.of(out), "spec capture", () -> new SpecCapture(root, specOptions).run())
+            if ((write ? track(report, root, List.of(out, out.resolveSibling("spec-format")), "spec capture", () -> new SpecCapture(root, specOptions).run())
                 : new SpecCapture(root, specOptions).run()) != 0) {
                 report.check(Report.Status.FAIL, "Spec capture", "failed");
                 return;
@@ -2222,12 +2226,14 @@ public final class Update {
             Files.createDirectories(target.getParent());
             Files.write(target, file.getValue());
         }
-        Path spec = work.resolve("spec");
-        if (Files.isDirectory(spec)) {
-            Path target = base.resolve("spec");
-            Files.createDirectories(target);
-            for (Path file : BuildHistory.files(spec)) {
-                Files.copy(file, target.resolve(file.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+        for (String capture : List.of("spec", "spec-format")) {
+            Path spec = work.resolve(capture);
+            if (Files.isDirectory(spec)) {
+                Path target = base.resolve(capture);
+                Files.createDirectories(target);
+                for (Path file : BuildHistory.files(spec)) {
+                    Files.copy(file, target.resolve(file.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+                }
             }
         }
         if (captureOnly == null) {

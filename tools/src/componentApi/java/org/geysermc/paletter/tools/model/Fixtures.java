@@ -242,6 +242,15 @@ public final class Fixtures {
     }
 
     /**
+     * Whole values of a component the format sweep tries at every format besides its base (by component id): inputs for the
+     * components BDS rejects at the current format, whose docs give no usable base. BDS decides what any of them does.
+     */
+    public List<JsonElement> sweepValues(String component) {
+        JsonObject values = json.has("sweepValues") ? json.getAsJsonObject("sweepValues") : new JsonObject();
+        return values.has(component) ? values.getAsJsonArray(component).asList() : List.of();
+    }
+
+    /**
      * Block descriptors ({@code name}, {@code states}) to try in every field that is one: real vanilla blocks with state
      * values of each JSON type, so BDS's registry says which it takes and how it sends them.
      */
@@ -336,9 +345,9 @@ public final class Fixtures {
 
     /** The sections of fixtures.json and api.json whose keys start with a component id ({@code item:minecraft:food:path}). */
     private static final List<String> FIXTURE_SECTIONS = List.of("requires", "context", "skip", "together", "samples", "alternatives",
-        "mapValues", "mapKeys", "probeOnly", "probeValues");
+        "mapValues", "mapKeys", "probeOnly", "probeValues", "sweepValues");
     private static final List<String> API_SECTIONS = List.of("rootLists", "forms", "types", "unions", "keyedExtras", "descriptors",
-        "blockDescriptors", "fields", "typeNames", "standalone", "standalonePaths", "openEnums", "exclude", "handWritten", "classes",
+        "blockDescriptors", "retired", "fields", "typeNames", "standalone", "standalonePaths", "openEnums", "exclude", "handWritten", "classes",
         "optional", "noDefaults", "enums");
 
     /**

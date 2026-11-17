@@ -50,6 +50,7 @@ public final class AddonGenerator {
     private final List<Variant> variants = new ArrayList<>();
     private final Map<String, Integer> counters = new LinkedHashMap<>();
     private final Map<String, Shrunk> shrunk;
+    private final boolean standard;
 
     /**
      * @param identifier the item or block identifier
@@ -97,6 +98,7 @@ public final class AddonGenerator {
         this.model = this.fixtures.apply(model);
         this.formatVersion = formatVersion;
         this.shrunk = Map.copyOf(shrunk);
+        this.standard = standard;
         if (standard) {
             generate();
         }
@@ -494,7 +496,8 @@ public final class AddonGenerator {
     /**
      * The base of a component in a file of another format version (the format sweep), with the fields the docs or BDS
      * say need a newer format removed, and one field set when {@code path} is not empty (to {@code value}, or to the
-     * sample of the field when that is null).
+     * sample of the field when that is null). With no path, a {@code value} replaces the whole base (a form or input the docs do
+     * not give the base).
      *
      * @return the variant, or null if the component itself needs a newer format or the field cannot be set
      */
@@ -509,6 +512,9 @@ public final class AddonGenerator {
                 remove(json, field.path());
             }
         }
+        if (path.isEmpty() && value != null) {
+            json = value.deepCopy();
+        }
         if (!path.isEmpty()) {
             Field field = c.field(path);
             value = value != null || field == null ? value : sample(c, path, primaryType(c, field), field);
@@ -517,7 +523,16 @@ public final class AddonGenerator {
                 return null;
             }
         }
-        return variant(c, "format", path, "format " + format + (path.isEmpty() ? "" : " " + kind(value)), path.isEmpty() ? null : value, json, format);
+        return variant(c, "format", path, "format " + format + (path.isEmpty() && value == null ? "" : " " + kind(value)), value, json, format);
+    }
+
+    /**
+     * The companions alone (the control of the component, which adds nothing of it) in a file of another format version: what
+     * the base at that format is compared with, as the file's envelope changes with the format (items below 1.16.100 are old-style).
+     */
+    public Variant controlAt(String componentId, String format) {
+        Component c = component(componentId);
+        return variant(c, "control", "", "control " + format, null, control(c), format);
     }
 
     /** Compares two format versions ({@code 1.21.120} against {@code 1.26.0}) by their numbers. */
@@ -1575,6 +1590,9 @@ public final class AddonGenerator {
             writeScript(bp.resolve("scripts/main.js"));
         }
         json(bp.resolve("manifest.json"), manifest);
+        if (standard) {
+            writeEnginePacks(out);
+        }
         json(rp.resolve("manifest.json"), JsonParser.parseString("""
             {"format_version": 2, "header": {"name": "Paletter spec capture resources", "description": "Textures and geometry for the spec capture",
               "uuid": "%s", "version": [1, 0, 0], "min_engine_version": %s},
@@ -1583,6 +1601,45 @@ public final class AddonGenerator {
         json(out.resolve("variants.json"), manifest());
         long items = variants.stream().filter(v -> v.kind().equals("item")).count();
         System.out.println(items + " items, " + (variants.size() - items) + " blocks (" + model.components().size() + " components) -> " + out);
+    }
+
+    /**
+     * The extra behavior packs of the spec add-on: per {@link #ENGINE_VERSIONS} one pack with that {@code min_engine_version} and a
+     * single control block, in the same world as the main pack. They show whether what BDS writes into every block that is not a
+     * component (the {@code molangVersion}) follows the pack's engine version: the file format is the main pack's, so the engine version
+     * is the only difference.
+     *
+     * @param directory the folder of the pack in the add-on ({@code behavior_pack_engine_<n>})
+     * @param identifier the identifier of its block
+     */
+    public record EnginePack(String minEngineVersion, String uuid, String directory, String identifier) {
+    }
+
+    public static final List<String> ENGINE_VERSIONS = List.of("1.16.100", "1.19.40");
+
+    public static List<EnginePack> enginePacks() {
+        List<EnginePack> packs = new ArrayList<>();
+        for (int i = 0; i < ENGINE_VERSIONS.size(); i++) {
+            packs.add(new EnginePack(ENGINE_VERSIONS.get(i), "a1e5c0de-0000-4000-8000-00000000d1" + String.format("%02x", i), "behavior_pack_engine_" + i,
+                NAMESPACE + ":engine_" + i));
+        }
+        return packs;
+    }
+
+    private void writeEnginePacks(Path out) throws IOException {
+        Component block = model.components().stream().filter(c -> c.kind().equals("block") && c.category().equals("component") && fixtures.requires(c.id()).isEmpty()).findFirst().orElse(null);
+        if (block == null) {
+            return;
+        }
+        for (EnginePack pack : enginePacks()) {
+            Path bp = out.resolve(pack.directory());
+            json(bp.resolve("blocks/" + pack.identifier().substring(NAMESPACE.length() + 1) + ".json"), definition(block, pack.identifier(), null, formatVersion, false));
+            json(bp.resolve("manifest.json"), JsonParser.parseString("""
+                {"format_version": 2, "header": {"name": "Paletter spec capture, engine %s", "description": "A control block under an older min_engine_version",
+                  "uuid": "%s", "version": [1, 0, 0], "min_engine_version": %s},
+                 "modules": [{"type": "data", "uuid": "%s", "version": [1, 0, 0]}]}""".formatted(
+                pack.minEngineVersion(), pack.uuid(), minEngine(pack.minEngineVersion()), pack.uuid().replaceFirst("d1(..)$", "d2$1"))));
+        }
     }
 
     /**
