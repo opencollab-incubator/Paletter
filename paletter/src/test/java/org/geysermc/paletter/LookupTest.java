@@ -1,9 +1,14 @@
 package org.geysermc.paletter;
 
 import org.cloudburstmc.nbt.NbtMap;
+import org.geysermc.paletter.block.CustomBlock;
+import org.geysermc.paletter.creative.CreativeCategory;
+import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
+import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.vanilla.BedrockBlockType;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
@@ -52,9 +57,13 @@ class LookupTest {
         assertNull(LATEST.blockState(changed, Lookup.EXACT));
         BedrockBlockState mapped = LATEST.blockState(changed, Lookup.RENAMED);
         assertNotNull(mapped);
-        assertSame(LATEST.blockState(changed, Lookup.RENAMED), mapped);
+        assertSame(Ids.canonicalBlocks(PALETTER).handle(Ids.block(PALETTER, changed)), mapped);
         // Exact in its own version, then mapped to the newest equivalent
         assertSame(mapped, PALETTER.vanilla(older).blockState(changed, Lookup.EXACT));
+        // RENAMED maps it forward on every palette, not only the newest
+        for (DataVersion version : PALETTER.versions()) {
+            assertSame(mapped, PALETTER.vanilla(version).blockState(changed, Lookup.RENAMED), version.toString());
+        }
     }
 
     @Test
@@ -100,6 +109,47 @@ class LookupTest {
         assertTrue(LATEST.explainUnknown(unknown, Lookup.EXACT).contains(Ids.forwardBlock(PALETTER, unknown).detail()));
         assertTrue(LATEST.explainUnknown("minecraft:paletter_test_unknown", 3, Lookup.EXACT)
             .contains("does not exist"));
+    }
+
+    @Test
+    void customContentIsAlwaysAccepted() {
+        CustomBlock lamp = CustomBlock.builder("lookup:lamp").build();
+        CustomItem ruby = CustomItem.builder("lookup:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
+        Palette palette = LATEST.extend(PaletteLayer.builder("lookup").block(lamp).item(ruby).build());
+        for (Lookup lookup : Lookup.values()) {
+            assertSame(lamp.type().defaultState(), palette.blockState(lamp.type().defaultState().toNbt(), lookup));
+            assertSame(ruby.type().base(), palette.itemVariant("lookup:ruby", 0, lookup));
+            assertSame(ruby.type(), palette.itemType("lookup:ruby", lookup));
+        }
+        assertNull(LATEST.blockState(lamp.type().defaultState().toNbt(), Lookup.EXACT));
+    }
+
+    @Test
+    void anExtendedPaletteLooksUpLikeItsParentAndSharesTheTables() {
+        CustomBlock lamp = CustomBlock.builder("lookup:shared").build();
+        for (Palette base : new Palette[] {LATEST, OLDEST}) {
+            Palette extended = base.extend(PaletteLayer.builder("shared").block(lamp).build());
+            assertSame(base.versionBlocks(), extended.versionBlocks());
+            assertSame(base.versionItems(), extended.versionItems());
+            NbtMap stone = BedrockBlocks.STONE.defaultState().toNbt();
+            assertSame(base.blockState(stone, Lookup.EXACT), extended.blockState(stone, Lookup.EXACT));
+            assertSame(base.itemVariant("minecraft:apple", 0, Lookup.EXACT), extended.itemVariant("minecraft:apple", 0, Lookup.EXACT));
+        }
+        // The newest palette reuses the table of the canonical ids
+        assertSame(LATEST.blocks().canonical().root(), LATEST.versionBlocks());
+    }
+
+    @Test
+    void blockTypesMatchExactly() {
+        assertSame(BedrockBlocks.STONE, LATEST.blockType("minecraft:stone", Lookup.EXACT));
+        assertNull(LATEST.blockType("minecraft:paletter_test_unknown", Lookup.EXACT));
+        assertNull(LATEST.blockType("minecraft:paletter_test_unknown", Lookup.RENAMED));
+        for (BedrockBlockType type : BedrockBlockType.vanillaTypes()) {
+            BedrockBlockType found = LATEST.blockType(type.identifier(), Lookup.EXACT);
+            if (found != null) {
+                assertSame(type, found, type.identifier());
+            }
+        }
     }
 
     @Test

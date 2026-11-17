@@ -51,6 +51,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -96,6 +97,7 @@ public final class Palette {
     private volatile Behaviour behaviour;
     private volatile CanonicalBlocks versionBlocks;
     private volatile CanonicalItems versionItems;
+    private volatile Map<String, NbtMap> firstStates;
     /** The palette this one extends, or is a copy of: its block states are a prefix of this one's. Null for vanilla palettes. */
     private final @Nullable Palette parent;
 
@@ -256,14 +258,21 @@ public final class Palette {
     /**
      * @param state a block state as {@code {name, states}}; extra keys are ignored
      * @param lookup whether the state must exist as is in this palette's version, see {@link Lookup}
-     * @return its handle, or null if the lookup does not accept the state (see {@link #explainUnknown(NbtMap, Lookup)})
+     * @return its handle, or null if the lookup does not accept the state: it is newer than this palette's version,
+     *         removed, or behind an experiment this palette does not enable (see {@link #explainUnknown(NbtMap, Lookup)}).
+     *         Custom blocks of the palette's layers are always accepted
      * @since 0.1.0
      */
     public @Nullable BedrockBlockState blockState(@NonNull NbtMap state, @NonNull Lookup lookup) {
         CanonicalBlocks canonical = blocks.canonical();
-        boolean custom = canonical.index(state) >= canonical.vanillaSize();
-        if (!custom && versionBlocks().index(state) == -1 && (lookup == Lookup.EXACT
-            || Canonicals.forwardBlock(canonical, state).kind() == Forwarding.Kind.EXACT)) {
+        int id = canonical.index(state);
+        if (id >= canonical.vanillaSize()) {
+            return canonical.handle(id);
+        }
+        if (gating.missingBlocks().contains(BlockStates.name(state))) {
+            return null;
+        }
+        if (versionBlocks().index(state) == -1 && (lookup == Lookup.EXACT || id != -1)) {
             return null;
         }
         return canonical.handle(Canonicals.block(canonical, state));
@@ -271,16 +280,18 @@ public final class Palette {
 
     /**
      * @param lookup whether the variant must exist as is in this palette's version, see {@link Lookup}
-     * @return its handle, or null if the lookup does not accept the variant. Aux 0 is the base variant, which every
-     *         item has
+     * @return its handle, or null if the lookup does not accept the variant, for the reasons of
+     *         {@link #blockState(NbtMap, Lookup)}. Aux 0 is the base variant, which every item has
      * @since 0.1.0
      */
     public @Nullable BedrockItemVariant itemVariant(@NonNull String identifier, int aux, @NonNull Lookup lookup) {
         ItemVariant variant = ItemVariant.of(identifier, aux);
         CanonicalItems canonical = items.canonical();
-        boolean custom = canonical.index(variant) >= canonical.vanillaSize();
-        if (!custom && versionItems().index(variant) == -1 && (lookup == Lookup.EXACT
-            || Canonicals.forwardItem(canonical, variant).kind() == Forwarding.Kind.EXACT)) {
+        int id = canonical.index(variant);
+        if (id >= canonical.vanillaSize()) {
+            return canonical.handle(id);
+        }
+        if (versionItems().index(variant) == -1 && (lookup == Lookup.EXACT || id != -1)) {
             return null;
         }
         return canonical.handle(Canonicals.item(canonical, variant));
@@ -298,12 +309,34 @@ public final class Palette {
     }
 
     /**
+     * @param identifier a block identifier of a vanilla block
+     * @param lookup whether the block must exist as is in this palette's version, see {@link Lookup}
+     * @return the block type, or null if the lookup does not accept the identifier. {@link Lookup#RENAMED} also finds
+     *         a block under the name an older version gave it. For a custom block use its {@code type()}
+     * @since 0.1.0
+     */
+    public @Nullable BedrockBlockType blockType(@NonNull String identifier, @NonNull Lookup lookup) {
+        NbtMap state = firstStates().get(identifier);
+        if (state == null) {
+            if (lookup == Lookup.EXACT) {
+                return null;
+            }
+            state = BlockStates.of(identifier);
+        }
+        BedrockBlockState handle = blockState(state, lookup);
+        return handle == null ? null : handle.type();
+    }
+
+    /**
      * @return why a block state has no handle under a lookup (see {@link #blockState(NbtMap, Lookup)}), or null if it has one
      * @since 0.1.0
      */
     public @Nullable String explainUnknown(@NonNull NbtMap state, @NonNull Lookup lookup) {
+        String name = BlockStates.name(state);
+        String toggle = gating.disabledBlocks().get(name);
         return blockState(state, lookup) != null ? null
-            : refused(BlockStates.name(state), lookup, reason(Canonicals.forwardBlock(blocks.canonical(), state)));
+            : refused(name, lookup, toggle != null ? disabled(toggle)
+                : reason(Canonicals.forwardBlock(blocks.canonical(), state)));
     }
 
     /**
@@ -311,9 +344,15 @@ public final class Palette {
      * @since 0.1.0
      */
     public @Nullable String explainUnknown(@NonNull String identifier, int aux, @NonNull Lookup lookup) {
-        return itemVariant(identifier, aux, lookup) != null ? null
-            : refused(identifier + "@" + aux, lookup,
-                reason(Canonicals.forwardItem(items.canonical(), ItemVariant.of(identifier, aux))));
+        String toggle = gating.disabledItems().get(identifier);
+        String unknown = toggle != null ? disabled(toggle)
+            : gating.removed().contains(identifier) ? "it was removed by VanillaContent.remove"
+            : reason(Canonicals.forwardItem(items.canonical(), ItemVariant.of(identifier, aux)));
+        return itemVariant(identifier, aux, lookup) != null ? null : refused(identifier + "@" + aux, lookup, unknown);
+    }
+
+    private static String disabled(String toggle) {
+        return "it is behind the disabled experiment " + toggle;
     }
 
     private static @Nullable String reason(Forwarding forwarding) {
@@ -328,20 +367,39 @@ public final class Palette {
             + (unknown != null ? unknown : "it is not in the data of " + data.version());
     }
 
-    /** The block states of this palette's version, as written in its data. */
-    private CanonicalBlocks versionBlocks() {
+    /** The block states of this palette's version, as written in its data. Shared with the palette this one extends. */
+    CanonicalBlocks versionBlocks() {
         CanonicalBlocks result = versionBlocks;
         if (result == null) {
-            versionBlocks = result = CanonicalBlocks.of(data.blockStates());
+            CanonicalBlocks root = blocks.canonical().root();
+            versionBlocks = result = parent != null ? parent.versionBlocks()
+                : root.version().equals(data.version().toString()) ? root : CanonicalBlocks.of(data.blockStates());
         }
         return result;
     }
 
-    /** The item variants of this palette's version, as written in its data. */
-    private CanonicalItems versionItems() {
+    /** The item variants of this palette's version, as written in its data. Shared with the palette this one extends. */
+    CanonicalItems versionItems() {
         CanonicalItems result = versionItems;
         if (result == null) {
-            versionItems = result = CanonicalItems.of(data);
+            versionItems = result = parent != null ? parent.versionItems() : CanonicalItems.of(data);
+        }
+        return result;
+    }
+
+    /** The first state of each block of this palette's version. Shared with the palette this one extends. */
+    private Map<String, NbtMap> firstStates() {
+        Map<String, NbtMap> result = firstStates;
+        if (result == null) {
+            if (parent != null) {
+                result = parent.firstStates();
+            } else {
+                result = new HashMap<>();
+                for (NbtMap state : data.blockStates()) {
+                    result.putIfAbsent(BlockStates.name(state), state);
+                }
+            }
+            firstStates = result;
         }
         return result;
     }
@@ -790,7 +848,8 @@ public final class Palette {
     /**
      * The experiment toggles this palette needs, because the Paletter enabled them ({@code vanilla(v -> v.experiments(...))})
      * and this version has content behind them: {@link #applyTo(StartGamePacket)} sends them. Empty by default, the
-     * content behind a toggle is missing then (see {@link VanillaContent#experiments}).
+     * content behind a toggle is missing then (see {@link VanillaContent#experiments}); {@link VanillaContent#allExperiments()}
+     * enables all of them.
      *
      * @return the toggle ids, sorted
      * @since 0.1.0

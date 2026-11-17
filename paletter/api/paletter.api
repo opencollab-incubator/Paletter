@@ -106,6 +106,7 @@ public final class org.geysermc.paletter.Palette {
     public org.geysermc.paletter.vanilla.BedrockBlockState blockState(int)
     public org.geysermc.paletter.vanilla.BedrockBlockState blockState(org.cloudburstmc.nbt.NbtMap, org.geysermc.paletter.Lookup)
     public org.geysermc.paletter.vanilla.BedrockBlockState blockState(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)
+    public org.geysermc.paletter.vanilla.BedrockBlockType blockType(java.lang.String, org.geysermc.paletter.Lookup)
     public org.geysermc.paletter.creative.CreativeContent creative()
     public org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket creativeContentPacket()
     public org.geysermc.paletter.creative.CreativeLayout creativeLayout()

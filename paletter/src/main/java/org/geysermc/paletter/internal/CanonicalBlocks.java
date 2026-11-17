@@ -236,6 +236,14 @@ public final class CanonicalBlocks {
     }
 
     /**
+     * @return the version whose states define these ids
+     */
+    @Internal
+    public @NonNull String version() {
+        return version;
+    }
+
+    /**
      * @return the first indices of the lineage: the vanilla states of the newest version
      */
     public @NonNull CanonicalBlocks root() {

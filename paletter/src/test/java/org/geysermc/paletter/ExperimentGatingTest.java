@@ -3,9 +3,11 @@ package org.geysermc.paletter;
 import org.cloudburstmc.protocol.bedrock.data.ExperimentData;
 import org.cloudburstmc.protocol.bedrock.packet.ResourcePackStackPacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
+import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.BlockFallback;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataSource;
+import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.internal.data.ExperimentContent;
 import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.internal.data.VanillaData;
@@ -57,6 +59,45 @@ class ExperimentGatingTest {
     }
 
     private static final Paletter PALETTER = Paletter.bundled();
+
+    @Test
+    void lookupsSeeWhatThePaletteHas() {
+        // The items behind a disabled toggle
+        String cushion = BedrockItems.BLACK_CUSHION.identifier();
+        Palette gated = Paletter.builder().build().palette(OLDEST);
+        for (Lookup lookup : Lookup.values()) {
+            assertNull(gated.itemVariant(cushion, 0, lookup));
+        }
+        assertTrue(gated.explainUnknown(cushion, 0, Lookup.EXACT).contains("disabled experiment " + TOGGLE));
+        Palette all = Paletter.builder().vanilla(vanilla -> vanilla.allExperiments()).build().palette(OLDEST);
+        assertNotNull(all.itemVariant(cushion, 0, Lookup.EXACT));
+
+        // The blocks behind a disabled toggle, in any version that has some
+        Paletter plain = Paletter.builder().build();
+        Paletter everything = Paletter.builder().vanilla(vanilla -> vanilla.allExperiments()).build();
+        boolean found = false;
+        for (DataVersion version : plain.versions()) {
+            for (String block : plain.vanilla(version).gating().missingBlocks()) {
+                NbtMap state = plain.vanillaData(version).blockStates().stream()
+                    .filter(candidate -> BlockStates.name(candidate).equals(block)).findFirst().orElseThrow();
+                for (Lookup lookup : Lookup.values()) {
+                    assertNull(plain.vanilla(version).blockState(state, lookup), block);
+                }
+                assertTrue(plain.vanilla(version).explainUnknown(state, Lookup.EXACT).contains("disabled experiment"), block);
+                assertNotNull(everything.vanilla(version).blockState(state, Lookup.EXACT), block);
+                found = true;
+            }
+        }
+        assertTrue(found, "some version gates blocks behind a toggle");
+    }
+
+    @Test
+    void removedItemsAreExplained() {
+        Palette palette = Paletter.builder().vanilla(vanilla -> vanilla.remove(BedrockItems.STICK)).build()
+            .palette(MIDDLE);
+        assertNull(palette.itemVariant("minecraft:stick", 0, Lookup.EXACT));
+        assertTrue(palette.explainUnknown("minecraft:stick", 0, Lookup.EXACT).contains("VanillaContent.remove"));
+    }
 
     @Test
     void allExperimentsEnablesTheVersionsToggleButNotVoxelShapes() {

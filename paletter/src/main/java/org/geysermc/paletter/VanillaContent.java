@@ -74,7 +74,8 @@ public final class VanillaContent {
     /**
      * Enables every experiment toggle the palette's version gates content with, except the voxel shape experiment, which
      * changes how the client treats shapes instead of adding content. The content behind the toggles is present, as in the
-     * raw data of the version; the palettes list the toggles in {@link Palette#experiments()}.
+     * raw data of the version; the palettes list the toggles in {@link Palette#experiments()}. Lookups with a
+     * {@link Lookup} see that content then.
      */
     public @NonNull VanillaContent allExperiments() {
         this.allExperiments = true;
@@ -122,6 +123,8 @@ public final class VanillaContent {
         data.blockStates().forEach(state -> blocksInData.add(state.getString("name")));
         Set<String> remove = new HashSet<>(removed);
         Set<String> missingBlocks = new TreeSet<>();
+        Map<String, String> disabledItems = new TreeMap<>();
+        Map<String, String> disabledBlocks = new TreeMap<>();
         List<String> notes = new ArrayList<>();
         marks.forEach((toggle, content) -> {
             if (requests(toggle)) {
@@ -138,13 +141,15 @@ public final class VanillaContent {
             List<String> blocks = gatedBlocks.stream().filter(block -> !enabledBlocks.containsKey(block) && blocksInData.contains(block)).toList();
             remove.addAll(items);
             missingBlocks.addAll(blocks);
+            items.forEach(item -> disabledItems.put(item, toggle));
+            blocks.forEach(block -> disabledBlocks.put(block, toggle));
             if (!items.isEmpty() || !blocks.isEmpty()) {
                 notes.add(data.version().name() + ": " + items.size() + " items, " + blocks.size() + " blocks behind `" + toggle
                     + "` use fallbacks; enable with vanilla(v -> v.experiments(\"" + toggle + "\"))");
             }
         });
         ExperimentGating gating = new ExperimentGating(List.copyOf(enabled), Map.copyOf(enabledItems), Map.copyOf(enabledBlocks),
-            Set.copyOf(missingBlocks), List.copyOf(notes));
+            Set.copyOf(missingBlocks), Map.copyOf(disabledItems), Map.copyOf(disabledBlocks), Set.copyOf(removed), List.copyOf(notes));
         if (remove.isEmpty() && missingBlocks.isEmpty()) {
             return new Applied(data, gating);
         }
@@ -176,11 +181,15 @@ public final class VanillaContent {
      * @param items item identifier to the enabled toggle that makes it present
      * @param blocks block identifier to the enabled toggle that makes it present
      * @param missingBlocks blocks present in the palette that are missing, as a disabled toggle gates them
+     * @param disabledItems item identifier to the disabled toggle that removes it
+     * @param disabledBlocks block identifier to the disabled toggle that gates it
+     * @param removed the identifiers of items taken out with {@link VanillaContent#remove}
      * @param notes one report line per disabled toggle that gates content of the version
      */
     record ExperimentGating(List<String> enabled, Map<String, String> items, Map<String, String> blocks, Set<String> missingBlocks,
+                            Map<String, String> disabledItems, Map<String, String> disabledBlocks, Set<String> removed,
                             List<String> notes) {
-        static final ExperimentGating NONE = new ExperimentGating(List.of(), Map.of(), Map.of(), Set.of(), List.of());
+        static final ExperimentGating NONE = new ExperimentGating(List.of(), Map.of(), Map.of(), Set.of(), Map.of(), Map.of(), Set.of(), List.of());
 
         @Nullable String ofItem(String identifier) {
             return items.get(identifier);
@@ -194,7 +203,7 @@ public final class VanillaContent {
         ExperimentGating withEnabled(String toggle) {
             List<String> all = new ArrayList<>(enabled);
             all.add(toggle);
-            return new ExperimentGating(all.stream().sorted().distinct().toList(), items, blocks, missingBlocks, notes);
+            return new ExperimentGating(all.stream().sorted().distinct().toList(), items, blocks, missingBlocks, disabledItems, disabledBlocks, removed, notes);
         }
     }
 }
