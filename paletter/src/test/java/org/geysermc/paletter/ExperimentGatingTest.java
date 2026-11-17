@@ -59,6 +59,17 @@ class ExperimentGatingTest {
     private static final Paletter PALETTER = Paletter.bundled();
 
     @Test
+    void allExperimentsEnablesTheVersionsToggleButNotVoxelShapes() {
+        Paletter paletter = Paletter.builder().vanilla(vanilla -> vanilla.allExperiments()).build();
+
+        Palette all = paletter.palette(OLDEST);
+        assertNotNull(all.itemDefinition(BedrockItems.BLACK_CUSHION));
+        assertTrue(all.experiments().contains(TOGGLE));
+        assertFalse(all.experiments().contains(VoxelShapeStore.EXPERIMENT));
+        assertEquals(List.of(), paletter.palette(1001).experiments());
+    }
+
+    @Test
     void enablingTheToggleMakesTheContentPresentAndIsSent() {
         Fallbacks flat = Fallbacks.builder().item(BedrockItems.BLACK_CUSHION, ItemFallback.of(BedrockItems.STICK)).build();
         Paletter paletter = Paletter.builder().fallbacks(flat).vanilla(vanilla -> vanilla.experiments(TOGGLE)).build();

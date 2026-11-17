@@ -255,6 +255,7 @@ public static final class org.geysermc.paletter.Paletter$Builder {
 }
 
 public final class org.geysermc.paletter.VanillaContent {
+    public org.geysermc.paletter.VanillaContent allExperiments()
     public org.geysermc.paletter.VanillaContent experiments(java.lang.String...)
     public org.geysermc.paletter.VanillaContent remove(org.geysermc.paletter.vanilla.BedrockItemType)
 }

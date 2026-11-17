@@ -6,6 +6,7 @@ import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.geysermc.paletter.internal.data.ExperimentContent;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
+import org.geysermc.paletter.internal.shape.VoxelShapeStore;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.TreeSet;
 public final class VanillaContent {
     private final Set<String> removed = new HashSet<>();
     private Set<String> experiments = Set.of();
+    private boolean allExperiments;
 
     VanillaContent() {
     }
@@ -41,6 +43,7 @@ public final class VanillaContent {
         VanillaContent copy = new VanillaContent();
         copy.removed.addAll(removed);
         copy.experiments = Set.copyOf(experiments);
+        copy.allExperiments = allExperiments;
         return copy;
     }
 
@@ -68,9 +71,19 @@ public final class VanillaContent {
         return this;
     }
 
+    /**
+     * Enables every experiment toggle the palette's version gates content with, except the voxel shape experiment, which
+     * changes how the client treats shapes instead of adding content. The content behind the toggles is present, as in the
+     * raw data of the version; the palettes list the toggles in {@link Palette#experiments()}.
+     */
+    public @NonNull VanillaContent allExperiments() {
+        this.allExperiments = true;
+        return this;
+    }
+
     /** @return whether the consumer asked for an experiment toggle */
     boolean requests(String toggle) {
-        return experiments.contains(toggle);
+        return experiments.contains(toggle) || allExperiments && !toggle.equals(VoxelShapeStore.EXPERIMENT);
     }
 
     /**
@@ -89,7 +102,7 @@ public final class VanillaContent {
         Map<String, String> enabledItems = new TreeMap<>();
         Map<String, String> enabledBlocks = new TreeMap<>();
         marks.forEach((toggle, content) -> {
-            if (experiments.contains(toggle)) {
+            if (requests(toggle)) {
                 enabled.add(toggle);
                 content.items().forEach(item -> enabledItems.putIfAbsent(item, toggle));
                 content.blocks().forEach(block -> enabledBlocks.putIfAbsent(block, toggle));
@@ -111,7 +124,7 @@ public final class VanillaContent {
         Set<String> missingBlocks = new TreeSet<>();
         List<String> notes = new ArrayList<>();
         marks.forEach((toggle, content) -> {
-            if (experiments.contains(toggle)) {
+            if (requests(toggle)) {
                 return;
             }
             List<String> items = content.items().stream().filter(item -> !enabledItems.containsKey(item) && itemsInData.contains(item)).toList();
