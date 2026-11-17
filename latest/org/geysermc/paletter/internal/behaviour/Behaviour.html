@@ -93,8 +93,8 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="annotations"><a href="../../annotation/Internal.html" title="annotation interface in org.geysermc.paletter.annotation">@Internal</a>
 </span><span class="modifiers">public final class </span><span class="element-name type-name-label">Behaviour</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">The behaviour values of the blocks and items of one <a href="../../Palette.html" title="class in org.geysermc.paletter"><code>Palette</code></a>, behind <a href="../../Palette.html#blockBehaviour(int)"><code>Palette.blockBehaviour(int)</code></a> and
- <a href="../../Palette.html#itemBehaviour(org.geysermc.paletter.vanilla.BedrockItemType)"><code>Palette.itemBehaviour(org.geysermc.paletter.vanilla.BedrockItemType)</code></a>. Thread safe.
+<div class="block">The behaviour values of the blocks and items of one <a href="../../Palette.html" title="class in org.geysermc.paletter"><code>Palette</code></a>, behind <a href="../../Palette.html#resolve(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>Palette.resolve(org.geysermc.paletter.vanilla.BedrockBlockState)</code></a> and
+ <a href="../../item/ResolvedItem.html#behaviour()"><code>ResolvedItem.behaviour()</code></a>. Thread safe.
  <p>
  Vanilla values come from the bundled captures of the palette's data version (an older capture's value when the
  version has none, see <a href="Provenance.html#inherited()"><code>Provenance.inherited()</code></a>); keys the captures lack fall back to what the component data
@@ -261,7 +261,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="../../behaviour/ItemValues.html" title="class in org.geysermc.paletter.behaviour">ItemValues</a></span>&nbsp;<span class="element-name">item</span><wbr><span class="parameters">(@NonNull <a href="../../item/RegisteredItem.html" title="class in org.geysermc.paletter.item">RegisteredItem</a>&nbsp;item)</span></div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the handle of an item of the palette, see <a href="#block(int)"><code>block(int)</code></a>; null if the item is not of the palette</dd>
+<dd>the handle of an item of the palette, of the palette this one extends for an item they share (the same instance), see <a href="#block(int)"><code>block(int)</code></a>; null if the item is not of the palette</dd>
 </dl>
 </section>
 </li>

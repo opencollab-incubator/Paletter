@@ -92,9 +92,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">BlockValues</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">The behaviour values of one block state in one palette: <code>palette.blockBehaviour(runtimeId)</code>. A handle is the
+<div class="block">The behaviour values of one block state in one palette: <code>palette.resolve(state).behaviour()</code>. A handle is the
  palette's values and the position of the state in them: <code>get</code> reads an array and neither allocates nor boxes.
- Call <code>palette.blockBehaviour(...).get(key)</code> on the hot path as it is; inlined, the handle costs nothing. Handles
+ Call <code>palette.resolve(...).behaviour().get(key)</code> on the hot path as it is; inlined, the handle costs nothing. Handles
  are equal for the same state in the same palette; compare them with <code>equals</code>, not <code>==</code>.
  <p>
  <code>get</code> returns the value: what the user's component sets, else the vanilla value, else BDS's default for custom
@@ -119,7 +119,7 @@ loadScripts(document, 'script');</script>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.geysermc.paletter.internal.behaviour.Behaviour,int)" class="member-name-link">BlockValues</a><wbr>(@NonNull <a href="../internal/behaviour/Behaviour.html" title="class in org.geysermc.paletter.internal.behaviour">Behaviour</a>&nbsp;behaviour,
  int&nbsp;index)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Plumbing of <a href="../Palette.html#blockBehaviour(int)"><code>Palette.blockBehaviour(int)</code></a>: public for it, not part of the API.</div>
+<div class="block">Plumbing of <a href="../Palette.html#resolve(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>Palette.resolve(org.geysermc.paletter.vanilla.BedrockBlockState)</code></a>: public for it, not part of the API.</div>
 </div>
 </div>
 </section>
@@ -203,7 +203,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in org.geysermc.paletter.annotation">@Internal</a>
 </span><span class="modifiers">public</span>&nbsp;<span class="element-name">BlockValues</span><wbr><span class="parameters">(@NonNull <a href="../internal/behaviour/Behaviour.html" title="class in org.geysermc.paletter.internal.behaviour">Behaviour</a>&nbsp;behaviour,
  int&nbsp;index)</span></div>
-<div class="block">Plumbing of <a href="../Palette.html#blockBehaviour(int)"><code>Palette.blockBehaviour(int)</code></a>: public for it, not part of the API.</div>
+<div class="block">Plumbing of <a href="../Palette.html#resolve(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>Palette.resolve(org.geysermc.paletter.vanilla.BedrockBlockState)</code></a>: public for it, not part of the API.</div>
 </section>
 </li>
 </ul>

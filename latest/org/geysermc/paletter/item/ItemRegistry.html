@@ -143,6 +143,15 @@ implements org.cloudburstmc.protocol.common.DefinitionRegistry&lt;org.cloudburst
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../internal/behaviour/Behaviour.html" title="class in org.geysermc.paletter.internal.behaviour">Behaviour</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#behaviour()" class="member-name-link">behaviour</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#bind(org.geysermc.paletter.Palette)" class="member-name-link">bind</a><wbr>(@NonNull <a href="../Palette.html" title="class in org.geysermc.paletter">Palette</a>&nbsp;palette)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Internal: binds the palette that owns this registry, unless one is bound: a palette that shares the registry of
+ another (a copy with a report) has the same values.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="../block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">blockOf</a><wbr>(@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -278,6 +287,28 @@ implements org.cloudburstmc.protocol.common.DefinitionRegistry&lt;org.cloudburst
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="bind(org.geysermc.paletter.Palette)">
+<h3>bind</h3>
+<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in org.geysermc.paletter.annotation">@Internal</a>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">bind</span><wbr><span class="parameters">(@NonNull <a href="../Palette.html" title="class in org.geysermc.paletter">Palette</a>&nbsp;palette)</span></div>
+<div class="block">Internal: binds the palette that owns this registry, unless one is bound: a palette that shares the registry of
+ another (a copy with a report) has the same values. Called by the palette when it is made.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="behaviour()">
+<h3>behaviour</h3>
+<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in org.geysermc.paletter.annotation">@Internal</a>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="../internal/behaviour/Behaviour.html" title="class in org.geysermc.paletter.internal.behaviour">Behaviour</a></span>&nbsp;<span class="element-name">behaviour</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the behaviour of the palette that owns this registry</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if no palette owns it yet, which what a palette resolves never sees</dd>
+</dl>
+</section>
+</li>
 <li>
 <section class="detail" id="vanilla(org.geysermc.paletter.internal.data.VanillaData,org.geysermc.paletter.block.BlockRegistry,org.geysermc.paletter.internal.CanonicalItems)">
 <h3>vanilla</h3>

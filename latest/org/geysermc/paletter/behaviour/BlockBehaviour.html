@@ -92,7 +92,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">BlockBehaviour</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">The behaviour keys of block states, read with <code>palette.blockBehaviour(state).get(key)</code> (<a href="BlockValues.html" title="class in org.geysermc.paletter.behaviour"><code>BlockValues</code></a>).
+<div class="block">The behaviour keys of block states, read with <code>palette.resolve(state).behaviour().get(key)</code> (<a href="BlockValues.html" title="class in org.geysermc.paletter.behaviour"><code>BlockValues</code></a>).
  Values are per state and per data version; <a href="BlockValues.html#explain(org.geysermc.paletter.behaviour.BehaviourKey)"><code>BlockValues.explain(org.geysermc.paletter.behaviour.BehaviourKey&lt;?&gt;)</code></a> says where one comes from. Each key is a property
  of Bedrock Dedicated Server (its source is named on the key), in BDS's units, not those of add-on components: custom
  blocks are converted (the component <code>minecraft:friction</code> 0.4 is a friction of 0.6).</div>

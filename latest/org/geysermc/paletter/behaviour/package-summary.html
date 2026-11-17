@@ -100,7 +100,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="BlockBehaviour.html" title="class in org.geysermc.paletter.behaviour">BlockBehaviour</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">The behaviour keys of block states, read with <code>palette.blockBehaviour(state).get(key)</code> (<a href="BlockValues.html" title="class in org.geysermc.paletter.behaviour"><code>BlockValues</code></a>).</div>
+<div class="block">The behaviour keys of block states, read with <code>palette.resolve(state).behaviour().get(key)</code> (<a href="BlockValues.html" title="class in org.geysermc.paletter.behaviour"><code>BlockValues</code></a>).</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab4"><a href="BlockShape.html" title="class in org.geysermc.paletter.behaviour">BlockShape</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab4">
@@ -113,7 +113,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="BlockValues.html" title="class in org.geysermc.paletter.behaviour">BlockValues</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">The behaviour values of one block state in one palette: <code>palette.blockBehaviour(runtimeId)</code>.</div>
+<div class="block">The behaviour values of one block state in one palette: <code>palette.resolve(state).behaviour()</code>.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="BooleanKey.html" title="class in org.geysermc.paletter.behaviour">BooleanKey</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
@@ -129,11 +129,11 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ItemBehaviour.html" title="class in org.geysermc.paletter.behaviour">ItemBehaviour</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">The behaviour keys of item types, read with <code>palette.itemBehaviour(type).get(key)</code> (<a href="ItemValues.html" title="class in org.geysermc.paletter.behaviour"><code>ItemValues</code></a>).</div>
+<div class="block">The behaviour keys of item types, read with <code>palette.resolve(variant).behaviour().get(key)</code> (<a href="ItemValues.html" title="class in org.geysermc.paletter.behaviour"><code>ItemValues</code></a>).</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="ItemValues.html" title="class in org.geysermc.paletter.behaviour">ItemValues</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">The behaviour values of one item type in one palette: <code>palette.itemBehaviour(BedrockItems.APPLE)</code>.</div>
+<div class="block">The behaviour values of one item type in one palette: <code>palette.resolve(BedrockItems.APPLE.base()).behaviour()</code>.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ObjectKey.html" title="class in org.geysermc.paletter.behaviour">ObjectKey</a>&lt;T&gt;</div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">

@@ -92,7 +92,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ItemValues</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">The behaviour values of one item type in one palette: <code>palette.itemBehaviour(BedrockItems.APPLE)</code>. Values are per
+<div class="block">The behaviour values of one item type in one palette: <code>palette.resolve(BedrockItems.APPLE.base()).behaviour()</code>. Values are per
  item type, not per aux value. A handle is the palette's values and the position of the item in them: <code>get</code> reads
  an array and neither allocates nor boxes. Handles are equal for the same item in the same palette.
  <p>
@@ -119,7 +119,7 @@ loadScripts(document, 'script');</script>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.geysermc.paletter.internal.behaviour.Behaviour,int)" class="member-name-link">ItemValues</a><wbr>(@NonNull <a href="../internal/behaviour/Behaviour.html" title="class in org.geysermc.paletter.internal.behaviour">Behaviour</a>&nbsp;behaviour,
  int&nbsp;index)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Plumbing of <a href="../Palette.html#itemBehaviour(org.geysermc.paletter.vanilla.BedrockItemType)"><code>Palette.itemBehaviour(org.geysermc.paletter.vanilla.BedrockItemType)</code></a>: public for it, not part of the API.</div>
+<div class="block">Plumbing of <a href="../item/ResolvedItem.html#behaviour()"><code>ResolvedItem.behaviour()</code></a>: public for it, not part of the API.</div>
 </div>
 </div>
 </section>
@@ -203,7 +203,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in org.geysermc.paletter.annotation">@Internal</a>
 </span><span class="modifiers">public</span>&nbsp;<span class="element-name">ItemValues</span><wbr><span class="parameters">(@NonNull <a href="../internal/behaviour/Behaviour.html" title="class in org.geysermc.paletter.internal.behaviour">Behaviour</a>&nbsp;behaviour,
  int&nbsp;index)</span></div>
-<div class="block">Plumbing of <a href="../Palette.html#itemBehaviour(org.geysermc.paletter.vanilla.BedrockItemType)"><code>Palette.itemBehaviour(org.geysermc.paletter.vanilla.BedrockItemType)</code></a>: public for it, not part of the API.</div>
+<div class="block">Plumbing of <a href="../item/ResolvedItem.html#behaviour()"><code>ResolvedItem.behaviour()</code></a>: public for it, not part of the API.</div>
 </section>
 </li>
 </ul>
