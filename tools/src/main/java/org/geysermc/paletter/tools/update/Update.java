@@ -36,6 +36,7 @@ import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.tools.client.Capture;
 import org.geysermc.paletter.tools.client.RecipeCapture;
+import org.geysermc.paletter.tools.data.RecipeData;
 import org.geysermc.paletter.tools.client.CapturedData;
 import org.geysermc.paletter.tools.client.LevelDat;
 import org.geysermc.paletter.tools.codegen.component.HandTransforms;
@@ -64,6 +65,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -1333,6 +1335,7 @@ public final class Update {
         VanillaData captured = read(scratch.resolve(name + ".nbt"));
         runs.imported = scratch.resolve(name + ".nbt");
         Map<String, List<VariantNames.Entry>> variantNames = VariantNames.read(root.resolve(VariantNames.FILE));
+        recipes(distribution, runs, captured);
         // The recipe data of the capture, committed with the build's other vanilla captures
         for (String file : List.of(RecipeCapture.CRAFTING, RecipeCapture.TRIM)) {
             if (Files.exists(runs.vanilla.resolve(file))) {
@@ -1388,6 +1391,41 @@ public final class Update {
             VariantNames.update(variantNames, name, dump, data);
         } catch (IllegalStateException e) {
             report.check(Report.Status.FAIL, "Item variant names", e.getMessage() + "; the names of " + name + " stay as they are");
+        }
+    }
+
+    /**
+     * The recipe capture against the committed one of this build, or of the build before ({@link #baseline}), and the
+     * assumptions the recipe data rests on (items and tags exist in the imported palette, net ids are 1..n). Runs before
+     * the capture is committed, so it still sees the old one.
+     */
+    private void recipes(BdsDistribution distribution, Runs runs, VanillaData captured) throws IOException {
+        if (!Files.exists(runs.vanilla.resolve(RecipeCapture.CRAFTING))) {
+            report.check(Report.Status.INFO, "Recipes", "no crafting data in the capture");
+            return;
+        }
+        RecipeCapture.Recipes recipes = RecipeCapture.read(runs.vanilla);
+        String previousBuild = baseline(distribution.version(), committedBuilds("vanilla/" + RecipeCapture.CRAFTING));
+        if (previousBuild == null) {
+            report.check(Report.Status.INFO, "Recipes", "no committed recipe capture to compare with");
+        } else {
+            Diff diff = Diff.recipes(RecipeCapture.read(bdsData.resolve(previousBuild).resolve("vanilla")), recipes);
+            String against = previousBuild.equals(distribution.version()) ? "the committed capture of " + previousBuild : previousBuild;
+            report.check(diff.identical() ? Report.Status.PASS : Report.Status.DIFF, "Recipes vs " + against,
+                diff.identical() ? "identical" : diff.count() + " differences");
+            report.diff("Recipes: BDS " + distribution.version() + " vs " + against, diff);
+        }
+        Set<String> items = new HashSet<>();
+        captured.items().forEach(item -> items.add(item.identifier()));
+        assumption("Recipe items exist in the palette", RecipeData.missingItems(recipes, items));
+        assumption("Recipe tags have members", RecipeData.emptyTags(recipes, captured.itemTags()));
+        assumption("Recipe net ids are 1..n", RecipeData.netIdProblems(recipes));
+    }
+
+    private void assumption(String name, List<String> problems) {
+        report.check(problems.isEmpty() ? Report.Status.PASS : Report.Status.FAIL, name, problems.isEmpty() ? "holds" : problems.size() + " problems");
+        if (!problems.isEmpty()) {
+            report.evidence("Problems", problems.stream().map(problem -> "- " + problem).toList());
         }
     }
 

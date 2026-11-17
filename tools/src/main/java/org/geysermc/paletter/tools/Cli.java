@@ -63,7 +63,7 @@ import java.util.concurrent.Callable;
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
     Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class, Cli.BehaviourCommand.class, Cli.BehaviourProbeCommand.class, Cli.BehaviourDumpCommand.class, Cli.ScriptDumpCommand.class,
-    Cli.VoxelShapesCommand.class, Cli.RecipesCaptureCommand.class
+    Cli.VoxelShapesCommand.class, Cli.RecipesCaptureCommand.class, Cli.RecipesDiffCommand.class
 })
 public final class Cli implements Runnable {
     /** The docs commit the committed model was generated from (MicrosoftDocs/minecraft-creator main, 2026-11-06). */
@@ -486,6 +486,26 @@ public final class Cli implements Runnable {
             flag(options, "preview", preview);
             flag(options, "keep-server", keepServer);
             org.geysermc.paletter.tools.update.RecipeProbe.run(root(), options);
+            return 0;
+        }
+    }
+
+    @Command(name = "recipes-diff", description = "Diffs the recipe captures of two builds in data/bds (normalised: list layout, net ids and random UUIDs ignored).")
+    static final class RecipesDiffCommand extends Rooted implements Callable<Integer> {
+        @Option(names = "--from", required = true) String from;
+        @Option(names = "--to", required = true) String to;
+
+        @Override
+        public Integer call() throws Exception {
+            Path data = root().resolve("data/bds");
+            Diff diff = Diff.recipes(CapturedData.recipes(data.resolve(from).resolve("vanilla")), CapturedData.recipes(data.resolve(to).resolve("vanilla")));
+            diff.print(System.out);
+            // The counts per kind: "+21 shaped"
+            Map<String, Long> counts = new java.util.TreeMap<>();
+            diff.lines().forEach((section, lines) -> lines.forEach(line -> counts.merge(
+                section + " / " + line.replaceFirst("^[+-] ", "").split(" ")[0], 1L, Long::sum)));
+            counts.forEach((kind, count) -> System.out.println("  " + kind + ": " + count));
+            System.out.println(diff.identical() ? "IDENTICAL" : "DIFFERENT");
             return 0;
         }
     }
