@@ -319,7 +319,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * a layer) the block is sent for, see {@link #canonical(BlockDefinition)}. Follows the data this registry was
      * compiled from, so it also works for palettes of other data sources and older versions.
      *
-     * @return the key, or null for a block of another palette, or one that no state of the newest data resolves to
+     * @return the key, or null for a runtime id this registry lacks, or a block that no state of the newest data resolves to
      * @since 0.1.0
      */
     public @Nullable BedrockBlockState key(@NonNull RegisteredBlockState block) {

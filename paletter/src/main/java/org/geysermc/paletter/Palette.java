@@ -363,7 +363,7 @@ public final class Palette {
     /**
      * The block an item variant is sent with in this palette's version, in its default state, as a key: a
      * {@link BedrockBlockState}, for every kind of variant (vanilla, extra, custom block items, fallbacks). Paletter alone
-     * decides it, see {@link ItemRegistry#blockOf}. A stack may carry a block state of its own, see {@link #encode}.
+     * decides it. A stack may carry a block state of its own, see {@link #encode}.
      * {@code blockDefinition(blockOf(variant))} is what is sent, and {@code resolve(variant).block()} the same without the
      * key. Unlike
      * {@link Paletter#blockOf}, which knows the vanilla variants of the newest data only, this follows the palette: the
@@ -371,7 +371,7 @@ public final class Palette {
      * runtime id here.
      *
      * @return the block's key, or null if the item is not a block item here (or no state of the newest data
-     *         resolves to the block, see {@link BlockRegistry#key})
+     *         resolves to the block, see {@link #blockState(BlockDefinition)})
      * @since 0.1.0
      */
     public @Nullable BedrockBlockState blockOf(@NonNull BedrockItemVariant variant) {
@@ -429,8 +429,14 @@ public final class Palette {
     }
 
     /**
-     * @return the key of a block this palette sends, the inverse of {@link #blockDefinition(BedrockBlockState)}, or null
-     *         for a definition of another palette or one that no state resolves to
+     * The key of a block this palette sends: its exact state, else the first state that resolves to it (several states
+     * may share a fallback). For a definition of this palette, {@code blockDefinition(blockState(definition))} is the
+     * definition again. The block is looked up by runtime id, the hash of its state: a definition of another palette
+     * gives the key of the block with the same runtime id here, as this palette knows it (a custom block of this
+     * palette's own layer).
+     *
+     * @return the key, or null if this palette has no block with the definition's runtime id, no state resolves to it,
+     *         or the definition is not a {@link RegisteredBlockState}
      * @since 0.1.0
      */
     public @Nullable BedrockBlockState blockState(@NonNull BlockDefinition definition) {
