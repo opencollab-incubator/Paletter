@@ -81,7 +81,9 @@ public final class SpecCapture {
         Path server = distribution.extract(cache, !options.containsKey("keep-server") && !options.containsKey("reuse-server"));
         try {
             Path modelDir = root.resolve("data/model");
-            Fixtures fixtures = Fixtures.read(modelDir).forBuild(distribution.version());
+            Fixtures fixtures = Fixtures.read(modelDir).forBuild(distribution.version())
+                // The add-on is the one place that takes BDS's schema: full enums and limits to vary
+                .withNewestSchema(distribution.version());
             // The add-on asks for no newer format than the build is: older builds refuse packs of a newer engine version
             String formatVersion = AddonGenerator.formatVersionFor(fixtures.formatVersion, distribution.version());
             Model docs = Model.read(modelDir.resolve("components.json"));
@@ -156,6 +158,12 @@ public final class SpecCapture {
             metadata.addProperty("protocol", protocol);
             metadata.addProperty("preview", preview);
             metadata.addProperty("formatVersion", formatVersion);
+            // Values the generator cut at AddonGenerator.MAX_VALUES, which no capture of this add-on varies
+            JsonArray cut = new JsonArray();
+            generator.cutValues().forEach(cut::add);
+            if (!cut.isEmpty()) {
+                metadata.add("valuesCut", cut);
+            }
             metadata.addProperty("nativeCodec", summary.nativeCodec());
             metadata.addProperty("codecProtocol", summary.codecProtocol());
             // creative block hashes that the client's palette (traits from the generated TraitStateTable) did and did not match

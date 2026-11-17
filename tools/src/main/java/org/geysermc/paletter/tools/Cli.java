@@ -21,6 +21,8 @@ import org.geysermc.paletter.tools.data.Importer;
 import org.geysermc.paletter.tools.data.WireShapes;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.Model;
+import org.geysermc.paletter.tools.model.Schema;
+import org.geysermc.paletter.tools.model.SchemaExtract;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 import org.geysermc.paletter.tools.model.addon.FixedAddons;
 import org.geysermc.paletter.tools.model.docs.DocsFetcher;
@@ -58,7 +60,7 @@ import java.util.concurrent.Callable;
  * repository. See docs/data-pipeline.md for what each command does.
  */
 @Command(name = "paletter-tools", mixinStandardHelpOptions = true, subcommands = {
-    Cli.Import.class, Cli.BdsInventoryCommand.class, Cli.WhiteboxCommand.class, Cli.WhiteboxCoverageCommand.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.Builds.class, Cli.SpecCaptureCommand.class,
+    Cli.Import.class, Cli.BdsInventoryCommand.class, Cli.BdsSchemaCommand.class, Cli.WhiteboxCommand.class, Cli.WhiteboxCoverageCommand.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.Builds.class, Cli.SpecCaptureCommand.class,
     Cli.VerifyCommand.class, Cli.CheckData.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class, Cli.ExperimentMarksCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
@@ -139,6 +141,30 @@ public final class Cli implements Runnable {
                 List<String> diff = BdsInventory.diff(
                     BdsInventory.parse(previous), BdsInventory.parse(file));
                 System.out.println(diff.size() + " changes against " + previous + (diff.isEmpty() ? "" : ":"));
+                diff.forEach(System.out::println);
+            }
+            return 0;
+        }
+    }
+
+    @Command(name = "bds-schema", description = "Extracts data/bds/<VERSION>/schema.json (keys, types, enums, limits of every item and block "
+        + "component) from the json_schemas of BDS's documentation generator; --docs is its docs directory (update keeps the one of a build "
+        + "in the cache, docgen/<VERSION>). Prints what changed against the schema of the previous build. Needs no BDS run.")
+    static final class BdsSchemaCommand extends Rooted implements Callable<Integer> {
+        @Option(names = "--bds", required = true, description = "BDS version, e.g. 1.26.63.1") String bds;
+        @Option(names = "--docs", required = true, description = "the docs directory BDS generated") Path docs;
+
+        @Override
+        public Integer call() throws Exception {
+            Path bdsData = root().resolve(Layout.BDS);
+            Schema previous = Schema.newest(bdsData, bds);
+            Path file = bdsData.resolve(bds).resolve(Schema.FILE);
+            SchemaExtract.write(docs, bds, file);
+            Schema schema = Schema.read(file);
+            System.out.println(file + ": " + schema.summary());
+            if (previous != Schema.NONE) {
+                List<String> diff = Schema.diff(previous, schema);
+                System.out.println(diff.size() + " changes against the schema of " + previous.build() + ":");
                 diff.forEach(System.out::println);
             }
             return 0;
@@ -698,7 +724,7 @@ public final class Cli implements Runnable {
             switch (kind) {
                 case "spec" -> {
                     Path model = root().resolve(Layout.MODEL);
-                    new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model)).write(out);
+                    new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model).withNewestSchema(null)).write(out);
                 }
                 case "capture" -> FixedAddons.writeCapture(out);
                 case "creative" -> FixedAddons.writeCreative(out);

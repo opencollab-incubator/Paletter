@@ -78,7 +78,9 @@ final class TraitStateTable {
         Map<String, Map<String, List<State>>> table = new TreeMap<>();
         for (Model.Component trait : model.components()) {
             if (trait.category().equals("trait")) {
-                table.put(trait.name(), statesOf(trait, history));
+                List<String> skipped = new ArrayList<>();
+                table.put(trait.name(), statesOf(trait, history, skipped));
+                skipped.forEach(line -> System.out.println("Skipped: " + line + " (no state in the trait state table until a capture shows it)"));
             }
         }
         Map<String, String> verified = verify(root, table);
@@ -107,6 +109,14 @@ final class TraitStateTable {
     }
 
     static Map<String, List<State>> statesOf(Model.Component trait, JsonObject history) {
+        return statesOf(trait, history, new ArrayList<>());
+    }
+
+    /**
+     * @param skipped gets an {@code enabled_states} value the docs name no state for ({@code minecraft:sixteen_way_rotation},
+     *                which BDS's schema lists): it is left out of the table and reported, until a capture shows what it adds
+     */
+    static Map<String, List<State>> statesOf(Model.Component trait, JsonObject history, List<String> skipped) {
         Map<String, State> documented = new LinkedHashMap<>();
         for (String note : trait.notes()) {
             Matcher m = ADDS_STATE.matcher(note.trim());
@@ -140,9 +150,10 @@ final class TraitStateTable {
         }
         if (unmatched != null) {
             if (unnamed.isEmpty()) {
-                throw new IllegalStateException(trait.id() + ": enabled_states " + unmatched + " adds no documented state");
+                skipped.add(trait.id() + ": enabled_states " + unmatched + " adds no documented state");
+            } else {
+                byValue.put(unmatched, unnamed.stream().map(documented::get).toList());
             }
-            byValue.put(unmatched, unnamed.stream().map(documented::get).toList());
         } else if (!unnamed.isEmpty()) {
             throw new IllegalStateException(trait.id() + ": no enabled_states value adds " + unnamed);
         }

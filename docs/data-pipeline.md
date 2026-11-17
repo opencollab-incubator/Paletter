@@ -7,6 +7,7 @@ code, and kept up to date. Everything here runs from the `tools` module, which i
 BDS (downloaded and run)   -> update, capture, spec-capture, behaviour-probe, ... -> data/bds/<build>/
 data/bds + Geyser files    -> import / update                    -> paletter/src/main/resources/paletter/*.nbt
 creator docs               -> docs                               -> data/model/components.json
+BDS docgen (`update`)      -> bds-schema                         -> data/bds/<build>/schema.json (merged into the model by `Fixtures#apply`)
 data/model + spec capture  -> infer                              -> data/model/mappings.json, coverage.md
 data/model                 -> generateComponentApi               -> paletter/src/generated/java (components, encoders, behaviour keys)
 bundled data               -> generateConstants                  -> paletter/src/generated/java (vanilla constants)
@@ -385,7 +386,7 @@ not ask for them.
 | Source | Gives | Verdict |
 |---|---|---|
 | The binary, read statically (`whitebox`) | registered components, network flag, kind, hand-written keys, envelopes, changes per build | used: no BDS run, any platform, about 15 s per build |
-| BDS's documentation generator (`test_config.json` with `generate_documentation`, about 40 s, stops by itself) | JSON schemas of every component: keys, types, enums, ranges per format version | BDS's own output; fits the docs side of the component model and the enum tables. The schemas are of the JSON, not of the network, and say nothing about hand-written components |
+| BDS's documentation generator (`test_config.json` with `generate_documentation`, about 40 s, stops by itself) | JSON schemas of every component: keys, types, enums, ranges per format version | used: `update` extracts keys, types, enums, limits, required and runtime constraints per component and format into `data/bds/<build>/schema.json` (`bds-schema` does it from a docs directory, offline; the raw tree stays in the cache, `docgen/<build>`). `Fixtures#apply` merges it into the model with the order schema, feedback, errata, docs. The schemas are of the JSON, not of the network, and say nothing about hand-written components |
 | Instrumenting a running BDS (`LD_PRELOAD` on Linux in CI, a DLL or Frida on Windows) to call each writer on a default object | real NBT, also of components whose JSON BDS rejects | not built: every address would come from `whitebox` anyway, a default object is not what an add-on produces, and it would be native code to maintain per build. Worth it only for components that no JSON at any format version reaches |
 | The content log and server switches | nothing about component data beyond what `spec-capture` already reads | no hook found |
 
@@ -534,3 +535,35 @@ the report; [native-capture.md](native-capture.md) is the plan for capturing the
 of a world with the `voxel_shapes` experiment, of a probe add-on and of anchor blocks, plus BDS's own shape files, into
 `data/bds/<build>/voxel-shapes`. `voxel-shapes import` writes `voxel_shapes.nbt`; `VoxelShapeConformanceTest` checks the
 library against every capture. The findings are in [wire-notes.md](wire-notes.md#voxel-shapes).
+
+## BDS schema
+
+`update` runs BDS's documentation generator first (its own start: BDS stops by itself), moves the generated `docs/` into the
+cache and writes `data/bds/<build>/schema.json` from `docs/json_schemas/server`. The extract starts at the entry points
+(`Item Components`, `Block Components`, `Traits`; the directory is the format version, `beta` last), follows the `$ref`s and
+writes per component and field path (`a.b`, `a[]`, `a{}`) the facts: types, enum, default, minimum and maximum, string and
+list limits, pattern, required, deprecated, underlying type and runtime constraint text. A definition that is the same in
+several formats is written once with its formats. The file is generated and facts only: the descriptions and the raw tree
+stay out of the repository.
+
+`Fixtures#apply` merges the schema into the model, schema before feedback before errata before docs, when
+`Fixtures.SCHEMA_IN_ADDON` is on (one switch for the add-on, the spec capture, the mapping inference, the coverage and the
+component API: one model). It is off until every build is captured again with the add-on the schema shapes; that change flips
+it together with the new data, so the committed captures and the conformance test stay valid until then.
+
+- Per component the newest stable format at or below the add-on's format version counts; `beta` and beta-only components do
+  not. Enum values (also of list elements), limits, `step` and `required` replace the docs'; the schema's types are added (first
+  where BDS takes none of the documented ones); members and components only the schema has are added (not deprecated ones, not
+  the elements of lists and maps). `required` is the union of the schema, the content log and the docs.
+- `oneOf`/`anyOf` are read per alternative: `required` only where every object alternative requires it (`requiredInSome`
+  otherwise), `minimum`, `maximum` and `default` from one alternative, `enumTypes` for the types an enum came from. Components
+  the document around the entry point forbids (`propertyNames`) are deprecated.
+- Where the content log and the schema disagree on a limit, list length, step or value, the schema's replaces the log's in
+  `Fixtures#facts` and the add-on varies both (`Fixtures#disputed`: boundaries of each, values of each). `update` reports the
+  disputes ("BDS schema vs content log"), the components it could not read, the keywords it does not know, and the values the
+  add-on generator cut at `MAX_VALUES` ("Add-on values cut", also `valuesCut` in `capture.json`).
+- The step never blocks an import: no docs, an unreadable layout or one bad component are skipped rows, and the previous
+  committed schema (the newest build not after the one being run) is what the model merges. A `schema.json` that cannot be read
+  is no schema, with a warning.
+- The trait state table skips (and reports) an `enabled_states` value no docs name a state for, such as
+  `minecraft:sixteen_way_rotation`.
