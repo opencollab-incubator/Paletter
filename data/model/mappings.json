@@ -6,8 +6,8 @@
       "bdsVersion": "1.26.36.1",
       "protocol": 1001,
       "windowProtocol": 1001,
-      "variants": 2881,
-      "accepted": 2262,
+      "variants": 2911,
+      "accepted": 2280,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     },
@@ -16,8 +16,8 @@
       "bdsVersion": "1.26.45.1",
       "protocol": 2169,
       "windowProtocol": 2168,
-      "variants": 2881,
-      "accepted": 2291,
+      "variants": 2911,
+      "accepted": 2309,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     },
@@ -26,8 +26,8 @@
       "bdsVersion": "1.26.52.3",
       "protocol": 2193,
       "windowProtocol": 2193,
-      "variants": 2883,
-      "accepted": 2296,
+      "variants": 2913,
+      "accepted": 2314,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     },
@@ -36,8 +36,8 @@
       "bdsVersion": "1.26.63.1",
       "protocol": 2225,
       "windowProtocol": 2225,
-      "variants": 2921,
-      "accepted": 2333,
+      "variants": 2951,
+      "accepted": 2351,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     },
@@ -47,8 +47,8 @@
       "protocol": 2259,
       "windowProtocol": 2259,
       "preview": "26.70",
-      "variants": 2884,
-      "accepted": 2307,
+      "variants": 2914,
+      "accepted": 2325,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     }
@@ -3175,8 +3175,8 @@
     },
     "block:minecraft:embedded_visual": {
       "variants": {
-        "accepted": 77,
-        "rejected": 47
+        "accepted": 83,
+        "rejected": 53
       },
       "wire": [
         "minecraft:embedded_visual"
@@ -3202,8 +3202,8 @@
           "status": "no-evidence"
         },
         "geometry.bone_visibility": {
-          "accepted": 30,
-          "rejected": 32,
+          "accepted": 36,
+          "rejected": 38,
           "rejectedValues": [
             "map<string>:{1}",
             "map<string>:{2}",
@@ -3231,6 +3231,12 @@
             "map<string>:{1} false",
             "map<string>:{1} !q.block_state('paletter:flag')",
             "map<string>:{1} query.block_state('paletter:flag')",
+            "map<string>:{1} -.5",
+            "map<string>:{1} -1.",
+            "map<string>:{1} 1.e3",
+            "map<string>:{1} .5e1",
+            "map<string>:{1} -1e3",
+            "map<string>:{1} 1E3",
             "map<boolean>:{1}",
             "map<boolean>:{1} linked geometry.identifier",
             "map<boolean>:{2}",
@@ -3582,7 +3588,7 @@
         "geometry": {
           "verified": {
             "build": "1.26.36.1",
-            "variants": 66
+            "variants": 72
           }
         },
         "material_instances": {
@@ -3597,8 +3603,8 @@
       ],
       "protocol2168": {
         "variants": {
-          "accepted": 77,
-          "rejected": 47
+          "accepted": 83,
+          "rejected": 53
         },
         "wire": [
           "minecraft:embedded_visual"
@@ -3624,8 +3630,8 @@
             "status": "no-evidence"
           },
           "geometry.bone_visibility": {
-            "accepted": 30,
-            "rejected": 32,
+            "accepted": 36,
+            "rejected": 38,
             "rejectedValues": [
               "map<string>:{1}",
               "map<string>:{2}",
@@ -3653,6 +3659,12 @@
               "map<string>:{1} false",
               "map<string>:{1} !q.block_state('paletter:flag')",
               "map<string>:{1} query.block_state('paletter:flag')",
+              "map<string>:{1} -.5",
+              "map<string>:{1} -1.",
+              "map<string>:{1} 1.e3",
+              "map<string>:{1} .5e1",
+              "map<string>:{1} -1e3",
+              "map<string>:{1} 1E3",
               "map<boolean>:{1}",
               "map<boolean>:{1} linked geometry.identifier",
               "map<boolean>:{2}",
@@ -3969,7 +3981,7 @@
           "geometry": {
             "verified": {
               "build": "1.26.45.1",
-              "variants": 66
+              "variants": 72
             }
           },
           "material_instances": {
@@ -3986,8 +3998,8 @@
       },
       "protocol2225": {
         "variants": {
-          "accepted": 80,
-          "rejected": 44
+          "accepted": 86,
+          "rejected": 50
         },
         "wire": [
           "minecraft:embedded_visual"
@@ -4013,8 +4025,8 @@
             "status": "no-evidence"
           },
           "geometry.bone_visibility": {
-            "accepted": 33,
-            "rejected": 29,
+            "accepted": 39,
+            "rejected": 35,
             "rejectedValues": [
               "map<string>:{1}",
               "map<string>:{2}",
@@ -4042,6 +4054,12 @@
               "map<string>:{1} false",
               "map<string>:{1} !q.block_state('paletter:flag')",
               "map<string>:{1} query.block_state('paletter:flag')",
+              "map<string>:{1} -.5",
+              "map<string>:{1} -1.",
+              "map<string>:{1} 1.e3",
+              "map<string>:{1} .5e1",
+              "map<string>:{1} -1e3",
+              "map<string>:{1} 1E3",
               "map<boolean>:{1}",
               "map<boolean>:{2}",
               "map<boolean>:{unknown key}"
@@ -4423,7 +4441,7 @@
           "geometry": {
             "verified": {
               "build": "1.26.63.1",
-              "variants": 69
+              "variants": 75
             }
           },
           "material_instances": {
@@ -4674,7 +4692,7 @@
     },
     "block:minecraft:geometry": {
       "variants": {
-        "accepted": 55,
+        "accepted": 61,
         "rejected": 19
       },
       "wire": [
@@ -4698,7 +4716,7 @@
       },
       "fields": {
         "bone_visibility": {
-          "accepted": 27,
+          "accepted": 33,
           "rejected": 4,
           "rejectedValues": [
             "map<string>:{1} +1",
@@ -4969,7 +4987,7 @@
         "": {
           "verified": {
             "build": "1.26.36.1",
-            "variants": 52
+            "variants": 58
           },
           "rejectedFields": [
             "n_way_visual_rotation"
@@ -4981,7 +4999,7 @@
       ],
       "protocol2168": {
         "variants": {
-          "accepted": 55,
+          "accepted": 61,
           "rejected": 19
         },
         "wire": [
@@ -5005,7 +5023,7 @@
         },
         "fields": {
           "bone_visibility": {
-            "accepted": 27,
+            "accepted": 33,
             "rejected": 4,
             "rejectedValues": [
               "map<string>:{1} +1",
@@ -5241,7 +5259,7 @@
           "": {
             "verified": {
               "build": "1.26.45.1",
-              "variants": 52
+              "variants": 58
             },
             "rejectedFields": [
               "n_way_visual_rotation"
@@ -5255,7 +5273,7 @@
       },
       "protocol2225": {
         "variants": {
-          "accepted": 69,
+          "accepted": 75,
           "rejected": 25
         },
         "wire": [
@@ -5279,7 +5297,7 @@
         },
         "fields": {
           "bone_visibility": {
-            "accepted": 30,
+            "accepted": 36,
             "rejected": 1,
             "rejectedValues": [
               "map<string>:{1} +1"
@@ -5534,9 +5552,9 @@
               "string:minecraft:paletter_unknown"
             ],
             "bdsErrors": [
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_80.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_b",
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_82.json | minecraft:geometry field n_way_visual_rotation.x references unknown state cardinal_direction",
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_83.json | minecraft:geometry field n_way_visual_rotation.x references unknown state minecraft:paletter_unknown"
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_86.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_b",
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_88.json | minecraft:geometry field n_way_visual_rotation.x references unknown state cardinal_direction",
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_89.json | minecraft:geometry field n_way_visual_rotation.x references unknown state minecraft:paletter_unknown"
             ],
             "status": "inferred",
             "rules": [
@@ -5560,9 +5578,9 @@
               "string:minecraft:paletter_unknown"
             ],
             "bdsErrors": [
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_86.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_b",
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_88.json | minecraft:geometry field n_way_visual_rotation.y references unknown state cardinal_direction",
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_89.json | minecraft:geometry field n_way_visual_rotation.y references unknown state minecraft:paletter_unknown"
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_92.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_b",
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_94.json | minecraft:geometry field n_way_visual_rotation.y references unknown state cardinal_direction",
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_95.json | minecraft:geometry field n_way_visual_rotation.y references unknown state minecraft:paletter_unknown"
             ],
             "status": "inferred",
             "rules": [
@@ -5586,9 +5604,9 @@
               "string:minecraft:paletter_unknown"
             ],
             "bdsErrors": [
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_92.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_b",
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_94.json | minecraft:geometry field n_way_visual_rotation.z references unknown state cardinal_direction",
-              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_95.json | minecraft:geometry field n_way_visual_rotation.z references unknown state minecraft:paletter_unknown"
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_98.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_b",
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_100.json | minecraft:geometry field n_way_visual_rotation.z references unknown state cardinal_direction",
+              "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_101.json | minecraft:geometry field n_way_visual_rotation.z references unknown state minecraft:paletter_unknown"
             ],
             "status": "inferred",
             "rules": [
@@ -5614,7 +5632,7 @@
           "": {
             "verified": {
               "build": "1.26.63.1",
-              "variants": 62
+              "variants": 68
             }
           }
         },
@@ -5624,7 +5642,7 @@
       },
       "protocol2259": {
         "variants": {
-          "accepted": 58,
+          "accepted": 64,
           "rejected": 16
         },
         "wire": [
@@ -5648,7 +5666,7 @@
         },
         "fields": {
           "bone_visibility": {
-            "accepted": 30,
+            "accepted": 36,
             "rejected": 1,
             "rejectedValues": [
               "map<string>:{1} +1"
@@ -5880,7 +5898,7 @@
           "": {
             "verified": {
               "build": "1.26.70.24",
-              "variants": 55
+              "variants": 61
             },
             "rejectedFields": [
               "n_way_visual_rotation"
@@ -5936,8 +5954,8 @@
     },
     "block:minecraft:item_visual": {
       "variants": {
-        "accepted": 73,
-        "rejected": 41
+        "accepted": 79,
+        "rejected": 47
       },
       "wire": [
         "minecraft:item_visual"
@@ -5988,8 +6006,8 @@
           ]
         },
         "geometry.bone_visibility": {
-          "accepted": 30,
-          "rejected": 32,
+          "accepted": 36,
+          "rejected": 38,
           "rejectedValues": [
             "map<string>:{1}",
             "map<string>:{2}",
@@ -6017,6 +6035,12 @@
             "map<string>:{1} false",
             "map<string>:{1} !q.block_state('paletter:flag')",
             "map<string>:{1} query.block_state('paletter:flag')",
+            "map<string>:{1} -.5",
+            "map<string>:{1} -1.",
+            "map<string>:{1} 1.e3",
+            "map<string>:{1} .5e1",
+            "map<string>:{1} -1e3",
+            "map<string>:{1} 1E3",
             "map<boolean>:{1}",
             "map<boolean>:{1} linked geometry.identifier",
             "map<boolean>:{2}",
@@ -6532,7 +6556,7 @@
         "geometry.bone_visibility": {
           "verified": {
             "build": "1.26.36.1",
-            "variants": 30
+            "variants": 36
           }
         },
         "geometry.uv_lock": {
@@ -6553,8 +6577,8 @@
       ],
       "protocol2168": {
         "variants": {
-          "accepted": 73,
-          "rejected": 41
+          "accepted": 79,
+          "rejected": 47
         },
         "wire": [
           "minecraft:item_visual"
@@ -6605,8 +6629,8 @@
             ]
           },
           "geometry.bone_visibility": {
-            "accepted": 30,
-            "rejected": 32,
+            "accepted": 36,
+            "rejected": 38,
             "rejectedValues": [
               "map<string>:{1}",
               "map<string>:{2}",
@@ -6634,6 +6658,12 @@
               "map<string>:{1} false",
               "map<string>:{1} !q.block_state('paletter:flag')",
               "map<string>:{1} query.block_state('paletter:flag')",
+              "map<string>:{1} -.5",
+              "map<string>:{1} -1.",
+              "map<string>:{1} 1.e3",
+              "map<string>:{1} .5e1",
+              "map<string>:{1} -1e3",
+              "map<string>:{1} 1E3",
               "map<boolean>:{1}",
               "map<boolean>:{1} linked geometry.identifier",
               "map<boolean>:{2}",
@@ -7114,7 +7144,7 @@
           "geometry.bone_visibility": {
             "verified": {
               "build": "1.26.45.1",
-              "variants": 30
+              "variants": 36
             }
           },
           "geometry.uv_lock": {
@@ -7137,8 +7167,8 @@
       },
       "protocol2225": {
         "variants": {
-          "accepted": 76,
-          "rejected": 38
+          "accepted": 82,
+          "rejected": 44
         },
         "wire": [
           "minecraft:item_visual"
@@ -7216,8 +7246,8 @@
             ]
           },
           "geometry.bone_visibility": {
-            "accepted": 33,
-            "rejected": 29,
+            "accepted": 39,
+            "rejected": 35,
             "rejectedValues": [
               "map<string>:{1}",
               "map<string>:{2}",
@@ -7245,6 +7275,12 @@
               "map<string>:{1} false",
               "map<string>:{1} !q.block_state('paletter:flag')",
               "map<string>:{1} query.block_state('paletter:flag')",
+              "map<string>:{1} -.5",
+              "map<string>:{1} -1.",
+              "map<string>:{1} 1.e3",
+              "map<string>:{1} .5e1",
+              "map<string>:{1} -1e3",
+              "map<string>:{1} 1E3",
               "map<boolean>:{1}",
               "map<boolean>:{2}",
               "map<boolean>:{unknown key}"
@@ -8014,7 +8050,7 @@
           "geometry.bone_visibility": {
             "verified": {
               "build": "1.26.63.1",
-              "variants": 33
+              "variants": 39
             }
           },
           "geometry.uv_lock": {

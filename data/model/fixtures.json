@@ -144,7 +144,7 @@
   },
   "mapValues": {
     "_comment": "Further values of a map's elements, each tried in a map of its own, by '<component>:<path>' then by field name. bone_visibility: how BDS writes a Molang number of each shape, the booleans as text, and expressions. Not among them: an expression BDS computes (it sent '1 + 1' as '2.000000' in the captures of 1.26.36.1 to 1.26.70.24 of 2026-11-17); the encoder does not compute Molang, and the conformance suite waives nothing.",
-    "bone_visibility": ["0", "0.0", "1", "0.5", "-1", "0.1234567", "0.0078125", "16777217", "2", "-0", "-0.5", ".5", "1.", "+1", " 1 ", "1e3", "1e-3", "1.5E2", "true", "false", "!q.block_state('paletter:flag')", "query.block_state('paletter:flag')"]
+    "bone_visibility": ["0", "0.0", "1", "0.5", "-1", "0.1234567", "0.0078125", "16777217", "2", "-0", "-0.5", ".5", "1.", "+1", " 1 ", "1e3", "1e-3", "1.5E2", "true", "false", "!q.block_state('paletter:flag')", "query.block_state('paletter:flag')", "-.5", "-1.", "1.e3", ".5e1", "-1e3", "1E3", "1e-50", "\t1", "00.5"]
   },
   "mapKeys": {
     "_comment": "Key used for a map value ({} in a path), by '<component>:<path>' then field name.",
