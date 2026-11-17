@@ -55,6 +55,10 @@ class RecipeCaptureTest {
             List.of(new ItemDescriptorWithCount(new MolangDescriptor("query.is_planks", 3), 2)),
             List.of(ItemData.builder().definition(stick).count(4).damage(1).build()), uuid, "crafting_table", 0, 10,
             RecipeUnlockingRequirement.INVALID));
+        crafting.getCraftingData().add(ShapelessRecipeData.shapeless("minecraft:legacy",
+            List.of(new ItemDescriptorWithCount(new DefaultDescriptor(plank, 0), 1)),
+            List.of(ItemData.builder().definition(stick).count(1).build()), uuid, "crafting_table", 0, 12,
+            RecipeUnlockingRequirement.INVALID));
         crafting.getMultiData().add(MultiRecipeData.of(uuid, 11));
         crafting.getPotionMixData().add(new PotionMixData(5, 1, 6, 0, 7, 2));
         crafting.getContainerMixData().add(new ContainerMixData(5, 6, 7));
@@ -73,6 +77,8 @@ class RecipeCaptureTest {
         assertEquals(1, recipes.count("shaped"));
         assertEquals(1, recipes.count("shapeless"));
         assertEquals(1, recipes.count("multi"));
+        assertEquals(1, recipes.count("crafting"));
+        assertEquals("shapeless", recipes.list("crafting").get(0).getAsJsonObject().get("type").getAsString());
         assertEquals(0, recipes.count("shulker_box"));
         JsonObject shaped = recipes.list("shaped").get(0).getAsJsonObject();
         JsonObject first = shaped.getAsJsonArray("ingredients").get(0).getAsJsonObject();
