@@ -13,6 +13,7 @@ import org.geysermc.paletter.tools.model.rule.Constant;
 import org.geysermc.paletter.tools.model.rule.Count;
 import org.geysermc.paletter.tools.model.rule.EmptyList;
 import org.geysermc.paletter.tools.model.rule.EmptyMap;
+import org.geysermc.paletter.tools.model.rule.EnumTable;
 import org.geysermc.paletter.tools.model.rule.Identity;
 import org.geysermc.paletter.tools.model.rule.Leaf;
 import org.geysermc.paletter.tools.model.rule.Linear;
@@ -60,6 +61,8 @@ final class RuleFit {
             if (rule instanceof Table && !tableAllowed(set, enumerated)) {
                 rule = Affix.fit(set, wire);
             }
+            EnumTable complete = EnumTable.fit(rule, closedValues(component, path));
+            rule = complete != null ? complete : rule;
         } else if (set.stream().allMatch(p -> p.json().isJsonArray())) {
             rule = array(set, wire, enumerated || feedback.has(component.id(), path + "[]", "values"));
         } else if (set.stream().allMatch(p -> p.json().isJsonObject())) {

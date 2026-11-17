@@ -16008,7 +16008,7 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
+                "kind": "enum-table",
                 "table": {
                   "down": "0",
                   "east": "5",
@@ -16314,7 +16314,7 @@
           "status": "inferred",
           "rules": [
             {
-              "kind": "table",
+              "kind": "enum-table",
               "table": {
                 "construction": "1",
                 "equipment": "3",
@@ -22573,7 +22573,7 @@
           "status": "inferred",
           "rules": [
             {
-              "kind": "table",
+              "kind": "enum-table",
               "table": {
                 "slot.armor.body": "0",
                 "slot.armor.chest": "0",
@@ -22593,7 +22593,7 @@
               "wire": "item_properties.allow_off_hand"
             },
             {
-              "kind": "table",
+              "kind": "enum-table",
               "table": {
                 "slot.armor.body": "1",
                 "slot.armor.chest": "1",

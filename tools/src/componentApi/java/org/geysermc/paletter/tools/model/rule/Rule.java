@@ -18,7 +18,7 @@ import java.util.List;
  * {@code RuleFit}), its encoder and its evaluation.
  */
 public abstract sealed class Rule permits Identity, Linear, Table, Affix, Bitset, Count, OrderedSet, Constant, EmptyList, EmptyMap,
-    Structure, CrossField {
+    Structure, CrossField, EnumTable {
     /** A table entry or constant for a leaf BDS does not send. */
     public static final String NOT_SENT = "<not sent>";
 
@@ -117,6 +117,7 @@ public abstract sealed class Rule permits Identity, Linear, Table, Affix, Bitset
             case EmptyMap.KIND -> new EmptyMap();
             case Structure.KIND -> new Structure();
             case CrossField.KIND -> new CrossField();
+            case EnumTable.KIND -> EnumTable.read(json);
             default -> throw new IllegalArgumentException("unknown rule kind " + kind + ": " + json);
         };
         rule.wire = json.has("wire") ? json.get("wire").getAsString() : null;

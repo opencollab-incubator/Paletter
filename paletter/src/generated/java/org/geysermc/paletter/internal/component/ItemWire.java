@@ -705,7 +705,7 @@ public final class ItemWire {
             case "slot.armor.legs" -> out.put("item_properties.allow_off_hand", (byte) 0);
             case "slot.weapon.mainhand" -> out.put("item_properties.allow_off_hand", (byte) 0);
             case "slot.weapon.offhand" -> out.put("item_properties.allow_off_hand", (byte) 1);
-            default -> ctx.drop(Wearable.NAME, "slot = " + v2.value() + " has no known wire value");
+            default -> throw new IllegalStateException("slot is not a value of its enum: " + v2.value());
         }
         switch (v2.value()) {
             case "slot.armor.body" -> out.put("item_properties.max_stack_size", 1);
@@ -715,7 +715,7 @@ public final class ItemWire {
             case "slot.armor.legs" -> out.put("item_properties.max_stack_size", 1);
             case "slot.weapon.mainhand" -> out.put("item_properties.max_stack_size", 64);
             case "slot.weapon.offhand" -> out.put("item_properties.max_stack_size", 64);
-            default -> ctx.drop(Wearable.NAME, "slot = " + v2.value() + " has no known wire value");
+            default -> throw new IllegalStateException("slot is not a value of its enum: " + v2.value());
         }
         out.put("minecraft:wearable.slot", v2.value());
     }
@@ -739,7 +739,7 @@ public final class ItemWire {
                 case "items" -> out.put("item_properties.creative_category", 4);
                 case "nature" -> out.put("item_properties.creative_category", 2);
                 case "none" -> out.put("item_properties.creative_category", 5);
-                default -> ctx.drop("menu_category", "category = " + v0.value() + " has no known wire value");
+                default -> throw new IllegalStateException("category is not a value of its enum: " + v0.value());
             }
         } else {
             out.put("item_properties.creative_category", 5);

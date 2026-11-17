@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.geysermc.paletter.tools.model.rule.Affix;
+import org.geysermc.paletter.tools.model.rule.EnumTable;
 import org.geysermc.paletter.tools.model.rule.Leaf;
 import org.geysermc.paletter.tools.model.rule.Observation;
 import org.geysermc.paletter.tools.model.rule.OrderedSet;
@@ -116,6 +117,22 @@ class RuleFitTest {
         assertTrue(RuleFit.tableAllowed(enums, true));
         assertFalse(RuleFit.tableAllowed(enums, false), "free strings must not become a table");
         assertTrue(RuleFit.tableAllowed(pairs("true", (byte) 1, "false", (byte) 2), false));
+    }
+
+    @Test
+    void aTableOfAnEnumIsCompleteOnlyWhenEveryValueOfTheSchemaWasSeen() {
+        List<Observation> seen = pairs("\"eat\"", 1, "\"drink\"", 2, "\"spear\"", 6);
+        Rule table = RuleFit.scalar(seen, Observation::json, W);
+        EnumTable complete = EnumTable.fit(table, java.util.Set.of("eat", "drink", "spear"));
+        assertEquals("enum-table", json(complete).get("kind").getAsString());
+        assertEquals("6", json(complete).getAsJsonObject("table").get("spear").getAsString());
+        // A value of the schema no capture tried: its leaf is not known, so the table stays a table
+        assertNull(EnumTable.fit(table, java.util.Set.of("eat", "drink", "spear", "brush")));
+        // A value outside the schema, and a field with no schema enum
+        assertNull(EnumTable.fit(table, java.util.Set.of("eat", "drink")));
+        assertNull(EnumTable.fit(table, java.util.Set.of()));
+        // Not a table at all
+        assertNull(EnumTable.fit(RuleFit.scalar(pairs("\"a\"", "a", "\"b\"", "b"), Observation::json, W), java.util.Set.of("a", "b")));
     }
 
     @Test

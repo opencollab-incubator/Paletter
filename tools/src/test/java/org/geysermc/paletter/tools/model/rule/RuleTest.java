@@ -52,9 +52,24 @@ class RuleTest {
         assertEquals("2 (int)", rule("{\"kind\": \"table\", \"table\": {\"drink\": \"2\"}, \"nbt\": \"int\"}").evaluate(JsonParser.parseString("\"drink\"")));
         assertEquals("minecraft:pig<> (string)", rule("{\"kind\": \"affix\", \"prefix\": \"\", \"suffix\": \"<>\", \"nbt\": \"string\"}")
             .evaluate(JsonParser.parseString("\"pig\"")));
+        assertEquals("6 (int)", rule("{\"kind\": \"enum-table\", \"table\": {\"spear\": \"6\"}, \"nbt\": \"int\"}").evaluate(JsonParser.parseString("\"spear\"")));
+        assertNull(rule("{\"kind\": \"enum-table\", \"table\": {\"spear\": \"6\"}, \"nbt\": \"int\"}").evaluate(JsonParser.parseString("\"brush\"")));
         // no NBT type, an element of a list, a constant: nothing to evaluate
         assertNull(rule("{\"kind\": \"identity\"}").evaluate(half));
         assertNull(rule("{\"kind\": \"identity\", \"element\": 0, \"nbt\": \"float\"}").evaluate(half));
         assertNull(rule("{\"kind\": \"constant\", \"value\": \"1\", \"nbt\": \"int\"}").evaluate(half));
+    }
+
+    @Test
+    void anEnumTableHasACaseForEveryValueAndNoFallback() {
+        RecordingEmitter e = new RecordingEmitter();
+        rule("{\"kind\": \"enum-table\", \"table\": {\"eat\": \"1\", \"none\": \"0\", \"hide\": \"<not sent>\"}, \"nbt\": \"int\"}").emit(e);
+        assertEquals("""
+            switch (key) {
+              case "eat" -> write("1 (int)");
+              case "hide" -> write("<not sent>");
+              case "none" -> write("0 (int)");
+              default -> throw new java.lang.IllegalStateException("path is not a value of its enum: " + key);
+            }""", e.written());
     }
 }
