@@ -41,7 +41,7 @@ public final class AnticheatExample {
 
     /** The friction of the block under the feet: a float, not boxed. */
     float frictionUnder(double x, double y, double z) {
-        return palette.blockBehaviour(blockAt((int) Math.floor(x), (int) Math.floor(y - 0.5), (int) Math.floor(z))).get(BlockBehaviour.FRICTION);
+        return palette.resolve(blockAt((int) Math.floor(x), (int) Math.floor(y - 0.5), (int) Math.floor(z))).behaviour().get(BlockBehaviour.FRICTION);
     }
 
     /** The collision boxes of the blocks in a 3x3x3 cube around a position, in world coordinates. */
@@ -50,7 +50,7 @@ public final class AnticheatExample {
         for (int x = px - 1; x <= px + 1; x++) {
             for (int y = py - 1; y <= py + 1; y++) {
                 for (int z = pz - 1; z <= pz + 1; z++) {
-                    BlockShape shape = palette.blockBehaviour(blockAt(x, y, z)).get(BlockBehaviour.COLLISION_SHAPE);
+                    BlockShape shape = palette.resolve(blockAt(x, y, z)).behaviour().get(BlockBehaviour.COLLISION_SHAPE);
                     for (BlockShape.Box box : shape.boxes()) {
                         boxes.add(new float[] {x + box.minX(), y + box.minY(), z + box.minZ(), x + box.maxX(), y + box.maxY(), z + box.maxZ()});
                     }
@@ -79,19 +79,19 @@ public final class AnticheatExample {
         }
 
         // Where a value comes from: the source, its version, whether it is inherited, third party or disputed
-        System.out.println("blue ice friction: " + palette.blockBehaviour(BedrockBlocks.BLUE_ICE).explain(BlockBehaviour.FRICTION));
+        System.out.println("blue ice friction: " + palette.resolve(BedrockBlocks.BLUE_ICE.defaultState()).behaviour().explain(BlockBehaviour.FRICTION));
 
         // A custom block: set by the server, a BDS default (measured on BDS), or not known
-        BlockValues custom = palette.blockBehaviour(palette.runtimeId(slippery.type().defaultState()));
+        BlockValues custom = palette.resolve(slippery.type().defaultState()).behaviour();
         System.out.println("custom friction: " + custom.explain(BlockBehaviour.FRICTION));
         System.out.println("custom explosion resistance: " + custom.explain(BlockBehaviour.EXPLOSION_RESISTANCE));
         System.out.println("custom destroy time: " + custom.getOrElse(BlockBehaviour.DESTROY_TIME, -2f) + ", "
             + custom.explain(BlockBehaviour.DESTROY_TIME));
 
         // Items: how long eating takes, the stack size, the damage of a weapon
-        System.out.println("apple use duration: " + palette.itemBehaviour(BedrockItems.APPLE).get(ItemBehaviour.USE_DURATION) + " ticks");
-        System.out.println("ender pearl stack: " + palette.itemBehaviour(BedrockItems.ENDER_PEARL).get(ItemBehaviour.MAX_STACK_SIZE));
+        System.out.println("apple use duration: " + palette.resolve(BedrockItems.APPLE.base()).behaviour().get(ItemBehaviour.USE_DURATION) + " ticks");
+        System.out.println("ender pearl stack: " + palette.resolve(BedrockItems.ENDER_PEARL.base()).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
         System.out.println("diamond sword attack damage: "
-            + palette.itemBehaviour(BedrockItems.DIAMOND_SWORD).explain(ItemBehaviour.ATTACK_DAMAGE));
+            + palette.resolve(BedrockItems.DIAMOND_SWORD.base()).behaviour().explain(ItemBehaviour.ATTACK_DAMAGE));
     }
 }

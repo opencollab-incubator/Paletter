@@ -216,7 +216,7 @@ class HotPathTest {
             runtimeIds[i] = palette.blocks().byIndex(i).getRuntimeId();
         }
         long allocated = allocated(runtimeIds.length,
-            i -> Float.floatToIntBits(palette.blockBehaviour(runtimeIds[i]).get(BlockBehaviour.FRICTION)));
+            i -> Float.floatToIntBits(palette.resolve(runtimeIds[i]).behaviour().get(BlockBehaviour.FRICTION)));
         assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * runtimeIds.length + " lookups");
     }
 }
