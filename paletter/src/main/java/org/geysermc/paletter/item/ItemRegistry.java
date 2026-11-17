@@ -99,6 +99,14 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     private final IntSet renumbered;
     private volatile @Nullable CanonicalTable canonicalTable;
     private volatile @Nullable ResolvedItem defaultResolved;
+    /** The palette of this registry, for the behaviour of what it resolves. */
+    private final PaletteLink link = new PaletteLink();
+
+    /** Internal: binds the palette that owns this registry. */
+    @Internal
+    public PaletteLink behaviourLink() {
+        return link;
+    }
 
     private ItemRegistry(Builder builder, Map<String, RegisteredBlockState> defaultBlocks, Set<String> multiStateBlockItems) {
         this.parent = builder.parent;
@@ -374,7 +382,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             RegisteredItem fallback = getDefinition(defaultFallback.target().identifier());
             if (fallback != null) {
                 defaultResolved = result = new ResolvedItem(fallback, defaultFallback.variant() == null ? 0 : defaultFallback.variant().aux(),
-                    defaultBlockOf(fallback.getIdentifier()), true);
+                    defaultBlockOf(fallback.getIdentifier()), true, link);
             }
         }
         return result;
@@ -403,7 +411,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                 block = resolution.block();
             }
         }
-        return new ResolvedItem(item, damage, block, fallback);
+        return new ResolvedItem(item, damage, block, fallback, link);
     }
 
     // ---- Canonical ids ----

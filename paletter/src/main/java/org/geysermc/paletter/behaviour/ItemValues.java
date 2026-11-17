@@ -8,7 +8,7 @@ import org.geysermc.paletter.internal.behaviour.Behaviour;
 import org.geysermc.paletter.internal.behaviour.Column;
 
 /**
- * The behaviour values of one item type in one palette: {@code palette.itemBehaviour(BedrockItems.APPLE)}. Values are per
+ * The behaviour values of one item type in one palette: {@code palette.resolve(BedrockItems.APPLE.base()).behaviour()}. Values are per
  * item type, not per aux value. A handle is the palette's values and the position of the item in them: {@code get} reads
  * an array and neither allocates nor boxes. Handles are equal for the same item in the same palette.
  * <p>
@@ -25,7 +25,7 @@ public final class ItemValues {
     private final int index;
 
     /**
-     * Plumbing of {@link Palette#itemBehaviour}: public for it, not part of the API.
+     * Plumbing of {@link org.geysermc.paletter.item.ResolvedItem#behaviour()}: public for it, not part of the API.
      */
     @Internal
     public ItemValues(@NonNull Behaviour behaviour, int index) {

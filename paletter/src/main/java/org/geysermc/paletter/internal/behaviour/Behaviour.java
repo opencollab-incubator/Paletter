@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * The behaviour values of the blocks and items of one {@link Palette}, behind {@link Palette#blockBehaviour} and
- * {@link Palette#itemBehaviour}. Thread safe.
+ * The behaviour values of the blocks and items of one {@link Palette}, behind {@link Palette#resolve(org.geysermc.paletter.vanilla.BedrockBlockState)} and
+ * {@link org.geysermc.paletter.item.ResolvedItem#behaviour()}. Thread safe.
  * <p>
  * Vanilla values come from the bundled captures of the palette's data version (an older capture's value when the
  * version has none, see {@link Provenance#inherited()}); keys the captures lack fall back to what the component data
