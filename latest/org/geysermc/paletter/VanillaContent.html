@@ -117,13 +117,19 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="VanillaContent.html" title="class in org.geysermc.paletter">VanillaContent</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#experiments(java.lang.String...)" class="member-name-link">experiments</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;toggles)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#allExperiments()" class="member-name-link">allExperiments</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Sets the enabled experiment toggles (e.g.</div>
+<div class="block">Enables every experiment toggle the palette's version gates content with, except the voxel shape experiment, which
+ changes how the client treats shapes instead of adding content.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="VanillaContent.html" title="class in org.geysermc.paletter">VanillaContent</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#remove(org.geysermc.paletter.vanilla.BedrockItemType)" class="member-name-link">remove</a><wbr>(@NonNull <a href="vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;item)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#experiments(java.lang.String...)" class="member-name-link">experiments</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;toggles)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets the enabled experiment toggles (e.g.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="VanillaContent.html" title="class in org.geysermc.paletter">VanillaContent</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#remove(org.geysermc.paletter.vanilla.BedrockItemType)" class="member-name-link">remove</a><wbr>(@NonNull <a href="vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;item)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Does not register the item.</div>
 </div>
 </div>
@@ -165,6 +171,16 @@ loadScripts(document, 'script');</script>
 <dt>Parameters:</dt>
 <dd><code>toggles</code> - the toggle ids, as BDS names them</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="allExperiments()">
+<h3>allExperiments</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="VanillaContent.html" title="class in org.geysermc.paletter">VanillaContent</a></span>&nbsp;<span class="element-name">allExperiments</span>()</div>
+<div class="block">Enables every experiment toggle the palette's version gates content with, except the voxel shape experiment, which
+ changes how the client treats shapes instead of adding content. The content behind the toggles is present, as in the
+ raw data of the version; the palettes list the toggles in <a href="Palette.html#experiments()"><code>Palette.experiments()</code></a>. Lookups with a
+ <a href="Lookup.html" title="enum class in org.geysermc.paletter"><code>Lookup</code></a> see that content then.</div>
 </section>
 </li>
 </ul>

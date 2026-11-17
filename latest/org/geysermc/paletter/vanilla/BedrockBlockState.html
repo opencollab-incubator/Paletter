@@ -96,7 +96,7 @@ loadScripts(document, 'script');</script>
  <p>
  Equality: <code>equals</code> always works. <code>==</code> works too for the states of vanilla types (the constants) and of
  registered custom blocks: a <a href="../block/CustomBlock.html" title="class in org.geysermc.paletter.block"><code>CustomBlock</code></a> owns its <a href="../block/CustomBlock.html#type()"><code>type</code></a> and states, and a palette it is registered in hands back exactly
- those (<code>Palette#block(NbtMap)</code>, <code>Palette#blockState</code>, ...). The states
+ those (<code>Palette#blockState(NbtMap, Lookup)</code>, ...). The states
  of a type made by <a href="BedrockBlockType.html#of(java.lang.String)"><code>BedrockBlockType.of(String)</code></a> for an unknown identifier are equal by value, not identical.
  Equal custom blocks registered by different layers each own their states; those are equal, not identical.
  <p>

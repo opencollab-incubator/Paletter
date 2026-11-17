@@ -104,7 +104,7 @@ loadScripts(document, 'script');</script>
  session.sendPacket(palette.creativeContentPacket());
  </code></pre>
  Translating content uses handles, version independent and interned objects (<a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockBlockState</code></a>,
- <a href="vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockItemVariant</code></a>): <a href="#block(org.cloudburstmc.nbt.NbtMap)"><code>block(NbtMap)</code></a> and <a href="#item(java.lang.String,int)"><code>item(String, int)</code></a> find them once, then
+ <a href="vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockItemVariant</code></a>): <a href="#blockState(org.cloudburstmc.nbt.NbtMap,org.geysermc.paletter.Lookup)"><code>blockState(NbtMap, Lookup)</code></a> and <a href="#itemVariant(java.lang.String,int,org.geysermc.paletter.Lookup)"><code>itemVariant(String, int, Lookup)</code></a> find them once, then
  <a href="#runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>runtimeId(BedrockBlockState)</code></a> and <a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>blockDefinition(BedrockBlockState)</code></a> for blocks, <a href="#resolve(org.geysermc.paletter.vanilla.BedrockItemVariant)"><code>resolve(BedrockItemVariant)</code></a>
  for items. <a href="#encode(org.geysermc.paletter.item.BedrockItemStack)"><code>encode(org.geysermc.paletter.item.BedrockItemStack)</code></a> and <a href="#decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)"><code>decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)</code></a> translate whole stacks at the protocol boundary. They are field reads and array lookups that do not allocate. The ids behind
  the handles are not API.</div>
@@ -146,44 +146,45 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="internal/behaviour/Behaviour.html" title="class in org.geysermc.paletter.internal.behaviour">Behaviour</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#behaviour()" class="member-name-link">behaviour</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#block(org.cloudburstmc.nbt.NbtMap)" class="member-name-link">block</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="behaviour/BlockValues.html" title="class in org.geysermc.paletter.behaviour">BlockValues</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockBehaviour(int)" class="member-name-link">blockBehaviour</a><wbr>(int&nbsp;runtimeId)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="behaviour/BlockValues.html" title="class in org.geysermc.paletter.behaviour">BlockValues</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockBehaviour(int)" class="member-name-link">blockBehaviour</a><wbr>(int&nbsp;runtimeId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The behaviour values (friction, destroy time, collision shape, light, ...) of a block state in this palette:
  <code>palette.blockBehaviour(runtimeId).get(BlockBehaviour.FRICTION)</code>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="behaviour/BlockValues.html" title="class in org.geysermc.paletter.behaviour">BlockValues</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockBehaviour(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockBehaviour</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="behaviour/BlockValues.html" title="class in org.geysermc.paletter.behaviour">BlockValues</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockBehaviour(org.geysermc.paletter.vanilla.BedrockBlockType)" class="member-name-link">blockBehaviour</a><wbr>(@NonNull <a href="vanilla/BedrockBlockType.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockType</a>&nbsp;type)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockBehaviour(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockBehaviour</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockDefinition(int)" class="member-name-link">blockDefinition</a><wbr>(int&nbsp;runtimeId)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="behaviour/BlockValues.html" title="class in org.geysermc.paletter.behaviour">BlockValues</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockBehaviour(org.geysermc.paletter.vanilla.BedrockBlockType)" class="member-name-link">blockBehaviour</a><wbr>(@NonNull <a href="vanilla/BedrockBlockType.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockType</a>&nbsp;type)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockDefinition</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockDefinition(int)" class="member-name-link">blockDefinition</a><wbr>(int&nbsp;runtimeId)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState,org.geysermc.paletter.block.RegisteredBlockState)" class="member-name-link">blockDefinition</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockDefinition</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState,org.geysermc.paletter.block.RegisteredBlockState)" class="member-name-link">blockDefinition</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state,
  @Nullable <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a>&nbsp;orElse)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">blockOf</a><wbr>(@NonNull <a href="vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">blockOf</a><wbr>(@NonNull <a href="vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The block an item variant is sent with in this palette's version, in its default state, as a key: a
  <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockBlockState</code></a>, for every kind of variant (vanilla, extra, custom block items, fallbacks).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="block/BlockRegistry.html" title="class in org.geysermc.paletter.block">BlockRegistry</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blocks()" class="member-name-link">blocks</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="block/BlockRegistry.html" title="class in org.geysermc.paletter.block">BlockRegistry</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blocks()" class="member-name-link">blocks</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Internal: use <a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>blockDefinition(BedrockBlockState)</code></a>, <a href="#blockState(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)"><code>blockState(BlockDefinition)</code></a> and the other methods of this class.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockState(int)" class="member-name-link">blockState</a><wbr>(int&nbsp;runtimeId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockState(int)" class="member-name-link">blockState</a><wbr>(int&nbsp;runtimeId)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockState(org.cloudburstmc.nbt.NbtMap,org.geysermc.paletter.Lookup)" class="member-name-link">blockState</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state,
+ @NonNull <a href="Lookup.html" title="enum class in org.geysermc.paletter">Lookup</a>&nbsp;lookup)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockState(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)" class="member-name-link">blockState</a><wbr>(@NonNull org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition&nbsp;definition)</code></div>
@@ -191,68 +192,70 @@ loadScripts(document, 'script');</script>
 <div class="block">The key of a block this palette sends: its exact state, else the first state that resolves to it (several states
  may share a fallback).</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="creative/CreativeContent.html" title="class in org.geysermc.paletter.creative">CreativeContent</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#creative()" class="member-name-link">creative</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockType.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockType</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockType(java.lang.String,org.geysermc.paletter.Lookup)" class="member-name-link">blockType</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+ @NonNull <a href="Lookup.html" title="enum class in org.geysermc.paletter">Lookup</a>&nbsp;lookup)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#creativeContentPacket()" class="member-name-link">creativeContentPacket</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="creative/CreativeContent.html" title="class in org.geysermc.paletter.creative">CreativeContent</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#creative()" class="member-name-link">creative</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="creative/CreativeLayout.html" title="class in org.geysermc.paletter.creative">CreativeLayout</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#creativeLayout()" class="member-name-link">creativeLayout</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#creativeContentPacket()" class="member-name-link">creativeContentPacket</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="item/BedrockItemStack.html" title="class in org.geysermc.paletter.item">BedrockItemStack</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)" class="member-name-link">decode</a><wbr>(@NonNull org.cloudburstmc.protocol.bedrock.data.inventory.ItemData&nbsp;data)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="creative/CreativeLayout.html" title="class in org.geysermc.paletter.creative">CreativeLayout</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#creativeLayout()" class="member-name-link">creativeLayout</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="item/BedrockItemStack.html" title="class in org.geysermc.paletter.item">BedrockItemStack</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)" class="member-name-link">decode</a><wbr>(@NonNull org.cloudburstmc.protocol.bedrock.data.inventory.ItemData&nbsp;data)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Decodes a stack the client sent.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull org.cloudburstmc.protocol.bedrock.data.inventory.ItemData</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#encode(org.geysermc.paletter.item.BedrockItemStack)" class="member-name-link">encode</a><wbr>(@NonNull <a href="item/BedrockItemStack.html" title="class in org.geysermc.paletter.item">BedrockItemStack</a>&nbsp;stack)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull org.cloudburstmc.protocol.bedrock.data.inventory.ItemData</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#encode(org.geysermc.paletter.item.BedrockItemStack)" class="member-name-link">encode</a><wbr>(@NonNull <a href="item/BedrockItemStack.html" title="class in org.geysermc.paletter.item">BedrockItemStack</a>&nbsp;stack)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Encodes a stack for this palette's version: the item with the aux value, count and NBT, and the block the stack
  places (its own block state if it has one and the item places blocks, else the item's default block).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#experimentOf(org.geysermc.paletter.vanilla.BedrockBlockType)" class="member-name-link">experimentOf</a><wbr>(@NonNull <a href="vanilla/BedrockBlockType.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockType</a>&nbsp;type)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#experimentOf(org.geysermc.paletter.vanilla.BedrockItemType)" class="member-name-link">experimentOf</a><wbr>(@NonNull <a href="vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;type)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#experimentOf(org.geysermc.paletter.vanilla.BedrockBlockType)" class="member-name-link">experimentOf</a><wbr>(@NonNull <a href="vanilla/BedrockBlockType.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockType</a>&nbsp;type)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#experiments()" class="member-name-link">experiments</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#experimentOf(org.geysermc.paletter.vanilla.BedrockItemType)" class="member-name-link">experimentOf</a><wbr>(@NonNull <a href="vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;type)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#experiments()" class="member-name-link">experiments</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The experiment toggles this palette needs, because the Paletter enabled them (<code>vanilla(v -&gt; v.experiments(...))</code>)
  and this version has content behind them: <a href="#applyTo(org.cloudburstmc.protocol.bedrock.packet.StartGamePacket)"><code>applyTo(StartGamePacket)</code></a> sends them.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="ItemExplanation.html" title="class in org.geysermc.paletter">ItemExplanation</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#explain(java.lang.String,int,org.cloudburstmc.nbt.NbtMap)" class="member-name-link">explain</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="ItemExplanation.html" title="class in org.geysermc.paletter">ItemExplanation</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#explain(java.lang.String,int,org.cloudburstmc.nbt.NbtMap)" class="member-name-link">explain</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
  int&nbsp;aux,
  @Nullable org.cloudburstmc.nbt.NbtMap&nbsp;blockState)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Explains what this palette does with an item: canonical and runtime id, how it was resolved for this
  version, the block it is sent with and its place in the creative inventory.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BlockExplanation.html" title="class in org.geysermc.paletter">BlockExplanation</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#explain(org.cloudburstmc.nbt.NbtMap)" class="member-name-link">explain</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BlockExplanation.html" title="class in org.geysermc.paletter">BlockExplanation</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#explain(org.cloudburstmc.nbt.NbtMap)" class="member-name-link">explain</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Explains what this palette does with a block state: canonical, runtime and hashed id, how it was resolved for
  this version and which state is sent.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#explainUnknown(java.lang.String,int)" class="member-name-link">explainUnknown</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
- int&nbsp;aux)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#explainUnknown(org.cloudburstmc.nbt.NbtMap)" class="member-name-link">explainUnknown</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#explainUnknown(java.lang.String,int,org.geysermc.paletter.Lookup)" class="member-name-link">explainUnknown</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+ int&nbsp;aux,
+ @NonNull <a href="Lookup.html" title="enum class in org.geysermc.paletter">Lookup</a>&nbsp;lookup)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Palette.html" title="class in org.geysermc.paletter">Palette</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#extend(org.geysermc.paletter.PaletteLayer)" class="member-name-link">extend</a><wbr>(@NonNull <a href="PaletteLayer.html" title="class in org.geysermc.paletter">PaletteLayer</a>&nbsp;layer)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#explainUnknown(org.cloudburstmc.nbt.NbtMap,org.geysermc.paletter.Lookup)" class="member-name-link">explainUnknown</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state,
+ @NonNull <a href="Lookup.html" title="enum class in org.geysermc.paletter">Lookup</a>&nbsp;lookup)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Palette.html" title="class in org.geysermc.paletter">Palette</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#extend(org.geysermc.paletter.PaletteLayer)" class="member-name-link">extend</a><wbr>(@NonNull <a href="PaletteLayer.html" title="class in org.geysermc.paletter">PaletteLayer</a>&nbsp;layer)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Compiles one more layer on top of this palette, e.g.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#item(java.lang.String,int)" class="member-name-link">item</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
- int&nbsp;aux)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="behaviour/ItemValues.html" title="class in org.geysermc.paletter.behaviour">ItemValues</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemBehaviour(org.geysermc.paletter.vanilla.BedrockItemType)" class="member-name-link">itemBehaviour</a><wbr>(@NonNull <a href="vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;type)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -281,6 +284,15 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemTags()" class="member-name-link">itemTags</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemType(java.lang.String,org.geysermc.paletter.Lookup)" class="member-name-link">itemType</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+ @NonNull <a href="Lookup.html" title="enum class in org.geysermc.paletter">Lookup</a>&nbsp;lookup)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemVariant(java.lang.String,int,org.geysermc.paletter.Lookup)" class="member-name-link">itemVariant</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+ int&nbsp;aux,
+ @NonNull <a href="Lookup.html" title="enum class in org.geysermc.paletter">Lookup</a>&nbsp;lookup)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemVariants()" class="member-name-link">itemVariants</a>()</code></div>
@@ -459,58 +471,95 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="block(org.cloudburstmc.nbt.NbtMap)">
-<h3>block</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a></span>&nbsp;<span class="element-name">block</span><wbr><span class="parameters">(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state)</span></div>
+<section class="detail" id="blockState(org.cloudburstmc.nbt.NbtMap,org.geysermc.paletter.Lookup)">
+<h3>blockState</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a></span>&nbsp;<span class="element-name">blockState</span><wbr><span class="parameters">(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state,
+ @NonNull <a href="Lookup.html" title="enum class in org.geysermc.paletter">Lookup</a>&nbsp;lookup)</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>state</code> - a block state of any bundled version (mapped forward as in <a href="Paletter.html#block(org.cloudburstmc.nbt.NbtMap)"><code>Paletter.block(NbtMap)</code></a>) or of a
-              custom block of this palette's layers, as <code>{name, states}</code>; extra keys like <code>version</code>
-              are ignored</dd>
+<dd><code>state</code> - a block state as <code>{name, states}</code>; extra keys are ignored</dd>
+<dd><code>lookup</code> - whether the state must exist as is in this palette's version, see <a href="Lookup.html" title="enum class in org.geysermc.paletter"><code>Lookup</code></a></dd>
 <dt>Returns:</dt>
-<dd>its handle, or null if there is no equivalent (see <a href="#explainUnknown(org.cloudburstmc.nbt.NbtMap)"><code>explainUnknown(NbtMap)</code></a>)</dd>
+<dd>its handle, or null if the lookup does not accept the state: it is newer than this palette's version,
+         removed, or behind an experiment this palette does not enable (see <a href="#explainUnknown(org.cloudburstmc.nbt.NbtMap,org.geysermc.paletter.Lookup)"><code>explainUnknown(NbtMap, Lookup)</code></a>).
+         Custom blocks of the palette's layers are always accepted</dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="item(java.lang.String,int)">
-<h3>item</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">item</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
- int&nbsp;aux)</span></div>
+<section class="detail" id="itemVariant(java.lang.String,int,org.geysermc.paletter.Lookup)">
+<h3>itemVariant</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">itemVariant</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+ int&nbsp;aux,
+ @NonNull <a href="Lookup.html" title="enum class in org.geysermc.paletter">Lookup</a>&nbsp;lookup)</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>identifier</code> - an item identifier of any bundled version (mapped forward as in <a href="Paletter.html#item(java.lang.String,int)"><code>Paletter.item(String, int)</code></a>) or
-                   of a custom item of this palette's layers</dd>
-<dd><code>aux</code> - the aux (damage) value</dd>
+<dd><code>lookup</code> - whether the variant must exist as is in this palette's version, see <a href="Lookup.html" title="enum class in org.geysermc.paletter"><code>Lookup</code></a></dd>
 <dt>Returns:</dt>
-<dd>its handle, or null if there is no equivalent (see <a href="#explainUnknown(java.lang.String,int)"><code>explainUnknown(String, int)</code></a>)</dd>
+<dd>its handle, or null if the lookup does not accept the variant, for the reasons of
+         <a href="#blockState(org.cloudburstmc.nbt.NbtMap,org.geysermc.paletter.Lookup)"><code>blockState(NbtMap, Lookup)</code></a>. Aux 0 is the base variant, which every item has</dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="explainUnknown(org.cloudburstmc.nbt.NbtMap)">
+<section class="detail" id="itemType(java.lang.String,org.geysermc.paletter.Lookup)">
+<h3>itemType</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">itemType</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+ @NonNull <a href="Lookup.html" title="enum class in org.geysermc.paletter">Lookup</a>&nbsp;lookup)</span></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>identifier</code> - an item identifier</dd>
+<dd><code>lookup</code> - whether the item must exist as is in this palette's version, see <a href="Lookup.html" title="enum class in org.geysermc.paletter"><code>Lookup</code></a></dd>
+<dt>Returns:</dt>
+<dd>the item type, or null if the lookup does not accept the identifier</dd>
+<dt>Since:</dt>
+<dd>0.1.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="blockType(java.lang.String,org.geysermc.paletter.Lookup)">
+<h3>blockType</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="vanilla/BedrockBlockType.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockType</a></span>&nbsp;<span class="element-name">blockType</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+ @NonNull <a href="Lookup.html" title="enum class in org.geysermc.paletter">Lookup</a>&nbsp;lookup)</span></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>identifier</code> - a block identifier of a vanilla block</dd>
+<dd><code>lookup</code> - whether the block must exist as is in this palette's version, see <a href="Lookup.html" title="enum class in org.geysermc.paletter"><code>Lookup</code></a></dd>
+<dt>Returns:</dt>
+<dd>the block type, or null if the lookup does not accept the identifier. <a href="Lookup.html#RENAMED"><code>Lookup.RENAMED</code></a> also finds
+         a block under the name an older version gave it. For a custom block use its <code>type()</code></dd>
+<dt>Since:</dt>
+<dd>0.1.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="explainUnknown(org.cloudburstmc.nbt.NbtMap,org.geysermc.paletter.Lookup)">
 <h3>explainUnknown</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">explainUnknown</span><wbr><span class="parameters">(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">explainUnknown</span><wbr><span class="parameters">(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state,
+ @NonNull <a href="Lookup.html" title="enum class in org.geysermc.paletter">Lookup</a>&nbsp;lookup)</span></div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>why a block state has no handle in this palette, or null if it has one</dd>
+<dd>why a block state has no handle under a lookup (see <a href="#blockState(org.cloudburstmc.nbt.NbtMap,org.geysermc.paletter.Lookup)"><code>blockState(NbtMap, Lookup)</code></a>), or null if it has one</dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="explainUnknown(java.lang.String,int)">
+<section class="detail" id="explainUnknown(java.lang.String,int,org.geysermc.paletter.Lookup)">
 <h3>explainUnknown</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">explainUnknown</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
- int&nbsp;aux)</span></div>
+ int&nbsp;aux,
+ @NonNull <a href="Lookup.html" title="enum class in org.geysermc.paletter">Lookup</a>&nbsp;lookup)</span></div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>why an item has no handle in this palette, or null if it has one</dd>
+<dd>why an item has no handle under a lookup (see <a href="#itemVariant(java.lang.String,int,org.geysermc.paletter.Lookup)"><code>itemVariant(String, int, Lookup)</code></a>), or null if it has one</dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>
@@ -602,8 +651,7 @@ loadScripts(document, 'script');</script>
  <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockBlockState</code></a>, for every kind of variant (vanilla, extra, custom block items, fallbacks). Paletter alone
  decides it. A stack may carry a block state of its own, see <a href="#encode(org.geysermc.paletter.item.BedrockItemStack)"><code>encode(org.geysermc.paletter.item.BedrockItemStack)</code></a>.
  <code>blockDefinition(blockOf(variant))</code> is what is sent, and <code>resolve(variant).block()</code> the same without the
- key. Unlike
- <a href="Paletter.html#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)"><code>Paletter.blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)</code></a>, which knows the vanilla variants of the newest data only, this follows the palette: the
+ key. It follows the palette: the
  fallback's block in an old version, the custom block of a layer. <a href="#runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>runtimeId(BedrockBlockState)</code></a> gives its
  runtime id here.</div>
 <dl class="notes">
@@ -912,7 +960,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">experiments</span>()</div>
 <div class="block">The experiment toggles this palette needs, because the Paletter enabled them (<code>vanilla(v -&gt; v.experiments(...))</code>)
  and this version has content behind them: <a href="#applyTo(org.cloudburstmc.protocol.bedrock.packet.StartGamePacket)"><code>applyTo(StartGamePacket)</code></a> sends them. Empty by default, the
- content behind a toggle is missing then (see <code>VanillaContent.experiments</code>).</div>
+ content behind a toggle is missing then (see <code>VanillaContent.experiments</code>); <a href="VanillaContent.html#allExperiments()"><code>VanillaContent.allExperiments()</code></a>
+ enables all of them.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the toggle ids, sorted</dd>

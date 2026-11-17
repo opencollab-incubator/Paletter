@@ -364,8 +364,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/Canonicals.html" title="class in org.geysermc.paletter.internal">Canonicals</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">The lookups from content to canonical ids that <a href="org/geysermc/paletter/Paletter.html" title="class in org.geysermc.paletter"><code>Paletter</code></a> and
- <a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter"><code>Palette</code></a> build their handle returning API on.</div>
+<div class="block">The lookups from content to canonical ids that <a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter"><code>Palette</code></a> builds its handle returning API on.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab3"><a href="org/geysermc/paletter/vanilla/state/CardinalDirection.html" title="enum class in org.geysermc.paletter.vanilla.state">CardinalDirection</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
@@ -1133,12 +1132,11 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
 <div class="block">The documented values; <a href="org/geysermc/paletter/block/component/LiquidDetection.OnLiquidTouches.html#value()"><code>LiquidDetection.OnLiquidTouches.value()</code></a> is the add-on JSON string.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="org/geysermc/paletter/Lookup.html" title="class in org.geysermc.paletter">Lookup</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
-<div class="block">How strictly <a href="org/geysermc/paletter/Paletter.html#block(org.cloudburstmc.nbt.NbtMap,org.geysermc.paletter.Lookup)"><code>block</code></a>, <a href="org/geysermc/paletter/Paletter.html#item(java.lang.String,int,org.geysermc.paletter.Lookup)"><code>item</code></a>
- and the type lookups of <a href="org/geysermc/paletter/Paletter.html" title="class in org.geysermc.paletter"><code>Paletter</code></a> match content against the bundled data: the content must exist as is in the
- data of <a href="org/geysermc/paletter/Lookup.html#version()"><code>Lookup.version()</code></a>, unless <a href="org/geysermc/paletter/Lookup.html#followRenames()"><code>Lookup.followRenames()</code></a> also accepts what the data of the newest version has under
- a new name (renamed and split blocks and items, added or removed state keys).</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="org/geysermc/paletter/Lookup.html" title="enum class in org.geysermc.paletter">Lookup</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab3">
+<div class="block">How strictly <a href="org/geysermc/paletter/Palette.html#blockState(org.cloudburstmc.nbt.NbtMap,org.geysermc.paletter.Lookup)"><code>blockState</code></a>,
+ <a href="org/geysermc/paletter/Palette.html#itemVariant(java.lang.String,int,org.geysermc.paletter.Lookup)"><code>itemVariant</code></a> and <a href="org/geysermc/paletter/Palette.html#itemType(java.lang.String,org.geysermc.paletter.Lookup)"><code>itemType</code></a>
+ match content against the palette's own version: the palette is the version.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="org/geysermc/paletter/block/component/Loot.html" title="class in org.geysermc.paletter.block.component">Loot</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
