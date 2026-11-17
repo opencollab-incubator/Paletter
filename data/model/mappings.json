@@ -3221,7 +3221,8 @@
             "bone_a: expected an object",
             "bone_a: invalid numeric value"
           ],
-          "status": "inferred",
+          "transform": "embeddedGeometry",
+          "status": "hand-rule",
           "rules": [
             {
               "kind": "empty-map",
@@ -3240,36 +3241,6 @@
               "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a.expression"
             },
             {
-              "kind": "constant",
-              "value": "13",
-              "mapEntry": true,
-              "nbt": "short",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a.version"
-            },
-            {
-              "kind": "constant",
-              "value": "1.000000",
-              "mapEntry": true,
-              "nbt": "string",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a_2.expression"
-            },
-            {
-              "kind": "constant",
-              "value": "13",
-              "mapEntry": true,
-              "nbt": "short",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a_2.version"
-            },
-            {
               "kind": "identity",
               "mapEntry": true,
               "nbt": "string",
@@ -3278,16 +3249,6 @@
                 "nested"
               ],
               "wire": "minecraft:embedded_visual.geometry.bone_visibility.paletter_unknown.expression"
-            },
-            {
-              "kind": "constant",
-              "value": "13",
-              "mapEntry": true,
-              "nbt": "short",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:embedded_visual.geometry.bone_visibility.paletter_unknown.version"
             }
           ],
           "whenAbsent": {
@@ -3298,7 +3259,53 @@
             "minecraft:embedded_visual.geometry.bone_visibility.bone_a_2.version": "omitted",
             "minecraft:embedded_visual.geometry.bone_visibility.paletter_unknown.expression": "omitted",
             "minecraft:embedded_visual.geometry.bone_visibility.paletter_unknown.version": "omitted"
-          }
+          },
+          "unexplained": [
+            {
+              "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a.version",
+              "samples": [
+                "<absent> -> -",
+                "{} -> -",
+                "{} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> 13 (short)",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 13 (short)",
+                "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+              ]
+            },
+            {
+              "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a_2.expression",
+              "samples": [
+                "<absent> -> -",
+                "{} -> -",
+                "{} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 1.000000 (string)",
+                "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+              ]
+            },
+            {
+              "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a_2.version",
+              "samples": [
+                "<absent> -> -",
+                "{} -> -",
+                "{} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 13 (short)",
+                "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+              ]
+            },
+            {
+              "wire": "minecraft:embedded_visual.geometry.bone_visibility.paletter_unknown.version",
+              "samples": [
+                "<absent> -> -",
+                "{} -> -",
+                "{} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> -",
+                "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> 13 (short)"
+              ]
+            }
+          ]
         },
         "geometry.culling": {
           "accepted": 6,
@@ -3613,7 +3620,8 @@
               "bone_a: expected an object",
               "bone_a: invalid numeric value"
             ],
-            "status": "inferred",
+            "transform": "embeddedGeometry",
+            "status": "hand-rule",
             "rules": [
               {
                 "kind": "empty-map",
@@ -3630,16 +3638,6 @@
                   "nested"
                 ],
                 "wire": "minecraft:embedded_visual.geometry.bone_visibility{}"
-              },
-              {
-                "kind": "constant",
-                "value": "1.000000",
-                "mapEntry": true,
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a_2"
               }
             ],
             "whenAbsent": {
@@ -3647,7 +3645,20 @@
               "minecraft:embedded_visual.geometry.bone_visibility.bone_a": "omitted",
               "minecraft:embedded_visual.geometry.bone_visibility.bone_a_2": "omitted",
               "minecraft:embedded_visual.geometry.bone_visibility.paletter_unknown": "omitted"
-            }
+            },
+            "unexplained": [
+              {
+                "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a_2",
+                "samples": [
+                  "<absent> -> -",
+                  "{} -> -",
+                  "{} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 1.000000 (string)",
+                  "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+                ]
+              }
+            ]
           },
           "geometry.culling": {
             "accepted": 6,
@@ -3967,36 +3978,6 @@
                 "nbt": "compound",
                 "tags": [],
                 "wire": "minecraft:embedded_visual.geometry.bone_visibility"
-              },
-              {
-                "kind": "table",
-                "table": {
-                  "q.block_state('paletter:flag')": "q.block_state('paletter:flag')",
-                  "true": "1.000000"
-                },
-                "mapEntry": true,
-                "nbt": "string",
-                "tags": [
-                  "renamed",
-                  "nested",
-                  "value-map"
-                ],
-                "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a"
-              },
-              {
-                "kind": "table",
-                "table": {
-                  "q.block_state('paletter:flag')": "q.block_state('paletter:flag')",
-                  "true": "1.000000"
-                },
-                "mapEntry": true,
-                "nbt": "string",
-                "tags": [
-                  "renamed",
-                  "nested",
-                  "value-map"
-                ],
-                "wire": "minecraft:embedded_visual.geometry.bone_visibility.paletter_unknown"
               }
             ],
             "whenAbsent": {
@@ -4007,6 +3988,17 @@
             },
             "unexplained": [
               {
+                "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a",
+                "samples": [
+                  "<absent> -> -",
+                  "{} -> -",
+                  "{} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
+                  "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+                ]
+              },
+              {
                 "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a_2",
                 "samples": [
                   "<absent> -> -",
@@ -4015,6 +4007,17 @@
                   "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
                   "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 1.000000 (string)",
                   "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+                ]
+              },
+              {
+                "wire": "minecraft:embedded_visual.geometry.bone_visibility.paletter_unknown",
+                "samples": [
+                  "<absent> -> -",
+                  "{} -> -",
+                  "{} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> -",
+                  "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)"
                 ]
               }
             ]
@@ -4626,7 +4629,8 @@
             "bone_a: invalid string",
             "minecraft:geometry: invalid string"
           ],
-          "status": "inferred",
+          "transform": "geometry",
+          "status": "hand-rule",
           "rules": [
             {
               "kind": "empty-map",
@@ -4645,36 +4649,6 @@
               "wire": "minecraft:geometry.bone_visibility.bone_a.expression"
             },
             {
-              "kind": "constant",
-              "value": "13",
-              "mapEntry": true,
-              "nbt": "short",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:geometry.bone_visibility.bone_a.version"
-            },
-            {
-              "kind": "constant",
-              "value": "1.000000",
-              "mapEntry": true,
-              "nbt": "string",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:geometry.bone_visibility.bone_a_2.expression"
-            },
-            {
-              "kind": "constant",
-              "value": "13",
-              "mapEntry": true,
-              "nbt": "short",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:geometry.bone_visibility.bone_a_2.version"
-            },
-            {
               "kind": "identity",
               "mapEntry": true,
               "nbt": "string",
@@ -4683,16 +4657,6 @@
                 "nested"
               ],
               "wire": "minecraft:geometry.bone_visibility.paletter_unknown.expression"
-            },
-            {
-              "kind": "constant",
-              "value": "13",
-              "mapEntry": true,
-              "nbt": "short",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:geometry.bone_visibility.paletter_unknown.version"
             }
           ],
           "whenAbsent": {
@@ -4703,7 +4667,53 @@
             "minecraft:geometry.bone_visibility.bone_a_2.version": "omitted",
             "minecraft:geometry.bone_visibility.paletter_unknown.expression": "omitted",
             "minecraft:geometry.bone_visibility.paletter_unknown.version": "omitted"
-          }
+          },
+          "unexplained": [
+            {
+              "wire": "minecraft:geometry.bone_visibility.bone_a.version",
+              "samples": [
+                "{} -> -",
+                "<absent> -> -",
+                "{} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> 13 (short)",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 13 (short)",
+                "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+              ]
+            },
+            {
+              "wire": "minecraft:geometry.bone_visibility.bone_a_2.expression",
+              "samples": [
+                "{} -> -",
+                "<absent> -> -",
+                "{} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 1.000000 (string)",
+                "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+              ]
+            },
+            {
+              "wire": "minecraft:geometry.bone_visibility.bone_a_2.version",
+              "samples": [
+                "{} -> -",
+                "<absent> -> -",
+                "{} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 13 (short)",
+                "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+              ]
+            },
+            {
+              "wire": "minecraft:geometry.bone_visibility.paletter_unknown.version",
+              "samples": [
+                "{} -> -",
+                "<absent> -> -",
+                "{} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> -",
+                "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> 13 (short)"
+              ]
+            }
+          ]
         },
         "culling": {
           "accepted": 6,
@@ -4923,7 +4933,8 @@
               "bone_a: invalid string",
               "minecraft:geometry: invalid string"
             ],
-            "status": "inferred",
+            "transform": "geometry",
+            "status": "hand-rule",
             "rules": [
               {
                 "kind": "empty-map",
@@ -4940,16 +4951,6 @@
                   "nested"
                 ],
                 "wire": "minecraft:geometry.bone_visibility{}"
-              },
-              {
-                "kind": "constant",
-                "value": "1.000000",
-                "mapEntry": true,
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:geometry.bone_visibility.bone_a_2"
               }
             ],
             "whenAbsent": {
@@ -4957,7 +4958,20 @@
               "minecraft:geometry.bone_visibility.bone_a": "omitted",
               "minecraft:geometry.bone_visibility.bone_a_2": "omitted",
               "minecraft:geometry.bone_visibility.paletter_unknown": "omitted"
-            }
+            },
+            "unexplained": [
+              {
+                "wire": "minecraft:geometry.bone_visibility.bone_a_2",
+                "samples": [
+                  "{} -> -",
+                  "<absent> -> -",
+                  "{} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 1.000000 (string)",
+                  "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+                ]
+              }
+            ]
           },
           "culling": {
             "accepted": 6,
@@ -5176,36 +5190,6 @@
                 "nbt": "compound",
                 "tags": [],
                 "wire": "minecraft:geometry.bone_visibility"
-              },
-              {
-                "kind": "table",
-                "table": {
-                  "q.block_state('paletter:flag')": "q.block_state('paletter:flag')",
-                  "true": "1.000000"
-                },
-                "mapEntry": true,
-                "nbt": "string",
-                "tags": [
-                  "renamed",
-                  "nested",
-                  "value-map"
-                ],
-                "wire": "minecraft:geometry.bone_visibility.bone_a"
-              },
-              {
-                "kind": "table",
-                "table": {
-                  "q.block_state('paletter:flag')": "q.block_state('paletter:flag')",
-                  "true": "1.000000"
-                },
-                "mapEntry": true,
-                "nbt": "string",
-                "tags": [
-                  "renamed",
-                  "nested",
-                  "value-map"
-                ],
-                "wire": "minecraft:geometry.bone_visibility.paletter_unknown"
               }
             ],
             "whenAbsent": {
@@ -5216,6 +5200,17 @@
             },
             "unexplained": [
               {
+                "wire": "minecraft:geometry.bone_visibility.bone_a",
+                "samples": [
+                  "{\"bone_a\":true} -> 1.000000 (string)",
+                  "<absent> -> -",
+                  "{} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
+                  "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+                ]
+              },
+              {
                 "wire": "minecraft:geometry.bone_visibility.bone_a_2",
                 "samples": [
                   "{\"bone_a\":true} -> -",
@@ -5224,6 +5219,17 @@
                   "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
                   "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 1.000000 (string)",
                   "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+                ]
+              },
+              {
+                "wire": "minecraft:geometry.bone_visibility.paletter_unknown",
+                "samples": [
+                  "{\"bone_a\":true} -> -",
+                  "<absent> -> -",
+                  "{} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> -",
+                  "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)"
                 ]
               }
             ]
@@ -5546,36 +5552,6 @@
                 "nbt": "compound",
                 "tags": [],
                 "wire": "minecraft:geometry.bone_visibility"
-              },
-              {
-                "kind": "table",
-                "table": {
-                  "q.block_state('paletter:flag')": "q.block_state('paletter:flag')",
-                  "true": "1.000000"
-                },
-                "mapEntry": true,
-                "nbt": "string",
-                "tags": [
-                  "renamed",
-                  "nested",
-                  "value-map"
-                ],
-                "wire": "minecraft:geometry.bone_visibility.bone_a"
-              },
-              {
-                "kind": "table",
-                "table": {
-                  "q.block_state('paletter:flag')": "q.block_state('paletter:flag')",
-                  "true": "1.000000"
-                },
-                "mapEntry": true,
-                "nbt": "string",
-                "tags": [
-                  "renamed",
-                  "nested",
-                  "value-map"
-                ],
-                "wire": "minecraft:geometry.bone_visibility.paletter_unknown"
               }
             ],
             "whenAbsent": {
@@ -5586,6 +5562,17 @@
             },
             "unexplained": [
               {
+                "wire": "minecraft:geometry.bone_visibility.bone_a",
+                "samples": [
+                  "{\"bone_a\":true} -> 1.000000 (string)",
+                  "<absent> -> -",
+                  "{} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
+                  "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+                ]
+              },
+              {
                 "wire": "minecraft:geometry.bone_visibility.bone_a_2",
                 "samples": [
                   "{\"bone_a\":true} -> -",
@@ -5594,6 +5581,17 @@
                   "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
                   "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 1.000000 (string)",
                   "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+                ]
+              },
+              {
+                "wire": "minecraft:geometry.bone_visibility.paletter_unknown",
+                "samples": [
+                  "{\"bone_a\":true} -> -",
+                  "<absent> -> -",
+                  "{} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> -",
+                  "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)"
                 ]
               }
             ]
@@ -5896,7 +5894,8 @@
             "bone_a: expected an object",
             "bone_a: invalid numeric value"
           ],
-          "status": "inferred",
+          "transform": "itemVisualBoneVisibility",
+          "status": "hand-rule",
           "rules": [
             {
               "kind": "empty-map",
@@ -5915,36 +5914,6 @@
               "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a.expression"
             },
             {
-              "kind": "constant",
-              "value": "13",
-              "mapEntry": true,
-              "nbt": "short",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a.version"
-            },
-            {
-              "kind": "constant",
-              "value": "1.000000",
-              "mapEntry": true,
-              "nbt": "string",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a_2.expression"
-            },
-            {
-              "kind": "constant",
-              "value": "13",
-              "mapEntry": true,
-              "nbt": "short",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a_2.version"
-            },
-            {
               "kind": "identity",
               "mapEntry": true,
               "nbt": "string",
@@ -5953,16 +5922,6 @@
                 "nested"
               ],
               "wire": "minecraft:item_visual.geometryDescription.bone_visibility.paletter_unknown.expression"
-            },
-            {
-              "kind": "constant",
-              "value": "13",
-              "mapEntry": true,
-              "nbt": "short",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:item_visual.geometryDescription.bone_visibility.paletter_unknown.version"
             },
             {
               "kind": "constant",
@@ -5993,7 +5952,53 @@
             "minecraft:item_visual.geometryDescription.bone_visibility.paletter_unknown.version": "omitted",
             "minecraft:item_visual.geometryDescription.culling": " (string)",
             "minecraft:item_visual.geometryDescription.culling_shape": " (string)"
-          }
+          },
+          "unexplained": [
+            {
+              "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a.version",
+              "samples": [
+                "<absent> -> -",
+                "{} -> -",
+                "{} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> 13 (short)",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 13 (short)",
+                "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+              ]
+            },
+            {
+              "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a_2.expression",
+              "samples": [
+                "<absent> -> -",
+                "{} -> -",
+                "{} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 1.000000 (string)",
+                "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+              ]
+            },
+            {
+              "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a_2.version",
+              "samples": [
+                "<absent> -> -",
+                "{} -> -",
+                "{} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 13 (short)",
+                "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+              ]
+            },
+            {
+              "wire": "minecraft:item_visual.geometryDescription.bone_visibility.paletter_unknown.version",
+              "samples": [
+                "<absent> -> -",
+                "{} -> -",
+                "{} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> -",
+                "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> 13 (short)"
+              ]
+            }
+          ]
         },
         "geometry.culling": {
           "accepted": 5,
@@ -6483,7 +6488,8 @@
               "bone_a: expected an object",
               "bone_a: invalid numeric value"
             ],
-            "status": "inferred",
+            "transform": "itemVisualBoneVisibility",
+            "status": "hand-rule",
             "rules": [
               {
                 "kind": "empty-map",
@@ -6500,16 +6506,6 @@
                   "nested"
                 ],
                 "wire": "minecraft:item_visual.geometryDescription.bone_visibility{}"
-              },
-              {
-                "kind": "constant",
-                "value": "1.000000",
-                "mapEntry": true,
-                "nbt": "string",
-                "tags": [
-                  "injected-default"
-                ],
-                "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a_2"
               },
               {
                 "kind": "constant",
@@ -6537,7 +6533,20 @@
               "minecraft:item_visual.geometryDescription.bone_visibility.paletter_unknown": "omitted",
               "minecraft:item_visual.geometryDescription.culling": " (string)",
               "minecraft:item_visual.geometryDescription.culling_shape": " (string)"
-            }
+            },
+            "unexplained": [
+              {
+                "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a_2",
+                "samples": [
+                  "<absent> -> -",
+                  "{} -> -",
+                  "{} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 1.000000 (string)",
+                  "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+                ]
+              }
+            ]
           },
           "geometry.culling": {
             "accepted": 5,
@@ -7061,36 +7070,6 @@
                 "wire": "minecraft:item_visual.geometryDescription.bone_visibility"
               },
               {
-                "kind": "table",
-                "table": {
-                  "q.block_state('paletter:flag')": "q.block_state('paletter:flag')",
-                  "true": "1.000000"
-                },
-                "mapEntry": true,
-                "nbt": "string",
-                "tags": [
-                  "renamed",
-                  "nested",
-                  "value-map"
-                ],
-                "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a"
-              },
-              {
-                "kind": "table",
-                "table": {
-                  "q.block_state('paletter:flag')": "q.block_state('paletter:flag')",
-                  "true": "1.000000"
-                },
-                "mapEntry": true,
-                "nbt": "string",
-                "tags": [
-                  "renamed",
-                  "nested",
-                  "value-map"
-                ],
-                "wire": "minecraft:item_visual.geometryDescription.bone_visibility.paletter_unknown"
-              },
-              {
                 "kind": "constant",
                 "value": "paletter:culling",
                 "nbt": "string",
@@ -7149,6 +7128,17 @@
             },
             "unexplained": [
               {
+                "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a",
+                "samples": [
+                  "<absent> -> -",
+                  "{} -> -",
+                  "{} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
+                  "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+                ]
+              },
+              {
                 "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a_2",
                 "samples": [
                   "<absent> -> -",
@@ -7157,6 +7147,17 @@
                   "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
                   "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 1.000000 (string)",
                   "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
+                ]
+              },
+              {
+                "wire": "minecraft:item_visual.geometryDescription.bone_visibility.paletter_unknown",
+                "samples": [
+                  "<absent> -> -",
+                  "{} -> -",
+                  "{} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                  "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> -",
+                  "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)"
                 ]
               }
             ]

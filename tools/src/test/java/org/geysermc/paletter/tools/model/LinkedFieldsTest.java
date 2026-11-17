@@ -118,14 +118,14 @@ class LinkedFieldsTest {
         assertFalse(fields.getAsJsonObject("chance.max").getAsJsonArray("rules").toString().contains("chance.min"),
             "the min the link set is not explained by max");
         assertFalse(fields.getAsJsonObject("replace").get("status").getAsString().equals("linked"));
-        // The linked variants of bones were accepted with the second geo, and still no rule follows the entries: it stays
-        // flagged until a rule or a hand transform explains it
+        // The linked variants of bones were accepted with the second geo. Each entry only ever had one value, which is no
+        // rule: the field is partial, and the conformance suite fails until a rule or a hand transform writes the entries
         AddonGenerator.Variant bones = second.variants().stream().filter(v -> v.path().equals("bones") && !v.linked().isEmpty()
             && !v.value().getAsJsonObject().isEmpty()).findFirst().orElseThrow();
         assertEquals("custom:geo", bones.component().getAsJsonObject().get("geo").getAsString());
-        assertEquals("linked", fields.getAsJsonObject("bones").get("status").getAsString(), fields.getAsJsonObject("bones").toString());
-        assertEquals(1, inference.linkedFields().size(), inference.linkedFields().toString());
-        assertTrue(inference.linkedFields().getFirst().contains("it needs a rule or a hand transform"), inference.linkedFields().toString());
+        assertEquals("partial", fields.getAsJsonObject("bones").get("status").getAsString(), fields.getAsJsonObject("bones").toString());
+        assertTrue(fields.getAsJsonObject("bones").getAsJsonArray("unexplained").toString().contains("minecraft:test.bones.k"));
+        assertEquals(0, inference.linkedFields().size(), inference.linkedFields().toString());
     }
 
     private static JsonObject fields(Path model) throws IOException {

@@ -179,9 +179,29 @@ class RuleFitTest {
         List<Pair> pairs = new ArrayList<>();
         pairs.add(new Pair(JsonParser.parseString("{\"bone_a\": 3}"), Map.of("x.bone_a", new Leaf("int", 3)), ""));
         pairs.add(new Pair(JsonParser.parseString("{\"bone_a\": 5}"), Map.of("x.bone_a", new Leaf("int", 5)), ""));
-        JsonObject rule = MappingInference.object(pairs, "x.bone_a");
+        JsonObject rule = MappingInference.object(pairs, "x.bone_a", false);
         assertEquals("identity", rule.get("kind").getAsString());
         assertTrue(rule.get("mapEntry").getAsBoolean());
+    }
+
+    @Test
+    void aMapEntryNeedsTheEvidenceAScalarDoes() {
+        // bone_visibility: the second entry only ever had one value, which BDS sends as "1.000000"
+        List<Pair> one = List.of(
+            new Pair(JsonParser.parseString("{\"bone_a\": \"q.x\"}"), Map.of("x.bone_a", new Leaf("string", "q.x")), ""),
+            new Pair(JsonParser.parseString("{\"bone_a\": \"q.x\", \"bone_b\": \"on\"}"),
+                Map.of("x.bone_a", new Leaf("string", "q.x"), "x.bone_b", new Leaf("string", "1.000000")), ""));
+        assertNull(MappingInference.object(one, "x.bone_b", false), "one value is no constant: another was never tried");
+        // two strings sent differently: a table of them is no rule for free text, only for an enum
+        List<Pair> two = new ArrayList<>(one);
+        two.add(new Pair(JsonParser.parseString("{\"bone_b\": \"q.x\"}"), Map.of("x.bone_b", new Leaf("string", "q.x")), ""));
+        assertNull(MappingInference.object(two, "x.bone_b", false));
+        assertEquals("table", MappingInference.object(two, "x.bone_b", true).get("kind").getAsString());
+        // a leaf that stays the same while the entry's value changes is a constant
+        List<Pair> version = List.of(
+            new Pair(JsonParser.parseString("{\"bone_a\": \"q.x\"}"), Map.of("x.bone_a.version", new Leaf("short", (short) 13)), ""),
+            new Pair(JsonParser.parseString("{\"bone_a\": \"1.0\"}"), Map.of("x.bone_a.version", new Leaf("short", (short) 13)), ""));
+        assertEquals("constant", MappingInference.object(version, "x.bone_a.version", false).get("kind").getAsString());
     }
 
     private static double round(double d) {

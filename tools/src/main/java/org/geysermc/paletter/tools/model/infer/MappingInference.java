@@ -1356,7 +1356,7 @@ public final class MappingInference {
         } else if (set.stream().allMatch(p -> p.json.isJsonArray())) {
             rule = array(set, wire, enumerated || feedback.has(component.id(), path + "[]", "values"));
         } else if (set.stream().allMatch(p -> p.json.isJsonObject())) {
-            rule = object(set, wire);
+            rule = object(set, wire, enumerated || feedback.has(component.id(), path + "{}", "values"));
         } else {
             rule = mixed(set, wire, enumerated, enumerated || feedback.has(component.id(), path + "[]", "values"));
         }
@@ -1812,8 +1812,16 @@ public final class MappingInference {
         return rule.has("offset") ? Math.abs(rule.get("offset").getAsDouble()) : 0;
     }
 
-    /** map entry: the JSON key appears in the leaf path and its value maps; or presence of an (empty) object. */
-    static JsonObject object(List<Pair> set, String wire) {
+    /**
+     * map entry: the JSON key appears in the leaf path and its value maps; or presence of an (empty) object.
+     * <p>
+     * An entry's rule needs the evidence a scalar's does: a leaf that is the same for the one value the entry ever had
+     * is no constant (another value was never tried), and a table of the strings seen is a rule only for a closed set of
+     * values ({@link #tableAllowed}).
+     *
+     * @param closed whether the values of the entries are of a closed set (an enum)
+     */
+    static JsonObject object(List<Pair> set, String wire, boolean closed) {
         // presence: the leaf exists iff the object is set
         boolean presence = set.stream().allMatch(p -> p.wire.get(wire) != null);
         Set<String> values = new TreeSet<>();
@@ -1839,8 +1847,13 @@ public final class MappingInference {
                 if (segments.contains(entry.getKey()) && entry.getValue().isJsonPrimitive()) {
                     List<Pair> having = set.stream().filter(q -> q.json.getAsJsonObject().has(entry.getKey())
                         && q.json.getAsJsonObject().get(entry.getKey()).isJsonPrimitive()).toList();
-                    JsonObject rule = scalar(having, q -> q.json.getAsJsonObject().get(entry.getKey()), wire);
-                    if (rule != null && !numericTable(rule)) {
+                    Getter value = q -> q.json.getAsJsonObject().get(entry.getKey());
+                    JsonObject rule = scalar(having, value, wire);
+                    String kind = rule == null ? "" : rule.get("kind").getAsString();
+                    boolean oneValue = kind.equals("constant") && having.stream().map(q -> value.get(q).toString()).distinct().count() < 2;
+                    boolean openTable = kind.equals("table") && !having.stream().allMatch(q -> value.get(q).getAsJsonPrimitive().isBoolean()
+                        || (closed && value.get(q).getAsJsonPrimitive().isString()));
+                    if (rule != null && !numericTable(rule) && !oneValue && !openTable) {
                         rule.addProperty("mapEntry", true);
                         rule.addProperty("key", entry.getKey());
                         return rule;

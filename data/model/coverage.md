@@ -64,7 +64,7 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | linear | 15 |
 | ordered-set | 2 |
 | structure | 29 |
-| table | 21 |
+| table | 15 |
 
 | tag | rules |
 |---|---|
@@ -75,13 +75,13 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | injected-default | 209 |
 | item_properties | 19 |
 | list-element | 33 |
-| nested | 90 |
+| nested | 84 |
 | outside-component:* | 3 |
 | presence | 17 |
-| renamed | 102 |
+| renamed | 96 |
 | type:* | 110 |
 | unit-conversion | 15 |
-| value-map | 7 |
+| value-map | 1 |
 
 ## Per component
 
@@ -195,12 +195,12 @@ together and capture again); `rejected`: every variant setting it was rejected;
 
 ## Fields that need a hand rule
 
-- `block:minecraft:embedded_visual` `geometry.bone_visibility`: hand-rule -> `embeddedGeometry` (unexplained: `minecraft:embedded_visual.geometry.bone_visibility.bone_a_2`)
+- `block:minecraft:embedded_visual` `geometry.bone_visibility`: hand-rule -> `embeddedGeometry` (unexplained: `minecraft:embedded_visual.geometry.bone_visibility.bone_a`, `minecraft:embedded_visual.geometry.bone_visibility.bone_a_2`, `minecraft:embedded_visual.geometry.bone_visibility.paletter_unknown`)
 - `block:minecraft:embedded_visual` `geometry.uv_lock`: hand-rule -> `embeddedGeometry` (unexplained: `minecraft:embedded_visual.geometry.uv_lock[]`)
 - `block:minecraft:embedded_visual` `material_instances`: hand-rule -> `materialInstancesInline`
-- `block:minecraft:geometry` `bone_visibility`: hand-rule -> `geometry` (unexplained: `minecraft:geometry.bone_visibility.bone_a_2`)
+- `block:minecraft:geometry` `bone_visibility`: hand-rule -> `geometry` (unexplained: `minecraft:geometry.bone_visibility.bone_a`, `minecraft:geometry.bone_visibility.bone_a_2`, `minecraft:geometry.bone_visibility.paletter_unknown`)
 - `block:minecraft:geometry` `uv_lock`: hand-rule -> `geometry` (unexplained: `minecraft:geometry.uv_lock[]`)
-- `block:minecraft:item_visual` `geometry.bone_visibility`: hand-rule -> `itemVisualBoneVisibility` (unexplained: `minecraft:item_visual.geometryDescription.bone_visibility.bone_a_2`)
+- `block:minecraft:item_visual` `geometry.bone_visibility`: hand-rule -> `itemVisualBoneVisibility` (unexplained: `minecraft:item_visual.geometryDescription.bone_visibility.bone_a`, `minecraft:item_visual.geometryDescription.bone_visibility.bone_a_2`, `minecraft:item_visual.geometryDescription.bone_visibility.paletter_unknown`)
 - `block:minecraft:item_visual` `geometry.uv_lock`: hand-rule -> `itemVisualUvLock` (unexplained: `minecraft:item_visual.geometryDescription.uv_lock[]`)
 - `block:minecraft:item_visual` `material_instances`: hand-rule -> `materialInstancesPacked` (unexplained: `minecraft:item_visual.materialInstancesDescription.materials.*.ambient_occlusion`, `minecraft:item_visual.materialInstancesDescription.materials.*.packed_bools`, `minecraft:item_visual.materialInstancesDescription.materials.*.render_method`, `minecraft:item_visual.materialInstancesDescription.materials.*.texture`)
 - `block:minecraft:placement_filter` `conditions[].block_filter[].states`: hand-rule -> `blockDescriptorStates` (unexplained: `minecraft:placement_filter.conditions`, `minecraft:placement_filter.conditions[].block_filter[].states[].state`, `minecraft:placement_filter.conditions[].block_filter[].states[].type`, `minecraft:placement_filter.conditions[].block_filter[].states[].value`)
