@@ -3,9 +3,13 @@ package org.geysermc.paletter.tools.update;
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.tools.client.CapturedData;
+import org.geysermc.paletter.tools.client.RecipeCapture;
 import org.geysermc.paletter.internal.creative.RawStack;
 import org.geysermc.paletter.internal.data.ExperimentContent;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -115,6 +119,18 @@ public final class ExperimentAttribution {
 
         return new Diff(sorted(itemsAdded), sorted(itemsChanged), sorted(scriptItems), sorted(blocks), sorted(dataDriven),
             creativeAdded, sorted(removed));
+    }
+
+    /**
+     * The recipes the toggles add, remove or change: the recipe diff of two capture directories, by section ("recipes added",
+     * "mixes changed", ...) with entries as {@code kind key}. Empty when either capture has no recipe data. Recipes are
+     * kept apart from the item {@link Diff}: they are bundled by the recipes module, not with the items and blocks.
+     */
+    static Map<String, List<String>> recipes(Path base, Path with) throws IOException {
+        if (!Files.exists(base.resolve(RecipeCapture.CRAFTING)) || !Files.exists(with.resolve(RecipeCapture.CRAFTING))) {
+            return Map.of();
+        }
+        return org.geysermc.paletter.tools.data.Diff.recipes(RecipeCapture.read(base), RecipeCapture.read(with)).lines();
     }
 
     /** Creative stacks as {@code id} (damage 0) or {@code id:damage}; block states and NBT are not distinguished. */

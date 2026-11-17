@@ -1,5 +1,6 @@
 package org.geysermc.paletter.tools.data;
 
+import com.google.gson.JsonObject;
 import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
@@ -14,6 +15,7 @@ import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.client.CapturedData;
+import org.geysermc.paletter.tools.client.RecipeCapture;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -43,6 +45,7 @@ import java.util.TreeSet;
  *   <li>{@link #bdsDump}: a Script API dump against a bundled version (the {@code bds-compare} command)</li>
  *   <li>{@link #source}: a directory in the CloudburstMC/Data layout against a bundled version, every aspect the bundled
  *       format keeps compared exactly (the {@code verify} command)</li>
+ *   <li>{@link #recipes}: two recipe captures, normalised ({@link RecipeData#normalize}), by recipe id</li>
  *   <li>{@link #shapes}: the wire shapes of components of two captures ({@link WireShapes})</li>
  * </ul>
  * Output: {@link #print} (console) and {@link #markdown} (report).
@@ -177,6 +180,73 @@ public final class Diff {
             diff.blockItems(before, after);
         }
         return diff;
+    }
+
+    /**
+     * Two recipe captures, whatever their list layout: per group (recipes, mixes, trims) the entries added, removed and
+     * changed (with the changed fields), unlock changes, and a changed {@code cleanRecipes} flag. Lines start with the kind.
+     */
+    public static Diff recipes(RecipeCapture.Recipes previous, RecipeCapture.Recipes captured) {
+        // Entries that share an id are told apart by their tag in both captures alike
+        Set<String> tagged = union(RecipeData.duplicateKeys(previous), RecipeData.duplicateKeys(captured));
+        Map<String, Map<String, JsonObject>> before = RecipeData.normalize(previous, tagged);
+        Map<String, Map<String, JsonObject>> after = RecipeData.normalize(captured, tagged);
+        Diff diff = new Diff();
+        Map<String, List<String>> added = new LinkedHashMap<>();
+        Map<String, List<String>> removed = new LinkedHashMap<>();
+        Map<String, List<String>> changed = new LinkedHashMap<>();
+        List<String> unlock = new ArrayList<>();
+        for (String kind : new TreeSet<>(union(before.keySet(), after.keySet()))) {
+            Map<String, JsonObject> x = before.getOrDefault(kind, Map.of());
+            Map<String, JsonObject> y = after.getOrDefault(kind, Map.of());
+            String group = RecipeData.MIXES.contains(kind) ? "mixes" : kind.startsWith(RecipeData.TRIM_PREFIX) ? "trim" : "recipes";
+            for (String key : y.keySet()) {
+                if (!x.containsKey(key)) {
+                    added.computeIfAbsent(group, g -> new ArrayList<>()).add(kind + " " + key);
+                }
+            }
+            for (String key : x.keySet()) {
+                if (!y.containsKey(key)) {
+                    removed.computeIfAbsent(group, g -> new ArrayList<>()).add(kind + " " + key);
+                }
+            }
+            for (String key : x.keySet()) {
+                JsonObject a = x.get(key);
+                JsonObject b = y.get(key);
+                if (b == null || a.equals(b)) {
+                    continue;
+                }
+                List<String> fields = new ArrayList<>();
+                for (String field : new TreeSet<>(union(a.keySet(), b.keySet()))) {
+                    if (!Objects.equals(a.get(field), b.get(field))) {
+                        fields.add(field);
+                    }
+                }
+                if (fields.remove("unlock")) {
+                    unlock.add(kind + " " + key);
+                }
+                if (!fields.isEmpty()) {
+                    changed.computeIfAbsent(group, g -> new ArrayList<>()).add(kind + " " + key + ": " + String.join(", ", fields));
+                }
+            }
+        }
+        if (!Objects.equals(previous.crafting().get("cleanRecipes"), captured.crafting().get("cleanRecipes"))) {
+            changed.computeIfAbsent("recipes", g -> new ArrayList<>()).add("cleanRecipes: " + previous.crafting().get("cleanRecipes")
+                + " -> " + captured.crafting().get("cleanRecipes"));
+        }
+        for (String group : List.of("recipes", "mixes", "trim")) {
+            diff.putIfAny(group + " added", added.getOrDefault(group, List.of()));
+            diff.putIfAny(group + " removed", removed.getOrDefault(group, List.of()));
+            diff.putIfAny(group + " changed", changed.getOrDefault(group, List.of()));
+        }
+        diff.putIfAny("recipe unlock changes", unlock);
+        return diff;
+    }
+
+    private static <T> Set<T> union(Set<T> a, Set<T> b) {
+        Set<T> union = new LinkedHashSet<>(a);
+        union.addAll(b);
+        return union;
     }
 
     /** A network capture against a bundled version: items, item components, block properties, creative layout. */

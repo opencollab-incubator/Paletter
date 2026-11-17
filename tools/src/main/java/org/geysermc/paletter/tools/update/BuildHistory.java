@@ -736,6 +736,32 @@ public final class BuildHistory {
     }
 
     /**
+     * {@link #sameData(byte[], byte[])} of two experiment records, except that the {@code content.recipes} of a toggle only
+     * count when the earlier record has them: records written before the recipe attribution do not, and are not changed
+     * builds for it.
+     */
+    static boolean sameExperimentRecord(byte[] record, byte[] earlier) throws IOException {
+        JsonElement now = json(new String(record, StandardCharsets.UTF_8));
+        JsonElement before = json(new String(earlier, StandardCharsets.UTF_8));
+        if (now != null && before != null && now.isJsonObject() && before.isJsonObject()) {
+            JsonObject toggles = now.getAsJsonObject().getAsJsonObject("toggles");
+            JsonObject earlierToggles = before.getAsJsonObject().getAsJsonObject("toggles");
+            if (toggles != null && earlierToggles != null) {
+                toggles.entrySet().forEach(entry -> {
+                    JsonObject content = entry.getValue().getAsJsonObject().getAsJsonObject("content");
+                    JsonElement other = earlierToggles.get(entry.getKey());
+                    JsonObject otherContent = other == null ? null : other.getAsJsonObject().getAsJsonObject("content");
+                    if (content != null && otherContent != null && !otherContent.has("recipes")) {
+                        content.remove("recipes");
+                    }
+                });
+                record = now.toString().getBytes(StandardCharsets.UTF_8);
+            }
+        }
+        return sameData(record, earlier);
+    }
+
+    /**
      * The JSON without {@link #STAMPS}: at the top level of a capture, and of the captures it embeds under
      * {@link #EMBEDDED} keys (top level only). A stamp key anywhere else is data.
      */

@@ -16,19 +16,57 @@ import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.internal.data.VersionFallbacks;
 import org.geysermc.paletter.item.ItemFallback;
+import org.geysermc.paletter.tools.client.RecipeCapture;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.GZIPOutputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** Attribution diffs on synthetic captures shaped like the y_2026_drop_4 one of BDS 1.26.63.1. */
 class ExperimentAttributionTest {
+
+    private static Path crafting(Path directory, String shapeless) throws IOException {
+        try (OutputStream out = new GZIPOutputStream(Files.newOutputStream(directory.resolve(RecipeCapture.CRAFTING)))) {
+            out.write(("{\"shapeless\":[" + shapeless + "]}").getBytes(StandardCharsets.UTF_8));
+        }
+        return directory;
+    }
+
+    @Test
+    void recipesOfAToggleAreItsRecipeDiff(@TempDir Path temp) throws IOException {
+        String torch = "{\"id\":\"minecraft:torch\",\"ingredients\":[],\"results\":[],\"uuid\":\"a\",\"tag\":\"crafting_table\",\"netId\":1}";
+        String fancy = "{\"id\":\"minecraft:fancy\",\"ingredients\":[],\"results\":[],\"uuid\":\"b\",\"tag\":\"crafting_table\",\"netId\":2}";
+        Path base = crafting(Files.createDirectory(temp.resolve("base")), torch);
+        Path with = crafting(Files.createDirectory(temp.resolve("with")), fancy + "," + torch.replace("\"netId\":1", "\"netId\":9"));
+        assertEquals(Map.of("recipes added", List.of("shapeless minecraft:fancy")), ExperimentAttribution.recipes(base, with));
+        assertEquals(Map.of(), ExperimentAttribution.recipes(base, Files.createDirectory(temp.resolve("none"))));
+    }
+
+    @Test
+    void recipesAreOnlyStagedWhenTheyDifferNormalised(@TempDir Path temp) throws IOException {
+        String torch = "{\"id\":\"minecraft:torch\",\"ingredients\":[],\"results\":[],\"uuid\":\"UUID\",\"tag\":\"crafting_table\",\"netId\":NET}";
+        Path committed = crafting(Files.createDirectory(temp.resolve("committed")), torch.replace("UUID", "a").replace("NET", "1"));
+        // Another start of BDS: random UUID, other net id
+        Path again = crafting(Files.createDirectory(temp.resolve("again")), torch.replace("UUID", "b").replace("NET", "7"));
+        Path changed = crafting(Files.createDirectory(temp.resolve("changed")), torch.replace("torch", "lantern").replace("UUID", "c").replace("NET", "1"));
+        assertFalse(Update.recipesChanged(committed, again));
+        assertTrue(Update.recipesChanged(committed, changed));
+        assertTrue(Update.recipesChanged(Files.createDirectory(temp.resolve("none")), again), "nothing committed yet");
+    }
 
     private static NbtMap item(String name, int id, int version, boolean componentBased) {
         return NbtMap.builder().putString("name", name).putShort("id", (short) id).putBoolean("componentBased", componentBased)

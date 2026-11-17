@@ -58,6 +58,8 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 | `voxel-shapes capture\|import\|check` | Voxel shape captures and `voxel_shapes.nbt`. |
 | `creative-probe` | Runs an add-on on BDS and records the creative inventory order. |
 | `education-capture` | Records what only an Education Edition world adds (`education.json`, used for `@Education`). |
+| `recipes-capture` | Records the crafting and trim data of one build (`vanilla/crafting_data.json.gz`, `vanilla/trim_data.json`); `update` writes them too. |
+| `recipes-diff` | `--from <build> --to <build>`: diffs two committed recipe captures in `data/bds`, normalised (list layout, net ids and random UUIDs ignored): recipes added, removed and changed, mixes, trims. `update` reports the same diff, and checks that recipe items, tags, block states and net ids hold; these are never blocking (a DIFF row at most). |
 | `inspect` | Prints `Palette#explain` for a block state or item in one or all bundled versions. |
 
 Gradle tasks: `generateConstants`, `generateComponentApi`, `generateComponentApiPreview`, `generateModel`,
@@ -202,6 +204,13 @@ current, the others retired. Each current toggle is then captured on its own to 
 
 The result is committed as `data/bds/<build>/experiments.json`, and the bundled version gets experiment marks: per
 toggle, the items, blocks and creative stacks it adds. The bundle itself is captured without experiments.
+
+The record also lists, per toggle, the recipes it adds, removes or changes (`content.recipes`, the recipe diff of the
+toggle's capture against the one without experiments). They are not part of the bundle's marks: the recipes module
+bundles them.
+The committed records do not have them yet: `content.recipes` appears with the next full `update` run, and until then a history
+check does not count a toggle's recipes as a difference when the earlier record lacks them. `recipes-capture` refuses a
+build without captures in `data/bds` and a machine of another BDS platform than the committed captures.
 
 ### Previews
 
