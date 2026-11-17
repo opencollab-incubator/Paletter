@@ -5,17 +5,17 @@ package org.geysermc.paletter.vanilla;
 import org.geysermc.paletter.annotation.SincePreview;
 
 /**
- * The named aux variants of Bedrock 1.1, the newest bundled release: potions, splash and lingering
- * potions and tipped arrows by effect, beds and banners by colour. The names are BDS's own spellings, taken from the
- * Script API (the potion effect id, the localization key of the stack), such as {@code POTION_LONG_NIGHTVISION} or
- * {@code BED_SILVER}. Every constant is the very {@link BedrockItemVariant} of {@code type.variant(aux)}. Referencing
- * them loads nothing.
+ * The named aux variants of Bedrock 1.1, the newest bundled release, of the items
+ * {@link BedrockItems#POTION}.
+ * The names are BDS's own spellings, taken from the Script API (the potion effect id, the localization key of the
+ * stack). Every constant is the very {@link BedrockItemVariant} of {@code type.variant(aux)}. Referencing them loads
+ * nothing.
  * <p>
  * Constants are added when Bedrock adds variants (binary compatible). A variant Bedrock removes keeps its constant,
  * deprecated: {@code type.variant(aux)} is then null. A name BDS changes stays as a deprecated alias of the new one.
  * <p>
- * The {@code @since} of a constant is the Paletter version that added it. The names come from BDS dumps of the newest
- * builds only: a variant is first captured in the oldest release with variant data, and may be older.
+ * {@code @since} is the Paletter version that added a constant. The names come from BDS dumps of the newest
+ * builds only, so a variant says nothing of the Bedrock release it is first in: it may be older than the dumps.
  * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks variants only the bundled Bedrock preview
  * has: without previews loaded ({@code paletter.previews}) its type has no such variant, so {@code type.variant(aux)}
  * is null and the constant stays a plain key. The mark goes when a release has it; the constant goes if a newer
@@ -30,7 +30,7 @@ public final class BedrockItemVariants {
      * @since 0.1.0
      * @deprecated Bedrock removed the variant
      */
-    @Deprecated(since = "2.1.0", forRemoval = true)
+    @Deprecated(since = "2.1.0")
     public static final BedrockItemVariant OLD_POTION = VanillaTypes.variant(BedrockItems.POTION, 9);
 
     /**
@@ -60,7 +60,7 @@ public final class BedrockItemVariants {
      * @since 0.1.0
      * @deprecated renamed to {@link #POTION_NIGHTVISION}
      */
-    @Deprecated(since = "2.1.0", forRemoval = true)
+    @Deprecated(since = "2.1.0")
     public static final BedrockItemVariant NIGHT_VISION = POTION_NIGHTVISION;
 
     private BedrockItemVariants() {

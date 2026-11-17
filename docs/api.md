@@ -112,8 +112,8 @@ states `IntState` and string states `EnumState`. Custom block properties can use
 the same name.
 
 When Bedrock removes content, its constant stays, deprecated, and resolves to `minecraft:unknown` (`isAvailable()` is
-false). A renamed identifier keeps its old constant as a deprecated alias. `@since` on a constant is the first Bedrock
-release that has the content without an experiment. `@Education` marks Education Edition content.
+false). A renamed identifier keeps its old constant as a deprecated alias. `@since` on a constant is the Paletter version that
+added it; the line `First in Bedrock` names the first Bedrock release that has the content without an experiment. `@Education` marks Education Edition content.
 
 `BedrockItemVariants` names the aux variants of potions, splash and lingering potions, tipped arrows, beds and banners.
 The names are BDS's own spellings (`POTION_LONG_NIGHTVISION`, `BED_SILVER`), taken from the Script API when the data is

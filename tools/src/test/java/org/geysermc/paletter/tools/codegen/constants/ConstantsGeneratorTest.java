@@ -147,9 +147,7 @@ class ConstantsGeneratorTest {
         first.getAsJsonObject("blocks").add("OLD_STONE_NAME", entry("minecraft:stone"));
         first.getAsJsonObject("blocks").remove("STONE");
         first.getAsJsonObject("items").add("OLD_ITEM", entry("minecraft:old_item"));
-        JsonObject removedToStick = entry("minecraft:removed_to_stick");
-        removedToStick.addProperty("fallback", "minecraft:stick");
-        first.getAsJsonObject("items").add("REMOVED_TO_STICK", removedToStick);
+        first.getAsJsonObject("items").add("REMOVED_ITEM", entry("minecraft:removed_item"));
         JsonObject state = new JsonObject();
         state.addProperty("name", "removed_state");
         state.addProperty("kind", "bool");
@@ -166,33 +164,34 @@ class ConstantsGeneratorTest {
         ConstantsGenerator.Result second = ConstantsGenerator.generate(release, null, names, first, "2.1.0");
         String blocks = second.files().get(BLOCKS);
         assertTrue(blocks.contains("""
-                @Deprecated(since = "2.1.0", forRemoval = true)
+                @Deprecated(since = "2.1.0")
                 public static final BedrockBlockType REMOVED_BLOCK = VanillaTypes.block("minecraft:removed_block");
             """), blocks.substring(0, 200));
         assertTrue(blocks.contains("@deprecated Bedrock removed the block; resolves to {@code minecraft:unknown}"));
         assertTrue(blocks.contains("""
-                @Deprecated(since = "2.1.0", forRemoval = true)
+                @Deprecated(since = "2.1.0")
                 public static final BedrockBlockType OLD_STONE_NAME = STONE;
             """));
-        // New in Paletter 2.1.0 (prose), in the newest release (the @since: Bedrock's version)
+        // New in Paletter 2.1.0 (the @since), in the newest release (the line of the Bedrock release)
         assertTrue(blocks.contains("""
-                 * Added in Paletter 2.1.0.
+                 * First in Bedrock %s.
                  *
-                 * @since %s
+                 * @since 2.1.0
                  */
                 public static final BedrockBlockType STONE = VanillaTypes.block("minecraft:stone");
             """.formatted(release.version().name())));
         String items = second.files().get(ITEMS);
         assertTrue(items.contains("public static final BedrockItemType OLD_ITEM = APPLE;"));
         assertTrue(items.contains("@deprecated Bedrock renamed it to {@link #APPLE}"));
-        assertTrue(items.contains("REMOVED_TO_STICK = VanillaTypes.item(\"minecraft:removed_to_stick\", \"minecraft:stick\");"));
+        assertTrue(items.contains("REMOVED_ITEM = VanillaTypes.item(\"minecraft:removed_item\");"));
+        assertFalse(blocks.contains("forRemoval") || items.contains("forRemoval"), "names are never removed");
         String states = second.files().get(STATES);
         assertTrue(states.contains("""
-                @Deprecated(since = "2.1.0", forRemoval = true)
+                @Deprecated(since = "2.1.0")
                 public static final BoolState REMOVED_STATE = VanillaTypes.state(BoolState.of("removed_state"));
             """));
         String cardinal = second.files().get(ConstantsGenerator.STATE_DIR + "/CardinalDirection.java");
-        assertTrue(cardinal.contains("    @Deprecated(since = \"2.1.0\", forRemoval = true)\n    UPWARDS(\"upwards\")"), cardinal);
+        assertTrue(cardinal.contains("    @Deprecated(since = \"2.1.0\")\n    UPWARDS(\"upwards\")"), cardinal);
 
         assertTrue(second.added().contains("BedrockBlocks.STONE = minecraft:stone"));
         assertEquals(6, second.deprecated().size(), second.deprecated().toString());
@@ -255,6 +254,137 @@ class ConstantsGeneratorTest {
         assertNull(history(result).getAsJsonObject("items").get("PREVIEW_ITEM"));
         assertNull(history(result).getAsJsonObject("states").get("PREVIEW_BIT"));
         compile(result, temp);
+    }
+
+    private static JsonObject itemsOf(ConstantsGenerator.Result result) {
+        return history(result).getAsJsonObject("items");
+    }
+
+    private static ConstantsGenerator.Result generate(ConstantsGenerator.Sources sources, JsonObject history, String version) {
+        return ConstantsGenerator.generate(sources.releases().getLast(), null, names(), history, version, sources);
+    }
+
+    @Test
+    void theBedrockReleaseFollowsTheDataUntilItsReleaseLeavesTheBundle() {
+        Map<String, Map<String, String>> gated = Map.of("1.1", Map.of("minecraft:egg", "drop"));
+        VanillaData v10 = version("1.0", 100, "minecraft:apple");
+        VanillaData v11 = version("1.1", 110, "minecraft:apple", "minecraft:egg");
+        VanillaData v12 = version("1.2", 120, "minecraft:apple", "minecraft:egg");
+
+        // Only 1.1 is bundled, and it has the egg behind an experiment: the first release that has it
+        ConstantsGenerator.Result first = generate(sources(gated, java.util.Set.of(), v11), new JsonObject(), "1.0.0");
+        assertEquals("1.1", itemsOf(first).getAsJsonObject("EGG").get("bedrock").getAsString());
+        assertEquals("1.1", itemsOf(first).getAsJsonObject("APPLE").get("bedrock").getAsString());
+
+        // 1.2 ungates the egg, and 1.0 is back-filled: what the history recorded is derived again, not kept
+        ConstantsGenerator.Result second = generate(sources(gated, java.util.Set.of(), v10, v11, v12), history(first), "2.0.0");
+        assertEquals("1.2", itemsOf(second).getAsJsonObject("EGG").get("bedrock").getAsString());
+        assertEquals("1.0", itemsOf(second).getAsJsonObject("APPLE").get("bedrock").getAsString());
+        assertTrue(second.files().get(ITEMS).contains("{@code 1.0} is the oldest bundled release"));
+        assertTrue(second.files().get(ITEMS).contains("First in Bedrock 1.2."));
+        assertTrue(second.files().get(ITEMS).contains("Behind the experiment {@code drop} in 1.1"));
+
+        // Releases leave the bundle: a recorded release that is not bundled anymore stays, the others are derived
+        ConstantsGenerator.Result third = generate(sources(Map.of(), java.util.Set.of(), v12), history(second), "3.0.0");
+        assertEquals("1.0", itemsOf(third).getAsJsonObject("APPLE").get("bedrock").getAsString());
+        assertEquals("1.2", itemsOf(third).getAsJsonObject("EGG").get("bedrock").getAsString());
+    }
+
+    @Test
+    void sinceIsThePaletterVersionInEveryClass(@TempDir Path temp) throws IOException {
+        JsonObject old = new JsonObject();
+        JsonObject items = new JsonObject();
+        items.add("APPLE", entry("minecraft:apple"));
+        old.add("items", items);
+        ConstantsGenerator.Result result = generate(sources(Map.of(), java.util.Set.of(),
+            version("1.0", 100, "minecraft:apple", "minecraft:egg")), old, "2.0.0");
+        String source = result.files().get(ITEMS);
+        // Added in the version of the run: @since is that, and the Bedrock release is its own line; the old one has no @since
+        assertTrue(source.contains("     * First in Bedrock 1.0.\n     *\n     * @since 2.0.0\n     */\n    public static final BedrockItemType EGG"), source);
+        assertTrue(source.contains("     * First in Bedrock 1.0.\n     */\n    public static final BedrockItemType APPLE"), source);
+        assertFalse(source.contains("@since 1.0"), "a Bedrock release is never a @since");
+        compile(result, temp);
+    }
+
+    @Test
+    void handNamesAreReadFromTheirFile() throws IOException {
+        List<String> committed = Files.readAllLines(ROOT.resolve(ConstantsGenerator.NAMES));
+        // Without any history, the hand names alone give the names the committed history has
+        ConstantsGenerator.Result fresh = ConstantsGenerator.generate(release, null,
+            ConstantsGenerator.Names.of(Renames.NONE, committed, new JsonObject()), new JsonObject(), "0.1.0");
+        JsonObject committedHistory = ConstantsGenerator.readJson(ROOT.resolve(ConstantsGenerator.HISTORY));
+        assertEquals(committedHistory.getAsJsonObject("states").keySet(), history(fresh).getAsJsonObject("states").keySet());
+        assertEquals(committedHistory.getAsJsonObject("enums").keySet(), history(fresh).getAsJsonObject("enums").keySet());
+
+        // A name of the file is used, wherever it comes from
+        List<String> renamed = new ArrayList<>(committed);
+        renamed.add("items minecraft:apple FRUIT");
+        String items = ConstantsGenerator.generate(release, null, ConstantsGenerator.Names.of(Renames.NONE, renamed, new JsonObject()),
+            new JsonObject(), "0.1.0").files().get(ITEMS);
+        assertTrue(items.contains("BedrockItemType FRUIT = VanillaTypes.item(\"minecraft:apple\")"));
+        assertFalse(items.contains(" APPLE = "));
+
+        // A line that matches nothing fails, and so do malformed ones
+        List<String> unused = new ArrayList<>(committed);
+        unused.add("blocks minecraft:nothing NOTHING");
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(release, null,
+            ConstantsGenerator.Names.of(Renames.NONE, unused, new JsonObject()), new JsonObject(), "0.1.0"));
+        assertTrue(e.getMessage().startsWith(ConstantsGenerator.NAMES) && e.getMessage().contains("blocks minecraft:nothing"), e.getMessage());
+        e = assertThrows(IllegalStateException.class, () -> ConstantsGenerator.Names.of(Renames.NONE, List.of("# c", "blocks minecraft:dirt"), new JsonObject()));
+        assertEquals(ConstantsGenerator.NAMES + " line 2: expected `blocks|items|states|enums <key> <name>`, got `blocks minecraft:dirt`", e.getMessage());
+        e = assertThrows(IllegalStateException.class,
+            () -> ConstantsGenerator.Names.of(Renames.NONE, List.of("items minecraft:dirt A", "items minecraft:dirt B"), new JsonObject()));
+        assertEquals(ConstantsGenerator.NAMES + " line 2: `items minecraft:dirt` is named twice", e.getMessage());
+    }
+
+    @Test
+    void renameChainsEndAtTheFinalConstant(@TempDir Path temp) throws IOException {
+        VanillaData data = version("1.0", 100, "minecraft:c");
+        JsonObject old = new JsonObject();
+        JsonObject items = new JsonObject();
+        items.add("A", entry("minecraft:a"));
+        items.add("B", entry("minecraft:b"));
+        old.add("items", items);
+        // a became b, which became c, in one update: both are aliases of C, not removed
+        ConstantsGenerator.Names chain = new ConstantsGenerator.Names(Map.of(), Map.of(), Map.of(), Map.of(),
+            new Renames(Map.of(), Map.of("minecraft:a", "minecraft:b", "minecraft:b", "minecraft:c")));
+        ConstantsGenerator.Result result = ConstantsGenerator.generate(data, null, chain, old, "2.0.0");
+        assertEquals("C", itemsOf(result).getAsJsonObject("A").get("replacement").getAsString());
+        assertEquals("C", itemsOf(result).getAsJsonObject("B").get("replacement").getAsString());
+        assertEquals(List.of("BedrockItems.A (minecraft:a, now C)", "BedrockItems.B (minecraft:b, now C)"), result.deprecated());
+        compile(result, temp.resolve("one"));
+
+        // A was already an alias of B, and B is renamed to c now: A follows (an alias sorts before its target here)
+        JsonObject aliased = new JsonObject();
+        JsonObject alias = entry("minecraft:a");
+        alias.addProperty("deprecated", "1.5.0");
+        alias.addProperty("replacement", "B");
+        JsonObject aliasItems = new JsonObject();
+        aliasItems.add("A", alias);
+        aliasItems.add("B", entry("minecraft:b"));
+        aliased.add("items", aliasItems);
+        ConstantsGenerator.Names oneStep = new ConstantsGenerator.Names(Map.of(), Map.of(), Map.of(), Map.of(),
+            new Renames(Map.of(), Map.of("minecraft:b", "minecraft:c")));
+        result = ConstantsGenerator.generate(data, null, oneStep, aliased, "2.0.0");
+        assertEquals("C", itemsOf(result).getAsJsonObject("A").get("replacement").getAsString());
+        assertEquals("1.5.0", itemsOf(result).getAsJsonObject("A").get("deprecated").getAsString());
+        compile(result, temp.resolve("two"));
+
+        // A cycle fails clearly
+        JsonObject cycle = new JsonObject();
+        JsonObject a = entry("minecraft:a");
+        a.addProperty("deprecated", "1.5.0");
+        a.addProperty("replacement", "B");
+        JsonObject b = entry("minecraft:b");
+        b.addProperty("deprecated", "1.5.0");
+        b.addProperty("replacement", "A");
+        JsonObject cycleItems = new JsonObject();
+        cycleItems.add("A", a);
+        cycleItems.add("B", b);
+        cycle.add("items", cycleItems);
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+            () -> ConstantsGenerator.generate(data, null, ConstantsGenerator.Names.of(Renames.NONE, new JsonObject()), cycle, "2.0.0"));
+        assertTrue(e.getMessage().contains("cycle of aliases"), e.getMessage());
     }
 
     /** Compiles the generated sources against Paletter's classes (the package private factory included). */

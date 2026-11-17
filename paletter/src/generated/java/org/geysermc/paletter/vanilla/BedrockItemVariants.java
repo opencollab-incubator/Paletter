@@ -5,17 +5,18 @@ package org.geysermc.paletter.vanilla;
 import org.geysermc.paletter.annotation.SincePreview;
 
 /**
- * The named aux variants of Bedrock 26.60, the newest bundled release: potions, splash and lingering
- * potions and tipped arrows by effect, beds and banners by colour. The names are BDS's own spellings, taken from the
- * Script API (the potion effect id, the localization key of the stack), such as {@code POTION_LONG_NIGHTVISION} or
- * {@code BED_SILVER}. Every constant is the very {@link BedrockItemVariant} of {@code type.variant(aux)}. Referencing
- * them loads nothing.
+ * The named aux variants of Bedrock 26.60, the newest bundled release, of the items
+ * {@link BedrockItems#ARROW}, {@link BedrockItems#BANNER}, {@link BedrockItems#BED},
+ * {@link BedrockItems#LINGERING_POTION}, {@link BedrockItems#POTION}, {@link BedrockItems#SPLASH_POTION}.
+ * The names are BDS's own spellings, taken from the Script API (the potion effect id, the localization key of the
+ * stack). Every constant is the very {@link BedrockItemVariant} of {@code type.variant(aux)}. Referencing them loads
+ * nothing.
  * <p>
  * Constants are added when Bedrock adds variants (binary compatible). A variant Bedrock removes keeps its constant,
  * deprecated: {@code type.variant(aux)} is then null. A name BDS changes stays as a deprecated alias of the new one.
  * <p>
- * The {@code @since} of a constant is the Paletter version that added it. The names come from BDS dumps of the newest
- * builds only: a variant is first captured in the oldest release with variant data, and may be older.
+ * {@code @since} is the Paletter version that added a constant. The names come from BDS dumps of the newest
+ * builds only, so a variant says nothing of the Bedrock release it is first in: it may be older than the dumps.
  * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks variants only the bundled Bedrock preview
  * has: without previews loaded ({@code paletter.previews}) its type has no such variant, so {@code type.variant(aux)}
  * is null and the constant stays a plain key. The mark goes when a release has it; the constant goes if a newer
