@@ -69,6 +69,7 @@ public final class VoxelShapes {
     /**
      * @return the packet to send a client before start game, identical to the one BDS sends for the same content
      */
+    @Internal
     public @NonNull VoxelShapesPacket toPacket() {
         List<SerializableVoxelShape> wire = new ArrayList<>(shapes.size());
         for (VoxelGrid shape : shapes) {

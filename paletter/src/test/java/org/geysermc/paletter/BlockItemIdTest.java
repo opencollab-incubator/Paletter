@@ -33,7 +33,7 @@ class BlockItemIdTest {
     }
 
     private static int blockId(Palette palette, String identifier) {
-        return palette.blockProperties().stream().filter(property -> property.getName().equals(identifier)).findFirst().orElseThrow()
+        return palette.blocks().blockProperties().stream().filter(property -> property.getName().equals(identifier)).findFirst().orElseThrow()
             .getProperties().getCompound("vanilla_block_data").getInt("block_id");
     }
 

@@ -1,5 +1,6 @@
 package org.geysermc.paletter.creative;
 
+import org.geysermc.paletter.annotation.Internal;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemData;
@@ -39,6 +40,7 @@ public final class CreativeContent {
         this.entries = entries;
     }
 
+    @Internal
     public static @NonNull CreativeContent compile(@NonNull CreativeLayout layout, @NonNull ItemRegistry items, @NonNull PaletteReport report) {
         List<CreativeItemGroup> groups = new ArrayList<>();
         List<CreativeItemData> contents = new ArrayList<>();
@@ -85,6 +87,7 @@ public final class CreativeContent {
         return entries.length;
     }
 
+    @Internal
     public @NonNull CreativeContentPacket toPacket() {
         CreativeContentPacket packet = new CreativeContentPacket();
         packet.getGroups().addAll(groups);

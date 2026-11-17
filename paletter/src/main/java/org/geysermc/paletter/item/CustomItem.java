@@ -49,7 +49,7 @@ public final class CustomItem {
      *                     without one, Bedrock's default)
      * @param creative where it goes in the creative inventory, or null to leave it out
      */
-    public CustomItem(@NonNull String identifier, @NonNull List<ItemComponent> components, @Nullable MenuCategory menuCategory,
+    private CustomItem(@NonNull String identifier, @NonNull List<ItemComponent> components, @Nullable MenuCategory menuCategory,
                       @Nullable CreativePlacement creative) {
         this.identifier = Objects.requireNonNull(identifier, "identifier");
         this.components = List.copyOf(components);

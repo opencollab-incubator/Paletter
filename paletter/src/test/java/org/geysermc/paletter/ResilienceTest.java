@@ -211,7 +211,7 @@ class ResilienceTest {
         palette.applyTo(packet);
         palette.applyTo(packet);
         assertEquals(once, packet.getBlockProperties());
-        assertEquals(palette.blockProperties().size(), packet.getBlockProperties().size());
+        assertEquals(palette.blocks().blockProperties().size(), packet.getBlockProperties().size());
         assertEquals(packet.getExperiments().stream().distinct().count(), packet.getExperiments().size());
     }
 

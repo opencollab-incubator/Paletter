@@ -1,5 +1,6 @@
 package org.geysermc.paletter.creative;
 
+import org.geysermc.paletter.annotation.Internal;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.item.BedrockItemStack;
@@ -56,18 +57,12 @@ public record CreativePlacement(@NonNull CreativeCategory category, @Nullable St
     }
 
     /**
-     * Applies this placement to an editor with {@link CreativeOrdering#APPEND}.
-     */
-    public void apply(@NonNull CreativeEditor editor, @NonNull BedrockItemStack stack) {
-        apply(editor, stack, CreativeOrdering.APPEND);
-    }
-
-    /**
      * Applies this placement to an editor. An anchor ({@link #after}) always wins if it exists; otherwise the
      * stack goes where the ordering policy puts it.
      *
      * @since 0.1.0
      */
+    @Internal
     public void apply(@NonNull CreativeEditor editor, @NonNull BedrockItemStack stack, @NonNull CreativeOrdering ordering) {
         if (ordering == CreativeOrdering.BDS) {
             CreativeEditor.Insertion insertion = editor.insert(stack);

@@ -1,6 +1,7 @@
 package org.geysermc.paletter;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.geysermc.paletter.annotation.Internal;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,6 +15,10 @@ import java.util.List;
  */
 public final class PaletteReport {
     private final List<Entry> entries = Collections.synchronizedList(new ArrayList<>());
+
+    @Internal
+    public PaletteReport() {
+    }
 
     public enum Level {
         /**
@@ -43,14 +48,17 @@ public final class PaletteReport {
         }
     }
 
+    @Internal
     public void info(@NonNull String source, @NonNull String message) {
         entries.add(new Entry(Level.INFO, source, message));
     }
 
+    @Internal
     public void warn(@NonNull String source, @NonNull String message) {
         entries.add(new Entry(Level.WARNING, source, message));
     }
 
+    @Internal
     public void error(@NonNull String source, @NonNull String message) {
         entries.add(new Entry(Level.ERROR, source, message));
     }

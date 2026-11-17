@@ -40,7 +40,7 @@ public final class Inspect {
     }
 
     private static ItemExplanation explain(Palette palette, ItemVariant item) {
-        return palette.explain(item.identifier(), item.damage());
+        return palette.explain(item.identifier(), item.damage(), null);
     }
 
     private static DataVersion find(Paletter paletter, String name) {

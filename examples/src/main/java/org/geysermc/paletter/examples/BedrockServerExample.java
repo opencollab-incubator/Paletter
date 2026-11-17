@@ -74,6 +74,6 @@ public final class BedrockServerExample {
             + paletter.properties(BedrockItems.APPLE, paletter.latest()).all().size());
 
         // Debugging: why does this id look the way it does?
-        System.out.println(palette.explain(BedrockBlocks.STONE.defaultState()));
+        System.out.println(palette.explain(BedrockBlocks.STONE.defaultState().toNbt()));
     }
 }

@@ -36,7 +36,7 @@ class CustomOrderTest {
 
         for (Palette palette : List.of(first, second)) {
             List<String> properties = new ArrayList<>();
-            palette.blockProperties().forEach(property -> {
+            palette.blocks().blockProperties().forEach(property -> {
                 if (property.getName().startsWith("order:")) {
                     properties.add(property.getName());
                 }
@@ -54,7 +54,7 @@ class CustomOrderTest {
         for (String identifier : ascending) {
             assertEquals(first.items().getDefinition(identifier).getRuntimeId(), second.items().getDefinition(identifier).getRuntimeId(), identifier);
         }
-        assertTrue(first.blockProperties().equals(second.blockProperties()));
+        assertTrue(first.blocks().blockProperties().equals(second.blocks().blockProperties()));
     }
 
     /** A consumer that registers data driven block items itself (Geyser) decides their slot among the custom items. */

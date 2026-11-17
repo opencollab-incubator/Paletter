@@ -71,12 +71,12 @@ class FallbackQueryTest {
             if (checked++ % 5 != 0) {
                 continue;
             }
-            ItemExplanation.Kind kind = oldest.explain(variant).kind();
+            ItemExplanation.Kind kind = oldest.explain(variant.type().identifier(), variant.aux(), null).kind();
             boolean fallback = kind == ItemExplanation.Kind.FALLBACK || kind == ItemExplanation.Kind.DEFAULT;
             assertEquals(fallback, oldest.isFallback(variant), variant + " " + kind);
             assertEquals(fallback, oldest.fallbackOf(variant) != null, variant + " " + kind);
             if (fallback) {
-                assertEquals(oldest.explain(variant).item(), oldest.fallbackOf(variant).type().identifier(), variant.toString());
+                assertEquals(oldest.explain(variant.type().identifier(), variant.aux(), null).item(), oldest.fallbackOf(variant).type().identifier(), variant.toString());
             }
         }
         assertTrue(checked > 100);

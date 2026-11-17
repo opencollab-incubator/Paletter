@@ -561,15 +561,6 @@ public final class Palette {
     }
 
     /**
-     * Like {@link #explain(NbtMap)}, for a vanilla state.
-     *
-     * @since 0.1.0
-     */
-    public @NonNull BlockExplanation explain(@NonNull BedrockBlockState state) {
-        return explain(state.toNbt());
-    }
-
-    /**
      * Explains what this palette does with an item: canonical and runtime id, how it was resolved for this
      * version, the block it is sent with and its place in the creative inventory. Slow, for debugging only.
      *
@@ -607,24 +598,6 @@ public final class Palette {
             sent == null ? -1 : sent.definition().getRuntimeId(), sent == null ? 0 : sent.damage(),
             block == null ? null : BlockExplanation.describe(block.getState()), block == null ? -1 : block.getRuntimeId(),
             creativeLayout().contains(matcher), creativeLayout().groupOf(matcher));
-    }
-
-    /**
-     * Like {@link #explain(String, int, NbtMap)}, without a block state.
-     *
-     * @since 0.1.0
-     */
-    public @NonNull ItemExplanation explain(@NonNull String identifier, int aux) {
-        return explain(identifier, aux, null);
-    }
-
-    /**
-     * Like {@link #explain(String, int)}, for a variant.
-     *
-     * @since 0.1.0
-     */
-    public @NonNull ItemExplanation explain(@NonNull BedrockItemVariant variant) {
-        return explain(variant.type().identifier(), variant.aux(), null);
     }
 
     /**
@@ -750,26 +723,6 @@ public final class Palette {
      */
     public @Nullable String experimentOf(@NonNull BedrockBlockType type) {
         return gating.ofBlock(type.identifier());
-    }
-
-    /**
-     * @return the enabled experiment toggle that makes an item present in this palette, or null
-     * @since 0.1.0
-     */
-    public @Nullable String experimentOf(@NonNull RegisteredItem item) {
-        return gating.ofItem(item.getIdentifier());
-    }
-
-    /**
-     * @return the enabled experiment toggle that makes a block present in this palette, or null
-     * @since 0.1.0
-     */
-    public @Nullable String experimentOf(@NonNull RegisteredBlock block) {
-        return gating.ofBlock(block.identifier());
-    }
-
-    public @NonNull List<BlockPropertyData> blockProperties() {
-        return blocks.blockProperties();
     }
 
     /**

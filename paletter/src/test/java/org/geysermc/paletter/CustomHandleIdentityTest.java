@@ -218,7 +218,7 @@ class CustomHandleIdentityTest {
         assertSame(type, palette.item(type).key(), where);
         assertSame(type, palette.resolve(base).definition().key(), where);
         assertSame(item, palette.item(type).customItem(), where);
-        assertSame(base, palette.explain(item.identifier(), 0).handle(), where);
+        assertSame(base, palette.explain(item.identifier(), 0, null).handle(), where);
         assertSame(base, palette.itemVariants().stream().filter(v -> v.type().identifier().equals(item.identifier())).findFirst().orElseThrow(), where);
         assertSame(type, palette.creativeLayout().stacks().filter(stack -> stack.type().identifier().equals(item.identifier()))
             .findFirst().orElseThrow().type(), where);

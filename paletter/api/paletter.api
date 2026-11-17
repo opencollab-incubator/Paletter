@@ -109,23 +109,17 @@ public final class org.geysermc.paletter.Palette {
     public org.geysermc.paletter.vanilla.BedrockBlockState blockKeyOf(org.geysermc.paletter.vanilla.BedrockItemVariant)
     public org.geysermc.paletter.block.RegisteredBlockState blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)
     public org.geysermc.paletter.block.RegisteredBlockState blockOrNull(org.geysermc.paletter.vanilla.BedrockBlockState)
-    public java.util.List<org.cloudburstmc.protocol.bedrock.data.BlockPropertyData> blockProperties()
     public org.geysermc.paletter.block.BlockRegistry blocks()
     public org.geysermc.paletter.creative.CreativeContent creative()
     public org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket creativeContentPacket()
     public org.geysermc.paletter.creative.CreativeLayout creativeLayout()
     public org.geysermc.paletter.item.BedrockItemStack decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)
     public org.cloudburstmc.protocol.bedrock.data.inventory.ItemData encode(org.geysermc.paletter.item.BedrockItemStack)
-    public java.lang.String experimentOf(org.geysermc.paletter.block.RegisteredBlock)
-    public java.lang.String experimentOf(org.geysermc.paletter.item.RegisteredItem)
     public java.lang.String experimentOf(org.geysermc.paletter.vanilla.BedrockBlockType)
     public java.lang.String experimentOf(org.geysermc.paletter.vanilla.BedrockItemType)
     public java.util.List<java.lang.String> experiments()
-    public org.geysermc.paletter.ItemExplanation explain(java.lang.String, int)
     public org.geysermc.paletter.ItemExplanation explain(java.lang.String, int, org.cloudburstmc.nbt.NbtMap)
     public org.geysermc.paletter.BlockExplanation explain(org.cloudburstmc.nbt.NbtMap)
-    public org.geysermc.paletter.BlockExplanation explain(org.geysermc.paletter.vanilla.BedrockBlockState)
-    public org.geysermc.paletter.ItemExplanation explain(org.geysermc.paletter.vanilla.BedrockItemVariant)
     public java.lang.String explainUnknown(java.lang.String, int)
     public java.lang.String explainUnknown(org.cloudburstmc.nbt.NbtMap)
     public org.geysermc.paletter.Palette extend(org.geysermc.paletter.PaletteLayer)
@@ -214,12 +208,8 @@ public record org.geysermc.paletter.PaletteLayer$Override {
 }
 
 public final class org.geysermc.paletter.PaletteReport {
-    public <init>()
     public java.util.List<org.geysermc.paletter.PaletteReport$Entry> entries()
-    public void error(java.lang.String, java.lang.String)
     public java.util.List<org.geysermc.paletter.PaletteReport$Entry> errors()
-    public void info(java.lang.String, java.lang.String)
-    public void warn(java.lang.String, java.lang.String)
     public java.util.List<org.geysermc.paletter.PaletteReport$Entry> warnings()
 }
 
@@ -516,7 +506,6 @@ public final class org.geysermc.paletter.block.BlockRegistry implements org.clou
 }
 
 public final class org.geysermc.paletter.block.CustomBlock {
-    public <init>(java.lang.String, java.util.List<org.geysermc.paletter.block.BlockProperty<?>>, java.util.List<org.geysermc.paletter.block.component.BlockTrait>, java.util.List<org.geysermc.paletter.block.component.BlockComponent>, java.util.List<org.geysermc.paletter.block.CustomBlock$Permutation>, org.geysermc.paletter.block.component.MenuCategory, org.geysermc.paletter.block.CustomBlock$BlockItem, org.geysermc.paletter.creative.CreativePlacement, java.util.Map<java.lang.String, java.lang.Object>, java.util.List<java.lang.String>)
     public static org.geysermc.paletter.block.CustomBlock$Builder builder(java.lang.String)
     public <T extends org.geysermc.paletter.block.component.BlockComponent> T component(java.lang.Class<T>)
     public java.util.List<org.geysermc.paletter.block.component.BlockComponent> components()
@@ -641,7 +630,6 @@ public final class org.geysermc.paletter.block.VoxelShapes {
     public org.geysermc.paletter.block.VoxelShape get(java.lang.String)
     public java.util.Set<java.lang.String> names()
     public int size()
-    public org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket toPacket()
     public java.lang.String toString()
 }
 
@@ -2248,12 +2236,10 @@ public enum org.geysermc.paletter.creative.CreativeCategory {
 }
 
 public final class org.geysermc.paletter.creative.CreativeContent {
-    public static org.geysermc.paletter.creative.CreativeContent compile(org.geysermc.paletter.creative.CreativeLayout, org.geysermc.paletter.item.ItemRegistry, org.geysermc.paletter.PaletteReport)
     public org.geysermc.paletter.creative.CreativeEntry entry(int)
     public java.util.List<org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemGroup> groups()
     public java.util.List<org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemData> items()
     public int size()
-    public org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket toPacket()
 }
 
 public final class org.geysermc.paletter.creative.CreativeEditor {
@@ -2353,7 +2339,6 @@ public sealed interface org.geysermc.paletter.creative.CreativeNode permits org.
 public enum org.geysermc.paletter.creative.CreativeOrdering {
     public static final org.geysermc.paletter.creative.CreativeOrdering APPEND
     public static final org.geysermc.paletter.creative.CreativeOrdering BDS
-    public java.util.List<java.lang.String> blockOrder(java.util.List<java.lang.String>, java.util.Collection<java.lang.String>)
     public static org.geysermc.paletter.creative.CreativeOrdering valueOf(java.lang.String)
     public static org.geysermc.paletter.creative.CreativeOrdering[] values()
 }
@@ -2364,8 +2349,6 @@ public record org.geysermc.paletter.creative.CreativePlacement {
     public org.geysermc.paletter.creative.CreativePlacement after(org.geysermc.paletter.creative.ItemMatcher)
     public org.geysermc.paletter.creative.CreativePlacement after(org.geysermc.paletter.vanilla.BedrockItemType)
     public org.geysermc.paletter.creative.CreativePlacement after(org.geysermc.paletter.vanilla.BedrockItemVariant)
-    public void apply(org.geysermc.paletter.creative.CreativeEditor, org.geysermc.paletter.item.BedrockItemStack)
-    public void apply(org.geysermc.paletter.creative.CreativeEditor, org.geysermc.paletter.item.BedrockItemStack, org.geysermc.paletter.creative.CreativeOrdering)
     public org.geysermc.paletter.creative.CreativeCategory category()
     public final boolean equals(java.lang.Object)
     public java.lang.String group()
@@ -2375,7 +2358,7 @@ public record org.geysermc.paletter.creative.CreativePlacement {
     public final java.lang.String toString()
 }
 
-public interface org.geysermc.paletter.creative.ItemMatcher {
+public sealed interface org.geysermc.paletter.creative.ItemMatcher permits org.geysermc.paletter.creative.ItemMatchers$And, org.geysermc.paletter.creative.ItemMatchers$BlockState, org.geysermc.paletter.creative.ItemMatchers$Custom, org.geysermc.paletter.creative.ItemMatchers$Damage, org.geysermc.paletter.creative.ItemMatchers$Exact, org.geysermc.paletter.creative.ItemMatchers$Id, org.geysermc.paletter.creative.ItemMatchers$Namespace, org.geysermc.paletter.creative.ItemMatchers$Not {
     public default org.geysermc.paletter.creative.ItemMatcher and(org.geysermc.paletter.creative.ItemMatcher)
     public static org.geysermc.paletter.creative.ItemMatcher blockState(org.cloudburstmc.nbt.NbtMap)
     public static org.geysermc.paletter.creative.ItemMatcher blockState(org.geysermc.paletter.vanilla.BedrockBlockState)
@@ -2388,80 +2371,6 @@ public interface org.geysermc.paletter.creative.ItemMatcher {
     public static org.geysermc.paletter.creative.ItemMatcher of(java.lang.String, java.util.function.Predicate<org.geysermc.paletter.item.BedrockItemStack>)
     public static org.geysermc.paletter.creative.ItemMatcher of(org.geysermc.paletter.vanilla.BedrockItemType)
     public static org.geysermc.paletter.creative.ItemMatcher of(org.geysermc.paletter.vanilla.BedrockItemVariant)
-}
-
-public record org.geysermc.paletter.creative.ItemMatcher$And implements org.geysermc.paletter.creative.ItemMatcher {
-    public <init>(org.geysermc.paletter.creative.ItemMatcher, org.geysermc.paletter.creative.ItemMatcher)
-    public final boolean equals(java.lang.Object)
-    public org.geysermc.paletter.creative.ItemMatcher first()
-    public final int hashCode()
-    public boolean matches(org.geysermc.paletter.item.BedrockItemStack)
-    public org.geysermc.paletter.creative.ItemMatcher second()
-    public java.lang.String toString()
-}
-
-public record org.geysermc.paletter.creative.ItemMatcher$BlockState implements org.geysermc.paletter.creative.ItemMatcher {
-    public <init>(org.cloudburstmc.nbt.NbtMap)
-    public org.cloudburstmc.nbt.NbtMap blockState()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public boolean matches(org.geysermc.paletter.item.BedrockItemStack)
-    public java.lang.String toString()
-}
-
-public record org.geysermc.paletter.creative.ItemMatcher$Custom implements org.geysermc.paletter.creative.ItemMatcher {
-    public <init>(java.lang.String, java.util.function.Predicate<org.geysermc.paletter.item.BedrockItemStack>)
-    public java.lang.String description()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public boolean matches(org.geysermc.paletter.item.BedrockItemStack)
-    public java.util.function.Predicate<org.geysermc.paletter.item.BedrockItemStack> predicate()
-    public java.lang.String toString()
-}
-
-public record org.geysermc.paletter.creative.ItemMatcher$Damage implements org.geysermc.paletter.creative.ItemMatcher {
-    public <init>(int)
-    public int damage()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public boolean matches(org.geysermc.paletter.item.BedrockItemStack)
-    public java.lang.String toString()
-}
-
-public record org.geysermc.paletter.creative.ItemMatcher$Exact implements org.geysermc.paletter.creative.ItemMatcher {
-    public <init>(org.geysermc.paletter.item.BedrockItemStack)
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public boolean matches(org.geysermc.paletter.item.BedrockItemStack)
-    public org.geysermc.paletter.item.BedrockItemStack stack()
-    public java.lang.String toString()
-}
-
-public record org.geysermc.paletter.creative.ItemMatcher$Id implements org.geysermc.paletter.creative.ItemMatcher {
-    public <init>(java.lang.String)
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public java.lang.String identifier()
-    public boolean matches(org.geysermc.paletter.item.BedrockItemStack)
-    public java.lang.String toString()
-}
-
-public record org.geysermc.paletter.creative.ItemMatcher$Namespace implements org.geysermc.paletter.creative.ItemMatcher {
-    public <init>(java.lang.String)
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public boolean matches(org.geysermc.paletter.item.BedrockItemStack)
-    public java.lang.String prefix()
-    public java.lang.String toString()
-}
-
-public record org.geysermc.paletter.creative.ItemMatcher$Not implements org.geysermc.paletter.creative.ItemMatcher {
-    public <init>(org.geysermc.paletter.creative.ItemMatcher)
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public org.geysermc.paletter.creative.ItemMatcher matcher()
-    public boolean matches(org.geysermc.paletter.item.BedrockItemStack)
-    public java.lang.String toString()
 }
 
 public record org.geysermc.paletter.data.DataVersion extends java.lang.Record implements java.lang.Comparable<org.geysermc.paletter.data.DataVersion> {
@@ -2500,7 +2409,6 @@ public record org.geysermc.paletter.item.BedrockItemStack {
 }
 
 public final class org.geysermc.paletter.item.CustomItem {
-    public <init>(java.lang.String, java.util.List<org.geysermc.paletter.item.component.ItemComponent>, org.geysermc.paletter.item.component.MenuCategory, org.geysermc.paletter.creative.CreativePlacement)
     public static org.geysermc.paletter.item.CustomItem$Builder builder(java.lang.String)
     public <T extends org.geysermc.paletter.item.component.ItemComponent> T component(java.lang.Class<T>)
     public java.util.List<org.geysermc.paletter.item.component.ItemComponent> components()

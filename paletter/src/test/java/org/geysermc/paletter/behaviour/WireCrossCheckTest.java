@@ -40,7 +40,7 @@ class WireCrossCheckTest {
         for (DataVersion version : PALETTER.versions()) {
             Palette palette = PALETTER.vanilla(version);
             Behaviour behaviour = palette.behaviour();
-            for (var data : palette.blockProperties()) {
+            for (var data : palette.blocks().blockProperties()) {
                 RegisteredBlock block = palette.blocks().block(data.getName());
                 for (RegisteredBlockState state : block.states()) {
                     for (BehaviourKey<?> key : BlockBehaviour.keys()) {

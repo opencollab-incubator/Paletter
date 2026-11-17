@@ -8,7 +8,6 @@ import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 
-import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
@@ -20,24 +19,24 @@ import java.util.function.Predicate;
  *
  * @since 0.1.0
  */
-@FunctionalInterface
-public interface ItemMatcher {
+public sealed interface ItemMatcher permits ItemMatchers.Id, ItemMatchers.Damage, ItemMatchers.BlockState,
+        ItemMatchers.Exact, ItemMatchers.Namespace, ItemMatchers.And, ItemMatchers.Not, ItemMatchers.Custom {
 
     boolean matches(@NonNull BedrockItemStack stack);
 
     default @NonNull ItemMatcher and(@NonNull ItemMatcher other) {
-        return new And(this, other);
+        return new ItemMatchers.And(this, other);
     }
 
     default @NonNull ItemMatcher negate() {
-        return new Not(this);
+        return new ItemMatchers.Not(this);
     }
 
     /**
      * Matches every stack of an item, regardless of damage, block state or NBT.
      */
     static @NonNull ItemMatcher id(@NonNull String identifier) {
-        return new Id(identifier);
+        return new ItemMatchers.Id(identifier);
     }
 
     /**
@@ -46,7 +45,7 @@ public interface ItemMatcher {
      * @since 0.1.0
      */
     static @NonNull ItemMatcher of(@NonNull BedrockItemType type) {
-        return new Id(type.identifier());
+        return new ItemMatchers.Id(type.identifier());
     }
 
     /**
@@ -55,15 +54,15 @@ public interface ItemMatcher {
      * @since 0.1.0
      */
     static @NonNull ItemMatcher of(@NonNull BedrockItemVariant variant) {
-        return new Id(variant.type().identifier()).and(new Damage(variant.aux()));
+        return new ItemMatchers.Id(variant.type().identifier()).and(new ItemMatchers.Damage(variant.aux()));
     }
 
     static @NonNull ItemMatcher damage(int damage) {
-        return new Damage(damage);
+        return new ItemMatchers.Damage(damage);
     }
 
     static @NonNull ItemMatcher blockState(@NonNull NbtMap blockState) {
-        return new BlockState(BlockStates.normalize(blockState));
+        return new ItemMatchers.BlockState(BlockStates.normalize(blockState));
     }
 
     /**
@@ -72,121 +71,21 @@ public interface ItemMatcher {
      * @since 0.1.0
      */
     static @NonNull ItemMatcher blockState(@NonNull BedrockBlockState blockState) {
-        return new BlockState(BlockStates.normalize(blockState.toNbt()));
+        return new ItemMatchers.BlockState(BlockStates.normalize(blockState.toNbt()));
     }
 
     /**
      * Matches stacks equal to the given stack in every respect, including count and NBT.
      */
     static @NonNull ItemMatcher exact(@NonNull BedrockItemStack stack) {
-        return new Exact(stack);
+        return new ItemMatchers.Exact(stack);
     }
 
     static @NonNull ItemMatcher namespace(@NonNull String namespace) {
-        return new Namespace(namespace.endsWith(":") ? namespace : namespace + ":");
+        return new ItemMatchers.Namespace(namespace.endsWith(":") ? namespace : namespace + ":");
     }
 
     static @NonNull ItemMatcher of(@NonNull String description, @NonNull Predicate<BedrockItemStack> predicate) {
-        return new Custom(description, predicate);
-    }
-
-    record Id(@NonNull String identifier) implements ItemMatcher {
-        @Override
-        public boolean matches(@NonNull BedrockItemStack stack) {
-            return stack.type().identifier().equals(identifier);
-        }
-
-        @Override
-        public String toString() {
-            return identifier;
-        }
-    }
-
-    record Damage(int damage) implements ItemMatcher {
-        @Override
-        public boolean matches(@NonNull BedrockItemStack stack) {
-            return stack.variant().aux() == damage;
-        }
-
-        @Override
-        public String toString() {
-            return "damage=" + damage;
-        }
-    }
-
-    record BlockState(@NonNull NbtMap blockState) implements ItemMatcher {
-        @Override
-        public boolean matches(@NonNull BedrockItemStack stack) {
-            return stack.blockState() != null && blockState.equals(stack.blockState().toNbt());
-        }
-
-        @Override
-        public String toString() {
-            return "block=" + blockState;
-        }
-    }
-
-    record Exact(@NonNull BedrockItemStack stack) implements ItemMatcher {
-        @Override
-        public boolean matches(@NonNull BedrockItemStack other) {
-            return stack.equals(other);
-        }
-
-        @Override
-        public String toString() {
-            return "exactly " + stack;
-        }
-    }
-
-    record Namespace(@NonNull String prefix) implements ItemMatcher {
-        @Override
-        public boolean matches(@NonNull BedrockItemStack stack) {
-            return stack.type().identifier().startsWith(prefix);
-        }
-
-        @Override
-        public String toString() {
-            return prefix + "*";
-        }
-    }
-
-    record And(@NonNull ItemMatcher first, @NonNull ItemMatcher second) implements ItemMatcher {
-        @Override
-        public boolean matches(@NonNull BedrockItemStack stack) {
-            return first.matches(stack) && second.matches(stack);
-        }
-
-        @Override
-        public String toString() {
-            return first + " & " + second;
-        }
-    }
-
-    record Not(@NonNull ItemMatcher matcher) implements ItemMatcher {
-        @Override
-        public boolean matches(@NonNull BedrockItemStack stack) {
-            return !matcher.matches(stack);
-        }
-
-        @Override
-        public String toString() {
-            return "not(" + matcher + ")";
-        }
-    }
-
-    record Custom(@NonNull String description, @NonNull Predicate<BedrockItemStack> predicate) implements ItemMatcher {
-        public Custom {
-            Objects.requireNonNull(predicate);
-        }
-
-        @Override
-        public boolean matches(@NonNull BedrockItemStack stack) {
-            return predicate.test(stack);
-        }
-
-        @Override
-        public String toString() {
-            return description;
-        }
+        return new ItemMatchers.Custom(description, predicate);
     }
 }

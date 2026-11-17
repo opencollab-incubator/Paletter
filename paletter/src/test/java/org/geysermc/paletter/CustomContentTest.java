@@ -134,7 +134,6 @@ class CustomContentTest {
 
     @Test
     void componentsAreOnePerName() {
-        assertThrows(IllegalArgumentException.class, () -> new CustomItem("example:x", List.of(MaxStackSize.of(1), MaxStackSize.of(2)), null, null));
         CustomItem replaced = CustomItem.builder("example:x").component(MaxStackSize.of(1)).component(MaxStackSize.of(2)).build();
         assertEquals(2, replaced.component(MaxStackSize.class).value());
         assertFalse(replaced.components().size() > 1);

@@ -1,5 +1,6 @@
 package org.geysermc.paletter.creative;
 
+import org.geysermc.paletter.annotation.Internal;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.nio.charset.StandardCharsets;
@@ -65,6 +66,7 @@ public enum CreativeOrdering {
      * @return {@code customBlocks} in placement order
      * @since 0.1.0
      */
+    @Internal
     public @NonNull List<String> blockOrder(@NonNull List<String> customBlocks, @NonNull Collection<String> vanillaDataDrivenBlocks) {
         if (this == APPEND) {
             return List.copyOf(customBlocks);

@@ -55,18 +55,18 @@ class ExplainTest {
     @Test
     void items() {
         Palette palette = Palettes.paletter().vanilla(PALETTER.latest());
-        ItemExplanation apple = palette.explain(BedrockItems.APPLE.base());
+        ItemExplanation apple = palette.explain("minecraft:apple", 0, null);
         assertNotNull(apple.handle());
         assertEquals(ItemExplanation.Kind.EXACT, apple.kind());
         assertEquals("minecraft:apple", apple.item());
         assertNull(apple.block());
         assertTrue(apple.creative());
 
-        ItemExplanation stone = palette.explain("minecraft:stone", 0);
+        ItemExplanation stone = palette.explain("minecraft:stone", 0, null);
         assertNotNull(stone.block());
         assertTrue(stone.toString().contains("block:"), stone.toString());
 
-        ItemExplanation unknown = palette.explain("minecraft:potion", 9999);
+        ItemExplanation unknown = palette.explain("minecraft:potion", 9999, null);
         assertNull(unknown.handle());
         assertFalse(unknown.creative());
         assertTrue(unknown.toString().contains("not in the creative inventory"), unknown.toString());

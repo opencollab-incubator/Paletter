@@ -72,7 +72,7 @@ public final class CustomBlock {
      * @param defaultStates state values of the default state; properties not listed use their first value
      * @param tags block tags, queryable with Molang (sent as the block's {@code blockTags})
      */
-    public CustomBlock(@NonNull String identifier, @NonNull List<BlockProperty<?>> properties, @NonNull List<BlockTrait> traits,
+    private CustomBlock(@NonNull String identifier, @NonNull List<BlockProperty<?>> properties, @NonNull List<BlockTrait> traits,
                        @NonNull List<BlockComponent> components, @NonNull List<Permutation> permutations,
                        @Nullable MenuCategory menuCategory, @NonNull BlockItem item, @Nullable CreativePlacement creative,
                        @NonNull Map<String, Object> defaultStates, @NonNull List<String> tags) {

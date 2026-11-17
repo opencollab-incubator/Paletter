@@ -68,7 +68,6 @@ class ExperimentGatingTest {
         assertNotNull(enabled.item(BedrockItems.BLACK_CUSHION));
         assertEquals(List.of(TOGGLE), enabled.experiments());
         assertEquals(TOGGLE, enabled.experimentOf(BedrockItems.BLACK_CUSHION));
-        assertEquals(TOGGLE, enabled.experimentOf(enabled.item(BedrockItems.BLACK_CUSHION)));
         assertNull(enabled.experimentOf(BedrockItems.STICK));
 
         StartGamePacket start = new StartGamePacket();
@@ -138,8 +137,8 @@ class ExperimentGatingTest {
 
         Palette missing = Paletter.builder().data(gatedBlock()).fallbacks(flat).build().palette(OLDEST);
         assertEquals("minecraft:stone", missing.blocks().byRuntimeId(missing.runtimeId(glass)).identifier());
-        assertEquals("minecraft:stone", missing.explain(glass).chain().getLast());
-        assertEquals(BlockExplanation.Kind.FALLBACK, missing.explain(glass).kind());
+        assertEquals("minecraft:stone", missing.explain(glass.toNbt()).chain().getLast());
+        assertEquals(BlockExplanation.Kind.FALLBACK, missing.explain(glass.toNbt()).kind());
         // Without a fallback of its own: the default fallback
         Palette unknown = Paletter.builder().data(gatedBlock()).build().palette(OLDEST);
         assertEquals("minecraft:unknown", unknown.blocks().byRuntimeId(unknown.runtimeId(glass)).identifier());

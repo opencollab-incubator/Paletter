@@ -158,7 +158,6 @@ class WireOnlyComponentTest {
 
     @Test
     void theyAreOnePerNameLikeGeneratedComponents() {
-        assertThrows(IllegalArgumentException.class, () -> new CustomItem("example:x", List.of(MiningSpeed.of(1), MiningSpeed.of(2)), null, null));
         CustomItem replaced = CustomItem.builder("example:x").component(FrameCount.of(2)).component(FrameCount.of(5)).build();
         assertEquals(5, replaced.component(FrameCount.class).value());
         assertEquals(1, replaced.components().size());
