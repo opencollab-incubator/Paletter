@@ -71,7 +71,7 @@ import java.util.function.Supplier;
  * session.sendPacket(palette.creativeContentPacket());
  * }</pre>
  * Translating content uses handles, version independent and interned objects ({@link BedrockBlockState},
- * {@link BedrockItemVariant}): {@link #block(NbtMap)} and {@link #item(String, int)} find them once, then
+ * {@link BedrockItemVariant}): {@link #blockState(NbtMap, Lookup)} and {@link #itemVariant(String, int, Lookup)} find them once, then
  * {@link #runtimeId(BedrockBlockState)} and {@link #blockDefinition(BedrockBlockState)} for blocks, {@link #resolve(BedrockItemVariant)}
  * for items. {@link #encode} and {@link #decode} translate whole stacks at the protocol boundary. They are field reads and array lookups that do not allocate. The ids behind
  * the handles are not API.
@@ -254,47 +254,6 @@ public final class Palette {
     // ---- Content handles ----
 
     /**
-     * @param state a block state of any bundled version (mapped forward to this palette's equivalent) or of a
-     *              custom block of this palette's layers, as {@code {name, states}}; extra keys like {@code version}
-     *              are ignored
-     * @return its handle, or null if there is no equivalent (see {@link #explainUnknown(NbtMap)})
-     * @since 0.1.0
-     */
-    public @Nullable BedrockBlockState block(@NonNull NbtMap state) {
-        CanonicalBlocks canonical = blocks.canonical();
-        return canonical.handle(Canonicals.block(canonical, state));
-    }
-
-    /**
-     * @param identifier an item identifier of any bundled version (mapped forward to this palette's equivalent) or
-     *                   of a custom item of this palette's layers
-     * @param aux the aux (damage) value
-     * @return its handle, or null if there is no equivalent (see {@link #explainUnknown(String, int)})
-     * @since 0.1.0
-     */
-    public @Nullable BedrockItemVariant item(@NonNull String identifier, int aux) {
-        return items.canonical().handle(Canonicals.item(items.canonical(), ItemVariant.of(identifier, aux)));
-    }
-
-    /**
-     * @return why a block state has no handle in this palette, or null if it has one
-     * @since 0.1.0
-     */
-    public @Nullable String explainUnknown(@NonNull NbtMap state) {
-        Forwarding forwarding = Canonicals.forwardBlock(blocks.canonical(), state);
-        return forwarding.known() ? null : forwarding.detail();
-    }
-
-    /**
-     * @return why an item has no handle in this palette, or null if it has one
-     * @since 0.1.0
-     */
-    public @Nullable String explainUnknown(@NonNull String identifier, int aux) {
-        Forwarding forwarding = Canonicals.forwardItem(items.canonical(), ItemVariant.of(identifier, aux));
-        return forwarding.known() ? null : forwarding.detail();
-    }
-
-    /**
      * @param state a block state as {@code {name, states}}; extra keys are ignored
      * @param lookup whether the state must exist as is in this palette's version, see {@link Lookup}
      * @return its handle, or null if the lookup does not accept the state (see {@link #explainUnknown(NbtMap, Lookup)})
@@ -307,7 +266,7 @@ public final class Palette {
             || Canonicals.forwardBlock(canonical, state).kind() == Forwarding.Kind.EXACT)) {
             return null;
         }
-        return block(state);
+        return canonical.handle(Canonicals.block(canonical, state));
     }
 
     /**
@@ -324,7 +283,7 @@ public final class Palette {
             || Canonicals.forwardItem(canonical, variant).kind() == Forwarding.Kind.EXACT)) {
             return null;
         }
-        return item(identifier, aux);
+        return canonical.handle(Canonicals.item(canonical, variant));
     }
 
     /**
@@ -344,7 +303,7 @@ public final class Palette {
      */
     public @Nullable String explainUnknown(@NonNull NbtMap state, @NonNull Lookup lookup) {
         return blockState(state, lookup) != null ? null
-            : refused(BlockStates.name(state), lookup, explainUnknown(state));
+            : refused(BlockStates.name(state), lookup, reason(Canonicals.forwardBlock(blocks.canonical(), state)));
     }
 
     /**
@@ -353,7 +312,12 @@ public final class Palette {
      */
     public @Nullable String explainUnknown(@NonNull String identifier, int aux, @NonNull Lookup lookup) {
         return itemVariant(identifier, aux, lookup) != null ? null
-            : refused(identifier + "@" + aux, lookup, explainUnknown(identifier, aux));
+            : refused(identifier + "@" + aux, lookup,
+                reason(Canonicals.forwardItem(items.canonical(), ItemVariant.of(identifier, aux))));
+    }
+
+    private static @Nullable String reason(Forwarding forwarding) {
+        return forwarding.known() ? null : forwarding.detail();
     }
 
     /**

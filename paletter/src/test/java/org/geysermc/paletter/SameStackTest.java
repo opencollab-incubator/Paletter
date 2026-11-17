@@ -94,8 +94,8 @@ class SameStackTest {
     void theBlockOfTheStackCounts() {
         Palette palette = latest();
         BedrockItemStack log = BedrockItemStack.of(BedrockItems.OAK_LOG.base());
-        BedrockBlockState sideways = Paletter.bundled().vanilla(Paletter.bundled().latest()).block(org.geysermc.paletter.internal.block.BlockStates.of("minecraft:oak_log",
-            java.util.Map.of("pillar_axis", "x")));
+        BedrockBlockState sideways = Paletter.bundled().vanilla(Paletter.bundled().latest()).blockState(org.geysermc.paletter.internal.block.BlockStates.of("minecraft:oak_log",
+            java.util.Map.of("pillar_axis", "x")), Lookup.RENAMED);
         assertNotNull(sideways);
         ItemData plain = palette.encode(log);
         ItemData placing = palette.encode(log.withBlockState(sideways));

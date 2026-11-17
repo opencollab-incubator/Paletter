@@ -52,7 +52,7 @@ class LookupTest {
         assertNull(LATEST.blockState(changed, Lookup.EXACT));
         BedrockBlockState mapped = LATEST.blockState(changed, Lookup.RENAMED);
         assertNotNull(mapped);
-        assertSame(LATEST.block(changed), mapped);
+        assertSame(LATEST.blockState(changed, Lookup.RENAMED), mapped);
         // Exact in its own version, then mapped to the newest equivalent
         assertSame(mapped, PALETTER.vanilla(older).blockState(changed, Lookup.EXACT));
     }
@@ -89,7 +89,7 @@ class LookupTest {
         NbtMap added = PALETTER.vanillaData(PALETTER.latest()).blockStates().stream()
             .filter(state -> !old.contains(BlockStates.normalize(state))).findFirst().orElseThrow();
         // The newest version has it, the oldest palette refuses it: the message says which data it asked
-        assertNull(LATEST.explainUnknown(added));
+        assertNull(LATEST.explainUnknown(added, Lookup.RENAMED));
         String refused = OLDEST.explainUnknown(added, Lookup.EXACT);
         assertNotNull(refused);
         assertTrue(refused.contains(oldest.toString()), refused);
@@ -97,9 +97,9 @@ class LookupTest {
 
         // Nothing has an equivalent: the reason of the mapping is kept
         NbtMap unknown = BlockStates.of("minecraft:paletter_test_unknown");
-        assertTrue(LATEST.explainUnknown(unknown, Lookup.EXACT).contains(LATEST.explainUnknown(unknown)));
+        assertTrue(LATEST.explainUnknown(unknown, Lookup.EXACT).contains(Ids.forwardBlock(PALETTER, unknown).detail()));
         assertTrue(LATEST.explainUnknown("minecraft:paletter_test_unknown", 3, Lookup.EXACT)
-            .contains(LATEST.explainUnknown("minecraft:paletter_test_unknown", 3)));
+            .contains("does not exist"));
     }
 
     @Test

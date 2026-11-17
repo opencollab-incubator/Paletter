@@ -1,5 +1,7 @@
 package org.geysermc.paletter.vanilla;
 
+import org.geysermc.paletter.Lookup;
+
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.Paletter;
@@ -57,7 +59,7 @@ class CustomKeysLeakTest {
         // Touch everything once, so lazily built structures are not counted as growth
         BedrockItemType.of("warmup:item");
         BedrockBlockType.of("warmup:block");
-        palette.item("warmup:item", 0);
+        palette.itemVariant("warmup:item", 0, Lookup.RENAMED);
         Map<String, Integer> before = staticSizes();
         assertTrue(before.containsKey("VanillaTypes.STATES"), "the fixture reads the static maps");
 
@@ -67,7 +69,7 @@ class CustomKeysLeakTest {
             BedrockItemVariant variant = BedrockItemVariant.of("attacker:variant_" + i, i);
             BedrockBlockType block = BedrockBlockType.of("attacker:block_" + i);
             block.defaultState();
-            palette.item("attacker:lookup_" + i, i);
+            palette.itemVariant("attacker:lookup_" + i, i, Lookup.RENAMED);
             palette.encode(BedrockItemStack.of(type.variantOf(i)));
             palette.blocks().resolve(NbtMap.builder().putString("name", "attacker:state_" + i).putCompound("states", NbtMap.EMPTY).build());
             if (i % 1000 == 0) {

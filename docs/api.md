@@ -51,7 +51,6 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 
 | Lookup | Returns |
 |---|---|
-| `Palette#block(NbtMap)`, `Palette#item(identifier, aux)` | The key for a state or variant of any bundled version, mapped forward, or null. `explainUnknown` says why. |
 | `Palette#blockState(NbtMap, Lookup)`, `Palette#itemVariant(identifier, aux, Lookup)`, `Palette#itemType(identifier, Lookup)` | The key (or item type) if the `Lookup` accepts the content in this palette's version, else null. |
 | `Palette#runtimeId(BedrockBlockState)` | The runtime id (the state hash). Throws if the palette lacks the state; `runtimeId(state, orElse)` returns `orElse` instead. |
 | `Palette#blockDefinition(BedrockBlockState)` | The `RegisteredBlockState` this version sends, after adapting and fallbacks. Throws if the palette lacks the state. Only a custom block of a layer the palette does not have can be lacking: with the bundled data, every version has each vanilla state. |
@@ -72,9 +71,9 @@ Lookups are on `Palette`, because the palette is the version. `Palette#blockStat
 and `itemType(identifier, Lookup)` take the `Lookup` explicitly: `Lookup.EXACT` accepts only what exists as written in the
 palette's own version, `Lookup.RENAMED` also what that version has under a new name (renamed identifiers following
 `renames.txt`, changed state keys). Each returns null if the lookup does not accept the content, and
-`explainUnknown(..., Lookup)` says why. Content of the palette's layers is always accepted. `Palette#block(NbtMap)` and
-`Palette#item(identifier, aux)` map content of any bundled version forward, so a mapping written against 26.50 keeps
-working when 26.60 becomes the newest version.
+`explainUnknown(..., Lookup)` says why. Content of the palette's layers is always accepted.
+There is no lookup without a `Lookup`: a mapping written against 26.50 keeps working when 26.60 becomes the newest
+version by using `Lookup.RENAMED`.
 
 Paletter decides which block an item carries (`Palette#blockOf`, a key). A layer override wins, then the block to item relation
 captured from the Script API, then the block states in the creative inventory.

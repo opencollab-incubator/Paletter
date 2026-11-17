@@ -78,9 +78,9 @@ class ForwardTest {
         assertEquals(-1, Ids.block(paletter, gone));
         assertEquals(Forwarding.Kind.UNKNOWN, forwarding.kind());
         assertTrue(forwarding.detail().contains("minecraft:removed_in_a_later_version"));
-        assertEquals(forwarding.detail(), paletter.vanilla(paletter.latest()).explainUnknown(gone));
-        assertNull(paletter.vanilla(paletter.latest()).explainUnknown(BlockStates.of("minecraft:air")));
-        assertNotNull(paletter.vanilla(paletter.latest()).explainUnknown("minecraft:removed_in_a_later_version", 0));
+        assertTrue(paletter.vanilla(paletter.latest()).explainUnknown(gone, Lookup.RENAMED).contains(forwarding.detail()));
+        assertNull(paletter.vanilla(paletter.latest()).explainUnknown(BlockStates.of("minecraft:air"), Lookup.RENAMED));
+        assertNotNull(paletter.vanilla(paletter.latest()).explainUnknown("minecraft:removed_in_a_later_version", 0, Lookup.RENAMED));
     }
 
     @Test
@@ -93,7 +93,7 @@ class ForwardTest {
                 int id = Ids.item(paletter, variant);
                 if (id == -1) {
                     // only variants of the newest version are allowed to be unknown (creative changed): say why
-                    assertNotNull(paletter.vanilla(paletter.latest()).explainUnknown(variant.identifier(), variant.damage()), variant.toString());
+                    assertNotNull(paletter.vanilla(paletter.latest()).explainUnknown(variant.identifier(), variant.damage(), Lookup.RENAMED), variant.toString());
                 }
             });
         }

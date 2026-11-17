@@ -42,7 +42,7 @@ class VariantBlockTest {
         assertNotNull(block);
         assertEquals(palette.resolve(BedrockItems.OAK_PLANKS.base()).block(), block);
         // The extra variant has a handle in the palette, and so a key
-        assertNotNull(palette.item(extra.type().identifier(), 7));
+        assertNotNull(palette.itemVariant(extra.type().identifier(), 7, Lookup.RENAMED));
         assertNotNull(palette.blocks().key(block));
     }
 

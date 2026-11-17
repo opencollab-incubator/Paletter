@@ -56,7 +56,7 @@ class BlockOfTest {
         Palette palette = paletter.vanilla(paletter.latest());
         RegisteredBlockState log = palette.resolve(BedrockItemVariant.of("minecraft:oak_log", 0)).block();
         assertNotNull(log);
-        BedrockBlockState sideways = paletter.vanilla(paletter.latest()).block(BlockStates.of("minecraft:oak_log", Map.of("pillar_axis", "x")));
+        BedrockBlockState sideways = paletter.vanilla(paletter.latest()).blockState(BlockStates.of("minecraft:oak_log", Map.of("pillar_axis", "x")), Lookup.RENAMED);
         ItemData data = palette.encode(BedrockItemStack.of(BedrockItemVariant.of("minecraft:oak_log", 0)).withBlockState(sideways));
         assertNotNull(data.getBlockDefinition());
         assertEquals("x", palette.blocks().byRuntimeId(data.getBlockDefinition().getRuntimeId()).states().getString("pillar_axis"));

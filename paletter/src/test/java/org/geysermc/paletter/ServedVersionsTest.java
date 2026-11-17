@@ -100,8 +100,8 @@ class ServedVersionsTest {
         for (Paletter paletter : List.of(withoutNewest(), olderData())) {
             String where = paletter.latest().toString();
             Palette palette = paletter.palette(paletter.latest().protocolVersion());
-            assertSame(BedrockBlocks.STONE.defaultState(), palette.block(BlockStates.of("minecraft:stone")), where);
-            assertSame(BedrockItems.POTION.variant(5), palette.item("minecraft:potion", 5), where);
+            assertSame(BedrockBlocks.STONE.defaultState(), palette.blockState(BlockStates.of("minecraft:stone"), Lookup.RENAMED), where);
+            assertSame(BedrockItems.POTION.variant(5), palette.itemVariant("minecraft:potion", 5, Lookup.RENAMED), where);
         }
     }
 }

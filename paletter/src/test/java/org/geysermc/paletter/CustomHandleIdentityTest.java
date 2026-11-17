@@ -85,15 +85,15 @@ class CustomHandleIdentityTest {
         }
         for (Palette palette : List.of(session, deeper)) {
             assertOwned(palette, sapphire, lantern);
-            BedrockItemVariant damaged = palette.item("example:ruby", 5);
+            BedrockItemVariant damaged = palette.itemVariant("example:ruby", 5, Lookup.RENAMED);
             assertNotNull(damaged);
             assertSame(ruby.type(), damaged.type(), "a variant of a custom item is of the item's type");
-            assertSame(damaged, palette.item("example:ruby", 5));
+            assertSame(damaged, palette.itemVariant("example:ruby", 5, Lookup.RENAMED));
             // Not the variant the layer was given: a variant of another damage value is equal, not identical (docs/api.md)
             assertEquals(given, damaged);
             assertNotSame(given, damaged);
         }
-        assertNull(base.item("example:sapphire", 0));
+        assertNull(base.itemVariant("example:sapphire", 0, Lookup.RENAMED));
     }
 
     @Test
@@ -131,11 +131,11 @@ class CustomHandleIdentityTest {
             .item(CustomBlock.BlockItem.NONE).build();
         Palette blockOnly = PALETTER.palette(PALETTER.latest().protocolVersion())
             .extend(PaletteLayer.builder("blocks").block(lamp).build());
-        assertNull(blockOnly.item("example:lamp", 0));
+        assertNull(blockOnly.itemVariant("example:lamp", 0, Lookup.RENAMED));
         Palette palette = blockOnly.extend(PaletteLayer.builder("items")
             .blockItem(lamp.identifier(), CustomBlock.BlockItem.SIMPLE, CreativePlacement.loose(CreativeCategory.CONSTRUCTION)).build());
         BedrockItemType itemType = lamp.itemType();
-        assertSame(itemType.base(), palette.item("example:lamp", 0));
+        assertSame(itemType.base(), palette.itemVariant("example:lamp", 0, Lookup.RENAMED));
         assertSame(itemType, palette.itemDefinition(itemType).key());
         BedrockItemStack decoded = palette.decode(palette.encode(BedrockItemStack.of(itemType.base())));
         assertNotNull(decoded);
@@ -157,11 +157,11 @@ class CustomHandleIdentityTest {
         assertOwned(a, first, firstLamp);
         assertOwned(b, second, secondLamp);
         // Not the same objects, but equal: equals and hash keys work across the two
-        assertNotSame(a.item("example:ruby", 0), b.item("example:ruby", 0));
-        assertEquals(a.item("example:ruby", 0), b.item("example:ruby", 0));
-        assertEquals(a.item("example:ruby", 0).hashCode(), b.item("example:ruby", 0).hashCode());
-        BedrockBlockState lampA = a.block(firstLamp.type().defaultState().toNbt());
-        BedrockBlockState lampB = b.block(firstLamp.type().defaultState().toNbt());
+        assertNotSame(a.itemVariant("example:ruby", 0, Lookup.RENAMED), b.itemVariant("example:ruby", 0, Lookup.RENAMED));
+        assertEquals(a.itemVariant("example:ruby", 0, Lookup.RENAMED), b.itemVariant("example:ruby", 0, Lookup.RENAMED));
+        assertEquals(a.itemVariant("example:ruby", 0, Lookup.RENAMED).hashCode(), b.itemVariant("example:ruby", 0, Lookup.RENAMED).hashCode());
+        BedrockBlockState lampA = a.blockState(firstLamp.type().defaultState().toNbt(), Lookup.RENAMED);
+        BedrockBlockState lampB = b.blockState(firstLamp.type().defaultState().toNbt(), Lookup.RENAMED);
         assertNotSame(lampA, lampB);
         assertEquals(lampA, lampB);
         assertEquals(lampA.hashCode(), lampB.hashCode());
@@ -176,8 +176,8 @@ class CustomHandleIdentityTest {
         CustomBlock lamp = lamp("example:lamp");
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion())
             .extend(PaletteLayer.builder("gc").item(ruby).block(lamp).build());
-        BedrockBlockState state = palette.block(lamp.type().defaultState().toNbt());
-        BedrockItemVariant variant = palette.item("example:ruby", 0);
+        BedrockBlockState state = palette.blockState(lamp.type().defaultState().toNbt(), Lookup.RENAMED);
+        BedrockItemVariant variant = palette.itemVariant("example:ruby", 0, Lookup.RENAMED);
         // Equal blocks and items made and dropped meanwhile must not change what the palette hands back
         WeakReference<CustomBlock> temporary = temporaryCopies();
         for (int i = 0; i < 100 && temporary.get() != null; i++) {
@@ -189,9 +189,9 @@ class CustomHandleIdentityTest {
             }
         }
         assertNull(temporary.get(), "nothing keeps a dropped block alive");
-        assertSame(state, palette.block(lamp.type().defaultState().toNbt()));
+        assertSame(state, palette.blockState(lamp.type().defaultState().toNbt(), Lookup.RENAMED));
         assertSame(lamp.type().defaultState(), state);
-        assertSame(variant, palette.item("example:ruby", 0));
+        assertSame(variant, palette.itemVariant("example:ruby", 0, Lookup.RENAMED));
         assertSame(ruby.type().base(), variant);
         assertOwned(palette, ruby, lamp);
     }
@@ -210,7 +210,7 @@ class CustomHandleIdentityTest {
         BedrockItemVariant base = type.base();
 
         // Items
-        assertSame(base, palette.item(item.identifier(), 0), where);
+        assertSame(base, palette.itemVariant(item.identifier(), 0, Lookup.RENAMED), where);
         ItemData encoded = palette.encode(BedrockItemStack.of(base, 3));
         BedrockItemStack decoded = palette.decode(encoded);
         assertNotNull(decoded, where);
@@ -225,7 +225,7 @@ class CustomHandleIdentityTest {
 
         // The block item
         BedrockItemType blockItem = block.itemType();
-        assertSame(blockItem.base(), palette.item(block.identifier(), 0), where);
+        assertSame(blockItem.base(), palette.itemVariant(block.identifier(), 0, Lookup.RENAMED), where);
         BedrockItemStack decodedBlockItem = palette.decode(palette.encode(BedrockItemStack.of(blockItem.base())));
         assertNotNull(decodedBlockItem, where);
         assertSame(blockItem.base(), decodedBlockItem.variant(), where);
@@ -236,7 +236,7 @@ class CustomHandleIdentityTest {
         // Blocks
         assertSame(block.type(), palette.blocks().block(block.identifier()).key(), where);
         for (BedrockBlockState state : block.type().states()) {
-            assertSame(state, palette.block(state.toNbt()), where);
+            assertSame(state, palette.blockState(state.toNbt(), Lookup.RENAMED), where);
             RegisteredBlockState registered = palette.blockDefinition(state);
             assertSame(state, palette.blocks().key(registered), where);
             assertSame(state, BedrockBlockState.fromCanonical(palette.blocks().canonical(), palette.blocks().canonical().index(state.toNbt())), where);

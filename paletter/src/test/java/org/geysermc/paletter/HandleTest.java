@@ -44,25 +44,25 @@ class HandleTest {
 
     @Test
     void blocksResolveToInternedHandles() {
-        BedrockBlockState stone = PALETTER.vanilla(PALETTER.latest()).block(BlockStates.of("minecraft:stone"));
+        BedrockBlockState stone = PALETTER.vanilla(PALETTER.latest()).blockState(BlockStates.of("minecraft:stone"), Lookup.RENAMED);
         assertSame(BedrockBlocks.STONE.defaultState(), stone);
-        assertSame(stone, PALETTER.vanilla(PALETTER.latest()).block(BlockStates.of("minecraft:stone", Map.of())));
-        assertNull(PALETTER.vanilla(PALETTER.latest()).block(BlockStates.of("minecraft:not_a_block")));
-        assertNotNull(PALETTER.vanilla(PALETTER.latest()).explainUnknown(BlockStates.of("minecraft:not_a_block")));
+        assertSame(stone, PALETTER.vanilla(PALETTER.latest()).blockState(BlockStates.of("minecraft:stone", Map.of()), Lookup.RENAMED));
+        assertNull(PALETTER.vanilla(PALETTER.latest()).blockState(BlockStates.of("minecraft:not_a_block"), Lookup.RENAMED));
+        assertNotNull(PALETTER.vanilla(PALETTER.latest()).explainUnknown(BlockStates.of("minecraft:not_a_block"), Lookup.RENAMED));
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
-        assertSame(stone, palette.block(BlockStates.of("minecraft:stone")));
+        assertSame(stone, palette.blockState(BlockStates.of("minecraft:stone"), Lookup.RENAMED));
         assertEquals(palette.blockDefinition(stone).getRuntimeId(), palette.runtimeId(stone));
     }
 
     @Test
     void itemsResolveToHandles() {
-        BedrockItemVariant apple = PALETTER.vanilla(PALETTER.latest()).item("minecraft:apple", 0);
+        BedrockItemVariant apple = PALETTER.vanilla(PALETTER.latest()).itemVariant("minecraft:apple", 0, Lookup.RENAMED);
         assertSame(BedrockItems.APPLE.base(), apple);
-        BedrockItemVariant potion = PALETTER.vanilla(PALETTER.latest()).item("minecraft:potion", 5);
+        BedrockItemVariant potion = PALETTER.vanilla(PALETTER.latest()).itemVariant("minecraft:potion", 5, Lookup.RENAMED);
         assertSame(BedrockItems.POTION.variant(5), potion);
-        assertNull(PALETTER.vanilla(PALETTER.latest()).item("minecraft:potion", 9999));
-        assertNotNull(PALETTER.vanilla(PALETTER.latest()).explainUnknown("minecraft:potion", 9999));
-        assertNull(PALETTER.vanilla(PALETTER.latest()).item("minecraft:not_an_item", 0));
+        assertNull(PALETTER.vanilla(PALETTER.latest()).itemVariant("minecraft:potion", 9999, Lookup.RENAMED));
+        assertNotNull(PALETTER.vanilla(PALETTER.latest()).explainUnknown("minecraft:potion", 9999, Lookup.RENAMED));
+        assertNull(PALETTER.vanilla(PALETTER.latest()).itemVariant("minecraft:not_an_item", 0, Lookup.RENAMED));
     }
 
     @Test
@@ -72,17 +72,17 @@ class HandleTest {
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").block(lamp).item(ruby).build());
         BedrockBlockType type = lamp.type();
         for (BedrockBlockState state : type.states()) {
-            assertSame(state, palette.block(state.toNbt()));
+            assertSame(state, palette.blockState(state.toNbt(), Lookup.RENAMED));
         }
-        assertNull(PALETTER.vanilla(PALETTER.latest()).block(type.defaultState().toNbt()));
-        BedrockItemVariant handle = palette.item("example:ruby", 0);
+        assertNull(PALETTER.vanilla(PALETTER.latest()).blockState(type.defaultState().toNbt(), Lookup.RENAMED));
+        BedrockItemVariant handle = palette.itemVariant("example:ruby", 0, Lookup.RENAMED);
         assertNotNull(handle);
         assertSame(ruby.type().base(), handle, "the palette hands back the item's own handle");
-        assertSame(handle, palette.item("example:ruby", 0));
+        assertSame(handle, palette.itemVariant("example:ruby", 0, Lookup.RENAMED));
         assertNotNull(palette.itemDefinition(handle.type()));
         assertTrue(palette.itemVariants().contains(handle));
         assertTrue(palette.itemVariants().contains(BedrockItems.APPLE.base()));
-        assertNull(PALETTER.vanilla(PALETTER.latest()).item("example:ruby", 0));
+        assertNull(PALETTER.vanilla(PALETTER.latest()).itemVariant("example:ruby", 0, Lookup.RENAMED));
     }
 
     @Test
