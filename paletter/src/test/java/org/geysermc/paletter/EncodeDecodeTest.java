@@ -80,7 +80,7 @@ class EncodeDecodeTest {
         assertNotNull(plainData.getBlockDefinition());
         assertNull(palette.decode(plainData).blockState(), "the default block is not a block state of the stack");
 
-        BedrockBlockState sideways = PALETTER.block(BlockStates.of("minecraft:oak_log", Map.of("pillar_axis", "x")));
+        BedrockBlockState sideways = PALETTER.vanilla(PALETTER.latest()).block(BlockStates.of("minecraft:oak_log", Map.of("pillar_axis", "x")));
         assertNotNull(sideways);
         ItemData data = palette.encode(plain.withBlockState(sideways));
         assertEquals(sideways.canonicalIn(palette.blocks().canonical()), palette.blocks().canonical(data.getBlockDefinition()));

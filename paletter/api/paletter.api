@@ -73,16 +73,11 @@ public enum org.geysermc.paletter.ItemExplanation$Kind {
     public static org.geysermc.paletter.ItemExplanation$Kind[] values()
 }
 
-public record org.geysermc.paletter.Lookup {
-    public static final org.geysermc.paletter.Lookup STRICT
-    public <init>(org.geysermc.paletter.data.DataVersion, boolean)
-    public final boolean equals(java.lang.Object)
-    public boolean followRenames()
-    public final int hashCode()
-    public static org.geysermc.paletter.Lookup of(org.geysermc.paletter.data.DataVersion)
-    public java.lang.String toString()
-    public org.geysermc.paletter.data.DataVersion version()
-    public org.geysermc.paletter.Lookup withRenames()
+public enum org.geysermc.paletter.Lookup {
+    public static final org.geysermc.paletter.Lookup EXACT
+    public static final org.geysermc.paletter.Lookup RENAMED
+    public static org.geysermc.paletter.Lookup valueOf(java.lang.String)
+    public static org.geysermc.paletter.Lookup[] values()
 }
 
 public record org.geysermc.paletter.Origin {
@@ -110,6 +105,7 @@ public final class org.geysermc.paletter.Palette {
     public org.geysermc.paletter.block.RegisteredBlockState blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState, org.geysermc.paletter.block.RegisteredBlockState)
     public org.geysermc.paletter.vanilla.BedrockBlockState blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)
     public org.geysermc.paletter.vanilla.BedrockBlockState blockState(int)
+    public org.geysermc.paletter.vanilla.BedrockBlockState blockState(org.cloudburstmc.nbt.NbtMap, org.geysermc.paletter.Lookup)
     public org.geysermc.paletter.vanilla.BedrockBlockState blockState(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)
     public org.geysermc.paletter.creative.CreativeContent creative()
     public org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket creativeContentPacket()
@@ -122,7 +118,9 @@ public final class org.geysermc.paletter.Palette {
     public org.geysermc.paletter.ItemExplanation explain(java.lang.String, int, org.cloudburstmc.nbt.NbtMap)
     public org.geysermc.paletter.BlockExplanation explain(org.cloudburstmc.nbt.NbtMap)
     public java.lang.String explainUnknown(java.lang.String, int)
+    public java.lang.String explainUnknown(java.lang.String, int, org.geysermc.paletter.Lookup)
     public java.lang.String explainUnknown(org.cloudburstmc.nbt.NbtMap)
+    public java.lang.String explainUnknown(org.cloudburstmc.nbt.NbtMap, org.geysermc.paletter.Lookup)
     public org.geysermc.paletter.Palette extend(org.geysermc.paletter.PaletteLayer)
     public org.geysermc.paletter.vanilla.BedrockItemVariant item(java.lang.String, int)
     public org.geysermc.paletter.behaviour.ItemValues itemBehaviour(org.geysermc.paletter.vanilla.BedrockItemType)
@@ -132,6 +130,8 @@ public final class org.geysermc.paletter.Palette {
     public org.geysermc.paletter.item.RegisteredItem itemDefinition(org.geysermc.paletter.vanilla.BedrockItemType)
     public java.util.List<org.geysermc.paletter.item.RegisteredItem> itemDefinitions()
     public java.util.Map<java.lang.String, java.util.List<java.lang.String>> itemTags()
+    public org.geysermc.paletter.vanilla.BedrockItemType itemType(java.lang.String, org.geysermc.paletter.Lookup)
+    public org.geysermc.paletter.vanilla.BedrockItemVariant itemVariant(java.lang.String, int, org.geysermc.paletter.Lookup)
     public java.util.List<org.geysermc.paletter.vanilla.BedrockItemVariant> itemVariants()
     public java.util.List<org.geysermc.paletter.PaletteLayer> layers()
     public org.geysermc.paletter.PaletteReport report()
@@ -233,19 +233,8 @@ public enum org.geysermc.paletter.PaletteReport$Level {
 }
 
 public final class org.geysermc.paletter.Paletter {
-    public org.geysermc.paletter.vanilla.BedrockBlockState block(org.cloudburstmc.nbt.NbtMap)
-    public org.geysermc.paletter.vanilla.BedrockBlockState block(org.cloudburstmc.nbt.NbtMap, org.geysermc.paletter.Lookup)
-    public org.geysermc.paletter.vanilla.BedrockBlockState blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)
-    public org.geysermc.paletter.vanilla.BedrockBlockType blockType(java.lang.String, org.geysermc.paletter.Lookup)
     public static org.geysermc.paletter.Paletter$Builder builder()
     public static org.geysermc.paletter.Paletter bundled()
-    public java.lang.String explainUnknown(java.lang.String, int)
-    public java.lang.String explainUnknown(java.lang.String, int, org.geysermc.paletter.Lookup)
-    public java.lang.String explainUnknown(org.cloudburstmc.nbt.NbtMap)
-    public java.lang.String explainUnknown(org.cloudburstmc.nbt.NbtMap, org.geysermc.paletter.Lookup)
-    public org.geysermc.paletter.vanilla.BedrockItemVariant item(java.lang.String, int)
-    public org.geysermc.paletter.vanilla.BedrockItemVariant item(java.lang.String, int, org.geysermc.paletter.Lookup)
-    public org.geysermc.paletter.vanilla.BedrockItemType itemType(java.lang.String, org.geysermc.paletter.Lookup)
     public org.geysermc.paletter.data.DataVersion latest()
     public org.geysermc.paletter.Palette palette(int)
     public org.geysermc.paletter.Palette palette(org.cloudburstmc.protocol.bedrock.codec.BedrockCodec)

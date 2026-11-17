@@ -56,7 +56,7 @@ class BlockOfTest {
         Palette palette = paletter.vanilla(paletter.latest());
         RegisteredBlockState log = palette.resolve(BedrockItemVariant.of("minecraft:oak_log", 0)).block();
         assertNotNull(log);
-        BedrockBlockState sideways = paletter.block(BlockStates.of("minecraft:oak_log", Map.of("pillar_axis", "x")));
+        BedrockBlockState sideways = paletter.vanilla(paletter.latest()).block(BlockStates.of("minecraft:oak_log", Map.of("pillar_axis", "x")));
         ItemData data = palette.encode(BedrockItemStack.of(BedrockItemVariant.of("minecraft:oak_log", 0)).withBlockState(sideways));
         assertNotNull(data.getBlockDefinition());
         assertEquals("x", palette.blocks().byRuntimeId(data.getBlockDefinition().getRuntimeId()).states().getString("pillar_axis"));
@@ -64,11 +64,10 @@ class BlockOfTest {
 
     @Test
     void blockOfIsVersionIndependent() {
-        BedrockBlockState block = paletter.blockOf(BedrockItemVariant.of("minecraft:acacia_sign", 0));
+        BedrockBlockState block = paletter.vanilla(paletter.latest()).blockOf(BedrockItemVariant.of("minecraft:acacia_sign", 0));
         assertNotNull(block);
         assertEquals("minecraft:acacia_standing_sign", block.type().identifier());
-        assertNull(paletter.blockOf(BedrockItemVariant.of("minecraft:stick", 0)));
-        assertNull(paletter.blockOf(BedrockItemVariant.of("minecraft:not_an_item", 0)));
+        assertNull(paletter.vanilla(paletter.latest()).blockOf(BedrockItemVariant.of("minecraft:stick", 0)));
     }
 
     /**

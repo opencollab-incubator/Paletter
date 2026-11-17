@@ -94,6 +94,8 @@ public final class Palette {
     private final Supplier<BehaviourStore> behaviourStore;
     private final Shapes shapes;
     private volatile Behaviour behaviour;
+    private volatile CanonicalBlocks versionBlocks;
+    private volatile CanonicalItems versionItems;
     /** The palette this one extends, or is a copy of: its block states are a prefix of this one's. Null for vanilla palettes. */
     private final @Nullable Palette parent;
 
@@ -252,7 +254,7 @@ public final class Palette {
     // ---- Content handles ----
 
     /**
-     * @param state a block state of any bundled version (mapped forward as in {@link Paletter#block(NbtMap)}) or of a
+     * @param state a block state of any bundled version (mapped forward to this palette's equivalent) or of a
      *              custom block of this palette's layers, as {@code {name, states}}; extra keys like {@code version}
      *              are ignored
      * @return its handle, or null if there is no equivalent (see {@link #explainUnknown(NbtMap)})
@@ -264,7 +266,7 @@ public final class Palette {
     }
 
     /**
-     * @param identifier an item identifier of any bundled version (mapped forward as in {@link Paletter#item(String, int)}) or
+     * @param identifier an item identifier of any bundled version (mapped forward to this palette's equivalent) or
      *                   of a custom item of this palette's layers
      * @param aux the aux (damage) value
      * @return its handle, or null if there is no equivalent (see {@link #explainUnknown(String, int)})
@@ -290,6 +292,94 @@ public final class Palette {
     public @Nullable String explainUnknown(@NonNull String identifier, int aux) {
         Forwarding forwarding = Canonicals.forwardItem(items.canonical(), ItemVariant.of(identifier, aux));
         return forwarding.known() ? null : forwarding.detail();
+    }
+
+    /**
+     * @param state a block state as {@code {name, states}}; extra keys are ignored
+     * @param lookup whether the state must exist as is in this palette's version, see {@link Lookup}
+     * @return its handle, or null if the lookup does not accept the state (see {@link #explainUnknown(NbtMap, Lookup)})
+     * @since 0.1.0
+     */
+    public @Nullable BedrockBlockState blockState(@NonNull NbtMap state, @NonNull Lookup lookup) {
+        CanonicalBlocks canonical = blocks.canonical();
+        boolean custom = canonical.index(state) >= canonical.vanillaSize();
+        if (!custom && versionBlocks().index(state) == -1 && (lookup == Lookup.EXACT
+            || Canonicals.forwardBlock(canonical, state).kind() == Forwarding.Kind.EXACT)) {
+            return null;
+        }
+        return block(state);
+    }
+
+    /**
+     * @param lookup whether the variant must exist as is in this palette's version, see {@link Lookup}
+     * @return its handle, or null if the lookup does not accept the variant. Aux 0 is the base variant, which every
+     *         item has
+     * @since 0.1.0
+     */
+    public @Nullable BedrockItemVariant itemVariant(@NonNull String identifier, int aux, @NonNull Lookup lookup) {
+        ItemVariant variant = ItemVariant.of(identifier, aux);
+        CanonicalItems canonical = items.canonical();
+        boolean custom = canonical.index(variant) >= canonical.vanillaSize();
+        if (!custom && versionItems().index(variant) == -1 && (lookup == Lookup.EXACT
+            || Canonicals.forwardItem(canonical, variant).kind() == Forwarding.Kind.EXACT)) {
+            return null;
+        }
+        return item(identifier, aux);
+    }
+
+    /**
+     * @param identifier an item identifier
+     * @param lookup whether the item must exist as is in this palette's version, see {@link Lookup}
+     * @return the item type, or null if the lookup does not accept the identifier
+     * @since 0.1.0
+     */
+    public @Nullable BedrockItemType itemType(@NonNull String identifier, @NonNull Lookup lookup) {
+        BedrockItemVariant base = itemVariant(identifier, 0, lookup);
+        return base == null ? null : base.type();
+    }
+
+    /**
+     * @return why a block state has no handle under a lookup (see {@link #blockState(NbtMap, Lookup)}), or null if it has one
+     * @since 0.1.0
+     */
+    public @Nullable String explainUnknown(@NonNull NbtMap state, @NonNull Lookup lookup) {
+        return blockState(state, lookup) != null ? null
+            : refused(BlockStates.name(state), lookup, explainUnknown(state));
+    }
+
+    /**
+     * @return why an item has no handle under a lookup (see {@link #itemVariant(String, int, Lookup)}), or null if it has one
+     * @since 0.1.0
+     */
+    public @Nullable String explainUnknown(@NonNull String identifier, int aux, @NonNull Lookup lookup) {
+        return itemVariant(identifier, aux, lookup) != null ? null
+            : refused(identifier + "@" + aux, lookup, explainUnknown(identifier, aux));
+    }
+
+    /**
+     * @param unknown why there is no equivalent, or null if there is one the lookup does not accept
+     */
+    private String refused(String content, Lookup lookup, @Nullable String unknown) {
+        return content + " is not accepted by the lookup (" + lookup + "): "
+            + (unknown != null ? unknown : "it is not in the data of " + data.version());
+    }
+
+    /** The block states of this palette's version, as written in its data. */
+    private CanonicalBlocks versionBlocks() {
+        CanonicalBlocks result = versionBlocks;
+        if (result == null) {
+            versionBlocks = result = CanonicalBlocks.of(data.blockStates());
+        }
+        return result;
+    }
+
+    /** The item variants of this palette's version, as written in its data. */
+    private CanonicalItems versionItems() {
+        CanonicalItems result = versionItems;
+        if (result == null) {
+            versionItems = result = CanonicalItems.of(data);
+        }
+        return result;
     }
 
     /**
@@ -365,8 +455,7 @@ public final class Palette {
      * {@link BedrockBlockState}, for every kind of variant (vanilla, extra, custom block items, fallbacks). Paletter alone
      * decides it. A stack may carry a block state of its own, see {@link #encode}.
      * {@code blockDefinition(blockOf(variant))} is what is sent, and {@code resolve(variant).block()} the same without the
-     * key. Unlike
-     * {@link Paletter#blockOf}, which knows the vanilla variants of the newest data only, this follows the palette: the
+     * key. It follows the palette: the
      * fallback's block in an old version, the custom block of a layer. {@link #runtimeId(BedrockBlockState)} gives its
      * runtime id here.
      *

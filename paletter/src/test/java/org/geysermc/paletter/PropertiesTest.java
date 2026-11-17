@@ -39,7 +39,7 @@ class PropertiesTest {
     @Test
     void aVanillaItemsPropertiesAreVersioned() {
         // red_shrub only exists from 26.50 on: its components are in the store for those versions only
-        BedrockItemType shrub = PALETTER.itemType("minecraft:red_shrub", Lookup.STRICT);
+        BedrockItemType shrub = PALETTER.vanilla(PALETTER.latest()).itemType("minecraft:red_shrub", Lookup.EXACT);
         assertNotNull(shrub);
         DataVersion older = PALETTER.versions().getFirst();
         DataVersion newer = PALETTER.latest();

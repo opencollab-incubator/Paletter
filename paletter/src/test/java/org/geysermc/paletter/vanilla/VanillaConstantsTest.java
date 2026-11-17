@@ -49,7 +49,7 @@ class VanillaConstantsTest {
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
         for (int id = 0; id < canonical.vanillaSize(); id++) {
             NbtMap nbt = canonical.state(id);
-            BedrockBlockType type = PALETTER.blockType(BlockStates.name(nbt), Lookup.STRICT);
+            BedrockBlockType type = PALETTER.vanilla(PALETTER.latest()).blockState(nbt, Lookup.EXACT).type();
             assertNotNull(type, nbt.toString());
             // Build it from the default state with typed values
             BedrockBlockType.StateBuilder builder = type.state();
@@ -60,7 +60,7 @@ class VanillaConstantsTest {
             assertEquals(id, Ids.block(PALETTER, state), nbt.toString());
             assertEquals(nbt, state.toNbt());
             assertSame(state, Ids.canonicalBlocks(PALETTER).handle(id));
-            assertSame(state, PALETTER.block(nbt, Lookup.STRICT));
+            assertSame(state, PALETTER.vanilla(PALETTER.latest()).blockState(nbt, Lookup.EXACT));
             assertEquals(id, Ids.block(palette, state));
             assertEquals(Ids.runtimeId(palette, id), palette.runtimeId(state));
             assertEquals(nbt, BlockStates.normalize(palette.blockDefinition(state).getState()));
@@ -120,7 +120,7 @@ class VanillaConstantsTest {
         assertEquals(List.of(0, 1, 2, 3, 4, 5), BedrockStates.FACING_DIRECTION.values());
         assertSame(BedrockStates.AGE, BedrockStates.byName("age"));
         assertTrue(BedrockBlocks.STONE.isAvailable());
-        assertSame(BedrockBlocks.STONE, PALETTER.blockType("minecraft:stone", Lookup.STRICT));
+        assertSame(BedrockBlocks.STONE, PALETTER.vanilla(PALETTER.latest()).blockState(BlockStates.of("minecraft:stone"), Lookup.EXACT).type());
         assertSame(BedrockBlocks.STONE, BedrockBlocks.STONE.defaultState().type());
     }
 
@@ -170,7 +170,7 @@ class VanillaConstantsTest {
         assertFalse(BedrockItems.POTION.hasVariant(9999));
         assertEquals(-1, Ids.item(PALETTER, BedrockItems.POTION.variantOf(9999)));
         assertTrue(BedrockItems.POTION.variants().size() > 40);
-        assertSame(BedrockItems.APPLE, PALETTER.itemType("minecraft:apple", Lookup.STRICT));
+        assertSame(BedrockItems.APPLE, PALETTER.vanilla(PALETTER.latest()).itemType("minecraft:apple", Lookup.EXACT));
 
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
         assertEquals("minecraft:apple", palette.itemDefinition(BedrockItems.APPLE).getIdentifier());
@@ -322,6 +322,6 @@ class VanillaConstantsTest {
         boolean[] ruby = new boolean[1];
         palette.creativeLayout().forEachStack(stack -> ruby[0] |= stack.type().identifier().equals("example:ruby"));
         assertTrue(ruby[0]);
-        assertEquals(Ids.block(PALETTER, PALETTER.block(BlockStates.of("minecraft:stone"), Lookup.STRICT)), Ids.block(PALETTER, BlockStates.of("minecraft:stone")));
+        assertEquals(Ids.block(PALETTER, PALETTER.vanilla(PALETTER.latest()).blockState(BlockStates.of("minecraft:stone"), Lookup.EXACT)), Ids.block(PALETTER, BlockStates.of("minecraft:stone")));
     }
 }

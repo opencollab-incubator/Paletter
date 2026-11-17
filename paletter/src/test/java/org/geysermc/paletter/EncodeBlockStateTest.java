@@ -41,7 +41,7 @@ class EncodeBlockStateTest {
     }
 
     private static BedrockBlockState state(String identifier, Map<String, Object> states) {
-        BedrockBlockState state = PALETTER.block(BlockStates.of(identifier, states));
+        BedrockBlockState state = PALETTER.vanilla(PALETTER.latest()).block(BlockStates.of(identifier, states));
         assertNotNull(state, identifier);
         return state;
     }
@@ -78,7 +78,7 @@ class EncodeBlockStateTest {
 
         // A canonical state this version has no block for: the table would say the default fallback, the NBT says none
         NbtMap missing = blocks.missingCanonical().getFirst();
-        BedrockBlockState missingState = PALETTER.block(missing);
+        BedrockBlockState missingState = PALETTER.vanilla(PALETTER.latest()).block(missing);
         assertNotNull(missingState);
         assertTrue(blocks.isMissing(missingState.canonicalIn(blocks.canonical())));
         assertSameAsResolve(palette, "minecraft:oak_planks", missingState);
@@ -90,7 +90,7 @@ class EncodeBlockStateTest {
             adapted = !blocks.isMissing(id) && blocks.exact(state) == null ? state : null;
         }
         assertNotNull(adapted, "the oldest version resolves some states of the newest");
-        assertSameAsResolve(palette, "minecraft:oak_planks", PALETTER.block(adapted));
+        assertSameAsResolve(palette, "minecraft:oak_planks", PALETTER.vanilla(PALETTER.latest()).block(adapted));
     }
 
     @Test

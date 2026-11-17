@@ -99,8 +99,6 @@ class ServedVersionsTest {
     void lookupsGiveTheKeysOfTheConstants() {
         for (Paletter paletter : List.of(withoutNewest(), olderData())) {
             String where = paletter.latest().toString();
-            assertSame(BedrockBlocks.STONE.defaultState(), paletter.block(BlockStates.of("minecraft:stone")), where);
-            assertSame(BedrockItems.APPLE.base(), paletter.item("minecraft:apple", 0), where);
             Palette palette = paletter.palette(paletter.latest().protocolVersion());
             assertSame(BedrockBlocks.STONE.defaultState(), palette.block(BlockStates.of("minecraft:stone")), where);
             assertSame(BedrockItems.POTION.variant(5), palette.item("minecraft:potion", 5), where);

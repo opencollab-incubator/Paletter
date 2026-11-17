@@ -94,7 +94,7 @@ public final class Ids {
     }
 
     public static int blockOf(Paletter p, ItemVariant variant) {
-        BedrockBlockState block = p.blockOf(BedrockItemVariant.of(variant.identifier(), variant.damage()));
+        BedrockBlockState block = p.vanilla(p.latest()).blockOf(BedrockItemVariant.of(variant.identifier(), variant.damage()));
         return block == null ? -1 : block(p, block);
     }
 

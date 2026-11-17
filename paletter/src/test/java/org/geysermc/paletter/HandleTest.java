@@ -44,11 +44,11 @@ class HandleTest {
 
     @Test
     void blocksResolveToInternedHandles() {
-        BedrockBlockState stone = PALETTER.block(BlockStates.of("minecraft:stone"));
+        BedrockBlockState stone = PALETTER.vanilla(PALETTER.latest()).block(BlockStates.of("minecraft:stone"));
         assertSame(BedrockBlocks.STONE.defaultState(), stone);
-        assertSame(stone, PALETTER.block(BlockStates.of("minecraft:stone", Map.of())));
-        assertNull(PALETTER.block(BlockStates.of("minecraft:not_a_block")));
-        assertNotNull(PALETTER.explainUnknown(BlockStates.of("minecraft:not_a_block")));
+        assertSame(stone, PALETTER.vanilla(PALETTER.latest()).block(BlockStates.of("minecraft:stone", Map.of())));
+        assertNull(PALETTER.vanilla(PALETTER.latest()).block(BlockStates.of("minecraft:not_a_block")));
+        assertNotNull(PALETTER.vanilla(PALETTER.latest()).explainUnknown(BlockStates.of("minecraft:not_a_block")));
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
         assertSame(stone, palette.block(BlockStates.of("minecraft:stone")));
         assertEquals(palette.blockDefinition(stone).getRuntimeId(), palette.runtimeId(stone));
@@ -56,13 +56,13 @@ class HandleTest {
 
     @Test
     void itemsResolveToHandles() {
-        BedrockItemVariant apple = PALETTER.item("minecraft:apple", 0);
+        BedrockItemVariant apple = PALETTER.vanilla(PALETTER.latest()).item("minecraft:apple", 0);
         assertSame(BedrockItems.APPLE.base(), apple);
-        BedrockItemVariant potion = PALETTER.item("minecraft:potion", 5);
+        BedrockItemVariant potion = PALETTER.vanilla(PALETTER.latest()).item("minecraft:potion", 5);
         assertSame(BedrockItems.POTION.variant(5), potion);
-        assertNull(PALETTER.item("minecraft:potion", 9999));
-        assertNotNull(PALETTER.explainUnknown("minecraft:potion", 9999));
-        assertNull(PALETTER.item("minecraft:not_an_item", 0));
+        assertNull(PALETTER.vanilla(PALETTER.latest()).item("minecraft:potion", 9999));
+        assertNotNull(PALETTER.vanilla(PALETTER.latest()).explainUnknown("minecraft:potion", 9999));
+        assertNull(PALETTER.vanilla(PALETTER.latest()).item("minecraft:not_an_item", 0));
     }
 
     @Test
@@ -74,7 +74,7 @@ class HandleTest {
         for (BedrockBlockState state : type.states()) {
             assertSame(state, palette.block(state.toNbt()));
         }
-        assertNull(PALETTER.block(type.defaultState().toNbt()));
+        assertNull(PALETTER.vanilla(PALETTER.latest()).block(type.defaultState().toNbt()));
         BedrockItemVariant handle = palette.item("example:ruby", 0);
         assertNotNull(handle);
         assertSame(ruby.type().base(), handle, "the palette hands back the item's own handle");
@@ -82,7 +82,7 @@ class HandleTest {
         assertNotNull(palette.itemDefinition(handle.type()));
         assertTrue(palette.itemVariants().contains(handle));
         assertTrue(palette.itemVariants().contains(BedrockItems.APPLE.base()));
-        assertNull(PALETTER.item("example:ruby", 0));
+        assertNull(PALETTER.vanilla(PALETTER.latest()).item("example:ruby", 0));
     }
 
     @Test
