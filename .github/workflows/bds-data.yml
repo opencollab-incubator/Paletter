@@ -147,7 +147,7 @@ jobs:
           done
           if [ "$CODE" != 0 ]; then
             for f in "$PALETTER_BDS_CACHE"/runs/*-"$BDS_VERSION"/exit-code; do
-              if [ -f "$f" ] && grep -Eqx '[1-9][0-9]*' "$f"; then CODE=$(cat "$f"); fi
+              if [ -f "$f" ] && grep -Eqx '[1-9][0-9]*' "$f"; then CODE=$(grep -Exm1 '[1-9][0-9]*' "$f"); fi
             done
           fi
           VERDICT=""
@@ -340,6 +340,12 @@ jobs:
           fi
           git apply --check "$PATCH"
           git apply "$PATCH"
+          # Check what the patch did, not only its headers: a patch whose --- and +++ paths differ moves a file without
+          # rename lines, so every changed path of the working tree must be a data path
+          git status --porcelain --untracked-files=all | cut -c4- | sed 's/^.* -> //' > "$RUNNER_TEMP/changed.txt"
+          if grep -Ev '^"?(data/|paletter/src/main/resources/paletter/|paletter/src/generated/|paletter/api/)' "$RUNNER_TEMP/changed.txt"; then
+            echo "The patch changed paths outside the data paths"; exit 1
+          fi
           # The versioned report, committed with the data, is the pull request body; when the patch has none (only
           # regenerated code changed), the run's own copy of it
           BODY="data/bds/$VERSION/update-report.md"
