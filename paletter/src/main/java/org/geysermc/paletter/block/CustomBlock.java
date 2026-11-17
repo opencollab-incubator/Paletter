@@ -86,7 +86,6 @@ public final class CustomBlock {
         this.creative = creative;
         this.defaultStates = Map.copyOf(defaultStates);
         this.tags = List.copyOf(tags);
-        checkUnique(identifier, this.components);
         checkUvLock(identifier, this.components);
         for (Permutation permutation : this.permutations) {
             checkUvLock(identifier, permutation.components());

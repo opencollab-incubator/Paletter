@@ -55,7 +55,6 @@ public final class CustomItem {
         this.components = List.copyOf(components);
         this.menuCategory = menuCategory;
         this.creative = creative;
-        checkUnique(identifier, this.components);
         this.type = BedrockItemType.custom(identifier);
     }
 
@@ -86,16 +85,6 @@ public final class CustomItem {
      */
     public @Nullable CreativePlacement creative() {
         return creative;
-    }
-
-    static void checkUnique(String identifier, List<ItemComponent> components) {
-        for (int i = 0; i < components.size(); i++) {
-            for (int j = i + 1; j < components.size(); j++) {
-                if (components.get(i).name().equals(components.get(j).name())) {
-                    throw new IllegalArgumentException(identifier + " has two " + components.get(i).name() + " components");
-                }
-            }
-        }
     }
 
     public static @NonNull Builder builder(@NonNull String identifier) {
