@@ -276,7 +276,17 @@ public final class CaptureWriter {
         JsonObject counts = new JsonObject();
         result.packetCounts.forEach(counts::addProperty);
         json.add("packets", counts);
+        // What BDS sent, in order, with the client's own sends; not what a client requires (unverified). Captures made
+        // before this field was added do not have it.
+        addPacketOrder(json, result);
         return json;
+    }
+
+    static void addPacketOrder(JsonObject json, CaptureClient.Result result) {
+        JsonArray order = new JsonArray();
+        result.packetOrder.forEach(order::add);
+        json.add("packetOrder", order);
+        json.addProperty("startGameIndex", result.startGameIndex);
     }
 
     int resolvedHashes() {

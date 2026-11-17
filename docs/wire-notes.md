@@ -151,6 +151,25 @@ packets. `CreativeOrderCheckTest` compiles each capture's custom content through
 inventory with the captured packet, and `update` repeats the check on every new build. To probe by hand:
 `./gradlew :tools:run --args="creative-probe --addon <dir> --out <dir> --starts 2"`.
 
+## Join sequence
+
+The headless client lists, per capture, every packet it received and sent from the login on (`packetOrder` in
+`capture.json`: `<- Name` received, `-> Name` sent when queued) and the index of start game in it (`startGameIndex`).
+**This is what BDS sends, in the order it sends it. It does not say what a client requires; that is unverified, there
+is no client test.** The client never sends `SetLocalPlayerAsInitialized`, so the order after start game also depends on
+its chunk radius and sub-chunk requests. Captures made before this field existed do not have it; it appears with the
+next recapture of each build. Sample, BDS 1.26.63.1 on Windows, one run (determinism across runs is checked by the
+recapture), from a one-off spike capture:
+
+1. Before start game: NetworkSettings, ServerToClientHandshake, PlayStatus (login success), ResourcePacksInfo,
+   ResourcePackStack, LevelEventGeneric, PlayerList, SyncWorldClocks, JigsawStructureData, VoxelShapes.
+2. **StartGame.**
+3. After it: 13 SyncEntityProperty, ItemComponent, SetSpawnPosition, SyncWorldClocks, SetDifficulty, SetCommandsEnabled,
+   UpdateAdventureSettings, UpdateAbilities, GameRulesChanged, PlayerList, UpdateAbilities, BiomeDefinitionList,
+   AvailableEntityIdentifiers, PlayerFog, CameraPresets, CameraAimAssistPresets, CameraSpline, UpdateAttributes,
+   CreativeContent, TrimData, 4 InventoryContent, PlayerHotbar, CraftingData, AvailableCommands, 3 Respawn,
+   NetworkChunkPublisherUpdate, then the level chunks.
+
 ## Voxel shapes
 
 `VoxelShapesPacket` (id 337, protocol 924 and later) is sent before start game. It carries every voxel shape the server

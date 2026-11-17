@@ -71,6 +71,13 @@ public final class CaptureClient {
         public ResourcePacksInfoPacket packsInfo;
         public ResourcePackStackPacket packStack;
         public final Map<String, Integer> packetCounts = new TreeMap<>();
+        /**
+         * Every packet of the session in the order it was received ({@code <- Name}) or sent ({@code -> Name}); sends are
+         * listed when they are queued. What BDS sent in which order, not what a client requires.
+         */
+        public final List<String> packetOrder = new java.util.concurrent.CopyOnWriteArrayList<>();
+        /** The index of the start game packet in {@link #packetOrder}, or -1. */
+        public volatile int startGameIndex = -1;
     }
 
     private final BedrockCodec codec;
@@ -154,7 +161,7 @@ public final class CaptureClient {
                         session.setPacketHandler(new Handler(session));
                         RequestNetworkSettingsPacket request = new RequestNetworkSettingsPacket();
                         request.setProtocolVersion(codec.getProtocolVersion());
-                        session.sendPacketImmediately(request);
+                        send(session, request, true);
                     }
                 })
                 .connect(address)
@@ -180,6 +187,15 @@ public final class CaptureClient {
         }
     }
 
+    private void send(BedrockClientSession session, BedrockPacket packet, boolean immediately) {
+        result.packetOrder.add("-> " + packet.getClass().getSimpleName());
+        if (immediately) {
+            session.sendPacketImmediately(packet);
+        } else {
+            session.sendPacket(packet);
+        }
+    }
+
     private void checkComplete() {
         if (result.startGame != null && !result.items.isEmpty() && result.creative != null && completeAt == Long.MAX_VALUE) {
             // Give the server a moment for the remaining packets of the join sequence (biomes, recipes, ...)
@@ -197,6 +213,10 @@ public final class CaptureClient {
         @Override
         public PacketSignal handlePacket(BedrockPacket packet) {
             result.packetCounts.merge(packet.getClass().getSimpleName(), 1, Integer::sum);
+            if (packet instanceof StartGamePacket) {
+                result.startGameIndex = result.packetOrder.size();
+            }
+            result.packetOrder.add("<- " + packet.getClass().getSimpleName());
             try {
                 return packet.handle(this);
             } catch (Exception e) {
@@ -209,8 +229,8 @@ public final class CaptureClient {
         public PacketSignal handle(NetworkSettingsPacket packet) {
             session.setCompression(packet.getCompressionAlgorithm());
             try {
-                session.sendPacketImmediately(login.loginPacket(codec.getProtocolVersion(),
-                    address.getHostString() + ":" + address.getPort(), codec.getMinecraftVersion()));
+                send(session, login.loginPacket(codec.getProtocolVersion(),
+                    address.getHostString() + ":" + address.getPort(), codec.getMinecraftVersion()), true);
             } catch (Exception e) {
                 done.completeExceptionally(e);
             }
@@ -225,7 +245,7 @@ public final class CaptureClient {
                 done.completeExceptionally(e);
                 return PacketSignal.HANDLED;
             }
-            session.sendPacketImmediately(new ClientToServerHandshakePacket());
+            send(session, new ClientToServerHandshakePacket(), true);
             return PacketSignal.HANDLED;
         }
 
@@ -256,7 +276,7 @@ public final class CaptureClient {
             // We have none of them, but claiming to have all skips the download
             ResourcePackClientResponsePacket response = new ResourcePackClientResponsePacket();
             response.setStatus(ResourcePackClientResponsePacket.Status.HAVE_ALL_PACKS);
-            session.sendPacket(response);
+            send(session, response, false);
             return PacketSignal.HANDLED;
         }
 
@@ -265,7 +285,7 @@ public final class CaptureClient {
             result.packStack = packet;
             ResourcePackClientResponsePacket response = new ResourcePackClientResponsePacket();
             response.setStatus(ResourcePackClientResponsePacket.Status.COMPLETED);
-            session.sendPacket(response);
+            send(session, response, false);
             return PacketSignal.HANDLED;
         }
 
@@ -275,7 +295,7 @@ public final class CaptureClient {
             RequestChunkRadiusPacket radius = new RequestChunkRadiusPacket();
             radius.setRadius(2);
             radius.setMaxRadius(2);
-            session.sendPacket(radius);
+            send(session, radius, false);
             checkComplete();
             return PacketSignal.HANDLED;
         }
