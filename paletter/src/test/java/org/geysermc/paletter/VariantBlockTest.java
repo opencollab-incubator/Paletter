@@ -27,7 +27,7 @@ class VariantBlockTest {
         for (var version : PALETTER.versions()) {
             Palette palette = PALETTER.palette(version.protocolVersion());
             BedrockItemVariant stone = BedrockItems.STONE.base();
-            RegisteredBlockState block = Palettes.blockDefinitionOf(palette, stone);
+            RegisteredBlockState block = palette.resolve(stone).block();
             assertNotNull(block, version.toString());
             assertSame(PALETTER.blockOf(stone), palette.blocks().key(block), version.toString());
         }
@@ -38,9 +38,9 @@ class VariantBlockTest {
         BedrockItemVariant extra = BedrockItems.OAK_PLANKS.variantOf(7);
         PaletteLayer layer = PaletteLayer.builder("test:variants").variant(extra).build();
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), layer);
-        RegisteredBlockState block = Palettes.blockDefinitionOf(palette, extra);
+        RegisteredBlockState block = palette.resolve(extra).block();
         assertNotNull(block);
-        assertEquals(Palettes.blockDefinitionOf(palette, BedrockItems.OAK_PLANKS.base()), block);
+        assertEquals(palette.resolve(BedrockItems.OAK_PLANKS.base()).block(), block);
         // The extra variant has a handle in the palette, and so a key
         assertNotNull(palette.item(extra.type().identifier(), 7));
         assertNotNull(palette.blocks().key(block));
@@ -50,8 +50,8 @@ class VariantBlockTest {
     void aVariantNobodyRegisteredStillGetsTheBlockOfItsItem() {
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
         BedrockItemVariant unknown = BedrockItems.OAK_PLANKS.variantOf(1234);
-        assertEquals(Palettes.blockDefinitionOf(palette, BedrockItems.OAK_PLANKS.base()), Palettes.blockDefinitionOf(palette, unknown));
-        assertNull(Palettes.blockDefinitionOf(palette, BedrockItems.STICK.variantOf(1234)));
+        assertEquals(palette.resolve(BedrockItems.OAK_PLANKS.base()).block(), palette.resolve(unknown).block());
+        assertNull(palette.resolve(BedrockItems.STICK.variantOf(1234)).block());
     }
 
     @Test
@@ -61,7 +61,7 @@ class VariantBlockTest {
         PaletteLayer layer = PaletteLayer.builder("test:custom").block(lamp).build();
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), layer);
         BedrockItemVariant item = BedrockItemType.of("variant:lamp").base();
-        RegisteredBlockState block = Palettes.blockDefinitionOf(palette, item);
+        RegisteredBlockState block = palette.resolve(item).block();
         assertNotNull(block);
         assertEquals("variant:lamp", block.identifier());
         BedrockBlockState key = palette.blocks().key(block);
@@ -75,15 +75,15 @@ class VariantBlockTest {
         Palette palette = PALETTER.palette(2168);
         BedrockItemVariant missing = null;
         for (BedrockItemVariant variant : PALETTER.palette(PALETTER.latest().protocolVersion()).itemVariants()) {
-            if (Palettes.isFallback(palette, variant) && PALETTER.blockOf(variant) != null) {
+            if (palette.resolve(variant).fallback() && PALETTER.blockOf(variant) != null) {
                 missing = variant;
                 break;
             }
         }
         assertNotNull(missing, "fixture: the oldest version lacks a block item of the newest");
-        RegisteredBlockState block = Palettes.blockDefinitionOf(palette, missing);
+        RegisteredBlockState block = palette.resolve(missing).block();
         assertNotNull(block);
-        assertEquals(Palettes.blockDefinitionOf(palette, Palettes.fallbackOf(palette, missing)), block);
+        assertEquals(palette.resolve(palette.resolve(missing).sent()).block(), block);
         assertEquals(BedrockBlocks.UNKNOWN, palette.blocks().key(block).type());
     }
 
@@ -96,14 +96,14 @@ class VariantBlockTest {
             assertNotNull(key, version.toString());
             // The same key Paletter gives without a palette, and the palette's runtime id of it
             assertSame(PALETTER.blockOf(planks), key, version.toString());
-            assertEquals(Palettes.blockDefinitionOf(palette, planks).getRuntimeId(), palette.runtimeId(key), version.toString());
+            assertEquals(palette.resolve(planks).block().getRuntimeId(), palette.runtimeId(key), version.toString());
         }
         assertNull(PALETTER.palette(PALETTER.latest().protocolVersion()).blockOf(BedrockItems.STICK.base()));
 
         // A fallback: the key of the block its fallback is sent with, where Paletter#blockOf knows the real block
         Palette oldest = PALETTER.palette(2168);
         for (BedrockItemVariant variant : PALETTER.palette(PALETTER.latest().protocolVersion()).itemVariants()) {
-            if (Palettes.isFallback(oldest, variant) && PALETTER.blockOf(variant) != null) {
+            if (oldest.resolve(variant).fallback() && PALETTER.blockOf(variant) != null) {
                 assertEquals(BedrockBlocks.UNKNOWN, oldest.blockOf(variant).type());
                 assertNotNull(PALETTER.blockOf(variant));
                 break;

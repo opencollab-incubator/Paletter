@@ -136,7 +136,7 @@ class HandleTest {
                 assertSame(resolved.definition(), sent.getDefinition(), version.toString());
                 assertEquals(resolved.damage(), sent.getDamage(), version.toString());
                 assertSame(resolved.block(), sent.getBlockDefinition(), version.toString());
-                assertEquals(resolved.fallback(), resolved.sent() != null, version.toString());
+                assertEquals(resolved.fallback(), !variant.equals(resolved.sent()), version.toString());
             }
         }
     }

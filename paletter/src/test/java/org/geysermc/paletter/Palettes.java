@@ -1,9 +1,5 @@
 package org.geysermc.paletter;
 
-import org.geysermc.paletter.block.RegisteredBlockState;
-import org.geysermc.paletter.item.ResolvedItem;
-import org.geysermc.paletter.vanilla.BedrockItemVariant;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,24 +27,6 @@ public final class Palettes {
 
     public static Palette palette(int protocol, PaletteLayer... layers) {
         return paletter(layers).palette(protocol);
-    }
-
-    /** The block a palette sends an item variant with, or null if it is not a block item here. */
-    public static RegisteredBlockState blockDefinitionOf(Palette palette, BedrockItemVariant variant) {
-        ResolvedItem resolved = palette.resolve(variant);
-        return resolved == null ? null : resolved.block();
-    }
-
-    /** Whether a palette sends a variant as another item: a resolution that is a fallback. */
-    public static boolean isFallback(Palette palette, BedrockItemVariant variant) {
-        ResolvedItem resolved = palette.resolve(variant);
-        return resolved != null && resolved.fallback();
-    }
-
-    /** The variant a palette sends in place of a variant, or null if it sends it as itself or not at all. */
-    public static BedrockItemVariant fallbackOf(Palette palette, BedrockItemVariant variant) {
-        ResolvedItem resolved = palette.resolve(variant);
-        return resolved == null ? null : resolved.sent();
     }
 
     private record Key(List<PaletteLayer> layers) {

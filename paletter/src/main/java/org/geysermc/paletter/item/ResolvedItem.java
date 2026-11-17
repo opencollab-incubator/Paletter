@@ -19,17 +19,15 @@ import org.geysermc.paletter.vanilla.BedrockItemVariant;
 public record ResolvedItem(@NonNull RegisteredItem definition, int damage, @Nullable RegisteredBlockState block, boolean fallback) {
 
     /**
-     * The variant this palette sends in place of the one that was resolved: the replacement of an
-     * {@code ItemFallback} (also a forced one), or the default fallback ({@code minecraft:unknown}) for a variant the
-     * version lacks. The aux is the one of the fallback's variant, else the replaced variant's. For a variant sent as
-     * itself there is no replacement. (A variant nothing is sent for has no resolution at all, see
-     * {@link org.geysermc.paletter.Palette#resolve}, so it never gets here.)
+     * The variant this palette sends, as a key: the resolved variant itself, or if {@link #fallback()} its replacement
+     * (of an {@code ItemFallback}, also a forced one, or the default fallback {@code minecraft:unknown} for a variant
+     * the version lacks). A replacement has the aux of the fallback's variant, else the replaced variant's.
      *
-     * @return the variant sent instead, or null if {@link #fallback()} is false
+     * @return the variant sent, never null
      * @since 0.1.0
      */
-    public @Nullable BedrockItemVariant sent() {
-        return fallback ? definition.key().variantOf(damage) : null;
+    public @NonNull BedrockItemVariant sent() {
+        return definition.key().variantOf(damage);
     }
 
     /**

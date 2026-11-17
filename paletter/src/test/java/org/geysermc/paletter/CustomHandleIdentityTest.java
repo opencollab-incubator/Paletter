@@ -121,7 +121,7 @@ class CustomHandleIdentityTest {
         assertNotNull(resolved);
         assertTrue(resolved.fallback());
         assertSame(ruby.type(), resolved.definition().key());
-        assertSame(ruby.type().base(), Palettes.fallbackOf(palette, BedrockItems.DIAMOND_SWORD.base()));
+        assertSame(ruby.type().base(), palette.resolve(BedrockItems.DIAMOND_SWORD.base()).sent());
         assertSame(ruby.type().base(), palette.decode(palette.encode(BedrockItemStack.of(BedrockItems.DIAMOND_SWORD))).variant());
     }
 

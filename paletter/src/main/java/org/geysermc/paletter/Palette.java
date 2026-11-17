@@ -379,7 +379,8 @@ public final class Palette {
      * What this palette sends for an item variant, without building an {@link ItemData}: the item definition, damage
      * and block of {@link #encode} (fallbacks applied), as one cached record. For the variants of the newest version it
      * is a field read and an array load, it does not allocate. Use it to read the definition or damage of many items;
-     * a stack's own block state, count and NBT are not part of it.
+     * a stack's own block state, count and NBT are not part of it. {@link ResolvedItem#fallback()} tells whether the
+     * variant is sent as another item, {@link ResolvedItem#sent()} which.
      *
      * @return the resolution, or null if the item does not exist in this version and has no fallback
      * @since 0.1.0

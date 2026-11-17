@@ -51,7 +51,7 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 | `Palette#runtimeId(BedrockBlockState)` | The runtime id (the state hash). Throws if the palette lacks the state; `runtimeIdOrDefault` does not. |
 | `Palette#blockDefinition(BedrockBlockState)` | The `RegisteredBlockState` this version sends, after adapting and fallbacks. `blockOrNull` returns null instead of throwing. |
 | `Palette#itemDefinition(BedrockItemType)` | The `RegisteredItem`, or null if the version lacks it. Fallbacks are not applied. |
-| `Palette#resolve(BedrockItemVariant)` | What `encode` would send, without building an `ItemData`. `sent()` is the variant sent in place of a fallback, null if the variant is sent as itself. |
+| `Palette#resolve(BedrockItemVariant)` | What `encode` would send, without building an `ItemData`. `sent()` is the variant sent: the variant itself, or its fallback if `fallback()`. |
 | `Palette#blockOf(BedrockItemVariant)` | The key of the block an item is sent with, or null. `blockDefinition(blockOf(v))` is what is sent. |
 | `Palette#encode(BedrockItemStack)` | The `ItemData` for the client, with fallbacks applied. |
 | `Palette#decode(ItemData)` | The stack a client sent, or null if unknown. |

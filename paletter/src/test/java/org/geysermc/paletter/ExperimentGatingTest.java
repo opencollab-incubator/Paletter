@@ -42,18 +42,18 @@ class ExperimentGatingTest {
         Paletter paletter = Paletter.builder().fallbacks(flat).build();
 
         Palette gated = paletter.palette(OLDEST);
-        assertTrue(Palettes.isFallback(gated, BedrockItems.BLACK_CUSHION.base()));
-        assertEquals(BedrockItems.STICK.base(), Palettes.fallbackOf(gated, BedrockItems.BLACK_CUSHION.base()));
+        assertTrue(gated.resolve(BedrockItems.BLACK_CUSHION.base()).fallback());
+        assertEquals(BedrockItems.STICK.base(), gated.resolve(BedrockItems.BLACK_CUSHION.base()).sent());
         assertNull(gated.itemDefinition(BedrockItems.BLACK_CUSHION));
         assertEquals(List.of(), gated.experiments());
 
         Palette regular = paletter.palette(MIDDLE);
-        assertFalse(Palettes.isFallback(regular, BedrockItems.BLACK_CUSHION.base()));
+        assertFalse(regular.resolve(BedrockItems.BLACK_CUSHION.base()).fallback());
         assertNotNull(regular.itemDefinition(BedrockItems.BLACK_CUSHION));
         assertEquals(List.of(), regular.experiments());
 
         // Without a fallback of its own the gated item is the default fallback, like content the version lacks
-        assertEquals(BedrockItems.UNKNOWN.base(), Palettes.fallbackOf(PALETTER.palette(OLDEST), BedrockItems.BLACK_CUSHION.base()));
+        assertEquals(BedrockItems.UNKNOWN.base(), PALETTER.palette(OLDEST).resolve(BedrockItems.BLACK_CUSHION.base()).sent());
     }
 
     private static final Paletter PALETTER = Paletter.bundled();
@@ -64,7 +64,7 @@ class ExperimentGatingTest {
         Paletter paletter = Paletter.builder().fallbacks(flat).vanilla(vanilla -> vanilla.experiments(TOGGLE)).build();
 
         Palette enabled = paletter.palette(OLDEST);
-        assertFalse(Palettes.isFallback(enabled, BedrockItems.BLACK_CUSHION.base()));
+        assertFalse(enabled.resolve(BedrockItems.BLACK_CUSHION.base()).fallback());
         assertNotNull(enabled.itemDefinition(BedrockItems.BLACK_CUSHION));
         assertEquals(List.of(TOGGLE), enabled.experiments());
         assertEquals(TOGGLE, enabled.experimentOf(BedrockItems.BLACK_CUSHION));
