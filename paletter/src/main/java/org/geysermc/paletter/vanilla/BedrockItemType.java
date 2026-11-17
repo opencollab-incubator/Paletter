@@ -17,13 +17,14 @@ import java.util.Objects;
  * ItemData apple = palette.item(BedrockItems.APPLE).toItemData().count(3).build();
  * ItemData potion = palette.item(BedrockItems.POTION.variant(5)).toItemData().build();
  * }</pre>
- * Items whose variants differ by damage (potions, banners, goat horns, ...) expose them with {@link #variant(int)} (null if unknown, {@link #variantOf(int)} makes any).
+ * A type is an {@link ItemKey} for its base variant, so it can be passed to the methods that take a variant. Items whose
+ * variants differ by damage (potions, banners, goat horns, ...) expose them with {@link #variant(int)}.
  * The potions, tipped arrows, beds and banners have constants for them in {@link BedrockItemVariants}.
  * <p>
  * Equality: {@code equals} always works, and types are map keys. {@code ==} works too for vanilla types, which are
  * singletons (the constants), and for registered custom content: a {@link CustomItem} owns its {@link CustomItem#type()
  * type} (a {@link org.geysermc.paletter.block.CustomBlock} its {@link org.geysermc.paletter.block.CustomBlock#itemType()
- * item type}), and a palette it is registered in hands back exactly that type. Types made by {@link #of(String)} for an
+ * item type}), and a palette it is registered in hands back exactly that type. Custom types made for an
  * identifier that is not vanilla are not interned: equal to each other and to the custom item's type, not identical.
  * Nothing is kept for identifiers Paletter does not know, so untrusted identifiers cannot grow memory: what is kept is
  * bounded by the registered content. Equal custom items registered by different layers each own their type; those
@@ -35,12 +36,14 @@ import java.util.Objects;
  *
  * @since 0.1.0
  */
-public final class BedrockItemType {
+public final class BedrockItemType implements ItemKey {
     private final String identifier;
     private final @Nullable String fallback;
     private final boolean custom;
     private final boolean education;
     private volatile @Nullable Linked linked;
+    /** The base variant, made on first use before the data is linked; no data needed. */
+    private @Nullable BedrockItemVariant base;
 
     BedrockItemType(String identifier, String fallback) {
         this(identifier, fallback, false);
@@ -58,19 +61,18 @@ public final class BedrockItemType {
         this.fallback = null;
         this.custom = true;
         this.education = false;
-        BedrockItemVariant base = new BedrockItemVariant(this, 0, -1);
+        BedrockItemVariant base = baseVariant();
         this.linked = new Linked(this, true, base, List.of(base));
     }
 
     /**
-     * The key of an identifier: the vanilla constant if the identifier (after renames) is vanilla in the newest bundled
-     * data or has a generated constant, else a custom type known by its identifier only. Custom types are not interned (equal, not identical,
-     * for equal identifiers), so unknown identifiers never accumulate; the type a registered custom item owns, which
-     * palettes hand back, is {@link CustomItem#type()}. Loads the data.
-     *
-     * @return the type of an identifier
+     * Plumbing: the type of an identifier: the vanilla constant if the identifier (after renames) is vanilla in the newest
+     * bundled data or has a generated constant, else a custom type known by its identifier only (not interned, so unknown
+     * identifiers never accumulate; equal, not identical, for equal identifiers). Loads the data. Use
+     * {@link org.geysermc.paletter.Palette#itemType} or the constants of {@link BedrockItems}.
      */
-    public static @NonNull BedrockItemType of(@NonNull String identifier) {
+    @Internal
+    public static @NonNull BedrockItemType fromIdentifier(@NonNull String identifier) {
         Objects.requireNonNull(identifier);
         VanillaIndex index = VanillaIndex.get();
         String renamed = index.renames.item(identifier);
@@ -108,7 +110,7 @@ public final class BedrockItemType {
 
     void linkAbsent(@Nullable BedrockItemType fallbackType) {
         if (fallbackType == null) {
-            BedrockItemVariant base = new BedrockItemVariant(this, 0, -1);
+            BedrockItemVariant base = baseVariant();
             this.linked = new Linked(this, false, base, List.of(base));
         } else {
             Linked target = fallbackType.linked();
@@ -158,7 +160,7 @@ public final class BedrockItemType {
     /**
      * Whether BDS only offers this item to worlds with Education Edition features (the same content the generated
      * constant carries {@link org.geysermc.paletter.annotation.Education @Education} for). Decided from BDS captures when
-     * the constants were generated; always false for custom items and for keys made with {@link #of(String)}.
+     * the constants were generated; always false for custom items and for types made for an unknown identifier.
      *
      * @since 0.1.0
      */
@@ -181,43 +183,61 @@ public final class BedrockItemType {
     }
 
     /**
-     * @return the base variant: damage 0, no block state
+     * The base variant, made on first use and adopted by the data when it links: the one instance of its type.
      */
-    public @NonNull BedrockItemVariant base() {
-        return linked().base;
+    synchronized BedrockItemVariant baseVariant() {
+        if (base == null) {
+            base = new BedrockItemVariant(this, 0, -1);
+        }
+        return base;
     }
 
     /**
-     * @return the variant with a damage value if it is one of {@link #variants()}, i.e. a known variant of the newest
-     *         data, else null
+     * @return the base variant: damage 0, no block state. Loads no data
      */
-    public @Nullable BedrockItemVariant variant(int damage) {
-        Linked linked = linked();
+    @Override
+    public @NonNull BedrockItemVariant variant() {
+        Linked linked = this.linked;
+        return linked != null ? linked.base : baseVariant();
+    }
+
+    /**
+     * The variant with a damage value, never null. Once the data is loaded (any palette does) this is the known variant
+     * of {@link #variants()} if there is one, so {@code ==} holds for the named constants of {@link BedrockItemVariants};
+     * an aux the data does not name gives a new variant without a canonical id (a layer can give it one with
+     * {@link org.geysermc.paletter.PaletteLayer.Builder#variant(ItemKey)}). Loads no data itself: before it is loaded the
+     * result is a plain variant, which {@code equals} the known one.
+     *
+     * @return the variant of this type with this aux value
+     */
+    public @NonNull BedrockItemVariant variant(int damage) {
+        if (damage == 0) {
+            return variant();
+        }
+        Linked linked = this.linked;
+        if (linked == null) {
+            return new BedrockItemVariant(this, damage, -1);
+        }
         for (BedrockItemVariant variant : linked.variants) {
             if (variant.aux() == damage) {
                 return variant;
             }
         }
-        return null;
+        return new BedrockItemVariant(linked.owner, damage, -1);
     }
 
     /**
-     * @return whether {@link #variant(int)} would return a variant for this damage value
+     * @return whether the newest bundled data names a variant with this damage value, i.e. it is one of
+     *         {@link #variants()}. Loads the data
      * @since 0.1.0
      */
     public boolean hasVariant(int damage) {
-        return variant(damage) != null;
-    }
-
-    /**
-     * @return the variant with a damage value: one of {@link #variants()} if it has a canonical id, else a new variant
-     *         without one (no canonical id; a layer can give it one with
-     *         {@link org.geysermc.paletter.PaletteLayer.Builder#variant(BedrockItemVariant)})
-     * @since 0.1.0
-     */
-    public @NonNull BedrockItemVariant variantOf(int damage) {
-        BedrockItemVariant known = variant(damage);
-        return known != null ? known : new BedrockItemVariant(linked().owner, damage, -1);
+        for (BedrockItemVariant variant : linked().variants) {
+            if (variant.aux() == damage) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -232,7 +252,7 @@ public final class BedrockItemType {
      */
     @Internal
     public @NonNull ItemVariant toItemVariant() {
-        return base().toItemVariant();
+        return variant().toItemVariant();
     }
 
     /**
@@ -240,7 +260,7 @@ public final class BedrockItemType {
      */
     @Internal
     public int canonicalIn(@NonNull CanonicalItems canonical) {
-        return base().canonicalIn(canonical);
+        return variant().canonicalIn(canonical);
     }
 
     @Override

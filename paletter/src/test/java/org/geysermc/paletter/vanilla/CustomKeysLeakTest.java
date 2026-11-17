@@ -57,7 +57,7 @@ class CustomKeysLeakTest {
     void manyDistinctCustomKeysDoNotGrowAnyStaticStructure() throws ReflectiveOperationException {
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
         // Touch everything once, so lazily built structures are not counted as growth
-        BedrockItemType.of("warmup:item");
+        BedrockItemType.fromIdentifier("warmup:item");
         BedrockBlockType.of("warmup:block");
         palette.itemVariant("warmup:item", 0, Lookup.RENAMED);
         Map<String, Integer> before = staticSizes();
@@ -65,16 +65,16 @@ class CustomKeysLeakTest {
 
         List<BedrockItemType> kept = new ArrayList<>();
         for (int i = 0; i < KEYS; i++) {
-            BedrockItemType type = BedrockItemType.of("attacker:item_" + i);
-            BedrockItemVariant variant = BedrockItemVariant.of("attacker:variant_" + i, i);
+            BedrockItemType type = BedrockItemType.fromIdentifier("attacker:item_" + i);
+            BedrockItemVariant variant = BedrockItemVariant.fromIdentifier("attacker:variant_" + i, i);
             BedrockBlockType block = BedrockBlockType.of("attacker:block_" + i);
             block.defaultState();
             palette.itemVariant("attacker:lookup_" + i, i, Lookup.RENAMED);
-            palette.encode(BedrockItemStack.of(type.variantOf(i)));
+            palette.encode(BedrockItemStack.of(type.variant(i)));
             palette.blocks().resolve(NbtMap.builder().putString("name", "attacker:state_" + i).putCompound("states", NbtMap.EMPTY).build());
             if (i % 1000 == 0) {
                 kept.add(type);
-                assertEquals(variant.type(), BedrockItemType.of("attacker:variant_" + i));
+                assertEquals(variant.type(), BedrockItemType.fromIdentifier("attacker:variant_" + i));
             }
         }
         assertEquals(before, staticSizes());
@@ -83,9 +83,9 @@ class CustomKeysLeakTest {
 
     @Test
     void unknownKeysAreCollectable() {
-        WeakReference<BedrockItemType> item = new WeakReference<>(BedrockItemType.of("gc:item"));
+        WeakReference<BedrockItemType> item = new WeakReference<>(BedrockItemType.fromIdentifier("gc:item"));
         WeakReference<BedrockBlockType> block = new WeakReference<>(BedrockBlockType.of("gc:block"));
-        WeakReference<BedrockItemVariant> variant = new WeakReference<>(BedrockItemVariant.of("gc:variant", 3));
+        WeakReference<BedrockItemVariant> variant = new WeakReference<>(BedrockItemVariant.fromIdentifier("gc:variant", 3));
         for (int i = 0; i < 50 && (item.get() != null || block.get() != null || variant.get() != null); i++) {
             System.gc();
             try {
@@ -141,14 +141,14 @@ class CustomKeysLeakTest {
 
     @Test
     void unknownKeysAreEqualByIdentifier() {
-        BedrockItemType item = BedrockItemType.of("eq:item");
-        assertNotSame(item, BedrockItemType.of("eq:item"));
-        assertEquals(item, BedrockItemType.of("eq:item"));
-        assertEquals(item.hashCode(), BedrockItemType.of("eq:item").hashCode());
-        assertEquals(BedrockItemVariant.of("eq:item", 4), BedrockItemVariant.of("eq:item", 4));
-        assertEquals(BedrockItemVariant.of("eq:item", 4).hashCode(), BedrockItemVariant.of("eq:item", 4).hashCode());
-        assertTrue(!BedrockItemVariant.of("eq:item", 4).equals(BedrockItemVariant.of("eq:item", 5)));
-        assertTrue(!item.equals(BedrockItemType.of("eq:other")));
+        BedrockItemType item = BedrockItemType.fromIdentifier("eq:item");
+        assertNotSame(item, BedrockItemType.fromIdentifier("eq:item"));
+        assertEquals(item, BedrockItemType.fromIdentifier("eq:item"));
+        assertEquals(item.hashCode(), BedrockItemType.fromIdentifier("eq:item").hashCode());
+        assertEquals(BedrockItemVariant.fromIdentifier("eq:item", 4), BedrockItemVariant.fromIdentifier("eq:item", 4));
+        assertEquals(BedrockItemVariant.fromIdentifier("eq:item", 4).hashCode(), BedrockItemVariant.fromIdentifier("eq:item", 4).hashCode());
+        assertTrue(!BedrockItemVariant.fromIdentifier("eq:item", 4).equals(BedrockItemVariant.fromIdentifier("eq:item", 5)));
+        assertTrue(!item.equals(BedrockItemType.fromIdentifier("eq:other")));
 
         BedrockBlockType block = BedrockBlockType.of("eq:block");
         assertEquals(block, BedrockBlockType.of("eq:block"));
@@ -160,8 +160,8 @@ class CustomKeysLeakTest {
 
     @Test
     void vanillaKeysStayIdentitySingletons() {
-        assertSame(BedrockItems.APPLE, BedrockItemType.of("minecraft:apple"));
-        assertSame(BedrockItems.APPLE.base(), BedrockItemVariant.of("minecraft:apple", 0));
+        assertSame(BedrockItems.APPLE, BedrockItemType.fromIdentifier("minecraft:apple"));
+        assertSame(BedrockItems.APPLE.variant(), BedrockItemVariant.fromIdentifier("minecraft:apple", 0));
         assertSame(BedrockBlocks.STONE, BedrockBlockType.of("minecraft:stone"));
         assertSame(BedrockBlocks.STONE.defaultState(), BedrockBlockType.of("minecraft:stone").defaultState());
     }

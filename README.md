@@ -56,7 +56,7 @@ BedrockItemVariant variant = palette.itemVariant("minecraft:potion", 5, Lookup.R
 
 // Blocks and items are keys; the palette gives the ids for its version
 int stone = palette.runtimeId(BedrockBlocks.STONE.defaultState());
-ItemData apples = palette.encode(BedrockItemStack.of(BedrockItems.APPLE.base(), 3));
+ItemData apples = palette.encode(BedrockItemStack.of(BedrockItems.APPLE, 3));
 
 // Behaviour values BDS uses but never sends to clients, of what the palette resolved
 ResolvedBlock block = palette.resolve(BedrockBlocks.STONE.defaultState());
@@ -70,7 +70,7 @@ and an anticheat.
 ## Concepts
 
 **Keys, registered entries and stacks.** A key names content and does not depend on a version: `BedrockBlockType`,
-`BedrockBlockState`, `BedrockItemType` and `BedrockItemVariant` (a type plus an aux value). Vanilla keys are generated
+`BedrockBlockState`, `BedrockItemType` and `BedrockItemVariant` (a type plus an aux value; both are an `ItemKey`, a type standing for its base variant). Vanilla keys are generated
 constants (`BedrockBlocks.STONE`, `BedrockItems.APPLE`); custom content gets its keys from `CustomBlock#type()` and
 `CustomItem#type()`. A registered entry (`RegisteredItem`, `RegisteredBlockState`) is a key inside one palette, with its
 runtime id and components; these implement Cloudburst's `ItemDefinition` and `BlockDefinition`. A stack

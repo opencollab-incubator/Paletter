@@ -77,7 +77,7 @@ class PropertiesTest {
         RegisteredItem item = palette.items().item("server:ruby");
         assertNotNull(item);
         assertTrue(item.properties().get(PropertyKind.COMPONENT, "minecraft:max_stack_size") != null);
-        assertEquals(Properties.EMPTY, PALETTER.properties(BedrockItemType.of("server:ruby"), PALETTER.latest()));
+        assertEquals(Properties.EMPTY, PALETTER.properties(BedrockItemType.fromIdentifier("server:ruby"), PALETTER.latest()));
     }
 
     @Test

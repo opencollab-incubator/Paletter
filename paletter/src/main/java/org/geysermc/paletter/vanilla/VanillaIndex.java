@@ -117,7 +117,14 @@ final class VanillaIndex {
                 id -> constantItems.computeIfAbsent(id, key -> new BedrockItemType(key, VanillaTypes.UNKNOWN)));
             BedrockItemVariant named = constantVariants.get(variant.identifier() + "@" + variant.damage());
             // A named constant stays without an id, and finds its canonical id by lookup
-            BedrockItemVariant handle = named != null ? named : new BedrockItemVariant(type, variant.damage(), i);
+            BedrockItemVariant handle = named;
+            if (handle == null && variant.damage() == 0) {
+                // The type's own base variant is the instance handed out before the data was linked
+                handle = type.baseVariant();
+                handle.identify(i);
+            } else if (handle == null) {
+                handle = new BedrockItemVariant(type, variant.damage(), i);
+            }
             itemsByCanonical[i] = handle;
             variants.computeIfAbsent(variant.identifier(), id -> new ArrayList<>()).add(handle);
         }

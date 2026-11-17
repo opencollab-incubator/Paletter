@@ -31,7 +31,7 @@ class SameStackTest {
     }
 
     private static BedrockItemStack sword(int count, NbtMap nbt) {
-        return new BedrockItemStack(BedrockItems.DIAMOND_SWORD.base(), count, nbt, null);
+        return new BedrockItemStack(BedrockItems.DIAMOND_SWORD.variant(), count, nbt, null);
     }
 
     @Test
@@ -86,14 +86,14 @@ class SameStackTest {
         assertFalse(palette.sameStack(base, base.toBuilder().canPlace("minecraft:stone").build()));
         assertFalse(palette.sameStack(base, base.toBuilder().canBreak("minecraft:stone").build()));
         assertTrue(palette.sameStack(base.toBuilder().canPlace("minecraft:stone").build(), base.toBuilder().canPlace("minecraft:stone").build()));
-        assertFalse(palette.sameStack(base, palette.encode(BedrockItemStack.of(BedrockItems.IRON_SWORD.base()))));
+        assertFalse(palette.sameStack(base, palette.encode(BedrockItemStack.of(BedrockItems.IRON_SWORD))));
         assertFalse(palette.sameStack(base, ItemData.AIR));
     }
 
     @Test
     void theBlockOfTheStackCounts() {
         Palette palette = latest();
-        BedrockItemStack log = BedrockItemStack.of(BedrockItems.OAK_LOG.base());
+        BedrockItemStack log = BedrockItemStack.of(BedrockItems.OAK_LOG);
         BedrockBlockState sideways = Paletter.bundled().vanilla(Paletter.bundled().latest()).blockState(org.geysermc.paletter.internal.block.BlockStates.of("minecraft:oak_log",
             java.util.Map.of("pillar_axis", "x")), Lookup.RENAMED);
         assertNotNull(sideways);

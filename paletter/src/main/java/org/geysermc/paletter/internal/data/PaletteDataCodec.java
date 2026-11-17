@@ -140,7 +140,7 @@ public final class PaletteDataCodec {
         Map<String, ItemFallback> itemFallbacks = new HashMap<>();
         fallbacksNbt.getCompound("items", NbtMap.EMPTY).forEach((name, value) -> {
             NbtMap fallback = (NbtMap) value;
-            itemFallbacks.put(name, new ItemFallback(BedrockItemType.of(fallback.getString("target")), null, fallback.getBoolean("force")));
+            itemFallbacks.put(name, new ItemFallback(BedrockItemType.fromIdentifier(fallback.getString("target")), null, fallback.getBoolean("force")));
         });
         Set<String> unmapped = new HashSet<>(fallbacksNbt.getList("unmapped", NbtType.STRING, List.of()));
 

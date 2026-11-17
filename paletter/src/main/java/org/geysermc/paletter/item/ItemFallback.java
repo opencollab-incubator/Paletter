@@ -10,7 +10,7 @@ import java.util.Objects;
 
 /**
  * A replacement for an item in a version. The target is a key: it needs no existence in any version, custom keys are
- * made with {@code BedrockItemType.of("namespace:id")}.
+ * made with {@link org.geysermc.paletter.Palette#itemType}.
  *
  * @param target the replacement item type
  * @param variant the exact replacement variant, or null to keep the aux of the replaced item

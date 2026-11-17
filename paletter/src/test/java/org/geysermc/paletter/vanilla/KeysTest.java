@@ -23,8 +23,8 @@ class KeysTest {
 
     @Test
     void ofReturnsTheConstants() {
-        assertSame(BedrockItems.APPLE, BedrockItemType.of("minecraft:apple"));
-        assertFalse(BedrockItemType.of("minecraft:apple").isCustom());
+        assertSame(BedrockItems.APPLE, BedrockItemType.fromIdentifier("minecraft:apple"));
+        assertFalse(BedrockItemType.fromIdentifier("minecraft:apple").isCustom());
     }
 
     @Test
@@ -33,11 +33,11 @@ class KeysTest {
         long thread = Thread.currentThread().threadId();
         BedrockItemType[] keep = new BedrockItemType[1];
         for (int i = 0; i < 10_000; i++) {
-            keep[0] = BedrockItemType.of("minecraft:apple");
+            keep[0] = BedrockItemType.fromIdentifier("minecraft:apple");
         }
         long before = threads.getThreadAllocatedBytes(thread);
         for (int i = 0; i < 10_000; i++) {
-            keep[0] = BedrockItemType.of("minecraft:apple");
+            keep[0] = BedrockItemType.fromIdentifier("minecraft:apple");
         }
         long allocated = threads.getThreadAllocatedBytes(thread) - before;
         assertSame(BedrockItems.APPLE, keep[0]);
@@ -46,26 +46,31 @@ class KeysTest {
 
     @Test
     void customTypesAreEqualByIdentifier() {
-        BedrockItemType first = BedrockItemType.of("test:thing");
+        BedrockItemType first = BedrockItemType.fromIdentifier("test:thing");
         // Not interned: nothing is kept for identifiers the data does not know
-        assertNotSame(first, BedrockItemType.of("test:thing"));
-        assertEquals(first, BedrockItemType.of("test:thing"));
+        assertNotSame(first, BedrockItemType.fromIdentifier("test:thing"));
+        assertEquals(first, BedrockItemType.fromIdentifier("test:thing"));
         assertTrue(first.isCustom());
-        assertNotEquals(first, BedrockItemType.of("test:other"));
-        assertEquals(first.hashCode(), BedrockItemType.of("test:thing").hashCode());
+        assertNotEquals(first, BedrockItemType.fromIdentifier("test:other"));
+        assertEquals(first.hashCode(), BedrockItemType.fromIdentifier("test:thing").hashCode());
+    }
+
+    @org.junit.jupiter.api.BeforeAll
+    static void dataLoaded() {
+        VanillaIndex.get();
     }
 
     @Test
     void variantsOfKnownTypesAreTheKnownInstances() {
-        assertSame(BedrockItems.APPLE.base(), BedrockItemVariant.of("minecraft:apple", 0));
-        assertSame(BedrockItems.APPLE.base(), BedrockItemVariant.of(BedrockItems.APPLE, 0));
+        assertSame(BedrockItems.APPLE.variant(), BedrockItemVariant.fromIdentifier("minecraft:apple", 0));
+        assertSame(BedrockItems.APPLE.variant(), BedrockItems.APPLE.variant(0));
         for (BedrockItemVariant known : BedrockItems.POTION.variants()) {
-            assertSame(known, BedrockItemVariant.of(BedrockItems.POTION, known.aux()));
+            assertSame(known, BedrockItems.POTION.variant(known.aux()));
         }
-        BedrockItemVariant unknown = BedrockItemVariant.of("test:thing", 7);
+        BedrockItemVariant unknown = BedrockItemVariant.fromIdentifier("test:thing", 7);
         assertEquals(7, unknown.aux());
-        assertEquals(BedrockItemType.of("test:thing"), unknown.type());
-        assertEquals(unknown, BedrockItemVariant.of("test:thing", 7));
+        assertEquals(BedrockItemType.fromIdentifier("test:thing"), unknown.type());
+        assertEquals(unknown, BedrockItemVariant.fromIdentifier("test:thing", 7));
     }
 
     @Test
@@ -75,7 +80,7 @@ class KeysTest {
         CanonicalItems items = CanonicalItems.of(PALETTER.vanillaData(PALETTER.latest()), renames);
         Forwarding forwarding = items.forward(item("test:old_apple", 0));
         assertEquals(Forwarding.Kind.RENAMED, forwarding.kind());
-        assertEquals(BedrockItems.APPLE.base().canonicalIn(items), forwarding.canonical());
+        assertEquals(BedrockItems.APPLE.variant().canonicalIn(items), forwarding.canonical());
     }
 
     @Test
@@ -89,9 +94,9 @@ class KeysTest {
         CanonicalItems items = CanonicalItems.of(PALETTER.vanillaData(PALETTER.latest()), renames);
         Forwarding forwarding = items.forward(item("minecraft:apple", 5));
         assertEquals(Forwarding.Kind.RENAMED, forwarding.kind());
-        assertEquals(BedrockItems.GOLDEN_APPLE.base().canonicalIn(items), forwarding.canonical());
+        assertEquals(BedrockItems.GOLDEN_APPLE.variant().canonicalIn(items), forwarding.canonical());
         Forwarding other = items.forward(item("test:legacy", 2));
-        assertEquals(BedrockItems.APPLE.base().canonicalIn(items), other.canonical());
+        assertEquals(BedrockItems.APPLE.variant().canonicalIn(items), other.canonical());
     }
 
     private static org.geysermc.paletter.internal.item.ItemVariant item(String id, int damage) {

@@ -155,7 +155,7 @@ public final class CanonicalItems {
             }
             type = handle.type();
         }
-        return type.variantOf(variant.damage());
+        return type.variant(variant.damage());
     }
 
     /**

@@ -47,14 +47,14 @@ class UnknownItemTest {
     void unknownAndMissingItemsAreSentAsTheSameStandIn() {
         Palette oldest = PALETTER.palette(OLDEST);
         BedrockItemVariant missing = missingInOldest(oldest);
-        BedrockItemVariant nobody = BedrockItemVariant.of("nobody:item", 0);
+        BedrockItemVariant nobody = BedrockItemVariant.fromIdentifier("nobody:item", 0);
         ItemData fromMissing = oldest.encode(BedrockItemStack.of(missing, 3));
         ItemData fromNobody = oldest.encode(BedrockItemStack.of(nobody, 3));
         assertEquals("minecraft:unknown", fromMissing.getDefinition().getIdentifier());
         assertSame(fromMissing.getDefinition(), fromNobody.getDefinition());
         assertEquals(3, fromNobody.getCount());
         assertTrue(oldest.resolve(nobody).fallback());
-        assertEquals(BedrockItems.UNKNOWN.base(), oldest.resolve(nobody).variant());
+        assertEquals(BedrockItems.UNKNOWN.variant(), oldest.resolve(nobody).variant());
         assertEquals(oldest.resolve(missing).variant(), oldest.resolve(nobody).variant());
         // The newest version has no item of that name either
         assertEquals("minecraft:unknown", latest().encode(BedrockItemStack.of(nobody)).getDefinition().getIdentifier());
@@ -65,10 +65,10 @@ class UnknownItemTest {
         Paletter stick = Paletter.builder().fallbacks(Fallbacks.builder().defaultItem(ItemFallback.of(BedrockItems.STICK)).build()).build();
         Palette oldest = stick.palette(OLDEST);
         BedrockItemVariant missing = missingInOldest(oldest);
-        BedrockItemVariant nobody = BedrockItemVariant.of("nobody:item", 7);
+        BedrockItemVariant nobody = BedrockItemVariant.fromIdentifier("nobody:item", 7);
         assertEquals("minecraft:stick", oldest.encode(BedrockItemStack.of(missing)).getDefinition().getIdentifier());
         assertEquals("minecraft:stick", oldest.encode(BedrockItemStack.of(nobody)).getDefinition().getIdentifier());
-        assertEquals(BedrockItems.STICK.base(), oldest.resolve(nobody).variant());
+        assertEquals(BedrockItems.STICK.variant(), oldest.resolve(nobody).variant());
     }
 
     @Test
@@ -76,7 +76,7 @@ class UnknownItemTest {
         Paletter none = Paletter.builder().fallbacks(Fallbacks.NONE).build();
         Palette oldest = none.palette(OLDEST);
         BedrockItemVariant missing = missingInOldest(oldest);
-        BedrockItemVariant nobody = BedrockItemVariant.of("nobody:item", 0);
+        BedrockItemVariant nobody = BedrockItemVariant.fromIdentifier("nobody:item", 0);
         assertEquals(ItemData.AIR, oldest.encode(BedrockItemStack.of(missing)));
         assertEquals(ItemData.AIR, oldest.encode(BedrockItemStack.of(nobody)));
         assertNull(oldest.resolve(nobody));
@@ -85,7 +85,7 @@ class UnknownItemTest {
     @Test
     void decodeKeepsTheDamageOfAnItemWithoutThatVariant() {
         Palette palette = latest();
-        BedrockItemVariant sword = BedrockItems.DIAMOND_SWORD.base();
+        BedrockItemVariant sword = BedrockItems.DIAMOND_SWORD.variant();
         ItemData worn = palette.encode(BedrockItemStack.of(sword, 2)).toBuilder().damage(17).build();
         BedrockItemStack decoded = palette.decode(worn);
         assertNotNull(decoded);
@@ -101,7 +101,7 @@ class UnknownItemTest {
         // A listed variant is still the known instance, an unlisted aux of an item with variants keeps its aux
         BedrockItemVariant potion = BedrockItems.POTION.variant(5);
         assertSame(potion, palette.decode(palette.encode(BedrockItemStack.of(potion))).variant());
-        ItemData odd = palette.encode(BedrockItemStack.of(BedrockItems.POTION.base())).toBuilder().damage(9999).build();
+        ItemData odd = palette.encode(BedrockItemStack.of(BedrockItems.POTION)).toBuilder().damage(9999).build();
         BedrockItemStack oddStack = palette.decode(odd);
         assertNotNull(oddStack);
         assertEquals(BedrockItems.POTION, oddStack.type());
@@ -140,7 +140,7 @@ class UnknownItemTest {
             items.resolve(ItemVariant.of("minecraft:oak_log", i));
             items.resolve(new ItemVariant("minecraft:oak_log", 0, NbtMap.builder().putString("name", "chosen:block_" + i)
                 .putCompound("states", NbtMap.EMPTY).build()));
-            palette.encode(BedrockItemStack.of(BedrockItemType.of("chosen:stack_" + i).variantOf(i)));
+            palette.encode(BedrockItemStack.of(BedrockItemType.fromIdentifier("chosen:stack_" + i).variant(i)));
         }
         assertEquals(cached, size(blocks, "resolutions"), "what a caller asks is not kept");
     }

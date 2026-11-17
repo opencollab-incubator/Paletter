@@ -165,10 +165,10 @@ class VanillaConstantsTest {
         assertEquals(Ids.item(PALETTER, ItemVariant.of("minecraft:apple")), Ids.item(PALETTER, BedrockItems.APPLE));
         assertEquals(Ids.item(PALETTER, ItemVariant.of("minecraft:potion", 5)), Ids.item(PALETTER, BedrockItems.POTION.variant(5)));
         assertSame(BedrockItems.POTION.variant(5), BedrockItems.POTION.variant(5));
-        assertNull(BedrockItems.POTION.variant(9999));
+        assertEquals(9999, BedrockItems.POTION.variant(9999).aux(), "never null: an aux the data does not name is a plain variant");
         assertTrue(BedrockItems.POTION.hasVariant(5));
         assertFalse(BedrockItems.POTION.hasVariant(9999));
-        assertEquals(-1, Ids.item(PALETTER, BedrockItems.POTION.variantOf(9999)));
+        assertEquals(-1, Ids.item(PALETTER, BedrockItems.POTION.variant(9999)));
         assertTrue(BedrockItems.POTION.variants().size() > 40);
         assertSame(BedrockItems.APPLE, PALETTER.vanilla(PALETTER.latest()).itemType("minecraft:apple", Lookup.EXACT));
 
@@ -176,18 +176,18 @@ class VanillaConstantsTest {
         assertEquals("minecraft:apple", palette.itemDefinition(BedrockItems.APPLE).getIdentifier());
         assertEquals(5, palette.encode(BedrockItemStack.of(BedrockItems.POTION.variant(5))).getDamage());
         // Any aux value encodes; only variants with an id are recognized when decoding
-        assertEquals(9999, palette.encode(BedrockItemStack.of(BedrockItems.POTION.variantOf(9999))).getDamage());
-        Palette withVariant = palette.extend(PaletteLayer.builder("variant").variant(BedrockItems.POTION.variantOf(9999)).build());
-        assertEquals(9999, withVariant.decode(withVariant.encode(BedrockItemStack.of(BedrockItems.POTION.variantOf(9999)))).variant().aux());
-        assertTrue(ItemMatcher.of(BedrockItems.POTION.variant(5)).matches(BedrockItemStack.of(BedrockItems.POTION.variantOf(5))));
-        assertFalse(ItemMatcher.of(BedrockItems.POTION.variant(5)).matches(BedrockItemStack.of(BedrockItems.POTION.variantOf(6))));
+        assertEquals(9999, palette.encode(BedrockItemStack.of(BedrockItems.POTION.variant(9999))).getDamage());
+        Palette withVariant = palette.extend(PaletteLayer.builder("variant").variant(BedrockItems.POTION.variant(9999)).build());
+        assertEquals(9999, withVariant.decode(withVariant.encode(BedrockItemStack.of(BedrockItems.POTION.variant(9999)))).variant().aux());
+        assertTrue(ItemMatcher.of(BedrockItems.POTION.variant(5)).matches(BedrockItemStack.of(BedrockItems.POTION.variant(5))));
+        assertFalse(ItemMatcher.of(BedrockItems.POTION.variant(5)).matches(BedrockItemStack.of(BedrockItems.POTION.variant(6))));
     }
 
     @Test
     void constantNames() {
         assertEquals("STONE", BedrockBlocks.STONE.constantName());
         assertEquals("APPLE", BedrockItems.APPLE.constantName());
-        assertNull(BedrockItemType.of("example:ruby").constantName());
+        assertNull(BedrockItemType.fromIdentifier("example:ruby").constantName());
         assertNull(BedrockBlockType.of("example:lamp").constantName());
         for (BedrockBlockType type : BedrockBlockType.vanillaTypes()) {
             assertNotNull(type.constantName(), type.identifier());

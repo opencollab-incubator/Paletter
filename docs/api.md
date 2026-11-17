@@ -41,7 +41,7 @@ Keys (`BedrockBlockType`, `BedrockBlockState`, `BedrockItemType`, `BedrockItemVa
 works. `==` works too for vanilla keys, which are singletons, and for registered custom content: a `CustomItem` or
 `CustomBlock` creates its types, their base item variant and its block states once and owns them, and a palette it is
 registered in hands back exactly those (`decode`, `block(NbtMap)`, `RegisteredItem#key`, `Palette#blockState`,
-...). Other variants of a custom item (`layer.variant(ruby.type().variantOf(5))`) are equal to the one the layer was
+...). Other variants of a custom item (`layer.variant(ruby.type().variant(5))`) are equal to the one the layer was
 given, not identical: compare them with `equals`. A key for an identifier Paletter does
 not know is a plain value, equal by identifier and not interned, so memory is bounded by registered content. Equal custom
 items or blocks in different layers each own their keys, which are equal but not identical. Registered entries (`RegisteredItem`, `RegisteredBlockState`) are compared by identity, like
@@ -64,8 +64,8 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 | `Palette#blockState(int)` | The key of the block with a runtime id (the hash), or null if this palette has no such block. For ids a server stores itself, e.g. chunk palettes; ids decoded from packets already come as definitions. |
 | `Palette#blockDefinition(int)` | The `RegisteredBlockState` with a runtime id, or null. |
 | `Palette#itemDefinition(int)` | The `RegisteredItem` with an item runtime id (negative for the plain item of a custom block), or null. |
-| `Palette#resolve(BedrockItemVariant)` | What `encode` would send, without building an `ItemData`. `behaviour()` gives the `ItemValues` of the item sent. `variant()` is the variant this palette sends for the requested one: the requested variant itself unless `fallback()`. |
-| `Palette#blockOf(BedrockItemVariant)` | The key of the block an item is sent with, or null. `blockDefinition(blockOf(v))` is what is sent. |
+| `Palette#resolve(ItemKey)` | What `encode` would send, without building an `ItemData`. `behaviour()` gives the `ItemValues` of the item sent. `variant()` is the variant this palette sends for the requested one: the requested variant itself unless `fallback()`. |
+| `Palette#blockOf(ItemKey)` | The key of the block an item is sent with, or null. `blockDefinition(blockOf(v))` is what is sent. |
 | `Palette#encode(BedrockItemStack)` | The `ItemData` for the client, with fallbacks applied. |
 | `Palette#decode(ItemData)` | The stack a client sent, or null if unknown. |
 | `Palette#explain(...)` | A readable explanation of how a block state or item resolves. |
@@ -114,6 +114,14 @@ the same name.
 When Bedrock removes content, its constant stays, deprecated, and resolves to `minecraft:unknown` (`isAvailable()` is
 false). A renamed identifier keeps its old constant as a deprecated alias. `@since` on a constant is the first Bedrock
 release that has the content without an experiment. `@Education` marks Education Edition content.
+
+An `ItemKey` is a `BedrockItemType` or a `BedrockItemVariant`, and the methods that take a variant (`Palette#resolve`,
+`blockOf`, `BedrockItemStack.of`, `PaletteLayer.Builder#variant`) take one: a type stands for its base variant, so
+`palette.resolve(BedrockItems.APPLE)` works. `type.variant()` is the base variant and `type.variant(aux)` the variant of
+an aux, never null (an aux the data does not name gives a plain variant without a canonical id). A key is a type and an
+aux, so creating or using one loads no data. Once the data is loaded `type.variant(aux)` is the known instance, so `==`
+holds for named constants; compare with `equals` otherwise. Keys for an identifier are made with `Palette#itemType` and
+`Palette#itemVariant`, or are the type of a `CustomItem`.
 
 `BedrockItemVariants` names the aux variants of potions, splash and lingering potions, tipped arrows, beds and banners.
 The names are BDS's own spellings (`POTION_LONG_NIGHTVISION`, `BED_SILVER`), taken from the Script API when the data is
@@ -211,14 +219,14 @@ enabled those constants resolve to `minecraft:unknown`. The mark goes away when 
 
 Behaviour belongs to a palette, not to a definition: `RegisteredBlockState` and `RegisteredItem` are the same in every
 version, so they have no `behaviour()`. It is reached through what a palette resolved: `Palette#resolve(BedrockBlockState)`
-gives a `ResolvedBlock` and `Palette#resolve(BedrockItemVariant)` a `ResolvedItem`, each with `behaviour()`. It returns
+gives a `ResolvedBlock` and `Palette#resolve(ItemKey)` a `ResolvedItem`, each with `behaviour()`. It returns
 values BDS uses but never sends to clients: friction, destroy time, collision and outline shapes, light, max stack size,
 attack damage and more.
 
 ```java
 float ice = palette.resolve(BedrockBlocks.BLUE_ICE.defaultState()).behaviour().get(BlockBehaviour.FRICTION);
 BlockShape stairs = palette.resolve(state).behaviour().get(BlockBehaviour.COLLISION_SHAPE);
-int eating = palette.resolve(BedrockItems.APPLE.base()).behaviour().get(ItemBehaviour.USE_DURATION);
+int eating = palette.resolve(BedrockItems.APPLE).behaviour().get(ItemBehaviour.USE_DURATION);
 String why = palette.resolve(BedrockBlocks.BLUE_ICE.defaultState()).behaviour().explain(BlockBehaviour.FRICTION);
 
 ResolvedBlock block = palette.resolve(state);
@@ -235,7 +243,7 @@ block.behaviour();    // the values of the block that is sent
 - `resolve(BedrockBlockState)` throws `IllegalArgumentException` where `blockDefinition(state)` throws.
   `resolve(state, orElse)` returns `orElse` (may be null) there, as `blockDefinition(state, orElse)` does.
   `resolveBlock(int runtimeId)` takes the runtime id of a block this palette sends (from a packet or a chunk palette) and
-  returns null if there is none; it is never a fallback. `resolve(BedrockItemVariant)` is null for an item that does not
+  returns null if there is none; it is never a fallback. `resolve(ItemKey)` is null for an item that does not
   exist and has no fallback.
 - `get` throws `IllegalStateException` when no value is known; `getOrElse(key, fallback)` returns the fallback instead.
 - Values belong to the palette, not the state: a newer capture can change a value for one version only. An extended

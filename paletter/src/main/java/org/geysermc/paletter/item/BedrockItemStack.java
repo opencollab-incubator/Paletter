@@ -6,6 +6,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
+import org.geysermc.paletter.vanilla.ItemKey;
 
 import java.util.Objects;
 
@@ -33,32 +34,25 @@ public record BedrockItemStack(@NonNull BedrockItemVariant variant, int count, @
     }
 
     /**
-     * @return one item of a variant, without NBT or block state
+     * @return one item of a variant, or of a type's base variant, without NBT or block state
      */
-    public static @NonNull BedrockItemStack of(@NonNull BedrockItemVariant variant) {
-        return new BedrockItemStack(variant, 1, null, null);
+    public static @NonNull BedrockItemStack of(@NonNull ItemKey key) {
+        return new BedrockItemStack(key.variant(), 1, null, null);
     }
 
     /**
-     * @return a stack of a variant, without NBT or block state
+     * @return a stack of a variant, or of a type's base variant, without NBT or block state
      */
-    public static @NonNull BedrockItemStack of(@NonNull BedrockItemVariant variant, int count) {
-        return new BedrockItemStack(variant, count, null, null);
-    }
-
-    /**
-     * @return one item of a type's base variant
-     */
-    public static @NonNull BedrockItemStack of(@NonNull BedrockItemType type) {
-        return of(type.base());
+    public static @NonNull BedrockItemStack of(@NonNull ItemKey key, int count) {
+        return new BedrockItemStack(key.variant(), count, null, null);
     }
 
     public @NonNull BedrockItemType type() {
         return variant.type();
     }
 
-    public @NonNull BedrockItemStack withVariant(@NonNull BedrockItemVariant variant) {
-        return new BedrockItemStack(variant, count, nbt, blockState);
+    public @NonNull BedrockItemStack withVariant(@NonNull ItemKey key) {
+        return new BedrockItemStack(key.variant(), count, nbt, blockState);
     }
 
     public @NonNull BedrockItemStack withCount(int count) {

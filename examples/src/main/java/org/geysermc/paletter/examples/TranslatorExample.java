@@ -61,8 +61,8 @@ public final class TranslatorExample {
 
         // Items, both directions: handle <-> the translator's own item table
         Map<BedrockItemVariant, String> bedrockToJava = new HashMap<>();
-        bedrockToJava.put(ruby.type().base(), "java:ruby");
-        ItemData toClient = shared.encode(BedrockItemStack.of(ruby.type().base(), 2));
+        bedrockToJava.put(ruby.type().variant(), "java:ruby");
+        ItemData toClient = shared.encode(BedrockItemStack.of(ruby.type(), 2));
         System.out.println("from client: " + bedrockToJava.get(shared.decode(toClient).variant()));
 
         // A session: a short lived layer on top of the shared palette; what it does not touch stays identical

@@ -26,7 +26,7 @@ class VariantBlockTest {
     void theKeyOfThePaletteBlockIsTheVersionIndependentBlock() {
         for (var version : PALETTER.versions()) {
             Palette palette = PALETTER.palette(version.protocolVersion());
-            BedrockItemVariant stone = BedrockItems.STONE.base();
+            BedrockItemVariant stone = BedrockItems.STONE.variant();
             RegisteredBlockState block = palette.resolve(stone).block();
             assertNotNull(block, version.toString());
             assertSame(PALETTER.vanilla(PALETTER.latest()).blockOf(stone), palette.blocks().key(block), version.toString());
@@ -35,12 +35,12 @@ class VariantBlockTest {
 
     @Test
     void aVariantRegisteredThroughTheLayerHasTheBlockOfItsItem() {
-        BedrockItemVariant extra = BedrockItems.OAK_PLANKS.variantOf(7);
+        BedrockItemVariant extra = BedrockItems.OAK_PLANKS.variant(7);
         PaletteLayer layer = PaletteLayer.builder("test:variants").variant(extra).build();
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), layer);
         RegisteredBlockState block = palette.resolve(extra).block();
         assertNotNull(block);
-        assertEquals(palette.resolve(BedrockItems.OAK_PLANKS.base()).block(), block);
+        assertEquals(palette.resolve(BedrockItems.OAK_PLANKS).block(), block);
         // The extra variant has a handle in the palette, and so a key
         assertNotNull(palette.itemVariant(extra.type().identifier(), 7, Lookup.RENAMED));
         assertNotNull(palette.blocks().key(block));
@@ -49,9 +49,9 @@ class VariantBlockTest {
     @Test
     void aVariantNobodyRegisteredStillGetsTheBlockOfItsItem() {
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
-        BedrockItemVariant unknown = BedrockItems.OAK_PLANKS.variantOf(1234);
-        assertEquals(palette.resolve(BedrockItems.OAK_PLANKS.base()).block(), palette.resolve(unknown).block());
-        assertNull(palette.resolve(BedrockItems.STICK.variantOf(1234)).block());
+        BedrockItemVariant unknown = BedrockItems.OAK_PLANKS.variant(1234);
+        assertEquals(palette.resolve(BedrockItems.OAK_PLANKS).block(), palette.resolve(unknown).block());
+        assertNull(palette.resolve(BedrockItems.STICK.variant(1234)).block());
     }
 
     @Test
@@ -60,7 +60,7 @@ class VariantBlockTest {
             .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION)).build();
         PaletteLayer layer = PaletteLayer.builder("test:custom").block(lamp).build();
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), layer);
-        BedrockItemVariant item = BedrockItemType.of("variant:lamp").base();
+        BedrockItemVariant item = BedrockItemType.fromIdentifier("variant:lamp").variant();
         RegisteredBlockState block = palette.resolve(item).block();
         assertNotNull(block);
         assertEquals("variant:lamp", block.identifier());
@@ -89,7 +89,7 @@ class VariantBlockTest {
 
     @Test
     void theBlockKeyIsExplicit() {
-        BedrockItemVariant planks = BedrockItems.OAK_PLANKS.base();
+        BedrockItemVariant planks = BedrockItems.OAK_PLANKS.variant();
         for (var version : PALETTER.versions()) {
             Palette palette = PALETTER.palette(version.protocolVersion());
             BedrockBlockState key = palette.blockOf(planks);
@@ -98,7 +98,7 @@ class VariantBlockTest {
             assertSame(PALETTER.vanilla(PALETTER.latest()).blockOf(planks), key, version.toString());
             assertEquals(palette.resolve(planks).block().getRuntimeId(), palette.runtimeId(key), version.toString());
         }
-        assertNull(PALETTER.palette(PALETTER.latest().protocolVersion()).blockOf(BedrockItems.STICK.base()));
+        assertNull(PALETTER.palette(PALETTER.latest().protocolVersion()).blockOf(BedrockItems.STICK.variant()));
 
         // A fallback: the key of the block its fallback is sent with, where Paletter#blockOf knows the real block
         Palette oldest = PALETTER.palette(2168);
@@ -116,7 +116,7 @@ class VariantBlockTest {
         CustomBlock lamp = CustomBlock.builder("variant:keyed")
             .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION)).build();
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("test:keyed").block(lamp).build());
-        BedrockItemVariant item = BedrockItemType.of("variant:keyed").base();
+        BedrockItemVariant item = BedrockItemType.fromIdentifier("variant:keyed").variant();
         BedrockBlockState key = palette.blockOf(item);
         assertNotNull(key);
         assertSame(lamp.type(), key.type());

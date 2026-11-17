@@ -12,13 +12,13 @@ import org.geysermc.paletter.annotation.SincePreview;
  * them loads nothing.
  * <p>
  * Constants are added when Bedrock adds variants (binary compatible). A variant Bedrock removes keeps its constant,
- * deprecated: {@code type.variant(aux)} is then null. A name BDS changes stays as a deprecated alias of the new one.
+ * deprecated: {@code type.variant(aux)} is then a plain variant, equal to the constant. A name BDS changes stays as a deprecated alias of the new one.
  * <p>
  * The {@code @since} of a constant is the Paletter version that added it. The names come from BDS dumps of the newest
  * builds only: a variant is first captured in the oldest release with variant data, and may be older.
  * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks variants only the bundled Bedrock preview
  * has: without previews loaded ({@code paletter.previews}) its type has no such variant, so {@code type.variant(aux)}
- * is null and the constant stays a plain key. The mark goes when a release has it; the constant goes if a newer
+ * is a plain variant and the constant stays a plain key. The mark goes when a release has it; the constant goes if a newer
  * preview drops it.
  *
  * @since 0.1.0

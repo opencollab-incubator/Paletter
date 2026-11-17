@@ -44,30 +44,30 @@ class BlockOfTest {
             assertEquals("minecraft:carrots", block(palette, "minecraft:carrot"));
             // a slab item places the slab, never the double slab
             assertEquals("minecraft:acacia_slab", block(palette, "minecraft:acacia_slab"));
-            assertNull(palette.resolve(BedrockItemVariant.of("minecraft:acacia_double_slab", 0)).block());
+            assertNull(palette.resolve(BedrockItemVariant.fromIdentifier("minecraft:acacia_double_slab", 0)).block());
             // items that place nothing
-            assertNull(palette.resolve(BedrockItemVariant.of("minecraft:stick", 0)).block());
-            assertNull(palette.resolve(BedrockItemVariant.of("minecraft:diamond_sword", 0)).block());
+            assertNull(palette.resolve(BedrockItemVariant.fromIdentifier("minecraft:stick", 0)).block());
+            assertNull(palette.resolve(BedrockItemVariant.fromIdentifier("minecraft:diamond_sword", 0)).block());
         }
     }
 
     @Test
     void aBlockStateOfTheStackWins() {
         Palette palette = paletter.vanilla(paletter.latest());
-        RegisteredBlockState log = palette.resolve(BedrockItemVariant.of("minecraft:oak_log", 0)).block();
+        RegisteredBlockState log = palette.resolve(BedrockItemVariant.fromIdentifier("minecraft:oak_log", 0)).block();
         assertNotNull(log);
         BedrockBlockState sideways = paletter.vanilla(paletter.latest()).blockState(BlockStates.of("minecraft:oak_log", Map.of("pillar_axis", "x")), Lookup.RENAMED);
-        ItemData data = palette.encode(BedrockItemStack.of(BedrockItemVariant.of("minecraft:oak_log", 0)).withBlockState(sideways));
+        ItemData data = palette.encode(BedrockItemStack.of(BedrockItemVariant.fromIdentifier("minecraft:oak_log", 0)).withBlockState(sideways));
         assertNotNull(data.getBlockDefinition());
         assertEquals("x", palette.blocks().byRuntimeId(data.getBlockDefinition().getRuntimeId()).states().getString("pillar_axis"));
     }
 
     @Test
     void blockOfIsVersionIndependent() {
-        BedrockBlockState block = paletter.vanilla(paletter.latest()).blockOf(BedrockItemVariant.of("minecraft:acacia_sign", 0));
+        BedrockBlockState block = paletter.vanilla(paletter.latest()).blockOf(BedrockItemVariant.fromIdentifier("minecraft:acacia_sign", 0));
         assertNotNull(block);
         assertEquals("minecraft:acacia_standing_sign", block.type().identifier());
-        assertNull(paletter.vanilla(paletter.latest()).blockOf(BedrockItemVariant.of("minecraft:stick", 0)));
+        assertNull(paletter.vanilla(paletter.latest()).blockOf(BedrockItemVariant.fromIdentifier("minecraft:stick", 0)));
     }
 
     /**
@@ -88,7 +88,7 @@ class BlockOfTest {
                         creative.add(stack.blockState());
                     }
                 });
-                RegisteredBlockState block = palette.resolve(BedrockItemVariant.of(id, 0)).block();
+                RegisteredBlockState block = palette.resolve(BedrockItemVariant.fromIdentifier(id, 0)).block();
                 assertNotNull(block, version + " " + id);
                 NbtMap expected = creative.isEmpty() ? palette.blocks().defaultState(id).getState() : creative.getFirst();
                 assertEquals(BlockStates.normalize(expected), BlockStates.normalize(block.getState()), version + " " + id);
@@ -97,7 +97,7 @@ class BlockOfTest {
     }
 
     private static String block(Palette palette, String item) {
-        RegisteredBlockState block = palette.resolve(BedrockItemVariant.of(item, 0)).block();
+        RegisteredBlockState block = palette.resolve(BedrockItemVariant.fromIdentifier(item, 0)).block();
         return block == null ? null : block.identifier();
     }
 }

@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * Converts the identifier based creative data of a version to a layout of stacks. Item identifiers go through the
- * renames and splits of {@link BedrockItemVariant#of(String, int)}. Block states are mapped forward to the newest
+ * renames and splits of {@link BedrockItemVariant#fromIdentifier}. Block states are mapped forward to the newest
  * version like {@link org.geysermc.paletter.Palette#blockDefinition}; a state without an equivalent is dropped from the stack
  * (it then places the item's default block) and reported.
  */
@@ -61,6 +61,6 @@ public final class RawConverter {
                     + Canonicals.forwardBlock(blocks, stack.blockState()).detail());
             }
         }
-        return new BedrockItemStack(BedrockItemVariant.of(stack.identifier(), stack.damage()), stack.count(), stack.tag(), state);
+        return new BedrockItemStack(BedrockItemVariant.fromIdentifier(stack.identifier(), stack.damage()), stack.count(), stack.tag(), state);
     }
 }

@@ -99,7 +99,7 @@ public final class org.geysermc.paletter.Palette {
     public org.geysermc.paletter.block.RegisteredBlockState blockDefinition(int)
     public org.geysermc.paletter.block.RegisteredBlockState blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)
     public org.geysermc.paletter.block.RegisteredBlockState blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState, org.geysermc.paletter.block.RegisteredBlockState)
-    public org.geysermc.paletter.vanilla.BedrockBlockState blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)
+    public org.geysermc.paletter.vanilla.BedrockBlockState blockOf(org.geysermc.paletter.vanilla.ItemKey)
     public org.geysermc.paletter.vanilla.BedrockBlockState blockState(int)
     public org.geysermc.paletter.vanilla.BedrockBlockState blockState(org.cloudburstmc.nbt.NbtMap, org.geysermc.paletter.Lookup)
     public org.geysermc.paletter.vanilla.BedrockBlockState blockState(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)
@@ -130,7 +130,7 @@ public final class org.geysermc.paletter.Palette {
     public org.geysermc.paletter.PaletteReport report()
     public org.geysermc.paletter.block.ResolvedBlock resolve(org.geysermc.paletter.vanilla.BedrockBlockState)
     public org.geysermc.paletter.block.ResolvedBlock resolve(org.geysermc.paletter.vanilla.BedrockBlockState, org.geysermc.paletter.block.ResolvedBlock)
-    public org.geysermc.paletter.item.ResolvedItem resolve(org.geysermc.paletter.vanilla.BedrockItemVariant)
+    public org.geysermc.paletter.item.ResolvedItem resolve(org.geysermc.paletter.vanilla.ItemKey)
     public org.geysermc.paletter.block.ResolvedBlock resolveBlock(int)
     public int runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState)
     public int runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState, int)
@@ -170,7 +170,7 @@ public static final class org.geysermc.paletter.PaletteLayer$Builder {
     @Experimental public org.geysermc.paletter.PaletteLayer$Builder overrideItem(java.lang.String, java.util.function.Consumer<org.geysermc.paletter.item.ItemOverride>)
     @Experimental public org.geysermc.paletter.PaletteLayer$Builder overrideItem(org.geysermc.paletter.vanilla.BedrockItemType, java.util.function.Consumer<org.geysermc.paletter.item.ItemOverride>)
     public org.geysermc.paletter.PaletteLayer$Builder tag(java.lang.String, java.lang.String...)
-    public org.geysermc.paletter.PaletteLayer$Builder variant(org.geysermc.paletter.vanilla.BedrockItemVariant)
+    public org.geysermc.paletter.PaletteLayer$Builder variant(org.geysermc.paletter.vanilla.ItemKey)
     public org.geysermc.paletter.PaletteLayer$Builder voxelShape(java.lang.String, org.geysermc.paletter.block.VoxelShape)
 }
 
@@ -2362,16 +2362,15 @@ public record org.geysermc.paletter.item.BedrockItemStack {
     public final boolean equals(java.lang.Object)
     public final int hashCode()
     public org.cloudburstmc.nbt.NbtMap nbt()
-    public static org.geysermc.paletter.item.BedrockItemStack of(org.geysermc.paletter.vanilla.BedrockItemType)
-    public static org.geysermc.paletter.item.BedrockItemStack of(org.geysermc.paletter.vanilla.BedrockItemVariant)
-    public static org.geysermc.paletter.item.BedrockItemStack of(org.geysermc.paletter.vanilla.BedrockItemVariant, int)
+    public static org.geysermc.paletter.item.BedrockItemStack of(org.geysermc.paletter.vanilla.ItemKey)
+    public static org.geysermc.paletter.item.BedrockItemStack of(org.geysermc.paletter.vanilla.ItemKey, int)
     public java.lang.String toString()
     public org.geysermc.paletter.vanilla.BedrockItemType type()
     public org.geysermc.paletter.vanilla.BedrockItemVariant variant()
     public org.geysermc.paletter.item.BedrockItemStack withBlockState(org.geysermc.paletter.vanilla.BedrockBlockState)
     public org.geysermc.paletter.item.BedrockItemStack withCount(int)
     public org.geysermc.paletter.item.BedrockItemStack withNbt(org.cloudburstmc.nbt.NbtMap)
-    public org.geysermc.paletter.item.BedrockItemStack withVariant(org.geysermc.paletter.vanilla.BedrockItemVariant)
+    public org.geysermc.paletter.item.BedrockItemStack withVariant(org.geysermc.paletter.vanilla.ItemKey)
 }
 
 public final class org.geysermc.paletter.item.CustomItem {
@@ -5465,8 +5464,7 @@ public final class org.geysermc.paletter.vanilla.BedrockBlocks {
     public static final org.geysermc.paletter.vanilla.BedrockBlockType ZOMBIE_HEAD
 }
 
-public final class org.geysermc.paletter.vanilla.BedrockItemType {
-    public org.geysermc.paletter.vanilla.BedrockItemVariant base()
+public final class org.geysermc.paletter.vanilla.BedrockItemType implements org.geysermc.paletter.vanilla.ItemKey {
     public java.lang.String constantName()
     public boolean equals(java.lang.Object)
     public boolean hasVariant(int)
@@ -5475,23 +5473,21 @@ public final class org.geysermc.paletter.vanilla.BedrockItemType {
     public boolean isAvailable()
     public boolean isCustom()
     public boolean isEducation()
-    public static org.geysermc.paletter.vanilla.BedrockItemType of(java.lang.String)
     public org.geysermc.paletter.vanilla.BedrockItemType resolved()
     public java.lang.String toString()
     public static java.util.List<org.geysermc.paletter.vanilla.BedrockItemType> vanillaTypes()
+    public org.geysermc.paletter.vanilla.BedrockItemVariant variant()
     public org.geysermc.paletter.vanilla.BedrockItemVariant variant(int)
-    public org.geysermc.paletter.vanilla.BedrockItemVariant variantOf(int)
     public java.util.List<org.geysermc.paletter.vanilla.BedrockItemVariant> variants()
 }
 
-public final class org.geysermc.paletter.vanilla.BedrockItemVariant {
+public final class org.geysermc.paletter.vanilla.BedrockItemVariant implements org.geysermc.paletter.vanilla.ItemKey {
     public int aux()
     public boolean equals(java.lang.Object)
     public int hashCode()
-    public static org.geysermc.paletter.vanilla.BedrockItemVariant of(java.lang.String, int)
-    public static org.geysermc.paletter.vanilla.BedrockItemVariant of(org.geysermc.paletter.vanilla.BedrockItemType, int)
     public java.lang.String toString()
     public org.geysermc.paletter.vanilla.BedrockItemType type()
+    public org.geysermc.paletter.vanilla.BedrockItemVariant variant()
 }
 
 public final class org.geysermc.paletter.vanilla.BedrockItemVariants {
@@ -7991,6 +7987,10 @@ public final class org.geysermc.paletter.vanilla.IntState extends org.geysermc.p
     public static org.geysermc.paletter.vanilla.IntState of(java.lang.String, int...)
     public static org.geysermc.paletter.vanilla.IntState range(java.lang.String, int, int)
     public java.util.List<java.lang.Integer> values()
+}
+
+public sealed interface org.geysermc.paletter.vanilla.ItemKey permits org.geysermc.paletter.vanilla.BedrockItemType, org.geysermc.paletter.vanilla.BedrockItemVariant {
+    public abstract org.geysermc.paletter.vanilla.BedrockItemVariant variant()
 }
 
 public interface org.geysermc.paletter.vanilla.StateValue {

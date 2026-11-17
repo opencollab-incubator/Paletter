@@ -45,6 +45,7 @@ import org.geysermc.paletter.block.RegisteredBlock;
 import org.geysermc.paletter.vanilla.BedrockBlockType;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
+import org.geysermc.paletter.vanilla.ItemKey;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ import java.util.function.Supplier;
  * }</pre>
  * Translating content uses handles, version independent and interned objects ({@link BedrockBlockState},
  * {@link BedrockItemVariant}): {@link #blockState(NbtMap, Lookup)} and {@link #itemVariant(String, int, Lookup)} find them once, then
- * {@link #runtimeId(BedrockBlockState)} and {@link #blockDefinition(BedrockBlockState)} for blocks, {@link #resolve(BedrockItemVariant)}
+ * {@link #runtimeId(BedrockBlockState)} and {@link #blockDefinition(BedrockBlockState)} for blocks, {@link #resolve(ItemKey)}
  * for items. {@link #encode} and {@link #decode} translate whole stacks at the protocol boundary. They are field reads and array lookups that do not allocate. The ids behind
  * the handles are not API.
  *
@@ -483,8 +484,8 @@ public final class Palette {
      *         resolves to the block, see {@link #blockState(BlockDefinition)})
      * @since 0.1.0
      */
-    public @Nullable BedrockBlockState blockOf(@NonNull BedrockItemVariant variant) {
-        RegisteredBlockState block = items.blockOf(variant);
+    public @Nullable BedrockBlockState blockOf(@NonNull ItemKey key) {
+        RegisteredBlockState block = items.blockOf(key);
         return block == null ? null : blocks.key(block);
     }
 
@@ -498,8 +499,8 @@ public final class Palette {
      * @return the resolution, or null if the item does not exist in this version and has no fallback
      * @since 0.1.0
      */
-    public @Nullable ResolvedItem resolve(@NonNull BedrockItemVariant variant) {
-        return items.resolve(variant);
+    public @Nullable ResolvedItem resolve(@NonNull ItemKey key) {
+        return items.resolve(key);
     }
 
     /**

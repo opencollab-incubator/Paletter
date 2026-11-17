@@ -10,7 +10,7 @@ import org.geysermc.paletter.block.VoxelShape;
 import org.geysermc.paletter.creative.CreativeEditor;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.vanilla.BedrockItemType;
-import org.geysermc.paletter.vanilla.BedrockItemVariant;
+import org.geysermc.paletter.vanilla.ItemKey;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.annotation.Experimental;
 import org.geysermc.paletter.item.ItemOverride;
@@ -263,8 +263,8 @@ public final class PaletteLayer {
          *
          * @since 0.1.0
          */
-        public @NonNull Builder variant(@NonNull BedrockItemVariant variant) {
-            return variant(variant.toItemVariant());
+        public @NonNull Builder variant(@NonNull ItemKey key) {
+            return variant(key.variant().toItemVariant());
         }
 
         @Internal

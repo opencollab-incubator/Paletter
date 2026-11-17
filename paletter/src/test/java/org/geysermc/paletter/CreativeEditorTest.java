@@ -34,7 +34,7 @@ class CreativeEditorTest {
     private static final BedrockItemStack NEW = stack("test:new");
 
     private static BedrockItemStack stack(String identifier) {
-        return BedrockItemStack.of(BedrockItemType.of(identifier));
+        return BedrockItemStack.of(BedrockItemType.fromIdentifier(identifier));
     }
 
     /**
@@ -130,8 +130,8 @@ class CreativeEditorTest {
     void sortAndReplace() {
         CreativeEditor editor = layout().edit();
         editor.group("g1").orElseThrow().sort(Comparator.comparing((BedrockItemStack stack) -> stack.type().identifier()).reversed());
-        assertEquals(1, editor.replace(ItemMatcher.id("test:b"), stack -> stack.withVariant(stack.type().variantOf(3))));
-        assertEquals(List.of(B.withVariant(B.type().variantOf(3)), A), editor.build().group("g1").orElseThrow().stacks());
+        assertEquals(1, editor.replace(ItemMatcher.id("test:b"), stack -> stack.withVariant(stack.type().variant(3))));
+        assertEquals(List.of(B.withVariant(B.type().variant(3)), A), editor.build().group("g1").orElseThrow().stacks());
     }
 
     @Test

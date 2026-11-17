@@ -295,7 +295,7 @@ class LayerTest {
     void creativeEditsRunPerVersionAndDropMissingItems() {
         PaletteLayer layer = PaletteLayer.builder("creative")
             .creative(editor -> editor.remove(ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.damage(2))))
-            .creative(editor -> editor.insert(BedrockItemStack.of(BedrockItemType.of("minecraft:poplar_boat"))).loose(CreativeCategory.ITEMS))
+            .creative(editor -> editor.insert(BedrockItemStack.of(BedrockItemType.fromIdentifier("minecraft:poplar_boat"))).loose(CreativeCategory.ITEMS))
             .build();
         Palette latest = Palettes.palette(LATEST, layer);
         Palette oldest = Palettes.palette(OLDEST, layer);
@@ -303,7 +303,7 @@ class LayerTest {
         assertEquals("minecraft:poplar_boat", latest.creative().items().getLast().getItem().getDefinition().getIdentifier());
         // Poplar boats exist in 26.40's item list (experimental), so they are kept; unknown items would be dropped
         PaletteLayer unknown = PaletteLayer.builder("unknown")
-            .creative(editor -> editor.insert(BedrockItemStack.of(BedrockItemType.of("test:does_not_exist"))).loose(CreativeCategory.ITEMS))
+            .creative(editor -> editor.insert(BedrockItemStack.of(BedrockItemType.fromIdentifier("test:does_not_exist"))).loose(CreativeCategory.ITEMS))
             .build();
         Palette withUnknown = Palettes.palette(OLDEST, unknown);
         assertEquals(PALETTER.vanilla(PALETTER.version(OLDEST)).creative().size(), withUnknown.creative().size());

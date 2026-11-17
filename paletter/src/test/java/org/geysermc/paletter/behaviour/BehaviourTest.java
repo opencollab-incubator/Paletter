@@ -101,7 +101,7 @@ class BehaviourTest {
         assertEquals(byType, palette.resolveBlock(palette.runtimeId(BedrockBlocks.ICE.defaultState())).behaviour());
         assertSame(palette.blockDefinition(BedrockBlocks.ICE.defaultState()), byType.state());
         assertNull(palette.resolveBlock(0x7eadbeef), "no such runtime id");
-        assertEquals(palette.resolve(BedrockItems.APPLE.base()).behaviour(), palette.resolve(BedrockItems.APPLE.base()).behaviour());
+        assertEquals(palette.resolve(BedrockItems.APPLE).behaviour(), palette.resolve(BedrockItems.APPLE).behaviour());
     }
 
     @Test
@@ -195,12 +195,12 @@ class BehaviourTest {
     @Test
     void vanillaItemValues() {
         Palette palette = latest();
-        assertEquals(16, palette.resolve(BedrockItems.ENDER_PEARL.base()).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
-        assertEquals(1561, palette.resolve(BedrockItems.DIAMOND_SWORD.base()).behaviour().get(ItemBehaviour.MAX_DAMAGE));
-        assertEquals(32, palette.resolve(BedrockItems.APPLE.base()).behaviour().get(ItemBehaviour.USE_DURATION), "from the component data");
+        assertEquals(16, palette.resolve(BedrockItems.ENDER_PEARL).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
+        assertEquals(1561, palette.resolve(BedrockItems.DIAMOND_SWORD).behaviour().get(ItemBehaviour.MAX_DAMAGE));
+        assertEquals(32, palette.resolve(BedrockItems.APPLE).behaviour().get(ItemBehaviour.USE_DURATION), "from the component data");
         RegisteredItem apple = Objects.requireNonNull(palette.itemDefinition(BedrockItems.APPLE));
         assertEquals(Provenance.Source.WIRE, palette.behaviour().provenance(apple, ItemBehaviour.USE_DURATION).source());
-        ItemValues bow = palette.resolve(BedrockItems.BOW.base()).behaviour();
+        ItemValues bow = palette.resolve(BedrockItems.BOW).behaviour();
         assertThrows(IllegalStateException.class, () -> bow.get(ItemBehaviour.USE_DURATION), "native item: needs the native capture");
         assertEquals(-1, bow.getOrElse(ItemBehaviour.USE_DURATION, -1));
     }
@@ -228,7 +228,7 @@ class BehaviourTest {
         assertEquals(Provenance.Source.USER, palette.behaviour().provenance(state, BlockBehaviour.FRICTION).source());
         assertTrue(values.explain(BlockBehaviour.FRICTION).contains("(USER)"), values.explain(BlockBehaviour.FRICTION));
 
-        assertEquals(16, palette.resolve(ruby.type().base()).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
+        assertEquals(16, palette.resolve(ruby.type()).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
         assertEquals(0.98f, palette.resolve(BedrockBlocks.ICE.defaultState()).behaviour().get(BlockBehaviour.FRICTION), "vanilla next to it");
     }
 
@@ -237,7 +237,7 @@ class BehaviourTest {
         BlockValues stone = latest().resolve(BedrockBlocks.STONE.defaultState()).behaviour();
         assertThrows(IllegalArgumentException.class, () -> stone.get(ItemBehaviour.MAX_STACK_SIZE));
         assertThrows(IllegalArgumentException.class, () -> stone.getOrElse(ItemBehaviour.MAX_STACK_SIZE, 1));
-        assertThrows(IllegalArgumentException.class, () -> latest().resolve(BedrockItems.APPLE.base()).behaviour().get(BlockBehaviour.FRICTION));
+        assertThrows(IllegalArgumentException.class, () -> latest().resolve(BedrockItems.APPLE).behaviour().get(BlockBehaviour.FRICTION));
         assertSame(BlockBehaviour.FRICTION, BlockBehaviour.key("friction"));
         assertEquals(null, BlockBehaviour.key("max_stack_size"));
         // A custom block that sets nothing has no value for a key whose BDS default was never captured
@@ -550,7 +550,7 @@ class BehaviourTest {
     void overriddenItemsAreUserSetForTheComponentsOfTheLayer() {
         Palette palette = mixed();
         RegisteredItem apple = Objects.requireNonNull(palette.itemDefinition(BedrockItems.APPLE));
-        assertEquals(3, palette.resolve(BedrockItems.APPLE.base()).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
+        assertEquals(3, palette.resolve(BedrockItems.APPLE).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
         assertTrue(palette.behaviour().provenance(apple, ItemBehaviour.MAX_STACK_SIZE).userSet());
         assertFalse(palette.behaviour().provenance(apple, ItemBehaviour.USE_DURATION).userSet());
         RegisteredItem pearl = Objects.requireNonNull(palette.itemDefinition(BedrockItems.ENDER_PEARL));
@@ -562,7 +562,7 @@ class BehaviourTest {
         Palette palette = mixed();
         RegisteredItem foreign = Objects.requireNonNull(PALETTER.vanilla(PALETTER.versions().getFirst()).itemDefinition(BedrockItems.APPLE));
         assertEquals(null, palette.behaviour().item(foreign), "an item of another palette is not an item of this one");
-        assertTrue(latest().resolve(CustomItem.builder("test:nowhere").build().type().base()).fallback(), "sent as the stand-in");
+        assertTrue(latest().resolve(CustomItem.builder("test:nowhere").build().type().variant()).fallback(), "sent as the stand-in");
     }
 
     @Test

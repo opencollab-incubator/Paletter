@@ -57,7 +57,7 @@ class HandleTest {
     @Test
     void itemsResolveToHandles() {
         BedrockItemVariant apple = PALETTER.vanilla(PALETTER.latest()).itemVariant("minecraft:apple", 0, Lookup.RENAMED);
-        assertSame(BedrockItems.APPLE.base(), apple);
+        assertSame(BedrockItems.APPLE.variant(), apple);
         BedrockItemVariant potion = PALETTER.vanilla(PALETTER.latest()).itemVariant("minecraft:potion", 5, Lookup.RENAMED);
         assertSame(BedrockItems.POTION.variant(5), potion);
         assertNull(PALETTER.vanilla(PALETTER.latest()).itemVariant("minecraft:potion", 9999, Lookup.RENAMED));
@@ -77,21 +77,21 @@ class HandleTest {
         assertNull(PALETTER.vanilla(PALETTER.latest()).blockState(type.defaultState().toNbt(), Lookup.RENAMED));
         BedrockItemVariant handle = palette.itemVariant("example:ruby", 0, Lookup.RENAMED);
         assertNotNull(handle);
-        assertSame(ruby.type().base(), handle, "the palette hands back the item's own handle");
+        assertSame(ruby.type().variant(), handle, "the palette hands back the item's own handle");
         assertSame(handle, palette.itemVariant("example:ruby", 0, Lookup.RENAMED));
         assertNotNull(palette.itemDefinition(handle.type()));
         assertTrue(palette.itemVariants().contains(handle));
-        assertTrue(palette.itemVariants().contains(BedrockItems.APPLE.base()));
+        assertTrue(palette.itemVariants().contains(BedrockItems.APPLE.variant()));
         assertNull(PALETTER.vanilla(PALETTER.latest()).itemVariant("example:ruby", 0, Lookup.RENAMED));
     }
 
     @Test
     void decodeReturnsTheStack() {
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
-        var apple = palette.encode(BedrockItemStack.of(BedrockItems.APPLE.base(), 3));
+        var apple = palette.encode(BedrockItemStack.of(BedrockItems.APPLE, 3));
         BedrockItemStack decoded = palette.decode(apple);
         assertNotNull(decoded);
-        assertSame(BedrockItems.APPLE.base(), decoded.variant());
+        assertSame(BedrockItems.APPLE.variant(), decoded.variant());
         assertEquals(3, decoded.count());
         assertNull(palette.decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData.AIR));
     }
@@ -126,7 +126,7 @@ class HandleTest {
     void resolveGivesWhatEncodeSends() {
         for (DataVersion version : PALETTER.versions()) {
             Palette palette = PALETTER.vanilla(version);
-            for (BedrockItemVariant variant : List.of(BedrockItems.APPLE.base(), BedrockItems.POTION.variant(5), BedrockItems.OAK_PLANKS.base())) {
+            for (BedrockItemVariant variant : List.of(BedrockItems.APPLE.variant(), BedrockItems.POTION.variant(5), BedrockItems.OAK_PLANKS.variant())) {
                 ResolvedItem resolved = palette.resolve(variant);
                 ItemData sent = palette.encode(BedrockItemStack.of(variant));
                 if (resolved == null) {

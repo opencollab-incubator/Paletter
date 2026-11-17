@@ -94,7 +94,7 @@ public final class ResolvedItem {
      * @since 0.1.0
      */
     public @NonNull BedrockItemVariant variant() {
-        return definition.key().variantOf(damage);
+        return definition.key().variant(damage);
     }
 
     /**

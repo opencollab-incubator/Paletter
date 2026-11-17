@@ -149,11 +149,11 @@ class ResolvedBehaviourTest {
         assertEquals(custom, session.resolveBlock(custom.definition().getRuntimeId()));
 
         // Items: each palette's own values, also for an override of a vanilla item
-        assertEquals(3, session.resolve(BedrockItems.APPLE.base()).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
-        assertEquals(64, base.resolve(BedrockItems.APPLE.base()).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
-        assertEquals(16, session.resolve(item.type().base()).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
-        ItemValues pearl = session.resolve(BedrockItems.ENDER_PEARL.base()).behaviour();
-        assertEquals(base.resolve(BedrockItems.ENDER_PEARL.base()).behaviour().get(ItemBehaviour.MAX_STACK_SIZE), pearl.get(ItemBehaviour.MAX_STACK_SIZE));
+        assertEquals(3, session.resolve(BedrockItems.APPLE).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
+        assertEquals(64, base.resolve(BedrockItems.APPLE).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
+        assertEquals(16, session.resolve(item.type()).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
+        ItemValues pearl = session.resolve(BedrockItems.ENDER_PEARL).behaviour();
+        assertEquals(base.resolve(BedrockItems.ENDER_PEARL).behaviour().get(ItemBehaviour.MAX_STACK_SIZE), pearl.get(ItemBehaviour.MAX_STACK_SIZE));
         assertSame(session.itemDefinition(BedrockItems.ENDER_PEARL), pearl.item());
     }
 
@@ -162,8 +162,8 @@ class ResolvedBehaviourTest {
         Palette base = latest();
         Palette session = base.extend(PaletteLayer.builder("blocks")
             .block(CustomBlock.builder("resolve:only").component(Friction.of(0.3f)).build()).build());
-        ResolvedItem resolved = Objects.requireNonNull(session.resolve(BedrockItems.APPLE.base()));
-        assertSame(base.resolve(BedrockItems.APPLE.base()).definition(), resolved.definition());
+        ResolvedItem resolved = Objects.requireNonNull(session.resolve(BedrockItems.APPLE));
+        assertSame(base.resolve(BedrockItems.APPLE).definition(), resolved.definition());
         assertFalse(resolved.fallback());
         RegisteredItem apple = Objects.requireNonNull(session.itemDefinition(BedrockItems.APPLE));
         assertSame(apple, resolved.behaviour().item());
@@ -176,26 +176,26 @@ class ResolvedBehaviourTest {
         Palette session = base.extend(PaletteLayer.builder("handles")
             .block(CustomBlock.builder("resolve:handles").component(Friction.of(0.3f)).build()).build());
         for (Palette palette : new Palette[] {base, session}) {
-            ItemValues canonical = palette.resolve(BedrockItems.APPLE.base()).behaviour();
-            ItemValues other = palette.resolve(BedrockItems.APPLE.variantOf(5)).behaviour();
+            ItemValues canonical = palette.resolve(BedrockItems.APPLE).behaviour();
+            ItemValues other = palette.resolve(BedrockItems.APPLE.variant(5)).behaviour();
             assertEquals(canonical, other, "a variant that is not canonical resolves to the same item");
             assertEquals(canonical.hashCode(), other.hashCode());
         }
         // An extension that did not change the item has the handle of its base
-        assertEquals(base.resolve(BedrockItems.APPLE.base()).behaviour(), session.resolve(BedrockItems.APPLE.variantOf(5)).behaviour());
-        assertEquals(base.resolve(BedrockItems.APPLE.base()).behaviour(), session.resolve(BedrockItems.APPLE.base()).behaviour());
+        assertEquals(base.resolve(BedrockItems.APPLE).behaviour(), session.resolve(BedrockItems.APPLE.variant(5)).behaviour());
+        assertEquals(base.resolve(BedrockItems.APPLE).behaviour(), session.resolve(BedrockItems.APPLE).behaviour());
     }
 
     @Test
     void anItemResolvedAsAFallbackHasTheFallbacksValues() {
         Palette palette = FORCED.vanilla(FORCED.latest());
-        ResolvedItem pearl = Objects.requireNonNull(palette.resolve(BedrockItems.ENDER_PEARL.base()));
+        ResolvedItem pearl = Objects.requireNonNull(palette.resolve(BedrockItems.ENDER_PEARL));
         assertTrue(pearl.fallback());
         ItemValues values = pearl.behaviour();
         assertSame(palette.itemDefinition(BedrockItems.DIAMOND_SWORD), values.item());
         assertEquals(1561, values.get(ItemBehaviour.MAX_DAMAGE));
-        assertEquals(16, latest().resolve(BedrockItems.ENDER_PEARL.base()).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
-        ResolvedItem direct = Objects.requireNonNull(palette.resolve(BedrockItems.DIAMOND_SWORD.base()));
+        assertEquals(16, latest().resolve(BedrockItems.ENDER_PEARL).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
+        ResolvedItem direct = Objects.requireNonNull(palette.resolve(BedrockItems.DIAMOND_SWORD));
         assertFalse(direct.fallback());
         assertEquals(direct.behaviour().item(), values.item());
     }

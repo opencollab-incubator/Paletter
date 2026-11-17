@@ -90,7 +90,7 @@ public final class RegisteredItem implements ItemDefinition {
     public @NonNull BedrockItemType key() {
         BedrockItemType result = key;
         if (result == null) {
-            result = BedrockItemType.of(identifier);
+            result = BedrockItemType.fromIdentifier(identifier);
             key = result;
         }
         return result;

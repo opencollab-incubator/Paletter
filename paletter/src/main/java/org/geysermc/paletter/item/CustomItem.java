@@ -113,7 +113,7 @@ public final class CustomItem {
 
     /**
      * The type of the item, to use it like a vanilla {@link org.geysermc.paletter.vanilla.BedrockItems} constant. It is
-     * created with the item and belongs to it: every call returns the same type (and the same {@link BedrockItemType#base()
+     * created with the item and belongs to it: every call returns the same type (and the same {@link BedrockItemType#variant()
      * base variant}), and a palette the item is registered in hands back exactly these for it ({@code decode},
      * {@code resolve}, {@link RegisteredItem#key()}, ...), so {@code ==} works like for vanilla constants. Another, equal
      * item has a type of its own, equal to this one but not identical: a palette hands back the type of the instance its

@@ -34,6 +34,7 @@ import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
+import org.geysermc.paletter.vanilla.ItemKey;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.internal.component.ComponentIndex;
@@ -319,12 +320,12 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      *     <li>the block of a custom block item.</li>
      * </ol>
      *
-     * @param variant a variant, written against the newest Bedrock version like {@link #resolve(ItemVariant)}
+     * @param key a variant (or a type, for its base variant), written against the newest Bedrock version like {@link #resolve(ItemVariant)}
      * @return the block, or null if the item is not a block item here (or does not exist and has no fallback)
      * @since 0.1.0
      */
-    public @Nullable RegisteredBlockState blockOf(@NonNull BedrockItemVariant variant) {
-        ResolvedItem resolved = resolve(variant);
+    public @Nullable RegisteredBlockState blockOf(@NonNull ItemKey key) {
+        ResolvedItem resolved = resolve(key);
         return resolved == null ? null : resolved.block();
     }
 
@@ -356,12 +357,13 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * What this version sends for a variant: its resolution, cached per canonical id. A field read and an array load
      * for the variants of the newest version, it does not allocate; any other variant is resolved on every call.
      *
-     * @param variant a variant, written against the newest Bedrock version
+     * @param key a variant (or a type, for its base variant), written against the newest Bedrock version
      * @return the item, damage and block to send, and whether the item is a fallback; null if the item does not exist
      *         here and has no fallback
      * @since 0.1.0
      */
-    public @Nullable ResolvedItem resolve(@NonNull BedrockItemVariant variant) {
+    public @Nullable ResolvedItem resolve(@NonNull ItemKey key) {
+        BedrockItemVariant variant = key.variant();
         int id = variant.canonicalIn(canonical);
         return id != -1 ? item(id) : resolve(variant.toItemVariant());
     }
@@ -536,7 +538,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     /**
      * Identifies a stack the client sent, see {@link #match(ItemData)}. The block state is set only if the stack's
      * block differs from the item's default block. If the item matched but not its damage value, the variant is the
-     * item's variant for the damage the client sent ({@link BedrockItemType#variantOf}), so the damage is not lost.
+     * item's variant for the damage the client sent ({@link BedrockItemType#variant(int)}), so the damage is not lost.
      *
      * @return the stack, or null for air or a stack that is no variant of the newest version
      */
@@ -559,7 +561,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         if (data.getDamage() != item(canonicalId).damage()) {
             // Only the item matched: its base variant stood in for a damage value the newest version has no variant
             // for (a map id, a wear value, a number nobody listed). Keep the damage instead of losing it
-            variant = variant.type().variantOf(data.getDamage());
+            variant = variant.type().variant(data.getDamage());
         }
         return new BedrockItemStack(variant, Math.max(1, data.getCount()), data.getTag(), state);
     }

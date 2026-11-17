@@ -35,14 +35,14 @@ class EncodeDecodeTest {
     void vanillaStacksRoundTrip() {
         Palette palette = latest();
         NbtMap tag = NbtMap.builder().putString("custom", "value").build();
-        BedrockItemStack stack = new BedrockItemStack(BedrockItems.DIAMOND_SWORD.base(), 1, tag, null);
+        BedrockItemStack stack = new BedrockItemStack(BedrockItems.DIAMOND_SWORD.variant(), 1, tag, null);
         ItemData data = palette.encode(stack);
         assertEquals("minecraft:diamond_sword", data.getDefinition().getIdentifier());
         assertEquals(tag, data.getTag());
         BedrockItemStack decoded = palette.decode(data);
         assertEquals(stack, decoded);
 
-        BedrockItemStack apples = BedrockItemStack.of(BedrockItems.APPLE.base(), 12);
+        BedrockItemStack apples = BedrockItemStack.of(BedrockItems.APPLE, 12);
         assertEquals(12, palette.encode(apples).getCount());
         assertEquals(apples, palette.decode(palette.encode(apples)));
     }
@@ -63,7 +63,7 @@ class EncodeDecodeTest {
     void customStacksRoundTrip() {
         CustomItem ruby = CustomItem.builder("example:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").item(ruby).build());
-        BedrockItemStack stack = BedrockItemStack.of(ruby.type().base(), 7);
+        BedrockItemStack stack = BedrockItemStack.of(ruby.type(), 7);
         ItemData data = palette.encode(stack);
         assertEquals("example:ruby", data.getDefinition().getIdentifier());
         assertEquals(stack, palette.decode(data));
@@ -74,7 +74,7 @@ class EncodeDecodeTest {
     @Test
     void aBlockStateOfTheStackIsKeptOnlyIfItDiffersFromTheItemsBlock() {
         Palette palette = latest();
-        BedrockItemVariant log = BedrockItemVariant.of("minecraft:oak_log", 0);
+        BedrockItemVariant log = BedrockItemVariant.fromIdentifier("minecraft:oak_log", 0);
         BedrockItemStack plain = BedrockItemStack.of(log);
         ItemData plainData = palette.encode(plain);
         assertNotNull(plainData.getBlockDefinition());
@@ -99,7 +99,7 @@ class EncodeDecodeTest {
             .build();
         Paletter paletter = Paletter.builder().fallbacks(fallbacks).build();
         Palette palette = paletter.palette(OLDEST);
-        BedrockItemStack boat = BedrockItemStack.of(BedrockItemVariant.of("minecraft:poplar_boat", 0), 2);
+        BedrockItemStack boat = BedrockItemStack.of(BedrockItemVariant.fromIdentifier("minecraft:poplar_boat", 0), 2);
         ItemData data = palette.encode(boat);
         assertEquals("minecraft:stick", data.getDefinition().getIdentifier());
         assertEquals(2, data.getCount());
@@ -110,7 +110,7 @@ class EncodeDecodeTest {
     @Test
     void nothingAtAllEncodesToAirAndDecodesToNull() {
         Paletter none = Paletter.builder().fallbacks(Fallbacks.NONE).vanilla(vanilla -> vanilla.remove(BedrockItems.APPLE)).build();
-        assertEquals(ItemData.AIR, none.palette(OLDEST).encode(BedrockItemStack.of(BedrockItems.APPLE.base())));
+        assertEquals(ItemData.AIR, none.palette(OLDEST).encode(BedrockItemStack.of(BedrockItems.APPLE)));
         assertNull(latest().decode(ItemData.AIR));
     }
 }
