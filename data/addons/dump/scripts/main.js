@@ -4,16 +4,17 @@
 //   PALETTER-DONE <total> chunks
 // Run BDS with its output redirected to a file, then: generator import ... --bds-dump <that file>
 //
-// Dump format (FORMAT 3):
+// Dump format (FORMAT 4):
 // {
-//   format: 3,
+//   format: 4,
 //   item_tags:      {tag: [item id]},
 //   items:          {item id: {max_stack, localization_key, components: [id], max_durability?}},
 //   block_defaults: {block id: {state: value}},              BlockPermutation.resolve(id), the true default
 //   block_states:   {block id: {state: [valid value]}},      values each state accepts on that block
 //   block_tags:     {tag: [block id]},                       tags of the default permutation
 //   block_items:    {block id: item id},                     the item of the default permutation, if any
-//   state_types:    {state: [valid value]}                   BlockStates.getAll(), all blocks together
+//   state_types:    {state: [valid value]}                   BlockStates.getAll(), all blocks together. The values are in the
+//                   order BDS lists them, unsorted (format 3 and before sorted them): the order of the network palette
 //   item_variants:  {item id: {aux: {key, potion?}}}  the aux values BDS accepts of VARIANT_ITEMS
 //                   key: localization key of the stack; potion: the effect id of the Script API potion component (potions), or
 //                   the effect whose set_potion loot table gives that aux (arrows, if exactly one does).
@@ -23,7 +24,7 @@
 
 import { BlockPermutation, BlockStates, BlockTypes, ItemStack, ItemTypes, Potions, system, world } from "@minecraft/server";
 
-const FORMAT = 3;
+const FORMAT = 4;
 const CHUNK_SIZE = 2000;
 
 const errors = [];

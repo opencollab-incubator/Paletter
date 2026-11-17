@@ -39,6 +39,8 @@ import java.util.regex.Pattern;
  * @param blockItems block identifier to the identifier of its item
  * @param items item identifier to what the Script API knows about it
  * @param itemVariants item identifier to aux value to what BDS says of that variant (format 3; empty before)
+ * @param stateTypes state name to its valid values in the order BDS lists them ({@code BlockStates.getAll()}); empty for
+ *                   dumps before format 4, which stored them sorted
  * @param errors problems the addon reported
  */
 public record BdsDump(
@@ -50,8 +52,12 @@ public record BdsDump(
     Map<String, String> blockItems,
     Map<String, Item> items,
     Map<String, Map<Integer, Variant>> itemVariants,
+    Map<String, List<Object>> stateTypes,
     List<String> errors
 ) {
+    /** The first dump format that keeps the value order of {@code state_types} as BDS lists it. */
+    static final int RAW_STATE_ORDER_FORMAT = 4;
+
     private static final Pattern VERSION = Pattern.compile("INFO\\] Version: (\\S+)");
 
     /**
@@ -184,6 +190,16 @@ public record BdsDump(
             itemVariants.put(item.getKey(), variants);
         }
 
+        // Older dumps sorted the values away; the order of those is no information, so it is not read
+        Map<String, List<Object>> stateTypes = new TreeMap<>();
+        if (root.has("format") && root.get("format").getAsInt() >= RAW_STATE_ORDER_FORMAT) {
+            for (Map.Entry<String, JsonElement> type : object(root, "state_types").entrySet()) {
+                List<Object> values = new ArrayList<>();
+                type.getValue().getAsJsonArray().forEach(value -> values.add(toNbt(value.getAsJsonPrimitive())));
+                stateTypes.put(type.getKey(), values);
+            }
+        }
+
         List<String> errors = new ArrayList<>();
         if (root.has("errors")) {
             root.getAsJsonArray("errors").forEach(error -> errors.add(error.getAsString()));
@@ -193,7 +209,7 @@ public record BdsDump(
         Map<String, List<String>> blockTags = tagMap(object(root, "block_tags"));
         System.out.println("  BDS dump of " + version + ": " + itemTags.size() + " item tags, " + items.size() + " items, "
             + defaults.size() + " block defaults, " + blockTags.size() + " block tags, " + errors.size() + " addon errors");
-        return new BdsDump(version, itemTags, defaults, blockStates, blockTags, blockItems, items, itemVariants, errors);
+        return new BdsDump(version, itemTags, defaults, blockStates, blockTags, blockItems, items, itemVariants, stateTypes, errors);
     }
 
     /**
@@ -239,12 +255,40 @@ public record BdsDump(
     }
 
     /**
+     * The state types whose value order differs between this dump and another, as {@code state: [values here] vs [values
+     * there]}. Only the values both have are compared, and only dumps from format 4 on have an order to compare.
+     */
+    public List<String> valueOrderDifferences(BdsDump other) {
+        List<String> differences = new ArrayList<>();
+        stateTypes.forEach((state, values) -> {
+            List<Object> there = other.stateTypes.get(state);
+            if (there == null) {
+                return;
+            }
+            List<Object> here = values.stream().filter(there::contains).toList();
+            List<Object> theirs = there.stream().filter(values::contains).toList();
+            if (!here.equals(theirs)) {
+                differences.add(state + ": " + here + " vs " + theirs);
+            }
+        });
+        return differences;
+    }
+
+    /**
      * The dump with object keys sorted and arrays of plain values sorted: the Script API lists states, tags and
      * components in an order that differs between server runs, so two dumps of the same build are only byte for byte
-     * equal like this.
+     * equal like this. The exception is {@code state_types}: BDS lists those values in the same order on every start,
+     * and it is the order of the network block palette, so it is kept.
      */
     public static String canonicalJson(String json) {
-        return new com.google.gson.Gson().toJson(canonical(JsonParser.parseString(json)));
+        JsonObject root = JsonParser.parseString(json).getAsJsonObject();
+        JsonObject canonical = canonical(root).getAsJsonObject();
+        if (root.has("state_types")) {
+            JsonObject types = new JsonObject();
+            new TreeMap<>(root.getAsJsonObject("state_types").asMap()).forEach(types::add);
+            canonical.add("state_types", types);
+        }
+        return new com.google.gson.Gson().toJson(canonical);
     }
 
     private static JsonElement canonical(JsonElement element) {

@@ -90,7 +90,7 @@ class ExperimentAttributionTest {
         items.forEach(item -> itemMap.put(item, new BdsDump.Item(64, item, List.of(), 0)));
         Map<String, Map<String, List<Object>>> blockMap = new LinkedHashMap<>();
         blocks.forEach(block -> blockMap.put(block, Map.of()));
-        return new BdsDump("1.26.63.1", Map.of(), Map.of(), blockMap, Map.of(), Map.of(), itemMap, Map.of(), List.of());
+        return new BdsDump("1.26.63.1", Map.of(), Map.of(), blockMap, Map.of(), Map.of(), itemMap, Map.of(), Map.of(), List.of());
     }
 
     private static final CapturedData BASE = capture(

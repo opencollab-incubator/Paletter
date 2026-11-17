@@ -1177,11 +1177,29 @@ public final class Update {
             Diff diff = Diff.scriptApi(baseline, dump);
             compared(diff.identical(), "Script API vs baseline " + baselineVersion, diff.identical() ? "identical" : diff.count() + " differences");
             report.diff("Script API: BDS " + distribution.version() + " vs baseline " + baselineVersion, diff);
+            valueOrder(baseline, dump);
             if (runs.vanilla == null) {
                 fallbackTodos(diff.lines("new blocks"), diff.lines("new items"), "Script API");
             }
         }
         stage(target, gzip(runs.dumpJson), "Script API baseline " + distribution.version());
+    }
+
+    /** A warning, never a failure: BDS lists a state type's values in another order than in the baseline build. */
+    private void valueOrder(BdsDump baseline, BdsDump dump) {
+        if (baseline.stateTypes().isEmpty()) {
+            report.check(Report.Status.SKIP, "Script API value order", "the baseline dump " + baseline.version()
+                + " has its values sorted; compared from the next recapture on");
+            return;
+        }
+        List<String> differences = baseline.valueOrderDifferences(dump);
+        if (differences.isEmpty()) {
+            report.check(Report.Status.PASS, "Script API value order", "the state types list their values in the baseline's order");
+        } else {
+            report.check(Report.Status.INFO, "Script API value order", "warning: " + differences.size() + " state types list their values in "
+                + "another order than in " + baseline.version() + "; generated blocks may need their value order checked");
+            report.evidence("State types (baseline vs this build)", differences);
+        }
     }
 
     /**
@@ -2326,15 +2344,16 @@ public final class Update {
             states.addAll(combinations);
             generated.add(name + " (" + blockStates.size() + " -> " + combinations.size() + " states)");
         });
-        // The Script API dump is canonical (values sorted); new blocks take the value order other blocks with the same
-        // state use (e.g. minecraft:corner "none" first, like every vanilla stairs block)
+        // New blocks take the value order BDS lists the state type in (BdsDump#stateTypes). A dump before format 4 has
+        // none (it was sorted), then the order other blocks with the same state use stands in (e.g. minecraft:corner
+        // "none" first, like every vanilla stairs block)
         Map<String, List<Object>> valueOrder = new LinkedHashMap<>();
         palette.values().forEach(blockStates -> values(blockStates).forEach(valueOrder::putIfAbsent));
         dump.blockStates().forEach((name, scriptValues) -> {
             if (!palette.containsKey(name)) {
                 Map<String, List<Object>> values = new LinkedHashMap<>();
                 scriptValues.forEach((key, list) -> {
-                    List<Object> order = valueOrder.getOrDefault(key, List.of());
+                    List<Object> order = dump.stateTypes().getOrDefault(key, valueOrder.getOrDefault(key, List.of()));
                     List<Object> sorted = new ArrayList<>();
                     order.stream().filter(v -> contains(list, v)).forEach(v -> sorted.add(list.stream()
                         .filter(w -> contains(List.of(v), w)).findFirst().orElseThrow()));
