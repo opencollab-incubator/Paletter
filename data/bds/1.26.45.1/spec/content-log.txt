@@ -247,14 +247,17 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embed
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_35.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_4.json |  -> components -> minecraft:embedded_visual -> geometry -> identifier: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_4.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_55.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_55.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_55.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_56.json |  -> components -> minecraft:embedded_visual -> material_instances: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_58.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_58.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock[0]: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_58.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_6.json |  -> components -> minecraft:embedded_visual -> geometry: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_6.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_60.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_61.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_62.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_62.json |  -> components -> minecraft:embedded_visual -> geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_62.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_63.json |  -> components -> minecraft:embedded_visual -> material_instances: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_67.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_68.json |  -> components -> minecraft:embedded_visual -> material_instances[0]: expected a key/value object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_7.json |  -> components -> minecraft:embedded_visual -> geometry: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_7.json |  -> components -> minecraft:embedded_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_8.json |  -> components -> minecraft:embedded_visual -> geometry: expected an object
@@ -355,10 +358,13 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_3.json |  -> components -> minecraft:item_visual -> geometry: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_32.json |  -> components -> minecraft:item_visual -> geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_32.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_49.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_49.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_49.json |  -> components -> minecraft:item_visual -> geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_50.json |  -> components -> minecraft:item_visual -> material_instances: missing required field
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_52.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_52.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock[0]: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_52.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_56.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_56.json |  -> components -> minecraft:item_visual -> geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_56.json |  -> components -> minecraft:item_visual -> geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_57.json |  -> components -> minecraft:item_visual -> material_instances: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_9.json |  -> components -> minecraft:item_visual -> geometry -> identifier: missing required field
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_item_visual_9.json |  -> components -> minecraft:item_visual -> geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_light_dampening_7.json |  -> components -> minecraft:light_dampening: the input must be a number <= 15

@@ -304,7 +304,6 @@ public final class BlockWire {
 
     private static void embeddedVisual(EmbeddedVisual c, WireContext ctx, WireNode out) {
         out.put("minecraft:embedded_visual.geometry.bone_visibility", NbtMap.EMPTY);
-        out.put("minecraft:embedded_visual.geometry.uv_lock", (byte) 0);
         Transforms.embeddedGeometry(ctx, out, c);
         Transforms.materialInstancesInline(ctx, out, c);
     }
@@ -375,7 +374,6 @@ public final class BlockWire {
         out.put("minecraft:item_visual.geometryDescription.isV1Fullblock", (byte) 0);
         out.put("minecraft:item_visual.geometryDescription.needsLegacyTopRotation", (byte) 0);
         out.put("minecraft:item_visual.geometryDescription.useBlockTypeLightAbsorption", (byte) 0);
-        out.put("minecraft:item_visual.geometryDescription.uv_lock", (byte) 0);
         out.put("minecraft:item_visual.materialInstancesDescription.mappings", NbtMap.EMPTY);
         ItemVisual.Geometry v0 = c.geometry();
         Map<String, String> v1 = v0.boneVisibility();
@@ -415,7 +413,7 @@ public final class BlockWire {
             if (v9 != null) {
             }
         }
-        boolean v10 = v0.uvLock();
+        Transforms.itemVisualUvLock(ctx, out, v0);
         Transforms.materialInstancesPacked(ctx, out, c);
     }
 
@@ -425,7 +423,6 @@ public final class BlockWire {
         out.put("minecraft:item_visual.geometryDescription.isV1Fullblock", (byte) 0);
         out.put("minecraft:item_visual.geometryDescription.needsLegacyTopRotation", (byte) 0);
         out.put("minecraft:item_visual.geometryDescription.useBlockTypeLightAbsorption", (byte) 0);
-        out.put("minecraft:item_visual.geometryDescription.uv_lock", (byte) 0);
         out.put("minecraft:item_visual.materialInstancesDescription.mappings", NbtMap.EMPTY);
         ItemVisual.Geometry v0 = c.geometry();
         Map<String, String> v1 = v0.boneVisibility();
@@ -478,7 +475,7 @@ public final class BlockWire {
             out.remove("minecraft:item_visual.geometryDescription.n_way_visual_rotation.y");
             out.remove("minecraft:item_visual.geometryDescription.n_way_visual_rotation.z");
         }
-        boolean v10 = v0.uvLock();
+        Transforms.itemVisualUvLock(ctx, out, v0);
         Transforms.materialInstancesPacked(ctx, out, c);
     }
 

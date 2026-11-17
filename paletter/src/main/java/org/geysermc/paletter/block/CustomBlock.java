@@ -8,7 +8,9 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.geysermc.paletter.block.component.BlockComponent;
 import org.geysermc.paletter.block.component.BlockTrait;
+import org.geysermc.paletter.block.component.EmbeddedVisual;
 import org.geysermc.paletter.block.component.Geometry;
+import org.geysermc.paletter.block.component.ItemVisual;
 import org.geysermc.paletter.block.component.MenuCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.internal.component.TraitStates;
@@ -180,7 +182,10 @@ public final class CustomBlock {
 
     /** The most state combinations a block may have, like vanilla blocks. */
     private static final int MAX_STATES = 1 << 24;
-    /** The most {@code uv_lock} bones; BDS 1.26.63.1 rejects the whole block above it, counting duplicates. */
+    /**
+     * The most {@code uv_lock} bones of a geometry ({@code minecraft:geometry} and the geometry of {@code item_visual} and
+     * {@code embedded_visual}); BDS 1.26.63.1 rejects the whole block above it, counting duplicates.
+     */
     private static final int MAX_UV_LOCK_BONES = 64;
 
     private static List<BlockProperty<?>> stateProperties(List<BlockProperty<?>> properties, List<BlockTrait> traits) {
@@ -194,8 +199,14 @@ public final class CustomBlock {
 
     private static void checkUvLock(String identifier, List<BlockComponent> components) {
         for (BlockComponent component : components) {
-            if (component instanceof Geometry geometry && geometry.uvLockBones() != null && geometry.uvLockBones().size() > MAX_UV_LOCK_BONES) {
-                throw new IllegalArgumentException(identifier + "'s minecraft:geometry lists " + geometry.uvLockBones().size()
+            List<String> bones = switch (component) {
+                case Geometry geometry -> geometry.uvLockBones();
+                case ItemVisual visual -> visual.geometry().uvLockBones();
+                case EmbeddedVisual visual -> visual.geometry().uvLockBones();
+                default -> null;
+            };
+            if (bones != null && bones.size() > MAX_UV_LOCK_BONES) {
+                throw new IllegalArgumentException(identifier + "'s " + component.name() + " lists " + bones.size()
                     + " uv_lock bones, more than the " + MAX_UV_LOCK_BONES + " BDS allows");
             }
         }

@@ -345,6 +345,24 @@ class TransformsTest {
     }
 
     @Test
+    void itemVisualUvLockIsTheOneOfGeometry() {
+        // what BDS 1.26.63.1 sent for item_visual: true as 1, ["bone_a", "paletter_b"] as [paletter_b, bone_a]
+        WireNode all = new WireNode();
+        Transforms.itemVisualUvLock(ctx, all, ItemVisual.Geometry.builder().identifier("geometry.lamp").uvLock(true).build());
+        assertEquals((byte) 1, compound(all, "minecraft:item_visual").getCompound("geometryDescription").getByte("uv_lock"));
+
+        WireNode bones = new WireNode();
+        Transforms.itemVisualUvLock(ctx, bones, ItemVisual.Geometry.builder().identifier("geometry.lamp").uvLockBones("bone_a", "paletter_b", "bone_a").build());
+        assertEquals(List.of("paletter_b", "bone_a"),
+            compound(bones, "minecraft:item_visual").getCompound("geometryDescription").getList("uv_lock", NbtType.STRING));
+
+        WireNode unset = new WireNode();
+        Transforms.itemVisualUvLock(ctx, unset, ItemVisual.Geometry.of("geometry.lamp"));
+        assertEquals((byte) 0, compound(unset, "minecraft:item_visual").getCompound("geometryDescription").getByte("uv_lock"));
+        assertTrue(report.entries().isEmpty());
+    }
+
+    @Test
     void geometryRotationSendsEveryAxisFrom26_60() {
         Geometry geometry = Geometry.builder().identifier("geometry.lamp")
             .nWayVisualRotation(Geometry.NWayVisualRotation.builder().y("minecraft:cardinal_direction").build()).build();

@@ -1079,7 +1079,7 @@ public static final class org.geysermc.paletter.block.component.EmbeddedVisual$B
 }
 
 public record org.geysermc.paletter.block.component.EmbeddedVisual$Geometry {
-    public <init>(java.util.Map<java.lang.String, java.lang.String>, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation, boolean)
+    public <init>(java.util.Map<java.lang.String, java.lang.String>, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation, java.lang.Boolean, java.util.List<java.lang.String>)
     public java.util.Map<java.lang.String, java.lang.String> boneVisibility()
     public static org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder builder()
     public java.lang.String culling()
@@ -1091,7 +1091,8 @@ public record org.geysermc.paletter.block.component.EmbeddedVisual$Geometry {
     public org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation nWayVisualRotation()
     public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder toBuilder()
     public final java.lang.String toString()
-    public boolean uvLock()
+    public java.lang.Boolean uvLock()
+    public java.util.List<java.lang.String> uvLockBones()
 }
 
 public static final class org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder {
@@ -1102,7 +1103,9 @@ public static final class org.geysermc.paletter.block.component.EmbeddedVisual$G
     public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder cullingShape(java.lang.String)
     public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder identifier(java.lang.String)
     public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder nWayVisualRotation(org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation)
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder uvLock(boolean)
+    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder uvLock(java.lang.Boolean)
+    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder uvLockBones(java.util.List<java.lang.String>)
+    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder uvLockBones(java.lang.String...)
 }
 
 public record org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation {
@@ -1376,7 +1379,7 @@ public static final class org.geysermc.paletter.block.component.ItemVisual$Build
 }
 
 public record org.geysermc.paletter.block.component.ItemVisual$Geometry {
-    public <init>(java.util.Map<java.lang.String, java.lang.String>, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation, boolean)
+    public <init>(java.util.Map<java.lang.String, java.lang.String>, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation, java.lang.Boolean, java.util.List<java.lang.String>)
     public java.util.Map<java.lang.String, java.lang.String> boneVisibility()
     public static org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder builder()
     public java.lang.String culling()
@@ -1389,7 +1392,8 @@ public record org.geysermc.paletter.block.component.ItemVisual$Geometry {
     public static org.geysermc.paletter.block.component.ItemVisual$Geometry of(java.lang.String)
     public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder toBuilder()
     public final java.lang.String toString()
-    public boolean uvLock()
+    public java.lang.Boolean uvLock()
+    public java.util.List<java.lang.String> uvLockBones()
 }
 
 public static final class org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder {
@@ -1400,7 +1404,9 @@ public static final class org.geysermc.paletter.block.component.ItemVisual$Geome
     public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder cullingShape(java.lang.String)
     public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder identifier(java.lang.String)
     public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder nWayVisualRotation(org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation)
-    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder uvLock(boolean)
+    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder uvLock(java.lang.Boolean)
+    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder uvLockBones(java.util.List<java.lang.String>)
+    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder uvLockBones(java.lang.String...)
 }
 
 public record org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation {

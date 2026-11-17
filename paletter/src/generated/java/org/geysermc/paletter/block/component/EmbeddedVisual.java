@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package org.geysermc.paletter.block.component;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -214,14 +215,19 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
      *        for all/some bones in the geometry, regardless of how the block is rotated using "minecraft:transformation"
      *        component. For performance reasons it's recommended to use the Boolean. Add-on JSON {@code uv_lock}. Default:
      *        <code>false</code>.
+     * @param uvLockBones The list of strings form of {@code uv_lock} (bones); excludes {@link #uvLock()}. Add-on JSON {@code uv_lock}.
      */
     public record Geometry(@NonNull Map<String, String> boneVisibility, @Nullable String culling,
             @Nullable String cullingLayer, @Nullable String cullingShape,
             @NonNull String identifier, @Nullable NWayVisualRotation nWayVisualRotation,
-            boolean uvLock) {
+            @Nullable Boolean uvLock, @Nullable List<String> uvLockBones) {
         public Geometry {
             boneVisibility = Check.copy(boneVisibility, "EmbeddedVisual.Geometry.boneVisibility");
             Objects.requireNonNull(identifier, "EmbeddedVisual.Geometry.identifier");
+            if (uvLock != null && uvLockBones != null) {
+                throw new IllegalArgumentException("EmbeddedVisual.Geometry sets both uvLock and uvLockBones");
+            }
+            uvLockBones = uvLockBones == null ? null : List.copyOf(uvLockBones);
         }
 
         /**
@@ -243,6 +249,7 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
             builder.identifier = identifier;
             builder.nWayVisualRotation = nWayVisualRotation;
             builder.uvLock = uvLock;
+            builder.uvLockBones = uvLockBones;
             return builder;
         }
 
@@ -263,6 +270,8 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
             private @Nullable NWayVisualRotation nWayVisualRotation;
 
             private @Nullable Boolean uvLock = false;
+
+            private @Nullable List<String> uvLockBones;
 
             private Builder() {
             }
@@ -317,11 +326,32 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
             }
 
             /**
+             * Sets {@code uv_lock} (clears the other form).
+             */
+            public @NonNull Builder uvLock(@Nullable Boolean uvLock) {
+                this.uvLock = uvLock;
+                if (uvLock != null) {
+                    this.uvLockBones = null;
+                }
+                return this;
+            }
+
+            /**
+             * Sets {@code uv_lock} (clears the other form).
+             */
+            public @NonNull Builder uvLockBones(@Nullable List<String> uvLockBones) {
+                this.uvLockBones = uvLockBones;
+                if (uvLockBones != null) {
+                    this.uvLock = null;
+                }
+                return this;
+            }
+
+            /**
              * Sets {@code uv_lock}.
              */
-            public @NonNull Builder uvLock(boolean uvLock) {
-                this.uvLock = uvLock;
-                return this;
+            public @NonNull Builder uvLockBones(@NonNull String... uvLockBones) {
+                return uvLockBones(List.of(uvLockBones));
             }
 
             /**
@@ -332,7 +362,7 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
                 if (identifier == null) {
                     throw new IllegalStateException("EmbeddedVisual.Geometry.identifier is required");
                 }
-                return new Geometry(boneVisibility, culling, cullingLayer, cullingShape, identifier, nWayVisualRotation, uvLock);
+                return new Geometry(boneVisibility, culling, cullingLayer, cullingShape, identifier, nWayVisualRotation, uvLock, uvLockBones);
             }
         }
     }

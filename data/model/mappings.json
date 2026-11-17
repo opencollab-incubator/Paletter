@@ -6,8 +6,8 @@
       "bdsVersion": "1.26.36.1",
       "protocol": 1001,
       "windowProtocol": 1001,
-      "variants": 2649,
-      "accepted": 2107,
+      "variants": 2663,
+      "accepted": 2119,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     },
@@ -16,8 +16,8 @@
       "bdsVersion": "1.26.45.1",
       "protocol": 2169,
       "windowProtocol": 2168,
-      "variants": 2649,
-      "accepted": 2136,
+      "variants": 2663,
+      "accepted": 2148,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     },
@@ -26,8 +26,8 @@
       "bdsVersion": "1.26.52.3",
       "protocol": 2193,
       "windowProtocol": 2193,
-      "variants": 2651,
-      "accepted": 2141,
+      "variants": 2665,
+      "accepted": 2153,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     },
@@ -36,8 +36,8 @@
       "bdsVersion": "1.26.63.1",
       "protocol": 2225,
       "windowProtocol": 2225,
-      "variants": 2689,
-      "accepted": 2171,
+      "variants": 2703,
+      "accepted": 2183,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     },
@@ -47,8 +47,8 @@
       "protocol": 2259,
       "windowProtocol": 2259,
       "preview": "26.70",
-      "variants": 2652,
-      "accepted": 2145,
+      "variants": 2666,
+      "accepted": 2157,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     }
@@ -3175,8 +3175,8 @@
     },
     "block:minecraft:embedded_visual": {
       "variants": {
-        "accepted": 43,
-        "rejected": 17
+        "accepted": 49,
+        "rejected": 18
       },
       "wire": [
         "minecraft:embedded_visual"
@@ -3322,17 +3322,58 @@
           "status": "dropped"
         },
         "geometry.uv_lock": {
-          "accepted": 0,
-          "rejected": 1,
+          "accepted": 6,
+          "rejected": 2,
           "rejectedValues": [
+            "array<string>:[wrong type]",
             "object:{}"
           ],
           "bdsErrors": [
-            "uv_lock: expected an array",
             "uv_lock: invalid numeric value",
-            "geometry: invalid string"
+            "uv_lock[0]: invalid string",
+            "geometry: invalid string",
+            "uv_lock: expected an array"
           ],
-          "status": "rejected"
+          "transform": "embeddedGeometry",
+          "status": "hand-rule",
+          "rules": [
+            {
+              "kind": "identity",
+              "nbt": "byte",
+              "tags": [
+                "type:boolean->byte"
+              ],
+              "wire": "minecraft:embedded_visual.geometry.uv_lock"
+            }
+          ],
+          "whenAbsent": {
+            "minecraft:embedded_visual.geometry.uv_lock": "0 (byte)",
+            "minecraft:embedded_visual.geometry.uv_lock[]": "omitted"
+          },
+          "unexplained": [
+            {
+              "wire": "minecraft:embedded_visual.geometry.uv_lock[0]",
+              "samples": [
+                "<absent> -> -",
+                "true -> -",
+                "false -> -",
+                "[] -> -",
+                "[\"bone_a\"] -> bone_a (string)",
+                "[\"bone_a\",\"paletter_b\"] -> paletter_b (string)"
+              ]
+            },
+            {
+              "wire": "minecraft:embedded_visual.geometry.uv_lock[1]",
+              "samples": [
+                "<absent> -> -",
+                "true -> -",
+                "false -> -",
+                "[] -> -",
+                "[\"bone_a\"] -> -",
+                "[\"bone_a\",\"paletter_b\"] -> bone_a (string)"
+              ]
+            }
+          ]
         },
         "material_instances": {
           "accepted": 3,
@@ -3425,14 +3466,13 @@
         }
       },
       "constants": {
-        "minecraft:embedded_visual.geometry.bone_visibility": "{} (compound)",
-        "minecraft:embedded_visual.geometry.uv_lock": "0 (byte)"
+        "minecraft:embedded_visual.geometry.bone_visibility": "{} (compound)"
       },
       "transforms": {
         "geometry": {
           "verified": {
             "build": "1.26.36.1",
-            "variants": 32
+            "variants": 38
           }
         },
         "material_instances": {
@@ -3449,8 +3489,8 @@
       ],
       "protocol2225": {
         "variants": {
-          "accepted": 43,
-          "rejected": 17
+          "accepted": 49,
+          "rejected": 18
         },
         "wire": [
           "minecraft:embedded_visual"
@@ -3661,17 +3701,58 @@
             }
           },
           "geometry.uv_lock": {
-            "accepted": 0,
-            "rejected": 1,
+            "accepted": 6,
+            "rejected": 2,
             "rejectedValues": [
+              "array<string>:[wrong type]",
               "object:{}"
             ],
             "bdsErrors": [
-              "uv_lock: expected an array",
               "uv_lock: invalid numeric value",
-              "geometry: invalid string"
+              "uv_lock[0]: invalid string",
+              "geometry: invalid string",
+              "uv_lock: expected an array"
             ],
-            "status": "rejected"
+            "transform": "embeddedGeometry",
+            "status": "hand-rule",
+            "rules": [
+              {
+                "kind": "identity",
+                "nbt": "byte",
+                "tags": [
+                  "type:boolean->byte"
+                ],
+                "wire": "minecraft:embedded_visual.geometry.uv_lock"
+              }
+            ],
+            "whenAbsent": {
+              "minecraft:embedded_visual.geometry.uv_lock": "0 (byte)",
+              "minecraft:embedded_visual.geometry.uv_lock[]": "omitted"
+            },
+            "unexplained": [
+              {
+                "wire": "minecraft:embedded_visual.geometry.uv_lock[0]",
+                "samples": [
+                  "<absent> -> -",
+                  "true -> -",
+                  "false -> -",
+                  "[] -> -",
+                  "[\"bone_a\"] -> bone_a (string)",
+                  "[\"bone_a\",\"paletter_b\"] -> paletter_b (string)"
+                ]
+              },
+              {
+                "wire": "minecraft:embedded_visual.geometry.uv_lock[1]",
+                "samples": [
+                  "<absent> -> -",
+                  "true -> -",
+                  "false -> -",
+                  "[] -> -",
+                  "[\"bone_a\"] -> -",
+                  "[\"bone_a\",\"paletter_b\"] -> bone_a (string)"
+                ]
+              }
+            ]
           },
           "material_instances": {
             "accepted": 3,
@@ -3764,14 +3845,13 @@
           }
         },
         "constants": {
-          "minecraft:embedded_visual.geometry.bone_visibility": "{} (compound)",
-          "minecraft:embedded_visual.geometry.uv_lock": "0 (byte)"
+          "minecraft:embedded_visual.geometry.bone_visibility": "{} (compound)"
         },
         "transforms": {
           "geometry": {
             "verified": {
               "build": "1.26.63.1",
-              "variants": 32
+              "variants": 38
             }
           },
           "material_instances": {
@@ -4902,8 +4982,8 @@
     },
     "block:minecraft:item_visual": {
       "variants": {
-        "accepted": 39,
-        "rejected": 11
+        "accepted": 45,
+        "rejected": 12
       },
       "wire": [
         "minecraft:item_visual"
@@ -5250,17 +5330,78 @@
           }
         },
         "geometry.uv_lock": {
-          "accepted": 0,
-          "rejected": 1,
+          "accepted": 6,
+          "rejected": 2,
           "rejectedValues": [
+            "array<string>:[wrong type]",
             "object:{}"
           ],
           "bdsErrors": [
-            "uv_lock: expected an array",
             "uv_lock: invalid numeric value",
-            "geometry: invalid string"
+            "uv_lock[0]: invalid string",
+            "geometry: invalid string",
+            "uv_lock: expected an array"
           ],
-          "status": "rejected"
+          "transform": "itemVisualUvLock",
+          "status": "hand-rule",
+          "rules": [
+            {
+              "kind": "constant",
+              "value": "paletter:culling",
+              "nbt": "string",
+              "tags": [
+                "injected-default"
+              ],
+              "wire": "minecraft:item_visual.geometryDescription.culling"
+            },
+            {
+              "kind": "constant",
+              "value": "paletter_a",
+              "nbt": "string",
+              "tags": [
+                "injected-default"
+              ],
+              "wire": "minecraft:item_visual.geometryDescription.culling_shape"
+            },
+            {
+              "kind": "identity",
+              "nbt": "byte",
+              "tags": [
+                "type:boolean->byte"
+              ],
+              "wire": "minecraft:item_visual.geometryDescription.uv_lock"
+            }
+          ],
+          "whenAbsent": {
+            "minecraft:item_visual.geometryDescription.culling": " (string)",
+            "minecraft:item_visual.geometryDescription.culling_shape": " (string)",
+            "minecraft:item_visual.geometryDescription.uv_lock": "0 (byte)",
+            "minecraft:item_visual.geometryDescription.uv_lock[]": "omitted"
+          },
+          "unexplained": [
+            {
+              "wire": "minecraft:item_visual.geometryDescription.uv_lock[0]",
+              "samples": [
+                "<absent> -> -",
+                "true -> -",
+                "false -> -",
+                "[] -> -",
+                "[\"bone_a\"] -> bone_a (string)",
+                "[\"bone_a\",\"paletter_b\"] -> paletter_b (string)"
+              ]
+            },
+            {
+              "wire": "minecraft:item_visual.geometryDescription.uv_lock[1]",
+              "samples": [
+                "<absent> -> -",
+                "true -> -",
+                "false -> -",
+                "[] -> -",
+                "[\"bone_a\"] -> -",
+                "[\"bone_a\",\"paletter_b\"] -> bone_a (string)"
+              ]
+            }
+          ]
         },
         "material_instances": {
           "accepted": 1,
@@ -5323,10 +5464,15 @@
         "minecraft:item_visual.geometryDescription.isV1Fullblock": "0 (byte)",
         "minecraft:item_visual.geometryDescription.needsLegacyTopRotation": "0 (byte)",
         "minecraft:item_visual.geometryDescription.useBlockTypeLightAbsorption": "0 (byte)",
-        "minecraft:item_visual.geometryDescription.uv_lock": "0 (byte)",
         "minecraft:item_visual.materialInstancesDescription.mappings": "{} (compound)"
       },
       "transforms": {
+        "geometry.uv_lock": {
+          "verified": {
+            "build": "1.26.36.1",
+            "variants": 6
+          }
+        },
         "material_instances": {
           "verified": {
             "build": "1.26.36.1",
@@ -5341,8 +5487,8 @@
       ],
       "protocol2225": {
         "variants": {
-          "accepted": 39,
-          "rejected": 11
+          "accepted": 45,
+          "rejected": 12
         },
         "wire": [
           "minecraft:item_visual"
@@ -5975,17 +6121,108 @@
             }
           },
           "geometry.uv_lock": {
-            "accepted": 0,
-            "rejected": 1,
+            "accepted": 6,
+            "rejected": 2,
             "rejectedValues": [
+              "array<string>:[wrong type]",
               "object:{}"
             ],
             "bdsErrors": [
-              "uv_lock: expected an array",
               "uv_lock: invalid numeric value",
-              "geometry: invalid string"
+              "uv_lock[0]: invalid string",
+              "geometry: invalid string",
+              "uv_lock: expected an array"
             ],
-            "status": "rejected"
+            "transform": "itemVisualUvLock",
+            "status": "hand-rule",
+            "rules": [
+              {
+                "kind": "constant",
+                "value": "paletter:culling",
+                "nbt": "string",
+                "tags": [
+                  "injected-default"
+                ],
+                "wire": "minecraft:item_visual.geometryDescription.culling"
+              },
+              {
+                "kind": "constant",
+                "value": "paletter_a",
+                "nbt": "string",
+                "tags": [
+                  "injected-default"
+                ],
+                "wire": "minecraft:item_visual.geometryDescription.culling_shape"
+              },
+              {
+                "kind": "constant",
+                "value": "paletter_a",
+                "nbt": "string",
+                "tags": [
+                  "injected-default"
+                ],
+                "wire": "minecraft:item_visual.geometryDescription.n_way_visual_rotation.x"
+              },
+              {
+                "kind": "constant",
+                "value": "paletter_a",
+                "nbt": "string",
+                "tags": [
+                  "injected-default"
+                ],
+                "wire": "minecraft:item_visual.geometryDescription.n_way_visual_rotation.y"
+              },
+              {
+                "kind": "constant",
+                "value": "paletter_a",
+                "nbt": "string",
+                "tags": [
+                  "injected-default"
+                ],
+                "wire": "minecraft:item_visual.geometryDescription.n_way_visual_rotation.z"
+              },
+              {
+                "kind": "identity",
+                "nbt": "byte",
+                "tags": [
+                  "type:boolean->byte"
+                ],
+                "wire": "minecraft:item_visual.geometryDescription.uv_lock"
+              }
+            ],
+            "whenAbsent": {
+              "minecraft:item_visual.geometryDescription.culling": " (string)",
+              "minecraft:item_visual.geometryDescription.culling_shape": " (string)",
+              "minecraft:item_visual.geometryDescription.n_way_visual_rotation.x": "omitted",
+              "minecraft:item_visual.geometryDescription.n_way_visual_rotation.y": "omitted",
+              "minecraft:item_visual.geometryDescription.n_way_visual_rotation.z": "omitted",
+              "minecraft:item_visual.geometryDescription.uv_lock": "0 (byte)",
+              "minecraft:item_visual.geometryDescription.uv_lock[]": "omitted"
+            },
+            "unexplained": [
+              {
+                "wire": "minecraft:item_visual.geometryDescription.uv_lock[0]",
+                "samples": [
+                  "<absent> -> -",
+                  "true -> -",
+                  "false -> -",
+                  "[] -> -",
+                  "[\"bone_a\"] -> bone_a (string)",
+                  "[\"bone_a\",\"paletter_b\"] -> paletter_b (string)"
+                ]
+              },
+              {
+                "wire": "minecraft:item_visual.geometryDescription.uv_lock[1]",
+                "samples": [
+                  "<absent> -> -",
+                  "true -> -",
+                  "false -> -",
+                  "[] -> -",
+                  "[\"bone_a\"] -> -",
+                  "[\"bone_a\",\"paletter_b\"] -> bone_a (string)"
+                ]
+              }
+            ]
           },
           "material_instances": {
             "accepted": 1,
@@ -6048,10 +6285,15 @@
           "minecraft:item_visual.geometryDescription.isV1Fullblock": "0 (byte)",
           "minecraft:item_visual.geometryDescription.needsLegacyTopRotation": "0 (byte)",
           "minecraft:item_visual.geometryDescription.useBlockTypeLightAbsorption": "0 (byte)",
-          "minecraft:item_visual.geometryDescription.uv_lock": "0 (byte)",
           "minecraft:item_visual.materialInstancesDescription.mappings": "{} (compound)"
         },
         "transforms": {
+          "geometry.uv_lock": {
+            "verified": {
+              "build": "1.26.63.1",
+              "variants": 6
+            }
+          },
           "material_instances": {
             "verified": {
               "build": "1.26.63.1",

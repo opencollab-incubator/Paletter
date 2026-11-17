@@ -6,7 +6,9 @@ import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.BlockHashes;
 import org.geysermc.paletter.block.CustomBlock;
+import org.geysermc.paletter.block.component.EmbeddedVisual;
 import org.geysermc.paletter.block.component.Geometry;
+import org.geysermc.paletter.block.component.ItemVisual;
 import org.geysermc.paletter.block.component.LightEmission;
 import org.geysermc.paletter.block.component.MaterialInstances;
 import org.geysermc.paletter.block.component.PlacementDirection;
@@ -189,6 +191,15 @@ class CustomContentTest {
         assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp").component(rejected).build());
         assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp")
             .property(BlockProperty.bool("example:lit")).permutation("q.block_state('example:lit')", rejected).build());
+        // and likewise in the geometry of item_visual and embedded_visual
+        MaterialInstances materials = MaterialInstances.builder().build();
+        ItemVisual.Geometry itemGeometry = ItemVisual.Geometry.builder().identifier("geometry.lamp").uvLockBones(Collections.nCopies(64, "lid")).build();
+        CustomBlock.builder("example:lamp").component(ItemVisual.builder().geometry(itemGeometry).materialInstances(materials).build()).build();
+        assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp").component(ItemVisual.builder()
+            .geometry(itemGeometry.toBuilder().uvLockBones(Collections.nCopies(65, "lid")).build()).materialInstances(materials).build()).build());
+        assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp").component(EmbeddedVisual.builder()
+            .geometry(EmbeddedVisual.Geometry.builder().identifier("geometry.lamp").uvLockBones(Collections.nCopies(65, "lid")).build())
+            .materialInstances(materials).build()).build());
     }
 
     @Test

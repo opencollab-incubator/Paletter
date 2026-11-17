@@ -2,10 +2,8 @@ package org.geysermc.paletter.internal.component;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
-import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.BlockComponent;
@@ -137,13 +135,13 @@ public final class Transforms {
 
     /**
      * The geometry of {@code minecraft:embedded_visual}: the shape of {@link #geometry} without its four flags, inline,
-     * with {@code n_way_visual_rotation} from BDS 1.26.63.1 on. Unverified: BDS rejected every {@code embedded_visual}
-     * variant of the captures, so this is the documented shape with the wire keys of {@code minecraft:geometry}.
+     * with {@code n_way_visual_rotation} from BDS 1.26.63.1 on and the {@code uv_lock} of {@link #uvLock(Boolean, List)}
+     * (the captures of BDS 1.26.36.1 to 1.26.70.24).
      */
     public static void embeddedGeometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull EmbeddedVisual c) {
         EmbeddedVisual.Geometry g = c.geometry();
-        NbtMapBuilder geometry = geometry(g.identifier(), g.boneVisibility(), g.culling(), g.cullingLayer(), g.cullingShape(), g.uvLock(), null)
-            .toBuilder();
+        NbtMapBuilder geometry = geometry(g.identifier(), g.boneVisibility(), g.culling(), g.cullingLayer(), g.cullingShape(), g.uvLock(),
+            g.uvLockBones()).toBuilder();
         for (String flag : List.of("ignoreGeometryForIsSolid", "isV1Fullblock", "needsLegacyTopRotation", "useBlockTypeLightAbsorption")) {
             geometry.remove(flag);
         }
@@ -185,14 +183,31 @@ public final class Transforms {
             .putByte("ignoreGeometryForIsSolid", (byte) 0)
             .putByte("isV1Fullblock", (byte) 0)
             .putByte("needsLegacyTopRotation", (byte) 0)
-            .putByte("useBlockTypeLightAbsorption", (byte) 0)
-            .putByte("uv_lock", Wire.bool(Boolean.TRUE.equals(uvLock)));
-        if (uvLockBones != null) {
-            // BDS 1.26.36.1 to 1.26.63.1: the bones as a list of strings instead of the byte; an empty list has no element type
-            List<String> locked = bdsBoneOrder(uvLockBones);
-            geometry.put("uv_lock", locked.isEmpty() ? Wire.emptyList() : new NbtList<>(NbtType.STRING, locked));
-        }
+            .putByte("useBlockTypeLightAbsorption", (byte) 0);
+        geometry.put("uv_lock", uvLock(uvLock, uvLockBones));
         return geometry.build();
+    }
+
+    /**
+     * {@code geometry.uv_lock} of {@code minecraft:item_visual}: the value {@code minecraft:geometry} sends for its
+     * {@code uv_lock}. The bones are sent in the order of {@link #bdsBoneOrder}, which depends on the hash of each name: a
+     * rule fitted to the captured names would only order those. The captures of BDS 1.26.36.1 to 1.26.70.24 send
+     * {@code true} as 1, a list as its bones, and take both for the full block geometry too.
+     */
+    public static void itemVisualUvLock(@NonNull WireContext ctx, @NonNull WireNode out, ItemVisual.@NonNull Geometry g) {
+        out.put("minecraft:item_visual.geometryDescription.uv_lock", uvLock(g.uvLock(), g.uvLockBones()));
+    }
+
+    /**
+     * {@code uv_lock} as BDS sends it for every geometry ({@code minecraft:geometry} and the geometry of {@code item_visual}
+     * and {@code embedded_visual}, BDS 1.26.36.1 to 1.26.70.24): a byte for the boolean form, 0 when it is not set; for the
+     * list form the bones as strings in {@link #bdsBoneOrder BDS's order}, an empty list without element type.
+     */
+    static @NonNull Object uvLock(@Nullable Boolean uvLock, @Nullable List<String> bones) {
+        if (bones == null) {
+            return Wire.bool(Boolean.TRUE.equals(uvLock));
+        }
+        return Wire.strings(bdsBoneOrder(bones));
     }
 
     /**

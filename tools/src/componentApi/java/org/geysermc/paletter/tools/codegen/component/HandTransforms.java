@@ -25,6 +25,7 @@ public final class HandTransforms {
         entry("block:minecraft:embedded_visual:geometry", "embeddedGeometry"),
         entry("block:minecraft:embedded_visual:material_instances", "materialInstancesInline"),
         entry("block:minecraft:geometry:", "geometry"),
+        entry("block:minecraft:item_visual:geometry.uv_lock", "itemVisualUvLock"),
         entry("block:minecraft:item_visual:material_instances", "materialInstancesPacked"),
         entry("block:minecraft:material_instances:", "materialInstances"),
         entry("block:minecraft:placement_filter:conditions[].block_filter[].states", "blockDescriptorStates"),
