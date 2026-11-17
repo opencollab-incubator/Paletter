@@ -1,8 +1,10 @@
 package org.geysermc.paletter.tools.update;
 
 import org.geysermc.paletter.tools.data.Nbt;
+import org.geysermc.paletter.tools.data.VariantNames;
 import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsDump;
+import org.geysermc.paletter.tools.bds.ScriptApiDump;
 import org.geysermc.paletter.tools.bds.BdsInventory;
 import org.geysermc.paletter.tools.bds.BdsRunner;
 import org.geysermc.paletter.tools.bds.BdsServer;
@@ -224,7 +226,7 @@ public final class Update {
         try {
             // 1. Script API dump
             Path dumpLog = work.resolve("bds-dump.log");
-            new BdsRunner(root.resolve(Layout.DUMP_ADDON)).run(server, dumpLog, timeout, port, false);
+            ScriptApiDump.run(root, server, dumpLog, timeout, port);
             String[] json = BdsDump.json(dumpLog);
             dump = BdsDump.parse(json[1], json[0]);
             Files.writeString(work.resolve("bds-dump.json"), json[1]);
@@ -1181,6 +1183,7 @@ public final class Update {
         new Importer(scratch).run(runs.vanilla, name, runs.protocol, null, runs.dumpLog);
         VanillaData captured = read(scratch.resolve(name + ".nbt"));
         runs.imported = scratch.resolve(name + ".nbt");
+        Map<String, List<VariantNames.Entry>> variantNames = VariantNames.read(root.resolve(VariantNames.FILE));
 
         if (runs.existing != null) {
             VanillaData bundled = read(resources.resolve(name + ".nbt"));
@@ -1202,6 +1205,7 @@ public final class Update {
                 bds.identical() ? "identical" : bds.count() + " differences");
             report.diff("Item tags and block defaults: BDS " + distribution.version() + " vs bundled " + name, bds);
             Files.write(staging.resources.resolve(name + ".nbt"), write(refreshed));
+            updateVariantNames(variantNames, name, dump, refreshed);
         } else {
             Importer.IndexEntry latest = Importer.readIndex(resources).stream().filter(e -> !e.preview()).reduce((a, b) -> b).orElseThrow();
             VanillaData previous = read(resources.resolve(latest.name() + ".nbt"));
@@ -1209,11 +1213,22 @@ public final class Update {
             report.check(Report.Status.DIFF, "New protocol " + runs.protocol, "not bundled yet; " + diff.count() + " differences to " + latest.name());
             report.diff("What changed: " + name + " (BDS " + distribution.version() + ") vs bundled " + latest.name(), diff);
             fallbackTodos(diff.lines("new blocks"), diff.lines("new items"), "network");
-            dropPreviews(distribution, name, runs.protocol, staging);
+            dropPreviews(distribution, name, runs.protocol, staging, variantNames);
             new Importer(staging.resources).run(runs.vanilla, name, runs.protocol, null, runs.dumpLog, preview);
             report.check(Report.Status.INFO, "Import", "imported " + name + " (" + runs.protocol + ")" + (preview ? " as a preview version" : ""));
             // Content older versions lack is listed above (INFO); there are no bundled fallbacks to check
             new Checker(staging.resources).problems(preview);
+            updateVariantNames(variantNames, name, dump, captured);
+        }
+        stage(root.resolve(VariantNames.FILE), VariantNames.render(variantNames).getBytes(StandardCharsets.UTF_8), "item variant names");
+    }
+
+    /** The variant names of a version from the dump; an incomplete dump is a FAIL and leaves the names as they are. */
+    private void updateVariantNames(Map<String, List<VariantNames.Entry>> variantNames, String name, BdsDump dump, VanillaData data) {
+        try {
+            VariantNames.update(variantNames, name, dump, data);
+        } catch (IllegalStateException e) {
+            report.check(Report.Status.FAIL, "Item variant names", e.getMessage() + "; the names of " + name + " stay as they are");
         }
     }
 
@@ -1221,7 +1236,8 @@ public final class Update {
      * Only the newest preview is bundled, and only until its release: importing a version drops every bundled preview of
      * the same name or an older protocol, with its BDS captures ({@code data/bds/<build>} of that name, but not this build).
      */
-    private void dropPreviews(BdsDistribution distribution, String name, int protocol, Staging staging) throws IOException {
+    private void dropPreviews(BdsDistribution distribution, String name, int protocol, Staging staging,
+                              Map<String, List<VariantNames.Entry>> variantNames) throws IOException {
         for (Importer.IndexEntry entry : Importer.readIndex(staging.resources)) {
             boolean sameName = entry.name().equals(name);
             // A preview imported again just replaces its own data
@@ -1229,6 +1245,7 @@ public final class Update {
                 continue;
             }
             Importer.remove(staging.resources, entry.name());
+            variantNames.remove(entry.name());
             report.check(Report.Status.INFO, "Import", "dropped preview " + entry.name() + " (" + entry.protocol() + "): "
                 + (preview ? "a newer preview replaces it" : "its release is imported"));
             try (Stream<Path> dirs = Files.list(bdsData)) {

@@ -6,6 +6,7 @@ import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator.EnumValu
 import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator.Kind;
 import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator.StateConstant;
 import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator.StateModel;
+import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator.Variant;
 import org.geysermc.paletter.internal.vanilla.BlockLayout;
 
 import java.util.ArrayList;
@@ -273,6 +274,60 @@ public final class JavaWriter {
         }
         appendAliases(out, aliases, constants, "BedrockItemType");
         out.append("    private BedrockItems() {\n    }\n}\n");
+        return out.toString();
+    }
+
+    static String variants(List<Variant> variants, String version) {
+        StringBuilder out = new StringBuilder(HEADER);
+        out.append("package ").append(ConstantsGenerator.PACKAGE).append(";\n\n");
+        appendImports(out, false, variants.stream().anyMatch(v -> v.constant().preview() != null));
+        out.append("/**\n");
+        out.append(" * The named aux variants of Bedrock ").append(version).append(", the newest bundled release: potions, splash and lingering\n");
+        out.append(" * potions and tipped arrows by effect, beds and banners by colour. The names are BDS's own spellings, taken from the\n");
+        out.append(" * Script API (the potion effect id, the localization key of the stack), such as {@code POTION_LONG_NIGHTVISION} or\n");
+        out.append(" * {@code BED_SILVER}. Every constant is the very {@link BedrockItemVariant} of {@code type.variant(aux)}. Referencing\n");
+        out.append(" * them loads nothing.\n");
+        out.append(" * <p>\n * Constants are added when Bedrock adds variants (binary compatible). A variant Bedrock removes keeps its constant,\n");
+        out.append(" * deprecated: {@code type.variant(aux)} is then null. A name BDS changes stays as a deprecated alias of the new one.\n");
+        out.append(" * <p>\n * The {@code @since} of a constant is the Paletter version that added it. The names come from BDS dumps of the newest\n");
+        out.append(" * builds only: a variant is first captured in the oldest release with variant data, and may be older.\n");
+        out.append(" * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks variants only the bundled Bedrock preview\n");
+        out.append(" * has: without previews loaded ({@code paletter.previews}) its type has no such variant, so {@code type.variant(aux)}\n");
+        out.append(" * is null and the constant stays a plain key. The mark goes when a release has it; the constant goes if a newer\n");
+        out.append(" * preview drops it.\n");
+        out.append(" *\n * @since ").append(CLASS_SINCE).append("\n */\n");
+        out.append("public final class BedrockItemVariants {\n");
+        List<Variant> aliases = new ArrayList<>();
+        for (Variant variant : variants) {
+            Constant constant = variant.constant();
+            if (constant.replacement() != null) {
+                aliases.add(variant);
+                continue;
+            }
+            out.append("    /**\n     * {@code ").append(constant.identifier()).append("} with aux ").append(variant.aux());
+            out.append(constant.deprecated() != null ? ", no longer in the bundled data." : ".");
+            if (constant.preview() != null) {
+                out.append("\n     * Only in the bundled preview ").append(constant.preview()).append('.');
+            } else {
+                out.append("\n     *\n     * @since ").append(constant.since());
+            }
+            if (constant.deprecated() != null) {
+                out.append("\n     * @deprecated Bedrock removed the variant");
+            }
+            out.append("\n     */\n");
+            appendAnnotations(out, constant);
+            out.append("    public static final BedrockItemVariant ").append(constant.name()).append(" = VanillaTypes.variant(BedrockItems.")
+                .append(ConstantsGenerator.constantName(constant.identifier())).append(", ").append(variant.aux()).append(");\n\n");
+        }
+        // Aliases come last: a static final field cannot refer to one declared after it
+        for (Variant alias : aliases) {
+            Constant constant = alias.constant();
+            out.append("    /**\n     * {@code ").append(constant.identifier()).append("} with aux ").append(alias.aux()).append(".\n     *\n     * @since ")
+                .append(constant.since()).append("\n     * @deprecated renamed to {@link #").append(constant.replacement()).append("}\n     */\n");
+            appendAnnotations(out, constant);
+            out.append("    public static final BedrockItemVariant ").append(constant.name()).append(" = ").append(constant.replacement()).append(";\n\n");
+        }
+        out.append("    private BedrockItemVariants() {\n    }\n}\n");
         return out.toString();
     }
 

@@ -4,9 +4,9 @@
 //   PALETTER-DONE <total> chunks
 // Run BDS with its output redirected to a file, then: generator import ... --bds-dump <that file>
 //
-// Dump format (FORMAT 2):
+// Dump format (FORMAT 3):
 // {
-//   format: 2,
+//   format: 3,
 //   item_tags:      {tag: [item id]},
 //   items:          {item id: {max_stack, localization_key, components: [id], max_durability?}},
 //   block_defaults: {block id: {state: value}},              BlockPermutation.resolve(id), the true default
@@ -14,12 +14,16 @@
 //   block_tags:     {tag: [block id]},                       tags of the default permutation
 //   block_items:    {block id: item id},                     the item of the default permutation, if any
 //   state_types:    {state: [valid value]}                   BlockStates.getAll(), all blocks together
+//   item_variants:  {item id: {aux: {key, potion?}}}  the aux values BDS accepts of VARIANT_ITEMS
+//                   key: localization key of the stack; potion: the effect id of the Script API potion component (potions), or
+//                   the effect whose set_potion loot table gives that aux (arrows, if exactly one does).
+//                   Missing if this part failed (see errors): the rest of the dump is complete without it
 //   errors:         [message]
 // }
 
-import { BlockPermutation, BlockStates, BlockTypes, ItemStack, ItemTypes, system, world } from "@minecraft/server";
+import { BlockPermutation, BlockStates, BlockTypes, ItemStack, ItemTypes, Potions, system, world } from "@minecraft/server";
 
-const FORMAT = 2;
+const FORMAT = 3;
 const CHUNK_SIZE = 2000;
 
 const errors = [];
@@ -130,6 +134,102 @@ function* dumpBlocks(out) {
     }
 }
 
+// The items whose aux value names a variant of them (potion effect, colour). Everything else with an aux is not named.
+const VARIANT_ITEMS = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:arrow", "minecraft:bed", "minecraft:banner"];
+const MAX_AUX = 64;
+const CHEST = { x: 0, y: -60, z: 0 };
+
+// The chest of the item variants needs a loaded chunk: a ticking area, which loads over some ticks
+async function loadChestArea() {
+    const dimension = world.getDimension("overworld");
+    try {
+        dimension.runCommand(`tickingarea add ${CHEST.x} ${CHEST.y} ${CHEST.z} ${CHEST.x + 1} ${CHEST.y} ${CHEST.z + 1} paletter`);
+    } catch {
+        // a rerun on the same world has the area already
+    }
+    for (let i = 0; i < 300; i++) {
+        try {
+            if (dimension.getBlock(CHEST)) {
+                return;
+            }
+        } catch {
+            // not loaded yet
+        }
+        await new Promise((resolve) => system.runTimeout(resolve, 10));
+    }
+    throw new Error("the ticking area for the item variants never loaded");
+}
+
+// replaceitem is the only way to set an aux value from scripts; BDS rejects the aux values the item does not have.
+// The stack goes through a chest in the ticking area, which is where it can be read back.
+function* dumpItemVariants(out) {
+    const dimension = world.getDimension("overworld");
+    dimension.setBlockType(CHEST, "minecraft:chest");
+    const container = dimension.getBlock(CHEST).getComponent("minecraft:inventory").container;
+    const at = `${CHEST.x} ${CHEST.y} ${CHEST.z}`;
+
+    function stackOf(slot, id, aux) {
+        container.setItem(slot, undefined);
+        dimension.runCommand(`replaceitem block ${at} slot.container ${slot} ${id} 1 ${aux}`);
+        const stack = container.getItem(slot);
+        return stack?.typeId === id ? stack : undefined;
+    }
+
+    const itemVariants = {};
+    for (const id of VARIANT_ITEMS) {
+        const variants = (itemVariants[id] = {});
+        for (let aux = 0; aux < MAX_AUX; aux++) {
+            const stack = stackOf(0, id, aux);
+            if (!stack) {
+                continue;
+            }
+            variants[aux] = { key: stack.localizationKey };
+            const potion = stack.getComponent("minecraft:potion");
+            if (potion) {
+                variants[aux].potion = potion.potionEffectType.id;
+            }
+        }
+        if (variants[MAX_AUX - 1]) {
+            throw new Error(`${id} accepts aux ${MAX_AUX - 1}: raise MAX_AUX`);
+        }
+        yield;
+    }
+
+    // Tipped arrows have no component: the tool wrote a loot table per potion effect (set_potion), and the aux of an
+    // arrow is the one whose stack the looted arrow stacks with
+    const effectsOfAux = {};
+    for (const effect of toArray(Potions.getAllEffectTypes())) {
+        container.setItem(0, undefined);
+        dimension.runCommand(`loot insert ${at} loot "paletter/arrow_${effect.id.split(":")[1]}"`);
+        const looted = container.getItem(0);
+        if (!looted) {
+            warn(`no arrow for the potion effect ${effect.id}`);
+            continue;
+        }
+        for (const aux of Object.keys(itemVariants["minecraft:arrow"])) {
+            const arrow = stackOf(1, "minecraft:arrow", aux);
+            if (looted.isStackableWith(arrow)) {
+                (effectsOfAux[aux] ??= []).push(effect.id);
+            }
+        }
+        yield;
+    }
+    // Several effects give the plain arrow (aux 0), which has no potion; every tipped arrow has exactly one effect.
+    // Without the tool's loot tables none has, and the variants are then incomplete as a whole
+    for (const aux of Object.keys(itemVariants["minecraft:arrow"])) {
+        const effects = effectsOfAux[aux] ?? [];
+        if (aux !== "0" && effects.length !== 1) {
+            throw new Error(`the tipped arrow aux ${aux} matches ${effects.length} potion effects, not one`);
+        }
+        if (effects.length === 1) {
+            itemVariants["minecraft:arrow"][aux].potion = effects[0];
+        }
+    }
+    out.item_variants = itemVariants;
+}
+
+let chestReady = false;
+
 function* dump() {
     const out = { format: FORMAT, item_tags: {}, items: {}, block_defaults: {}, block_states: {}, block_tags: {}, block_items: {}, state_types: {} };
     for (const stateType of toArray(BlockStates.getAll())) {
@@ -137,6 +237,14 @@ function* dump() {
     }
     yield* dumpItems(out);
     yield* dumpBlocks(out);
+    // The variants need a chest in a ticking area and loot tables of the tool; the rest of the dump stands without them
+    if (chestReady) {
+        try {
+            yield* dumpItemVariants(out);
+        } catch (error) {
+            warn(`item variants: ${error}`);
+        }
+    }
     out.errors = errors;
 
     const json = JSON.stringify(out);
@@ -152,8 +260,14 @@ function* dump() {
 
 // Item stacks cannot be created during early execution; wait for the world. The dump runs as a job so it never
 // trips the script watchdog.
-world.afterEvents.worldLoad.subscribe(() => {
+world.afterEvents.worldLoad.subscribe(async () => {
     console.warn("PALETTER-START");
+    try {
+        await loadChestArea();
+        chestReady = true;
+    } catch (error) {
+        warn(`item variants: ${error}`);
+    }
     system.runJob((function* () {
         try {
             yield* dump();

@@ -12,7 +12,7 @@ import org.geysermc.paletter.internal.item.ItemVariant;
  * {@link BedrockItemType#variant(int)} and {@link BedrockItemType#variants()}.
  * <p>
  * Equality: as for {@link BedrockItemType}, {@code equals} always works. {@code ==} works too for the variants of the
- * vanilla constants and for the base variant of registered custom content: {@code customItem.type().base()} is the very
+ * vanilla constants (the types of {@link BedrockItems}, the named variants of {@link BedrockItemVariants}) and for the base variant of registered custom content: {@code customItem.type().base()} is the very
  * variant {@link org.geysermc.paletter.Palette#decode} gives back. Variants made by
  * {@link BedrockItemType#variantOf(int)} for an aux value that is not one of {@link BedrockItemType#variants()}, and
  * variants of types made by {@link BedrockItemType#of(String)} for unknown identifiers, are new objects: compare those
@@ -23,6 +23,7 @@ import org.geysermc.paletter.internal.item.ItemVariant;
 public final class BedrockItemVariant {
     private final BedrockItemType type;
     private final int aux;
+    /** The canonical id in the newest bundled data, or -1: a variant without one, and the named constants, which look it up. */
     private final int id;
     private volatile ItemVariant variant;
 

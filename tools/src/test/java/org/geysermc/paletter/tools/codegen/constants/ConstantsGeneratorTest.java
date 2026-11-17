@@ -71,7 +71,7 @@ class ConstantsGeneratorTest {
 
     private static ConstantsGenerator.Sources sources(Map<String, Map<String, String>> gated, java.util.Set<String> education,
                                                       VanillaData... releases) {
-        return new ConstantsGenerator.Sources(List.of(releases), gated, Map.of(), education, java.util.Set.of());
+        return new ConstantsGenerator.Sources(List.of(releases), gated, Map.of(), education, java.util.Set.of(), Map.of());
     }
 
     @Test

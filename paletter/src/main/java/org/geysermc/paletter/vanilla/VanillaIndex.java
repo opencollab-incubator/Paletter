@@ -64,6 +64,18 @@ final class VanillaIndex {
             }
         }
 
+        // The named variants, which the data's variants of their types adopt
+        Map<String, BedrockItemVariant> constantVariants = new HashMap<>();
+        for (Field field : initialize("BedrockItemVariants").getFields()) {
+            try {
+                if (Modifier.isStatic(field.getModifiers()) && field.get(null) instanceof BedrockItemVariant variant) {
+                    constantVariants.putIfAbsent(variant.type().identifier() + "@" + variant.aux(), variant);
+                }
+            } catch (IllegalAccessException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
         this.itemConstants = constantItems;
         this.blockConstants = constantBlocks;
         Paletter paletter = Paletter.bundled();
@@ -103,7 +115,9 @@ final class VanillaIndex {
             ItemVariant variant = items.variant(i);
             BedrockItemType type = itemsById.computeIfAbsent(variant.identifier(),
                 id -> constantItems.computeIfAbsent(id, key -> new BedrockItemType(key, VanillaTypes.UNKNOWN)));
-            BedrockItemVariant handle = new BedrockItemVariant(type, variant.damage(), i);
+            BedrockItemVariant named = constantVariants.get(variant.identifier() + "@" + variant.damage());
+            // A named constant stays without an id, and finds its canonical id by lookup
+            BedrockItemVariant handle = named != null ? named : new BedrockItemVariant(type, variant.damage(), i);
             itemsByCanonical[i] = handle;
             variants.computeIfAbsent(variant.identifier(), id -> new ArrayList<>()).add(handle);
         }

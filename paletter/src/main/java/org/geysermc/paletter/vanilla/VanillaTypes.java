@@ -56,6 +56,14 @@ final class VanillaTypes {
         return new BedrockItemType(identifier, fallback == null ? UNKNOWN : fallback);
     }
 
+    /**
+     * A named variant of a vanilla type ({@code BedrockItemVariants}). The index adopts it as the type's variant of that aux,
+     * so it is the instance {@link BedrockItemType#variant(int)} answers.
+     */
+    static @NonNull BedrockItemVariant variant(@NonNull BedrockItemType type, int aux) {
+        return new BedrockItemVariant(type, aux, -1);
+    }
+
     static <S extends BedrockState<?>> @NonNull S state(@NonNull S state) {
         BedrockState<?> existing = STATES.putIfAbsent(state.name(), state);
         if (existing != null) {
