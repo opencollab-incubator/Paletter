@@ -312,8 +312,8 @@ public final class JavaWriter {
         out.append(" * nothing.\n");
         out.append(" * <p>\n * Constants are added when Bedrock adds variants (binary compatible). A variant Bedrock removes keeps its constant,\n");
         out.append(" * deprecated: {@code type.variant(aux)} is then null. A name BDS changes stays as a deprecated alias of the new one.\n");
-        out.append(" * <p>\n * {@code @since} is the Paletter version that added a constant. The names come from BDS dumps of the newest\n");
-        out.append(" * builds only, so a variant says nothing of the Bedrock release it is first in: it may be older than the dumps.\n");
+        out.append(" * <p>\n * {@code @since} is the Paletter version that added a constant, only written if newer than the class. The\n");
+        out.append(" * names come from BDS dumps of the newest builds only, so a variant says nothing of the Bedrock release it is first in: it may be older than the dumps.\n");
         out.append(" * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks variants only the bundled Bedrock preview\n");
         out.append(" * has: without previews loaded ({@code paletter.previews}) its type has no such variant, so {@code type.variant(aux)}\n");
         out.append(" * is null and the constant stays a plain key. The mark goes when a release has it; the constant goes if a newer\n");
@@ -332,7 +332,7 @@ public final class JavaWriter {
             if (constant.preview() != null) {
                 out.append("\n     * Only in the bundled preview ").append(constant.preview()).append('.');
             } else {
-                out.append("\n     *\n     * @since ").append(constant.since());
+                appendSince(out, constant.since(), "    ");
             }
             if (constant.deprecated() != null) {
                 out.append("\n     * @deprecated Bedrock removed the variant");
@@ -345,8 +345,9 @@ public final class JavaWriter {
         // Aliases come last: a static final field cannot refer to one declared after it
         for (Variant alias : aliases) {
             Constant constant = alias.constant();
-            out.append("    /**\n     * {@code ").append(constant.identifier()).append("} with aux ").append(alias.aux()).append(".\n     *\n     * @since ")
-                .append(constant.since()).append("\n     * @deprecated renamed to {@link #").append(constant.replacement()).append("}\n     */\n");
+            out.append("    /**\n     * {@code ").append(constant.identifier()).append("} with aux ").append(alias.aux()).append('.');
+            appendSince(out, constant.since(), "    ");
+            out.append("\n     * @deprecated renamed to {@link #").append(constant.replacement()).append("}\n     */\n");
             appendAnnotations(out, constant);
             out.append("    public static final BedrockItemVariant ").append(constant.name()).append(" = ").append(constant.replacement()).append(";\n\n");
         }

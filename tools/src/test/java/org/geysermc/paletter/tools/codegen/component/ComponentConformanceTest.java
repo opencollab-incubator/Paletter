@@ -67,6 +67,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * {@code build/reports/component-conformance-<protocol>.md}.
  */
 class ComponentConformanceTest {
+    /**
+     * Components that no capture has an accepted variant of besides the control one: BDS rejects every other
+     * variant in the content log ("not present in the Schema" = its schema does not know the component at all,
+     * "deprecated" = the member is rejected as deprecated). Their encoding is not verified: gaps to close before the full
+     * recapture. A component that is not listed must have a compared variant, so a new fully rejected one fails.
+     */
+    private static final Map<String, String> KNOWN_GAPS = Map.ofEntries(
+        Map.entry("block:minecraft:block_light_absorption", "not present in the Schema"),
+        Map.entry("block:minecraft:block_light_emission", "not present in the Schema"),
+        Map.entry("block:minecraft:bone_visibility", "not present in the Schema"),
+        Map.entry("block:minecraft:breathability", "deprecated"),
+        Map.entry("block:minecraft:destroy_time", "not present in the Schema"),
+        Map.entry("block:minecraft:explosion_resistance", "not present in the Schema"),
+        Map.entry("block:minecraft:queued_ticking", "deprecated"),
+        Map.entry("block:minecraft:random_ticking", "deprecated"),
+        Map.entry("block:minecraft:unit_cube", "deprecated"),
+        Map.entry("item:minecraft:chargeable", "not present in the Schema"),
+        Map.entry("item:minecraft:render_offsets", "not present in the Schema"),
+        Map.entry("item:minecraft:seed", "not present in the Schema"),
+        Map.entry("item:minecraft:use_duration", "not present in the Schema"),
+        Map.entry("item:minecraft:weapon", "not present in the Schema"));
     static final Path ROOT = Path.of(System.getProperty("paletter.root", ".."));
     static final Path MODEL = ROOT.resolve("data/model");
 
@@ -162,6 +183,7 @@ class ComponentConformanceTest {
 
         List<Outcome> outcomes = new ArrayList<>();
         Set<String> components = new TreeSet<>();
+        Set<String> compared = new TreeSet<>();
         int rejected = 0;
         for (JsonObject entry : recorded) {
             String identifier = entry.get("identifier").getAsString();
@@ -178,11 +200,17 @@ class ComponentConformanceTest {
                 continue;
             }
             outcomes.add(check(identifier, component, block, generator.definitionOf(component, identifier, entry.get("json")), expected, data));
+            // The control variant is accepted whatever the component is, so it says nothing of it; the base one sets the component
+            String role = entry.has("role") ? entry.get("role").getAsString() : "";
+            if (!role.equals("control")) {
+                compared.add(component);
+            }
         }
         Set<String> uncompared = new TreeSet<>(components);
-        outcomes.stream().filter(o -> !o.status().equals("missing")).forEach(o -> uncompared.remove(o.component()));
-        assertTrue(uncompared.isEmpty(), "protocol " + protocol + ": no variant of these components was both accepted by BDS and found in its data, "
-            + "so their generated encoding is not verified: " + uncompared);
+        uncompared.removeAll(compared);
+        uncompared.removeAll(KNOWN_GAPS.keySet());
+        assertTrue(uncompared.isEmpty(), "protocol " + protocol + ": no variant of these components, other than the control one, was both "
+            + "accepted by BDS and found in its data, so their generated encoding is not verified: " + uncompared);
 
         // Report
         Map<String, int[]> perComponent = new TreeMap<>();
