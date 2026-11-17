@@ -1,7 +1,7 @@
 package org.geysermc.paletter.internal.creative;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.geysermc.paletter.PaletteReport;
+import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeGroup;
@@ -27,14 +27,14 @@ import java.util.Map;
  */
 public final class RawConverter {
     private final CanonicalBlocks blocks;
-    private final PaletteReport report;
+    private final PaletteReportBuilder report;
 
-    private RawConverter(CanonicalBlocks blocks, PaletteReport report) {
+    private RawConverter(CanonicalBlocks blocks, PaletteReportBuilder report) {
         this.blocks = blocks;
         this.report = report;
     }
 
-    public static @NonNull CreativeLayout convert(@NonNull RawLayout raw, @NonNull BlockRegistry blocks, @NonNull PaletteReport report) {
+    public static @NonNull CreativeLayout convert(@NonNull RawLayout raw, @NonNull BlockRegistry blocks, @NonNull PaletteReportBuilder report) {
         RawConverter converter = new RawConverter(blocks.canonical(), report);
         Map<CreativeCategory, List<CreativeNode>> categories = new EnumMap<>(CreativeCategory.class);
         for (CreativeCategory category : CreativeCategory.values()) {

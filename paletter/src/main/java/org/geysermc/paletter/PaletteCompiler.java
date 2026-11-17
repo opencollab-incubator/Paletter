@@ -8,6 +8,7 @@ import org.geysermc.paletter.internal.shape.VoxelShapeCompiler;
 import org.geysermc.paletter.internal.shape.VoxelShapeStore;
 import org.geysermc.paletter.internal.block.BlockInterner;
 import org.geysermc.paletter.internal.block.BlockStates;
+import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.internal.Canonicals;
@@ -59,7 +60,7 @@ final class PaletteCompiler {
                            Supplier<BehaviourStore> behaviour, VoxelShapeStore shapeStore) {
         VanillaContent.Applied applied = content.apply(loaded);
         VanillaData data = applied.data();
-        PaletteReport report = new PaletteReport();
+        PaletteReportBuilder report = new PaletteReportBuilder();
         applied.gating().notes().forEach(note -> report.info("vanilla", note));
         BlockRegistry blocks = BlockRegistry.build(data, canonicalBlocks, interner)
             .withMissing(applied.gating().missingBlocks())
@@ -73,7 +74,7 @@ final class PaletteCompiler {
         CreativeContent creative = CreativeContent.compile(layout, items, report);
         prepareCanonical(blocks, null, items, null, report);
         // The experiment changes the vanilla voxel shapes of some versions: those palettes need the toggle
-        boolean shapeExperiment = content.requests(VoxelShapeStore.EXPERIMENT) && shapeStore.experimentMatters(data.version());
+        boolean shapeExperiment = content.requests(data.version(), VoxelShapeStore.EXPERIMENT) && shapeStore.experimentMatters(data.version());
         List<VoxelShapeStore.Entry> vanillaShapes = shapeStore.shapes(data.version(), shapeExperiment);
         if (vanillaShapes == null) {
             // BDS sends the voxel shapes packet to every client (protocol 924 and later), so a palette needs them
@@ -96,7 +97,7 @@ final class PaletteCompiler {
     private static Palette extendUnchecked(Palette parent, PaletteLayer layer) {
         VanillaData data = parent.vanillaData();
         String source = layer.id();
-        PaletteReport report = new PaletteReport();
+        PaletteReportBuilder report = new PaletteReportBuilder();
         report.addAll(parent.report());
 
         try {
@@ -292,7 +293,7 @@ final class PaletteCompiler {
      * report entries are already included).
      */
     private static void prepareCanonical(BlockRegistry blocks, BlockRegistry parentBlocks, ItemRegistry items, ItemRegistry parentItems,
-                                         PaletteReport report) {
+                                         PaletteReportBuilder report) {
         blocks.prepareCanonical();
         items.prepareCanonical();
         if (blocks != parentBlocks) {
@@ -300,6 +301,10 @@ final class PaletteCompiler {
             if (!missing.isEmpty() && (parentBlocks == null || !missing.equals(parentBlocks.missingCanonical()))) {
                 Set<String> names = new LinkedHashSet<>();
                 missing.forEach(state -> names.add(BlockStates.name(state)));
+                CanonicalBlocks canonicalBlocks = blocks.canonical();
+                // Content the generated constants do not know (a preview) has no handle yet
+                report.unknownBlocks(missing.stream().map(state -> canonicalBlocks.handle(canonicalBlocks.index(state)))
+                    .filter(Objects::nonNull).map(BedrockBlockState::type).toList());
                 report.info("canonical", missing.size() + " canonical block states have no " + blocks.version()
                     + " block and no fallback, and are sent as " + (blocks.defaultFallback() == null ? "air"
                     : blocks.defaultFallback().target().identifier()) + ": " + names);
@@ -307,6 +312,8 @@ final class PaletteCompiler {
         }
         List<ItemVariant> missingItems = items.missingCanonical();
         if (!missingItems.isEmpty() && (parentItems == null || !missingItems.equals(parentItems.missingCanonical()))) {
+            CanonicalItems canonicalItems = items.canonical();
+            report.unknownItems(missingItems.stream().map(variant -> canonicalItems.handle(canonicalItems.index(variant))).filter(Objects::nonNull).toList());
             report.info("canonical", missingItems.size() + " canonical item variants do not exist in " + items.version()
                 + " and have no fallback" + (items.defaultFallback() == null ? "" : ", and are sent as "
                 + items.defaultFallback().target().identifier()) + ": " + missingItems);

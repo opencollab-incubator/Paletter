@@ -3,7 +3,7 @@ package org.geysermc.paletter.internal.component;
 import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
-import org.geysermc.paletter.PaletteReport;
+import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.CollisionBox;
@@ -46,7 +46,7 @@ class TransformsTest {
     private static final Paletter PALETTER = Paletter.bundled();
     private static final VanillaData DATA = PALETTER.vanillaData(PALETTER.latest());
 
-    private final PaletteReport report = new PaletteReport();
+    private final PaletteReportBuilder report = new PaletteReportBuilder();
     private final WireContext ctx = WireContext.of(DATA, report, "test").subject("test:thing");
     /** The data version of the capture of BDS 1.26.52.3 (26.50), before the shapes that changed in 1.26.63.1. */
     private final WireContext ctx26_50 = at(ComponentIndex.BDS_1_26_52_3);

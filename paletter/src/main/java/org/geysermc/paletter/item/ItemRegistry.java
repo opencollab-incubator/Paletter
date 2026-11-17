@@ -22,7 +22,7 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
 import org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket;
 import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import org.geysermc.paletter.PaletteException;
-import org.geysermc.paletter.PaletteReport;
+import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.block.BlockResolution;
@@ -864,7 +864,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         /**
          * @return false if the item does not exist in this version, so there was nothing to override
          */
-        public boolean override(@NonNull String identifier, @NonNull Consumer<ItemOverride> modifier, @NonNull PaletteReport report,
+        public boolean override(@NonNull String identifier, @NonNull Consumer<ItemOverride> modifier, @NonNull PaletteReportBuilder report,
                                 @NonNull String source) {
             RegisteredItem original = get(identifier);
             if (original == null) {
@@ -882,7 +882,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             return true;
         }
 
-        public @NonNull RegisteredItem addCustom(@NonNull CustomItem custom, @NonNull PaletteReport report, @NonNull String source) {
+        public @NonNull RegisteredItem addCustom(@NonNull CustomItem custom, @NonNull PaletteReportBuilder report, @NonNull String source) {
             checkUnused(custom.identifier());
             int runtimeId = nextRuntimeId;
             NbtMap componentData = ItemCompiler.componentData(custom.identifier(), runtimeId, custom.components(), custom.menuCategory(),
@@ -900,7 +900,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         /**
          * @return the context components of this palette compile in: its version, and its items and blocks for descriptors
          */
-        private WireContext context(PaletteReport report, String source) {
+        private WireContext context(PaletteReportBuilder report, String source) {
             return WireContext.of(version, report, source, new WireContext.Registry() {
                 @Override
                 public boolean itemExists(@NonNull String identifier) {
@@ -919,7 +919,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         /**
          * Registers the item of a custom block, unless the block has none.
          */
-        public @Nullable RegisteredItem addBlockItem(@NonNull CustomBlock block, @NonNull PaletteReport report, @NonNull String source) {
+        public @Nullable RegisteredItem addBlockItem(@NonNull CustomBlock block, @NonNull PaletteReportBuilder report, @NonNull String source) {
             return addBlockItem(block, block.item(), report, source);
         }
 
@@ -929,7 +929,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
          * @return the item, or null for {@link CustomBlock.BlockItem#NONE}
          */
         public @Nullable RegisteredItem addBlockItem(@NonNull CustomBlock block, CustomBlock.@NonNull BlockItem blockItem,
-                                                  @NonNull PaletteReport report, @NonNull String source) {
+                                                  @NonNull PaletteReportBuilder report, @NonNull String source) {
             RegisteredItem item;
             switch (blockItem) {
                 case CustomBlock.BlockItem.None none -> {
@@ -979,7 +979,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             tagItems(tag).addAll(identifiers);
         }
 
-        public @NonNull ItemRegistry build(@NonNull CreativeLayout layout, @NonNull PaletteReport report) {
+        public @NonNull ItemRegistry build(@NonNull CreativeLayout layout, @NonNull PaletteReportBuilder report) {
             Map<String, Set<NbtMap>> creativeStates = new HashMap<>();
             Set<String> creativeWithoutBlock = new HashSet<>();
             layout.forEachStack(stack -> {

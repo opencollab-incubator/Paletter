@@ -85,7 +85,7 @@ class VoxelShapeConformanceTest {
     private static Palette palette(ShapeImport.Captured capture, boolean experiment, PaletteLayer layer) {
         Paletter.Builder builder = Paletter.builder();
         if (experiment) {
-            builder.vanilla(vanilla -> vanilla.experiments(VoxelShapeStore.EXPERIMENT));
+            builder.experiments(VoxelShapeStore.EXPERIMENT);
         }
         if (layer != null) {
             builder.layer(layer);

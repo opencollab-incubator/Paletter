@@ -109,7 +109,7 @@ class EncodeDecodeTest {
 
     @Test
     void nothingAtAllEncodesToAirAndDecodesToNull() {
-        Paletter none = Paletter.builder().fallbacks(Fallbacks.NONE).vanilla(vanilla -> vanilla.remove(BedrockItems.APPLE)).build();
+        Paletter none = Paletter.builder().fallbacks(Fallbacks.NONE).removeItems(BedrockItems.APPLE).build();
         assertEquals(ItemData.AIR, none.palette(OLDEST).encode(BedrockItemStack.of(BedrockItems.APPLE)));
         assertNull(latest().decode(ItemData.AIR));
     }

@@ -266,7 +266,7 @@ class LayerTest {
         assertTrue(boat.fallback());
         assertEquals("minecraft:pale_oak_boat", boat.definition().getIdentifier());
         // With the experiment enabled the content is there; in the newest version it is regular content
-        Palette enabled = Paletter.builder().vanilla(vanilla -> vanilla.experiments("y_2026_drop_3")).fallbacks(Fallbacks.builder()
+        Palette enabled = Paletter.builder().experiments("y_2026_drop_3").fallbacks(Fallbacks.builder()
             .block(BedrockBlocks.POPLAR_PLANKS, BlockFallback.of(BedrockBlocks.PALE_OAK_PLANKS)).build())
             .build().palette(PALETTER.version(OLDEST).protocolVersion());
         assertEquals("minecraft:poplar_planks", enabled.blocks().resolve(poplar).block().identifier());

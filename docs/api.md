@@ -75,10 +75,11 @@ Lookups are on `Palette`, because the palette is the version. `Palette#blockStat
 what exists as written in the palette's own version, `Lookup.RENAMED` also content of an older bundled version, mapped
 forward (renamed identifiers following `renames.txt`, changed state keys); only content that is unchanged is checked
 against the palette's version. Each returns null if the lookup does not accept the content, and
-`explainUnknown(..., Lookup)` says why. Content of the palette's layers is always accepted.
+`explainUnknown(..., Lookup)` says why, naming the keys that differ from the closest known state (a block state key or value,
+the aux of an item). Content of the palette's layers is always accepted.
 
 A palette sees exactly what it has: a lookup returns null for content newer than the palette's version, content removed
-with `VanillaContent.remove`, and content behind an experiment the palette does not enable. To get keys that resolve through
+with `Paletter.Builder#removeItems`, and content behind an experiment the palette does not enable. To get keys that resolve through
 fallbacks on every version, look them up on the newest palette, with the experiments you need (`allExperiments()` enables
 all), or use the constants (`BedrockBlocks`, `BedrockItems`). There is no lookup without a `Lookup`: a mapping written
 against 26.50 keeps working when 26.60 becomes the newest version by using `Lookup.RENAMED` on the newest palette.
@@ -211,9 +212,11 @@ An item fallback is an exact variant: `ItemFallback.of(BedrockItems.BIRCH_BOAT)`
 your decision. `./gradlew :tools:run --args="check-data"` lists what each older version lacks.
 
 Content that a Bedrock version only has behind an experiment toggle is missing by default.
-`Paletter.builder().vanilla(v -> v.experiments("y_2026_drop_3"))` enables it; `vanilla(v -> v.remove(...))` hides vanilla
-items. `vanilla(v -> v.allExperiments())` enables every toggle the version gates content with, except the voxel
-shape experiment; the palette lists them in `Palette#experiments()`.
+`Paletter.builder().experiments("y_2026_drop_3")` enables it in every version; `experiments(version, "y_2026_drop_3")`
+enables it in one version (a version that is not served makes `build()` throw a `PaletteException`). Every call adds to
+the earlier ones, like `removeItems(...)`, which hides vanilla items. `allExperiments()` enables every toggle
+the version gates content with, except the voxel shape experiment, which only comes with an explicit
+`experiments("voxel_shapes")`; the palette lists them in `Palette#experiments()`.
 
 ## Previews
 
@@ -293,4 +296,8 @@ Layers given to `Paletter.builder()` are startup configuration: a problem throws
 still be extended by another layer. Duplicate identifiers (blocks, items, voxel shapes) and duplicate block runtime ids
 are rejected, across layers and within one. `PaletteException#layer()` is the id of the layer and `#identifier()` the
 content it is about (null when it is not about one). The message names both, and the version. `PaletteReport` also
-lists what was adapted, replaced or dropped per version.
+lists what was adapted, replaced or dropped per version. A report never changes (a palette extended with a layer has a new
+one) and knows its `version()`; `unknownBlocks()` (block types) and `unknownItems()` (item variants, so a missing aux is
+exact) are the content of the newest data that the
+version lacks and no specific fallback covers (a default fallback does not count; content behind a disabled experiment or
+removed with `removeItems` is included).

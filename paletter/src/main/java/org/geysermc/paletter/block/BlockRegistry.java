@@ -16,7 +16,7 @@ import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
 import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import org.geysermc.paletter.PaletteException;
-import org.geysermc.paletter.PaletteReport;
+import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.VanillaData;
@@ -160,7 +160,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      */
     @Internal
     public @NonNull BlockRegistry withCustomBlocks(@NonNull VanillaData data, @NonNull Object key, @NonNull List<CustomBlock> additional,
-                                                  @NonNull PaletteReport report, @NonNull String source) {
+                                                  @NonNull PaletteReportBuilder report, @NonNull String source) {
         if (additional.isEmpty()) {
             return this;
         }
@@ -178,7 +178,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         List<BlockPropertyData> encoded = new ArrayList<>(all.size());
         WireContext context = WireContext.of(data, report, source);
         // The blocks already here were reported by their own layers: encode them again into a report nobody reads
-        WireContext earlier = WireContext.of(data, new PaletteReport(), source);
+        WireContext earlier = WireContext.of(data, new PaletteReportBuilder(), source);
         for (int i = 0; i < all.size(); i++) {
             CustomBlock block = all.get(i);
             WireContext blockContext = i < table.customBlocks.size() ? earlier : context;
@@ -515,7 +515,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * was not exact is recorded in the report.
      */
     @Internal
-    public @NonNull RegisteredBlockState[] table(@NonNull List<NbtMap> states, @NonNull RegisteredBlockState missing, @NonNull PaletteReport report) {
+    public @NonNull RegisteredBlockState[] table(@NonNull List<NbtMap> states, @NonNull RegisteredBlockState missing, @NonNull PaletteReportBuilder report) {
         RegisteredBlockState[] result = new RegisteredBlockState[states.size()];
         Map<BlockResolution.Kind, Integer> counts = new LinkedHashMap<>();
         for (int i = 0; i < result.length; i++) {

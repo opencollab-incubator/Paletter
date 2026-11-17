@@ -238,17 +238,15 @@ class ResilienceTest {
     }
 
     @Test
-    void theBuiltPaletterDoesNotShareItsVanillaContentWithTheBuilder() {
-        VanillaContent[] leaked = new VanillaContent[1];
-        Paletter.Builder builder = Paletter.builder().vanilla(content -> leaked[0] = content);
+    void theBuiltPaletterDoesNotShareItsExperimentsWithTheBuilder() {
+        Paletter.Builder builder = Paletter.builder();
         Paletter paletter = builder.build();
         int protocol = LATEST.protocolVersion();
         assertFalse(Palettes.palette(protocol).experiments().isEmpty(), "the latest version has content behind a toggle");
         assertEquals(List.of(), paletter.palette(protocol).experiments());
 
-        // Changing the builder's content (through the leaked reference, or the builder) after build() changes nothing
-        leaked[0].experiments(Palettes.EXPERIMENTS);
-        builder.vanilla(content -> content.experiments(Palettes.EXPERIMENTS));
+        // Changing the builder after build() changes nothing
+        builder.experiments(Palettes.EXPERIMENTS);
         assertEquals(List.of(), paletter.palette(protocol).experiments());
         assertEquals(List.of(), paletter.vanilla(LATEST).experiments());
         // A second build() takes the changes

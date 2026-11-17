@@ -208,6 +208,9 @@ public record org.geysermc.paletter.PaletteLayer$Override {
 
 public final class org.geysermc.paletter.PaletteReport {
     public java.util.List<org.geysermc.paletter.PaletteReport$Entry> entries()
+    public java.util.Set<org.geysermc.paletter.vanilla.BedrockBlockType> unknownBlocks()
+    public java.util.Set<org.geysermc.paletter.vanilla.BedrockItemVariant> unknownItems()
+    public org.geysermc.paletter.data.DataVersion version()
     public java.util.List<org.geysermc.paletter.PaletteReport$Entry> warnings()
 }
 
@@ -245,20 +248,17 @@ public final class org.geysermc.paletter.Paletter {
 }
 
 public static final class org.geysermc.paletter.Paletter$Builder {
+    public org.geysermc.paletter.Paletter$Builder allExperiments()
     public org.geysermc.paletter.Paletter build()
     public org.geysermc.paletter.Paletter$Builder creativeOrdering(org.geysermc.paletter.creative.CreativeOrdering)
     public org.geysermc.paletter.Paletter$Builder data(org.geysermc.paletter.data.PaletteDataSource)
+    public org.geysermc.paletter.Paletter$Builder experiments(org.geysermc.paletter.data.DataVersion, java.lang.String...)
+    public org.geysermc.paletter.Paletter$Builder experiments(java.lang.String...)
     public org.geysermc.paletter.Paletter$Builder fallbacks(org.geysermc.paletter.Fallbacks)
     public org.geysermc.paletter.Paletter$Builder layer(org.geysermc.paletter.PaletteLayer)
+    public org.geysermc.paletter.Paletter$Builder removeItems(org.geysermc.paletter.vanilla.BedrockItemType...)
     public org.geysermc.paletter.Paletter$Builder reports(java.util.function.Consumer<org.geysermc.paletter.PaletteReport>)
-    public org.geysermc.paletter.Paletter$Builder vanilla(java.util.function.Consumer<org.geysermc.paletter.VanillaContent>)
     public org.geysermc.paletter.Paletter$Builder versions(java.util.function.Predicate<org.geysermc.paletter.data.DataVersion>)
-}
-
-public final class org.geysermc.paletter.VanillaContent {
-    public org.geysermc.paletter.VanillaContent allExperiments()
-    public org.geysermc.paletter.VanillaContent experiments(java.lang.String...)
-    public org.geysermc.paletter.VanillaContent remove(org.geysermc.paletter.vanilla.BedrockItemType)
 }
 
 public @interface org.geysermc.paletter.annotation.BedrockFormat {

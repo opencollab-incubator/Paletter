@@ -1,6 +1,7 @@
 package org.geysermc.paletter;
 
 import org.geysermc.paletter.annotation.Internal;
+import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.internal.behaviour.Behaviour;
 import org.geysermc.paletter.internal.behaviour.BehaviourStore;
 import org.geysermc.paletter.internal.Canonicals;
@@ -56,6 +57,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.WeakHashMap;
 import java.util.function.Supplier;
 
@@ -115,7 +117,7 @@ public final class Palette {
     private final @Nullable Palette parent;
 
     Palette(VanillaData data, List<PaletteLayer> layers, BlockRegistry blocks, ItemRegistry items,
-            CreativeLayout creativeLayout, CreativeContent creative, PaletteReport report, CreativeOrdering ordering,
+            CreativeLayout creativeLayout, CreativeContent creative, PaletteReportBuilder report, CreativeOrdering ordering,
             VanillaContent.ExperimentGating gating, Supplier<BehaviourStore> behaviourStore, Shapes shapes, @Nullable Palette parent) {
         this.parent = parent;
         this.parentCanonicalSize = parent == null ? 0 : parent.blocks.canonical().size();
@@ -129,7 +131,7 @@ public final class Palette {
         this.items = items;
         this.creativeLayout = creativeLayout;
         this.creative = creative;
-        this.report = report;
+        this.report = report.build(data.version());
         this.ordering = ordering;
         // Last: the registry may be asked for the behaviour of this palette from now on
         items.bind(this);
@@ -149,7 +151,7 @@ public final class Palette {
     /**
      * @return this palette with another report, sharing everything else
      */
-    Palette withReport(PaletteReport report) {
+    Palette withReport(PaletteReportBuilder report) {
         return new Palette(data, layers, blocks, items, creativeLayout, creative, report, ordering, gating, behaviourStore, shapes, this);
     }
 
@@ -393,8 +395,8 @@ public final class Palette {
         String name = BlockStates.name(state);
         String toggle = gating.disabledBlocks().get(name);
         return blockState(state, lookup) != null ? null
-            : refused(name, lookup, toggle != null ? disabled(toggle)
-                : reason(Canonicals.forwardBlock(blocks.canonical(), state)));
+            : refused(name, lookup, toggle != null ? disabled(toggle) : null,
+                Canonicals.forwardBlock(blocks.canonical(), state), () -> differingKeys(state));
     }
 
     /**
@@ -403,26 +405,82 @@ public final class Palette {
      */
     public @Nullable String explainUnknown(@NonNull String identifier, int aux, @NonNull Lookup lookup) {
         String toggle = gating.disabledItems().get(identifier);
-        String unknown = toggle != null ? disabled(toggle)
-            : gating.removed().contains(identifier) ? "it was removed by VanillaContent.remove"
-            : reason(Canonicals.forwardItem(items.canonical(), ItemVariant.of(identifier, aux)));
-        return itemVariant(identifier, aux, lookup) != null ? null : refused(identifier + "@" + aux, lookup, unknown);
+        String definite = toggle != null ? disabled(toggle)
+            : gating.removed().contains(identifier) ? "it was removed by Paletter.Builder.removeItems" : null;
+        return itemVariant(identifier, aux, lookup) != null ? null
+            : refused(identifier + "@" + aux, lookup, definite, Canonicals.forwardItem(items.canonical(), ItemVariant.of(identifier, aux)),
+                () -> data.items().stream().noneMatch(item -> item.identifier().equals(identifier))
+                    ? "; no item " + identifier + " in " + data.version() : "; the item exists, but not with aux " + aux);
     }
 
     private static String disabled(String toggle) {
         return "it is behind the disabled experiment " + toggle;
     }
 
-    private static @Nullable String reason(Forwarding forwarding) {
-        return forwarding.known() ? null : forwarding.detail();
+    /**
+     * @param definite why the content is missing, if that is the whole story (a disabled experiment, a removed item)
+     * @param forwarding what the newest version has instead: no equivalent at all is the whole story, a changed or
+     *                   renamed equivalent is said before what differs in this version's data
+     * @param notInData what to add when the content is simply not in the data of the version
+     */
+    private String refused(String content, Lookup lookup, @Nullable String definite, Forwarding forwarding, Supplier<String> notInData) {
+        String why = definite;
+        if (why == null && !forwarding.known()) {
+            why = forwarding.detail();
+        }
+        if (why == null) {
+            boolean changed = forwarding.kind() != Forwarding.Kind.EXACT && !forwarding.detail().isEmpty();
+            why = (changed ? forwarding.detail() + "; " : "") + "it is not in the data of " + data.version() + notInData.get();
+        }
+        return content + " is not accepted by the lookup (" + lookup + "): " + why;
     }
 
     /**
-     * @param unknown why there is no equivalent, or null if there is one the lookup does not accept
+     * @return which keys of a block state differ from the closest state of the same block in this palette's version
      */
-    private String refused(String content, Lookup lookup, @Nullable String unknown) {
-        return content + " is not accepted by the lookup (" + lookup + "): "
-            + (unknown != null ? unknown : "it is not in the data of " + data.version());
+    private String differingKeys(NbtMap state) {
+        String name = BlockStates.name(state);
+        NbtMap wanted = BlockStates.states(state);
+        List<String> fewest = null;
+        for (NbtMap known : data.blockStates()) {
+            if (!BlockStates.name(known).equals(name)) {
+                continue;
+            }
+            List<String> differing = new ArrayList<>();
+            NbtMap values = BlockStates.states(known);
+            for (String key : new TreeSet<>(union(wanted.keySet(), values.keySet()))) {
+                Object want = wanted.get(key);
+                Object have = values.get(key);
+                if (have == null) {
+                    differing.add("key " + key + " is not a state of " + name);
+                } else if (want == null) {
+                    differing.add("key " + key + " is not set (states have e.g. " + have + ")");
+                } else if (!comparable(want).equals(comparable(have))) {
+                    differing.add("key " + key + " is " + want + ", the closest known state has " + have);
+                }
+            }
+            if (fewest == null || differing.size() < fewest.size()) {
+                fewest = differing;
+            }
+        }
+        if (fewest == null) {
+            return "; no block " + name + " in " + data.version();
+        }
+        return fewest.isEmpty() ? "" : "; compared with the closest known state of " + name + ": " + String.join(", ", fewest);
+    }
+
+    /** A state value as a number, so a byte, an int and a boolean of the same value are equal. */
+    private static Object comparable(Object value) {
+        if (value instanceof Boolean flag) {
+            return flag ? 1L : 0L;
+        }
+        return value instanceof Number number ? (Object) number.longValue() : value;
+    }
+
+    private static Set<String> union(Set<String> first, Set<String> second) {
+        Set<String> result = new HashSet<>(first);
+        result.addAll(second);
+        return result;
     }
 
     /** The block states of this palette's version, as written in its data. Shared with the palette this one extends. */
@@ -905,9 +963,9 @@ public final class Palette {
     }
 
     /**
-     * The experiment toggles this palette needs, because the Paletter enabled them ({@code vanilla(v -> v.experiments(...))})
+     * The experiment toggles this palette needs, because the Paletter enabled them ({@code experiments(...)})
      * and this version has content behind them: {@link #applyTo(StartGamePacket)} sends them. Empty by default, the
-     * content behind a toggle is missing then (see {@link VanillaContent#experiments}); {@link VanillaContent#allExperiments()}
+     * content behind a toggle is missing then (see {@link Paletter.Builder#experiments(String...)}); {@link Paletter.Builder#allExperiments()}
      * enables all of them.
      *
      * @return the toggle ids, sorted

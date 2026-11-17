@@ -78,7 +78,7 @@ runtime id and components; these implement Cloudburst's `ItemDefinition` and `Bl
 where a packet needs it, through `Palette#encode` and `Palette#decode`.
 
 **Paletter, palettes and layers.** `Paletter` holds the settings shared by every version: the data source, fallbacks,
-which vanilla content and experiments are enabled, creative ordering and the global layers. `paletter.palette(...)`
+which vanilla items are removed, which experiments are enabled, creative ordering and the global layers. `paletter.palette(...)`
 compiles one immutable, thread safe `Palette` per data version and caches it. A `PaletteLayer` is content only (custom
 items and blocks, overrides of vanilla items, creative edits, tags, voxel shapes) and compiles against every version.
 `palette.extend(layer)` adds a short-lived layer, for example per session, on top of a shared palette; anything the

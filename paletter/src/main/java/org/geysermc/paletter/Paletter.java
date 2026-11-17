@@ -5,6 +5,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
 import org.geysermc.paletter.annotation.Internal;
+import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.internal.block.BlockInterner;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.internal.CanonicalBlocks;
@@ -70,6 +71,12 @@ public final class Paletter {
         this.versions = source.versions().stream().filter(builder.versions).toList();
         this.fallbacks = builder.fallbacks;
         this.vanillaContent = builder.vanillaContent.copy();
+        for (DataVersion version : vanillaContent.experimentVersions()) {
+            if (!versions.contains(version)) {
+                throw new PaletteException("Experiments are enabled for " + version + ", which this Paletter does not serve (served: "
+                    + versions + ")");
+            }
+        }
         this.creativeOrdering = builder.creativeOrdering;
         this.reports = builder.reports;
         this.globalLayers = List.copyOf(builder.layers);
@@ -271,7 +278,7 @@ public final class Paletter {
             boolean[] created = {false};
             Palette noted = newerThanData.computeIfAbsent(palette, p -> {
                 created[0] = true;
-                PaletteReport report = new PaletteReport();
+                PaletteReportBuilder report = new PaletteReportBuilder();
                 report.addAll(p.report());
                 report.info("paletter", message);
                 return p.withReport(report);
@@ -279,9 +286,9 @@ public final class Paletter {
             if (created[0]) {
                 // Reported outside the computation, so the consumer may use this Paletter; only the note: the rest of
                 // the report went to the consumer with the palette itself
-                PaletteReport note = new PaletteReport();
+                PaletteReportBuilder note = new PaletteReportBuilder();
                 note.info("paletter", message);
-                reports.accept(note);
+                reports.accept(note.build(palette.version()));
             }
             return noted;
         }
@@ -370,10 +377,54 @@ public final class Paletter {
         }
 
         /**
-         * Selects which vanilla content exists. The content is only valid inside the consumer.
+         * Enables experiment toggles (e.g. {@code y_2026_drop_4}) in every version. By default none is enabled: the items
+         * and blocks a version has only behind a toggle are missing in its palette, so the {@link Fallbacks} apply to
+         * them like to content the version lacks altogether (and {@code force} is only for content that is really there).
+         * An enabled toggle makes its content present in the versions that gate it; those palettes list the toggle in
+         * {@link Palette#experiments()} and send it with
+         * {@link Palette#applyTo(org.cloudburstmc.protocol.bedrock.packet.StartGamePacket)}. A palette tells the toggle of a
+         * piece of content with {@code Palette#experimentOf}, and its report has a line for every toggle left disabled.
+         * Every call adds to the toggles of the earlier ones.
+         *
+         * @param toggles the toggle ids, as BDS names them
          */
-        public @NonNull Builder vanilla(@NonNull Consumer<VanillaContent> content) {
-            Objects.requireNonNull(content).accept(vanillaContent);
+        public @NonNull Builder experiments(@NonNull String... toggles) {
+            vanillaContent.experiments(toggles);
+            return this;
+        }
+
+        /**
+         * Enables experiment toggles in one version only, in addition to those of {@link #experiments(String...)}.
+         * The version must be one this instance serves, or {@link #build()} throws a {@link PaletteException}.
+         * Every call adds to the toggles of the earlier ones. Toggles that gate nothing in a version are ignored there; for
+         * a toggle enabled for one version the palette's report says so.
+         *
+         * @param version the data version
+         * @param toggles the toggle ids, as BDS names them
+         */
+        public @NonNull Builder experiments(@NonNull DataVersion version, @NonNull String... toggles) {
+            vanillaContent.experiments(Objects.requireNonNull(version), toggles);
+            return this;
+        }
+
+        /**
+         * Enables every experiment toggle each version gates content with, except the voxel shape experiment, which
+         * changes how the client treats shapes instead of adding content. The content behind the toggles is present, as in
+         * the raw data of the version; the palettes list the toggles in {@link Palette#experiments()}. Lookups with a
+         * {@link Lookup} see that content then. Adds to {@link #experiments(String...)} (the union is enabled). The voxel
+         * shape experiment is enabled only by naming it: {@code experiments("voxel_shapes")}.
+         */
+        public @NonNull Builder allExperiments() {
+            vanillaContent.allExperiments();
+            return this;
+        }
+
+        /**
+         * Does not register these vanilla items: they have no definition and no creative entry, and resolve through the
+         * {@link Fallbacks}. Blocks are never removed, the client's block palette has to match.
+         */
+        public @NonNull Builder removeItems(@NonNull BedrockItemType... items) {
+            vanillaContent.remove(items);
             return this;
         }
 
@@ -389,7 +440,8 @@ public final class Paletter {
 
         /**
          * @param reports called once for each palette compiled (with this instance's layers applied), with its report, and
-         *                once with a one entry report for a palette served for a protocol newer than the newest data.
+         *                once with a one entry report for a palette served for a protocol newer than the newest data (that
+         *                note has no {@code unknownBlocks} or {@code unknownItems}).
          *                Called outside any internal lock: it may use this Paletter
          */
         public @NonNull Builder reports(@NonNull Consumer<PaletteReport> reports) {
