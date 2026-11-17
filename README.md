@@ -123,7 +123,7 @@ Paletter is at 1.0.0-SNAPSHOT, not released yet. Until the first release the API
 already tracks API changes (`paletter/api/paletter.api`), so every change is visible in review.
 
 Bundled versions ([versions.txt](paletter/src/main/resources/paletter/versions.txt)): 26.30, 26.40, 26.50, 26.60 and
-the 26.70 preview (served only with `-Dpaletter.previews=true`). Known gaps:
+the 26.70 preview (served only with `Paletter.builder().previews(true)`). Known gaps:
 
 - Biome definitions, entity identifiers and other data that is not about items or blocks are out of scope.
 - `MiningSpeed`, `FrameCount`, `RenderOffsets` and `OnPlayerPlacing` are hand-written wire-only components that Geyser

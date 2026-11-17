@@ -281,7 +281,7 @@ build without captures in `data/bds` and a machine of another BDS platform than 
 ### Previews
 
 Paletter bundles the newest preview next to the releases. `update --channel preview` imports it like a release, marked
-`preview` in `versions.txt`; the library serves it only when `paletter.previews` is `true`. Generated API that only the
+`preview` in `versions.txt`; the library serves it only to a Paletter built with `Paletter.builder().previews(true)`. Generated API that only the
 preview has (constants, states, enum values, components and fields BDS releases reject) is marked
 `@SincePreview("<version>")` and is kept out of `constants-history.json`. Importing a newer preview, or the preview's
 release, drops the bundled preview and its `data/bds/<build>` captures. Release runs never compare against a preview's

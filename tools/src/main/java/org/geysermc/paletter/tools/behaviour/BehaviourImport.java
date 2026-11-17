@@ -84,6 +84,9 @@ public final class BehaviourImport {
         PaletteDataSource source = PaletteDataSource.directory(resources);
         List<Bundled> result = new ArrayList<>();
         for (DataVersion version : source.versions()) {
+            if (version.isPreview()) {
+                continue;
+            }
             VanillaData data = source.load(version);
             Map<Integer, NbtMap> states = new LinkedHashMap<>();
             data.blockStates().forEach(state -> states.put(BlockHashes.hash(state), state));

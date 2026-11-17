@@ -222,9 +222,9 @@ class VanillaConstantsTest {
     private static Map<String, String> constants(Class<?> type) throws IllegalAccessException {
         Map<String, String> constants = new HashMap<>();
         for (Field field : type.getFields()) {
-            // Deprecated constants are not in the data; preview constants only with previews loaded
+            // Deprecated constants are not in the data; preview constants are not in the data of a release
             if (!Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(Deprecated.class)
-                || field.isAnnotationPresent(SincePreview.class) && !Boolean.getBoolean("paletter.previews")) {
+                || field.isAnnotationPresent(SincePreview.class)) {
                 continue;
             }
             Object value = field.get(null);

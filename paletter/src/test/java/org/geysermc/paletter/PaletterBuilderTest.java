@@ -76,7 +76,7 @@ class PaletterBuilderTest {
             copy(version.name() + ".nbt", directory);
         }
         PaletteDataSource source = PaletteDataSource.directory(directory);
-        assertEquals(PALETTER.versions(), source.versions());
+        assertEquals(PALETTER.versions(), source.versions().stream().filter(version -> !version.isPreview()).toList());
         Paletter paletter = Paletter.builder().data(source).build();
         Palette expected = PALETTER.palette(PALETTER.latest().protocolVersion());
         Palette actual = paletter.palette(PALETTER.latest().protocolVersion());

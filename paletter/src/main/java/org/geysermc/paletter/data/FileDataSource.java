@@ -28,8 +28,7 @@ import java.util.Map;
 
 /**
  * Reads data in the bundled format from a set of files: {@code versions.txt} lists one
- * {@code <name> <protocol> [preview]} line per version (preview versions are skipped unless the system property
- * {@code paletter.previews} is {@code true}), and each version is stored in {@code <name>.nbt}
+ * {@code <name> <protocol> [preview]} line per version (a {@link DataVersion#isPreview() preview}), and each version is stored in {@code <name>.nbt}
  * (written by the generator, see {@link PaletteDataCodec}). Item components and data driven blocks are stored once with
  * their version ranges in {@code properties.nbt} (see {@link PropertyStore}), behaviour values in
  * {@code behaviour.nbt} (see {@link BehaviourStore}), the vanilla voxel shapes in {@code voxel_shapes.nbt} (see
@@ -43,8 +42,6 @@ final class FileDataSource implements PaletteDataSource {
         file -> FileDataSource.class.getResourceAsStream("/paletter/" + file), "the library jar");
     private final Opener opener;
     private final String origin;
-    /** Set to {@code true} to also load versions marked {@code preview} in {@code versions.txt}. */
-    static final String PREVIEWS_PROPERTY = "paletter.previews";
 
     private volatile List<DataVersion> versions;
     private volatile Map<String, List<VerifiedBuild>> verifiedBuilds;
@@ -90,11 +87,8 @@ final class FileDataSource implements PaletteDataSource {
                     continue;
                 }
                 String[] parts = line.split("\\s+");
-                // "<name> <protocol> preview": data of a preview build, only loaded on request
-                if (parts.length > 2 && parts[2].equals("preview") && !Boolean.getBoolean(PREVIEWS_PROPERTY)) {
-                    continue;
-                }
-                versions.add(new DataVersion(parts[0], Integer.parseInt(parts[1])));
+                // "<name> <protocol> preview": data of a preview build
+                versions.add(new DataVersion(parts[0], Integer.parseInt(parts[1]), parts.length > 2 && parts[2].equals("preview")));
             }
             Collections.sort(versions);
             return List.copyOf(versions);
