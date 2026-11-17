@@ -18,7 +18,7 @@ import org.geysermc.paletter.tools.model.addon.AddonWriter;
 import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.infer.Feedback;
 import org.geysermc.paletter.tools.model.infer.Wire;
-import org.geysermc.paletter.tools.model.infer.Wire.Leaf;
+import org.geysermc.paletter.tools.model.rule.Leaf;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.paletter.tools.data.Nbt;

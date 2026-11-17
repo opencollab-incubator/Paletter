@@ -7,7 +7,7 @@ import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.Model.Component;
 import org.geysermc.paletter.tools.model.Model.Field;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
-import org.geysermc.paletter.tools.model.infer.Wire.Leaf;
+import org.geysermc.paletter.tools.model.rule.Leaf;
 
 import java.util.ArrayList;
 import java.util.List;

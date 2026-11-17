@@ -18,6 +18,7 @@ import org.geysermc.paletter.tools.codegen.component.BehaviourKeys.Key;
 import org.geysermc.paletter.tools.codegen.component.BehaviourKeys.Leaf;
 import org.geysermc.paletter.tools.codegen.component.BehaviourKeys.Owner;
 import org.geysermc.paletter.tools.codegen.component.ComponentGenerator.GenerationException;
+import org.geysermc.paletter.tools.model.rule.Rule;
 
 import javax.lang.model.element.Modifier;
 import java.util.ArrayList;
@@ -361,7 +362,7 @@ final class BehaviourSource {
                 rules.addAll(rules(window.getAsJsonObject("fields").getAsJsonObject(leaf.field())));
             }
             List<JsonObject> onto = rules.stream().filter(r -> r.has("wire") && (leaf.leaf() == null
-                ? ComponentGenerator.VALUE_KINDS.contains(r.get("kind").getAsString()) : r.get("wire").getAsString().equals(leaf.leaf()))).toList();
+                ? Rule.of(r).writesValue() : r.get("wire").getAsString().equals(leaf.leaf()))).toList();
             if (onto.isEmpty()) {
                 throw new GenerationException(where + ": mappings.json has no " + (leaf.leaf() == null ? "value rule" : "rule") + " of " + id + " "
                     + (leaf.field().isEmpty() ? "(value forms)" : leaf.field()) + (leaf.leaf() == null ? "" : " onto " + leaf.leaf())

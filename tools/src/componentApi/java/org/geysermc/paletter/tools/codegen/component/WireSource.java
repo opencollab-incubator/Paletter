@@ -3,7 +3,6 @@ package org.geysermc.paletter.tools.codegen.component;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.palantir.javapoet.AnnotationSpec;
 import com.palantir.javapoet.ClassName;
 import com.palantir.javapoet.CodeBlock;
@@ -26,6 +25,11 @@ import org.geysermc.paletter.tools.codegen.component.ApiModel.Type;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Vec3;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Window;
 import org.geysermc.paletter.tools.codegen.component.ComponentGenerator.GenerationException;
+import org.geysermc.paletter.tools.model.rule.Constant;
+import org.geysermc.paletter.tools.model.rule.Emitter;
+import org.geysermc.paletter.tools.model.rule.EmptyMap;
+import org.geysermc.paletter.tools.model.rule.Identity;
+import org.geysermc.paletter.tools.model.rule.Rule;
 
 import javax.lang.model.element.Modifier;
 import java.util.ArrayList;
@@ -339,13 +343,11 @@ final class WireSource {
     private void transformedLeaves(ObjType o, Window w, boolean inside, Set<String> leaves) {
         for (Field f : fieldsWithAlternatives(o)) {
             boolean transformed = inside || f.transform != null;
-            JsonObject m = transformed ? ComponentGenerator.mappingOf(w, f) : null;
-            if (m != null && m.has("rules")) {
-                for (JsonElement r : m.getAsJsonArray("rules")) {
-                    JsonObject rule = r.getAsJsonObject();
+            if (transformed) {
+                for (Rule rule : Rule.all(ComponentGenerator.mappingOf(w, f))) {
                     // not what only the field's presence switches: such a constant can be another field's leaf
-                    if (!rule.get("kind").getAsString().equals("constant") || rule.has("mapEntry")) {
-                        leaves.add(strip(rule.get("wire").getAsString()));
+                    if (!(rule instanceof Constant) || rule.mapEntry) {
+                        leaves.add(strip(rule.wire));
                     }
                 }
             }
@@ -369,13 +371,10 @@ final class WireSource {
     private void collectOwned(ObjType o, boolean transformed) {
         for (Field f : fieldsWithAlternatives(o)) {
             if (transformed && f.transform != null) {
-                JsonObject m = ComponentGenerator.mappingOf(window, f);
-                if (m != null && m.has("rules")) {
-                    for (JsonElement r : m.getAsJsonArray("rules")) {
-                        String wire = strip(r.getAsJsonObject().get("wire").getAsString());
-                        owned.add(wire);
-                        ownerOf.putIfAbsent(wire, f);
-                    }
+                for (Rule r : Rule.all(ComponentGenerator.mappingOf(window, f))) {
+                    String wire = strip(r.wire);
+                    owned.add(wire);
+                    ownerOf.putIfAbsent(wire, f);
                 }
                 for (String wire : ComponentGenerator.whenAbsent(window, f).keySet()) {
                     owned.add(strip(wire));
@@ -384,10 +383,10 @@ final class WireSource {
             }
             ObjType child = ComponentGenerator.objectOf(f.type);
             if (!transformed) {
-                for (JsonObject r : rules(f)) {
-                    if (ComponentGenerator.VALUE_KINDS.contains(r.get("kind").getAsString())) {
-                        owned.add(strip(r.get("wire").getAsString()));
-                        ownerOf.putIfAbsent(strip(r.get("wire").getAsString()), f.alternativeOf != null ? f.alternativeOf : f);
+                for (Rule r : rules(f)) {
+                    if (r.writesValue()) {
+                        owned.add(strip(r.wire));
+                        ownerOf.putIfAbsent(strip(r.wire), f.alternativeOf != null ? f.alternativeOf : f);
                     }
                 }
                 if (child != null && f.type instanceof ListOf) {
@@ -411,25 +410,21 @@ final class WireSource {
         return wire;
     }
 
-    private List<JsonObject> rules(Field f) {
-        List<JsonObject> rules = new ArrayList<>(ComponentGenerator.rulesOf(window, f));
+    private List<Rule> rules(Field f) {
+        List<Rule> rules = new ArrayList<>(ComponentGenerator.rulesOf(window, f));
         if (f.type instanceof Vec3) {
             // The x/y/z children of the object form write the same leaves as the elements of the array form
             for (String axis : List.of("x", "y", "z")) {
-                JsonObject m = window.field(f.path + "." + axis);
-                if (m != null && m.has("rules")) {
-                    for (JsonElement r : m.getAsJsonArray("rules")) {
-                        JsonObject copy = r.getAsJsonObject().deepCopy();
-                        if (ComponentGenerator.VALUE_KINDS.contains(copy.get("kind").getAsString())) {
-                            copy.addProperty("element", List.of("x", "y", "z").indexOf(axis));
-                            rules.add(copy);
-                        }
+                for (Rule r : Rule.all(window.field(f.path + "." + axis))) {
+                    if (r.writesValue()) {
+                        r.element = List.of("x", "y", "z").indexOf(axis);
+                        rules.add(r);
                     }
                 }
             }
-            Map<String, JsonObject> byLeaf = new LinkedHashMap<>();
-            for (JsonObject r : rules) {
-                byLeaf.putIfAbsent(r.get("wire").getAsString() + " " + r.get("kind").getAsString(), r);
+            Map<String, Rule> byLeaf = new LinkedHashMap<>();
+            for (Rule r : rules) {
+                byLeaf.putIfAbsent(r.wire + " " + r.kind(), r);
             }
             rules = new ArrayList<>(byLeaf.values());
         }
@@ -491,25 +486,19 @@ final class WireSource {
     }
 
     private void present(Field f, String var, String node, String prefix) {
-        List<JsonObject> rules = rules(f);
+        List<Rule> rules = rules(f);
         boolean form = f.form != null;
         boolean mapped = false;
-        for (JsonObject r : rules) {
-            String kind = r.get("kind").getAsString();
-            String wire = strip(r.get("wire").getAsString());
-            if (kind.equals("constant")) {
+        for (Rule r : rules) {
+            String wire = strip(r.wire);
+            if (r instanceof Constant) {
+                // what the field's presence switches on, where no other field owns the leaf
                 if ((form || !owned.contains(wire)) && placeable(wire, prefix)) {
-                    String rel = relative(wire, prefix);
-                    String v = r.get("value").getAsString();
-                    if (v.equals("<not sent>")) {
-                        b.addStatement("$N.remove($S)", node, rel);
-                    } else if (r.has("nbt")) {
-                        put(node, rel, literal(v + " (" + r.get("nbt").getAsString() + ")"));
-                    }
+                    r.emit(new LeafEmitter(f, f.type, CodeBlock.of("$N", var), node, relative(wire, prefix), false));
                 }
                 continue;
             }
-            if (!ComponentGenerator.VALUE_KINDS.contains(kind)) {
+            if (!r.writesValue()) {
                 continue;
             }
             mapped = true;
@@ -544,7 +533,7 @@ final class WireSource {
             b.endControlFlow();
             return;
         }
-        if (!mapped && rules.stream().noneMatch(x -> x.get("kind").getAsString().equals("constant"))) {
+        if (!mapped && rules.stream().noneMatch(x -> x instanceof Constant)) {
             JsonObject m = ComponentGenerator.mappingOf(window, f);
             String status = m == null ? "none" : m.get("status").getAsString();
             if (!status.equals("dropped")) {
@@ -606,8 +595,8 @@ final class WireSource {
     private List<String> allWires(ObjType o) {
         List<String> wires = new ArrayList<>();
         for (Field f : fieldsWithAlternatives(o)) {
-            for (JsonObject r : ComponentGenerator.rulesOf(window, f)) {
-                wires.add(strip(r.get("wire").getAsString()));
+            for (Rule r : ComponentGenerator.rulesOf(window, f)) {
+                wires.add(strip(r.wire));
             }
             ObjType child = ComponentGenerator.objectOf(f.type);
             if (child != null) {
@@ -629,21 +618,19 @@ final class WireSource {
         return prefix.isEmpty() ? wire : wire.substring(prefix.length() + 1);
     }
 
-    private void value(Field f, JsonObject r, String var, String node, String prefix, String wire) {
-        String kind = r.get("kind").getAsString();
-        String nbt = r.has("nbt") ? r.get("nbt").getAsString() : null;
+    private void value(Field f, Rule r, String var, String node, String prefix, String wire) {
         Type t = f.type;
         CodeBlock expr = CodeBlock.of("$N", var);
-        // A whole list of scalars: the rule describes one element (wire ends with [])
-        if (t instanceof ListOf l && !(l.element() instanceof ObjRef) && wire.endsWith("[]") && kind.equals("identity")) {
+        // A rule of every element of a list leaf (wire ends with []) onto a list of scalars or a vector: the leaf is the list
+        if (r.wholeList() && wire.endsWith("[]") && (t instanceof ListOf l && !(l.element() instanceof ObjRef) || t instanceof Vec3)) {
             String listWire = wire.substring(0, wire.length() - 2);
             checkPlaceable(f, listWire, prefix);
-            put(node, relative(listWire, prefix), listValue(l.element(), nbt, var));
+            r.emit(new LeafEmitter(f, t, expr, node, relative(listWire, prefix), true));
             return;
         }
         // A list of scalars sent as a list of objects that hold each value under one key ({name})
         int element = wire.lastIndexOf("[].");
-        if (t instanceof ListOf l && !(l.element() instanceof ObjRef) && kind.equals("identity") && element > 0
+        if (t instanceof ListOf l && !(l.element() instanceof ObjRef) && r instanceof Identity && element > 0
             && !wire.substring(element + 3).contains("[]") && !wire.substring(element + 3).contains(".")) {
             String listWire = wire.substring(0, element);
             checkPlaceable(f, listWire, prefix);
@@ -651,29 +638,15 @@ final class WireSource {
             b.addStatement("$N.list($S)", node, relative(listWire, prefix));
             b.beginControlFlow("for ($T $N : $N)", ApiSource.typeName(c, l.element(), true), x, var);
             b.addStatement("$N.element($S).put($S, $L)", node, relative(listWire, prefix), wire.substring(element + 3),
-                convert(l.element(), CodeBlock.of("$N", x), nbt, f));
+                convert(l.element(), CodeBlock.of("$N", x), r.nbt, f));
             b.endControlFlow();
             return;
         }
-        // A list sent as the set of its values in BDS's own order
-        if (t instanceof ListOf l && !(l.element() instanceof ObjRef) && wire.endsWith("[]") && kind.equals("ordered-set")) {
-            String listWire = wire.substring(0, wire.length() - 2);
-            checkPlaceable(f, listWire, prefix);
-            CodeBlock values = l.element() instanceof EnumRef ? CodeBlock.of("$N.stream().map(x -> x.value()).toList()", var) : CodeBlock.of("$N", var);
-            if (!r.has("order")) { // the JSON's order without duplicates
-                put(node, relative(listWire, prefix), CodeBlock.of("$T.strings($L.stream().distinct().toList())", WIRE, values));
-                return;
-            }
-            CodeBlock order = CodeBlock.join(r.getAsJsonArray("order").asList().stream().map(v -> CodeBlock.of("$S", v.getAsString())).toList(), ", ");
-            put(node, relative(listWire, prefix), CodeBlock.of("$T.strings($T.of($L).stream().filter($L::contains).toList())", WIRE, ApiSource.LIST,
-                order, values));
-            return;
-        }
         // A map whose keys reach the wire (wire ends with {}): one leaf per entry
-        if (t instanceof MapOf m && wire.endsWith("{}") && kind.equals("identity")) {
+        if (t instanceof MapOf m && wire.endsWith("{}") && r instanceof Identity) {
             String mapWire = wire.substring(0, wire.length() - 2);
             checkPlaceable(f, mapWire, prefix);
-            if (rules(f).stream().anyMatch(x -> x.get("kind").getAsString().equals("empty-map") && strip(x.get("wire").getAsString()).equals(mapWire))) {
+            if (rules(f).stream().anyMatch(x -> x instanceof EmptyMap && strip(x.wire).equals(mapWire))) {
                 b.beginControlFlow("if ($N.isEmpty())", var);
                 put(node, relative(mapWire, prefix), CodeBlock.of("$T.EMPTY", NBT_MAP));
                 b.endControlFlow();
@@ -681,21 +654,14 @@ final class WireSource {
             String e = "x" + (vars++);
             b.beginControlFlow("for ($T<$T, $T> $N : $N.entrySet())", Map.Entry.class, String.class, ApiSource.typeName(c, m.value(), true), e, var);
             b.addStatement("$N.put($S + $N.getKey(), $L)", node, relative(mapWire, prefix) + ".", e,
-                convert(m.value(), CodeBlock.of("$N.getValue()", e), nbt, f));
+                convert(m.value(), CodeBlock.of("$N.getValue()", e), r.nbt, f));
             b.endControlFlow();
             return;
         }
-        if (t instanceof Vec3 && wire.endsWith("[]") && kind.equals("identity")) {
-            String listWire = wire.substring(0, wire.length() - 2);
-            checkPlaceable(f, listWire, prefix);
-            put(node, relative(listWire, prefix), CodeBlock.of("$T.floats($T.of($N.x(), $N.y(), $N.z()))", WIRE, ApiSource.LIST, var, var, var));
-            return;
-        }
         checkPlaceable(f, wire, prefix);
-        String rel = relative(wire, prefix);
         boolean guarded = false;
-        if (r.has("element") && !kind.equals("bitset")) {
-            int k = r.get("element").getAsInt();
+        if (r.element != null) {
+            int k = r.element;
             if (t instanceof Vec3) {
                 expr = CodeBlock.of("$N.$N()", var, List.of("x", "y", "z").get(k));
                 t = new Scalar(ScalarKind.FLOAT);
@@ -706,101 +672,130 @@ final class WireSource {
                 t = l.element();
             }
         }
-        if (nbt == null) {
+        if (r.nbt == null) {
             throw new GenerationException(c.id + " " + f.path + ": the rule for " + wire + " has no NBT type");
         }
-        switch (kind) {
-            case "identity" -> put(node, rel, convert(t, expr, nbt, f));
-            case "linear" -> {
-                double scale = r.get("scale").getAsDouble();
-                double offset = r.get("offset").getAsDouble();
-                // A scale of 1/n (degrees / 90 -> quarter turns) divides by n: the rounded scale times a multiple of n would
-                // fall just short of the integer an integral leaf truncates to
-                double divisor = 1 / scale;
-                CodeBlock number = Math.abs(scale) < 1 && Math.abs(divisor - Math.rint(divisor)) < 1e-3
-                    ? CodeBlock.of("($L / $L + $L)", numeric(t, expr), decimal(Math.rint(divisor)), decimal(offset))
-                    : CodeBlock.of("($L * $L + $L)", decimal(scale), numeric(t, expr), decimal(offset));
-                if (r.has("modulo")) {
-                    // wrapped into [0, modulo): BDS sends -90 degrees as 3 quarter turns
-                    number = CodeBlock.of("$T.floorMod($T.round($L), $LL)", Math.class, Math.class, number, r.get("modulo").getAsLong());
-                }
-                put(node, rel, fromNumber(nbt, number, f));
-            }
-            case "table" -> {
-                CodeBlock key = key(t, expr);
-                b.beginControlFlow("switch ($L)", key);
-                JsonObject table = r.getAsJsonObject("table");
-                String fallback = openFallback(f, table);
-                for (String k : new TreeSet<>(table.keySet())) {
-                    String v = table.get(k).getAsString();
-                    if (fallback != null && !f.documentedValues.contains(k) && v.equals(fallback)) {
-                        continue; // an undocumented value: the default below
-                    }
-                    putCase(node, rel, "case $S", k, v, nbt);
-                }
-                if (fallback != null) {
-                    putCase(node, rel, "default", null, fallback, nbt);
-                } else {
-                    b.addStatement("default -> ctx.drop($L, $S + $L + $S)", name(), f.path + " = ", key, " has no known wire value");
-                }
-                b.endControlFlow();
-            }
-            case "affix" -> put(node, rel, CodeBlock.of("$S + $T.namespaced($L) + $S", r.get("prefix").getAsString(), WIRE, stringOf(t, expr),
-                r.get("suffix").getAsString()));
-            case "bitset" -> {
-                if (!(t instanceof ListOf l)) {
-                    throw new GenerationException(c.id + " " + f.path + ": a bitset rule needs a list field");
-                }
-                String bits = "bits" + (vars++);
-                String e = "x" + (vars++);
-                b.addStatement("int $N = 0", bits);
-                b.beginControlFlow("for ($T $N : $N)", ApiSource.typeName(c, l.element(), true), e, var);
-                CodeBlock.Builder sw = CodeBlock.builder().add("$N |= switch ($L) {\n", bits, stringOf(l.element(), CodeBlock.of("$N", e))).indent();
-                JsonObject table = r.getAsJsonObject("bits");
-                for (String k : new TreeSet<>(table.keySet())) {
-                    sw.add("case $S -> $L;\n", k, table.get(k).getAsLong());
-                }
-                sw.add("default -> 0;\n").unindent().add("}");
-                b.addStatement("$L", sw.build());
-                b.endControlFlow();
-                put(node, rel, fromNumber(nbt, CodeBlock.of("$N", bits), f));
-            }
-            case "count" -> put(node, rel, fromNumber(nbt, CodeBlock.of("$N.size()", var), f));
-            default -> throw new GenerationException(c.id + " " + f.path + ": unknown rule kind " + kind);
-        }
+        r.emit(new LeafEmitter(f, t, expr, node, relative(wire, prefix), false));
         if (guarded) {
             b.endControlFlow();
         }
     }
 
     /**
-     * What BDS sends for every string an open enum does not document: the one output of the table entries observed for
-     * undocumented values (the capture's own samples), or null if there are none or they disagree.
+     * What a rule of a field writes against ({@link Rule#emit}): the field's value (narrowed to the element of an element
+     * rule) and the leaf, relative to the node.
      */
-    private static String openFallback(Field f, JsonObject table) {
-        if (f.documentedValues == null) {
-            return null;
+    private final class LeafEmitter implements Emitter {
+        private final Field f;
+        private final Type t;
+        private final CodeBlock expr;
+        private final String node;
+        private final String rel;
+        /** Whether the leaf is the list of a rule of every element: the value is written as a list. */
+        private final boolean list;
+
+        LeafEmitter(Field f, Type t, CodeBlock expr, String node, String rel, boolean list) {
+            this.f = f;
+            this.t = t;
+            this.expr = expr;
+            this.node = node;
+            this.rel = rel;
+            this.list = list;
         }
-        Set<String> outputs = new TreeSet<>();
-        for (String k : table.keySet()) {
-            if (!f.documentedValues.contains(k)) {
-                outputs.add(table.get(k).getAsString());
+
+        @Override
+        public CodeBlock.Builder code() {
+            return b;
+        }
+
+        @Override
+        public String local(String prefix) {
+            return prefix + (vars++);
+        }
+
+        @Override
+        public CodeBlock value() {
+            return expr;
+        }
+
+        @Override
+        public CodeBlock number() {
+            return numeric(t, expr);
+        }
+
+        @Override
+        public CodeBlock string() {
+            return stringOf(t, expr);
+        }
+
+        @Override
+        public CodeBlock key() {
+            return WireSource.this.key(t, expr);
+        }
+
+        @Override
+        public CodeBlock convert(String nbt) {
+            if (!list) {
+                return WireSource.this.convert(t, expr, nbt, f);
             }
+            if (t instanceof ListOf l) {
+                return listValue(l.element(), nbt, expr);
+            }
+            return CodeBlock.of("$T.floats($T.of($L.x(), $L.y(), $L.z()))", WIRE, ApiSource.LIST, expr, expr, expr);
         }
-        return outputs.size() == 1 ? outputs.iterator().next() : null;
-    }
 
-    private void putCase(String node, String rel, String label, String key, String value, String nbt) {
-        String head = key == null ? label : CodeBlock.of(label, key).toString();
-        if (value.equals("<not sent>")) {
-            b.addStatement("$L -> $N.remove($S)", head, node, rel);
-        } else {
-            b.addStatement("$L -> $N.put($S, $L)", head, node, rel, literal(value + " (" + nbt + ")"));
+        @Override
+        public CodeBlock fromNumber(String nbt, CodeBlock number) {
+            return WireSource.this.fromNumber(nbt, number, f);
         }
-    }
 
-    private static String decimal(double d) {
-        return Docs.number(d) + (d == Math.rint(d) ? ".0" : "");
+        @Override
+        public CodeBlock strings() {
+            if (!list || !(t instanceof ListOf l)) {
+                throw error("a rule of the strings of a list needs a list field");
+            }
+            return l.element() instanceof EnumRef ? CodeBlock.of("$L.stream().map(x -> x.value()).toList()", expr) : expr;
+        }
+
+        @Override
+        public TypeName elementType() {
+            return t instanceof ListOf l ? ApiSource.typeName(c, l.element(), true) : null;
+        }
+
+        @Override
+        public CodeBlock elementString(CodeBlock element) {
+            return stringOf(((ListOf) t).element(), element);
+        }
+
+        @Override
+        public void put(CodeBlock value) {
+            WireSource.this.put(node, rel, value);
+        }
+
+        @Override
+        public CodeBlock write(String typed) {
+            return typed.equals(Rule.NOT_SENT) ? CodeBlock.of("$N.remove($S)", node, rel) : CodeBlock.of("$N.put($S, $L)", node, rel, literal(typed));
+        }
+
+        @Override
+        public CodeBlock component() {
+            return name();
+        }
+
+        @Override
+        public String path() {
+            return f.path;
+        }
+
+        @Override
+        public List<String> documentedValues() {
+            return f.documentedValues;
+        }
+
+        @Override
+        public GenerationException error(String message) {
+            return new GenerationException(c.id + " " + f.path + ": " + message);
+        }
     }
 
     private void checkPlaceable(Field f, String wire, String prefix) {
@@ -810,12 +805,12 @@ final class WireSource {
         }
     }
 
-    private CodeBlock listValue(Type element, String nbt, String var) {
+    private CodeBlock listValue(Type element, String nbt, CodeBlock list) {
         return switch (element) {
-            case EnumRef e -> CodeBlock.of("$T.strings($N.stream().map(x -> x.value()).toList())", WIRE, var);
-            case Scalar s when s.kind() == ScalarKind.STRING -> CodeBlock.of("$T.strings($N)", WIRE, var);
-            case Scalar s when s.kind() == ScalarKind.INT -> CodeBlock.of("$T.ints($N)", WIRE, var);
-            case Scalar s when s.kind() == ScalarKind.FLOAT -> CodeBlock.of("$T.floats($N)", WIRE, var);
+            case EnumRef e -> CodeBlock.of("$T.strings($L.stream().map(x -> x.value()).toList())", WIRE, list);
+            case Scalar s when s.kind() == ScalarKind.STRING -> CodeBlock.of("$T.strings($L)", WIRE, list);
+            case Scalar s when s.kind() == ScalarKind.INT -> CodeBlock.of("$T.ints($L)", WIRE, list);
+            case Scalar s when s.kind() == ScalarKind.FLOAT -> CodeBlock.of("$T.floats($L)", WIRE, list);
             default -> throw new GenerationException(c.id + ": unsupported list element " + element + " (" + nbt + ")");
         };
     }
@@ -956,65 +951,6 @@ final class WireSource {
                 }
                 throw new GenerationException("unsupported wire literal: " + typed);
             }
-        };
-    }
-
-    /**
-     * Evaluates a value rule on a JSON value the way the encoder does, as a {@code value (type)} literal; null if the
-     * rule cannot be evaluated on it.
-     */
-    static String evaluate(JsonObject rule, JsonElement json) {
-        if (!rule.has("nbt") || json == null || !json.isJsonPrimitive()) {
-            return null;
-        }
-        String nbt = rule.get("nbt").getAsString();
-        JsonPrimitive p = json.getAsJsonPrimitive();
-        String kind = rule.get("kind").getAsString();
-        if (rule.has("element")) {
-            return null;
-        }
-        switch (kind) {
-            case "identity" -> {
-                if (p.isBoolean()) {
-                    return typed(p.getAsBoolean() ? 1 : 0, nbt);
-                }
-                if (p.isNumber()) {
-                    return typed(p.getAsDouble(), nbt);
-                }
-                return nbt.equals("string") ? p.getAsString() + " (string)" : null;
-            }
-            case "linear" -> {
-                if (!p.isNumber() && !p.isBoolean()) {
-                    return null;
-                }
-                double x = p.isBoolean() ? (p.getAsBoolean() ? 1 : 0) : p.getAsDouble();
-                return typed(rule.get("scale").getAsDouble() * x + rule.get("offset").getAsDouble(), nbt);
-            }
-            case "table" -> {
-                JsonObject table = rule.getAsJsonObject("table");
-                String k = p.isString() ? p.getAsString() : p.toString();
-                return table.has(k) ? table.get(k).getAsString() + " (" + nbt + ")" : null;
-            }
-            case "affix" -> {
-                String v = p.getAsString();
-                return rule.get("prefix").getAsString() + (v.contains(":") ? v : "minecraft:" + v) + rule.get("suffix").getAsString() + " (string)";
-            }
-            default -> {
-                return null;
-            }
-        }
-    }
-
-    private static String typed(double v, String nbt) {
-        return switch (nbt) {
-            case "byte" -> (byte) (long) v + " (byte)";
-            case "short" -> (short) (long) v + " (short)";
-            case "int" -> (int) (long) v + " (int)";
-            case "long" -> (long) v + " (long)";
-            case "float" -> (float) v + " (float)";
-            case "double" -> v + " (double)";
-            case "string" -> Docs.number(v) + " (string)";
-            default -> null;
         };
     }
 

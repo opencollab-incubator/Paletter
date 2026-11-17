@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
+import org.geysermc.paletter.tools.model.rule.Linear;
+import org.geysermc.paletter.tools.model.rule.Rule;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,7 +91,7 @@ public final class Feedback {
     /**
      * @param variant the variant the line belongs to, or null if it names none
      */
-    void add(String kind, String line, MappingInference.Variant variant) {
+    void add(String kind, String line, SpecCaptures.Variant variant) {
         if (variant != null) {
             links(line, variant);
         }
@@ -161,7 +163,7 @@ public final class Feedback {
      * field the variant sets (the same message for a variant of {@code identifier} whose base has {@code bone_visibility})
      * is a {@code conflicts} fact of that other field.
      */
-    private void links(String line, MappingInference.Variant variant) {
+    private void links(String line, SpecCaptures.Variant variant) {
         if (!variant.role().equals("field") || !variant.linked().isEmpty() || variant.json() == null) {
             return;
         }
@@ -171,18 +173,18 @@ public final class Feedback {
         }
         // a line that quotes what the variant gives its own field is about that value ("Bad expression: +1, for bone visibilities
         // of bone bone_a of geometry geometry.paletter_cube"), wherever it says the value sits
-        JsonElement varied = variant.path().isEmpty() ? variant.json() : MappingInference.jsonAt(variant.json(), variant.path());
+        JsonElement varied = variant.path().isEmpty() ? variant.json() : SpecCaptures.jsonAt(variant.json(), variant.path());
         List<String> ownValues = new ArrayList<>();
         leaves(varied, ownValues);
         boolean aboutOwnValue = ownValues.stream().anyMatch(value -> !value.isBlank()
             && Pattern.compile("(?<![\\w.:])" + Pattern.quote(value) + "(?![\\w:])").matcher(message).find());
         for (String other : aboutOwnValue ? List.<String>of() : quoted(variant.json(), variant.path(), message)) {
-            String value = MappingInference.jsonAt(variant.json(), other).getAsString();
+            String value = SpecCaptures.jsonAt(variant.json(), other).getAsString();
             Matcher identifier = Pattern.compile("([a-z]+) identifier " + Pattern.quote(value)).matcher(message);
             String fact = message.contains(OWN_IDENTIFIER) && identifier.find() ? "identifier " + other + " " + identifier.group(1) : "conflicts " + other + " '" + value + "'";
             facts.computeIfAbsent(variant.component(), k -> new TreeMap<>()).computeIfAbsent(variant.path(), k -> new TreeSet<>()).add(fact);
         }
-        JsonElement own = variant.path().isEmpty() ? null : MappingInference.jsonAt(variant.json(), variant.path());
+        JsonElement own = variant.path().isEmpty() ? null : SpecCaptures.jsonAt(variant.json(), variant.path());
         if (own != null && own.isJsonPrimitive() && own.getAsJsonPrimitive().isString() && !message.contains(OWN_IDENTIFIER)
             && quotes(message, own.getAsString())) {
             members(variant.json(), "", other -> {
@@ -238,7 +240,7 @@ public final class Feedback {
      * name ({@code "minecraft:block_placer":}), the variants' identifiers as {@code <id>}.
      */
     static String message(String line) {
-        return MappingInference.errorText(line).replaceFirst("^\\[[A-Za-z]+]\\s+(\"[^\"]+\"|'[^']+'):\\s*", "");
+        return SpecCaptures.errorText(line).replaceFirst("^\\[[A-Za-z]+]\\s+(\"[^\"]+\"|'[^']+'):\\s*", "");
     }
 
     /**
@@ -345,5 +347,26 @@ public final class Feedback {
             json.add(component, c);
         });
         return json;
+    }
+
+    /**
+     * Feeds the whole steps of a component's newest rules back to the generator ({@link Feedback#step}): a linear rule onto
+     * an integer leaf whose input step ({@code 1 / scale}) is a whole number of at least 2.
+     */
+    void steps(String componentId, JsonObject newest) {
+        if (!newest.has("fields")) {
+            return;
+        }
+        for (Map.Entry<String, JsonElement> field : newest.getAsJsonObject("fields").entrySet()) {
+            JsonObject result = field.getValue().getAsJsonObject();
+            for (Rule rule : Rule.all(result)) {
+                if (rule instanceof Linear linear && "int".equals(rule.nbt)) {
+                    double step = Math.abs(1 / linear.scale);
+                    if (step >= 2 && Math.abs(step - Math.rint(step)) < 1e-3) {
+                        step(componentId, field.getKey(), Math.round(step));
+                    }
+                }
+            }
+        }
     }
 }

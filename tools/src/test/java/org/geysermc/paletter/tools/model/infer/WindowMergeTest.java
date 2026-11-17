@@ -2,6 +2,7 @@ package org.geysermc.paletter.tools.model.infer;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.geysermc.paletter.tools.model.MappingWindows;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -22,7 +23,7 @@ class WindowMergeTest {
 
     @Test
     void sameShapeJoinsThePreviousWindowWhateverBdsSaid() {
-        JsonObject merged = MappingInference.merge(List.of(
+        JsonObject merged = MappingWindows.merge(List.of(
             result("sent", "test:a.x", 5, "message of the old build"),
             result("sent", "test:a.x", 7, "message of the new build"),
             result("sent", "test:a.x", 9, "message of the newest build")), List.of(100, 200, 300));
@@ -32,7 +33,7 @@ class WindowMergeTest {
 
     @Test
     void aDifferentShapeStartsAWindowAndIsComparedWithThePreviousOneNotTheFirst() {
-        JsonObject merged = MappingInference.merge(List.of(
+        JsonObject merged = MappingWindows.merge(List.of(
             result("sent", "test:a.x", 5, "e"), result("sent", "test:a.y", 5, "e"), result("sent", "test:a.x", 5, "e"),
             result("sent", "test:a.x", 6, "f")), List.of(100, 200, 300, 400));
         assertEquals("[100]", merged.getAsJsonArray("protocols").toString());
@@ -47,14 +48,14 @@ class WindowMergeTest {
         JsonObject gone = result("rejected", "test:a.x", 0, "no longer known");
         gone.add("wire", new com.google.gson.JsonArray());
         gone.add("fields", new JsonObject());
-        JsonObject merged = MappingInference.merge(List.of(result("sent", "test:a.x", 5, "e"), gone), List.of(100, 200));
+        JsonObject merged = MappingWindows.merge(List.of(result("sent", "test:a.x", 5, "e"), gone), List.of(100, 200));
         assertEquals("rejected", merged.getAsJsonObject("protocol200").get("status").getAsString());
-        assertEquals(merged.getAsJsonObject("protocol200"), MappingInference.newest(merged));
+        assertEquals(merged.getAsJsonObject("protocol200"), MappingWindows.newest(merged));
     }
 
     @Test
     void withoutResultsThereIsNothing() {
-        assertNull(MappingInference.merge(List.of(), List.of()));
+        assertNull(MappingWindows.merge(List.of(), List.of()));
     }
 
     @Test
@@ -63,8 +64,8 @@ class WindowMergeTest {
         JsonObject b = result("sent", "test:a.x", 99, "two");
         b.getAsJsonObject("variants").addProperty("rejected", 40);
         b.addProperty("note", "something");
-        assertEquals(MappingInference.wireShape(a), MappingInference.wireShape(b));
+        assertEquals(MappingWindows.wireShape(a), MappingWindows.wireShape(b));
         b.getAsJsonObject("fields").getAsJsonObject("x").addProperty("status", "dropped");
-        assertTrue(!MappingInference.wireShape(a).equals(MappingInference.wireShape(b)));
+        assertTrue(!MappingWindows.wireShape(a).equals(MappingWindows.wireShape(b)));
     }
 }

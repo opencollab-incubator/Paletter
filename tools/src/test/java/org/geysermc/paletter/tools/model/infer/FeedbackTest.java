@@ -95,8 +95,8 @@ class FeedbackTest {
         assertEquals(1, unnamed.json().size(), "only the generated marker");
     }
 
-    private static MappingInference.Variant variant(String path, String json) {
-        return new MappingInference.Variant("paletter:b_geometry_1", "block", "blocks/b_geometry_1.json", "block:minecraft:geometry", "field", path,
+    private static SpecCaptures.Variant variant(String path, String json) {
+        return new SpecCaptures.Variant("paletter:b_geometry_1", "block", "blocks/b_geometry_1.json", "block:minecraft:geometry", "field", path,
             "label", null, JsonParser.parseString(json), List.of());
     }
 
