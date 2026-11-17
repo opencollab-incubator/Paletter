@@ -52,11 +52,6 @@ public final class RegisteredBlock {
         this.customBlock = customBlock;
         this.propertyData = propertyData;
         this.defaultStateNbt = defaultStateNbt;
-        if (customBlock != null) {
-            for (int i = 0; i < this.states.size(); i++) {
-                this.states.get(i).bind(customBlock, i);
-            }
-        }
     }
 
     public @NonNull String identifier() {

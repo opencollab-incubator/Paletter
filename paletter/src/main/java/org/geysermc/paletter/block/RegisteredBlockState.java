@@ -1,7 +1,6 @@
 package org.geysermc.paletter.block;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
 import org.geysermc.paletter.annotation.Internal;
@@ -24,25 +23,12 @@ public final class RegisteredBlockState implements BlockDefinition {
     private final int runtimeId;
     private final NbtMap state;
     private final boolean custom;
-    /** Custom states belong to one block in every palette they are in; vanilla states are shared and not bound. */
-    private volatile @Nullable CustomBlock customBlock;
-    private int indexInBlock;
 
     @Internal
     public RegisteredBlockState(int runtimeId, NbtMap state, boolean custom) {
         this.runtimeId = runtimeId;
         this.state = state;
         this.custom = custom;
-    }
-
-    /**
-     * Binds a custom state to its block and its position there.
-     */
-    synchronized void bind(CustomBlock block, int index) {
-        if (this.customBlock == null) {
-            this.indexInBlock = index;
-            this.customBlock = block;
-        }
     }
 
     /**
