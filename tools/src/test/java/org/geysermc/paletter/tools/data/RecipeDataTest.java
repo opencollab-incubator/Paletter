@@ -72,7 +72,7 @@ class RecipeDataTest {
         assertEquals(List.of("multi 00000000-0000-0000-0000-000000000001"), diff.lines("recipes removed"));
         assertEquals(List.of("shaped minecraft:stick: priority"), diff.lines("recipes changed"));
         assertEquals(List.of("shaped minecraft:stick"), diff.lines("recipe unlock changes"));
-        assertEquals(List.of("+ potion_mix minecraft:potion:4 + minecraft:ice_ball:0 + minecraft:potion:48"), diff.lines("potion and container mixes"));
+        assertEquals(List.of("potion_mix minecraft:potion:4 + minecraft:ice_ball:0 + minecraft:potion:48"), diff.lines("mixes added"));
     }
 
     @Test
@@ -81,7 +81,8 @@ class RecipeDataTest {
         JsonObject after = json("{\"patterns\":[{\"itemName\":\"a\",\"patternId\":\"p\"},{\"itemName\":\"b\",\"patternId\":\"q\"}],"
             + "\"materials\":[{\"materialId\":\"m\",\"color\":\"blue\",\"itemName\":\"i\"}]}");
         Diff diff = Diff.recipes(new RecipeCapture.Recipes(json("{}"), before), new RecipeCapture.Recipes(json("{}"), after));
-        assertEquals(List.of("trim_material m: color", "+ trim_pattern q"), diff.lines("trim patterns and materials"));
+        assertEquals(List.of("trim_pattern q"), diff.lines("trim added"));
+        assertEquals(List.of("trim_material m: color"), diff.lines("trim changed"));
     }
 
     @Test
@@ -90,9 +91,65 @@ class RecipeDataTest {
         // Net ids 1, 2, 3: exactly 1..n
         assertTrue(RecipeData.netIdProblems(recipes).isEmpty());
         assertFalse(RecipeData.netIdProblems(split("u", 5)).isEmpty());
-        assertTrue(RecipeData.missingItems(recipes, Set.of("minecraft:stick", "minecraft:torch")).isEmpty());
-        assertEquals(List.of("minecraft:torch (shapeless minecraft:torch)"), RecipeData.missingItems(recipes, Set.of("minecraft:stick")));
+        assertTrue(RecipeData.missingItems(recipes, Set.of("minecraft:stick", "minecraft:torch", "minecraft:potion", "minecraft:ice_ball")).isEmpty());
+        assertEquals(List.of("minecraft:torch (shapeless minecraft:torch)"), RecipeData.missingItems(recipes, Set.of("minecraft:stick", "minecraft:potion", "minecraft:ice_ball")));
         assertTrue(RecipeData.emptyTags(recipes, Map.of("minecraft:planks", List.of("minecraft:oak_planks"))).isEmpty());
         assertEquals(List.of("minecraft:planks (shaped minecraft:stick)"), RecipeData.emptyTags(recipes, Map.of("minecraft:planks", List.of())));
+    }
+
+    private static final String BEEF = "{\"id\":\"minecraft:furnace_beef\",\"ingredients\":[{\"kind\":\"default\",\"id\":\"minecraft:beef\",\"aux\":32767,\"count\":1}],"
+        + "\"results\":[{\"id\":\"minecraft:cooked_beef\",\"aux\":0,\"count\":1}],\"uuid\":\"UUID\",\"tag\":\"TAG\",\"priority\":0,\"netId\":NET,"
+        + "\"unlock\":{\"context\":\"none\",\"ingredients\":[]}}";
+
+    private static RecipeCapture.Recipes beef(String... tags) {
+        List<String> entries = new java.util.ArrayList<>();
+        for (String tag : tags) {
+            entries.add(entry(BEEF.replace("TAG", tag), "u" + tag, entries.size() + 1));
+        }
+        return new RecipeCapture.Recipes(json("{\"shapeless\":[" + String.join(",", entries) + "]}"), null);
+    }
+
+    @Test
+    void sameIdIsToldApartByTag() {
+        assertTrue(Diff.recipes(beef("furnace", "smoker"), beef("smoker", "furnace")).identical());
+        Diff diff = Diff.recipes(beef("furnace", "smoker"), beef("furnace"));
+        assertEquals(List.of("shapeless minecraft:furnace_beef (smoker)"), diff.lines("recipes removed"));
+        assertEquals(1, diff.count());
+    }
+
+    @Test
+    void legacyFurnaceRecipes() {
+        String furnace = "\"input\":{\"id\":\"minecraft:cobblestone\",\"aux\":0},\"result\":{\"id\":\"minecraft:stone\",\"aux\":0,\"count\":1},\"tag\":\"furnace\"}";
+        RecipeCapture.Recipes recipes = new RecipeCapture.Recipes(json("{\"crafting\":[{\"type\":\"furnace\"," + furnace + ",{\"type\":\"furnace_data\","
+            + furnace.replace("cobblestone", "coal") + "]}"), null);
+        assertEquals(List.of("furnace", "furnace_data"), List.copyOf(RecipeData.normalize(recipes).keySet()));
+        assertEquals(List.of("minecraft:cobblestone:0 (furnace)"), List.copyOf(RecipeData.normalize(recipes).get("furnace").keySet()));
+        assertTrue(Diff.recipes(recipes, recipes).identical());
+        assertEquals(List.of("furnace minecraft:cobblestone:0 (furnace)"), Diff.recipes(recipes, new RecipeCapture.Recipes(
+            json("{\"crafting\":[]}"), null)).lines("recipes removed").subList(0, 1));
+    }
+
+    @Test
+    void checksItemsOfMixesAndReducers() {
+        RecipeCapture.Recipes recipes = new RecipeCapture.Recipes(json("{\"potion_mix\":[" + MIX.replace("minecraft:ice_ball", "unknown:77") + "],"
+            + "\"material_reducer\":[{\"input\":{\"id\":\"minecraft:potion\",\"aux\":0},\"itemCounts\":[{\"id\":\"minecraft:gone\",\"count\":1}]}]}"), null);
+        List<String> missing = RecipeData.missingItems(recipes, Set.of("minecraft:potion"));
+        assertEquals(2, missing.size());
+        assertTrue(missing.get(0).startsWith("minecraft:gone"));
+        assertTrue(missing.get(1).startsWith("unknown:77"));
+    }
+
+    @Test
+    void comparesCleanRecipesAndChecksBlockStates() {
+        assertEquals(List.of("cleanRecipes: true -> false"), Diff.recipes(
+            new RecipeCapture.Recipes(json("{\"cleanRecipes\":true}"), null), new RecipeCapture.Recipes(json("{\"cleanRecipes\":false}"), null)).lines("recipes changed"));
+        RecipeCapture.Recipes recipes = new RecipeCapture.Recipes(json("{\"shaped\":[{\"id\":\"minecraft:a\",\"results\":[{\"id\":\"minecraft:a\",\"block_runtime_id\":\"5\"},"
+            + "{\"id\":\"minecraft:b\",\"block_runtime_id\":\"6\",\"block_state_b64\":\"x\"}]}]}"), null);
+        assertEquals(List.of("minecraft:a block 5 (shaped minecraft:a)"), RecipeData.missingBlockStates(recipes));
+    }
+
+    @Test
+    void trimWithoutPatternsIsFine() {
+        assertTrue(Diff.recipes(new RecipeCapture.Recipes(json("{}"), json("{}")), new RecipeCapture.Recipes(json("{}"), json("{\"bdsVersion\":\"x\"}"))).identical());
     }
 }

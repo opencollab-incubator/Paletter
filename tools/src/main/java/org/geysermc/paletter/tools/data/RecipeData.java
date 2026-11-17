@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import org.geysermc.paletter.tools.client.RecipeCapture;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,9 +22,10 @@ import java.util.function.BiConsumer;
  * multi recipes, without the UUIDs (random per server start). Trim patterns and materials are kinds as well.
  */
 public final class RecipeData {
-    public static final String TRIM_PATTERN = "trim_pattern";
-    public static final String TRIM_MATERIAL = "trim_material";
-    /** Kinds that are not recipes of a station: their items are not part of the recipe checks. */
+    public static final String TRIM_PREFIX = "trim_";
+    public static final String TRIM_PATTERN = TRIM_PREFIX + "pattern";
+    public static final String TRIM_MATERIAL = TRIM_PREFIX + "material";
+    /** The mix and reducer kinds: items by {@code input}, {@code reagent} and {@code output}, no ingredients. */
     static final Set<String> MIXES = Set.of("potion_mix", "container_mix", "material_reducer");
 
     private RecipeData() {
@@ -31,6 +33,15 @@ public final class RecipeData {
 
     /** Recipes by kind, then by key (sorted): shaped, shapeless, multi, potion_mix, trim_pattern, ... */
     public static Map<String, Map<String, JsonObject>> normalize(RecipeCapture.Recipes recipes) {
+        return normalize(recipes, duplicateKeys(recipes));
+    }
+
+    /**
+     * @param tagged the kind and key ({@code kind|key}) of entries that are told apart by their station tag ({@code id (tag)}),
+     *               because two entries share an id (the furnace recipes of the smelting stations). Both captures of a
+     *               diff must use the same set, so that an id that is unique in one of them still has the same key.
+     */
+    public static Map<String, Map<String, JsonObject>> normalize(RecipeCapture.Recipes recipes, Set<String> tagged) {
         Map<String, Map<String, JsonObject>> kinds = new TreeMap<>();
         each(recipes, (kind, entry) -> {
             JsonObject copy = entry.deepCopy();
@@ -40,14 +51,27 @@ public final class RecipeData {
                 copy.remove("uuid");
             }
             Map<String, JsonObject> byKey = kinds.computeIfAbsent(kind, k -> new TreeMap<>());
-            String key = key(kind, copy);
-            // The same key twice (wire order within a list): number them
+            String base = key(kind, copy);
+            String key = tagged.contains(kind + "|" + base) && copy.has("tag") ? base + " (" + copy.get("tag").getAsString() + ")" : base;
+            // Still the same key (wire order within a list): number them
             for (int n = 2; byKey.containsKey(key); n++) {
-                key = key(kind, copy) + "#" + n;
+                key = base + "#" + n;
             }
             byKey.put(key, copy);
         });
         return kinds;
+    }
+
+    /** The {@code kind|key} of entries whose key another entry of the capture has as well. */
+    public static Set<String> duplicateKeys(RecipeCapture.Recipes recipes) {
+        Set<String> seen = new HashSet<>();
+        Set<String> duplicates = new TreeSet<>();
+        each(recipes, (kind, entry) -> {
+            if (!seen.add(kind + "|" + key(kind, entry))) {
+                duplicates.add(kind + "|" + key(kind, entry));
+            }
+        });
+        return duplicates;
     }
 
     /** Every entry of the capture with its kind; the pre-2168 {@code crafting} list by the type of each entry. */
@@ -60,11 +84,11 @@ public final class RecipeData {
             }
         }
         if (recipes.trim() != null) {
-            for (JsonElement pattern : recipes.trim().getAsJsonArray("patterns")) {
-                action.accept(TRIM_PATTERN, pattern.getAsJsonObject());
-            }
-            for (JsonElement material : recipes.trim().getAsJsonArray("materials")) {
-                action.accept(TRIM_MATERIAL, material.getAsJsonObject());
+            for (String[] part : new String[][]{{"patterns", TRIM_PATTERN}, {"materials", TRIM_MATERIAL}}) {
+                JsonArray entries = recipes.trim().getAsJsonArray(part[0]);
+                for (JsonElement entry : entries == null ? new JsonArray() : entries) {
+                    action.accept(part[1], entry.getAsJsonObject());
+                }
             }
         }
     }
@@ -94,7 +118,7 @@ public final class RecipeData {
         Set<String> missing = new TreeSet<>();
         each(recipes, (kind, entry) -> references(kind, entry, (item, tag) -> {
             if (item != null && !item.equals("minecraft:air") && !paletteItems.contains(item)) {
-                missing.add(item + " (" + kind + " " + describe(kind, entry) + ")");
+                missing.add(item + " (" + kind + " " + key(kind, entry) + ")");
             }
         }));
         return List.copyOf(missing);
@@ -105,7 +129,7 @@ public final class RecipeData {
         Set<String> empty = new TreeSet<>();
         each(recipes, (kind, entry) -> references(kind, entry, (item, tag) -> {
             if (tag != null && tags.getOrDefault(tag, List.of()).isEmpty()) {
-                empty.add(tag + " (" + kind + " " + describe(kind, entry) + ")");
+                empty.add(tag + " (" + kind + " " + key(kind, entry) + ")");
             }
         }));
         return List.copyOf(empty);
@@ -130,13 +154,38 @@ public final class RecipeData {
         return problems;
     }
 
-    private static String describe(String kind, JsonObject entry) {
-        return key(kind, entry);
+    /** A result with a block runtime id has a block state as well: the capture could not resolve it otherwise. */
+    public static List<String> missingBlockStates(RecipeCapture.Recipes recipes) {
+        List<String> missing = new ArrayList<>();
+        each(recipes, (kind, entry) -> {
+            for (String member : List.of("result", "results")) {
+                JsonElement results = entry.get(member);
+                if (results == null) {
+                    continue;
+                }
+                for (JsonElement result : results.isJsonArray() ? results.getAsJsonArray() : List.of(results)) {
+                    JsonObject item = result.getAsJsonObject();
+                    if (item.has("block_runtime_id") && !item.has("block_state_b64")) {
+                        missing.add(item.get("id").getAsString() + " block " + item.get("block_runtime_id").getAsString() + " (" + kind + " " + key(kind, entry) + ")");
+                    }
+                }
+            }
+        });
+        return missing;
     }
 
-    /** The items and tags a recipe names (one of the two is null per call). */
+    /** The items and tags a recipe names (one of the two is null per call). Mixes and reducers name items only. */
     private static void references(String kind, JsonObject entry, BiConsumer<String, String> action) {
-        if (!MIXES.contains(kind)) {
+        if (MIXES.contains(kind)) {
+            for (String member : List.of("input", "reagent", "output")) {
+                if (entry.has(member)) {
+                    action.accept(entry.getAsJsonObject(member).get("id").getAsString(), null);
+                }
+            }
+            if (entry.has("itemCounts")) {
+                entry.getAsJsonArray("itemCounts").forEach(count -> action.accept(count.getAsJsonObject().get("id").getAsString(), null));
+            }
+        } else {
             entry.entrySet().forEach(member -> walk(member.getValue(), member.getKey(), action));
         }
     }
