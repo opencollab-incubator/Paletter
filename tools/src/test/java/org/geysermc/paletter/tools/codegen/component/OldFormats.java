@@ -33,7 +33,7 @@ final class OldFormats {
 
     /**
      * @param mapping    the component's entry of {@code mappings.json}, or null
-     * @param notSent    whether the white-box says BDS does not send the component
+     * @param notSent    whether the white-box says BDS does not send the component (used only without sweep data: the capture decides otherwise)
      * @param verified   the components with a compared variant in the capture (what a replacement must be among)
      * @return the classification, {@link #PENDING_SWEEP} without sweep data, or null if the data fits none (a failure to explain)
      */
@@ -54,7 +54,7 @@ final class OldFormats {
             if (entries.stream().anyMatch(e -> e.has("legacyEnvelope"))) {
                 return OLD_STYLE_ITEM;
             }
-            if (notSent || entries.stream().allMatch(e -> e.getAsJsonArray("wire").isEmpty())) {
+            if (entries.stream().allMatch(e -> e.getAsJsonArray("wire").isEmpty())) {
                 return SERVER_ONLY;
             }
             return null;

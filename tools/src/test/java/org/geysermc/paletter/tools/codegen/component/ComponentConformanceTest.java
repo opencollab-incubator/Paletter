@@ -252,6 +252,7 @@ class ComponentConformanceTest {
         assertTrue(unexplained.isEmpty(), "protocol " + protocol + ": no variant of these components, other than the control one, was both accepted by BDS "
             + "and found in its data, and the format sweep does not account for them (replaced, old-style item, server-only, rejected at every format), "
             + "so their generated encoding is not verified: " + unexplained);
+        checkRetirements(mappings, compared);
         if (newest) {
             classifiedNow.retainAll(SWEEP_PENDING);
             assertTrue(classifiedNow.isEmpty(), "the data classifies these now: remove them from SWEEP_PENDING: " + classifiedNow);
@@ -292,15 +293,50 @@ class ComponentConformanceTest {
             + " (see build/reports/component-conformance-" + protocol + ".md):\n  " + String.join("\n  ", notPassing));
     }
 
-/** The white-box of the newest build that has one, or null. */
-private static JsonObject whitebox() throws IOException {
-    try (Stream<Path> dirs = Files.list(ROOT.resolve("data/bds"))) {
-        Path newest = dirs.filter(d -> Files.exists(d.resolve("whitebox.json"))).max(Comparator.comparing(d -> d.getFileName().toString(), org.geysermc.paletter.tools.Versions.ORDER)).orElse(null);
-        return newest == null ? null : JsonParser.parseString(Files.readString(newest.resolve("whitebox.json"), StandardCharsets.UTF_8)).getAsJsonObject();
+/**
+ * The retirements against the data: every component of {@code api.json} {@code retired} must be one BDS never sends (server-only or
+ * rejected at every format; {@code seed} only inside an old-style item), and no kept deprecated component may be one. Components
+ * still in {@link #SWEEP_PENDING} are not decided yet.
+ */
+private static void checkRetirements(JsonObject mappings, Set<String> compared) throws IOException {
+    JsonObject api = JsonParser.parseString(Files.readString(MODEL.resolve("api.json"), StandardCharsets.UTF_8)).getAsJsonObject();
+    JsonObject components = JsonParser.parseString(Files.readString(MODEL.resolve("components.json"), StandardCharsets.UTF_8)).getAsJsonObject();
+    Set<String> retired = new TreeSet<>(api.getAsJsonObject("retired").keySet());
+    retired.removeIf(id -> id.startsWith("_"));
+    List<String> wrong = new ArrayList<>();
+    for (String id : retired) {
+        String how = OldFormats.classify(mappings.has(id) ? mappings.getAsJsonObject(id) : null, OldFormats.notSent(whitebox(), id), compared);
+        boolean ok = OldFormats.SERVER_ONLY.equals(how) || OldFormats.REJECTED_EVERYWHERE.equals(how)
+            || (id.equals("item:minecraft:seed") && OldFormats.OLD_STYLE_ITEM.equals(how)) || OldFormats.PENDING_SWEEP.equals(how);
+        if (!ok) {
+            wrong.add(id + " is " + how + ": it reaches the wire, keep its record");
+        }
     }
+    for (JsonElement e : components.getAsJsonArray("components")) {
+        JsonObject c = e.getAsJsonObject();
+        String id = c.get("id").getAsString();
+        String status = c.get("status").getAsString();
+        if (!c.get("category").getAsString().equals("component") || !(status.equals("deprecated") || status.equals("legacy")) || retired.contains(id)
+            || SWEEP_PENDING.contains(id) || id.endsWith(":minecraft:custom_components")) {
+            continue;
+        }
+        String how = OldFormats.classify(mappings.has(id) ? mappings.getAsJsonObject(id) : null, OldFormats.notSent(whitebox(), id), compared);
+        if (OldFormats.SERVER_ONLY.equals(how) || OldFormats.REJECTED_EVERYWHERE.equals(how)) {
+            wrong.add(id + " is " + how + ": BDS never sends it, retire it in api.json");
+        }
+    }
+    assertTrue(wrong.isEmpty(), "retirements against the data: " + wrong);
 }
 
-private static Set<String> union(Set<String> a, Set<String> b) {
+/** The white-box of the newest build that has one, or null. */
+    private static JsonObject whitebox() throws IOException {
+        try (Stream<Path> dirs = Files.list(ROOT.resolve("data/bds"))) {
+            Path newest = dirs.filter(d -> Files.exists(d.resolve("whitebox.json"))).max(Comparator.comparing(d -> d.getFileName().toString(), org.geysermc.paletter.tools.Versions.ORDER)).orElse(null);
+            return newest == null ? null : JsonParser.parseString(Files.readString(newest.resolve("whitebox.json"), StandardCharsets.UTF_8)).getAsJsonObject();
+        }
+    }
+
+    private static Set<String> union(Set<String> a, Set<String> b) {
         Set<String> s = new TreeSet<>(a);
         s.addAll(b);
         return s;

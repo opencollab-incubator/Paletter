@@ -90,6 +90,11 @@ class FormatInferenceTest {
         variants.add(variant("paletter:seed_f", "item", "item:minecraft:seed", "format", "1.10.0"));
         items.add(item("paletter:seed_c", false, filler));
         items.add(item("paletter:seed_f", false, NbtMap.builder().putCompound("minecraft:seed", NbtMap.builder().putString("crop_result", "x").build()).build()));
+        // a seed that sends no components at all: an old-style item the capture's wire does not carry, accepted all the same
+        variants.add(variant("paletter:seed_c2", "item", "item:minecraft:seed", "control", "1.16.0"));
+        variants.add(variant("paletter:seed_f2", "item", "item:minecraft:seed", "format", "1.16.0"));
+        items.add(item("paletter:seed_c2", false, NbtMap.EMPTY));
+        items.add(item("paletter:seed_f2", false, NbtMap.builder().putCompound("minecraft:seed", NbtMap.builder().putString("crop_result", "x").build()).build()));
         // silent: accepted, sends what the control sends
         variants.add(variant("paletter:silent_c", "item", "item:minecraft:silent", "control", "1.20.10"));
         variants.add(variant("paletter:silent_f", "item", "item:minecraft:silent", "format", "1.20.10"));
@@ -116,6 +121,7 @@ class FormatInferenceTest {
         assertTrue(legacy.get("legacyEnvelope").getAsBoolean());
         assertEquals("[\"minecraft:seed\"]", legacy.getAsJsonArray("wire").toString(), "the filler of the control is not a change");
         assertNull(legacy.get("upgradedTo"));
+        assertTrue(result.get("item:minecraft:seed").get("1.16.0").get("legacyEnvelope").getAsBoolean(), "an empty old-style control still counts");
         JsonObject silent = result.get("item:minecraft:silent").get("1.20.10");
         assertTrue(silent.getAsJsonArray("wire").isEmpty(), "accepted and sent nothing: server only");
         assertFalse(silent.has("legacyEnvelope"));

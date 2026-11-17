@@ -64,7 +64,7 @@ final class FormatInference {
         Map<String, Map<String, Obs>> controls = new HashMap<>();
         for (MappingInference.Variant v : capture.variants()) {
             if (v.role().equals("control") && formats.containsKey(v.identifier())) {
-                controls.computeIfAbsent(v.component(), k -> new HashMap<>()).put(formats.get(v.identifier()), obs(capture, v));
+                controls.computeIfAbsent(v.component(), k -> new HashMap<>()).put(formats.get(v.identifier()), obs(capture, v, legacy));
                 result.computeIfAbsent(v.component(), k -> new TreeMap<>(AddonGenerator::compare));
             }
         }
@@ -73,7 +73,7 @@ final class FormatInference {
         for (MappingInference.Variant v : capture.variants()) {
             Obs control = controls.getOrDefault(v.component(), Map.of()).get(formats.get(v.identifier()));
             Component component = model.components().stream().filter(c -> c.id().equals(v.component())).findFirst().orElse(null);
-            Obs own = obs(capture, v);
+            Obs own = obs(capture, v, legacy);
             if (!v.role().equals("format") || control == null || !control.accepted() || !own.accepted() || component == null) {
                 continue;
             }
@@ -109,8 +109,13 @@ final class FormatInference {
         return result;
     }
 
-    private static Obs obs(MappingInference.Capture capture, MappingInference.Variant v) {
-        return new Obs(v, capture.wire().get(v.identifier()), capture.log().getOrDefault(v.identifier(), List.of()));
+    /** An old-style item that sends no components is in the registry but not in the capture's wire: it is accepted, with nothing on it. */
+    private static Obs obs(MappingInference.Capture capture, MappingInference.Variant v, Set<String> legacy) {
+        Map<String, Wire.Leaf> wire = capture.wire().get(v.identifier());
+        if (wire == null && legacy.contains(v.identifier())) {
+            wire = Map.of();
+        }
+        return new Obs(v, wire, capture.log().getOrDefault(v.identifier(), List.of()));
     }
 
     /**
