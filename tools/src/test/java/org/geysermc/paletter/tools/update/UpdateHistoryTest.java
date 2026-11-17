@@ -1,6 +1,7 @@
 package org.geysermc.paletter.tools.update;
 
 import org.geysermc.paletter.tools.bds.BdsDistribution;
+import org.geysermc.paletter.tools.model.infer.SpecDiff;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -36,6 +37,26 @@ class UpdateHistoryTest {
             assertThrows(IllegalStateException.class, () -> update.stage(outside, new byte[0], "x"), outside.toString());
         }
         assertFalse(Files.exists(root.resolve("data/bds/1.26.31.1")), "nothing is written before the build is kept");
+    }
+
+    @Test
+    void aHistoryCheckStagesNoVariantNames(@TempDir Path root) throws IOException {
+        Update update = historyCheck(root);
+        update.stageVariantNames(Map.of());
+        assertTrue(update.report().repoChanges.isEmpty());
+    }
+
+    @Test
+    void capturesOfAnotherAddOnFailAHistoryCheckButNotACaptureOnlyRun(@TempDir Path root, @TempDir Path out) throws IOException {
+        SpecDiff.Pairing other = new SpecDiff.Pairing(10, 2, 3, 0);
+        Update check = historyCheck(root);
+        assertFalse(check.variantsAlike(other, "1.26.36.1"));
+        assertTrue(check.report().failed());
+        // A recapture's captures are of the new add-on by design, even when it compares with the committed ones of a release
+        Update recapture = new Update(root, Map.of("channel", "release", "against", "1.26.36.1", "capture-only", out.toString()));
+        recapture.begin(new BdsDistribution("1.26.31.1", false, "win", "https://example.invalid/bedrock-server-1.26.31.1.zip"));
+        assertTrue(recapture.variantsAlike(other, "1.26.36.1"));
+        assertFalse(recapture.report().failed());
     }
 
     @Test
@@ -83,5 +104,37 @@ class UpdateHistoryTest {
         assertTrue(report.contains("not extracted, the previous schema stays: java.io.IOException: No component schemas"), report);
         assertFalse(update.report().failed());
         assertTrue(update.report().repoChanges.isEmpty(), "no schema.json from a failed step");
+    }
+
+    @Test
+    void aCaptureOnlyRunWritesItsCapturesIntoItsOwnDirectoryAndNothingElse(@TempDir Path root, @TempDir Path out, @TempDir Path work) throws IOException {
+        // The build is committed already (a recapture): its directory is neither deleted nor an obstacle
+        Files.createDirectories(root.resolve("data/bds/1.26.36.1/spec"));
+        Files.writeString(root.resolve("data/bds/1.26.36.1/experiments.json"), "old");
+        Update update = new Update(root, Map.of("channel", "release", "capture-only", out.toString()));
+        update.begin(new BdsDistribution("1.26.36.1", false, "win", "https://example.invalid/bedrock-server-1.26.36.1.zip"));
+        update.stage(root.resolve("data/bds/1.26.36.1/experiments.json"), "new".getBytes(StandardCharsets.UTF_8), "experiment record");
+        update.stage(root.resolve("data/bds/1.26.36.1/addon/content-log.txt"), "WARN x\n".getBytes(StandardCharsets.UTF_8), "add-on content log");
+        // Derived data is the gathering job's: dropped, never written into the checkout or the directory
+        update.stage(root.resolve("paletter/src/main/resources/paletter/26.30.nbt"), new byte[1], "bundled data");
+        update.stage(root.resolve("data/model/variant_names.txt"), new byte[1], "item variant names");
+        Files.createDirectories(work.resolve("spec"));
+        Files.writeString(work.resolve("spec/capture.json"), "{\"protocol\": 1001}");
+        update.keep(work);
+        assertEquals("new", Files.readString(out.resolve("experiments.json")));
+        assertEquals("WARN x\n", Files.readString(out.resolve("addon/content-log.txt")));
+        assertTrue(Files.exists(out.resolve("spec/capture.json")));
+        assertFalse(Files.exists(out.resolve("paletter")));
+        assertFalse(Files.exists(out.resolve("data")));
+        assertEquals("old", Files.readString(root.resolve("data/bds/1.26.36.1/experiments.json")), "the checkout is untouched");
+        assertFalse(Files.exists(root.resolve("paletter")));
+        assertTrue(update.report().repoChanges.isEmpty(), update.report().repoChanges.toString());
+    }
+
+    @Test
+    void aCaptureOnlyRunNeedsADirectoryOutsideDataBds(@TempDir Path root) {
+        assertThrows(IllegalArgumentException.class, () -> new Update(root, Map.of("channel", "release", "capture-only", root.resolve("data/bds/x").toString())));
+        assertThrows(IllegalArgumentException.class, () -> new Update(root, Map.of("channel", "release", "capture-only", root.toString())));
+        assertThrows(IllegalArgumentException.class, () -> new Update(root, Map.of("channel", "release", "capture-only", "out", "verify-only", "true")));
     }
 }

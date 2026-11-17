@@ -33,6 +33,7 @@ import org.geysermc.paletter.tools.update.BuildTable;
 import org.geysermc.paletter.tools.update.CreativeProbe;
 import org.geysermc.paletter.tools.update.EducationProbe;
 import org.geysermc.paletter.tools.update.ExperimentMarks;
+import org.geysermc.paletter.tools.update.RecapturePlan;
 import org.geysermc.paletter.tools.update.SpecCapture;
 import org.geysermc.paletter.tools.update.Update;
 import org.geysermc.paletter.tools.whitebox.Whitebox;
@@ -281,12 +282,15 @@ public final class Cli implements Runnable {
         @Option(names = "--timeout", description = "seconds") String timeout;
         @Option(names = "--against", description = "A history check (see `builds`): compare with the committed captures of this build "
             + "instead of the newest, and write only data/bds/VERSION, when anything differs") String against;
+        @Option(names = "--capture-only", description = "The capture half of a full recapture: write the captures of the build (the files that "
+            + "would go to data/bds/VERSION, and spec/) into this directory and nothing into the repository; the report goes to the work directory") String captureOnly;
 
         @Override
         public Integer call() throws Exception {
             Map<String, String> options = new HashMap<>();
             options.put("channel", channel);
             put(options, "against", against);
+            put(options, "capture-only", captureOnly);
             put(options, "version", version);
             flag(options, "verify-only", verifyOnly);
             flag(options, "keep-server", keepServer);
@@ -302,7 +306,7 @@ public final class Cli implements Runnable {
     }
 
     @Command(name = "builds", description = "Every BDS release build, one by one: list them, or check the ones data/bds/builds.json lacks "
-        + "against the previous kept build (captures kept only when they differ).", subcommands = {Builds.ListBuilds.class, Builds.Check.class, Builds.Table.class})
+        + "against the previous kept build (captures kept only when they differ).", subcommands = {Builds.ListBuilds.class, Builds.Check.class, Builds.Table.class, Builds.Plan.class})
     static final class Builds implements Runnable {
         @Override
         public void run() {
@@ -350,6 +354,20 @@ public final class Cli implements Runnable {
                 BuildHistory.BuildList list = BuildHistory.fetchWithCurrentRelease();
                 return BuildHistory.check(root(), list, list.range(from, to), cache != null ? Path.of(cache) : BdsDistribution.defaultCache(),
                     BuildHistory.updates(root(), options), limit == null ? Integer.MAX_VALUE : limit, (minFreeMb == null ? 1536 : minFreeMb) << 20);
+            }
+        }
+
+        @Command(name = "plan", description = "The builds a full recapture captures (every kept release build and the preview with captures in "
+            + "data/bds) as a GitHub Actions matrix, written to --output (one line of JSON) and listed on stdout.")
+        static final class Plan extends Rooted implements Callable<Integer> {
+            @Option(names = "--output", required = true, description = "File for the matrix JSON") Path output;
+
+            @Override
+            public Integer call() throws Exception {
+                List<RecapturePlan.Leg> legs = RecapturePlan.of(root());
+                Files.writeString(output, RecapturePlan.matrix(legs) + "\n");
+                legs.forEach(leg -> System.out.println(leg.build() + (leg.preview() ? " (preview)" : "") + (leg.against() != null ? " (history check)" : "")));
+                return legs.isEmpty() ? 1 : 0;
             }
         }
 
