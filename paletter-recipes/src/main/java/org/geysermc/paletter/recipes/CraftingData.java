@@ -16,7 +16,7 @@ import java.util.Map;
  *     <li>Items resolve through the palette, so the items of its layers work, and tags are the palette's {@link Palette#itemTags()}.</li>
  *     <li>A recipe with an item the palette does not have, a tag without items, or a result block state it does not have is
  *         dropped, as BDS drops it: see {@link #dropped()}. A potion or container mix with a missing item is left out
- *         the same way.</li>
+ *         the same way: see {@link #droppedPotionMixes()} and {@link #droppedContainerMixes()}.</li>
  *     <li>The net ids are 1, 2, ... in the order the recipes were added; a dropped recipe has none.</li>
  *     <li>The UUIDs are derived from the recipe's id and station, so the same recipes give the same UUIDs on every run. The
  *         {@link Recipe.Multi multi recipes} keep their fixed UUIDs.</li>
@@ -34,11 +34,16 @@ public final class CraftingData {
     private final CraftingDataPacket encoded;
     private final Map<Recipe, Integer> netIds;
     private final List<Recipe> dropped;
+    private final List<PotionMix> droppedPotionMixes;
+    private final List<ContainerMix> droppedContainerMixes;
 
-    private CraftingData(CraftingDataPacket encoded, Map<Recipe, Integer> netIds, List<Recipe> dropped) {
+    private CraftingData(CraftingDataPacket encoded, Map<Recipe, Integer> netIds, List<Recipe> dropped, List<PotionMix> droppedPotionMixes,
+                         List<ContainerMix> droppedContainerMixes) {
         this.encoded = encoded;
         this.netIds = netIds;
         this.dropped = List.copyOf(dropped);
+        this.droppedPotionMixes = List.copyOf(droppedPotionMixes);
+        this.droppedContainerMixes = List.copyOf(droppedContainerMixes);
     }
 
     /**
@@ -80,6 +85,20 @@ public final class CraftingData {
      */
     public @NonNull List<Recipe> dropped() {
         return dropped;
+    }
+
+    /**
+     * @return the potion mixes that were left out because the palette lacks one of their items, in the order they were added
+     */
+    public @NonNull List<PotionMix> droppedPotionMixes() {
+        return droppedPotionMixes;
+    }
+
+    /**
+     * @return the container mixes that were left out because the palette lacks one of their items, in the order they were added
+     */
+    public @NonNull List<ContainerMix> droppedContainerMixes() {
+        return droppedContainerMixes;
     }
 
     /**
@@ -148,9 +167,11 @@ public final class CraftingData {
                     dropped.add(recipe);
                 }
             }
-            potionMixes.forEach(mix -> add(packet.getPotionMixData(), encoder.potionMix(mix)));
-            containerMixes.forEach(mix -> add(packet.getContainerMixData(), encoder.containerMix(mix)));
-            return new CraftingData(packet, netIds, dropped);
+            List<PotionMix> droppedPotionMixes = new ArrayList<>();
+            potionMixes.stream().filter(mix -> !add(packet.getPotionMixData(), encoder.potionMix(mix))).forEach(droppedPotionMixes::add);
+            List<ContainerMix> droppedContainerMixes = new ArrayList<>();
+            containerMixes.stream().filter(mix -> !add(packet.getContainerMixData(), encoder.containerMix(mix))).forEach(droppedContainerMixes::add);
+            return new CraftingData(packet, netIds, dropped, droppedPotionMixes, droppedContainerMixes);
         }
 
         private static <T> boolean add(List<T> list, T value) {

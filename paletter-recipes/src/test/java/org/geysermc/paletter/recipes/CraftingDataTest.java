@@ -46,6 +46,24 @@ class CraftingDataTest {
     }
 
     @Test
+    void mixesWithMissingItemsAreReported() {
+        BedrockItemType missing = BedrockItemType.fromIdentifier("test:missing");
+        PotionMix badPotion = new PotionMix(missing.variant(), BedrockItems.STICK.variant(), BedrockItems.STICK.variant());
+        PotionMix goodPotion = new PotionMix(BedrockItems.STICK.variant(), BedrockItems.COAL.variant(), BedrockItems.TORCH.variant());
+        ContainerMix badContainer = new ContainerMix(BedrockItems.STICK, missing, BedrockItems.COAL);
+        ContainerMix goodContainer = new ContainerMix(BedrockItems.STICK, BedrockItems.COAL, BedrockItems.TORCH);
+
+        CraftingData data = CraftingData.builder(PALETTE).potionMixes(List.of(badPotion, goodPotion)).containerMixes(List.of(badContainer, goodContainer)).build();
+
+        assertEquals(List.of(badPotion), data.droppedPotionMixes());
+        assertEquals(List.of(badContainer), data.droppedContainerMixes());
+        CraftingDataPacket packet = new CraftingDataPacket();
+        data.applyTo(packet);
+        assertEquals(1, packet.getPotionMixData().size());
+        assertEquals(1, packet.getContainerMixData().size());
+    }
+
+    @Test
     void uuidsAreTheSameOnEveryRun() {
         List<Recipe> recipes = List.of(shapeless("test:a", new Ingredient.AnyVariant(BedrockItems.STICK, 1)));
         CraftingDataPacket first = new CraftingDataPacket();

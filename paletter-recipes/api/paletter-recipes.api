@@ -13,6 +13,8 @@ public final class org.geysermc.paletter.recipes.CraftingData {
     public void applyTo(org.cloudburstmc.protocol.bedrock.packet.CraftingDataPacket)
     public static org.geysermc.paletter.recipes.CraftingData$Builder builder(org.geysermc.paletter.Palette)
     public java.util.List<org.geysermc.paletter.recipes.Recipe> dropped()
+    public java.util.List<org.geysermc.paletter.recipes.ContainerMix> droppedContainerMixes()
+    public java.util.List<org.geysermc.paletter.recipes.PotionMix> droppedPotionMixes()
     public int netId(org.geysermc.paletter.recipes.Recipe)
 }
 
