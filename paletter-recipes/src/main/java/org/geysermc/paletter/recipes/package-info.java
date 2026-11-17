@@ -1,5 +1,5 @@
 /**
- * The vanilla recipes of Bedrock Edition per data version, from BDS captures. Nothing here is public API yet; the
- * recipe records, the loader and the encoder follow.
+ * The vanilla recipes of Bedrock Edition per data version, from BDS captures: {@link org.geysermc.paletter.recipes.VanillaRecipes}
+ * and its records. The recipe encoder follows.
  */
 package org.geysermc.paletter.recipes;

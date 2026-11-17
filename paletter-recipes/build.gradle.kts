@@ -17,7 +17,16 @@ dependencies {
 
 java {
     withSourcesJar()
-    // withJavadocJar() and the javadoc settings of :paletter come with the first public type: javadoc fails without one
+    withJavadocJar()
+}
+
+// As :paletter's: every doclint group but `missing`, any other warning fails
+tasks.javadoc {
+    options {
+        this as StandardJavadocDocletOptions
+        addBooleanOption("Xdoclint:all,-missing", true)
+        addBooleanOption("Werror", true)
+    }
 }
 
 publishing {
@@ -29,4 +38,4 @@ publishing {
     }
 }
 
-// No binary compatibility check (japicmp, as in :paletter) until the module exports its first type: it has nothing to compare.
+// No binary compatibility check (japicmp, as in :paletter) until there is a release to compare with.
