@@ -97,7 +97,7 @@ class PaletteIdentityTest {
         PaletteLayer layer = PaletteLayer.builder("session")
             .item(RUBY)
             .block(LAMP)
-            .overrideItem("minecraft:cake", item -> item.components(MaxStackSize.of(1)))
+            .overrideItem("minecraft:cake", item -> item.modifyComponents(MaxStackSize.of(1)))
             .build();
         for (DataVersion version : PALETTER.versions()) {
             int protocol = version.protocolVersion();

@@ -525,7 +525,7 @@ class BehaviourTest {
         CustomBlock block = CustomBlock.builder("test:block").component(Friction.of(0.1f)).build();
         CustomItem item = CustomItem.builder("test:thing").component(MaxStackSize.of(16)).build();
         return latest().extend(PaletteLayer.builder("test").block(block).item(item)
-            .overrideItem(BedrockItems.APPLE, apple -> apple.dataDriven(MaxStackSize.of(3))).build());
+            .overrideItem(BedrockItems.APPLE, apple -> apple.replaceComponents(MaxStackSize.of(3))).build());
     }
 
     @Test

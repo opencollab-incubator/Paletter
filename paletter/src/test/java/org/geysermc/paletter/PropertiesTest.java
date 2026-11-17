@@ -85,7 +85,7 @@ class PropertiesTest {
         Palette base = PALETTER.vanilla(PALETTER.latest()).extend(PaletteLayer.builder("server").item(ruby()).build());
         RegisteredItem before = base.items().item("server:ruby");
         Palette session = base.extend(PaletteLayer.builder("override")
-            .overrideItem("server:ruby", item -> item.components(MaxStackSize.of(1))).build());
+            .overrideItem("server:ruby", item -> item.modifyComponents(MaxStackSize.of(1))).build());
         RegisteredItem after = session.items().item("server:ruby");
         assertNotNull(after);
         assertNotEquals(before.properties(), after.properties());
@@ -97,7 +97,7 @@ class PropertiesTest {
     void overridesEditVanillaItemsTheSame() {
         Palette base = PALETTER.vanilla(PALETTER.latest());
         Palette session = base.extend(PaletteLayer.builder("override")
-            .overrideItem("minecraft:cake", item -> item.components(MaxStackSize.of(3))).build());
+            .overrideItem("minecraft:cake", item -> item.modifyComponents(MaxStackSize.of(3))).build());
         assertEquals((byte) 3, session.items().item("minecraft:cake").properties().component("minecraft:max_stack_size").getByte("value"));
         assertNotEquals(base.items().item("minecraft:cake").properties(), session.items().item("minecraft:cake").properties());
     }

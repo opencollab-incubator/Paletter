@@ -31,7 +31,7 @@ PaletteLayer content = PaletteLayer.builder("server")
         .component(Friction.of(0.1f))
         .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION))
         .build())
-    .overrideItem(BedrockItems.CAKE, item -> item.components(MaxStackSize.of(1)))
+    .overrideItem(BedrockItems.CAKE, item -> item.modifyComponents(MaxStackSize.of(1)))
     .build();
 
 // One Paletter per application: policy and global content

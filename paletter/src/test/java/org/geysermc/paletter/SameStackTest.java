@@ -111,7 +111,7 @@ class SameStackTest {
         Palette base = latest();
         PaletteLayer layer = PaletteLayer.builder("override")
             .item(CustomItem.builder("same:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build())
-            .overrideItem("minecraft:diamond_sword", item -> item.components(MaxStackSize.of(1)))
+            .overrideItem("minecraft:diamond_sword", item -> item.modifyComponents(MaxStackSize.of(1)))
             .build();
         Palette session = base.extend(layer);
         ItemData fromBase = base.encode(sword(1, null));

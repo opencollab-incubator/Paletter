@@ -71,7 +71,7 @@ class ExtendReuseTest {
     void anOverrideOfAnItemInTheCreativeInventoryRebuildsIt() {
         Palette parent = parent();
         Palette child = parent.extend(PaletteLayer.builder("override")
-            .overrideItem("minecraft:cake", item -> item.components(MaxStackSize.of(1))).build());
+            .overrideItem("minecraft:cake", item -> item.modifyComponents(MaxStackSize.of(1))).build());
         assertNotSame(parent.creative(), child.creative());
         assertNotSame(parent.items().item("minecraft:cake"), child.items().item("minecraft:cake"));
         CreativeEntry cake = child.creative().items().stream().map(data -> child.creative().entry(data.getNetId()))

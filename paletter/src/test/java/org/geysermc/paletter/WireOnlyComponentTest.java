@@ -167,7 +167,7 @@ class WireOnlyComponentTest {
     @Test
     void overridesOfVanillaItemsWriteThem() {
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("fixes")
-            .overrideItem("minecraft:bow", item -> item.components(FrameCount.of(10), MiningSpeed.of(0.5f))).build());
+            .overrideItem("minecraft:bow", item -> item.modifyComponents(FrameCount.of(10), MiningSpeed.of(0.5f))).build());
         NbtMap properties = palette.items().getDefinition("minecraft:bow").getComponentData().getCompound("components")
             .getCompound("item_properties");
         assertEquals(10, properties.getInt("frame_count"));
@@ -203,7 +203,7 @@ class WireOnlyComponentTest {
         // Legacy items (cake) have no component data of their own: the override starts from {name, id, components}
         for (DataVersion version : PALETTER.versions()) {
             Palette palette = Palettes.palette(version.protocolVersion(), PaletteLayer.builder("fixes")
-                .overrideItem("minecraft:cake", item -> item.components(MiningSpeed.of(2f))).build());
+                .overrideItem("minecraft:cake", item -> item.modifyComponents(MiningSpeed.of(2f))).build());
             RegisteredItem cake = palette.items().getDefinition("minecraft:cake");
             NbtMap data = cake.getComponentData();
             assertEquals("minecraft:cake", data.getString("name"), version.toString());

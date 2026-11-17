@@ -95,7 +95,7 @@ class ItemPatchTest {
     void overrideShadowsTheBaseOnlyInThePatch() {
         Palette base = PALETTER.vanilla(PALETTER.latest());
         Palette session = base.extend(PaletteLayer.builder("override")
-            .overrideItem("minecraft:cake", item -> item.components(MaxStackSize.of(1)))
+            .overrideItem("minecraft:cake", item -> item.modifyComponents(MaxStackSize.of(1)))
             .build());
         RegisteredItem original = base.items().item("minecraft:cake");
         RegisteredItem overridden = session.items().item("minecraft:cake");

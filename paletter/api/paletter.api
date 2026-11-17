@@ -171,8 +171,8 @@ public static final class org.geysermc.paletter.PaletteLayer$Builder {
     public org.geysermc.paletter.PaletteLayer$Builder creative(java.util.function.BiConsumer<org.geysermc.paletter.creative.CreativeEditor, org.geysermc.paletter.data.DataVersion>)
     public org.geysermc.paletter.PaletteLayer$Builder creative(java.util.function.Consumer<org.geysermc.paletter.creative.CreativeEditor>)
     public org.geysermc.paletter.PaletteLayer$Builder item(org.geysermc.paletter.item.CustomItem)
-    public org.geysermc.paletter.PaletteLayer$Builder overrideItem(java.lang.String, java.util.function.Consumer<org.geysermc.paletter.item.ItemOverride>)
-    public org.geysermc.paletter.PaletteLayer$Builder overrideItem(org.geysermc.paletter.vanilla.BedrockItemType, java.util.function.Consumer<org.geysermc.paletter.item.ItemOverride>)
+    @Experimental public org.geysermc.paletter.PaletteLayer$Builder overrideItem(java.lang.String, java.util.function.Consumer<org.geysermc.paletter.item.ItemOverride>)
+    @Experimental public org.geysermc.paletter.PaletteLayer$Builder overrideItem(org.geysermc.paletter.vanilla.BedrockItemType, java.util.function.Consumer<org.geysermc.paletter.item.ItemOverride>)
     public org.geysermc.paletter.PaletteLayer$Builder tag(java.lang.String, java.lang.String...)
     public org.geysermc.paletter.PaletteLayer$Builder variant(org.geysermc.paletter.vanilla.BedrockItemVariant)
     public org.geysermc.paletter.PaletteLayer$Builder voxelShape(java.lang.String, org.geysermc.paletter.block.VoxelShape)
@@ -2405,13 +2405,13 @@ public record org.geysermc.paletter.item.ItemFallback {
     public org.geysermc.paletter.vanilla.BedrockItemVariant variant()
 }
 
-public final class org.geysermc.paletter.item.ItemOverride {
+@Experimental public final class org.geysermc.paletter.item.ItemOverride {
     public org.geysermc.paletter.item.ItemOverride block(org.cloudburstmc.nbt.NbtMap)
     public org.geysermc.paletter.item.ItemOverride componentBased(boolean)
-    public org.geysermc.paletter.item.ItemOverride components(org.geysermc.paletter.item.component.ItemComponent...)
-    public org.geysermc.paletter.item.ItemOverride dataDriven(org.geysermc.paletter.item.component.ItemComponent...)
+    public org.geysermc.paletter.item.ItemOverride modifyComponents(org.geysermc.paletter.item.component.ItemComponent...)
     public org.geysermc.paletter.item.ItemOverride noBlock()
     public org.geysermc.paletter.item.RegisteredItem original()
+    public org.geysermc.paletter.item.ItemOverride replaceComponents(org.geysermc.paletter.item.component.ItemComponent...)
     public org.geysermc.paletter.item.ItemOverride version(org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion)
 }
 

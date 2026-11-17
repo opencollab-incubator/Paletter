@@ -12,6 +12,7 @@ import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 import org.geysermc.paletter.item.CustomItem;
+import org.geysermc.paletter.annotation.Experimental;
 import org.geysermc.paletter.item.ItemOverride;
 import org.geysermc.paletter.internal.item.ItemVariant;
 
@@ -202,17 +203,24 @@ public final class PaletteLayer {
 
         /**
          * Changes an existing item definition. Skipped (and reported) for versions without the item.
+         * <p>
+         * <b>Experimental.</b> BDS only supports overriding vanilla data driven items; it rejects modern format overrides
+         * of hard coded and legacy items, which Paletter does not refuse. The client's behaviour for Paletter's overrides
+         * is <b>unverified</b> (no client test exists). The API may change.
          */
+        @Experimental
         public @NonNull Builder overrideItem(@NonNull String identifier, @NonNull Consumer<ItemOverride> modifier) {
             overrides.add(new Override(identifier, modifier));
             return this;
         }
 
         /**
-         * Changes an existing item definition, like {@link #overrideItem(String, Consumer)}.
+         * Changes an existing item definition, like {@link #overrideItem(String, Consumer)}, with the same caveats:
+         * experimental, and unverified on a client.
          *
          * @since 0.1.0
          */
+        @Experimental
         public @NonNull Builder overrideItem(@NonNull BedrockItemType type, @NonNull Consumer<ItemOverride> modifier) {
             return overrideItem(type.identifier(), modifier);
         }
