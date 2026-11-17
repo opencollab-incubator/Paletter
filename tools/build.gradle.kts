@@ -46,6 +46,8 @@ dependencies {
 }
 
 tasks.test {
+    // Tests of the "binary" tag read a BDS binary from the cache: ./gradlew :tools:whiteboxRegression
+    useJUnitPlatform { excludeTags("binary") }
     // ./gradlew :tools:test -PupdateGolden=true rewrites the generator tests' golden files (Golden; review the diff)
     systemProperty("paletter.updateGolden", (findProperty("updateGolden") as String?) ?: "false")
     // -PupdateShapeDisagreements=true rewrites data/model/vanilla-shapes-known-<protocol>.txt (VanillaShapeOracleTest)
@@ -141,11 +143,22 @@ val checkMappings = cliTask("checkMappings", "verification",
 val checkData = cliTask("checkData", "verification",
     "Fails on problems of the bundled data: what older bundled versions lack of the newest one", "check-data", check = true)
 
-// What the code of a build can send that its captures do not show (docs/data-pipeline.md, "White-box discovery").
-// Not part of check yet: update does not regenerate the reports.
-cliTask("checkWhitebox", "verification",
+// What the code of a build can send that its captures do not show (docs/data-pipeline.md, "White-box discovery"). Reads
+// only committed facts and captures, never a BDS binary, and fails on a stale report, not on a gap (that is --strict).
+val checkWhitebox = cliTask("checkWhitebox", "verification",
     "Fails if a committed whitebox-coverage.md is not what the committed whitebox.json and captures give", "whitebox-coverage", "--check", check = true)
 
 tasks.named("check") {
-    dependsOn(checkConstants, checkComponentApi, checkMappings, checkData)
+    dependsOn(checkConstants, checkComponentApi, checkMappings, checkData, checkWhitebox)
+}
+
+// The white-box analysis of a cached BDS binary against the committed whitebox.json. Explicit only (not in check or
+// build): CI has no binary. A build whose zip is not in the cache is skipped, not downloaded.
+tasks.register<Test>("whiteboxRegression") {
+    group = "verification"
+    description = "Runs the white-box analysis on a cached BDS binary and compares it with the committed whitebox.json"
+    testClassesDirs = sourceSets.test.get().output.classesDirs
+    classpath = sourceSets.test.get().runtimeClasspath
+    useJUnitPlatform { includeTags("binary") }
+    outputs.upToDateWhen { false }
 }

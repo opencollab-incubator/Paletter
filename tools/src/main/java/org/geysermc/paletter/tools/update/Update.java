@@ -40,6 +40,9 @@ import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.ExperimentContent;
 import org.geysermc.paletter.tools.data.BundledFiles;
+import org.geysermc.paletter.tools.whitebox.Whitebox;
+import org.geysermc.paletter.tools.whitebox.WhiteboxCoverage;
+import org.geysermc.paletter.tools.whitebox.WhiteboxRun;
 import org.geysermc.paletter.internal.data.VanillaData;
 
 import java.io.ByteArrayInputStream;
@@ -272,6 +275,8 @@ public final class Update {
         if (runs.protocol != null) {
             specCapture(distribution, work, runs);
         }
+        // After the captures, which the white-box facts are checked against and compared with
+        whitebox(cache, distribution);
         if (runs.voxelShapesWritten) {
             // After the data of the version is in place: the import reads the block names of the bundled versions
             ShapeImport.run(root);
@@ -1041,6 +1046,47 @@ public final class Update {
             report.check(Report.Status.SKIP, "BDS inventory", "the Linux build could not be downloaded: " + e.getMessage());
         } catch (Exception e) {
             report.fail("BDS inventory", e);
+        }
+    }
+
+    /**
+     * What the code of the build's Linux binary can send ({@code whitebox}) and which of it no capture shows
+     * ({@code whitebox-coverage}). Advisory: nothing else of the update depends on it, so whatever goes wrong here (an
+     * exception, a failed self-check) is a FAIL row and the facts are not written. New gaps are listed under "Needs attention".
+     */
+    private void whitebox(Path cache, BdsDistribution distribution) {
+        String build = distribution.version();
+        try {
+            WhiteboxRun run = WhiteboxRun.of(BdsDistribution.resolve(true, preview, build).zip(cache), root, build);
+            if (!run.problems().isEmpty()) {
+                report.check(Report.Status.FAIL, "White-box", "white-box unavailable for this build: " + String.join("; ", run.problems()));
+                return;
+            }
+            Path data = bdsData.resolve(build);
+            stage(data.resolve(Whitebox.FILE), Whitebox.json(run.facts()).getBytes(StandardCharsets.UTF_8), "white-box facts " + build);
+            List<String> changes = run.changes().stream().filter(line -> line.startsWith("!")).toList();
+            report.check(Report.Status.INFO, "White-box", run.changes().isEmpty() ? "no changes against the build before"
+                : changes.size() + " changes of what the code sends, " + (run.changes().size() - changes.size()) + " of how it writes it");
+            if (!changes.isEmpty()) {
+                report.action("capture the components that changed again", "Changes", changes);
+            }
+            List<String> rewritten = run.changes().stream().filter(line -> line.startsWith("~")).toList();
+            if (!rewritten.isEmpty()) {
+                report.evidence("Writers whose code changed", rewritten);
+            }
+            if (run.coverage() == null) {
+                report.check(Report.Status.SKIP, "White-box coverage", "no captures of this build");
+                return;
+            }
+            stage(data.resolve(WhiteboxCoverage.FILE), run.coverage().getBytes(StandardCharsets.UTF_8), "white-box coverage " + build);
+            report.check(Report.Status.INFO, "White-box coverage", run.gaps().size() + " things the code can send that no capture shows, "
+                + run.newGaps().size() + " new");
+            if (!run.newGaps().isEmpty()) {
+                report.action("capture them with a spec variant, a format sweep entry or a probe add-on", "New gaps",
+                    run.newGaps().stream().map(gap -> "- " + gap.subject() + ": " + gap.missing()).toList());
+            }
+        } catch (Exception e) {
+            report.check(Report.Status.FAIL, "White-box", "white-box unavailable for this build: " + e);
         }
     }
 
