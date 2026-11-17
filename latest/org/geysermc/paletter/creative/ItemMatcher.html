@@ -38,7 +38,7 @@ loadScripts(document, 'script');</script>
 <li>
 <p>Summary:</p>
 <ul>
-<li><a href="#nested-class-summary">Nested</a></li>
+<li>Nested</li>
 <li>Field</li>
 <li>Constr</li>
 <li><a href="#method-summary">Method</a></li>
@@ -58,7 +58,7 @@ loadScripts(document, 'script');</script>
 <div id="navbar-sub-list">
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -86,17 +86,8 @@ loadScripts(document, 'script');</script>
 <h1 title="Interface ItemMatcher" class="title">Interface ItemMatcher</h1>
 </div>
 <section class="class-description" id="class-description">
-<dl class="notes">
-<dt>All Known Implementing Classes:</dt>
-<dd><code><a href="ItemMatcher.And.html" title="class in org.geysermc.paletter.creative">ItemMatcher.And</a></code>, <code><a href="ItemMatcher.BlockState.html" title="class in org.geysermc.paletter.creative">ItemMatcher.BlockState</a></code>, <code><a href="ItemMatcher.Custom.html" title="class in org.geysermc.paletter.creative">ItemMatcher.Custom</a></code>, <code><a href="ItemMatcher.Damage.html" title="class in org.geysermc.paletter.creative">ItemMatcher.Damage</a></code>, <code><a href="ItemMatcher.Exact.html" title="class in org.geysermc.paletter.creative">ItemMatcher.Exact</a></code>, <code><a href="ItemMatcher.Id.html" title="class in org.geysermc.paletter.creative">ItemMatcher.Id</a></code>, <code><a href="ItemMatcher.Namespace.html" title="class in org.geysermc.paletter.creative">ItemMatcher.Namespace</a></code>, <code><a href="ItemMatcher.Not.html" title="class in org.geysermc.paletter.creative">ItemMatcher.Not</a></code></dd>
-</dl>
-<dl class="notes">
-<dt>Functional Interface:</dt>
-<dd>This is a functional interface and can therefore be used as the assignment target for a lambda expression or method reference.</dd>
-</dl>
 <hr>
-<div class="type-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/FunctionalInterface.html" title="class or interface in java.lang" class="external-link">@FunctionalInterface</a>
-</span><span class="modifiers">public interface </span><span class="element-name type-name-label">ItemMatcher</span></div>
+<div class="type-signature"><span class="modifiers">public sealed interface </span><span class="element-name type-name-label">ItemMatcher</span></div>
 <div class="block">Selects creative stacks, e.g. as an anchor to insert after, or to remove. Matchers print readably, so a placement
  that found nothing can be reported as <code>after(minecraft:hopper_minecart) matched nothing</code>.
  <pre><code>
@@ -109,42 +100,6 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="summary">
 <ul class="summary-list">
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<li>
-<section class="nested-class-summary" id="nested-class-summary">
-<h2>Nested Class Summary</h2>
-<div class="caption"><span>Nested Classes</span></div>
-<div class="summary-table three-column-summary">
-<div class="table-header col-first">Modifier and Type</div>
-<div class="table-header col-second">Interface</div>
-<div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="ItemMatcher.And.html" class="type-name-link" title="class in org.geysermc.paletter.creative">ItemMatcher.And</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second odd-row-color"><code><a href="ItemMatcher.BlockState.html" class="type-name-link" title="class in org.geysermc.paletter.creative">ItemMatcher.BlockState</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="ItemMatcher.Custom.html" class="type-name-link" title="class in org.geysermc.paletter.creative">ItemMatcher.Custom</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second odd-row-color"><code><a href="ItemMatcher.Damage.html" class="type-name-link" title="class in org.geysermc.paletter.creative">ItemMatcher.Damage</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="ItemMatcher.Exact.html" class="type-name-link" title="class in org.geysermc.paletter.creative">ItemMatcher.Exact</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second odd-row-color"><code><a href="ItemMatcher.Id.html" class="type-name-link" title="class in org.geysermc.paletter.creative">ItemMatcher.Id</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="ItemMatcher.Namespace.html" class="type-name-link" title="class in org.geysermc.paletter.creative">ItemMatcher.Namespace</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second odd-row-color"><code><a href="ItemMatcher.Not.html" class="type-name-link" title="class in org.geysermc.paletter.creative">ItemMatcher.Not</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-</div>
-</section>
-</li>
 <!-- ========== METHOD SUMMARY =========== -->
 <li>
 <section class="method-summary" id="method-summary">
