@@ -63,7 +63,7 @@ import java.util.concurrent.Callable;
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
     Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class, Cli.BehaviourCommand.class, Cli.BehaviourProbeCommand.class, Cli.BehaviourDumpCommand.class, Cli.ScriptDumpCommand.class,
-    Cli.VoxelShapesCommand.class
+    Cli.VoxelShapesCommand.class, Cli.RecipesCaptureCommand.class
 })
 public final class Cli implements Runnable {
     /** The docs commit the committed model was generated from (MicrosoftDocs/minecraft-creator main, 2026-11-06). */
@@ -462,6 +462,30 @@ public final class Cli implements Runnable {
             put(options, "out", out);
             put(options, "timeout", timeout);
             EducationProbe.run(root(), options);
+            return 0;
+        }
+    }
+
+    @Command(name = "recipes-capture", description = "Captures a vanilla world of one BDS build and writes only its crafting and trim data "
+        + "to data/bds/VERSION/vanilla.")
+    static final class RecipesCaptureCommand extends Rooted implements Callable<Integer> {
+        @Option(names = "--version", required = true) String version;
+        @Option(names = "--preview") boolean preview;
+        @Option(names = "--cache") String cache;
+        @Option(names = "--port") String port;
+        @Option(names = "--timeout") String timeout;
+        @Option(names = "--keep-server") boolean keepServer;
+
+        @Override
+        public Integer call() throws Exception {
+            Map<String, String> options = new HashMap<>();
+            put(options, "version", version);
+            put(options, "cache", cache);
+            put(options, "port", port);
+            put(options, "timeout", timeout);
+            flag(options, "preview", preview);
+            flag(options, "keep-server", keepServer);
+            org.geysermc.paletter.tools.update.RecipeProbe.run(root(), options);
             return 0;
         }
     }

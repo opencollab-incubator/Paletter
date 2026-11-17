@@ -35,6 +35,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.tools.client.Capture;
+import org.geysermc.paletter.tools.client.RecipeCapture;
 import org.geysermc.paletter.tools.client.CapturedData;
 import org.geysermc.paletter.tools.client.LevelDat;
 import org.geysermc.paletter.tools.codegen.component.HandTransforms;
@@ -1332,6 +1333,12 @@ public final class Update {
         VanillaData captured = read(scratch.resolve(name + ".nbt"));
         runs.imported = scratch.resolve(name + ".nbt");
         Map<String, List<VariantNames.Entry>> variantNames = VariantNames.read(root.resolve(VariantNames.FILE));
+        // The recipe data of the capture, committed with the build's other vanilla captures
+        for (String file : List.of(RecipeCapture.CRAFTING, RecipeCapture.TRIM)) {
+            if (Files.exists(runs.vanilla.resolve(file))) {
+                stageCopy(bdsData.resolve(distribution.version()).resolve("vanilla").resolve(file), runs.vanilla.resolve(file), "recipe capture " + file);
+            }
+        }
 
         if (runs.existing != null) {
             VanillaData bundled = read(resources.resolve(name + ".nbt"));
