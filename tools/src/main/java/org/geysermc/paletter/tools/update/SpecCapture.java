@@ -61,10 +61,16 @@ public final class SpecCapture {
 
     private final Path root;
     private final Map<String, String> options;
+    private Capture.Summary summary;
 
     public SpecCapture(Path root, Map<String, String> options) {
         this.root = root;
         this.options = options;
+    }
+
+    /** What the client recorded in the last capture of {@link #run} (block hashes, experiments), null before it. */
+    public Capture.Summary summary() {
+        return summary;
     }
 
     public int run() throws Exception {
@@ -143,7 +149,7 @@ public final class SpecCapture {
                 generator = new AddonGenerator(docs, fixtures, formatVersion, shrunk);
             }
             List<String> contentLog = run.contentLog();
-            Capture.Summary summary = run.summary();
+            summary = run.summary();
             int protocol = run.protocol();
             Files.createDirectories(out);
             for (String file : List.of("custom_item_registry.nbt", "custom_block_properties.nbt")) {

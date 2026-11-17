@@ -41,6 +41,7 @@ final class NetworkDataStage {
         try {
             recipes.recipes(distribution, runs, captured);
             recipes.stageRecipes(distribution, runs);
+            recipes.stageProbe(distribution, runs, scratch.resolveSibling("recipe-probe"));
         } catch (Exception e) {
             ctx.report.fail("Recipes", e);
         }

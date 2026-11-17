@@ -2,7 +2,6 @@ package org.geysermc.paletter.tools.update;
 
 import org.geysermc.paletter.internal.data.VanillaData;
 import java.nio.file.Path;
-import java.util.List;
 
 /** What the server runs gave; fields stay null when a step was impossible. */
 final class Runs {
@@ -18,10 +17,7 @@ final class Runs {
     String referenceName;
     Path imported;
     Path vanilla;
-    Path addon;
-    Path customCapture;
     Path creative;
-    List<String> addonContentLog;
     /** The bundled version this run's network data belongs to (null without a capture). */
     String bundledName;
     /** Whether this run replaced the voxel shape captures of its build: the bundled voxel shapes follow. */

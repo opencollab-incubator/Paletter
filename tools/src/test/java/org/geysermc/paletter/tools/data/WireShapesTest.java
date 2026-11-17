@@ -22,7 +22,7 @@ import java.util.zip.GZIPOutputStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** {@link WireShapes#uncoveredByBuild}: the wire paths of every build's add-on capture that no rule covers. */
+/** {@link WireShapes#uncoveredByBuild}: the wire paths of every build's spec capture that no rule covers. */
 class WireShapesTest {
     private static final String COMPONENTS = """
         {"source": "test", "commit": "test", "license": "test", "formatNotes": [], "components": [
@@ -35,9 +35,9 @@ class WireShapesTest {
           "fields": {"x": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "int", "tags": [], "wire": "minecraft:covered.x"}]}}}}}""")
         .getAsJsonObject();
 
-    /** A build's add-on capture with one item of the covered component with the given members, and maybe an undocumented component. */
-    private static void addon(Path bdsData, String build, NbtMap covered, boolean mystery) throws IOException {
-        Path directory = Files.createDirectories(bdsData.resolve(build).resolve("addon"));
+    /** A build's spec capture with one item of the covered component with the given members, and maybe an undocumented component. */
+    private static void spec(Path bdsData, String build, NbtMap covered, boolean mystery) throws IOException {
+        Path directory = Files.createDirectories(bdsData.resolve(build).resolve("spec"));
         NbtMapBuilder components = NbtMap.builder().putCompound("minecraft:covered", covered);
         if (mystery) {
             components.putCompound("minecraft:mystery", NbtMap.builder().putInt("z", 1).build());
@@ -54,10 +54,10 @@ class WireShapesTest {
     void everyBuildIsCheckedOldestFirstAndOnlyBuildsWithGapsAreListed(@TempDir Path root) throws IOException {
         Path bdsData = Files.createDirectories(root.resolve("bds"));
         // 1.26.9.1 is older than 1.26.36.1 although it sorts after it as text
-        addon(bdsData, "1.26.36.1", NbtMap.builder().putInt("x", 1).putInt("extra", 2).build(), false);
-        addon(bdsData, "1.26.9.1", NbtMap.builder().putInt("x", 1).build(), true);
-        addon(bdsData, "1.26.45.1", NbtMap.builder().putInt("x", 1).build(), false);
-        // a build without an add-on capture has nothing to check
+        spec(bdsData, "1.26.36.1", NbtMap.builder().putInt("x", 1).putInt("extra", 2).build(), false);
+        spec(bdsData, "1.26.9.1", NbtMap.builder().putInt("x", 1).build(), true);
+        spec(bdsData, "1.26.45.1", NbtMap.builder().putInt("x", 1).build(), false);
+        // a build without a spec capture has nothing to check
         Files.createDirectories(bdsData.resolve("1.26.50.1/spec"));
         Path components = root.resolve("components.json");
         Files.writeString(components, COMPONENTS);

@@ -4,6 +4,7 @@ import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.client.RecipeCapture;
 import org.geysermc.paletter.tools.data.RecipeData;
+import org.geysermc.paletter.tools.model.addon.UnlockProbe;
 import org.geysermc.paletter.internal.data.VanillaData;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -84,6 +85,25 @@ final class RecipeStage {
             if (Files.exists(runs.vanilla.resolve(file))) {
                 ctx.stageCopy(committed.resolve(file), runs.vanilla.resolve(file), "recipe capture " + file);
             }
+        }
+    }
+
+    /**
+     * Keeps the recipes of the unlock probe ({@link UnlockProbe}) of the creative order probe's capture in
+     * {@code data/bds/<build>/recipe-probe}: how BDS sends {@code unlock} per recipe format. Staged only when they differ from
+     * the committed ones (the UUIDs of shapeless recipes are random per BDS start, {@link Diff#recipes} compares them normalised).
+     */
+    void stageProbe(BdsDistribution distribution, Runs runs, Path probe) throws IOException {
+        if (runs.creative == null || !Files.exists(runs.creative.resolve(RecipeCapture.CRAFTING))) {
+            ctx.report.check(Report.Status.INFO, "Unlock probe recipes", "no crafting data in the creative order probe capture");
+            return;
+        }
+        Files.createDirectories(probe);
+        Files.write(probe.resolve(RecipeCapture.CRAFTING),
+            UpdateContext.gzip(RecipeCapture.only(RecipeCapture.read(runs.creative), UnlockProbe.PREFIX)));
+        Path committed = ctx.bdsData.resolve(distribution.version()).resolve("recipe-probe");
+        if (recipesChanged(committed, probe)) {
+            ctx.stageCopy(committed.resolve(RecipeCapture.CRAFTING), probe.resolve(RecipeCapture.CRAFTING), "unlock probe recipes");
         }
     }
 

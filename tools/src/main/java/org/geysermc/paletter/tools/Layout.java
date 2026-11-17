@@ -9,7 +9,6 @@ public final class Layout {
     /** The add-on packs the tooling runs on BDS. */
     public static final String ADDONS = "data/addons";
     public static final String DUMP_ADDON = ADDONS + "/dump";
-    public static final String CAPTURE_ADDON = ADDONS + "/capture";
     public static final String CREATIVE_ADDON = ADDONS + "/creative";
     public static final String PROBE_ADDON = ADDONS + "/probe";
     public static final String BEHAVIOUR_DUMP_ADDON = ADDONS + "/behaviour-dump";

@@ -732,10 +732,10 @@ public final class Cli implements Runnable {
     }
 
     @Command(name = "addon", description = "Generates an add-on. Kinds: spec (data/model -> every documented component + variants.json, "
-        + "the default), capture (data/addons/capture), creative (data/addons/creative), creative-large (the 700 block probe)")
+        + "the default), creative (data/addons/creative), creative-large (the 700 block probe)")
     static final class Addon extends Rooted implements Callable<Integer> {
         @Option(names = "--out", required = true) Path out;
-        @Option(names = "--kind", defaultValue = "spec", description = "spec, capture, creative or creative-large") String kind;
+        @Option(names = "--kind", defaultValue = "spec", description = "spec, creative or creative-large") String kind;
 
         @Override
         public Integer call() throws Exception {
@@ -744,7 +744,6 @@ public final class Cli implements Runnable {
                     Path model = root().resolve(Layout.MODEL);
                     new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model).withNewestSchema(null)).write(out);
                 }
-                case "capture" -> FixedAddons.writeCapture(out);
                 case "creative" -> FixedAddons.writeCreative(out);
                 case "creative-large" -> FixedAddons.writeCreativeLarge(out);
                 default -> throw new IllegalArgumentException("Unknown --kind " + kind);
@@ -780,7 +779,7 @@ public final class Cli implements Runnable {
             Path model = root().resolve(Layout.MODEL);
             JsonObject mappings = JsonParser.parseString(Files.readString(model.resolve("mappings.json"))).getAsJsonObject();
             Model components = Fixtures.read(model).apply(Model.read(model.resolve("components.json")));
-            // every build's add-on capture; the paths with a reason are listed in coverage.md, which is compared above, so a
+            // every build's spec capture; the paths with a reason are listed in coverage.md, which is compared above, so a
             // new one there is a reviewed change
             WireShapes.uncoveredByBuild(root().resolve(Layout.BDS), mappings, components).forEach((build, uncovered) -> {
                 uncovered.forEach((reason, paths) -> System.out.println(build + ", " + reason + ":\n  " + String.join("\n  ", paths)));

@@ -26,8 +26,8 @@ import java.util.Map;
  *     stable, so the states of a block keep their order). Checked by capturing the same world once hashed and once
  *     sequential: every creative stack's state (resolved through its hash) must sit at the sequential id BDS sent;</li>
  *     <li><b>custom block ids</b>: {@code vanilla_block_data.block_id} of custom blocks is 10000, 10001, ... ({@link BlockRegistry#CUSTOM_BLOCK_ID_START}) in
- *     <i>descending</i> identifier order (BDS uses descending <i>file name</i> order; the capture add-on names each file
- *     after its block, docs/wire-notes.md), and a custom block's item has runtime id {@code 255 - block_id}
+ *     <i>descending</i> identifier order (BDS uses descending <i>file name</i> order; the creative order probe names its
+ *     block files by identifier rank, docs/wire-notes.md), and a custom block's item has runtime id {@code 255 - block_id}
  *     ({@link ComponentIndex#BLOCK_ITEM_ID_PLUS_BLOCK_ID}). Both constants are inferred from the spec captures.</li>
  * </ul>
  */

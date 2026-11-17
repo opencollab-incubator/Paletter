@@ -193,10 +193,10 @@ public final class WireShapes {
     }
 
     /**
-     * {@link #uncovered} and {@link #classify} for the add-on capture of every build ({@code <bdsData>/<build>/addon}), oldest
+     * {@link #uncovered} and {@link #classify} for the spec capture of every build ({@code <bdsData>/<build>/spec}), oldest
      * build first: a new wire path of an older build is as much a gap as one of the newest.
      *
-     * @return build -> reason -> paths, only builds with an add-on capture and reasons with paths
+     * @return build -> reason -> paths, only builds with a spec capture and reasons with paths
      */
     public static Map<String, Map<String, List<String>>> uncoveredByBuild(Path bdsData, JsonObject mappings, Model model) throws IOException {
         Map<String, Map<String, List<String>>> out = new java.util.LinkedHashMap<>();
@@ -205,11 +205,11 @@ public final class WireShapes {
         }
         List<Path> builds;
         try (java.util.stream.Stream<Path> files = Files.list(bdsData)) {
-            builds = files.filter(f -> Files.exists(f.resolve("addon/custom_item_registry.nbt")))
+            builds = files.filter(f -> Files.exists(f.resolve("spec/custom_item_registry.nbt")))
                 .sorted(java.util.Comparator.comparing(f -> f.getFileName().toString(), org.geysermc.paletter.tools.Versions.ORDER)).toList();
         }
         for (Path build : builds) {
-            Map<String, List<String>> classified = classify(ofCapture(build.resolve("addon")).uncovered(mappings), mappings, model);
+            Map<String, List<String>> classified = classify(ofCapture(build.resolve("spec")).uncovered(mappings), mappings, model);
             if (!classified.isEmpty()) {
                 out.put(build.getFileName().toString(), classified);
             }

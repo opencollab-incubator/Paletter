@@ -1,0 +1,22 @@
+{
+  "format_version": "1.14",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "paletter:unlock_context_always_unlocked_1_14"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:dirt"
+      }
+    ],
+    "result": {
+      "item": "minecraft:stick"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
+    }
+  }
+}

@@ -230,6 +230,32 @@
       "components": {
         "minecraft:max_stack_size": 64
       }
+    },
+    {
+      "file": "f25",
+      "identifier": "paletter:replaced_hidden_block",
+      "menu_category": {
+        "category": "items"
+      },
+      "components": {
+        "minecraft:block_placer": {
+          "block": "paletter:replaced_hidden_block",
+          "replace_block_item": true
+        }
+      }
+    },
+    {
+      "file": "f26",
+      "identifier": "paletter:replaced_shown_block",
+      "menu_category": {
+        "category": "none"
+      },
+      "components": {
+        "minecraft:block_placer": {
+          "block": "paletter:replaced_shown_block",
+          "replace_block_item": true
+        }
+      }
     }
   ],
   "blocks": [
@@ -309,6 +335,18 @@
     },
     {
       "identifier": "exp:block_with_item",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    {
+      "identifier": "paletter:replaced_hidden_block",
+      "menu_category": {
+        "category": "none"
+      }
+    },
+    {
+      "identifier": "paletter:replaced_shown_block",
       "menu_category": {
         "category": "construction"
       }

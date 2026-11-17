@@ -1,0 +1,22 @@
+{
+  "format_version": "1.20.30",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "paletter:unlock_context_player_in_water_1_20_30"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:dirt"
+      }
+    ],
+    "result": {
+      "item": "minecraft:stick"
+    },
+    "unlock": {
+      "context": "PlayerInWater"
+    }
+  }
+}

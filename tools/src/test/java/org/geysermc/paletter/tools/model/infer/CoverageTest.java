@@ -77,7 +77,7 @@ class CoverageTest {
         coverage.wirePaths(Map.of("1.26.36.1", Map.of("the creator docs do not describe the component, so the model has no fields for it",
             List.of("item:minecraft:mystery a", "item:minecraft:mystery b"))));
         String markdown = coverage.markdown(List.of());
-        assertTrue(markdown.contains("## Wire paths no rule covers\n\nIn the add-on capture of each build, with the reason the model has no rule "
+        assertTrue(markdown.contains("## Wire paths no rule covers\n\nIn the spec capture of each build, with the reason the model has no rule "
             + "for them. A new path here is a change to review.\n\n### 1.26.36.1\n\nthe creator docs do not describe the component, so the "
             + "model has no fields for it (2):\n\n- `item:minecraft:mystery a`\n- `item:minecraft:mystery b`\n"), markdown);
     }
