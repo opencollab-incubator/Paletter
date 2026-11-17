@@ -4,7 +4,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
-import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.BlockComponent;
 import org.geysermc.paletter.block.component.CollisionBox;
@@ -25,11 +24,7 @@ import org.geysermc.paletter.item.component.Repairable;
 import org.geysermc.paletter.item.component.Shooter;
 import org.geysermc.paletter.item.component.UseAnimation;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -172,7 +167,7 @@ public final class Transforms {
      *     <li>A number is sent as the float it is, in six decimals: {@code "1"}, {@code "1.0"}, {@code " 1 "} and
      *     {@code "1."} as {@code "1.000000"}, {@code ".5"} as {@code "0.500000"}, {@code "1e3"} as {@code "1000.000000"},
      *     {@code "16777217"} as {@code "16777216.000000"}, {@code "0.0078125"} as {@code "0.007812"}, {@code "-0"} as
-     *     {@code "-0.000000"} ({@link #molangNumber}).</li>
+     *     {@code "-0.000000"} ({@link Wire#molangNumber}).</li>
      *     <li>{@code "true"} is {@code "1.000000"} and {@code "false"} is {@code "0.000000"}. That is what BDS sends for
      *     the text in every build and for the JSON boolean from 1.26.63.1 on; the older builds refuse the JSON boolean
      *     ("expected an object"), so there the text is what an add-on can write.</li>
@@ -199,7 +194,7 @@ public final class Transforms {
         }
         for (Map.Entry<String, String> bone : bones.entrySet()) {
             String value = bone.getValue();
-            String expression = value.equals("true") ? "1.000000" : value.equals("false") ? "0.000000" : molangNumber(value);
+            String expression = value.equals("true") ? "1.000000" : value.equals("false") ? "0.000000" : Wire.molangNumber(value);
             if (expression == null) {
                 expression = value;
                 if (!MOLANG_QUERY.matcher(value).find()) {
@@ -218,28 +213,6 @@ public final class Transforms {
 
     /** A query in a Molang expression: BDS sends an expression that has one as written. */
     private static final Pattern MOLANG_QUERY = Pattern.compile("(?<![A-Za-z0-9_.])(q|query)\\.[a-z_]");
-
-    /** The shapes of a Molang number the captures have: digits with or without a fraction or an exponent, spaces around. */
-    private static final Pattern MOLANG_NUMBER = Pattern.compile("\\s*-?(\\d+\\.?\\d*|\\.\\d+)([eE]-?\\d+)?\\s*");
-
-    /**
-     * A Molang number as BDS sends it where it computes an expression (bone visibility, BDS 1.26.36.1 to 1.26.70.24): the
-     * float in six decimals of its exact value, a tie to the even digit ({@code 0.0078125} is {@code "0.007812"}), the
-     * sign kept ({@code "-0.000000"}).
-     *
-     * @return the number, or null if the text is not a number of a captured shape or is beyond a float
-     */
-    static @Nullable String molangNumber(@NonNull String text) {
-        if (!MOLANG_NUMBER.matcher(text).matches()) {
-            return null;
-        }
-        float value = Float.parseFloat(text.trim());
-        if (Float.isInfinite(value)) {
-            return null;
-        }
-        String digits = new BigDecimal(value).setScale(6, RoundingMode.HALF_EVEN).toPlainString();
-        return (Float.floatToRawIntBits(value) < 0 && !digits.startsWith("-") ? "-" : "") + digits;
-    }
 
     /** {@code n_way_visual_rotation}: every axis, an empty string for an axis that is not set. */
     private static NbtMap rotation(@Nullable String x, @Nullable String y, @Nullable String z) {
@@ -271,7 +244,7 @@ public final class Transforms {
 
     /**
      * {@code geometry.uv_lock} of {@code minecraft:item_visual}: the value {@code minecraft:geometry} sends for its
-     * {@code uv_lock}. The bones are sent in the order of {@link #bdsBoneOrder}, which depends on the hash of each name: a
+     * {@code uv_lock}. The bones are sent in the order of {@link Wire#byNameHash}, which depends on the hash of each name: a
      * rule fitted to the captured names would only order those. The captures of BDS 1.26.36.1 to 1.26.70.24 send
      * {@code true} as 1, a list as its bones, and take both for the full block geometry too.
      */
@@ -282,24 +255,13 @@ public final class Transforms {
     /**
      * {@code uv_lock} as BDS sends it for every geometry ({@code minecraft:geometry} and the geometry of {@code item_visual}
      * and {@code embedded_visual}, BDS 1.26.36.1 to 1.26.70.24): a byte for the boolean form, 0 when it is not set; for the
-     * list form the bones as strings in {@link #bdsBoneOrder BDS's order}, an empty list without element type.
+     * list form the bones as strings in {@link Wire#byNameHash BDS's order}, an empty list without element type.
      */
     static @NonNull Object uvLock(@Nullable Boolean uvLock, @Nullable List<String> bones) {
         if (bones == null) {
             return Wire.bool(Boolean.TRUE.equals(uvLock));
         }
-        return Wire.strings(bdsBoneOrder(bones));
-    }
-
-    /**
-     * The {@code uv_lock} bones in the order BDS sends them. BDS keeps them in a {@code std::set<HashedString>}, so each
-     * bone is sent once, ascending by the unsigned 64 bit hash of its name (captures of BDS 1.26.36.1 to 1.26.63.1).
-     * Bones with equal hashes keep their order; BDS's order for them is not known.
-     */
-    static @NonNull List<String> bdsBoneOrder(@NonNull List<String> bones) {
-        List<String> ordered = new ArrayList<>(new LinkedHashSet<>(bones));
-        ordered.sort((a, b) -> Long.compareUnsigned(BlockRegistry.nameHash(a), BlockRegistry.nameHash(b)));
-        return ordered;
+        return Wire.strings(Wire.byNameHash(bones));
     }
 
     // ---- material_instances ----------------------------------------------------------------------------------------
@@ -696,12 +658,12 @@ public final class Transforms {
 
 
     /**
-     * A permutation's Molang condition as BDS sends it: a number constant like any Molang number ({@link #molangNumber}),
+     * A permutation's Molang condition as BDS sends it: a number constant like any Molang number ({@link Wire#molangNumber}),
      * anything else as written. Only {@code "1"} and {@code "0"} are captured as conditions (BDS 1.26.36.1 to 1.26.70.24);
      * that BDS prints the other number shapes the same way here is unverified.
      */
     static String condition(String condition) {
-        String number = molangNumber(condition);
+        String number = Wire.molangNumber(condition);
         return number != null ? number : condition;
     }
 

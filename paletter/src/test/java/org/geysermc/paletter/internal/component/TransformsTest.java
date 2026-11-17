@@ -215,9 +215,9 @@ class TransformsTest {
         captured.put("1e3", "1000.000000");
         captured.put("1e-3", "0.001000");
         captured.put("1.5E2", "150.000000");
-        captured.forEach((text, sent) -> assertEquals(sent, Transforms.molangNumber(text), text));
+        captured.forEach((text, sent) -> assertEquals(sent, Wire.molangNumber(text), text));
         for (String text : List.of("+1", "1 + 1", "1e+3", "0x10", "1f", "NaN", "Infinity", "1e39", "", "q.life_time")) {
-            assertNull(Transforms.molangNumber(text), text + " is not a number of a captured shape");
+            assertNull(Wire.molangNumber(text), text + " is not a number of a captured shape");
         }
     }
 
@@ -481,13 +481,13 @@ class TransformsTest {
     @Test
     void uvLockBonesAreInBdsOrder() {
         // the JSON list, then the list BDS 1.26.63.1 sent for it
-        assertEquals(List.of("c", "b", "a"), Transforms.bdsBoneOrder(List.of("a", "b", "c")));
-        assertEquals(List.of("alpha", "beta", "zeta", "mid"), Transforms.bdsBoneOrder(List.of("zeta", "alpha", "mid", "beta")));
-        assertEquals(List.of("bone_a"), Transforms.bdsBoneOrder(List.of("bone_a", "bone_a")));
+        assertEquals(List.of("c", "b", "a"), Wire.byNameHash(List.of("a", "b", "c")));
+        assertEquals(List.of("alpha", "beta", "zeta", "mid"), Wire.byNameHash(List.of("zeta", "alpha", "mid", "beta")));
+        assertEquals(List.of("bone_a"), Wire.byNameHash(List.of("bone_a", "bone_a")));
         assertEquals(List.of("", "up", "body", "pivot", "root", "0", "Top", "lid"),
-            Transforms.bdsBoneOrder(List.of("lid", "pivot", "root", "up", "body", "0", "", "Top")));
+            Wire.byNameHash(List.of("lid", "pivot", "root", "up", "body", "0", "", "Top")));
         assertEquals(List.of("ÿ", "é", "ñandú", "🦴", "bone_ä", "~", "z", "e", "骨"),
-            Transforms.bdsBoneOrder(List.of("é", "e", "ñandú", "骨", "🦴", "z", "ÿ", "~", "bone_ä")));
+            Wire.byNameHash(List.of("é", "e", "ñandú", "骨", "🦴", "z", "ÿ", "~", "bone_ä")));
     }
 
     @Test
