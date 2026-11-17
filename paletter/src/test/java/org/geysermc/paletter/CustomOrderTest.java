@@ -43,10 +43,11 @@ class CustomOrderTest {
             });
             assertEquals(List.of("order:d", "order:c", "order:b", "order:a"), properties);
 
-            int previous = -1;
+            // Plain block items are 255 - block_id: the identifiers above get the highest item ids
+            int previous = Integer.MAX_VALUE;
             for (String identifier : List.of("order:d", "order:c", "order:b", "order:a")) {
                 int runtimeId = palette.items().getDefinition(identifier).getRuntimeId();
-                assertTrue(runtimeId > previous, identifier + " is registered after the identifiers above it");
+                assertTrue(runtimeId < previous, identifier + " has a lower id than the identifiers above it");
                 previous = runtimeId;
             }
         }
@@ -56,13 +57,13 @@ class CustomOrderTest {
         assertTrue(first.blockProperties().equals(second.blockProperties()));
     }
 
-    /** A consumer that registers block items itself (Geyser) decides their slot among the custom items. */
+    /** A consumer that registers data driven block items itself (Geyser) decides their slot among the custom items. */
     @Test
     void explicitBlockItemsKeepTheirRegistrationOrder() {
         PaletteLayer.Builder layer = PaletteLayer.builder("explicit");
         for (String identifier : List.of("order:a", "order:c", "order:b")) {
             CustomBlock block = block(identifier);
-            layer.blockItem(identifier, block.item(), null).block(block);
+            layer.blockItem(identifier, CustomBlock.BlockItem.dataDriven(), null).block(block);
         }
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), layer.build());
         int a = palette.items().getDefinition("order:a").getRuntimeId();

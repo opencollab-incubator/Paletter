@@ -6,6 +6,8 @@ import org.geysermc.paletter.internal.item.ItemInterner;
 import org.geysermc.paletter.internal.item.ItemVariant;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -32,6 +34,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
+import org.geysermc.paletter.internal.component.ComponentIndex;
 import org.geysermc.paletter.internal.component.ItemCompiler;
 import org.geysermc.paletter.internal.component.WireContext;
 import org.geysermc.paletter.item.component.BlockPlacer;
@@ -91,6 +94,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     private volatile @Nullable Map<String, List<String>> mergedTags;
     private final List<CustomItem> customItems;
     private final int nextRuntimeId;
+    /** Runtime ids of the parent's items that this registry renumbered: the parent's item with such an id no longer exists here. */
+    private final IntSet renumbered;
     private volatile @Nullable CanonicalTable canonicalTable;
     private volatile @Nullable ResolvedItem defaultResolved;
 
@@ -113,6 +118,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         this.tags = Collections.unmodifiableMap(tags);
         this.customItems = List.copyOf(builder.customItems);
         this.nextRuntimeId = builder.nextRuntimeId;
+        this.renumbered = builder.renumbered;
     }
 
     /**
@@ -164,7 +170,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     @Override
     public @Nullable RegisteredItem getDefinition(int runtimeId) {
         RegisteredItem item = byRuntimeId.get(runtimeId);
-        return item != null || parent == null ? item : parent.getDefinition(runtimeId);
+        return item != null || parent == null || renumbered.contains(runtimeId) ? item : parent.getDefinition(runtimeId);
     }
 
     @Override
@@ -200,7 +206,9 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                     } else {
                         Int2ObjectMap<RegisteredItem> all = new Int2ObjectOpenHashMap<>();
                         for (RegisteredItem item : parent.definitions()) {
-                            all.put(item.getRuntimeId(), item);
+                            if (!renumbered.contains(item.getRuntimeId())) {
+                                all.put(item.getRuntimeId(), item);
+                            }
                         }
                         all.putAll(byRuntimeId);
                         merged = new ArrayList<>(all.values());
@@ -745,6 +753,10 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         private final Map<String, Set<String>> tags = new LinkedHashMap<>();
         private final List<CustomItem> customItems;
         private int nextRuntimeId;
+        /** Old runtime ids of the parent's plain block items that took the id of their block's new {@code block_id}. */
+        private final IntSet renumbered = new IntOpenHashSet();
+        /** Identifiers of those items. */
+        private final Set<String> renumberedBlockItems = new HashSet<>();
         /** Identifiers the layer is about to register: they exist for components compiled before their registration. */
         private final Set<String> declared = new HashSet<>();
 
@@ -777,11 +789,47 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             this.canonical = canonical;
             this.customItems = new ArrayList<>(parent.customItems);
             this.nextRuntimeId = parent.nextRuntimeId;
+            renumberBlockItems(parent);
+        }
+
+        /**
+         * Custom blocks are numbered again when a layer adds blocks, and the item of a plain block item follows its block's id.
+         */
+        private void renumberBlockItems(ItemRegistry parent) {
+            if (blocks == parent.blocks) {
+                return;
+            }
+            for (String identifier : parent.customBlockItems) {
+                RegisteredItem item = parent.getDefinition(identifier);
+                if (item == null || item.getVersion() != ItemVersion.NONE || item.isComponentBased()) {
+                    continue;
+                }
+                int runtimeId = plainBlockItemId(identifier);
+                if (runtimeId != item.getRuntimeId()) {
+                    renumbered.add(item.getRuntimeId());
+                    renumberedBlockItems.add(identifier);
+                    put(new RegisteredItem(identifier, runtimeId, ItemVersion.NONE, false, null, item.origin(), List.of(), null, item.key()));
+                }
+            }
+        }
+
+        /** BDS gives the plain item of a custom block the id {@code 255 - block_id}: negative, as block ids start at 10000. */
+        private int plainBlockItemId(String block) {
+            return ComponentIndex.BLOCK_ITEM_ID_PLUS_BLOCK_ID - blocks.customBlockId(block);
+        }
+
+        /**
+         * @return the blocks whose plain item got a new runtime id because this builder's blocks number the parent's blocks differently
+         */
+        @Internal
+        public @NonNull Set<String> renumberedBlockItems() {
+            return Collections.unmodifiableSet(renumberedBlockItems);
         }
 
         private void put(RegisteredItem item) {
             byRuntimeId.put(item.getRuntimeId(), item);
             byIdentifier.put(item.getIdentifier(), item);
+            // Plain block items have negative ids: they never move the next sequential id
             nextRuntimeId = Math.max(nextRuntimeId, item.getRuntimeId() + 1);
         }
 
@@ -879,14 +927,14 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                 }
                 case CustomBlock.BlockItem.Simple simple -> {
                     checkUnused(block.identifier());
-                    item = new RegisteredItem(block.identifier(), nextRuntimeId, ItemVersion.NONE, false, null, Origin.custom(source), List.of(), null,
+                    item = new RegisteredItem(block.identifier(), plainBlockItemId(block.identifier()), ItemVersion.NONE, false, null, Origin.custom(source), List.of(), null,
                         block.itemType());
                 }
                 case CustomBlock.BlockItem.DataDriven dataDriven -> {
                     checkUnused(block.identifier());
                     List<ItemComponent> components = new ArrayList<>(dataDriven.components());
                     if (components.stream().noneMatch(c -> c instanceof BlockPlacer)) {
-                        components.add(BlockPlacer.builder().block(block.identifier()).build());
+                        components.add(BlockPlacer.builder().block(block.identifier()).replaceBlockItem(true).build());
                     }
                     int runtimeId = nextRuntimeId;
                     item = new RegisteredItem(block.identifier(), runtimeId, ItemVersion.DATA_DRIVEN, true,

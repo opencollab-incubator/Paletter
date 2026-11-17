@@ -100,7 +100,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     @Internal
     public static @NonNull BlockRegistry build(@NonNull VanillaData data, @NonNull CanonicalBlocks canonical,
                                               @NonNull BlockInterner interner) {
-        return new BlockRegistry(new Table(null, data, List.of(), Map.of(), List.of(), interner), canonical, data.fallbacks().blocks(),
+        return new BlockRegistry(new Table(null, data, List.of(), Map.of(), List.of(), Map.of(), interner), canonical, data.fallbacks().blocks(),
             BlockFallback.UNKNOWN, Set.of(), interner, null);
     }
 
@@ -188,7 +188,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         Map<String, Origin> origins = new HashMap<>(table.origins);
         additional.forEach(block -> origins.put(block.identifier(), Origin.custom(source)));
         // Hashed ids do not depend on the other states: only the added states get a table, over this one
-        Table extended = new Table(table, data, all, Map.copyOf(origins), encoded, interner);
+        Table extended = new Table(table, data, all, Map.copyOf(origins), encoded, Map.copyOf(blockIds), interner);
         return new BlockRegistry(extended, canonical.extend(key, additional), fallbacks, defaultFallback, missing, interner, this);
     }
 
@@ -589,6 +589,20 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         return table.blockProperties;
     }
 
+    /**
+     * @param identifier a custom block of this palette
+     * @return its {@code block_id}, the one in {@link #blockProperties()}; item ids of plain block items derive from it
+     * @throws PaletteException if there is no such custom block
+     */
+    @Internal
+    public int customBlockId(@NonNull String identifier) {
+        Integer id = table.customBlockIds.get(identifier);
+        if (id == null) {
+            throw new PaletteException("Custom block " + identifier + " does not exist in " + version());
+        }
+        return id;
+    }
+
     public @NonNull List<CustomBlock> customBlocks() {
         return table.customBlocks;
     }
@@ -669,14 +683,17 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         private final List<BlockPropertyData> blockProperties;
         /** Every custom block, including the parent's. */
         private final List<CustomBlock> customBlocks;
+        /** The {@code block_id} of every custom block, including the parent's. */
+        private final Map<String, Integer> customBlockIds;
         private final Map<String, Origin> origins;
         private final Map<String, RegisteredBlock> ownBlocks;
         private final Map<String, Schema> schemas = new ConcurrentHashMap<>();
         private final RegisteredBlockState air;
 
         private Table(@Nullable Table parent, VanillaData data, List<CustomBlock> customBlocks, Map<String, Origin> origins,
-                      List<BlockPropertyData> customProperties, BlockInterner interner) {
+                      List<BlockPropertyData> customProperties, Map<String, Integer> customBlockIds, BlockInterner interner) {
             this.parent = parent;
+            this.customBlockIds = customBlockIds;
             this.parentSize = parent == null ? 0 : parent.size();
             this.version = data.version();
             this.customBlocks = List.copyOf(customBlocks);

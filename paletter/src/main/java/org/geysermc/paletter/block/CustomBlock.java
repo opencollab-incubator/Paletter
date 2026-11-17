@@ -245,13 +245,16 @@ public final class CustomBlock {
          */
         BlockItem NONE = new None();
         /**
-         * A plain block item. The client renders it as its block.
+         * A plain block item. The client renders it as its block. Like BDS, the palette gives it the runtime id
+         * {@code 255 - block_id} (negative: block ids start at 10000), so it moves when a later layer adds blocks and
+         * the palette numbers all custom blocks again.
          */
         BlockItem SIMPLE = new Simple();
 
         /**
          * A data driven item that places the block, e.g. to give it its own icon. The palette adds the
-         * {@code minecraft:block_placer} component for the block unless the components have one.
+         * {@code minecraft:block_placer} component for the block (with {@code replace_block_item}, as BDS sends it) unless
+         * the components have one. The item has a sequential runtime id like any data driven item.
          */
         static @NonNull BlockItem dataDriven(@NonNull ItemComponent... components) {
             return new DataDriven(List.of(components));

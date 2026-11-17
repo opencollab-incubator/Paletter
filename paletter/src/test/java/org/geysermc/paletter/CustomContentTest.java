@@ -210,7 +210,9 @@ class CustomContentTest {
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), layer);
         RegisteredItem ruby = palette.items().getDefinition("example:ruby");
         RegisteredItem item = palette.items().getDefinition(lamp.identifier());
-        assertTrue(item.getRuntimeId() > ruby.getRuntimeId());
+        // The plain block item is numbered by its block, not after the custom items
+        assertEquals(255 - palette.blocks().customBlockId(lamp.identifier()), item.getRuntimeId());
+        assertTrue(item.getRuntimeId() < ruby.getRuntimeId());
         // The block's own placement still applies
         assertTrue(palette.creativeLayout().stacks().anyMatch(s -> s.type().identifier().equals(lamp.identifier())));
     }

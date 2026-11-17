@@ -89,6 +89,10 @@ release that has the content without an experiment. `@Education` marks Education
 
 ## Components
 
+A custom block's plain item (`BlockItem.SIMPLE`) has the runtime id `255 - block_id`, as in BDS: negative, and it changes
+when a later layer adds blocks, because BDS numbers custom blocks by identifier in descending order. Read ids from the
+palette, never keep them across layers. Data driven block items (`BlockItem.dataDriven`) get sequential ids.
+
 Custom items and blocks use Bedrock's add-on component model as generated Java: one record per component
 (`minecraft:durability` is `Durability`), nested records for objects, enums for documented enums, and builders that apply
 documented defaults and check the ranges BDS enforces.

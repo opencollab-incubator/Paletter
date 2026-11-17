@@ -205,6 +205,7 @@ final class PaletteCompiler {
             Set<String> registers = new HashSet<>(registered);
             layer.overrides().forEach(override -> registers.add(override.identifier()));
             layer.blocks().forEach(block -> registers.add(block.identifier()));
+            registers.addAll(items.renumberedBlockItems());
             CreativeContent content = sameLayout && !mentions(layout, registers)
                 ? parent.creative() : CreativeContent.compile(layout, itemPalette, report);
             prepareCanonical(blocks, parent.blocks(), itemPalette, parent.items(), report);
