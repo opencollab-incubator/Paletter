@@ -1816,6 +1816,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/Palette.html#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockDefinition(BedrockBlockState)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="org/geysermc/paletter/Palette.html#blockDefinitionOrNull(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockDefinitionOrNull(BedrockBlockState)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/internal/component/Transforms.html#blockDescriptorStates(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.block.component.PlacementFilter.BlockFilter)" class="member-name-link">blockDescriptorStates(WireContext, WireNode, PlacementFilter.BlockFilter)</a> - Static method in class org.geysermc.paletter.internal.component.<a href="org/geysermc/paletter/internal/component/Transforms.html" title="class in org.geysermc.paletter.internal.component">Transforms</a></dt>
 <dd>
 <div class="block">Placement filter descriptors send their states as a list of <code>{state, type, value}</code>, only when there are any.</div>
@@ -1981,11 +1983,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Records the order BDS sends the data driven blocks of a version in; the properties of the blocks are stored
  sorted, so this is what <a href="org/geysermc/paletter/internal/data/PropertyStore.html#attach(org.geysermc.paletter.internal.data.VanillaData)"><code>PropertyStore.attach(org.geysermc.paletter.internal.data.VanillaData)</code></a> puts them back in order with.</div>
-</dd>
-<dt><a href="org/geysermc/paletter/Palette.html#blockOrNull(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockOrNull(BedrockBlockState)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
-<dd>
-<div class="block">Like <a href="org/geysermc/paletter/Palette.html#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>Palette.blockDefinition(BedrockBlockState)</code></a>, but for a state that is not in this palette it returns null instead of
- throwing.</div>
 </dd>
 <dt><a href="org/geysermc/paletter/item/component/BlockPlacer.html" class="type-name-link" title="class in org.geysermc.paletter.item.component">BlockPlacer</a> - Record Class in <a href="org/geysermc/paletter/item/component/package-summary.html">org.geysermc.paletter.item.component</a></dt>
 <dd>
@@ -22295,11 +22292,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="org/geysermc/paletter/Palette.html#runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">runtimeId(BedrockBlockState)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="org/geysermc/paletter/Palette.html#runtimeIdOrDefault(org.geysermc.paletter.vanilla.BedrockBlockState,int)" class="member-name-link">runtimeIdOrDefault(BedrockBlockState, int)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
-<dd>
-<div class="block">Like <a href="org/geysermc/paletter/Palette.html#runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>Palette.runtimeId(BedrockBlockState)</code></a>, but for a state that is not in this palette it returns a default
- instead of throwing.</div>
-</dd>
+<dt><a href="org/geysermc/paletter/Palette.html#runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState,int)" class="member-name-link">runtimeId(BedrockBlockState, int)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:S">S</h2>
 <dl class="index">

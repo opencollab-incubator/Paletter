@@ -167,17 +167,14 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockDefinition</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">blockOf</a><wbr>(@NonNull <a href="vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockDefinitionOrNull(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockDefinitionOrNull</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">blockOf</a><wbr>(@NonNull <a href="vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The block an item variant is sent with in this palette's version, in its default state, as a key: a
  <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockBlockState</code></a>, for every kind of variant (vanilla, extra, custom block items, fallbacks).</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockOrNull(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockOrNull</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Like <a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>blockDefinition(BedrockBlockState)</code></a>, but for a state that is not in this palette it returns null instead of
- throwing.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="block/BlockRegistry.html" title="class in org.geysermc.paletter.block">BlockRegistry</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blocks()" class="member-name-link">blocks</a>()</code></div>
@@ -303,12 +300,9 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">runtimeId</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#runtimeIdOrDefault(org.geysermc.paletter.vanilla.BedrockBlockState,int)" class="member-name-link">runtimeIdOrDefault</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state,
- int&nbsp;defaultId)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Like <a href="#runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>runtimeId(BedrockBlockState)</code></a>, but for a state that is not in this palette it returns a default
- instead of throwing.</div>
-</div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState,int)" class="member-name-link">runtimeId</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state,
+ int&nbsp;orElse)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#sameStack(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData,org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)" class="member-name-link">sameStack</a><wbr>(@NonNull org.cloudburstmc.protocol.bedrock.data.inventory.ItemData&nbsp;a,
  @NonNull org.cloudburstmc.protocol.bedrock.data.inventory.ItemData&nbsp;b)</code></div>
@@ -374,7 +368,8 @@ loadScripts(document, 'script');</script>
 <dd><code>runtimeId</code> - the runtime id of a state of this palette, as it sends it: the hash, or the sequential id of a
                   palette that numbers them</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the palette has no state with this runtime id</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the palette has no state with this runtime id; <a href="#blockDefinition(int)"><code>blockDefinition(int)</code></a>
+         is null then</dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>
@@ -388,7 +383,7 @@ loadScripts(document, 'script');</script>
 <dt>Returns:</dt>
 <dd>the behaviour values of the state this palette sends for a state, see <a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>blockDefinition(BedrockBlockState)</code></a></dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the state is not in this palette</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - like <a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>blockDefinition(BedrockBlockState)</code></a></dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>
@@ -402,7 +397,7 @@ loadScripts(document, 'script');</script>
 <dt>Returns:</dt>
 <dd>the behaviour values of the default state of a block, see <a href="#blockBehaviour(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>blockBehaviour(BedrockBlockState)</code></a></dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the block is not in this palette</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - like <a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>blockDefinition(BedrockBlockState)</code></a></dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>
@@ -416,7 +411,8 @@ loadScripts(document, 'script');</script>
  <code>palette.itemBehaviour(BedrockItems.APPLE).get(ItemBehaviour.MAX_STACK_SIZE)</code>.</div>
 <dl class="notes">
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if this palette has no such item, see <a href="#itemDefinition(org.geysermc.paletter.vanilla.BedrockItemType)"><code>itemDefinition(BedrockItemType)</code></a></dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if this palette has no such item: <a href="#itemDefinition(org.geysermc.paletter.vanilla.BedrockItemType)"><code>itemDefinition(BedrockItemType)</code></a> is
+         null then</dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>
@@ -538,26 +534,25 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></span>&nbsp;<span class="element-name">blockDefinition</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</span></div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the block to send for a state; resolved for this version, air if nothing fits. A field read and an array
-         load, it does not allocate</dd>
+<dd>the block to send for a state; resolved for this version with its fallbacks, air if nothing fits. A field
+         read and an array load, it does not allocate</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the state is not in this palette (a custom block of a layer it does not have).
-         On a path that may see such states (a session palette showing another session's custom blocks), use
-         <a href="#blockOrNull(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>blockOrNull(BedrockBlockState)</code></a>: exceptions are expensive and the stack trace is built every time</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the state is not in this palette: a custom block of a layer it does not have,
+         e.g. one a session palette shows from another session. Never for a vanilla state when the data is
+         bundled: every version sends something for it. Use <a href="#blockDefinitionOrNull(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>blockDefinitionOrNull(BedrockBlockState)</code></a> for
+         states that may be missing</dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="blockOrNull(org.geysermc.paletter.vanilla.BedrockBlockState)">
-<h3>blockOrNull</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></span>&nbsp;<span class="element-name">blockOrNull</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</span></div>
-<div class="block">Like <a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>blockDefinition(BedrockBlockState)</code></a>, but for a state that is not in this palette it returns null instead of
- throwing. Same cost otherwise.</div>
+<section class="detail" id="blockDefinitionOrNull(org.geysermc.paletter.vanilla.BedrockBlockState)">
+<h3>blockDefinitionOrNull</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></span>&nbsp;<span class="element-name">blockDefinitionOrNull</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</span></div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the block to send for a state, or null if the state is not in this palette</dd>
+<dd>the block to send for a state like <a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>blockDefinition(BedrockBlockState)</code></a>, or null where that throws</dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>
@@ -569,28 +564,26 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">runtimeId</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</span></div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the runtime id to send for a state: its hash, see <a href="block/BlockHashes.html" title="class in org.geysermc.paletter.block"><code>BlockHashes</code></a>. A field read and an
-         array load, it does not allocate</dd>
+<dd>the runtime id to send for a state: its hash, see <a href="block/BlockHashes.html" title="class in org.geysermc.paletter.block"><code>BlockHashes</code></a>. A field read and an array load, it
+         does not allocate</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the state is not in this palette (a custom block of a layer it does not have).
-         Use <a href="#runtimeIdOrDefault(org.geysermc.paletter.vanilla.BedrockBlockState,int)"><code>runtimeIdOrDefault(BedrockBlockState, int)</code></a> where that can happen at runtime</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - like <a href="#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>blockDefinition(BedrockBlockState)</code></a>. Use
+         <a href="#runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState,int)"><code>runtimeId(BedrockBlockState, int)</code></a> for states that may be missing</dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="runtimeIdOrDefault(org.geysermc.paletter.vanilla.BedrockBlockState,int)">
-<h3>runtimeIdOrDefault</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">runtimeIdOrDefault</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state,
- int&nbsp;defaultId)</span></div>
-<div class="block">Like <a href="#runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>runtimeId(BedrockBlockState)</code></a>, but for a state that is not in this palette it returns a default
- instead of throwing. Same cost otherwise.</div>
+<section class="detail" id="runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState,int)">
+<h3>runtimeId</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">runtimeId</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;state,
+ int&nbsp;orElse)</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>defaultId</code> - what to return for a state that is not in this palette, e.g. the runtime id of air</dd>
+<dd><code>orElse</code> - what to return where <a href="#runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>runtimeId(BedrockBlockState)</code></a> throws, e.g. the runtime id of air</dd>
 <dt>Returns:</dt>
-<dd>the runtime id to send for a state, or <code>defaultId</code></dd>
+<dd>the runtime id to send for a state, or <code>orElse</code> if the state is not in this palette</dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>
