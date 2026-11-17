@@ -55,7 +55,7 @@ public final class TranslatorExample {
         // Per client version: chunk translation is one array lookup per block. With HASHED ids the vanilla entries are equal
         for (int protocol : new int[]{paletter.versions().getFirst().protocolVersion(), paletter.latest().protocolVersion()}) {
             Palette palette = paletter.palette(protocol);
-            int[] javaToRuntime = Arrays.stream(javaToBedrock).mapToInt(palette::runtimeId).toArray();
+            int[] javaToRuntime = Arrays.stream(javaToBedrock).mapToInt(state -> palette.runtimeId(state, -1)).toArray();
             System.out.println(protocol + ": java -> runtime ids " + Arrays.toString(javaToRuntime));
         }
 

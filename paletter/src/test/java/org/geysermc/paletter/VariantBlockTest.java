@@ -67,7 +67,7 @@ class VariantBlockTest {
         BedrockBlockState key = palette.blocks().key(block);
         assertNotNull(key);
         assertEquals("variant:lamp", key.type().identifier());
-        assertEquals(block.getRuntimeId(), palette.runtimeId(key));
+        assertEquals(block.getRuntimeId(), palette.runtimeId(key, -1));
     }
 
     @Test
@@ -96,7 +96,7 @@ class VariantBlockTest {
             assertNotNull(key, version.toString());
             // The same key Paletter gives without a palette, and the palette's runtime id of it
             assertSame(PALETTER.blockOf(planks), key, version.toString());
-            assertEquals(palette.resolve(planks).block().getRuntimeId(), palette.runtimeId(key), version.toString());
+            assertEquals(palette.resolve(planks).block().getRuntimeId(), palette.runtimeId(key, -1), version.toString());
         }
         assertNull(PALETTER.palette(PALETTER.latest().protocolVersion()).blockOf(BedrockItems.STICK.base()));
 

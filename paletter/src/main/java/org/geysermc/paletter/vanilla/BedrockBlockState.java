@@ -18,7 +18,7 @@ import org.geysermc.paletter.internal.CanonicalBlocks;
  * Equal custom blocks registered by different layers each own their states; those are equal, not identical.
  * <p>
  * Canonical ids come from {@link org.geysermc.paletter.Paletter#canonicalBlocks()} (vanilla states) and
- * {@link org.geysermc.paletter.Palette#runtimeId(BedrockBlockState)} (vanilla and custom states). For a vanilla
+ * {@link org.geysermc.paletter.Palette#runtimeId(BedrockBlockState, int)} (vanilla and custom states). For a vanilla
  * state both are an addition, not a hash lookup: the first state of its block plus the sum of each value's index times
  * the stride of its property, computed once (Bedrock enumerates every block's states as the full product of its values;
  * blocks that are not get a lookup table). Custom block states have canonical ids per layer lineage only.

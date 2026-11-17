@@ -66,7 +66,7 @@ class EncodeBlockStateTest {
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
         BedrockBlockState sideways = state("minecraft:oak_log", Map.of("pillar_axis", "x"));
         BedrockItemStack stack = new BedrockItemStack(BedrockItemVariant.of("minecraft:oak_log", 0), 1, null, sideways);
-        assertEquals(palette.runtimeId(sideways), palette.encode(stack).getBlockDefinition().getRuntimeId());
+        assertEquals(palette.runtimeId(sideways, -1), palette.encode(stack).getBlockDefinition().getRuntimeId());
     }
 
     @Test
@@ -104,8 +104,8 @@ class EncodeBlockStateTest {
 
         ItemData data = session.encode(stack);
         assertEquals(viaResolve(session, stack), data);
-        assertEquals(session.runtimeId(lit), data.getBlockDefinition().getRuntimeId());
-        assertNotEquals(session.runtimeId(LAMP.type().defaultState()), data.getBlockDefinition().getRuntimeId());
+        assertEquals(session.runtimeId(lit, -1), data.getBlockDefinition().getRuntimeId());
+        assertNotEquals(session.runtimeId(LAMP.type().defaultState(), -1), data.getBlockDefinition().getRuntimeId());
 
         // Not in the palette: no canonical id, so the fallbacks decide, as before
         assertEquals(viaResolve(base, stack), base.encode(stack));

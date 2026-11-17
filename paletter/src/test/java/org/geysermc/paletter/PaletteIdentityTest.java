@@ -86,7 +86,7 @@ class PaletteIdentityTest {
             for (BedrockBlockType type : BedrockBlockType.vanillaTypes().subList(0, 50)) {
                 for (BedrockBlockState state : type.states()) {
                     assertSame(palette.blockDefinition(state), palette.blockDefinition(state));
-                    assertSame(palette.blockDefinition(state), palette.blocks().getDefinition(palette.runtimeId(state)));
+                    assertSame(palette.blockDefinition(state), palette.blocks().getDefinition(palette.runtimeId(state, -1)));
                 }
             }
         }

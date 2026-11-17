@@ -29,7 +29,7 @@ import java.util.WeakHashMap;
  * appended, in layer order, per lineage of layers: the same layer stack gives the same indices in every version.
  * <p>
  * Not API: consumers hold {@link org.geysermc.paletter.vanilla.BedrockBlockState} handles and never see these ids; the
- * handles carry them in a hidden field and {@code Palette#runtimeId(BedrockBlockState)} is an array
+ * handles carry them in a hidden field and {@code Palette#runtimeId(BedrockBlockState, int)} is an array
  * lookup with them.
  *
  * @since 0.1.0

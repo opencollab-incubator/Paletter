@@ -47,7 +47,7 @@ public final class BedrockServerExample {
         BedrockCodecHelper helper = Bedrock_v2225.CODEC.createHelper();
         palette.applyTo(helper);
         System.out.println("stone through the codec helper: " + helper.getBlockDefinitions().getDefinition(
-            palette.runtimeId(BedrockBlocks.STONE.defaultState())));
+            palette.runtimeId(BedrockBlocks.STONE.defaultState(), -1)));
 
         // Start game gets the block properties and hashed block ids
         StartGamePacket startGame = new StartGamePacket();
@@ -58,7 +58,7 @@ public final class BedrockServerExample {
 
         // Content is held as handles, independent of the client version; a palette turns one into what its client needs
         BedrockBlockState stone = BedrockBlocks.STONE.defaultState();
-        System.out.println("stone: runtime id " + palette.runtimeId(stone));
+        System.out.println("stone: runtime id " + palette.runtimeId(stone, -1));
 
         // Items: handle -> stack for the client, and back. The palette hands back the ruby's own handle, so == works
         // (equals works too, e.g. for an equal item registered by another layer)

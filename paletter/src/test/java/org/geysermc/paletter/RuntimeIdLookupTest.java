@@ -23,7 +23,7 @@ class RuntimeIdLookupTest {
         assertNotNull(key);
         assertSame(block, PALETTE.blockDefinition(id));
         assertEquals(id, PALETTE.blockDefinition(key).getRuntimeId());
-        assertEquals(id, PALETTE.runtimeId(key));
+        assertEquals(id, PALETTE.runtimeId(key, -1));
     }
 
     @Test

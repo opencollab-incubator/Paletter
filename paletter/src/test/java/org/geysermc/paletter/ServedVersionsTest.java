@@ -76,7 +76,7 @@ class ServedVersionsTest {
                 }
                 assertEquals(canonical.state(id), BlockStates.normalize(handle.toNbt()), where);
                 assertEquals(id, handle.canonicalIn(canonical), where);
-                assertEquals(palette.blocks().runtimeId(id), palette.runtimeId(handle), where);
+                assertEquals(palette.blocks().runtimeId(id), palette.runtimeId(handle, -1), where);
             }
         }
     }

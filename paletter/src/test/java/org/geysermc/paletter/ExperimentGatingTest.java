@@ -136,15 +136,15 @@ class ExperimentGatingTest {
         Fallbacks flat = Fallbacks.builder().block(BedrockBlocks.GLASS, BlockFallback.of(BedrockBlocks.STONE)).build();
 
         Palette missing = Paletter.builder().data(gatedBlock()).fallbacks(flat).build().palette(OLDEST);
-        assertEquals("minecraft:stone", missing.blocks().byRuntimeId(missing.runtimeId(glass)).identifier());
+        assertEquals("minecraft:stone", missing.blocks().byRuntimeId(missing.runtimeId(glass, -1)).identifier());
         assertEquals("minecraft:stone", missing.explain(glass.toNbt()).chain().getLast());
         assertEquals(BlockExplanation.Kind.FALLBACK, missing.explain(glass.toNbt()).kind());
         // Without a fallback of its own: the default fallback
         Palette unknown = Paletter.builder().data(gatedBlock()).build().palette(OLDEST);
-        assertEquals("minecraft:unknown", unknown.blocks().byRuntimeId(unknown.runtimeId(glass)).identifier());
+        assertEquals("minecraft:unknown", unknown.blocks().byRuntimeId(unknown.runtimeId(glass, -1)).identifier());
 
         Palette present = Paletter.builder().data(gatedBlock()).fallbacks(flat).vanilla(vanilla -> vanilla.experiments("block_toggle")).build().palette(OLDEST);
-        assertEquals("minecraft:glass", present.blocks().byRuntimeId(present.runtimeId(glass)).identifier());
+        assertEquals("minecraft:glass", present.blocks().byRuntimeId(present.runtimeId(glass, -1)).identifier());
         assertEquals("block_toggle", present.experimentOf(BedrockBlocks.GLASS));
         assertEquals(List.of("block_toggle"), present.experiments());
         assertNull(present.experimentOf(BedrockBlocks.STONE));

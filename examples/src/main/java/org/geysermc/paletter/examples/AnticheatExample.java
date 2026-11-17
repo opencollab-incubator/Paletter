@@ -32,7 +32,7 @@ public final class AnticheatExample {
 
     AnticheatExample(Palette palette) {
         this.palette = palette;
-        this.air = palette.runtimeId(BedrockBlocks.AIR.defaultState());
+        this.air = palette.runtimeId(BedrockBlocks.AIR.defaultState(), -1);
     }
 
     int blockAt(int x, int y, int z) {
@@ -68,9 +68,9 @@ public final class AnticheatExample {
         Palette palette = paletter.palette(paletter.latest().protocolVersion());
         AnticheatExample check = new AnticheatExample(palette);
 
-        check.world.put(List.of(0, 63, 0), palette.runtimeId(BedrockBlocks.BLUE_ICE.defaultState()));
-        check.world.put(List.of(1, 63, 0), palette.runtimeId(slippery.type().defaultState()));
-        check.world.put(List.of(0, 64, 1), palette.runtimeId(BedrockBlocks.OAK_STAIRS.defaultState()));
+        check.world.put(List.of(0, 63, 0), palette.runtimeId(BedrockBlocks.BLUE_ICE.defaultState(), -1));
+        check.world.put(List.of(1, 63, 0), palette.runtimeId(slippery.type().defaultState(), -1));
+        check.world.put(List.of(0, 64, 1), palette.runtimeId(BedrockBlocks.OAK_STAIRS.defaultState(), -1));
 
         System.out.println("friction on blue ice: " + check.frictionUnder(0.5, 64, 0.5));
         System.out.println("friction on the custom block: " + check.frictionUnder(1.5, 64, 0.5));
@@ -82,7 +82,7 @@ public final class AnticheatExample {
         System.out.println("blue ice friction: " + palette.blockBehaviour(BedrockBlocks.BLUE_ICE).explain(BlockBehaviour.FRICTION));
 
         // A custom block: set by the server, a BDS default (measured on BDS), or not known
-        BlockValues custom = palette.blockBehaviour(palette.runtimeId(slippery.type().defaultState()));
+        BlockValues custom = palette.blockBehaviour(palette.runtimeId(slippery.type().defaultState(), -1));
         System.out.println("custom friction: " + custom.explain(BlockBehaviour.FRICTION));
         System.out.println("custom explosion resistance: " + custom.explain(BlockBehaviour.EXPLOSION_RESISTANCE));
         System.out.println("custom destroy time: " + custom.getOrElse(BlockBehaviour.DESTROY_TIME, -2f) + ", "
