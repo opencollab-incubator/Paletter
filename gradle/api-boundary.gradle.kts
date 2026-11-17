@@ -13,7 +13,8 @@
 // packages keep any module graph from resolving), so the jar carries an Automatic-Module-Name instead.
 val moduleInfo = file("src/module/java/module-info.java")
 val moduleInfoText = moduleInfo.readText()
-val moduleName = Regex("""^\s*module\s+([\w.]+)\s*\{""", RegexOption.MULTILINE).find(moduleInfoText)!!.groupValues[1]
+val moduleName = Regex("""^\s*module\s+([\w.]+)\s*\{""", RegexOption.MULTILINE).find(moduleInfoText)?.groupValues?.get(1)
+    ?: error("$moduleInfo declares no module")
 val exportedPackages: List<String> = Regex("""^\s*exports\s+([\w.]+)\s*;""", RegexOption.MULTILINE)
     .findAll(moduleInfoText).map { it.groupValues[1] }.toList()
 // For the module's own checks (apiCompat)
