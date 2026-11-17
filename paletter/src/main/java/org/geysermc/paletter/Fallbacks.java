@@ -122,7 +122,7 @@ public final class Fallbacks {
         }
 
         public @NonNull Builder item(@NonNull BedrockItemType type, @NonNull BedrockItemType replacement) {
-            return item(type, ItemFallback.of(replacement));
+            return item(type, ItemFallback.keepingAux(replacement));
         }
 
         /**

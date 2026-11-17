@@ -90,11 +90,9 @@ public final class BedrockBlockType {
      * interned: equal for equal identifiers, not identical, so compare them with {@code equals}, and unknown
      * identifiers never accumulate. The type of a {@link CustomBlock} is {@link CustomBlock#type()}. Loads
      * the data.
-     *
-     * @return the type of an identifier
-     * @since 0.1.0
      */
-    public static @NonNull BedrockBlockType of(@NonNull String identifier) {
+    @Internal
+    public static @NonNull BedrockBlockType fromIdentifier(@NonNull String identifier) {
         Objects.requireNonNull(identifier);
         BedrockBlockType known = VanillaIndex.get().blockOrConstant(identifier);
         return known != null ? known : new BedrockBlockType(identifier, true);
@@ -168,7 +166,7 @@ public final class BedrockBlockType {
     /**
      * Whether BDS only offers this block to worlds with Education Edition features (the same content the generated
      * constant carries {@link org.geysermc.paletter.annotation.Education @Education} for). Decided from BDS captures when
-     * the constants were generated; always false for custom blocks and for keys made with {@link #of(String)}.
+     * the constants were generated; always false for custom blocks and for types made for an unknown identifier.
      *
      * @since 0.1.0
      */

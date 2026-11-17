@@ -22,7 +22,7 @@ import java.util.Objects;
  * The potions, tipped arrows, beds and banners have constants for them in {@link BedrockItemVariants}.
  * <p>
  * Equality: {@code equals} always works, and types are map keys. {@code ==} works too for vanilla types, which are
- * singletons (the constants), and for registered custom content: a {@link CustomItem} owns its {@link CustomItem#type()
+ * singletons (the constants), for their {@link #variant() base variant} and for registered custom content: a {@link CustomItem} owns its {@link CustomItem#type()
  * type} (a {@link org.geysermc.paletter.block.CustomBlock} its {@link org.geysermc.paletter.block.CustomBlock#itemType()
  * item type}), and a palette it is registered in hands back exactly that type. Custom types made for an
  * identifier that is not vanilla are not interned: equal to each other and to the custom item's type, not identical.
@@ -42,8 +42,10 @@ public final class BedrockItemType implements ItemKey {
     private final boolean custom;
     private final boolean education;
     private volatile @Nullable Linked linked;
-    /** The base variant, made on first use before the data is linked; no data needed. */
-    private @Nullable BedrockItemVariant base;
+    /** The base variant: made with the type, so it is the same object whenever it is asked for. */
+    private final BedrockItemVariant base = new BedrockItemVariant(this, 0, -1);
+    /** The named variants with a nonzero aux, registered by the generated constants of {@link BedrockItemVariants}. */
+    private volatile BedrockItemVariant[] named = new BedrockItemVariant[0];
 
     BedrockItemType(String identifier, String fallback) {
         this(identifier, fallback, false);
@@ -61,8 +63,7 @@ public final class BedrockItemType implements ItemKey {
         this.fallback = null;
         this.custom = true;
         this.education = false;
-        BedrockItemVariant base = baseVariant();
-        this.linked = new Linked(this, true, base, List.of(base));
+        this.linked = new Linked(this, true, List.of(base), new int[] {-1});
     }
 
     /**
@@ -104,18 +105,60 @@ public final class BedrockItemType implements ItemKey {
         return VanillaIndex.get().itemTypes;
     }
 
-    void link(List<BedrockItemVariant> variants) {
-        this.linked = new Linked(this, true, variants.getFirst(), List.copyOf(variants));
+    /** The data's variants of this type, the base first, with their canonical ids in the bundled data. */
+    void link(List<BedrockItemVariant> variants, int[] ids) {
+        this.linked = new Linked(this, true, List.copyOf(variants), ids);
     }
 
     void linkAbsent(@Nullable BedrockItemType fallbackType) {
         if (fallbackType == null) {
-            BedrockItemVariant base = baseVariant();
-            this.linked = new Linked(this, false, base, List.of(base));
+            this.linked = new Linked(this, false, List.of(base), new int[] {-1});
         } else {
+            // Keys of this type stay of this type; they find the fallback's canonical ids through this
             Linked target = fallbackType.linked();
-            this.linked = new Linked(target.owner, false, target.base, target.variants);
+            this.linked = new Linked(target.owner, false, target.variants, target.ids);
         }
+    }
+
+    /**
+     * Registers a named variant of the generated constants: the one instance of its aux for this type. Only named
+     * variants are kept, never arbitrary ones.
+     *
+     * @return the registered variant of this aux, which is the given one unless the aux was already named
+     */
+    synchronized BedrockItemVariant name(BedrockItemVariant variant) {
+        for (BedrockItemVariant known : named) {
+            if (known.aux() == variant.aux()) {
+                return known;
+            }
+        }
+        BedrockItemVariant[] grown = java.util.Arrays.copyOf(named, named.length + 1);
+        grown[named.length] = variant;
+        named = grown;
+        return variant;
+    }
+
+    @Nullable BedrockItemVariant named(int aux) {
+        for (BedrockItemVariant variant : named) {
+            if (variant.aux() == aux) {
+                return variant;
+            }
+        }
+        return null;
+    }
+
+    /** The bundled data's canonical id of the variant of this aux if the data has one, else -1. */
+    int bundledId(int aux) {
+        Linked linked = this.linked;
+        if (linked == null) {
+            return -1;
+        }
+        for (int i = 0; i < linked.ids.length; i++) {
+            if (linked.variants.get(i).aux() == aux) {
+                return linked.ids[i];
+            }
+        }
+        return -1;
     }
 
     private Linked linked() {
@@ -183,47 +226,48 @@ public final class BedrockItemType implements ItemKey {
     }
 
     /**
-     * The base variant, made on first use and adopted by the data when it links: the one instance of its type.
-     */
-    synchronized BedrockItemVariant baseVariant() {
-        if (base == null) {
-            base = new BedrockItemVariant(this, 0, -1);
-        }
-        return base;
-    }
-
-    /**
      * @return the base variant: damage 0, no block state. Loads no data
      */
     @Override
     public @NonNull BedrockItemVariant variant() {
-        Linked linked = this.linked;
-        return linked != null ? linked.base : baseVariant();
+        return base;
+    }
+
+    @Override
+    public @NonNull BedrockItemType type() {
+        return this;
     }
 
     /**
-     * The variant with a damage value, never null. Once the data is loaded (any palette does) this is the known variant
-     * of {@link #variants()} if there is one, so {@code ==} holds for the named constants of {@link BedrockItemVariants};
-     * an aux the data does not name gives a new variant without a canonical id (a layer can give it one with
-     * {@link org.geysermc.paletter.PaletteLayer.Builder#variant(ItemKey)}). Loads no data itself: before it is loaded the
-     * result is a plain variant, which {@code equals} the known one.
+     * The variant of this type with a damage value, never null, and always of this type (also for a type that is not
+     * {@link #isAvailable() available}: it resolves like any variant of it). The named constants of
+     * {@link BedrockItemVariants} and the variants the bundled data lists are the same instance every time, so {@code ==}
+     * holds for them whenever the key was made. An aux nobody named gives a new variant without a canonical id (a layer can
+     * give it one with {@link org.geysermc.paletter.PaletteLayer.Builder#variant(ItemKey)}); those are not kept, so
+     * arbitrary auxes cannot grow memory. Loads no bundled data: only the constants of {@link BedrockItemVariants}.
      *
      * @return the variant of this type with this aux value
      */
     public @NonNull BedrockItemVariant variant(int damage) {
         if (damage == 0) {
-            return variant();
+            return base;
+        }
+        if (!custom) {
+            VanillaTypes.loadNamedVariants();
+        }
+        BedrockItemVariant known = named(damage);
+        if (known != null) {
+            return known;
         }
         Linked linked = this.linked;
-        if (linked == null) {
-            return new BedrockItemVariant(this, damage, -1);
-        }
-        for (BedrockItemVariant variant : linked.variants) {
-            if (variant.aux() == damage) {
-                return variant;
+        if (linked != null) {
+            for (BedrockItemVariant variant : linked.variants) {
+                if (variant.aux() == damage && variant.type() == this) {
+                    return variant;
+                }
             }
         }
-        return new BedrockItemVariant(linked.owner, damage, -1);
+        return new BedrockItemVariant(this, damage, -1);
     }
 
     /**
@@ -278,6 +322,7 @@ public final class BedrockItemType implements ItemKey {
         return identifier;
     }
 
-    private record Linked(BedrockItemType owner, boolean available, BedrockItemVariant base, List<BedrockItemVariant> variants) {
+    /** What linking the data gave: {@code ids} are the canonical ids of {@code variants}, the base first, or -1. */
+    private record Linked(BedrockItemType owner, boolean available, List<BedrockItemVariant> variants, int[] ids) {
     }
 }

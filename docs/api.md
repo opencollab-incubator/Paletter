@@ -119,8 +119,11 @@ An `ItemKey` is a `BedrockItemType` or a `BedrockItemVariant`, and the methods t
 `blockOf`, `BedrockItemStack.of`, `PaletteLayer.Builder#variant`) take one: a type stands for its base variant, so
 `palette.resolve(BedrockItems.APPLE)` works. `type.variant()` is the base variant and `type.variant(aux)` the variant of
 an aux, never null (an aux the data does not name gives a plain variant without a canonical id). A key is a type and an
-aux, so creating or using one loads no data. Once the data is loaded `type.variant(aux)` is the known instance, so `==`
-holds for named constants; compare with `equals` otherwise. Keys for an identifier are made with `Palette#itemType` and
+aux, so creating or using one loads no bundled data, and a key made before any palette resolves exactly like one made
+after. The base variant and the named constants of `BedrockItemVariants` are the same object whenever they are asked for,
+so `==` holds for them; other auxes are new variants, compare those with `equals`. Methods that take an `ItemKey` read a
+type as aux 0; where a type means every aux, the name says so (`ItemFallback.keepingAux`, `ItemMatcher.anyVariantOf`,
+`CreativePlacement.afterAnyOf`). Keys for an identifier are made with `Palette#itemType` and
 `Palette#itemVariant`, or are the type of a `CustomItem`.
 
 `BedrockItemVariants` names the aux variants of potions, splash and lingering potions, tipped arrows, beds and banners.
@@ -195,7 +198,7 @@ items).
 ```java
 Fallbacks fallbacks = Fallbacks.builder()
     .block(BedrockBlocks.ICICLE, BedrockBlocks.STONE)
-    .item(version, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.BIRCH_BOAT))
+    .item(version, BedrockItems.POPLAR_BOAT, ItemFallback.keepingAux(BedrockItems.BIRCH_BOAT))
     .block(version, BedrockBlocks.POPLAR_LOG, BlockFallback.of(BedrockBlocks.BIRCH_LOG).forced())
     .build();
 ```

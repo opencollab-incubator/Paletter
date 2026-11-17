@@ -88,7 +88,7 @@ class FallbackQueryTest {
     void aFallbacksEntryNamesItsTarget() {
         BedrockItemVariant missing = missingInOldest().getFirst();
         Palette type = Paletter.builder()
-            .fallbacks(Fallbacks.builder().item(missing.type(), ItemFallback.of(BedrockItems.STICK)).build())
+            .fallbacks(Fallbacks.builder().item(missing.type(), ItemFallback.keepingAux(BedrockItems.STICK)).build())
             .build().palette(OLDEST);
         assertTrue(type.resolve(missing).fallback());
         // The aux of the replaced variant is kept
@@ -104,7 +104,7 @@ class FallbackQueryTest {
     @Test
     void aForcedFallbackReplacesAnExistingItem() {
         Palette forced = Paletter.builder()
-            .fallbacks(Fallbacks.builder().item(BedrockItems.DIAMOND_SWORD, ItemFallback.of(BedrockItems.STICK).forced()).build())
+            .fallbacks(Fallbacks.builder().item(BedrockItems.DIAMOND_SWORD, ItemFallback.keepingAux(BedrockItems.STICK).forced()).build())
             .build().palette(OLDEST);
         assertTrue(forced.resolve(BedrockItems.DIAMOND_SWORD).fallback());
         assertEquals(BedrockItems.STICK.variant(), forced.resolve(BedrockItems.DIAMOND_SWORD).variant());

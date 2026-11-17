@@ -2303,8 +2303,8 @@ public record org.geysermc.paletter.creative.CreativePlacement {
     public <init>(org.geysermc.paletter.creative.CreativeCategory, java.lang.String, org.geysermc.paletter.creative.ItemMatcher)
     public org.geysermc.paletter.creative.ItemMatcher after()
     public org.geysermc.paletter.creative.CreativePlacement after(org.geysermc.paletter.creative.ItemMatcher)
-    public org.geysermc.paletter.creative.CreativePlacement after(org.geysermc.paletter.vanilla.BedrockItemType)
     public org.geysermc.paletter.creative.CreativePlacement after(org.geysermc.paletter.vanilla.BedrockItemVariant)
+    public org.geysermc.paletter.creative.CreativePlacement afterAnyOf(org.geysermc.paletter.vanilla.BedrockItemType)
     public org.geysermc.paletter.creative.CreativeCategory category()
     public final boolean equals(java.lang.Object)
     public java.lang.String group()
@@ -2316,6 +2316,7 @@ public record org.geysermc.paletter.creative.CreativePlacement {
 
 public sealed interface org.geysermc.paletter.creative.ItemMatcher permits org.geysermc.paletter.creative.ItemMatchers$And, org.geysermc.paletter.creative.ItemMatchers$BlockState, org.geysermc.paletter.creative.ItemMatchers$Custom, org.geysermc.paletter.creative.ItemMatchers$Damage, org.geysermc.paletter.creative.ItemMatchers$Exact, org.geysermc.paletter.creative.ItemMatchers$Id, org.geysermc.paletter.creative.ItemMatchers$Namespace, org.geysermc.paletter.creative.ItemMatchers$Not {
     public default org.geysermc.paletter.creative.ItemMatcher and(org.geysermc.paletter.creative.ItemMatcher)
+    public static org.geysermc.paletter.creative.ItemMatcher anyVariantOf(org.geysermc.paletter.vanilla.BedrockItemType)
     public static org.geysermc.paletter.creative.ItemMatcher blockState(org.cloudburstmc.nbt.NbtMap)
     public static org.geysermc.paletter.creative.ItemMatcher blockState(org.geysermc.paletter.vanilla.BedrockBlockState)
     public static org.geysermc.paletter.creative.ItemMatcher damage(int)
@@ -2325,7 +2326,6 @@ public sealed interface org.geysermc.paletter.creative.ItemMatcher permits org.g
     public static org.geysermc.paletter.creative.ItemMatcher namespace(java.lang.String)
     public default org.geysermc.paletter.creative.ItemMatcher negate()
     public static org.geysermc.paletter.creative.ItemMatcher of(java.lang.String, java.util.function.Predicate<org.geysermc.paletter.item.BedrockItemStack>)
-    public static org.geysermc.paletter.creative.ItemMatcher of(org.geysermc.paletter.vanilla.BedrockItemType)
     public static org.geysermc.paletter.creative.ItemMatcher of(org.geysermc.paletter.vanilla.BedrockItemVariant)
 }
 
@@ -2403,7 +2403,7 @@ public record org.geysermc.paletter.item.ItemFallback {
     public boolean force()
     public org.geysermc.paletter.item.ItemFallback forced()
     public final int hashCode()
-    public static org.geysermc.paletter.item.ItemFallback of(org.geysermc.paletter.vanilla.BedrockItemType)
+    public static org.geysermc.paletter.item.ItemFallback keepingAux(org.geysermc.paletter.vanilla.BedrockItemType)
     public static org.geysermc.paletter.item.ItemFallback of(org.geysermc.paletter.vanilla.BedrockItemVariant)
     public org.geysermc.paletter.vanilla.BedrockItemType target()
     public final java.lang.String toString()
@@ -3935,7 +3935,6 @@ public final class org.geysermc.paletter.vanilla.BedrockBlockType {
     public boolean isAvailable()
     public boolean isCustom()
     public boolean isEducation()
-    public static org.geysermc.paletter.vanilla.BedrockBlockType of(java.lang.String)
     public java.util.List<org.geysermc.paletter.vanilla.BedrockState<?>> properties()
     public org.geysermc.paletter.vanilla.BedrockBlockType resolved()
     public org.geysermc.paletter.vanilla.BedrockBlockType$StateBuilder state()
@@ -5475,6 +5474,7 @@ public final class org.geysermc.paletter.vanilla.BedrockItemType implements org.
     public boolean isEducation()
     public org.geysermc.paletter.vanilla.BedrockItemType resolved()
     public java.lang.String toString()
+    public org.geysermc.paletter.vanilla.BedrockItemType type()
     public static java.util.List<org.geysermc.paletter.vanilla.BedrockItemType> vanillaTypes()
     public org.geysermc.paletter.vanilla.BedrockItemVariant variant()
     public org.geysermc.paletter.vanilla.BedrockItemVariant variant(int)
@@ -7990,6 +7990,7 @@ public final class org.geysermc.paletter.vanilla.IntState extends org.geysermc.p
 }
 
 public sealed interface org.geysermc.paletter.vanilla.ItemKey permits org.geysermc.paletter.vanilla.BedrockItemType, org.geysermc.paletter.vanilla.BedrockItemVariant {
+    public abstract org.geysermc.paletter.vanilla.BedrockItemType type()
     public abstract org.geysermc.paletter.vanilla.BedrockItemVariant variant()
 }
 

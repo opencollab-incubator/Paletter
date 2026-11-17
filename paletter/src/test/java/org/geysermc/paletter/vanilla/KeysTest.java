@@ -55,11 +55,6 @@ class KeysTest {
         assertEquals(first.hashCode(), BedrockItemType.fromIdentifier("test:thing").hashCode());
     }
 
-    @org.junit.jupiter.api.BeforeAll
-    static void dataLoaded() {
-        VanillaIndex.get();
-    }
-
     @Test
     void variantsOfKnownTypesAreTheKnownInstances() {
         assertSame(BedrockItems.APPLE.variant(), BedrockItemVariant.fromIdentifier("minecraft:apple", 0));

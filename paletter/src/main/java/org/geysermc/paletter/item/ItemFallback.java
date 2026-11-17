@@ -37,7 +37,7 @@ public record ItemFallback(@NonNull BedrockItemType target, @Nullable BedrockIte
      * @return a fallback to an item type, keeping the aux of the replaced item
      * @since 0.1.0
      */
-    public static @NonNull ItemFallback of(@NonNull BedrockItemType target) {
+    public static @NonNull ItemFallback keepingAux(@NonNull BedrockItemType target) {
         return new ItemFallback(target, null, false);
     }
 

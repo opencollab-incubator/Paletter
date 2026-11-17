@@ -44,8 +44,8 @@ public record CreativePlacement(@NonNull CreativeCategory category, @Nullable St
      * @return this placement, right after the stacks of an item type if present
      * @since 0.1.0
      */
-    public @NonNull CreativePlacement after(@NonNull BedrockItemType anchor) {
-        return after(ItemMatcher.of(anchor));
+    public @NonNull CreativePlacement afterAnyOf(@NonNull BedrockItemType anchor) {
+        return after(ItemMatcher.anyVariantOf(anchor));
     }
 
     /**

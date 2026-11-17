@@ -124,11 +124,11 @@ class PaletterBuilderTest {
         DataVersion oldest = PALETTER.version(OLDEST);
         DataVersion newest = PALETTER.latest();
         Fallbacks fallbacks = Fallbacks.builder()
-            .item(oldest, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.STICK).forced())
-            .item(newest, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.APPLE).forced())
+            .item(oldest, BedrockItems.POPLAR_BOAT, ItemFallback.keepingAux(BedrockItems.STICK).forced())
+            .item(newest, BedrockItems.POPLAR_BOAT, ItemFallback.keepingAux(BedrockItems.APPLE).forced())
             .build();
-        assertEquals(Map.of("minecraft:poplar_boat", ItemFallback.of(BedrockItems.STICK).forced()), fallbacks.items(PALETTER.version(OLDEST)));
-        assertEquals(Map.of("minecraft:poplar_boat", ItemFallback.of(BedrockItems.APPLE).forced()), fallbacks.items(PALETTER.latest()));
+        assertEquals(Map.of("minecraft:poplar_boat", ItemFallback.keepingAux(BedrockItems.STICK).forced()), fallbacks.items(PALETTER.version(OLDEST)));
+        assertEquals(Map.of("minecraft:poplar_boat", ItemFallback.keepingAux(BedrockItems.APPLE).forced()), fallbacks.items(PALETTER.latest()));
         assertEquals(ItemFallback.UNKNOWN, fallbacks.defaultItem());
         assertNull(Fallbacks.NONE.defaultItem());
         assertNull(Fallbacks.NONE.defaultBlock());

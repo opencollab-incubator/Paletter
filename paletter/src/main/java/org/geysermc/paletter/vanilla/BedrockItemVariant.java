@@ -24,17 +24,12 @@ public final class BedrockItemVariant implements ItemKey {
     private final BedrockItemType type;
     private final int aux;
     /** The canonical id in the newest bundled data, or -1: a variant without one, and the named constants, which look it up. */
-    private int id;
+    private final int id;
     private volatile ItemVariant variant;
 
     BedrockItemVariant(BedrockItemType type, int aux, int id) {
         this.type = type;
         this.aux = aux;
-        this.id = id;
-    }
-
-    /** The index gives the type's own base variant its canonical id when it links the data. */
-    void identify(int id) {
         this.id = id;
     }
 
@@ -104,9 +99,10 @@ public final class BedrockItemVariant implements ItemKey {
      */
     @Internal
     public int canonicalIn(@NonNull CanonicalItems canonical) {
-        if (id >= 0) {
+        int bundledId = id >= 0 ? id : type.bundledId(aux);
+        if (bundledId >= 0) {
             CanonicalItems bundled = VanillaIndex.get().items;
-            return canonical.root() == bundled ? id : canonical.vanillaIdsFrom(bundled)[id];
+            return canonical.root() == bundled ? bundledId : canonical.vanillaIdsFrom(bundled)[bundledId];
         }
         return canonical.index(toItemVariant());
     }

@@ -257,7 +257,7 @@ class LayerTest {
         assertEquals(BlockExplanation.Kind.DEFAULT, oldest.explain(poplar).kind());
         Palette flat = Paletter.builder().fallbacks(Fallbacks.builder()
             .block(BedrockBlocks.POPLAR_PLANKS, BlockFallback.of(BedrockBlocks.PALE_OAK_PLANKS))
-            .item(BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.PALE_OAK_BOAT)).build())
+            .item(BedrockItems.POPLAR_BOAT, ItemFallback.keepingAux(BedrockItems.PALE_OAK_BOAT)).build())
             .build().palette(PALETTER.version(OLDEST).protocolVersion());
         assertEquals("minecraft:pale_oak_planks", flat.blocks().resolve(poplar).block().identifier());
 
@@ -278,7 +278,7 @@ class LayerTest {
     void fallbacksNeverShadowAnItemsOwnCanonicalId() {
         // A layer sends poplar boats as pale oak boats in 26.40; pale oak boats must still match themselves there
         Paletter forcing = Paletter.builder().fallbacks(Fallbacks.builder()
-            .item(BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.PALE_OAK_BOAT).forced()).build()).build();
+            .item(BedrockItems.POPLAR_BOAT, ItemFallback.keepingAux(BedrockItems.PALE_OAK_BOAT).forced()).build()).build();
         int poplar = Ids.item(PALETTER, ItemVariant.of("minecraft:poplar_boat"));
         int paleOak = Ids.item(PALETTER, ItemVariant.of("minecraft:pale_oak_boat"));
         for (DataVersion version : PALETTER.versions()) {

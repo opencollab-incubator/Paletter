@@ -61,7 +61,21 @@ final class VanillaTypes {
      * so it is the instance {@link BedrockItemType#variant(int)} answers.
      */
     static @NonNull BedrockItemVariant variant(@NonNull BedrockItemType type, int aux) {
-        return new BedrockItemVariant(type, aux, -1);
+        return aux == 0 ? type.variant() : type.name(new BedrockItemVariant(type, aux, -1));
+    }
+
+    private static volatile boolean namedLoaded;
+
+    /** Initializes {@code BedrockItemVariants}, which registers the named variants on their types: constants only, no data. */
+    static void loadNamedVariants() {
+        if (!namedLoaded) {
+            try {
+                Class.forName(VanillaTypes.class.getPackageName() + ".BedrockItemVariants", true, VanillaTypes.class.getClassLoader());
+            } catch (ClassNotFoundException e) {
+                throw new IllegalStateException(e);
+            }
+            namedLoaded = true;
+        }
     }
 
     static <S extends BedrockState<?>> @NonNull S state(@NonNull S state) {

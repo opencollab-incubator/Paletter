@@ -44,7 +44,7 @@ public sealed interface ItemMatcher permits ItemMatchers.Id, ItemMatchers.Damage
      *
      * @since 0.1.0
      */
-    static @NonNull ItemMatcher of(@NonNull BedrockItemType type) {
+    static @NonNull ItemMatcher anyVariantOf(@NonNull BedrockItemType type) {
         return new ItemMatchers.Id(type.identifier());
     }
 

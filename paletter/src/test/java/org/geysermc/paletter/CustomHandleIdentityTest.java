@@ -113,7 +113,7 @@ class CustomHandleIdentityTest {
     void aFallbackToACustomItemResolvesToItsOwnedVariant() {
         CustomItem ruby = ruby("example:ruby");
         Paletter paletter = Paletter.builder()
-            .fallbacks(Fallbacks.builder().item(BedrockItems.DIAMOND_SWORD, ItemFallback.of(ruby.type()).forced()).build())
+            .fallbacks(Fallbacks.builder().item(BedrockItems.DIAMOND_SWORD, ItemFallback.keepingAux(ruby.type()).forced()).build())
             .layer(PaletteLayer.builder("content").item(ruby).build())
             .build();
         Palette palette = paletter.palette(paletter.latest().protocolVersion());

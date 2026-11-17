@@ -64,17 +64,8 @@ final class VanillaIndex {
             }
         }
 
-        // The named variants, which the data's variants of their types adopt
-        Map<String, BedrockItemVariant> constantVariants = new HashMap<>();
-        for (Field field : initialize("BedrockItemVariants").getFields()) {
-            try {
-                if (Modifier.isStatic(field.getModifiers()) && field.get(null) instanceof BedrockItemVariant variant) {
-                    constantVariants.putIfAbsent(variant.type().identifier() + "@" + variant.aux(), variant);
-                }
-            } catch (IllegalAccessException e) {
-                throw new IllegalStateException(e);
-            }
-        }
+        // The named variants register on their types, which the data's variants of them adopt
+        VanillaTypes.loadNamedVariants();
 
         this.itemConstants = constantItems;
         this.blockConstants = constantBlocks;
@@ -110,25 +101,22 @@ final class VanillaIndex {
 
         Map<String, BedrockItemType> itemsById = new LinkedHashMap<>();
         Map<String, List<BedrockItemVariant>> variants = new HashMap<>();
+        Map<String, List<Integer>> variantIds = new HashMap<>();
         this.itemsByCanonical = new BedrockItemVariant[items.vanillaSize()];
         for (int i = 0; i < items.vanillaSize(); i++) {
             ItemVariant variant = items.variant(i);
             BedrockItemType type = itemsById.computeIfAbsent(variant.identifier(),
                 id -> constantItems.computeIfAbsent(id, key -> new BedrockItemType(key, VanillaTypes.UNKNOWN)));
-            BedrockItemVariant named = constantVariants.get(variant.identifier() + "@" + variant.damage());
-            // A named constant stays without an id, and finds its canonical id by lookup
-            BedrockItemVariant handle = named;
-            if (handle == null && variant.damage() == 0) {
-                // The type's own base variant is the instance handed out before the data was linked
-                handle = type.baseVariant();
-                handle.identify(i);
-            } else if (handle == null) {
+            // The base and the named variants belong to the type and have no id of their own: the type's link has it
+            BedrockItemVariant handle = variant.damage() == 0 ? type.variant() : type.named(variant.damage());
+            if (handle == null) {
                 handle = new BedrockItemVariant(type, variant.damage(), i);
             }
             itemsByCanonical[i] = handle;
             variants.computeIfAbsent(variant.identifier(), id -> new ArrayList<>()).add(handle);
+            variantIds.computeIfAbsent(variant.identifier(), id -> new ArrayList<>()).add(i);
         }
-        itemsById.forEach((id, type) -> type.link(variants.get(id)));
+        itemsById.forEach((id, type) -> type.link(variants.get(id), variantIds.get(id).stream().mapToInt(Integer::intValue).toArray()));
         this.itemsById = itemsById;
         this.itemTypes = List.copyOf(itemsById.values());
 

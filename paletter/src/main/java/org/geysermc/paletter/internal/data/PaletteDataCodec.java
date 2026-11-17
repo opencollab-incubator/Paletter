@@ -133,7 +133,7 @@ public final class PaletteDataCodec {
         Map<String, BlockFallback> blockFallbacks = new HashMap<>();
         fallbacksNbt.getCompound("blocks", NbtMap.EMPTY).forEach((name, value) -> {
             NbtMap fallback = (NbtMap) value;
-            BedrockBlockType target = BedrockBlockType.of(fallback.getString("target"));
+            BedrockBlockType target = BedrockBlockType.fromIdentifier(fallback.getString("target"));
             blockFallbacks.put(name, new BlockFallback(target, fallback.getBoolean("clear_states") ? target.defaultState() : null,
                 fallback.getBoolean("force")));
         });

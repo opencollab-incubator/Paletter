@@ -95,7 +95,7 @@ class EncodeDecodeTest {
     void fallbacksApplyWhenEncodingForAnOlderVersion() {
         DataVersion oldest = PALETTER.version(OLDEST);
         Fallbacks fallbacks = Fallbacks.builder()
-            .item(oldest, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.STICK).forced())
+            .item(oldest, BedrockItems.POPLAR_BOAT, ItemFallback.keepingAux(BedrockItems.STICK).forced())
             .build();
         Paletter paletter = Paletter.builder().fallbacks(fallbacks).build();
         Palette palette = paletter.palette(OLDEST);

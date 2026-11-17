@@ -62,7 +62,7 @@ class UnknownItemTest {
 
     @Test
     void theConfiguredDefaultFallbackIsUsedEverywhere() {
-        Paletter stick = Paletter.builder().fallbacks(Fallbacks.builder().defaultItem(ItemFallback.of(BedrockItems.STICK)).build()).build();
+        Paletter stick = Paletter.builder().fallbacks(Fallbacks.builder().defaultItem(ItemFallback.keepingAux(BedrockItems.STICK)).build()).build();
         Palette oldest = stick.palette(OLDEST);
         BedrockItemVariant missing = missingInOldest(oldest);
         BedrockItemVariant nobody = BedrockItemVariant.fromIdentifier("nobody:item", 7);

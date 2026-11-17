@@ -188,7 +188,7 @@ class VanillaConstantsTest {
         assertEquals("STONE", BedrockBlocks.STONE.constantName());
         assertEquals("APPLE", BedrockItems.APPLE.constantName());
         assertNull(BedrockItemType.fromIdentifier("example:ruby").constantName());
-        assertNull(BedrockBlockType.of("example:lamp").constantName());
+        assertNull(BedrockBlockType.fromIdentifier("example:lamp").constantName());
         for (BedrockBlockType type : BedrockBlockType.vanillaTypes()) {
             assertNotNull(type.constantName(), type.identifier());
         }
@@ -261,7 +261,7 @@ class VanillaConstantsTest {
             .defaultState("example:level", 2)
             .build();
         CustomItem ruby = CustomItem.builder("example:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)
-            .after(BedrockItems.DIAMOND)).build();
+            .afterAnyOf(BedrockItems.DIAMOND)).build();
         PaletteLayer layer = PaletteLayer.builder("custom").block(lamp).item(ruby)
             .overrideItem(BedrockItems.CAKE, item -> { })
             .build();
@@ -308,7 +308,7 @@ class VanillaConstantsTest {
                     .destroySpeeds(org.geysermc.paletter.item.component.Digger.DestroySpeeds.builder()
                         .block(org.geysermc.paletter.item.component.Digger.Block.of(BedrockBlocks.STONE)).speed(4).build())
                     .build())
-                .creative(CreativePlacement.loose(CreativeCategory.ITEMS).after(BedrockItems.DIAMOND))
+                .creative(CreativePlacement.loose(CreativeCategory.ITEMS).afterAnyOf(BedrockItems.DIAMOND))
                 .build())
             .creative(editor -> editor.remove(ItemMatcher.of(BedrockItems.EMPTY_MAP.variant(2))))
             .build();

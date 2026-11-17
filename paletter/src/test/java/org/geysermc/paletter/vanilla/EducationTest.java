@@ -47,6 +47,6 @@ class EducationTest {
         assertFalse(BedrockBlocks.STONE.isEducation());
         // Keys that are not constants never are
         assertFalse(BedrockItemType.fromIdentifier("example:balloon").isEducation());
-        assertFalse(BedrockBlockType.of("example:element_1").isEducation());
+        assertFalse(BedrockBlockType.fromIdentifier("example:element_1").isEducation());
     }
 }

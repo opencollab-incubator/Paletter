@@ -1,7 +1,8 @@
 package org.geysermc.paletter.vanilla;
 
 import org.geysermc.paletter.Paletter;
-import org.junit.jupiter.api.BeforeAll;
+import org.geysermc.paletter.internal.CanonicalItems;
+import org.geysermc.paletter.internal.item.ItemVariant;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -55,12 +56,6 @@ class ItemVariantsTest {
         return output;
     }
 
-    @BeforeAll
-    static void dataLoaded() {
-        // Identity of named variants holds once the data is linked; the load-nothing tests run in a fresh JVM
-        VanillaIndex.get();
-    }
-
     @Test
     void referencingAConstantLoadsNoData(@TempDir Path temp) throws IOException, InterruptedException {
         String output = run(temp, Reference.class);
@@ -70,6 +65,58 @@ class ItemVariantsTest {
         for (String data : DATA) {
             assertFalse(output.contains("." + data + " source:"), data + " was loaded by referencing a constant");
         }
+    }
+
+    /** Keys made before any data is loaded, then checked against what the data gives: the main of {@link #keysMadeBeforeLoadingAreTheSame}. */
+    public static final class PreLoad {
+        static void check(boolean ok, String what) {
+            if (!ok) {
+                throw new IllegalStateException(what);
+            }
+        }
+
+        public static void main(String[] args) {
+            BedrockItemVariant bed = BedrockItems.BED.variant();
+            BedrockItemVariant potion = BedrockItems.POTION.variant(19);
+            BedrockItemVariant preview = BedrockItems.BRITTLE_ICE.variant();
+            BedrockItemVariant previewDamaged = BedrockItems.BRITTLE_ICE.variant(3);
+
+            Paletter paletter = Paletter.bundled();
+            org.geysermc.paletter.Palette palette = paletter.palette(paletter.latest().protocolVersion());
+            check(bed == BedrockItemVariants.BED_WHITE, "BED.variant() is BED_WHITE");
+            check(bed == BedrockItems.BED.variant(), "BED.variant() is stable");
+            check(potion == BedrockItemVariants.POTION_WATER_BREATHING, "POTION.variant(19) is the named constant");
+            check(potion == BedrockItems.POTION.variant(19), "POTION.variant(19) is stable");
+            check(preview == BedrockItems.BRITTLE_ICE.variant(), "an absent type's base is stable");
+            check(previewDamaged.type() == BedrockItems.BRITTLE_ICE, "variants are of their own type, not the fallback's");
+            check(palette.resolve(bed).equals(palette.resolve(BedrockItems.BED)), "bed resolves like its type");
+            check(palette.resolve(potion).equals(palette.resolve(BedrockItems.POTION.variant(19))), "potion resolves like after loading");
+            check(palette.resolve(preview).equals(palette.resolve(BedrockItems.BRITTLE_ICE)), "absent type resolves like its type");
+            check(palette.resolve(previewDamaged).equals(palette.resolve(BedrockItems.BRITTLE_ICE.variant(3))), "absent variant resolves like after loading");
+            System.out.println("PRELOAD OK");
+        }
+    }
+
+    @Test
+    void keysMadeBeforeLoadingAreTheSame(@TempDir Path temp) throws IOException, InterruptedException {
+        String output = run(temp, PreLoad.class);
+        assertTrue(output.contains("PRELOAD OK"), output);
+    }
+
+    @Test
+    void aVariantWithoutAnIdResolvesToTheRightId() {
+        CanonicalItems canonical = Paletter.bundled().canonicalItems();
+        // Named constants and the base have no id of their own: the type's link knows it
+        assertEquals(canonical.index(ItemVariant.of("minecraft:potion", 19)), BedrockItemVariants.POTION_WATER_BREATHING.canonicalIn(canonical));
+        assertEquals(canonical.index(ItemVariant.of("minecraft:bed", 0)), BedrockItems.BED.variant().canonicalIn(canonical));
+        assertEquals(canonical.index(ItemVariant.of("minecraft:apple", 0)), BedrockItems.APPLE.variant().canonicalIn(canonical));
+        // A variant the data does not have has none
+        assertEquals(-1, BedrockItems.POTION.variant(9999).canonicalIn(canonical));
+        // An absent type's variants find the id of its fallback
+        BedrockItemType absent = BedrockItems.BRITTLE_ICE;
+        assertFalse(absent.isAvailable());
+        assertEquals(absent.resolved().variant().canonicalIn(canonical), absent.variant().canonicalIn(canonical));
+        assertEquals(absent, absent.variant(3).type());
     }
 
     @Test

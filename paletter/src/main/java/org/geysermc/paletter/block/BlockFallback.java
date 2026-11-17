@@ -10,7 +10,7 @@ import java.util.Objects;
 
 /**
  * A replacement for a block in a version. The target is a key: it needs no existence in any version, custom keys are
- * made with {@code BedrockBlockType.of("namespace:id")}.
+ * made with {@link org.geysermc.paletter.Palette#blockState}.
  *
  * @param target the replacement block type
  * @param state the exact replacement state, or null to carry over the state values the replaced block and the
