@@ -14,6 +14,8 @@ picocli = "4.7.7"
 # The API dump (tools module, apiDump source set) reads class files
 asm = "9.11.1"
 # apiCompat (paletter): binary compatibility against the released artifact
+# The white-box discovery (tools module) decodes x86-64 instructions of the BDS binary
+iced = "1.21.0"
 japicmp = "0.4.6"
 jmh-plugin = "0.7.4"
 
@@ -30,6 +32,7 @@ libdatachannel = { group = "dev.opencollab", name = "libdatachannel-java-arch-de
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 picocli = { group = "info.picocli", name = "picocli", version.ref = "picocli" }
 javapoet = { group = "com.palantir.javapoet", name = "javapoet", version.ref = "javapoet" }
+iced-x86 = { group = "io.github.icedland.iced", name = "iced-x86", version.ref = "iced" }
 asm-util = { group = "org.ow2.asm", name = "asm-util", version.ref = "asm" }
 junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit" }
 # Versions from junit-bom

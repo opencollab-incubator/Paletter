@@ -32,6 +32,7 @@ dependencies {
     implementation(project(":paletter"))
     implementation(libs.gson)
     implementation(libs.picocli)
+    implementation(libs.iced.x86)
     // The capture client: BDS 1.26.70+ only speaks NetherNet (WebRTC, HTTP signaling on server-port); RakNet from the same build
     implementation(libs.protocol.connection)
     implementation(libs.raknet)
