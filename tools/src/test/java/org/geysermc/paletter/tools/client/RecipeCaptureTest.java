@@ -8,7 +8,9 @@ import org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition;
 import org.cloudburstmc.protocol.bedrock.data.definitions.SimpleItemDefinition;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
+import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.ContainerMixData;
+import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.MaterialReducer;
 import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.PotionMixData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.RecipeUnlockingRequirement;
 import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.recipe.MultiRecipeData;
@@ -62,6 +64,7 @@ class RecipeCaptureTest {
         crafting.getMultiData().add(MultiRecipeData.of(uuid, 11));
         crafting.getPotionMixData().add(new PotionMixData(5, 1, 6, 0, 7, 2));
         crafting.getContainerMixData().add(new ContainerMixData(5, 6, 7));
+        crafting.getMaterialReducers().add(new MaterialReducer(7 << 16 | 3, Object2IntMaps.singleton(stick, 2)));
         TrimDataPacket trim = new TrimDataPacket();
         trim.getPatterns().add(new TrimPattern("minecraft:coast_armor_trim_smithing_template", "coast"));
         trim.getMaterials().add(new TrimMaterial("amethyst", "§u", "minecraft:amethyst_shard"));
@@ -101,6 +104,10 @@ class RecipeCaptureTest {
         assertEquals(2, potion.getAsJsonObject("output").get("aux").getAsInt());
         assertEquals("minecraft:crafting_table",
             recipes.list("container_mix").get(0).getAsJsonObject().getAsJsonObject("output").get("id").getAsString());
+        JsonObject reducer = recipes.list("material_reducer").get(0).getAsJsonObject();
+        assertEquals("minecraft:crafting_table", reducer.getAsJsonObject("input").get("id").getAsString());
+        assertEquals(3, reducer.getAsJsonObject("input").get("aux").getAsInt());
+        assertEquals("minecraft:stick", reducer.getAsJsonArray("itemCounts").get(0).getAsJsonObject().get("id").getAsString());
         assertEquals(1, recipes.trim().getAsJsonArray("patterns").size());
         assertEquals("amethyst", recipes.trim().getAsJsonArray("materials").get(0).getAsJsonObject().get("materialId").getAsString());
         assertTrue(recipes.trim().get("_generated").getAsString().contains("Do not edit"));

@@ -49,16 +49,17 @@ import java.util.zip.GZIPOutputStream;
 
 /**
  * A captured {@code CraftingDataPacket} ({@value #CRAFTING}) and {@code TrimDataPacket} ({@value #TRIM}), as BDS sent them:
- * one array per recipe list in wire order, one entry per line, nothing derived. Items are written by identifier (from the
- * capture's own item registry, never runtime ids) and block runtime ids of results as block states like the creative
- * capture; net ids, UUIDs, priorities, station tags and unlock requirements stay raw.
+ * one array per recipe list, its entries in wire order, one entry per line, nothing derived. Items are written by
+ * identifier (from the capture's own item registry, never runtime ids) and block runtime ids of results as block states
+ * like the creative capture; net ids, UUIDs, priorities, station tags and unlock requirements stay raw.
  */
 public final class RecipeCapture {
     public static final String CRAFTING = "crafting_data.json.gz";
     public static final String TRIM = "trim_data.json";
     /**
-     * The recipe lists of the file, in wire order. {@code crafting} is the one list builds before protocol 2168 send (every
-     * recipe in it, with its type); the two chemistry lists are empty on BDS.
+     * The recipe lists of the file (in a fixed order: the wire order of the lists differs between protocols). {@code crafting}
+     * is the one list builds before protocol 2168 send (every recipe in it, with its type); the two chemistry lists are empty
+     * on BDS.
      */
     public static final List<String> LISTS = List.of("crafting", "shaped", "shapeless", "shulker_box", "multi", "smithing_transform", "smithing_trim",
         "potion_mix", "container_mix", "material_reducer", "shaped_chemistry", "shapeless_chemistry");
@@ -277,7 +278,8 @@ public final class RecipeCapture {
 
     private JsonObject materialReducer(MaterialReducer reducer) {
         JsonObject json = new JsonObject();
-        json.addProperty("inputId", reducer.getInputId());
+        // The input is (runtime id << 16) | aux on the wire
+        json.add("input", plainItem(reducer.getInputId() >>> 16, reducer.getInputId() & 0xFFFF));
         JsonArray counts = new JsonArray();
         reducer.getItemCounts().forEach((item, count) -> {
             JsonObject entry = new JsonObject();
