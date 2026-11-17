@@ -126,6 +126,14 @@ public final class Update {
      * build>} is written (when anything differs); bundled data, constants, the content log and the model stay as they are.
      */
     private final String against;
+    /**
+     * {@code --capture-only <dir>}: the capture half of a full recapture (see docs/data-pipeline.md, "Full recapture"). The
+     * run captures and compares as usual, but writes nothing into the repository: the files that would go to
+     * {@code data/bds/<build>} (and the spec capture) go to this directory, with the same relative paths, and the rest of
+     * the update (bundled data, constants, the model, white-box, the build table) is left to the job that gathers the
+     * captures of every build. Works for releases and previews, with or without {@code --against}.
+     */
+    private final Path captureOnly;
     /** In a history check: what this run would write into {@code data/bds/<build>}, written only when it differs. */
     private final Map<Path, byte[]> pending = new LinkedHashMap<>();
     private Path buildDirectory;
@@ -160,6 +168,10 @@ public final class Update {
         this.against = options.containsKey("against") ? Versions.requireBuild(options.get("against")) : null;
         if (against != null && preview) {
             throw new IllegalArgumentException("--against checks release builds only");
+        }
+        this.captureOnly = options.containsKey("capture-only") ? Path.of(options.get("capture-only")).toAbsolutePath().normalize() : null;
+        if (captureOnly != null && (verifyOnly || captureOnly.startsWith(bdsData) || bdsData.startsWith(captureOnly))) {
+            throw new IllegalArgumentException("--capture-only writes the captures into a directory of its own (not data/bds, not with --verify-only)");
         }
     }
 
@@ -209,7 +221,7 @@ public final class Update {
         } catch (Exception e) {
             report.fail("pipeline", e);
         }
-        if (against == null && !verifyOnly && !report.failed()) {
+        if (against == null && captureOnly == null && !verifyOnly && !report.failed()) {
             // New captures of a bundled build change what the record says per data version
             track(report, root, List.of(resources.resolve(BuildTable.RESOURCE), bdsData.resolve(BuildTable.TABLE)), "build table",
                 () -> BuildTable.run(root, false));
@@ -226,11 +238,12 @@ public final class Update {
         if (against != null && !Files.isDirectory(BdsDistribution.inside(bdsData, against))) {
             throw new IllegalArgumentException("--against " + against + ": no captures in " + relative(bdsData.resolve(against)));
         }
-        if (against != null && !verifyOnly && Files.exists(buildDirectory)) {
+        if (against != null && !verifyOnly && captureOnly == null && Files.exists(buildDirectory)) {
             throw new IllegalArgumentException(root.relativize(buildDirectory) + " exists: a history check only adds builds (use --verify-only)");
         }
         report.header.put("Date", LocalDate.now().toString());
-        report.header.put("Mode", against != null ? "history check against " + against + (verifyOnly ? " (nothing written)"
+        report.header.put("Mode", captureOnly != null ? "capture only" + (against != null ? " (compared with " + against + ")" : "")
+            + ": captures go to a directory of the recapture job, nothing is written into the repository" : against != null ? "history check against " + against + (verifyOnly ? " (nothing written)"
             : " (captures written to data/bds/" + distribution.version() + " only if they differ)") : verifyOnly ? "verify only (nothing written)" : "update");
         report.header.put("BDS", distribution.version() + " " + distribution.platform() + " (" + distribution.url() + ")");
         this.distribution = distribution;
@@ -248,7 +261,7 @@ public final class Update {
         }
 
         // A history check keeps the captures of a build only if they differ from the build it was compared with
-        boolean kept = against != null && !verifyOnly && !report.failed() && changed();
+        boolean kept = captureOnly != null ? !report.failed() : against != null && !verifyOnly && !report.failed() && changed();
         if (kept) {
             keep(work);
         }
@@ -256,6 +269,7 @@ public final class Update {
         // changed no data file keeps the committed report, so the report is never the only change. A history check keeps
         // its report with the captures of a kept build
         Path reportFile = options.containsKey("report") ? Path.of(options.get("report"))
+            : captureOnly != null ? work.resolve("report.md")
             : against != null ? (kept ? buildDirectory.resolve(REPORT) : work.resolve("report.md"))
             : verifyOnly || report.repoChanges.isEmpty() ? work.resolve("report.md") : bdsData.resolve(distribution.version()).resolve(REPORT);
         report.generatedBy = command(distribution);
@@ -264,6 +278,13 @@ public final class Update {
             report.write(work.resolve("report.md"));
         }
         System.out.println("Report: " + reportFile.toAbsolutePath());
+        if (captureOnly != null) {
+            // Differences from the committed captures are the point of a recapture, never a failure; decisions are the gathering job's
+            int code = report.failed() ? 1 : 0;
+            Files.writeString(work.resolve(EXIT_CODE), code + "\n");
+            System.out.println(report.failed() ? "FAILED" : "CAPTURED into " + captureOnly);
+            return code;
+        }
         if (against != null) {
             System.out.println(report.failed() ? "FAILED" : changed() ? "DIFFERS FROM " + against + (kept ? " (kept)" : "") : "IDENTICAL TO " + against);
             return report.failed() || (verifyOnly && changed()) ? 1 : 0;
@@ -370,8 +391,8 @@ public final class Update {
         if (runs.addon != null) {
             shapes(distribution, runs);
         }
-        if (against != null) {
-            // A history check leaves the repository's bundled data, constants and model alone
+        if (against != null || captureOnly != null) {
+            // A history check (and the capture half of a recapture) leaves the repository's bundled data, constants and model alone
             if (runs.protocol != null) {
                 specCapture(distribution, work, runs);
             }
@@ -1807,7 +1828,7 @@ public final class Update {
      */
     private void specCapture(BdsDistribution distribution, Path work, Runs runs) throws Exception {
         // A history check captures into the work directory; keep() copies the capture when the build is kept
-        boolean write = !verifyOnly && against == null;
+        boolean write = !verifyOnly && against == null && captureOnly == null;
         Path out = write ? bdsData.resolve(distribution.version()).resolve("spec") : work.resolve("spec");
         Map<String, String> specOptions = new LinkedHashMap<>(options);
         specOptions.put("version", distribution.version());
@@ -2044,6 +2065,16 @@ public final class Update {
     }
 
     void stage(Path target, byte[] content, String what) throws IOException {
+        if (captureOnly != null) {
+            // Only what belongs to the captures of this build; the rest is derived data that the gathering job regenerates
+            Path normalized = target.toAbsolutePath().normalize();
+            if (normalized.startsWith(buildDirectory) && !normalized.equals(buildDirectory)) {
+                pending.put(normalized, content);
+            } else {
+                System.out.println("Capture only: not staged (" + what + ")");
+            }
+            return;
+        }
         if (against != null) {
             // A history check writes only the captures of its build, and only when the build is kept (keep())
             Path normalized = target.toAbsolutePath().normalize();
@@ -2156,20 +2187,27 @@ public final class Update {
 
     /** Writes the captures of a kept build (history check) into {@code data/bds/<build>}. */
     void keep(Path work) throws IOException {
-        BdsDistribution.deleteRecursively(buildDirectory);
+        // A recapture writes into its own directory and deletes nothing; a history check replaces the build's directory
+        Path base = captureOnly != null ? captureOnly : buildDirectory;
+        if (captureOnly == null) {
+            BdsDistribution.deleteRecursively(buildDirectory);
+        }
         for (Map.Entry<Path, byte[]> file : pending.entrySet()) {
-            Files.createDirectories(file.getKey().getParent());
-            Files.write(file.getKey(), file.getValue());
+            Path target = base.resolve(buildDirectory.relativize(file.getKey()).toString());
+            Files.createDirectories(target.getParent());
+            Files.write(target, file.getValue());
         }
         Path spec = work.resolve("spec");
         if (Files.isDirectory(spec)) {
-            Path target = buildDirectory.resolve("spec");
+            Path target = base.resolve("spec");
             Files.createDirectories(target);
             for (Path file : BuildHistory.files(spec)) {
                 Files.copy(file, target.resolve(file.getFileName()), StandardCopyOption.REPLACE_EXISTING);
             }
         }
-        report.repoChanges.add("add `" + root.relativize(buildDirectory).toString().replace('\\', '/') + "` (captures of this build)");
+        if (captureOnly == null) {
+            report.repoChanges.add("add `" + root.relativize(buildDirectory).toString().replace('\\', '/') + "` (captures of this build)");
+        }
     }
 
     // ---------------------------------------------------------------------------------------------------------------
