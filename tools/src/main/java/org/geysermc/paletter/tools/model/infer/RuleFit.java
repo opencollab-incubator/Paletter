@@ -7,6 +7,7 @@ import org.geysermc.paletter.tools.model.Model.Field;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 import org.geysermc.paletter.tools.model.addon.JsonPath;
 import org.geysermc.paletter.tools.model.infer.SpecCaptures.Obs;
+import org.geysermc.paletter.tools.model.rule.Affine;
 import org.geysermc.paletter.tools.model.rule.Affix;
 import org.geysermc.paletter.tools.model.rule.Bitset;
 import org.geysermc.paletter.tools.model.rule.Constant;
@@ -232,7 +233,8 @@ final class RuleFit {
             return best;
         }
         Rule count = Count.fit(set, wire);
-        return count != null ? count : EmptyList.fit(set, wire);
+        Rule list = count != null ? count : EmptyList.fit(set, wire);
+        return list != null ? list : Affine.fit(set, wire);
     }
 
     /**
@@ -285,7 +287,7 @@ final class RuleFit {
                 }
             }
         }
-        return null;
+        return Affine.fit(set, wire);
     }
 
     private List<String> tags(Component component, String path, String jsonName, String wire, Rule rule, List<Observation> set) {

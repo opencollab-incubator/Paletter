@@ -28,6 +28,9 @@ public interface Emitter {
     /** @return the value as a {@code double} (a boolean as 0 or 1) */
     CodeBlock number();
 
+    /** @return the number at a path of the value, a list or object ({@code origin[0]}), as a {@code double} */
+    CodeBlock input(String path);
+
     /** @return the value as a string (an enum's own value) */
     CodeBlock string();
 

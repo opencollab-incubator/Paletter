@@ -37,6 +37,11 @@ final class RecordingEmitter implements Emitter {
     }
 
     @Override
+    public CodeBlock input(String path) {
+        return CodeBlock.of("input($S)", path);
+    }
+
+    @Override
     public CodeBlock string() {
         return CodeBlock.of("string");
     }

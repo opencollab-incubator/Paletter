@@ -54,6 +54,8 @@ class RuleTest {
             .evaluate(JsonParser.parseString("\"pig\"")));
         assertEquals("6 (int)", rule("{\"kind\": \"enum-table\", \"table\": {\"spear\": \"6\"}, \"nbt\": \"int\"}").evaluate(JsonParser.parseString("\"spear\"")));
         assertNull(rule("{\"kind\": \"enum-table\", \"table\": {\"spear\": \"6\"}, \"nbt\": \"int\"}").evaluate(JsonParser.parseString("\"brush\"")));
+        assertEquals("5.0 (float)", rule("{\"kind\": \"affine\", \"terms\": {\"origin[0]\": -1, \"size[0]\": -1}, \"constant\": 8.0, \"nbt\": \"float\"}").evaluate(JsonParser.parseString("{\"origin\": [1, 2, 3], \"size\": [2, 2, 3]}")));
+        assertNull(rule("{\"kind\": \"affine\", \"terms\": {\"origin[0]\": -1, \"size[0]\": -1}, \"constant\": 8.0, \"nbt\": \"float\"}").evaluate(JsonParser.parseString("{\"origin\": [1, 2, 3]}")), "an input is missing");
         // no NBT type, an element of a list, a constant: nothing to evaluate
         assertNull(rule("{\"kind\": \"identity\"}").evaluate(half));
         assertNull(rule("{\"kind\": \"identity\", \"element\": 0, \"nbt\": \"float\"}").evaluate(half));
@@ -71,5 +73,12 @@ class RuleTest {
               case "none" -> write("0 (int)");
               default -> throw new java.lang.IllegalStateException("path is not a value of its enum: " + key);
             }""", e.written());
+    }
+
+    @Test
+    void anAffineRuleSumsItsInputs() {
+        RecordingEmitter e = new RecordingEmitter();
+        rule("{\"kind\": \"affine\", \"terms\": {\"origin[0]\": -1, \"size[0]\": -1}, \"constant\": 8.0, \"nbt\": \"float\"}").emit(e);
+        assertEquals("put(float((8.0 - input(\"origin[0]\") - input(\"size[0]\"))));", e.written());
     }
 }
