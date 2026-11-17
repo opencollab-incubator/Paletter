@@ -8,6 +8,7 @@ import org.geysermc.paletter.behaviour.BlockShape;
 import org.geysermc.paletter.behaviour.BlockValues;
 import org.geysermc.paletter.behaviour.ItemBehaviour;
 import org.geysermc.paletter.block.CustomBlock;
+import org.geysermc.paletter.block.ResolvedBlock;
 import org.geysermc.paletter.block.component.Friction;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItems;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * What a movement anticheat (Boar) needs from the server's blocks and items, read from Paletter instead of hand tables:
@@ -39,9 +41,15 @@ public final class AnticheatExample {
         return world.getOrDefault(List.of(x, y, z), air);
     }
 
+    /** The values of the block at a position; an id this palette does not send (a corrupt chunk) counts as air. */
+    BlockValues valuesAt(int x, int y, int z) {
+        ResolvedBlock block = palette.resolveBlock(blockAt(x, y, z));
+        return (block != null ? block : Objects.requireNonNull(palette.resolveBlock(air))).behaviour();
+    }
+
     /** The friction of the block under the feet: a float, not boxed. */
     float frictionUnder(double x, double y, double z) {
-        return palette.resolve(blockAt((int) Math.floor(x), (int) Math.floor(y - 0.5), (int) Math.floor(z))).behaviour().get(BlockBehaviour.FRICTION);
+        return valuesAt((int) Math.floor(x), (int) Math.floor(y - 0.5), (int) Math.floor(z)).get(BlockBehaviour.FRICTION);
     }
 
     /** The collision boxes of the blocks in a 3x3x3 cube around a position, in world coordinates. */
@@ -50,7 +58,7 @@ public final class AnticheatExample {
         for (int x = px - 1; x <= px + 1; x++) {
             for (int y = py - 1; y <= py + 1; y++) {
                 for (int z = pz - 1; z <= pz + 1; z++) {
-                    BlockShape shape = palette.resolve(blockAt(x, y, z)).behaviour().get(BlockBehaviour.COLLISION_SHAPE);
+                    BlockShape shape = valuesAt(x, y, z).get(BlockBehaviour.COLLISION_SHAPE);
                     for (BlockShape.Box box : shape.boxes()) {
                         boxes.add(new float[] {x + box.minX(), y + box.minY(), z + box.minZ(), x + box.maxX(), y + box.maxY(), z + box.maxZ()});
                     }

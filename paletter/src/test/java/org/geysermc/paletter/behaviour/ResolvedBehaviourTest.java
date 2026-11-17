@@ -10,6 +10,7 @@ import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.block.ResolvedBlock;
 import org.geysermc.paletter.block.component.Friction;
 import org.geysermc.paletter.internal.CanonicalBlocks;
+import org.geysermc.paletter.internal.block.BlockResolution;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.ItemFallback;
 import org.geysermc.paletter.item.RegisteredItem;
@@ -53,7 +54,7 @@ class ResolvedBehaviourTest {
             // The values the removed blockBehaviour gave: the position of the block in the palette's values
             assertEquals(palette.behaviour().block(palette.blocks().indexOf(definition)), resolved.behaviour());
             assertSame(definition, resolved.behaviour().state());
-            assertEquals(resolved.behaviour(), palette.resolve(definition.getRuntimeId()).behaviour());
+            assertEquals(resolved.behaviour(), palette.resolveBlock(definition.getRuntimeId()).behaviour());
         }
         assertEquals(0.98f, palette.resolve(BedrockBlocks.ICE.defaultState()).behaviour().get(BlockBehaviour.FRICTION));
         assertEquals(BlockShape.FULL_CUBE, palette.resolve(BedrockBlocks.STONE.defaultState()).behaviour().get(BlockBehaviour.COLLISION_SHAPE));
@@ -63,11 +64,11 @@ class ResolvedBehaviourTest {
     void aRuntimeIdIsTheBlockAsSent() {
         Palette palette = latest();
         int id = palette.runtimeId(BedrockBlocks.ICE.defaultState());
-        ResolvedBlock resolved = Objects.requireNonNull(palette.resolve(id));
+        ResolvedBlock resolved = Objects.requireNonNull(palette.resolveBlock(id));
         assertSame(palette.blockDefinition(id), resolved.definition());
         assertFalse(resolved.fallback());
         assertEquals(palette.resolve(BedrockBlocks.ICE.defaultState()), resolved);
-        assertNull(palette.resolve(0x7eadbeef));
+        assertNull(palette.resolveBlock(0x7eadbeef));
     }
 
     @Test
@@ -80,7 +81,7 @@ class ResolvedBehaviourTest {
         assertEquals(0.6f, latest().resolve(BedrockBlocks.DIRT.defaultState()).behaviour().get(BlockBehaviour.FRICTION));
         assertFalse(palette.resolve(BedrockBlocks.ICE.defaultState()).fallback());
         // By runtime id it is the block as sent, never a fallback
-        assertFalse(Objects.requireNonNull(palette.resolve(dirt.definition().getRuntimeId())).fallback());
+        assertFalse(Objects.requireNonNull(palette.resolveBlock(dirt.definition().getRuntimeId())).fallback());
     }
 
     @Test
@@ -101,6 +102,22 @@ class ResolvedBehaviourTest {
             assertSame(resolved.definition(), resolved.behaviour().state());
         }
         assertTrue(found > 0, "the oldest version lacks states of the newest");
+    }
+
+    @Test
+    void aStateOnlyAdaptedToTheVersionIsNotAFallback() {
+        Palette oldest = PALETTER.vanilla(PALETTER.versions().getFirst());
+        CanonicalBlocks canonical = oldest.blocks().canonical();
+        int found = 0;
+        for (int id = 0; id < canonical.size() && found < 50; id++) {
+            if (oldest.blocks().resolve(canonical.state(id)).kind() != BlockResolution.Kind.ADAPTED) {
+                continue;
+            }
+            found++;
+            ResolvedBlock resolved = oldest.resolve(Objects.requireNonNull(canonical.handle(id)));
+            assertFalse(resolved.fallback(), canonical.handle(id).toString());
+        }
+        assertTrue(found > 0, "the oldest version adapts states of the newest, e.g. stairs");
     }
 
     @Test
@@ -128,8 +145,8 @@ class ResolvedBehaviourTest {
         ResolvedBlock custom = session.resolve(block.type().defaultState());
         assertEquals(0.9f, custom.behaviour().get(BlockBehaviour.FRICTION), 1e-6f);
         assertNull(base.resolve(block.type().defaultState(), null));
-        assertNull(base.resolve(custom.definition().getRuntimeId()));
-        assertEquals(custom, session.resolve(custom.definition().getRuntimeId()));
+        assertNull(base.resolveBlock(custom.definition().getRuntimeId()));
+        assertEquals(custom, session.resolveBlock(custom.definition().getRuntimeId()));
 
         // Items: each palette's own values, also for an override of a vanilla item
         assertEquals(3, session.resolve(BedrockItems.APPLE.base()).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
@@ -146,10 +163,27 @@ class ResolvedBehaviourTest {
         Palette session = base.extend(PaletteLayer.builder("blocks")
             .block(CustomBlock.builder("resolve:only").component(Friction.of(0.3f)).build()).build());
         ResolvedItem resolved = Objects.requireNonNull(session.resolve(BedrockItems.APPLE.base()));
-        assertEquals(base.resolve(BedrockItems.APPLE.base()), resolved, "the same resolution, equal");
+        assertSame(base.resolve(BedrockItems.APPLE.base()).definition(), resolved.definition());
+        assertFalse(resolved.fallback());
         RegisteredItem apple = Objects.requireNonNull(session.itemDefinition(BedrockItems.APPLE));
         assertSame(apple, resolved.behaviour().item());
         assertEquals(session.behaviour().item(apple).get(ItemBehaviour.MAX_STACK_SIZE), resolved.behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
+    }
+
+    @Test
+    void oneItemHasOneHandleWhicheverVariantResolvedToIt() {
+        Palette base = latest();
+        Palette session = base.extend(PaletteLayer.builder("handles")
+            .block(CustomBlock.builder("resolve:handles").component(Friction.of(0.3f)).build()).build());
+        for (Palette palette : new Palette[] {base, session}) {
+            ItemValues canonical = palette.resolve(BedrockItems.APPLE.base()).behaviour();
+            ItemValues other = palette.resolve(BedrockItems.APPLE.variantOf(5)).behaviour();
+            assertEquals(canonical, other, "a variant that is not canonical resolves to the same item");
+            assertEquals(canonical.hashCode(), other.hashCode());
+        }
+        // An extension that did not change the item has the handle of its base
+        assertEquals(base.resolve(BedrockItems.APPLE.base()).behaviour(), session.resolve(BedrockItems.APPLE.variantOf(5)).behaviour());
+        assertEquals(base.resolve(BedrockItems.APPLE.base()).behaviour(), session.resolve(BedrockItems.APPLE.base()).behaviour());
     }
 
     @Test

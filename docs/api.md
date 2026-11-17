@@ -55,16 +55,16 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 | `Palette#runtimeId(BedrockBlockState)` | The runtime id (the state hash). Throws if the palette lacks the state; `runtimeId(state, orElse)` returns `orElse` instead. |
 | `Palette#blockDefinition(BedrockBlockState)` | The `RegisteredBlockState` this version sends, after adapting and fallbacks. Throws if the palette lacks the state. Only a custom block of a layer the palette does not have can be lacking: with the bundled data, every version has each vanilla state. |
 | `Palette#blockDefinition(BedrockBlockState, RegisteredBlockState)` | Like `blockDefinition(state)`, but returns `orElse` (may be null) where that throws; as `runtimeId(state, orElse)` does for the runtime id. |
-| `Palette#resolve(BedrockBlockState)` | A `ResolvedBlock`: the `definition()` sent (as `blockDefinition(state)`), `fallback()` (whether the state is sent as another one) and `behaviour()` (`BlockValues`, see Behaviour). Throws like `blockDefinition(state)`. Makes a small record per call. |
+| `Palette#resolve(BedrockBlockState)` | A `ResolvedBlock`: the `definition()` sent (as `blockDefinition(state)`), `fallback()` (whether a `BlockFallback` or the default block was used; adapting state values to the version is not one) and `behaviour()` (`BlockValues`, see Behaviour). Throws like `blockDefinition(state)`. Makes a resolution per call. |
 | `Palette#resolve(BedrockBlockState, ResolvedBlock)` | Like `resolve(state)`, but returns `orElse` (may be null) where that throws. |
-| `Palette#resolve(int)` | The `ResolvedBlock` of a block this palette sends, by runtime id, or null; never a fallback. |
+| `Palette#resolveBlock(int)` | The `ResolvedBlock` of a block this palette sends, by runtime id, or null; never a fallback. |
 | `Palette#itemDefinition(BedrockItemType)` | The `RegisteredItem`, or null if the version lacks it. Fallbacks are not applied. |
 | `Palette#itemDefinition(String)` | The `RegisteredItem` for an identifier, or null. `itemDefinitions()` lists all items in runtime id order, `itemTags()` the item tags (tag to identifiers). |
 | `Palette#blockState(BlockDefinition)` | The key of a block this palette sends, looked up by runtime id: `blockDefinition(blockState(d))` is `d`. A definition of another palette gives the key of the block with its runtime id here, or null if there is none. |
 | `Palette#blockState(int)` | The key of the block with a runtime id (the hash), or null if this palette has no such block. For ids a server stores itself, e.g. chunk palettes; ids decoded from packets already come as definitions. |
 | `Palette#blockDefinition(int)` | The `RegisteredBlockState` with a runtime id, or null. |
 | `Palette#itemDefinition(int)` | The `RegisteredItem` with an item runtime id (negative for the plain item of a custom block), or null. |
-| `Palette#resolve(BedrockItemVariant)` | What `encode` would send, without building an `ItemData`. `behaviour()` gives the `ItemValues` of the palette that resolved it. `variant()` is the variant this palette sends for the requested one: the requested variant itself unless `fallback()`. |
+| `Palette#resolve(BedrockItemVariant)` | What `encode` would send, without building an `ItemData`. `behaviour()` gives the `ItemValues` of the item sent. `variant()` is the variant this palette sends for the requested one: the requested variant itself unless `fallback()`. |
 | `Palette#blockOf(BedrockItemVariant)` | The key of the block an item is sent with, or null. `blockDefinition(blockOf(v))` is what is sent. |
 | `Palette#encode(BedrockItemStack)` | The `ItemData` for the client, with fallbacks applied. |
 | `Palette#decode(ItemData)` | The stack a client sent, or null if unknown. |
@@ -223,25 +223,24 @@ String why = palette.resolve(BedrockBlocks.BLUE_ICE.defaultState()).behaviour().
 
 ResolvedBlock block = palette.resolve(state);
 block.definition();   // the block sent, as blockDefinition(state)
-block.fallback();     // true if the state is sent as another one
+block.fallback();     // true if a fallback block was used for it
 block.behaviour();    // the values of the block that is sent
 ```
 
 - Keys are the constants of `BlockBehaviour` and `ItemBehaviour`. Number and boolean keys return primitives. A
-  `ResolvedBlock` is made on each call (with the `BlockValues` handle); it is a small record and is not cached. A
-  `ResolvedItem` is cached, and its `behaviour()` makes a two field handle.
+  Handles and a `ResolvedBlock` are made on each call: do not compare
+  them with `==`, use `equals`. A `ResolvedItem` is shared and compared by its parts.
 - A resolution carries the values of the block or item that is sent. A fallback state has the values of its
   replacement.
 - `resolve(BedrockBlockState)` throws `IllegalArgumentException` where `blockDefinition(state)` throws.
   `resolve(state, orElse)` returns `orElse` (may be null) there, as `blockDefinition(state, orElse)` does.
-  `resolve(int runtimeId)` takes the runtime id of a block this palette sends (from a packet or a chunk palette) and
+  `resolveBlock(int runtimeId)` takes the runtime id of a block this palette sends (from a packet or a chunk palette) and
   returns null if there is none; it is never a fallback. `resolve(BedrockItemVariant)` is null for an item that does not
   exist and has no fallback.
 - `get` throws `IllegalStateException` when no value is known; `getOrElse(key, fallback)` returns the fallback instead.
 - Values belong to the palette, not the state: a newer capture can change a value for one version only. An extended
-  palette shares the values of its base for what they have in common. `behaviour()` gives the values of the palette that
-  resolved it; for the items a layer did not change, the extended palette reuses the base's resolutions, whose handles
-  belong to the base palette and have the same values (compare values, not handles, across palettes).
+  palette shares the values of its base for what they have in common, and the handles: one item has one handle in a
+  palette, whichever variant resolved to it, and an extension has the base's handle for the items it did not change.
 - `explain` returns one line for debugging: the value, its source and capture, and whether it was set by the user,
   inherited from an older version, post-processed by its source, or disputed. It is not a format to parse.
 - Custom blocks and items answer from their components (`Friction`, `LightEmission`, `CollisionBox`, `MaxStackSize`,

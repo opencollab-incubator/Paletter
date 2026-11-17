@@ -3,12 +3,14 @@ package org.geysermc.paletter;
 import com.sun.management.ThreadMXBean;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.geysermc.paletter.behaviour.BlockBehaviour;
+import org.geysermc.paletter.behaviour.ItemBehaviour;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
+import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +34,8 @@ class HotPathTest {
     private static final Paletter PALETTER = Paletter.bundled();
     private static final int ROUNDS = 20;
     private static final int WARMUP_ROUNDS = 200;
-    private static final int ATTEMPTS = 10;
+    /** The JIT compiles in the background: a cold run may need more rounds before the lookups are compiled and do not allocate. */
+    private static final int ATTEMPTS = 60;
 
     /** The newest version with custom blocks in three layers, the way a server with session layers has it. */
     private static Palette layered() {
@@ -77,6 +80,9 @@ class HotPathTest {
                 }
             }
             least = Math.min(least, threads.getThreadAllocatedBytes(thread) - before);
+            if (least < 1024) {
+                break;
+            }
         }
         // Keeps the results alive, so the lookups are not optimized away
         assertTrue(sum != Long.MIN_VALUE);
@@ -209,6 +215,28 @@ class HotPathTest {
     }
 
     @Test
+    void resolveStateBehaviourDoesNotAllocate() {
+        Palette palette = layered();
+        BedrockBlockState[] states = new BedrockBlockState[palette.blocks().size()];
+        for (int i = 0; i < states.length; i++) {
+            BedrockBlockState key = palette.blocks().key(palette.blocks().byIndex(i));
+            states[i] = key != null ? key : BedrockBlocks.AIR.defaultState();
+        }
+        long allocated = allocated(states.length,
+            i -> Float.floatToIntBits(palette.resolve(states[i]).behaviour().get(BlockBehaviour.FRICTION)));
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * states.length + " lookups");
+    }
+
+    @Test
+    void resolveVariantBehaviourDoesNotAllocate() {
+        Palette palette = layered();
+        List<BedrockItemVariant> variants = palette.itemVariants();
+        long allocated = allocated(variants.size(),
+            i -> palette.resolve(variants.get(i)).behaviour().getOrElse(ItemBehaviour.MAX_STACK_SIZE, 0));
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * variants.size() + " lookups");
+    }
+
+    @Test
     void blockBehaviourDoesNotAllocate() {
         Palette palette = layered();
         int[] runtimeIds = new int[palette.blocks().size()];
@@ -216,7 +244,7 @@ class HotPathTest {
             runtimeIds[i] = palette.blocks().byIndex(i).getRuntimeId();
         }
         long allocated = allocated(runtimeIds.length,
-            i -> Float.floatToIntBits(palette.resolve(runtimeIds[i]).behaviour().get(BlockBehaviour.FRICTION)));
+            i -> Float.floatToIntBits(palette.resolveBlock(runtimeIds[i]).behaviour().get(BlockBehaviour.FRICTION)));
         assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * runtimeIds.length + " lookups");
     }
 }

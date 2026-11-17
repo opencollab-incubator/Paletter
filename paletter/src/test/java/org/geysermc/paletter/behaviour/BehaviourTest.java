@@ -98,9 +98,9 @@ class BehaviourTest {
         Palette palette = latest();
         BlockValues byType = palette.resolve(BedrockBlocks.ICE.defaultState()).behaviour();
         assertEquals(byType, palette.resolve(BedrockBlocks.ICE.defaultState()).behaviour());
-        assertEquals(byType, palette.resolve(palette.runtimeId(BedrockBlocks.ICE.defaultState())).behaviour());
+        assertEquals(byType, palette.resolveBlock(palette.runtimeId(BedrockBlocks.ICE.defaultState())).behaviour());
         assertSame(palette.blockDefinition(BedrockBlocks.ICE.defaultState()), byType.state());
-        assertNull(palette.resolve(0x7eadbeef), "no such runtime id");
+        assertNull(palette.resolveBlock(0x7eadbeef), "no such runtime id");
         assertEquals(palette.resolve(BedrockItems.APPLE.base()).behaviour(), palette.resolve(BedrockItems.APPLE.base()).behaviour());
     }
 
@@ -188,7 +188,7 @@ class BehaviourTest {
 
         CustomBlock plain = CustomBlock.builder("test:plain").build();
         Palette custom = palette.extend(PaletteLayer.builder("test").block(plain).build());
-        String destroy = custom.resolve(custom.blocks().block("test:plain").defaultState().getRuntimeId()).behaviour().explain(BlockBehaviour.DESTROY_TIME);
+        String destroy = custom.resolveBlock(custom.blocks().block("test:plain").defaultState().getRuntimeId()).behaviour().explain(BlockBehaviour.DESTROY_TIME);
         assertTrue(destroy.startsWith("no value: "), destroy);
     }
 
@@ -217,7 +217,7 @@ class BehaviourTest {
         Palette palette = Paletter.builder().layer(PaletteLayer.builder("test").block(slab).item(ruby).build()).build()
             .palette(LATEST.protocolVersion());
         RegisteredBlockState state = palette.blocks().block("test:slab").defaultState();
-        BlockValues values = palette.resolve(state.getRuntimeId()).behaviour();
+        BlockValues values = palette.resolveBlock(state.getRuntimeId()).behaviour();
 
         assertEquals(0.9f, values.get(BlockBehaviour.FRICTION), 1e-6f);
         assertEquals(3f, values.get(BlockBehaviour.DESTROY_TIME));
@@ -242,7 +242,7 @@ class BehaviourTest {
         assertEquals(null, BlockBehaviour.key("max_stack_size"));
         // A custom block that sets nothing has no value for a key whose BDS default was never captured
         Palette custom = latest().extend(PaletteLayer.builder("test").block(CustomBlock.builder("test:plain").build()).build());
-        BlockValues plain = custom.resolve(custom.blocks().block("test:plain").defaultState().getRuntimeId()).behaviour();
+        BlockValues plain = custom.resolveBlock(custom.blocks().block("test:plain").defaultState().getRuntimeId()).behaviour();
         IllegalStateException missing = assertThrows(IllegalStateException.class, () -> plain.get(BlockBehaviour.DESTROY_TIME), "no default captured");
         assertTrue(missing.getMessage().contains("block:destroy_time") && missing.getMessage().contains("has no value"), missing.getMessage());
         assertEquals(2f, plain.getOrElse(BlockBehaviour.DESTROY_TIME, 2f));
@@ -294,7 +294,7 @@ class BehaviourTest {
                     Provenance.Alternative alternative = provenance.alternatives().getFirst();
                     assertEquals(Provenance.Source.ALLAY_DATA, alternative.source());
                     assertTrue(alternative.value() instanceof BlockShape);
-                    assertTrue(!alternative.value().equals(palette.resolve(state.getRuntimeId()).behaviour().get(BlockBehaviour.COLLISION_SHAPE)));
+                    assertTrue(!alternative.value().equals(palette.resolveBlock(state.getRuntimeId()).behaviour().get(BlockBehaviour.COLLISION_SHAPE)));
                 }
             }
             assertTrue(disputed, "doors are disputed in " + version.name());
@@ -326,7 +326,7 @@ class BehaviourTest {
                 String direction = state.states().getString("minecraft:cardinal_direction");
                 BlockShape expected = probedPanel(direction, state.states().getByte("open_bit") != 0, state.states().getByte("door_hinge_bit") != 0);
                 Provenance provenance = palette.behaviour().provenance(state, BlockBehaviour.COLLISION_SHAPE);
-                assertEquals(expected, palette.resolve(state.getRuntimeId()).behaviour().get(BlockBehaviour.COLLISION_SHAPE), state.toString());
+                assertEquals(expected, palette.resolveBlock(state.getRuntimeId()).behaviour().get(BlockBehaviour.COLLISION_SHAPE), state.toString());
                 assertEquals(Provenance.Source.BDS_PROBE, provenance.source(), state.toString());
                 assertFalse(provenance.thirdParty());
                 assertFalse(provenance.disputed(), "BDS settled the dispute of Data (0.1875) and Allay (0.1825)");
@@ -348,10 +348,10 @@ class BehaviourTest {
         Palette newest = latest();
         Palette oldest = PALETTER.vanilla(PALETTER.versions().getFirst());
         RegisteredBlockState door = newest.blocks().states("minecraft:iron_door").getFirst();
-        assertSame(door, oldest.resolve(door.getRuntimeId()).behaviour().state());
-        assertNotEquals(newest.resolve(door.getRuntimeId()).behaviour(), oldest.resolve(door.getRuntimeId()).behaviour());
-        assertFalse(newest.resolve(door.getRuntimeId()).behaviour().get(BlockBehaviour.COLLISION_SHAPE)
-            .equals(oldest.resolve(door.getRuntimeId()).behaviour().get(BlockBehaviour.COLLISION_SHAPE)), "measured in the newest version only");
+        assertSame(door, oldest.resolveBlock(door.getRuntimeId()).behaviour().state());
+        assertNotEquals(newest.resolveBlock(door.getRuntimeId()).behaviour(), oldest.resolveBlock(door.getRuntimeId()).behaviour());
+        assertFalse(newest.resolveBlock(door.getRuntimeId()).behaviour().get(BlockBehaviour.COLLISION_SHAPE)
+            .equals(oldest.resolveBlock(door.getRuntimeId()).behaviour().get(BlockBehaviour.COLLISION_SHAPE)), "measured in the newest version only");
     }
 
     /** @return {@code data/bds/<build>/behaviour-probe} of the newest build that has one */
@@ -404,7 +404,7 @@ class BehaviourTest {
         Palette palette = latest().extend(PaletteLayer.builder("test").block(block).build());
         Behaviour behaviour = palette.behaviour();
         RegisteredBlockState state = palette.blocks().block("test:plain").defaultState();
-        BlockValues values = palette.resolve(state.getRuntimeId()).behaviour();
+        BlockValues values = palette.resolveBlock(state.getRuntimeId()).behaviour();
 
         List<BehaviourKey<?>> measured = new ArrayList<>();
         for (JsonElement element : capture.getAsJsonArray("defaults")) {
@@ -458,11 +458,11 @@ class BehaviourTest {
 
         Provenance friction = behaviour.provenance(state, BlockBehaviour.FRICTION);
         assertTrue(friction.userSet());
-        assertEquals(0.9f, palette.resolve(state.getRuntimeId()).behaviour().get(BlockBehaviour.FRICTION), 1e-6f, "component 0.1: engine friction 1 - 0.1");
+        assertEquals(0.9f, palette.resolveBlock(state.getRuntimeId()).behaviour().get(BlockBehaviour.FRICTION), 1e-6f, "component 0.1: engine friction 1 - 0.1");
         assertFalse(friction.thirdParty());
 
         // No component and no known BDS default: no value, and the provenance says why
-        assertThrows(IllegalStateException.class, () -> palette.resolve(state.getRuntimeId()).behaviour().get(BlockBehaviour.DESTROY_TIME));
+        assertThrows(IllegalStateException.class, () -> palette.resolveBlock(state.getRuntimeId()).behaviour().get(BlockBehaviour.DESTROY_TIME));
         Provenance destroy = behaviour.provenance(state, BlockBehaviour.DESTROY_TIME);
         assertTrue(destroy.unknownDefault());
         assertEquals(Provenance.Source.UNKNOWN_DEFAULT, destroy.source());
@@ -505,15 +505,15 @@ class BehaviourTest {
 
         assertEquals(stone, session.resolve(BedrockBlocks.STONE.defaultState()).behaviour(), "a shared state has the values of the parent palette");
         int custom = session.blocks().block("test:block").defaultState().getRuntimeId();
-        assertEquals(0.9f, session.resolve(custom).behaviour().get(BlockBehaviour.FRICTION), 1e-6f);
-        assertNull(base.resolve(custom), "not a state of the parent");
+        assertEquals(0.9f, session.resolveBlock(custom).behaviour().get(BlockBehaviour.FRICTION), 1e-6f);
+        assertNull(base.resolveBlock(custom), "not a state of the parent");
 
         // Another layer on top of the session still shares them, and the first session's block
         CustomBlock other = CustomBlock.builder("test:other").component(Friction.of(0.2f)).build();
         Palette second = session.extend(PaletteLayer.builder("second").block(other).build());
         assertEquals(stone, second.resolve(BedrockBlocks.STONE.defaultState()).behaviour());
-        assertEquals(session.resolve(custom).behaviour(), second.resolve(custom).behaviour());
-        assertEquals(0.8f, second.resolve(second.blocks().block("test:other").defaultState().getRuntimeId()).behaviour().get(BlockBehaviour.FRICTION), 1e-6f);
+        assertEquals(session.resolveBlock(custom).behaviour(), second.resolveBlock(custom).behaviour());
+        assertEquals(0.8f, second.resolveBlock(second.blocks().block("test:other").defaultState().getRuntimeId()).behaviour().get(BlockBehaviour.FRICTION), 1e-6f);
 
         // A layer without blocks adds no states: every value is the parent's
         Palette items = base.extend(PaletteLayer.builder("items").item(CustomItem.builder("test:i").build()).build());
@@ -535,7 +535,7 @@ class BehaviourTest {
             for (BehaviourKey<?> key : BlockBehaviour.keys()) {
                 for (int i = 0; i < palette.blocks().size(); i += 7) {
                     RegisteredBlockState state = palette.blocks().byIndex(i);
-                    assertEquals(resolved(behaviour, state, key), boxed(palette.resolve(state.getRuntimeId()).behaviour(), key), state + " " + key);
+                    assertEquals(resolved(behaviour, state, key), boxed(palette.resolveBlock(state.getRuntimeId()).behaviour(), key), state + " " + key);
                 }
             }
             for (BehaviourKey<?> key : ItemBehaviour.keys()) {
