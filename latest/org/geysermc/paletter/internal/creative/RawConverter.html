@@ -93,7 +93,7 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">RawConverter</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Converts the identifier based creative data of a version to a layout of stacks. Item identifiers go through the
- renames and splits of <a href="../../vanilla/BedrockItemVariant.html#of(java.lang.String,int)"><code>BedrockItemVariant.of(String, int)</code></a>. Block states are mapped forward to the newest
+ renames and splits of <a href="../../vanilla/BedrockItemVariant.html#fromIdentifier(java.lang.String,int)"><code>BedrockItemVariant.fromIdentifier(java.lang.String, int)</code></a>. Block states are mapped forward to the newest
  version like <a href="../../Palette.html#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>Palette.blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)</code></a>; a state without an equivalent is dropped from the stack
  (it then places the item's default block) and reported.</div>
 </section>

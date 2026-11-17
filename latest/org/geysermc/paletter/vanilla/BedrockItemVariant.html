@@ -89,18 +89,23 @@ loadScripts(document, 'script');</script>
 <div class="inheritance">org.geysermc.paletter.vanilla.BedrockItemVariant</div>
 </div>
 <section class="class-description" id="class-description">
+<dl class="notes">
+<dt>All Implemented Interfaces:</dt>
+<dd><code><a href="ItemKey.html" title="interface in org.geysermc.paletter.vanilla">ItemKey</a></code></dd>
+</dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">BedrockItemVariant</span>
-<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
+implements <a href="ItemKey.html" title="interface in org.geysermc.paletter.vanilla">ItemKey</a></span></div>
 <div class="block">A variant of a <a href="BedrockItemType.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockItemType</code></a>: the type and its aux (damage) value. The block a stack places is not part of
  the variant, it belongs to the stack (<a href="../item/BedrockItemStack.html#blockState()"><code>BedrockItemStack.blockState()</code></a>). Obtained from
- <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a> and <a href="BedrockItemType.html#variants()"><code>BedrockItemType.variants()</code></a>.
+ <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a> and <a href="BedrockItemType.html#variants()"><code>BedrockItemType.variants()</code></a>, or <a href="BedrockItemType.html#variant()"><code>BedrockItemType.variant()</code></a> for the base variant. It is an <a href="ItemKey.html" title="interface in org.geysermc.paletter.vanilla"><code>ItemKey</code></a>, as is a type (for its base variant).
  <p>
  Equality: as for <a href="BedrockItemType.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockItemType</code></a>, <code>equals</code> always works. <code>==</code> works too for the variants of the
- vanilla constants (the types of <a href="BedrockItems.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockItems</code></a>, the named variants of <a href="BedrockItemVariants.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockItemVariants</code></a>) and for the base variant of registered custom content: <code>customItem.type().base()</code> is the very
+ vanilla constants (the types of <a href="BedrockItems.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockItems</code></a>, the named variants of <a href="BedrockItemVariants.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockItemVariants</code></a>) and for the base variant of registered custom content: <code>customItem.type().variant()</code> is the very
  variant <a href="../Palette.html#decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)"><code>Palette.decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)</code></a> gives back. Variants made by
- <a href="BedrockItemType.html#variantOf(int)"><code>BedrockItemType.variantOf(int)</code></a> for an aux value that is not one of <a href="BedrockItemType.html#variants()"><code>BedrockItemType.variants()</code></a>, and
- variants of types made by <a href="BedrockItemType.html#of(java.lang.String)"><code>BedrockItemType.of(String)</code></a> for unknown identifiers, are new objects: compare those
+ <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a> for an aux value that is not one of <a href="BedrockItemType.html#variants()"><code>BedrockItemType.variants()</code></a>, and
+ variants of types made for unknown identifiers, are new objects: compare those
  with <code>equals</code>.</div>
 <dl class="notes">
 <dt>Since:</dt>
@@ -135,28 +140,27 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Plumbing of <a href="../Palette.html" title="class in org.geysermc.paletter"><code>Palette</code></a>: the handle of a canonical id.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(java.lang.String,int)" class="member-name-link">of</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
- int&nbsp;aux)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The variant of an identifier and aux value, applying renames and splits (a legacy variant that became its own
- type).</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(org.geysermc.paletter.vanilla.BedrockItemType,int)" class="member-name-link">of</a><wbr>(@NonNull <a href="BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;type,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromIdentifier(java.lang.String,int)" class="member-name-link">fromIdentifier</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
  int&nbsp;aux)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../internal/item/ItemVariant.html" title="class in org.geysermc.paletter.internal.item">ItemVariant</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toItemVariant()" class="member-name-link">toItemVariant</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Plumbing: the variant of an identifier and aux value, applying renames and splits (a legacy variant that became its
+ own type).</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../internal/item/ItemVariant.html" title="class in org.geysermc.paletter.internal.item">ItemVariant</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toItemVariant()" class="member-name-link">toItemVariant</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#variant()" class="member-name-link">variant</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
@@ -189,27 +193,24 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="of(java.lang.String,int)">
-<h3>of</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+<section class="detail" id="fromIdentifier(java.lang.String,int)">
+<h3>fromIdentifier</h3>
+<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in org.geysermc.paletter.annotation">@Internal</a>
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">fromIdentifier</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
  int&nbsp;aux)</span></div>
-<div class="block">The variant of an identifier and aux value, applying renames and splits (a legacy variant that became its own
- type). Loads the data.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the variant</dd>
-</dl>
+<div class="block">Plumbing: the variant of an identifier and aux value, applying renames and splits (a legacy variant that became its
+ own type). Loads the data. Use <a href="../Palette.html#itemVariant(java.lang.String,int,org.geysermc.paletter.Lookup)"><code>Palette.itemVariant(java.lang.String, int, org.geysermc.paletter.Lookup)</code></a> or <code>type.variant(aux)</code>.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="of(org.geysermc.paletter.vanilla.BedrockItemType,int)">
-<h3>of</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(@NonNull <a href="BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;type,
- int&nbsp;aux)</span></div>
+<section class="detail" id="variant()">
+<h3>variant</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">variant</span>()</div>
 <dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="ItemKey.html#variant()">variant</a></code>&nbsp;in interface&nbsp;<code><a href="ItemKey.html" title="interface in org.geysermc.paletter.vanilla">ItemKey</a></code></dd>
 <dt>Returns:</dt>
-<dd>the known variant of the type with this aux value (the same instance as <code>type.variant(aux)</code>), else
-         a new variant</dd>
+<dd>this variant</dd>
 </dl>
 </section>
 </li>
@@ -217,6 +218,12 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="type()">
 <h3>type</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">type</span>()</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="ItemKey.html#type()">type</a></code>&nbsp;in interface&nbsp;<code><a href="ItemKey.html" title="interface in org.geysermc.paletter.vanilla">ItemKey</a></code></dd>
+<dt>Returns:</dt>
+<dd>the type of this key: itself for a type</dd>
+</dl>
 </section>
 </li>
 <li>

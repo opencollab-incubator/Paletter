@@ -98,7 +98,7 @@ loadScripts(document, 'script');</script>
  Placement is relative to things that already exist, never by raw index, so edits keep working when a new
  Bedrock version shuffles the vanilla layout:
  <pre><code>
- editor.insert(BedrockItemStack.of(BedrockItemType.of("geysermc:furnace_minecart"))).after(ItemMatcher.id("minecraft:hopper_minecart"));
+ editor.insert(BedrockItemStack.of(furnaceMinecart.type())).after(ItemMatcher.id("minecraft:hopper_minecart"));
  editor.groupOrCreate(CreativeCategory.ITEMS, "geyser:tools").add(stack).placeAfterGroup("itemGroup.name.minecart");
  editor.remove(ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.damage(2)));
  </code></pre>

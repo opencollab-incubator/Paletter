@@ -115,48 +115,49 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#and(org.geysermc.paletter.creative.ItemMatcher)" class="member-name-link">and</a><wbr>(@NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a>&nbsp;other)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#blockState(org.cloudburstmc.nbt.NbtMap)" class="member-name-link">blockState</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;blockState)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#blockState(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockState</a><wbr>(@NonNull <a href="../vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;blockState)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
-<div class="block">Matches stacks that carry this block state.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#damage(int)" class="member-name-link">damage</a><wbr>(int&nbsp;damage)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#exact(org.geysermc.paletter.item.BedrockItemStack)" class="member-name-link">exact</a><wbr>(@NonNull <a href="../item/BedrockItemStack.html" title="class in org.geysermc.paletter.item">BedrockItemStack</a>&nbsp;stack)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
-<div class="block">Matches stacks equal to the given stack in every respect, including count and NBT.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#id(java.lang.String)" class="member-name-link">id</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#anyVariantOf(org.geysermc.paletter.vanilla.BedrockItemType)" class="member-name-link">anyVariantOf</a><wbr>(@NonNull <a href="../vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;type)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
-<div class="block">Matches every stack of an item, regardless of damage, block state or NBT.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#matches(org.geysermc.paletter.item.BedrockItemStack)" class="member-name-link">matches</a><wbr>(@NonNull <a href="../item/BedrockItemStack.html" title="class in org.geysermc.paletter.item">BedrockItemStack</a>&nbsp;stack)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#namespace(java.lang.String)" class="member-name-link">namespace</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;namespace)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#negate()" class="member-name-link">negate</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#of(java.lang.String,java.util.function.Predicate)" class="member-name-link">of</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
- @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="../item/BedrockItemStack.html" title="class in org.geysermc.paletter.item">BedrockItemStack</a>&gt;&nbsp;predicate)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#of(org.geysermc.paletter.vanilla.BedrockItemType)" class="member-name-link">of</a><wbr>(@NonNull <a href="../vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;type)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Matches every stack of an item type, like <a href="#id(java.lang.String)"><code>id(String)</code></a>.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#blockState(org.cloudburstmc.nbt.NbtMap)" class="member-name-link">blockState</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;blockState)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#of(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">of</a><wbr>(@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#blockState(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockState</a><wbr>(@NonNull <a href="../vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a>&nbsp;blockState)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
-<div class="block">Matches the stacks of a variant: its item and aux value.</div>
+<div class="block">Matches stacks that carry this block state.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#damage(int)" class="member-name-link">damage</a><wbr>(int&nbsp;damage)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#exact(org.geysermc.paletter.item.BedrockItemStack)" class="member-name-link">exact</a><wbr>(@NonNull <a href="../item/BedrockItemStack.html" title="class in org.geysermc.paletter.item">BedrockItemStack</a>&nbsp;stack)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Matches stacks equal to the given stack in every respect, including count and NBT.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#id(java.lang.String)" class="member-name-link">id</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Matches every stack of an item, regardless of damage, block state or NBT.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#matches(org.geysermc.paletter.item.BedrockItemStack)" class="member-name-link">matches</a><wbr>(@NonNull <a href="../item/BedrockItemStack.html" title="class in org.geysermc.paletter.item">BedrockItemStack</a>&nbsp;stack)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#namespace(java.lang.String)" class="member-name-link">namespace</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;namespace)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#negate()" class="member-name-link">negate</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#of(java.lang.String,java.util.function.Predicate)" class="member-name-link">of</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
+ @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="../item/BedrockItemStack.html" title="class in org.geysermc.paletter.item">BedrockItemStack</a>&gt;&nbsp;predicate)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#of(org.geysermc.paletter.vanilla.ItemKey)" class="member-name-link">of</a><wbr>(@NonNull <a href="../vanilla/ItemKey.html" title="interface in org.geysermc.paletter.vanilla">ItemKey</a>&nbsp;key)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Matches the stacks of exactly this variant: its item and aux value (a type is its base variant, aux 0; see
+ <a href="#anyVariantOf(org.geysermc.paletter.vanilla.BedrockItemType)"><code>anyVariantOf(org.geysermc.paletter.vanilla.BedrockItemType)</code></a> for every aux).</div>
 </div>
 </div>
 </div>
@@ -198,9 +199,9 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="of(org.geysermc.paletter.vanilla.BedrockItemType)">
-<h3>of</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">@NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;type)</span></div>
+<section class="detail" id="anyVariantOf(org.geysermc.paletter.vanilla.BedrockItemType)">
+<h3>anyVariantOf</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">@NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></span>&nbsp;<span class="element-name">anyVariantOf</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;type)</span></div>
 <div class="block">Matches every stack of an item type, like <a href="#id(java.lang.String)"><code>id(String)</code></a>.</div>
 <dl class="notes">
 <dt>Since:</dt>
@@ -209,10 +210,11 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="of(org.geysermc.paletter.vanilla.BedrockItemVariant)">
+<section class="detail" id="of(org.geysermc.paletter.vanilla.ItemKey)">
 <h3>of</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">@NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</span></div>
-<div class="block">Matches the stacks of a variant: its item and aux value.</div>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">@NonNull <a href="ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/ItemKey.html" title="interface in org.geysermc.paletter.vanilla">ItemKey</a>&nbsp;key)</span></div>
+<div class="block">Matches the stacks of exactly this variant: its item and aux value (a type is its base variant, aux 0; see
+ <a href="#anyVariantOf(org.geysermc.paletter.vanilla.BedrockItemType)"><code>anyVariantOf(org.geysermc.paletter.vanilla.BedrockItemType)</code></a> for every aux).</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>0.1.0</dd>

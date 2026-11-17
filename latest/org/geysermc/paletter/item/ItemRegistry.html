@@ -153,7 +153,7 @@ implements org.cloudburstmc.protocol.common.DefinitionRegistry&lt;org.cloudburst
  another (a copy with a report) has the same values.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="../block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">blockOf</a><wbr>(@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockOf(org.geysermc.paletter.vanilla.ItemKey)" class="member-name-link">blockOf</a><wbr>(@NonNull <a href="../vanilla/ItemKey.html" title="interface in org.geysermc.paletter.vanilla">ItemKey</a>&nbsp;key)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The block an item variant is sent with in this version: the single owner of that decision.</div>
 </div>
@@ -242,7 +242,7 @@ implements org.cloudburstmc.protocol.common.DefinitionRegistry&lt;org.cloudburst
 <div class="block">Resolves a variant, written against the newest Bedrock version, for this palette's version.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="ResolvedItem.html" title="class in org.geysermc.paletter.item">ResolvedItem</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(org.geysermc.paletter.vanilla.BedrockItemVariant)" class="member-name-link">resolve</a><wbr>(@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(org.geysermc.paletter.vanilla.ItemKey)" class="member-name-link">resolve</a><wbr>(@NonNull <a href="../vanilla/ItemKey.html" title="interface in org.geysermc.paletter.vanilla">ItemKey</a>&nbsp;key)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">What this version sends for a variant: its resolution, cached per canonical id.</div>
 </div>
@@ -451,9 +451,9 @@ implements org.cloudburstmc.protocol.common.DefinitionRegistry&lt;org.cloudburst
 </section>
 </li>
 <li>
-<section class="detail" id="blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)">
+<section class="detail" id="blockOf(org.geysermc.paletter.vanilla.ItemKey)">
 <h3>blockOf</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="../block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></span>&nbsp;<span class="element-name">blockOf</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="../block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></span>&nbsp;<span class="element-name">blockOf</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/ItemKey.html" title="interface in org.geysermc.paletter.vanilla">ItemKey</a>&nbsp;key)</span></div>
 <div class="block">The block an item variant is sent with in this version: the single owner of that decision. For an item that
  places blocks, a block state of the variant wins (adapted to this version), otherwise the item's block, which is
  decided in this order:
@@ -468,7 +468,7 @@ implements org.cloudburstmc.protocol.common.DefinitionRegistry&lt;org.cloudburst
  </ol></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>variant</code> - a variant, written against the newest Bedrock version like <a href="#resolve(org.geysermc.paletter.internal.item.ItemVariant)"><code>resolve(ItemVariant)</code></a></dd>
+<dd><code>key</code> - a variant (or a type, for its base variant), written against the newest Bedrock version like <a href="#resolve(org.geysermc.paletter.internal.item.ItemVariant)"><code>resolve(ItemVariant)</code></a></dd>
 <dt>Returns:</dt>
 <dd>the block, or null if the item is not a block item here (or does not exist and has no fallback)</dd>
 <dt>Since:</dt>
@@ -483,7 +483,7 @@ implements org.cloudburstmc.protocol.common.DefinitionRegistry&lt;org.cloudburst
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="../block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></span>&nbsp;<span class="element-name">defaultBlock</span><wbr><span class="parameters">(@NonNull org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition&nbsp;definition)</span></div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the block this item is sent with by default, or null if it is not a block item; see <a href="#blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)"><code>blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)</code></a></dd>
+<dd>the block this item is sent with by default, or null if it is not a block item; see <a href="#blockOf(org.geysermc.paletter.vanilla.ItemKey)"><code>blockOf(org.geysermc.paletter.vanilla.ItemKey)</code></a></dd>
 </dl>
 </section>
 </li>
@@ -507,14 +507,14 @@ implements org.cloudburstmc.protocol.common.DefinitionRegistry&lt;org.cloudburst
 </section>
 </li>
 <li>
-<section class="detail" id="resolve(org.geysermc.paletter.vanilla.BedrockItemVariant)">
+<section class="detail" id="resolve(org.geysermc.paletter.vanilla.ItemKey)">
 <h3>resolve</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="ResolvedItem.html" title="class in org.geysermc.paletter.item">ResolvedItem</a></span>&nbsp;<span class="element-name">resolve</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="ResolvedItem.html" title="class in org.geysermc.paletter.item">ResolvedItem</a></span>&nbsp;<span class="element-name">resolve</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/ItemKey.html" title="interface in org.geysermc.paletter.vanilla">ItemKey</a>&nbsp;key)</span></div>
 <div class="block">What this version sends for a variant: its resolution, cached per canonical id. A field read and an array load
  for the variants of the newest version, it does not allocate; any other variant is resolved on every call.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>variant</code> - a variant, written against the newest Bedrock version</dd>
+<dd><code>key</code> - a variant (or a type, for its base variant), written against the newest Bedrock version</dd>
 <dt>Returns:</dt>
 <dd>the item, damage and block to send, and whether the item is a fallback; null if the item does not exist
          here and has no fallback</dd>
@@ -594,7 +594,7 @@ implements org.cloudburstmc.protocol.common.DefinitionRegistry&lt;org.cloudburst
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="BedrockItemStack.html" title="class in org.geysermc.paletter.item">BedrockItemStack</a></span>&nbsp;<span class="element-name">decode</span><wbr><span class="parameters">(@NonNull org.cloudburstmc.protocol.bedrock.data.inventory.ItemData&nbsp;data)</span></div>
 <div class="block">Identifies a stack the client sent, see <a href="#match(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)"><code>match(ItemData)</code></a>. The block state is set only if the stack's
  block differs from the item's default block. If the item matched but not its damage value, the variant is the
- item's variant for the damage the client sent (<a href="../vanilla/BedrockItemType.html#variantOf(int)"><code>BedrockItemType.variantOf(int)</code></a>), so the damage is not lost.</div>
+ item's variant for the damage the client sent (<a href="../vanilla/BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>), so the damage is not lost.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the stack, or null for air or a stack that is no variant of the newest version</dd>
