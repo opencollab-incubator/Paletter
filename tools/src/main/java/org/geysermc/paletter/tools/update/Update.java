@@ -4,6 +4,7 @@ import org.geysermc.paletter.tools.data.Nbt;
 import org.geysermc.paletter.tools.data.VariantNames;
 import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsDump;
+import org.geysermc.paletter.tools.bds.BdsDocGen;
 import org.geysermc.paletter.tools.bds.ScriptApiDump;
 import org.geysermc.paletter.tools.bds.BdsInventory;
 import org.geysermc.paletter.tools.bds.BdsRunner;
@@ -22,6 +23,8 @@ import org.geysermc.paletter.tools.Layout;
 import org.geysermc.paletter.tools.Versions;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.Model;
+import org.geysermc.paletter.tools.model.Schema;
+import org.geysermc.paletter.tools.model.SchemaExtract;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 import org.geysermc.paletter.tools.model.addon.FixedAddons;
 import org.geysermc.paletter.tools.shape.ShapeImport;
@@ -320,7 +323,8 @@ public final class Update {
         try {
             // 1. Script API dump
             Path dumpLog = work.resolve("bds-dump.log");
-            ScriptApiDump.run(root, server, dumpLog, timeout, port);
+            Path docs = ScriptApiDump.run(root, server, dumpLog, timeout, port);
+            schema(cache, distribution, docs);
             String[] json = BdsDump.json(dumpLog);
             dump = BdsDump.parse(json[1], json[0]);
             Files.writeString(work.resolve("bds-dump.json"), json[1]);
@@ -1160,6 +1164,67 @@ public final class Update {
     }
 
     /**
+     * The schema of the build ({@code schema.json}: the facts of BDS's own JSON schemas, written by its documentation generator)
+     * and what changed against the schema of the previous build. Never a failure: whatever goes wrong here (no docs, a schema
+     * layout the extract does not read) is a skipped row, and the previous schema stays what the model merges.
+     */
+    void schema(Path cache, BdsDistribution distribution, Path docs) {
+        String build = distribution.version();
+        try {
+            if (docs == null) {
+                report.check(Report.Status.SKIP, "BDS schema", "BDS's documentation generator wrote no docs (see bds-docgen.log); the previous schema stays");
+                return;
+            }
+            Schema previous = Schema.newest(bdsData, build);
+            JsonObject extract = SchemaExtract.extract(BdsDocGen.keep(docs, cache, build), build);
+            Schema schema = Schema.of(extract);
+            if (previous == Schema.NONE) {
+                report.check(Report.Status.INFO, "BDS schema", schema.summary() + "; no schema of an older build to diff against");
+            } else {
+                List<String> diff = Schema.diff(previous, schema);
+                report.check(diff.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "BDS schema vs " + previous.build(),
+                    schema.summary() + (diff.isEmpty() ? ", no changes" : ", " + diff.size() + " changes"));
+                if (!diff.isEmpty()) {
+                    report.evidence("Schema changes", diff.stream().map(line -> "- `" + line + "`").toList());
+                }
+            }
+            if (!schema.skipped().isEmpty()) {
+                report.check(Report.Status.DIFF, "BDS schema components skipped", schema.skipped().size() + " components could not be read and are not in schema.json");
+                report.evidence("Schema components skipped", schema.skipped().stream().map(line -> "- " + line).toList());
+            }
+            if (!schema.unhandledKeywords().isEmpty()) {
+                report.check(Report.Status.INFO, "BDS schema keywords", "the extract does not know " + schema.unhandledKeywords());
+            }
+            // What the content log said that the schema contradicts: the add-on tests both until a capture settles it
+            Path feedback = root.resolve(Layout.MODEL).resolve("bds-feedback.json");
+            List<String> disputes = Files.exists(feedback)
+                ? schema.disputes(JsonParser.parseString(Files.readString(feedback, StandardCharsets.UTF_8)).getAsJsonObject()) : List.of();
+            report.check(disputes.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "BDS schema vs content log",
+                disputes.isEmpty() ? "no limit or value the log and the schema disagree on" : disputes.size() + " disputes, the add-on tests both");
+            if (!disputes.isEmpty()) {
+                report.evidence("Schema and content log disagree", disputes.stream().map(line -> "- " + line).toList());
+            }
+            stage(bdsData.resolve(build).resolve(Schema.FILE), SchemaExtract.render(extract).getBytes(StandardCharsets.UTF_8), "BDS schema " + build);
+        } catch (Exception e) {
+            report.check(Report.Status.SKIP, "BDS schema", "not extracted, the previous schema stays: " + e);
+        }
+    }
+
+    /** Says which values of the add-on the generator cut at {@code MAX_VALUES} (the capture's {@code valuesCut}): no variant has them. */
+    private void cutValues(Path capture) {
+        try {
+            JsonObject meta = JsonParser.parseString(Files.readString(capture.resolve("capture.json"), StandardCharsets.UTF_8)).getAsJsonObject();
+            if (meta.has("valuesCut")) {
+                List<String> cut = meta.getAsJsonArray("valuesCut").asList().stream().map(e -> "- " + e.getAsString()).toList();
+                report.check(Report.Status.INFO, "Add-on values cut", cut.size() + " fields have more values than the add-on varies (AddonGenerator.MAX_VALUES)");
+                report.evidence("Values the add-on does not vary", cut);
+            }
+        } catch (IOException | RuntimeException e) {
+            report.check(Report.Status.SKIP, "Add-on values cut", "capture.json not readable: " + e);
+        }
+    }
+
+    /**
      * The inventory of the build's Linux binary ({@link BdsInventory}: block and item components, Script API members) and what
      * changed against the inventory of the previous build: new BDS properties show up here before anything reads them.
      */
@@ -1766,6 +1831,7 @@ public final class Update {
             return;
         }
         report.check(Report.Status.INFO, "Spec capture", "`" + (write ? root.relativize(out) : out) + "`");
+        cutValues(out);
         SpecDiff.Pairing pairing = previous == null ? null : SpecDiff.pairing(previous, out);
         if (pairing != null && !pairing.same()) {
             // The values and acceptance only cover the variants both were given alike: in a history check that would

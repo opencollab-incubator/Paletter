@@ -107,8 +107,8 @@ class ComponentConformanceTest {
         // The definitions of the variants as that capture's add-on had them (its format version and the bases it shrunk).
         // For the newest capture they are also checked against what the generator makes of today's model. Probed keys
         // apply only to the build they were probed on, as in spec-capture.
-        AddonGenerator generator = new AddonGenerator(Model.read(MODEL.resolve("components.json")),
-            Fixtures.read(MODEL).forBuild(meta.get("bdsVersion").getAsString()),
+        Fixtures fixtures = Fixtures.read(MODEL).forBuild(meta.get("bdsVersion").getAsString());
+        AddonGenerator generator = new AddonGenerator(Model.read(MODEL.resolve("components.json")), fixtures,
             meta.get("formatVersion").getAsString(), AddonGenerator.Shrunk.of(manifest));
         if (newest) {
             assertEquals(recorded.length, generator.variants().size(), "the add-on generator no longer produces the captured variants");

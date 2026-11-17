@@ -92,8 +92,9 @@ public final class AddonGenerator {
     }
 
     private AddonGenerator(Model model, Fixtures fixtures, String formatVersion, Map<String, Shrunk> shrunk, boolean standard) {
-        this.model = fixtures.apply(model);
-        this.fixtures = fixtures;
+        // The schema (if the fixtures have one) is read for the format version the add-on is made for
+        this.fixtures = fixtures.forFormat(formatVersion);
+        this.model = this.fixtures.apply(model);
         this.formatVersion = formatVersion;
         this.shrunk = Map.copyOf(shrunk);
         if (standard) {
@@ -776,6 +777,8 @@ public final class AddonGenerator {
      */
     static final int MAX_VALUES = 32;
 
+    private final Map<String, String> cut = new java.util.TreeMap<>();
+
     /** An identifier nothing defines. */
     static final String UNKNOWN_IDENTIFIER = "minecraft:paletter_unknown";
 
@@ -801,7 +804,18 @@ public final class AddonGenerator {
         Map<String, Labeled> distinct = new LinkedHashMap<>();
         Set<String> labels = new java.util.HashSet<>();
         values.stream().filter(v -> labels.add(v.label)).forEach(v -> distinct.putIfAbsent(v.value.toString(), v));
-        return distinct.values().stream().limit(MAX_VALUES).toList();
+        List<Labeled> all = new ArrayList<>(distinct.values());
+        if (all.size() > MAX_VALUES) {
+            List<String> dropped = all.subList(MAX_VALUES, all.size()).stream().map(v -> v.label).toList();
+            cut.put(c.id() + " " + path + " (" + type.type() + ")", "kept " + MAX_VALUES + " of " + all.size() + ", cut: "
+                + String.join(", ", dropped.subList(0, Math.min(dropped.size(), 12))) + (dropped.size() > 12 ? ", ... (" + (dropped.size() - 12) + " more)" : ""));
+        }
+        return all.stream().limit(MAX_VALUES).toList();
+    }
+
+    /** The values cut at {@link #MAX_VALUES} (a field and JSON type, how many were kept of how many, which were cut): no variant has them. */
+    public List<String> cutValues() {
+        return cut.entrySet().stream().map(e -> e.getKey() + ": " + e.getValue()).toList();
     }
 
     private List<Labeled> sampleOnly(Component c, String path) {
@@ -824,6 +838,19 @@ public final class AddonGenerator {
         if (range != null && range.max() != null) {
             numbers.add(range.max());
             numbers.add(range.max() + 1);
+        }
+        // The limits of the content log that the schema contradicts: BDS decides which holds, so both are tested
+        for (String fact : fixtures.disputed(c.id(), path)) {
+            String[] parts = fact.split(" ");
+            if (parts[0].equals("range") || parts[0].equals("min")) {
+                numbers.add(Double.parseDouble(parts[1]));
+                numbers.add(Double.parseDouble(parts[1]) - 1);
+            }
+            if (parts[0].equals("range") || parts[0].equals("max")) {
+                double max = Double.parseDouble(parts[parts.length - 1]);
+                numbers.add(max);
+                numbers.add(max + 1);
+            }
         }
         List<Double> listed = field == null ? List.of() : field.enumValues().stream()
             .filter(e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isNumber()).map(JsonElement::getAsDouble).toList();
@@ -872,7 +899,17 @@ public final class AddonGenerator {
         if (exact != null && exact.isJsonPrimitive()) {
             strings.add(exact);
         }
-        List<JsonElement> enums = field == null || field.enumValues().isEmpty() ? bdsStrings(c, path) : field.enumValues();
+        List<JsonElement> enums = new ArrayList<>(field == null || field.enumValues().isEmpty() ? bdsStrings(c, path) : field.enumValues());
+        // Values of the content log the schema does not list: tested as well
+        for (String fact : fixtures.disputed(c.id(), path)) {
+            java.util.regex.Matcher quoted = java.util.regex.Pattern.compile("'([^']*)'").matcher(fact);
+            while (fact.startsWith("values ") && quoted.find()) {
+                JsonPrimitive value = new JsonPrimitive(quoted.group(1));
+                if (!enums.contains(value)) {
+                    enums.add(value);
+                }
+            }
+        }
         if (!enums.isEmpty()) {
             strings.add(new JsonPrimitive(NAMESPACE + "_invalid"));
             strings.addAll(enums);
@@ -1036,8 +1073,15 @@ public final class AddonGenerator {
         }
         Double maxItems = factNumber(c, path, "maxItems");
         Double exactly = factNumber(c, path, "items");
-        for (Double n : java.util.Arrays.asList(maxItems, maxItems == null ? null : maxItems + 1,
-            exactly == null ? null : exactly - 1, exactly == null ? null : exactly + 1)) {
+        List<Double> counts = new ArrayList<>(java.util.Arrays.asList(maxItems, maxItems == null ? null : maxItems + 1,
+            exactly == null ? null : exactly - 1, exactly == null ? null : exactly + 1));
+        for (String fact : fixtures.disputed(c.id(), path)) {
+            if (fact.startsWith("maxItems ")) {
+                counts.add(Double.parseDouble(fact.substring(9)));
+                counts.add(Double.parseDouble(fact.substring(9)) + 1);
+            }
+        }
+        for (Double n : counts) {
             if (n != null && n > 2) {
                 values.add(new Labeled("[" + n.intValue() + "x]", copies(first, n.intValue())));
             }

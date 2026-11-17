@@ -18,26 +18,33 @@ import java.util.zip.GZIPOutputStream;
 /**
  * Runs the Script API dump add-on ({@code data/addons/dump}) on an extracted BDS. The add-on finds the aux value of a
  * tipped arrow through loot tables, one {@code set_potion} table per potion effect, so this first runs BDS's own
- * documentation generator ({@code docs/vanilladata_modules/mojang-potion-effects.json}) and installs the tables with
+ * documentation generator ({@link BdsDocGen}, {@code vanilladata_modules/mojang-potion-effects.json}) and installs the tables with
  * the add-on. No effect is listed by hand.
  */
 public final class ScriptApiDump {
-    private static final String EFFECTS_FILE = "docs/vanilladata_modules/mojang-potion-effects.json";
+    private static final String EFFECTS_FILE = "vanilladata_modules/mojang-potion-effects.json";
 
     private ScriptApiDump() {
     }
 
-    /** Runs the add-on; its console goes to {@code log}. */
-    public static void run(Path root, Path server, Path log, int timeout, int port) throws IOException, InterruptedException {
+    /**
+     * Runs the add-on; its console goes to {@code log}.
+     *
+     * @return BDS's {@code docs} directory (still in the server), or null if the documentation generator failed
+     */
+    public static Path run(Path root, Path server, Path log, int timeout, int port) throws IOException, InterruptedException {
+        Path docs = null;
         List<String> effects;
         try {
-            effects = potionEffects(server, log.resolveSibling("bds-docgen.log"), timeout, port);
+            docs = BdsDocGen.generate(server, log.resolveSibling("bds-docgen.log"), timeout, port);
+            effects = potionEffects(docs);
         } catch (IOException | RuntimeException e) {
             // The dump still runs: without the loot tables the add-on reports an error per effect, and tipped arrows stay unnamed
             System.out.println("No potion effect list from BDS's documentation generator, so no tipped arrows are dumped: " + e.getMessage());
             effects = List.of();
         }
         new BdsRunner(root.resolve(Layout.DUMP_ADDON)).withPackFiles(lootTables(effects)).run(server, log, timeout, port, false);
+        return docs != null && Files.isDirectory(docs) ? docs : null;
     }
 
     /**
@@ -77,22 +84,10 @@ public final class ScriptApiDump {
         return tables;
     }
 
-    /** The potion effect identifiers of BDS's documentation generator ({@code test_config.json}; BDS stops by itself). */
-    static List<String> potionEffects(Path server, Path log, int timeout, int port) throws IOException, InterruptedException {
-        BdsRunner.configure(server, port);
-        Path config = server.resolve("test_config.json");
-        try (BdsServer bds = new BdsServer(server, false)) {
-            Files.writeString(config, "{\"generate_documentation\": true}");
-            bds.start(log);
-            if (bds.await(line -> line.contains("Server stop requested."), timeout) == null) {
-                throw new IOException("BDS did not generate its documentation within " + timeout + "s; see " + log);
-            }
-        } finally {
-            // The file makes BDS stop right after it starts
-            Files.deleteIfExists(config);
-        }
+    /** The potion effect identifiers in the documentation BDS generated. */
+    static List<String> potionEffects(Path docs) throws IOException {
         List<String> effects = new ArrayList<>();
-        String json = Files.readString(server.resolve(EFFECTS_FILE));
+        String json = Files.readString(docs.resolve(EFFECTS_FILE));
         for (JsonElement item : JsonParser.parseString(json).getAsJsonObject().getAsJsonArray("data_items")) {
             effects.add(item.getAsJsonObject().get("name").getAsString());
         }

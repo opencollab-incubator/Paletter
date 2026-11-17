@@ -68,4 +68,20 @@ class UpdateHistoryTest {
         Update update = new Update(root, Map.of("against", "1.26.36.1"));
         assertThrows(IllegalArgumentException.class, () -> update.begin(new BdsDistribution("1.26.31.1", false, "win", "u")));
     }
+
+    @Test
+    void aFailedSchemaStepIsASkippedRowAndNeverAFailure(@TempDir Path root, @TempDir Path cache, @TempDir Path docs) throws IOException {
+        BdsDistribution build = new BdsDistribution("1.26.31.1", false, "win", "https://example.invalid/bedrock-server-1.26.31.1.zip");
+        Update update = historyCheck(root);
+        // BDS's documentation generator wrote nothing
+        update.schema(cache, build, null);
+        // It wrote something the extract cannot read (no component schemas)
+        Files.createDirectories(docs.resolve("json_schemas/server"));
+        update.schema(cache, build, docs);
+        String report = update.report().render();
+        assertTrue(report.contains("BDS's documentation generator wrote no docs"), report);
+        assertTrue(report.contains("not extracted, the previous schema stays: java.io.IOException: No component schemas"), report);
+        assertFalse(update.report().failed());
+        assertTrue(update.report().repoChanges.isEmpty(), "no schema.json from a failed step");
+    }
 }

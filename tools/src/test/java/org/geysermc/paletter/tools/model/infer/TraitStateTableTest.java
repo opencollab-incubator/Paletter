@@ -14,6 +14,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** The trait state table: its naming rule on a synthetic trait, and the table the committed data gives. */
@@ -83,5 +84,25 @@ class TraitStateTableTest {
             .get(0).getAsJsonObject();
         assertTrue(facing.get("default").getAsString().startsWith("verified"), facing.toString());
         assertEquals(4, table.getAsJsonObject("minecraft:connection").getAsJsonArray("minecraft:cardinal_connections").size());
+    }
+
+
+    @Test
+    void aValueNamingNoDocumentedStateIsSkippedAndReported() {
+        List<String> skipped = new java.util.ArrayList<>();
+        Map<String, List<TraitStateTable.State>> states = TraitStateTable.statesOf(trait(List.of("test:facing", "test:sixteen_way_rotation"),
+            "adds state test:facing: String north, south"), HISTORY, skipped);
+        assertEquals(List.of("test:facing"), List.copyOf(states.keySet()));
+        assertEquals(List.of("block:trait:test:turn: enabled_states test:sixteen_way_rotation adds no documented state"), skipped);
+    }
+
+    /** With BDS's schema in the model, the enabled_states it lists beyond the docs (sixteen_way_rotation) do not stop the table. */
+    @Test
+    void withTheSchemaInTheModelTheTableSkipsWhatNoDocsName() throws IOException {
+        Path modelDir = ROOT.resolve("data/model");
+        Model model = Fixtures.read(modelDir, true).apply(Model.read(modelDir.resolve("components.json")));
+        JsonObject table = TraitStateTable.infer(ROOT, model).getAsJsonObject("minecraft:placement_direction");
+        assertTrue(table.has("minecraft:cardinal_direction"));
+        assertFalse(table.has("minecraft:sixteen_way_rotation"));
     }
 }
