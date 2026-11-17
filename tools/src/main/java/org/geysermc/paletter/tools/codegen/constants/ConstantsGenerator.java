@@ -469,6 +469,10 @@ public final class ConstantsGenerator {
         JsonObject previous = object(history, "variants");
         Map<String, VariantNames.Entry> current = new TreeMap<>();
         sources.variantNames(release.version().name()).forEach(entry -> current.put(entry.name(), entry));
+        if (current.isEmpty() && !previous.isEmpty()) {
+            throw new IllegalStateException("The newest release " + release.version().name() + " has no variant names in data/model/variant_names.txt, "
+                + "but " + HISTORY + " has " + previous.size() + ": that would deprecate them all. Run script-dump on a build of it; names are not carried forward");
+        }
         Map<String, String> nameOf = new HashMap<>();
         current.values().forEach(entry -> nameOf.put(entry.identifier() + "@" + entry.aux(), entry.name()));
         Map<String, Variant> variants = new TreeMap<>();

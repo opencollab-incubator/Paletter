@@ -406,6 +406,17 @@ class ConstantsGoldenTest {
     }
 
     @Test
+    void aReleaseWithoutVariantNamesDoesNotDeprecateThem(@TempDir Path temp) throws IOException {
+        JsonObject history = JsonParser.parseString(variants(temp.resolve("a"), "1.1 minecraft:potion 1 POTION_A\n", new JsonObject(), "0.1.0")
+            .files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
+        assertEquals("The newest release 1.1 has no variant names in data/model/variant_names.txt, but data/model/constants-history.json has 1: "
+            + "that would deprecate them all. Run script-dump on a build of it; names are not carried forward",
+            assertThrows(IllegalStateException.class, () -> variants(temp.resolve("b"), "# nothing\n", history, "2.1.0")).getMessage());
+        // Without a history there is nothing to lose
+        assertEquals("{}", historyOf(variants(temp.resolve("c"), "# nothing\n", new JsonObject(), "0.1.0")).toString());
+    }
+
+    @Test
     void aVariantNameKeepsItsMeaning(@TempDir Path temp) throws IOException {
         Path data = temp.resolve("data");
         write(data, List.of(data("1.1", 110, releaseBlocks(false), releaseItems(false))), List.of(false));

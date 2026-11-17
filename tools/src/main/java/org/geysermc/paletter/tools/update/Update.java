@@ -1205,7 +1205,7 @@ public final class Update {
                 bds.identical() ? "identical" : bds.count() + " differences");
             report.diff("Item tags and block defaults: BDS " + distribution.version() + " vs bundled " + name, bds);
             Files.write(staging.resources.resolve(name + ".nbt"), write(refreshed));
-            VariantNames.update(variantNames, name, dump, refreshed);
+            updateVariantNames(variantNames, name, dump, refreshed);
         } else {
             Importer.IndexEntry latest = Importer.readIndex(resources).stream().filter(e -> !e.preview()).reduce((a, b) -> b).orElseThrow();
             VanillaData previous = read(resources.resolve(latest.name() + ".nbt"));
@@ -1218,9 +1218,18 @@ public final class Update {
             report.check(Report.Status.INFO, "Import", "imported " + name + " (" + runs.protocol + ")" + (preview ? " as a preview version" : ""));
             // Content older versions lack is listed above (INFO); there are no bundled fallbacks to check
             new Checker(staging.resources).problems(preview);
-            VariantNames.update(variantNames, name, dump, captured);
+            updateVariantNames(variantNames, name, dump, captured);
         }
         stage(root.resolve(VariantNames.FILE), VariantNames.render(variantNames).getBytes(StandardCharsets.UTF_8), "item variant names");
+    }
+
+    /** The variant names of a version from the dump; an incomplete dump is a FAIL and leaves the names as they are. */
+    private void updateVariantNames(Map<String, List<VariantNames.Entry>> variantNames, String name, BdsDump dump, VanillaData data) {
+        try {
+            VariantNames.update(variantNames, name, dump, data);
+        } catch (IllegalStateException e) {
+            report.check(Report.Status.FAIL, "Item variant names", e.getMessage() + "; the names of " + name + " stay as they are");
+        }
     }
 
     /**

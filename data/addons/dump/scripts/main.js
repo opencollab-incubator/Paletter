@@ -214,8 +214,13 @@ function* dumpItemVariants(out) {
         }
         yield;
     }
-    // Several effects give the plain arrow (aux 0), which has no potion
-    for (const [aux, effects] of Object.entries(effectsOfAux)) {
+    // Several effects give the plain arrow (aux 0), which has no potion; every tipped arrow has exactly one effect.
+    // Without the tool's loot tables none has, and the variants are then incomplete as a whole
+    for (const aux of Object.keys(itemVariants["minecraft:arrow"])) {
+        const effects = effectsOfAux[aux] ?? [];
+        if (aux !== "0" && effects.length !== 1) {
+            throw new Error(`the tipped arrow aux ${aux} matches ${effects.length} potion effects, not one`);
+        }
         if (effects.length === 1) {
             itemVariants["minecraft:arrow"][aux].potion = effects[0];
         }

@@ -15,7 +15,7 @@ import org.geysermc.paletter.annotation.SincePreview;
  * deprecated: {@code type.variant(aux)} is then null. A name BDS changes stays as a deprecated alias of the new one.
  * <p>
  * The {@code @since} of a constant is the Paletter version that added it. The names come from BDS dumps of the newest
- * builds only, so a variant may be older than Bedrock 26.60 even if its constant is not.
+ * builds only: a variant is first captured in the oldest release with variant data, and may be older.
  * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks variants only the bundled Bedrock preview
  * has: without previews loaded ({@code paletter.previews}) its type has no such variant, so {@code type.variant(aux)}
  * is null and the constant stays a plain key. The mark goes when a release has it; the constant goes if a newer
