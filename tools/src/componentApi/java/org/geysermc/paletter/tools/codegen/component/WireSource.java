@@ -726,6 +726,16 @@ final class WireSource {
         }
 
         @Override
+        public CodeBlock holds(String jsonType) {
+            throw error("a union rule needs the sealed type of the union, which the API does not generate yet");
+        }
+
+        @Override
+        public Emitter as(String jsonType) {
+            throw error("a union rule needs the sealed type of the union, which the API does not generate yet");
+        }
+
+        @Override
         public CodeBlock input(String path) {
             Type type = t;
             CodeBlock at = expr;

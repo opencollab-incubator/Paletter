@@ -56,6 +56,9 @@ class RuleTest {
         assertNull(rule("{\"kind\": \"enum-table\", \"table\": {\"spear\": \"6\"}, \"nbt\": \"int\"}").evaluate(JsonParser.parseString("\"brush\"")));
         assertEquals("5.0 (float)", rule("{\"kind\": \"affine\", \"terms\": {\"origin[0]\": -1, \"size[0]\": -1}, \"constant\": 8.0, \"nbt\": \"float\"}").evaluate(JsonParser.parseString("{\"origin\": [1, 2, 3], \"size\": [2, 2, 3]}")));
         assertNull(rule("{\"kind\": \"affine\", \"terms\": {\"origin[0]\": -1, \"size[0]\": -1}, \"constant\": 8.0, \"nbt\": \"float\"}").evaluate(JsonParser.parseString("{\"origin\": [1, 2, 3]}")), "an input is missing");
+        assertEquals("30 (int)", rule("{\"kind\": \"union\", \"by\": {\"number\": {\"kind\": \"linear\", \"scale\": 20.0, \"offset\": 0.0, \"nbt\": \"int\"}, \"string\": {\"kind\": \"identity\", \"nbt\": \"string\"}}, \"nbt\": \"int\"}").evaluate(half));
+        assertEquals("a (string)", rule("{\"kind\": \"union\", \"by\": {\"number\": {\"kind\": \"linear\", \"scale\": 20.0, \"offset\": 0.0, \"nbt\": \"int\"}, \"string\": {\"kind\": \"identity\", \"nbt\": \"string\"}}, \"nbt\": \"int\"}").evaluate(JsonParser.parseString("\"a\"")));
+        assertNull(rule("{\"kind\": \"union\", \"by\": {\"number\": {\"kind\": \"linear\", \"scale\": 20.0, \"offset\": 0.0, \"nbt\": \"int\"}, \"string\": {\"kind\": \"identity\", \"nbt\": \"string\"}}, \"nbt\": \"int\"}").evaluate(JsonParser.parseString("true")), "no rule for booleans");
         // no NBT type, an element of a list, a constant: nothing to evaluate
         assertNull(rule("{\"kind\": \"identity\"}").evaluate(half));
         assertNull(rule("{\"kind\": \"identity\", \"element\": 0, \"nbt\": \"float\"}").evaluate(half));
@@ -80,5 +83,22 @@ class RuleTest {
         RecordingEmitter e = new RecordingEmitter();
         rule("{\"kind\": \"affine\", \"terms\": {\"origin[0]\": -1, \"size[0]\": -1}, \"constant\": 8.0, \"nbt\": \"float\"}").emit(e);
         assertEquals("put(float((8.0 - input(\"origin[0]\") - input(\"size[0]\"))));", e.written());
+    }
+
+    @Test
+    void aUnionWritesTheRuleOfEachAlternative() {
+        RecordingEmitter e = new RecordingEmitter();
+        rule("{\"kind\": \"union\", \"by\": {\"number\": {\"kind\": \"linear\", \"scale\": 20.0, \"offset\": 0.0, \"nbt\": \"int\"}, \"string\": {\"kind\": \"identity\", \"nbt\": \"string\"}}, \"nbt\": \"int\"}").emit(e);
+        assertEquals("""
+            if (holds("number")) {
+              as("number");
+              put(int((20.0 * number + 0.0)));
+            }
+            if (holds("string")) {
+              as("string");
+              put(convert("string"));
+            }""", e.written());
+        JsonObject json = JsonParser.parseString("{\"kind\": \"union\", \"by\": {\"string\": {\"kind\": \"identity\", \"nbt\": \"string\"}}}").getAsJsonObject();
+        assertEquals(json.toString(), Rule.of(json).toJson().toString());
     }
 }

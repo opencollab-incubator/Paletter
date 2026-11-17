@@ -37,6 +37,17 @@ final class RecordingEmitter implements Emitter {
     }
 
     @Override
+    public CodeBlock holds(String jsonType) {
+        return CodeBlock.of("holds($S)", jsonType);
+    }
+
+    @Override
+    public Emitter as(String jsonType) {
+        code.addStatement("as($S)", jsonType);
+        return this;
+    }
+
+    @Override
     public CodeBlock input(String path) {
         return CodeBlock.of("input($S)", path);
     }

@@ -20622,6 +20622,44 @@
                 "injected-default"
               ],
               "wire": "minecraft:repairable.repair_items[].items[].name"
+            },
+            {
+              "kind": "union",
+              "by": {
+                "number": {
+                  "kind": "identity",
+                  "nbt": "float"
+                },
+                "string": {
+                  "kind": "constant",
+                  "value": "<not sent>"
+                }
+              },
+              "nbt": "float",
+              "tags": [
+                "type:integer->float"
+              ],
+              "wire": "minecraft:repairable.repair_items[].repair_amount"
+            },
+            {
+              "kind": "union",
+              "by": {
+                "number": {
+                  "kind": "constant",
+                  "value": "<not sent>"
+                },
+                "string": {
+                  "kind": "identity",
+                  "nbt": "string"
+                }
+              },
+              "nbt": "string",
+              "tags": [
+                "renamed",
+                "nested",
+                "type:integer->string"
+              ],
+              "wire": "minecraft:repairable.repair_items[].repair_amount.expression"
             }
           ],
           "whenAbsent": {
@@ -20632,28 +20670,6 @@
             "minecraft:repairable.repair_items[].repair_amount.version": "omitted"
           },
           "unexplained": [
-            {
-              "wire": "minecraft:repairable.repair_items[0].repair_amount",
-              "samples": [
-                "<absent> -> -",
-                "0 -> 0.0 (float)",
-                "0.5 -> 0.5 (float)",
-                "1 -> 1.0 (float)",
-                "2.25 -> 2.25 (float)",
-                "30 -> 30.0 (float)"
-              ]
-            },
-            {
-              "wire": "minecraft:repairable.repair_items[0].repair_amount.expression",
-              "samples": [
-                "<absent> -> -",
-                "0 -> -",
-                "0.5 -> -",
-                "1 -> -",
-                "2.25 -> -",
-                "30 -> -"
-              ]
-            },
             {
               "wire": "minecraft:repairable.repair_items[0].repair_amount.version",
               "samples": [

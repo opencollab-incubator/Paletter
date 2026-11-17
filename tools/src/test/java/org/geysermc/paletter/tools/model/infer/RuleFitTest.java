@@ -9,6 +9,7 @@ import org.geysermc.paletter.tools.model.rule.EnumTable;
 import org.geysermc.paletter.tools.model.rule.Leaf;
 import org.geysermc.paletter.tools.model.rule.Observation;
 import org.geysermc.paletter.tools.model.rule.OrderedSet;
+import org.geysermc.paletter.tools.model.rule.Union;
 import org.geysermc.paletter.tools.model.rule.Rule;
 import org.junit.jupiter.api.Test;
 
@@ -158,6 +159,21 @@ class RuleFitTest {
         assertNull(Affine.fit(List.of(box(1, 1, 0, 7), box(2, 2, 0, 6), box(1, 1, 2, 5), box(3, 3, 1, 4)), W));
         // no sum of the numbers gives the leaves
         assertNull(Affine.fit(List.of(box(1, 2, 0, 5), box(-4, 2, 0, 11), box(0, 2, 0, 6), box(1, 3, 0, 4)), W));
+    }
+
+    @Test
+    void aFieldWhoseJsonTypesLandOnOneLeafGetsARulePerType() {
+        // repair_amount-like: a number is scaled into an int, a string is sent as it is
+        List<Observation> mixed = pairs("1.5", 30, "3", 60, "0.5", 10, "\"a\"", "a", "\"b\"", "b");
+        JsonObject union = json(Union.fit(mixed, W, type -> RuleFit.scalar(type, Observation::json, W)));
+        assertEquals("union", union.get("kind").getAsString());
+        assertEquals("linear", union.getAsJsonObject("by").getAsJsonObject("number").get("kind").getAsString());
+        assertEquals("int", union.getAsJsonObject("by").getAsJsonObject("number").get("nbt").getAsString());
+        assertEquals("identity", union.getAsJsonObject("by").getAsJsonObject("string").get("kind").getAsString());
+        assertEquals("string", union.getAsJsonObject("by").getAsJsonObject("string").get("nbt").getAsString());
+        // one JSON type is no union, and a type no rule fits makes none
+        assertNull(Union.fit(pairs("1.5", 30, "3", 60), W, type -> RuleFit.scalar(type, Observation::json, W)));
+        assertNull(Union.fit(pairs("1.5", 30, "3", 60, "\"a\"", 1, "\"a\"", 2), W, type -> RuleFit.scalar(type, Observation::json, W)));
     }
 
     @Test
