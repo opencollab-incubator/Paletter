@@ -93,12 +93,12 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>Record Components:</dt>
-<dd><code><span id="param-damageChance">damageChance</span></code> - Specifies the percentage chance of this item losing durability. Specifies the percentage chance of this item
-        losing durability. Default is set to 100. Defined as an int range with min and max value. Check that the
-        limits imposed on the range (minimum, maximum and maximum distance between values) are respected. Add-on JSON
-        <code>damage_chance</code>. Default: <code>&#123;"max":100,"min":100&#125;</code>.</dd>
+<dd><code><span id="param-damageChance">damageChance</span></code> - Specifies the percentage chance of this item losing durability. Default is set to 100. Defined as an int range
+        with min and max value. Check that the limits imposed on the range (minimum, maximum and maximum distance
+        between values) are respected. Add-on JSON <code>damage_chance</code>. Default:
+        <code>&#123;"max":100,"min":100&#125;</code>.</dd>
 <dd><code><span id="param-maxDurability">maxDurability</span></code> - Max durability is the amount of damage that this item can take before breaking. This is a required parameter
-        and has a minimum of 0. Add-on JSON <code>max_durability</code>. Required. Range [0, inf) (BDS 1.26.63.1).</dd>
+        and has a minimum of 0. Add-on JSON <code>max_durability</code>. Required. At least 0 (BDS 1.26.63.1).</dd>
 </dl>
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>

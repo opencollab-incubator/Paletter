@@ -94,51 +94,48 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Record Components:</dt>
 <dd><code><span id="param-boneVisibility">boneVisibility</span></code> - A JSON object that contains a list of key/value pairs that map from bone name in the specified geometry file
-        (key) to a Molang expression that tells whether the bone should be visible or not (value). A JSON object that
-        contains a list of key/value pairs that map from bone name in the specified geometry file (key) to a Molang
-        expression that tells whether the bone should be visible or not (value). The expression is limited to using
-        the "query.block_state()" query. When using "bone_visibility" in geometry components in the "permutations"
-        section, you must also have a default version of the geometry component with "bone_visibility" in the
-        "components" section. Value must have at most 64 items. Add-on JSON <code>bone_visibility</code>. Default:
-        <code>&#123;&#125;</code>.</dd>
+        (key) to a Molang expression that tells whether the bone should be visible or not (value). The expression is
+        limited to using the "query.block_state()" query. When using "bone_visibility" in geometry components in the
+        "permutations" section, you must also have a default version of the geometry component with "bone_visibility"
+        in the "components" section. Value must have at most 64 items. Add-on JSON <code>bone_visibility</code>. Default:
+        <code>&#123;&#125;</code>. Empty while <code>identifier</code> is <code>minecraft:geometry.full_block</code> (BDS
+        1.26.63.1).</dd>
 <dd><code><span id="param-culling">culling</span></code> - Which block_culling .json file to use when rendering this block. Value must have at most 256 items. Add-on
         JSON <code>culling</code>. Optional (null: not set).</dd>
-<dd><code><span id="param-cullingLayer">cullingLayer</span></code> - A string that allows culling rule to group multiple blocks together when comparing them. A string that allows
-        culling rule to group multiple blocks together when comparing them. When using the minecraft namespace, the
-        only allowed culling layer identifiers are : "minecraft:culling_layer.undefined" or
+<dd><code><span id="param-cullingLayer">cullingLayer</span></code> - A string that allows culling rule to group multiple blocks together when comparing them. When using the
+        minecraft namespace, the only allowed culling layer identifiers are : "minecraft:culling_layer.undefined" or
         "minecraft:culling_layer.leaves". When using no namespaces or a custom one, the names must start and end with
         an alpha-numeric character. Value must have at least 1 items. Value must have at most 256 items. Value must
         match a regular expression pattern of
         "^(?:minecraft:culling_layer.undefined|minecraft:culling_layer.leaves|(?!minecraft:)[a-z0-9].*[a-z0-9])$".
         Add-on JSON <code>culling_layer</code>. Optional (null: not set).</dd>
-<dd><code><span id="param-cullingShape">cullingShape</span></code> - Currently only available with the VoxelShape experiment on. Currently only available with the VoxelShape
-        experiment on. The voxel shape used for culling adjacent block faces. Voxel shapes work together with culling
-        rules and will not function if there is no culling rule defined for the block. Only adjacent blocks with voxel
-        shapes will occlude using this shape. Blocks using &#92;"minecraft:geometry.full_block&#92;" always use the
-        unit cube shape and will ignore custom shapes if specified. When using the minecraft namespace, the only
-        currently available culling shape identifiers are : &#92;"minecraft:empty&#92;" or
-        &#92;"minecraft:unit_cube&#92;". When using no namespaces or a custom one, the names must start and end with
-        an alpha-numeric character. Value must have at most 256 items. Value must match a regular expression pattern
-        of "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$". Add-on JSON <code>
-        culling_shape</code>. Optional (null: not set).</dd>
-<dd><code><span id="param-identifier">identifier</span></code> - The description identifier of the geometry to use to render this block. The description identifier of the
-        geometry to use to render this block. This identifier must either match an existing geometry identifier in any
-        of the loaded resource packs or be one of the currently supported Vanilla identifiers:
-        "minecraft:geometry.full_block" or "minecraft:geometry.cross". Value must have at most 256 items. Add-on JSON
-        <code>identifier</code>. Required.</dd>
+<dd><code><span id="param-cullingShape">cullingShape</span></code> - Currently only available with the VoxelShape experiment on. The voxel shape used for culling adjacent block
+        faces. Voxel shapes work together with culling rules and will not function if there is no culling rule defined
+        for the block. Only adjacent blocks with voxel shapes will occlude using this shape. Blocks using
+        &#92;"minecraft:geometry.full_block&#92;" always use the unit cube shape and will ignore custom shapes if
+        specified. When using the minecraft namespace, the only currently available culling shape identifiers are :
+        &#92;"minecraft:empty&#92;" or &#92;"minecraft:unit_cube&#92;". When using no namespaces or a custom one, the
+        names must start and end with an alpha-numeric character. Value must have at most 256 items. Value must match
+        a regular expression pattern of "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$".
+        Add-on JSON <code>culling_shape</code>. Optional (null: not set).</dd>
+<dd><code><span id="param-identifier">identifier</span></code> - The description identifier of the geometry to use to render this block. This identifier must either match an
+        existing geometry identifier in any of the loaded resource packs or be one of the currently supported Vanilla
+        identifiers: "minecraft:geometry.full_block" or "minecraft:geometry.cross". Value must have at most 256 items.
+        Add-on JSON <code>identifier</code>. Required.</dd>
 <dd><code><span id="param-nWayVisualRotation">nWayVisualRotation</span></code> - Optional object that maps x/y/z axes to block state names that drive visual-only geometry rotation. Add-on
         JSON <code>n_way_visual_rotation</code>. Optional (null: not set).</dd>
-<dd><code><span id="param-uvLock">uvLock</span></code> - A field that is either a Boolean or an array of strings, max size 64 strings. A field that is either a Boolean
-        or an array of strings, max size 64 strings. This field locks UV orientation for all/some bones in the
-        geometry, regardless of how the block is rotated using "minecraft:transformation" component. For performance
-        reasons it's recommended to use the Boolean. Add-on JSON <code>uv_lock</code>. Default: <code>false</code>.</dd>
+<dd><code><span id="param-uvLock">uvLock</span></code> - A field that is either a Boolean or an array of strings, max size 64 strings. This field locks UV orientation
+        for all/some bones in the geometry, regardless of how the block is rotated using "minecraft:transformation"
+        component. For performance reasons it's recommended to use the Boolean. Add-on JSON <code>uv_lock</code>. Default:
+        <code>false</code>.</dd>
+<dd><code><span id="param-uvLockBones">uvLockBones</span></code> - The list of strings form of <code>uv_lock</code> (bones); excludes <a href="#uvLock()"><code>uvLock()</code></a>. Add-on JSON <code>uv_lock</code>.</dd>
 </dl>
 <dl class="notes">
 <dt>Enclosing class:</dt>
 <dd><code><a href="EmbeddedVisual.html" title="class in org.geysermc.paletter.block.component">EmbeddedVisual</a></code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">EmbeddedVisual.Geometry</span>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;boneVisibility, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;culling, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;cullingLayer, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;cullingShape, @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier, @Nullable <a href="EmbeddedVisual.NWayVisualRotation.html" title="class in org.geysermc.paletter.block.component">EmbeddedVisual.NWayVisualRotation</a>&nbsp;nWayVisualRotation, boolean&nbsp;uvLock)
+<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">EmbeddedVisual.Geometry</span>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;boneVisibility, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;culling, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;cullingLayer, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;cullingShape, @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier, @Nullable <a href="EmbeddedVisual.NWayVisualRotation.html" title="class in org.geysermc.paletter.block.component">EmbeddedVisual.NWayVisualRotation</a>&nbsp;nWayVisualRotation, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&nbsp;uvLock, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;uvLockBones)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></span></div>
 <div class="block">The "minecraft:geometry" component that will be used when rendered inside of another block.</div>
 </section>
@@ -169,13 +166,14 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.util.Map,java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.geysermc.paletter.block.component.EmbeddedVisual.NWayVisualRotation,boolean)" class="member-name-link">Geometry</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;boneVisibility,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.util.Map,java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.geysermc.paletter.block.component.EmbeddedVisual.NWayVisualRotation,java.lang.Boolean,java.util.List)" class="member-name-link">Geometry</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;boneVisibility,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;culling,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;cullingLayer,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;cullingShape,
  @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
  @Nullable <a href="EmbeddedVisual.NWayVisualRotation.html" title="class in org.geysermc.paletter.block.component">EmbeddedVisual.NWayVisualRotation</a>&nbsp;nWayVisualRotation,
- boolean&nbsp;uvLock)</code></div>
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&nbsp;uvLock,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;uvLockBones)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates an instance of a <code>Geometry</code> record class.</div>
 </div>
@@ -244,10 +242,15 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a string representation of this record class.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#uvLock()" class="member-name-link">uvLock</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-uvLock"><code>uvLock</code></a> record component.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#uvLockBones()" class="member-name-link">uvLockBones</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the value of the <a href="#param-uvLockBones"><code>uvLockBones</code></a> record component.</div>
 </div>
 </div>
 </div>
@@ -267,7 +270,7 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(java.util.Map,java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.geysermc.paletter.block.component.EmbeddedVisual.NWayVisualRotation,boolean)">
+<section class="detail" id="&lt;init&gt;(java.util.Map,java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.geysermc.paletter.block.component.EmbeddedVisual.NWayVisualRotation,java.lang.Boolean,java.util.List)">
 <h3>Geometry</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">Geometry</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;boneVisibility,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;culling,
@@ -275,7 +278,8 @@ loadScripts(document, 'script');</script>
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;cullingShape,
  @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
  @Nullable <a href="EmbeddedVisual.NWayVisualRotation.html" title="class in org.geysermc.paletter.block.component">EmbeddedVisual.NWayVisualRotation</a>&nbsp;nWayVisualRotation,
- boolean&nbsp;uvLock)</span></div>
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&nbsp;uvLock,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;uvLockBones)</span></div>
 <div class="block">Creates an instance of a <code>Geometry</code> record class.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -286,6 +290,7 @@ loadScripts(document, 'script');</script>
 <dd><code>identifier</code> - the value for the <a href="#param-identifier"><code>identifier</code></a> record component</dd>
 <dd><code>nWayVisualRotation</code> - the value for the <a href="#param-nWayVisualRotation"><code>nWayVisualRotation</code></a> record component</dd>
 <dd><code>uvLock</code> - the value for the <a href="#param-uvLock"><code>uvLock</code></a> record component</dd>
+<dd><code>uvLockBones</code> - the value for the <a href="#param-uvLockBones"><code>uvLockBones</code></a> record component</dd>
 </dl>
 </section>
 </li>
@@ -347,7 +352,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="equals(java.lang.Object)">
 <h3>equals</h3>
 <div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">equals</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</span></div>
-<div class="block">Indicates whether some other object is "equal to" this one. The objects are equal if the other object is of the same class and if all the record components are equal. Reference components are compared with <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Objects.html#equals(java.lang.Object,java.lang.Object)" title="class or interface in java.util" class="external-link"><code>Objects::equals(Object,Object)</code></a>; primitive components are compared with '=='.</div>
+<div class="block">Indicates whether some other object is "equal to" this one. The objects are equal if the other object is of the same class and if all the record components are equal. All components in this record class are compared with <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Objects.html#equals(java.lang.Object,java.lang.Object)" title="class or interface in java.util" class="external-link"><code>Objects::equals(Object,Object)</code></a>.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></code></dd>
@@ -427,11 +432,22 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="uvLock()">
 <h3>uvLock</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">uvLock</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a></span>&nbsp;<span class="element-name">uvLock</span>()</div>
 <div class="block">Returns the value of the <a href="#param-uvLock"><code>uvLock</code></a> record component.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value of the <a href="#param-uvLock"><code>uvLock</code></a> record component</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="uvLockBones()">
+<h3>uvLockBones</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">uvLockBones</span>()</div>
+<div class="block">Returns the value of the <a href="#param-uvLockBones"><code>uvLockBones</code></a> record component.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the value of the <a href="#param-uvLockBones"><code>uvLockBones</code></a> record component</dd>
 </dl>
 </section>
 </li>

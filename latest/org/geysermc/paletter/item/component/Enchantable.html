@@ -93,13 +93,12 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>Record Components:</dt>
-<dd><code><span id="param-slot">slot</span></code> - Specifies which types of enchantments can be applied. Specifies which types of enchantments can be applied.
-        For example, <code>bow</code> would allow this item to be enchanted as if it were a bow. Value must match a
-        regular expression pattern of
+<dd><code><span id="param-slot">slot</span></code> - Specifies which types of enchantments can be applied. For example, <code>bow</code> would allow this item to
+        be enchanted as if it were a bow. Value must match a regular expression pattern of
         "none|all|g_armor|armor_head|armor_torso|armor_feet|armor_legs|sword|bow|spear|crossbow|melee_spear|g_tool|hoe|shears|flintsteel|shield|g_digging|axe|pickaxe|shovel|fishing_rod|carrot_stick|elytra|cosmetic_head".
         Add-on JSON <code>slot</code>. Required.</dd>
-<dd><code><span id="param-value">value</span></code> - Specifies the value of the enchantment (minimum of 0). Add-on JSON <code>value</code>. Required. Range [0, inf)
-        (BDS 1.26.63.1).</dd>
+<dd><code><span id="param-value">value</span></code> - Specifies the value of the enchantment (minimum of 0). Add-on JSON <code>value</code>. Required. At least 0 (BDS
+        1.26.63.1).</dd>
 </dl>
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>

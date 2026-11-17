@@ -93,10 +93,9 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>Record Components:</dt>
-<dd><code><span id="param-minPower">minPower</span></code> - Optional minimum value for incoming signal strength. Optional minimum value for incoming signal strength. If
-        signal strength is greater than or equal to this value then the 'onRedstoneUpdate' event is sent to Scripts.
-        Defaults to 0 meaning event is always emitted. Value must be &lt;= 15. Add-on JSON <code>min_power</code>. Default:
-        <code>0</code>.</dd>
+<dd><code><span id="param-minPower">minPower</span></code> - Optional minimum value for incoming signal strength. If signal strength is greater than or equal to this value
+        then the 'onRedstoneUpdate' event is sent to Scripts. Defaults to 0 meaning event is always emitted. Value
+        must be &lt;= 15. Add-on JSON <code>min_power</code>. Default: <code>0</code>. At most 15 (BDS 1.26.63.1).</dd>
 <dd><code><span id="param-propagatesPower">propagatesPower</span></code> - Optional Boolean to control whether a signal can pass through this block or not, defaults to false. Add-on
         JSON <code>propagates_power</code>. Default: <code>false</code>.</dd>
 </dl>

@@ -99,7 +99,7 @@ loadScripts(document, 'script');</script>
  <pre><code>
  palette.applyTo(session.getCodecHelper());     // item and block definitions for the codec
  palette.applyTo(startGamePacket);              // block properties and the block network id mode
- session.sendPacket(palette.voxelShapesPacket());   // before start game
+ session.sendPacket(palette.voxelShapesPacket());   // always, before start game
  session.sendPacket(palette.itemComponentPacket());
  session.sendPacket(palette.creativeContentPacket());
  </code></pre>
@@ -342,12 +342,14 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="data/DataVersion.html" title="class in org.geysermc.paletter.data">DataVersion</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#version()" class="member-name-link">version</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="block/VoxelShapes.html" title="class in org.geysermc.paletter.block">VoxelShapes</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="block/VoxelShapes.html" title="class in org.geysermc.paletter.block">VoxelShapes</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#voxelShapes()" class="member-name-link">voxelShapes</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#voxelShapesPacket()" class="member-name-link">voxelShapesPacket</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">BDS sends this packet to every client, before start game, also when the world has no custom shapes.</div>
+</div>
 </div>
 </div>
 </div>
@@ -975,12 +977,11 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="voxelShapes()">
 <h3>voxelShapes</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="block/VoxelShapes.html" title="class in org.geysermc.paletter.block">VoxelShapes</a></span>&nbsp;<span class="element-name">voxelShapes</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="block/VoxelShapes.html" title="class in org.geysermc.paletter.block">VoxelShapes</a></span>&nbsp;<span class="element-name">voxelShapes</span>()</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the voxel shapes of this palette (the shapes Bedrock culls block faces with): the vanilla ones BDS of this
- version sends, plus the ones the layers define and what Bedrock derives from them for custom blocks. Null if no
- capture of this version is bundled</dd>
+ version sends, plus the ones the layers define and what Bedrock derives from them for custom blocks</dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>
@@ -989,11 +990,12 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="voxelShapesPacket()">
 <h3>voxelShapesPacket</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket</span>&nbsp;<span class="element-name">voxelShapesPacket</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket</span>&nbsp;<span class="element-name">voxelShapesPacket</span>()</div>
+<div class="block">BDS sends this packet to every client, before start game, also when the world has no custom shapes. Send it
+ the same way: always.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the voxel shapes packet to send before start game (protocol 924 and later), identical to the one BDS
- sends for the same content; null if no capture of this version is bundled</dd>
+<dd>the voxel shapes packet to send before start game, identical to the one BDS sends for the same content</dd>
 <dt>Since:</dt>
 <dd>0.1.0</dd>
 </dl>

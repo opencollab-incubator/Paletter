@@ -94,15 +94,13 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Record Components:</dt>
 <dd><code><span id="param-itemSpecificSpeeds">itemSpecificSpeeds</span></code> - Optional array of objects to describe item specific block destroy speeds, each object contains an 'item'
-        ItemDescriptor and a 'destroy_speed' float. Optional array of objects to describe item specific block destroy
-        speeds, each object contains an 'item' ItemDescriptor and a 'destroy_speed' float. This array currently
-        requires UpcomingFeatures experiment to be enabled. Add-on JSON <code>item_specific_speeds</code>. Optional (null:
-        not set).</dd>
+        ItemDescriptor and a 'destroy_speed' float. This array currently requires UpcomingFeatures experiment to be
+        enabled. Add-on JSON <code>item_specific_speeds</code>. Optional (null: not set).</dd>
 <dd><code><span id="param-secondsToDestroy">secondsToDestroy</span></code> - Sets the number of seconds it takes to destroy the block with base equipment. Greater numbers result in
-        greater mining times. Add-on JSON <code>seconds_to_destroy</code>. Default: <code>0</code>. Range [0, inf) (BDS
+        greater mining times. Add-on JSON <code>seconds_to_destroy</code>. Default: <code>0</code>. At least 0 (BDS
         1.26.63.1).</dd>
-<dd><code><span id="param-enabled">enabled</span></code> - The boolean form of the component (add-on JSON &#123;&#64;code "minecraft:destructible_by_mining":
-        &lt;boolean&gt;&#125;). Optional (null: not set).</dd>
+<dd><code><span id="param-enabled">enabled</span></code> - The boolean form of the component (add-on JSON <code>"minecraft:destructible_by_mining": &lt;boolean&gt;</code>).
+        Optional (null: not set).</dd>
 </dl>
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>

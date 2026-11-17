@@ -183,7 +183,9 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="SIMPLE">
 <h3>SIMPLE</h3>
 <div class="member-signature"><span class="modifiers">static final</span>&nbsp;<span class="return-type"><a href="CustomBlock.BlockItem.html" title="interface in org.geysermc.paletter.block">CustomBlock.BlockItem</a></span>&nbsp;<span class="element-name">SIMPLE</span></div>
-<div class="block">A plain block item. The client renders it as its block.</div>
+<div class="block">A plain block item. The client renders it as its block. Like BDS, the palette gives it the runtime id
+ <code>255 - block_id</code> (negative: block ids start at 10000), so it moves when a later layer adds blocks and
+ the palette numbers all custom blocks again.</div>
 </section>
 </li>
 </ul>
@@ -199,7 +201,9 @@ loadScripts(document, 'script');</script>
 <h3>dataDriven</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">@NonNull <a href="CustomBlock.BlockItem.html" title="interface in org.geysermc.paletter.block">CustomBlock.BlockItem</a></span>&nbsp;<span class="element-name">dataDriven</span><wbr><span class="parameters">(@NonNull <a href="../item/component/ItemComponent.html" title="interface in org.geysermc.paletter.item.component">ItemComponent</a>...&nbsp;components)</span></div>
 <div class="block">A data driven item that places the block, e.g. to give it its own icon. The palette adds the
- <code>minecraft:block_placer</code> component for the block unless the components have one.</div>
+ <code>minecraft:block_placer</code> component for the block unless the components have one, with
+ <code>replace_block_item</code>, which BDS needs for an item named like its block. The item has a sequential
+ runtime id like any data driven item.</div>
 </section>
 </li>
 </ul>

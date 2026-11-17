@@ -183,7 +183,8 @@ loadScripts(document, 'script');</script>
  @NonNull <a href="../../block/component/EmbeddedVisual.html" title="class in org.geysermc.paletter.block.component">EmbeddedVisual</a>&nbsp;c)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The geometry of <code>minecraft:embedded_visual</code>: the shape of <a href="#geometry(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.block.component.Geometry)"><code>geometry(org.geysermc.paletter.internal.component.WireContext, org.geysermc.paletter.internal.component.WireNode, org.geysermc.paletter.block.component.Geometry)</code></a> without its four flags, inline,
- with <code>n_way_visual_rotation</code> from BDS 1.26.63.1 on.</div>
+ with <code>n_way_visual_rotation</code> from BDS 1.26.63.1 on, the <code>uv_lock</code> of <code>uvLock(Boolean, List)</code> and the
+ bone visibility of <code>boneVisibility(org.geysermc.paletter.internal.component.WireContext, java.lang.String, java.util.Map&lt;java.lang.String, java.lang.String&gt;)</code>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#formattingCode(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.item.component.HoverTextColor)" class="member-name-link">formattingCode</a><wbr>(@NonNull <a href="WireContext.html" title="class in org.geysermc.paletter.internal.component">WireContext</a>&nbsp;ctx,
@@ -221,6 +222,22 @@ loadScripts(document, 'script');</script>
  query), an entry without known items dropped with its repair amount.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#itemVisualBoneVisibility(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.block.component.ItemVisual.Geometry)" class="member-name-link">itemVisualBoneVisibility</a><wbr>(@NonNull <a href="WireContext.html" title="class in org.geysermc.paletter.internal.component">WireContext</a>&nbsp;ctx,
+ @NonNull <a href="WireNode.html" title="class in org.geysermc.paletter.internal.component">WireNode</a>&nbsp;out,
+ @NonNull <a href="../../block/component/ItemVisual.Geometry.html" title="class in org.geysermc.paletter.block.component">ItemVisual.Geometry</a>&nbsp;c)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block"><code>item_visual.geometry.bone_visibility</code>: the <code>boneVisibility(org.geysermc.paletter.internal.component.WireContext, java.lang.String, java.util.Map&lt;java.lang.String, java.lang.String&gt;)</code> every geometry sends, which no rule over the
+ JSON value fits (BDS parses the expression); the other geometry fields of <code>item_visual</code> have inferred rules.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#itemVisualUvLock(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.block.component.ItemVisual.Geometry)" class="member-name-link">itemVisualUvLock</a><wbr>(@NonNull <a href="WireContext.html" title="class in org.geysermc.paletter.internal.component">WireContext</a>&nbsp;ctx,
+ @NonNull <a href="WireNode.html" title="class in org.geysermc.paletter.internal.component">WireNode</a>&nbsp;out,
+ @NonNull <a href="../../block/component/ItemVisual.Geometry.html" title="class in org.geysermc.paletter.block.component">ItemVisual.Geometry</a>&nbsp;g)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block"><code>geometry.uv_lock</code> of <code>minecraft:item_visual</code>: the value <code>minecraft:geometry</code> sends for its
+ <code>uv_lock</code>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#materialInstances(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.block.component.MaterialInstances)" class="member-name-link">materialInstances</a><wbr>(@NonNull <a href="WireContext.html" title="class in org.geysermc.paletter.internal.component">WireContext</a>&nbsp;ctx,
  @NonNull <a href="WireNode.html" title="class in org.geysermc.paletter.internal.component">WireNode</a>&nbsp;out,
  @NonNull <a href="../../block/component/MaterialInstances.html" title="class in org.geysermc.paletter.block.component">MaterialInstances</a>&nbsp;c)</code></div>
@@ -254,25 +271,32 @@ loadScripts(document, 'script');</script>
  components is not sent at all, which takes its condition leaf with it.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#rgbColor(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.item.component.Dyeable)" class="member-name-link">rgbColor</a><wbr>(@NonNull <a href="WireContext.html" title="class in org.geysermc.paletter.internal.component">WireContext</a>&nbsp;ctx,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceBlockItem(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.item.component.BlockPlacer)" class="member-name-link">replaceBlockItem</a><wbr>(@NonNull <a href="WireContext.html" title="class in org.geysermc.paletter.internal.component">WireContext</a>&nbsp;ctx,
  @NonNull <a href="WireNode.html" title="class in org.geysermc.paletter.internal.component">WireNode</a>&nbsp;out,
- @NonNull <a href="../../item/component/Dyeable.html" title="class in org.geysermc.paletter.item.component">Dyeable</a>&nbsp;c)</code></div>
+ @NonNull <a href="../../item/component/BlockPlacer.html" title="class in org.geysermc.paletter.item.component">BlockPlacer</a>&nbsp;c)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block"><code>minecraft:dyeable</code> default_color: hex or [r, g, b] to a list of three ints; white by default.</div>
+<div class="block"><code>block_placer.replace_block_item</code>: BDS takes it only for the block that has the item's own identifier.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#selectionBox(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.block.component.SelectionBox)" class="member-name-link">selectionBox</a><wbr>(@NonNull <a href="WireContext.html" title="class in org.geysermc.paletter.internal.component">WireContext</a>&nbsp;ctx,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#rgbColor(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.item.component.Dyeable)" class="member-name-link">rgbColor</a><wbr>(@NonNull <a href="WireContext.html" title="class in org.geysermc.paletter.internal.component">WireContext</a>&nbsp;ctx,
+ @NonNull <a href="WireNode.html" title="class in org.geysermc.paletter.internal.component">WireNode</a>&nbsp;out,
+ @NonNull <a href="../../item/component/Dyeable.html" title="class in org.geysermc.paletter.item.component">Dyeable</a>&nbsp;c)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block"><code>minecraft:dyeable</code> default_color: hex or [r, g, b] to a list of three ints; white by default.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#selectionBox(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.block.component.SelectionBox)" class="member-name-link">selectionBox</a><wbr>(@NonNull <a href="WireContext.html" title="class in org.geysermc.paletter.internal.component">WireContext</a>&nbsp;ctx,
  @NonNull <a href="WireNode.html" title="class in org.geysermc.paletter.internal.component">WireNode</a>&nbsp;out,
  @NonNull <a href="../../block/component/SelectionBox.html" title="class in org.geysermc.paletter.block.component">SelectionBox</a>&nbsp;c)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block"><code>minecraft:selection_box</code>: <code>enabled</code> and the box as origin/size in JSON units, always all three; the
  false form keeps the full cube.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#useAnimationId(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.item.component.UseAnimation)" class="member-name-link">useAnimationId</a><wbr>(@NonNull <a href="WireContext.html" title="class in org.geysermc.paletter.internal.component">WireContext</a>&nbsp;ctx,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#useAnimationId(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.item.component.UseAnimation)" class="member-name-link">useAnimationId</a><wbr>(@NonNull <a href="WireContext.html" title="class in org.geysermc.paletter.internal.component">WireContext</a>&nbsp;ctx,
  @NonNull <a href="WireNode.html" title="class in org.geysermc.paletter.internal.component">WireNode</a>&nbsp;out,
  @NonNull <a href="../../item/component/UseAnimation.html" title="class in org.geysermc.paletter.item.component">UseAnimation</a>&nbsp;c)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block"><code>minecraft:use_animation</code>: the component keeps the name, <code>item_properties.use_animation</code> numbers it
  (eat 1 and spear 6 captured from BDS 1.26.63.1, the others as vanilla items send them); unknown names are 0.</div>
 </div>
@@ -318,8 +342,7 @@ loadScripts(document, 'script');</script>
 <div class="block"><code>minecraft:geometry</code>, in the shape every BDS 1.26.63.1 capture shows: the description fields plus four flags
  BDS always sends as 0 (<code>ignoreGeometryForIsSolid</code>, <code>isV1Fullblock</code>, <code>needsLegacyTopRotation</code>,
  <code>useBlockTypeLightAbsorption</code>), unset fields as BDS sends them (<code>culling</code> "", <code>culling_layer</code>
- undefined). Bone visibility is a Molang expression, kept as a string like BDS does; the constants
- <code>true</code>/<code>false</code> become <code>"1.000000"</code>/<code>"0.000000"</code>, which no rule over the JSON value fits.
+ undefined). Bone visibility is <code>boneVisibility(org.geysermc.paletter.internal.component.WireContext, java.lang.String, java.util.Map&lt;java.lang.String, java.lang.String&gt;)</code>.
  <p>
  BDS sends <code>n_way_visual_rotation</code> from 1.26.63.1 on, every axis, "" for an axis not set. The captures of
  BDS 1.26.36.1 to 1.26.52.3 rejected the base of the component, so their shape is this one without it.</div>
@@ -332,8 +355,30 @@ loadScripts(document, 'script');</script>
  @NonNull <a href="WireNode.html" title="class in org.geysermc.paletter.internal.component">WireNode</a>&nbsp;out,
  @NonNull <a href="../../block/component/EmbeddedVisual.html" title="class in org.geysermc.paletter.block.component">EmbeddedVisual</a>&nbsp;c)</span></div>
 <div class="block">The geometry of <code>minecraft:embedded_visual</code>: the shape of <a href="#geometry(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.block.component.Geometry)"><code>geometry(org.geysermc.paletter.internal.component.WireContext, org.geysermc.paletter.internal.component.WireNode, org.geysermc.paletter.block.component.Geometry)</code></a> without its four flags, inline,
- with <code>n_way_visual_rotation</code> from BDS 1.26.63.1 on. Unverified: BDS rejected every <code>embedded_visual</code>
- variant of the captures, so this is the documented shape with the wire keys of <code>minecraft:geometry</code>.</div>
+ with <code>n_way_visual_rotation</code> from BDS 1.26.63.1 on, the <code>uv_lock</code> of <code>uvLock(Boolean, List)</code> and the
+ bone visibility of <code>boneVisibility(org.geysermc.paletter.internal.component.WireContext, java.lang.String, java.util.Map&lt;java.lang.String, java.lang.String&gt;)</code>. The captures of BDS 1.26.36.1 to 1.26.70.24 bear it out.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="itemVisualBoneVisibility(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.block.component.ItemVisual.Geometry)">
+<h3>itemVisualBoneVisibility</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">itemVisualBoneVisibility</span><wbr><span class="parameters">(@NonNull <a href="WireContext.html" title="class in org.geysermc.paletter.internal.component">WireContext</a>&nbsp;ctx,
+ @NonNull <a href="WireNode.html" title="class in org.geysermc.paletter.internal.component">WireNode</a>&nbsp;out,
+ @NonNull <a href="../../block/component/ItemVisual.Geometry.html" title="class in org.geysermc.paletter.block.component">ItemVisual.Geometry</a>&nbsp;c)</span></div>
+<div class="block"><code>item_visual.geometry.bone_visibility</code>: the <code>boneVisibility(org.geysermc.paletter.internal.component.WireContext, java.lang.String, java.util.Map&lt;java.lang.String, java.lang.String&gt;)</code> every geometry sends, which no rule over the
+ JSON value fits (BDS parses the expression); the other geometry fields of <code>item_visual</code> have inferred rules.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="itemVisualUvLock(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.block.component.ItemVisual.Geometry)">
+<h3>itemVisualUvLock</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">itemVisualUvLock</span><wbr><span class="parameters">(@NonNull <a href="WireContext.html" title="class in org.geysermc.paletter.internal.component">WireContext</a>&nbsp;ctx,
+ @NonNull <a href="WireNode.html" title="class in org.geysermc.paletter.internal.component">WireNode</a>&nbsp;out,
+ @NonNull <a href="../../block/component/ItemVisual.Geometry.html" title="class in org.geysermc.paletter.block.component">ItemVisual.Geometry</a>&nbsp;g)</span></div>
+<div class="block"><code>geometry.uv_lock</code> of <code>minecraft:item_visual</code>: the value <code>minecraft:geometry</code> sends for its
+ <code>uv_lock</code>. The bones are sent in the order of <code>bdsBoneOrder(java.util.List&lt;java.lang.String&gt;)</code>, which depends on the hash of each name: a
+ rule fitted to the captured names would only order those. The captures of BDS 1.26.36.1 to 1.26.70.24 send
+ <code>true</code> as 1, a list as its bones, and take both for the full block geometry too.</div>
 </section>
 </li>
 <li>
@@ -367,7 +412,7 @@ loadScripts(document, 'script');</script>
  @NonNull <a href="../../block/component/EmbeddedVisual.html" title="class in org.geysermc.paletter.block.component">EmbeddedVisual</a>&nbsp;c)</span></div>
 <div class="block"><code>minecraft:embedded_visual</code>'s material instances: a whole <code>minecraft:material_instances</code> object, inline
  per face with its flags as bytes. Setting it also fills in the sibling geometry's defaults, so correlating one field
- at a time cannot separate the two. Unverified: BDS rejected every <code>embedded_visual</code> variant of the captures.</div>
+ at a time cannot separate the two. The captures of BDS 1.26.36.1 to 1.26.70.24 bear out three accepted variants.</div>
 </section>
 </li>
 <li>
@@ -420,6 +465,19 @@ loadScripts(document, 'script');</script>
  <code>minecraft:ice_crystal</code> and <code>minecraft:icicle</code> as <code>""</code>, that of 1.26.63.1 as named, so the leaf
  depends on the version's blocks, not on the JSON value. A name of another namespace is a custom block, which may be
  registered after the item, so it is sent as it is.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="replaceBlockItem(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.item.component.BlockPlacer)">
+<h3>replaceBlockItem</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">replaceBlockItem</span><wbr><span class="parameters">(@NonNull <a href="WireContext.html" title="class in org.geysermc.paletter.internal.component">WireContext</a>&nbsp;ctx,
+ @NonNull <a href="WireNode.html" title="class in org.geysermc.paletter.internal.component">WireNode</a>&nbsp;out,
+ @NonNull <a href="../../item/component/BlockPlacer.html" title="class in org.geysermc.paletter.item.component">BlockPlacer</a>&nbsp;c)</span></div>
+<div class="block"><code>block_placer.replace_block_item</code>: BDS takes it only for the block that has the item's own identifier. For
+ any other block it logs "Item identifier ... does not match the block identifier ... Cannot replace the block item"
+ and sends <code>replaceBlockItem</code> 0, so the leaf follows two fields and the item's identifier, which no rule over
+ the field's value fits. The captures of BDS 1.26.36.1 to 1.26.70.24 send 1 for <code>true</code> with a block of the
+ item's identifier and 0 for <code>true</code> with <code>minecraft:dirt</code>.</div>
 </section>
 </li>
 <li>

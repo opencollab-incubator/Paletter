@@ -93,7 +93,8 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>Record Components:</dt>
-<dd><code><span id="param-max">max</span></code> - Add-on JSON <code>max</code>. Default: <code>100</code>. Range [0, 100] (BDS 1.26.63.1).</dd>
+<dd><code><span id="param-max">max</span></code> - Add-on JSON <code>max</code>. Default: <code>100</code>. Range [0, 100] (BDS 1.26.63.1). Not below <code>min</code> (BDS
+        1.26.63.1).</dd>
 <dd><code><span id="param-min">min</span></code> - Add-on JSON <code>min</code>. Default: <code>100</code>. Range [0, 100] (BDS 1.26.63.1).</dd>
 </dl>
 <dl class="notes">
@@ -103,9 +104,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">Durability.DamageChance</span>(int&nbsp;max, int&nbsp;min)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></span></div>
-<div class="block">Specifies the percentage chance of this item losing durability. Specifies the percentage chance of this item
- losing durability. Default is set to 100. Defined as an int range with min and max value. Check that the
- limits imposed on the range (minimum, maximum and maximum distance between values) are respected.</div>
+<div class="block">Specifies the percentage chance of this item losing durability. Default is set to 100. Defined as an int range
+ with min and max value. Check that the limits imposed on the range (minimum, maximum and maximum distance
+ between values) are respected.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

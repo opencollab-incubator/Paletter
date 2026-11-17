@@ -219,7 +219,7 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the vanilla voxel shapes of the versions; the bundled source reads <code>voxel_shapes.nbt</code>, the default
- has none</dd>
+ has none. A palette of a version without them cannot be built</dd>
 </dl>
 </section>
 </li>
@@ -239,8 +239,10 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">@NonNull <a href="PaletteDataSource.html" title="interface in org.geysermc.paletter.data">PaletteDataSource</a></span>&nbsp;<span class="element-name">directory</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;directory)</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>directory</code> - a directory in the bundled format: <code>versions.txt</code>, one <code>&lt;name&gt;.nbt</code> per version, and
-                  optionally <code>properties.nbt</code>, <code>behaviour.nbt</code>, <code>voxel_shapes.nbt</code> and <code>renames.txt</code>. Read when first needed</dd>
+<dd><code>directory</code> - a directory in the bundled format: <code>versions.txt</code>, one <code>&lt;name&gt;.nbt</code> per version,
+                  <code>voxel_shapes.nbt</code> with the shapes of every version (a palette without them fails to build),
+                  and optionally <code>properties.nbt</code>, <code>behaviour.nbt</code> and <code>renames.txt</code>. Read when first
+                  needed</dd>
 <dt>Returns:</dt>
 <dd>a source reading that directory</dd>
 <dt>Since:</dt>

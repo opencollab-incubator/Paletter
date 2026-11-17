@@ -93,13 +93,11 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>Record Components:</dt>
-<dd><code><span id="param-movementType">movementType</span></code> - How the block reacts to being pushed by another block like a piston. How the block reacts to being pushed by
-        another block like a piston. The options are: "push_pull" - The default value for this field. The block will
-        be pushed and pulled by a piston. "push" - The block will only be pulled by a piston and will ignore a sticky
-        piston. "popped" - The block is destroyed when moved by a piston. "immovable" - The block is unaffected by a
-        piston. Add-on JSON <code>movement_type</code>. Required.</dd>
-<dd><code><span id="param-sticky">sticky</span></code> - How the block should handle adjacent blocks around it when being pushed by another block like a piston. How
-        the block should handle adjacent blocks around it when being pushed by another block like a piston. The
+<dd><code><span id="param-movementType">movementType</span></code> - How the block reacts to being pushed by another block like a piston. The options are: "push_pull" - The
+        default value for this field. The block will be pushed and pulled by a piston. "push" - The block will only be
+        pulled by a piston and will ignore a sticky piston. "popped" - The block is destroyed when moved by a piston.
+        "immovable" - The block is unaffected by a piston. Add-on JSON <code>movement_type</code>. Required.</dd>
+<dd><code><span id="param-sticky">sticky</span></code> - How the block should handle adjacent blocks around it when being pushed by another block like a piston. The
         options are: "same" - Adjacent blocks to this block will be moved when moved. This excludes other blocks with
         the "same" property. This will only work with the movement_type: "push_pull". "none" - The default and will
         not move adjacent blocks. Add-on JSON <code>sticky</code>. Default: <code>"none"</code>.</dd>
