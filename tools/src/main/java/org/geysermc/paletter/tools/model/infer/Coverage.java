@@ -37,12 +37,24 @@ public final class Coverage {
         results.put(component.id(), result);
     }
 
+    /** What BDS did with a component: its inferred status, else why there is none ({@code skipped}, {@code pending capture} for one whose script variants are not captured yet, {@code not tested}). */
+    String status(Component c) {
+        JsonObject r = results.get(c.id());
+        if (r != null) {
+            return r.get("status").getAsString();
+        }
+        if (fixtures.skip(c.id(), null) != null) {
+            return "skipped";
+        }
+        return fixtures.scriptVariants(c.id()).isEmpty() ? "not tested" : "pending capture";
+    }
+
     private Map<String, Integer> componentCounts() {
         Map<String, Integer> counts = new LinkedHashMap<>();
         for (Component c : model.components()) {
             counts.merge("documented", 1, Integer::sum);
             JsonObject r = results.get(c.id());
-            String status = r == null ? "not tested" : r.get("status").getAsString();
+            String status = status(c);
             counts.merge(status, 1, Integer::sum);
             if (r != null && (status.equals("sent") || status.equals("server-only"))) {
                 counts.merge("accepted by BDS", 1, Integer::sum);
@@ -144,7 +156,7 @@ public final class Coverage {
         md.append("\n## Per component\n\n| component | docs status | BDS | wire | fields: inferred / partial / unresolved+hand / dropped / rejected / total |\n|---|---|---|---|---|\n");
         for (Component c : model.components()) {
             JsonObject r = results.get(c.id());
-            String status = r == null ? (fixtures.skip(c.id(), null) != null ? "skipped" : "not tested") : r.get("status").getAsString();
+            String status = status(c);
             String wire = r == null || !r.has("wire") ? "" : String.join(", ", r.getAsJsonArray("wire").asList().stream().map(JsonElement::getAsString).toList());
             Map<String, Integer> f = new TreeMap<>();
             if (r != null && r.has("fields")) {

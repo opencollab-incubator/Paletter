@@ -168,7 +168,10 @@ When a component field cannot be sent in a palette's protocol, it is left out an
 Compiling a palette never fails because of the Bedrock version.
 
 `MiningSpeed`, `FrameCount`, `RenderOffsets` and `OnPlayerPlacing` are hand-written, not generated. They are wire fields
-Geyser needs that have no add-on JSON form, so there is no BDS capture to verify them against. `RenderOffsets` and
+Geyser needs that have no add-on JSON form, so there is no BDS capture to verify them against.
+`ScriptHooks` (block `minecraft:custom_components`: whether any script component handles interaction and placement) and
+`UseOnHook` (item `minecraft:publisher_on_use_on`) are hand-written too: the add-on JSON of those is component names, which
+never reach the wire; the spec capture will check them against BDS after the next recapture. `RenderOffsets` and
 `OnPlayerPlacing` are retired from the add-on format; `MiningSpeed` and `FrameCount` are `@Experimental`.
 
 ## The creative inventory

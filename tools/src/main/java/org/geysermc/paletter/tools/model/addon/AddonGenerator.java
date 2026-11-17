@@ -40,6 +40,9 @@ public final class AddonGenerator {
     public static final String NAMESPACE = "paletter";
     public static final String BP_UUID = "a1e5c0de-0000-4000-8000-00000000d001";
     public static final String RP_UUID = "a1e5c0de-0000-4000-8000-00000000e001";
+    /** The line the script of the add-on prints once it has registered its components; a capture without it did not load the script. */
+    public static final String SCRIPT_MARKER = "PALETTER-COMPONENTS";
+    private static final String CUSTOM_COMPONENTS = "minecraft:custom_components";
 
     private final Model model;
     private final Fixtures fixtures;
@@ -51,7 +54,7 @@ public final class AddonGenerator {
     /**
      * @param identifier the item or block identifier
      * @param role       {@code control} (companions only, or the minimal accepted pair for companions that need each other),
-     *                   {@code base}, {@code form} (a whole value of another JSON type), {@code field} (one field changed),
+     *                   {@code base}, {@code script} (script custom components bound, see {@link #scriptVariants}), {@code form} (a whole value of another JSON type), {@code field} (one field changed),
      *                   {@code omit} (one base field removed), {@code probe} (one key the model does not know added,
      *                   see {@link #probe}), {@code format} (the base or one field at another format version, see
      *                   {@link #atFormat})
@@ -205,6 +208,10 @@ public final class AddonGenerator {
                 continue;
             }
             variant(c, "control", "", "control", null, control(c));
+            if (c.name().equals(CUSTOM_COMPONENTS)) {
+                scriptVariants(c); // no fields: the docs model's form is not one of the two BDS takes
+                continue;
+            }
             Shrunk shrunkBase = shrunk.get(Shrunk.key("base", c.id(), "", "base"));
             JsonElement base = shrunkBase != null ? shrunkBase.json().deepCopy() : base(c);
             variant(c, "base", "", "base", null, base);
@@ -243,6 +250,21 @@ public final class AddonGenerator {
                     }
                 }
             }
+            scriptVariants(c); // the placers: with a script component that has onUseOn
+        }
+    }
+
+    /**
+     * Adds the variants of {@code scriptComponents} for a component (role {@code script}). An object value is a map of the item's or
+     * block's own members (components, {@code permutations}): the new form of {@code custom_components}, or a placer's variant that
+     * adds a script component next to the placer. An array is the old form, which stays under the component's name. The other roles
+     * keep the value under the component's name whatever its shape (the format sweep's {@code {}} for {@code custom_components}).
+     */
+    private void scriptVariants(Component c) {
+        for (JsonObject entry : fixtures.scriptVariants(c.id())) {
+            JsonElement json = entry.get("json");
+            String format = entry.has("format") ? entry.get("format").getAsString() : null;
+            variant(c, "script", "", json.toString(), null, json, format);
         }
     }
 
@@ -287,7 +309,7 @@ public final class AddonGenerator {
                 }
             }
         }
-        JsonObject definition = definition(c, identifier, json, format == null ? formatVersion : format);
+        JsonObject definition = definition(c, identifier, json, format == null ? formatVersion : format, role.equals("script"));
         String file = (c.kind().equals("block") ? "blocks/" : "items/") + identifier.substring(NAMESPACE.length() + 1) + ".json";
         Variant variant = new Variant(identifier, c.kind(), file, c.id(), role, path, label, value, json, definition, format,
             links == null ? List.of() : links.paths(), companion);
@@ -415,10 +437,11 @@ public final class AddonGenerator {
      * component and the JSON it was given), rebuilt as the capture's add-on had it, so the capture stays valid after the
      * model moved on.
      *
+     * @param role the role of the variant: a {@code script} one holds a map of components, any other the component's own value
      * @param json the component's JSON of the variant ({@code null} for a control without the component)
      */
-    public JsonObject definitionOf(String componentId, String identifier, JsonElement json) {
-        return definition(component(componentId), identifier, json, formatVersion);
+    public JsonObject definitionOf(String componentId, String identifier, String role, JsonElement json) {
+        return definition(component(componentId), identifier, json, formatVersion, role.equals("script"));
     }
 
     /** Adds the base of a component, which the probes of its keys are compared with. */
@@ -515,7 +538,7 @@ public final class AddonGenerator {
     }
 
     /** The whole item or block file of a variant. */
-    private JsonObject definition(Component c, String identifier, JsonElement json, String format) {
+    private JsonObject definition(Component c, String identifier, JsonElement json, String format, boolean script) {
         JsonObject description = new JsonObject();
         description.addProperty("identifier", identifier);
         JsonObject menu = new JsonObject();
@@ -527,7 +550,19 @@ public final class AddonGenerator {
         JsonArray permutations = null;
         if (json != null) {
             switch (c.category()) {
-                case "component" -> components.add(c.name(), json);
+                case "component" -> {
+                    if (script && json.isJsonObject()) {
+                        for (Map.Entry<String, JsonElement> e : json.getAsJsonObject().entrySet()) {
+                            if (e.getKey().equals("permutations")) {
+                                permutations = e.getValue().getAsJsonArray();
+                            } else {
+                                components.add(e.getKey(), e.getValue());
+                            }
+                        }
+                    } else {
+                        components.add(c.name(), json);
+                    }
+                }
                 case "description" -> {
                     if (json.isJsonObject()) {
                         description.remove("menu_category");
@@ -1527,11 +1562,19 @@ public final class AddonGenerator {
             }
         }
         FixedAddons.writeLootTable(bp);
-        json(bp.resolve("manifest.json"), JsonParser.parseString("""
+        JsonObject manifest = JsonParser.parseString("""
             {"format_version": 2, "header": {"name": "Paletter spec capture", "description": "Generated from data/model: every documented component field, varied",
               "uuid": "%s", "version": [1, 0, 0], "min_engine_version": %s},
              "modules": [{"type": "data", "uuid": "a1e5c0de-0000-4000-8000-00000000d002", "version": [1, 0, 0]}],
-             "dependencies": [{"uuid": "%s", "version": [1, 0, 0]}]}""".formatted(BP_UUID, minEngine(formatVersion), RP_UUID)));
+             "dependencies": [{"uuid": "%s", "version": [1, 0, 0]}]}""".formatted(BP_UUID, minEngine(formatVersion), RP_UUID)).getAsJsonObject();
+        if (fixtures.hasScriptComponents()) {
+            manifest.getAsJsonArray("modules").add(JsonParser.parseString("""
+                {"type": "script", "language": "javascript", "uuid": "a1e5c0de-0000-4000-8000-00000000d003", "entry": "scripts/main.js", "version": [1, 0, 0]}"""));
+            manifest.getAsJsonArray("dependencies").add(JsonParser.parseString("""
+                {"module_name": "@minecraft/server", "version": "%s"}""".formatted(fixtures.scriptComponents().get("module").getAsString())));
+            writeScript(bp.resolve("scripts/main.js"));
+        }
+        json(bp.resolve("manifest.json"), manifest);
         json(rp.resolve("manifest.json"), JsonParser.parseString("""
             {"format_version": 2, "header": {"name": "Paletter spec capture resources", "description": "Textures and geometry for the spec capture",
               "uuid": "%s", "version": [1, 0, 0], "min_engine_version": %s},
@@ -1540,6 +1583,48 @@ public final class AddonGenerator {
         json(out.resolve("variants.json"), manifest());
         long items = variants.stream().filter(v -> v.kind().equals("item")).count();
         System.out.println(items + " items, " + (variants.size() - items) + " blocks (" + model.components().size() + " components) -> " + out);
+    }
+
+    /**
+     * The script of the add-on: on startup it registers every component of {@code scriptComponents} with an empty function per
+     * callback (a component's name and parameters never reach the wire, only which callbacks it has), then prints {@link #SCRIPT_MARKER}.
+     */
+    private void writeScript(Path file) throws IOException {
+        JsonObject tables = scriptTables();
+        Files.createDirectories(file.getParent());
+        Files.writeString(file, """
+            // Generated by AddonGenerator from the scriptComponents of data/model/fixtures.json: do not edit.
+            import { system } from "@minecraft/server";
+
+            const tables = %s;
+
+            system.beforeEvents.startup.subscribe(event => {
+                const registries = { block: event.blockComponentRegistry, item: event.itemComponentRegistry };
+                let count = 0;
+                for (const [kind, table] of Object.entries(tables)) {
+                    for (const [name, callbacks] of Object.entries(table)) {
+                        registries[kind].registerCustomComponent(name, Object.fromEntries(callbacks.map(callback => [callback, () => {}])));
+                        count++;
+                    }
+                }
+                console.warn("%s " + count);
+            });
+            """.formatted(Model.GSON.toJson(tables), SCRIPT_MARKER), StandardCharsets.UTF_8);
+    }
+
+    private JsonObject scriptTables() {
+        JsonObject tables = new JsonObject();
+        tables.add("block", fixtures.scriptComponents().get("block"));
+        tables.add("item", fixtures.scriptComponents().get("item"));
+        return tables;
+    }
+
+    /** The line the script prints when it has registered every component of the table (null without a script). */
+    public String scriptMarker() {
+        if (!fixtures.hasScriptComponents()) {
+            return null;
+        }
+        return SCRIPT_MARKER + " " + scriptTables().entrySet().stream().mapToInt(e -> e.getValue().getAsJsonObject().size()).sum();
     }
 
     /** {@code variants.json}: what each identifier tests. */

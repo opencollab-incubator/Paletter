@@ -230,6 +230,8 @@
     "block:minecraft:collision_box:[].max"
   ],
   "handWritten": {
+    "block:minecraft:custom_components": "the wire-only ScriptHooks (the flags BDS sends for script custom components; names and parameters never reach the wire)",
+    "item:minecraft:custom_components": "the wire-only UseOnHook (minecraft:publisher_on_use_on, which BDS adds for a script component with onUseOn)",
     "item:minecraft:render_offsets": "the wire-only RenderOffsets (rejected by BDS, still sent for legacy content)"
   },
   "classes": {

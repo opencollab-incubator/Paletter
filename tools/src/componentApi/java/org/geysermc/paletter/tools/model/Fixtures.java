@@ -177,6 +177,29 @@ public final class Fixtures {
         return skip.has(key) ? skip.get(key).getAsString() : null;
     }
 
+    /** Whether there is a {@code scriptComponents} table; without one the add-on has no script and no script variants. */
+    public boolean hasScriptComponents() {
+        return json.has("scriptComponents");
+    }
+
+    /** The script custom components of the spec add-on ({@code scriptComponents}): the module version, the components, the variants. */
+    public JsonObject scriptComponents() {
+        return json.getAsJsonObject("scriptComponents");
+    }
+
+    /** The variants that bind script custom components under a component (by id), in file order; empty for most. */
+    public List<JsonObject> scriptVariants(String component) {
+        List<JsonObject> out = new ArrayList<>();
+        if (!hasScriptComponents()) {
+            return out;
+        }
+        JsonObject variants = scriptComponents().getAsJsonObject("variants");
+        if (variants.has(component)) {
+            variants.getAsJsonArray(component).forEach(v -> out.add(v.getAsJsonObject()));
+        }
+        return out;
+    }
+
     /** Fields only set in their own variants, never in a base (a docs name BDS does not take would reject every variant). */
     public boolean probeOnly(String component, String path) {
         return json.has("probeOnly") && json.getAsJsonArray("probeOnly").contains(new com.google.gson.JsonPrimitive(component + ":" + path));

@@ -23,7 +23,8 @@ What the captures show but no field explains:
 | accepted by BDS | 87 |
 | rejected | 14 |
 | server-only | 12 |
-| not tested | 4 |
+| pending capture | 2 |
+| skipped | 2 |
 
 `sent`: the component changes the wire; `server-only`: accepted, nothing on the wire; `rejected`: BDS rejects every variant; `untestable`: its companions were rejected.
 
@@ -96,7 +97,7 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | `block:minecraft:collision_box` | active (exp.) | sent | minecraft:collision_box | 2 / 0 / 0 / 0 / 4 / 6 |
 | `block:minecraft:connection_rule` | active (exp.) | sent | minecraft:connection_rule | 2 / 0 / 0 / 0 / 0 / 2 |
 | `block:minecraft:crafting_table` | active (exp.) | sent | minecraft:crafting_table | 2 / 0 / 0 / 0 / 0 / 2 |
-| `block:minecraft:custom_components` | deprecated | skipped |  | 0 / 0 / 0 / 0 / 0 / 0 |
+| `block:minecraft:custom_components` | deprecated | pending capture |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `block:minecraft:destroy_time` | legacy | rejected |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `block:minecraft:destructible_by_explosion` | active | server-only |  | 0 / 0 / 0 / 1 / 0 / 1 |
 | `block:minecraft:destructible_by_mining` | active | sent | minecraft:destructible_by_mining | 4 / 0 / 0 / 0 / 2 / 6 |
@@ -147,7 +148,7 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | `item:minecraft:chargeable` | deprecated | rejected |  | 0 / 0 / 0 / 0 / 2 / 2 |
 | `item:minecraft:compostable` | active | sent | minecraft:compostable | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:minecraft:cooldown` | active | sent | minecraft:cooldown | 3 / 0 / 0 / 0 / 0 / 3 |
-| `item:minecraft:custom_components` | deprecated | skipped |  | 0 / 0 / 0 / 0 / 0 / 0 |
+| `item:minecraft:custom_components` | deprecated | pending capture |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `item:minecraft:damage` | active | sent | item_properties.damage, minecraft:damage | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:minecraft:damage_absorption` | active | server-only |  | 0 / 0 / 0 / 1 / 0 / 1 |
 | `item:minecraft:digger` | active | sent | minecraft:digger | 6 / 0 / 1 / 0 / 0 / 7 |

@@ -161,7 +161,14 @@ class ComponentConformanceTest {
      */
     private static final Set<String> RECAPTURE_PENDING = Set.of("item:minecraft:enchantable", "item:minecraft:hover_text_color",
         "item:minecraft:use_animation", "item:minecraft:block_placer", "item:minecraft:entity_placer", "item:minecraft:digger",
-        "block:minecraft:placement_filter", "block:minecraft:collision_box", "block:minecraft:selection_box", "block:minecraft:transformation");
+        "block:minecraft:placement_filter", "block:minecraft:collision_box", "block:minecraft:selection_box", "block:minecraft:transformation",
+        // the script custom components (control included) are not in the committed captures yet
+        "block:minecraft:custom_components", "item:minecraft:custom_components");
+
+    /** Not in the committed captures yet: the components of {@link #RECAPTURE_PENDING}, and every script variant (the placers' ones too). */
+    private static boolean pending(String component, String role) {
+        return RECAPTURE_PENDING.contains(component) || role.equals("script");
+    }
 
     private void conformance(Path capture, boolean newest) throws IOException {
         JsonObject meta = JsonParser.parseString(Files.readString(capture.resolve("capture.json"))).getAsJsonObject();
@@ -176,8 +183,8 @@ class ComponentConformanceTest {
         AddonGenerator generator = new AddonGenerator(Model.read(MODEL.resolve("components.json")), fixtures,
             meta.get("formatVersion").getAsString(), AddonGenerator.Shrunk.of(manifest));
         if (newest) {
-            List<JsonObject> captured = Arrays.stream(recorded).filter(r -> !RECAPTURE_PENDING.contains(r.get("component").getAsString())).toList();
-            List<AddonGenerator.Variant> generated = generator.variants().stream().filter(v -> !RECAPTURE_PENDING.contains(v.componentId())).toList();
+            List<JsonObject> captured = Arrays.stream(recorded).filter(r -> !pending(r.get("component").getAsString(), r.has("role") ? r.get("role").getAsString() : "")).toList();
+            List<AddonGenerator.Variant> generated = generator.variants().stream().filter(v -> !pending(v.componentId(), v.role())).toList();
             assertEquals(captured.size(), generated.size(), "the add-on generator no longer produces the captured variants");
             for (int i = 0; i < captured.size(); i++) {
                 AddonGenerator.Variant v = generated.get(i);
@@ -211,6 +218,7 @@ class ComponentConformanceTest {
         Set<String> components = new TreeSet<>();
         Set<String> compared = new TreeSet<>();
         int rejected = 0;
+        int oldForm = 0;
         for (JsonObject entry : recorded) {
             String identifier = entry.get("identifier").getAsString();
             boolean block = entry.get("kind").getAsString().equals("block");
@@ -220,12 +228,16 @@ class ComponentConformanceTest {
                 rejected++; // rejected by BDS: nothing to conform to
                 continue;
             }
+            if (component.endsWith(":minecraft:custom_components") && entry.get("json").isJsonArray()) {
+                oldForm++; // accepted, in the old list-of-names form: the API deliberately offers only the new form
+                continue;
+            }
             NbtMap expected = block ? blocks.get(identifier) : items.get(identifier);
             if (expected == null) {
                 outcomes.add(new Outcome(identifier, component, "missing", "BDS neither sent it nor logged an error for it"));
                 continue;
             }
-            outcomes.add(check(identifier, component, block, generator.definitionOf(component, identifier, entry.get("json")), expected, data));
+            outcomes.add(check(identifier, component, block, generator.definitionOf(component, identifier, entry.has("role") ? entry.get("role").getAsString() : "", entry.get("json")), expected, data));
             // The control variant is accepted whatever the component is, so it says nothing of it; the base one sets the component
             String role = entry.has("role") ? entry.get("role").getAsString() : "";
             if (!role.equals("control")) {
@@ -248,7 +260,7 @@ class ComponentConformanceTest {
         }
         StringBuilder report = new StringBuilder("# Component conformance against " + capture.getParent().getFileName() + " (protocol " + protocol + ")\n\n");
         report.append("Accepted variants: ").append(outcomes.size()).append(". ").append(totals).append(". Rejected by BDS (content log ERROR, not compared): ")
-            .append(rejected).append("\n\n");
+            .append(rejected).append(". Accepted old-form custom_components (not in the API, not compared): ").append(oldForm).append("\n\n");
         report.append("| component | pass | fail | unbindable | not generated | missing |\n|---|---|---|---|---|---|\n");
         perComponent.forEach((c, n) -> report.append("| `").append(c).append("` | ").append(n[0]).append(" | ").append(n[1]).append(" | ")
             .append(n[2]).append(" | ").append(n[3]).append(" | ").append(n[4]).append(" |\n"));

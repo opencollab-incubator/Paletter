@@ -483,8 +483,9 @@ list cannot drift from the data. `--strict` fails on any gap; it is opt-in, as s
 
 ### Script custom components
 
-Captured with a probe add-on on 1.26.63.1 (a script module that registers one custom component per callback, used by
-blocks and items in both JSON forms), and matching what `whitebox` reads from the code:
+Read once from a probe add-on on 1.26.63.1 (a script module that registers one custom component per callback, used by
+blocks and items in both JSON forms; its raw data is not in the repo) and matching what `whitebox` reads from the code.
+The spec add-on now captures it (below); until a recapture has run, treat these rules as documented, not captured:
 
 - Blocks: `minecraft:custom_components` is sent as three bytes, `hasPlayerInteract`, `hasPlayerPlacing` and
   `isV1Component`. Component names and parameters are never sent.
@@ -497,10 +498,16 @@ blocks and items in both JSON forms), and matching what `whitebox` reads from th
 - Items: the custom components component is not sent. A component with an `onUseOn` callback makes BDS add
   `minecraft:publisher_on_use_on: {autoSucceedOnClient: 1b}`; no other callback changes the item's data.
 
-To capture this in the pipeline, the spec add-on needs a script module like the one of `data/addons/dump`: it
-registers, on `system.beforeEvents.startup`, one block component per callback, one without callbacks and one with all,
-and the same for items; the blocks and items use them in the old form at format 1.21.80 and in the new form at the
-current format, plus a block with two components. `fixtures.json` skips both components until then.
+The spec add-on has a script module (`@minecraft/server` 2.0.0, one pinned version for every build) that registers, on
+`system.beforeEvents.startup`, the components of `scriptComponents` in `fixtures.json`: per kind one without callbacks,
+one per callback BDS is documented to put on the wire, and one with every other callback of that module version (names
+from its `index.d.ts`). The variants (role `script`) use them in the old form at format 1.21.80 and in the new form
+at the current format, with two components on one block, with parameters, in a permutation, and next to the placers
+(which also write `publisher_on_use_on`). `spec-capture` fails when the script did not print `PALETTER-COMPONENTS`,
+so a script that did not load cannot pass for components without callbacks. Open until captured: whether the block's
+compound is sent with neither callback, what happens in permutations, with a name the script did not register, and
+whether an `onUseOn` component together with a placer sends 1 or 0. The API (`ScriptHooks`, `UseOnHook`) offers only
+the new form, so the conformance test does not compare the old-form variants.
 
 ### In `update`
 
