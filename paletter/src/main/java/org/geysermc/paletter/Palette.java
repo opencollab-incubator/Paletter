@@ -773,12 +773,13 @@ public final class Palette {
      * Compiles one more layer on top of this palette, e.g. for one session. Results are cached per layer
      * instance for as long as the layer is referenced.
      * <p>
-     * Never throws for a problem with the layer's content (a duplicate custom id, a block hash collision, a duplicate
-     * item, an exception from a component encoder or a callback): the palette is returned unchanged, with an
-     * {@link PaletteReport.Level#ERROR} entry in its {@link #report()} (a copy of this palette's report, which is not
-     * modified) naming the layer, the version and the cause. Check {@link PaletteReport#errors()}.
+     * A layer that cannot be compiled (a duplicate identifier or runtime id, across or within layers, a block hash
+     * collision, an exception from a component encoder or a callback) throws a {@link PaletteException} naming the layer
+     * and the content identifier. Nothing changes then: this palette is untouched and nothing is cached, so the same
+     * layer throws again and other layers can still be applied.
      *
-     * @return the palette with the layer, or this palette (with the error in its report) if the layer failed
+     * @return the palette with the layer
+     * @throws PaletteException if the layer cannot be compiled
      */
     public @NonNull Palette extend(@NonNull PaletteLayer layer) {
         synchronized (extensions) {
@@ -788,7 +789,7 @@ public final class Palette {
                 return palette;
             }
         }
-        Palette extended = PaletteCompiler.extend(this, layer, true);
+        Palette extended = PaletteCompiler.extend(this, layer);
         synchronized (extensions) {
             WeakReference<Palette> raced = extensions.get(layer);
             Palette palette = raced == null ? null : raced.get();

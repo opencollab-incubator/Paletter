@@ -73,7 +73,7 @@ public final class CanonicalBlocks {
             NbtMap state = BlockStates.normalize(this.states[i]);
             this.states[i] = state;
             if (index.put(state, offset + i) != -1 || (parent != null && parent.index(state) != -1)) {
-                throw new PaletteException("Duplicate canonical block state " + state);
+                throw new PaletteException("Duplicate canonical block state " + state, null, BlockStates.name(state), null);
             }
         }
         index.trim();

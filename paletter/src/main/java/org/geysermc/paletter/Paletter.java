@@ -309,7 +309,7 @@ public final class Paletter {
             created[0] = true;
             Palette result = vanilla(v);
             for (PaletteLayer layer : globalLayers) {
-                result = PaletteCompiler.extend(result, layer, false);
+                result = PaletteCompiler.extend(result, layer);
             }
             return result;
         });

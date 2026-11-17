@@ -64,7 +64,7 @@ public final class CanonicalItems {
         index.defaultReturnValue(-1);
         for (int i = 0; i < this.variants.length; i++) {
             if (index.put(this.variants[i], offset + i) != -1 || (parent != null && parent.index(this.variants[i]) != -1)) {
-                throw new PaletteException("Duplicate canonical item variant " + this.variants[i]);
+                throw new PaletteException("Duplicate canonical item variant " + this.variants[i], null, this.variants[i].identifier(), null);
             }
         }
         index.trim();

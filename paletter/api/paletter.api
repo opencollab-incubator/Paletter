@@ -143,7 +143,9 @@ public final class org.geysermc.paletter.Palette {
 
 public class org.geysermc.paletter.PaletteException extends java.lang.RuntimeException {
     public <init>(java.lang.String)
-    public <init>(java.lang.String, java.lang.Throwable)
+    public <init>(java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable)
+    public java.lang.String identifier()
+    public java.lang.String layer()
 }
 
 public final class org.geysermc.paletter.PaletteLayer {

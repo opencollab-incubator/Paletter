@@ -87,22 +87,10 @@ final class PaletteCompiler {
     }
 
     /**
-     * @param session true if the layer is compiled for one session: a layer that cannot be applied then leaves the parent
-     *                unchanged, with an error in its report, instead of throwing (global layers are startup configuration
-     *                and fail loudly)
+     * @throws PaletteException if the layer cannot be compiled; nothing is changed
      */
-    static Palette extend(Palette parent, PaletteLayer layer, boolean session) {
-        try {
-            return extendUnchecked(parent, layer);
-        } catch (PaletteException e) {
-            if (!session) {
-                throw e;
-            }
-            PaletteReport report = new PaletteReport();
-            report.addAll(parent.report());
-            report.error(layer.id(), e.getMessage() + " (the layer is not applied to the " + parent.version() + " palette)");
-            return parent.withReport(report);
-        }
+    static Palette extend(Palette parent, PaletteLayer layer) {
+        return extendUnchecked(parent, layer);
     }
 
     private static Palette extendUnchecked(Palette parent, PaletteLayer layer) {
@@ -172,7 +160,7 @@ final class PaletteCompiler {
                     }
                     case PaletteLayer.ItemEntry.OfBlock(String identifier, CustomBlock.BlockItem blockItem, var placement) -> {
                         CustomBlock block = blocks.customBlocks().stream().filter(b -> b.identifier().equals(identifier)).findFirst()
-                            .orElseThrow(() -> new PaletteException("Item of unknown custom block " + identifier));
+                            .orElseThrow(() -> new PaletteException("Item of unknown custom block " + identifier, null, identifier, null));
                         // The block of this layer keeps its own placement unless blockItem gives another
                         CreativePlacement effective = placement != null || layer.blocks().stream().noneMatch(b -> b.identifier().equals(identifier))
                             ? placement : creativePlacement(block, ordering);
@@ -219,7 +207,7 @@ final class PaletteCompiler {
                 for (PaletteLayer each : layers) {
                     each.voxelShapes().forEach((identifier, shape) -> {
                         if (custom.putIfAbsent(identifier, shape) != null) {
-                            report.error(source, "The voxel shape " + identifier + " is defined by an earlier layer; that definition is used");
+                            throw new PaletteException("The voxel shape " + identifier + " is defined twice", null, identifier, null);
                         }
                     });
                 }
@@ -228,11 +216,12 @@ final class PaletteCompiler {
             return new Palette(data, layers, blocks, itemPalette, layout, content, report, parent.ordering(), parent.gating(),
                 parent.behaviourStore(), shapes, parent);
         } catch (PaletteException e) {
-            throw new PaletteException("Unable to compile layer " + source + " for " + data.version() + ": " + e.getMessage(), e);
+            throw new PaletteException("Unable to compile layer " + source + " for " + data.version() + ": " + e.getMessage(),
+                source, e.identifier(), e);
         } catch (RuntimeException e) {
             // A component encoder or a consumer callback (override modifier, creative edit) failed
             throw new PaletteException("Unable to compile layer " + source + " for " + data.version() + ": "
-                + e.getClass().getSimpleName() + (e.getMessage() == null ? "" : ": " + e.getMessage()), e);
+                + e.getClass().getSimpleName() + (e.getMessage() == null ? "" : ": " + e.getMessage()), source, null, e);
         }
     }
 

@@ -959,7 +959,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
 
         private void checkUnused(String identifier) {
             if (get(identifier) != null) {
-                throw new PaletteException("Item " + identifier + " already exists in " + version);
+                throw new PaletteException("Item " + identifier + " already exists in " + version, null, identifier, null);
             }
         }
 

@@ -615,7 +615,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     public int customBlockId(@NonNull String identifier) {
         Integer id = table.customBlockIds.get(identifier);
         if (id == null) {
-            throw new PaletteException("Custom block " + identifier + " does not exist in " + version());
+            throw new PaletteException("Custom block " + identifier + " does not exist in " + version(), null, identifier, null);
         }
         return id;
     }
@@ -729,7 +729,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             for (CustomBlock block : ownCustom) {
                 if (vanillaNames.contains(block.identifier()) || customByName.containsKey(block.identifier())
                     || parent != null && parent.block(block.identifier()) != null) {
-                    throw new PaletteException("Custom block " + block.identifier() + " is registered twice, or collides with a vanilla block");
+                    throw new PaletteException("Custom block " + block.identifier() + " is registered twice, or collides with a vanilla block",
+                        null, block.identifier(), null);
                 }
                 customStates.addAll(block.states());
                 customByName.put(block.identifier(), block);
@@ -766,16 +767,16 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                 }
                 int collision = byHash.put(block.getRuntimeId(), i);
                 if (collision != -1 && own[collision].getState().equals(state)) {
-                    throw new PaletteException("Duplicate block state in " + version + " palette: " + state);
+                    throw new PaletteException("Duplicate block state in " + version + " palette: " + state, null, BlockStates.name(state), null);
                 }
                 if (collision != -1) {
                     throw new PaletteException("Block network id hash collision in the " + version + " palette: "
-                        + own[collision].getState() + " and " + state + " both hash to " + block.getRuntimeId());
+                        + own[collision].getState() + " and " + state + " both hash to " + block.getRuntimeId(), null, BlockStates.name(state), null);
                 }
                 int inParent = parent == null ? -1 : parent.indexOfRuntimeId(block.getRuntimeId());
                 if (inParent != -1) {
                     throw new PaletteException("Block network id hash collision in the " + version + " palette: "
-                        + parent.byIndex(inParent).getState() + " and " + state + " both hash to " + block.getRuntimeId());
+                        + parent.byIndex(inParent).getState() + " and " + state + " both hash to " + block.getRuntimeId(), null, BlockStates.name(state), null);
                 }
                 own[i] = block;
             }
