@@ -210,20 +210,24 @@ final class WireSource {
             type.addMethod(encoder(name).addCode(bodies.getFirst()).build());
             return;
         }
+        // The windows must cover every protocol: the last is a plain else, so a gap would be a silent hole
+        for (int i = 0; i < windows.size(); i++) {
+            boolean first = i == 0;
+            boolean last = i == windows.size() - 1;
+            if (first && windows.get(i).since() != Integer.MIN_VALUE || last && windows.get(i).until() != Integer.MAX_VALUE
+                || !last && windows.get(i).until() != windows.get(i + 1).since()) {
+                throw new GenerationException(c.id + ": the protocol windows are not contiguous: " + windows);
+            }
+        }
         CodeBlock.Builder dispatch = CodeBlock.builder().addStatement("int protocol = ctx.protocol()");
         for (int i = 0; i < windows.size(); i++) {
             Window w = windows.get(i);
-            List<String> conditions = new ArrayList<>();
-            if (w.since() != Integer.MIN_VALUE) {
-                conditions.add("protocol >= " + w.since());
-            }
-            if (w.until() != Integer.MAX_VALUE) {
-                conditions.add("protocol < " + w.until());
-            }
             if (i == 0) {
-                dispatch.beginControlFlow("if ($L)", String.join(" && ", conditions));
+                dispatch.beginControlFlow("if (protocol < $L)", w.until());
+            } else if (i < windows.size() - 1) {
+                dispatch.nextControlFlow("else if (protocol < $L)", w.until());
             } else {
-                dispatch.nextControlFlow("else if ($L)", String.join(" && ", conditions));
+                dispatch.nextControlFlow("else");
             }
             dispatch.addStatement("$N$L(c, ctx, out)", name, window(w));
         }
@@ -257,9 +261,6 @@ final class WireSource {
         }
         if (w != null) {
             Set<String> transformed = transformedLeaves();
-            this.window = w;
-            this.owned = new TreeSet<>();
-            this.ownerOf.clear();
             collectOwned(c.root);
             for (Map.Entry<String, String> e : w.constants().entrySet()) {
                 String path = strip(e.getKey());
@@ -329,17 +330,16 @@ final class WireSource {
         Set<String> leaves = new TreeSet<>();
         for (Window other : c.windows) {
             if (other.sent()) {
-                this.window = other;
-                transformedLeaves(c.root, false, leaves);
+                transformedLeaves(c.root, other, false, leaves);
             }
         }
         return leaves;
     }
 
-    private void transformedLeaves(ObjType o, boolean inside, Set<String> leaves) {
+    private void transformedLeaves(ObjType o, Window w, boolean inside, Set<String> leaves) {
         for (Field f : fieldsWithAlternatives(o)) {
             boolean transformed = inside || f.transform != null;
-            JsonObject m = transformed ? ComponentGenerator.mappingOf(window, f) : null;
+            JsonObject m = transformed ? ComponentGenerator.mappingOf(w, f) : null;
             if (m != null && m.has("rules")) {
                 for (JsonElement r : m.getAsJsonArray("rules")) {
                     JsonObject rule = r.getAsJsonObject();
@@ -351,7 +351,7 @@ final class WireSource {
             }
             ObjType child = ComponentGenerator.objectOf(f.type);
             if (child != null) {
-                transformedLeaves(child, transformed, leaves);
+                transformedLeaves(child, w, transformed, leaves);
             }
         }
     }
@@ -463,17 +463,25 @@ final class WireSource {
     private void field(Field f, String owner, String node, String prefix) {
         String var = "v" + (vars++);
         boolean nullable = ApiSource.nullable(f);
+        CodeBlock.Builder all = b;
+        b = CodeBlock.builder();
+        present(f, var, node, prefix);
+        CodeBlock present = b.build();
+        b = CodeBlock.builder();
+        if (nullable) {
+            absentLines(f, f, node, prefix, new TreeSet<>());
+        }
+        CodeBlock absent = b.build();
+        b = all;
+        if (present.isEmpty() && absent.isEmpty()) {
+            return; // the field writes nothing in this window
+        }
         b.addStatement("$T $N = $N.$N()", ApiSource.typeName(c, f.type, nullable), var, owner, f.java);
         if (nullable) {
             b.beginControlFlow("if ($N != null)", var);
         }
-        present(f, var, node, prefix);
+        b.add(present);
         if (nullable) {
-            CodeBlock.Builder present = b;
-            b = CodeBlock.builder();
-            absentLines(f, f, node, prefix, new TreeSet<>());
-            CodeBlock absent = b.build();
-            b = present;
             if (!absent.isEmpty()) {
                 b.nextControlFlow("else");
                 b.add(absent);

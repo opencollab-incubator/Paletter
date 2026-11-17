@@ -39,14 +39,13 @@ public final class TraitWire {
         out.put("name", "minecraft:connection");
         out.put("type", 0);
         out.put("update_flags", 3);
-        List<Connection.EnabledStates> v0 = c.enabledStates();
     }
 
     private static void multiBlock(MultiBlock c, WireContext ctx, WireNode out) {
         int protocol = ctx.protocol();
         if (protocol < 2168) {
             multiBlockUntil2168(c, ctx, out);
-        } else if (protocol >= 2168) {
+        } else {
             multiBlockFrom2168(c, ctx, out);
         }
     }
@@ -54,7 +53,6 @@ public final class TraitWire {
     private static void multiBlockUntil2168(MultiBlock c, WireContext ctx, WireNode out) {
         out.put("enabled_states.multi_block", (byte) 1);
         out.put("name", "minecraft:multi_block");
-        List<MultiBlock.EnabledStates> v0 = c.enabledStates();
         int v1 = c.parts();
         out.put("part_count", Wire.toByte(v1));
         MultiBlock.Direction v2 = c.direction();
@@ -69,7 +67,6 @@ public final class TraitWire {
         out.put("enabled_states.multi_block", (byte) 1);
         out.put("name", "minecraft:multi_block");
         out.put("place_behavior", (byte) 0);
-        List<MultiBlock.EnabledStates> v0 = c.enabledStates();
         int v1 = c.parts();
         out.put("part_count", Wire.toByte(v1));
         MultiBlock.Direction v2 = c.direction();

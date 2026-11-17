@@ -4,7 +4,6 @@
 package org.geysermc.paletter.internal.component;
 
 import java.util.List;
-import java.util.Map;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.paletter.item.component.Ancient;
 import org.geysermc.paletter.item.component.Count;
@@ -59,7 +58,7 @@ public final class ItemWire {
         int protocol = ctx.protocol();
         if (protocol < 200) {
             gadgetUntil200(c, ctx, out);
-        } else if (protocol >= 200) {
+        } else {
             gadgetFrom200(c, ctx, out);
         }
     }
@@ -164,7 +163,6 @@ public final class ItemWire {
         }
         float v18 = c.reach();
         out.put("test:widget.reach", Wire.toFloat(v18));
-        Map<String, Widget.NestedThing> v19 = c.moreNested();
         Transforms.testMap(ctx, out, c);
     }
 

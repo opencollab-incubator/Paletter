@@ -326,19 +326,26 @@ public final class Transforms {
     /**
      * {@code minecraft:embedded_visual}'s material instances: a whole {@code minecraft:material_instances} object, inline
      * per face with its flags as bytes. Setting it also fills in the sibling geometry's defaults, so correlating one field
-     * at a time cannot separate the two. The captures of BDS 1.26.36.1 to 1.26.70.24 bear out three accepted variants.
+     * at a time cannot separate the two. The captures of BDS 1.26.36.1 to 1.26.70.24 bear out three accepted variants,
+     * none of which sets {@code alpha_masked_tint}: it is sent as 0, and a caller who sets it is told (unverified until a
+     * capture shows what BDS sends).
      */
     public static void materialInstancesInline(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull EmbeddedVisual c) {
         NbtMapBuilder faces = NbtMap.builder();
-        faces(c.materialInstances()).forEach((face, instance) -> faces.putCompound(face, NbtMap.builder()
-            .putString("texture", instance.texture() == null ? "" : instance.texture())
-            .putString("render_method", instance.renderMethod() == null ? "opaque" : instance.renderMethod().value())
-            .putString("tint_method", instance.tintMethod() == null ? "none" : instance.tintMethod())
-            .putFloat("ambient_occlusion", instance.ambientOcclusion() == null ? 1f : instance.ambientOcclusion())
-            .putByte("face_dimming", Wire.bool(instance.faceDimming() == null || instance.faceDimming()))
-            .putByte("isotropic", Wire.bool(instance.isotropic()))
-            .putByte("alpha_masked_tint", (byte) 0)
-            .build()));
+        faces(c.materialInstances()).forEach((face, instance) -> {
+            if (Boolean.TRUE.equals(instance.alphaMaskedTint())) {
+                ctx.changed(EmbeddedVisual.NAME, "material instance " + face + " alpha_masked_tint is sent as 0; no capture shows BDS sending it");
+            }
+            faces.putCompound(face, NbtMap.builder()
+                .putString("texture", instance.texture() == null ? "" : instance.texture())
+                .putString("render_method", instance.renderMethod() == null ? "opaque" : instance.renderMethod().value())
+                .putString("tint_method", instance.tintMethod() == null ? "none" : instance.tintMethod())
+                .putFloat("ambient_occlusion", instance.ambientOcclusion() == null ? 1f : instance.ambientOcclusion())
+                .putByte("face_dimming", Wire.bool(instance.faceDimming() == null || instance.faceDimming()))
+                .putByte("isotropic", Wire.bool(instance.isotropic()))
+                .putByte("alpha_masked_tint", (byte) 0)
+                .build());
+        });
         out.put("minecraft:embedded_visual.material_instances", faces.build());
         // (an empty material_instances object is sent empty)
     }
@@ -398,9 +405,11 @@ public final class Transforms {
     /**
      * The {@code states} of a block descriptor ({@code block_placer.use_on}, {@code entity_placer.use_on} and
      * {@code dispense_on}, {@code digger.destroy_speeds[].block}, {@code placement_filter} block filters): a compound of
-     * state values, typed like the named block's states in the palette's registry (booleans as bytes; {@code pillar_axis}
-     * "y" becomes 0). The registry decides the type and BDS drops a descriptor whose block lacks a state, so no rule over
-     * the JSON value fits, and the capture's sample state names drop the whole entry.
+     * state values, typed like the named block's states in the palette's registry (booleans as bytes, ints as the
+     * registry's type). BDS 1.26.63.1 sends an enum state as its index ({@code pillar_axis} "y" as 0, see
+     * {@code custom_item_registry.snbt}); that index is not derivable from the registry, so a string state is sent as
+     * given and reported. BDS drops a whole descriptor whose block lacks a state (the capture's invented state names), which
+     * is reported too. No rule over the JSON value fits, because the registry decides the type.
      */
     public static void blockDescriptorStates(@NonNull WireContext ctx, @NonNull WireNode out, BlockPlacer.UseOn d) {
         descriptor(ctx, out, "", d.name(), d.states(), d.tags());
@@ -441,8 +450,8 @@ public final class Transforms {
 
     /**
      * The {@code type} of a placement filter state: 2 for an int state, as BDS 1.26.63.1 sent it. 1 for a string and 0 for
-     * a boolean state follow the same order but no capture has them (no accepted variant has a string or boolean state),
-     * so the conformance suite does not check them.
+     * a boolean state follow the same order but are unverified: no accepted variant has a string or boolean state, so the
+     * conformance suite does not check them.
      */
     private static int stateType(Object value) {
         return value instanceof Integer ? 2 : value instanceof Byte ? 0 : 1;
@@ -450,9 +459,17 @@ public final class Transforms {
 
     static @NonNull NbtMap states(WireContext ctx, @Nullable String block, Map<String, Object> states) {
         NbtMap known = block == null ? null : ctx.registry().blockStates(block);
+        if (!states.isEmpty() && block != null && known == null && (block.indexOf(':') < 0 || block.startsWith("minecraft:"))) {
+            ctx.changed("block descriptor", "block " + block + " is not a block of this version; BDS drops a descriptor it cannot resolve");
+        }
         NbtMapBuilder out = NbtMap.builder();
         states.forEach((name, value) -> {
             Object type = known == null ? null : known.get(name);
+            if (known != null && type == null) {
+                ctx.changed("block descriptor", "block " + block + " has no state " + name + "; BDS drops the descriptor");
+            } else if (value instanceof String) {
+                ctx.changed("block descriptor", "state " + name + " is sent as the string " + value + "; BDS sends an enum state as its index (unverified beyond pillar_axis y = 0)");
+            }
             Object converted;
             if (value instanceof Boolean b) {
                 converted = Wire.bool(b);
@@ -565,8 +582,9 @@ public final class Transforms {
     // ---- formatting_code ---------------------------------------------------------------------------------------------
 
     /**
-     * Color name -> formatting code of {@code item_properties.hover_text_color}: Bedrock's color table. The captures have
-     * only the color names of the accepted {@code hover_text_color} variants, so the conformance suite checks only those.
+     * Color name -> formatting code of {@code item_properties.hover_text_color}: Bedrock's color table, hand-entered. The
+     * captures have only the names of the accepted {@code hover_text_color} variants; HandTransformsTest lists every other
+     * entry as unverified.
      */
     private static final Map<String, Character> FORMATTING = new LinkedHashMap<>();
 
@@ -619,24 +637,33 @@ public final class Transforms {
     // ---- rgb_color ---------------------------------------------------------------------------------------------------
 
     /**
-     * {@code minecraft:dyeable} default_color: hex or [r, g, b] to a list of three ints; white by default. The inference
-     * dropped the field: the varied values of the captures all came out white or were rejected.
+     * {@code minecraft:dyeable} default_color: six hex digits or exactly [r, g, b] to a list of three ints, white by
+     * default. BDS 1.26.x rejects the whole item for any other form ("a hex value with 6 characters"; the captured
+     * {@code []}, {@code [3]} and {@code [3, 7]}), so those are reported and the field is left out rather than sent as a
+     * derived color. Channels outside 0-255 are clamped, as captured ({@code [-90, 450, 720]}). Three or eight hex digits
+     * are uncaptured; they are treated as rejected, like BDS's message says.
      */
     public static void rgbColor(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Dyeable c) {
         List<Integer> rgb = List.of(255, 255, 255);
         if (c.defaultColorHex() != null) {
             String hex = c.defaultColorHex().startsWith("#") ? c.defaultColorHex().substring(1) : c.defaultColorHex();
-            try {
-                int value = Integer.parseInt(hex, 16);
-                rgb = List.of((value >> 16) & 0xff, (value >> 8) & 0xff, value & 0xff);
-            } catch (NumberFormatException e) {
-                ctx.drop(Dyeable.NAME, "default_color " + c.defaultColorHex() + " is not a hex color");
+            if (!HEX_COLOR.matcher(hex).matches()) {
+                ctx.drop(Dyeable.NAME, "default_color " + c.defaultColorHex() + " is not a hex color of 6 digits");
+                return;
             }
-        } else if (c.defaultColor() != null && c.defaultColor().size() == 3) {
+            int value = Integer.parseInt(hex, 16);
+            rgb = List.of((value >> 16) & 0xff, (value >> 8) & 0xff, value & 0xff);
+        } else if (c.defaultColor() != null) {
+            if (c.defaultColor().size() != 3) {
+                ctx.drop(Dyeable.NAME, "default_color " + c.defaultColor() + " does not have exactly 3 channels");
+                return;
+            }
             rgb = c.defaultColor().stream().map(v -> Math.max(0, Math.min(255, v))).toList();
         }
         out.put("minecraft:dyeable.default_color", Wire.ints(rgb));
     }
+
+    private static final Pattern HEX_COLOR = Pattern.compile("[0-9a-fA-F]{6}");
 
     // ---- destructible_by_mining --------------------------------------------------------------------------------------
 
@@ -666,11 +693,13 @@ public final class Transforms {
 
 
     /**
-     * A permutation's Molang condition as BDS sends it: a number constant in the six decimals BDS writes it with
-     * ({@code "1"} -> {@code "1.000000"}, BDS 1.26.36.1 to 1.26.63.1), anything else as written.
+     * A permutation's Molang condition as BDS sends it: a number constant like any Molang number ({@link #molangNumber}),
+     * anything else as written. Only {@code "1"} and {@code "0"} are captured as conditions (BDS 1.26.36.1 to 1.26.70.24);
+     * that BDS prints the other number shapes the same way here is unverified.
      */
     static String condition(String condition) {
-        return condition.matches("-?\\d+(\\.\\d+)?") ? String.format(java.util.Locale.ROOT, "%.6f", Double.parseDouble(condition)) : condition;
+        String number = molangNumber(condition);
+        return number != null ? number : condition;
     }
 
     // ---- selection_box -----------------------------------------------------------------------------------------------
@@ -691,16 +720,16 @@ public final class Transforms {
     // ---- use_animation_id --------------------------------------------------------------------------------------------
 
     /**
-     * Animation name -> {@code item_properties.use_animation}. eat 1 and spear 6 are captured from BDS 1.26.63.1 (and
-     * checked by the conformance suite); the others are as vanilla items send them.
+     * Animation name -> {@code item_properties.use_animation}, hand-entered. The captures have none, eat, drink and spear;
+     * HandTransformsTest lists every other entry as unverified.
      */
     private static final Map<String, Integer> USE_ANIMATIONS = Map.of("none", 0, "eat", 1, "drink", 2, "block", 3, "bow", 4,
         "camera", 5, "spear", 6, "crossbow", 9, "spyglass", 10, "brush", 12);
 
     /**
      * {@code minecraft:use_animation}: the component keeps the name, {@code item_properties.use_animation} numbers it
-     * (eat 1 and spear 6 captured from BDS 1.26.63.1, the others as vanilla items send them); unknown names are 0. The
-     * docs give no enum for the value, so the inference saw only the two samples and fitted a constant.
+     * (none, eat, drink and spear are captured, see {@link #USE_ANIMATIONS}); unknown names are 0. BDS's error truncates the
+     * enum ("none, eat, drink, ... (7 others)"), so the other names and ids are not BDS data yet.
      */
     public static void useAnimationId(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull UseAnimation c) {
         String value = c.value() == null ? "none" : c.value();

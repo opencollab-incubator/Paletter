@@ -119,11 +119,11 @@ public final class BlockWire {
         int protocol = ctx.protocol();
         if (protocol < 2193) {
             blockEntityUntil2193(c, ctx, out);
-        } else if (protocol >= 2193 && protocol < 2225) {
+        } else if (protocol < 2225) {
             blockEntityFrom2193Until2225(c, ctx, out);
-        } else if (protocol >= 2225 && protocol < 2259) {
+        } else if (protocol < 2259) {
             blockEntityFrom2225Until2259(c, ctx, out);
-        } else if (protocol >= 2259) {
+        } else {
             blockEntityFrom2259(c, ctx, out);
         }
     }
@@ -135,7 +135,6 @@ public final class BlockWire {
     private static void blockEntityFrom2193Until2225(BlockEntity c, WireContext ctx, WireNode out) {
         BlockEntity.Container v0 = c.container();
         if (v0 != null) {
-            boolean v1 = v0.showUiOnInteraction();
             int v2 = v0.slotCount();
             out.put("minecraft:container.slot_count", Wire.toByte(v2));
             String v3 = v0.title();
@@ -145,7 +144,6 @@ public final class BlockWire {
         } else {
             out.remove("minecraft:container.slot_count");
         }
-        boolean v4 = c.dynamicProperties();
         Boolean v5 = c.entityStorage();
         if (v5 != null) {
             ctx.drop(BlockEntity.NAME, "entity_storage has no known wire mapping");
@@ -155,7 +153,6 @@ public final class BlockWire {
     private static void blockEntityFrom2225Until2259(BlockEntity c, WireContext ctx, WireNode out) {
         BlockEntity.Container v0 = c.container();
         if (v0 != null) {
-            boolean v1 = v0.showUiOnInteraction();
             int v2 = v0.slotCount();
             out.put("minecraft:container.slot_count", Wire.toByte(v2));
             String v3 = v0.title();
@@ -167,10 +164,6 @@ public final class BlockWire {
         } else {
             out.remove("minecraft:container.slot_count");
             out.remove("minecraft:container.title");
-        }
-        boolean v4 = c.dynamicProperties();
-        Boolean v5 = c.entityStorage();
-        if (v5 != null) {
         }
     }
 
@@ -192,7 +185,6 @@ public final class BlockWire {
             out.remove("minecraft:container.slot_count");
             out.remove("minecraft:container.title");
         }
-        boolean v4 = c.dynamicProperties();
         Boolean v5 = c.entityStorage();
         if (v5 != null) {
             ctx.drop(BlockEntity.NAME, "entity_storage has no known wire mapping");
@@ -224,7 +216,7 @@ public final class BlockWire {
         int protocol = ctx.protocol();
         if (protocol < 2259) {
             collisionBoxUntil2259(c, ctx, out);
-        } else if (protocol >= 2259) {
+        } else {
             collisionBoxFrom2259(c, ctx, out);
         }
     }
@@ -343,7 +335,7 @@ public final class BlockWire {
         int protocol = ctx.protocol();
         if (protocol < 2225) {
             itemVisualUntil2225(c, ctx, out);
-        } else if (protocol >= 2225) {
+        } else {
             itemVisualFrom2225(c, ctx, out);
         }
     }
@@ -378,18 +370,6 @@ public final class BlockWire {
             out.put("minecraft:item_visual.geometryDescription.identifier", v4);
         } else {
             out.put("minecraft:item_visual.geometryDescription.identifier", "minecraft:geometry.full_block");
-        }
-        ItemVisual.NWayVisualRotation v5 = v0.nWayVisualRotation();
-        if (v5 != null) {
-            String v6 = v5.x();
-            if (v6 != null) {
-            }
-            String v7 = v5.y();
-            if (v7 != null) {
-            }
-            String v8 = v5.z();
-            if (v8 != null) {
-            }
         }
         Transforms.itemVisualBoneVisibility(ctx, out, v0);
         Transforms.itemVisualUvLock(ctx, out, v0);
@@ -475,7 +455,6 @@ public final class BlockWire {
             n2.put("liquidType", "water");
             boolean v3 = e1.canContainLiquid();
             n2.put("canContainLiquid", Wire.bool(v3));
-            LiquidDetection.LiquidType v4 = e1.liquidType();
             LiquidDetection.OnLiquidTouches v5 = e1.onLiquidTouches();
             n2.put("onLiquidTouches", v5.value());
             List<String> v6 = e1.stopsLiquidFlowingFromDirection();
@@ -630,7 +609,7 @@ public final class BlockWire {
         int protocol = ctx.protocol();
         if (protocol < 2193) {
             replaceableUntil2193(c, ctx, out);
-        } else if (protocol >= 2193) {
+        } else {
             replaceableFrom2193(c, ctx, out);
         }
     }

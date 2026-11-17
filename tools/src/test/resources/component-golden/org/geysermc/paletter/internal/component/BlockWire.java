@@ -37,7 +37,7 @@ public final class BlockWire {
         int protocol = ctx.protocol();
         if (protocol < 200) {
             glowUntil200(c, ctx, out);
-        } else if (protocol >= 200) {
+        } else {
             glowFrom200(c, ctx, out);
         }
     }

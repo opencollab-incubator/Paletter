@@ -297,6 +297,49 @@ class TransformsTest {
     }
 
     @Test
+    void anEmbeddedAlphaMaskedTintIsSentAsZeroAndReported() {
+        WireNode inline = new WireNode();
+        Transforms.materialInstancesInline(ctx, inline, EmbeddedVisual.builder()
+            .geometry(EmbeddedVisual.Geometry.builder().identifier("minecraft:geometry.full_block").build())
+            .materialInstances(MaterialInstances.builder().all(MaterialInstances.Instance.builder().texture("stone").alphaMaskedTint(true).build()).build()).build());
+        assertEquals((byte) 0, compound(inline, "minecraft:embedded_visual").getCompound("material_instances").getCompound("*").getByte("alpha_masked_tint"));
+        assertEquals(1, report.warnings().size());
+        assertTrue(report.warnings().getFirst().message().contains("alpha_masked_tint"));
+    }
+
+    @Test
+    void aPermutationConditionNumberIsAMolangNumber() {
+        assertEquals("1.000000", Transforms.condition("1"));
+        assertEquals("0.007812", Transforms.condition("0.0078125"));
+        assertEquals("16777216.000000", Transforms.condition("16777217"));
+        assertEquals("0.500000", Transforms.condition(".5"));
+        assertEquals("q.block_state('a')", Transforms.condition("q.block_state('a')"));
+        assertEquals("paletter_b", Transforms.condition("paletter_b"));
+    }
+
+    @Test
+    void aColorOtherThanSixHexDigitsOrThreeChannelsIsDropped() {
+        for (Dyeable bad : List.of(Dyeable.builder().defaultColorHex("#f00").build(), Dyeable.builder().defaultColorHex("#ffff0000").build(),
+            Dyeable.builder().defaultColorHex("-ff").build(), Dyeable.builder().defaultColor(List.of(3, 7)).build(),
+            Dyeable.builder().defaultColor(List.of()).build())) {
+            WireNode out = new WireNode();
+            Transforms.rgbColor(ctx, out, bad);
+            assertTrue(out.isEmpty(), bad.toString());
+        }
+        assertEquals(5, report.warnings().size());
+    }
+
+    @Test
+    void descriptorStatesOfAnUnknownBlockOrStateAreReported() {
+        Transforms.blockDescriptorStates(ctx, new WireNode(), BlockPlacer.UseOn.builder().name("minecraft:oak_log").states(Map.of("paletter_state", 1)).build());
+        assertEquals(1, report.warnings().size());
+        Transforms.blockDescriptorStates(ctx, new WireNode(), BlockPlacer.UseOn.builder().name("minecraft:paletter_unknown").states(Map.of("a", 1)).build());
+        assertEquals(2, report.warnings().size());
+        Transforms.blockDescriptorStates(ctx, new WireNode(), BlockPlacer.UseOn.builder().name("minecraft:oak_log").states(Map.of("pillar_axis", "y")).build());
+        assertEquals(3, report.warnings().size(), "an enum state is sent as the string until its BDS index can be derived");
+    }
+
+    @Test
     void materialInstancesWithCustomNames() {
         MaterialInstances materials = MaterialInstances.builder()
             .all(MaterialInstances.Instance.builder().texture("stone").build())

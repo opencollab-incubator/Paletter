@@ -38,6 +38,8 @@ class ComponentWindowsTest {
         JsonObject g = new JsonObject();
         gadget.accept(g);
         components.add("item:test:gadget", g);
+        // these windows use protocols of their own, not the ones of the captures
+        mappings.getAsJsonArray("captures").forEach(capture -> capture.getAsJsonObject().remove("windowProtocol"));
         Inputs base = ComponentGeneratorTest.inputs();
         return new Inputs(base.components(), base.fixtures(), base.feedback(), mappings, base.transforms(), base.api(), base.since());
     }
@@ -140,6 +142,41 @@ class ComponentWindowsTest {
     }
 
     @Test
+    void theLastWindowIsAPlainElseSoTheDispatchIsExhaustive() {
+        Inputs in = inputs(g -> {
+            g.asMap().putAll(window("on", 100).asMap());
+            g.add("protocol200", window("active", 200));
+            g.add("protocol300", window("on", 300));
+        });
+        String source = itemWire(in);
+        assertTrue(source.contains("if (protocol < 200) {") && source.contains("} else if (protocol < 300) {") && source.contains("} else {"), source);
+        assertTrue(!source.contains("protocol >="), source);
+    }
+
+    @Test
+    void aFieldThatWritesNothingInAWindowGetsNeitherAVariableNorAnEmptyIf() {
+        Inputs in = inputs(g -> {
+            g.asMap().putAll(window("on", 100).asMap());
+            JsonObject second = window("on", 200);
+            second.getAsJsonObject("fields").add("value", ComponentGeneratorTest.json("{\"status\": \"rejected\"}"));
+            second.getAsJsonObject("forms").remove("boolean");
+            g.add("protocol200", second);
+        });
+        String source = itemWire(in);
+        assertTrue(!source.matches("(?s).*if \\(v\\d+ != null\\) \\{\\s*}.*"), source);
+    }
+
+    @Test
+    void aCaptureWithoutTheComponentFailsInsteadOfBeingAbsorbedByItsNeighbourWindow() {
+        Inputs in = inputs(g -> g.asMap().putAll(window("on", 100).asMap()));
+        int[] windows = {100, 200};
+        in.mappings().getAsJsonArray("captures").forEach(capture -> capture.getAsJsonObject().addProperty("windowProtocol", windows[capture.getAsJsonObject().get("protocol").getAsInt() / 100 - 1]));
+        ComponentGenerator.GenerationException e = org.junit.jupiter.api.Assertions.assertThrows(ComponentGenerator.GenerationException.class,
+            () -> ComponentGenerator.generate(in));
+        assertTrue(e.getMessage().contains("no result for the captures of protocols [200]"), e.getMessage());
+    }
+
+    @Test
     void windowsThatEncodeTheSameAreOne() {
         // Two windows whose mappings differ only in what the encoder ignores
         Inputs in = inputs(g -> {
@@ -166,6 +203,16 @@ class ComponentWindowsTest {
             captures.add(c);
         }
         mappings.add("captures", captures);
+        // (every component has a result for each of these captures; their windows are not what is tested here)
+        mappings.getAsJsonObject("components").entrySet().forEach(e -> {
+            if (e.getValue().getAsJsonObject().has("protocols")) {
+                JsonArray all = new JsonArray();
+                for (int window : new int[]{99, 149, 199}) {
+                    all.add(window);
+                }
+                e.getValue().getAsJsonObject().add("protocols", all);
+            }
+        });
         Inputs in = new Inputs(base.components(), base.fixtures(), base.feedback(), mappings, base.transforms(), base.api(), base.since());
         String index = ComponentGenerator.generate(in).get("org/geysermc/paletter/internal/component/ComponentIndex.java");
         assertTrue(index.contains("int OLDEST_CAPTURED_PROTOCOL = 100;"), index);
