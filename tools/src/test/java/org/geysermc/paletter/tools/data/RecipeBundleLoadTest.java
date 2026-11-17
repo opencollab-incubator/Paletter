@@ -151,7 +151,7 @@ class RecipeBundleLoadTest {
     @Test
     void everyItemOfEveryVersionResolvesInThePaletteOfThatVersion() {
         for (DataVersion version : VERSIONS) {
-            Palette palette = Paletter.builder().allExperiments().build().palette(version.protocolVersion());
+            Palette palette = Paletter.builder().allExperiments().previews(version.isPreview()).build().palette(version.protocolVersion());
             VanillaRecipes loaded = VanillaRecipes.of(version);
             List<ItemKey> keys = new ArrayList<>();
             ingredients(version).forEach(ingredient -> {

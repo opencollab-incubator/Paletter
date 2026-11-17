@@ -1,6 +1,8 @@
 package org.geysermc.paletter.recipes;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
 import org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.ContainerMixData;
@@ -17,6 +19,7 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.descriptor.DefaultDescri
 import org.cloudburstmc.protocol.bedrock.data.inventory.descriptor.ItemDescriptorWithCount;
 import org.cloudburstmc.protocol.bedrock.data.inventory.descriptor.ItemTagDescriptor;
 import org.geysermc.paletter.Lookup;
+import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockItemType;
@@ -173,15 +176,33 @@ final class RecipeEncoder {
         }
         ItemData.Builder item = ItemData.builder().definition(definition).damage(result.item().aux()).count(result.count());
         if (!result.blockState().isEmpty()) {
-            BedrockBlockState state = palette.blockState(result.blockState(), Lookup.EXACT);
-            if (state == null) {
+            BlockDefinition block = block(result.blockState());
+            if (block == null) {
                 return null;
             }
-            item.blockDefinition(palette.blockDefinition(state));
+            item.blockDefinition(block);
         }
         if (!result.tag().isEmpty()) {
             item.tag(result.tag());
         }
         return item.build();
+    }
+
+    /**
+     * The block a result is sent with: the state exactly as this palette's version has it. A state that only a preview
+     * has (a block added since the newest release) has no {@link BedrockBlockState}, the constants do not reach it: it is
+     * found by its state, as long as it is in the data and not a stand-in for something the palette lacks.
+     */
+    private @Nullable BlockDefinition block(NbtMap state) {
+        BedrockBlockState handle = palette.blockState(state, Lookup.EXACT);
+        if (handle != null) {
+            return palette.blockDefinition(handle);
+        }
+        BlockRegistry blocks = palette.blocks();
+        int canonical = blocks.canonical().index(state);
+        if (canonical == -1 || blocks.isMissing(canonical) || blocks.isFallback(canonical)) {
+            return null;
+        }
+        return blocks.exact(state);
     }
 }
