@@ -10,7 +10,7 @@ import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.Model.Component;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
-import org.geysermc.paletter.tools.model.infer.MappingInference.Obs;
+import org.geysermc.paletter.tools.model.infer.SpecCaptures.Obs;
 import org.geysermc.paletter.tools.model.rule.Leaf;
 
 import java.io.IOException;
@@ -48,7 +48,7 @@ final class FormatInference {
      * @return per component id: format -> entry (only the formats BDS accepted), in format order
      */
     static Map<String, TreeMap<String, JsonObject>> read(Path dir, Model model, Fixtures fixtures, Map<String, Set<String>> wireKeys) throws IOException {
-        MappingInference.Capture capture = MappingInference.load(dir);
+        SpecCaptures.Capture capture = SpecCaptures.load(dir);
         Map<String, String> formats = new HashMap<>();
         JsonParser.parseString(Files.readString(dir.resolve("variants.json"), StandardCharsets.UTF_8)).getAsJsonArray().forEach(e -> {
             if (e.getAsJsonObject().has("format")) {
@@ -63,7 +63,7 @@ final class FormatInference {
         }
         Map<String, TreeMap<String, JsonObject>> result = new TreeMap<>();
         Map<String, Map<String, Obs>> controls = new HashMap<>();
-        for (MappingInference.Variant v : capture.variants()) {
+        for (SpecCaptures.Variant v : capture.variants()) {
             if (v.role().equals("control") && formats.containsKey(v.identifier())) {
                 controls.computeIfAbsent(v.component(), k -> new HashMap<>()).put(formats.get(v.identifier()), obs(capture, v, legacy));
                 result.computeIfAbsent(v.component(), k -> new TreeMap<>(AddonGenerator::compare));
@@ -71,7 +71,7 @@ final class FormatInference {
         }
         Map<String, Map<String, Set<String>>> keys = new TreeMap<>();
         Map<String, Set<String>> legacyAt = new HashMap<>();
-        for (MappingInference.Variant v : capture.variants()) {
+        for (SpecCaptures.Variant v : capture.variants()) {
             Obs control = controls.getOrDefault(v.component(), Map.of()).get(formats.get(v.identifier()));
             Component component = model.components().stream().filter(c -> c.id().equals(v.component())).findFirst().orElse(null);
             Obs own = obs(capture, v, legacy);
@@ -87,7 +87,7 @@ final class FormatInference {
                 }
             });
             String format = formats.get(v.identifier());
-            keys.computeIfAbsent(v.component(), k -> new TreeMap<>()).computeIfAbsent(format, k -> new TreeSet<>()).addAll(MappingInference.wireKeys(footprint));
+            keys.computeIfAbsent(v.component(), k -> new TreeMap<>()).computeIfAbsent(format, k -> new TreeSet<>()).addAll(FieldAnalysis.wireKeys(footprint));
             if (legacy.contains(v.identifier())) {
                 legacyAt.computeIfAbsent(v.component(), k -> new TreeSet<>()).add(format);
             }
@@ -111,7 +111,7 @@ final class FormatInference {
     }
 
     /** An old-style item that sends no components is in the registry but not in the capture's wire: it is accepted, with nothing on it. */
-    private static Obs obs(MappingInference.Capture capture, MappingInference.Variant v, Set<String> legacy) {
+    private static Obs obs(SpecCaptures.Capture capture, SpecCaptures.Variant v, Set<String> legacy) {
         Map<String, Leaf> wire = capture.wire().get(v.identifier());
         if (wire == null && legacy.contains(v.identifier())) {
             wire = Map.of();

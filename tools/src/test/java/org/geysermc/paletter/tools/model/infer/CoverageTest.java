@@ -65,8 +65,8 @@ class CoverageTest {
         return new Coverage(model(), Fixtures.read(MODEL), Map.of());
     }
 
-    private static MappingInference.Capture capture(String bdsVersion, List<String> unattributed) {
-        return new MappingInference.Capture("data/bds/" + bdsVersion + "/spec", bdsVersion, 1, List.of(), Map.of(), Map.of(), unattributed,
+    private static SpecCaptures.Capture capture(String bdsVersion, List<String> unattributed) {
+        return new SpecCaptures.Capture("data/bds/" + bdsVersion + "/spec", bdsVersion, 1, List.of(), Map.of(), Map.of(), unattributed,
             new Feedback(), Map.of(), null);
     }
 

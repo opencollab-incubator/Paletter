@@ -35,7 +35,7 @@ class RuleFitTest {
     }
 
     private static JsonObject scalar(List<Observation> pairs) {
-        return json(MappingInference.scalar(pairs, Observation::json, W));
+        return json(RuleFit.scalar(pairs, Observation::json, W));
     }
 
     @Test
@@ -80,9 +80,9 @@ class RuleFitTest {
         assertEquals(List.of(), json(OrderedSet.fit(bones, varying, java.util.Set.of())));
         // Nor does a table of the strings seen at one place of the list say anything about other strings
         List<Observation> second = pairs("[\"bone_a\", \"paletter_b\"]", "p", "[\"paletter_b\", \"bone_a\"]", "q");
-        JsonObject open = json(MappingInference.array(second, W, false));
+        JsonObject open = json(RuleFit.array(second, W, false));
         assertFalse(open != null && open.get("kind").getAsString().equals("table"), String.valueOf(open));
-        assertEquals("table", json(MappingInference.array(second, W, true)).get("kind").getAsString());
+        assertEquals("table", json(RuleFit.array(second, W, true)).get("kind").getAsString());
         // The JSON's order without repeats needs no known set of values
         List<Observation> tags = List.of(list("[\"a\", \"a\", \"b\"]", "a", "b"), list("[\"b\"]", "b"));
         List<JsonObject> deduped = json(OrderedSet.fit(tags, varying, java.util.Set.of()));
@@ -101,10 +101,10 @@ class RuleFitTest {
                 Map.of(first, new Leaf("string", "paletter_b"), "minecraft:x.leaf[1]", new Leaf("string", "bone_a")), "two"),
             new Observation(JsonParser.parseString("[\"bone_a\"]"), Map.of(first, new Leaf("string", "bone_a")), "one"),
             new Observation(JsonParser.parseString("[]"), Map.of(W, new Leaf("list", "[]")), "none"));
-        assertEquals("identity", json(MappingInference.mixed(uvLock, W, false, false)).get("kind").getAsString(), "the byte follows the boolean");
-        assertNull(json(MappingInference.mixed(uvLock, first, false, false)), "that booleans send no first element is no rule for the lists");
+        assertEquals("identity", json(RuleFit.mixed(uvLock, W, false, false)).get("kind").getAsString(), "the byte follows the boolean");
+        assertNull(json(RuleFit.mixed(uvLock, first, false, false)), "that booleans send no first element is no rule for the lists");
         // A leaf the lists do not send either stays what the scalar part says
-        assertEquals("constant", json(MappingInference.mixed(uvLock, "minecraft:x.other", false, false)).get("kind").getAsString());
+        assertEquals("constant", json(RuleFit.mixed(uvLock, "minecraft:x.other", false, false)).get("kind").getAsString());
     }
 
     @Test
@@ -113,9 +113,9 @@ class RuleFitTest {
         JsonObject rule = scalar(enums);
         assertEquals("table", rule.get("kind").getAsString());
         assertEquals("6", rule.getAsJsonObject("table").get("spear").getAsString());
-        assertTrue(MappingInference.tableAllowed(enums, true));
-        assertFalse(MappingInference.tableAllowed(enums, false), "free strings must not become a table");
-        assertTrue(MappingInference.tableAllowed(pairs("true", (byte) 1, "false", (byte) 2), false));
+        assertTrue(RuleFit.tableAllowed(enums, true));
+        assertFalse(RuleFit.tableAllowed(enums, false), "free strings must not become a table");
+        assertTrue(RuleFit.tableAllowed(pairs("true", (byte) 1, "false", (byte) 2), false));
     }
 
     @Test
@@ -143,11 +143,11 @@ class RuleFitTest {
 
     @Test
     void bitset() {
-        JsonObject rule = json(MappingInference.array(pairs("[\"down\"]", 1, "[\"up\"]", 2, "[\"north\"]", 4, "[\"up\",\"north\"]", 6, "[]", 0), W, true));
+        JsonObject rule = json(RuleFit.array(pairs("[\"down\"]", 1, "[\"up\"]", 2, "[\"north\"]", 4, "[\"up\",\"north\"]", 6, "[]", 0), W, true));
         assertEquals("bitset", rule.get("kind").getAsString());
         assertEquals(4, rule.getAsJsonObject("bits").get("north").getAsInt());
         // OR does not hold: not a bit set
-        JsonObject broken = json(MappingInference.array(pairs("[\"down\"]", 1, "[\"up\"]", 2, "[\"up\",\"down\"]", 7), W, true));
+        JsonObject broken = json(RuleFit.array(pairs("[\"down\"]", 1, "[\"up\"]", 2, "[\"up\",\"down\"]", 7), W, true));
         assertTrue(broken == null || !broken.get("kind").getAsString().equals("bitset"));
     }
 
@@ -158,7 +158,7 @@ class RuleFitTest {
         for (int[] v : new int[][]{{0, 90, 0}, {90, 180, 270}, {180, 270, 0}}) {
             pairs.add(new Observation(JsonParser.parseString("[" + v[0] + "," + v[1] + "," + v[2] + "]"), Map.of(W, new Leaf("int", v[0] / 90)), ""));
         }
-        JsonObject rule = json(MappingInference.array(pairs, W, false));
+        JsonObject rule = json(RuleFit.array(pairs, W, false));
         assertEquals("linear", rule.get("kind").getAsString());
         assertEquals(0, rule.get("element").getAsInt());
         assertEquals(round(1 / 90.0), rule.get("scale").getAsDouble());
@@ -171,7 +171,7 @@ class RuleFitTest {
         for (int[] v : new int[][]{{90, 180, 270}, {180, 270, 0}}) {
             pairs.add(new Observation(JsonParser.parseString("[" + v[0] + "," + v[1] + "," + v[2] + "]"), Map.of(W, new Leaf("int", v[1] / 90)), ""));
         }
-        JsonObject rule = json(MappingInference.array(pairs, W, false));
+        JsonObject rule = json(RuleFit.array(pairs, W, false));
         assertEquals("linear", rule.get("kind").getAsString());
         assertEquals(1, rule.get("element").getAsInt());
         assertEquals(0.0, rule.get("offset").getAsDouble());
@@ -182,7 +182,7 @@ class RuleFitTest {
         List<Observation> pairs = new ArrayList<>();
         pairs.add(new Observation(JsonParser.parseString("{\"bone_a\": 3}"), Map.of("x.bone_a", new Leaf("int", 3)), ""));
         pairs.add(new Observation(JsonParser.parseString("{\"bone_a\": 5}"), Map.of("x.bone_a", new Leaf("int", 5)), ""));
-        JsonObject rule = json(MappingInference.object(pairs, "x.bone_a", false));
+        JsonObject rule = json(RuleFit.object(pairs, "x.bone_a", false));
         assertEquals("identity", rule.get("kind").getAsString());
         assertTrue(rule.get("mapEntry").getAsBoolean());
     }
@@ -194,17 +194,17 @@ class RuleFitTest {
             new Observation(JsonParser.parseString("{\"bone_a\": \"q.x\"}"), Map.of("x.bone_a", new Leaf("string", "q.x")), ""),
             new Observation(JsonParser.parseString("{\"bone_a\": \"q.x\", \"bone_b\": \"on\"}"),
                 Map.of("x.bone_a", new Leaf("string", "q.x"), "x.bone_b", new Leaf("string", "1.000000")), ""));
-        assertNull(json(MappingInference.object(one, "x.bone_b", false)), "one value is no constant: another was never tried");
+        assertNull(json(RuleFit.object(one, "x.bone_b", false)), "one value is no constant: another was never tried");
         // two strings sent differently: a table of them is no rule for free text, only for an enum
         List<Observation> two = new ArrayList<>(one);
         two.add(new Observation(JsonParser.parseString("{\"bone_b\": \"q.x\"}"), Map.of("x.bone_b", new Leaf("string", "q.x")), ""));
-        assertNull(json(MappingInference.object(two, "x.bone_b", false)));
-        assertEquals("table", json(MappingInference.object(two, "x.bone_b", true)).get("kind").getAsString());
+        assertNull(json(RuleFit.object(two, "x.bone_b", false)));
+        assertEquals("table", json(RuleFit.object(two, "x.bone_b", true)).get("kind").getAsString());
         // a leaf that stays the same while the entry's value changes is a constant
         List<Observation> version = List.of(
             new Observation(JsonParser.parseString("{\"bone_a\": \"q.x\"}"), Map.of("x.bone_a.version", new Leaf("short", (short) 13)), ""),
             new Observation(JsonParser.parseString("{\"bone_a\": \"1.0\"}"), Map.of("x.bone_a.version", new Leaf("short", (short) 13)), ""));
-        assertEquals("constant", json(MappingInference.object(version, "x.bone_a.version", false)).get("kind").getAsString());
+        assertEquals("constant", json(RuleFit.object(version, "x.bone_a.version", false)).get("kind").getAsString());
     }
 
     private static JsonObject json(Rule rule) {

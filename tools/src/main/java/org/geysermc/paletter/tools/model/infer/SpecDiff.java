@@ -63,17 +63,17 @@ public final class SpecDiff {
     }
 
     public static Pairing pairing(Path previous, Path current) throws IOException {
-        return pairing(MappingInference.load(previous), MappingInference.load(current));
+        return pairing(SpecCaptures.load(previous), SpecCaptures.load(current));
     }
 
-    static Pairing pairing(MappingInference.Capture before, MappingInference.Capture after) {
-        Map<String, MappingInference.Variant> earlier = new HashMap<>();
+    static Pairing pairing(SpecCaptures.Capture before, SpecCaptures.Capture after) {
+        Map<String, SpecCaptures.Variant> earlier = new HashMap<>();
         before.variants().forEach(v -> earlier.put(v.identifier(), v));
         int same = 0;
         int onlyAfter = 0;
         int different = 0;
-        for (MappingInference.Variant variant : after.variants()) {
-            MappingInference.Variant old = earlier.remove(variant.identifier());
+        for (SpecCaptures.Variant variant : after.variants()) {
+            SpecCaptures.Variant old = earlier.remove(variant.identifier());
             if (old == null) {
                 onlyAfter++;
             } else if (!old.component().equals(variant.component()) || !java.util.Objects.equals(old.json(), variant.json())) {
@@ -87,13 +87,13 @@ public final class SpecDiff {
 
     /** @return the changes, in variant order */
     public static List<Change> compare(Path previous, Path current) throws IOException {
-        MappingInference.Capture before = MappingInference.load(previous);
-        MappingInference.Capture after = MappingInference.load(current);
-        Map<String, MappingInference.Variant> earlier = new HashMap<>();
+        SpecCaptures.Capture before = SpecCaptures.load(previous);
+        SpecCaptures.Capture after = SpecCaptures.load(current);
+        Map<String, SpecCaptures.Variant> earlier = new HashMap<>();
         before.variants().forEach(v -> earlier.put(v.identifier(), v));
         List<Change> changes = new ArrayList<>();
-        for (MappingInference.Variant variant : after.variants()) {
-            MappingInference.Variant old = earlier.get(variant.identifier());
+        for (SpecCaptures.Variant variant : after.variants()) {
+            SpecCaptures.Variant old = earlier.get(variant.identifier());
             if (old == null || !old.component().equals(variant.component()) || !java.util.Objects.equals(old.json(), variant.json())
                 || !accepted(before, old) || !accepted(after, variant)) {
                 continue;
@@ -114,15 +114,15 @@ public final class SpecDiff {
      * @return the differences, in variant order
      */
     public static List<String> acceptance(Path previous, Path current) throws IOException {
-        MappingInference.Capture before = MappingInference.load(previous);
-        MappingInference.Capture after = MappingInference.load(current);
+        SpecCaptures.Capture before = SpecCaptures.load(previous);
+        SpecCaptures.Capture after = SpecCaptures.load(current);
         String formatBefore = BuildHistory.formatVersion(previous);
         String formatAfter = BuildHistory.formatVersion(current);
-        Map<String, MappingInference.Variant> earlier = new HashMap<>();
+        Map<String, SpecCaptures.Variant> earlier = new HashMap<>();
         before.variants().forEach(v -> earlier.put(v.identifier(), v));
         List<String> changes = new ArrayList<>();
-        for (MappingInference.Variant variant : after.variants()) {
-            MappingInference.Variant old = earlier.get(variant.identifier());
+        for (SpecCaptures.Variant variant : after.variants()) {
+            SpecCaptures.Variant old = earlier.get(variant.identifier());
             if (old == null || !old.component().equals(variant.component()) || !java.util.Objects.equals(old.json(), variant.json())) {
                 continue;
             }
@@ -149,7 +149,7 @@ public final class SpecDiff {
         return lines.stream().map(line -> BuildHistory.withoutFormatVersion(line, formatVersion)).toList();
     }
 
-    private static boolean accepted(MappingInference.Capture capture, MappingInference.Variant variant) {
+    private static boolean accepted(SpecCaptures.Capture capture, SpecCaptures.Variant variant) {
         return capture.wire().containsKey(variant.identifier())
             && capture.log().getOrDefault(variant.identifier(), List.of()).stream().noneMatch(line -> line.startsWith("ERROR"));
     }
