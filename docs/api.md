@@ -49,7 +49,7 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 |---|---|
 | `Paletter#block(NbtMap)`, `Paletter#item(identifier, aux)` | The key for a state or variant of any bundled version, or null. `explainUnknown` says why. |
 | `Palette#runtimeId(BedrockBlockState, int orElse)` | The runtime id (the state hash), or `orElse` if the palette lacks the state. |
-| `Palette#blockDefinition(BedrockBlockState)` | The `RegisteredBlockState` this version sends, after adapting and fallbacks, or null if the palette lacks the state (a custom block of a layer it does not have). |
+| `Palette#blockDefinition(BedrockBlockState)` | The `RegisteredBlockState` this version sends, after adapting and fallbacks, or null if the palette lacks the state (a custom block of a layer it does not have). With the bundled data, a vanilla state is never lacking: these are not null, and `orElse` is not used. |
 | `Palette#itemDefinition(BedrockItemType)` | The `RegisteredItem`, or null if the version lacks it. Fallbacks are not applied. |
 | `Palette#itemDefinition(String)` | The `RegisteredItem` for an identifier, or null. `itemDefinitions()` lists all items in runtime id order, `itemTags()` the item tags (tag to identifiers). |
 | `Palette#blockState(BlockDefinition)` | The key of a block this palette sends, looked up by runtime id: `blockDefinition(blockState(d))` is `d`. A definition of another palette gives the key of the block with its runtime id here, or null if there is none. |

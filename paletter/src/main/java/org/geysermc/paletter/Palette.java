@@ -196,7 +196,7 @@ public final class Palette {
     }
 
     /**
-     * @return the behaviour values of the default state of a block, see {@link #blockBehaviour(BedrockBlockState)}
+     * @return the behaviour values of the default state of a block, see {@link #blockBehaviour(BedrockBlockState)};
      *         null if the block is not in this palette
      * @since 0.1.0
      */
@@ -304,7 +304,8 @@ public final class Palette {
     /**
      * @return the block to send for a state; resolved for this version, air if nothing fits. A field read and an array
      *         load, it does not allocate. Null if the state is not in this palette (a custom block of a layer it does
-     *         not have, e.g. one a session palette shows from another session)
+     *         not have, e.g. one a session palette shows from another session). Never null for a vanilla state when
+     *         the data is bundled: every version sends something for it
      * @since 0.1.0
      */
     public @Nullable RegisteredBlockState blockDefinition(@NonNull BedrockBlockState state) {
@@ -314,7 +315,8 @@ public final class Palette {
 
     /**
      * @param orElse what to return for a state that is not in this palette (a custom block of a layer it does not have),
-     *               e.g. the runtime id of air
+     *               e.g. the runtime id of air. Never used for a vanilla state when the data is bundled, see
+     *               {@link #blockDefinition(BedrockBlockState)}
      * @return the runtime id to send for a state: its hash, see {@link BlockHashes}, or {@code orElse} if the state is
      *         not in this palette. A field read and an array load, it does not allocate
      * @since 0.1.0
