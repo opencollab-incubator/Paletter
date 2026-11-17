@@ -23,23 +23,14 @@ import org.geysermc.paletter.internal.item.ItemVariant;
 public final class BedrockItemVariant {
     private final BedrockItemType type;
     private final int aux;
-    /** The canonical id in the newest bundled data; -1 for a variant that has none, or a constant that is not linked yet. */
-    private int id;
+    /** The canonical id in the newest bundled data, or -1: a variant without one, and the named constants, which look it up. */
+    private final int id;
     private volatile ItemVariant variant;
 
     BedrockItemVariant(BedrockItemType type, int aux, int id) {
         this.type = type;
         this.aux = aux;
         this.id = id;
-    }
-
-    /**
-     * Links a generated constant ({@link VanillaTypes#variant}) to the data: it becomes the variant of its canonical id, so
-     * that it is the instance {@link BedrockItemType#variant(int)} answers.
-     */
-    BedrockItemVariant bind(int id) {
-        this.id = id;
-        return this;
     }
 
     /**

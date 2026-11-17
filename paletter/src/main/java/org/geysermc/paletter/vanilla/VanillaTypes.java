@@ -57,8 +57,8 @@ final class VanillaTypes {
     }
 
     /**
-     * A named variant of a vanilla type ({@code BedrockItemVariants}). It is linked to the data with the type: the index
-     * adopts it as the variant of its canonical id.
+     * A named variant of a vanilla type ({@code BedrockItemVariants}). The index adopts it as the type's variant of that aux,
+     * so it is the instance {@link BedrockItemType#variant(int)} answers.
      */
     static @NonNull BedrockItemVariant variant(@NonNull BedrockItemType type, int aux) {
         return new BedrockItemVariant(type, aux, -1);
