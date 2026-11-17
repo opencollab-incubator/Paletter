@@ -1,101 +1,66 @@
 package org.geysermc.paletter.creative;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.paletter.annotation.Internal;
-import org.geysermc.paletter.item.BedrockItemStack;
+import java.util.Objects;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.ItemKey;
 
 /**
- * Declares where a custom item or block item goes in the creative inventory. It is tried in this order:
- * <ol>
- *     <li>right after {@code after}, if set and present;</li>
- *     <li>at the end of {@code group}, if set. The group is created at the end of the category if it does not exist;</li>
- *     <li>as a loose stack at the end of the category.</li>
- * </ol>
- * It never ends up inside some unrelated vanilla group just because that group happens to be last in the category.
- * Without an anchor, the layer's {@link CreativeOrdering} decides the order between stacks and how groups are found
- * (by default exactly like BDS, see {@link CreativeOrdering#BDS}).
- * <p>
- * The category and group are also written into the item's data driven properties ({@code creative_category} and
- * {@code creative_group}), and into a custom block's {@code menu_category}, so the client and the creative packet agree.
+ * Where a custom item or block item goes in the creative inventory <i>within</i> its category and group: the position
+ * adjustment of the layer. Whether it is in the creative inventory at all, and its category and group, are decided by the
+ * {@code menu_category} of the item or block alone, as in BDS (absent or {@code none}: not in it).
+ * <ul>
+ *     <li>{@link #DEFAULT}: where the layer's {@link CreativeOrdering} puts it (by default exactly like BDS, see
+ *     {@link CreativeOrdering#BDS});</li>
+ *     <li>{@link #after(ItemMatcher)}: right after the first stack that matches, under every ordering. An anchor that
+ *     matches nothing falls back to the default position, and the compile reports it.</li>
+ * </ul>
  *
- * @param category the category
- * @param group the group to add to, or null
- * @param after a stack to insert after, or null
  * @since 1.0.0
  */
-public record CreativePlacement(@NonNull CreativeCategory category, @Nullable String group, @Nullable ItemMatcher after) {
+public sealed interface CreativePlacement permits DefaultPlacement, CreativePlacement.After {
 
-    public static @NonNull CreativePlacement loose(@NonNull CreativeCategory category) {
-        return new CreativePlacement(category, null, null);
-    }
+    /**
+     * The position the layer's {@link CreativeOrdering} gives: what an item or block has by default.
+     *
+     * @since 1.0.0
+     */
+    CreativePlacement DEFAULT = new DefaultPlacement();
 
-    public static @NonNull CreativePlacement group(@NonNull CreativeCategory category, @NonNull String group) {
-        return new CreativePlacement(category, group, null);
-    }
-
-    public @NonNull CreativePlacement after(@NonNull ItemMatcher anchor) {
-        return new CreativePlacement(category, group, anchor);
+    /**
+     * @return a placement right after the stacks an anchor matches
+     * @since 1.0.0
+     */
+    static @NonNull CreativePlacement after(@NonNull ItemMatcher anchor) {
+        return new After(anchor);
     }
 
     /**
-     * @return this placement, right after the stacks of any variant of an item type if present
+     * @return a placement right after exactly that variant, if present (a type is its base variant)
      * @since 1.0.0
      */
-    public @NonNull CreativePlacement afterAnyVariantOf(@NonNull BedrockItemType anchor) {
-        return after(ItemMatcher.anyVariantOf(anchor));
-    }
-
-    /**
-     * @return this placement, right after exactly that variant if present (a type is its base variant)
-     * @since 1.0.0
-     */
-    public @NonNull CreativePlacement after(@NonNull ItemKey anchor) {
+    static @NonNull CreativePlacement after(@NonNull ItemKey anchor) {
         return after(ItemMatcher.of(anchor));
     }
 
     /**
-     * Applies this placement to an editor. An anchor ({@link #after}) always wins if it exists; otherwise the
-     * stack goes where the ordering policy puts it.
-     *
+     * @return a placement right after the stacks of any variant of an item type, if present
      * @since 1.0.0
      */
-    @Internal
-    public void apply(@NonNull CreativeEditor editor, @NonNull BedrockItemStack stack, @NonNull CreativeOrdering ordering) {
-        if (ordering == CreativeOrdering.BDS) {
-            CreativeEditor.Insertion insertion = editor.insert(stack);
-            if (after != null && insertion.after(after)) {
-                return;
-            }
-            if (group != null) {
-                insertion.intoCategoryGroup(category, bdsGroupName(group));
-            } else {
-                insertion.loose(category);
-            }
-            return;
-        }
-        applyAppend(editor, stack);
+    static @NonNull CreativePlacement afterAnyVariantOf(@NonNull BedrockItemType anchor) {
+        return after(ItemMatcher.anyVariantOf(anchor));
     }
 
     /**
-     * The creative packet name BDS uses for a {@code menu_category} group: the {@code minecraft:} namespace is
-     * dropped ({@code minecraft:itemGroup.name.sword} is {@code itemGroup.name.sword}), other namespaces are kept.
+     * A placement right after an anchor. If nothing matches the anchor, the default position is used and the palette
+     * report gets a warning.
+     *
+     * @param anchor the stack to insert after
+     * @since 1.0.0
      */
-    static @NonNull String bdsGroupName(@NonNull String group) {
-        return group.startsWith("minecraft:") ? group.substring("minecraft:".length()) : group;
-    }
-
-    private void applyAppend(@NonNull CreativeEditor editor, @NonNull BedrockItemStack stack) {
-        CreativeEditor.Insertion insertion = editor.insert(stack);
-        if (after != null && insertion.after(after)) {
-            return;
-        }
-        if (group != null) {
-            insertion.intoGroup(category, group);
-        } else {
-            insertion.loose(category);
+    record After(@NonNull ItemMatcher anchor) implements CreativePlacement {
+        public After {
+            Objects.requireNonNull(anchor, "anchor");
         }
     }
 }

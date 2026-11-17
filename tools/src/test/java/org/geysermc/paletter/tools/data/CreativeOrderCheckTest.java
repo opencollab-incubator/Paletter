@@ -12,6 +12,7 @@ import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.data.DataVersion;
+import org.geysermc.paletter.data.PaletteDataSource;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,7 +20,9 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,6 +45,24 @@ class CreativeOrderCheckTest {
             directory.resolve("custom_block_properties.nbt"));
         assertTrue(result.matches(), String.join("\n", result.differences()));
         assertTrue(result.customStacks() >= customStacks, "only " + result.customStacks() + " custom stacks compared");
+    }
+
+    /**
+     * Data driven items, the ones that replace a block item among them, share one sequence: the addon capture has
+     * paletter:plain 908, paletter:plain_block 909 (replaces the block's item) and paletter:projectile 910. The ids
+     * Paletter gives differ from BDS's by a constant, as custom items do not move vanilla ones.
+     */
+    @Test
+    void dataDrivenItemsKeepTheirIdDistancesOfTheCapture() throws Exception {
+        Path directory = CAPTURES.resolve("addon");
+        List<NbtMap> captured = CreativeOrderCheck.readList(directory.resolve("custom_item_registry.nbt"), "items").stream()
+            .filter(item -> item.getBoolean("componentBased") && !item.getString("name").startsWith("minecraft:")).toList();
+        PaletteLayer layer = CreativeOrderCheck.layer(captured, CreativeOrderCheck.readList(directory.resolve("custom_block_properties.nbt"), "blocks"));
+        Palette palette = Paletter.builder().data(PaletteDataSource.directory(DATA)).layer(layer).build().palette(2225);
+        int shift = palette.itemDefinition(captured.getFirst().getString("name")).getRuntimeId() - captured.getFirst().getShort("id");
+        for (NbtMap item : captured) {
+            assertEquals(item.getShort("id") + shift, palette.itemDefinition(item.getString("name")).getRuntimeId(), item.getString("name"));
+        }
     }
 
     @Test

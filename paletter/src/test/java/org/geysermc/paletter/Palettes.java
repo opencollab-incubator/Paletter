@@ -19,7 +19,7 @@ public final class Palettes {
     public static Paletter paletter(PaletteLayer... layers) {
         return PALETTERS.computeIfAbsent(new Key(List.of(layers)), key -> {
             // Every experiment on: the tests of the palettes are about the content of a version, not about its gating
-            Paletter.Builder builder = Paletter.builder().vanilla(vanilla -> vanilla.experiments(EXPERIMENTS));
+            Paletter.Builder builder = Paletter.builder().experiments(EXPERIMENTS);
             key.layers.forEach(builder::layer);
             return builder.build();
         });

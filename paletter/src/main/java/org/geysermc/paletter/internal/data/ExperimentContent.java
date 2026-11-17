@@ -8,7 +8,7 @@ import java.util.List;
  * What one experiment toggle adds to a version's vanilla content, as BDS showed it: the bundled data of a version is
  * captured without experiments, so this content is either missing from it (new items) or present but not usable
  * without the toggle (blocks in the palette, items in the registry that only the toggle turns on). A Paletter treats it
- * as missing unless it enables the toggle ({@code VanillaContent#experiments}), so ordinary fallbacks apply to it; a block
+ * as missing unless it enables the toggle ({@code Paletter.Builder#experiments}), so ordinary fallbacks apply to it; a block
  * is gated with its item (the block to item relation).
  * <p>
  * Recorded by the generator's {@code update} (one capture per toggle against one without any, see

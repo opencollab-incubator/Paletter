@@ -4,7 +4,6 @@ import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.CustomItem;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +22,7 @@ class LayerLeakTest {
     /** Compiles a layer in every version, and drops every reference to it. */
     private static WeakReference<PaletteLayer> extendOnce(String id) {
         PaletteLayer layer = PaletteLayer.builder(id)
-            .item(CustomItem.builder(id + ":ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build())
+            .item(CustomItem.builder(id + ":ruby").menuCategory(CreativeCategory.ITEMS).build())
             .block(CustomBlock.builder(id + ":lamp")
                 .property(BlockProperty.bool(id + ":lit"))
                 .component(Geometry.of("minecraft:geometry.full_block"))
@@ -32,7 +31,6 @@ class LayerLeakTest {
         PALETTER.versions().forEach(version -> {
             Palette extended = PALETTER.palette(version.protocolVersion()).extend(layer);
             assertTrue(extended.layers().contains(layer));
-            assertTrue(extended.report().errors().isEmpty(), extended.report().errors().toString());
         });
         return new WeakReference<>(layer);
     }

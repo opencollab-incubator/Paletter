@@ -1,7 +1,8 @@
 package org.geysermc.paletter.internal.shape;
 
 import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.paletter.PaletteReport;
+import org.geysermc.paletter.PaletteException;
+import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlock;
@@ -49,7 +50,7 @@ public final class VoxelShapeCompiler {
      * @param blocks the blocks of the palette; its custom blocks name shapes in {@code minecraft:geometry}
      */
     public static VoxelShapes compile(List<VoxelShapeStore.Entry> vanilla, Map<String, VoxelShape> custom, BlockRegistry blocks,
-                                      PaletteReport report) {
+                                      PaletteReportBuilder report) {
         VoxelShapeCompiler compiler = new VoxelShapeCompiler();
         List<VoxelShapeStore.Entry> made = new ArrayList<>();
         for (VoxelShapeStore.Entry entry : vanilla) {
@@ -61,10 +62,9 @@ public final class VoxelShapeCompiler {
         }
         custom.forEach((identifier, shape) -> {
             if (compiler.names.containsKey(identifier)) {
-                report.error(SOURCE, "The voxel shape " + identifier + " is defined twice; the first definition is used");
-            } else {
-                compiler.names.put(identifier, compiler.add(shape.grid()));
+                throw new PaletteException("The voxel shape " + identifier + " is defined twice", null, identifier, null);
             }
+            compiler.names.put(identifier, compiler.add(shape.grid()));
         });
 
         List<RegisteredBlock> customBlocks = new ArrayList<>();
@@ -108,7 +108,7 @@ public final class VoxelShapeCompiler {
     }
 
     /** The shapes BDS makes for a custom block: per state its transformed culling shape, then the shapes of its faces. */
-    private void addBlock(RegisteredBlock block, PaletteReport report) {
+    private void addBlock(RegisteredBlock block, PaletteReportBuilder report) {
         for (RegisteredBlockState state : block.states()) {
             Properties properties = block.properties(state);
             NbtMap geometry = properties.component("minecraft:geometry");

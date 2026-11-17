@@ -6,7 +6,6 @@ import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.ItemRegistry;
@@ -38,7 +37,7 @@ class PaletteIdentityTest {
     private static final Paletter HASHED = Palettes.paletter();
 
     private static final CustomItem RUBY = CustomItem.builder("identity:ruby")
-        .creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
+        .menuCategory(CreativeCategory.ITEMS).build();
     private static final CustomBlock LAMP = CustomBlock.builder("identity:lamp")
         .property(BlockProperty.range("identity:level", 0, 3))
         .component(Geometry.of("minecraft:geometry.full_block"))

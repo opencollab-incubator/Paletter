@@ -122,6 +122,7 @@ public final class org.geysermc.paletter.Palette {
     public org.geysermc.paletter.item.RegisteredItem itemDefinition(java.lang.String)
     public org.geysermc.paletter.item.RegisteredItem itemDefinition(org.geysermc.paletter.vanilla.BedrockItemType)
     public java.util.List<org.geysermc.paletter.item.RegisteredItem> itemDefinitions()
+    public org.geysermc.paletter.vanilla.BedrockItemType itemOf(org.geysermc.paletter.vanilla.BedrockBlockType)
     public java.util.Map<java.lang.String, java.util.List<java.lang.String>> itemTags()
     public org.geysermc.paletter.vanilla.BedrockItemType itemType(java.lang.String, org.geysermc.paletter.Lookup)
     public org.geysermc.paletter.vanilla.BedrockItemVariant itemVariant(java.lang.String, int, org.geysermc.paletter.Lookup)
@@ -143,7 +144,9 @@ public final class org.geysermc.paletter.Palette {
 
 public class org.geysermc.paletter.PaletteException extends java.lang.RuntimeException {
     public <init>(java.lang.String)
-    public <init>(java.lang.String, java.lang.Throwable)
+    public <init>(java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable)
+    public java.lang.String identifier()
+    public java.lang.String layer()
 }
 
 public final class org.geysermc.paletter.PaletteLayer {
@@ -152,7 +155,6 @@ public final class org.geysermc.paletter.PaletteLayer {
     public boolean changesBlocks()
     public java.util.List<java.util.function.BiConsumer<org.geysermc.paletter.creative.CreativeEditor, org.geysermc.paletter.data.DataVersion>> creativeEdits()
     public java.lang.String id()
-    public java.util.List<org.geysermc.paletter.PaletteLayer$ItemEntry> itemEntries()
     public java.util.List<org.geysermc.paletter.item.CustomItem> items()
     public java.util.List<org.geysermc.paletter.PaletteLayer$Override> overrides()
     public java.util.Map<java.lang.String, java.util.List<java.lang.String>> tags()
@@ -162,7 +164,6 @@ public final class org.geysermc.paletter.PaletteLayer {
 
 public static final class org.geysermc.paletter.PaletteLayer$Builder {
     public org.geysermc.paletter.PaletteLayer$Builder block(org.geysermc.paletter.block.CustomBlock)
-    public org.geysermc.paletter.PaletteLayer$Builder blockItem(java.lang.String, org.geysermc.paletter.block.CustomBlock$BlockItem, org.geysermc.paletter.creative.CreativePlacement)
     public org.geysermc.paletter.PaletteLayer build()
     public org.geysermc.paletter.PaletteLayer$Builder creative(java.util.function.BiConsumer<org.geysermc.paletter.creative.CreativeEditor, org.geysermc.paletter.data.DataVersion>)
     public org.geysermc.paletter.PaletteLayer$Builder creative(java.util.function.Consumer<org.geysermc.paletter.creative.CreativeEditor>)
@@ -172,27 +173,6 @@ public static final class org.geysermc.paletter.PaletteLayer$Builder {
     public org.geysermc.paletter.PaletteLayer$Builder tag(java.lang.String, java.lang.String...)
     public org.geysermc.paletter.PaletteLayer$Builder variant(org.geysermc.paletter.vanilla.ItemKey)
     public org.geysermc.paletter.PaletteLayer$Builder voxelShape(java.lang.String, org.geysermc.paletter.block.VoxelShape)
-}
-
-public sealed interface org.geysermc.paletter.PaletteLayer$ItemEntry permits org.geysermc.paletter.PaletteLayer$ItemEntry$Custom, org.geysermc.paletter.PaletteLayer$ItemEntry$OfBlock {
-}
-
-public record org.geysermc.paletter.PaletteLayer$ItemEntry$Custom implements org.geysermc.paletter.PaletteLayer$ItemEntry {
-    public <init>(org.geysermc.paletter.item.CustomItem)
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public org.geysermc.paletter.item.CustomItem item()
-    public final java.lang.String toString()
-}
-
-public record org.geysermc.paletter.PaletteLayer$ItemEntry$OfBlock implements org.geysermc.paletter.PaletteLayer$ItemEntry {
-    public <init>(java.lang.String, org.geysermc.paletter.block.CustomBlock$BlockItem, org.geysermc.paletter.creative.CreativePlacement)
-    public java.lang.String block()
-    public org.geysermc.paletter.creative.CreativePlacement creative()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public org.geysermc.paletter.block.CustomBlock$BlockItem item()
-    public final java.lang.String toString()
 }
 
 public record org.geysermc.paletter.PaletteLayer$Override {
@@ -206,7 +186,9 @@ public record org.geysermc.paletter.PaletteLayer$Override {
 
 public final class org.geysermc.paletter.PaletteReport {
     public java.util.List<org.geysermc.paletter.PaletteReport$Entry> entries()
-    public java.util.List<org.geysermc.paletter.PaletteReport$Entry> errors()
+    public java.util.Set<org.geysermc.paletter.vanilla.BedrockBlockType> unknownBlocks()
+    public java.util.Set<org.geysermc.paletter.vanilla.BedrockItemVariant> unknownItems()
+    public org.geysermc.paletter.data.DataVersion version()
     public java.util.List<org.geysermc.paletter.PaletteReport$Entry> warnings()
 }
 
@@ -221,7 +203,6 @@ public record org.geysermc.paletter.PaletteReport$Entry {
 }
 
 public enum org.geysermc.paletter.PaletteReport$Level {
-    public static final org.geysermc.paletter.PaletteReport$Level ERROR
     public static final org.geysermc.paletter.PaletteReport$Level INFO
     public static final org.geysermc.paletter.PaletteReport$Level WARNING
     public static org.geysermc.paletter.PaletteReport$Level valueOf(java.lang.String)
@@ -245,20 +226,17 @@ public final class org.geysermc.paletter.Paletter {
 }
 
 public static final class org.geysermc.paletter.Paletter$Builder {
+    public org.geysermc.paletter.Paletter$Builder allExperiments()
     public org.geysermc.paletter.Paletter build()
     public org.geysermc.paletter.Paletter$Builder creativeOrdering(org.geysermc.paletter.creative.CreativeOrdering)
     public org.geysermc.paletter.Paletter$Builder data(org.geysermc.paletter.data.PaletteDataSource)
+    public org.geysermc.paletter.Paletter$Builder experiments(org.geysermc.paletter.data.DataVersion, java.lang.String...)
+    public org.geysermc.paletter.Paletter$Builder experiments(java.lang.String...)
     public org.geysermc.paletter.Paletter$Builder fallbacks(org.geysermc.paletter.Fallbacks)
     public org.geysermc.paletter.Paletter$Builder layer(org.geysermc.paletter.PaletteLayer)
+    public org.geysermc.paletter.Paletter$Builder removeItems(org.geysermc.paletter.vanilla.BedrockItemType...)
     public org.geysermc.paletter.Paletter$Builder reports(java.util.function.Consumer<org.geysermc.paletter.PaletteReport>)
-    public org.geysermc.paletter.Paletter$Builder vanilla(java.util.function.Consumer<org.geysermc.paletter.VanillaContent>)
     public org.geysermc.paletter.Paletter$Builder versions(java.util.function.Predicate<org.geysermc.paletter.data.DataVersion>)
-}
-
-public final class org.geysermc.paletter.VanillaContent {
-    public org.geysermc.paletter.VanillaContent allExperiments()
-    public org.geysermc.paletter.VanillaContent experiments(java.lang.String...)
-    public org.geysermc.paletter.VanillaContent remove(org.geysermc.paletter.vanilla.BedrockItemType)
 }
 
 public @interface org.geysermc.paletter.annotation.BedrockFormat {
@@ -473,7 +451,7 @@ public final class org.geysermc.paletter.block.CustomBlock {
     public static org.geysermc.paletter.block.CustomBlock$Builder builder(java.lang.String)
     public <T extends org.geysermc.paletter.block.component.BlockComponent> T component(java.lang.Class<T>)
     public java.util.List<org.geysermc.paletter.block.component.BlockComponent> components()
-    public org.geysermc.paletter.creative.CreativePlacement creative()
+    public org.geysermc.paletter.creative.CreativePlacement creativePlacement()
     public org.cloudburstmc.nbt.NbtMap defaultState()
     public java.util.Map<java.lang.String, java.lang.Object> defaultStates()
     public boolean equals(java.lang.Object)
@@ -493,42 +471,23 @@ public final class org.geysermc.paletter.block.CustomBlock {
     public org.geysermc.paletter.vanilla.BedrockBlockType type()
 }
 
-public sealed interface org.geysermc.paletter.block.CustomBlock$BlockItem permits org.geysermc.paletter.block.CustomBlock$BlockItem$DataDriven, org.geysermc.paletter.block.CustomBlock$BlockItem$None, org.geysermc.paletter.block.CustomBlock$BlockItem$Simple {
+public enum org.geysermc.paletter.block.CustomBlock$BlockItem {
     public static final org.geysermc.paletter.block.CustomBlock$BlockItem NONE
     public static final org.geysermc.paletter.block.CustomBlock$BlockItem SIMPLE
-    public static org.geysermc.paletter.block.CustomBlock$BlockItem dataDriven(org.geysermc.paletter.item.component.ItemComponent...)
-}
-
-public record org.geysermc.paletter.block.CustomBlock$BlockItem$DataDriven implements org.geysermc.paletter.block.CustomBlock$BlockItem {
-    public <init>(java.util.List<org.geysermc.paletter.item.component.ItemComponent>)
-    public java.util.List<org.geysermc.paletter.item.component.ItemComponent> components()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public final java.lang.String toString()
-}
-
-public record org.geysermc.paletter.block.CustomBlock$BlockItem$None implements org.geysermc.paletter.block.CustomBlock$BlockItem {
-    public <init>()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public final java.lang.String toString()
-}
-
-public record org.geysermc.paletter.block.CustomBlock$BlockItem$Simple implements org.geysermc.paletter.block.CustomBlock$BlockItem {
-    public <init>()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public final java.lang.String toString()
+    public static org.geysermc.paletter.block.CustomBlock$BlockItem valueOf(java.lang.String)
+    public static org.geysermc.paletter.block.CustomBlock$BlockItem[] values()
 }
 
 public static final class org.geysermc.paletter.block.CustomBlock$Builder {
     public org.geysermc.paletter.block.CustomBlock build()
     public org.geysermc.paletter.block.CustomBlock$Builder component(org.geysermc.paletter.block.component.BlockComponent)
     public org.geysermc.paletter.block.CustomBlock$Builder components(org.geysermc.paletter.block.component.BlockComponent...)
-    public org.geysermc.paletter.block.CustomBlock$Builder creative(org.geysermc.paletter.creative.CreativePlacement)
+    public org.geysermc.paletter.block.CustomBlock$Builder creativePlacement(org.geysermc.paletter.creative.CreativePlacement)
     public org.geysermc.paletter.block.CustomBlock$Builder defaultState(java.lang.String, java.lang.Object)
     public org.geysermc.paletter.block.CustomBlock$Builder item(org.geysermc.paletter.block.CustomBlock$BlockItem)
     public org.geysermc.paletter.block.CustomBlock$Builder menuCategory(org.geysermc.paletter.block.component.MenuCategory)
+    public org.geysermc.paletter.block.CustomBlock$Builder menuCategory(org.geysermc.paletter.creative.CreativeCategory)
+    public org.geysermc.paletter.block.CustomBlock$Builder menuCategory(org.geysermc.paletter.creative.CreativeCategory, java.lang.String)
     public org.geysermc.paletter.block.CustomBlock$Builder permutation(java.lang.String, org.geysermc.paletter.block.component.BlockComponent...)
     public org.geysermc.paletter.block.CustomBlock$Builder permutation(org.geysermc.paletter.block.CustomBlock$Permutation)
     public org.geysermc.paletter.block.CustomBlock$Builder property(org.geysermc.paletter.block.BlockProperty<?>)
@@ -2299,18 +2258,18 @@ public enum org.geysermc.paletter.creative.CreativeOrdering {
     public static org.geysermc.paletter.creative.CreativeOrdering[] values()
 }
 
-public record org.geysermc.paletter.creative.CreativePlacement {
-    public <init>(org.geysermc.paletter.creative.CreativeCategory, java.lang.String, org.geysermc.paletter.creative.ItemMatcher)
-    public org.geysermc.paletter.creative.ItemMatcher after()
-    public org.geysermc.paletter.creative.CreativePlacement after(org.geysermc.paletter.creative.ItemMatcher)
-    public org.geysermc.paletter.creative.CreativePlacement after(org.geysermc.paletter.vanilla.ItemKey)
-    public org.geysermc.paletter.creative.CreativePlacement afterAnyVariantOf(org.geysermc.paletter.vanilla.BedrockItemType)
-    public org.geysermc.paletter.creative.CreativeCategory category()
+public sealed interface org.geysermc.paletter.creative.CreativePlacement permits org.geysermc.paletter.creative.CreativePlacement$After, org.geysermc.paletter.creative.DefaultPlacement {
+    public static final org.geysermc.paletter.creative.CreativePlacement DEFAULT
+    public static org.geysermc.paletter.creative.CreativePlacement after(org.geysermc.paletter.creative.ItemMatcher)
+    public static org.geysermc.paletter.creative.CreativePlacement after(org.geysermc.paletter.vanilla.ItemKey)
+    public static org.geysermc.paletter.creative.CreativePlacement afterAnyVariantOf(org.geysermc.paletter.vanilla.BedrockItemType)
+}
+
+public record org.geysermc.paletter.creative.CreativePlacement$After implements org.geysermc.paletter.creative.CreativePlacement {
+    public <init>(org.geysermc.paletter.creative.ItemMatcher)
+    public org.geysermc.paletter.creative.ItemMatcher anchor()
     public final boolean equals(java.lang.Object)
-    public java.lang.String group()
-    public static org.geysermc.paletter.creative.CreativePlacement group(org.geysermc.paletter.creative.CreativeCategory, java.lang.String)
     public final int hashCode()
-    public static org.geysermc.paletter.creative.CreativePlacement loose(org.geysermc.paletter.creative.CreativeCategory)
     public final java.lang.String toString()
 }
 
@@ -2377,7 +2336,7 @@ public final class org.geysermc.paletter.item.CustomItem {
     public static org.geysermc.paletter.item.CustomItem$Builder builder(java.lang.String)
     public <T extends org.geysermc.paletter.item.component.ItemComponent> T component(java.lang.Class<T>)
     public java.util.List<org.geysermc.paletter.item.component.ItemComponent> components()
-    public org.geysermc.paletter.creative.CreativePlacement creative()
+    public org.geysermc.paletter.creative.CreativePlacement creativePlacement()
     public boolean equals(java.lang.Object)
     public int hashCode()
     public java.lang.String identifier()
@@ -2392,7 +2351,9 @@ public static final class org.geysermc.paletter.item.CustomItem$Builder {
     public org.geysermc.paletter.item.CustomItem$Builder component(org.geysermc.paletter.item.component.ItemComponent)
     public org.geysermc.paletter.item.CustomItem$Builder components(java.util.List<? extends org.geysermc.paletter.item.component.ItemComponent>)
     public org.geysermc.paletter.item.CustomItem$Builder components(org.geysermc.paletter.item.component.ItemComponent...)
-    public org.geysermc.paletter.item.CustomItem$Builder creative(org.geysermc.paletter.creative.CreativePlacement)
+    public org.geysermc.paletter.item.CustomItem$Builder creativePlacement(org.geysermc.paletter.creative.CreativePlacement)
+    public org.geysermc.paletter.item.CustomItem$Builder menuCategory(org.geysermc.paletter.creative.CreativeCategory)
+    public org.geysermc.paletter.item.CustomItem$Builder menuCategory(org.geysermc.paletter.creative.CreativeCategory, java.lang.String)
     public org.geysermc.paletter.item.CustomItem$Builder menuCategory(org.geysermc.paletter.item.component.MenuCategory)
 }
 

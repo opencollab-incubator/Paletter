@@ -2,7 +2,7 @@ package org.geysermc.paletter;
 
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativePlacement;
+import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.RegisteredItem;
 import org.geysermc.paletter.item.component.BlockPlacer;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ class BlockItemIdTest {
     private static final int PROTOCOL = PALETTER.latest().protocolVersion();
 
     private static CustomBlock block(String identifier) {
-        return CustomBlock.builder(identifier).creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION)).build();
+        return CustomBlock.builder(identifier).menuCategory(CreativeCategory.CONSTRUCTION).build();
     }
 
     private static PaletteLayer layer(String id, String... identifiers) {
@@ -77,13 +77,14 @@ class BlockItemIdTest {
     }
 
     @Test
-    void dataDrivenBlockItemsStaySequentialAndReplaceTheBlockItem() {
+    void aReplacingItemIsSequentialAndTheBlocksItem() {
         CustomBlock block = block("ids:driven");
-        Palette palette = Palettes.palette(PROTOCOL, PaletteLayer.builder("driven")
-            .blockItem(block.identifier(), CustomBlock.BlockItem.dataDriven(), null).block(block).build());
+        CustomItem replacement = CustomItem.builder("ids:driven")
+            .component(BlockPlacer.builder().block("ids:driven").replaceBlockItem(true).build()).build();
+        Palette palette = Palettes.palette(PROTOCOL, PaletteLayer.builder("driven").block(block).item(replacement).build());
         RegisteredItem item = palette.items().getDefinition("ids:driven");
         assertTrue(item.getRuntimeId() > 0);
-        // The wire still sends replaceBlockItem as the constant 0 (the inferred mapping predates the capture that sets it)
+        // The wire sends replaceBlockItem 1 for the block's own identifier (addon capture, paletter:plain_block)
         BlockPlacer placer = item.components().stream().filter(BlockPlacer.class::isInstance).map(BlockPlacer.class::cast).findFirst().orElseThrow();
         assertTrue(placer.replaceBlockItem());
         assertNull(palette.items().getDefinition(255 - blockId(palette, "ids:driven")));

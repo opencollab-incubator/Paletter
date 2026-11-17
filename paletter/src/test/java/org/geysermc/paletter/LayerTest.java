@@ -60,8 +60,8 @@ class LayerTest {
                 .components(Icon.of("minecart_furnace"),
                     DisplayName.builder().value("item.minecartFurnace.name").build(),
                     MaxStackSize.of(1))
-                .creative(CreativePlacement.group(CreativeCategory.ITEMS, "itemGroup.name.minecart")
-                    .after(ItemMatcher.id("minecraft:hopper_minecart")))
+                .menuCategory(CreativeCategory.ITEMS, "itemGroup.name.minecart")
+                .creativePlacement(CreativePlacement.after(ItemMatcher.id("minecraft:hopper_minecart")))
                 .build())
             .build();
     }
@@ -127,7 +127,7 @@ class LayerTest {
     void sessionLayersShareUnchangedDefinitions() {
         Palette shared = Palettes.palette(LATEST, minecartLayer());
         PaletteLayer session = PaletteLayer.builder("session")
-            .item(CustomItem.builder("server:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build())
+            .item(CustomItem.builder("server:ruby").menuCategory(CreativeCategory.ITEMS).build())
             .build();
         Palette sessionPalette = shared.extend(session);
 
@@ -186,7 +186,7 @@ class LayerTest {
             .components(LightEmission.of(15), Geometry.of("minecraft:geometry.full_block"))
             .permutation("q.block_state('geyser:lit') == 1", LightEmission.of(15))
             .defaultState("geyser:color", 1)
-            .creative(CreativePlacement.loose(CreativeCategory.ITEMS))
+            .menuCategory(CreativeCategory.ITEMS)
             .build();
         Palette vanilla = PALETTER.vanilla(PALETTER.version(LATEST));
         Palette palette = Palettes.palette(LATEST, PaletteLayer.builder("blocks").block(lamp).build());
@@ -266,7 +266,7 @@ class LayerTest {
         assertTrue(boat.fallback());
         assertEquals("minecraft:pale_oak_boat", boat.definition().getIdentifier());
         // With the experiment enabled the content is there; in the newest version it is regular content
-        Palette enabled = Paletter.builder().vanilla(vanilla -> vanilla.experiments("y_2026_drop_3")).fallbacks(Fallbacks.builder()
+        Palette enabled = Paletter.builder().experiments("y_2026_drop_3").fallbacks(Fallbacks.builder()
             .block(BedrockBlocks.POPLAR_PLANKS, BlockFallback.of(BedrockBlocks.PALE_OAK_PLANKS)).build())
             .build().palette(PALETTER.version(OLDEST).protocolVersion());
         assertEquals("minecraft:poplar_planks", enabled.blocks().resolve(poplar).block().identifier());
@@ -321,12 +321,11 @@ class LayerTest {
     }
 
     @Test
-    void theItemsOfALayerAreTheCustomEntriesInOrder() {
-        CustomItem first = CustomItem.builder("order:first").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
-        CustomItem second = CustomItem.builder("order:second").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
-        PaletteLayer layer = PaletteLayer.builder("order").item(first).blockItem("order:block", CustomBlock.BlockItem.NONE, null).item(second).build();
+    void theItemsOfALayerAreInRegistrationOrder() {
+        CustomItem first = CustomItem.builder("order:first").menuCategory(CreativeCategory.ITEMS).build();
+        CustomItem second = CustomItem.builder("order:second").menuCategory(CreativeCategory.ITEMS).build();
+        PaletteLayer layer = PaletteLayer.builder("order").item(first).item(second).build();
         assertEquals(List.of(first, second), layer.items());
-        assertEquals(3, layer.itemEntries().size());
     }
 
     @Test

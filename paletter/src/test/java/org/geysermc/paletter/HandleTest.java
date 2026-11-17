@@ -8,7 +8,6 @@ import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.CustomItem;
@@ -39,7 +38,7 @@ class HandleTest {
     }
 
     private static CustomItem ruby() {
-        return CustomItem.builder("example:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
+        return CustomItem.builder("example:ruby").menuCategory(CreativeCategory.ITEMS).build();
     }
 
     @Test

@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 public class ExtendBenchmark {
     private Palette palette;
+    private Palette stacked;
     private CustomBlock block;
 
     @Setup
@@ -31,10 +32,24 @@ public class ExtendBenchmark {
         Paletter paletter = Paletter.bundled();
         palette = paletter.palette(paletter.latest().protocolVersion());
         block = CustomBlock.builder("bench:session_block").property(BlockProperty.bool("bench:lit")).build();
+        PaletteLayer.Builder many = PaletteLayer.builder("many");
+        for (int i = 0; i < 20; i++) {
+            many.block(CustomBlock.builder("bench:block_" + i).property(BlockProperty.bool("bench:lit")).build());
+        }
+        stacked = palette.extend(many.build());
     }
 
     @Benchmark
     public Palette extend() {
         return palette.extend(PaletteLayer.builder("session").block(block).build());
+    }
+
+    /**
+     * Extending a palette that has custom blocks already: they keep their ids ("bench:aa" sorts last), so a layer
+     * need not encode them again.
+     */
+    @Benchmark
+    public Palette extendStacked() {
+        return stacked.extend(PaletteLayer.builder("session").block(CustomBlock.builder("bench:aa").build()).build());
     }
 }

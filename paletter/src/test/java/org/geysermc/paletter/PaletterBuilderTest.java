@@ -4,7 +4,6 @@ import org.geysermc.paletter.block.BlockHashes;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeOrdering;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataSource;
 import org.geysermc.paletter.internal.data.ExperimentContent;
@@ -105,9 +104,9 @@ class PaletterBuilderTest {
     @Test
     void globalLayersApplyToEveryVersionInOrder() {
         PaletteLayer first = PaletteLayer.builder("first")
-            .item(CustomItem.builder("test:first").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build()).build();
+            .item(CustomItem.builder("test:first").menuCategory(CreativeCategory.ITEMS).build()).build();
         PaletteLayer second = PaletteLayer.builder("second")
-            .item(CustomItem.builder("test:second").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build()).build();
+            .item(CustomItem.builder("test:second").menuCategory(CreativeCategory.ITEMS).build()).build();
         Paletter paletter = Paletter.builder().layer(first).layer(second).build();
         for (DataVersion version : paletter.versions()) {
             Palette palette = paletter.palette(version.protocolVersion());
@@ -140,7 +139,7 @@ class PaletterBuilderTest {
 
     @Test
     void vanillaContentRemovesItems() {
-        Paletter paletter = Paletter.builder().vanilla(vanilla -> vanilla.remove(BedrockItems.APPLE)).build();
+        Paletter paletter = Paletter.builder().removeItems(BedrockItems.APPLE).build();
         for (DataVersion version : paletter.versions()) {
             Palette palette = paletter.palette(version.protocolVersion());
             assertNull(palette.items().getDefinition("minecraft:apple"), version.toString());
@@ -154,7 +153,7 @@ class PaletterBuilderTest {
         }
         assertNotNull(PALETTER.palette(OLDEST).items().getDefinition("minecraft:apple"));
 
-        Paletter none = Paletter.builder().fallbacks(Fallbacks.NONE).vanilla(vanilla -> vanilla.remove(BedrockItems.APPLE)).build();
+        Paletter none = Paletter.builder().fallbacks(Fallbacks.NONE).removeItems(BedrockItems.APPLE).build();
         assertNull(none.palette(OLDEST).items().resolve(ItemVariant.of("minecraft:apple")));
     }
 
@@ -188,6 +187,20 @@ class PaletterBuilderTest {
     }
 
     @Test
+    void experimentsOfOneVersionAreEnabledOnlyThere() {
+        // test_toggle gates the apple in every version; it is enabled for the oldest alone
+        List<DataVersion> versions = Paletter.builder().build().versions();
+        Paletter paletter = Paletter.builder().data(experimental()).experiments(versions.get(0), "test_toggle").build();
+
+        Palette first = paletter.palette(versions.get(0).protocolVersion());
+        assertNotNull(first.items().getDefinition("minecraft:apple"));
+        assertEquals(List.of("test_toggle"), first.experiments());
+        Palette second = paletter.palette(versions.get(1).protocolVersion());
+        assertNull(second.items().getDefinition("minecraft:apple"));
+        assertEquals(List.of(), second.experiments());
+    }
+
+    @Test
     void experimentsRemoveItemsOfToggles() {
         // None enabled by default: the content of every toggle is missing
         Palette byDefault = Paletter.builder().data(experimental()).build().palette(OLDEST);
@@ -195,20 +208,20 @@ class PaletterBuilderTest {
         assertNull(byDefault.items().getDefinition("minecraft:golden_apple"));
         assertEquals(List.of(), byDefault.experiments());
 
-        Palette all = Paletter.builder().data(experimental()).vanilla(vanilla -> vanilla.experiments("test_toggle", "other_toggle", "shared_toggle"))
+        Palette all = Paletter.builder().data(experimental()).experiments("test_toggle", "other_toggle", "shared_toggle")
             .build().palette(OLDEST);
         assertNotNull(all.items().getDefinition("minecraft:apple"));
         assertNotNull(all.items().getDefinition("minecraft:golden_apple"));
         assertEquals(List.of("other_toggle", "shared_toggle", "test_toggle"), all.experiments());
 
-        Palette some = Paletter.builder().data(experimental()).vanilla(vanilla -> vanilla.experiments("test_toggle", "shared_toggle"))
+        Palette some = Paletter.builder().data(experimental()).experiments("test_toggle", "shared_toggle")
             .build().palette(OLDEST);
         assertNotNull(some.items().getDefinition("minecraft:apple"));
         assertNull(some.items().getDefinition("minecraft:golden_apple"));
         // Gated by two toggles, one of them enabled
         assertNotNull(some.items().getDefinition("minecraft:carrot"));
 
-        Palette none = Paletter.builder().data(experimental()).vanilla(vanilla -> vanilla.experiments()).build().palette(OLDEST);
+        Palette none = Paletter.builder().data(experimental()).experiments().build().palette(OLDEST);
         assertNull(none.items().getDefinition("minecraft:apple"));
         assertNull(none.items().getDefinition("minecraft:golden_apple"));
         assertNull(none.items().getDefinition("minecraft:carrot"));
@@ -248,6 +261,7 @@ class PaletterBuilderTest {
         Palette append = Paletter.builder().creativeOrdering(CreativeOrdering.APPEND).layer(layer).build()
             .palette(protocol);
         assertTrue(stacks(bds).contains("test:block_menu_only:0"));
-        assertFalse(stacks(append).contains("test:block_menu_only:0"));
+        // The ordering decides the order, never presence
+        assertTrue(stacks(append).contains("test:block_menu_only:0"));
     }
 }

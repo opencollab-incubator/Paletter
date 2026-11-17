@@ -16,7 +16,7 @@ import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
 import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import org.geysermc.paletter.PaletteException;
-import org.geysermc.paletter.PaletteReport;
+import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.VanillaData;
@@ -160,7 +160,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      */
     @Internal
     public @NonNull BlockRegistry withCustomBlocks(@NonNull VanillaData data, @NonNull Object key, @NonNull List<CustomBlock> additional,
-                                                  @NonNull PaletteReport report, @NonNull String source) {
+                                                  @NonNull PaletteReportBuilder report, @NonNull String source) {
         if (additional.isEmpty()) {
             return this;
         }
@@ -178,11 +178,22 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         List<BlockPropertyData> encoded = new ArrayList<>(all.size());
         WireContext context = WireContext.of(data, report, source);
         // The blocks already here were reported by their own layers: encode them again into a report nobody reads
-        WireContext earlier = WireContext.of(data, new PaletteReport(), source);
+        WireContext earlier = WireContext.of(data, new PaletteReportBuilder(), source);
+        // The blocks already here keep their encoding (the same instance) while their block id is the same: nothing else
+        // that a layer changes goes into it
+        Map<String, BlockPropertyData> earlierEncoded = new HashMap<>();
+        for (BlockPropertyData property : table.blockProperties) {
+            if (table.customBlockIds.containsKey(property.getName())) {
+                earlierEncoded.put(property.getName(), property);
+            }
+        }
         for (int i = 0; i < all.size(); i++) {
             CustomBlock block = all.get(i);
-            WireContext blockContext = i < table.customBlocks.size() ? earlier : context;
-            encoded.add(new BlockPropertyData(block.identifier(), BlockCompiler.propertyData(block, blockIds.get(block.identifier()), blockContext)));
+            int blockId = blockIds.get(block.identifier());
+            boolean isEarlier = i < table.customBlocks.size();
+            BlockPropertyData kept = isEarlier && table.customBlockIds.get(block.identifier()) == blockId ? earlierEncoded.get(block.identifier()) : null;
+            encoded.add(kept != null ? kept
+                : new BlockPropertyData(block.identifier(), BlockCompiler.propertyData(block, blockId, isEarlier ? earlier : context)));
         }
         // The property list BDS sends follows its block ids too
         encoded.sort(java.util.Comparator.comparing(BlockPropertyData::getName).reversed());
@@ -515,7 +526,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * was not exact is recorded in the report.
      */
     @Internal
-    public @NonNull RegisteredBlockState[] table(@NonNull List<NbtMap> states, @NonNull RegisteredBlockState missing, @NonNull PaletteReport report) {
+    public @NonNull RegisteredBlockState[] table(@NonNull List<NbtMap> states, @NonNull RegisteredBlockState missing, @NonNull PaletteReportBuilder report) {
         RegisteredBlockState[] result = new RegisteredBlockState[states.size()];
         Map<BlockResolution.Kind, Integer> counts = new LinkedHashMap<>();
         for (int i = 0; i < result.length; i++) {
@@ -615,7 +626,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     public int customBlockId(@NonNull String identifier) {
         Integer id = table.customBlockIds.get(identifier);
         if (id == null) {
-            throw new PaletteException("Custom block " + identifier + " does not exist in " + version());
+            throw new PaletteException("Custom block " + identifier + " does not exist in " + version(), null, identifier, null);
         }
         return id;
     }
@@ -729,7 +740,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             for (CustomBlock block : ownCustom) {
                 if (vanillaNames.contains(block.identifier()) || customByName.containsKey(block.identifier())
                     || parent != null && parent.block(block.identifier()) != null) {
-                    throw new PaletteException("Custom block " + block.identifier() + " is registered twice, or collides with a vanilla block");
+                    throw new PaletteException("Custom block " + block.identifier() + " is registered twice, or collides with a vanilla block",
+                        null, block.identifier(), null);
                 }
                 customStates.addAll(block.states());
                 customByName.put(block.identifier(), block);
@@ -766,16 +778,16 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                 }
                 int collision = byHash.put(block.getRuntimeId(), i);
                 if (collision != -1 && own[collision].getState().equals(state)) {
-                    throw new PaletteException("Duplicate block state in " + version + " palette: " + state);
+                    throw new PaletteException("Duplicate block state in " + version + " palette: " + state, null, BlockStates.name(state), null);
                 }
                 if (collision != -1) {
                     throw new PaletteException("Block network id hash collision in the " + version + " palette: "
-                        + own[collision].getState() + " and " + state + " both hash to " + block.getRuntimeId());
+                        + own[collision].getState() + " and " + state + " both hash to " + block.getRuntimeId(), null, BlockStates.name(state), null);
                 }
                 int inParent = parent == null ? -1 : parent.indexOfRuntimeId(block.getRuntimeId());
                 if (inParent != -1) {
                     throw new PaletteException("Block network id hash collision in the " + version + " palette: "
-                        + parent.byIndex(inParent).getState() + " and " + state + " both hash to " + block.getRuntimeId());
+                        + parent.byIndex(inParent).getState() + " and " + state + " both hash to " + block.getRuntimeId(), null, BlockStates.name(state), null);
                 }
                 own[i] = block;
             }

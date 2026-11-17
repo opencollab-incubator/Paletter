@@ -2,7 +2,7 @@ package org.geysermc.paletter.internal.component;
 
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
-import org.geysermc.paletter.PaletteReport;
+import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.component.BlockEntity;
 import org.geysermc.paletter.block.component.ConnectionRule;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GeneratedRulesTest {
     private static final Paletter PALETTER = Paletter.bundled();
 
-    private final PaletteReport report = new PaletteReport();
+    private final PaletteReportBuilder report = new PaletteReportBuilder();
     private final WireContext ctx = at(ComponentIndex.NEWEST_CAPTURED_PROTOCOL);
 
     private WireContext at(int protocol) {

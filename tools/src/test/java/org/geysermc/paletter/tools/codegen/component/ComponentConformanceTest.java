@@ -11,7 +11,7 @@ import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.nbt.NbtUtils;
-import org.geysermc.paletter.PaletteReport;
+import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.data.DataVersion;
@@ -251,7 +251,7 @@ class ComponentConformanceTest {
     }
 
     private static Outcome check(String identifier, String componentId, boolean block, JsonObject definition, NbtMap expected, VanillaData data) {
-        PaletteReport report = new PaletteReport();
+        PaletteReportBuilder report = new PaletteReportBuilder();
         WireContext ctx = WireContext.of(data, report, "conformance");
         NbtMap actual;
         try {
@@ -260,7 +260,7 @@ class ComponentConformanceTest {
                 actual = withoutBlockId(BlockCompiler.propertyData(custom, 10000, ctx));
             } else {
                 CustomItem custom = ApiBinder.item(definition);
-                actual = ItemCompiler.componentData(custom.identifier(), 0, custom.components(), custom.menuCategory(), custom.creative(), ctx)
+                actual = ItemCompiler.componentData(custom.identifier(), 0, custom.components(), custom.menuCategory(), ctx)
                     .getCompound("components");
             }
         } catch (ApiBinder.Unbindable e) {

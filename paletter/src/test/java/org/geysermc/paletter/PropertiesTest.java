@@ -8,7 +8,6 @@ import org.geysermc.paletter.block.RegisteredBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.block.component.LightEmission;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.RegisteredItem;
@@ -32,7 +31,7 @@ class PropertiesTest {
     static final Paletter PALETTER = Paletter.bundled();
 
     private static CustomItem ruby() {
-        return CustomItem.builder("server:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS))
+        return CustomItem.builder("server:ruby").menuCategory(CreativeCategory.ITEMS)
             .components(MaxStackSize.of(16)).build();
     }
 

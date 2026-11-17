@@ -5,13 +5,13 @@ import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeEntry;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.component.MaxStackSize;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -60,7 +60,7 @@ class ExtendReuseTest {
     @Test
     void aLayerThatPlacesAnItemRebuildsTheCreativeContent() {
         Palette parent = parent();
-        CustomItem ruby = CustomItem.builder("reuse:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
+        CustomItem ruby = CustomItem.builder("reuse:ruby").menuCategory(CreativeCategory.ITEMS).build();
         Palette child = parent.extend(PaletteLayer.builder("item").item(ruby).build());
         assertNotSame(parent.creative(), child.creative());
         assertEquals(parent.creative().size() + 1, child.creative().size());
@@ -77,5 +77,28 @@ class ExtendReuseTest {
         CreativeEntry cake = child.creative().items().stream().map(data -> child.creative().entry(data.getNetId()))
             .filter(entry -> entry.stack().type().identifier().equals("minecraft:cake")).findFirst().orElseThrow();
         assertSame(child.items().item("minecraft:cake"), cake.item().getDefinition());
+    }
+
+    private static org.cloudburstmc.protocol.bedrock.data.BlockPropertyData properties(Palette palette, String identifier) {
+        return palette.blocks().blockProperties().stream().filter(data -> data.getName().equals(identifier)).findFirst().orElseThrow();
+    }
+
+    @Test
+    void aBlockKeepsItsEncodingWhileItsBlockIdStays() {
+        Palette parent = parent().extend(PaletteLayer.builder("lamp").block(LAMP).build());
+        // "reuse:aa" sorts after "reuse:lamp": BDS numbers by identifier in descending order, so the lamp keeps its id
+        Palette child = parent.extend(PaletteLayer.builder("after").block(CustomBlock.builder("reuse:aa").build()).build());
+        assertEquals(parent.blocks().customBlockId("reuse:lamp"), child.blocks().customBlockId("reuse:lamp"));
+        assertSame(properties(parent, "reuse:lamp"), properties(child, "reuse:lamp"));
+    }
+
+    @Test
+    void aBlockIsEncodedAgainWhenItsBlockIdChanges() {
+        Palette parent = parent().extend(PaletteLayer.builder("lamp").block(LAMP).build());
+        // "reuse:zz" sorts before "reuse:lamp": the lamp's id moves up
+        Palette child = parent.extend(PaletteLayer.builder("before").block(CustomBlock.builder("reuse:zz").build()).build());
+        assertNotEquals(parent.blocks().customBlockId("reuse:lamp"), child.blocks().customBlockId("reuse:lamp"));
+        assertNotSame(properties(parent, "reuse:lamp"), properties(child, "reuse:lamp"));
+        assertEquals(child.blocks().customBlockId("reuse:lamp"), properties(child, "reuse:lamp").getProperties().getCompound("vanilla_block_data").getInt("block_id"));
     }
 }

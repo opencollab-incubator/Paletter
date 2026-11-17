@@ -27,8 +27,12 @@ class CreativeOrderingTest {
     private static final Paletter PALETTER = Paletter.bundled();
     private static final int LATEST = 2225;
 
-    private static CustomItem item(String identifier, CreativePlacement placement) {
-        return CustomItem.builder(identifier).creative(placement).build();
+    private static CustomItem item(String identifier, CreativeCategory category, String group) {
+        return CustomItem.builder(identifier).menuCategory(category, group).build();
+    }
+
+    private static CustomItem item(String identifier, CreativeCategory category) {
+        return CustomItem.builder(identifier).menuCategory(category).build();
     }
 
     private static List<String> stacks(Palette palette) {
@@ -40,7 +44,7 @@ class CreativeOrderingTest {
     @Test
     void bdsIsTheDefault() {
         PaletteLayer layer = PaletteLayer.builder("x")
-            .item(item("test:item", CreativePlacement.loose(CreativeCategory.CONSTRUCTION))).build();
+            .item(item("test:item", CreativeCategory.CONSTRUCTION)).build();
         Palette explicit = Paletter.builder().creativeOrdering(CreativeOrdering.BDS).layer(layer).build().palette(LATEST);
         Palette defaulted = Palettes.palette(LATEST, layer);
         assertEquals(stacks(explicit), stacks(defaulted));
@@ -49,8 +53,8 @@ class CreativeOrderingTest {
     @Test
     void bdsAppendsToTheGroupOfTheCategoryInDefinitionOrderAndStripsTheMinecraftNamespace() {
         PaletteLayer layer = PaletteLayer.builder("swords")
-            .item(item("test:sword_c", CreativePlacement.group(CreativeCategory.EQUIPMENT, "minecraft:itemGroup.name.sword")))
-            .item(item("test:sword_a", CreativePlacement.group(CreativeCategory.EQUIPMENT, "itemGroup.name.sword")))
+            .item(item("test:sword_c", CreativeCategory.EQUIPMENT, "minecraft:itemGroup.name.sword"))
+            .item(item("test:sword_a", CreativeCategory.EQUIPMENT, "itemGroup.name.sword"))
             .build();
         Palette palette = Palettes.palette(LATEST, layer);
         CreativeGroup swords = palette.creativeLayout().group("itemGroup.name.sword").orElseThrow();
@@ -62,9 +66,9 @@ class CreativeOrderingTest {
     @Test
     void bdsCreatesMissingGroupsPerCategoryAtTheEnd() {
         PaletteLayer layer = PaletteLayer.builder("groups")
-            .item(item("test:wrong_category", CreativePlacement.group(CreativeCategory.ITEMS, "minecraft:itemGroup.name.sword")))
-            .item(item("test:new_group", CreativePlacement.group(CreativeCategory.NATURE, "test:itemGroup.new")))
-            .item(item("test:loose", CreativePlacement.loose(CreativeCategory.NATURE)))
+            .item(item("test:wrong_category", CreativeCategory.ITEMS, "minecraft:itemGroup.name.sword"))
+            .item(item("test:new_group", CreativeCategory.NATURE, "test:itemGroup.new"))
+            .item(item("test:loose", CreativeCategory.NATURE))
             .build();
         Palette palette = Palettes.palette(LATEST, layer);
         List<CreativeNode> items = palette.creativeLayout().nodes(CreativeCategory.ITEMS);
@@ -81,8 +85,8 @@ class CreativeOrderingTest {
     @Test
     void anchorsStillWin() {
         PaletteLayer layer = PaletteLayer.builder("anchor")
-            .item(item("test:after_hopper", CreativePlacement.group(CreativeCategory.ITEMS, "itemGroup.name.minecart")
-                .after(ItemMatcher.id("minecraft:hopper_minecart"))))
+            .item(CustomItem.builder("test:after_hopper").menuCategory(CreativeCategory.ITEMS, "itemGroup.name.minecart")
+                .creativePlacement(CreativePlacement.after(ItemMatcher.id("minecraft:hopper_minecart"))).build())
             .build();
         Palette palette = Palettes.palette(LATEST, layer);
         String group = palette.creativeLayout().groupOf(ItemMatcher.id("minecraft:hopper_minecart"));
@@ -94,7 +98,7 @@ class CreativeOrderingTest {
     @Test
     void bdsPlacesBlocksBeforeItemsAndBlocksByMenuCategory() {
         PaletteLayer layer = PaletteLayer.builder("blocks")
-            .item(item("test:item", CreativePlacement.loose(CreativeCategory.CONSTRUCTION)))
+            .item(item("test:item", CreativeCategory.CONSTRUCTION))
             .block(CustomBlock.builder("test:block_menu_only").menuCategory(org.geysermc.paletter.block.component.MenuCategory.builder()
                 .category(org.geysermc.paletter.block.component.MenuCategory.Category.CONSTRUCTION).build()).build())
             .build();
@@ -104,11 +108,12 @@ class CreativeOrderingTest {
         assertEquals("test:item", ((CreativeItem) construction.getLast()).stack().type().identifier());
 
         Palette append = Paletter.builder().creativeOrdering(CreativeOrdering.APPEND).layer(PaletteLayer.builder("blocks")
-            .item(item("test:item", CreativePlacement.loose(CreativeCategory.CONSTRUCTION)))
+            .item(item("test:item", CreativeCategory.CONSTRUCTION))
             .block(CustomBlock.builder("test:block_menu_only").menuCategory(org.geysermc.paletter.block.component.MenuCategory.builder()
                 .category(org.geysermc.paletter.block.component.MenuCategory.Category.CONSTRUCTION).build()).build())
             .build()).build().palette(LATEST);
-        assertFalse(append.creativeLayout().contains(ItemMatcher.id("test:block_menu_only")));
+        // The ordering decides the order, never presence: the menu category does
+        assertTrue(append.creativeLayout().contains(ItemMatcher.id("test:block_menu_only")));
     }
 
     @Test

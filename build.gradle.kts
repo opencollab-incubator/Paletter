@@ -35,6 +35,8 @@ subprojects {
     tasks.withType<Test>().configureEach {
         useJUnitPlatform()
         maxHeapSize = "1G"
+        // JOL cannot read the fields of records through Unsafe without this
+        jvmArgs("-Djol.magicFieldOffset=true")
         // Tests read the repository (data/, the bundled and generated files) through this root, so they are inputs too:
         // a build cache hit must not skip a test whose data changed
         systemProperty("paletter.root", rootProject.projectDir.absolutePath)

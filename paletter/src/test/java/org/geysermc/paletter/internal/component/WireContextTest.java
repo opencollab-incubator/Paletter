@@ -1,6 +1,6 @@
 package org.geysermc.paletter.internal.component;
 
-import org.geysermc.paletter.PaletteReport;
+import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.junit.jupiter.api.Test;
@@ -16,12 +16,12 @@ class WireContextTest {
     @Test
     void aChangedValueAndADroppedOneAreWarningsThatSayWhichItIs() {
         Paletter paletter = Paletter.bundled();
-        PaletteReport report = new PaletteReport();
+        PaletteReportBuilder report = new PaletteReportBuilder();
         WireContext ctx = WireContext.of(paletter.vanillaData(paletter.latest()), report, "pack").subject("test:lamp");
         ctx.changed("minecraft:geometry", "bone_visibility arm is sent as a number");
         ctx.drop("minecraft:geometry", "culling_layer is not known");
         assertEquals(2, report.warnings().size());
-        PaletteReport.Entry changed = report.warnings().get(0);
+        org.geysermc.paletter.PaletteReport.Entry changed = report.warnings().get(0);
         assertEquals("pack", changed.source());
         assertEquals("test:lamp: minecraft:geometry bone_visibility arm is sent as a number in " + ctx.version(), changed.message(),
             "what is sent differently, for which item or block and version; it is not left out");

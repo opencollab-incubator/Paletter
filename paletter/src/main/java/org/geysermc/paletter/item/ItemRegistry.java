@@ -22,7 +22,7 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
 import org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket;
 import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import org.geysermc.paletter.PaletteException;
-import org.geysermc.paletter.PaletteReport;
+import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.block.BlockResolution;
@@ -40,8 +40,6 @@ import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.internal.component.ComponentIndex;
 import org.geysermc.paletter.internal.component.ItemCompiler;
 import org.geysermc.paletter.internal.component.WireContext;
-import org.geysermc.paletter.item.component.BlockPlacer;
-import org.geysermc.paletter.item.component.ItemComponent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -311,7 +309,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * places blocks, a block state of the variant wins (adapted to this version), otherwise the item's block, which is
      * decided in this order:
      * <ol>
-     *     <li>an override of a layer ({@code PaletteLayer.Builder#blockItem});</li>
+     *     <li>a block set by an item override of a layer;</li>
      *     <li>the bundled block to item relation of the data ({@code VanillaData#blockItems}): the block whose first
      *     creative stack the item has, else the block named like the item, else the first block that places it
      *     (sorted by identifier), in its default state;</li>
@@ -327,6 +325,14 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     public @Nullable RegisteredBlockState blockOf(@NonNull ItemKey key) {
         ResolvedItem resolved = resolve(key);
         return resolved == null ? null : resolved.block();
+    }
+
+    /**
+     * @return the item of a custom block of a layer of this registry, or null if the block has none
+     */
+    @Internal
+    public @Nullable RegisteredItem customBlockItem(@NonNull String identifier) {
+        return customBlockItems.contains(identifier) ? item(identifier) : null;
     }
 
     /**
@@ -864,7 +870,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         /**
          * @return false if the item does not exist in this version, so there was nothing to override
          */
-        public boolean override(@NonNull String identifier, @NonNull Consumer<ItemOverride> modifier, @NonNull PaletteReport report,
+        public boolean override(@NonNull String identifier, @NonNull Consumer<ItemOverride> modifier, @NonNull PaletteReportBuilder report,
                                 @NonNull String source) {
             RegisteredItem original = get(identifier);
             if (original == null) {
@@ -882,11 +888,11 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             return true;
         }
 
-        public @NonNull RegisteredItem addCustom(@NonNull CustomItem custom, @NonNull PaletteReport report, @NonNull String source) {
+        public @NonNull RegisteredItem addCustom(@NonNull CustomItem custom, @NonNull PaletteReportBuilder report, @NonNull String source) {
             checkUnused(custom.identifier());
             int runtimeId = nextRuntimeId;
             NbtMap componentData = ItemCompiler.componentData(custom.identifier(), runtimeId, custom.components(), custom.menuCategory(),
-                custom.creative(), context(report, source));
+                context(report, source));
             RegisteredItem item = new RegisteredItem(custom.identifier(), runtimeId, ItemVersion.DATA_DRIVEN, true, componentData,
                 Origin.custom(source), custom.components(), custom, custom.type());
             put(item);
@@ -900,7 +906,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         /**
          * @return the context components of this palette compile in: its version, and its items and blocks for descriptors
          */
-        private WireContext context(PaletteReport report, String source) {
+        private WireContext context(PaletteReportBuilder report, String source) {
             return WireContext.of(version, report, source, new WireContext.Registry() {
                 @Override
                 public boolean itemExists(@NonNull String identifier) {
@@ -918,48 +924,35 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
 
         /**
          * Registers the item of a custom block, unless the block has none.
-         */
-        public @Nullable RegisteredItem addBlockItem(@NonNull CustomBlock block, @NonNull PaletteReport report, @NonNull String source) {
-            return addBlockItem(block, block.item(), report, source);
-        }
-
-        /**
-         * Registers an item for a custom block of this palette, e.g. one registered without item in an earlier layer.
          *
          * @return the item, or null for {@link CustomBlock.BlockItem#NONE}
          */
-        public @Nullable RegisteredItem addBlockItem(@NonNull CustomBlock block, CustomBlock.@NonNull BlockItem blockItem,
-                                                  @NonNull PaletteReport report, @NonNull String source) {
-            RegisteredItem item;
-            switch (blockItem) {
-                case CustomBlock.BlockItem.None none -> {
-                    return null;
-                }
-                case CustomBlock.BlockItem.Simple simple -> {
-                    checkUnused(block.identifier());
-                    item = new RegisteredItem(block.identifier(), plainBlockItemId(block.identifier()), ItemVersion.NONE, false, null, Origin.custom(source), List.of(), null,
-                        block.itemType());
-                }
-                case CustomBlock.BlockItem.DataDriven dataDriven -> {
-                    checkUnused(block.identifier());
-                    List<ItemComponent> components = new ArrayList<>(dataDriven.components());
-                    if (components.stream().noneMatch(c -> c instanceof BlockPlacer)) {
-                        components.add(BlockPlacer.builder().block(block.identifier()).replaceBlockItem(true).build());
-                    }
-                    int runtimeId = nextRuntimeId;
-                    item = new RegisteredItem(block.identifier(), runtimeId, ItemVersion.DATA_DRIVEN, true,
-                        ItemCompiler.componentData(block.identifier(), runtimeId, components, null, block.creative(),
-                            context(report, source)), Origin.custom(source), components, null, block.itemType());
-                }
+        public @Nullable RegisteredItem addBlockItem(@NonNull CustomBlock block, @NonNull PaletteReportBuilder report, @NonNull String source) {
+            if (block.item() == CustomBlock.BlockItem.NONE) {
+                return null;
             }
+            checkUnused(block.identifier());
+            RegisteredItem item = new RegisteredItem(block.identifier(), plainBlockItemId(block.identifier()), ItemVersion.NONE, false, null,
+                Origin.custom(source), List.of(), null, block.itemType());
             put(item);
             customBlockItems.add(block.identifier());
             return item;
         }
 
+        /**
+         * Registers a custom item that replaces the item of a custom block ({@code block_placer} with
+         * {@code replace_block_item}): an ordinary data driven item with the next sequential id, which is the block's item.
+         */
+        public @NonNull RegisteredItem addBlockItemReplacement(@NonNull CustomItem custom, @NonNull PaletteReportBuilder report,
+                                                               @NonNull String source) {
+            RegisteredItem item = addCustom(custom, report, source);
+            customBlockItems.add(custom.identifier());
+            return item;
+        }
+
         private void checkUnused(String identifier) {
             if (get(identifier) != null) {
-                throw new PaletteException("Item " + identifier + " already exists in " + version);
+                throw new PaletteException("Item " + identifier + " already exists in " + version, null, identifier, null);
             }
         }
 
@@ -979,7 +972,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             tagItems(tag).addAll(identifiers);
         }
 
-        public @NonNull ItemRegistry build(@NonNull CreativeLayout layout, @NonNull PaletteReport report) {
+        public @NonNull ItemRegistry build(@NonNull CreativeLayout layout, @NonNull PaletteReportBuilder report) {
             Map<String, Set<NbtMap>> creativeStates = new HashMap<>();
             Set<String> creativeWithoutBlock = new HashSet<>();
             layout.forEachStack(stack -> {

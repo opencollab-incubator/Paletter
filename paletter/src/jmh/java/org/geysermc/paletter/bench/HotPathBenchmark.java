@@ -1,6 +1,8 @@
 package org.geysermc.paletter.bench;
 
+import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
+import org.geysermc.paletter.Lookup;
 import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
@@ -50,6 +52,10 @@ public class HotPathBenchmark {
     private int[] runtimeIds;
     /** The key of each of {@link #runtimeIds}, air where a block has none. */
     private BedrockBlockState[] states;
+    /** {@link #states} as NBT, what a Java to Bedrock translator or a world reader has. */
+    private NbtMap[] stateNbt;
+    private String[] identifiers;
+    private int[] auxes;
     private RegisteredBlockState[] customStates;
     private BedrockBlockState[] customHandles;
     private int item;
@@ -91,6 +97,16 @@ public class HotPathBenchmark {
         for (int i = 0; i < states.length; i++) {
             BedrockBlockState key = palette.blocks().key(palette.blocks().byRuntimeId(runtimeIds[i]));
             states[i] = key != null ? key : BedrockBlocks.AIR.defaultState();
+        }
+        stateNbt = new NbtMap[states.length];
+        for (int i = 0; i < states.length; i++) {
+            stateNbt[i] = states[i].toNbt();
+        }
+        identifiers = new String[variants.length];
+        auxes = new int[variants.length];
+        for (int i = 0; i < variants.length; i++) {
+            identifiers[i] = variants[i].type().identifier();
+            auxes[i] = variants[i].aux();
         }
         Collections.shuffle(customs, random);
         customStates = customs.toArray(RegisteredBlockState[]::new);
@@ -187,6 +203,25 @@ public class HotPathBenchmark {
     @Benchmark
     public int customRuntimeId() {
         return palette.runtimeId(customHandles[nextCustom()]);
+    }
+
+    /** A block state of NBT to its handle, the exact lookup of a translator. */
+    @Benchmark
+    public BedrockBlockState blockStateExact() {
+        return palette.blockState(stateNbt[nextBlock()], Lookup.EXACT);
+    }
+
+    /** An identifier and aux to its item variant, the exact lookup of a translator. */
+    @Benchmark
+    public BedrockItemVariant itemVariantExact() {
+        int i = nextItem();
+        return palette.itemVariant(identifiers[i], auxes[i], Lookup.EXACT);
+    }
+
+    /** A vanilla (or custom) block handle to its runtime id. */
+    @Benchmark
+    public int runtimeIdOfState() {
+        return palette.runtimeId(states[nextBlock()]);
     }
 
     /** A vanilla block handle to its runtime id. */

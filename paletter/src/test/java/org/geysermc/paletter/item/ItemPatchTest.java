@@ -7,7 +7,6 @@ import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.component.MaxStackSize;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +26,7 @@ class ItemPatchTest {
 
     private static PaletteLayer ruby() {
         return PaletteLayer.builder("session")
-            .item(CustomItem.builder("server:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build())
+            .item(CustomItem.builder("server:ruby").menuCategory(CreativeCategory.ITEMS).build())
             .build();
     }
 
