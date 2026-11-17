@@ -1812,6 +1812,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <a href="./org/geysermc/paletter/internal/data/VanillaData.html#param-blockDefaults"><code>blockDefaults</code></a> record component.</div>
 </dd>
+<dt><a href="org/geysermc/paletter/Palette.html#blockDefinition(int)" class="member-name-link">blockDefinition(int)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/Palette.html#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockDefinition(BedrockBlockState)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/internal/component/Transforms.html#blockDescriptorStates(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.block.component.PlacementFilter.BlockFilter)" class="member-name-link">blockDescriptorStates(WireContext, WireNode, PlacementFilter.BlockFilter)</a> - Static method in class org.geysermc.paletter.internal.component.<a href="org/geysermc/paletter/internal/component/Transforms.html" title="class in org.geysermc.paletter.internal.component">Transforms</a></dt>
@@ -2058,7 +2060,9 @@ loadScripts(document, 'script');</script>
 <dt><a href="org/geysermc/paletter/item/ItemRegistry.html#blocks()" class="member-name-link">blocks()</a> - Method in class org.geysermc.paletter.item.<a href="org/geysermc/paletter/item/ItemRegistry.html" title="class in org.geysermc.paletter.item">ItemRegistry</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/Palette.html#blocks()" class="member-name-link">blocks()</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Internal: use <a href="org/geysermc/paletter/Palette.html#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>Palette.blockDefinition(BedrockBlockState)</code></a>, <a href="org/geysermc/paletter/Palette.html#blockState(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)"><code>Palette.blockState(BlockDefinition)</code></a> and the other methods of this class.</div>
+</dd>
 <dt><a href="org/geysermc/paletter/PaletteLayer.html#blocks()" class="member-name-link">blocks()</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/PaletteLayer.html" title="class in org.geysermc.paletter">PaletteLayer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/internal/behaviour/BehaviourStore.Builder.html#blocks(org.geysermc.paletter.behaviour.BehaviourKey,int,java.util.Map)" class="member-name-link">blocks(BehaviourKey&lt;T&gt;, int, Map&lt;Integer, T&gt;)</a> - Method in class org.geysermc.paletter.internal.behaviour.<a href="org/geysermc/paletter/internal/behaviour/BehaviourStore.Builder.html" title="class in org.geysermc.paletter.internal.behaviour">BehaviourStore.Builder</a></dt>
@@ -2092,8 +2096,15 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <a href="./org/geysermc/paletter/ItemExplanation.html#param-blockState"><code>blockState</code></a> record component.</div>
 </dd>
+<dt><a href="org/geysermc/paletter/Palette.html#blockState(int)" class="member-name-link">blockState(int)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/creative/ItemMatcher.html#blockState(org.cloudburstmc.nbt.NbtMap)" class="member-name-link">blockState(NbtMap)</a> - Static method in interface org.geysermc.paletter.creative.<a href="org/geysermc/paletter/creative/ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="org/geysermc/paletter/Palette.html#blockState(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)" class="member-name-link">blockState(BlockDefinition)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
+<dd>
+<div class="block">The key of a block this palette sends: its exact state, else the first state that resolves to it (several states
+ may share a fallback).</div>
+</dd>
 <dt><a href="org/geysermc/paletter/creative/ItemMatcher.html#blockState(org.geysermc.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockState(BedrockBlockState)</a> - Static method in interface org.geysermc.paletter.creative.<a href="org/geysermc/paletter/creative/ItemMatcher.html" title="interface in org.geysermc.paletter.creative">ItemMatcher</a></dt>
 <dd>
 <div class="block">Matches stacks that carry this block state.</div>
@@ -13797,7 +13808,13 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="org/geysermc/paletter/Palette.html#itemComponentPacket()" class="member-name-link">itemComponentPacket()</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="org/geysermc/paletter/Palette.html#itemDefinition(int)" class="member-name-link">itemDefinition(int)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="org/geysermc/paletter/Palette.html#itemDefinition(java.lang.String)" class="member-name-link">itemDefinition(String)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/Palette.html#itemDefinition(org.geysermc.paletter.vanilla.BedrockItemType)" class="member-name-link">itemDefinition(BedrockItemType)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="org/geysermc/paletter/Palette.html#itemDefinitions()" class="member-name-link">itemDefinitions()</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/internal/component/Transforms.html#itemDescriptorList(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.item.component.Repairable)" class="member-name-link">itemDescriptorList(WireContext, WireNode, Repairable)</a> - Static method in class org.geysermc.paletter.internal.component.<a href="org/geysermc/paletter/internal/component/Transforms.html" title="class in org.geysermc.paletter.internal.component">Transforms</a></dt>
 <dd>
@@ -13878,7 +13895,9 @@ loadScripts(document, 'script');</script>
 <dt><a href="org/geysermc/paletter/item/ItemRegistry.html#items()" class="member-name-link">items()</a> - Method in class org.geysermc.paletter.item.<a href="org/geysermc/paletter/item/ItemRegistry.html" title="class in org.geysermc.paletter.item">ItemRegistry</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/Palette.html#items()" class="member-name-link">items()</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Internal: use <a href="org/geysermc/paletter/Palette.html#itemDefinition(java.lang.String)"><code>Palette.itemDefinition(String)</code></a>, <a href="org/geysermc/paletter/Palette.html#itemDefinitions()"><code>Palette.itemDefinitions()</code></a>, <a href="org/geysermc/paletter/Palette.html#itemTags()"><code>Palette.itemTags()</code></a> and the other methods of this class.</div>
+</dd>
 <dt><a href="org/geysermc/paletter/PaletteLayer.html#items()" class="member-name-link">items()</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/PaletteLayer.html" title="class in org.geysermc.paletter">PaletteLayer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/item/component/Repairable.RepairItems.Builder.html#items(java.lang.String...)" class="member-name-link">items(String...)</a> - Method in class org.geysermc.paletter.item.component.<a href="org/geysermc/paletter/item/component/Repairable.RepairItems.Builder.html" title="class in org.geysermc.paletter.item.component">Repairable.RepairItems.Builder</a></dt>
@@ -13933,6 +13952,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <a href="./org/geysermc/paletter/internal/data/VanillaData.html#param-itemTags"><code>itemTags</code></a> record component.</div>
 </dd>
+<dt><a href="org/geysermc/paletter/Palette.html#itemTags()" class="member-name-link">itemTags()</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/Palette.html" title="class in org.geysermc.paletter">Palette</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/block/CustomBlock.html#itemType()" class="member-name-link">itemType()</a> - Method in class org.geysermc.paletter.block.<a href="org/geysermc/paletter/block/CustomBlock.html" title="class in org.geysermc.paletter.block">CustomBlock</a></dt>
 <dd>
 <div class="block">The type of the block item, owned by the block like <a href="org/geysermc/paletter/block/CustomBlock.html#type()"><code>CustomBlock.type()</code></a>: a palette hands back this type and its base
@@ -14195,11 +14216,6 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="org/geysermc/paletter/block/RegisteredBlock.html#key()" class="member-name-link">key()</a> - Method in class org.geysermc.paletter.block.<a href="org/geysermc/paletter/block/RegisteredBlock.html" title="class in org.geysermc.paletter.block">RegisteredBlock</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="org/geysermc/paletter/block/RegisteredBlockState.html#key()" class="member-name-link">key()</a> - Method in class org.geysermc.paletter.block.<a href="org/geysermc/paletter/block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></dt>
-<dd>
-<div class="block">The key of this state as the newest bundled data and the layer of its block know it, without a palette: for a
- state of a palette built from other data, or of an older version, use <a href="org/geysermc/paletter/block/BlockRegistry.html#key(org.geysermc.paletter.block.RegisteredBlockState)"><code>BlockRegistry.key(org.geysermc.paletter.block.RegisteredBlockState)</code></a>.</div>
-</dd>
 <dt><a href="org/geysermc/paletter/item/RegisteredItem.html#key()" class="member-name-link">key()</a> - Method in class org.geysermc.paletter.item.<a href="org/geysermc/paletter/item/RegisteredItem.html" title="class in org.geysermc.paletter.item">RegisteredItem</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/geysermc/paletter/internal/component/Wire.html#key(double)" class="member-name-link">key(double)</a> - Static method in class org.geysermc.paletter.internal.component.<a href="org/geysermc/paletter/internal/component/Wire.html" title="class in org.geysermc.paletter.internal.component">Wire</a></dt>
@@ -22596,12 +22612,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <a href="./org/geysermc/paletter/BlockExplanation.html#param-sent"><code>sent</code></a> record component.</div>
 </dd>
-<dt><a href="org/geysermc/paletter/item/ResolvedItem.html#sent()" class="member-name-link">sent()</a> - Method in record class org.geysermc.paletter.item.<a href="org/geysermc/paletter/item/ResolvedItem.html" title="class in org.geysermc.paletter.item">ResolvedItem</a></dt>
-<dd>
-<div class="block">The variant this palette sends, as a key: the resolved variant itself, or if <a href="org/geysermc/paletter/item/ResolvedItem.html#fallback()"><code>ResolvedItem.fallback()</code></a> its replacement
- (of an <code>ItemFallback</code>, also a forced one, or the default fallback <code>minecraft:unknown</code> for a variant
- the version lacks).</div>
-</dd>
 <dt><a href="org/geysermc/paletter/vanilla/BedrockItems.html#SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE" class="member-name-link">SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE</a> - Static variable in class org.geysermc.paletter.vanilla.<a href="org/geysermc/paletter/vanilla/BedrockItems.html" title="class in org.geysermc.paletter.vanilla">BedrockItems</a></dt>
 <dd>
 <div class="block"><code>minecraft:sentry_armor_trim_smithing_template</code>.</div>
@@ -27770,6 +27780,12 @@ the order they are declared.</div>
 <dt><a href="org/geysermc/paletter/item/ItemFallback.html#variant()" class="member-name-link">variant()</a> - Method in record class org.geysermc.paletter.item.<a href="org/geysermc/paletter/item/ItemFallback.html" title="class in org.geysermc.paletter.item">ItemFallback</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./org/geysermc/paletter/item/ItemFallback.html#param-variant"><code>variant</code></a> record component.</div>
+</dd>
+<dt><a href="org/geysermc/paletter/item/ResolvedItem.html#variant()" class="member-name-link">variant()</a> - Method in record class org.geysermc.paletter.item.<a href="org/geysermc/paletter/item/ResolvedItem.html" title="class in org.geysermc.paletter.item">ResolvedItem</a></dt>
+<dd>
+<div class="block">The variant this palette sends for the requested one, as a key: the requested variant itself, or if <a href="org/geysermc/paletter/item/ResolvedItem.html#fallback()"><code>ResolvedItem.fallback()</code></a> its replacement
+ (of an <code>ItemFallback</code>, also a forced one, or the default fallback <code>minecraft:unknown</code> for a variant
+ the version lacks).</div>
 </dd>
 <dt><a href="org/geysermc/paletter/internal/CanonicalItems.html#variant(int)" class="member-name-link">variant(int)</a> - Method in class org.geysermc.paletter.internal.<a href="org/geysermc/paletter/internal/CanonicalItems.html" title="class in org.geysermc.paletter.internal">CanonicalItems</a></dt>
 <dd>&nbsp;</dd>

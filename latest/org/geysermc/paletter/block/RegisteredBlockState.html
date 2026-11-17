@@ -102,11 +102,8 @@ implements org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition</s
  <p>
  Vanilla states are additionally shared between all palettes of a
  <a href="../Paletter.html" title="class in org.geysermc.paletter"><code>Paletter</code></a>, across versions: equal state, same instance. That is why a state does not
- know its block, the state set of a block can differ between versions. Ask the palette you have the state from,
- <a href="BlockRegistry.html#block(org.geysermc.paletter.block.RegisteredBlockState)"><code>BlockRegistry.block(RegisteredBlockState)</code></a>, for its <a href="RegisteredBlock.html" title="class in org.geysermc.paletter.block"><code>RegisteredBlock</code></a>, which also has the effective
- <a href="RegisteredBlock.html#components(org.geysermc.paletter.block.RegisteredBlockState)">components</a> and
- <a href="RegisteredBlock.html#properties(org.geysermc.paletter.block.RegisteredBlockState)">properties</a> of a state. The position of a state in its
- palette is <a href="BlockRegistry.html#indexOf(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)"><code>BlockRegistry.indexOf(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)</code></a>.</div>
+ know its key: ask the palette you have the state from,
+ <a href="../Palette.html#blockState(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)"><code>Palette.blockState(BlockDefinition)</code></a>.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>0.1.0</dd>
@@ -152,18 +149,12 @@ implements org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition</s
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isCustom()" class="member-name-link">isCustom</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="../vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#key()" class="member-name-link">key</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The key of this state as the newest bundled data and the layer of its block know it, without a palette: for a
- state of a palette built from other data, or of an older version, use <a href="BlockRegistry.html#key(org.geysermc.paletter.block.RegisteredBlockState)"><code>BlockRegistry.key(org.geysermc.paletter.block.RegisteredBlockState)</code></a>.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull org.cloudburstmc.nbt.NbtMap</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#states()" class="member-name-link">states</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull org.cloudburstmc.nbt.NbtMap</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#states()" class="member-name-link">states</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -239,18 +230,6 @@ implements org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition</s
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>true if this state belongs to a custom block added by a layer</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="key()">
-<h3>key</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="../vanilla/BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a></span>&nbsp;<span class="element-name">key</span>()</div>
-<div class="block">The key of this state as the newest bundled data and the layer of its block know it, without a palette: for a
- state of a palette built from other data, or of an older version, use <a href="BlockRegistry.html#key(org.geysermc.paletter.block.RegisteredBlockState)"><code>BlockRegistry.key(org.geysermc.paletter.block.RegisteredBlockState)</code></a>.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the key, or null for a vanilla state that is not in the newest bundled data</dd>
 </dl>
 </section>
 </li>
