@@ -6,7 +6,7 @@
 //
 // Dump format (FORMAT 3):
 // {
-//   format: 2,
+//   format: 3,
 //   item_tags:      {tag: [item id]},
 //   items:          {item id: {max_stack, localization_key, components: [id], max_durability?}},
 //   block_defaults: {block id: {state: value}},              BlockPermutation.resolve(id), the true default
@@ -14,9 +14,10 @@
 //   block_tags:     {tag: [block id]},                       tags of the default permutation
 //   block_items:    {block id: item id},                     the item of the default permutation, if any
 //   state_types:    {state: [valid value]}                   BlockStates.getAll(), all blocks together
-//   item_variants:  {item id: {aux: {key, potion?, delivery?}}}  the aux values BDS accepts of VARIANT_ITEMS
-//                   key: localization key of the stack; potion, delivery: the Script API potion component (potions), or
-//                   the effect whose set_potion loot table gives that aux (arrows, if exactly one does)
+//   item_variants:  {item id: {aux: {key, potion?}}}  the aux values BDS accepts of VARIANT_ITEMS
+//                   key: localization key of the stack; potion: the effect id of the Script API potion component (potions), or
+//                   the effect whose set_potion loot table gives that aux (arrows, if exactly one does).
+//                   Missing if this part failed (see errors): the rest of the dump is complete without it
 //   errors:         [message]
 // }
 
@@ -174,9 +175,9 @@ function* dumpItemVariants(out) {
         return stack?.typeId === id ? stack : undefined;
     }
 
-    out.item_variants = {};
+    const itemVariants = {};
     for (const id of VARIANT_ITEMS) {
-        const variants = (out.item_variants[id] = {});
+        const variants = (itemVariants[id] = {});
         for (let aux = 0; aux < MAX_AUX; aux++) {
             const stack = stackOf(0, id, aux);
             if (!stack) {
@@ -186,8 +187,10 @@ function* dumpItemVariants(out) {
             const potion = stack.getComponent("minecraft:potion");
             if (potion) {
                 variants[aux].potion = potion.potionEffectType.id;
-                variants[aux].delivery = potion.potionDeliveryType.id;
             }
+        }
+        if (variants[MAX_AUX - 1]) {
+            throw new Error(`${id} accepts aux ${MAX_AUX - 1}: raise MAX_AUX`);
         }
         yield;
     }
@@ -203,7 +206,7 @@ function* dumpItemVariants(out) {
             warn(`no arrow for the potion effect ${effect.id}`);
             continue;
         }
-        for (const aux of Object.keys(out.item_variants["minecraft:arrow"])) {
+        for (const aux of Object.keys(itemVariants["minecraft:arrow"])) {
             const arrow = stackOf(1, "minecraft:arrow", aux);
             if (looted.isStackableWith(arrow)) {
                 (effectsOfAux[aux] ??= []).push(effect.id);
@@ -214,10 +217,13 @@ function* dumpItemVariants(out) {
     // Several effects give the plain arrow (aux 0), which has no potion
     for (const [aux, effects] of Object.entries(effectsOfAux)) {
         if (effects.length === 1) {
-            out.item_variants["minecraft:arrow"][aux].potion = effects[0];
+            itemVariants["minecraft:arrow"][aux].potion = effects[0];
         }
     }
+    out.item_variants = itemVariants;
 }
+
+let chestReady = false;
 
 function* dump() {
     const out = { format: FORMAT, item_tags: {}, items: {}, block_defaults: {}, block_states: {}, block_tags: {}, block_items: {}, state_types: {} };
@@ -226,7 +232,14 @@ function* dump() {
     }
     yield* dumpItems(out);
     yield* dumpBlocks(out);
-    yield* dumpItemVariants(out);
+    // The variants need a chest in a ticking area and loot tables of the tool; the rest of the dump stands without them
+    if (chestReady) {
+        try {
+            yield* dumpItemVariants(out);
+        } catch (error) {
+            warn(`item variants: ${error}`);
+        }
+    }
     out.errors = errors;
 
     const json = JSON.stringify(out);
@@ -246,9 +259,9 @@ world.afterEvents.worldLoad.subscribe(async () => {
     console.warn("PALETTER-START");
     try {
         await loadChestArea();
+        chestReady = true;
     } catch (error) {
-        console.warn(`PALETTER-FAILED ${error} ${error?.stack}`);
-        return;
+        warn(`item variants: ${error}`);
     }
     system.runJob((function* () {
         try {
