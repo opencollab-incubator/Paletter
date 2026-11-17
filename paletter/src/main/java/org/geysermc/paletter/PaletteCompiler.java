@@ -10,6 +10,7 @@ import org.geysermc.paletter.internal.shape.VoxelShapeStore;
 import org.geysermc.paletter.internal.block.BlockInterner;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.internal.PaletteReportBuilder;
+import org.geysermc.paletter.creative.Placements;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.internal.Canonicals;
@@ -126,7 +127,7 @@ final class PaletteCompiler {
                 customTypes.add(item.type());
             }
             for (CustomBlock block : layer.blocks()) {
-                if (!(block.item() instanceof CustomBlock.BlockItem.None) && !replacements.containsKey(block.identifier())) {
+                if (block.item() != CustomBlock.BlockItem.NONE && !replacements.containsKey(block.identifier())) {
                     newVariants.add(ItemVariant.of(block.identifier()));
                 }
             }
@@ -156,7 +157,7 @@ final class PaletteCompiler {
                 items.addCustom(custom, report, source);
                 Menu menu = menu(custom.menuCategory());
                 if (menu != null) {
-                    placed.add(new Placed(null, BedrockItemStack.of(custom.type()), custom.creative(), menu));
+                    placed.add(new Placed(null, BedrockItemStack.of(custom.type()), custom.creativePlacement(), menu));
                 }
             }
             // BDS registers block items in the order of the block files, identifier descending without files, whatever
@@ -169,13 +170,13 @@ final class PaletteCompiler {
                     // BDS adds the replacing item in the block pass, in the item's own category, as a plain stack
                     Menu menu = menu(replacement.menuCategory());
                     if (menu != null) {
-                        placed.add(new Placed(block.identifier(), BedrockItemStack.of(replacement.type()), replacement.creative(), menu));
+                        placed.add(new Placed(block.identifier(), BedrockItemStack.of(replacement.type()), replacement.creativePlacement(), menu));
                     }
                     continue;
                 }
                 Menu menu = menu(block.menuCategory());
                 if (items.addBlockItem(block, report, source) != null && menu != null) {
-                    placed.add(new Placed(block.identifier(), blockItemStack(block, blocks), block.creative(), menu));
+                    placed.add(new Placed(block.identifier(), blockItemStack(block, blocks), block.creativePlacement(), menu));
                 }
             }
             layer.tags().forEach(items::tag);
@@ -267,7 +268,7 @@ final class PaletteCompiler {
     /** A creative placement to apply; {@code block} is the custom block if the stack is a block item. */
     private record Placed(@Nullable String block, BedrockItemStack stack, CreativePlacement placement, Menu menu) {
         void apply(CreativeEditor creative, CreativeOrdering ordering, PaletteReportBuilder report, String source) {
-            if (!placement.apply(creative, stack, menu.category(), menu.group(), ordering)) {
+            if (!Placements.apply(placement, creative, stack, menu.category(), menu.group(), ordering)) {
                 report.warn(source, "The creative placement of " + stack.type().identifier() + " is after a stack that does not exist; "
                     + "it is at the default position");
             }
@@ -285,7 +286,8 @@ final class PaletteCompiler {
 
     /** @return the menu of an item's {@code menu_category}, or null if it is absent or {@code none}: not in creative */
     private static @Nullable Menu menu(org.geysermc.paletter.item.component.@Nullable MenuCategory menu) {
-        return menu == null ? null : menu(menu.category().value(), menu.group());
+        // A menu category without a category is sent as none, so the item is not in creative
+        return menu == null || menu.category() == null ? null : menu(menu.category().value(), menu.group());
     }
 
     private static @Nullable Menu menu(String category, @Nullable String group) {
@@ -318,7 +320,7 @@ final class PaletteCompiler {
                 + "it is registered as an ordinary item");
             return false;
         }
-        if (own.item() instanceof CustomBlock.BlockItem.None) {
+        if (own.item() == CustomBlock.BlockItem.NONE) {
             throw new PaletteException("The item " + item.identifier() + " replaces the item of the block of the same name, "
                 + "which is registered without an item (BlockItem.NONE)", layer.id(), item.identifier(), null);
         }

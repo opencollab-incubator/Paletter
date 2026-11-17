@@ -162,7 +162,7 @@ public final class CustomBlock {
      * @return the position of the block item within the category and group of the {@link #menuCategory()},
      *         {@link CreativePlacement#DEFAULT} if not set
      */
-    public @NonNull CreativePlacement creative() {
+    public @NonNull CreativePlacement creativePlacement() {
         return creative;
     }
 
@@ -241,24 +241,17 @@ public final class CustomBlock {
      * an ordinary {@link org.geysermc.paletter.item.CustomItem} with the identifier of the block and a
      * {@code block_placer} with {@code replace_block_item}, registered in the same layer: the block's item is then that item.
      */
-    public sealed interface BlockItem {
+    public enum BlockItem {
         /**
          * No item; the block cannot be held.
          */
-        BlockItem NONE = new None();
+        NONE,
         /**
          * A plain block item. The client renders it as its block. Like BDS, the palette gives it the runtime id
          * {@code 255 - block_id} (negative: block ids start at 10000), so it moves when a later layer adds blocks and
          * the palette numbers all custom blocks again.
          */
-        BlockItem SIMPLE = new Simple();
-
-        record None() implements BlockItem {
-        }
-
-        record Simple() implements BlockItem {
-        }
-
+        SIMPLE
     }
 
     public static @NonNull Builder builder(@NonNull String identifier) {
@@ -477,7 +470,7 @@ public final class CustomBlock {
         /**
          * Adjusts the position of the block item within its category and group, e.g. right after another item.
          */
-        public @NonNull Builder creative(@NonNull CreativePlacement creative) {
+        public @NonNull Builder creativePlacement(@NonNull CreativePlacement creative) {
             this.creative = Objects.requireNonNull(creative, "creative");
             return this;
         }

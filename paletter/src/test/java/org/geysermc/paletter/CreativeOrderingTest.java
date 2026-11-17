@@ -86,7 +86,7 @@ class CreativeOrderingTest {
     void anchorsStillWin() {
         PaletteLayer layer = PaletteLayer.builder("anchor")
             .item(CustomItem.builder("test:after_hopper").menuCategory(CreativeCategory.ITEMS, "itemGroup.name.minecart")
-                .creative(CreativePlacement.after(ItemMatcher.id("minecraft:hopper_minecart"))).build())
+                .creativePlacement(CreativePlacement.after(ItemMatcher.id("minecraft:hopper_minecart"))).build())
             .build();
         Palette palette = Palettes.palette(LATEST, layer);
         String group = palette.creativeLayout().groupOf(ItemMatcher.id("minecraft:hopper_minecart"));

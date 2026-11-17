@@ -61,7 +61,7 @@ class LayerTest {
                     DisplayName.builder().value("item.minecartFurnace.name").build(),
                     MaxStackSize.of(1))
                 .menuCategory(CreativeCategory.ITEMS, "itemGroup.name.minecart")
-                .creative(CreativePlacement.after(ItemMatcher.id("minecraft:hopper_minecart")))
+                .creativePlacement(CreativePlacement.after(ItemMatcher.id("minecraft:hopper_minecart")))
                 .build())
             .build();
     }

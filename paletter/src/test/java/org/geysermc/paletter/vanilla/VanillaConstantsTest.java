@@ -258,7 +258,7 @@ class VanillaConstantsTest {
             .defaultState("example:level", 2)
             .build();
         CustomItem ruby = CustomItem.builder("example:ruby").menuCategory(CreativeCategory.ITEMS)
-            .creative(CreativePlacement.afterAnyVariantOf(BedrockItems.DIAMOND)).build();
+            .creativePlacement(CreativePlacement.afterAnyVariantOf(BedrockItems.DIAMOND)).build();
         PaletteLayer layer = PaletteLayer.builder("custom").block(lamp).item(ruby)
             .overrideItem(BedrockItems.CAKE, item -> { })
             .build();
@@ -306,7 +306,7 @@ class VanillaConstantsTest {
                         .block(org.geysermc.paletter.item.component.Digger.Block.of(BedrockBlocks.STONE)).speed(4).build())
                     .build())
                 .menuCategory(CreativeCategory.ITEMS)
-                .creative(CreativePlacement.afterAnyVariantOf(BedrockItems.DIAMOND))
+                .creativePlacement(CreativePlacement.afterAnyVariantOf(BedrockItems.DIAMOND))
                 .build())
             .creative(editor -> editor.remove(ItemMatcher.of(BedrockItems.EMPTY_MAP.variant(2))))
             .build();

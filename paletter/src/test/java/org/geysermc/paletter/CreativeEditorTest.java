@@ -9,6 +9,7 @@ import org.geysermc.paletter.creative.CreativeItem;
 import org.geysermc.paletter.creative.CreativeNode;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.creative.CreativePlacement;
+import org.geysermc.paletter.creative.Placements;
 import org.geysermc.paletter.creative.ItemMatcher;
 import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.vanilla.BedrockItemType;
@@ -137,15 +138,16 @@ class CreativeEditorTest {
     @Test
     void placementPrefersAnchorThenGroupThenLoose() {
         CreativeEditor editor = layout().edit();
-        CreativePlacement.after(ItemMatcher.id("test:c")).apply(editor, NEW, CreativeCategory.ITEMS, "g1", CreativeOrdering.APPEND);
+        Placements.apply(CreativePlacement.after(ItemMatcher.id("test:c")), editor, NEW, CreativeCategory.ITEMS, "g1", CreativeOrdering.APPEND);
         assertEquals(List.of(C, NEW), editor.build().group("g2").orElseThrow().stacks());
 
         BedrockItemStack other = stack("test:other");
-        CreativePlacement.after(ItemMatcher.id("test:missing")).apply(editor, other, CreativeCategory.NATURE, "new_group", CreativeOrdering.APPEND);
+        assertFalse(Placements.apply(CreativePlacement.after(ItemMatcher.id("test:missing")), editor, other, CreativeCategory.NATURE, "new_group",
+            CreativeOrdering.APPEND), "a missing anchor is told");
         assertEquals(List.of(other), editor.build().group("new_group").orElseThrow().stacks());
 
         BedrockItemStack third = stack("test:third");
-        CreativePlacement.DEFAULT.apply(editor, third, CreativeCategory.ITEMS, null, CreativeOrdering.APPEND);
+        assertTrue(Placements.apply(CreativePlacement.DEFAULT, editor, third, CreativeCategory.ITEMS, null, CreativeOrdering.APPEND));
         assertEquals(new CreativeItem(third), editor.view(CreativeCategory.ITEMS).getLast());
     }
 

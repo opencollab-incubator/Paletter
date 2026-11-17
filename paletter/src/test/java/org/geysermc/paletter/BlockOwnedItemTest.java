@@ -2,6 +2,8 @@ package org.geysermc.paletter;
 
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeCategory;
+import org.geysermc.paletter.creative.CreativeGroup;
+import org.geysermc.paletter.creative.CreativeItem;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.creative.ItemMatcher;
@@ -35,10 +37,10 @@ class BlockOwnedItemTest {
 
     @Test
     void theMenuCategoryAloneDecidesWhetherContentIsInCreative() {
-        assertSame(CreativePlacement.DEFAULT, CustomItem.builder("own:item").build().creative());
-        assertSame(CreativePlacement.DEFAULT, CustomBlock.builder("own:block").build().creative());
-        assertThrows(NullPointerException.class, () -> CustomItem.builder("own:item").creative(null));
-        assertThrows(NullPointerException.class, () -> CustomBlock.builder("own:block").creative(null));
+        assertSame(CreativePlacement.DEFAULT, CustomItem.builder("own:item").build().creativePlacement());
+        assertSame(CreativePlacement.DEFAULT, CustomBlock.builder("own:block").build().creativePlacement());
+        assertThrows(NullPointerException.class, () -> CustomItem.builder("own:item").creativePlacement(null));
+        assertThrows(NullPointerException.class, () -> CustomBlock.builder("own:block").creativePlacement(null));
         assertThrows(NullPointerException.class, () -> CreativePlacement.after((ItemMatcher) null));
 
         MenuCategory none = MenuCategory.builder().category(MenuCategory.Category.NONE).build();
@@ -66,10 +68,10 @@ class BlockOwnedItemTest {
     @Test
     void aPlacementOnlyAdjustsThePositionWithinTheMenuCategory() {
         CustomItem ruby = CustomItem.builder("own:after_hopper").menuCategory(CreativeCategory.ITEMS)
-            .creative(CreativePlacement.after(BedrockItems.HOPPER_MINECART)).build();
+            .creativePlacement(CreativePlacement.after(BedrockItems.HOPPER_MINECART)).build();
         CustomItem missing = CustomItem.builder("own:missing_anchor").menuCategory(CreativeCategory.ITEMS)
-            .creative(CreativePlacement.after(ItemMatcher.id("own:nowhere"))).build();
-        CustomItem hidden = CustomItem.builder("own:hidden_anchor").creative(CreativePlacement.after(BedrockItems.HOPPER_MINECART)).build();
+            .creativePlacement(CreativePlacement.after(ItemMatcher.id("own:nowhere"))).build();
+        CustomItem hidden = CustomItem.builder("own:hidden_anchor").creativePlacement(CreativePlacement.after(BedrockItems.HOPPER_MINECART)).build();
         Palette palette = Palettes.palette(PROTOCOL, PaletteLayer.builder("anchors").item(ruby).item(missing).item(hidden).build());
         List<String> ids = palette.creativeLayout().stacks().map(stack -> stack.type().identifier()).toList();
         assertEquals(ids.indexOf("minecraft:hopper_minecart") + 1, ids.indexOf("own:after_hopper"));
@@ -112,6 +114,14 @@ class BlockOwnedItemTest {
             PaletteLayer later = PaletteLayer.builder("later").item(replacing("own:early")).build();
             PaletteException e = assertThrows(PaletteException.class, () -> Palettes.palette(PROTOCOL, early, later));
             assertTrue(e.getMessage().contains("a replacing item must be in its block's layer"), e.getMessage());
+            assertEquals("later", e.layer());
+            assertEquals("own:early", e.identifier());
+            // Through Palette#extend directly
+            Palette base = PALETTER.palette(PROTOCOL).extend(early);
+            PaletteException extended = assertThrows(PaletteException.class, () -> base.extend(later));
+            assertTrue(extended.getMessage().contains("a replacing item must be in its block's layer"), extended.getMessage());
+            assertEquals("later", extended.layer());
+            assertEquals("own:early", extended.identifier());
         }
     }
 
@@ -121,6 +131,34 @@ class BlockOwnedItemTest {
         PaletteException e = assertThrows(PaletteException.class,
             () -> Palettes.palette(PROTOCOL, PaletteLayer.builder("both").block(block).item(replacing("own:none")).build()));
         assertTrue(e.getMessage().contains("BlockItem.NONE"), e.getMessage());
+        assertEquals("both", e.layer());
+        assertEquals("own:none", e.identifier());
+    }
+
+    @Test
+    void aReplacingItemIsPlacedByItsOwnMenuCategoryUnderAppendToo() {
+        CustomBlock block = CustomBlock.builder("own:driven").menuCategory(CreativeCategory.CONSTRUCTION).build();
+        CustomItem item = CustomItem.builder("own:driven").component(Icon.of("x"))
+            .component(BlockPlacer.builder().block("own:driven").replaceBlockItem(true).build())
+            .menuCategory(CreativeCategory.ITEMS).build();
+        PaletteLayer layer = PaletteLayer.builder("driven").block(block).item(item).build();
+        Palette append = Paletter.builder().creativeOrdering(CreativeOrdering.APPEND).layer(layer).build().palette(PROTOCOL);
+        assertEquals(1, stacksOf(append, "own:driven").size());
+        assertNull(stacksOf(append, "own:driven").getFirst().blockState());
+        assertSame(item.type(), append.itemOf(block.type()));
+        assertTrue(append.creativeLayout().nodes(CreativeCategory.ITEMS).stream().anyMatch(node ->
+            node instanceof CreativeItem entry && entry.stack().type().identifier().equals("own:driven")
+            || node instanceof CreativeGroup group && group.stacks().stream().anyMatch(stack -> stack.type().identifier().equals("own:driven"))));
+    }
+
+    @Test
+    void aMenuCategoryWithoutACategoryIsNotInCreative() {
+        // The wire sends none for it; compiling must not fail
+        CustomItem item = CustomItem.builder("own:no_category").menuCategory(
+            org.geysermc.paletter.item.component.MenuCategory.builder().group("itemGroup.name.x").build()).build();
+        Palette palette = Palettes.palette(PROTOCOL, PaletteLayer.builder("none").item(item).build());
+        assertTrue(stacksOf(palette, "own:no_category").isEmpty());
+        assertNotNull(palette.itemDefinition("own:no_category"));
     }
 
     @Test

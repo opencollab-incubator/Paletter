@@ -84,7 +84,7 @@ public final class CustomItem {
      * @return the position within the category and group of the {@link #menuCategory()}, {@link CreativePlacement#DEFAULT}
      *         if not set
      */
-    public @NonNull CreativePlacement creative() {
+    public @NonNull CreativePlacement creativePlacement() {
         return creative;
     }
 
@@ -219,7 +219,7 @@ public final class CustomItem {
         /**
          * Adjusts the position of the item within its category and group, e.g. right after another item.
          */
-        public @NonNull Builder creative(@NonNull CreativePlacement creative) {
+        public @NonNull Builder creativePlacement(@NonNull CreativePlacement creative) {
             this.creative = Objects.requireNonNull(creative, "creative");
             return this;
         }

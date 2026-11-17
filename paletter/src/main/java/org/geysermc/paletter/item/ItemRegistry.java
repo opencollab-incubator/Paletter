@@ -928,7 +928,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
          * @return the item, or null for {@link CustomBlock.BlockItem#NONE}
          */
         public @Nullable RegisteredItem addBlockItem(@NonNull CustomBlock block, @NonNull PaletteReportBuilder report, @NonNull String source) {
-            if (block.item() instanceof CustomBlock.BlockItem.None) {
+            if (block.item() == CustomBlock.BlockItem.NONE) {
                 return null;
             }
             checkUnused(block.identifier());
