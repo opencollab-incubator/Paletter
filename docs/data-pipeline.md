@@ -205,6 +205,10 @@ current, the others retired. Each current toggle is then captured on its own to 
 The result is committed as `data/bds/<build>/experiments.json`, and the bundled version gets experiment marks: per
 toggle, the items, blocks and creative stacks it adds. The bundle itself is captured without experiments.
 
+The record also lists, per toggle, the recipes it adds, removes or changes (`content.recipes`, the recipe diff of the
+toggle's capture against the one without experiments). They are not part of the bundle's marks: the recipes module
+bundles them.
+
 ### Previews
 
 Paletter bundles the newest preview next to the releases. `update --channel preview` imports it like a release, marked

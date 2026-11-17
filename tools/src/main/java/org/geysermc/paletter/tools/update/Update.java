@@ -512,6 +512,8 @@ public final class Update {
         ExperimentAttribution.Diff all;
         Map<String, ExperimentAttribution.Diff> each = new TreeMap<>();
         Map<String, ExperimentContent> content = new TreeMap<>();
+        /** Per toggle the recipes it adds, removes or changes, by section; only toggles that touch recipes. */
+        Map<String, Map<String, List<String>>> recipes = new TreeMap<>();
         List<String> unexplained = List.of();
         String attribution = "none";
         long millis;
@@ -890,10 +892,12 @@ public final class Update {
                         ExperimentAttribution.Diff diff = ExperimentAttribution.diff(base, CapturedData.read(out), dump, BdsDump.read(log));
                         result.each.put(toggle, diff);
                         result.content.put(toggle, diff.content(creativeBefore));
+                        recipes(result, toggle, runs.vanilla, out);
                     }
                     result.unexplained = ExperimentAttribution.unexplained(result.all, result.each);
                 } else if (result.current.size() == 1) {
                     result.content.put(result.current.getFirst(), result.all.content(creativeBefore));
+                    recipes(result, result.current.getFirst(), runs.vanilla, work.resolve("experiments/all"));
                 }
             } finally {
                 // The dump world back without experiments
@@ -901,6 +905,13 @@ public final class Update {
             }
         }
         result.millis = (System.nanoTime() - started) / 1_000_000;
+    }
+
+    private static void recipes(ExperimentRun result, String toggle, Path base, Path with) throws IOException {
+        Map<String, List<String>> changes = ExperimentAttribution.recipes(base, with);
+        if (!changes.isEmpty()) {
+            result.recipes.put(toggle, changes);
+        }
     }
 
     /** Whether start game reported exactly the requested toggles; retired ones are kept but never streamed. */
@@ -1089,6 +1100,12 @@ public final class Update {
                 content.add("dataDrivenBlocks", array(diff.dataDrivenBlocks()));
                 content.add("creativeAdded", array(diff.creativeAdded()));
                 content.add("removed", array(diff.removed()));
+                Map<String, List<String>> recipes = result.recipes.get(toggle);
+                if (recipes != null) {
+                    JsonObject sections = new JsonObject();
+                    recipes.forEach((section, entries) -> sections.add(section, array(entries)));
+                    content.add("recipes", sections);
+                }
                 entry.add("content", content);
             }
             toggles.add(toggle, entry);
