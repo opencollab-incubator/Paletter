@@ -7,6 +7,8 @@ import org.geysermc.paletter.tools.bds.BdsServer;
 import org.geysermc.paletter.tools.client.Capture;
 import org.geysermc.paletter.tools.client.RecipeCapture;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,7 +29,11 @@ public final class RecipeProbe {
     }
 
     public static void run(Path root, Map<String, String> options) throws Exception {
-        Path cache = options.containsKey("cache") ? Path.of(options.get("cache")) : BdsDistribution.defaultCache();
+        if (!Files.isDirectory(root.resolve(Layout.BDS))) {
+            throw new IllegalArgumentException(root + " is not the repository root (it has no " + Layout.BDS
+                + "); pass --root as a native path, e.g. C:/...");
+        }
+        Path cache = options.containsKey("cache") ? path(options.get("cache")) : BdsDistribution.defaultCache();
         BdsDistribution distribution = BdsDistribution.resolve(options.containsKey("preview"), options.get("version"));
         String name = "recipes-" + distribution.platform() + "-" + distribution.version();
         Path server = cache.resolve("servers").resolve(name);
@@ -72,7 +78,7 @@ public final class RecipeProbe {
             bds.awaitStarted(timeout);
             Capture.Reachable reachable = Capture.reachable(bds, address, 20);
             if (reachable == null || reachable.protocol() == 0) {
-                throw new java.io.IOException("BDS answers neither a RakNet ping nor NetherNet LAN discovery with a protocol");
+                throw new IOException("BDS answers neither a RakNet ping nor NetherNet LAN discovery with a protocol");
             }
             VanillaData reference = EducationProbe.reference(root, null, reachable.protocol());
             System.out.println("BDS " + bdsVersion + ", protocol " + reachable.protocol() + (reachable.netherNet() ? " (NetherNet)" : ""));
@@ -80,8 +86,19 @@ public final class RecipeProbe {
         }
         Files.createDirectories(out);
         for (String file : new String[] {RecipeCapture.CRAFTING, RecipeCapture.TRIM}) {
+            if (!Files.exists(work.resolve("vanilla").resolve(file))) {
+                throw new IOException("BDS sent no data for " + file + "; see " + work.resolve("bds.log"));
+            }
             Files.copy(work.resolve("vanilla").resolve(file), out.resolve(file), StandardCopyOption.REPLACE_EXISTING);
             System.out.println("Wrote " + out.resolve(file) + " (" + Files.size(out.resolve(file)) + " bytes)");
         }
+    }
+
+    /** A path option; a Git Bash path ({@code /c/...}) reaches Java unconverted and would silently mean {@code C:\c\...}. */
+    private static Path path(String value) {
+        if (File.separatorChar == '\\' && value.matches("/[A-Za-z]/.*")) {
+            throw new IllegalArgumentException(value + " is a Git Bash path; pass it as " + value.charAt(1) + ":" + value.substring(2));
+        }
+        return Path.of(value).toAbsolutePath();
     }
 }
