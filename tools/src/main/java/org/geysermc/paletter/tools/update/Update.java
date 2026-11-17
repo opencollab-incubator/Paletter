@@ -1335,7 +1335,12 @@ public final class Update {
         VanillaData captured = read(scratch.resolve(name + ".nbt"));
         runs.imported = scratch.resolve(name + ".nbt");
         Map<String, List<VariantNames.Entry>> variantNames = VariantNames.read(root.resolve(VariantNames.FILE));
-        recipes(distribution, runs, captured);
+        try {
+            recipes(distribution, runs, captured);
+        } catch (Exception e) {
+            // The recipe data never blocks the import
+            report.check(Report.Status.DIFF, "Recipes", "not compared: " + e);
+        }
         // The recipe data of the capture, committed with the build's other vanilla captures
         for (String file : List.of(RecipeCapture.CRAFTING, RecipeCapture.TRIM)) {
             if (Files.exists(runs.vanilla.resolve(file))) {
@@ -1396,8 +1401,9 @@ public final class Update {
 
     /**
      * The recipe capture against the committed one of this build, or of the build before ({@link #baseline}), and the
-     * assumptions the recipe data rests on (items and tags exist in the imported palette, net ids are 1..n). Runs before
-     * the capture is committed, so it still sees the old one.
+     * assumptions the recipe data rests on (items and tags exist in the imported palette, results have their block state,
+     * net ids are 1..n). Runs before the capture is committed, so it still sees the old one. Only ever INFO, PASS or DIFF:
+     * it must not block an import.
      */
     private void recipes(BdsDistribution distribution, Runs runs, VanillaData captured) throws IOException {
         if (!Files.exists(runs.vanilla.resolve(RecipeCapture.CRAFTING))) {
@@ -1419,11 +1425,12 @@ public final class Update {
         captured.items().forEach(item -> items.add(item.identifier()));
         assumption("Recipe items exist in the palette", RecipeData.missingItems(recipes, items));
         assumption("Recipe tags have members", RecipeData.emptyTags(recipes, captured.itemTags()));
+        assumption("Recipe results have their block state", RecipeData.missingBlockStates(recipes));
         assumption("Recipe net ids are 1..n", RecipeData.netIdProblems(recipes));
     }
 
     private void assumption(String name, List<String> problems) {
-        report.check(problems.isEmpty() ? Report.Status.PASS : Report.Status.FAIL, name, problems.isEmpty() ? "holds" : problems.size() + " problems");
+        report.check(problems.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, name, problems.isEmpty() ? "holds" : problems.size() + " problems");
         if (!problems.isEmpty()) {
             report.evidence("Problems", problems.stream().map(problem -> "- " + problem).toList());
         }

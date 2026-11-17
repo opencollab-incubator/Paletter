@@ -500,11 +500,6 @@ public final class Cli implements Runnable {
             Path data = root().resolve("data/bds");
             Diff diff = Diff.recipes(CapturedData.recipes(data.resolve(from).resolve("vanilla")), CapturedData.recipes(data.resolve(to).resolve("vanilla")));
             diff.print(System.out);
-            // The counts per kind: "+21 shaped"
-            Map<String, Long> counts = new java.util.TreeMap<>();
-            diff.lines().forEach((section, lines) -> lines.forEach(line -> counts.merge(
-                section + " / " + line.replaceFirst("^[+-] ", "").split(" ")[0], 1L, Long::sum)));
-            counts.forEach((kind, count) -> System.out.println("  " + kind + ": " + count));
             System.out.println(diff.identical() ? "IDENTICAL" : "DIFFERENT");
             return 0;
         }

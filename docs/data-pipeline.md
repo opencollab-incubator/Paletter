@@ -59,7 +59,7 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 | `creative-probe` | Runs an add-on on BDS and records the creative inventory order. |
 | `education-capture` | Records what only an Education Edition world adds (`education.json`, used for `@Education`). |
 | `recipes-capture` | Records the crafting and trim data of one build (`vanilla/crafting_data.json.gz`, `vanilla/trim_data.json`); `update` writes them too. |
-| `recipes-diff` | `--from <build> --to <build>`: diffs two committed recipe captures in `data/bds`, normalised (list layout, net ids and random UUIDs ignored): recipes added, removed and changed, mixes, trims. `update` reports the same diff. |
+| `recipes-diff` | `--from <build> --to <build>`: diffs two committed recipe captures in `data/bds`, normalised (list layout, net ids and random UUIDs ignored): recipes added, removed and changed, mixes, trims. `update` reports the same diff, and checks that recipe items, tags, block states and net ids hold; these are never blocking (a DIFF row at most). |
 | `inspect` | Prints `Palette#explain` for a block state or item in one or all bundled versions. |
 
 Gradle tasks: `generateConstants`, `generateComponentApi`, `generateComponentApiPreview`, `generateModel`,
