@@ -101,9 +101,12 @@ loadScripts(document, 'script');</script>
  Items whose variants differ by damage (potions, banners, goat horns, ...) expose them with <a href="#variant(int)"><code>variant(int)</code></a> (null if unknown, <a href="#variantOf(int)"><code>variantOf(int)</code></a> makes any): the
  bundled data has no names for them, so they have no constants of their own.
  <p>
- Equality: vanilla types are singletons (the constants); custom types are not interned, so two calls of <a href="#of(java.lang.String)"><code>of(String)</code></a>
- with one identifier give equal but not identical types. Compare with <code>equals</code> (or use them as map keys), never
- with <code>==</code>. Nothing is kept for identifiers Paletter does not know, so untrusted identifiers cannot grow memory.
+ Equality: <code>equals</code> always works, and types are map keys. <code>==</code> works too for vanilla types, which are
+ singletons (the constants), and for registered custom content: a <a href="../item/CustomItem.html" title="class in org.geysermc.paletter.item"><code>CustomItem</code></a> owns its <a href="../item/CustomItem.html#type()"><code>type</code></a> (a <a href="../block/CustomBlock.html" title="class in org.geysermc.paletter.block"><code>CustomBlock</code></a> its <a href="../block/CustomBlock.html#itemType()"><code>item type</code></a>), and a palette it is registered in hands back exactly that type. Types made by <a href="#of(java.lang.String)"><code>of(String)</code></a> for an
+ identifier that is not vanilla are not interned: equal to each other and to the custom item's type, not identical.
+ Nothing is kept for identifiers Paletter does not know, so untrusted identifiers cannot grow memory: what is kept is
+ bounded by the registered content. Equal custom items registered by different layers each own their type; those
+ types are equal, not identical.
  <p>
  Referencing a type loads nothing. A vanilla constant the bundled data does not have (deprecated, or a preview item
  without the preview loaded) is not <a href="#isAvailable()"><code>available</code></a> and resolves to its fallback, normally
@@ -138,39 +141,42 @@ loadScripts(document, 'script');</script>
 <div class="block">The name of the generated constant of <a href="BedrockItems.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockItems</code></a> (or the preview items) that holds this type, preferring
  one that is not deprecated.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#custom(java.lang.String)" class="member-name-link">custom</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Plumbing of <a href="../item/CustomItem.html" title="class in org.geysermc.paletter.item"><code>CustomItem</code></a> and <a href="../block/CustomBlock.html" title="class in org.geysermc.paletter.block"><code>CustomBlock</code></a>, which create their type once and
+ own it: use <a href="../item/CustomItem.html#type()"><code>CustomItem.type()</code></a> and <a href="../block/CustomBlock.html#itemType()"><code>CustomBlock.itemType()</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hasVariant(int)" class="member-name-link">hasVariant</a><wbr>(int&nbsp;damage)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#identifier()" class="member-name-link">identifier</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isAvailable()" class="member-name-link">isAvailable</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isCustom()" class="member-name-link">isCustom</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hasVariant(int)" class="member-name-link">hasVariant</a><wbr>(int&nbsp;damage)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#identifier()" class="member-name-link">identifier</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isAvailable()" class="member-name-link">isAvailable</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isEducation()" class="member-name-link">isEducation</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isCustom()" class="member-name-link">isCustom</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isEducation()" class="member-name-link">isEducation</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Whether BDS only offers this item to worlds with Education Edition features (the same content the generated
  constant carries <a href="../annotation/Education.html" title="annotation interface in org.geysermc.paletter.annotation"><code>@Education</code></a> for).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(java.lang.String)" class="member-name-link">of</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(java.lang.String)" class="member-name-link">of</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The key of an identifier: the vanilla constant if the identifier (after renames) is vanilla in the newest bundled
  data or has a generated constant, else a custom type known by its identifier only.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(org.geysermc.paletter.item.CustomItem)" class="member-name-link">of</a><wbr>(@NonNull <a href="../item/CustomItem.html" title="class in org.geysermc.paletter.item">CustomItem</a>&nbsp;item)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolved()" class="member-name-link">resolved</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
@@ -215,7 +221,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</span></div>
 <div class="block">The key of an identifier: the vanilla constant if the identifier (after renames) is vanilla in the newest bundled
  data or has a generated constant, else a custom type known by its identifier only. Custom types are not interned (equal, not identical,
- for equal identifiers), so unknown identifiers never accumulate. Loads the data.</div>
+ for equal identifiers), so unknown identifiers never accumulate; the type a registered custom item owns, which
+ palettes hand back, is <a href="../item/CustomItem.html#type()"><code>CustomItem.type()</code></a>. Loads the data.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the type of an identifier</dd>
@@ -223,12 +230,15 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="of(org.geysermc.paletter.item.CustomItem)">
-<h3>of</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(@NonNull <a href="../item/CustomItem.html" title="class in org.geysermc.paletter.item">CustomItem</a>&nbsp;item)</span></div>
+<section class="detail" id="custom(java.lang.String)">
+<h3>custom</h3>
+<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in org.geysermc.paletter.annotation">@Internal</a>
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">custom</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</span></div>
+<div class="block">Plumbing of <a href="../item/CustomItem.html" title="class in org.geysermc.paletter.item"><code>CustomItem</code></a> and <a href="../block/CustomBlock.html" title="class in org.geysermc.paletter.block"><code>CustomBlock</code></a>, which create their type once and
+ own it: use <a href="../item/CustomItem.html#type()"><code>CustomItem.type()</code></a> and <a href="../block/CustomBlock.html#itemType()"><code>CustomBlock.itemType()</code></a>.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the type of a custom item; same as <a href="#of(java.lang.String)"><code>of(String)</code></a></dd>
+<dd>a new custom type of an identifier, with its base variant. Loads no data</dd>
 </dl>
 </section>
 </li>

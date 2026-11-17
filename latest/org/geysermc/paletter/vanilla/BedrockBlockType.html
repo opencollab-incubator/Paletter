@@ -102,7 +102,10 @@ loadScripts(document, 'script');</script>
  int runtimeId = palette.runtimeId(door);
  </code></pre>
  Referencing a type loads nothing; its states are resolved against the newest data of <a href="../Paletter.html#bundled()"><code>Paletter.bundled()</code></a> on first use. A vanilla constant the data does not have (deprecated
- because Bedrock removed the block, or a preview block without the preview loaded) is not <a href="#isAvailable()"><code>available</code></a>: its states are those of its fallback, normally <code>minecraft:unknown</code>.</div>
+ because Bedrock removed the block, or a preview block without the preview loaded) is not <a href="#isAvailable()"><code>available</code></a>: its states are those of its fallback, normally <code>minecraft:unknown</code>.
+ <p>
+ Equality: like its states (see <a href="BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockBlockState</code></a>), <code>equals</code> always works, and <code>==</code> works for the
+ vanilla constants and for the type a registered <a href="../block/CustomBlock.html" title="class in org.geysermc.paletter.block"><code>CustomBlock</code></a> owns.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>0.1.0</dd>
@@ -144,42 +147,46 @@ loadScripts(document, 'script');</script>
 <div class="block">The name of the generated constant of <a href="BedrockBlocks.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockBlocks</code></a> (or the preview blocks) that holds this type, preferring
  one that is not deprecated.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#defaultState()" class="member-name-link">defaultState</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hasProperty(org.geysermc.paletter.vanilla.BedrockState)" class="member-name-link">hasProperty</a><wbr>(@NonNull <a href="BedrockState.html" title="class in org.geysermc.paletter.vanilla">BedrockState</a>&lt;?&gt;&nbsp;state)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#identifier()" class="member-name-link">identifier</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isAvailable()" class="member-name-link">isAvailable</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="BedrockBlockType.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockType</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#custom(java.lang.String,java.util.List,java.util.Map)" class="member-name-link">custom</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+ @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../block/BlockProperty.html" title="class in org.geysermc.paletter.block">BlockProperty</a>&lt;?&gt;&gt;&nbsp;properties,
+ @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;defaultStates)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Plumbing of <a href="../block/CustomBlock.html" title="class in org.geysermc.paletter.block"><code>CustomBlock</code></a>, which creates its type once and owns it: use <a href="../block/CustomBlock.html#type()"><code>CustomBlock.type()</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BedrockBlockState.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockState</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#defaultState()" class="member-name-link">defaultState</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isCustom()" class="member-name-link">isCustom</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hasProperty(org.geysermc.paletter.vanilla.BedrockState)" class="member-name-link">hasProperty</a><wbr>(@NonNull <a href="BedrockState.html" title="class in org.geysermc.paletter.vanilla">BedrockState</a>&lt;?&gt;&nbsp;state)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#identifier()" class="member-name-link">identifier</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isAvailable()" class="member-name-link">isAvailable</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isEducation()" class="member-name-link">isEducation</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isCustom()" class="member-name-link">isCustom</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isEducation()" class="member-name-link">isEducation</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Whether BDS only offers this block to worlds with Education Edition features (the same content the generated
  constant carries <a href="../annotation/Education.html" title="annotation interface in org.geysermc.paletter.annotation"><code>@Education</code></a> for).</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="BedrockBlockType.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockType</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(java.lang.String)" class="member-name-link">of</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="BedrockBlockType.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockType</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(java.lang.String)" class="member-name-link">of</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The key of an identifier: the vanilla constant if the identifier is a vanilla block of the newest bundled data or
  has a generated constant, else a custom type known by its identifier only (no states).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="BedrockBlockType.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockType</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(org.geysermc.paletter.block.CustomBlock)" class="member-name-link">of</a><wbr>(@NonNull <a href="../block/CustomBlock.html" title="class in org.geysermc.paletter.block">CustomBlock</a>&nbsp;block)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="BedrockState.html" title="class in org.geysermc.paletter.vanilla">BedrockState</a>&lt;?&gt;&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#properties()" class="member-name-link">properties</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
@@ -222,13 +229,19 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="of(org.geysermc.paletter.block.CustomBlock)">
-<h3>of</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockBlockType.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockType</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(@NonNull <a href="../block/CustomBlock.html" title="class in org.geysermc.paletter.block">CustomBlock</a>&nbsp;block)</span></div>
+<section class="detail" id="custom(java.lang.String,java.util.List,java.util.Map)">
+<h3>custom</h3>
+<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in org.geysermc.paletter.annotation">@Internal</a>
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockBlockType.html" title="class in org.geysermc.paletter.vanilla">BedrockBlockType</a></span>&nbsp;<span class="element-name">custom</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+ @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../block/BlockProperty.html" title="class in org.geysermc.paletter.block">BlockProperty</a>&lt;?&gt;&gt;&nbsp;properties,
+ @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;defaultStates)</span></div>
+<div class="block">Plumbing of <a href="../block/CustomBlock.html" title="class in org.geysermc.paletter.block"><code>CustomBlock</code></a>, which creates its type once and owns it: use <a href="../block/CustomBlock.html#type()"><code>CustomBlock.type()</code></a>.</div>
 <dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>properties</code> - the state properties, in declaration order (<a href="../block/CustomBlock.html#stateProperties()"><code>CustomBlock.stateProperties()</code></a>)</dd>
+<dd><code>defaultStates</code> - the values of the default state; properties not listed use their first value</dd>
 <dt>Returns:</dt>
-<dd>the type of a custom block. Equal blocks have the same type; a type equals another of the same identifier
-         and states, so also the type of the identifier alone if the block has no states</dd>
+<dd>a new custom type. Loads no data</dd>
 </dl>
 </section>
 </li>
@@ -239,7 +252,7 @@ loadScripts(document, 'script');</script>
 <div class="block">The key of an identifier: the vanilla constant if the identifier is a vanilla block of the newest bundled data or
  has a generated constant, else a custom type known by its identifier only (no states). Such types are not
  interned: equal for equal identifiers, not identical, so compare them with <code>equals</code>, and unknown
- identifiers never accumulate. The type of a <a href="../block/CustomBlock.html" title="class in org.geysermc.paletter.block"><code>CustomBlock</code></a> with states is <a href="#of(org.geysermc.paletter.block.CustomBlock)"><code>of(CustomBlock)</code></a>. Loads
+ identifiers never accumulate. The type of a <a href="../block/CustomBlock.html" title="class in org.geysermc.paletter.block"><code>CustomBlock</code></a> is <a href="../block/CustomBlock.html#type()"><code>CustomBlock.type()</code></a>. Loads
  the data.</div>
 <dl class="notes">
 <dt>Returns:</dt>

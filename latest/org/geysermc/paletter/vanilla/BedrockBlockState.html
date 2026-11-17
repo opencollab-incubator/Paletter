@@ -92,9 +92,13 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">BedrockBlockState</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">One state of a <a href="BedrockBlockType.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockBlockType</code></a>. There is one instance per state of a vanilla type, so <a href="#with(org.geysermc.paletter.vanilla.BedrockState,T)"><code>with(org.geysermc.paletter.vanilla.BedrockState&lt;T&gt;, T)</code></a> does not
- allocate and states can be compared with <code>==</code>; the states of a custom type of an unknown identifier are equal by
- value, so compare those with <code>equals</code>.
+<div class="block">One state of a <a href="BedrockBlockType.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockBlockType</code></a>. A type creates each of its states once, so <a href="#with(org.geysermc.paletter.vanilla.BedrockState,T)"><code>with(org.geysermc.paletter.vanilla.BedrockState&lt;T&gt;, T)</code></a> does not allocate.
+ <p>
+ Equality: <code>equals</code> always works. <code>==</code> works too for the states of vanilla types (the constants) and of
+ registered custom blocks: a <a href="../block/CustomBlock.html" title="class in org.geysermc.paletter.block"><code>CustomBlock</code></a> owns its <a href="../block/CustomBlock.html#type()"><code>type</code></a> and states, and a palette it is registered in hands back exactly
+ those (<code>Palette#block(NbtMap)</code>, <a href="../block/RegisteredBlockState.html#key()"><code>RegisteredBlockState.key()</code></a>, ...). The states
+ of a type made by <a href="BedrockBlockType.html#of(java.lang.String)"><code>BedrockBlockType.of(String)</code></a> for an unknown identifier are equal by value, not identical.
+ Equal custom blocks registered by different layers each own their states; those are equal, not identical.
  <p>
  Canonical ids come from <a href="../Paletter.html#canonicalBlocks()"><code>Paletter.canonicalBlocks()</code></a> (vanilla states) and
  <a href="../Palette.html#runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState)"><code>Palette.runtimeId(BedrockBlockState)</code></a> (vanilla and custom states). For a vanilla

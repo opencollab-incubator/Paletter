@@ -122,8 +122,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="CanonicalItems.html" title="class in org.geysermc.paletter.internal">CanonicalItems</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#extend(java.lang.Object,java.util.List)" class="member-name-link">extend</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;key,
- @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="item/ItemVariant.html" title="class in org.geysermc.paletter.internal.item">ItemVariant</a>&gt;&nbsp;additional)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#extend(java.lang.Object,java.util.List,java.util.Collection)" class="member-name-link">extend</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;key,
+ @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="item/ItemVariant.html" title="class in org.geysermc.paletter.internal.item">ItemVariant</a>&gt;&nbsp;additional,
+ @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="../vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&gt;&nbsp;types)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#extendsOrIs(org.geysermc.paletter.internal.CanonicalItems)" class="member-name-link">extendsOrIs</a><wbr>(@NonNull <a href="CanonicalItems.html" title="class in org.geysermc.paletter.internal">CanonicalItems</a>&nbsp;other)</code></div>
@@ -211,16 +212,20 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="extend(java.lang.Object,java.util.List)">
+<section class="detail" id="extend(java.lang.Object,java.util.List,java.util.Collection)">
 <h3>extend</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="CanonicalItems.html" title="class in org.geysermc.paletter.internal">CanonicalItems</a></span>&nbsp;<span class="element-name">extend</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;key,
- @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="item/ItemVariant.html" title="class in org.geysermc.paletter.internal.item">ItemVariant</a>&gt;&nbsp;additional)</span></div>
+ @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="item/ItemVariant.html" title="class in org.geysermc.paletter.internal.item">ItemVariant</a>&gt;&nbsp;additional,
+ @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="../vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&gt;&nbsp;types)</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>key</code> - identifies the extension (e.g. the layer adding the items); the same key returns the same instance
             for as long as it is referenced</dd>
 <dd><code>additional</code> - variants to append, e.g. base variants of custom items. Variants that already have an id
                    (here or earlier in the list) are skipped; a block state equal to the item's default is dropped</dd>
+<dd><code>types</code> - the types of the custom items (and custom block items) the variants belong to: their handles are
+              these types' own variants, so the palette hands back the objects <code>CustomItem#type()</code> owns.
+              Variants of a custom item of an earlier extension use that item's type</dd>
 <dt>Returns:</dt>
 <dd>these indices with the given variants appended, or this if there are none</dd>
 </dl>
@@ -310,7 +315,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="../vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">handle</span><wbr><span class="parameters">(int&nbsp;canonical)</span></div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the handle of a canonical id, or null if there is no such id. Handles of custom content are created once</dd>
+<dd>the handle of a canonical id, or null if there is no such id. The handle of a custom item's variant is that
+         item's own (<code>CustomItem#type()</code>, <code>CustomBlock#itemType()</code>); other handles are created once</dd>
 </dl>
 </section>
 </li>

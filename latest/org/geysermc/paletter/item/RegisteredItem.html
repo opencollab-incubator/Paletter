@@ -248,7 +248,9 @@ implements org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition</sp
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="../vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">key</span>()</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the key of this item: the vanilla constant, or the custom type of its identifier</dd>
+<dd>the key of this item: the vanilla constant, or for a custom item or block item the type the
+         <a href="CustomItem.html" title="class in org.geysermc.paletter.item"><code>CustomItem</code></a> or <a href="../block/CustomBlock.html" title="class in org.geysermc.paletter.block"><code>CustomBlock</code></a> owns (<a href="CustomItem.html#type()"><code>CustomItem.type()</code></a>,
+         <a href="../block/CustomBlock.html#itemType()"><code>CustomBlock.itemType()</code></a>)</dd>
 </dl>
 </section>
 </li>

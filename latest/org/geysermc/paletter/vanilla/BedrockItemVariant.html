@@ -94,7 +94,14 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">A variant of a <a href="BedrockItemType.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockItemType</code></a>: the type and its aux (damage) value. The block a stack places is not part of
  the variant, it belongs to the stack (<a href="../item/BedrockItemStack.html#blockState()"><code>BedrockItemStack.blockState()</code></a>). Obtained from
- <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a> and <a href="BedrockItemType.html#variants()"><code>BedrockItemType.variants()</code></a>.</div>
+ <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a> and <a href="BedrockItemType.html#variants()"><code>BedrockItemType.variants()</code></a>.
+ <p>
+ Equality: as for <a href="BedrockItemType.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockItemType</code></a>, <code>equals</code> always works. <code>==</code> works too for the variants of the
+ vanilla constants and for the base variant of registered custom content: <code>customItem.type().base()</code> is the very
+ variant <a href="../Palette.html#decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)"><code>Palette.decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)</code></a> gives back. Variants made by
+ <a href="BedrockItemType.html#variantOf(int)"><code>BedrockItemType.variantOf(int)</code></a> for an aux value that is not one of <a href="BedrockItemType.html#variants()"><code>BedrockItemType.variants()</code></a>, and
+ variants of types made by <a href="BedrockItemType.html#of(java.lang.String)"><code>BedrockItemType.of(String)</code></a> for unknown identifiers, are new objects: compare those
+ with <code>equals</code>.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>0.1.0</dd>

@@ -268,7 +268,8 @@ loadScripts(document, 'script');</script>
 <h3>variant</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="PaletteLayer.Builder.html" title="class in org.geysermc.paletter">PaletteLayer.Builder</a></span>&nbsp;<span class="element-name">variant</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockItemVariant.html" title="class in org.geysermc.paletter.vanilla">BedrockItemVariant</a>&nbsp;variant)</span></div>
 <div class="block">Gives a variant a canonical id, so that <a href="Palette.html#decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)"><code>Palette.decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)</code></a> recognizes it. Needed for variants of the newest version that are
- neither an item's base variant nor in the creative inventory.</div>
+ neither an item's base variant nor in the creative inventory. A palette hands back a variant equal to this one,
+ not necessarily this object: compare it with <code>equals</code>.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>0.1.0</dd>

@@ -134,18 +134,21 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../../block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a> @NonNull []</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#intern(org.geysermc.paletter.block.RegisteredBlockState%5B%5D)" class="member-name-link">intern</a><wbr>(@NonNull <a href="../../block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a> @NonNull []&nbsp;page)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int @NonNull []</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#pageStats()" class="member-name-link">pageStats</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="../../block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#knownVanillaBlock(org.cloudburstmc.nbt.NbtMap)" class="member-name-link">knownVanillaBlock</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../../block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#vanillaBlock(org.cloudburstmc.nbt.NbtMap)" class="member-name-link">vanillaBlock</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int @NonNull []</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#pageStats()" class="member-name-link">pageStats</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../../block/RegisteredBlock.html" title="class in org.geysermc.paletter.block">RegisteredBlock</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#vanillaType(java.lang.String,java.util.List,org.cloudburstmc.nbt.NbtMap,org.cloudburstmc.nbt.NbtMap)" class="member-name-link">vanillaType</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../../block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#vanillaBlock(org.cloudburstmc.nbt.NbtMap)" class="member-name-link">vanillaBlock</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../../block/RegisteredBlock.html" title="class in org.geysermc.paletter.block">RegisteredBlock</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#vanillaType(java.lang.String,java.util.List,org.cloudburstmc.nbt.NbtMap,org.cloudburstmc.nbt.NbtMap)" class="member-name-link">vanillaType</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
  @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a>&gt;&nbsp;states,
  @Nullable org.cloudburstmc.nbt.NbtMap&nbsp;propertyData,
  @Nullable org.cloudburstmc.nbt.NbtMap&nbsp;defaultState)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -184,6 +187,16 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the shared hashed definition of a vanilla state; its hash is computed once</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="knownVanillaBlock(org.cloudburstmc.nbt.NbtMap)">
+<h3>knownVanillaBlock</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="../../block/RegisteredBlockState.html" title="class in org.geysermc.paletter.block">RegisteredBlockState</a></span>&nbsp;<span class="element-name">knownVanillaBlock</span><wbr><span class="parameters">(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state)</span></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the shared definition of a vanilla state if one was made, else null. Takes no lock and does not allocate</dd>
 </dl>
 </section>
 </li>
