@@ -7,21 +7,29 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.nbt.NbtUtils;
+import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.RecipeUnlockingRequirement.UnlockingContext;
+import org.geysermc.paletter.internal.data.PaletteDataCodec;
+import org.geysermc.paletter.tools.Versions;
 import org.geysermc.paletter.tools.Layout;
 import org.geysermc.paletter.tools.client.RecipeCapture;
 import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 /**
@@ -33,6 +41,8 @@ import java.util.stream.Stream;
  * a version are the {@code content.recipes} of its {@code experiments.json}, where the record has them.
  * <p>
  * A recipe kind or ingredient descriptor the bundle does not know fails the import: it is added with the capture that shows it.
+ * So does anything the loader would otherwise have to guess: an item that is not in its own data version's palette, an unknown
+ * unlock context, a malformed UUID, a container mix with an aux value, an empty block state or item tag.
  */
 public final class RecipeImport {
     public static final String DIRECTORY = "paletter-recipes/src/main/resources/paletter/recipes";
@@ -45,37 +55,61 @@ public final class RecipeImport {
     private RecipeImport() {
     }
 
-    /** The bundles the captures give, by data version name. */
-    public static Map<String, byte[]> bundles(Path root) throws IOException {
+    /** The capture directory (a build's {@code vanilla}) each data version's bundle comes from, by data version name; the newest build of a version wins. */
+    public static Map<String, Path> captures(Path root) throws IOException {
         List<ConstantsGenerator.Bundle> versions = ConstantsGenerator.readIndex(root.resolve(ConstantsGenerator.DATA));
         Map<String, Path> builds = new TreeMap<>();
-        Map<String, JsonObject> records = new TreeMap<>();
         try (Stream<Path> list = Files.list(root.resolve(Layout.BDS))) {
-            for (Path build : list.filter(Files::isDirectory).sorted().toList()) {
+            for (Path build : list.filter(Files::isDirectory).sorted(Comparator.comparing(path -> path.getFileName().toString(), Versions.ORDER)).toList()) {
                 Path record = build.resolve("experiments.json");
                 if (Files.exists(record) && Files.exists(build.resolve("vanilla").resolve(RecipeCapture.CRAFTING))) {
                     JsonObject json = ConstantsGenerator.readJson(record);
                     String version = ConstantsGenerator.Sources.releaseOf(versions, json.get("protocol").getAsInt());
                     if (version != null) {
                         builds.put(version, build.resolve("vanilla"));
-                        records.put(version, json);
                     }
                 }
             }
         }
-        Map<String, byte[]> bundles = new TreeMap<>();
-        for (ConstantsGenerator.Bundle version : versions) {
-            Path capture = builds.get(version.name());
+        return builds;
+    }
+
+    /** The bundles the captures give, by data version name. */
+    public static Map<String, NbtMap> bundles(Path root) throws IOException {
+        Map<String, Path> captures = captures(root);
+        Map<String, NbtMap> bundles = new TreeMap<>();
+        for (ConstantsGenerator.Bundle version : ConstantsGenerator.readIndex(root.resolve(ConstantsGenerator.DATA))) {
+            Path capture = captures.get(version.name());
             if (capture == null) {
                 throw new IOException("No recipe capture in data/bds for the data version " + version.name());
             }
-            bundles.put(version.name(), bytes(bundle(RecipeCapture.read(capture), records.get(version.name()))));
+            JsonObject record = ConstantsGenerator.readJson(capture.resolveSibling("experiments.json"));
+            bundles.put(version.name(), bundle(RecipeCapture.read(capture), record, items(root, version.name())));
         }
         return bundles;
     }
 
-    /** One bundle: the capture's recipes and the experiment marks of the record. */
-    public static NbtMap bundle(RecipeCapture.Recipes capture, JsonObject experimentRecord) {
+    /**
+     * One bundle: the capture's recipes and the experiment marks of the record.
+     *
+     * @param items the item identifiers of the capture's data version: every item the capture names must be one of them
+     */
+    public static NbtMap bundle(RecipeCapture.Recipes capture, JsonObject experimentRecord, Set<String> items) {
+        List<String> missing = RecipeData.missingItems(capture, items);
+        if (!missing.isEmpty()) {
+            throw new IllegalStateException("Items that are not in the palette of the data version: " + missing);
+        }
+        if (capture.trim() != null) {
+            Set<String> trimMissing = new TreeSet<>();
+            RecipeData.each(capture, (kind, entry) -> {
+                if (kind.startsWith(RecipeData.TRIM_PREFIX) && !items.contains(entry.get("itemName").getAsString())) {
+                    trimMissing.add(entry.get("itemName").getAsString() + " (" + kind + ")");
+                }
+            });
+            if (!trimMissing.isEmpty()) {
+                throw new IllegalStateException("Trim items that are not in the palette of the data version: " + trimMissing);
+            }
+        }
         Map<String, List<NbtMap>> kinds = new LinkedHashMap<>();
         Stream.concat(RECIPE_KINDS.stream(), Stream.of("potion_mix", "container_mix", "trim_pattern", "trim_material"))
             .forEach(kind -> kinds.put(kind, new ArrayList<>()));
@@ -111,7 +145,7 @@ public final class RecipeImport {
     private static NbtMap recipe(String kind, JsonObject entry) {
         NbtMapBuilder recipe = NbtMap.builder().putString("type", kind);
         if (kind.equals("multi")) {
-            return recipe.putString("id", entry.get("uuid").getAsString()).build();
+            return recipe.putString("id", UUID.fromString(entry.get("uuid").getAsString()).toString()).build();
         }
         recipe.putString("id", entry.get("id").getAsString());
         switch (kind) {
@@ -135,7 +169,7 @@ public final class RecipeImport {
                 recipe.putList("results", NbtType.COMPOUND, results);
                 recipe.putString("station", entry.get("tag").getAsString()).putInt("priority", entry.get("priority").getAsInt());
                 JsonObject unlock = entry.getAsJsonObject("unlock");
-                recipe.putCompound("unlock", NbtMap.builder().putString("context", unlock.get("context").getAsString())
+                recipe.putCompound("unlock", NbtMap.builder().putString("context", UnlockingContext.valueOf(unlock.get("context").getAsString().toUpperCase(Locale.ROOT)).name().toLowerCase(Locale.ROOT))
                     .putList("ingredients", NbtType.COMPOUND, ingredients(unlock.getAsJsonArray("ingredients").asList())).build());
                 return recipe.build();
             }
@@ -163,15 +197,23 @@ public final class RecipeImport {
             .putInt("count", result.get("count").getAsInt());
         try {
             if (result.has("block_state_b64")) {
-                builder.putCompound("block", Nbt.readLeBase64(result.get("block_state_b64").getAsString()));
+                builder.putCompound("block", nonEmpty(Nbt.readLeBase64(result.get("block_state_b64").getAsString()), "block state", result));
             }
             if (result.has("nbt_b64")) {
-                builder.putCompound("nbt", Nbt.readLeBase64(result.get("nbt_b64").getAsString()));
+                builder.putCompound("nbt", nonEmpty(Nbt.readLeBase64(result.get("nbt_b64").getAsString()), "item tag", result));
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
         return builder.build();
+    }
+
+    /** A compound the loader reads an absent one as empty: an empty one would be ambiguous. */
+    private static NbtMap nonEmpty(NbtMap compound, String what, JsonObject result) {
+        if (compound.isEmpty()) {
+            throw new IllegalStateException("An empty " + what + " in the result " + result);
+        }
+        return compound;
     }
 
     /** A potion mix (items with aux values) or a container mix (identifiers: the wire has no aux for them). */
@@ -224,7 +266,16 @@ public final class RecipeImport {
         return lines;
     }
 
-    private static byte[] bytes(NbtMap bundle) throws IOException {
+    /** The item identifiers of a bundled data version. */
+    private static Set<String> items(Path root, String version) throws IOException {
+        try (InputStream stream = Files.newInputStream(root.resolve(ConstantsGenerator.DATA).resolve(version + ".nbt"))) {
+            Set<String> items = new TreeSet<>();
+            PaletteDataCodec.read(stream).items().forEach(item -> items.add(item.identifier()));
+            return items;
+        }
+    }
+
+    static byte[] bytes(NbtMap bundle) throws IOException {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         try (NBTOutputStream output = NbtUtils.createGZIPWriter(bytes)) {
             output.writeTag(bundle);
@@ -236,10 +287,11 @@ public final class RecipeImport {
     public static void run(Path root) throws IOException {
         Path directory = root.resolve(DIRECTORY);
         Files.createDirectories(directory);
-        Map<String, byte[]> bundles = bundles(root);
-        for (Map.Entry<String, byte[]> bundle : bundles.entrySet()) {
-            Files.write(directory.resolve(bundle.getKey() + ".nbt"), bundle.getValue());
-            System.out.println("Wrote " + bundle.getKey() + ".nbt: " + bundle.getValue().length + " bytes");
+        Map<String, NbtMap> bundles = bundles(root);
+        for (Map.Entry<String, NbtMap> bundle : bundles.entrySet()) {
+            byte[] bytes = bytes(bundle.getValue());
+            Files.write(directory.resolve(bundle.getKey() + ".nbt"), bytes);
+            System.out.println("Wrote " + bundle.getKey() + ".nbt: " + bytes.length + " bytes");
         }
         for (Path stale : stale(directory, bundles)) {
             Files.delete(stale);
@@ -250,11 +302,12 @@ public final class RecipeImport {
     /** @return what differs between the bundled files and what the captures give, empty if they agree */
     public static List<String> check(Path root) throws IOException {
         Path directory = root.resolve(DIRECTORY);
-        Map<String, byte[]> bundles = bundles(root);
+        Map<String, NbtMap> bundles = bundles(root);
         List<String> problems = new ArrayList<>();
-        for (Map.Entry<String, byte[]> bundle : bundles.entrySet()) {
+        for (Map.Entry<String, NbtMap> bundle : bundles.entrySet()) {
             Path file = directory.resolve(bundle.getKey() + ".nbt");
-            if (!Files.exists(file) || !Arrays.equals(Files.readAllBytes(file), bundle.getValue())) {
+            // The decoded bundle: the compressed bytes depend on the zlib build
+            if (!Files.exists(file) || !bundle.getValue().equals(Nbt.readGzip(file))) {
                 problems.add(bundle.getKey() + ".nbt is missing or not what the captures give");
             }
         }
@@ -262,7 +315,10 @@ public final class RecipeImport {
         return problems;
     }
 
-    private static List<Path> stale(Path directory, Map<String, byte[]> bundles) throws IOException {
+    private static List<Path> stale(Path directory, Map<String, NbtMap> bundles) throws IOException {
+        if (!Files.isDirectory(directory)) {
+            return List.of();
+        }
         try (Stream<Path> files = Files.list(directory)) {
             return files.filter(file -> !bundles.containsKey(file.getFileName().toString().replaceFirst("\\.nbt$", ""))).sorted().toList();
         }
