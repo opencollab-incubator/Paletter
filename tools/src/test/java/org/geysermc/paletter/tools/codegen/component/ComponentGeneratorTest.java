@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -252,6 +253,59 @@ class ComponentGeneratorTest {
             """), glow);
         // Text the generator writes keeps its Javadoc tags
         assertTrue(glow.contains("(add-on JSON {@code \"test:glow\": <integer>})"), glow);
+    }
+
+    /**
+     * A component whose object {@code geo} has an inferred {@code id} and a {@code bones} map only a hand transform compiles.
+     * BDS of protocol 100 never varied the map (a constant), BDS of protocol 200 did; the variants of {@code bones} were
+     * compared with the control, so its rules also name the sibling's leaf.
+     */
+    private static Inputs lamp() {
+        Inputs in = inputs();
+        in.components().getAsJsonArray("components").add(json("""
+            {"id": "block:test:lamp", "kind": "block", "category": "component", "name": "test:lamp", "status": "active",
+             "doc": "A lamp.", "page": "", "experiments": [], "forms": [{"type": "object"}], "notes": [],
+             "fields": [
+               {"path": "geo", "types": [{"type": "object", "ref": "Geo"}], "required": true, "enumValues": [], "examples": [], "doc": "The geometry."},
+               {"path": "geo.id", "types": [{"type": "string"}], "required": false, "enumValues": [], "examples": [], "doc": "Its name."},
+               {"path": "geo.bones", "types": [{"type": "map", "items": {"type": "string"}}], "defaultValue": {}, "required": false,
+                "enumValues": [], "examples": [], "doc": "Its bones."}
+             ]}"""));
+        String id = """
+            "geo.id": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "string", "tags": [], "wire": "test:lamp.geo.id"}],
+                       "whenAbsent": {"test:lamp.geo.id": "none (string)"}}""";
+        in.mappings().getAsJsonObject("components").add("block:test:lamp", json("""
+            {"status": "sent", "wire": ["test:lamp"], "protocols": [100],
+             "constants": {"test:lamp.geo.bones": "{} (compound)", "test:lamp.geo.solid": "0 (byte)"},
+             "fields": {"geo": {"status": "inferred", "rules": []}, %s, "geo.bones": {"status": "dropped"}},
+             "protocol200": {"status": "sent", "wire": ["test:lamp"], "protocols": [200],
+               "constants": {"test:lamp.geo.solid": "0 (byte)"},
+               "fields": {"geo": {"status": "inferred", "rules": []}, %s,
+                 "geo.bones": {"status": "hand-rule", "transform": "testMap",
+                   "rules": [{"kind": "empty-map", "nbt": "compound", "tags": [], "wire": "test:lamp.geo.bones"},
+                             {"kind": "constant", "value": "1.000000", "mapEntry": true, "nbt": "string", "tags": [], "wire": "test:lamp.geo.bones.arm"},
+                             {"kind": "constant", "value": "paletter", "nbt": "string", "tags": ["injected-default"], "wire": "test:lamp.geo.id"}],
+                   "whenAbsent": {"test:lamp.geo.bones": "{} (compound)", "test:lamp.geo.id": "none (string)"}}}}}""".formatted(id, id)));
+        Map<String, String> transforms = new java.util.TreeMap<>(in.transforms());
+        transforms.put("block:test:lamp:geo.bones", "testMap");
+        return new Inputs(in.components(), in.fixtures(), in.feedback(), in.mappings(), transforms, in.api(), in.since());
+    }
+
+    @Test
+    void aFieldTransformSitsBesideInferredSiblings() {
+        String wire = ComponentGenerator.generate(lamp()).get("org/geysermc/paletter/internal/component/BlockWire.java");
+        String lamp = wire.substring(wire.indexOf("private static void lamp("));
+        lamp = lamp.substring(0, lamp.indexOf("\n    }\n") + 1);
+        // The sibling keeps its inferred rule and its absent value, although the transformed field's variants touched its leaf
+        assertTrue(lamp.contains("out.put(\"test:lamp.geo.id\", v1);"), lamp);
+        assertTrue(lamp.contains("out.put(\"test:lamp.geo.id\", \"none\");"), lamp);
+        // The transform is called with the object that holds the field, after the generic rules
+        assertTrue(lamp.indexOf("Transforms.testMap(ctx, out, v0);") > lamp.indexOf("out.put(\"test:lamp.geo.id\", v1);"), lamp);
+        // What the transform writes is not written as a constant first; a constant nothing else writes still is
+        assertFalse(lamp.contains("\"test:lamp.geo.bones\""), lamp);
+        assertTrue(lamp.contains("out.put(\"test:lamp.geo.solid\", (byte) 0);"), lamp);
+        // so the two windows encode alike and are one
+        assertFalse(wire.contains("lampUntil200") || wire.contains("lampFrom200"), "the windows differ only in a constant the transform overwrites");
     }
 
     @Test

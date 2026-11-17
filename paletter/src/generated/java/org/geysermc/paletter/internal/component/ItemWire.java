@@ -154,6 +154,8 @@ public final class ItemWire {
             String v6 = e3.tags();
             if (v6 != null) {
                 n4.put("tags", v6);
+            } else {
+                n4.remove("tags");
             }
             Transforms.blockDescriptorStates(ctx, n4, e3);
         }
@@ -222,17 +224,20 @@ public final class ItemWire {
                 String v5 = v3.tags();
                 if (v5 != null) {
                     n2.put("block.tags", v5);
+                } else {
+                    n2.remove("block.tags");
                 }
                 Transforms.blockDescriptorStates(ctx, n2, v3);
             } else {
                 n2.remove("block.name");
                 n2.remove("block.states");
                 n2.remove("block.tags");
-                n2.remove("speed");
             }
             Integer v6 = e1.speed();
             if (v6 != null) {
                 n2.put("speed", Wire.toInt(v6));
+            } else {
+                n2.remove("speed");
             }
         }
         boolean v7 = c.useEfficiency();
@@ -290,6 +295,8 @@ public final class ItemWire {
             String v4 = e1.tags();
             if (v4 != null) {
                 n2.put("tags", v4);
+            } else {
+                n2.remove("tags");
             }
             Transforms.blockDescriptorStates(ctx, n2, e1);
         }
@@ -312,6 +319,8 @@ public final class ItemWire {
             String v10 = e7.tags();
             if (v10 != null) {
                 n8.put("tags", v10);
+            } else {
+                n8.remove("tags");
             }
             Transforms.blockDescriptorStates(ctx, n8, e7);
         }

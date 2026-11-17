@@ -256,10 +256,14 @@ final class WireSource {
             absentObject(w);
         }
         if (w != null) {
+            Set<String> transformed = transformedLeaves();
+            this.window = w;
+            this.owned = new TreeSet<>();
+            this.ownerOf.clear();
             collectOwned(c.root);
             for (Map.Entry<String, String> e : w.constants().entrySet()) {
                 String path = strip(e.getKey());
-                if (!path.contains("[]")) {
+                if (!path.contains("[]") && transformed.stream().noneMatch(leaf -> path.equals(leaf) || path.startsWith(leaf + "."))) {
                     put("out", path, literal(e.getValue()));
                 }
             }
@@ -316,10 +320,55 @@ final class WireSource {
         b.addStatement("$T.$N(ctx, $N, $N)", TRANSFORMS, transform, node, value);
     }
 
-    private void collectOwned(ObjType o) {
+    /**
+     * The leaves the value of a transformed field (or of a field inside it) moves in any window of the component. Its
+     * transform writes them in every window (it checks the protocol itself), so a window where such a leaf never varied
+     * does not write it as a constant first: the windows would differ only in a value the transform overwrites.
+     */
+    private Set<String> transformedLeaves() {
+        Set<String> leaves = new TreeSet<>();
+        for (Window other : c.windows) {
+            if (other.sent()) {
+                this.window = other;
+                transformedLeaves(c.root, false, leaves);
+            }
+        }
+        return leaves;
+    }
+
+    private void transformedLeaves(ObjType o, boolean inside, Set<String> leaves) {
         for (Field f : fieldsWithAlternatives(o)) {
-            if (f.transform != null) {
-                // A transformed field owns every leaf its observations touch: its transform writes them
+            boolean transformed = inside || f.transform != null;
+            JsonObject m = transformed ? ComponentGenerator.mappingOf(window, f) : null;
+            if (m != null && m.has("rules")) {
+                for (JsonElement r : m.getAsJsonArray("rules")) {
+                    JsonObject rule = r.getAsJsonObject();
+                    // not what only the field's presence switches: such a constant can be another field's leaf
+                    if (!rule.get("kind").getAsString().equals("constant") || rule.has("mapEntry")) {
+                        leaves.add(strip(rule.get("wire").getAsString()));
+                    }
+                }
+            }
+            ObjType child = ComponentGenerator.objectOf(f.type);
+            if (child != null) {
+                transformedLeaves(child, transformed, leaves);
+            }
+        }
+    }
+
+    /**
+     * Who writes each leaf: the field whose value rule targets it, else the transformed field whose observations touch it.
+     * A value rule comes first: the variants of a transformed field can move a sibling's leaf (they are compared with the
+     * control when BDS rejected the base), and the sibling's own rule still writes that leaf.
+     */
+    private void collectOwned(ObjType o) {
+        collectOwned(o, false);
+        collectOwned(o, true);
+    }
+
+    private void collectOwned(ObjType o, boolean transformed) {
+        for (Field f : fieldsWithAlternatives(o)) {
+            if (transformed && f.transform != null) {
                 JsonObject m = ComponentGenerator.mappingOf(window, f);
                 if (m != null && m.has("rules")) {
                     for (JsonElement r : m.getAsJsonArray("rules")) {
@@ -333,21 +382,23 @@ final class WireSource {
                     ownerOf.putIfAbsent(strip(wire), f);
                 }
             }
-            for (JsonObject r : rules(f)) {
-                if (ComponentGenerator.VALUE_KINDS.contains(r.get("kind").getAsString())) {
-                    owned.add(strip(r.get("wire").getAsString()));
-                    ownerOf.putIfAbsent(strip(r.get("wire").getAsString()), f.alternativeOf != null ? f.alternativeOf : f);
-                }
-            }
             ObjType child = ComponentGenerator.objectOf(f.type);
-            if (child != null && f.type instanceof ListOf) {
-                String list = listPath(child, "");
-                if (list != null) {
-                    ownerOf.putIfAbsent(list, f);
+            if (!transformed) {
+                for (JsonObject r : rules(f)) {
+                    if (ComponentGenerator.VALUE_KINDS.contains(r.get("kind").getAsString())) {
+                        owned.add(strip(r.get("wire").getAsString()));
+                        ownerOf.putIfAbsent(strip(r.get("wire").getAsString()), f.alternativeOf != null ? f.alternativeOf : f);
+                    }
+                }
+                if (child != null && f.type instanceof ListOf) {
+                    String list = listPath(child, "");
+                    if (list != null) {
+                        ownerOf.putIfAbsent(list, f);
+                    }
                 }
             }
             if (child != null) {
-                collectOwned(child);
+                collectOwned(child, transformed);
             }
         }
     }
