@@ -34,7 +34,7 @@ class GeneratedMarkersTest {
     private static final Set<String> HAND_MODEL = Set.of("api.json", "fixtures.json", "constant-names.txt", "ATTRIBUTION.md");
     private static final Set<String> GENERATED_BDS = Set.of("builds.md");
     /** Paths in a build directory: its generated files, including those inside a capture directory (marked, checked above). */
-    private static final Set<String> GENERATED_BUILD = Set.of("inventory.json", "whitebox.json", "whitebox-coverage.md", "update-report.md",
+    private static final Set<String> GENERATED_BUILD = Set.of("inventory.json", "schema.json", "whitebox.json", "whitebox-coverage.md", "update-report.md",
         "vanilla/crafting_data.json.gz", "vanilla/trim_data.json");
     /** What BDS (or its Script API dump) gave, kept as it came; everything in a subdirectory of a build is a capture too. */
     private static final Set<String> CAPTURED_BUILD = Set.of("dump.json.gz", "behaviour-dump.json.gz", "education.json", "experiments.json");
