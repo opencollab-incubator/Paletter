@@ -62,6 +62,32 @@ BDS 1.26.63 rejects the block components `unit_cube`, `breathability`, `queued_t
 `on_interact`, `on_placed`, `on_player_destroyed`, `on_player_placing`, `on_step_off` and `on_step_on` (replaced by
 script custom components), and the legacy `tag:<name>` components, at every format version tried.
 
+## Overriding vanilla items
+
+Captured facts (BDS 1.26.63.1, probe pack and registry entries in `data/bds/1.26.63.1/override/`; the write-up of the
+probe's strings is not in the repository):
+
+- **Data driven vanilla item** (`minecraft:apple`, format 1.26.60): the pack's components **replace** the vanilla
+  ones entirely (food, icon, display name, tags and use components are gone). Only `item_properties.creative_category`
+  keeps the vanilla value (2). The runtime id moves from 883 to 853, to the front of the data driven range, and every
+  vanilla item from 853 up shifts (32 ids).
+- **Hard coded item at format 1.10** (`minecraft:feather`): accepted. It becomes a legacy item with legacy style
+  component NBT (`{minecraft:max_stack_size: 9}`), its id stays 330.
+- **Hard coded item at 1.16.100 or higher** (`minecraft:stick`): rejected ("no 1.16.100+ Vanilla format version
+  exists"). A legacy item with components (`minecraft:bread` at 1.16.100): rejected, asking for 1.20.0 or higher;
+  format 1.20 and up was not captured.
+- **Several packs** overriding the same item: the top pack wins (seen in binary strings only, not captured).
+
+Paletter's choices, all **unverified on a client** (no client test exists; vanilla item overrides are `@Experimental`):
+
+- Vanilla runtime ids stay fixed, unlike BDS, which moves an overridden data driven item. A client that expects BDS's
+  numbering was not tested.
+- `replaceComponents` has BDS's shape: it replaces the vanilla components, with the custom item defaults underneath,
+  and keeps the vanilla `creative_category`. `ItemOverrideTest` compares the apple with BDS's captured entry.
+- `modifyComponents` merges onto the vanilla data. BDS never sends this shape.
+- Hard coded and legacy targets (e.g. `firework_rocket`, which Geyser overrides) are not refused, though BDS rejects
+  modern format overrides of them. The client's result is unverified.
+
 ## Content log findings
 
 - A block needs both `geometry` and `material_instances`, or neither. `flower_pottable` and `item_visual` need both.

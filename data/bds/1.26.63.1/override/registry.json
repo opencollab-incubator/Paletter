@@ -1,0 +1,81 @@
+{
+  "minecraft:feather": {
+    "name": "minecraft:feather",
+    "id": 330,
+    "componentBased": 0,
+    "version": 0,
+    "data": {
+      "components": {
+        "minecraft:max_stack_size": 9
+      }
+    }
+  },
+  "minecraft:apple": {
+    "name": "minecraft:apple",
+    "id": 853,
+    "componentBased": 1,
+    "version": 1,
+    "data": {
+      "components": {
+        "item_properties": {
+          "allow_off_hand": 0,
+          "can_destroy_in_creative": 1,
+          "creative_category": 2,
+          "creative_group": "",
+          "damage": 0,
+          "enchantable_slot": "none",
+          "enchantable_value": 0,
+          "foil": 0,
+          "frame_count": 1,
+          "hand_equipped": 0,
+          "hidden_in_commands": 2,
+          "liquid_clipped": 0,
+          "max_stack_size": 3,
+          "mining_speed": 1.0,
+          "should_despawn": 1,
+          "stacked_by_data": 0,
+          "use_animation": 0,
+          "use_duration": 0
+        },
+        "item_tags": [],
+        "minecraft:max_stack_size": {
+          "value": 3
+        }
+      }
+    }
+  },
+  "paletter:override_item_control": {
+    "name": "paletter:override_item_control",
+    "id": 854,
+    "componentBased": 1,
+    "version": 1,
+    "data": {
+      "components": {
+        "item_properties": {
+          "allow_off_hand": 0,
+          "can_destroy_in_creative": 1,
+          "creative_category": 4,
+          "creative_group": "",
+          "damage": 0,
+          "enchantable_slot": "none",
+          "enchantable_value": 0,
+          "foil": 0,
+          "frame_count": 1,
+          "hand_equipped": 0,
+          "hidden_in_commands": 2,
+          "liquid_clipped": 0,
+          "max_stack_size": 11,
+          "mining_speed": 1.0,
+          "should_despawn": 1,
+          "stacked_by_data": 0,
+          "use_animation": 0,
+          "use_duration": 0
+        },
+        "item_tags": [],
+        "minecraft:max_stack_size": {
+          "value": 11
+        }
+      }
+    }
+  }
+}
