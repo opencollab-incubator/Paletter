@@ -98,8 +98,8 @@ loadScripts(document, 'script');</script>
  ItemData apple = palette.item(BedrockItems.APPLE).toItemData().count(3).build();
  ItemData potion = palette.item(BedrockItems.POTION.variant(5)).toItemData().build();
  </code></pre>
- Items whose variants differ by damage (potions, banners, goat horns, ...) expose them with <a href="#variant(int)"><code>variant(int)</code></a> (null if unknown, <a href="#variantOf(int)"><code>variantOf(int)</code></a> makes any): the
- bundled data has no names for them, so they have no constants of their own.
+ Items whose variants differ by damage (potions, banners, goat horns, ...) expose them with <a href="#variant(int)"><code>variant(int)</code></a> (null if unknown, <a href="#variantOf(int)"><code>variantOf(int)</code></a> makes any).
+ The potions, tipped arrows, beds and banners have constants for them in <a href="BedrockItemVariants.html" title="class in org.geysermc.paletter.vanilla"><code>BedrockItemVariants</code></a>.
  <p>
  Equality: <code>equals</code> always works, and types are map keys. <code>==</code> works too for vanilla types, which are
  singletons (the constants), and for registered custom content: a <a href="../item/CustomItem.html" title="class in org.geysermc.paletter.item"><code>CustomItem</code></a> owns its <a href="../item/CustomItem.html#type()"><code>type</code></a> (a <a href="../block/CustomBlock.html" title="class in org.geysermc.paletter.block"><code>CustomBlock</code></a> its <a href="../block/CustomBlock.html#itemType()"><code>item type</code></a>), and a palette it is registered in hands back exactly that type. Types made by <a href="#of(java.lang.String)"><code>of(String)</code></a> for an
