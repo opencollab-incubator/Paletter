@@ -101,7 +101,6 @@ class VoxelShapeConformanceTest {
         assertEquals(expected.getShapes().size(), actual.getShapes().size(), "number of shapes");
         assertEquals(new ArrayList<>(expected.getNameMap().entrySet()), new ArrayList<>(actual.getNameMap().entrySet()), "names, in wire order");
         assertEquals(expected.getCustomShapeCount(), actual.getCustomShapeCount(), "custom shape count");
-        assertTrue(palette.report().errors().isEmpty(), () -> "errors: " + palette.report().errors());
     }
 
     /** Every shape file of BDS's own packs gives the shape BDS sends under its name. */

@@ -95,6 +95,13 @@ public final class Palette {
     private final Supplier<BehaviourStore> behaviourStore;
     private final Shapes shapes;
     private volatile Behaviour behaviour;
+    /**
+     * The resolutions handed out by {@link #resolve(BedrockBlockState)} (by canonical id) and
+     * {@link #resolveBlock(int)} (by palette index), made on first use: a lookup allocates nothing. Threads may race to
+     * fill a slot and publish equal instances; that is safe because {@link ResolvedBlock}'s fields are final.
+     */
+    private volatile ResolvedBlock[] resolvedByCanonical;
+    private volatile ResolvedBlock[] resolvedByIndex;
     private volatile CanonicalBlocks versionBlocks;
     private volatile CanonicalItems versionItems;
     private volatile Map<String, NbtMap> firstStates;
@@ -180,7 +187,7 @@ public final class Palette {
      * Vanilla values come from the bundled captures of the palette's version, custom ones from their components.
      * Behaviour is only reachable through a resolution, so the palette that resolved it is the one that answers.
      * <p>
-     * Makes a {@link ResolvedBlock} on each call, which is cheap: the lookups are array reads. Do not compare resolutions with {@code ==}.
+     * A resolution is made once per state and kept by the palette, so a lookup allocates nothing. Compare resolutions with {@code equals}.
      *
      * @throws IllegalArgumentException like {@link #blockDefinition(BedrockBlockState)}. Use
      *         {@link #resolve(BedrockBlockState, ResolvedBlock)} for states that may be missing
@@ -203,8 +210,33 @@ public final class Palette {
     }
 
     private ResolvedBlock resolveCanonical(int canonical) {
-        RegisteredBlockState block = blocks.block(canonical);
-        return new ResolvedBlock(block, blocks.isFallback(canonical), behaviour().block(blocks.indexOfRuntimeId(block.getRuntimeId())));
+        ResolvedBlock[] cache = resolvedByCanonical;
+        if (cache == null) {
+            cache = resolvedByCanonicalTable();
+        }
+        ResolvedBlock resolved = cache[canonical];
+        if (resolved == null) {
+            RegisteredBlockState block = blocks.block(canonical);
+            cache[canonical] = resolved = new ResolvedBlock(block, blocks.isFallback(canonical),
+                behaviour().block(blocks.indexOfRuntimeId(block.getRuntimeId())));
+        }
+        return resolved;
+    }
+
+    private synchronized ResolvedBlock[] resolvedByCanonicalTable() {
+        ResolvedBlock[] cache = resolvedByCanonical;
+        if (cache == null) {
+            resolvedByCanonical = cache = new ResolvedBlock[blocks.canonical().size()];
+        }
+        return cache;
+    }
+
+    private synchronized ResolvedBlock[] resolvedByIndexTable() {
+        ResolvedBlock[] cache = resolvedByIndex;
+        if (cache == null) {
+            resolvedByIndex = cache = new ResolvedBlock[blocks.size()];
+        }
+        return cache;
     }
 
     /**
@@ -220,8 +252,15 @@ public final class Palette {
         if (index == -1) {
             return null;
         }
-        RegisteredBlockState block = blocks.byIndex(index);
-        return new ResolvedBlock(block, false, behaviour().block(index));
+        ResolvedBlock[] cache = resolvedByIndex;
+        if (cache == null) {
+            cache = resolvedByIndexTable();
+        }
+        ResolvedBlock resolved = cache[index];
+        if (resolved == null) {
+            cache[index] = resolved = new ResolvedBlock(blocks.byIndex(index), false, behaviour().block(index));
+        }
+        return resolved;
     }
 
     public @NonNull DataVersion version() {
@@ -775,8 +814,8 @@ public final class Palette {
      * <p>
      * A layer that cannot be compiled (a duplicate identifier or runtime id, across or within layers, a block hash
      * collision, an exception from a component encoder or a callback) throws a {@link PaletteException} naming the layer
-     * and the content identifier. Nothing changes then: this palette is untouched and nothing is cached, so the same
-     * layer throws again and other layers can still be applied.
+     * and the content identifier. This palette is unchanged then, and no palette or failure is cached: the same layer
+     * throws again, and other layers can still be applied.
      *
      * @return the palette with the layer
      * @throws PaletteException if the layer cannot be compiled

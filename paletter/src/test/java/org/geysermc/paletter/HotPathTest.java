@@ -214,17 +214,35 @@ class HotPathTest {
         assertTrue(newer > 0, "the oldest version has every state of the newest");
     }
 
+    /** A plain loop, no lambda: other tests make the shared {@link #allocated} helper megamorphic. */
+    private static long allocatedBy(Runnable once) {
+        ThreadMXBean threads = (ThreadMXBean) ManagementFactory.getThreadMXBean();
+        long thread = Thread.currentThread().threadId();
+        once.run(); // fills the lazy caches
+        long before = threads.getThreadAllocatedBytes(thread);
+        once.run();
+        return threads.getThreadAllocatedBytes(thread) - before;
+    }
+
     @Test
-    void resolveStateBehaviourDoesNotAllocate() {
+    void resolveStateDoesNotAllocate() {
         Palette palette = layered();
         BedrockBlockState[] states = new BedrockBlockState[palette.blocks().size()];
         for (int i = 0; i < states.length; i++) {
             BedrockBlockState key = palette.blocks().key(palette.blocks().byIndex(i));
             states[i] = key != null ? key : BedrockBlocks.AIR.defaultState();
         }
-        long allocated = allocated(states.length,
-            i -> Float.floatToIntBits(palette.resolve(states[i]).behaviour().get(BlockBehaviour.FRICTION)));
-        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * states.length + " lookups");
+        for (BedrockBlockState state : states) {
+            assertSame(palette.resolve(state), palette.resolve(state));
+        }
+        long[] sum = {0};
+        long allocated = allocatedBy(() -> {
+            for (BedrockBlockState state : states) {
+                sum[0] += Float.floatToIntBits(palette.resolve(state).behaviour().get(BlockBehaviour.FRICTION));
+            }
+        });
+        // Holds interpreted too: the resolutions are cached, not scalar-replaced
+        assertTrue(allocated < 1024, allocated + " bytes allocated by " + states.length + " lookups");
     }
 
     @Test
@@ -237,14 +255,21 @@ class HotPathTest {
     }
 
     @Test
-    void blockBehaviourDoesNotAllocate() {
+    void resolveBlockDoesNotAllocate() {
         Palette palette = layered();
         int[] runtimeIds = new int[palette.blocks().size()];
         for (int i = 0; i < runtimeIds.length; i++) {
             runtimeIds[i] = palette.blocks().byIndex(i).getRuntimeId();
         }
-        long allocated = allocated(runtimeIds.length,
-            i -> Float.floatToIntBits(palette.resolveBlock(runtimeIds[i]).behaviour().get(BlockBehaviour.FRICTION)));
-        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * runtimeIds.length + " lookups");
+        for (int runtimeId : runtimeIds) {
+            assertSame(palette.resolveBlock(runtimeId), palette.resolveBlock(runtimeId));
+        }
+        long[] sum = {0};
+        long allocated = allocatedBy(() -> {
+            for (int runtimeId : runtimeIds) {
+                sum[0] += Float.floatToIntBits(palette.resolveBlock(runtimeId).behaviour().get(BlockBehaviour.FRICTION));
+            }
+        });
+        assertTrue(allocated < 1024, allocated + " bytes allocated by " + runtimeIds.length + " lookups");
     }
 }

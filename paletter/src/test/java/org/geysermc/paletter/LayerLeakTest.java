@@ -32,7 +32,6 @@ class LayerLeakTest {
         PALETTER.versions().forEach(version -> {
             Palette extended = PALETTER.palette(version.protocolVersion()).extend(layer);
             assertTrue(extended.layers().contains(layer));
-            assertTrue(extended.report().errors().isEmpty(), extended.report().errors().toString());
         });
         return new WeakReference<>(layer);
     }

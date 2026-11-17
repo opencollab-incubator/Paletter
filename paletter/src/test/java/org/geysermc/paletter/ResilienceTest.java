@@ -43,7 +43,9 @@ class ResilienceTest {
 
     /**
      * The extension throws a PaletteException naming the layer, the version, the cause and, if given, the identifier;
-     * the base and everything shared with it are untouched, and the same layer fails again (nothing is cached).
+     * the base and everything shared with it are untouched, and the same layer fails again (no palette or failure is
+     * cached). The canonical tables the failed compile may already have filled for the layer are not checked: they are
+     * weak and deterministic per layer, so a later extension of the same layer is unaffected.
      */
     private static void assertRejected(Palette base, PaletteLayer layer, String cause, String identifier) {
         BlockRegistry blocks = base.blocks();

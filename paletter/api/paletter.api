@@ -208,7 +208,6 @@ public record org.geysermc.paletter.PaletteLayer$Override {
 
 public final class org.geysermc.paletter.PaletteReport {
     public java.util.List<org.geysermc.paletter.PaletteReport$Entry> entries()
-    public java.util.List<org.geysermc.paletter.PaletteReport$Entry> errors()
     public java.util.List<org.geysermc.paletter.PaletteReport$Entry> warnings()
 }
 
@@ -223,7 +222,6 @@ public record org.geysermc.paletter.PaletteReport$Entry {
 }
 
 public enum org.geysermc.paletter.PaletteReport$Level {
-    public static final org.geysermc.paletter.PaletteReport$Level ERROR
     public static final org.geysermc.paletter.PaletteReport$Level INFO
     public static final org.geysermc.paletter.PaletteReport$Level WARNING
     public static org.geysermc.paletter.PaletteReport$Level valueOf(java.lang.String)

@@ -1,6 +1,7 @@
 package org.geysermc.paletter.internal.shape;
 
 import org.cloudburstmc.nbt.NbtMap;
+import org.geysermc.paletter.PaletteException;
 import org.geysermc.paletter.PaletteReport;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.block.CustomBlock;
@@ -61,10 +62,9 @@ public final class VoxelShapeCompiler {
         }
         custom.forEach((identifier, shape) -> {
             if (compiler.names.containsKey(identifier)) {
-                report.error(SOURCE, "The voxel shape " + identifier + " is defined twice; the first definition is used");
-            } else {
-                compiler.names.put(identifier, compiler.add(shape.grid()));
+                throw new PaletteException("The voxel shape " + identifier + " is defined twice", null, identifier, null);
             }
+            compiler.names.put(identifier, compiler.add(shape.grid()));
         });
 
         List<RegisteredBlock> customBlocks = new ArrayList<>();

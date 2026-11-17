@@ -98,7 +98,7 @@ class VoxelShapesTest {
         assertEquals(vanilla.voxelShapes().size() + 2, shapes.size());
         // Vanilla shapes keep their ids
         vanilla.voxelShapesPacket().getNameMap().forEach((name, id) -> assertEquals(id, packet.getNameMap().get(name), name));
-        assertTrue(palette.report().errors().isEmpty() && palette.report().warnings().isEmpty(), palette.report().toString());
+        assertTrue(palette.report().warnings().isEmpty(), palette.report().toString());
     }
 
     @Test
