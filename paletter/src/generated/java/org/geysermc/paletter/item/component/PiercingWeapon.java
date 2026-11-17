@@ -23,7 +23,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *        distance are considered. Block collisions between the user and target block damage and its effects. Add-on
  *        JSON {@code reach}. Default: <code>&#123;"max":3,"min":0&#125;</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_piercing_weapon?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:piercing_weapon</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
 public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeReach,

@@ -26,7 +26,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        <code>minecraft:corner_and_cardinal_direction</code> to be enabled. Add-on JSON {@code blocks_to_corner_with}.
  *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/traits/placement_direction?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:placement_direction</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates> enabledStates,
         @Nullable Float yRotationOffset,

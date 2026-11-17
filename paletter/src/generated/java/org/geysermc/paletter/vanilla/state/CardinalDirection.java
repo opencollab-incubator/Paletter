@@ -8,7 +8,7 @@ import org.geysermc.paletter.vanilla.StateValue;
 /**
  * Values of {@code minecraft:cardinal_direction}.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public enum CardinalDirection implements StateValue {
     /**

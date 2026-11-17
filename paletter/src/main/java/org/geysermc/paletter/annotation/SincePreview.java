@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * changed as the release has it); when a newer preview drops the content, so does the API. Like {@link Experimental},
  * it is not covered by the compatibility promise.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

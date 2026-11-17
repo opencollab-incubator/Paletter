@@ -8,7 +8,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @param kind the kind of property
  * @param name the name within the kind, e.g. {@code minecraft:max_stack_size} for a {@link PropertyKind#COMPONENT}
  * @param value the value as an NBT tag value: an {@code NbtMap}, {@code NbtList}, string or number
- * @since 0.1.0
+ * @since 1.0.0
  */
 public record Property(@NonNull PropertyKind kind, @NonNull String name, @NonNull Object value) {
 

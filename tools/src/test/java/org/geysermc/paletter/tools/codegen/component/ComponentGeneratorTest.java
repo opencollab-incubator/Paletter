@@ -182,7 +182,7 @@ class ComponentGeneratorTest {
         return new Inputs(components(), json("{\"errata\": [], \"replacedBy\": {\"item:test:ancient\": {\"by\": [\"item:test:widget\"], \"evidence\": \"hand evidence\"}}}"),
             json("{\"item:test:widget\": {\"count\": [\"range 1 64\"]}}"), mappings(),
             Map.of("item:test:widget:colors", "testMap", "item:test:widget:stripes", "testMap", "block:test:slab:[]", "testMap"),
-            json("{\"since\": \"0.1.0\", \"keyedExtras\": {\"item:test:widget\": "
+            json("{\"since\": \"1.0.0\", \"keyedExtras\": {\"item:test:widget\": "
                 + "{\"from\": \"nested\", \"field\": \"moreNested\", \"doc\": \"Nested things under any other key.\"}}, "
                 + "\"openEnums\": [\"item:test:widget:rarity\"], \"optional\": [\"item:test:widget:reach\"], "
                 + "\"descriptors\": {\"item:test:widget:fuel\": \"item\"}, "

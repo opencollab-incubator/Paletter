@@ -21,7 +21,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * @param enabledStates Which states to enable. Must specify at least one. Valid value is <code>minecraft:cardinal_connections</code>.
  *        Add-on JSON {@code enabled_states}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/traits/connection?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:connection</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
 @Experimental

@@ -16,7 +16,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * A key is a plain value, a type and an aux: creating or referencing one loads no data, so the constants of
  * {@link BedrockItems} and {@link BedrockItemVariants} can be used in static initializers.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public sealed interface ItemKey permits BedrockItemType, BedrockItemVariant {
     /**

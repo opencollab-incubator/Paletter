@@ -12,7 +12,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * Add-on JSON: {@code "minecraft:flower_pottable"}.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_flower_pottable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:flower_pottable</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.120")
 public record FlowerPottable() implements BlockComponent {

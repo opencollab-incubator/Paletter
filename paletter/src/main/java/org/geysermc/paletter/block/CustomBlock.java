@@ -43,7 +43,7 @@ import java.util.Objects;
  * for the block, so they can be compared with {@code ==}. Equal blocks (same identifier and definition) are
  * {@code equals}, but each has types of its own, see {@link #type()}.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class CustomBlock {
     private final String identifier;
@@ -339,7 +339,7 @@ public final class CustomBlock {
      * the type of the instance its layer registered.
      *
      * @return the type of the block
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull BedrockBlockType type() {
         return type;
@@ -351,7 +351,7 @@ public final class CustomBlock {
      * {@link BlockItem#NONE}, or by a later layer ({@link org.geysermc.paletter.PaletteLayer.Builder#blockItem}).
      *
      * @return the type of the block item
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull BedrockItemType itemType() {
         return itemType;

@@ -18,7 +18,7 @@ import org.geysermc.paletter.internal.item.ItemVariant;
  * variants of types made for unknown identifiers, are new objects: compare those
  * with {@code equals}.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class BedrockItemVariant implements ItemKey {
     private final BedrockItemType type;

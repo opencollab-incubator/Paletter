@@ -25,7 +25,7 @@ import java.util.List;
  *                     direct from BDS settles it; empty if the value is not disputed
  * @param postProcessing how the source itself post-processed the value (e.g. {@code door_state_correction}: the
  *                       dump's author corrected it after the BDS dump), or null if the source did not say so
- * @since 0.1.0
+ * @since 1.0.0
  */
 public record Provenance(@NonNull Source source, @NonNull String reference, @NonNull DataVersion captured, @NonNull DataVersion version,
                          @NonNull List<Alternative> alternatives, @Nullable String postProcessing) {
@@ -107,7 +107,7 @@ public record Provenance(@NonNull Source source, @NonNull String reference, @Non
      * @param reference what exactly was read
      * @param captured the data version it was captured for
      * @param value the value it gave, of the key's type
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public record Alternative(@NonNull Source source, @NonNull String reference, @NonNull DataVersion captured, @NonNull Object value) {
     }
@@ -122,7 +122,7 @@ public record Provenance(@NonNull Source source, @NonNull String reference, @Non
      * capture; the sources it beats only cross-check it. A custom block or item that does not set a value gets what
      * Paletter sends for it ({@link #WIRE}), else {@link #BDS_DEFAULT}, else {@link #UNKNOWN_DEFAULT}.
      *
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public enum Source {
         /** A component the user set on custom content (or on an override of a vanilla item). */

@@ -15,7 +15,7 @@ import java.util.Objects;
  * made by the palette, and shared between a palette and the palettes extending it: compare them by their parts, not
  * with {@code equals}.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class ResolvedItem {
     private final RegisteredItem definition;
@@ -69,7 +69,7 @@ public final class ResolvedItem {
      * of the items it did not change. A handle is made on each call: compare it with {@code equals}, not {@code ==}.
      *
      * @throws IllegalStateException if the definition is not an item of the palette, which a resolution never gives
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull ItemValues behaviour() {
         ItemValues values = registry.behaviour().item(definition);
@@ -91,7 +91,7 @@ public final class ResolvedItem {
      * the version lacks). A replacement is exactly the fallback's variant.
      *
      * @return the variant this palette sends for the requested one, never null
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull BedrockItemVariant variant() {
         return definition.key().variant(damage);

@@ -23,7 +23,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  *        {@code repair_items}. Default: <code>[]</code>. Compiled by the hand transform {@code
  *        Transforms.itemDescriptorList}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_repairable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:repairable</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
 public record Repairable(

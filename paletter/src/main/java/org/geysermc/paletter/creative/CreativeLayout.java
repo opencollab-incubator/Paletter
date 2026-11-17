@@ -20,7 +20,7 @@ import java.util.stream.Stream;
  * groups (unnamed ones for loose runs), each item pointing at a group index, and it crashes on empty groups.
  * {@link CreativeContent} handles that translation per client version, so none of it leaks into the layout.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class CreativeLayout {
     private static final CreativeLayout EMPTY = new CreativeLayout(new EnumMap<>(CreativeCategory.class));
@@ -107,7 +107,7 @@ public final class CreativeLayout {
 
     /**
      * @return true if a stack matching the matcher is in the layout, loose or in a group
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public boolean contains(@NonNull ItemMatcher matcher) {
         return !locateAll(matcher).isEmpty();
@@ -115,7 +115,7 @@ public final class CreativeLayout {
 
     /**
      * @return the name of the group holding the first stack matching the matcher, or null if there is none or it is loose
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable String groupOf(@NonNull ItemMatcher matcher) {
         List<CreativeLocation> all = locateAll(matcher);

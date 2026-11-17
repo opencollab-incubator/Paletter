@@ -27,7 +27,7 @@ import org.geysermc.paletter.vanilla.BedrockBlockType;
  * @param useOn List of block descriptors of the blocks that this item can be used on. If left empty, all blocks will be
  *        allowed. Add-on JSON {@code use_on}. Default: <code>[]</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_entity_placer?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:entity_placer</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
 public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullable String entity,

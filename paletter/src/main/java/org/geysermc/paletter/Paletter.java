@@ -46,7 +46,7 @@ import java.util.function.Predicate;
  * Canonical ids ({@link #canonicalBlocks()}, {@link #canonicalItems()}) are defined by the newest
  * version, and valid in every palette of this instance.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class Paletter {
     private final PaletteDataSource source;
@@ -78,7 +78,7 @@ public final class Paletter {
     /**
      * @return a builder with the defaults: bundled data, all versions,
      *         {@link Fallbacks#UNKNOWN}, all vanilla content, {@link CreativeOrdering#BDS}, no layers
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public static @NonNull Builder builder() {
         return new Builder();
@@ -111,7 +111,7 @@ public final class Paletter {
      * @param version a data version of this instance's data source
      * @return the builds, oldest first; empty when the data source records none (a preview, or data of another source)
      * @see PaletteDataSource#verifiedBuilds(DataVersion)
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull List<VerifiedBuild> verifiedBuilds(@NonNull DataVersion version) {
         return source.verifiedBuilds(version);
@@ -133,7 +133,7 @@ public final class Paletter {
     /**
      * @param name a version name, e.g. {@code 26.60}
      * @return the data version of that name this instance serves, or null
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable DataVersion version(@NonNull String name) {
         for (DataVersion version : versions) {
@@ -247,7 +247,7 @@ public final class Paletter {
     /**
      * @return the plain vanilla palette of a data version (with this instance's fallbacks and vanilla content, but
      *         without its layers)
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull Palette vanilla(@NonNull DataVersion version) {
         return vanilla.computeIfAbsent(version,
@@ -259,7 +259,7 @@ public final class Paletter {
      * The palette of a protocol version: vanilla content plus this instance's layers, compiled once per data version
      * and cached. Session content goes on top of it with {@link Palette#extend(PaletteLayer)}.
      *
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull Palette palette(int protocolVersion) {
         DataVersion version = version(protocolVersion);
@@ -294,7 +294,7 @@ public final class Paletter {
      *
      * @return this instance
      * @throws PaletteException if a global layer cannot be compiled
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull Paletter warmUp() {
         for (DataVersion version : versions()) {
@@ -321,7 +321,7 @@ public final class Paletter {
     }
 
     /**
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull Palette palette(@NonNull BedrockCodec codec) {
         return palette(codec.getProtocolVersion());
@@ -330,7 +330,7 @@ public final class Paletter {
     /**
      * Configures the global policy of a {@link Paletter}: everything that is the same for every palette it compiles.
      *
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public static final class Builder {
         private PaletteDataSource source = PaletteDataSource.bundled();
@@ -419,7 +419,7 @@ public final class Paletter {
     /**
      * @return the properties of a vanilla item in a version, without compiling a palette; empty for custom items and for
      * items the version does not have. Equal to {@code palette.itemDefinition(type).properties()} of a palette of that version
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull Properties properties(@NonNull BedrockItemType type, @NonNull DataVersion version) {
         return source.properties().item(type.identifier(), version);
@@ -428,7 +428,7 @@ public final class Paletter {
     /**
      * @return the properties of a vanilla block in a version, without compiling a palette; empty for custom blocks and for
      * blocks the version does not have
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull Properties properties(@NonNull BedrockBlockType type, @NonNull DataVersion version) {
         return source.properties().block(type.identifier(), version);

@@ -24,7 +24,7 @@ import org.geysermc.paletter.vanilla.ItemKey;
  * @param category the category
  * @param group the group to add to, or null
  * @param after a stack to insert after, or null
- * @since 0.1.0
+ * @since 1.0.0
  */
 public record CreativePlacement(@NonNull CreativeCategory category, @Nullable String group, @Nullable ItemMatcher after) {
 
@@ -42,7 +42,7 @@ public record CreativePlacement(@NonNull CreativeCategory category, @Nullable St
 
     /**
      * @return this placement, right after the stacks of any variant of an item type if present
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull CreativePlacement afterAnyVariantOf(@NonNull BedrockItemType anchor) {
         return after(ItemMatcher.anyVariantOf(anchor));
@@ -50,7 +50,7 @@ public record CreativePlacement(@NonNull CreativeCategory category, @Nullable St
 
     /**
      * @return this placement, right after exactly that variant if present (a type is its base variant)
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull CreativePlacement after(@NonNull ItemKey anchor) {
         return after(ItemMatcher.of(anchor));
@@ -60,7 +60,7 @@ public record CreativePlacement(@NonNull CreativeCategory category, @Nullable St
      * Applies this placement to an editor. An anchor ({@link #after}) always wins if it exists; otherwise the
      * stack goes where the ordering policy puts it.
      *
-     * @since 0.1.0
+     * @since 1.0.0
      */
     @Internal
     public void apply(@NonNull CreativeEditor editor, @NonNull BedrockItemStack stack, @NonNull CreativeOrdering ordering) {

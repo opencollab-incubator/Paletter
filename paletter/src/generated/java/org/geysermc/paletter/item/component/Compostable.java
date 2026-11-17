@@ -17,7 +17,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        inclusive Value must be &gt;= 1. Value must be &lt;= 100. Add-on JSON {@code composting_chance}. Required.
  *        Range [1, 100] (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_compostable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:compostable</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.60")
 public record Compostable(int compostingChance) implements ItemComponent {

@@ -14,7 +14,7 @@ import org.geysermc.paletter.annotation.Internal;
  * know its key: ask the palette you have the state from,
  * {@link org.geysermc.paletter.Palette#blockState(BlockDefinition)}.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class RegisteredBlockState implements BlockDefinition {
     private final int runtimeId;

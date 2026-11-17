@@ -33,7 +33,7 @@ import java.util.Objects;
  * are equal, not identical. Equal items (same identifier and definition) are {@code equals}, but each has a type of its
  * own, see {@link #type()}.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class CustomItem {
     private final String identifier;
@@ -120,7 +120,7 @@ public final class CustomItem {
      * layer registered.
      *
      * @return the type of the item
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull BedrockItemType type() {
         return type;

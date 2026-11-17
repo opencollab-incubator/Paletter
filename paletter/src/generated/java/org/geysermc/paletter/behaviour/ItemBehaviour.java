@@ -11,7 +11,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * are per item type (not per aux value) and per data version. Each key is a property of Bedrock Dedicated Server (its
  * source is named on the key).
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class ItemBehaviour {
     /**

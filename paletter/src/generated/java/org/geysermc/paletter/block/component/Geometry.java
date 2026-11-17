@@ -67,7 +67,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        Optional (null: not set).
  * @param uvLockBones The list of strings form of {@code uv_lock} (bones); excludes {@link #uvLock()}. Add-on JSON {@code uv_lock}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_geometry?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:geometry</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.19.40")
 public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> boneVisibility,

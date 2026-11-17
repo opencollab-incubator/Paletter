@@ -15,7 +15,7 @@ package org.geysermc.paletter;
  * that resolve through fallbacks on every version, look them up on the newest palette, with the experiments you need
  * ({@code VanillaContent#allExperiments()}), or use the constants.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public enum Lookup {
     /**

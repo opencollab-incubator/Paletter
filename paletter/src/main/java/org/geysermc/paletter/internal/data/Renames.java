@@ -16,7 +16,7 @@ import java.util.Set;
  * A line {@code item <old>@<aux> <new>[@<aux>]} splits a legacy variant off into a type of its own.
  * The constants generator reads the same file to keep the old constants as deprecated aliases.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 @Internal
 public record Renames(@NonNull Map<String, String> blocks, @NonNull Map<String, String> items,

@@ -27,7 +27,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  * @param maxSlots The maximum allowed weight of the sum of all contained items. Maximum is 64. Default is 64. Value must be
  *        &lt;= 64. Add-on JSON {@code max_slots}. Default: <code>64</code>. At most 64 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_storage_item?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:storage_item</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.40")
 public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String> allowedItems,

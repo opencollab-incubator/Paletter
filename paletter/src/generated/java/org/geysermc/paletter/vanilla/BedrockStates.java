@@ -38,7 +38,7 @@ import org.geysermc.paletter.vanilla.state.WallConnectionType;
  * <p>
  * Constants are added when Bedrock adds states; states Bedrock removes stay, deprecated.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class BedrockStates {
     /**

@@ -71,7 +71,7 @@ import java.util.function.Consumer;
  * It also knows which block each block item is sent with, so consumers never have to work that out from the
  * creative inventory themselves.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 @Internal
 public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
@@ -322,7 +322,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      *
      * @param key a variant (or a type, for its base variant), written against the newest Bedrock version like {@link #resolve(ItemVariant)}
      * @return the block, or null if the item is not a block item here (or does not exist and has no fallback)
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable RegisteredBlockState blockOf(@NonNull ItemKey key) {
         ResolvedItem resolved = resolve(key);
@@ -360,7 +360,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * @param key a variant (or a type, for its base variant), written against the newest Bedrock version
      * @return the item, damage and block to send, and whether the item is a fallback; null if the item does not exist
      *         here and has no fallback
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable ResolvedItem resolve(@NonNull ItemKey key) {
         BedrockItemVariant variant = key.variant();

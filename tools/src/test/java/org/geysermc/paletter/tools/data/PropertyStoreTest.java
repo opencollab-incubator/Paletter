@@ -199,7 +199,7 @@ class PropertyStoreTest {
             .dataDrivenBlocks().stream().map(BlockPropertyData::getName).toList());
     }
 
-    /** The committed data keeps the order of BDS: not sorted, and the same as the files before format 2 had. */
+    /** The committed data keeps the order of BDS: not sorted. */
     @Test
     void committedDataDrivenBlocksAreInTheOrderBdsSends() throws Exception {
         PaletteDataSource source = PaletteDataSource.bundled();
@@ -235,31 +235,6 @@ class PropertyStoreTest {
         byte[] first = bytes(PropertyStore.build(versions));
         assertArrayEquals(first, bytes(PropertyStore.build(versions.reversed())));
         assertArrayEquals(first, bytes(PropertyStore.read(new ByteArrayInputStream(first))));
-    }
-
-    @Test
-    void format1RoundTrips() throws Exception {
-        // the bundled versions as old format 1 files had them: components in the version file
-        PaletteDataSource source = PaletteDataSource.bundled();
-        List<VanillaData> versions = new ArrayList<>();
-        for (DataVersion version : source.versions()) {
-            ByteArrayOutputStream format1 = new ByteArrayOutputStream();
-            PaletteDataCodec.write(source.load(version), format1, PaletteDataCodec.FORMAT_1);
-            versions.add(PaletteDataCodec.read(new ByteArrayInputStream(format1.toByteArray())));
-        }
-        PropertyStore store = roundTrip(PropertyStore.build(versions));
-        for (VanillaData original : versions) {
-            ByteArrayOutputStream format2 = new ByteArrayOutputStream();
-            PaletteDataCodec.write(original, format2);
-            VanillaData stripped = PaletteDataCodec.read(new ByteArrayInputStream(format2.toByteArray()));
-            assertTrue(stripped.items().stream().allMatch(item -> item.componentData() == null), "format 2 has no components");
-            assertTrue(stripped.dataDrivenBlocks().isEmpty());
-            VanillaData again = store.attach(stripped);
-            String name = original.version().name();
-            assertEquals(original.items(), again.items(), name);
-            assertEquals(new HashSet<>(original.dataDrivenBlocks()), new HashSet<>(again.dataDrivenBlocks()), name);
-        }
-        assertTrue(store.rangeCount() > 0);
     }
 
     @Test

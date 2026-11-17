@@ -23,7 +23,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        must have at most 64 items. Add-on JSON {@code material_instances}. Required. Compiled by the hand transform
  *        {@code Transforms.materialInstancesInline}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_embedded_visual?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:embedded_visual</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.120")
 public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,

@@ -31,7 +31,7 @@ import java.util.Objects;
  * Equality: like its states (see {@link BedrockBlockState}), {@code equals} always works, and {@code ==} works for the
  * vanilla constants and for the type a registered {@link CustomBlock} owns.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class BedrockBlockType {
     private final String identifier;
@@ -150,7 +150,7 @@ public final class BedrockBlockType {
      * one that is not deprecated. Loads no data.
      *
      * @return the constant's name, e.g. {@code STONE}, or null for a custom type or one without a constant
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable String constantName() {
         return ConstantNames.of(this);
@@ -168,7 +168,7 @@ public final class BedrockBlockType {
      * constant carries {@link org.geysermc.paletter.annotation.Education @Education} for). Decided from BDS captures when
      * the constants were generated; always false for custom blocks and for types made for an unknown identifier.
      *
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public boolean isEducation() {
         return education;
@@ -285,7 +285,7 @@ public final class BedrockBlockType {
     /**
      * Builds a state from the default state of a type.
      *
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public static final class StateBuilder {
         private BedrockBlockState state;

@@ -12,7 +12,7 @@ import java.util.Objects;
  * {@link ObjectKey} its object.
  *
  * @param <T> the value type: {@link Float}, {@link Integer}, {@link Boolean}, {@link String} or {@link BlockShape}
- * @since 0.1.0
+ * @since 1.0.0
  */
 public abstract sealed class BehaviourKey<T> permits FloatKey, IntKey, BooleanKey, ObjectKey {
     /** Whose property a key is. */

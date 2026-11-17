@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  * <p>
  * Consumers must not use anything marked {@code @Internal}. See {@code docs/api.md}.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

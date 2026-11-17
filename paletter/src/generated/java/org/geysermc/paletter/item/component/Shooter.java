@@ -26,7 +26,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  * @param scalePowerByDrawDuration When true, the projectile's launch power increases based on how long the player holds the use button before
  *        releasing. Default is false. Add-on JSON {@code scale_power_by_draw_duration}. Default: <code>false</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_shooter?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:shooter</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
 public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean chargeOnDraw,

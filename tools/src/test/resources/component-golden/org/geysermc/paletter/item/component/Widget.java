@@ -40,7 +40,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  * @param reach The docs require it; BDS takes it omitted. Add-on JSON {@code reach}. Default: <code>3</code>.
  * @param moreNested Nested things under any other key. Add-on JSON {@code nested}. Default: <code>&#123;&#125;</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/test_widget?view=minecraft-bedrock-stable">Microsoft Learn: test:widget</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.0")
 public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mode,

@@ -18,7 +18,7 @@ import org.geysermc.paletter.internal.behaviour.Column;
  * a key whose BDS default is not captured ({@link BlockBehaviour#DESTROY_TIME}, {@link BlockBehaviour#OUTLINE_SHAPE}).
  * {@code getOrElse} returns its fallback there instead. Both throw {@link IllegalArgumentException} for an {@link ItemBehaviour} key.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class BlockValues {
     private final Behaviour behaviour;

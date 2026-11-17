@@ -8,7 +8,7 @@ import org.geysermc.paletter.vanilla.StateValue;
 /**
  * Values of {@code wall_east}, {@code wall_west}.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public enum WallSide implements StateValue {
     /**

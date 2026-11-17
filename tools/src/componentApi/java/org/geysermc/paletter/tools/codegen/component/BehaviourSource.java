@@ -130,7 +130,7 @@ final class BehaviourSource {
         List<Key> keys = all.stream().filter(k -> k.owner() == owner).toList();
         String plural = owner == Owner.BLOCK ? "block" : "item";
         TypeSpec.Builder type = TypeSpec.classBuilder(constantsClass(owner)).addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-            .addJavadoc("$L\n\n@since 0.1.0\n", owner == Owner.BLOCK ? BehaviourKeys.BLOCK_DOC : BehaviourKeys.ITEM_DOC);
+            .addJavadoc("$L\n\n@since 1.0.0\n", owner == Owner.BLOCK ? BehaviourKeys.BLOCK_DOC : BehaviourKeys.ITEM_DOC);
         for (Key key : keys) {
             // the ordinal is the position among every key, block and item ones alike
             CodeBlock initializer = key.type().equals("Float") || key.type().equals("Integer") || key.type().equals("Boolean")

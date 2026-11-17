@@ -10,7 +10,7 @@ import java.util.List;
  * instance per distinct bundled shape, but that is an optimisation and not something to rely on with {@code ==}.
  *
  * @param boxes the boxes, possibly none (no collision)
- * @since 0.1.0
+ * @since 1.0.0
  */
 public record BlockShape(@NonNull List<Box> boxes) {
     public static final BlockShape EMPTY = new BlockShape(List.of());
@@ -61,7 +61,7 @@ public record BlockShape(@NonNull List<Box> boxes) {
     /**
      * One axis aligned box.
      *
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public record Box(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {
     }

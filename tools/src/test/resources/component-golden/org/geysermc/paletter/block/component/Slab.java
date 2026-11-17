@@ -16,7 +16,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @param parts The entries of the component (add-on JSON: the component's value is this list). Default: <code>[]</code>.
  *        Compiled by the hand transform {@code Transforms.testMap}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_slab?view=minecraft-bedrock-stable">Microsoft Learn: test:slab</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 public record Slab(@NonNull List<Slab.Entry> parts) implements BlockComponent {
     /**

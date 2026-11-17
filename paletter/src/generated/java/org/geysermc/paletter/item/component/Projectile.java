@@ -21,7 +21,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *        "^(?:&#92;w+(?:&#92;.&#92;w+)*:(?=&#92;w))?(?:&#92;w+(?:&#92;.&#92;w+)*)(?:&lt;((?:&#92;w+(?:&#92;.&#92;w+)*:(?=&#92;w))?&#92;w+(?:&#92;.&#92;w+)*)*&gt;)?$".
  *        Add-on JSON {@code projectile_entity}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_projectile?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:projectile</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
 public record Projectile(float minimumCriticalPower,

@@ -77,7 +77,7 @@ import java.util.function.Supplier;
  * for items. {@link #encode} and {@link #decode} translate whole stacks at the protocol boundary. They are field reads and array lookups that do not allocate. The ids behind
  * the handles are not API.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class Palette {
     private static final String[] NO_STRINGS = new String[0];
@@ -184,7 +184,7 @@ public final class Palette {
      *
      * @throws IllegalArgumentException like {@link #blockDefinition(BedrockBlockState)}. Use
      *         {@link #resolve(BedrockBlockState, ResolvedBlock)} for states that may be missing
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull ResolvedBlock resolve(@NonNull BedrockBlockState state) {
         return resolveCanonical(requireCanonical(state));
@@ -195,7 +195,7 @@ public final class Palette {
      *         {@link #blockDefinition(BedrockBlockState, RegisteredBlockState)}, not the configured {@code Fallbacks},
      *         which apply before it
      * @return the resolution of a state, or {@code orElse} if the state is not in this palette
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable ResolvedBlock resolve(@NonNull BedrockBlockState state, @Nullable ResolvedBlock orElse) {
         int canonical = state.canonicalIn(blocks.canonical());
@@ -213,7 +213,7 @@ public final class Palette {
      *
      * @param runtimeId a block runtime id of this palette
      * @return the resolution, or null if this palette has no block with this runtime id
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable ResolvedBlock resolveBlock(int runtimeId) {
         int index = blocks.indexOfRuntimeId(runtimeId);
@@ -260,7 +260,7 @@ public final class Palette {
      * @return its handle, or null if the lookup does not accept the state: it is newer than this palette's version,
      *         removed, or behind an experiment this palette does not enable (see {@link #explainUnknown(NbtMap, Lookup)}).
      *         Custom blocks of the palette's layers are always accepted
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable BedrockBlockState blockState(@NonNull NbtMap state, @NonNull Lookup lookup) {
         CanonicalBlocks canonical = blocks.canonical();
@@ -281,7 +281,7 @@ public final class Palette {
      * @param lookup whether the variant must exist as is in this palette's version, see {@link Lookup}
      * @return its handle, or null if the lookup does not accept the variant, for the reasons of
      *         {@link #blockState(NbtMap, Lookup)}. Aux 0 is the base variant, which every item has
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable BedrockItemVariant itemVariant(@NonNull String identifier, int aux, @NonNull Lookup lookup) {
         ItemVariant variant = ItemVariant.of(identifier, aux);
@@ -300,7 +300,7 @@ public final class Palette {
      * @param identifier an item identifier
      * @param lookup whether the item must exist as is in this palette's version, see {@link Lookup}
      * @return the item type, or null if the lookup does not accept the identifier
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable BedrockItemType itemType(@NonNull String identifier, @NonNull Lookup lookup) {
         BedrockItemVariant base = itemVariant(identifier, 0, lookup);
@@ -312,7 +312,7 @@ public final class Palette {
      * @param lookup whether the block must exist as is in this palette's version, see {@link Lookup}
      * @return the block type, or null if the lookup does not accept the identifier. {@link Lookup#RENAMED} also finds
      *         a block under the name an older version gave it. For a custom block use its {@code type()}
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable BedrockBlockType blockType(@NonNull String identifier, @NonNull Lookup lookup) {
         NbtMap state = firstStates().get(identifier);
@@ -328,7 +328,7 @@ public final class Palette {
 
     /**
      * @return why a block state has no handle under a lookup (see {@link #blockState(NbtMap, Lookup)}), or null if it has one
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable String explainUnknown(@NonNull NbtMap state, @NonNull Lookup lookup) {
         String name = BlockStates.name(state);
@@ -340,7 +340,7 @@ public final class Palette {
 
     /**
      * @return why an item has no handle under a lookup (see {@link #itemVariant(String, int, Lookup)}), or null if it has one
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable String explainUnknown(@NonNull String identifier, int aux, @NonNull Lookup lookup) {
         String toggle = gating.disabledItems().get(identifier);
@@ -406,7 +406,7 @@ public final class Palette {
     /**
      * @return every item variant this palette knows, in no particular order: the vanilla ones of the newest data, the
      *         custom items and variants of its layers
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull List<BedrockItemVariant> itemVariants() {
         CanonicalItems canonical = items.canonical();
@@ -424,7 +424,7 @@ public final class Palette {
      *         e.g. one a session palette shows from another session. Never for a vanilla state when the data is
      *         bundled: every version sends something for it. Use {@link #blockDefinition(BedrockBlockState, RegisteredBlockState)}
      *         for states that may be missing
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull RegisteredBlockState blockDefinition(@NonNull BedrockBlockState state) {
         return blocks.block(requireCanonical(state));
@@ -434,7 +434,7 @@ public final class Palette {
      * @param orElse what to return where {@link #blockDefinition(BedrockBlockState)} throws, may be null; not the
      *         configured {@code Fallbacks}, which apply before it
      * @return the block to send for a state, or {@code orElse} if the state is not in this palette
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable RegisteredBlockState blockDefinition(@NonNull BedrockBlockState state,
                                                           @Nullable RegisteredBlockState orElse) {
@@ -447,7 +447,7 @@ public final class Palette {
      *         does not allocate
      * @throws IllegalArgumentException like {@link #blockDefinition(BedrockBlockState)}. Use
      *         {@link #runtimeId(BedrockBlockState, int)} for states that may be missing
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public int runtimeId(@NonNull BedrockBlockState state) {
         return blocks.runtimeId(requireCanonical(state));
@@ -456,7 +456,7 @@ public final class Palette {
     /**
      * @param orElse what to return where {@link #runtimeId(BedrockBlockState)} throws, e.g. the runtime id of air
      * @return the runtime id to send for a state, or {@code orElse} if the state is not in this palette
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public int runtimeId(@NonNull BedrockBlockState state, int orElse) {
         int canonical = state.canonicalIn(blocks.canonical());
@@ -482,7 +482,7 @@ public final class Palette {
      *
      * @return the block's key, or null if the item is not a block item here (or no state of the newest data
      *         resolves to the block, see {@link #blockState(BlockDefinition)})
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable BedrockBlockState blockOf(@NonNull ItemKey key) {
         RegisteredBlockState block = items.blockOf(key);
@@ -497,7 +497,7 @@ public final class Palette {
      * variant is sent as another item, {@link ResolvedItem#variant()} which.
      *
      * @return the resolution, or null if the item does not exist in this version and has no fallback
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable ResolvedItem resolve(@NonNull ItemKey key) {
         return items.resolve(key);
@@ -506,7 +506,7 @@ public final class Palette {
     /**
      * @return the item of a type as registered in this palette, or null if it has none (an item of a layer this palette
      *         does not have, or one that does not exist in this version; fallbacks are not applied, see {@link #encode})
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable RegisteredItem itemDefinition(@NonNull BedrockItemType type) {
         return items.item(type.identifier());
@@ -516,7 +516,7 @@ public final class Palette {
      * @param identifier an item identifier such as {@code minecraft:stick}
      * @return the item with this identifier as registered in this palette, or null if it has none; fallbacks are not
      *         applied, see {@link #encode}
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable RegisteredItem itemDefinition(@NonNull String identifier) {
         return items.item(identifier);
@@ -524,7 +524,7 @@ public final class Palette {
 
     /**
      * @return every item registered in this palette, in runtime id order
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull List<RegisteredItem> itemDefinitions() {
         return items.definitions();
@@ -532,7 +532,7 @@ public final class Palette {
 
     /**
      * @return the item tags, tag to item identifiers: the vanilla tags plus the tags of custom items and layers
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull Map<String, List<String>> itemTags() {
         return items.tags();
@@ -547,7 +547,7 @@ public final class Palette {
      *
      * @return the key, or null if this palette has no block with the definition's runtime id, no state resolves to it,
      *         or the definition is not a {@link RegisteredBlockState}
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable BedrockBlockState blockState(@NonNull BlockDefinition definition) {
         return definition instanceof RegisteredBlockState block ? blocks.key(block) : null;
@@ -558,7 +558,7 @@ public final class Palette {
      * @return the key of the block with this runtime id, or null if this palette has no such block. For ids decoded from
      *         packets the codec helper already gives definitions; use this for ids a server stores itself, e.g. chunk
      *         palettes
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable BedrockBlockState blockState(int runtimeId) {
         RegisteredBlockState block = blocks.byRuntimeId(runtimeId);
@@ -570,7 +570,7 @@ public final class Palette {
      * @return the block with this runtime id as sent, or null if this palette has no such block. For ids decoded from
      *         packets the codec helper already gives definitions; use this for ids a server stores itself, e.g. chunk
      *         palettes
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable RegisteredBlockState blockDefinition(int runtimeId) {
         return blocks.byRuntimeId(runtimeId);
@@ -580,7 +580,7 @@ public final class Palette {
      * @param runtimeId an item runtime id of this palette (negative for the plain item of a custom block)
      * @return the item with this runtime id as registered in this palette, or null if it has none. For ids decoded from
      *         packets the codec helper already gives definitions; use this for ids a server stores itself
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable RegisteredItem itemDefinition(int runtimeId) {
         return items.getDefinition(runtimeId);
@@ -597,7 +597,7 @@ public final class Palette {
      *
      * @return the item data, or {@link ItemData#AIR} only if there is neither a fallback for the item nor a default one
      *         ({@link Fallbacks#NONE})
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull ItemData encode(@NonNull BedrockItemStack stack) {
         return items.encode(stack);
@@ -609,7 +609,7 @@ public final class Palette {
      * version, is not recognized.
      *
      * @return the stack, or null for air or an item this palette cannot identify
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable BedrockItemStack decode(@NonNull ItemData data) {
         return items.decode(data);
@@ -628,7 +628,7 @@ public final class Palette {
      * Stacks that differ only in count, or only in NBT, never match.
      *
      * @return true if the stacks are the same
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public boolean sameStack(@NonNull ItemData a, @NonNull ItemData b) {
         if (a == b) {
@@ -690,7 +690,7 @@ public final class Palette {
      * Explains what this palette does with a block state: canonical, runtime and hashed id, how it was resolved for
      * this version and which state is sent. Slow, for debugging only.
      *
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull BlockExplanation explain(@NonNull NbtMap state) {
         NbtMap normalized = BlockStates.normalize(state);
@@ -712,7 +712,7 @@ public final class Palette {
      * Explains what this palette does with an item: canonical and runtime id, how it was resolved for this
      * version, the block it is sent with and its place in the creative inventory. Slow, for debugging only.
      *
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull ItemExplanation explain(@NonNull String identifier, int aux, @Nullable NbtMap blockState) {
         ItemVariant variant = ItemVariant.of(identifier, aux);
@@ -830,7 +830,7 @@ public final class Palette {
      * Adds the experiments of {@link #experiments()} to a resource pack stack packet (the client reads the enabled
      * experiments from there as well).
      *
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public void applyTo(@NonNull ResourcePackStackPacket packet) {
         addExperiments(packet.getExperiments());
@@ -851,7 +851,7 @@ public final class Palette {
      * enables all of them.
      *
      * @return the toggle ids, sorted
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull List<String> experiments() {
         return gating.enabled();
@@ -860,7 +860,7 @@ public final class Palette {
     /**
      * @return the enabled experiment toggle that makes an item present in this palette, or null if the item needs none.
      *         (Definitions are shared between palettes, so the registered item does not know; ask the palette.)
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable String experimentOf(@NonNull BedrockItemType type) {
         return gating.ofItem(type.identifier());
@@ -868,7 +868,7 @@ public final class Palette {
 
     /**
      * @return the enabled experiment toggle that makes a block present in this palette, or null if the block needs none
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable String experimentOf(@NonNull BedrockBlockType type) {
         return gating.ofBlock(type.identifier());
@@ -877,7 +877,7 @@ public final class Palette {
     /**
      * @return the voxel shapes of this palette (the shapes Bedrock culls block faces with): the vanilla ones BDS of this
      * version sends, plus the ones the layers define and what Bedrock derives from them for custom blocks
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull VoxelShapes voxelShapes() {
         return shapes.compiled();
@@ -888,7 +888,7 @@ public final class Palette {
      * the same way: always.
      *
      * @return the voxel shapes packet to send before start game, identical to the one BDS sends for the same content
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull VoxelShapesPacket voxelShapesPacket() {
         return shapes.compiled().toPacket();

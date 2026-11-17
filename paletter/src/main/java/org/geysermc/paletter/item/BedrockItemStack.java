@@ -18,7 +18,7 @@ import java.util.Objects;
  * @param count the stack size, at least 1
  * @param nbt the item NBT, or null for none (an empty compound is normalized to null)
  * @param blockState the block the stack places, or null for the item's default block (or none)
- * @since 0.1.0
+ * @since 1.0.0
  */
 public record BedrockItemStack(@NonNull BedrockItemVariant variant, int count, @Nullable NbtMap nbt,
                                @Nullable BedrockBlockState blockState) {

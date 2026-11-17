@@ -18,7 +18,7 @@ import org.geysermc.paletter.internal.behaviour.Column;
  * of a custom item whose BDS default is not captured. {@code getOrElse} returns its fallback there instead. Both throw
  * {@link IllegalArgumentException} for a {@link BlockBehaviour} key.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class ItemValues {
     private final Behaviour behaviour;
