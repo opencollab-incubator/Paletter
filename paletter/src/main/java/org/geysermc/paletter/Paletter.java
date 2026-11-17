@@ -14,7 +14,6 @@ import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.property.Properties;
-import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockBlockType;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 

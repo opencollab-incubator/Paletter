@@ -67,13 +67,18 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 | `Palette#decode(ItemData)` | The stack a client sent, or null if unknown. |
 | `Palette#explain(...)` | A readable explanation of how a block state or item resolves. |
 
-Lookups are on `Palette`, because the palette is the version. `Palette#blockState(NbtMap, Lookup)`, `itemVariant(identifier, aux, Lookup)`
-and `itemType(identifier, Lookup)` take the `Lookup` explicitly: `Lookup.EXACT` accepts only what exists as written in the
-palette's own version, `Lookup.RENAMED` also what that version has under a new name (renamed identifiers following
-`renames.txt`, changed state keys). Each returns null if the lookup does not accept the content, and
+Lookups are on `Palette`, because the palette is the version. `Palette#blockState(NbtMap, Lookup)`, `itemVariant(identifier, aux, Lookup)`,
+`itemType(identifier, Lookup)` and `blockType(identifier, Lookup)` take the `Lookup` explicitly: `Lookup.EXACT` accepts only
+what exists as written in the palette's own version, `Lookup.RENAMED` also content of an older bundled version, mapped
+forward (renamed identifiers following `renames.txt`, changed state keys); only content that is unchanged is checked
+against the palette's version. Each returns null if the lookup does not accept the content, and
 `explainUnknown(..., Lookup)` says why. Content of the palette's layers is always accepted.
-There is no lookup without a `Lookup`: a mapping written against 26.50 keeps working when 26.60 becomes the newest
-version by using `Lookup.RENAMED`.
+
+A palette sees exactly what it has: a lookup returns null for content newer than the palette's version, content removed
+with `VanillaContent.remove`, and content behind an experiment the palette does not enable. To get keys that resolve through
+fallbacks on every version, look them up on the newest palette, with the experiments you need (`allExperiments()` enables
+all), or use the constants (`BedrockBlocks`, `BedrockItems`). There is no lookup without a `Lookup`: a mapping written
+against 26.50 keeps working when 26.60 becomes the newest version by using `Lookup.RENAMED` on the newest palette.
 
 Paletter decides which block an item carries (`Palette#blockOf`, a key). A layer override wins, then the block to item relation
 captured from the Script API, then the block states in the creative inventory.
@@ -189,7 +194,8 @@ your decision. `./gradlew :tools:run --args="check-data"` lists what each older 
 
 Content that a Bedrock version only has behind an experiment toggle is missing by default.
 `Paletter.builder().vanilla(v -> v.experiments("y_2026_drop_3"))` enables it; `vanilla(v -> v.remove(...))` hides vanilla
-items.
+items. `vanilla(v -> v.allExperiments())` enables every toggle the version gates content with, except the voxel
+shape experiment; the palette lists them in `Palette#experiments()`.
 
 ## Previews
 

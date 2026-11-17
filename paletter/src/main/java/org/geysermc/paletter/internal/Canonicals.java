@@ -5,8 +5,8 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.internal.item.ItemVariant;
 
 /**
- * The lookups from content to canonical ids that {@link org.geysermc.paletter.Paletter} and
- * {@link org.geysermc.paletter.Palette} build their handle returning API on. Not API.
+ * The lookups from content to canonical ids that {@link org.geysermc.paletter.Palette} builds its handle returning API on.
+ * Not API.
  */
 public final class Canonicals {
     private Canonicals() {
