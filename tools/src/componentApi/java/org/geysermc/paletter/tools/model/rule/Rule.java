@@ -18,7 +18,7 @@ import java.util.List;
  * {@code RuleFit}), its encoder and its evaluation.
  */
 public abstract sealed class Rule permits Identity, Linear, Table, Affix, Bitset, Count, OrderedSet, Constant, EmptyList, EmptyMap,
-    Structure, CrossField {
+    Structure, CrossField, PackedBits, Molang, HashOrderedSet {
     /** A table entry or constant for a leaf BDS does not send. */
     public static final String NOT_SENT = "<not sent>";
 
@@ -58,6 +58,16 @@ public abstract sealed class Rule permits Identity, Linear, Table, Affix, Bitset
      *         of every element: it writes the whole list ({@link Emitter#convert} and {@link Emitter#strings} give the list)
      */
     public boolean wholeList() {
+        return false;
+    }
+
+    /** @return whether several fields write the leaf, each its own part of it (bits): the leaf has no single owner */
+    public boolean sharesLeaf() {
+        return false;
+    }
+
+    /** @return whether, for a map entry, the rule is of every key: the entry's value goes to the leaf of its key (unchanged or normalised) */
+    public boolean mapValue() {
         return false;
     }
 
@@ -117,6 +127,9 @@ public abstract sealed class Rule permits Identity, Linear, Table, Affix, Bitset
             case EmptyMap.KIND -> new EmptyMap();
             case Structure.KIND -> new Structure();
             case CrossField.KIND -> new CrossField();
+            case PackedBits.KIND -> PackedBits.read(json);
+            case Molang.KIND -> new Molang();
+            case HashOrderedSet.KIND -> new HashOrderedSet();
             default -> throw new IllegalArgumentException("unknown rule kind " + kind + ": " + json);
         };
         rule.wire = json.has("wire") ? json.get("wire").getAsString() : null;

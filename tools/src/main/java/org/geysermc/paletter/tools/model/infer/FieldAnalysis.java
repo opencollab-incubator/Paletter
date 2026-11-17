@@ -12,10 +12,8 @@ import org.geysermc.paletter.tools.model.infer.SpecCaptures.Capture;
 import org.geysermc.paletter.tools.model.infer.SpecCaptures.Obs;
 import org.geysermc.paletter.tools.model.infer.SpecCaptures.Variant;
 import org.geysermc.paletter.tools.model.rule.CrossField;
-import org.geysermc.paletter.tools.model.rule.Identity;
 import org.geysermc.paletter.tools.model.rule.Leaf;
 import org.geysermc.paletter.tools.model.rule.Observation;
-import org.geysermc.paletter.tools.model.rule.OrderedSet;
 import org.geysermc.paletter.tools.model.rule.Rule;
 import org.geysermc.paletter.tools.model.rule.Structure;
 
@@ -388,11 +386,11 @@ final class FieldAnalysis {
             status = distinctValues ? "dropped" : "no-evidence";
         } else {
             Map<String, Rule> byGeneric = new LinkedHashMap<>();
-            for (OrderedSet set : OrderedSet.fit(observations, varying, RuleFit.closedValues(component, path))) {
+            for (Rule set : RuleFit.sets(observations, varying, RuleFit.closedValues(component, path))) {
                 // the list leaves are explained as a whole: drop them from the leaf by leaf fit
                 String list = set.wire;
                 varying.removeIf(w -> w.matches(Pattern.quote(list.substring(0, list.length() - 2)) + "\\[\\d+]"));
-                byGeneric.put(list + " ordered-set", set);
+                byGeneric.put(list + " " + set.kind(), set);
             }
             for (String wire : varying) {
                 Rule rule = ruleFit.fit(component, path, wire, observations);
@@ -483,8 +481,8 @@ final class FieldAnalysis {
     static List<Rule> mapEntries(java.util.Collection<Rule> rules) {
         Map<String, List<Rule>> byParent = new LinkedHashMap<>();
         for (Rule rule : rules) {
-            if (rule.key != null && rule instanceof Identity && rule.wire.endsWith("." + rule.key)) {
-                byParent.computeIfAbsent(rule.wire.substring(0, rule.wire.length() - rule.key.length() - 1) + " " + rule.nbt, k -> new ArrayList<>()).add(rule);
+            if (rule.key != null && rule.mapValue() && rule.wire.endsWith("." + rule.key)) {
+                byParent.computeIfAbsent(rule.wire.substring(0, rule.wire.length() - rule.key.length() - 1) + " " + rule.kind() + " " + rule.nbt, k -> new ArrayList<>()).add(rule);
             }
         }
         List<Rule> out = new ArrayList<>();

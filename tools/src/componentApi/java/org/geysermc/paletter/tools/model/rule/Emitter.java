@@ -37,6 +37,9 @@ public interface Emitter {
     /** @return the value as sent unchanged as a leaf of the NBT type (a list of scalars as a list) */
     CodeBlock convert(String nbt);
 
+    /** @return the leaf's current value in the node being written: a boxed number, or null if nothing wrote it yet */
+    CodeBlock leaf();
+
     /** @return a number as a leaf of the NBT type */
     CodeBlock fromNumber(String nbt, CodeBlock number);
 

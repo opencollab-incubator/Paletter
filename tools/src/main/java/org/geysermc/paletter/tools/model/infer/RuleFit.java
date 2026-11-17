@@ -13,10 +13,14 @@ import org.geysermc.paletter.tools.model.rule.Constant;
 import org.geysermc.paletter.tools.model.rule.Count;
 import org.geysermc.paletter.tools.model.rule.EmptyList;
 import org.geysermc.paletter.tools.model.rule.EmptyMap;
+import org.geysermc.paletter.tools.model.rule.HashOrderedSet;
 import org.geysermc.paletter.tools.model.rule.Identity;
 import org.geysermc.paletter.tools.model.rule.Leaf;
 import org.geysermc.paletter.tools.model.rule.Linear;
+import org.geysermc.paletter.tools.model.rule.Molang;
 import org.geysermc.paletter.tools.model.rule.Observation;
+import org.geysermc.paletter.tools.model.rule.OrderedSet;
+import org.geysermc.paletter.tools.model.rule.PackedBits;
 import org.geysermc.paletter.tools.model.rule.Rule;
 import org.geysermc.paletter.tools.model.rule.Table;
 
@@ -43,6 +47,15 @@ final class RuleFit {
         this.feedback = feedback;
     }
 
+    /** @return the rules of the list leaves the field's lists are sent as a set: in an order of BDS's own, or by the hash of each name */
+    static List<Rule> sets(List<Observation> observations, Set<String> varying, Set<String> closed) {
+        List<Rule> rules = new ArrayList<>(OrderedSet.fit(observations, varying, closed));
+        Set<String> rest = new TreeSet<>(varying);
+        rules.forEach(r -> rest.removeIf(w -> w.matches(Pattern.quote(r.wire.substring(0, r.wire.length() - 2)) + "\\[\\d+]")));
+        rules.addAll(HashOrderedSet.fit(observations, rest));
+        return rules;
+    }
+
     /** @return the rule of the leaf the field's JSON value decides, with its NBT type and tags; null if no kind fits */
     Rule fit(Component component, String path, String wire, List<Observation> observations) {
         List<Observation> set = observations.stream().filter(p -> p.json() != null && !p.json().isJsonNull()).toList();
@@ -59,6 +72,9 @@ final class RuleFit {
             rule = scalar(set, Observation::json, wire);
             if (rule instanceof Table && !tableAllowed(set, enumerated)) {
                 rule = Affix.fit(set, wire);
+            }
+            if (rule instanceof Table && PackedBits.fit(observations, wire) != null) {
+                rule = PackedBits.fit(observations, wire);
             }
         } else if (set.stream().allMatch(p -> p.json().isJsonArray())) {
             rule = array(set, wire, enumerated || feedback.has(component.id(), path + "[]", "values"));
@@ -123,6 +139,9 @@ final class RuleFit {
         Rule rule = Identity.fit(xs, ys);
         if (rule == null) {
             rule = Linear.fit(xs, ys);
+        }
+        if (rule == null) {
+            rule = Molang.fit(xs, ys);
         }
         return rule != null ? rule : Table.fit(xs, ys);
     }

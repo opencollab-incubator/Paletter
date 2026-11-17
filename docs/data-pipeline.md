@@ -361,8 +361,12 @@ wiki and vanilla packs (only as names, never as values); accepted keys land in `
 
 **Inference.** A variant is accepted when BDS sent it and logged no error. For each field, every wire leaf that changed
 against the base is explained by the first rule that fits all observations: `identity`, `linear`, `table`, `affix`,
-`bitset`, `ordered-set`, `element`, or a constant switched on by the field's presence. `whenAbsent` records what BDS
-sends when the field is omitted. Fields no rule explains need a hand transform. Captures from different builds that
+`bitset`, `ordered-set`, `element`, or a constant switched on by the field's presence. Three more kinds explain what a
+table or an identity cannot: `packed-bits` (a boolean that is one bit of a leaf several fields share, `packed_bools`),
+`molang` (an expression BDS sends with its numbers in six decimals) and `hash-ordered-set` (names BDS sends ordered by
+the hash of each). Each needs evidence a few captured values cannot fake (an observation without the field, two numbers
+and a fraction, lists in more than one order); until the add-on provides it the field stays with its hand transform.
+`whenAbsent` records what BDS sends when the field is omitted. Fields no rule explains need a hand transform. Captures from different builds that
 differ become separate protocol windows in `mappings.json`. What a linked variant's other field moves on the wire is
 not attributed to the field it varies.
 

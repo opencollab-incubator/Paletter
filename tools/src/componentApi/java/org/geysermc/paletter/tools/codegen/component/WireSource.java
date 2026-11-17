@@ -29,6 +29,7 @@ import org.geysermc.paletter.tools.model.rule.Constant;
 import org.geysermc.paletter.tools.model.rule.Emitter;
 import org.geysermc.paletter.tools.model.rule.EmptyMap;
 import org.geysermc.paletter.tools.model.rule.Identity;
+import org.geysermc.paletter.tools.model.rule.Molang;
 import org.geysermc.paletter.tools.model.rule.Rule;
 
 import javax.lang.model.element.Modifier;
@@ -643,7 +644,7 @@ final class WireSource {
             return;
         }
         // A map whose keys reach the wire (wire ends with {}): one leaf per entry
-        if (t instanceof MapOf m && wire.endsWith("{}") && r instanceof Identity) {
+        if (t instanceof MapOf m && wire.endsWith("{}") && r.mapValue()) {
             String mapWire = wire.substring(0, wire.length() - 2);
             checkPlaceable(f, mapWire, prefix);
             if (rules(f).stream().anyMatch(x -> x instanceof EmptyMap && strip(x.wire).equals(mapWire))) {
@@ -653,8 +654,9 @@ final class WireSource {
             }
             String e = "x" + (vars++);
             b.beginControlFlow("for ($T<$T, $T> $N : $N.entrySet())", Map.Entry.class, String.class, ApiSource.typeName(c, m.value(), true), e, var);
+            CodeBlock entry = convert(m.value(), CodeBlock.of("$N.getValue()", e), r.nbt, f);
             b.addStatement("$N.put($S + $N.getKey(), $L)", node, relative(mapWire, prefix) + ".", e,
-                convert(m.value(), CodeBlock.of("$N.getValue()", e), r.nbt, f));
+                r instanceof Molang ? CodeBlock.of("$T.molang($L)", WIRE, entry) : entry);
             b.endControlFlow();
             return;
         }
@@ -765,6 +767,11 @@ final class WireSource {
         @Override
         public CodeBlock elementString(CodeBlock element) {
             return stringOf(((ListOf) t).element(), element);
+        }
+
+        @Override
+        public CodeBlock leaf() {
+            return CodeBlock.of("$N.get($S)", node, rel);
         }
 
         @Override

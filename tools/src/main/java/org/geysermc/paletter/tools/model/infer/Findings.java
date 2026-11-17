@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+import org.geysermc.paletter.tools.model.rule.PackedBits;
 import org.geysermc.paletter.tools.model.rule.Rule;
 import org.geysermc.paletter.tools.model.rule.Table;
 
@@ -185,7 +186,11 @@ final class Findings {
 
     /** The values of a table rule onto an integral leaf, when every one is a non negative integer; else null. */
     private static long[] integralTable(JsonObject rule) {
-        return Rule.of(rule) instanceof Table table ? table.integral() : null;
+        return switch (Rule.of(rule)) {
+            case Table table -> table.integral();
+            case PackedBits bits -> bits.integral();
+            default -> null;
+        };
     }
 
     private static void union(JsonArray into, JsonElement element) {

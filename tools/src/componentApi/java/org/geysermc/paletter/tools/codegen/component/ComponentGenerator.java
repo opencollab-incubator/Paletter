@@ -1328,11 +1328,11 @@ public final class ComponentGenerator {
         for (Field f : o.fields) {
             boolean t = transformed || f.transform != null || c.transform != null;
             if (!t) {
-                for (String leaf : rulesOf(w, f).stream().filter(Rule::writesValue).map(r -> r.wire).toList()) {
+                for (String leaf : rulesOf(w, f).stream().filter(Rule::writesValue).filter(r -> !r.sharesLeaf()).map(r -> r.wire).toList()) {
                     owners.computeIfAbsent(leaf, k -> new ArrayList<>()).add(f.alternativeOf != null ? f.alternativeOf.path : f.path);
                 }
                 for (Field a : f.alternatives) {
-                    rulesOf(w, a).stream().filter(Rule::writesValue)
+                    rulesOf(w, a).stream().filter(Rule::writesValue).filter(r -> !r.sharesLeaf())
                         .forEach(r -> owners.computeIfAbsent(r.wire, k -> new ArrayList<>()).add(f.path));
                 }
             }

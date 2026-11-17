@@ -3260,6 +3260,16 @@
               "wire": "minecraft:embedded_visual.geometry.bone_visibility"
             },
             {
+              "kind": "molang",
+              "mapEntry": true,
+              "nbt": "string",
+              "tags": [
+                "renamed",
+                "nested"
+              ],
+              "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a.expression"
+            },
+            {
               "kind": "constant",
               "value": "13",
               "mapEntry": true,
@@ -3290,17 +3300,6 @@
             "minecraft:embedded_visual.geometry.bone_visibility.paletter_unknown.version": "omitted"
           },
           "unexplained": [
-            {
-              "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a.expression",
-              "samples": [
-                "<absent> -> -",
-                "{} -> -",
-                "{} -> -",
-                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
-                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
-                "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
-              ]
-            },
             {
               "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a_2.expression",
               "samples": [
@@ -3688,6 +3687,16 @@
                 "wire": "minecraft:embedded_visual.geometry.bone_visibility"
               },
               {
+                "kind": "molang",
+                "mapEntry": true,
+                "nbt": "string",
+                "tags": [
+                  "renamed",
+                  "nested"
+                ],
+                "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a"
+              },
+              {
                 "kind": "identity",
                 "mapEntry": true,
                 "nbt": "string",
@@ -3705,17 +3714,6 @@
               "minecraft:embedded_visual.geometry.bone_visibility.paletter_unknown": "omitted"
             },
             "unexplained": [
-              {
-                "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a",
-                "samples": [
-                  "<absent> -> -",
-                  "{} -> -",
-                  "{} -> -",
-                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
-                  "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
-                  "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
-                ]
-              },
               {
                 "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a_2",
                 "samples": [
@@ -4740,6 +4738,16 @@
               "wire": "minecraft:geometry.bone_visibility"
             },
             {
+              "kind": "molang",
+              "mapEntry": true,
+              "nbt": "string",
+              "tags": [
+                "renamed",
+                "nested"
+              ],
+              "wire": "minecraft:geometry.bone_visibility.bone_a.expression"
+            },
+            {
               "kind": "constant",
               "value": "13",
               "mapEntry": true,
@@ -4770,17 +4778,6 @@
             "minecraft:geometry.bone_visibility.paletter_unknown.version": "omitted"
           },
           "unexplained": [
-            {
-              "wire": "minecraft:geometry.bone_visibility.bone_a.expression",
-              "samples": [
-                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
-                "<absent> -> -",
-                "{} -> -",
-                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
-                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
-                "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
-              ]
-            },
             {
               "wire": "minecraft:geometry.bone_visibility.bone_a_2.expression",
               "samples": [
@@ -5047,6 +5044,16 @@
                 "wire": "minecraft:geometry.bone_visibility"
               },
               {
+                "kind": "molang",
+                "mapEntry": true,
+                "nbt": "string",
+                "tags": [
+                  "renamed",
+                  "nested"
+                ],
+                "wire": "minecraft:geometry.bone_visibility.bone_a"
+              },
+              {
                 "kind": "identity",
                 "mapEntry": true,
                 "nbt": "string",
@@ -5064,17 +5071,6 @@
               "minecraft:geometry.bone_visibility.paletter_unknown": "omitted"
             },
             "unexplained": [
-              {
-                "wire": "minecraft:geometry.bone_visibility.bone_a",
-                "samples": [
-                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
-                  "<absent> -> -",
-                  "{} -> -",
-                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
-                  "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
-                  "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
-                ]
-              },
               {
                 "wire": "minecraft:geometry.bone_visibility.bone_a_2",
                 "samples": [
@@ -6064,6 +6060,16 @@
               "wire": "minecraft:item_visual.geometryDescription.bone_visibility"
             },
             {
+              "kind": "molang",
+              "mapEntry": true,
+              "nbt": "string",
+              "tags": [
+                "renamed",
+                "nested"
+              ],
+              "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a.expression"
+            },
+            {
               "kind": "constant",
               "value": "13",
               "mapEntry": true,
@@ -6114,17 +6120,6 @@
             "minecraft:item_visual.geometryDescription.culling_shape": " (string)"
           },
           "unexplained": [
-            {
-              "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a.expression",
-              "samples": [
-                "<absent> -> -",
-                "{} -> -",
-                "{} -> -",
-                "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
-                "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
-                "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
-              ]
-            },
             {
               "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a_2.expression",
               "samples": [
@@ -6687,6 +6682,16 @@
                 "wire": "minecraft:item_visual.geometryDescription.bone_visibility"
               },
               {
+                "kind": "molang",
+                "mapEntry": true,
+                "nbt": "string",
+                "tags": [
+                  "renamed",
+                  "nested"
+                ],
+                "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a"
+              },
+              {
                 "kind": "identity",
                 "mapEntry": true,
                 "nbt": "string",
@@ -6724,17 +6729,6 @@
               "minecraft:item_visual.geometryDescription.culling_shape": " (string)"
             },
             "unexplained": [
-              {
-                "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a",
-                "samples": [
-                  "<absent> -> -",
-                  "{} -> -",
-                  "{} -> -",
-                  "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
-                  "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
-                  "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
-                ]
-              },
               {
                 "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a_2",
                 "samples": [
@@ -8619,17 +8613,15 @@
           "status": "inferred",
           "rules": [
             {
-              "kind": "table",
-              "table": {
-                "false": "4",
-                "true": "5"
-              },
+              "kind": "packed-bits",
+              "mask": 1,
+              "base": 5,
               "nbt": "byte",
               "tags": [
                 "renamed",
                 "nested",
                 "type:boolean->byte",
-                "enum->int"
+                "packed-bits"
               ],
               "wire": "minecraft:material_instances.materials.*.packed_bools",
               "residualBits": [
@@ -8647,17 +8639,15 @@
           "status": "inferred",
           "rules": [
             {
-              "kind": "table",
-              "table": {
-                "false": "5",
-                "true": "7"
-              },
+              "kind": "packed-bits",
+              "mask": 2,
+              "base": 5,
               "nbt": "byte",
               "tags": [
                 "renamed",
                 "nested",
                 "type:boolean->byte",
-                "enum->int"
+                "packed-bits"
               ],
               "wire": "minecraft:material_instances.materials.*.packed_bools",
               "residualBits": [
@@ -8871,17 +8861,15 @@
           "status": "inferred",
           "rules": [
             {
-              "kind": "table",
-              "table": {
-                "false": "5",
-                "true": "7"
-              },
+              "kind": "packed-bits",
+              "mask": 2,
+              "base": 5,
               "nbt": "byte",
               "tags": [
                 "renamed",
                 "nested",
                 "type:boolean->byte",
-                "enum->int"
+                "packed-bits"
               ],
               "wire": "minecraft:material_instances.materials.down.packed_bools",
               "residualBits": [
@@ -9080,17 +9068,15 @@
           "status": "inferred",
           "rules": [
             {
-              "kind": "table",
-              "table": {
-                "false": "5",
-                "true": "7"
-              },
+              "kind": "packed-bits",
+              "mask": 2,
+              "base": 5,
               "nbt": "byte",
               "tags": [
                 "renamed",
                 "nested",
                 "type:boolean->byte",
-                "enum->int"
+                "packed-bits"
               ],
               "wire": "minecraft:material_instances.materials.east.packed_bools",
               "residualBits": [
@@ -9289,17 +9275,15 @@
           "status": "inferred",
           "rules": [
             {
-              "kind": "table",
-              "table": {
-                "false": "5",
-                "true": "7"
-              },
+              "kind": "packed-bits",
+              "mask": 2,
+              "base": 5,
               "nbt": "byte",
               "tags": [
                 "renamed",
                 "nested",
                 "type:boolean->byte",
-                "enum->int"
+                "packed-bits"
               ],
               "wire": "minecraft:material_instances.materials.north.packed_bools",
               "residualBits": [
@@ -9498,17 +9482,15 @@
           "status": "inferred",
           "rules": [
             {
-              "kind": "table",
-              "table": {
-                "false": "5",
-                "true": "7"
-              },
+              "kind": "packed-bits",
+              "mask": 2,
+              "base": 5,
               "nbt": "byte",
               "tags": [
                 "renamed",
                 "nested",
                 "type:boolean->byte",
-                "enum->int"
+                "packed-bits"
               ],
               "wire": "minecraft:material_instances.materials.south.packed_bools",
               "residualBits": [
@@ -9707,17 +9689,15 @@
           "status": "inferred",
           "rules": [
             {
-              "kind": "table",
-              "table": {
-                "false": "5",
-                "true": "7"
-              },
+              "kind": "packed-bits",
+              "mask": 2,
+              "base": 5,
               "nbt": "byte",
               "tags": [
                 "renamed",
                 "nested",
                 "type:boolean->byte",
-                "enum->int"
+                "packed-bits"
               ],
               "wire": "minecraft:material_instances.materials.up.packed_bools",
               "residualBits": [
@@ -9916,17 +9896,15 @@
           "status": "inferred",
           "rules": [
             {
-              "kind": "table",
-              "table": {
-                "false": "5",
-                "true": "7"
-              },
+              "kind": "packed-bits",
+              "mask": 2,
+              "base": 5,
               "nbt": "byte",
               "tags": [
                 "renamed",
                 "nested",
                 "type:boolean->byte",
-                "enum->int"
+                "packed-bits"
               ],
               "wire": "minecraft:material_instances.materials.west.packed_bools",
               "residualBits": [
@@ -10205,17 +10183,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "4",
-                  "true": "5"
-                },
+                "kind": "packed-bits",
+                "mask": 1,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.*.packed_bools",
                 "residualBits": [
@@ -10233,17 +10209,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
+                "kind": "packed-bits",
+                "mask": 2,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.*.packed_bools",
                 "residualBits": [
@@ -10457,17 +10431,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
+                "kind": "packed-bits",
+                "mask": 2,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.down.packed_bools",
                 "residualBits": [
@@ -10666,17 +10638,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
+                "kind": "packed-bits",
+                "mask": 2,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.east.packed_bools",
                 "residualBits": [
@@ -10875,17 +10845,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
+                "kind": "packed-bits",
+                "mask": 2,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.north.packed_bools",
                 "residualBits": [
@@ -11084,17 +11052,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
+                "kind": "packed-bits",
+                "mask": 2,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.south.packed_bools",
                 "residualBits": [
@@ -11293,17 +11259,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
+                "kind": "packed-bits",
+                "mask": 2,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.up.packed_bools",
                 "residualBits": [
@@ -11502,17 +11466,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
+                "kind": "packed-bits",
+                "mask": 2,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.west.packed_bools",
                 "residualBits": [
@@ -11586,17 +11548,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "13"
-                },
+                "kind": "packed-bits",
+                "mask": 8,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.*.packed_bools",
                 "residualBits": [
@@ -11624,17 +11584,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "13"
-                },
+                "kind": "packed-bits",
+                "mask": 8,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.down.packed_bools",
                 "residualBits": [
@@ -11662,17 +11620,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "13"
-                },
+                "kind": "packed-bits",
+                "mask": 8,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.east.packed_bools",
                 "residualBits": [
@@ -11700,17 +11656,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "13"
-                },
+                "kind": "packed-bits",
+                "mask": 8,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.north.packed_bools",
                 "residualBits": [
@@ -11738,17 +11692,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "13"
-                },
+                "kind": "packed-bits",
+                "mask": 8,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.south.packed_bools",
                 "residualBits": [
@@ -11776,17 +11728,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "13"
-                },
+                "kind": "packed-bits",
+                "mask": 8,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.up.packed_bools",
                 "residualBits": [
@@ -11814,17 +11764,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "13"
-                },
+                "kind": "packed-bits",
+                "mask": 8,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.west.packed_bools",
                 "residualBits": [
@@ -12043,17 +11991,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "4",
-                  "true": "5"
-                },
+                "kind": "packed-bits",
+                "mask": 1,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.*.packed_bools",
                 "residualBits": [
@@ -12071,17 +12017,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
+                "kind": "packed-bits",
+                "mask": 2,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.*.packed_bools",
                 "residualBits": [
@@ -12295,17 +12239,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
+                "kind": "packed-bits",
+                "mask": 2,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.down.packed_bools",
                 "residualBits": [
@@ -12504,17 +12446,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
+                "kind": "packed-bits",
+                "mask": 2,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.east.packed_bools",
                 "residualBits": [
@@ -12713,17 +12653,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
+                "kind": "packed-bits",
+                "mask": 2,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.north.packed_bools",
                 "residualBits": [
@@ -12922,17 +12860,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
+                "kind": "packed-bits",
+                "mask": 2,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.south.packed_bools",
                 "residualBits": [
@@ -13131,17 +13067,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
+                "kind": "packed-bits",
+                "mask": 2,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.up.packed_bools",
                 "residualBits": [
@@ -13340,17 +13274,15 @@
             "status": "inferred",
             "rules": [
               {
-                "kind": "table",
-                "table": {
-                  "false": "5",
-                  "true": "7"
-                },
+                "kind": "packed-bits",
+                "mask": 2,
+                "base": 5,
                 "nbt": "byte",
                 "tags": [
                   "renamed",
                   "nested",
                   "type:boolean->byte",
-                  "enum->int"
+                  "packed-bits"
                 ],
                 "wire": "minecraft:material_instances.materials.west.packed_bools",
                 "residualBits": [
