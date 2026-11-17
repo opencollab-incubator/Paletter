@@ -131,12 +131,19 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default @NonNull <a href="../internal/data/Renames.html" title="class in org.geysermc.paletter.internal.data">Renames</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#renames()" class="member-name-link">renames</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="DataVersion.html" title="class in org.geysermc.paletter.data">DataVersion</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#versions()" class="member-name-link">versions</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default @NonNull <a href="../internal/shape/VoxelShapeStore.html" title="class in org.geysermc.paletter.internal.shape">VoxelShapeStore</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#voxelShapes()" class="member-name-link">voxelShapes</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="VerifiedBuild.html" title="class in org.geysermc.paletter.data">VerifiedBuild</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#verifiedBuilds(org.geysermc.paletter.data.DataVersion)" class="member-name-link">verifiedBuilds</a><wbr>(@NonNull <a href="DataVersion.html" title="class in org.geysermc.paletter.data">DataVersion</a>&nbsp;version)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">The Bedrock Dedicated Server release builds that were run and found to send the data of a version: the build its
+ data was captured from and the builds compared with it and found identical, oldest first; the list may hold the
+ capture build alone.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="DataVersion.html" title="class in org.geysermc.paletter.data">DataVersion</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#versions()" class="member-name-link">versions</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default @NonNull <a href="../internal/shape/VoxelShapeStore.html" title="class in org.geysermc.paletter.internal.shape">VoxelShapeStore</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#voxelShapes()" class="member-name-link">voxelShapes</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -158,6 +165,26 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>all available versions, oldest first</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="verifiedBuilds(org.geysermc.paletter.data.DataVersion)">
+<h3>verifiedBuilds</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="VerifiedBuild.html" title="class in org.geysermc.paletter.data">VerifiedBuild</a>&gt;</span>&nbsp;<span class="element-name">verifiedBuilds</span><wbr><span class="parameters">(@NonNull <a href="DataVersion.html" title="class in org.geysermc.paletter.data">DataVersion</a>&nbsp;version)</span></div>
+<div class="block">The Bedrock Dedicated Server release builds that were run and found to send the data of a version: the build its
+ data was captured from and the builds compared with it and found identical, oldest first; the list may hold the
+ capture build alone. What <a href="../Paletter.html#verifiedBuilds(org.geysermc.paletter.data.DataVersion)"><code>Paletter.verifiedBuilds(org.geysermc.paletter.data.DataVersion)</code></a> returns: a source provides it here.
+ A version serves every protocol from its first one up to the next version's; builds outside the list are served
+ the same data, unverified. The bundled source reads <code>builds.txt</code>, generated from the record of every checked
+ release build; the default, and a preview version, has none.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>version</code> - a version of this source</dd>
+<dt>Returns:</dt>
+<dd>the builds, oldest first; empty when none were recorded</dd>
+<dt>Since:</dt>
+<dd>0.1.0</dd>
 </dl>
 </section>
 </li>
@@ -241,8 +268,8 @@ loadScripts(document, 'script');</script>
 <dt>Parameters:</dt>
 <dd><code>directory</code> - a directory in the bundled format: <code>versions.txt</code>, one <code>&lt;name&gt;.nbt</code> per version,
                   <code>voxel_shapes.nbt</code> with the shapes of every version (a palette without them fails to build),
-                  and optionally <code>properties.nbt</code>, <code>behaviour.nbt</code> and <code>renames.txt</code>. Read when first
-                  needed</dd>
+                  and optionally <code>properties.nbt</code>, <code>behaviour.nbt</code>, <code>renames.txt</code> and
+                  <code>builds.txt</code>. Read when first needed</dd>
 <dt>Returns:</dt>
 <dd>a source reading that directory</dd>
 <dt>Since:</dt>

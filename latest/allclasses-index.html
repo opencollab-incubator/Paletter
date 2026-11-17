@@ -1913,104 +1913,109 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
 <div class="block">Values of <code>vault_state</code>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="org/geysermc/paletter/internal/data/VersionFallbacks.html" title="class in org.geysermc.paletter.internal.data">VersionFallbacks</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="org/geysermc/paletter/data/VerifiedBuild.html" title="class in org.geysermc.paletter.data">VerifiedBuild</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">A Bedrock Dedicated Server release build that was run and found to send the data of a <a href="org/geysermc/paletter/data/DataVersion.html" title="class in org.geysermc.paletter.data"><code>DataVersion</code></a>: the build
+ the data was captured from, or one whose captures were identical to it.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="org/geysermc/paletter/internal/data/VersionFallbacks.html" title="class in org.geysermc.paletter.internal.data">VersionFallbacks</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
 <div class="block">Replacements for blocks and items of the newest bundled version, for an older version that lacks them.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab3"><a href="org/geysermc/paletter/vanilla/state/VerticalHalf.html" title="enum class in org.geysermc.paletter.vanilla.state">VerticalHalf</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="org/geysermc/paletter/vanilla/state/VerticalHalf.html" title="enum class in org.geysermc.paletter.vanilla.state">VerticalHalf</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab3">
 <div class="block">Values of <code>minecraft:vertical_half</code>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/shape/VoxelGrid.html" title="class in org.geysermc.paletter.internal.shape">VoxelGrid</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/shape/VoxelGrid.html" title="class in org.geysermc.paletter.internal.shape">VoxelGrid</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A voxel shape as Bedrock keeps and sends it: per axis the sorted coordinates of a grid (in blocks), and which of the
  cells between them are filled.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/block/VoxelShape.html" title="class in org.geysermc.paletter.block">VoxelShape</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/block/VoxelShape.html" title="class in org.geysermc.paletter.block">VoxelShape</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A voxel shape as Bedrock keeps and sends it (<code>VoxelShapesPacket</code>): a grid with, per axis, the sorted coordinates
  of its planes in blocks (<code>0</code> to <code>1</code> is the block), and which of the cells between the planes are filled.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/shape/VoxelShapeCompiler.html" title="class in org.geysermc.paletter.internal.shape">VoxelShapeCompiler</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/shape/VoxelShapeCompiler.html" title="class in org.geysermc.paletter.internal.shape">VoxelShapeCompiler</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Builds the voxel shape registry of a palette the way BDS builds its own (docs/wire-notes.md, "Voxel shapes"):
  
      the named vanilla shapes, in the order of the bundled capture;
      the custom shapes in the order they were registered (BDS: the order of their file names).</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/shape/VoxelShapeRules.html" title="class in org.geysermc.paletter.internal.shape">VoxelShapeRules</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/shape/VoxelShapeRules.html" title="class in org.geysermc.paletter.internal.shape">VoxelShapeRules</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">What BDS refuses in a voxel shape file, with its own words (content log of the probe add-on of
  <code>voxel-shapes capture</code>, data/bds/&lt;build&gt;/voxel-shapes/content-log.txt; the limit on the extent is a text
  of the BDS binary that no capture reached).</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/block/VoxelShapes.html" title="class in org.geysermc.paletter.block">VoxelShapes</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/block/VoxelShapes.html" title="class in org.geysermc.paletter.block">VoxelShapes</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">The voxel shapes of a palette: the shapes Bedrock culls the faces of neighbouring blocks with, which a server sends
  every client before start game (<code>VoxelShapesPacket</code>, protocol 924 and later).</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/shape/VoxelShapeStore.html" title="class in org.geysermc.paletter.internal.shape">VoxelShapeStore</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/shape/VoxelShapeStore.html" title="class in org.geysermc.paletter.internal.shape">VoxelShapeStore</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">The bundled voxel shape registries of vanilla Bedrock (<code>voxel_shapes.nbt</code>): per data version the shapes BDS
  sends a client of a world without add-ons, in its order (and, where it differs, of a world with the experiment
  <a href="org/geysermc/paletter/internal/shape/VoxelShapeStore.html#EXPERIMENT">"voxel_shapes"</a>).</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="org/geysermc/paletter/internal/shape/VoxelShapeStore.Entry.html" title="class in org.geysermc.paletter.internal.shape">VoxelShapeStore.Entry</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="org/geysermc/paletter/internal/shape/VoxelShapeStore.Entry.html" title="class in org.geysermc.paletter.internal.shape">VoxelShapeStore.Entry</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
 <div class="block">One shape of a vanilla registry; its position in the list is its id.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="org/geysermc/paletter/internal/shape/VoxelShapeStore.Registry.html" title="class in org.geysermc.paletter.internal.shape">VoxelShapeStore.Registry</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="org/geysermc/paletter/vanilla/state/WallConnectionType.html" title="enum class in org.geysermc.paletter.vanilla.state">WallConnectionType</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab3">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="org/geysermc/paletter/internal/shape/VoxelShapeStore.Registry.html" title="class in org.geysermc.paletter.internal.shape">VoxelShapeStore.Registry</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab3"><a href="org/geysermc/paletter/vanilla/state/WallConnectionType.html" title="enum class in org.geysermc.paletter.vanilla.state">WallConnectionType</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
 <div class="block">Values of <code>pale_moss_carpet_side_east</code>, <code>pale_moss_carpet_side_north</code>, <code>pale_moss_carpet_side_south</code>, <code>pale_moss_carpet_side_west</code>, <code>wall_connection_type_east</code>, <code>wall_connection_type_north</code>, <code>wall_connection_type_south</code>, <code>wall_connection_type_west</code>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="org/geysermc/paletter/item/component/Wearable.html" title="class in org.geysermc.paletter.item.component">Wearable</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="org/geysermc/paletter/item/component/Wearable.html" title="class in org.geysermc.paletter.item.component">Wearable</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
 <div class="block">Sets the wearable item component, which allows an item to be worn by a player in a specified equipment slot.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/item/component/Wearable.Builder.html" title="class in org.geysermc.paletter.item.component">Wearable.Builder</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/item/component/Wearable.Builder.html" title="class in org.geysermc.paletter.item.component">Wearable.Builder</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Builds <a href="org/geysermc/paletter/item/component/Wearable.html" title="class in org.geysermc.paletter.item.component"><code>Wearable</code></a>: defaults applied, required fields and ranges checked by <a href="org/geysermc/paletter/item/component/Wearable.Builder.html#build()"><code>Wearable.Builder.build()</code></a>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab3"><a href="org/geysermc/paletter/item/component/Wearable.Slot.html" title="enum class in org.geysermc.paletter.item.component">Wearable.Slot</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="org/geysermc/paletter/item/component/Wearable.Slot.html" title="enum class in org.geysermc.paletter.item.component">Wearable.Slot</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab3">
 <div class="block">The documented values; <a href="org/geysermc/paletter/item/component/Wearable.Slot.html#value()"><code>Wearable.Slot.value()</code></a> is the add-on JSON string.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/component/Wire.html" title="class in org.geysermc.paletter.internal.component">Wire</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/component/Wire.html" title="class in org.geysermc.paletter.internal.component">Wire</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Value conversions the generated encoders use: add-on JSON values to the NBT type a wire leaf has.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/component/WireContext.html" title="class in org.geysermc.paletter.internal.component">WireContext</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/component/WireContext.html" title="class in org.geysermc.paletter.internal.component">WireContext</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">What one compilation of components targets: the palette's version (its protocol picks the mapping window), where to
  report what cannot be expressed, and the registry data transforms resolve descriptors against (whether an item exists,
  the types of a block's states).</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="org/geysermc/paletter/internal/component/WireContext.Registry.html" title="interface in org.geysermc.paletter.internal.component">WireContext.Registry</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="org/geysermc/paletter/internal/component/WireContext.Registry.html" title="interface in org.geysermc.paletter.internal.component">WireContext.Registry</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">Item and block lookups for descriptors.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/component/WireNode.html" title="class in org.geysermc.paletter.internal.component">WireNode</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/component/WireNode.html" title="class in org.geysermc.paletter.internal.component">WireNode</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A mutable NBT compound the component encoders write into by dotted path (<code>minecraft:durability.damage_chance.min</code>).</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="org/geysermc/paletter/block/component/WireOnlyBlockComponent.html" title="interface in org.geysermc.paletter.block.component">WireOnlyBlockComponent</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="org/geysermc/paletter/block/component/WireOnlyBlockComponent.html" title="interface in org.geysermc.paletter.block.component">WireOnlyBlockComponent</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">Hand-written block components for wire fields Bedrock clients read but add-on JSON cannot set (or no longer can): they
  have no source in the component model, so they are not generated.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="org/geysermc/paletter/item/component/WireOnlyItemComponent.html" title="interface in org.geysermc.paletter.item.component">WireOnlyItemComponent</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="org/geysermc/paletter/item/component/WireOnlyItemComponent.html" title="interface in org.geysermc.paletter.item.component">WireOnlyItemComponent</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">Hand-written item components for wire fields Bedrock clients read but add-on JSON cannot set (or no longer can): they
  have no source in the component model, so they are not generated.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/component/WireOnlyWire.html" title="class in org.geysermc.paletter.internal.component">WireOnlyWire</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/component/WireOnlyWire.html" title="class in org.geysermc.paletter.internal.component">WireOnlyWire</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Encoders of the hand-written <a href="org/geysermc/paletter/item/component/WireOnlyItemComponent.html" title="interface in org.geysermc.paletter.item.component"><code>WireOnlyItemComponent</code></a>s and <a href="org/geysermc/paletter/block/component/WireOnlyBlockComponent.html" title="interface in org.geysermc.paletter.block.component"><code>WireOnlyBlockComponent</code></a>s, dispatched from the generated <code>ItemWire</code>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/behaviour/WireRules.html" title="class in org.geysermc.paletter.internal.behaviour">WireRules</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="org/geysermc/paletter/internal/behaviour/WireRules.html" title="class in org.geysermc.paletter.internal.behaviour">WireRules</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Behaviour values read from the component data BDS sends (or Paletter sends for custom content): one rule per key.</div>
 </div>
 </div>
