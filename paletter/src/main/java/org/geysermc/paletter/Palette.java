@@ -54,6 +54,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -336,6 +337,53 @@ public final class Palette {
             return null;
         }
         return canonical.handle(Canonicals.block(canonical, state));
+    }
+
+    /**
+     * The same as {@link #blockState(NbtMap, Lookup)}, without NBT: for the state of a Java block, e.g. a placement
+     * filter's name and states, or {@code state.type().identifier()} and {@link BedrockBlockState#values()}, which
+     * round trip with {@link Lookup#EXACT}.
+     *
+     * @param identifier a block identifier
+     * @param values the state values by state name: {@link Boolean}, {@link Integer} or {@link String}, as the block
+     *               has them. All of the block's states must be there, and no others; a value of another type is no
+     *               match
+     * @return its handle, or null if there is no such state or the lookup does not accept it
+     * @since 1.0.0
+     */
+    public @Nullable BedrockBlockState blockState(@NonNull String identifier, @NonNull Map<String, ?> values, @NonNull Lookup lookup) {
+        CanonicalBlocks canonical = blocks.canonical();
+        BedrockBlockType custom = canonical.customType(identifier);
+        if (custom != null) {
+            return custom.stateOf(values);
+        }
+        BedrockBlockType vanilla = BedrockBlockType.vanillaType(identifier);
+        BedrockBlockState state = vanilla == null ? null : vanilla.stateOf(values);
+        if (state == null) {
+            // Not a state of the newest version: older ones and renames are found by their NBT
+            Map<String, Object> nbt = nbtValues(values);
+            return nbt == null ? null : blockState(BlockStates.of(identifier, nbt), lookup);
+        }
+        if (gating.missingBlocks().contains(identifier)
+            || versionBlocks() != canonical.root() && versionBlocks().index(state.toNbt()) == -1) {
+            return null;
+        }
+        return state;
+    }
+
+    /** Descriptor values as block state NBT (booleans are bytes), or null if one is not a boolean, int or string. */
+    private static @Nullable Map<String, Object> nbtValues(Map<String, ?> values) {
+        Map<String, Object> nbt = new LinkedHashMap<>();
+        for (Map.Entry<String, ?> entry : values.entrySet()) {
+            Object value = entry.getValue();
+            if (value instanceof Boolean b) {
+                value = (byte) (b ? 1 : 0);
+            } else if (!(value instanceof Integer || value instanceof String)) {
+                return null;
+            }
+            nbt.put(entry.getKey(), value);
+        }
+        return nbt;
     }
 
     /**

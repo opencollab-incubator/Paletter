@@ -152,7 +152,7 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
          * @return a descriptor matching one block state (its block and every state value)
          */
         public static @NonNull UseOn of(@NonNull BedrockBlockState state) {
-            return builder().name(state.type().identifier()).states(Check.states(state)).build();
+            return builder().name(state.type().identifier()).states(state.values()).build();
         }
 
         /**

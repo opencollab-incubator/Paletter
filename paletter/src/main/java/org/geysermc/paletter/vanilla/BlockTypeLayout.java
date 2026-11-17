@@ -182,6 +182,19 @@ final class BlockTypeLayout {
         return -1;
     }
 
+    /**
+     * @return the index of a value as {@link BedrockBlockState#values()} has it (booleans for byte states), or -1
+     */
+    int indexOfValue(int property, @Nullable Object value) {
+        Object[] candidates = values[property];
+        for (int i = 0; i < candidates.length; i++) {
+            if (candidates[i] instanceof Byte b ? value instanceof Boolean v && (b != 0) == v : candidates[i].equals(value)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     int valueIndex(int property, int value) {
         Object[] candidates = values[property];
         for (int i = 0; i < candidates.length; i++) {

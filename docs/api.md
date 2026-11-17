@@ -51,7 +51,8 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 
 | Lookup | Returns |
 |---|---|
-| `Palette#blockState(NbtMap, Lookup)`, `Palette#itemVariant(identifier, aux, Lookup)`, `Palette#itemType(identifier, Lookup)` | The key (or item type) if the `Lookup` accepts the content in this palette's version, else null. |
+| `Palette#blockState(NbtMap, Lookup)`, `Palette#blockState(identifier, values, Lookup)`, `Palette#itemVariant(identifier, aux, Lookup)`, `Palette#itemType(identifier, Lookup)` | The key (or item type) if the `Lookup` accepts the content in this palette's version, else null. |
+| `Palette#blockState(identifier, values, Lookup)` | The same as the NBT overload, from state values as `Map<String, Object>` of `Boolean`, `Integer` or `String`, without building NBT. All of the block's states must be given; a value of another type is no match. `BedrockBlockState#values()` has the same shape (unmodifiable, in state order), so `palette.blockState(s.type().identifier(), s.values(), Lookup.EXACT)` is `s`. The generated `states` of `PlacementFilter.BlockFilter`, `BlockPlacer.UseOn` and the other block descriptors use it too. |
 | `Palette#runtimeId(BedrockBlockState)` | The runtime id (the state hash). Throws if the palette lacks the state; `runtimeId(state, orElse)` returns `orElse` instead. |
 | `Palette#blockDefinition(BedrockBlockState)` | The `RegisteredBlockState` this version sends, after adapting and fallbacks. Throws if the palette lacks the state. Only a custom block of a layer the palette does not have can be lacking: with the bundled data, every version has each vanilla state. |
 | `Palette#blockDefinition(BedrockBlockState, RegisteredBlockState)` | Like `blockDefinition(state)`, but returns `orElse` (may be null) where that throws; as `runtimeId(state, orElse)` does for the runtime id. |
@@ -71,7 +72,7 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 | `Palette#decode(ItemData)` | The stack a client sent, or null if unknown. |
 | `Palette#explain(...)` | A readable explanation of how a block state or item resolves. |
 
-Lookups are on `Palette`, because the palette is the version. `Palette#blockState(NbtMap, Lookup)`, `itemVariant(identifier, aux, Lookup)`,
+Lookups are on `Palette`, because the palette is the version. `Palette#blockState(NbtMap, Lookup)`, `blockState(identifier, values, Lookup)`, `itemVariant(identifier, aux, Lookup)`,
 `itemType(identifier, Lookup)` and `blockType(identifier, Lookup)` take the `Lookup` explicitly: `Lookup.EXACT` accepts only
 what exists as written in the palette's own version, `Lookup.RENAMED` also content of an older bundled version, mapped
 forward (renamed identifiers following `renames.txt`, changed state keys); only content that is unchanged is checked

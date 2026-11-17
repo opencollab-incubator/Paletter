@@ -211,6 +211,13 @@ public class HotPathBenchmark {
         return palette.blockState(stateNbt[nextBlock()], Lookup.EXACT);
     }
 
+    /** A block state of an identifier and values to its handle, the exact lookup without NBT. */
+    @Benchmark
+    public BedrockBlockState blockStateExactValues() {
+        BedrockBlockState state = states[nextBlock()];
+        return palette.blockState(state.type().identifier(), state.values(), Lookup.EXACT);
+    }
+
     /** An identifier and aux to its item variant, the exact lookup of a translator. */
     @Benchmark
     public BedrockItemVariant itemVariantExact() {

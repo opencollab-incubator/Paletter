@@ -403,6 +403,20 @@ public final class CanonicalBlocks {
     }
 
     /**
+     * @return the type of the custom block of this lineage with an identifier, or null
+     */
+    @Internal
+    public @Nullable BedrockBlockType customType(@NonNull String identifier) {
+        for (CanonicalBlocks current = this; current != null; current = current.parent) {
+            int base = current.customBases.getInt(identifier);
+            if (base != -1) {
+                return current.customTypeAt(base);
+            }
+        }
+        return null;
+    }
+
+    /**
      * @return true if the other indices are these, or these with states appended
      */
     public boolean extendsOrIs(@NonNull CanonicalBlocks other) {

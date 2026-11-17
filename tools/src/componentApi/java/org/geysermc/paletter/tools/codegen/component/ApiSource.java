@@ -588,7 +588,7 @@ final class ApiSource {
                     type.addMethod(MethodSpec.methodBuilder("of").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                         .addJavadoc("@return a descriptor matching one block state (its block and every state value)\n")
                         .addParameter(nonNull(BLOCK_STATE), "state").returns(nonNull(name(o)))
-                        .addStatement("return builder().$N(state.type().identifier()).$N($T.states(state)).build()", name.java, states.java, CHECK)
+                        .addStatement("return builder().$N(state.type().identifier()).$N(state.values()).build()", name.java, states.java)
                         .build());
                 }
             }

@@ -99,6 +99,16 @@ public final class BedrockBlockType {
     }
 
     /**
+     * Plumbing of {@link org.geysermc.paletter.Palette}.
+     *
+     * @return the vanilla type of the newest bundled data with an identifier, or null
+     */
+    @Internal
+    public static @Nullable BedrockBlockType vanillaType(@NonNull String identifier) {
+        return VanillaIndex.get().block(identifier);
+    }
+
+    /**
      * @return every vanilla block type of the newest bundled data, in palette order. Loads the data
      */
     public static @NonNull List<BedrockBlockType> vanillaTypes() {
@@ -116,6 +126,29 @@ public final class BedrockBlockType {
         }
         this.layout = fallbackType.layout();
         this.available = false;
+    }
+
+    /**
+     * Plumbing of {@link org.geysermc.paletter.Palette}.
+     *
+     * @return the state with exactly these values (see {@link BedrockBlockState#values()}), or null if the block has no
+     *         such state: a missing or extra name, a value of another type or one the block does not have
+     */
+    @Internal
+    public @Nullable BedrockBlockState stateOf(@NonNull Map<String, ?> values) {
+        BlockTypeLayout layout = layout();
+        if (values.size() != layout.properties.length) {
+            return null;
+        }
+        int combination = 0;
+        for (int p = 0; p < layout.properties.length; p++) {
+            int index = layout.indexOfValue(p, values.get(layout.properties[p].name()));
+            if (index == -1) {
+                return null;
+            }
+            combination += index * layout.radix[p];
+        }
+        return layout.byCombination()[combination];
     }
 
     BlockTypeLayout layout() {

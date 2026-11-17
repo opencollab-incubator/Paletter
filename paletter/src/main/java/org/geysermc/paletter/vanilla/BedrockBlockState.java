@@ -7,6 +7,10 @@ import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * One state of a {@link BedrockBlockType}. A type creates each of its states once, so {@link #with} does not allocate.
  * <p>
@@ -30,6 +34,7 @@ public final class BedrockBlockState {
     private final int combination;
     private final int id;
     private volatile @Nullable NbtMap nbt;
+    private volatile @Nullable Map<String, Object> values;
 
     BedrockBlockState(BlockTypeLayout layout, int combination, int id) {
         this.layout = layout;
@@ -114,6 +119,25 @@ public final class BedrockBlockState {
             throw new IllegalArgumentException(type() + " has no state " + layout.nbtStates(changed));
         }
         return state;
+    }
+
+    /**
+     * @return the values of the state by state name, in the order of the block's states in Bedrock Dedicated Server's
+     *         data: {@link Boolean}, {@link Integer} or {@link String}. Unmodifiable. Together with
+     *         {@code type().identifier()} it finds this state again:
+     *         {@code palette.blockState(identifier, values(), Lookup.EXACT)}
+     */
+    public @NonNull Map<String, Object> values() {
+        Map<String, Object> values = this.values;
+        if (values == null) {
+            values = new LinkedHashMap<>();
+            for (int p = 0; p < layout.properties.length; p++) {
+                Object value = layout.values[p][layout.valueOf(combination, p)];
+                values.put(layout.properties[p].name(), value instanceof Byte b ? (Object) (b != 0) : value);
+            }
+            this.values = values = Collections.unmodifiableMap(values);
+        }
+        return values;
     }
 
     /**

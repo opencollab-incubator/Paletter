@@ -91,14 +91,4 @@ public final class Check {
             }
         });
     }
-
-    /**
-     * @return the states of a block state as descriptor values (byte states as booleans)
-     */
-    public static @NonNull Map<String, Object> states(@NonNull BedrockBlockState state) {
-        Map<String, Object> states = new LinkedHashMap<>();
-        NbtMap nbt = state.toNbt().getCompound("states");
-        nbt.forEach((name, value) -> states.put(name, value instanceof Byte b ? (Object) (b != 0) : value));
-        return Collections.unmodifiableMap(states);
-    }
 }

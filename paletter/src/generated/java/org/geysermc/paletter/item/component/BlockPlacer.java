@@ -169,7 +169,7 @@ public record BlockPlacer(@BedrockFormat("1.26.10") boolean alignedPlacement, @N
          * @return a descriptor matching one block state (its block and every state value)
          */
         public static @NonNull UseOn of(@NonNull BedrockBlockState state) {
-            return builder().name(state.type().identifier()).states(Check.states(state)).build();
+            return builder().name(state.type().identifier()).states(state.values()).build();
         }
 
         /**
