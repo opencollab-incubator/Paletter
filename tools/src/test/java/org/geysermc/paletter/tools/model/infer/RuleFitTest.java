@@ -3,8 +3,11 @@ package org.geysermc.paletter.tools.model.infer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.geysermc.paletter.tools.model.infer.MappingInference.Pair;
-import org.geysermc.paletter.tools.model.infer.Wire.Leaf;
+import org.geysermc.paletter.tools.model.rule.Affix;
+import org.geysermc.paletter.tools.model.rule.Leaf;
+import org.geysermc.paletter.tools.model.rule.Observation;
+import org.geysermc.paletter.tools.model.rule.OrderedSet;
+import org.geysermc.paletter.tools.model.rule.Rule;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -21,18 +24,18 @@ class RuleFitTest {
     private static final String W = "minecraft:x.leaf";
 
     /** Observations: json text, leaf (null = not sent). */
-    private static List<Pair> pairs(Object... jsonAndLeaf) {
-        List<Pair> pairs = new ArrayList<>();
+    private static List<Observation> pairs(Object... jsonAndLeaf) {
+        List<Observation> pairs = new ArrayList<>();
         for (int i = 0; i < jsonAndLeaf.length; i += 2) {
             JsonElement json = JsonParser.parseString((String) jsonAndLeaf[i]);
             Object leaf = jsonAndLeaf[i + 1];
-            pairs.add(new Pair(json, leaf == null ? Map.of() : Map.of(W, new Leaf(Wire.typeOf(leaf), leaf)), "v" + i));
+            pairs.add(new Observation(json, leaf == null ? Map.of() : Map.of(W, new Leaf(Wire.typeOf(leaf), leaf)), "v" + i));
         }
         return pairs;
     }
 
-    private static JsonObject scalar(List<Pair> pairs) {
-        return MappingInference.scalar(pairs, Pair::json, W);
+    private static JsonObject scalar(List<Observation> pairs) {
+        return json(MappingInference.scalar(pairs, Observation::json, W));
     }
 
     @Test
@@ -55,34 +58,34 @@ class RuleFitTest {
     }
 
     /** A list observation: the JSON list and the elements BDS sent for it. */
-    private static Pair list(String json, String... sent) {
+    private static Observation list(String json, String... sent) {
         Map<String, Leaf> wire = new java.util.TreeMap<>();
         for (int i = 0; i < sent.length; i++) {
             wire.put("minecraft:x.list[" + i + "]", new Leaf("string", sent[i]));
         }
-        return new Pair(JsonParser.parseString(json), wire, json);
+        return new Observation(JsonParser.parseString(json), wire, json);
     }
 
     @Test
     void anOrderOfBdsOwnIsARuleOnlyForAClosedSetOfValuesAllSeen() {
         java.util.Set<String> varying = java.util.Set.of("minecraft:x.list[0]", "minecraft:x.list[1]", "minecraft:x.list[2]");
-        List<Pair> faces = List.of(list("[\"north\", \"up\", \"east\"]", "up", "north", "east"), list("[\"east\", \"north\"]", "north", "east"));
-        List<JsonObject> closed = MappingInference.orderedSet(faces, varying, java.util.Set.of("up", "north", "east"));
+        List<Observation> faces = List.of(list("[\"north\", \"up\", \"east\"]", "up", "north", "east"), list("[\"east\", \"north\"]", "north", "east"));
+        List<JsonObject> closed = json(OrderedSet.fit(faces, varying, java.util.Set.of("up", "north", "east")));
         assertEquals(1, closed.size());
         assertEquals("[\"up\",\"north\",\"east\"]", closed.get(0).get("order").toString());
         // One documented value was never sent: its place in the order is not known
-        assertEquals(List.of(), MappingInference.orderedSet(faces, varying, java.util.Set.of("up", "north", "east", "down")));
+        assertEquals(List.of(), json(OrderedSet.fit(faces, varying, java.util.Set.of("up", "north", "east", "down"))));
         // Any string goes (bones, ordered by the hash of their names): the two captured names order no others
-        List<Pair> bones = List.of(list("[\"bone_a\", \"paletter_b\"]", "paletter_b", "bone_a"), list("[\"bone_a\"]", "bone_a"));
-        assertEquals(List.of(), MappingInference.orderedSet(bones, varying, java.util.Set.of()));
+        List<Observation> bones = List.of(list("[\"bone_a\", \"paletter_b\"]", "paletter_b", "bone_a"), list("[\"bone_a\"]", "bone_a"));
+        assertEquals(List.of(), json(OrderedSet.fit(bones, varying, java.util.Set.of())));
         // Nor does a table of the strings seen at one place of the list say anything about other strings
-        List<Pair> second = pairs("[\"bone_a\", \"paletter_b\"]", "p", "[\"paletter_b\", \"bone_a\"]", "q");
-        JsonObject open = MappingInference.array(second, W, false);
+        List<Observation> second = pairs("[\"bone_a\", \"paletter_b\"]", "p", "[\"paletter_b\", \"bone_a\"]", "q");
+        JsonObject open = json(MappingInference.array(second, W, false));
         assertFalse(open != null && open.get("kind").getAsString().equals("table"), String.valueOf(open));
-        assertEquals("table", MappingInference.array(second, W, true).get("kind").getAsString());
+        assertEquals("table", json(MappingInference.array(second, W, true)).get("kind").getAsString());
         // The JSON's order without repeats needs no known set of values
-        List<Pair> tags = List.of(list("[\"a\", \"a\", \"b\"]", "a", "b"), list("[\"b\"]", "b"));
-        List<JsonObject> deduped = MappingInference.orderedSet(tags, varying, java.util.Set.of());
+        List<Observation> tags = List.of(list("[\"a\", \"a\", \"b\"]", "a", "b"), list("[\"b\"]", "b"));
+        List<JsonObject> deduped = json(OrderedSet.fit(tags, varying, java.util.Set.of()));
         assertEquals(1, deduped.size());
         assertFalse(deduped.get(0).has("order"));
     }
@@ -91,22 +94,22 @@ class RuleFitTest {
     void aLeafOnlyTheListFormSendsIsNotExplainedByTheScalarFormNotSendingIt() {
         // uv_lock: a byte for true and false, the bones for a list, in an order of BDS's own
         String first = "minecraft:x.leaf[0]";
-        List<Pair> uvLock = List.of(
-            new Pair(JsonParser.parseString("true"), Map.of(W, new Leaf("byte", (byte) 1)), "true"),
-            new Pair(JsonParser.parseString("false"), Map.of(W, new Leaf("byte", (byte) 0)), "false"),
-            new Pair(JsonParser.parseString("[\"bone_a\", \"paletter_b\"]"),
+        List<Observation> uvLock = List.of(
+            new Observation(JsonParser.parseString("true"), Map.of(W, new Leaf("byte", (byte) 1)), "true"),
+            new Observation(JsonParser.parseString("false"), Map.of(W, new Leaf("byte", (byte) 0)), "false"),
+            new Observation(JsonParser.parseString("[\"bone_a\", \"paletter_b\"]"),
                 Map.of(first, new Leaf("string", "paletter_b"), "minecraft:x.leaf[1]", new Leaf("string", "bone_a")), "two"),
-            new Pair(JsonParser.parseString("[\"bone_a\"]"), Map.of(first, new Leaf("string", "bone_a")), "one"),
-            new Pair(JsonParser.parseString("[]"), Map.of(W, new Leaf("list", "[]")), "none"));
-        assertEquals("identity", MappingInference.mixed(uvLock, W, false, false).get("kind").getAsString(), "the byte follows the boolean");
-        assertNull(MappingInference.mixed(uvLock, first, false, false), "that booleans send no first element is no rule for the lists");
+            new Observation(JsonParser.parseString("[\"bone_a\"]"), Map.of(first, new Leaf("string", "bone_a")), "one"),
+            new Observation(JsonParser.parseString("[]"), Map.of(W, new Leaf("list", "[]")), "none"));
+        assertEquals("identity", json(MappingInference.mixed(uvLock, W, false, false)).get("kind").getAsString(), "the byte follows the boolean");
+        assertNull(json(MappingInference.mixed(uvLock, first, false, false)), "that booleans send no first element is no rule for the lists");
         // A leaf the lists do not send either stays what the scalar part says
-        assertEquals("constant", MappingInference.mixed(uvLock, "minecraft:x.other", false, false).get("kind").getAsString());
+        assertEquals("constant", json(MappingInference.mixed(uvLock, "minecraft:x.other", false, false)).get("kind").getAsString());
     }
 
     @Test
     void tableForEnumsOnly() {
-        List<Pair> enums = pairs("\"eat\"", 1, "\"drink\"", 2, "\"spear\"", 6);
+        List<Observation> enums = pairs("\"eat\"", 1, "\"drink\"", 2, "\"spear\"", 6);
         JsonObject rule = scalar(enums);
         assertEquals("table", rule.get("kind").getAsString());
         assertEquals("6", rule.getAsJsonObject("table").get("spear").getAsString());
@@ -131,31 +134,31 @@ class RuleFitTest {
 
     @Test
     void affixAndDefaultNamespace() {
-        JsonObject rule = MappingInference.affix(pairs("\"minecraft:pig\"", "minecraft:pig<>", "\"cow\"", "minecraft:cow<>"), W);
+        JsonObject rule = json(Affix.fit(pairs("\"minecraft:pig\"", "minecraft:pig<>", "\"cow\"", "minecraft:cow<>"), W));
         assertEquals("affix", rule.get("kind").getAsString());
         assertEquals("", rule.get("prefix").getAsString());
         assertEquals("<>", rule.get("suffix").getAsString());
-        assertNull(MappingInference.affix(pairs("\"a\"", "x_a", "\"b\"", "y_b"), W), "inconsistent prefixes");
+        assertNull(json(Affix.fit(pairs("\"a\"", "x_a", "\"b\"", "y_b"), W)), "inconsistent prefixes");
     }
 
     @Test
     void bitset() {
-        JsonObject rule = MappingInference.array(pairs("[\"down\"]", 1, "[\"up\"]", 2, "[\"north\"]", 4, "[\"up\",\"north\"]", 6, "[]", 0), W, true);
+        JsonObject rule = json(MappingInference.array(pairs("[\"down\"]", 1, "[\"up\"]", 2, "[\"north\"]", 4, "[\"up\",\"north\"]", 6, "[]", 0), W, true));
         assertEquals("bitset", rule.get("kind").getAsString());
         assertEquals(4, rule.getAsJsonObject("bits").get("north").getAsInt());
         // OR does not hold: not a bit set
-        JsonObject broken = MappingInference.array(pairs("[\"down\"]", 1, "[\"up\"]", 2, "[\"up\",\"down\"]", 7), W, true);
+        JsonObject broken = json(MappingInference.array(pairs("[\"down\"]", 1, "[\"up\"]", 2, "[\"up\",\"down\"]", 7), W, true));
         assertTrue(broken == null || !broken.get("kind").getAsString().equals("bitset"));
     }
 
     @Test
     void listElementWithScale() {
         // rotation [x, y, z] in degrees -> RX quarter turns: element 0, linear 1/90
-        List<Pair> pairs = new ArrayList<>();
+        List<Observation> pairs = new ArrayList<>();
         for (int[] v : new int[][]{{0, 90, 0}, {90, 180, 270}, {180, 270, 0}}) {
-            pairs.add(new Pair(JsonParser.parseString("[" + v[0] + "," + v[1] + "," + v[2] + "]"), Map.of(W, new Leaf("int", v[0] / 90)), ""));
+            pairs.add(new Observation(JsonParser.parseString("[" + v[0] + "," + v[1] + "," + v[2] + "]"), Map.of(W, new Leaf("int", v[0] / 90)), ""));
         }
-        JsonObject rule = MappingInference.array(pairs, W, false);
+        JsonObject rule = json(MappingInference.array(pairs, W, false));
         assertEquals("linear", rule.get("kind").getAsString());
         assertEquals(0, rule.get("element").getAsInt());
         assertEquals(round(1 / 90.0), rule.get("scale").getAsDouble());
@@ -164,11 +167,11 @@ class RuleFitTest {
     @Test
     void twoVectorsPickTheElementWithoutOffset() {
         // the accepted rotation variants of the capture: two points fit a line on every element; RY is element 1
-        List<Pair> pairs = new ArrayList<>();
+        List<Observation> pairs = new ArrayList<>();
         for (int[] v : new int[][]{{90, 180, 270}, {180, 270, 0}}) {
-            pairs.add(new Pair(JsonParser.parseString("[" + v[0] + "," + v[1] + "," + v[2] + "]"), Map.of(W, new Leaf("int", v[1] / 90)), ""));
+            pairs.add(new Observation(JsonParser.parseString("[" + v[0] + "," + v[1] + "," + v[2] + "]"), Map.of(W, new Leaf("int", v[1] / 90)), ""));
         }
-        JsonObject rule = MappingInference.array(pairs, W, false);
+        JsonObject rule = json(MappingInference.array(pairs, W, false));
         assertEquals("linear", rule.get("kind").getAsString());
         assertEquals(1, rule.get("element").getAsInt());
         assertEquals(0.0, rule.get("offset").getAsDouble());
@@ -176,10 +179,10 @@ class RuleFitTest {
 
     @Test
     void mapEntry() {
-        List<Pair> pairs = new ArrayList<>();
-        pairs.add(new Pair(JsonParser.parseString("{\"bone_a\": 3}"), Map.of("x.bone_a", new Leaf("int", 3)), ""));
-        pairs.add(new Pair(JsonParser.parseString("{\"bone_a\": 5}"), Map.of("x.bone_a", new Leaf("int", 5)), ""));
-        JsonObject rule = MappingInference.object(pairs, "x.bone_a", false);
+        List<Observation> pairs = new ArrayList<>();
+        pairs.add(new Observation(JsonParser.parseString("{\"bone_a\": 3}"), Map.of("x.bone_a", new Leaf("int", 3)), ""));
+        pairs.add(new Observation(JsonParser.parseString("{\"bone_a\": 5}"), Map.of("x.bone_a", new Leaf("int", 5)), ""));
+        JsonObject rule = json(MappingInference.object(pairs, "x.bone_a", false));
         assertEquals("identity", rule.get("kind").getAsString());
         assertTrue(rule.get("mapEntry").getAsBoolean());
     }
@@ -187,21 +190,29 @@ class RuleFitTest {
     @Test
     void aMapEntryNeedsTheEvidenceAScalarDoes() {
         // bone_visibility: the second entry only ever had one value, which BDS sends as "1.000000"
-        List<Pair> one = List.of(
-            new Pair(JsonParser.parseString("{\"bone_a\": \"q.x\"}"), Map.of("x.bone_a", new Leaf("string", "q.x")), ""),
-            new Pair(JsonParser.parseString("{\"bone_a\": \"q.x\", \"bone_b\": \"on\"}"),
+        List<Observation> one = List.of(
+            new Observation(JsonParser.parseString("{\"bone_a\": \"q.x\"}"), Map.of("x.bone_a", new Leaf("string", "q.x")), ""),
+            new Observation(JsonParser.parseString("{\"bone_a\": \"q.x\", \"bone_b\": \"on\"}"),
                 Map.of("x.bone_a", new Leaf("string", "q.x"), "x.bone_b", new Leaf("string", "1.000000")), ""));
-        assertNull(MappingInference.object(one, "x.bone_b", false), "one value is no constant: another was never tried");
+        assertNull(json(MappingInference.object(one, "x.bone_b", false)), "one value is no constant: another was never tried");
         // two strings sent differently: a table of them is no rule for free text, only for an enum
-        List<Pair> two = new ArrayList<>(one);
-        two.add(new Pair(JsonParser.parseString("{\"bone_b\": \"q.x\"}"), Map.of("x.bone_b", new Leaf("string", "q.x")), ""));
-        assertNull(MappingInference.object(two, "x.bone_b", false));
-        assertEquals("table", MappingInference.object(two, "x.bone_b", true).get("kind").getAsString());
+        List<Observation> two = new ArrayList<>(one);
+        two.add(new Observation(JsonParser.parseString("{\"bone_b\": \"q.x\"}"), Map.of("x.bone_b", new Leaf("string", "q.x")), ""));
+        assertNull(json(MappingInference.object(two, "x.bone_b", false)));
+        assertEquals("table", json(MappingInference.object(two, "x.bone_b", true)).get("kind").getAsString());
         // a leaf that stays the same while the entry's value changes is a constant
-        List<Pair> version = List.of(
-            new Pair(JsonParser.parseString("{\"bone_a\": \"q.x\"}"), Map.of("x.bone_a.version", new Leaf("short", (short) 13)), ""),
-            new Pair(JsonParser.parseString("{\"bone_a\": \"1.0\"}"), Map.of("x.bone_a.version", new Leaf("short", (short) 13)), ""));
-        assertEquals("constant", MappingInference.object(version, "x.bone_a.version", false).get("kind").getAsString());
+        List<Observation> version = List.of(
+            new Observation(JsonParser.parseString("{\"bone_a\": \"q.x\"}"), Map.of("x.bone_a.version", new Leaf("short", (short) 13)), ""),
+            new Observation(JsonParser.parseString("{\"bone_a\": \"1.0\"}"), Map.of("x.bone_a.version", new Leaf("short", (short) 13)), ""));
+        assertEquals("constant", json(MappingInference.object(version, "x.bone_a.version", false)).get("kind").getAsString());
+    }
+
+    private static JsonObject json(Rule rule) {
+        return rule == null ? null : rule.toJson();
+    }
+
+    private static List<JsonObject> json(List<OrderedSet> rules) {
+        return rules.stream().map(Rule::toJson).toList();
     }
 
     private static double round(double d) {

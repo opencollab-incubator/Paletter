@@ -24,6 +24,7 @@ import org.geysermc.paletter.tools.codegen.component.ApiModel.Window;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.MappingWindows;
 import org.geysermc.paletter.tools.model.Model;
+import org.geysermc.paletter.tools.model.rule.Rule;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -85,7 +86,6 @@ public final class ComponentGenerator {
     private static final Set<String> JAVA_LANG = Set.of("Record", "Throwable", "Object", "String", "Class", "Enum", "Exception", "Error",
         "Integer", "Long", "Short", "Byte", "Float", "Double", "Boolean", "Character", "Number", "Void", "Math", "System", "Thread",
         "Runtime", "Process", "Module", "Package", "Iterable", "Comparable", "Override", "Deprecated");
-    static final Set<String> VALUE_KINDS = Set.of("identity", "linear", "table", "affix", "bitset", "count", "ordered-set");
 
     private final Inputs in;
     private final ApiModel model = new ApiModel();
@@ -516,11 +516,9 @@ public final class ComponentGenerator {
 
     static Set<String> valueLeaves(JsonObject fieldMapping) {
         Set<String> leaves = new TreeSet<>();
-        if (fieldMapping.has("rules")) {
-            for (JsonElement r : fieldMapping.getAsJsonArray("rules")) {
-                if (VALUE_KINDS.contains(r.getAsJsonObject().get("kind").getAsString())) {
-                    leaves.add(r.getAsJsonObject().get("wire").getAsString());
-                }
+        for (Rule r : Rule.all(fieldMapping)) {
+            if (r.writesValue()) {
+                leaves.add(r.wire);
             }
         }
         return leaves;
@@ -1330,13 +1328,12 @@ public final class ComponentGenerator {
         for (Field f : o.fields) {
             boolean t = transformed || f.transform != null || c.transform != null;
             if (!t) {
-                for (String leaf : rulesOf(w, f).stream().filter(r -> VALUE_KINDS.contains(r.get("kind").getAsString()))
-                    .map(r -> r.get("wire").getAsString()).toList()) {
+                for (String leaf : rulesOf(w, f).stream().filter(Rule::writesValue).map(r -> r.wire).toList()) {
                     owners.computeIfAbsent(leaf, k -> new ArrayList<>()).add(f.alternativeOf != null ? f.alternativeOf.path : f.path);
                 }
                 for (Field a : f.alternatives) {
-                    rulesOf(w, a).stream().filter(r -> VALUE_KINDS.contains(r.get("kind").getAsString()))
-                        .forEach(r -> owners.computeIfAbsent(r.get("wire").getAsString(), k -> new ArrayList<>()).add(f.path));
+                    rulesOf(w, a).stream().filter(Rule::writesValue)
+                        .forEach(r -> owners.computeIfAbsent(r.wire, k -> new ArrayList<>()).add(f.path));
                 }
             }
             ObjType child = objectOf(f.type);
@@ -1358,19 +1355,14 @@ public final class ComponentGenerator {
     }
 
     /** The rules of a field in a window, without the rules a union's object takes over from its children. */
-    static List<JsonObject> rulesOf(Window w, Field f) {
-        JsonObject m = mappingOf(w, f);
-        List<JsonObject> rules = new ArrayList<>();
-        if (m == null || !m.has("rules")) {
-            return rules;
-        }
-        m.getAsJsonArray("rules").forEach(r -> rules.add(r.getAsJsonObject()));
+    static List<Rule> rulesOf(Window w, Field f) {
+        List<Rule> rules = Rule.all(mappingOf(w, f));
         if (f.type instanceof ObjRef || (f.type instanceof ListOf l && l.element() instanceof ObjRef)) {
             // An object's own value rules come from its scalar shorthand, which its children explain
-            rules.removeIf(r -> VALUE_KINDS.contains(r.get("kind").getAsString()));
+            rules.removeIf(Rule::writesValue);
         }
         if (!f.alternatives.isEmpty()) {
-            rules.removeIf(r -> VALUE_KINDS.contains(r.get("kind").getAsString()));
+            rules.removeIf(Rule::writesValue);
         }
         return rules;
     }
@@ -1486,10 +1478,10 @@ public final class ComponentGenerator {
                 if (v == null) {
                     continue;
                 }
-                for (JsonObject rule : rulesOf(w, child)) {
-                    String leaf = rule.get("wire").getAsString();
+                for (Rule rule : rulesOf(w, child)) {
+                    String leaf = rule.wire;
                     String expected = absent.get(leaf);
-                    String actual = WireSource.evaluate(rule, v);
+                    String actual = rule.evaluate(v);
                     if (expected != null && actual != null && !sameLiteral(expected, actual)) {
                         return "BDS sends " + leaf + " = " + expected + " when it is omitted";
                     }
@@ -1497,17 +1489,13 @@ public final class ComponentGenerator {
             }
             return null;
         }
-        for (JsonObject rule : rulesOf(w, f)) {
-            String kind = rule.get("kind").getAsString();
-            String leaf = rule.get("wire").getAsString();
+        for (Rule rule : rulesOf(w, f)) {
+            String leaf = rule.wire;
             String expected = absent.get(leaf);
             if (expected == null || (expected.equals("omitted") && f.path != null && f.path.contains("[]"))) {
                 continue;
             }
-            if (kind.equals("constant") || kind.equals("empty-list") || kind.equals("structure") || kind.equals("cross-field")) {
-                continue;
-            }
-            String actual = WireSource.evaluate(rule, d);
+            String actual = rule.evaluate(d);
             if (actual == null) {
                 continue;
             }

@@ -11,7 +11,21 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.tools.codegen.component.HandTransforms;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
-import org.geysermc.paletter.tools.model.infer.Wire.Leaf;
+import org.geysermc.paletter.tools.model.rule.Affix;
+import org.geysermc.paletter.tools.model.rule.Bitset;
+import org.geysermc.paletter.tools.model.rule.Constant;
+import org.geysermc.paletter.tools.model.rule.Count;
+import org.geysermc.paletter.tools.model.rule.CrossField;
+import org.geysermc.paletter.tools.model.rule.EmptyList;
+import org.geysermc.paletter.tools.model.rule.EmptyMap;
+import org.geysermc.paletter.tools.model.rule.Identity;
+import org.geysermc.paletter.tools.model.rule.Leaf;
+import org.geysermc.paletter.tools.model.rule.Linear;
+import org.geysermc.paletter.tools.model.rule.Observation;
+import org.geysermc.paletter.tools.model.rule.OrderedSet;
+import org.geysermc.paletter.tools.model.rule.Rule;
+import org.geysermc.paletter.tools.model.rule.Structure;
+import org.geysermc.paletter.tools.model.rule.Table;
 import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.Model.Component;
 import org.geysermc.paletter.tools.model.Model.Field;
@@ -545,10 +559,9 @@ public final class MappingInference {
         }
         for (Map.Entry<String, JsonElement> field : newest.getAsJsonObject("fields").entrySet()) {
             JsonObject result = field.getValue().getAsJsonObject();
-            for (JsonElement r : result.has("rules") ? result.getAsJsonArray("rules") : new JsonArray()) {
-                JsonObject rule = r.getAsJsonObject();
-                if (rule.get("kind").getAsString().equals("linear") && rule.has("nbt") && rule.get("nbt").getAsString().equals("int")) {
-                    double step = Math.abs(1 / rule.get("scale").getAsDouble());
+            for (Rule rule : Rule.all(result)) {
+                if (rule instanceof Linear linear && "int".equals(rule.nbt)) {
+                    double step = Math.abs(1 / linear.scale);
                     if (step >= 2 && Math.abs(step - Math.rint(step)) < 1e-3) {
                         feedback.step(componentId, field.getKey(), Math.round(step));
                     }
@@ -1139,12 +1152,7 @@ public final class MappingInference {
 
     /** The values of a table rule onto an integral leaf, when every one is a non negative integer; else null. */
     private static long[] integralTable(JsonObject rule) {
-        if (!rule.get("kind").getAsString().equals("table") || !rule.has("nbt")
-            || !List.of("byte", "short", "int", "long").contains(rule.get("nbt").getAsString())) {
-            return null;
-        }
-        List<String> values = rule.getAsJsonObject("table").entrySet().stream().map(e -> e.getValue().getAsString()).toList();
-        return values.stream().allMatch(v -> v.matches("\\d{1,18}")) ? values.stream().mapToLong(Long::parseLong).toArray() : null;
+        return Rule.of(rule) instanceof Table table ? table.integral() : null;
     }
 
     private static void union(JsonArray into, JsonElement element) {
@@ -1265,13 +1273,13 @@ public final class MappingInference {
             out.addProperty("unknownToBds", true);
         }
         // Observations: the reference (with its own value at the path) and the accepted variants
-        List<Pair> observations = new ArrayList<>();
+        List<Observation> observations = new ArrayList<>();
         if (!form) {
-            observations.add(new Pair(referenceValue, reference.wire(), "reference"));
+            observations.add(new Observation(referenceValue, reference.wire(), "reference"));
         }
         for (Obs o : accepted) {
             JsonElement value = o.variant().role().equals("omit") ? null : form ? o.variant().json() : jsonAt(o.variant().json(), path);
-            observations.add(new Pair(value, o.wire(), o.variant().label()));
+            observations.add(new Observation(value, o.wire(), o.variant().label()));
         }
         Set<String> varying = new TreeSet<>();
         // A leaf the linked field moves is left out of a linked variant by name, so a leaf both fields write is masked: the
@@ -1293,11 +1301,11 @@ public final class MappingInference {
         }
         if (form) {
             // a whole value form also "varies" every leaf it shares with the control's absence of the component
-            observations.add(0, new Pair(null, reference.wire(), "control"));
+            observations.add(0, new Observation(null, reference.wire(), "control"));
         }
-        boolean distinctValues = observations.stream().map(p -> Objects.toString(p.json)).distinct().count() > 1;
+        boolean distinctValues = observations.stream().map(p -> Objects.toString(p.json())).distinct().count() > 1;
         String status;
-        JsonArray rules = new JsonArray();
+        List<Rule> rules = new ArrayList<>();
         JsonArray unexplained = new JsonArray();
         JsonObject absent = new JsonObject();
         if (accepted.isEmpty()) {
@@ -1305,59 +1313,49 @@ public final class MappingInference {
         } else if (varying.isEmpty()) {
             status = distinctValues ? "dropped" : "no-evidence";
         } else {
-            Map<String, JsonObject> byGeneric = new LinkedHashMap<>();
-            for (JsonObject set : orderedSet(observations, varying, closedValues(component, path))) {
+            Map<String, Rule> byGeneric = new LinkedHashMap<>();
+            for (OrderedSet set : OrderedSet.fit(observations, varying, closedValues(component, path))) {
                 // the list leaves are explained as a whole: drop them from the leaf by leaf fit
-                String list = set.get("wire").getAsString();
+                String list = set.wire;
                 varying.removeIf(w -> w.matches(Pattern.quote(list.substring(0, list.length() - 2)) + "\\[\\d+]"));
                 byGeneric.put(list + " ordered-set", set);
             }
             for (String wire : varying) {
-                JsonObject rule = fit(component, path, wire, observations);
-                Leaf whenAbsent = observations.stream().filter(p -> p.json == null).map(p -> p.wire.get(wire)).filter(Objects::nonNull).findFirst().orElse(null);
-                boolean anyAbsent = observations.stream().anyMatch(p -> p.json == null);
+                Rule rule = fit(component, path, wire, observations);
+                Leaf whenAbsent = observations.stream().filter(p -> p.json() == null).map(p -> p.wire().get(wire)).filter(Objects::nonNull).findFirst().orElse(null);
+                boolean anyAbsent = observations.stream().anyMatch(p -> p.json() == null);
                 if (anyAbsent && !form) {
                     absent.addProperty(Wire.generic(wire), whenAbsent == null ? "omitted" : whenAbsent.toString());
                 }
-                boolean setVaries = observations.stream().filter(p -> p.json != null)
-                    .anyMatch(p -> !Objects.equals(p.wire.get(wire), reference.wire().get(wire)));
+                boolean setVaries = observations.stream().filter(p -> p.json() != null)
+                    .anyMatch(p -> !Objects.equals(p.wire().get(wire), reference.wire().get(wire)));
                 if (rule == null && !setVaries && !form) {
                     // only observations without the field differ (another field of the variant moved it)
-                    rule = new JsonObject();
-                    rule.addProperty("kind", "cross-field");
-                    JsonArray t = new JsonArray();
-                    t.add("depends-on-other-fields");
-                    rule.add("tags", t);
+                    rule = new CrossField();
                 }
                 if (rule == null && container(component, path)) {
                     // a list/object/map field: its elements' leaves are explained by its child fields
-                    rule = new JsonObject();
-                    rule.addProperty("kind", "structure");
-                    JsonArray t = new JsonArray();
-                    t.add("explained-by-child-fields");
-                    rule.add("tags", t);
+                    rule = new Structure();
                 }
                 if (rule == null) {
                     JsonObject u = new JsonObject();
                     u.addProperty("wire", wire);
                     JsonArray samples = new JsonArray();
-                    observations.stream().limit(6).forEach(p -> samples.add((p.json == null ? ABSENT : p.json.toString()) + " -> "
-                        + (p.wire.get(wire) == null ? "-" : p.wire.get(wire).toString())));
+                    observations.stream().limit(6).forEach(p -> samples.add((p.json() == null ? ABSENT : p.json().toString()) + " -> "
+                        + (p.wire().get(wire) == null ? "-" : p.wire().get(wire).toString())));
                     u.add("samples", samples);
                     unexplained.add(u);
                 } else {
-                    String key = Wire.generic(wire) + " " + rule.get("kind").getAsString();
-                    JsonObject existing = byGeneric.get(key);
-                    if (existing == null) {
-                        rule.addProperty("wire", Wire.generic(wire));
+                    String key = Wire.generic(wire) + " " + rule.kind();
+                    if (!byGeneric.containsKey(key)) {
+                        rule.wire = Wire.generic(wire);
                         byGeneric.put(key, rule);
                     }
                 }
             }
             byGeneric.values().forEach(rule -> steps(rule, path, accepted, rejected));
-            mapEntries(byGeneric.values()).forEach(rules::add);
-            boolean onlyStructural = rules.asList().stream().allMatch(r -> List.of("structure", "cross-field", "constant", "empty-list", "empty-map")
-                .contains(r.getAsJsonObject().get("kind").getAsString()));
+            rules.addAll(mapEntries(byGeneric.values()));
+            boolean onlyStructural = rules.stream().noneMatch(Rule::writesValue);
             status = unexplained.isEmpty() ? (onlyStructural && !container(component, path) && !form ? "dropped" : "inferred")
                 : rules.isEmpty() ? "unresolved" : "partial";
         }
@@ -1384,7 +1382,9 @@ public final class MappingInference {
         }
         out.addProperty("status", status);
         if (!rules.isEmpty()) {
-            out.add("rules", rules);
+            JsonArray array = new JsonArray();
+            rules.forEach(r -> array.add(r.toJson()));
+            out.add("rules", array);
         }
         if (!absent.isEmpty()) {
             out.add("whenAbsent", absent);
@@ -1424,37 +1424,31 @@ public final class MappingInference {
      * Map entries whose key is the last segment of their leaf: two or more keys with the same rule below one parent make
      * one rule for every key ({@code textures{}}); a single key says nothing about others and keeps its own leaf.
      */
-    static List<JsonObject> mapEntries(java.util.Collection<JsonObject> rules) {
-        Map<String, List<JsonObject>> byParent = new LinkedHashMap<>();
-        for (JsonObject rule : rules) {
-            String wire = rule.get("wire").getAsString();
-            String key = rule.has("key") ? rule.get("key").getAsString() : null;
-            if (key != null && rule.get("kind").getAsString().equals("identity") && wire.endsWith("." + key)) {
-                byParent.computeIfAbsent(wire.substring(0, wire.length() - key.length() - 1) + " " + rule.get("nbt"), k -> new ArrayList<>()).add(rule);
+    static List<Rule> mapEntries(java.util.Collection<Rule> rules) {
+        Map<String, List<Rule>> byParent = new LinkedHashMap<>();
+        for (Rule rule : rules) {
+            if (rule.key != null && rule instanceof Identity && rule.wire.endsWith("." + rule.key)) {
+                byParent.computeIfAbsent(rule.wire.substring(0, rule.wire.length() - rule.key.length() - 1) + " " + rule.nbt, k -> new ArrayList<>()).add(rule);
             }
         }
-        List<JsonObject> out = new ArrayList<>();
+        List<Rule> out = new ArrayList<>();
         Set<String> merged = new java.util.HashSet<>();
-        for (JsonObject rule : rules) {
-            String wire = rule.get("wire").getAsString();
-            List<JsonObject> siblings = byParent.values().stream().filter(l -> l.contains(rule)).findFirst().orElse(List.of());
+        for (Rule rule : rules) {
+            List<Rule> siblings = byParent.values().stream().filter(l -> l.contains(rule)).findFirst().orElse(List.of());
             if (siblings.size() >= 2) {
-                String parent = wire.substring(0, wire.length() - rule.get("key").getAsString().length() - 1);
+                String parent = rule.wire.substring(0, rule.wire.length() - rule.key.length() - 1);
                 if (merged.add(parent)) {
-                    JsonObject any = rule.deepCopy();
-                    any.remove("key");
-                    any.addProperty("wire", parent + "{}");
-                    out.add(any);
+                    // the first sibling stands for every key
+                    rule.key = null;
+                    rule.wire = parent + "{}";
+                    out.add(rule);
                 }
                 continue;
             }
-            rule.remove("key");
+            rule.key = null;
             out.add(rule);
         }
         return out;
-    }
-
-    record Pair(JsonElement json, Map<String, Leaf> wire, String label) {
     }
 
     /** Whether the model has fields below this path (a list, object or map with documented contents). */
@@ -1465,27 +1459,27 @@ public final class MappingInference {
     }
 
     // ---------------------------------------------------------------------------------------------------------------
-    // Rule fitting
+    // Rule fitting: which kind of rule a JSON shape can have, in order. A new kind of rule is fitted here (Rule)
 
-    private JsonObject fit(Component component, String path, String wire, List<Pair> observations) {
-        List<Pair> set = observations.stream().filter(p -> p.json != null && !p.json.isJsonNull()).toList();
+    private Rule fit(Component component, String path, String wire, List<Observation> observations) {
+        List<Observation> set = observations.stream().filter(p -> p.json() != null && !p.json().isJsonNull()).toList();
         if (set.isEmpty()) {
             return null;
         }
         String jsonName = path.isEmpty() ? "" : AddonGenerator.tokens(path).getLast();
-        boolean scalars = set.stream().allMatch(p -> p.json.isJsonPrimitive());
-        JsonObject rule = null;
+        boolean scalars = set.stream().allMatch(p -> p.json().isJsonPrimitive());
+        Rule rule;
         Field field = component.field(path);
         // an enum of the docs, or one BDS lists in its content log ("expects one of the following strings")
         boolean enumerated = field != null && !field.enumValues().isEmpty() || feedback.has(component.id(), path, "values");
         if (scalars) {
-            rule = scalar(set, p -> p.json, wire);
-            if (rule != null && rule.get("kind").getAsString().equals("table") && !tableAllowed(set, enumerated)) {
-                rule = affix(set, wire);
+            rule = scalar(set, Observation::json, wire);
+            if (rule instanceof Table && !tableAllowed(set, enumerated)) {
+                rule = Affix.fit(set, wire);
             }
-        } else if (set.stream().allMatch(p -> p.json.isJsonArray())) {
+        } else if (set.stream().allMatch(p -> p.json().isJsonArray())) {
             rule = array(set, wire, enumerated || feedback.has(component.id(), path + "[]", "values"));
-        } else if (set.stream().allMatch(p -> p.json.isJsonObject())) {
+        } else if (set.stream().allMatch(p -> p.json().isJsonObject())) {
             rule = object(set, wire, enumerated || feedback.has(component.id(), path + "{}", "values"));
         } else {
             rule = mixed(set, wire, enumerated, enumerated || feedback.has(component.id(), path + "[]", "values"));
@@ -1493,11 +1487,11 @@ public final class MappingInference {
         if (rule == null) {
             return null;
         }
-        Leaf sample = set.stream().map(p -> p.wire.get(wire)).filter(Objects::nonNull).findFirst().orElse(null);
+        Leaf sample = set.stream().map(p -> p.wire().get(wire)).filter(Objects::nonNull).findFirst().orElse(null);
         if (sample != null) {
-            rule.addProperty("nbt", sample.type());
+            rule.nbt = sample.type();
         }
-        rule.add("tags", tags(component, path, jsonName, wire, rule, set));
+        rule.tags = tags(component, path, jsonName, wire, rule, set);
         return rule;
     }
 
@@ -1510,213 +1504,61 @@ public final class MappingInference {
      * @param enumerated     whether the scalar values are of a closed set (an enum)
      * @param closedElements whether the list's elements are
      */
-    static JsonObject mixed(List<Pair> set, String wire, boolean enumerated, boolean closedElements) {
-        List<Pair> primitive = set.stream().filter(p -> p.json.isJsonPrimitive()).toList();
-        List<Pair> lists = set.stream().filter(p -> p.json.isJsonArray()).toList();
-        JsonObject rule = primitive.isEmpty() ? null : scalar(primitive, p -> p.json, wire);
-        if (rule != null && rule.get("kind").getAsString().equals("table") && !tableAllowed(primitive, enumerated)) {
-            rule = affix(primitive, wire);
+    static Rule mixed(List<Observation> set, String wire, boolean enumerated, boolean closedElements) {
+        List<Observation> primitive = set.stream().filter(p -> p.json().isJsonPrimitive()).toList();
+        List<Observation> lists = set.stream().filter(p -> p.json().isJsonArray()).toList();
+        Rule rule = primitive.isEmpty() ? null : scalar(primitive, Observation::json, wire);
+        if (rule instanceof Table && !tableAllowed(primitive, enumerated)) {
+            rule = Affix.fit(primitive, wire);
         }
-        boolean scalarSilent = rule != null && rule.get("kind").getAsString().equals("constant")
-            && primitive.stream().allMatch(p -> p.wire.get(wire) == null) && lists.stream().anyMatch(p -> p.wire.get(wire) != null);
+        boolean scalarSilent = rule instanceof Constant
+            && primitive.stream().allMatch(p -> p.wire().get(wire) == null) && lists.stream().anyMatch(p -> p.wire().get(wire) != null);
         if ((rule == null || scalarSilent) && !lists.isEmpty()) {
             rule = array(lists, wire, closedElements);
         }
         return rule;
     }
 
-    private static boolean numericTable(JsonObject rule) {
-        return rule.get("kind").getAsString().equals("table")
-            && rule.getAsJsonObject("table").keySet().stream().anyMatch(k -> k.matches("-?[\\d.]+"));
-    }
-
     /** A value table generalizes only for closed sets: booleans and documented enums. */
-    static boolean tableAllowed(List<Pair> set, boolean enumerated) {
-        return set.stream().allMatch(p -> p.json.getAsJsonPrimitive().isBoolean())
-            || (enumerated && set.stream().allMatch(p -> p.json.getAsJsonPrimitive().isString()));
+    static boolean tableAllowed(List<Observation> set, boolean enumerated) {
+        return set.stream().allMatch(p -> p.json().getAsJsonPrimitive().isBoolean())
+            || (enumerated && set.stream().allMatch(p -> p.json().getAsJsonPrimitive().isString()));
     }
 
-    /** Free strings: leaf = prefix + value + suffix (namespace added, "<>" event suffix). */
-    static JsonObject affix(List<Pair> set, String wire) {
-        String prefix = null;
-        String suffix = null;
-        for (Pair p : set) {
-            if (!p.json.getAsJsonPrimitive().isString() || p.wire.get(wire) == null || !(p.wire.get(wire).value() instanceof String leaf)) {
-                return null;
-            }
-            String x = p.json.getAsString();
-            if (!x.contains(":") && leaf.contains("minecraft:" + x)) {
-                x = "minecraft:" + x; // the default namespace is added
-            }
-            int at = leaf.indexOf(x);
-            if (at < 0) {
-                // a namespace the leaf adds to a bare value
-                return null;
-            }
-            String pre = leaf.substring(0, at);
-            String suf = leaf.substring(at + x.length());
-            if ((prefix != null && !prefix.equals(pre)) || (suffix != null && !suffix.equals(suf))) {
-                return null;
-            }
-            prefix = pre;
-            suffix = suf;
-        }
-        JsonObject rule = new JsonObject();
-        rule.addProperty("kind", "affix");
-        rule.addProperty("prefix", prefix);
-        rule.addProperty("suffix", suffix);
-        return rule;
-    }
-
-    interface Getter {
-        JsonElement get(Pair p);
-    }
-
-    /** identity, linear or table between a scalar JSON value and a leaf. */
-    static JsonObject scalar(List<Pair> set, Getter getter, String wire) {
+    /** identity, linear, table (or constant) between a scalar JSON value and a leaf, in that order. */
+    static Rule scalar(List<Observation> set, Function<Observation, JsonElement> getter, String wire) {
         List<JsonElement> xs = new ArrayList<>();
         List<Leaf> ys = new ArrayList<>();
-        for (Pair p : set) {
-            JsonElement x = getter.get(p);
+        for (Observation p : set) {
+            JsonElement x = getter.apply(p);
             if (x == null || !x.isJsonPrimitive()) {
                 return null;
             }
             xs.add(x);
-            ys.add(p.wire.get(wire));
+            ys.add(p.wire().get(wire));
         }
-        boolean identity = true;
-        for (int i = 0; i < xs.size(); i++) {
-            if (ys.get(i) == null || !same(xs.get(i), ys.get(i))) {
-                identity = false;
-                break;
-            }
+        Rule rule = Identity.fit(xs, ys);
+        if (rule == null) {
+            rule = Linear.fit(xs, ys);
         }
-        if (identity) {
-            JsonObject rule = new JsonObject();
-            rule.addProperty("kind", "identity");
-            return rule;
-        }
-        // linear: y = a x + b over numbers (booleans as 0/1)
-        if (xs.stream().allMatch(x -> x.getAsJsonPrimitive().isNumber()) && ys.stream().allMatch(y -> y != null && y.numeric())) {
-            Set<Double> distinct = new TreeSet<>();
-            xs.forEach(x -> distinct.add(x.getAsDouble()));
-            if (distinct.size() >= 2) {
-                int i = 0;
-                int j = -1;
-                for (int k = 1; k < xs.size(); k++) {
-                    if (xs.get(k).getAsDouble() != xs.get(0).getAsDouble()) {
-                        j = k;
-                        break;
-                    }
-                }
-                double a = (ys.get(j).number() - ys.get(i).number()) / (xs.get(j).getAsDouble() - xs.get(i).getAsDouble());
-                double b = ys.get(i).number() - a * xs.get(i).getAsDouble();
-                boolean fits = true;
-                for (int k = 0; k < xs.size(); k++) {
-                    if (!close(a * xs.get(k).getAsDouble() + b, ys.get(k).number())) {
-                        fits = false;
-                        break;
-                    }
-                }
-                if (fits && Math.abs(a) > 1e-9) { // scale 0 is a constant, below
-                    JsonObject rule = new JsonObject();
-                    rule.addProperty("kind", "linear");
-                    rule.addProperty("scale", round(a));
-                    rule.addProperty("offset", round(b));
-                    return rule;
-                }
-                JsonObject wrapped = wrapped(xs, ys);
-                if (wrapped != null) {
-                    return wrapped;
-                }
-            }
-        }
-        // table: a function from JSON value to leaf (absent leaf = not sent)
-        Map<String, String> table = new TreeMap<>();
-        for (int i = 0; i < xs.size(); i++) {
-            String key = xs.get(i).getAsJsonPrimitive().isString() ? xs.get(i).getAsString() : xs.get(i).toString();
-            String value = ys.get(i) == null ? "<not sent>" : String.valueOf(ys.get(i).value());
-            String existing = table.putIfAbsent(key, value);
-            if (existing != null && !existing.equals(value)) {
-                return null;
-            }
-        }
-        if (table.size() < 2 || table.values().stream().distinct().count() < 2) {
-            if (table.size() == 1 || table.values().stream().distinct().count() == 1) {
-                // every tested value gives the same leaf: a constant the field's presence switches on
-                JsonObject rule = new JsonObject();
-                rule.addProperty("kind", "constant");
-                rule.addProperty("value", table.values().iterator().next());
-                return rule;
-            }
-        }
-        JsonObject rule = new JsonObject();
-        rule.addProperty("kind", "table");
-        JsonObject entries = new JsonObject();
-        table.forEach(entries::addProperty);
-        rule.add("table", entries);
-        return rule;
-    }
-
-    /**
-     * A line wrapped into {@code [0, m)}: whole steps on an integer leaf that start again past the largest one BDS sends
-     * ({@code -90 -> 3}, {@code 450 -> 1} quarter turns). The modulus is the largest leaf plus one, and an observation
-     * outside the line's range must show the wrap; null otherwise.
-     */
-    static JsonObject wrapped(List<JsonElement> xs, List<Leaf> ys) {
-        if (ys.stream().anyMatch(y -> y == null || !y.numeric() || y.number() < 0 || y.number() != Math.rint(y.number()))) {
-            return null;
-        }
-        long modulus = (long) ys.stream().mapToDouble(Leaf::number).max().orElse(0) + 1;
-        if (modulus < 2) {
-            return null;
-        }
-        for (int i = 0; i < xs.size(); i++) {
-            for (int j = i + 1; j < xs.size(); j++) {
-                double dx = xs.get(j).getAsDouble() - xs.get(i).getAsDouble();
-                if (dx == 0) {
-                    continue;
-                }
-                double a = (ys.get(j).number() - ys.get(i).number()) / dx;
-                double b = ys.get(i).number() - a * xs.get(i).getAsDouble();
-                if (Math.abs(a) < 1e-9) {
-                    continue;
-                }
-                boolean fits = true;
-                boolean wraps = false;
-                for (int k = 0; k < xs.size() && fits; k++) {
-                    double line = a * xs.get(k).getAsDouble() + b;
-                    fits = close(line, Math.rint(line)) && Math.floorMod((long) Math.rint(line), modulus) == (long) ys.get(k).number();
-                    wraps |= line < 0 || line >= modulus;
-                }
-                if (fits && wraps) {
-                    JsonObject rule = new JsonObject();
-                    rule.addProperty("kind", "linear");
-                    rule.addProperty("scale", round(a));
-                    rule.addProperty("offset", round(b));
-                    rule.addProperty("modulo", modulus);
-                    return rule;
-                }
-            }
-        }
-        return null;
+        return rule != null ? rule : Table.fit(xs, ys);
     }
 
     /**
      * A linear rule onto whole steps of its input ({@code degrees / 90}) gets {@code multipleOf}: when every accepted value
      * is a multiple of the step and BDS refused a variant whose value is not. The API refuses such values too.
      */
-    private static void steps(JsonObject rule, String path, List<Obs> accepted, List<Obs> rejected) {
-        if (!rule.get("kind").getAsString().equals("linear") || !"int".equals(rule.has("nbt") ? rule.get("nbt").getAsString() : null)) {
+    private static void steps(Rule rule, String path, List<Obs> accepted, List<Obs> rejected) {
+        if (!(rule instanceof Linear linear) || !"int".equals(rule.nbt)) {
             return;
         }
-        double step = 1 / rule.get("scale").getAsDouble();
+        double step = 1 / linear.scale;
         if (Math.abs(step) < 2 || Math.abs(step - Math.rint(step)) > 1e-3) {
             return;
         }
         long n = Math.abs((long) Math.rint(step));
-        Integer element = rule.has("element") ? rule.get("element").getAsInt() : null;
-        java.util.function.Function<Obs, List<Double>> numbers = o -> {
+        Integer element = rule.element;
+        Function<Obs, List<Double>> numbers = o -> {
             JsonElement value = o.variant().role().equals("omit") ? null : jsonAt(o.variant().json(), path);
             List<Double> out = new ArrayList<>();
             if (value != null && value.isJsonPrimitive() && value.getAsJsonPrimitive().isNumber()) {
@@ -1735,76 +1577,8 @@ public final class MappingInference {
         boolean acceptedOnSteps = accepted.stream().flatMap(o -> numbers.apply(o).stream()).allMatch(multiple::test);
         boolean refusedOffSteps = rejected.stream().anyMatch(o -> numbers.apply(o).stream().anyMatch(x -> !multiple.test(x)));
         if (acceptedOnSteps && refusedOffSteps) {
-            rule.addProperty("multipleOf", n);
+            rule.multipleOf = n;
         }
-    }
-
-    /**
-     * Lists of strings BDS sends as the set of their values: in an order of its own ({@code connected_faces ["north",
-     * "east", "up"]} -> {@code ["up", "north", "east"]}; the rule's {@code order} is the one of the observation that holds
-     * every value seen), or in the JSON's order without the duplicates ({@code tags ["a", "a"]} -> {@code item_tags ["a"]};
-     * no {@code order}). Every observed list leaf must hold the distinct values of the JSON list in that order, and the
-     * order must differ from the JSON's somewhere or a duplicate must be dropped (else element identity explains it).
-     * <p>
-     * An order of BDS's own is a rule only for a closed set of values, all of them seen: for a list of any strings
-     * ({@code uv_lock}'s bones, sent in the order of their name hashes) the order of the few captured values says nothing
-     * about the others, and an encoder made from it would drop them. Such a list stays unexplained (a hand transform).
-     *
-     * @param closed the values the list's elements can have, empty if any string goes
-     * @return one rule per list leaf of {@code varying} that fits
-     */
-    static List<JsonObject> orderedSet(List<Pair> observations, Set<String> varying, Set<String> closed) {
-        List<Pair> set = observations.stream().filter(p -> p.json != null && p.json.isJsonArray()).toList();
-        if (set.isEmpty() || set.stream().anyMatch(p -> p.json.getAsJsonArray().asList().stream()
-            .anyMatch(e -> !e.isJsonPrimitive() || !e.getAsJsonPrimitive().isString()))) {
-            return List.of();
-        }
-        Set<String> lists = new TreeSet<>();
-        for (String wire : varying) {
-            Matcher m = Pattern.compile("^(.*)\\[\\d+]$").matcher(wire);
-            if (m.matches()) {
-                lists.add(m.group(1));
-            }
-        }
-        List<JsonObject> rules = new ArrayList<>();
-        for (String list : lists) {
-            JsonObject rule = orderedSet(set, list, closed);
-            if (rule != null) {
-                rules.add(rule);
-            }
-        }
-        return rules;
-    }
-
-    private static JsonObject orderedSet(List<Pair> set, String list, Set<String> closed) {
-        Function<Pair, List<Object>> sent = p -> {
-            List<Object> out = new ArrayList<>();
-            for (int k = 0; p.wire.get(list + "[" + k + "]") != null; k++) {
-                out.add(p.wire.get(list + "[" + k + "]").value());
-            }
-            return out;
-        };
-        Function<Pair, List<String>> distinct = p -> p.json.getAsJsonArray().asList().stream().map(JsonElement::getAsString).distinct().toList();
-        if (set.stream().allMatch(p -> distinct.apply(p).equals(sent.apply(p)))) {
-            // the JSON's order: a set only if BDS dropped a duplicate
-            if (set.stream().noneMatch(p -> p.json.getAsJsonArray().size() != distinct.apply(p).size())) {
-                return null;
-            }
-            return orderedSetRule(list, null);
-        }
-        Set<String> all = new TreeSet<>();
-        set.forEach(p -> p.json.getAsJsonArray().forEach(e -> all.add(e.getAsString())));
-        List<Object> order = set.stream().map(sent).filter(l -> l.size() == all.size() && all.containsAll(l)).findFirst().orElse(null);
-        if (order == null || all.size() < 2 || closed.isEmpty() || !all.containsAll(closed)) {
-            return null;
-        }
-        for (Pair p : set) {
-            List<String> json = distinct.apply(p);
-            if (!order.stream().filter(json::contains).toList().equals(sent.apply(p))) {
-                return null;
-            }
-        }
-        return orderedSetRule(list, order);
     }
 
     /** The strings the docs list as the values of a field (of its elements, for a list); empty if they list none. */
@@ -1817,67 +1591,20 @@ public final class MappingInference {
         return values;
     }
 
-    private static JsonObject orderedSetRule(String list, List<Object> order) {
-        JsonObject rule = new JsonObject();
-        rule.addProperty("kind", "ordered-set");
-        if (order != null) {
-            JsonArray values = new JsonArray();
-            order.forEach(v -> values.add(String.valueOf(v)));
-            rule.add("order", values);
-        }
-        rule.addProperty("nbt", "string");
-        rule.add("tags", new JsonArray());
-        rule.addProperty("wire", Wire.generic(list + "[0]"));
-        return rule;
-    }
-
     /**
-     * element k -> leaf, bit set, or list identity.
+     * A constant, bit set, element k -> leaf, count or empty list.
      *
      * @param closed whether the elements are of a closed set of values (an enum): only then a table of the strings seen
      *               is a rule, as for a scalar ({@link #tableAllowed})
      */
-    static JsonObject array(List<Pair> set, String wire, boolean closed) {
+    static Rule array(List<Observation> set, String wire, boolean closed) {
         // the same leaf whatever the list (a structure the presence of the field adds)
-        if (set.stream().map(p -> String.valueOf(p.wire.get(wire) == null ? null : p.wire.get(wire).value())).distinct().count() == 1) {
-            JsonObject rule = new JsonObject();
-            rule.addProperty("kind", "constant");
-            rule.addProperty("value", set.get(0).wire.get(wire) == null ? "<not sent>" : String.valueOf(set.get(0).wire.get(wire).value()));
-            return rule;
+        if (set.stream().map(p -> String.valueOf(p.wire().get(wire) == null ? null : p.wire().get(wire).value())).distinct().count() == 1) {
+            return new Constant(set.get(0).wire().get(wire) == null ? Rule.NOT_SENT : String.valueOf(set.get(0).wire().get(wire).value()));
         }
-        // bit set: a list of strings -> int
-        if (set.stream().allMatch(p -> p.json.getAsJsonArray().asList().stream().allMatch(e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isString()))
-            && set.stream().allMatch(p -> p.wire.get(wire) != null && p.wire.get(wire).numeric())) {
-            Map<String, Long> bits = new TreeMap<>();
-            for (Pair p : set) {
-                if (p.json.getAsJsonArray().size() == 1) {
-                    bits.put(p.json.getAsJsonArray().get(0).getAsString(), (long) p.wire.get(wire).number());
-                }
-            }
-            boolean fits = bits.size() >= 2;
-            for (Pair p : set) {
-                long expected = 0;
-                for (JsonElement e : p.json.getAsJsonArray()) {
-                    Long bit = bits.get(e.getAsString());
-                    if (bit == null) {
-                        fits = false;
-                        break;
-                    }
-                    expected |= bit;
-                }
-                if (!fits || expected != (long) p.wire.get(wire).number()) {
-                    fits = false;
-                    break;
-                }
-            }
-            if (fits) {
-                JsonObject rule = new JsonObject();
-                rule.addProperty("kind", "bitset");
-                JsonObject table = new JsonObject();
-                bits.forEach(table::addProperty);
-                rule.add("bits", table);
-                return rule;
-            }
+        Rule bitset = Bitset.fit(set, wire);
+        if (bitset != null) {
+            return bitset;
         }
         // element k of the JSON list -> the leaf (index of the leaf first)
         Matcher index = Pattern.compile("\\[(\\d+)]$").matcher(wire);
@@ -1890,26 +1617,26 @@ public final class MappingInference {
                 candidates.add(k);
             }
         }
-        JsonObject best = null;
+        Rule best = null;
         for (int k : candidates) {
             final int at = k;
-            List<Pair> having = set.stream().filter(p -> p.json.getAsJsonArray().size() > at).toList();
-            boolean shorterUnsent = set.stream().filter(p -> p.json.getAsJsonArray().size() <= at).allMatch(p -> p.wire.get(wire) == null);
-            if (having.isEmpty() || !shorterUnsent || having.stream().anyMatch(p -> !p.json.getAsJsonArray().get(at).isJsonPrimitive())) {
+            List<Observation> having = set.stream().filter(p -> p.json().getAsJsonArray().size() > at).toList();
+            boolean shorterUnsent = set.stream().filter(p -> p.json().getAsJsonArray().size() <= at).allMatch(p -> p.wire().get(wire) == null);
+            if (having.isEmpty() || !shorterUnsent || having.stream().anyMatch(p -> !p.json().getAsJsonArray().get(at).isJsonPrimitive())) {
                 continue;
             }
-            JsonObject rule = scalar(having, p -> p.json.getAsJsonArray().get(at), wire);
-            if (rule != null && having.size() < 2 && !rule.get("kind").getAsString().equals("identity")) {
+            Rule rule = scalar(having, p -> p.json().getAsJsonArray().get(at), wire);
+            if (rule != null && having.size() < 2 && !(rule instanceof Identity)) {
                 rule = null;
             }
-            if (rule != null && numericTable(rule)) {
+            if (rule instanceof Table table && table.numericKeys()) {
                 rule = null;
             }
-            if (rule != null && rule.get("kind").getAsString().equals("table") && !closed) {
+            if (rule instanceof Table && !closed) {
                 rule = null;
             }
-            if (rule != null && !rule.get("kind").getAsString().equals("constant")) {
-                rule.addProperty("element", k);
+            if (rule != null && !(rule instanceof Constant)) {
+                rule.element = k;
                 if (best == null || offset(rule) < offset(best)) {
                     best = rule;
                 }
@@ -1918,19 +1645,8 @@ public final class MappingInference {
         if (best != null) {
             return best;
         }
-        // list length (an empty marker or a count)
-        if (set.stream().allMatch(p -> p.wire.get(wire) != null && p.wire.get(wire).numeric()
-            && (long) p.wire.get(wire).number() == p.json.getAsJsonArray().size())) {
-            JsonObject rule = new JsonObject();
-            rule.addProperty("kind", "count");
-            return rule;
-        }
-        if (set.stream().allMatch(p -> (p.json.getAsJsonArray().isEmpty()) == (p.wire.get(wire) != null && "[]".equals(p.wire.get(wire).value())))) {
-            JsonObject rule = new JsonObject();
-            rule.addProperty("kind", "empty-list");
-            return rule;
-        }
-        return null;
+        Rule count = Count.fit(set, wire);
+        return count != null ? count : EmptyList.fit(set, wire);
     }
 
     /**
@@ -1938,12 +1654,12 @@ public final class MappingInference {
      * of a vector fit a line on every element ({@code [90, 180, 270]} and {@code [180, 270, 0]} put RY on element 0 with
      * offset 1 as well as on element 1 with offset 0), so the element whose rule needs no offset explains the leaf.
      */
-    private static double offset(JsonObject rule) {
-        return rule.has("offset") ? Math.abs(rule.get("offset").getAsDouble()) : 0;
+    private static double offset(Rule rule) {
+        return rule instanceof Linear linear ? Math.abs(linear.offset) : 0;
     }
 
     /**
-     * map entry: the JSON key appears in the leaf path and its value maps; or presence of an (empty) object.
+     * A constant, an empty map, or a map entry: the JSON key appears in the leaf path and its value maps.
      * <p>
      * An entry's rule needs the evidence a scalar's does: a leaf that is the same for the one value the entry ever had
      * is no constant (another value was never tried), and a table of the strings seen is a rule only for a closed set of
@@ -1951,41 +1667,33 @@ public final class MappingInference {
      *
      * @param closed whether the values of the entries are of a closed set (an enum)
      */
-    static JsonObject object(List<Pair> set, String wire, boolean closed) {
+    static Rule object(List<Observation> set, String wire, boolean closed) {
         // presence: the leaf exists iff the object is set
-        boolean presence = set.stream().allMatch(p -> p.wire.get(wire) != null);
+        boolean presence = set.stream().allMatch(p -> p.wire().get(wire) != null);
         Set<String> values = new TreeSet<>();
-        set.forEach(p -> values.add(String.valueOf(p.wire.get(wire) == null ? null : p.wire.get(wire).value())));
+        set.forEach(p -> values.add(String.valueOf(p.wire().get(wire) == null ? null : p.wire().get(wire).value())));
         if (presence && values.size() == 1) {
-            JsonObject rule = new JsonObject();
-            rule.addProperty("kind", "constant");
-            rule.addProperty("value", values.iterator().next());
-            return rule;
+            return new Constant(values.iterator().next());
         }
-        // an empty map sent as an empty compound (its entries are leaves of their own)
-        java.util.function.Predicate<Pair> empty = p -> p.json.getAsJsonObject().isEmpty();
-        if (set.stream().anyMatch(empty) && set.stream().anyMatch(empty.negate()) && set.stream()
-            .allMatch(p -> empty.test(p) == (p.wire.get(wire) != null && p.wire.get(wire).toString().equals("{} (compound)")))) {
-            JsonObject rule = new JsonObject();
-            rule.addProperty("kind", "empty-map");
-            return rule;
+        Rule emptyMap = EmptyMap.fit(set, wire);
+        if (emptyMap != null) {
+            return emptyMap;
         }
         // map entry: JSON {key: v} -> leaf ...key... = f(v)
         List<String> segments = Wire.segments(wire);
-        for (Pair p : set) {
-            for (Map.Entry<String, JsonElement> entry : p.json.getAsJsonObject().entrySet()) {
+        for (Observation p : set) {
+            for (Map.Entry<String, JsonElement> entry : p.json().getAsJsonObject().entrySet()) {
                 if (segments.contains(entry.getKey()) && entry.getValue().isJsonPrimitive()) {
-                    List<Pair> having = set.stream().filter(q -> q.json.getAsJsonObject().has(entry.getKey())
-                        && q.json.getAsJsonObject().get(entry.getKey()).isJsonPrimitive()).toList();
-                    Getter value = q -> q.json.getAsJsonObject().get(entry.getKey());
-                    JsonObject rule = scalar(having, value, wire);
-                    String kind = rule == null ? "" : rule.get("kind").getAsString();
-                    boolean oneValue = kind.equals("constant") && having.stream().map(q -> value.get(q).toString()).distinct().count() < 2;
-                    boolean openTable = kind.equals("table") && !having.stream().allMatch(q -> value.get(q).getAsJsonPrimitive().isBoolean()
-                        || (closed && value.get(q).getAsJsonPrimitive().isString()));
-                    if (rule != null && !numericTable(rule) && !oneValue && !openTable) {
-                        rule.addProperty("mapEntry", true);
-                        rule.addProperty("key", entry.getKey());
+                    List<Observation> having = set.stream().filter(q -> q.json().getAsJsonObject().has(entry.getKey())
+                        && q.json().getAsJsonObject().get(entry.getKey()).isJsonPrimitive()).toList();
+                    Function<Observation, JsonElement> value = q -> q.json().getAsJsonObject().get(entry.getKey());
+                    Rule rule = scalar(having, value, wire);
+                    boolean oneValue = rule instanceof Constant && having.stream().map(q -> value.apply(q).toString()).distinct().count() < 2;
+                    boolean openTable = rule instanceof Table && !having.stream().allMatch(q -> value.apply(q).getAsJsonPrimitive().isBoolean()
+                        || (closed && value.apply(q).getAsJsonPrimitive().isString()));
+                    if (rule != null && !(rule instanceof Table table && table.numericKeys()) && !oneValue && !openTable) {
+                        rule.mapEntry = true;
+                        rule.key = entry.getKey();
                         return rule;
                     }
                 }
@@ -1994,16 +1702,13 @@ public final class MappingInference {
         return null;
     }
 
-    private JsonArray tags(Component component, String path, String jsonName, String wire, JsonObject rule, List<Pair> set) {
+    private List<String> tags(Component component, String path, String jsonName, String wire, Rule rule, List<Observation> set) {
         Set<String> tags = new LinkedHashSet<>();
         List<String> segments = Wire.segments(Wire.generic(wire));
         String leafName = segments.getLast().replace("[]", "");
-        String kind = rule.get("kind").getAsString();
-        if (kind.equals("constant") || kind.equals("empty-list")) {
+        if (rule.presence()) {
             // a leaf the field's presence switches on (a sibling default BDS writes with it), not the field's value
-            JsonArray array = new JsonArray();
-            array.add(!jsonName.isEmpty() && leafName.equals(jsonName) ? "presence" : "injected-default");
-            return array;
+            return List.of(!jsonName.isEmpty() && leafName.equals(jsonName) ? "presence" : "injected-default");
         }
         if (path.isEmpty() && wire.endsWith(".value")) {
             tags.add("wrapped-in-value");
@@ -2021,8 +1726,8 @@ public final class MappingInference {
         if (!path.isEmpty() && wireDepth != jsonDepth && !wire.startsWith("item_properties")) {
             tags.add(wireDepth > jsonDepth ? "nested" : "flattened");
         }
-        JsonElement x = set.getFirst().json;
-        Leaf y = set.stream().map(p -> p.wire.get(wire)).filter(Objects::nonNull).findFirst().orElse(null);
+        JsonElement x = set.getFirst().json();
+        Leaf y = set.stream().map(p -> p.wire().get(wire)).filter(Objects::nonNull).findFirst().orElse(null);
         if (y != null && x.isJsonPrimitive()) {
             JsonPrimitive p = x.getAsJsonPrimitive();
             String jsonType = p.isBoolean() ? "boolean" : p.isNumber() ? (isInteger(p) ? "integer" : "number") : "string";
@@ -2032,19 +1737,11 @@ public final class MappingInference {
                 tags.add("type:" + jsonType + "->" + nbt);
             }
         }
-        if (kind.equals("linear")) {
-            tags.add("unit-conversion");
-        }
-        if (kind.equals("table")) {
-            boolean numbers = rule.getAsJsonObject("table").entrySet().stream().allMatch(e -> e.getValue().getAsString().matches("-?\\d+"));
-            tags.add(numbers ? "enum->int" : "value-map");
-        }
-        if (rule.has("element")) {
+        tags.addAll(rule.kindTags());
+        if (rule.element != null) {
             tags.add("list-element");
         }
-        JsonArray array = new JsonArray();
-        tags.forEach(array::add);
-        return array;
+        return List.copyOf(tags);
     }
 
     // ---------------------------------------------------------------------------------------------------------------
@@ -2069,25 +1766,6 @@ public final class MappingInference {
             }
         }
         return current;
-    }
-
-    private static boolean same(JsonElement x, Leaf y) {
-        JsonPrimitive p = x.getAsJsonPrimitive();
-        if (p.isBoolean()) {
-            return y.numeric() && y.number() == (p.getAsBoolean() ? 1 : 0);
-        }
-        if (p.isNumber()) {
-            return y.numeric() && close(p.getAsDouble(), y.number());
-        }
-        return y.value() instanceof String s && s.equals(p.getAsString());
-    }
-
-    private static boolean close(double a, double b) {
-        return Math.abs(a - b) <= 1e-5 * Math.max(1, Math.abs(a));
-    }
-
-    private static double round(double d) {
-        return Math.round(d * 1e6) / 1e6;
     }
 
     private static boolean isInteger(JsonPrimitive p) {

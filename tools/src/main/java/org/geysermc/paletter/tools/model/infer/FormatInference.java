@@ -11,6 +11,7 @@ import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.Model.Component;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 import org.geysermc.paletter.tools.model.infer.MappingInference.Obs;
+import org.geysermc.paletter.tools.model.rule.Leaf;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -111,7 +112,7 @@ final class FormatInference {
 
     /** An old-style item that sends no components is in the registry but not in the capture's wire: it is accepted, with nothing on it. */
     private static Obs obs(MappingInference.Capture capture, MappingInference.Variant v, Set<String> legacy) {
-        Map<String, Wire.Leaf> wire = capture.wire().get(v.identifier());
+        Map<String, Leaf> wire = capture.wire().get(v.identifier());
         if (wire == null && legacy.contains(v.identifier())) {
             wire = Map.of();
         }

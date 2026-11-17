@@ -1,6 +1,6 @@
 package org.geysermc.paletter.tools.model.infer;
 
-import org.geysermc.paletter.tools.model.infer.Wire.Leaf;
+import org.geysermc.paletter.tools.model.rule.Leaf;
 import org.geysermc.paletter.tools.update.BuildHistory;
 
 import java.io.IOException;
