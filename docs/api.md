@@ -288,6 +288,9 @@ always. Every palette has it: a palette of a version whose data has no vanilla s
 ## Errors and reports
 
 Layers given to `Paletter.builder()` are startup configuration: a problem throws `PaletteException` on the first
-`palette(...)` call, and `Paletter#warmUp()` compiles every version up front. `Palette#extend(layer)` never throws for a
-problem with the layer; it returns the base palette unchanged with an `ERROR` entry in `report()`. `PaletteReport` also
+`palette(...)` call, and `Paletter#warmUp()` compiles every version up front. `Palette#extend(layer)` throws a
+`PaletteException` too, and changes nothing: the palette is untouched, nothing is cached, and the same palette can
+still be extended by another layer. Duplicate identifiers (blocks, items, voxel shapes) and duplicate block runtime ids
+are rejected, across layers and within one. `PaletteException#layer()` is the id of the layer and `#identifier()` the
+content it is about (null when it is not about one). The message names both, and the version. `PaletteReport` also
 lists what was adapted, replaced or dropped per version.
