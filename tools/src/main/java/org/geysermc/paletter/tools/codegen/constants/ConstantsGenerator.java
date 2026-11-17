@@ -78,18 +78,9 @@ public final class ConstantsGenerator {
      */
     public record Names(Map<String, String> blocks, Map<String, String> items, Map<String, String> states, Map<String, String> enums,
                         Renames renames, Set<String> hand) {
-        public Names(Map<String, String> blocks, Map<String, String> items, Map<String, String> states, Map<String, String> enums,
-                     Renames renames) {
-            this(blocks, items, states, enums, renames, Set.of());
-        }
-
-        /** The names a history records: a state's constant and a string state's enum. */
-        public static Names of(Renames renames, JsonObject history) {
-            return of(renames, List.of(), history);
-        }
-
         /**
-         * @param lines the lines of {@link #NAMES}; they win over the history
+         * @param lines the lines of {@link #NAMES}; they win over the names the history records (a state's constant and a
+         *              string state's enum)
          */
         public static Names of(Renames renames, List<String> lines, JsonObject history) {
             Map<String, String> blocks = new TreeMap<>();

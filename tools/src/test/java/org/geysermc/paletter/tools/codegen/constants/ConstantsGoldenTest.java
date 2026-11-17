@@ -151,7 +151,7 @@ class ConstantsGoldenTest {
     private static ConstantsGenerator.Names names(Map<String, String> blocks, Map<String, String> items, Map<String, String> states,
                                                   Map<String, String> enums) {
         return new ConstantsGenerator.Names(blocks, items, states, enums,
-            new Renames(Map.of("minecraft:old_door", "minecraft:test_door"), Map.of()));
+            new Renames(Map.of("minecraft:old_door", "minecraft:test_door"), Map.of()), java.util.Set.of());
     }
 
     /** {@code variant_names.txt} of the second generation: the release names two potion variants, the preview one more. */

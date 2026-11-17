@@ -123,7 +123,7 @@ class ConstantsGeneratorTest {
     }
 
     private static ConstantsGenerator.Names names() {
-        return ConstantsGenerator.Names.of(Renames.NONE, new JsonObject());
+        return ConstantsGenerator.Names.of(Renames.NONE, List.of(), new JsonObject());
     }
 
     @Test
@@ -159,7 +159,7 @@ class ConstantsGeneratorTest {
         first.getAsJsonObject("enums").getAsJsonObject("CardinalDirection").getAsJsonObject("values").add("UPWARDS", value);
 
         ConstantsGenerator.Names names = new ConstantsGenerator.Names(this.names.blocks(), this.names.items(), this.names.states(),
-            this.names.enums(), new Renames(Map.of(), Map.of("minecraft:old_item", "minecraft:apple")));
+            this.names.enums(), new Renames(Map.of(), Map.of("minecraft:old_item", "minecraft:apple")), java.util.Set.of());
 
         ConstantsGenerator.Result second = ConstantsGenerator.generate(release, null, names, first, "2.1.0");
         String blocks = second.files().get(BLOCKS);
@@ -215,18 +215,18 @@ class ConstantsGeneratorTest {
         assertEquals("WallConnectionType", ConstantsGenerator.className("wall_connection_type_east"));
 
         ConstantsGenerator.Names clash = new ConstantsGenerator.Names(Map.of("minecraft:dirt", "STONE"), names.items(), names.states(),
-            names.enums(), names.renames());
+            names.enums(), names.renames(), java.util.Set.of());
         IllegalStateException e = assertThrows(IllegalStateException.class,
             () -> ConstantsGenerator.generate(release, null, clash, new JsonObject(), "0.1.0"));
         assertTrue(e.getMessage().contains("Duplicate constant BedrockBlocks.STONE"), e.getMessage());
 
         ConstantsGenerator.Names noOverride = new ConstantsGenerator.Names(names.blocks(), names.items(), Map.of(), names.enums(),
-            names.renames());
+            names.renames(), java.util.Set.of());
         e = assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(release, null, noOverride, new JsonObject(), "0.1.0"));
         assertTrue(e.getMessage().contains("Duplicate constant BedrockStates.FACING_DIRECTION"), e.getMessage());
 
         ConstantsGenerator.Names invalid = new ConstantsGenerator.Names(names.blocks(), Map.of("minecraft:apple", "1APPLE"), names.states(),
-            names.enums(), names.renames());
+            names.enums(), names.renames(), java.util.Set.of());
         assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(release, null, invalid, new JsonObject(), "0.1.0"));
     }
 
@@ -347,7 +347,7 @@ class ConstantsGeneratorTest {
         old.add("items", items);
         // a became b, which became c, in one update: both are aliases of C, not removed
         ConstantsGenerator.Names chain = new ConstantsGenerator.Names(Map.of(), Map.of(), Map.of(), Map.of(),
-            new Renames(Map.of(), Map.of("minecraft:a", "minecraft:b", "minecraft:b", "minecraft:c")));
+            new Renames(Map.of(), Map.of("minecraft:a", "minecraft:b", "minecraft:b", "minecraft:c")), java.util.Set.of());
         ConstantsGenerator.Result result = ConstantsGenerator.generate(data, null, chain, old, "2.0.0");
         assertEquals("C", itemsOf(result).getAsJsonObject("A").get("replacement").getAsString());
         assertEquals("C", itemsOf(result).getAsJsonObject("B").get("replacement").getAsString());
@@ -364,7 +364,7 @@ class ConstantsGeneratorTest {
         aliasItems.add("B", entry("minecraft:b"));
         aliased.add("items", aliasItems);
         ConstantsGenerator.Names oneStep = new ConstantsGenerator.Names(Map.of(), Map.of(), Map.of(), Map.of(),
-            new Renames(Map.of(), Map.of("minecraft:b", "minecraft:c")));
+            new Renames(Map.of(), Map.of("minecraft:b", "minecraft:c")), java.util.Set.of());
         result = ConstantsGenerator.generate(data, null, oneStep, aliased, "2.0.0");
         assertEquals("C", itemsOf(result).getAsJsonObject("A").get("replacement").getAsString());
         assertEquals("1.5.0", itemsOf(result).getAsJsonObject("A").get("deprecated").getAsString());
@@ -383,7 +383,7 @@ class ConstantsGeneratorTest {
         cycleItems.add("B", b);
         cycle.add("items", cycleItems);
         IllegalStateException e = assertThrows(IllegalStateException.class,
-            () -> ConstantsGenerator.generate(data, null, ConstantsGenerator.Names.of(Renames.NONE, new JsonObject()), cycle, "2.0.0"));
+            () -> ConstantsGenerator.generate(data, null, ConstantsGenerator.Names.of(Renames.NONE, List.of(), new JsonObject()), cycle, "2.0.0"));
         assertTrue(e.getMessage().contains("cycle of aliases"), e.getMessage());
     }
 
