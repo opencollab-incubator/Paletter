@@ -190,7 +190,8 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
      *        limited to using the "query.block_state()" query. When using "bone_visibility" in geometry components in the
      *        "permutations" section, you must also have a default version of the geometry component with "bone_visibility"
      *        in the "components" section. Value must have at most 64 items. Add-on JSON {@code bone_visibility}. Default:
-     *        <code>&#123;&#125;</code>. Compiled by the hand transform {@code Transforms.itemVisualBoneVisibility}.
+     *        <code>&#123;&#125;</code>. Empty while {@code identifier} is {@code minecraft:geometry.full_block} (BDS
+     *        1.26.63.1). Compiled by the hand transform {@code Transforms.itemVisualBoneVisibility}.
      * @param culling Which block_culling .json file to use when rendering this block. Value must have at most 256 items. Add-on
      *        JSON {@code culling}. Optional (null: not set).
      * @param cullingLayer A string that allows culling rule to group multiple blocks together when comparing them. When using the
@@ -228,6 +229,7 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
             @Nullable Boolean uvLock, @Nullable List<String> uvLockBones) {
         public Geometry {
             boneVisibility = Check.copy(boneVisibility, "ItemVisual.Geometry.boneVisibility");
+            Check.conflict("ItemVisual.Geometry", "boneVisibility", !boneVisibility.isEmpty(), "identifier", identifier, "minecraft:geometry.full_block");
             if (uvLock != null && uvLockBones != null) {
                 throw new IllegalArgumentException("ItemVisual.Geometry sets both uvLock and uvLockBones");
             }

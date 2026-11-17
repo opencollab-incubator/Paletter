@@ -45,6 +45,17 @@ public final class Check {
         }
     }
 
+    /**
+     * A map or list BDS takes only empty while another field of the object has a value ("Cannot use bone visibility feature
+     * with: minecraft:geometry.full_block").
+     */
+    public static void conflict(@NonNull String owner, @NonNull String field, boolean used, @NonNull String other, @Nullable String otherValue,
+                                @NonNull String value) {
+        if (used && value.equals(otherValue)) {
+            throw new IllegalArgumentException(owner + "." + field + " must be empty while " + other + " is " + value);
+        }
+    }
+
     /** A value BDS takes only in whole steps (degrees in quarter turns): a multiple of {@code step}. */
     public static void multipleOf(@NonNull String field, double value, double step) {
         double steps = value / step;

@@ -404,6 +404,10 @@ final class ApiSource {
         if (f.notBelow != null) {
             s.append(" Not below {@code ").append(f.notBelow.json).append("} (").append(f.notBelowSource).append(").");
         }
+        if (f.conflictsWith != null) {
+            s.append(" Empty while {@code ").append(f.conflictsWith.json).append("} is {@code ").append(f.conflictValue).append("} (")
+                .append(f.conflictSource).append(").");
+        }
         if (f.multipleOf != null) {
             s.append(" Multiples of ").append(Docs.number(f.multipleOf)).append(" only (BDS refuses the others).");
         }
@@ -537,6 +541,10 @@ final class ApiSource {
                 if (!unset.isEmpty()) {
                     body.endControlFlow();
                 }
+            }
+            if (f.conflictsWith != null) {
+                body.addStatement("$T.conflict($S, $S, $L, $S, $N, $S)", CHECK, owner, f.java,
+                    (nullable ? f.java + " != null && " : "") + "!" + f.java + ".isEmpty()", f.conflictsWith.java, f.conflictsWith.java, f.conflictValue);
             }
             for (Field a : f.alternatives) {
                 body.beginControlFlow("if ($N != null && $N != null)", f.java, a.java);

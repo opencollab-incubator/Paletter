@@ -174,10 +174,11 @@ for a member it does not vary, `spec-capture` shrinks the variant and captures a
 
 **Linked fields.** One field at a time is not enough where BDS ties two fields: `damage_chance.max` below the default
 `min` is refused, `replace_block_item` is ignored unless `block` is the item itself. The content log says so, and
-`bds-feedback.json` keeps it as a link: `order <low> <high>`, `conflicts <path>`, `identifier <path> <kind>`. Beside each
+`bds-feedback.json` keeps it as a link: `order <low> <high>`, `conflicts <path> '<value>'`, `identifier <path> <kind>`. Beside each
 variant of such a field the generator adds a linked one (label `<label> linked <paths>`): the other field at its far
 limit, at its second valid value (`fixtures.json` `alternatives`), or the variant's own identifier with a minimal block of
-that name. The plain variant stays, so BDS keeps saying what ties the fields.
+that name. The plain variant stays, so BDS keeps saying what ties the fields. The API refuses what BDS refuses: the record of
+the object checks an `order` and a `conflicts` fact in its constructor.
 
 **What BDS says that the docs do not.** BDS wins over the docs. Type errors in the content log become errata.
 `spec-capture --probe-keys` asks BDS about keys the docs leave out, using candidates from the BDS binary, the bedrock

@@ -342,6 +342,7 @@ public final class ComponentGenerator {
             c.root.fields.add(f);
         }
         orders(c, c.root);
+        conflicts(c, c.root);
         keyedExtras(c);
         // Forms: synthetic fields, or shorthands of a field
         for (Map.Entry<String, JsonObject> form : c.pendingForms.entrySet()) {
@@ -1144,6 +1145,7 @@ public final class ComponentGenerator {
         // Same name: allowed only for the same structure (merged later)
         c.allTypes.add(o);
         orders(c, o);
+        conflicts(c, o);
     }
 
     /**
@@ -1167,6 +1169,37 @@ public final class ComponentGenerator {
 
     private static boolean number(Field f) {
         return f.type instanceof Scalar s && (s.kind() == ScalarKind.INT || s.kind() == ScalarKind.FLOAT);
+    }
+
+    /**
+     * The value of another field BDS refuses a field with ({@code bds-feedback.json}: {@code conflicts <path> '<value>'} on
+     * the field's path, from "Cannot use bone visibility feature with: minecraft:geometry.full_block"): the record's
+     * constructor checks it. For a map or a list, which BDS takes empty beside that value, and a string field of the same
+     * object.
+     */
+    private void conflicts(Comp c, ObjType o) {
+        for (Field f : o.fields) {
+            if (f.path == null || !(f.type instanceof MapOf || f.type instanceof ListOf)) {
+                continue;
+            }
+            for (String note : notes(c, feedbackPath(c, f.path))) {
+                Matcher conflict = Pattern.compile("conflicts (\\S+) '(.*)'").matcher(note);
+                if (!conflict.matches()) {
+                    continue;
+                }
+                o.fields.stream().filter(other -> other != f && other.path != null && feedbackPath(c, other.path).equals(conflict.group(1))
+                    && other.type instanceof Scalar s && s.kind() == ScalarKind.STRING).findFirst().ifPresent(other -> {
+                        f.conflictsWith = other;
+                        f.conflictValue = conflict.group(2);
+                        f.conflictSource = "BDS " + bdsVersion();
+                    });
+            }
+        }
+    }
+
+    /** The path {@code bds-feedback.json} has a field under. */
+    private String feedbackPath(Comp c, String path) {
+        return c.standalone ? standalonePrefix(c.id) + "." + path : path;
     }
 
     /** Object types with the same fields share one record; types with the same name must be the same. */
@@ -1218,7 +1251,8 @@ public final class ComponentGenerator {
         StringBuilder s = new StringBuilder("{");
         for (Field f : o.fields) {
             s.append(f.json).append(':').append(typeSignature(f.type)).append('=').append(f.docsDefault).append(f.required)
-                .append(f.notBelow == null ? "" : ">=" + f.notBelow.json).append(';');
+                .append(f.notBelow == null ? "" : ">=" + f.notBelow.json)
+                .append(f.conflictsWith == null ? "" : "!" + f.conflictsWith.json + "=" + f.conflictValue).append(';');
         }
         return s.append('}').toString();
     }

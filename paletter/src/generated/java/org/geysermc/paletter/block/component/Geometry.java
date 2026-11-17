@@ -27,7 +27,8 @@ import org.geysermc.paletter.internal.component.Check;
  *        requires a format version of at least 1.19.80. Added to the geometry component in 1.19.80 as a replacement for
  *        the previous part_visibility component. As of 1.20.10, bone visibility values support Molang expressions,
  *        restoring functionality closer to the original experimental part_visibility component. Add-on JSON {@code
- *        bone_visibility}. Optional (null: not set).
+ *        bone_visibility}. Optional (null: not set). Empty while {@code identifier} is {@code
+ *        minecraft:geometry.full_block} (BDS 1.26.63.1).
  * @param culling An optional identifer of a culling definition. The culling definition is used to determine which faces of the
  *        block should be culled when rendering. The culling definition can be used to optimize rendering performance by
  *        reducing the number of faces that need to be rendered. This identifier must match an existing culling
@@ -82,6 +83,7 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
 
     public Geometry {
         boneVisibility = boneVisibility == null ? null : Check.copy(boneVisibility, "Geometry.boneVisibility");
+        Check.conflict("Geometry", "boneVisibility", boneVisibility != null && !boneVisibility.isEmpty(), "identifier", identifier, "minecraft:geometry.full_block");
         Objects.requireNonNull(cullingLayer, "Geometry.cullingLayer");
         Objects.requireNonNull(cullingShape, "Geometry.cullingShape");
         Objects.requireNonNull(identifier, "Geometry.identifier");

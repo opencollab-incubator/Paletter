@@ -3,8 +3,10 @@ package org.geysermc.paletter.tools.codegen.component;
 import com.google.gson.JsonElement;
 import org.geysermc.paletter.block.component.CollisionBox;
 import org.geysermc.paletter.block.component.DestructibleByMining;
+import org.geysermc.paletter.block.component.EmbeddedVisual;
 import org.geysermc.paletter.block.component.Friction;
 import org.geysermc.paletter.block.component.Geometry;
+import org.geysermc.paletter.block.component.ItemVisual;
 import org.geysermc.paletter.block.component.LightEmission;
 import org.geysermc.paletter.internal.component.ComponentIndex;
 import org.geysermc.paletter.item.component.Durability;
@@ -158,6 +160,13 @@ class GeneratedApiTest {
         // and an order between two fields BDS demands ("max value cannot be lower than min value")
         assertThrows(IllegalArgumentException.class, () -> Durability.DamageChance.builder().min(50).max(10).build());
         assertEquals(10, Durability.DamageChance.builder().min(10).max(10).build().max(), "equal is in order");
+        // and a value of another field BDS refuses a map with ("Cannot use bone visibility feature with: minecraft:geometry.full_block")
+        Map<String, String> bone = Map.of("arm", "q.block_state('test:lit')");
+        assertThrows(IllegalArgumentException.class, () -> ItemVisual.Geometry.builder().identifier("minecraft:geometry.full_block").boneVisibility(bone).build());
+        assertThrows(IllegalArgumentException.class, () -> EmbeddedVisual.Geometry.builder().identifier("minecraft:geometry.full_block").boneVisibility(bone).build());
+        assertThrows(IllegalArgumentException.class, () -> Geometry.builder().identifier("minecraft:geometry.full_block").boneVisibility(bone).build());
+        assertEquals(bone, ItemVisual.Geometry.builder().identifier("geometry.lamp").boneVisibility(bone).build().boneVisibility());
+        assertEquals(Map.of(), ItemVisual.Geometry.of("minecraft:geometry.full_block").boneVisibility(), "BDS takes the empty map");
     }
 
     /** The JSON BDS accepts that the docs do not model, as the API expresses it (the conformance suite checks each against BDS's NBT). */

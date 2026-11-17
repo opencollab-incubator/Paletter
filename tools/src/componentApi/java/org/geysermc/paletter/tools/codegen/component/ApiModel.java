@@ -257,6 +257,13 @@ final class ApiModel {
         /** The number field of the same object this one must not be below (BDS: "max value cannot be lower than min value"). */
         Field notBelow;
         String notBelowSource;
+        /**
+         * The string field of the same object whose value {@link #conflictValue} BDS refuses this map or list with, unless it
+         * is empty ("Cannot use bone visibility feature with: minecraft:geometry.full_block").
+         */
+        Field conflictsWith;
+        String conflictValue;
+        String conflictSource;
         List<Double> allowed;
         /** The step BDS takes the values in (an inferred rule's {@code multipleOf}: it refused the others); null if none. */
         Double multipleOf;

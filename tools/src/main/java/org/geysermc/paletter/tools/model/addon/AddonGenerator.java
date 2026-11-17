@@ -306,9 +306,9 @@ public final class AddonGenerator {
      *     <li>{@code order <low> <high>} on an object ("max value cannot be lower than min value"): a variant of one of the
      *     two sets the other to its far limit (the low one to its lowest value, the high one to its highest; without a
      *     known limit to the varied value), so every value of the varied one keeps the order;</li>
-     *     <li>{@code conflicts <path>} on a field (BDS refused its variants for the value another field has in them,
+     *     <li>{@code conflicts <path> '<value>'} on a field (BDS refused its variants for the value another field has in them,
      *     "Cannot use bone visibility feature with: minecraft:geometry.full_block"): the other field takes its second valid
-     *     value ({@code fixtures.json} {@code alternatives});</li>
+     *     value ({@code fixtures.json} {@code alternatives}), unless the variant has it already;</li>
      *     <li>{@code identifier <path> <kind>} on a field (BDS wants another field to name the item or block itself, "Item
      *     identifier ... does not match the block identifier ..."): the other field gets the variant's own identifier, and
      *     the add-on a minimal {@code <kind>} with that identifier.</li>
@@ -339,7 +339,7 @@ public final class AddonGenerator {
             String[] parts = fact.split(" ");
             if (parts[0].equals("conflicts")) {
                 JsonElement alternative = fixtures.alternative(c.id(), parts[1], tokens(parts[1]).getLast());
-                if (alternative != null && set(linked, parts[1], alternative)) {
+                if (alternative != null && !alternative.equals(get(linked, parts[1])) && set(linked, parts[1], alternative)) {
                     paths.add(parts[1]);
                 }
             } else if (parts[0].equals("identifier") && (parentOf(parts[1]).isEmpty() || get(linked, parentOf(parts[1])) != null)) {

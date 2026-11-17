@@ -331,6 +331,16 @@ class ComponentGeneratorTest {
     }
 
     @Test
+    void theRecordConstructorChecksAValueBdsRefusesAMapWith() {
+        // bds-feedback.json: BDS refused the entries of bones for the id the variants had
+        Inputs in = lamp();
+        in.feedback().add("block:test:lamp", json("{\"geo.bones\": [\"conflicts geo.id 'test:full'\"]}"));
+        String lamp = ComponentGenerator.generate(in).get("org/geysermc/paletter/block/component/Lamp.java");
+        assertTrue(lamp.contains("Check.conflict(\"Lamp.Geo\", \"bones\", !bones.isEmpty(), \"id\", id, \"test:full\");"), lamp);
+        assertTrue(lamp.contains("Empty while {@code id} is {@code"), lamp);
+    }
+
+    @Test
     void learnLinksFollowTheDocsPaths() {
         assertEquals("https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_render_offsets?view=minecraft-bedrock-stable",
             Docs.learnUrl("creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_render_offsets.md"));

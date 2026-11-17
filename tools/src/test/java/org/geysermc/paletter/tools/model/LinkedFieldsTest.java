@@ -89,7 +89,7 @@ class LinkedFieldsTest {
             .getAsJsonObject("item:minecraft:test");
         assertTrue(feedback.getAsJsonArray("chance").toString().contains("order min max"), feedback.toString());
         assertTrue(feedback.getAsJsonArray("replace").toString().contains("identifier block block"), feedback.toString());
-        assertTrue(feedback.getAsJsonArray("bones").toString().contains("conflicts geo"), feedback.toString());
+        assertTrue(feedback.getAsJsonArray("bones").toString().contains("conflicts geo 'minecraft:full'"), feedback.toString());
 
         // Second capture: the links from the feedback
         AddonGenerator second = new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model));

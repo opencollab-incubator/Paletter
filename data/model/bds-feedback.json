@@ -94,7 +94,7 @@
       "required"
     ],
     "geometry.bone_visibility": [
-      "conflicts geometry.identifier"
+      "conflicts geometry.identifier 'minecraft:geometry.full_block'"
     ],
     "geometry.identifier": [
       "required"
@@ -133,6 +133,9 @@
     ]
   },
   "block:minecraft:geometry": {
+    "bone_visibility": [
+      "conflicts identifier 'minecraft:geometry.full_block'"
+    ],
     "identifier": [
       "required"
     ],
@@ -160,7 +163,7 @@
       "required"
     ],
     "geometry.bone_visibility": [
-      "conflicts geometry.identifier"
+      "conflicts geometry.identifier 'minecraft:geometry.full_block'"
     ],
     "geometry.identifier": [
       "required"

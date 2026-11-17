@@ -145,8 +145,12 @@ public final class Feedback {
      * The fields BDS ties to the field a variant varies, where a line of the variant quotes the value another field has in
      * the variant: {@code identifier <path> <kind>} when the line also names the variant's own identifier as what the other
      * field's {@code <kind>} must match ("Item identifier &lt;id&gt; does not match the block identifier minecraft:dirt"),
-     * else {@code conflicts <path>} ("Cannot use bone visibility feature with: minecraft:geometry.full_block"). Lines that
+     * else {@code conflicts <path> '<value>'} ("Cannot use bone visibility feature with: minecraft:geometry.full_block"). Lines that
      * list allowed values or a pattern quote values without saying anything about them, and are skipped.
+     * <p>
+     * The same tie shows from the other side: a line that quotes the value the variant gives its own field and names another
+     * field the variant sets (the same message for a variant of {@code identifier} whose base has {@code bone_visibility})
+     * is a {@code conflicts} fact of that other field.
      */
     private void links(String line, MappingInference.Variant variant) {
         if (!variant.role().equals("field") || !variant.linked().isEmpty() || variant.json() == null) {
@@ -159,8 +163,40 @@ public final class Feedback {
         for (String other : quoted(variant.json(), variant.path(), message)) {
             String value = MappingInference.jsonAt(variant.json(), other).getAsString();
             Matcher identifier = Pattern.compile("([a-z]+) identifier " + Pattern.quote(value)).matcher(message);
-            String fact = message.contains(OWN_IDENTIFIER) && identifier.find() ? "identifier " + other + " " + identifier.group(1) : "conflicts " + other;
+            String fact = message.contains(OWN_IDENTIFIER) && identifier.find() ? "identifier " + other + " " + identifier.group(1) : "conflicts " + other + " '" + value + "'";
             facts.computeIfAbsent(variant.component(), k -> new TreeMap<>()).computeIfAbsent(variant.path(), k -> new TreeSet<>()).add(fact);
+        }
+        JsonElement own = variant.path().isEmpty() ? null : MappingInference.jsonAt(variant.json(), variant.path());
+        if (own != null && own.isJsonPrimitive() && own.getAsJsonPrimitive().isString() && !message.contains(OWN_IDENTIFIER)
+            && quotes(message, own.getAsString())) {
+            members(variant.json(), "", other -> {
+                if (!related(other, variant.path()) && names(message, AddonGenerator.tokens(other).getLast())) {
+                    facts.computeIfAbsent(variant.component(), k -> new TreeMap<>()).computeIfAbsent(other, k -> new TreeSet<>())
+                        .add("conflicts " + variant.path() + " '" + own.getAsString() + "'");
+                }
+            });
+        }
+    }
+
+    /** Whether a message quotes a value of at least three characters as a whole. */
+    private static boolean quotes(String message, String value) {
+        return value.length() >= 3 && Pattern.compile("(?<![\\w.:])" + Pattern.quote(value) + "(?![\\w:])").matcher(message).find();
+    }
+
+    /** Whether a message names a field by its key, as BDS writes it in prose ({@code bone_visibility}: "bone visibility"). */
+    static boolean names(String message, String key) {
+        return key.contains("_") && Pattern.compile("(?<![a-z0-9_])" + Pattern.quote(key).replace("_", "\\E[ _]\\Q") + "(?![a-z0-9_])")
+            .matcher(message.toLowerCase(java.util.Locale.ROOT)).find();
+    }
+
+    /** The path of every member of the objects of a JSON value ({@code a}, {@code a.b}). */
+    private static void members(JsonElement json, String path, java.util.function.Consumer<String> out) {
+        if (json != null && json.isJsonObject()) {
+            json.getAsJsonObject().entrySet().forEach(e -> {
+                String member = path.isEmpty() ? e.getKey() : path + "." + e.getKey();
+                out.accept(member);
+                members(e.getValue(), member, out);
+            });
         }
     }
 
@@ -182,8 +218,7 @@ public final class Feedback {
     static List<String> quoted(JsonElement json, String varied, String message) {
         List<String> out = new ArrayList<>();
         strings(json, "", (path, value) -> {
-            if (value.length() >= 3 && !related(path, varied)
-                && Pattern.compile("(?<![\\w.:])" + Pattern.quote(value) + "(?![\\w:])").matcher(message).find()) {
+            if (!related(path, varied) && quotes(message, value)) {
                 out.add(path);
             }
         });
