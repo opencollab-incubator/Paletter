@@ -91,7 +91,7 @@ class VanillaShapeOracleTest {
                     compiled.addBlock(BlockCompiler.propertyData(block, 10000, ctx));
                 } else {
                     CustomItem item = ApiBinder.item(definition);
-                    compiled.addItem(ItemCompiler.componentData(item.identifier(), 0, item.components(), item.menuCategory(), item.creative(), ctx));
+                    compiled.addItem(ItemCompiler.componentData(item.identifier(), 0, item.components(), item.menuCategory(), ctx));
                 }
                 encoded++;
             } catch (ApiBinder.Unbindable ignored) {

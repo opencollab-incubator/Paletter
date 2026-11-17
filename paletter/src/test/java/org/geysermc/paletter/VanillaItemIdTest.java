@@ -5,10 +5,10 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.item.CustomItem;
+import org.geysermc.paletter.item.component.BlockPlacer;
 import org.geysermc.paletter.item.RegisteredItem;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.MaxStackSize;
@@ -30,15 +30,17 @@ class VanillaItemIdTest {
     private static final Paletter PALETTER = Paletter.bundled();
 
     private static CustomBlock block(String identifier) {
-        return CustomBlock.builder(identifier).creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION)).build();
+        return CustomBlock.builder(identifier).menuCategory(CreativeCategory.CONSTRUCTION).build();
     }
 
     private static CustomItem item(String identifier) {
-        return CustomItem.builder(identifier).component(Icon.of("ruby")).creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
+        return CustomItem.builder(identifier).component(Icon.of("ruby")).menuCategory(CreativeCategory.ITEMS).build();
     }
 
     private static PaletteLayer.Builder dataDrivenBlock(PaletteLayer.Builder layer, String identifier) {
-        return layer.blockItem(identifier, CustomBlock.BlockItem.dataDriven(), null).block(block(identifier));
+        return layer.block(block(identifier)).item(CustomItem.builder(identifier)
+            .component(BlockPlacer.builder().block(identifier).replaceBlockItem(true).build())
+            .menuCategory(CreativeCategory.ITEMS).build());
     }
 
     // Every later layer adds a block that sorts above the earlier ones, so the plain block items of those move

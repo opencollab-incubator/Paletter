@@ -8,7 +8,6 @@ import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.component.DisplayName;
 import org.geysermc.paletter.item.component.Icon;
@@ -32,12 +31,12 @@ public final class TranslatorExample {
         CustomItem ruby = CustomItem.builder("example:ruby")
             .component(Icon.of("ruby"))
             .component(DisplayName.builder().value("item.example.ruby.name").build())
-            .creative(CreativePlacement.loose(CreativeCategory.ITEMS))
+            .menuCategory(CreativeCategory.ITEMS)
             .build();
         CustomBlock lamp = CustomBlock.builder("example:lamp")
             .property(BlockProperty.bool("example:lit"))
             .component(Geometry.of("minecraft:geometry.full_block"))
-            .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION))
+            .menuCategory(CreativeCategory.CONSTRUCTION)
             .build();
         PaletteLayer translator = PaletteLayer.builder("translator").item(ruby).block(lamp).build();
 

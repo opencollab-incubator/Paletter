@@ -21,7 +21,7 @@ PaletteLayer content = PaletteLayer.builder("server")
         .component(Icon.of("ruby"))
         .component(DisplayName.builder().value("item.example.ruby.name").build())
         .component(MaxStackSize.of(16))
-        .creative(CreativePlacement.group(CreativeCategory.ITEMS, "itemGroup.name.minerals"))
+        .menuCategory(CreativeCategory.ITEMS, "itemGroup.name.minerals")
         .build())
     .voxelShape("example:post", VoxelShape.ofBoxes("example:post", 6 / 16f, 0, 6 / 16f, 10 / 16f, 1, 10 / 16f))
     .block(CustomBlock.builder("example:post")
@@ -29,7 +29,7 @@ PaletteLayer content = PaletteLayer.builder("server")
         .component(MaterialInstances.builder()
             .all(MaterialInstances.Instance.builder().texture("post").build()).build())
         .component(Friction.of(0.1f))
-        .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION))
+        .menuCategory(CreativeCategory.CONSTRUCTION)
         .build())
     .overrideItem(BedrockItems.CAKE, item -> item.modifyComponents(MaxStackSize.of(1)))
     .build();
@@ -56,6 +56,7 @@ BedrockItemVariant variant = palette.itemVariant("minecraft:potion", 5, Lookup.R
 
 // Blocks and items are keys; the palette gives the ids for its version
 int stone = palette.runtimeId(BedrockBlocks.STONE.defaultState());
+BedrockItemType stoneItem = palette.itemOf(BedrockBlocks.STONE);   // a custom block owns its item, see CustomBlock#itemType()
 ItemData apples = palette.encode(BedrockItemStack.of(BedrockItems.APPLE, 3));
 
 // Behaviour values BDS uses but never sends to clients, of what the palette resolved

@@ -5,7 +5,6 @@ import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeEntry;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.component.MaxStackSize;
 import org.junit.jupiter.api.Test;
@@ -61,7 +60,7 @@ class ExtendReuseTest {
     @Test
     void aLayerThatPlacesAnItemRebuildsTheCreativeContent() {
         Palette parent = parent();
-        CustomItem ruby = CustomItem.builder("reuse:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
+        CustomItem ruby = CustomItem.builder("reuse:ruby").menuCategory(CreativeCategory.ITEMS).build();
         Palette child = parent.extend(PaletteLayer.builder("item").item(ruby).build());
         assertNotSame(parent.creative(), child.creative());
         assertEquals(parent.creative().size() + 1, child.creative().size());

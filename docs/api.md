@@ -66,6 +66,7 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 | `Palette#itemDefinition(int)` | The `RegisteredItem` with an item runtime id (negative for the plain item of a custom block), or null. |
 | `Palette#resolve(ItemKey)` | What `encode` would send, without building an `ItemData`. `behaviour()` gives the `ItemValues` of the item sent. `variant()` is the variant this palette sends for the requested one: the requested variant itself unless `fallback()`. |
 | `Palette#blockOf(ItemKey)` | The key of the block an item is sent with, or null. `blockDefinition(blockOf(v))` is what is sent. |
+| `Palette#itemOf(BedrockBlockType)` | The item the Script API gives for the block's default permutation: the block's own item for a custom block, else the bundled block to item relation. Null if there is none here. Whether the client's pick block gives this item is unverified. |
 | `Palette#encode(BedrockItemStack)` | The `ItemData` for the client, with fallbacks applied. |
 | `Palette#decode(ItemData)` | The stack a client sent, or null if unknown. |
 | `Palette#explain(...)` | A readable explanation of how a block state or item resolves. |
@@ -87,8 +88,19 @@ against 26.50 keeps working when 26.60 becomes the newest version by using `Look
 Paletter decides which block an item carries (`Palette#blockOf`, a key). A layer override wins, then the block to item relation
 captured from the Script API, then the block states in the creative inventory.
 
-Vanilla items keep the runtime ids of the bundled data in every palette: custom items and data driven block items get
-sequential ids after them. A custom block's plain item (`BlockItem.SIMPLE`) has the runtime id `255 - block_id`, as in
+A custom block owns its item, as in BDS, so a layer never registers it separately: `CustomBlock.Builder#item` chooses
+`BlockItem.SIMPLE` or `NONE`. An item of its own that replaces the block item is an ordinary `CustomItem` with the block's
+identifier and a `block_placer` with `replace_block_item` (BDS takes the flag only for that identifier), registered in the
+same layer with `layer.item(...)` (in another layer, or for a block with `BlockItem.NONE`, compiling throws a `PaletteException`
+naming the cause; a flag for a block that does not exist is reported and the item stays an ordinary one): its category, components and id come from the item, and `Palette#itemOf` gives it for
+the block. In the creative inventory it is a plain stack (no block state) in the item's own category, placed in the block
+pass; the block keeps its own `menu_category`, which is independent of the item's (the `paletter:plain_block` capture: block
+construction, item items). Plain items are numbered by their block (`255 - block_id`) and placed in the order of the
+blocks; replacing items share the sequence of the custom items.
+
+Vanilla items keep the runtime ids of the bundled data in every palette: custom items (replacing items included) get
+sequential ids after them, in registration order (Paletter's rule: the BDS capture's ids look alphabetical, which
+would be the file name order of an add-on, but that is not shown to be the rule). A custom block's plain item (`BlockItem.SIMPLE`) has the runtime id `255 - block_id`, as in
 BDS: negative, and it changes when a later layer adds blocks, because BDS numbers custom blocks by identifier in
 descending order. Read ids from the palette, never keep them across layers.
 
@@ -153,7 +165,7 @@ CustomBlock lamp = CustomBlock.builder("example:lamp")
         .all(MaterialInstances.Instance.builder().texture("example_lamp").build()).build())
     .component(CollisionBox.builder().boxes(CollisionBox.Entry.builder().origin(-8, 0, -8).size(16, 8, 16).build()).build())
     .permutation("q.block_state('example:lit')", LightEmission.of(10))
-    .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION))
+    .menuCategory(CreativeCategory.CONSTRUCTION)
     .build();
 ```
 
@@ -185,8 +197,14 @@ PaletteLayer.builder("server").creative(editor -> {
 });
 ```
 
-Custom items and blocks declare a `CreativePlacement`: after an anchor, in a named group, or loose at the end of a
-category. Without an anchor, `CreativeOrdering` (set on `Paletter.Builder`) decides the order. The default, `BDS`, puts
+Custom items and blocks have a `menu_category` (the generated `MenuCategory` record: category, group,
+`hiddenInCommands`), which maps one to one from add-on JSON. As in BDS it alone decides whether the item or block item is in the
+creative inventory and in which category and group, under every ordering: absent or category `none` means not in it.
+`menuCategory(CreativeCategory)` and `menuCategory(CreativeCategory, group)` on both builders are shortcuts. A block and the
+item that replaces its item each have a menu category of their own. A `CreativePlacement` adjusts only the position within
+that category and group: `CreativePlacement.DEFAULT` (the default) or `CreativePlacement.after(ItemMatcher | ItemKey)` /
+`afterAnyVariantOf(type)`, set with `creative(placement)`. An anchor that matches nothing falls back to the default position
+and adds a warning to the palette report. `CreativeOrdering` (set on `Paletter.Builder`) only decides the order, never presence. The default, `BDS`, puts
 content exactly where BDS puts add-on content; [wire-notes.md](wire-notes.md#creative-inventory-order) has the rule.
 `CreativeContent` turns the layout into a valid packet: categories in client order, items the version lacks dropped,
 empty groups dropped (they crash the client), and network ids numbered from 1.

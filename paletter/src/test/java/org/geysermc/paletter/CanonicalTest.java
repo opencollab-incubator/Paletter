@@ -13,7 +13,6 @@ import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.item.ItemVariant;
 import org.geysermc.paletter.item.RegisteredItem;
@@ -36,7 +35,7 @@ class CanonicalTest {
     private static CustomBlock lamp() {
         return CustomBlock.builder("test:lamp")
             .property(BlockProperty.bool("test:lit"))
-            .creative(CreativePlacement.loose(CreativeCategory.ITEMS))
+            .menuCategory(CreativeCategory.ITEMS)
             .build();
     }
 

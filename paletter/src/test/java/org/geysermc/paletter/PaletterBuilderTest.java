@@ -4,7 +4,6 @@ import org.geysermc.paletter.block.BlockHashes;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeOrdering;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataSource;
 import org.geysermc.paletter.internal.data.ExperimentContent;
@@ -105,9 +104,9 @@ class PaletterBuilderTest {
     @Test
     void globalLayersApplyToEveryVersionInOrder() {
         PaletteLayer first = PaletteLayer.builder("first")
-            .item(CustomItem.builder("test:first").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build()).build();
+            .item(CustomItem.builder("test:first").menuCategory(CreativeCategory.ITEMS).build()).build();
         PaletteLayer second = PaletteLayer.builder("second")
-            .item(CustomItem.builder("test:second").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build()).build();
+            .item(CustomItem.builder("test:second").menuCategory(CreativeCategory.ITEMS).build()).build();
         Paletter paletter = Paletter.builder().layer(first).layer(second).build();
         for (DataVersion version : paletter.versions()) {
             Palette palette = paletter.palette(version.protocolVersion());
@@ -262,6 +261,7 @@ class PaletterBuilderTest {
         Palette append = Paletter.builder().creativeOrdering(CreativeOrdering.APPEND).layer(layer).build()
             .palette(protocol);
         assertTrue(stacks(bds).contains("test:block_menu_only:0"));
-        assertFalse(stacks(append).contains("test:block_menu_only:0"));
+        // The ordering decides the order, never presence
+        assertTrue(stacks(append).contains("test:block_menu_only:0"));
     }
 }

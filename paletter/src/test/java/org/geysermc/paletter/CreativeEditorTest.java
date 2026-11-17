@@ -137,15 +137,15 @@ class CreativeEditorTest {
     @Test
     void placementPrefersAnchorThenGroupThenLoose() {
         CreativeEditor editor = layout().edit();
-        CreativePlacement.group(CreativeCategory.ITEMS, "g1").after(ItemMatcher.id("test:c")).apply(editor, NEW, CreativeOrdering.APPEND);
+        CreativePlacement.after(ItemMatcher.id("test:c")).apply(editor, NEW, CreativeCategory.ITEMS, "g1", CreativeOrdering.APPEND);
         assertEquals(List.of(C, NEW), editor.build().group("g2").orElseThrow().stacks());
 
         BedrockItemStack other = stack("test:other");
-        CreativePlacement.group(CreativeCategory.NATURE, "new_group").after(ItemMatcher.id("test:missing")).apply(editor, other, CreativeOrdering.APPEND);
+        CreativePlacement.after(ItemMatcher.id("test:missing")).apply(editor, other, CreativeCategory.NATURE, "new_group", CreativeOrdering.APPEND);
         assertEquals(List.of(other), editor.build().group("new_group").orElseThrow().stacks());
 
         BedrockItemStack third = stack("test:third");
-        CreativePlacement.loose(CreativeCategory.ITEMS).apply(editor, third, CreativeOrdering.APPEND);
+        CreativePlacement.DEFAULT.apply(editor, third, CreativeCategory.ITEMS, null, CreativeOrdering.APPEND);
         assertEquals(new CreativeItem(third), editor.view(CreativeCategory.ITEMS).getLast());
     }
 

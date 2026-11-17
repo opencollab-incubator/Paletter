@@ -3,7 +3,6 @@ package org.geysermc.paletter;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.OnPlayerPlacing;
@@ -44,7 +43,7 @@ class WireOnlyComponentTest {
 
     private static CustomItem.Builder base() {
         return CustomItem.builder("example:wand").component(Icon.of("wand"))
-            .creative(CreativePlacement.loose(CreativeCategory.ITEMS));
+            .menuCategory(CreativeCategory.ITEMS);
     }
 
     private static NbtMap scale(float x, float y, float z) {

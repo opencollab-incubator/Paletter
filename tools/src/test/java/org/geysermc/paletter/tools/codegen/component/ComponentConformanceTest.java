@@ -260,7 +260,7 @@ class ComponentConformanceTest {
                 actual = withoutBlockId(BlockCompiler.propertyData(custom, 10000, ctx));
             } else {
                 CustomItem custom = ApiBinder.item(definition);
-                actual = ItemCompiler.componentData(custom.identifier(), 0, custom.components(), custom.menuCategory(), custom.creative(), ctx)
+                actual = ItemCompiler.componentData(custom.identifier(), 0, custom.components(), custom.menuCategory(), ctx)
                     .getCompound("components");
             }
         } catch (ApiBinder.Unbindable e) {

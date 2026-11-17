@@ -149,7 +149,7 @@ public final class ItemOverride {
     RegisteredItem apply(WireContext context) {
         NbtMap componentData = original.getComponentData();
         if (fresh || (componentData == null && !components.isEmpty())) {
-            componentData = ItemCompiler.componentData(original.getIdentifier(), original.getRuntimeId(), components, null, null, context);
+            componentData = ItemCompiler.componentData(original.getIdentifier(), original.getRuntimeId(), components, null, context);
             if (fresh) {
                 componentData = keepCreativeCategory(componentData);
             }

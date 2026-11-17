@@ -1,5 +1,6 @@
 package org.geysermc.paletter;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
@@ -29,6 +30,8 @@ import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.item.CustomItem;
+import org.geysermc.paletter.internal.component.Wire;
+import org.geysermc.paletter.item.component.BlockPlacer;
 import org.geysermc.paletter.item.ItemRegistry;
 import org.geysermc.paletter.internal.item.ItemVariant;
 
@@ -106,32 +109,24 @@ final class PaletteCompiler {
             BlockRegistry blocks = parent.blocks()
                 .withCustomBlocks(data, layer, layer.blocks(), report, source);
 
+            // Items of the layer that replace the item of one of its blocks: they are the blocks' items
+            Map<String, CustomItem> replacements = new LinkedHashMap<>();
+            for (CustomItem item : layer.items()) {
+                if (replacesBlockItem(item, blocks, layer, report, source)) {
+                    replacements.put(item.identifier(), item);
+                }
+            }
+
             List<ItemVariant> newVariants = new ArrayList<>();
             // The handles of the new variants are the types the custom items and blocks own
             List<BedrockItemType> customTypes = new ArrayList<>();
             blocks.customBlocks().forEach(block -> customTypes.add(block.itemType()));
-            // blockItem(...) for a block of this layer takes over the item registration the block would do itself
-            Set<String> explicit = new HashSet<>();
-            layer.itemEntries().forEach(entry -> {
-                if (entry instanceof PaletteLayer.ItemEntry.OfBlock ofBlock) {
-                    explicit.add(ofBlock.block());
-                }
-            });
-            for (PaletteLayer.ItemEntry entry : layer.itemEntries()) {
-                switch (entry) {
-                    case PaletteLayer.ItemEntry.Custom custom -> {
-                        newVariants.add(custom.item().variant());
-                        customTypes.add(custom.item().type());
-                    }
-                    case PaletteLayer.ItemEntry.OfBlock ofBlock -> {
-                        if (!(ofBlock.item() instanceof CustomBlock.BlockItem.None)) {
-                            newVariants.add(ItemVariant.of(ofBlock.block()));
-                        }
-                    }
-                }
+            for (CustomItem item : layer.items()) {
+                newVariants.add(item.variant());
+                customTypes.add(item.type());
             }
             for (CustomBlock block : layer.blocks()) {
-                if (!explicit.contains(block.identifier()) && !(block.item() instanceof CustomBlock.BlockItem.None)) {
+                if (!(block.item() instanceof CustomBlock.BlockItem.None) && !replacements.containsKey(block.identifier())) {
                     newVariants.add(ItemVariant.of(block.identifier()));
                 }
             }
@@ -149,26 +144,19 @@ final class PaletteCompiler {
             }
 
             CreativeOrdering ordering = parent.ordering();
-            // Placements in registration order (custom items and block items interleaved, then items of blocks)
+            // Placements in registration order: custom items, then items of blocks. Items get sequential ids in the order they
+            // are registered in, the ones that replace a block item among them (the addon capture: plain 908, plain_block 909,
+            // projectile 910)
             List<Placed> placed = new ArrayList<>();
-            for (PaletteLayer.ItemEntry entry : layer.itemEntries()) {
-                switch (entry) {
-                    case PaletteLayer.ItemEntry.Custom(CustomItem custom) -> {
-                        items.addCustom(custom, report, source);
-                        if (custom.creative() != null) {
-                            placed.add(new Placed(null, BedrockItemStack.of(custom.type()), custom.creative()));
-                        }
-                    }
-                    case PaletteLayer.ItemEntry.OfBlock(String identifier, CustomBlock.BlockItem blockItem, var placement) -> {
-                        CustomBlock block = blocks.customBlocks().stream().filter(b -> b.identifier().equals(identifier)).findFirst()
-                            .orElseThrow(() -> new PaletteException("Item of unknown custom block " + identifier, null, identifier, null));
-                        // The block of this layer keeps its own placement unless blockItem gives another
-                        CreativePlacement effective = placement != null || layer.blocks().stream().noneMatch(b -> b.identifier().equals(identifier))
-                            ? placement : creativePlacement(block, ordering);
-                        if (items.addBlockItem(block, blockItem, report, source) != null && effective != null) {
-                            placed.add(new Placed(identifier, blockItemStack(block, blocks), effective));
-                        }
-                    }
+            for (CustomItem custom : layer.items()) {
+                if (replacements.containsKey(custom.identifier())) {
+                    items.addBlockItemReplacement(custom, report, source);
+                    continue;
+                }
+                items.addCustom(custom, report, source);
+                Menu menu = menu(custom.menuCategory());
+                if (menu != null) {
+                    placed.add(new Placed(null, BedrockItemStack.of(custom.type()), custom.creative(), menu));
                 }
             }
             // BDS registers block items in the order of the block files, identifier descending without files, whatever
@@ -176,12 +164,18 @@ final class PaletteCompiler {
             List<CustomBlock> blocksByItemOrder = new ArrayList<>(layer.blocks());
             blocksByItemOrder.sort(Comparator.comparing(CustomBlock::identifier).reversed());
             for (CustomBlock block : blocksByItemOrder) {
-                if (explicit.contains(block.identifier())) {
+                CustomItem replacement = replacements.get(block.identifier());
+                if (replacement != null) {
+                    // BDS adds the replacing item in the block pass, in the item's own category, as a plain stack
+                    Menu menu = menu(replacement.menuCategory());
+                    if (menu != null) {
+                        placed.add(new Placed(block.identifier(), BedrockItemStack.of(replacement.type()), replacement.creative(), menu));
+                    }
                     continue;
                 }
-                CreativePlacement placement = creativePlacement(block, ordering);
-                if (items.addBlockItem(block, report, source) != null && placement != null) {
-                    placed.add(new Placed(block.identifier(), blockItemStack(block, blocks), placement));
+                Menu menu = menu(block.menuCategory());
+                if (items.addBlockItem(block, report, source) != null && menu != null) {
+                    placed.add(new Placed(block.identifier(), blockItemStack(block, blocks), block.creative(), menu));
                 }
             }
             layer.tags().forEach(items::tag);
@@ -189,7 +183,7 @@ final class PaletteCompiler {
             // Without placements and edits the layout is the parent's, and so is what is compiled from it unless the layer
             // registers an item or block the layout mentions
             boolean sameLayout = placed.isEmpty() && layer.creativeEdits().isEmpty();
-            CreativeLayout layout = sameLayout ? parent.creativeLayout() : creativeLayout(parent, layer, blocks, placed);
+            CreativeLayout layout = sameLayout ? parent.creativeLayout() : creativeLayout(parent, layer, blocks, placed, report);
             ItemRegistry itemPalette = items.build(layout, report);
             Set<String> registers = new HashSet<>(registered);
             layer.overrides().forEach(override -> registers.add(override.identifier()));
@@ -227,12 +221,13 @@ final class PaletteCompiler {
     }
 
     /** The layout of the parent with the creative placements and edits of the layer applied. */
-    private static CreativeLayout creativeLayout(Palette parent, PaletteLayer layer, BlockRegistry blocks, List<Placed> placed) {
+    private static CreativeLayout creativeLayout(Palette parent, PaletteLayer layer, BlockRegistry blocks, List<Placed> placed,
+                                                 PaletteReportBuilder report) {
         CreativeEditor creative = parent.creativeLayout().edit();
         CreativeOrdering ordering = parent.ordering();
         VanillaData data = parent.vanillaData();
         if (ordering == CreativeOrdering.APPEND) {
-            placed.forEach(entry -> entry.placement().apply(creative, entry.stack(), ordering));
+            placed.forEach(entry -> entry.apply(creative, ordering, report, layer.id()));
         } else {
             // BDS adds block items while iterating its data driven block map, then items in registration order.
             // Custom blocks enter the map by block id, which Paletter assigns by identifier, descending
@@ -245,11 +240,10 @@ final class PaletteCompiler {
                 data.dataDrivenBlocks().stream().map(BlockPropertyData::getName).toList())) {
                 Placed entry = blockItems.get(identifier);
                 if (entry != null) {
-                    entry.placement().apply(creative, entry.stack(), ordering);
+                    entry.apply(creative, ordering, report, layer.id());
                 }
             }
-            placed.stream().filter(entry -> entry.block() == null)
-                .forEach(entry -> entry.placement().apply(creative, entry.stack(), ordering));
+            placed.stream().filter(entry -> entry.block() == null).forEach(entry -> entry.apply(creative, ordering, report, layer.id()));
         }
         for (BiConsumer<CreativeEditor, DataVersion> edit : layer.creativeEdits()) {
             edit.accept(creative, data.version());
@@ -271,21 +265,64 @@ final class PaletteCompiler {
     }
 
     /** A creative placement to apply; {@code block} is the custom block if the stack is a block item. */
-    private record Placed(@Nullable String block, BedrockItemStack stack, CreativePlacement placement) {
+    private record Placed(@Nullable String block, BedrockItemStack stack, CreativePlacement placement, Menu menu) {
+        void apply(CreativeEditor creative, CreativeOrdering ordering, PaletteReportBuilder report, String source) {
+            if (!placement.apply(creative, stack, menu.category(), menu.group(), ordering)) {
+                report.warn(source, "The creative placement of " + stack.type().identifier() + " is after a stack that does not exist; "
+                    + "it is at the default position");
+            }
+        }
+    }
+
+    /** The category and group of a {@code menu_category}: what decides, as in BDS, that and where an item is in creative. */
+    private record Menu(CreativeCategory category, @Nullable String group) {
+    }
+
+    /** @return the menu of a block's {@code menu_category}, or null if it is absent or {@code none}: not in creative */
+    private static @Nullable Menu menu(org.geysermc.paletter.block.component.@Nullable MenuCategory menu) {
+        return menu == null ? null : menu(menu.category().value(), menu.group());
+    }
+
+    /** @return the menu of an item's {@code menu_category}, or null if it is absent or {@code none}: not in creative */
+    private static @Nullable Menu menu(org.geysermc.paletter.item.component.@Nullable MenuCategory menu) {
+        return menu == null ? null : menu(menu.category().value(), menu.group());
+    }
+
+    private static @Nullable Menu menu(String category, @Nullable String group) {
+        if (category.equals(CreativeCategory.NONE_NAME)) {
+            return null;
+        }
+        return new Menu(CreativeCategory.fromBedrockName(category), group == null || group.isEmpty() ? null : group);
     }
 
     /**
-     * The creative placement of a custom block: its own, or with {@link CreativeOrdering#BDS} the one its menu
-     * category implies (BDS puts every block with a menu category in the creative inventory).
+     * @return true if the item replaces the item of a block of the layer: it has the block's identifier and a
+     *         {@code block_placer} for that block with {@code replace_block_item}, the only case BDS takes the flag
+     * @throws PaletteException if the block is of an earlier layer, or of this one without a block item
      */
-    private static @Nullable CreativePlacement creativePlacement(CustomBlock block, CreativeOrdering ordering) {
-        org.geysermc.paletter.block.component.MenuCategory menu = block.menuCategory();
-        if (block.creative() != null || ordering == CreativeOrdering.APPEND || menu == null
-            || menu.category() == org.geysermc.paletter.block.component.MenuCategory.Category.NONE) {
-            return block.creative();
+    private static boolean replacesBlockItem(CustomItem item, BlockRegistry blocks, PaletteLayer layer, PaletteReportBuilder report,
+                                             String source) {
+        BlockPlacer placer = item.component(BlockPlacer.class);
+        if (placer == null || !placer.replaceBlockItem() || placer.block() == null
+            || !Wire.namespaced(item.identifier()).equals(Wire.namespaced(placer.block()))) {
+            // Not a replacement: a flag for another block is reported by the component
+            return false;
         }
-        CreativeCategory category = CreativeCategory.fromBedrockName(menu.category().value());
-        return menu.group() == null || menu.group().isEmpty() ? CreativePlacement.loose(category) : CreativePlacement.group(category, menu.group());
+        CustomBlock own = layer.blocks().stream().filter(block -> block.identifier().equals(item.identifier())).findFirst().orElse(null);
+        if (own == null) {
+            if (blocks.customBlocks().stream().anyMatch(block -> block.identifier().equals(item.identifier()))) {
+                throw new PaletteException("The item " + item.identifier() + " replaces the item of the block of the same name, which an earlier layer "
+                    + "registered: a replacing item must be in its block's layer", layer.id(), item.identifier(), null);
+            }
+            report.warn(source, "The item " + item.identifier() + " has replace_block_item, but there is no custom block of that name; "
+                + "it is registered as an ordinary item");
+            return false;
+        }
+        if (own.item() instanceof CustomBlock.BlockItem.None) {
+            throw new PaletteException("The item " + item.identifier() + " replaces the item of the block of the same name, "
+                + "which is registered without an item (BlockItem.NONE)", layer.id(), item.identifier(), null);
+        }
+        return true;
     }
 
     /**

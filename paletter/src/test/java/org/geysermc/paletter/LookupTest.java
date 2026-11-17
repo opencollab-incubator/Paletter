@@ -3,7 +3,6 @@ package org.geysermc.paletter;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.internal.block.BlockStates;
@@ -114,7 +113,7 @@ class LookupTest {
     @Test
     void customContentIsAlwaysAccepted() {
         CustomBlock lamp = CustomBlock.builder("lookup:lamp").build();
-        CustomItem ruby = CustomItem.builder("lookup:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
+        CustomItem ruby = CustomItem.builder("lookup:ruby").menuCategory(CreativeCategory.ITEMS).build();
         Palette palette = LATEST.extend(PaletteLayer.builder("lookup").block(lamp).item(ruby).build());
         for (Lookup lookup : Lookup.values()) {
             assertSame(lamp.type().defaultState(), palette.blockState(lamp.type().defaultState().toNbt(), lookup));

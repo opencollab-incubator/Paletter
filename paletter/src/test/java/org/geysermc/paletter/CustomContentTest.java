@@ -14,7 +14,6 @@ import org.geysermc.paletter.block.component.MaterialInstances;
 import org.geysermc.paletter.block.component.PlacementDirection;
 import org.geysermc.paletter.block.component.UnitCube;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.RegisteredItem;
@@ -51,7 +50,7 @@ class CustomContentTest {
             .component(Durability.builder().maxDurability(250).build())
             .component(Tags.builder().tags("minecraft:gems").build())
             .component(UseModifiers.builder().useDuration(1.6f).build())
-            .creative(CreativePlacement.group(CreativeCategory.ITEMS, "itemGroup.name.minerals"))
+            .menuCategory(CreativeCategory.ITEMS, "itemGroup.name.minerals")
             .build();
     }
 
@@ -63,7 +62,7 @@ class CustomContentTest {
             .component(MaterialInstances.builder().all(MaterialInstances.Instance.builder().texture("lamp").build()).build())
             .permutation("q.block_state('example:lit')", LightEmission.of(15))
             .tags("minecraft:stone")
-            .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION))
+            .menuCategory(CreativeCategory.CONSTRUCTION)
             .build();
     }
 
@@ -202,17 +201,16 @@ class CustomContentTest {
     }
 
     @Test
-    void blockItemTakesOverTheItemOfABlockOfTheSameLayer() {
+    void theItemOfABlockIsNumberedByItsBlock() {
         CustomBlock lamp = lamp();
-        PaletteLayer layer = PaletteLayer.builder("ordered").item(ruby())
-            .blockItem(lamp.identifier(), lamp.item(), null).block(lamp).build();
+        PaletteLayer layer = PaletteLayer.builder("ordered").item(ruby()).block(lamp).build();
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), layer);
         RegisteredItem ruby = palette.items().getDefinition("example:ruby");
         RegisteredItem item = palette.items().getDefinition(lamp.identifier());
         // The plain block item is numbered by its block, not after the custom items
         assertEquals(255 - palette.blocks().customBlockId(lamp.identifier()), item.getRuntimeId());
         assertTrue(item.getRuntimeId() < ruby.getRuntimeId());
-        // The block's own placement still applies
+        // The block's own placement applies
         assertTrue(palette.creativeLayout().stacks().anyMatch(s -> s.type().identifier().equals(lamp.identifier())));
     }
 

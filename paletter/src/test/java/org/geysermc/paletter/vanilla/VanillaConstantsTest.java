@@ -257,8 +257,8 @@ class VanillaConstantsTest {
             .property(BlockProperty.strings("minecraft:cardinal_direction", "north", "south", "east", "west"))
             .defaultState("example:level", 2)
             .build();
-        CustomItem ruby = CustomItem.builder("example:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)
-            .afterAnyVariantOf(BedrockItems.DIAMOND)).build();
+        CustomItem ruby = CustomItem.builder("example:ruby").menuCategory(CreativeCategory.ITEMS)
+            .creative(CreativePlacement.afterAnyVariantOf(BedrockItems.DIAMOND)).build();
         PaletteLayer layer = PaletteLayer.builder("custom").block(lamp).item(ruby)
             .overrideItem(BedrockItems.CAKE, item -> { })
             .build();
@@ -305,7 +305,8 @@ class VanillaConstantsTest {
                     .destroySpeeds(org.geysermc.paletter.item.component.Digger.DestroySpeeds.builder()
                         .block(org.geysermc.paletter.item.component.Digger.Block.of(BedrockBlocks.STONE)).speed(4).build())
                     .build())
-                .creative(CreativePlacement.loose(CreativeCategory.ITEMS).afterAnyVariantOf(BedrockItems.DIAMOND))
+                .menuCategory(CreativeCategory.ITEMS)
+                .creative(CreativePlacement.afterAnyVariantOf(BedrockItems.DIAMOND))
                 .build())
             .creative(editor -> editor.remove(ItemMatcher.of(BedrockItems.EMPTY_MAP.variant(2))))
             .build();

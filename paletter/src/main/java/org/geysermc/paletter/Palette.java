@@ -607,6 +607,25 @@ public final class Palette {
     }
 
     /**
+     * The item the Script API gives for the block's default permutation: the block's own item for a custom block (registered
+     * with the block, see {@link org.geysermc.paletter.block.CustomBlock#item()}, or the item that replaces it), else the item
+     * of the bundled block to item relation of the data. Whether the client's pick block gives this item is
+     * <b>unverified</b>.
+     *
+     * @return the item's type, or null if the block has no item here (a custom block with
+     *         {@link org.geysermc.paletter.block.CustomBlock.BlockItem#NONE}, or a block no item places)
+     * @since 1.0.0
+     */
+    public @Nullable BedrockItemType itemOf(@NonNull BedrockBlockType block) {
+        RegisteredItem custom = items.customBlockItem(block.identifier());
+        if (custom != null) {
+            return custom.key();
+        }
+        String item = data.blockItems().get(block.identifier());
+        return item == null || items.item(item) == null ? null : BedrockItemType.fromIdentifier(item);
+    }
+
+    /**
      * What this palette sends for an item variant, without building an {@link ItemData}: the item definition, damage
      * and block of {@link #encode} (fallbacks applied), as one cached record. For the variants of the newest version it
      * is a field read and an array load, it does not allocate. Use it to read the definition or damage of many items;

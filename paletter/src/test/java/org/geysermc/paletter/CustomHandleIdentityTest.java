@@ -5,7 +5,6 @@ import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.item.CustomItem;
@@ -37,11 +36,11 @@ class CustomHandleIdentityTest {
 
     private static CustomBlock lamp(String identifier) {
         return CustomBlock.builder(identifier).property(BlockProperty.bool("example:lit"))
-            .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION)).build();
+            .menuCategory(CreativeCategory.CONSTRUCTION).build();
     }
 
     private static CustomItem ruby(String identifier) {
-        return CustomItem.builder(identifier).creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
+        return CustomItem.builder(identifier).menuCategory(CreativeCategory.ITEMS).build();
     }
 
     @Test
@@ -126,15 +125,17 @@ class CustomHandleIdentityTest {
     }
 
     @Test
-    void aBlockItemOfALaterLayerIsTheBlocksOwnItemType() {
-        CustomBlock lamp = CustomBlock.builder("example:lamp").property(BlockProperty.bool("example:lit"))
-            .item(CustomBlock.BlockItem.NONE).build();
+    void aBlockItemIsTheBlocksOwnItemType() {
+        CustomBlock none = CustomBlock.builder("example:none").item(CustomBlock.BlockItem.NONE).build();
         Palette blockOnly = PALETTER.palette(PALETTER.latest().protocolVersion())
-            .extend(PaletteLayer.builder("blocks").block(lamp).build());
-        assertNull(blockOnly.itemVariant("example:lamp", 0, Lookup.RENAMED));
-        Palette palette = blockOnly.extend(PaletteLayer.builder("items")
-            .blockItem(lamp.identifier(), CustomBlock.BlockItem.SIMPLE, CreativePlacement.loose(CreativeCategory.CONSTRUCTION)).build());
+            .extend(PaletteLayer.builder("blocks").block(none).build());
+        assertNull(blockOnly.itemVariant("example:none", 0, Lookup.RENAMED));
+        assertNull(blockOnly.itemOf(none.type()));
+        CustomBlock lamp = CustomBlock.builder("example:lamp").property(BlockProperty.bool("example:lit"))
+            .menuCategory(CreativeCategory.CONSTRUCTION).build();
+        Palette palette = blockOnly.extend(PaletteLayer.builder("lamps").block(lamp).build());
         BedrockItemType itemType = lamp.itemType();
+        assertSame(itemType, palette.itemOf(lamp.type()));
         assertSame(itemType.variant(), palette.itemVariant("example:lamp", 0, Lookup.RENAMED));
         assertSame(itemType, palette.itemDefinition(itemType).key());
         BedrockItemStack decoded = palette.decode(palette.encode(BedrockItemStack.of(itemType)));

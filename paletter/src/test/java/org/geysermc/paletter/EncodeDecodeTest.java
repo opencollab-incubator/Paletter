@@ -4,7 +4,6 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.data.DataVersion;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.item.CustomItem;
@@ -61,7 +60,7 @@ class EncodeDecodeTest {
 
     @Test
     void customStacksRoundTrip() {
-        CustomItem ruby = CustomItem.builder("example:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
+        CustomItem ruby = CustomItem.builder("example:ruby").menuCategory(CreativeCategory.ITEMS).build();
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").item(ruby).build());
         BedrockItemStack stack = BedrockItemStack.of(ruby.type(), 7);
         ItemData data = palette.encode(stack);
