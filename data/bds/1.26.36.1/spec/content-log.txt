@@ -312,24 +312,24 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geome
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_35.json |  -> components -> minecraft:geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_36.json |  -> components -> minecraft:geometry -> n_way_visual_rotation: expected an object
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_36.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_38.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_38.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_38.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_39.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_39.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_39.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_40.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_40.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_40.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_41.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_41.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_41.json |  -> components -> minecraft:geometry -> uv_lock[0]: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_41.json |  -> components -> minecraft:geometry: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_42.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_42.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_42.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_45.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_45.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_45.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_46.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_46.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_46.json |  -> components -> minecraft:geometry -> uv_lock[0]: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_46.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_47.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_47.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_47.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_48.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_48.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_48.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_49.json |  -> components -> minecraft:geometry -> uv_lock: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_49.json |  -> components -> minecraft:geometry -> uv_lock: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_49.json |  -> components -> minecraft:geometry: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_instrument_sound_2.json |  -> components -> minecraft:instrument_sound: expected object with at least 1 elements
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_instrument_sound_3.json |  -> components -> minecraft:instrument_sound -> down: This value is bound to 'Instrument' and expects one of the following strings: 'note.harp', 'note.bd', 'note.snare', ... (24 others). Found: 'paletter_invalid'
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_instrument_sound_31.json |  -> components -> minecraft:instrument_sound -> up: This value is bound to 'Instrument' and expects one of the following strings: 'note.harp', 'note.bd', 'note.snare', ... (24 others). Found: 'paletter_invalid'
@@ -468,10 +468,6 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_mater
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_215.json |  -> components -> minecraft:material_instances -> south: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_219.json |  -> components -> minecraft:material_instances -> south -> render_method: This value is bound to 'Block Render Layer' and expects one of the following strings: 'double_sided', 'blend', 'blend_to_opaque', ... (5 others). Found: 'paletter_invalid'
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_219.json |  -> components -> minecraft:material_instances -> south: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_22.json |  -> components -> minecraft:material_instances -> * -> face_dimming: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_22.json |  -> components -> minecraft:material_instances -> *: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_23.json |  -> components -> minecraft:material_instances -> * -> face_dimming: invalid numeric value
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_23.json |  -> components -> minecraft:material_instances -> *: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_236.json |  -> components -> minecraft:material_instances -> south -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_236.json |  -> components -> minecraft:material_instances -> south: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_237.json |  -> components -> minecraft:material_instances -> south -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
@@ -492,10 +488,14 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_mater
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_258.json |  -> components -> minecraft:material_instances -> up: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_259.json |  -> components -> minecraft:material_instances -> up -> face_dimming: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_259.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_26.json |  -> components -> minecraft:material_instances -> * -> face_dimming: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_26.json |  -> components -> minecraft:material_instances -> *: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_260.json |  -> components -> minecraft:material_instances -> up -> face_dimming: invalid numeric value
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_260.json |  -> components -> minecraft:material_instances -> up: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_264.json |  -> components -> minecraft:material_instances -> up -> render_method: This value is bound to 'Block Render Layer' and expects one of the following strings: 'double_sided', 'blend', 'blend_to_opaque', ... (5 others). Found: 'paletter_invalid'
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_264.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_27.json |  -> components -> minecraft:material_instances -> * -> face_dimming: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_27.json |  -> components -> minecraft:material_instances -> *: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_281.json |  -> components -> minecraft:material_instances -> up -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_281.json |  -> components -> minecraft:material_instances -> up: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_282.json |  -> components -> minecraft:material_instances -> up -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
@@ -522,12 +522,12 @@ ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_mater
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_326.json |  -> components -> minecraft:material_instances -> west: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_327.json |  -> components -> minecraft:material_instances -> west -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_327.json |  -> components -> minecraft:material_instances -> west: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_48.json |  -> components -> minecraft:material_instances -> * -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_48.json |  -> components -> minecraft:material_instances -> * -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_invalid'
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_48.json |  -> components -> minecraft:material_instances -> *: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_49.json |  -> components -> minecraft:material_instances -> * -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_49.json |  -> components -> minecraft:material_instances -> *: invalid string
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_50.json |  -> components -> minecraft:material_instances -> * -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others). Found: 'paletter_invalid'
-ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_50.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_56.json |  -> components -> minecraft:material_instances -> * -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_56.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_57.json |  -> components -> minecraft:material_instances -> * -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_57.json |  -> components -> minecraft:material_instances -> *: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_68.json |  -> components -> minecraft:material_instances -> down -> ambient_occlusion: the input is outside of the accepted range [0, 10]
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_68.json |  -> components -> minecraft:material_instances -> down: invalid string
 ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_70.json |  -> components -> minecraft:material_instances -> down -> ambient_occlusion: the input is outside of the accepted range [0, 10]
@@ -1109,6 +1109,9 @@ ERROR [Item]  'paletter:render_offsets_3': Failed to parse field ' -> components
 ERROR [Item]  'paletter:render_offsets_4': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
 ERROR [Item]  'paletter:render_offsets_5': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
 ERROR [Item]  'paletter:render_offsets_6': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  'paletter:repairable_10': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
+ERROR [Item]  'paletter:repairable_11': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
+ERROR [Item]  'paletter:repairable_12': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
 ERROR [Item]  'paletter:repairable_13': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
 ERROR [Item]  'paletter:repairable_14': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
 ERROR [Item]  'paletter:repairable_15': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
@@ -1126,14 +1129,11 @@ ERROR [Item]  'paletter:repairable_26': Failed to parse field ' -> components ->
 ERROR [Item]  'paletter:repairable_27': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
 ERROR [Item]  'paletter:repairable_28': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
 ERROR [Item]  'paletter:repairable_29': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
-ERROR [Item]  'paletter:repairable_3': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
 ERROR [Item]  'paletter:repairable_30': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
 ERROR [Item]  'paletter:repairable_31': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
 ERROR [Item]  'paletter:repairable_33': Failed to parse field ' -> components -> minecraft:repairable -> repair_items[0] -> items[0]: expected an object'
 ERROR [Item]  'paletter:repairable_33': Failed to parse field ' -> components -> minecraft:repairable -> repair_items[0] -> items[0]: invalid string'
 ERROR [Item]  'paletter:repairable_33': Failed to parse field ' -> components -> minecraft:repairable -> repair_items[0]: expected an array'
-ERROR [Item]  'paletter:repairable_4': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
-ERROR [Item]  'paletter:repairable_5': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
 ERROR [Item]  'paletter:repairable_6': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
 ERROR [Item]  'paletter:repairable_7': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
 ERROR [Item]  'paletter:repairable_8': Failed to parse field ' -> components -> minecraft:repairable -> repair_items: expected an array'
@@ -1462,6 +1462,9 @@ ERROR [Item]  Error Parsing Item 'paletter:render_offsets_3':
 ERROR [Item]  Error Parsing Item 'paletter:render_offsets_4':
 ERROR [Item]  Error Parsing Item 'paletter:render_offsets_5':
 ERROR [Item]  Error Parsing Item 'paletter:render_offsets_6':
+ERROR [Item]  Error Parsing Item 'paletter:repairable_10':
+ERROR [Item]  Error Parsing Item 'paletter:repairable_11':
+ERROR [Item]  Error Parsing Item 'paletter:repairable_12':
 ERROR [Item]  Error Parsing Item 'paletter:repairable_13':
 ERROR [Item]  Error Parsing Item 'paletter:repairable_14':
 ERROR [Item]  Error Parsing Item 'paletter:repairable_15':
@@ -1479,12 +1482,9 @@ ERROR [Item]  Error Parsing Item 'paletter:repairable_26':
 ERROR [Item]  Error Parsing Item 'paletter:repairable_27':
 ERROR [Item]  Error Parsing Item 'paletter:repairable_28':
 ERROR [Item]  Error Parsing Item 'paletter:repairable_29':
-ERROR [Item]  Error Parsing Item 'paletter:repairable_3':
 ERROR [Item]  Error Parsing Item 'paletter:repairable_30':
 ERROR [Item]  Error Parsing Item 'paletter:repairable_31':
 ERROR [Item]  Error Parsing Item 'paletter:repairable_33':
-ERROR [Item]  Error Parsing Item 'paletter:repairable_4':
-ERROR [Item]  Error Parsing Item 'paletter:repairable_5':
 ERROR [Item]  Error Parsing Item 'paletter:repairable_6':
 ERROR [Item]  Error Parsing Item 'paletter:repairable_7':
 ERROR [Item]  Error Parsing Item 'paletter:repairable_8':

@@ -156,8 +156,9 @@ public final class Fixtures {
     }
 
     /**
-     * The model with the errata applied: types, forms and fields are only ever added. First the hand written errata, then
-     * what BDS said ({@link BdsErrata}: the types its content log demands, the keys the probe found it accepts).
+     * The model with the errata applied: types, forms and fields are only ever added. First the hand written errata (an
+     * erratum's types come first: they are what BDS takes; the documented ones stay after them, so each capture asks BDS
+     * again), then what BDS said ({@link BdsErrata}: the types its content log demands, the keys the probe found it accepts).
      */
     public Model apply(Model model) {
         Map<String, Component> components = new LinkedHashMap<>();
@@ -173,7 +174,7 @@ public final class Fixtures {
             if (erratum.has("forms")) {
                 erratum.getAsJsonArray("forms").forEach(f -> {
                     JType type = parseType(f.getAsString());
-                    if (!forms.contains(type)) {
+                    if (forms.stream().noneMatch(form -> form.toString().equals(type.toString()))) {
                         forms.add(type);
                     }
                 });
@@ -186,8 +187,8 @@ public final class Fixtures {
                 if (existing == null) {
                     fields.add(new Field(path, types, null, false, List.of(), null, null, List.of(), "(erratum) " + erratum.get("why").getAsString()));
                 } else {
-                    List<JType> merged = new ArrayList<>(existing.types());
-                    types.stream().filter(t -> !merged.contains(t)).forEach(merged::add);
+                    List<JType> merged = new ArrayList<>(types);
+                    existing.types().stream().filter(t -> merged.stream().noneMatch(m -> m.toString().equals(t.toString()))).forEach(merged::add);
                     List<JsonElement> values = existing.enumValues();
                     if (values.isEmpty() && types.stream().anyMatch(t -> t.type().equals("string"))) {
                         values = org.geysermc.paletter.tools.model.docs.DocsParser.valuesIn(existing.doc());

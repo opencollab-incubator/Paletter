@@ -4158,18 +4158,18 @@
           "accepted": 7,
           "rejected": 6,
           "rejectedValues": [
+            "array<string>:[wrong type]",
             "string:bone_a",
             "string:paletter_b",
             "string:",
             "string:minecraft:bone_a",
-            "string:minecraft:paletter_unknown",
-            "array<string>:[wrong type]"
+            "string:minecraft:paletter_unknown"
           ],
           "bdsErrors": [
-            "uv_lock: expected an array",
             "uv_lock: invalid numeric value",
+            "uv_lock[0]: invalid string",
             "minecraft:geometry: invalid string",
-            "uv_lock[0]: invalid string"
+            "uv_lock: expected an array"
           ],
           "transform": "geometry",
           "status": "hand-rule",
@@ -4451,18 +4451,18 @@
             "accepted": 7,
             "rejected": 6,
             "rejectedValues": [
+              "array<string>:[wrong type]",
               "string:bone_a",
               "string:paletter_b",
               "string:",
               "string:minecraft:bone_a",
-              "string:minecraft:paletter_unknown",
-              "array<string>:[wrong type]"
+              "string:minecraft:paletter_unknown"
             ],
             "bdsErrors": [
-              "uv_lock: expected an array",
               "uv_lock: invalid numeric value",
+              "uv_lock[0]: invalid string",
               "minecraft:geometry: invalid string",
-              "uv_lock[0]: invalid string"
+              "uv_lock: expected an array"
             ],
             "transform": "geometry",
             "status": "hand-rule",
@@ -4774,18 +4774,18 @@
             "accepted": 7,
             "rejected": 6,
             "rejectedValues": [
+              "array<string>:[wrong type]",
               "string:bone_a",
               "string:paletter_b",
               "string:",
               "string:minecraft:bone_a",
-              "string:minecraft:paletter_unknown",
-              "array<string>:[wrong type]"
+              "string:minecraft:paletter_unknown"
             ],
             "bdsErrors": [
-              "uv_lock: expected an array",
               "uv_lock: invalid numeric value",
+              "uv_lock[0]: invalid string",
               "minecraft:geometry: invalid string",
-              "uv_lock[0]: invalid string"
+              "uv_lock: expected an array"
             ],
             "transform": "geometry",
             "status": "hand-rule",
@@ -6709,14 +6709,14 @@
           "accepted": 7,
           "rejected": 3,
           "rejectedValues": [
+            "string:paletter_invalid",
             "boolean:true",
-            "boolean:false",
-            "string:paletter_invalid"
+            "boolean:false"
           ],
           "bdsErrors": [
-            "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
+            "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
             "*: invalid string",
-            "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid"
+            "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
           ],
           "status": "inferred",
           "rules": [
@@ -8295,14 +8295,14 @@
             "accepted": 7,
             "rejected": 3,
             "rejectedValues": [
+              "string:paletter_invalid",
               "boolean:true",
-              "boolean:false",
-              "string:paletter_invalid"
+              "boolean:false"
             ],
             "bdsErrors": [
-              "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
+              "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
               "*: invalid string",
-              "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid"
+              "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
             ],
             "status": "inferred",
             "rules": [
@@ -10133,14 +10133,14 @@
             "accepted": 7,
             "rejected": 3,
             "rejectedValues": [
+              "string:paletter_invalid",
               "boolean:true",
-              "boolean:false",
-              "string:paletter_invalid"
+              "boolean:false"
             ],
             "bdsErrors": [
-              "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
+              "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
               "*: invalid string",
-              "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid"
+              "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
             ],
             "status": "inferred",
             "rules": [
